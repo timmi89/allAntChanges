@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     (r'^nodes/$', 'rb.views.index'),
+    (r'^request-meta/$', 'rb.views.display_meta'),
 	#(r'^nodes/(?P<node_id>\d+)/$', 'rb.views.detail'),
     #(r'^nodes/(?P<node_id>\d+)/$', 'nodes.views.detail'),
     #(r'^nodes/(?P<node_id>\d+)/results/$', 'nodes.views.results'),
