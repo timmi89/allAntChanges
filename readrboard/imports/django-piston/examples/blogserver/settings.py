@@ -1,37 +1,34 @@
-# Django settings for readrboard project.
+import os, sys
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-# ReadrUser user profile
-AUTH_PROFILE_MODULE = 'rb.readruser'
-
-# Facebook shit
-LOGIN_REDIRECT_URL = '/'
-FACEBOOK_API_KEY = '457d702093ea6718adb6236ae72a2fc9'
-FACEBOOK_APPLICATION_SECRET = 'f14061a2ed9d7ae8ed1c3b231a8148c9'
-
 ADMINS = (
-    'tyler@readrboard.com'
+    # ('Your Name', 'your_email@domain.com'),
 )
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = 'readrdb.db'             # Or path to database file if using sqlite3.
-DATABASE_USER = ''             # Not used with sqlite3.
-DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-FILE_REL_PATH = '/usr/share/'
+# Fix up piston imports here. We would normally place piston in 
+# a directory accessible via the Django app, but this is an
+# example and we ship it a couple of directories up.
+sys.path.insert(0, os.path.join(BASE_DIR, '../../'))
+
+DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+DATABASE_NAME = os.path.join(BASE_DIR, 'db')             # Or path to database file if using sqlite3.
+#DATABASE_USER = ''             # Not used with sqlite3.
+#DATABASE_PASSWORD = ''         # Not used with sqlite3.
+#DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
+#DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/New York'
+TIME_ZONE = 'America/Chicago'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -58,7 +55,7 @@ MEDIA_URL = ''
 ADMIN_MEDIA_PREFIX = '/media/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'g^+j%4z)3ddwqu^tt)(w8phq&r6-y8f0!e&w^z68xo3(@jxgc!'
+SECRET_KEY = 'f@vhy8vuq7w70v=cnynm(am1__*zt##i2--i2p-021@-qgws%g'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -73,13 +70,11 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
 
-ROOT_URLCONF = 'readrboard.urls'
+ROOT_URLCONF = 'blogserver.urls'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    "readrboard/rb/templates"
+    os.path.join(BASE_DIR, 'templates'),
+    os.path.join(BASE_DIR, '../../piston/templates'),
 )
 
 INSTALLED_APPS = (
@@ -87,7 +82,14 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'readrboard.rb',
     'django.contrib.admin',
-    'django.contrib.comments',
+    'django.contrib.markup',
+    'blogserver.blog',
+    'blogserver.api',
 )
+
+FIXTURE_DIRS = (
+    os.path.join(BASE_DIR, 'fixtures'),
+)
+
+APPEND_SLASH = False
