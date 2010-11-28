@@ -3,6 +3,9 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+# ReadrUser user profile
+AUTH_PROFILE_MODULE = 'rb.readruser'
+
 # Facebook shit
 LOGIN_REDIRECT_URL = '/'
 FACEBOOK_API_KEY = '457d702093ea6718adb6236ae72a2fc9'
