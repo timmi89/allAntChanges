@@ -23,7 +23,9 @@ class Tag(Node):
     tag = models.CharField(max_length=50)
 
 class Group():
-    include_tag = models.CharField(max=length=250)
+    include_selectors = models.CharField(max=length=250)
+    no_rdr_selectors = models.CharField(max=length=250)
+    group_tags = models.ManyToManyField(Tag)
 
 class FacebookProfileModel(models.Model):
     about_me = models.TextField(blank=True, null=True)
