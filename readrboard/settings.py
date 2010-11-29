@@ -3,7 +3,6 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-<<<<<<< HEAD:readrboard/settings.py
 # ReadrUser user profile
 AUTH_PROFILE_MODULE = 'rb.readruser'
 
@@ -11,10 +10,9 @@ AUTH_PROFILE_MODULE = 'rb.readruser'
 LOGIN_REDIRECT_URL = '/'
 FACEBOOK_API_KEY = '457d702093ea6718adb6236ae72a2fc9'
 FACEBOOK_APPLICATION_SECRET = 'f14061a2ed9d7ae8ed1c3b231a8148c9'
-=======
+
 # Setting user profile to Author
-AUTH_PROFILE_MODULE = 'rb.Author'
->>>>>>> 85cf3579d8b7dcc7e8987d7dffb93cc008c98403:readrboard/settings.py
+AUTH_PROFILE_MODULE = 'rb.ReadrUser'
 
 ADMINS = (
     'tyler@readrboard.com'
@@ -94,8 +92,5 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'readrboard.rb',
     'django.contrib.admin',
-<<<<<<< HEAD:readrboard/settings.py
     'django.contrib.comments',
-=======
->>>>>>> 85cf3579d8b7dcc7e8987d7dffb93cc008c98403:readrboard/settings.py
 )

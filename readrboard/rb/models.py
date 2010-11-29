@@ -9,12 +9,12 @@ class Node(models.Model):
     class Meta:
         abstract = True
 
-class Article(Node):
+class Page(Node):
     site = models.ForeignKey(Site)
     url = models.URLField()
 
 class RBNode(Node):
-    article = models.ManyToManyField(Article, editable=False)
+    page = models.ManyToManyField(Page, editable=False)
     hash = models.CharField(max_length=32, editable=False)
     content = models.TextField() #make this something better
 
@@ -23,8 +23,8 @@ class Tag(Node):
     tag = models.CharField(max_length=50)
 
 class Group():
-    include_selectors = models.CharField(max=length=250)
-    no_rdr_selectors = models.CharField(max=length=250)
+    include_selectors = models.CharField(max_length=250)
+    no_rdr_selectors = models.CharField(max_length=250)
     group_tags = models.ManyToManyField(Tag)
 
 class FacebookProfileModel(models.Model):
