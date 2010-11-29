@@ -16,14 +16,14 @@ class Article(Node):
 class RBNode(Node):
     article = models.ManyToManyField(Article, editable=False)
     hash = models.CharField(max_length=32, editable=False)
+    content = models.TextField() #make this something better
 
 class Tag(Node):
     parent = Node()
     tag = models.CharField(max_length=50)
 
-class Rating(Node):
-    parent = RBNode()
-    rating = models.PositiveSmallIntegerField()
+class Group():
+    include_tag = models.CharField(max=length=250)
 
 class FacebookProfileModel(models.Model):
     about_me = models.TextField(blank=True, null=True)
