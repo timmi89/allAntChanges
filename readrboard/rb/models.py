@@ -6,6 +6,8 @@ import datetime
 Node_Types = (
     ('TXT', 'Text'),
     ('IMG', 'Image'),
+    ('VID', 'Video'),
+    ('SND', 'Sound'),
 )
 
 class Node(models.Model):
