@@ -1,9 +1,13 @@
 from django.conf.urls.defaults import *
 from django.conf import settings
 
+from django.conf import settings
+
+
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
+
 
 urlpatterns = patterns('',
     # Example:
@@ -28,10 +32,17 @@ urlpatterns = patterns('',
     #testing 'packaging' the urlpatterns within the rb django project
     (r'^tags/', include('rb.urls')),
     
+
+      
     (r'^admin/', include(admin.site.urls)),
 )
 
 if settings.DEBUG:
     urlpatterns += patterns('',
+<<<<<<< HEAD
+        (r'^media/(?P<path>.*)$', 'django.views.static.serve', {	'document_root': settings.MEDIA_ROOT}),
+    )
+=======
         (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     )
+>>>>>>> 3759cd0d22106e01b82236111deb1adc03a75dd7
