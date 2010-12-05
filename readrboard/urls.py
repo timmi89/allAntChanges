@@ -26,6 +26,6 @@ urlpatterns = patterns('',
     
     #testing 'packaging' the urlpatterns within the rb django project
     (r'^tags/', include('rb.urls')),
-        
+    
     (r'^admin/', include(admin.site.urls)),
 )
