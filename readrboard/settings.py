@@ -82,6 +82,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    #todo: make this an absolute path as recommended. Using rel paths for now
+    # so it's compatible on all our local machines
     "readrboard/rb/templates"
 )
 
