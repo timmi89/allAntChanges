@@ -1,7 +1,7 @@
 #from django.template import Context, loader
-#from rb.models import Node
-from django.http import HttpResponse
-from django.shortcuts import render_to_response
+from rb.models import *
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render_to_response, get_object_or_404
 
 
 def index(request):
@@ -9,6 +9,11 @@ def index(request):
 
 def detail(request, node_id):
     return HttpResponse("You're looking at node %s." % node_id)
+
+#extra test added by eric
+def tag_detail(request, tag_id):
+	tag = get_object_or_404(Tag, pk=tag_id)
+	return render_to_response('main/tag.html', {"tag": tag})
 
 def search_form(request):
     return render_to_response('search_form.html')

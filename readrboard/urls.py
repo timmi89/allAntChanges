@@ -17,11 +17,15 @@ urlpatterns = patterns('',
     (r'^search/$', 'rb.views.search'),
     (r'^comments/', include('django.contrib.comments.urls')),
     (r'^nodes/$', 'rb.views.index'),
-    (r'^request-meta/$', 'rb.views.display_meta'),
+    (r'^request-meta/$', 'rb.views.display_meta'),	
 	#(r'^nodes/(?P<node_id>\d+)/$', 'rb.views.detail'),
-    #(r'^nodes/(?P<node_id>\d+)/$', 'nodes.views.detail'),
-    #(r'^nodes/(?P<node_id>\d+)/results/$', 'nodes.views.results'),
-    #(r'^nodes/(?P<node_id>\d+)/vote/$', 'nodes.views.vote'),
+    #(r'^nodes/(?P<node_id>\d+)/$', 'rb.views.detail'),
+    #(r'^nodes/(?P<node_id>\d+)/results/$', 'rb.views.results'),
+    #(r'^nodes/(?P<node_id>\d+)/vote/$', 'rb.views.vote'),
     # Uncomment the next line to enable the admin:
+    
+    #testing 'packaging' the urlpatterns within the rb django project
+    (r'^tags/', include('rb.urls')),
+    
     (r'^admin/', include(admin.site.urls)),
 )
