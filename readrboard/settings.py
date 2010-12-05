@@ -15,7 +15,10 @@ FACEBOOK_APPLICATION_SECRET = 'f14061a2ed9d7ae8ed1c3b231a8148c9'
 AUTH_PROFILE_MODULE = 'rb.ReadrUser'
 
 ADMINS = (
-    'tyler@readrboard.com'
+    # ('Your Name', 'your_email@domain.com'),    
+    ('Tyler Brock', 'tyler@readrboard.com'),
+    ('Porter Bayne', 'porter@readrboard.com'),
+    ('Eric Chaves', 'eric@readrboard.com'),
 )
 
 MANAGERS = ADMINS
