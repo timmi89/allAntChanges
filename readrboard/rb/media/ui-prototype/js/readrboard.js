@@ -1,5 +1,6 @@
 var RDR = RDR ? RDR : {};
-var $R = $R ? $R : $;  // make our own jquery object
+var $R = $R ? $R : $;  // make our own jquery object.  plugins will be at bottom of this page.
+
 RDR = {
 	// none of this obj's properties are definite.  just jotting down a few ideas.
 	errors : {
@@ -20,10 +21,10 @@ RDR = {
 	groupPrefs : {
 		// defined by server after initial init call
 		blessedTags : [
-			{ name: "Great!", value: 5, tid: 0 },
-			{ name: "Hate", value: -5, tid: 1 },
-			{ name: "Kewl", value: 2, tid: 2 },
-			{ name: "No Homo", value: 0, tid: 3 }
+			{ name: "Great!", tid: 0 },
+			{ name: "Hate", tid: 1 },
+			{ name: "Kewl", tid: 2 },
+			{ name: "No Homo", tid: 3 }
 		]
 	},
 	rindow : {
@@ -33,8 +34,8 @@ RDR = {
 			var x = arguments[0].x ? arguments[0].x:100;
 			var y = arguments[0].y ? arguments[0].y:100;
 			
-			new_rindow = $R('div.rdr.window.rewritable');
-			if ( new_rindow.length == 0 ) {
+			new_rindow = $R('div.rdr.window.rewritable'); // jquery obj of the rewritable window
+			if ( new_rindow.length == 0 ) { // oh, there's no rewritable window available, so make one
 				new_rindow = $R('<div class="rdr window rewritable" style="width:' + width + 'px;">' +
 					'<div class="rdr-close">x</div>' +
 					'<h1></h1>' +
@@ -45,7 +46,7 @@ RDR = {
 				new_rindow.draggable({handle:'h1', containment:'document', stack:'.RDR.window', start:function() { $R(this).removeClass('rewritable'); }});
 			}
 			
-			// TODO: this probably should pass in the window and calculate, so that it can be done on the fly
+			// TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
 			var coords = RDR.util.stayInWindow(x,y,width,300);
 			new_rindow.css('left', coords.x + 'px');
 			new_rindow.css('top', coords.y + 'px');
@@ -84,6 +85,22 @@ RDR = {
 			coords.x = x;
 			coords.y = y;
 			return coords;
+		},
+		md5 : {
+			hexcase:0,
+			b64pad:"",
+			chrsz:8,
+			hex_md5 : function(s){return RDR.util.md5.binl2hex(RDR.util.md5.core_md5(RDR.util.md5.str2binl(s),s.length*RDR.util.md5.chrsz));},
+			core_md5 : function(x,len){x[len>>5]|=0x80<<((len)%32);x[(((len+64)>>>9)<<4)+14]=len;var a=1732584193;var b=-271733879;var c=-1732584194;var d=271733878;for(var i=0;i<x.length;i+=16){var olda=a;var oldb=b;var oldc=c;var oldd=d;a=RDR.util.md5.md5_ff(a,b,c,d,x[i+0],7,-680876936);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+1],12,-389564586);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+2],17,606105819);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+3],22,-1044525330);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+4],7,-176418897);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+5],12,1200080426);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+6],17,-1473231341);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+7],22,-45705983);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+8],7,1770035416);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+9],12,-1958414417);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+10],17,-42063);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+11],22,-1990404162);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+12],7,1804603682);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+13],12,-40341101);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+14],17,-1502002290);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+15],22,1236535329);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+1],5,-165796510);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+6],9,-1069501632);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+11],14,643717713);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+0],20,-373897302);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+5],5,-701558691);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+10],9,38016083);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+15],14,-660478335);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+4],20,-405537848);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+9],5,568446438);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+14],9,-1019803690);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+3],14,-187363961);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+8],20,1163531501);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+13],5,-1444681467);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+2],9,-51403784);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+7],14,1735328473);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+12],20,-1926607734);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+5],4,-378558);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+8],11,-2022574463);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+11],16,1839030562);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+14],23,-35309556);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+1],4,-1530992060);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+4],11,1272893353);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+7],16,-155497632);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+10],23,-1094730640);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+13],4,681279174);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+0],11,-358537222);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+3],16,-722521979);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+6],23,76029189);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+9],4,-640364487);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+12],11,-421815835);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+15],16,530742520);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+2],23,-995338651);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+0],6,-198630844);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+7],10,1126891415);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+14],15,-1416354905);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+5],21,-57434055);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+12],6,1700485571);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+3],10,-1894986606);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+10],15,-1051523);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+1],21,-2054922799);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+8],6,1873313359);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+15],10,-30611744);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+6],15,-1560198380);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+13],21,1309151649);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+4],6,-145523070);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+11],10,-1120210379);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+2],15,718787259);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+9],21,-343485551);a=RDR.util.md5.safe_add(a,olda);b=RDR.util.md5.safe_add(b,oldb);c=RDR.util.md5.safe_add(c,oldc);d=RDR.util.md5.safe_add(d,oldd);} return Array(a,b,c,d);},
+			md5_cmn : function(q,a,b,x,s,t){return RDR.util.md5.safe_add(RDR.util.md5.bit_rol(RDR.util.md5.safe_add(RDR.util.md5.safe_add(a,q),RDR.util.md5.safe_add(x,t)),s),b);},
+			md5_ff : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn((b&c)|((~b)&d),a,b,x,s,t);},
+			md5_gg : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn((b&d)|(c&(~d)),a,b,x,s,t);},
+			md5_hh : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(b^c^d,a,b,x,s,t);},
+			md5_ii : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(c^(b|(~d)),a,b,x,s,t);},
+			safe_add : function(x,y){var lsw=(x&0xFFFF)+(y&0xFFFF);var msw=(x>>16)+(y>>16)+(lsw>>16);return(msw<<16)|(lsw&0xFFFF);},
+			bit_rol : function(num,cnt){return(num<<cnt)|(num>>>(32-cnt));},
+			str2binl : function(str){var bin=Array();var mask=(1<<RDR.util.md5.chrsz)-1;for(var i=0;i<str.length*RDR.util.md5.chrsz;i+=RDR.util.md5.chrsz){bin[i>>5]|=(str.charCodeAt(i/RDR.util.md5.chrsz)&mask)<<(i%32);}return bin;},
+			binl2hex : function(binarray){var hex_tab=RDR.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";var str="";for(var i=0;i<binarray.length*4;i++){str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);} return str;}
 		}
 	},
 	actions : {
@@ -291,8 +308,41 @@ RDR = {
 	}
 };
 
-// append the predefined styles into the page
-// document.write("");
+// jquery ($R) plugins
+
+/* jquery json v2.2 */
+/* http://code.google.com/p/jquery-json/ */
+(function($R){$R.toJSON=function(o)
+{if(typeof(JSON)=='object'&&JSON.stringify)
+return JSON.stringify(o);var type=typeof(o);if(o===null)
+return"null";if(type=="undefined")
+return undefined;if(type=="number"||type=="boolean")
+return o+"";if(type=="string")
+return $R.quoteString(o);if(type=='object')
+{if(typeof o.toJSON=="function")
+return $R.toJSON(o.toJSON());if(o.constructor===Date)
+{var month=o.getUTCMonth()+1;if(month<10)month='0'+month;var day=o.getUTCDate();if(day<10)day='0'+day;var year=o.getUTCFullYear();var hours=o.getUTCHours();if(hours<10)hours='0'+hours;var minutes=o.getUTCMinutes();if(minutes<10)minutes='0'+minutes;var seconds=o.getUTCSeconds();if(seconds<10)seconds='0'+seconds;var milli=o.getUTCMilliseconds();if(milli<100)milli='0'+milli;if(milli<10)milli='0'+milli;return'"'+year+'-'+month+'-'+day+'T'+
+hours+':'+minutes+':'+seconds+'.'+milli+'Z"';}
+if(o.constructor===Array)
+{var ret=[];for(var i=0;i<o.length;i++)
+ret.push($R.toJSON(o[i])||"null");return"["+ret.join(",")+"]";}
+var pairs=[];for(var k in o){var name;var type=typeof k;if(type=="number")
+name='"'+k+'"';else if(type=="string")
+name=$R.quoteString(k);else
+continue;if(typeof o[k]=="function")
+continue;var val=$R.toJSON(o[k]);pairs.push(name+":"+val);}
+return"{"+pairs.join(", ")+"}";}};$R.evalJSON=function(src)
+{if(typeof(JSON)=='object'&&JSON.parse)
+return JSON.parse(src);return eval("("+src+")");};$R.secureEvalJSON=function(src)
+{if(typeof(JSON)=='object'&&JSON.parse)
+return JSON.parse(src);var filtered=src;filtered=filtered.replace(/\\["\\\/bfnrtu]/g,'@');filtered=filtered.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']');filtered=filtered.replace(/(?:^|:|,)(?:\s*\[)+/g,'');if(/^[\],:{}\s]*$R/.test(filtered))
+return eval("("+src+")");else
+throw new SyntaxError("Error parsing JSON, source is not valid.");};$R.quoteString=function(string)
+{if(string.match(_escapeable))
+{return'"'+string.replace(_escapeable,function(a)
+{var c=_meta[a];if(typeof c==='string')return c;c=a.charCodeAt();return'\\u00'+Math.floor(c/16).toString(16)+(c%16).toString(16);})+'"';}
+return'"'+string+'"';};var _escapeable=/["\\\x00-\x1f\x7f-\x9f]/g;var _meta={'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','"':'\\"','\\':'\\\\'};})(jQuery);
+
 
 // init the drag selection tracker
 $R('body').bind('mouseup.rdr', RDR.actions.startSelect );
