@@ -19,7 +19,7 @@ urlpatterns = patterns('',
     (r'^comments/', include('django.contrib.comments.urls')),
     (r'^nodes/$', 'rb.views.index'),
     (r'^request-meta/$', 'rb.views.display_meta'),	
-	#(r'^nodes/(?P<node_id>\d+)/$', 'rb.views.detail'),
+    #(r'^nodes/(?P<node_id>\d+)/$', 'rb.views.detail'),
     #(r'^nodes/(?P<node_id>\d+)/$', 'rb.views.detail'),
     #(r'^nodes/(?P<node_id>\d+)/results/$', 'rb.views.results'),
     #(r'^nodes/(?P<node_id>\d+)/vote/$', 'rb.views.vote'),
@@ -29,6 +29,7 @@ urlpatterns = patterns('',
     (r'^tags/', include('rb.urls')),
     
     (r'^admin/', include(admin.site.urls)),
+    (r'^json-nodes/', 'rb.views.json_content_node'),
 )
 
 if settings.DEBUG:

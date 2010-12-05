@@ -2,7 +2,7 @@
 from rb.models import *
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
-
+from django.core import serializers
 
 def index(request):
     return HttpResponse("index")
@@ -32,3 +32,15 @@ def display_meta(request):
     for k, v in values:
         html.append('<tr><td>%s</td><td>%s</td></tr>' % (k, v))
     return HttpResponse('<table>%s</table>' % '\n'.join(html))
+
+def json_content_node(request):
+    objects = ContentNode.objects.all()
+    js = serializers.get_serializer("json")()
+    serialized = js.serialize(objects, ensure_ascii=False)
+    return HttpResponse(serialized)
+
+def json_users(request):
+    objects = ReadrUser.objects.all()
+    js = serializers.get_serializer("json")()
+    serialized = js.serialize(objects, ensure_ascii=False)
+    return HttpResponse(serialized)

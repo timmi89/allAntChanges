@@ -3,9 +3,19 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 import datetime
 
+Node_Types = (
+    ('TXT', 'Text'),
+    ('IMG', 'Image'),
+)
+
 class Node(models.Model):
-    inserted = models.DateField(auto_now_add=True, editable=False)    
-    updated = models.DateField(auto_now=True, editable=False)
+    parent = models.ForeignKey(
+        'self',
+        related_name='children',
+        blank=True,
+        null=True)
+    inserted = models.DateTimeField(auto_now_add=True, editable=False)
+    updated = models.DateTimeField(auto_now=True, editable=False)
     class Meta:
         abstract = True
 
@@ -13,19 +23,12 @@ class Page(Node):
     site = models.ForeignKey(Site)
     url = models.URLField()
 
-class RBNode(Node):
-    page = models.ManyToManyField(Page, editable=False)
-    hash = models.CharField(max_length=32, editable=False)
-    content = models.TextField() #make this something better
-
-class Tag(Node):
-    parent = Node()
-    tag = models.CharField(max_length=50)
+    def __unicode__(self):
+        return self.url
 
 class Group():
     include_selectors = models.CharField(max_length=250)
     no_rdr_selectors = models.CharField(max_length=250)
-    group_tags = models.ManyToManyField(Tag)
 
 class FacebookProfileModel(models.Model):
     about_me = models.TextField(blank=True, null=True)
@@ -40,5 +43,29 @@ class FacebookProfileModel(models.Model):
     class Meta:
         abstract = True
 
-class ReadrUser(FacebookProfileModel):
-    user = models.ForeignKey(User, unique=True)
+#class ReadrUser(FacebookProfileModel):
+#    user = models.ForeignKey(User, unique=True)
+
+class ContentNode(Node):
+    user = models.ForeignKey(User)
+    type = models.CharField(max_length=3, choices=Node_Types)
+    page = models.ForeignKey(Page)
+    hash = models.CharField(max_length=32, editable=False)
+    content = models.TextField() #make this something better
+
+    def __unicode__(self):
+        return self.hash
+
+class Comment(Node):
+    user = models.ForeignKey(User)
+    comment = models.TextField()
+
+    def __unicode__(self):
+        return unicode(self.user+":"+self.parent+":"+self.tag)
+
+class Tag(Node):
+    user = models.ForeignKey(User)
+    tag = models.CharField(max_length=160)
+
+    def __unicode__(self):
+        return unicode(self.tag)
