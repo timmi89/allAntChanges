@@ -1,3 +1,4 @@
+
 #from django.template import Context, loader
 from rb.models import *
 from django.http import HttpResponse, HttpResponseRedirect
@@ -44,3 +45,7 @@ def json_users(request):
     js = serializers.get_serializer("json")()
     serialized = js.serialize(objects, ensure_ascii=False)
     return HttpResponse(serialized)
+
+def send(request):
+    print request.GET
+    return HttpResponse("ok")

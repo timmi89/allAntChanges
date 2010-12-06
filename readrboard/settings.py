@@ -98,4 +98,5 @@ INSTALLED_APPS = (
     'readrboard.rb',
     'django.contrib.admin',
     'django.contrib.comments',
+    'readrboard.api',
 )
