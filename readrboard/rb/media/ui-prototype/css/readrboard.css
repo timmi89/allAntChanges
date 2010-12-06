@@ -39,6 +39,7 @@ em.rdr-selected-text 	{display:block; background:#eee; padding:5px; margin:5px 0
 
 ul.rdr-tags			{list-style-type:none; padding:0; margin:0; overflow:auto; }
 ul.rdr-tags li		{float:left; padding:5px 20px 5px 0; }
+ul.rdr-tags li.selected	{background:#ddd;}
 ul.preselected			{font-size:22px; font-family:ReadrLeague, Arial, sans-serif; margin:5px 0; }
 ul.preselected a		{color:#000;text-decoration:none;}
 ul.preselected a:hover	{color:#e71f1f;}
