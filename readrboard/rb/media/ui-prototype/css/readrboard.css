@@ -35,7 +35,7 @@ div.rdr h1,
 div.rdr h2	{font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif; color:#e71f1f; margin: 0; }
 div.rdr h1	{font-size:21px; cursor:move; }
 
-em.rdr-selected-text 	{display:block; background:#eee; padding:5px; margin:5px 0; text-shadow:1px 1px 1px #999; }
+em.rdr-selected-text 	{display:block; background:#eee; padding:5px; margin:5px 0; text-shadow:1px 1px 1px #999; font-size:18px; font-family:Georgia, serif; }
 
 ul.rdr-tags			{list-style-type:none; padding:0; margin:0; overflow:auto; }
 ul.rdr-tags li		{float:left; padding:5px 20px 5px 0; }

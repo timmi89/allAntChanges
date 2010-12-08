@@ -21,10 +21,10 @@ RDR = {
 	groupPrefs : {
 		// defined by server after initial init call
 		blessedTags : [
-			{ name: "Great!", tid: 0 },
-			{ name: "Hate", tid: 1 },
-			{ name: "Kewl", tid: 2 },
-			{ name: "No Homo", tid: 3 }
+			{ name: "Sweet!", tid: 0 },
+			{ name: "Um, no.", tid: 1 },
+			{ name: "Hilar", tid: 2 },
+			{ name: "Totes", tid: 3 }
 		]
 	},
 	rindow : {
@@ -127,12 +127,12 @@ RDR = {
 					rateStartContent += '<li tid="'+RDR.groupPrefs.blessedTags[i].tid+'"><a href="javascript:void(0);">'+RDR.groupPrefs.blessedTags[i].name+'</a></li>';
 				}
 				rateStartContent += '</ul>' +
-				'<div class="rdr-instruct">Add your own ratings, separated by comma:</div>' +
+				'<div class="rdr-instruct">Add your own ratings, separated by semicolon:</div>' +
 				'<input type="text" name="unknown-tags" />' +
 				'<button>Rate</button>' +
-				'<div class="rdr-help">e.g., Love this, autumn, insightful</div>';
+				'<div class="rdr-help">e.g., Love this; autumn; insightful</div>';
 
-			rindow.animate({minWidth:'400px', minHeight:'125px'}, 400, function() {
+			rindow.animate({width:'400px', minHeight:'125px'}, 300, function() {
 				rindow.find('div.contentSpace').append( rateStartContent );
 				rindow.find('h1').text('Rate This');
 				rindow.find('em.rdr-selected-text').html( RDR.why.content );
