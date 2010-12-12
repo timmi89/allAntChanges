@@ -12,8 +12,7 @@ ContentNodes = Resource(handler=ContentNodeHandler, authentication=auth)
 urlpatterns = patterns('',
     url(r'^nodes/$', ContentNodes),
     url(r'^nodes/(?P<emitter_format>.+)/$', ContentNodes),
-    url(r'^nodes\.(?P<emitter_format>.+)', ContentNodes, hash=''),
-
+    url(r'^nodes\.(?P<emitter_format>.+)', ContentNodes),
     # automated documentation
     url(r'^$', documentation_view),
 )

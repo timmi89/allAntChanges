@@ -48,4 +48,4 @@ def json_users(request):
 
 def send(request):
     print request.GET
-    return HttpResponse("ok")
+    return HttpResponse(request.GET)

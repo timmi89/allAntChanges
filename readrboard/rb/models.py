@@ -31,6 +31,7 @@ class Page(Node):
 class Group():
     include_selectors = models.CharField(max_length=250)
     no_rdr_selectors = models.CharField(max_length=250)
+    css = models.URLField()
 
 class FacebookProfileModel(models.Model):
     about_me = models.TextField(blank=True, null=True)
