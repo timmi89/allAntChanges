@@ -23,15 +23,20 @@ class Node(models.Model):
 
         
 class RBGroup(models.Model):
+    name = models.CharField(max_length=250)
+    short_name = models.CharField(max_length=25)
     include_selectors = models.CharField(max_length=250)
     no_rdr_selectors = models.CharField(max_length=250)
     css = models.URLField()
 
+    def __unicode__(self):
+        return self.name
+
 class RBSite(Site):
 	rb_group = models.ForeignKey(RBGroup)
-	include_selectors = models.CharField(max_length=250)
-	no_rdr_selectors = models.CharField(max_length=250)
-	css = models.URLField()
+	include_selectors = models.CharField(max_length=250, blank=True)
+	no_rdr_selectors = models.CharField(max_length=250, blank=True)
+	css = models.URLField(blank=True)
 
 class RBPage(Node):
     rb_site = models.ForeignKey(RBSite)
