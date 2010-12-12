@@ -1,0 +1,9 @@
+from piston.handler import BaseHandler, AnonymousBaseHandler
+from piston.urls import rc, require_mine, require_extended
+
+from rb.models import *
+
+class ContentNodeHandler(BaseHandler):
+    model = ContentNode()
+
+    fields = ('id','user','hash')
