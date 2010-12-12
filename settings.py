@@ -99,4 +99,5 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.comments',
     'readrboard.api',
+    'south',
 )
