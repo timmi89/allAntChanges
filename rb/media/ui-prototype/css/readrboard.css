@@ -22,13 +22,22 @@ div.rdr.tooltip {
 	-moz-box-shadow: 0 0 10px 1px #aaa;
 	-webkit-box-shadow: 0 0 10px 1px #aaa;
 	box-shadow: 0 0 10px 1px #aaa;
-	padding: 8px 10px;
+	background:url("/static/ui-prototype/images/rindow_bg.png") no-repeat 0 0;
+	padding: 8px;
 	font: normal 12px Arial, sans-serif;
 	position:absolute;
 	z-index:1100;
 	background:#fff;
 	width:200px;
 	height:30px;
+}
+
+div.rdr.tooltip a {
+	background:url("/static/ui-prototype/images/tooltip_icons.png") no-repeat 0 0;
+	display:block;
+	height:32px;
+	text-indent:-9999px;
+	width:32px;
 }
 
 div.rdr h1, 

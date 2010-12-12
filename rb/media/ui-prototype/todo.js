@@ -2,7 +2,7 @@
 TODAY
 	x JSON
 	
-	Send Tags
+	x Send Tags
 		force user, user_auth
 			dummy RDR.user
 		force page

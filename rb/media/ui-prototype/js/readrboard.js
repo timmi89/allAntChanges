@@ -1,8 +1,8 @@
 var RDR = RDR ? RDR : {};
 var $R = $R ? $R : $;  // make our own jquery object.  plugins will be at bottom of this page.
 
+// none of this obj's properties are definite.  just jotting down a few ideas.
 RDR = {
-	// none of this obj's properties are definite.  just jotting down a few ideas.
 	errors : {
 		tooltip: {
 			rating:"",
@@ -30,7 +30,6 @@ RDR = {
 	rindow : {
 		// content comes later.  this is just to identify or draw the container.
 		draw: function() {
-			// TODO:  remove width??  since can't animate until ... hmm.
 			var width = arguments[0].width ? arguments[0].width:400;
 			var x = arguments[0].x ? arguments[0].x:100;
 			var y = arguments[0].y ? arguments[0].y:100;
@@ -132,36 +131,49 @@ RDR = {
 				'<button>Rate</button>' +
 				'<div class="rdr-help">e.g., Love this, autumn, insightful</div>';
 
-			rindow.animate({minWidth:'400px', minHeight:'125px'}, 400, function() {
+			// add content and animate the tooltip to accommodate it
+			rindow.animate({width:'400px', minHeight:'125px'}, 300, function() {
+
 				rindow.find('div.contentSpace').append( rateStartContent );
 				rindow.find('h1').text('Rate This');
 				rindow.find('em.rdr-selected-text').html( RDR.why.content );
 				
+				// enable the "click on a blessed tag to choose it" functionality.  just css class based.
 				rindow.find('ul.preselected li').toggle( 
-					function() { $R(this).addClass('selected');},
+					function() { $R(this).addClass('selected'); $R(this).parents('div.rdr.window').removeClass('rewritable'); },
 					function() { $R(this).removeClass('selected');}
 				);
+				
+				// bind the button with a function (since this isn't in a <form>)
 				rindow.find('button').click( function() {
 					RDR.actions.rateSend( rindow );
 				});
 			});	
 		},
 		rateSend : function(rindow) {
+			// get the user-added tags from the input field
 			var unknown_tags = rindow.find('input[name="unknown-tags"]').val();
+			
+			// get the blessed tags the user chose, by checking for the css class
 			var known_tags = [];
 			rindow.find('ul.preselected li.selected').each( function() {
 				known_tags.push( $R(this).attr('tid') );
 			});
 			
+			// get the text that was highlighted
 			var content = RDR.why.sel.text;
 			
+			// send the data!
 			$R.ajax({
 				url: "/json-send/",
 				contentType: "application/json",
 				dataType: "json",
 				data: { unknown_tags:unknown_tags, known_tags:known_tags, user:10, page:1, content:content, content_type:"text" },
-				success: function(msg){
-					console.log(msg);
+				success: function(msg) {
+					
+				},
+				complete: function(msg) {
+					console.log('done');
 				}
 			});
 		},
