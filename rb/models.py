@@ -38,7 +38,7 @@ class RBSite(Site):
 	no_rdr_selectors = models.CharField(max_length=250, blank=True)
 	css = models.URLField(blank=True)
 
-class RBPage(Node):
+class RBPage(models.Model):
     rb_site = models.ForeignKey(RBSite)
     url = models.URLField()
 
@@ -65,7 +65,7 @@ class ContentNode(Node):
     user = models.ForeignKey(User)
     type = models.CharField(max_length=3, choices=Node_Types)
     rb_page = models.ForeignKey(RBPage)
-    hash = models.CharField(max_length=32, editable=False)
+    hash = models.CharField(max_length=32, editable=True)
     content = models.TextField() #make this something better
 
     def __unicode__(self):

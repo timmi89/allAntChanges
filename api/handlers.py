@@ -4,7 +4,7 @@ from rb.models import *
 class ContentNodeHandler(BaseHandler):
     allowed_methods = ('GET',)
     model = ContentNode
-    fields = ('hash', 'type', 'parent',)
+    fields = ('hash', 'type',)
 
     def read(self, request):
         # called on GET requests
