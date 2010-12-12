@@ -5,7 +5,7 @@
          url('LeagueGothic.otf') format('truetype');
 }
 
-div.rdr.window {
+div.rdr.rdr_window {
 	-moz-box-shadow: 0 0 10px 1px #aaa;
 	-webkit-box-shadow: 0 0 10px 1px #aaa;
 	box-shadow: 0 0 10px 1px #aaa;
@@ -18,12 +18,12 @@ div.rdr.window {
 	background:#fff;
 }
 
-div.rdr.tooltip {
+div.rdr.rdr_tooltip {
 	-moz-box-shadow: 0 0 10px 1px #aaa;
 	-webkit-box-shadow: 0 0 10px 1px #aaa;
 	box-shadow: 0 0 10px 1px #aaa;
 	background:url("/static/ui-prototype/images/rindow_bg.png") no-repeat 0 0;
-	padding: 8px;
+	padding: 3px;
 	font: normal 12px Arial, sans-serif;
 	position:absolute;
 	z-index:1100;
@@ -32,7 +32,7 @@ div.rdr.tooltip {
 	height:30px;
 }
 
-div.rdr.tooltip a {
+div.rdr.rdr_tooltip a {
 	background:url("/static/ui-prototype/images/tooltip_icons.png") no-repeat 0 0;
 	display:block;
 	height:32px;
@@ -40,23 +40,26 @@ div.rdr.tooltip a {
 	width:32px;
 }
 
+div.rdr.rdr_tooltip a:hover {
+}
+
 div.rdr h1, 
 div.rdr h2	{font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif; color:#e71f1f; margin: 0; }
 div.rdr h1	{font-size:21px; cursor:move; }
 
-em.rdr-selected-text 	{display:block; background:#eee; padding:5px; margin:5px 0; text-shadow:1px 1px 1px #999; }
+em.rdr_selected-text 	{display:block; background:#eee; padding:5px; margin:5px 0; text-shadow:1px 1px 1px #999; }
 
-ul.rdr-tags			{list-style-type:none; padding:0; margin:0; overflow:auto; }
-ul.rdr-tags li		{float:left; padding:5px 20px 5px 0; }
-ul.rdr-tags li.selected	{background:#ddd;}
-ul.preselected			{font-size:22px; font-family:ReadrLeague, Arial, sans-serif; margin:5px 0; }
-ul.preselected a		{color:#000;text-decoration:none;}
-ul.preselected a:hover	{color:#e71f1f;}
+ul.rdr_tags			{list-style-type:none; padding:0; margin:0; overflow:auto; }
+ul.rdr_tags li		{float:left; padding:5px 20px 5px 0; }
+ul.rdr_tags li.rdr_selected	{background:#ddd;}
+ul.rdr_preselected			{font-size:22px; font-family:ReadrLeague, Arial, sans-serif; margin:5px 0; }
+ul.rdr_preselected a		{color:#000;text-decoration:none;}
+ul.rdr_preselected a:hover	{color:#e71f1f;}
 
-div.rdr-close		{float:right;color:#e50000;cursor:pointer;}
+div.rdr_close		{float:right;color:#e50000;cursor:pointer;}
 
-div.rdr-instruct	{color:#666; -m}
-div.rdr-help		{font-style:italic; font-size:11px; color:#aaa;}
+div.rdr_instruct	{color:#666; -m}
+div.rdr_help		{font-style:italic; font-size:11px; color:#aaa;}
 
 /* forms */
 div.rdr input[type="text"]	{font-size:14px; color:#666; width:70%; -moz-box-shadow: 1px 4px 11px -5px #aaa inset; -webkit-box-shadow: 1px 4px 11px -5px #aaa inset; box-shadow: 1px 4px 11px -5px #aaa inset; padding:4px; }

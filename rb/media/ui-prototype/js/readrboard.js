@@ -34,17 +34,17 @@ RDR = {
 			var x = arguments[0].x ? arguments[0].x:100;
 			var y = arguments[0].y ? arguments[0].y:100;
 
-			new_rindow = $R('div.rdr.window.rewritable'); // jquery obj of the rewritable window
+			new_rindow = $R('div.rdr.rdr_window.rdr.rdr_rewritable'); // jquery obj of the rewritable window
 			if ( new_rindow.length == 0 ) { // oh, there's no rewritable window available, so make one
-				new_rindow = $R('<div class="rdr window rewritable" style="max-width:' + width + 'px;"></div>');
+				new_rindow = $R('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + width + 'px;"></div>');
 				$R('body').append( new_rindow );
 			}
 			
 			if ( new_rindow.find('h1').length == 0 ) {
 				new_rindow.html('');
-				new_rindow.append( '<div class="rdr-close">x</div><h1></h1><div class="rdr contentSpace"></div>' );	
-				new_rindow.find('div.rdr-close').click( function() { $R(this).parents('div.rdr.window').remove(); } );
-				new_rindow.draggable({handle:'h1', containment:'document', stack:'.RDR.window', start:function() { $R(this).removeClass('rewritable'); }});
+				new_rindow.append( '<div class="rdr_close">x</div><h1></h1><div class="rdr rdr_contentSpace"></div>' );	
+				new_rindow.find('div.rdr_close').click( function() { $R(this).parents('div.rdr.rdr_window').remove(); } );
+				new_rindow.draggable({handle:'h1', containment:'document', stack:'.RDR.window', start:function() { $R(this).removeClass('rdr_rewritable'); }});
 			}
 			// TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
 			var coords = RDR.util.stayInWindow(x,y,width,300);
@@ -54,24 +54,24 @@ RDR = {
 			return new_rindow;
 		},
 		closeAll: function() {
-			$R('div.rdr.window').remove();
+			$R('div.rdr.rdr_window').remove();
 		}
 	},
 	tooltip : {
 		draw: function() {
-			if ( $R('div.rdr.tooltip').length == 0 ) {
+			if ( $R('div.rdr.rdr_tooltip').length == 0 ) {
 				var x = arguments[0].x ? arguments[0].x : 100;
 				var y = arguments[0].y ? (arguments[0].y-45) : 100;
 
 				var coords = RDR.util.stayInWindow(x,y,200,30);
-				var new_tooltip = $R('<div class="rdr tooltip" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.rateStart();">Rate</a>' +
+				var new_tooltip = $R('<div class="rdr rdr_tooltip" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
+					'<a href="javascript:void(0);" onclick="RDR.actions.rateStart();" class="rdr_rate">Rate</a>' +
 				'</div>');
 				$R('body').append( new_tooltip );
 			}
 		},
 		close: function() {
-			$R('div.rdr.tooltip').remove();
+			$R('div.rdr.rdr_tooltip').remove();
 		}
 	},
 	user : {
@@ -116,32 +116,32 @@ RDR = {
 	actions : {
 		rateStart : function() {
 			// draw the window over the tooltip
-			var tooltipOffsets = $R('div.rdr.tooltip').offset();
-			$R('div.rdr.tooltip').removeClass('tooltip').addClass('window').addClass('rewritable');
+			var tooltipOffsets = $R('div.rdr.rdr_tooltip').offset();
+			$R('div.rdr.rdr_tooltip').removeClass('rdr_tooltip').addClass('rdr_window').addClass('rdr_rewritable');
 			var rindow = RDR.rindow.draw({x:tooltipOffsets.left, y:tooltipOffsets.top});
 			
 			// write content to the window
-			var rateStartContent = '<em class="rdr-selected-text"></em><ul class="rdr-tags preselected">';
+			var rateStartContent = '<em class="rdr_selected-text"></em><ul class="rdr_tags rdr_preselected">';
 			for (var i=0,j=RDR.groupPrefs.blessedTags.length; i<j; i++) {
 					rateStartContent += '<li tid="'+RDR.groupPrefs.blessedTags[i].tid+'"><a href="javascript:void(0);">'+RDR.groupPrefs.blessedTags[i].name+'</a></li>';
 				}
 				rateStartContent += '</ul>' +
-				'<div class="rdr-instruct">Add your own ratings, separated by comma:</div>' +
+				'<div class="rdr_instruct">Add your own ratings, separated by comma:</div>' +
 				'<input type="text" name="unknown-tags" />' +
 				'<button>Rate</button>' +
-				'<div class="rdr-help">e.g., Love this, autumn, insightful</div>';
+				'<div class="rdr_help">e.g., Love this, autumn, insightful</div>';
 
 			// add content and animate the tooltip to accommodate it
 			rindow.animate({width:'400px', minHeight:'125px'}, 300, function() {
 
-				rindow.find('div.contentSpace').append( rateStartContent );
+				rindow.find('div.rdr_contentSpace').append( rateStartContent );
 				rindow.find('h1').text('Rate This');
-				rindow.find('em.rdr-selected-text').html( RDR.why.content );
+				rindow.find('em.rdr_selected-text').html( RDR.why.content );
 				
 				// enable the "click on a blessed tag to choose it" functionality.  just css class based.
-				rindow.find('ul.preselected li').toggle( 
-					function() { $R(this).addClass('selected'); $R(this).parents('div.rdr.window').removeClass('rewritable'); },
-					function() { $R(this).removeClass('selected');}
+				rindow.find('ul.rdr_preselected li').toggle( 
+					function() { $R(this).addClass('rdr_selected'); $R(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable'); },
+					function() { $R(this).removeClass('rdr_selected');}
 				);
 				
 				// bind the button with a function (since this isn't in a <form>)
@@ -156,7 +156,7 @@ RDR = {
 			
 			// get the blessed tags the user chose, by checking for the css class
 			var known_tags = [];
-			rindow.find('ul.preselected li.selected').each( function() {
+			rindow.find('ul.rdr_preselected li.rdr_selected').each( function() {
 				known_tags.push( $R(this).attr('tid') );
 			});
 			
@@ -185,7 +185,7 @@ RDR = {
 			if ( !mouse_target.hasClass('rdr') && mouse_target.parents('div.rdr').length == 0 ) {
 				
 				// closes undragged windows
-				$R('div.rdr.window.rewritable, div.rdr.tooltip').remove();
+				$R('div.rdr.rdr_window.rdr.rdr_rewritable, div.rdr.rdr_tooltip').remove();
 
 				// see what the user selected
 				// TODO: need separate image function, which should then prevent event bubbling into this
