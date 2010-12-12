@@ -1,0 +1,63 @@
+/* ie.css */
+body {text-align:center;}
+.container {text-align:left;}
+* html .column, * html div.span-1, * html div.span-2, * html div.span-3, * html div.span-4, * html div.span-5, * html div.span-6, * html div.span-7, * html div.span-8, * html div.span-9, * html div.span-10, * html div.span-11, * html div.span-12, * html div.span-13, * html div.span-14, * html div.span-15, * html div.span-16, * html div.span-17, * html div.span-18, * html div.span-19, * html div.span-20, * html div.span-21, * html div.span-22, * html div.span-23, * html div.span-24 {overflow-x:hidden;}
+* html legend {margin:0px -8px 16px 0;padding:0;}
+ol {margin-left:2em;}
+sup {vertical-align:text-top;}
+sub {vertical-align:text-bottom;}
+html>body p code {*white-space:normal;}
+p, em {overflow: visible;}
+hr {margin:-8px auto 11px;}
+img {-ms-interpolation-mode:bicubic;}
+.clearfix, .container {display:inline-block;}
+* html .clearfix, * html .container {height:1%;}
+fieldset {padding-top:0;}
+input.text, input.title {background-color:#fff;border:1px solid #bbb;}
+input.text:focus, input.title:focus {border-color:#666;}
+input.text, input.title, textarea, select {margin:0.5em 0;}
+input.checkbox, input.radio {position:relative;top:.25em;}
+form.inline div, form.inline p {vertical-align:middle;}
+form.inline label {position:relative;top:-0.25em;}
+form.inline input.checkbox, form.inline input.radio, form.inline input.button, form.inline button {margin:0.5em 0;}
+button, input.button {position:relative;top:0.25em;}
+
+#list-items .ui-sortable-placeholder	{height:190px !important;visibility:visible !important;}
+div.share-box {margin:12px 0 0 -110px !important;}
+div.share-box ul.network-icons {padding-bottom:10px;}
+
+.modal #module-search-results .search		{_position:absolute !important;_top:expression(eval(document.body.scrollTop));_left:0px;height:47px;}
+.modal #module-search-results .search 		{_margin-top:0px !important;}
+.modal #module-search-results .search input.standard-input	{_height:30px;}
+.modal #module-search-filter.grid-2.first {_width:140px;}
+.modal #itinerary-stats		{_position:absolute !important;_top:expression(document.body.scrollTop+document.body.clientHeight-this.clientHeight);_left:0px;height:47px;}
+
+.update.standard-button {display:block;float:left;}
+.edit-mode a {display:block;margin-top:5px;}
+
+
+#module-fashionweek-touts li hr			{margin:3px 0 3px 65px;}
+#module-fashion-week #module-more-in	{padding-bottom:15px;}
+#module-fashion-week #module-more-in div.see-more	{padding-top:5px;background-position: 9px 9px; }
+#module-fashionweek-touts ul	{padding-top:30px;margin-top:-10px}
+
+#module-holiday-touts li hr		{margin:3px 0 3px 45px;}
+
+#module-search     		{margin:5px 5px 0 0;float:right;}
+#module-search form .submit			{height:33px;margin:0 0 0 4px;padding:0 10px 3px;}
+
+#module-flipbook-content ul.toolbar 	{top:-15px;}
+#module-flipbook-top-ad-share ul.toolbar li.fb-like	{margin-bottom:0;}
+#module-flipbook-end-share .standard-button		{margin-left:-10px;}
+
+/* IE6 fixes */
+* html #module-fashion-week #module-categories-list div {margin:0 !important;padding:0;}
+* html #module-fashion-week #module-categories-list div.grid-2 {padding:0;margin:20px 0 0 0 !important;}
+* html #module-fashion-week #module-categories-list div.grid-8 div.grid-2.first {margin:20px 30px 0 0 !important;}
+* html #module-fashion-week #module-categories-list div.grid-8 div.grid-2.last {margin:20px 0 0 30px !important;}
+* html #module-sidebar{margin-left:0;}
+* html #module-fashion-week #fw_twitter 	{display:none;}
+* html #module-search form .submit			{padding:0 6px 3px;}
+
+
+
