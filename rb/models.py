@@ -21,17 +21,24 @@ class Node(models.Model):
     class Meta:
         abstract = True
 
-class Page(Node):
-    site = models.ForeignKey(Site)
+        
+class RBGroup(models.Model):
+    include_selectors = models.CharField(max_length=250)
+    no_rdr_selectors = models.CharField(max_length=250)
+    css = models.URLField()
+
+class RBSite(Site):
+	rb_group = models.ForeignKey(RBGroup)
+	include_selectors = models.CharField(max_length=250)
+	no_rdr_selectors = models.CharField(max_length=250)
+	css = models.URLField()
+
+class RBPage(Node):
+    rb_site = models.ForeignKey(RBSite)
     url = models.URLField()
 
     def __unicode__(self):
         return self.url
-
-class Group():
-    include_selectors = models.CharField(max_length=250)
-    no_rdr_selectors = models.CharField(max_length=250)
-    css = models.URLField()
 
 class FacebookProfileModel(models.Model):
     about_me = models.TextField(blank=True, null=True)
@@ -52,7 +59,7 @@ class FacebookProfileModel(models.Model):
 class ContentNode(Node):
     user = models.ForeignKey(User)
     type = models.CharField(max_length=3, choices=Node_Types)
-    page = models.ForeignKey(Page)
+    rb_page = models.ForeignKey(RBPage)
     hash = models.CharField(max_length=32, editable=False)
     content = models.TextField() #make this something better
 

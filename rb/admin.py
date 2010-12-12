@@ -2,9 +2,11 @@ from rb.models import *
 from django.contrib import admin
 #from django.contrib import comments
 
-admin.site.register(Page)
+admin.site.register(RBPage)
+admin.site.register(RBSite)
 admin.site.register(Tag)
 admin.site.register(Comment)
+admin.site.register(RBGroup)
 
 #This replaces the line above to customize the admin page console
 #todo: it doesn't work yet though.. resolve bugs
