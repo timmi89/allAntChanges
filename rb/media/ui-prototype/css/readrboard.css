@@ -28,26 +28,28 @@ div.rdr.rdr_tooltip {
 	position:absolute;
 	z-index:1100;
 	background:#fff;
-	width:200px;
+	width:172px;
 	height:30px;
 }
 
 div.rdr.rdr_tooltip a {
 	background:url("/static/ui-prototype/images/tooltip_icons.png") no-repeat 0 0;
 	display:block;
-	height:32px;
+	height:30px;
+	width:30px;
 	text-indent:-9999px;
-	width:32px;
+	float:left;
 }
 
-div.rdr.rdr_tooltip a:hover {
-}
+div.rdr.rdr_tooltip a.rdr_about		 	{ background-position: -4px 0; width:26px; }
+div.rdr.rdr_tooltip a.rdr_rate		 	{ background-position: -28px 0; }
+div.rdr.rdr_tooltip a.rdr_rate:hover	{ background-position: -172px 0; }
 
 div.rdr h1, 
 div.rdr h2	{font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif; color:#e71f1f; margin: 0; }
 div.rdr h1	{font-size:21px; cursor:move; }
 
-em.rdr_selected-text 	{display:block; background:#eee; padding:5px; margin:5px 0; text-shadow:1px 1px 1px #999; }
+em.rdr_selected-text 	{display:block; background:#eee; padding:5px; margin:5px 0; text-shadow:1px 1px 1px #999; font-size:18px; font-family:Georgia, serif;}
 
 ul.rdr_tags			{list-style-type:none; padding:0; margin:0; overflow:auto; }
 ul.rdr_tags li		{float:left; padding:5px 20px 5px 0; }

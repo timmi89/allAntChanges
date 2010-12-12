@@ -3,6 +3,9 @@ var $R = $R ? $R : $;  // make our own jquery object.  plugins will be at bottom
 
 // none of this obj's properties are definite.  just jotting down a few ideas.
 RDR = {
+	data : {
+		nodes : []
+	},
 	errors : {
 		tooltip: {
 			rating:"",
@@ -18,14 +21,15 @@ RDR = {
 				"</style>"
 		*/
 	},
-	groupPrefs : {
+	group_prefs : {
 		// defined by server after initial init call
-		blessedTags : [
+		blessed_tags : [
 			{ name: "Great!", tid: 0 },
 			{ name: "Hate", tid: 1 },
 			{ name: "Kewl", tid: 2 },
 			{ name: "No Homo", tid: 3 }
-		]
+		],
+		hashable_nodes : "#module-article p"
 	},
 	rindow : {
 		// content comes later.  this is just to identify or draw the container.
@@ -60,11 +64,12 @@ RDR = {
 	tooltip : {
 		draw: function() {
 			if ( $R('div.rdr.rdr_tooltip').length == 0 ) {
-				var x = arguments[0].x ? arguments[0].x : 100;
+				var x = arguments[0].x ? (arguments[0].x-34) : 100;
 				var y = arguments[0].y ? (arguments[0].y-45) : 100;
 
 				var coords = RDR.util.stayInWindow(x,y,200,30);
 				var new_tooltip = $R('<div class="rdr rdr_tooltip" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
+					'<a href="javascript:void(0);" onclick="RDR.actions.aboutReadrBoard();" class="rdr_about">Rate</a>' +
 					'<a href="javascript:void(0);" onclick="RDR.actions.rateStart();" class="rdr_rate">Rate</a>' +
 				'</div>');
 				$R('body').append( new_tooltip );
@@ -111,9 +116,68 @@ RDR = {
 			bit_rol : function(num,cnt){return(num<<cnt)|(num>>>(32-cnt));},
 			str2binl : function(str){var bin=Array();var mask=(1<<RDR.util.md5.chrsz)-1;for(var i=0;i<str.length*RDR.util.md5.chrsz;i+=RDR.util.md5.chrsz){bin[i>>5]|=(str.charCodeAt(i/RDR.util.md5.chrsz)&mask)<<(i%32);}return bin;},
 			binl2hex : function(binarray){var hex_tab=RDR.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";var str="";for(var i=0;i<binarray.length*4;i++){str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);} return str;}
+		},
+		cleanPara : function(para) {
+			// common function for cleaning the paragraph.  right now, it's removing spaces, tabs, newlines, and then double spaces
+			if(para != "") {
+				return para.replace(/[\n\r\t]+/gi,' ').replace().replace(/\s{2,}/g,' ');
+			}
 		}
 	},
 	actions : {
+		aboutReadrBoard : function() {
+			return true;
+		},
+		hashNodes : function() {
+console.log('hashing nodes');
+			// snag all the nodes that we can set icons next to and send'em next 
+			// TODO: restrict this to the viewport + a few, rather than all
+			var content_nodes = $R( RDR.group_prefs.hashable_nodes ).not('rdr-hashed');
+
+			content_nodes.each( function() {
+
+				// get the node's text and smash case
+				// TODO: <br> tags and block-level tags can screw up words.  ex:
+					// hello<br>how are you?   here becomes
+					// hellohow are you?    <-- no space where the <br> was.  bad.
+				var node_text = $R(this).html().replace(/< *br *\/?>/gi, '\n');
+				node_text = $R( "<div>" + node_text + "</div>" ).text().toLowerCase();
+
+				// if there's any content...
+				if ( node_text && node_text!="undefined" && node_text.length > 5 ) {
+					// clean whitespace
+					node_text = RDR.util.cleanPara ( node_text );
+				
+					// hash the text
+					var node_hash = RDR.util.md5.hex_md5( node_text );
+				
+					// add an object with the text and hash to the nodes dictionary
+					if ( !RDR.data.nodes[node_hash] ) RDR.data.nodes[node_hash] = node_text;
+				
+					// add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
+					// this makes it easy to find on the page later
+					$R(this).addClass( 'rdr-' + node_hash ).addClass('rdr-hashed');
+				}
+			});
+			
+			RDR.actions.sendHashes();
+		},
+		sendHashes : function() {
+			console.log('sending nodes');
+			// TODO: dont' send all hashes
+			console.dir( RDR.data.nodes );
+			// send the data!
+			$R.ajax({
+				url: "/json-send/",
+				type: "get",
+				contentType: "application/json",
+				dataType: "jsonp",
+				data: { hashes : RDR.data.nodes },
+				success: function(data) {
+					console.dir(data);
+				}
+			});
+		},
 		rateStart : function() {
 			// draw the window over the tooltip
 			var tooltipOffsets = $R('div.rdr.rdr_tooltip').offset();
@@ -122,8 +186,8 @@ RDR = {
 			
 			// write content to the window
 			var rateStartContent = '<em class="rdr_selected-text"></em><ul class="rdr_tags rdr_preselected">';
-			for (var i=0,j=RDR.groupPrefs.blessedTags.length; i<j; i++) {
-					rateStartContent += '<li tid="'+RDR.groupPrefs.blessedTags[i].tid+'"><a href="javascript:void(0);">'+RDR.groupPrefs.blessedTags[i].name+'</a></li>';
+			for (var i=0,j=RDR.group_prefs.blessed_tags.length; i<j; i++) {
+					rateStartContent += '<li tid="'+RDR.group_prefs.blessed_tags[i].tid+'"><a href="javascript:void(0);">'+RDR.group_prefs.blessed_tags[i].name+'</a></li>';
 				}
 				rateStartContent += '</ul>' +
 				'<div class="rdr_instruct">Add your own ratings, separated by comma:</div>' +
@@ -167,13 +231,10 @@ RDR = {
 			$R.ajax({
 				url: "/json-send/",
 				contentType: "application/json",
-				dataType: "json",
+				dataType: "jsonp",
 				data: { unknown_tags:unknown_tags, known_tags:known_tags, user:10, page:1, content:content, content_type:"text" },
 				success: function(msg) {
-					
-				},
-				complete: function(msg) {
-					console.log('done');
+					console.log('success');
 				}
 			});
 		},
@@ -222,8 +283,8 @@ RDR = {
 					if ( RDR.why.blockParent.text && RDR.why.blockParent.text.length > 0) {
 
 						// now, strip newlines and tabs -- and then the doublespaces that result
-						RDR.why.blockParentTextClean = RDR.why.blockParent.text.replace(/[\n\r\t]+/gi,' ').replace(/\s{2,}/g,' ');
-						RDR.why.selectionTextClean = RDR.why.content.replace(/[\n\r\t]+/gi,' ').replace(/\s{2,}/g,' ');
+						RDR.why.blockParentTextClean = RDR.util.cleanPara ( RDR.why.blockParent.text );
+						RDR.why.selectionTextClean = RDR.util.cleanPara ( RDR.why.content );
 
 						if ( RDR.why.blockParentTextClean.indexOf( RDR.why.selectionTextClean ) != -1 ) {
 							// this can be commented on if it's long enough and has at least one space (two words or more)
@@ -398,3 +459,5 @@ return'"'+string+'"';};var _escapeable=/["\\\x00-\x1f\x7f-\x9f]/g;var _meta={'\b
 
 // init the drag selection tracker
 $R('body').bind('mouseup.rdr', RDR.actions.startSelect );
+
+RDR.actions.hashNodes();
