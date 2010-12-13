@@ -165,14 +165,19 @@ console.log('hashing nodes');
 		sendHashes : function() {
 			console.log('sending nodes');
 			// TODO: dont' send all hashes
-			console.dir( RDR.data.nodes );
+			
+			var md5_list = [];
+			for (var i in RDR.data.nodes ) {
+				md5_list.push( i );
+			}
+
 			// send the data!
 			$R.ajax({
 				url: "/json-send/",
 				type: "get",
 				contentType: "application/json",
 				dataType: "jsonp",
-				data: { hashes : RDR.data.nodes },
+				data: { groupID : 1, pageID : 1, hashes : md5_list },
 				success: function(data) {
 					console.dir(data);
 				}
