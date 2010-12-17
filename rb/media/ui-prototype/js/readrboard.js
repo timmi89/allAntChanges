@@ -173,7 +173,7 @@ console.log('hashing nodes');
 
 			// send the data!
 			$R.ajax({
-				url: "/json-send/",
+				url: "/api/nodes",
 				type: "get",
 				contentType: "application/json",
 				dataType: "jsonp",

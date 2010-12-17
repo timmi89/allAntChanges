@@ -8,7 +8,9 @@ class ContentNodeHandler(BaseHandler):
 
     def read(self, request):
         # called on GET requests
-        # never modifies data
+        #print request.GET.getlist('hashes[]')
+        for node in request.GET.getlist('hashes[]'):
+            print node
         return ContentNode.objects.all()
 
     #def create(self, request):
