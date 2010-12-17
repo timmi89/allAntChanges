@@ -17,14 +17,18 @@ class ContentNodeHandler(BaseHandler):
         # called on POST and creates new
         # objects and should them or rc.CREATED
 
-class GroupHandler(BaseHandler):
+class RBGroupHandler(BaseHandler):
     allowed_methods = ('GET',)
     model = RBGroup
-    fields = ('include_selectors', 'no_rdr_selectors')
+    fields = ('name', 'short_name', 'include_selectors', 'no_rdr_selectors', 'css')
 
-    def read(self, request, group):
-        return Group.objects.filter(id=group)
-    
+    def read(self, request, group=None):
+        if group:
+            group = int(group)
+            return RBGroup.objects.filter(id=group)
+        else:
+            return RBGroup.objects.all()
+
 """model = ContentNode()
     fields = ('id','user','hash')
 
