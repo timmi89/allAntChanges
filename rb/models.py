@@ -24,19 +24,21 @@ class Node(models.Model):
         
 class RBGroup(models.Model):
     name = models.CharField(max_length=250)
-    short_name = models.CharField(max_length=25)
-    include_selectors = models.CharField(max_length=250)
-    no_rdr_selectors = models.CharField(max_length=250)
-    css = models.URLField()
+    public_id = models.CharField(max_length=25)
+    selector_whitelist = models.TextField(blank=True, null=True)
+    selector_blacklist = models.TextField(blank=True, null=True)
+    tag_whitelist = models.TextField(blank=True, null=True)
+    tag_blacklist = models.TextField(blank=True, null=True)
+    css_url = models.URLField() #do we need 'blank=True, null=True' here right?
 
     def __unicode__(self):
         return self.name
 
 class RBSite(Site):
-	rb_group = models.ForeignKey(RBGroup)
-	include_selectors = models.CharField(max_length=250, blank=True)
-	no_rdr_selectors = models.CharField(max_length=250, blank=True)
-	css = models.URLField(blank=True)
+    rb_group = models.ForeignKey(RBGroup)
+    include_selectors = models.CharField(max_length=250, blank=True)
+    no_rdr_selectors = models.CharField(max_length=250, blank=True)
+    css = models.URLField(blank=True)
 
 class RBPage(models.Model):
     rb_site = models.ForeignKey(RBSite)

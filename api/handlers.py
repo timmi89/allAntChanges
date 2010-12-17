@@ -20,7 +20,7 @@ class ContentNodeHandler(BaseHandler):
 class GroupHandler(BaseHandler):
     allowed_methods = ('GET',)
     model = RBGroup
-    fields = ('include_selectors', 'no_rdr_selectors')
+    fields = ('selector_whitelist', 'selector_blacklist')
 
     def read(self, request, group):
         return Group.objects.filter(id=group)
