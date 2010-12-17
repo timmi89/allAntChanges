@@ -20,12 +20,12 @@ class ContentNodeHandler(BaseHandler):
 class RBGroupHandler(BaseHandler):
     allowed_methods = ('GET',)
     model = RBGroup
-    fields = ('name', 'short_name', 'include_selectors', 'no_rdr_selectors', 'css')
+    fields = ('name', 'public_id', 'selector_whitelist', 'selector_blacklist', 'tag_whitelist', 'tag_blacklist', 'css_url')
 
-    def read(self, request, group=None):
-        if group:
-            group = int(group)
-            return RBGroup.objects.filter(id=group)
+    def read(self, request, public_id=None):
+        if public_id:
+            public_id = str(public_id)  #TODO: how and where is this data cleaned
+            return RBGroup.objects.filter(public_id=public_id)
         else:
             return RBGroup.objects.all()
 
