@@ -1,6 +1,10 @@
 var RDR = RDR ? RDR : {};
 var $R = $R ? $R : $;  // make our own jquery object.  plugins will be at bottom of this page.
 
+//
+//note - ec: I temporaily changed the js link the dailycandy.html to point to readrboard-edit-ec.js, working on that file seperately to keep this one as reference...
+//
+
 // none of this obj's properties are definite.  just jotting down a few ideas.
 RDR = {
 	data : {
