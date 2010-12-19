@@ -11,7 +11,7 @@ RDR = {
 		nodes : []
 	},
 	errors : {
-		tooltip: {
+		actionbar: {
 			rating:"",
 			commenting:""
 		}
@@ -58,29 +58,34 @@ RDR = {
 			var coords = RDR.util.stayInWindow(x,y,width,300);
 			new_rindow.css('left', coords.x + 'px');
 			new_rindow.css('top', coords.y + 'px');
-			RDR.tooltip.close();
+			RDR.actionbar.close();
 			return new_rindow;
 		},
 		closeAll: function() {
 			$R('div.rdr.rdr_window').remove();
 		}
 	},
-	tooltip : {
+	actionbar : {
 		draw: function() {
-			if ( $R('div.rdr.rdr_tooltip').length == 0 ) {
+			if ( $R('div.rdr.rdr_actionbar').length == 0 ) {
 				var x = arguments[0].x ? (arguments[0].x-34) : 100;
 				var y = arguments[0].y ? (arguments[0].y-45) : 100;
 
 				var coords = RDR.util.stayInWindow(x,y,200,30);
-				var new_tooltip = $R('<div class="rdr rdr_tooltip" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
+				var new_actionbar = $R('<div class="rdr rdr_actionbar" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
 					'<a href="javascript:void(0);" onclick="RDR.actions.aboutReadrBoard();" class="rdr_about">Rate</a>' +
+					'<span class="rdr_divider">&nbsp;</span>' +
 					'<a href="javascript:void(0);" onclick="RDR.actions.rateStart();" class="rdr_rate">Rate</a>' +
+					'<a href="javascript:void(0);" onclick="RDR.actions.searchStart();" class="rdr_search">Search</a>' +
+					'<a href="javascript:void(0);" onclick="RDR.actions.bookmarkStart();" class="rdr_bookmark">Bookmark</a>' +
+					'<a href="javascript:void(0);" onclick="RDR.actions.commentStart();" class="rdr_comment">Comment</a>' +
+					'<a href="javascript:void(0);" onclick="RDR.actions.shareStart();" class="rdr_share">Share</a>' +
 				'</div>');
-				$R('body').append( new_tooltip );
+				$R('body').append( new_actionbar );
 			}
 		},
 		close: function() {
-			$R('div.rdr.rdr_tooltip').remove();
+			$R('div.rdr.rdr_actionbar').remove();
 		}
 	},
 	user : {
@@ -188,10 +193,10 @@ console.log('hashing nodes');
 			});
 		},
 		rateStart : function() {
-			// draw the window over the tooltip
-			var tooltipOffsets = $R('div.rdr.rdr_tooltip').offset();
-			$R('div.rdr.rdr_tooltip').removeClass('rdr_tooltip').addClass('rdr_window').addClass('rdr_rewritable');
-			var rindow = RDR.rindow.draw({x:tooltipOffsets.left, y:tooltipOffsets.top});
+			// draw the window over the actionbar
+			var actionbarOffsets = $R('div.rdr.rdr_actionbar').offset();
+			$R('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
+			var rindow = RDR.rindow.draw({x:actionbarOffsets.left, y:actionbarOffsets.top});
 			
 			// write content to the window
 			var rateStartContent = '<em class="rdr_selected-text"></em><ul class="rdr_tags rdr_preselected">';
@@ -204,7 +209,7 @@ console.log('hashing nodes');
 				'<button>Rate</button>' +
 				'<div class="rdr_help">e.g., Love this, autumn, insightful</div>';
 
-			// add content and animate the tooltip to accommodate it
+			// add content and animate the actionbar to accommodate it
 			rindow.animate({width:'400px', minHeight:'125px'}, 300, function() {
 
 				rindow.find('div.rdr_contentSpace').append( rateStartContent );
@@ -255,7 +260,7 @@ console.log('hashing nodes');
 			if ( !mouse_target.hasClass('rdr') && mouse_target.parents('div.rdr').length == 0 ) {
 				
 				// closes undragged windows
-				$R('div.rdr.rdr_window.rdr.rdr_rewritable, div.rdr.rdr_tooltip').remove();
+				$R('div.rdr.rdr_window.rdr.rdr_rewritable, div.rdr.rdr_actionbar').remove();
 
 				// see what the user selected
 				// TODO: need separate image function, which should then prevent event bubbling into this
@@ -297,11 +302,11 @@ console.log('hashing nodes');
 
 						if ( RDR.why.blockParentTextClean.indexOf( RDR.why.selectionTextClean ) != -1 ) {
 							// this can be commented on if it's long enough and has at least one space (two words or more)
-							RDR.tooltip.draw({x:parseInt(e.pageX), y:parseInt(e.pageY) });
+							RDR.actionbar.draw({x:parseInt(e.pageX), y:parseInt(e.pageY) });
 
 							// also should detect if selection has an image, embed, object, audio, or video tag in it
 						} else {
-							RDR.tooltip.draw({x:parseInt(e.pageX), y:parseInt(e.pageY), cant_comment:true });
+							RDR.actionbar.draw({x:parseInt(e.pageX), y:parseInt(e.pageY), cant_comment:true });
 						}
 					}
 				}
