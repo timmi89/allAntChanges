@@ -26,8 +26,8 @@ RDR = {
 		blessed_tags : [
 			{ name: "Great!", tid: 0 },
 			{ name: "Hate", tid: 1 },
-			{ name: "Kewl", tid: 2 },
-			{ name: "No Homo", tid: 3 }
+			{ name: "Interesting", tid: 2 },
+			{ name: "Boooooring", tid: 3 }
 		],
 		hashable_nodes : "#module-article p"
 	},
