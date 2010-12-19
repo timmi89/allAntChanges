@@ -43,13 +43,13 @@ div.rdr.rdr_actionbar a {
 
 div.rdr.rdr_actionbar a.rdr_about		 	{ background-position: -4px 0; width:21px; }
 div.rdr.rdr_actionbar a.rdr_rate		 	{ background-position: -27px -1px; }
-div.rdr.rdr_actionbar a.rdr_search	 	{ background-position: -55px -1px; }
+div.rdr.rdr_actionbar a.rdr_search	 		{ background-position: -55px -1px; }
 div.rdr.rdr_actionbar a.rdr_bookmark	 	{ background-position: -82px 0px; }
-div.rdr.rdr_actionbar a.rdr_comment	 	{ background-position: -110px -2px; }
+div.rdr.rdr_actionbar a.rdr_comment	 		{ background-position: -110px -2px; }
 div.rdr.rdr_actionbar a.rdr_share		 	{ background-position: -141px -1px; }
 div.rdr.rdr_actionbar a:hover				{ background-color:#ffd3d3;}
 div.rdr.rdr_actionbar a.rdr_about:hover 	{ background-color:transparent; }
-div.rdr.rdr_actionbar span.rdr_divider	{ background:url("/static/ui-prototype/images/actionbar_icons.png") no-repeat -25px 0; display:block; height:30px; width:3px; text-indent:-9999px; float:left;}
+div.rdr.rdr_actionbar span.rdr_divider		{ background:url("/static/ui-prototype/images/actionbar_icons.png") no-repeat -25px 0; display:block; height:30px; width:3px; text-indent:-9999px; float:left;}
 
 div.rdr h1, 
 div.rdr h2	{font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif; color:#e71f1f; margin: 0; }
