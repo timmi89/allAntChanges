@@ -1,14 +1,13 @@
 var RDR = RDR ? RDR : {};
-var $;  // make our own jquery object.  plugins will be at bottom of this page.
-
-//
-//note - ec: I temporaily changed the js link the dailycandy.html to point to readrboard-edit-ec.js, working on that file seperately to keep this one as reference...
-//
+var $R = $R ? $R : $;  // make our own jquery object.  plugins will be at bottom of this page.
 
 // none of this obj's properties are definite.  just jotting down a few ideas.
 RDR = {
     data : {
-        nodes : []
+        nodes : [],
+        rbgroup : {
+            public_id : "dc" //dailycandy
+        }
     },
     errors : {
         tooltip: {
@@ -28,6 +27,7 @@ RDR = {
     group_prefs : {
         // defined by server after initial init call
         blessed_tags : [
+        /*
         {
             name: "Great!",
             tid: 0
@@ -44,6 +44,7 @@ RDR = {
             name: "No Homo",
             tid: 3
         }
+        */
         ],
         hashable_nodes : "#module-article p"
     },
@@ -326,9 +327,52 @@ RDR = {
                     hashes : md5_list
                 },
                 success: function(data) {
+                    console.log('nodes call success')
                     console.dir(data);
                 }
             });
+
+            // request the RBGroup Data
+            console.log("requesting rbgroup data")
+            $R.ajax({
+                url: "/api/rbgroup",
+                type: "get",
+                contentType: "application/json",
+                dataType: "jsonp",
+                data: {
+                    public_id : RDR.data.rbgroup.public_id
+                },
+                success: function(data, textStatus, XHR) {
+
+                    console.log('rbgroup call success')
+                    console.dir(data);
+                    console.log(XHR)
+                        
+                    $.each(data, function(index, value){
+                        var rb_group = value;
+                        //Only expects back one user (index==0)
+                        console.log('current user is ' + rb_group.name)
+                        console.log(rb_group.name +' requests that RB not touch anything with the class ' + rb_group.selector_blacklist)
+                    });
+
+                    //expects back
+                    /*
+                        name = models.CharField(max_length=250)
+                        public_id = models.CharField(max_length=25)
+                        selector_whitelist = models.TextField(blank=True)
+                        selector_blacklist = models.TextField(blank=True)
+                        tag_whitelist = models.TextField(blank=True)
+                        tag_blacklist = models.TextField(blank=True)
+                        css_url = models.URLField() #do we need 'blank=True, null=True' here right?
+                    */
+                },
+                error: function(XHR){
+                    console.warn(XHR)
+                }
+            });
+
+
+
         },
         rateStart : function() {
             // draw the window over the tooltip
@@ -721,10 +765,7 @@ RDR = {
         '\\':'\\\\'
     };
 
-})($);
-
-var a = $R.evalJSON('{"test":2}');
-console.log(a)
+})($R);
 
 // init the drag selection tracker
 $R('body').bind('mouseup.rdr', RDR.actions.startSelect );
