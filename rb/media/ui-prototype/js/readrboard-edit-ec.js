@@ -31,14 +31,14 @@ function readrBoard($R){
             auth_token: 	"1234567890"
         },
         errors : {
-            tooltip: {
+            actionbar: {
                 rating:"",
                 commenting:""
             }
         },
         why : {},
         styles : {
-            /*
+        /*
 		page: 	"<style type='text/css'>"+
 				"body 		{background:#fff;}" +
 				"body p		{}" +
@@ -77,29 +77,34 @@ function readrBoard($R){
                 var coords = RDR.util.stayInWindow(x,y,width,300);
                 new_rindow.css('left', coords.x + 'px');
                 new_rindow.css('top', coords.y + 'px');
-                RDR.tooltip.close();
+                RDR.actionbar.close();
                 return new_rindow;
             },
             closeAll: function() {
                 $('div.rdr.rdr_window').remove();
             }
         },
-        tooltip : {
+        actionbar : {
             draw: function() {
-                if ( $('div.rdr.rdr_tooltip').length == 0 ) {
+                if ( $('div.rdr.rdr_actionbar').length == 0 ) {
                     var x = arguments[0].x ? (arguments[0].x-34) : 100;
                     var y = arguments[0].y ? (arguments[0].y-45) : 100;
 
                     var coords = RDR.util.stayInWindow(x,y,200,30);
-                    var new_tooltip = $('<div class="rdr rdr_tooltip" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
+                    var new_actionbar = $('<div class="rdr rdr_actionbar" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
                         '<a href="javascript:void(0);" onclick="RDR.actions.aboutReadrBoard();" class="rdr_about">Rate</a>' +
+                        '<span class="rdr_divider">&nbsp;</span>' +
                         '<a href="javascript:void(0);" onclick="RDR.actions.rateStart();" class="rdr_rate">Rate</a>' +
+                        '<a href="javascript:void(0);" onclick="RDR.actions.searchStart();" class="rdr_search">Search</a>' +
+                        '<a href="javascript:void(0);" onclick="RDR.actions.bookmarkStart();" class="rdr_bookmark">Bookmark</a>' +
+                        '<a href="javascript:void(0);" onclick="RDR.actions.commentStart();" class="rdr_comment">Comment</a>' +
+                        '<a href="javascript:void(0);" onclick="RDR.actions.shareStart();" class="rdr_share">Share</a>' +
                         '</div>');
-                    $('body').append( new_tooltip );
+                    $('body').append( new_actionbar );
                 }
             },
             close: function() {
-                $('div.rdr.rdr_tooltip').remove();
+                $('div.rdr.rdr_actionbar').remove();
             }
         },
         util : {
@@ -297,27 +302,27 @@ function readrBoard($R){
                             //console.log(3);
                             //RDR.group.blessed_tags = tag_whitelist;
                             RDR.group.blessed_tags = [
-                                {
-                                    name: "Great!",
-                                    tid: 0
-                                },
-                                {
-                                    name: "Hate",
-                                    tid: 1
-                                },
-                                {
-                                    name: "Kewl",
-                                    tid: 2
-                                },
-                                {
-                                    name: "No Homo",
-                                    tid: 3
-                                }
+                            {
+                                name: "Great!",
+                                tid: 0
+                            },
+                            {
+                                name: "Hate",
+                                tid: 1
+                            },
+                            {
+                                name: "Kewl",
+                                tid: 2
+                            },
+                            {
+                                name: "No Homo",
+                                tid: 3
+                            }
                             ];
                         });
 
-                        //expects back
-                        /*
+                    //expects back
+                    /*
                         name = models.CharField(max_length=250)
                         short_name = models.CharField(max_length=25)
                         selector_whitelist = models.TextField(blank=True)
@@ -376,6 +381,8 @@ function readrBoard($R){
                 //this.initUserData(userShortName);
 
                 // init the drag selection tracker
+                console.log(this);
+                console.log('-------');
                 $('body').bind('mouseup.rdr', this.startSelect );
 
             },
@@ -440,12 +447,12 @@ function readrBoard($R){
                 });
             },
             rateStart : function() {
-                // draw the window over the tooltip
-                var tooltipOffsets = $('div.rdr.rdr_tooltip').offset();
-                $('div.rdr.rdr_tooltip').removeClass('rdr_tooltip').addClass('rdr_window').addClass('rdr_rewritable');
+                // draw the window over the actionbar
+                var actionbarOffsets = $('div.rdr.rdr_actionbar').offset();
+                $('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
                 var rindow = RDR.rindow.draw({
-                    x:tooltipOffsets.left,
-                    y:tooltipOffsets.top
+                    x:actionbarOffsets.left,
+                    y:actionbarOffsets.top
                 });
 
                 // write content to the window
@@ -454,12 +461,12 @@ function readrBoard($R){
                     rateStartContent += '<li tid="'+RDR.group.blessed_tags[i].tid+'"><a href="javascript:void(0);">'+RDR.group.blessed_tags[i].name+'</a></li>';
                 }
                 rateStartContent += '</ul>' +
-                    '<div class="rdr_instruct">Add your own ratings, separated by comma:</div>' +
-                    '<input type="text" name="unknown-tags" />' +
-                    '<button>Rate</button>' +
-                    '<div class="rdr_help">e.g., Love this, autumn, insightful</div>';
+                '<div class="rdr_instruct">Add your own ratings, separated by comma:</div>' +
+                '<input type="text" name="unknown-tags" />' +
+                '<button>Rate</button>' +
+                '<div class="rdr_help">e.g., Love this, autumn, insightful</div>';
 
-                // add content and animate the tooltip to accommodate it
+                // add content and animate the actionbar to accommodate it
                 rindow.animate({
                     width:'400px',
                     minHeight:'125px'
@@ -471,14 +478,14 @@ function readrBoard($R){
 
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
                     rindow.find('ul.rdr_preselected li').toggle(
-                    function() {
-                        $(this).addClass('rdr_selected');
-                        $(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-                    },
-                    function() {
-                        $(this).removeClass('rdr_selected');
-                    }
-                );
+                        function() {
+                            $(this).addClass('rdr_selected');
+                            $(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+                        },
+                        function() {
+                            $(this).removeClass('rdr_selected');
+                        }
+                        );
 
                     // bind the button with a function (since this isn't in a <form>)
                     rindow.find('button').click( function() {
@@ -525,7 +532,7 @@ function readrBoard($R){
                 if ( !mouse_target.hasClass('rdr') && mouse_target.parents('div.rdr').length == 0 ) {
 
                     // closes undragged windows
-                    $('div.rdr.rdr_window.rdr.rdr_rewritable, div.rdr.rdr_tooltip').remove();
+                    $('div.rdr.rdr_window.rdr.rdr_rewritable, div.rdr.rdr_actionbar').remove();
 
                     // see what the user selected
                     // TODO: need separate image function, which should then prevent event bubbling into this
@@ -567,14 +574,14 @@ function readrBoard($R){
 
                             if ( RDR.why.blockParentTextClean.indexOf( RDR.why.selectionTextClean ) != -1 ) {
                                 // this can be commented on if it's long enough and has at least one space (two words or more)
-                                RDR.tooltip.draw({
+                                RDR.actionbar.draw({
                                     x:parseInt(e.pageX),
                                     y:parseInt(e.pageY)
                                 });
 
-                                // also should detect if selection has an image, embed, object, audio, or video tag in it
+                            // also should detect if selection has an image, embed, object, audio, or video tag in it
                             } else {
-                                RDR.tooltip.draw({
+                                RDR.actionbar.draw({
                                     x:parseInt(e.pageX),
                                     y:parseInt(e.pageY),
                                     cant_comment:true
@@ -607,7 +614,7 @@ function readrBoard($R){
                     var sel = win.getSelection();
 
                     if(!sel.isCollapsed && $.browser.mozilla){
-                        /*
+                    /*
 					TODO:  I don't think we need this, but we need to test more and see if we need it back.
 						   His code's a year old and I'm thinking Mozilla fixed the need for all this..?
 
@@ -779,7 +786,7 @@ function jqueryJSON($){
                 if(milli<100)milli='0'+milli;
                 if(milli<10)milli='0'+milli;
                 return'"'+year+'-'+month+'-'+day+'T'+
-                    hours+':'+minutes+':'+seconds+'.'+milli+'Z"';
+                hours+':'+minutes+':'+seconds+'.'+milli+'Z"';
             }
             if(o.constructor===Array)
             {
@@ -796,7 +803,7 @@ function jqueryJSON($){
                     name='"'+k+'"';
                 else if(type=="string")
                     name=$.quoteString(k);else
-                        continue;
+                    continue;
                 if(typeof o[k]=="function")
                     continue;
                 var val=$.toJSON(o[k]);
@@ -825,7 +832,7 @@ function jqueryJSON($){
         filtered=filtered.replace(/(?:^|:|,)(?:\s*\[)+/g,'');
         if(/^[\],:{}\s]*$/.test(filtered))
             return eval("("+src+")");else
-                throw new SyntaxError("Error parsing JSON, source is not valid.");
+            throw new SyntaxError("Error parsing JSON, source is not valid.");
     };
 
     $.quoteString=function(string)
@@ -837,11 +844,11 @@ function jqueryJSON($){
             return'"'+string.replace(_escapeable,function(a)
 
             {
-                var c=_meta[a];
-                if(typeof c==='string')return c;
-                c=a.charCodeAt();
-                return'\\u00'+Math.floor(c/16).toString(16)+(c%16).toString(16);
-            })+'"';
+                    var c=_meta[a];
+                    if(typeof c==='string')return c;
+                    c=a.charCodeAt();
+                    return'\\u00'+Math.floor(c/16).toString(16)+(c%16).toString(16);
+                })+'"';
         }
         return'"'+string+'"';
     };
@@ -871,9 +878,9 @@ if( $().jquery ===  jQueryVersion) {
     $RDependentFunctions($R);
 
 } else {
-    // $ isn't jQuery 1.4.4...could be a different version, or a diff framework
+// $ isn't jQuery 1.4.4...could be a different version, or a diff framework
 
-    //none of this is working right now..
+//none of this is working right now..
 /*
     // Copy the client's jQuery
     client$ = $.RBclone();
