@@ -47,10 +47,10 @@ RDR = {
 				new_rindow = $R('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + width + 'px;"></div>');
 				$R('body').append( new_rindow );
 			}
-
+			
 			if ( new_rindow.find('h1').length == 0 ) {
 				new_rindow.html('');
-				new_rindow.append( '<div class="rdr_close">x</div><h1></h1><div class="rdr rdr_contentSpace"></div>' );
+				new_rindow.append( '<div class="rdr_close">x</div><h1></h1><div class="rdr rdr_contentSpace"></div>' );	
 				new_rindow.find('div.rdr_close').click( function() { $R(this).parents('div.rdr.rdr_window').remove(); } );
 				new_rindow.draggable({handle:'h1', containment:'document', stack:'.RDR.window', start:function() { $R(this).removeClass('rdr_rewritable'); }});
 			}
@@ -139,7 +139,7 @@ RDR = {
 		},
 		hashNodes : function() {
 console.log('hashing nodes');
-			// snag all the nodes that we can set icons next to and send'em next
+			// snag all the nodes that we can set icons next to and send'em next 
 			// TODO: restrict this to the viewport + a few, rather than all
 			var content_nodes = $R( RDR.group_prefs.hashable_nodes ).not('rdr-hashed');
 
@@ -156,25 +156,25 @@ console.log('hashing nodes');
 				if ( node_text && node_text!="undefined" && node_text.length > 5 ) {
 					// clean whitespace
 					node_text = RDR.util.cleanPara ( node_text );
-
+				
 					// hash the text
 					var node_hash = RDR.util.md5.hex_md5( node_text );
-
+				
 					// add an object with the text and hash to the nodes dictionary
 					if ( !RDR.data.nodes[node_hash] ) RDR.data.nodes[node_hash] = node_text;
-
+				
 					// add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
 					// this makes it easy to find on the page later
 					$R(this).addClass( 'rdr-' + node_hash ).addClass('rdr-hashed');
 				}
 			});
-
+			
 			RDR.actions.sendHashes();
 		},
 		sendHashes : function() {
 			console.log('sending nodes');
 			// TODO: dont' send all hashes
-
+			
 			var md5_list = [];
 			for (var i in RDR.data.nodes ) {
 				md5_list.push( i );
@@ -197,7 +197,7 @@ console.log('hashing nodes');
 			var actionbarOffsets = $R('div.rdr.rdr_actionbar').offset();
 			$R('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
 			var rindow = RDR.rindow.draw({x:actionbarOffsets.left, y:actionbarOffsets.top});
-
+			
 			// write content to the window
 			var rateStartContent = '<em class="rdr_selected-text"></em><ul class="rdr_tags rdr_preselected">';
 			for (var i=0,j=RDR.group_prefs.blessed_tags.length; i<j; i++) {
@@ -215,32 +215,32 @@ console.log('hashing nodes');
 				rindow.find('div.rdr_contentSpace').append( rateStartContent );
 				rindow.find('h1').text('Rate This');
 				rindow.find('em.rdr_selected-text').html( RDR.why.content );
-
+				
 				// enable the "click on a blessed tag to choose it" functionality.  just css class based.
-				rindow.find('ul.rdr_preselected li').toggle(
+				rindow.find('ul.rdr_preselected li').toggle( 
 					function() { $R(this).addClass('rdr_selected'); $R(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable'); },
 					function() { $R(this).removeClass('rdr_selected');}
 				);
-
+				
 				// bind the button with a function (since this isn't in a <form>)
 				rindow.find('button').click( function() {
 					RDR.actions.rateSend( rindow );
 				});
-			});
+			});	
 		},
 		rateSend : function(rindow) {
 			// get the user-added tags from the input field
 			var unknown_tags = rindow.find('input[name="unknown-tags"]').val();
-
+			
 			// get the blessed tags the user chose, by checking for the css class
 			var known_tags = [];
 			rindow.find('ul.rdr_preselected li.rdr_selected').each( function() {
 				known_tags.push( $R(this).attr('tid') );
 			});
-
+			
 			// get the text that was highlighted
 			var content = RDR.why.sel.text;
-
+			
 			// send the data!
 			$R.ajax({
 				url: "/json-send/",
@@ -258,7 +258,7 @@ console.log('hashing nodes');
 
 			// make sure it's not selecting inside the RDR windows.
 			if ( !mouse_target.hasClass('rdr') && mouse_target.parents('div.rdr').length == 0 ) {
-
+				
 				// closes undragged windows
 				$R('div.rdr.rdr_window.rdr.rdr_rewritable, div.rdr.rdr_actionbar').remove();
 
@@ -266,9 +266,9 @@ console.log('hashing nodes');
 				// TODO: need separate image function, which should then prevent event bubbling into this
 				RDR.why.sel = RDR.actions.selectedText();
 				if ( RDR.why.sel.text && RDR.why.sel.text.length > 3 && RDR.why.sel.text.indexOf(" ") != -1 ) {
-
+					
 					// next line's redundant, but this way we just use .content in later functions, based on itemType
-					RDR.why.content = RDR.why.sel.text;
+					RDR.why.content = RDR.why.sel.text;  
 					RDR.why.itemType = "text";
 					RDR.why.blockParent = null;
 
@@ -293,7 +293,7 @@ console.log('hashing nodes');
 
 					// cache the blockParent's text for slightly faster processing
 					RDR.why.blockParent.text = RDR.why.blockParent.text();
-
+				
 					if ( RDR.why.blockParent.text && RDR.why.blockParent.text.length > 0) {
 
 						// now, strip newlines and tabs -- and then the doublespaces that result
@@ -319,7 +319,7 @@ console.log('hashing nodes');
 			we can remove all of his comments at runtime.  this seems to run fine for me in Firefox.
 			TODO: test in IE!
 			*/
-
+			
 			var win = win ? win : window;
 
 			var obj = null;
@@ -333,12 +333,12 @@ console.log('hashing nodes');
 				// Mozilla seems to be selecting the wrong Node, the one that comes before the selected node.
 				// I'm not sure if there's a configuration to solve this,
 				var sel = win.getSelection();
-
+				
 				if(!sel.isCollapsed && $R.browser.mozilla){
 					/*
 					TODO:  I don't think we need this, but we need to test more and see if we need it back.
 						   His code's a year old and I'm thinking Mozilla fixed the need for all this..?
-
+					
 					// If we've selected an element, (note: only works on Anchors, only checked bold and spans)
 					// we can use the anchorOffset to find the childNode that has been selected
 					if(sel.focusNode.nodeName !== '#text'){
@@ -366,8 +366,8 @@ console.log('hashing nodes');
 						obj = sel.anchorNode;
 					}
 					// If the element is the first child of another (no text appears before it)
-					else if( typeof sel.anchorNode.data !== 'undefined'
-								&& sel.anchorOffset === 0
+					else if( typeof sel.anchorNode.data !== 'undefined' 
+								&& sel.anchorOffset === 0 
 								&& sel.anchorOffset < sel.anchorNode.data.length ){
 						//Selected whole element at start of paragraph
 						obj = sel.anchorNode.parentNode
@@ -385,8 +385,8 @@ console.log('hashing nodes');
 					// The previous element length and the anchorOffset will be identical
 					// And the focus Offset is greater than zero
 					// So basically we are at the end of the preceeding element and have selected 0 of the current.
-					else if( typeof sel.anchorNode.data !== 'undefined'
-							&& sel.anchorOffset === sel.anchorNode.data.length
+					else if( typeof sel.anchorNode.data !== 'undefined' 
+							&& sel.anchorOffset === sel.anchorNode.data.length 
 							&& sel.focusOffset === 0 ){
 						//Selected whole element text
 						obj = (sel.anchorNode.nextSibling || sel.focusNode.previousSibling);
@@ -411,7 +411,7 @@ console.log('hashing nodes');
 
 				if(sel.parentElement)
 					obj = sel.parentElement();
-				else
+				else 
 					obj = sel.item(0);
 
 				text = sel.text || sel;
@@ -419,7 +419,7 @@ console.log('hashing nodes');
 				if(text.toString)
 					text = text.toString();
 			}
-			else
+			else 
 				throw 'Error';
 
 			// webkit
