@@ -24,7 +24,7 @@ class Node(models.Model):
         
 class RBGroup(models.Model):
     name = models.CharField(max_length=250)
-    public_id = models.CharField(max_length=25) #change this back to short_name
+    short_name = models.CharField(max_length=25)
     selector_whitelist = models.TextField(blank=True)
     selector_blacklist = models.TextField(blank=True)
     tag_whitelist = models.TextField(blank=True)
