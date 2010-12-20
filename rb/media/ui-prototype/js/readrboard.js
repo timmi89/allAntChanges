@@ -1,341 +1,625 @@
-var RDR = RDR ? RDR : {};
-var $R = $R ? $R : $;  // make our own jquery object.  plugins will be at bottom of this page.
 
-//
-//note - ec: I temporaily changed the js link the dailycandy.html to point to readrboard-edit-ec.js, working on that file seperately to keep this one as reference...
-//
+console.log($)
+var jQueryVersion = "1.4.4",
+RDR, //our global RDR object
+$R = {}, //init var: our clone of jQuery
+client$ = {}; //init var: clients copy of jQuery
 
-// none of this obj's properties are definite.  just jotting down a few ideas.
-RDR = {
-	data : {
-		nodes : []
-	},
-	errors : {
-		actionbar: {
-			rating:"",
-			commenting:""
-		}
-	},
-	why : {},
-	styles : {
-		/*
+//Our Readrboard function that builds the RDR object which gets returned into the global scope.
+//This function gets called above in
+function readrBoard($R){
+
+    var $ = $R;
+
+    var RDR = RDR ? RDR : {}
+    // none of this obj's properties are definite.  just jotting down a few ideas.
+    RDR = {
+        data : {
+            nodes : []
+        },
+        group : {
+            short_name : "dc",
+            hashable_nodes : "#module-article p"
+        },
+        user : {
+            short_name:		"JoeReadrOnFB",
+            first_name:		"Joe",
+            last_name:		"Readr",
+            status:		"full",
+            auth_token: 	"1234567890"
+        },
+        errors : {
+            actionbar: {
+                rating:"",
+                commenting:""
+            }
+        },
+        why : {},
+        styles : {
+        /*
 		page: 	"<style type='text/css'>"+
 				"body 		{background:#fff;}" +
 				"body p		{}" +
 				"</style>"
 		*/
-	},
-	group_prefs : {
-		// defined by server after initial init call
-		blessed_tags : [
-			{ name: "Great!", tid: 0 },
-			{ name: "Hate", tid: 1 },
-			{ name: "Interesting", tid: 2 },
-			{ name: "Boooooring", tid: 3 }
-		],
-		hashable_nodes : "#module-article p"
-	},
-	rindow : {
-		// content comes later.  this is just to identify or draw the container.
-		draw: function() {
-			var width = arguments[0].width ? arguments[0].width:400;
-			var x = arguments[0].x ? arguments[0].x:100;
-			var y = arguments[0].y ? arguments[0].y:100;
+        },
 
-			new_rindow = $R('div.rdr.rdr_window.rdr.rdr_rewritable'); // jquery obj of the rewritable window
-			if ( new_rindow.length == 0 ) { // oh, there's no rewritable window available, so make one
-				new_rindow = $R('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + width + 'px;"></div>');
-				$R('body').append( new_rindow );
-			}
+        rindow : {
+            // content comes later.  this is just to identify or draw the container.
+            draw: function() {
+                var width = arguments[0].width ? arguments[0].width:400;
+                var x = arguments[0].x ? arguments[0].x:100;
+                var y = arguments[0].y ? arguments[0].y:100;
+
+                new_rindow = $('div.rdr.rdr_window.rdr.rdr_rewritable'); // jquery obj of the rewritable window
+                if ( new_rindow.length == 0 ) { // oh, there's no rewritable window available, so make one
+                    new_rindow = $('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + width + 'px;"></div>');
+                    $('body').append( new_rindow );
+                }
 			
-			if ( new_rindow.find('h1').length == 0 ) {
-				new_rindow.html('');
-				new_rindow.append( '<div class="rdr_close">x</div><h1></h1><div class="rdr rdr_contentSpace"></div>' );	
-				new_rindow.find('div.rdr_close').click( function() { $R(this).parents('div.rdr.rdr_window').remove(); } );
-				new_rindow.draggable({handle:'h1', containment:'document', stack:'.RDR.window', start:function() { $R(this).removeClass('rdr_rewritable'); }});
-			}
-			// TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-			var coords = RDR.util.stayInWindow(x,y,width,300);
-			new_rindow.css('left', coords.x + 'px');
-			new_rindow.css('top', coords.y + 'px');
-			RDR.actionbar.close();
-			return new_rindow;
-		},
-		closeAll: function() {
-			$R('div.rdr.rdr_window').remove();
-		}
-	},
-	actionbar : {
-		draw: function() {
-			if ( $R('div.rdr.rdr_actionbar').length == 0 ) {
-				var x = arguments[0].x ? (arguments[0].x-34) : 100;
-				var y = arguments[0].y ? (arguments[0].y-45) : 100;
+                if ( new_rindow.find('h1').length == 0 ) {
+                    new_rindow.html('');
+                    new_rindow.append( '<div class="rdr_close">x</div><h1></h1><div class="rdr rdr_contentSpace"></div>' );
+                    new_rindow.find('div.rdr_close').click( function() {
+                        $(this).parents('div.rdr.rdr_window').remove();
+                    } );
+                    new_rindow.draggable({
+                        handle:'h1',
+                        containment:'document',
+                        stack:'.RDR.window',
+                        start:function() {
+                            $(this).removeClass('rdr_rewritable');
+                        }
+                    });
+                }
+                // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
+                var coords = RDR.util.stayInWindow(x,y,width,300);
+                new_rindow.css('left', coords.x + 'px');
+                new_rindow.css('top', coords.y + 'px');
+                RDR.actionbar.close();
+                return new_rindow;
+            },
+            closeAll: function() {
+                $('div.rdr.rdr_window').remove();
+            }
+        },
+        actionbar : {
+            draw: function() {
+                if ( $('div.rdr.rdr_actionbar').length == 0 ) {
+                    var x = arguments[0].x ? (arguments[0].x-34) : 100;
+                    var y = arguments[0].y ? (arguments[0].y-45) : 100;
 
-				var coords = RDR.util.stayInWindow(x,y,200,30);
-				var new_actionbar = $R('<div class="rdr rdr_actionbar" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.aboutReadrBoard();" class="rdr_about">Rate</a>' +
-					'<span class="rdr_divider">&nbsp;</span>' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.rateStart();" class="rdr_rate">Rate</a>' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.searchStart();" class="rdr_search">Search</a>' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.bookmarkStart();" class="rdr_bookmark">Bookmark</a>' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.commentStart();" class="rdr_comment">Comment</a>' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.shareStart();" class="rdr_share">Share</a>' +
-				'</div>');
-				$R('body').append( new_actionbar );
-			}
-		},
-		close: function() {
-			$R('div.rdr.rdr_actionbar').remove();
-		}
-	},
-	user : {
-		shortname:		"JoeReadrOnFB",
-		firstname:		"Joe",
-		lastname:		"Readr",
-		status:			"full",
-		auth_token: 	"1234567890"
-	},
-	util : {
-		stayInWindow : function(x,y,w,h) {
-			var coords = {};
-			var rWin = $R(window);
-			var winWidth = rWin.width();
-			var winHeight = rWin.height();
-			var winScroll = rWin.scrollTop();
-			if ( x > winWidth ) { x = winWidth - w; }
-			if ( y > winHeight + winScroll ) { y = winHeight + winScroll - h; }
-			if ( x < 10 ) x = 10;
-			if ( y - winScroll < 10 ) y = winScroll + 10;
-			coords.x = x;
-			coords.y = y;
-			return coords;
-		},
-		md5 : {
-			hexcase:0,
-			b64pad:"",
-			chrsz:8,
-			hex_md5 : function(s){return RDR.util.md5.binl2hex(RDR.util.md5.core_md5(RDR.util.md5.str2binl(s),s.length*RDR.util.md5.chrsz));},
-			core_md5 : function(x,len){x[len>>5]|=0x80<<((len)%32);x[(((len+64)>>>9)<<4)+14]=len;var a=1732584193;var b=-271733879;var c=-1732584194;var d=271733878;for(var i=0;i<x.length;i+=16){var olda=a;var oldb=b;var oldc=c;var oldd=d;a=RDR.util.md5.md5_ff(a,b,c,d,x[i+0],7,-680876936);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+1],12,-389564586);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+2],17,606105819);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+3],22,-1044525330);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+4],7,-176418897);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+5],12,1200080426);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+6],17,-1473231341);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+7],22,-45705983);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+8],7,1770035416);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+9],12,-1958414417);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+10],17,-42063);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+11],22,-1990404162);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+12],7,1804603682);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+13],12,-40341101);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+14],17,-1502002290);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+15],22,1236535329);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+1],5,-165796510);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+6],9,-1069501632);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+11],14,643717713);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+0],20,-373897302);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+5],5,-701558691);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+10],9,38016083);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+15],14,-660478335);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+4],20,-405537848);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+9],5,568446438);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+14],9,-1019803690);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+3],14,-187363961);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+8],20,1163531501);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+13],5,-1444681467);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+2],9,-51403784);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+7],14,1735328473);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+12],20,-1926607734);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+5],4,-378558);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+8],11,-2022574463);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+11],16,1839030562);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+14],23,-35309556);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+1],4,-1530992060);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+4],11,1272893353);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+7],16,-155497632);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+10],23,-1094730640);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+13],4,681279174);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+0],11,-358537222);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+3],16,-722521979);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+6],23,76029189);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+9],4,-640364487);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+12],11,-421815835);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+15],16,530742520);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+2],23,-995338651);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+0],6,-198630844);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+7],10,1126891415);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+14],15,-1416354905);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+5],21,-57434055);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+12],6,1700485571);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+3],10,-1894986606);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+10],15,-1051523);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+1],21,-2054922799);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+8],6,1873313359);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+15],10,-30611744);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+6],15,-1560198380);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+13],21,1309151649);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+4],6,-145523070);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+11],10,-1120210379);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+2],15,718787259);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+9],21,-343485551);a=RDR.util.md5.safe_add(a,olda);b=RDR.util.md5.safe_add(b,oldb);c=RDR.util.md5.safe_add(c,oldc);d=RDR.util.md5.safe_add(d,oldd);} return Array(a,b,c,d);},
-			md5_cmn : function(q,a,b,x,s,t){return RDR.util.md5.safe_add(RDR.util.md5.bit_rol(RDR.util.md5.safe_add(RDR.util.md5.safe_add(a,q),RDR.util.md5.safe_add(x,t)),s),b);},
-			md5_ff : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn((b&c)|((~b)&d),a,b,x,s,t);},
-			md5_gg : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn((b&d)|(c&(~d)),a,b,x,s,t);},
-			md5_hh : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(b^c^d,a,b,x,s,t);},
-			md5_ii : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(c^(b|(~d)),a,b,x,s,t);},
-			safe_add : function(x,y){var lsw=(x&0xFFFF)+(y&0xFFFF);var msw=(x>>16)+(y>>16)+(lsw>>16);return(msw<<16)|(lsw&0xFFFF);},
-			bit_rol : function(num,cnt){return(num<<cnt)|(num>>>(32-cnt));},
-			str2binl : function(str){var bin=Array();var mask=(1<<RDR.util.md5.chrsz)-1;for(var i=0;i<str.length*RDR.util.md5.chrsz;i+=RDR.util.md5.chrsz){bin[i>>5]|=(str.charCodeAt(i/RDR.util.md5.chrsz)&mask)<<(i%32);}return bin;},
-			binl2hex : function(binarray){var hex_tab=RDR.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";var str="";for(var i=0;i<binarray.length*4;i++){str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);} return str;}
-		},
-		cleanPara : function(para) {
-			// common function for cleaning the paragraph.  right now, it's removing spaces, tabs, newlines, and then double spaces
-			if(para != "") {
-				return para.replace(/[\n\r\t]+/gi,' ').replace().replace(/\s{2,}/g,' ');
-			}
-		}
-	},
-	actions : {
-		aboutReadrBoard : function() {
-			return true;
-		},
-		hashNodes : function() {
-console.log('hashing nodes');
-			// snag all the nodes that we can set icons next to and send'em next 
-			// TODO: restrict this to the viewport + a few, rather than all
-			var content_nodes = $R( RDR.group_prefs.hashable_nodes ).not('rdr-hashed');
+                    var coords = RDR.util.stayInWindow(x,y,200,30);
+                    var new_actionbar = $('<div class="rdr rdr_actionbar" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
+                        '<a href="javascript:void(0);" onclick="RDR.actions.aboutReadrBoard();" class="rdr_about">Rate</a>' +
+                        '<span class="rdr_divider">&nbsp;</span>' +
+                        '<a href="javascript:void(0);" onclick="RDR.actions.rateStart();" class="rdr_rate">Rate</a>' +
+                        '<a href="javascript:void(0);" onclick="RDR.actions.searchStart();" class="rdr_search">Search</a>' +
+                        '<a href="javascript:void(0);" onclick="RDR.actions.bookmarkStart();" class="rdr_bookmark">Bookmark</a>' +
+                        '<a href="javascript:void(0);" onclick="RDR.actions.commentStart();" class="rdr_comment">Comment</a>' +
+                        '<a href="javascript:void(0);" onclick="RDR.actions.shareStart();" class="rdr_share">Share</a>' +
+                        '</div>');
+                    $('body').append( new_actionbar );
+                }
+            },
+            close: function() {
+                $('div.rdr.rdr_actionbar').remove();
+            }
+        },
+        user : {
+            shortname:		"JoeReadrOnFB",
+            firstname:		"Joe",
+            lastname:		"Readr",
+            status:             "full",
+            auth_token: 	"1234567890"
+        },
+        util : {
+            stayInWindow : function(x,y,w,h) {
+                var coords = {};
+                var rWin = $(window);
+                var winWidth = rWin.width();
+                var winHeight = rWin.height();
+                var winScroll = rWin.scrollTop();
+                if ( x > winWidth ) {
+                    x = winWidth - w;
+                }
+                if ( y > winHeight + winScroll ) {
+                    y = winHeight + winScroll - h;
+                }
+                if ( x < 10 ) x = 10;
+                if ( y - winScroll < 10 ) y = winScroll + 10;
+                coords.x = x;
+                coords.y = y;
+                return coords;
+            },
+            md5 : {
+                hexcase:0,
+                b64pad:"",
+                chrsz:8,
+                hex_md5 : function(s){
+                    return RDR.util.md5.binl2hex(RDR.util.md5.core_md5(RDR.util.md5.str2binl(s),s.length*RDR.util.md5.chrsz));
+                },
+                core_md5 : function(x,len){
+                    x[len>>5]|=0x80<<((len)%32);
+                    x[(((len+64)>>>9)<<4)+14]=len;
+                    var a=1732584193;
+                    var b=-271733879;
+                    var c=-1732584194;
+                    var d=271733878;
+                    for(var i=0;i<x.length;i+=16){
+                        var olda=a;
+                        var oldb=b;
+                        var oldc=c;
+                        var oldd=d;
+                        a=RDR.util.md5.md5_ff(a,b,c,d,x[i+0],7,-680876936);
+                        d=RDR.util.md5.md5_ff(d,a,b,c,x[i+1],12,-389564586);
+                        c=RDR.util.md5.md5_ff(c,d,a,b,x[i+2],17,606105819);
+                        b=RDR.util.md5.md5_ff(b,c,d,a,x[i+3],22,-1044525330);
+                        a=RDR.util.md5.md5_ff(a,b,c,d,x[i+4],7,-176418897);
+                        d=RDR.util.md5.md5_ff(d,a,b,c,x[i+5],12,1200080426);
+                        c=RDR.util.md5.md5_ff(c,d,a,b,x[i+6],17,-1473231341);
+                        b=RDR.util.md5.md5_ff(b,c,d,a,x[i+7],22,-45705983);
+                        a=RDR.util.md5.md5_ff(a,b,c,d,x[i+8],7,1770035416);
+                        d=RDR.util.md5.md5_ff(d,a,b,c,x[i+9],12,-1958414417);
+                        c=RDR.util.md5.md5_ff(c,d,a,b,x[i+10],17,-42063);
+                        b=RDR.util.md5.md5_ff(b,c,d,a,x[i+11],22,-1990404162);
+                        a=RDR.util.md5.md5_ff(a,b,c,d,x[i+12],7,1804603682);
+                        d=RDR.util.md5.md5_ff(d,a,b,c,x[i+13],12,-40341101);
+                        c=RDR.util.md5.md5_ff(c,d,a,b,x[i+14],17,-1502002290);
+                        b=RDR.util.md5.md5_ff(b,c,d,a,x[i+15],22,1236535329);
+                        a=RDR.util.md5.md5_gg(a,b,c,d,x[i+1],5,-165796510);
+                        d=RDR.util.md5.md5_gg(d,a,b,c,x[i+6],9,-1069501632);
+                        c=RDR.util.md5.md5_gg(c,d,a,b,x[i+11],14,643717713);
+                        b=RDR.util.md5.md5_gg(b,c,d,a,x[i+0],20,-373897302);
+                        a=RDR.util.md5.md5_gg(a,b,c,d,x[i+5],5,-701558691);
+                        d=RDR.util.md5.md5_gg(d,a,b,c,x[i+10],9,38016083);
+                        c=RDR.util.md5.md5_gg(c,d,a,b,x[i+15],14,-660478335);
+                        b=RDR.util.md5.md5_gg(b,c,d,a,x[i+4],20,-405537848);
+                        a=RDR.util.md5.md5_gg(a,b,c,d,x[i+9],5,568446438);
+                        d=RDR.util.md5.md5_gg(d,a,b,c,x[i+14],9,-1019803690);
+                        c=RDR.util.md5.md5_gg(c,d,a,b,x[i+3],14,-187363961);
+                        b=RDR.util.md5.md5_gg(b,c,d,a,x[i+8],20,1163531501);
+                        a=RDR.util.md5.md5_gg(a,b,c,d,x[i+13],5,-1444681467);
+                        d=RDR.util.md5.md5_gg(d,a,b,c,x[i+2],9,-51403784);
+                        c=RDR.util.md5.md5_gg(c,d,a,b,x[i+7],14,1735328473);
+                        b=RDR.util.md5.md5_gg(b,c,d,a,x[i+12],20,-1926607734);
+                        a=RDR.util.md5.md5_hh(a,b,c,d,x[i+5],4,-378558);
+                        d=RDR.util.md5.md5_hh(d,a,b,c,x[i+8],11,-2022574463);
+                        c=RDR.util.md5.md5_hh(c,d,a,b,x[i+11],16,1839030562);
+                        b=RDR.util.md5.md5_hh(b,c,d,a,x[i+14],23,-35309556);
+                        a=RDR.util.md5.md5_hh(a,b,c,d,x[i+1],4,-1530992060);
+                        d=RDR.util.md5.md5_hh(d,a,b,c,x[i+4],11,1272893353);
+                        c=RDR.util.md5.md5_hh(c,d,a,b,x[i+7],16,-155497632);
+                        b=RDR.util.md5.md5_hh(b,c,d,a,x[i+10],23,-1094730640);
+                        a=RDR.util.md5.md5_hh(a,b,c,d,x[i+13],4,681279174);
+                        d=RDR.util.md5.md5_hh(d,a,b,c,x[i+0],11,-358537222);
+                        c=RDR.util.md5.md5_hh(c,d,a,b,x[i+3],16,-722521979);
+                        b=RDR.util.md5.md5_hh(b,c,d,a,x[i+6],23,76029189);
+                        a=RDR.util.md5.md5_hh(a,b,c,d,x[i+9],4,-640364487);
+                        d=RDR.util.md5.md5_hh(d,a,b,c,x[i+12],11,-421815835);
+                        c=RDR.util.md5.md5_hh(c,d,a,b,x[i+15],16,530742520);
+                        b=RDR.util.md5.md5_hh(b,c,d,a,x[i+2],23,-995338651);
+                        a=RDR.util.md5.md5_ii(a,b,c,d,x[i+0],6,-198630844);
+                        d=RDR.util.md5.md5_ii(d,a,b,c,x[i+7],10,1126891415);
+                        c=RDR.util.md5.md5_ii(c,d,a,b,x[i+14],15,-1416354905);
+                        b=RDR.util.md5.md5_ii(b,c,d,a,x[i+5],21,-57434055);
+                        a=RDR.util.md5.md5_ii(a,b,c,d,x[i+12],6,1700485571);
+                        d=RDR.util.md5.md5_ii(d,a,b,c,x[i+3],10,-1894986606);
+                        c=RDR.util.md5.md5_ii(c,d,a,b,x[i+10],15,-1051523);
+                        b=RDR.util.md5.md5_ii(b,c,d,a,x[i+1],21,-2054922799);
+                        a=RDR.util.md5.md5_ii(a,b,c,d,x[i+8],6,1873313359);
+                        d=RDR.util.md5.md5_ii(d,a,b,c,x[i+15],10,-30611744);
+                        c=RDR.util.md5.md5_ii(c,d,a,b,x[i+6],15,-1560198380);
+                        b=RDR.util.md5.md5_ii(b,c,d,a,x[i+13],21,1309151649);
+                        a=RDR.util.md5.md5_ii(a,b,c,d,x[i+4],6,-145523070);
+                        d=RDR.util.md5.md5_ii(d,a,b,c,x[i+11],10,-1120210379);
+                        c=RDR.util.md5.md5_ii(c,d,a,b,x[i+2],15,718787259);
+                        b=RDR.util.md5.md5_ii(b,c,d,a,x[i+9],21,-343485551);
+                        a=RDR.util.md5.safe_add(a,olda);
+                        b=RDR.util.md5.safe_add(b,oldb);
+                        c=RDR.util.md5.safe_add(c,oldc);
+                        d=RDR.util.md5.safe_add(d,oldd);
+                    }
+                    return Array(a,b,c,d);
+                },
+                md5_cmn : function(q,a,b,x,s,t){
+                    return RDR.util.md5.safe_add(RDR.util.md5.bit_rol(RDR.util.md5.safe_add(RDR.util.md5.safe_add(a,q),RDR.util.md5.safe_add(x,t)),s),b);
+                },
+                md5_ff : function(a,b,c,d,x,s,t){
+                    return RDR.util.md5.md5_cmn((b&c)|((~b)&d),a,b,x,s,t);
+                },
+                md5_gg : function(a,b,c,d,x,s,t){
+                    return RDR.util.md5.md5_cmn((b&d)|(c&(~d)),a,b,x,s,t);
+                },
+                md5_hh : function(a,b,c,d,x,s,t){
+                    return RDR.util.md5.md5_cmn(b^c^d,a,b,x,s,t);
+                },
+                md5_ii : function(a,b,c,d,x,s,t){
+                    return RDR.util.md5.md5_cmn(c^(b|(~d)),a,b,x,s,t);
+                },
+                safe_add : function(x,y){
+                    var lsw=(x&0xFFFF)+(y&0xFFFF);
+                    var msw=(x>>16)+(y>>16)+(lsw>>16);
+                    return(msw<<16)|(lsw&0xFFFF);
+                },
+                bit_rol : function(num,cnt){
+                    return(num<<cnt)|(num>>>(32-cnt));
+                },
+                str2binl : function(str){
+                    var bin=Array();
+                    var mask=(1<<RDR.util.md5.chrsz)-1;
+                    for(var i=0;i<str.length*RDR.util.md5.chrsz;i+=RDR.util.md5.chrsz){
+                        bin[i>>5]|=(str.charCodeAt(i/RDR.util.md5.chrsz)&mask)<<(i%32);
+                    }
+                    return bin;
+                },
+                binl2hex : function(binarray){
+                    var hex_tab=RDR.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";
+                    var str="";
+                    for(var i=0;i<binarray.length*4;i++){
+                        str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);
+                    }
+                    return str;
+                }
+            },
+            cleanPara : function(para) {
+                // common function for cleaning the paragraph.  right now, it's removing spaces, tabs, newlines, and then double spaces
+                if(para != "") {
+                    return para.replace(/[\n\r\t]+/gi,' ').replace().replace(/\s{2,}/g,' ');
+                }
+            }
+        },
+        actions : {
+            aboutReadrBoard : function() {
+                return true;
+            },
+            initGroupData : function(groupShortName){
+                // request the RBGroup Data
 
-			content_nodes.each( function() {
+                console.log("requesting rbgroup data")
+                console.log(groupShortName)
+                $.ajax({
+                    url: "/api/rbgroup",
+                    type: "get",
+                    contentType: "application/json",
+                    dataType: "jsonp",
+                    data: {
+                        short_name : groupShortName
+                    },
+                    success: function(data, textStatus, XHR) {
 
-				// get the node's text and smash case
-				// TODO: <br> tags and block-level tags can screw up words.  ex:
-					// hello<br>how are you?   here becomes
-					// hellohow are you?    <-- no space where the <br> was.  bad.
-				var node_text = $R(this).html().replace(/< *br *\/?>/gi, '\n');
-				node_text = $R( "<div>" + node_text + "</div>" ).text().toLowerCase();
+                        console.log('rbgroup call success')
+                        console.dir(data);
+                        console.log(XHR)
 
-				// if there's any content...
-				if ( node_text && node_text!="undefined" && node_text.length > 5 ) {
-					// clean whitespace
-					node_text = RDR.util.cleanPara ( node_text );
+                        //get this from the DB?
+                        //this.hashable_nodes = "#module-article p";
+
+                        $.each(data, function(index, value){
+                            var rb_group = value;
+                            //Only expects back one group (index==0)
+                            console.log('current group is ' + rb_group.name)
+                            console.log(rb_group.name +' requests that RB not touch anything with the class ' + rb_group.selector_blacklist)
+
+                            //not working
+                            //console.log(rb_group.tag_whitelist);
+                            //var tag_whitelist = $.evalJSON(rb_group.tag_whitelist);
+                            //console.log(tag_whitelist);
+                            //console.log(3);
+                            //RDR.group.blessed_tags = tag_whitelist;
+                            RDR.group.blessed_tags = [
+                            {
+                                name: "Great!",
+                                tid: 0
+                            },
+                            {
+                                name: "Hate",
+                                tid: 1
+                            },
+                            {
+                                name: "Interesting",
+                                tid: 2
+                            },
+                            {
+                                name: "Boooooring",
+                                tid: 3
+                            }
+                            ];
+                        });
+
+                    //expects back
+                    /*
+                        name = models.CharField(max_length=250)
+                        short_name = models.CharField(max_length=25)
+                        selector_whitelist = models.TextField(blank=True)
+                        selector_blacklist = models.TextField(blank=True)
+                        tag_whitelist = models.TextField(blank=True)
+                        tag_blacklist = models.TextField(blank=True)
+                        css_url = models.URLField() #do we need 'blank=True, null=True' here right?
+                         */
+                    },
+                    error: function(XHR){
+                        console.warn(XHR)
+                    }
+                });
+            },
+            initUserData : function(userShortName){
+                // request the RBGroup Data
+                console.log("requesting user data")
+                $.ajax({
+                    url: "/api/rbuser",
+                    type: "get",
+                    contentType: "application/json",
+                    dataType: "jsonp",
+                    data: {
+                        short_name : userShortName
+                    },
+                    success: function(data, textStatus, XHR) {
+
+                        console.log('rbuser call success')
+                        console.dir(data);
+                        console.log(XHR)
+
+                        //get this from the DB?
+                        //this.hashable_nodes = "#module-article p";
+
+                        $.each(data, function(index, value){
+                            var rb_group = value;
+                            //Only expects back one user (index==0)
+                            console.log('current user is ' + rb_user.name)
+
+                        });
+
+                    },
+                    error: function(XHR){
+                        console.warn(XHR)
+                        console.warn('failed, but thats cool, we were expecting it to');
+                        console.log('user is ', userShortName);
+                    }
+                });
+            },
+            init : function(){
+                var groupShortName = RDR.group.short_name;
+                var userShortName = RDR.user.short_name;
+
+                this.hashNodes();
+                this.initGroupData(groupShortName);
+                //this.initUserData(userShortName);
+
+                // init the drag selection tracker
+                console.log(this);
+                console.log('-------');
+                $('body').bind('mouseup.rdr', this.startSelect );
+
+            },
+            hashNodes : function() {
+                console.log('hashing nodes');
+                // snag all the nodes that we can set icons next to and send'em next
+                // TODO: restrict this to the viewport + a few, rather than all
+                var content_nodes = $( RDR.group.hashable_nodes ).not('rdr-hashed');
+
+                content_nodes.each( function() {
+
+                    // get the node's text and smash case
+                    // TODO: <br> tags and block-level tags can screw up words.  ex:
+                    // hello<br>how are you?   here becomes
+                    // hellohow are you?    <-- no space where the <br> was.  bad.
+                    var node_text = $(this).html().replace(/< *br *\/?>/gi, '\n');
+                    node_text = $( "<div>" + node_text + "</div>" ).text().toLowerCase();
+
+                    // if there's any content...
+                    if ( node_text && node_text!="undefined" && node_text.length > 5 ) {
+                        // clean whitespace
+                        node_text = RDR.util.cleanPara ( node_text );
 				
-					// hash the text
-					var node_hash = RDR.util.md5.hex_md5( node_text );
+                        // hash the text
+                        var node_hash = RDR.util.md5.hex_md5( node_text );
 				
-					// add an object with the text and hash to the nodes dictionary
-					if ( !RDR.data.nodes[node_hash] ) RDR.data.nodes[node_hash] = node_text;
+                        // add an object with the text and hash to the nodes dictionary
+                        if ( !RDR.data.nodes[node_hash] ) RDR.data.nodes[node_hash] = node_text;
 				
-					// add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
-					// this makes it easy to find on the page later
-					$R(this).addClass( 'rdr-' + node_hash ).addClass('rdr-hashed');
-				}
-			});
+                        // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
+                        // this makes it easy to find on the page later
+                        $(this).addClass( 'rdr-' + node_hash ).addClass('rdr-hashed');
+                    }
+                });
 			
-			RDR.actions.sendHashes();
-		},
-		sendHashes : function() {
-			console.log('sending nodes');
-			// TODO: dont' send all hashes
+                RDR.actions.sendHashes();
+            },
+            sendHashes : function() {
+                console.log('sending nodes');
+                // TODO: dont' send all hashes
 			
-			var md5_list = [];
-			for (var i in RDR.data.nodes ) {
-				md5_list.push( i );
-			}
+                var md5_list = [];
+                for (var i in RDR.data.nodes ) {
+                    md5_list.push( i );
+                }
 
-			// send the data!
-			$R.ajax({
-				url: "/api/nodes",
-				type: "get",
-				contentType: "application/json",
-				dataType: "jsonp",
-				data: { groupID : 1, pageID : 1, hashes : md5_list },
-				success: function(data) {
-					console.dir(data);
-				}
-			});
-		},
-		rateStart : function() {
-			// draw the window over the actionbar
-			var actionbarOffsets = $R('div.rdr.rdr_actionbar').offset();
-			$R('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
-			var rindow = RDR.rindow.draw({x:actionbarOffsets.left, y:actionbarOffsets.top});
+                // send the data!
+                $.ajax({
+                    url: "/api/nodes",
+                    type: "get",
+                    contentType: "application/json",
+                    dataType: "jsonp",
+                    data: {
+                        groupID : 1,
+                        pageID : 1,
+                        hashes : md5_list
+                    },
+                    success: function(data) {
+                        console.dir(data);
+                    }
+                });
+            },
+            rateStart : function() {
+                // draw the window over the actionbar
+                var actionbarOffsets = $('div.rdr.rdr_actionbar').offset();
+                $('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
+                var rindow = RDR.rindow.draw({
+                    x:actionbarOffsets.left,
+                    y:actionbarOffsets.top
+                });
 			
-			// write content to the window
-			var rateStartContent = '<em class="rdr_selected-text"></em><ul class="rdr_tags rdr_preselected">';
-			for (var i=0,j=RDR.group_prefs.blessed_tags.length; i<j; i++) {
-					rateStartContent += '<li tid="'+RDR.group_prefs.blessed_tags[i].tid+'"><a href="javascript:void(0);">'+RDR.group_prefs.blessed_tags[i].name+'</a></li>';
-				}
-				rateStartContent += '</ul>' +
-				'<div class="rdr_instruct">Add your own ratings, separated by comma:</div>' +
-				'<input type="text" name="unknown-tags" />' +
-				'<button>Rate</button>' +
-				'<div class="rdr_help">e.g., Love this, autumn, insightful</div>';
+                // write content to the window
+                var rateStartContent = '<em class="rdr_selected-text"></em><ul class="rdr_tags rdr_preselected">';
+                for (var i=0,j=RDR.group.blessed_tags.length; i<j; i++) {
+                    rateStartContent += '<li tid="'+RDR.group.blessed_tags[i].tid+'"><a href="javascript:void(0);">'+RDR.group.blessed_tags[i].name+'</a></li>';
+                }
+                rateStartContent += '</ul>' +
+                '<div class="rdr_instruct">Add your own ratings, separated by comma:</div>' +
+                '<input type="text" name="unknown-tags" />' +
+                '<button>Rate</button>' +
+                '<div class="rdr_help">e.g., Love this, autumn, insightful</div>';
 
-			// add content and animate the actionbar to accommodate it
-			rindow.animate({width:'400px', minHeight:'125px'}, 300, function() {
+                // add content and animate the actionbar to accommodate it
+                rindow.animate({
+                    width:'400px',
+                    minHeight:'125px'
+                }, 300, function() {
 
-				rindow.find('div.rdr_contentSpace').append( rateStartContent );
-				rindow.find('h1').text('Rate This');
-				rindow.find('em.rdr_selected-text').html( RDR.why.content );
+                    rindow.find('div.rdr_contentSpace').append( rateStartContent );
+                    rindow.find('h1').text('Rate This');
+                    rindow.find('em.rdr_selected-text').html( RDR.why.content );
 				
-				// enable the "click on a blessed tag to choose it" functionality.  just css class based.
-				rindow.find('ul.rdr_preselected li').toggle( 
-					function() { $R(this).addClass('rdr_selected'); $R(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable'); },
-					function() { $R(this).removeClass('rdr_selected');}
-				);
+                    // enable the "click on a blessed tag to choose it" functionality.  just css class based.
+                    rindow.find('ul.rdr_preselected li').toggle(
+                        function() {
+                            $(this).addClass('rdr_selected');
+                            $(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+                        },
+                        function() {
+                            $(this).removeClass('rdr_selected');
+                        }
+                        );
 				
-				// bind the button with a function (since this isn't in a <form>)
-				rindow.find('button').click( function() {
-					RDR.actions.rateSend( rindow );
-				});
-			});	
-		},
-		rateSend : function(rindow) {
-			// get the user-added tags from the input field
-			var unknown_tags = rindow.find('input[name="unknown-tags"]').val();
+                    // bind the button with a function (since this isn't in a <form>)
+                    rindow.find('button').click( function() {
+                        RDR.actions.rateSend( rindow );
+                    });
+                });
+            },
+            rateSend : function(rindow) {
+                // get the user-added tags from the input field
+                var unknown_tags = rindow.find('input[name="unknown-tags"]').val();
 			
-			// get the blessed tags the user chose, by checking for the css class
-			var known_tags = [];
-			rindow.find('ul.rdr_preselected li.rdr_selected').each( function() {
-				known_tags.push( $R(this).attr('tid') );
-			});
+                // get the blessed tags the user chose, by checking for the css class
+                var known_tags = [];
+                rindow.find('ul.rdr_preselected li.rdr_selected').each( function() {
+                    known_tags.push( $(this).attr('tid') );
+                });
 			
-			// get the text that was highlighted
-			var content = RDR.why.sel.text;
+                // get the text that was highlighted
+                var content = RDR.why.sel.text;
 			
-			// send the data!
-			$R.ajax({
-				url: "/json-send/",
-				contentType: "application/json",
-				dataType: "jsonp",
-				data: { unknown_tags:unknown_tags, known_tags:known_tags, user:10, page:1, content:content, content_type:"text" },
-				success: function(msg) {
-					console.log('success');
-				}
-			});
-		},
-		startSelect : function(e) {
-			// make a jQuery object of the node the user clicked on (at point of mouse up)
-			var mouse_target = $R(e.target);
+                // send the data!
+                $.ajax({
+                    url: "/json-send/",
+                    contentType: "application/json",
+                    dataType: "jsonp",
+                    data: {
+                        unknown_tags:unknown_tags,
+                        known_tags:known_tags,
+                        user:10,
+                        page:1,
+                        content:content,
+                        content_type:"text"
+                    },
+                    success: function(msg) {
+                        console.log('success');
+                    }
+                });
+            },
+            startSelect : function(e) {
+                // make a jQuery object of the node the user clicked on (at point of mouse up)
+                var mouse_target = $(e.target);
 
-			// make sure it's not selecting inside the RDR windows.
-			if ( !mouse_target.hasClass('rdr') && mouse_target.parents('div.rdr').length == 0 ) {
+                // make sure it's not selecting inside the RDR windows.
+                if ( !mouse_target.hasClass('rdr') && mouse_target.parents('div.rdr').length == 0 ) {
 				
-				// closes undragged windows
-				$R('div.rdr.rdr_window.rdr.rdr_rewritable, div.rdr.rdr_actionbar').remove();
+                    // closes undragged windows
+                    $('div.rdr.rdr_window.rdr.rdr_rewritable, div.rdr.rdr_actionbar').remove();
 
-				// see what the user selected
-				// TODO: need separate image function, which should then prevent event bubbling into this
-				RDR.why.sel = RDR.actions.selectedText();
-				if ( RDR.why.sel.text && RDR.why.sel.text.length > 3 && RDR.why.sel.text.indexOf(" ") != -1 ) {
+                    // see what the user selected
+                    // TODO: need separate image function, which should then prevent event bubbling into this
+                    RDR.why.sel = RDR.actions.selectedText();
+                    if ( RDR.why.sel.text && RDR.why.sel.text.length > 3 && RDR.why.sel.text.indexOf(" ") != -1 ) {
 					
-					// next line's redundant, but this way we just use .content in later functions, based on itemType
-					RDR.why.content = RDR.why.sel.text;  
-					RDR.why.itemType = "text";
-					RDR.why.blockParent = null;
+                        // next line's redundant, but this way we just use .content in later functions, based on itemType
+                        RDR.why.content = RDR.why.sel.text;
+                        RDR.why.itemType = "text";
+                        RDR.why.blockParent = null;
 
-					// can we comment on the selection?
-					// identify the selection's block parent (RDR.why.blockParent)
-					// see it contains the whole selection text
-					// and check for the rdr class.
-					if ( RDR.why.sel.obj.css('display') != "block" ) {
-						RDR.why.sel.obj.parents().each( function() {
-							// cache the obj... faster!
-							var aParent = $R(this);
-							if ( aParent.css('display') == "block" ) {
-								// we've found the first parent of the selected text that is block-level
-								RDR.why.blockParent = aParent;
-								return false;  // exits out of a jQuery.each loop
-							}
-						});
-					} else {
-						// the node initially clicked on is the first block level container
-						RDR.why.blockParent = RDR.why.sel.obj;
-					}
+                        // can we comment on the selection?
+                        // identify the selection's block parent (RDR.why.blockParent)
+                        // see it contains the whole selection text
+                        // and check for the rdr class.
+                        if ( RDR.why.sel.obj.css('display') != "block" ) {
+                            RDR.why.sel.obj.parents().each( function() {
+                                // cache the obj... faster!
+                                var aParent = $(this);
+                                if ( aParent.css('display') == "block" ) {
+                                    // we've found the first parent of the selected text that is block-level
+                                    RDR.why.blockParent = aParent;
+                                    return false;  // exits out of a jQuery.each loop
+                                }
+                            });
+                        } else {
+                            // the node initially clicked on is the first block level container
+                            RDR.why.blockParent = RDR.why.sel.obj;
+                        }
 
-					// cache the blockParent's text for slightly faster processing
-					RDR.why.blockParent.text = RDR.why.blockParent.text();
+                        // cache the blockParent's text for slightly faster processing
+                        RDR.why.blockParent.text = RDR.why.blockParent.text();
 				
-					if ( RDR.why.blockParent.text && RDR.why.blockParent.text.length > 0) {
+                        if ( RDR.why.blockParent.text && RDR.why.blockParent.text.length > 0) {
 
-						// now, strip newlines and tabs -- and then the doublespaces that result
-						RDR.why.blockParentTextClean = RDR.util.cleanPara ( RDR.why.blockParent.text );
-						RDR.why.selectionTextClean = RDR.util.cleanPara ( RDR.why.content );
+                            // now, strip newlines and tabs -- and then the doublespaces that result
+                            RDR.why.blockParentTextClean = RDR.util.cleanPara ( RDR.why.blockParent.text );
+                            RDR.why.selectionTextClean = RDR.util.cleanPara ( RDR.why.content );
 
-						if ( RDR.why.blockParentTextClean.indexOf( RDR.why.selectionTextClean ) != -1 ) {
-							// this can be commented on if it's long enough and has at least one space (two words or more)
-							RDR.actionbar.draw({x:parseInt(e.pageX), y:parseInt(e.pageY) });
+                            if ( RDR.why.blockParentTextClean.indexOf( RDR.why.selectionTextClean ) != -1 ) {
+                                // this can be commented on if it's long enough and has at least one space (two words or more)
+                                RDR.actionbar.draw({
+                                    x:parseInt(e.pageX),
+                                    y:parseInt(e.pageY)
+                                });
 
-							// also should detect if selection has an image, embed, object, audio, or video tag in it
-						} else {
-							RDR.actionbar.draw({x:parseInt(e.pageX), y:parseInt(e.pageY), cant_comment:true });
-						}
-					}
-				}
-			}
-		},
-		selectedText : function(win) {
-			/**
+                            // also should detect if selection has an image, embed, object, audio, or video tag in it
+                            } else {
+                                RDR.actionbar.draw({
+                                    x:parseInt(e.pageX),
+                                    y:parseInt(e.pageY),
+                                    cant_comment:true
+                                });
+                            }
+                        }
+                    }
+                }
+            },
+            selectedText : function(win) {
+                /**
 			modified from Drew Dodson's code here:
 			http://perplexed.co.uk/1020_text_selector_jquery_plugin.htm
 			we can remove all of his comments at runtime.  this seems to run fine for me in Firefox.
 			TODO: test in IE!
 			*/
 			
-			var win = win ? win : window;
+                var win = win ? win : window;
 
-			var obj = null;
-			var text = null;
+                var obj = null;
+                var text = null;
 
-			// Get parent element to determine the formatting applied to the selected text
-			if(win.getSelection){
-				var obj = win.getSelection().anchorNode;
+                // Get parent element to determine the formatting applied to the selected text
+                if(win.getSelection){
+                    var obj = win.getSelection().anchorNode;
 
-				var text = win.getSelection().toString();
-				// Mozilla seems to be selecting the wrong Node, the one that comes before the selected node.
-				// I'm not sure if there's a configuration to solve this,
-				var sel = win.getSelection();
+                    var text = win.getSelection().toString();
+                    // Mozilla seems to be selecting the wrong Node, the one that comes before the selected node.
+                    // I'm not sure if there's a configuration to solve this,
+                    var sel = win.getSelection();
 				
-				if(!sel.isCollapsed && $R.browser.mozilla){
-					/*
+                    if(!sel.isCollapsed && $.browser.mozilla){
+                    /*
 					TODO:  I don't think we need this, but we need to test more and see if we need it back.
 						   His code's a year old and I'm thinking Mozilla fixed the need for all this..?
 					
@@ -399,79 +683,245 @@ console.log('hashing nodes');
 						obj = sel.focusNode.parentNode;
 					}
 					*/
-				}
-				else if(sel.isCollapsed) {
-					obj = obj ? (obj.parentNode ? obj.parentNode:obj) : "";
-				}
+                    }
+                    else if(sel.isCollapsed) {
+                        obj = obj ? (obj.parentNode ? obj.parentNode:obj) : "";
+                    }
 
-			}
-			else if(win.document.selection){
-				var sel = win.document.selection.createRange();
-				var obj = sel;
+                }
+                else if(win.document.selection){
+                    var sel = win.document.selection.createRange();
+                    var obj = sel;
 
-				if(sel.parentElement)
-					obj = sel.parentElement();
-				else 
-					obj = sel.item(0);
+                    if(sel.parentElement)
+                        obj = sel.parentElement();
+                    else
+                        obj = sel.item(0);
 
-				text = sel.text || sel;
+                    text = sel.text || sel;
 
-				if(text.toString)
-					text = text.toString();
-			}
-			else 
-				throw 'Error';
+                    if(text.toString)
+                        text = text.toString();
+                }
+                else
+                    throw 'Error';
 
-			// webkit
-			if(obj.nodeName==='#text')
-				obj = obj.parentNode;
+                // webkit
+                if(obj.nodeName==='#text')
+                    obj = obj.parentNode;
 
-			// if the selected object has no tagName then return false.
-			if(typeof obj.tagName === 'undefined')
-				return false;
+                // if the selected object has no tagName then return false.
+                if(typeof obj.tagName === 'undefined')
+                    return false;
 
-			return {'obj':$R(obj),'text':text};
-		}
-	}
-};
+                return {
+                    'obj':$(obj),
+                    'text':text
+                };
+            }
+        }
+    };
 
-// jquery ($R) plugins
+    return RDR;
+}
+
+
+
+//clone object function taken from http://my.opera.com/GreyWyvern/blog/show.dml/1725165
+
+
+//loadScript copied from http://www.logiclabz.com/javascript/dynamically-loading-javascript-file-with-callback-event-handlers.aspx
+function loadScript(sScriptSrc,callbackfunction) {
+    var oHead = document.getElementsByTagName('head')[0];
+    if(oHead) {
+        var oScript = document.createElement('script');
+
+        oScript.setAttribute('src',sScriptSrc);
+        oScript.setAttribute('type','text/javascript');
+
+        var loadFunction = function() {
+            if (this.readyState == 'complete' || this.readyState == 'loaded') {
+                callbackfunction();
+            }
+        };
+        oScript.onload = callbackfunction;
+        oScript.onreadystatechange = loadFunction;
+        oHead.appendChild(oScript);
+    }
+}
+
+// jquery plugins to be calld above with $R on the getjQuery callback
 
 /* jquery json v2.2 */
 /* http://code.google.com/p/jquery-json/ */
-(function($R){$R.toJSON=function(o)
-{if(typeof(JSON)=='object'&&JSON.stringify)
-return JSON.stringify(o);var type=typeof(o);if(o===null)
-return"null";if(type=="undefined")
-return undefined;if(type=="number"||type=="boolean")
-return o+"";if(type=="string")
-return $R.quoteString(o);if(type=='object')
-{if(typeof o.toJSON=="function")
-return $R.toJSON(o.toJSON());if(o.constructor===Date)
-{var month=o.getUTCMonth()+1;if(month<10)month='0'+month;var day=o.getUTCDate();if(day<10)day='0'+day;var year=o.getUTCFullYear();var hours=o.getUTCHours();if(hours<10)hours='0'+hours;var minutes=o.getUTCMinutes();if(minutes<10)minutes='0'+minutes;var seconds=o.getUTCSeconds();if(seconds<10)seconds='0'+seconds;var milli=o.getUTCMilliseconds();if(milli<100)milli='0'+milli;if(milli<10)milli='0'+milli;return'"'+year+'-'+month+'-'+day+'T'+
-hours+':'+minutes+':'+seconds+'.'+milli+'Z"';}
-if(o.constructor===Array)
-{var ret=[];for(var i=0;i<o.length;i++)
-ret.push($R.toJSON(o[i])||"null");return"["+ret.join(",")+"]";}
-var pairs=[];for(var k in o){var name;var type=typeof k;if(type=="number")
-name='"'+k+'"';else if(type=="string")
-name=$R.quoteString(k);else
-continue;if(typeof o[k]=="function")
-continue;var val=$R.toJSON(o[k]);pairs.push(name+":"+val);}
-return"{"+pairs.join(", ")+"}";}};$R.evalJSON=function(src)
-{if(typeof(JSON)=='object'&&JSON.parse)
-return JSON.parse(src);return eval("("+src+")");};$R.secureEvalJSON=function(src)
-{if(typeof(JSON)=='object'&&JSON.parse)
-return JSON.parse(src);var filtered=src;filtered=filtered.replace(/\\["\\\/bfnrtu]/g,'@');filtered=filtered.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']');filtered=filtered.replace(/(?:^|:|,)(?:\s*\[)+/g,'');if(/^[\],:{}\s]*$R/.test(filtered))
-return eval("("+src+")");else
-throw new SyntaxError("Error parsing JSON, source is not valid.");};$R.quoteString=function(string)
-{if(string.match(_escapeable))
-{return'"'+string.replace(_escapeable,function(a)
-{var c=_meta[a];if(typeof c==='string')return c;c=a.charCodeAt();return'\\u00'+Math.floor(c/16).toString(16)+(c%16).toString(16);})+'"';}
-return'"'+string+'"';};var _escapeable=/["\\\x00-\x1f\x7f-\x9f]/g;var _meta={'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','"':'\\"','\\':'\\\\'};})(jQuery);
+function jqueryJSON($){
+    $.toJSON=function(o)
+
+    {
+        if(typeof(JSON)=='object'&&JSON.stringify)
+            return JSON.stringify(o);
+        var type=typeof(o);
+        if(o===null)
+            return"null";
+        if(type=="undefined")
+            return undefined;
+        if(type=="number"||type=="boolean")
+            return o+"";
+        if(type=="string")
+            return $.quoteString(o);
+        if(type=='object')
+
+        {
+            if(typeof o.toJSON=="function")
+                return $.toJSON(o.toJSON());
+            if(o.constructor===Date)
+
+            {
+                var month=o.getUTCMonth()+1;
+                if(month<10)month='0'+month;
+                var day=o.getUTCDate();
+                if(day<10)day='0'+day;
+                var year=o.getUTCFullYear();
+                var hours=o.getUTCHours();
+                if(hours<10)hours='0'+hours;
+                var minutes=o.getUTCMinutes();
+                if(minutes<10)minutes='0'+minutes;
+                var seconds=o.getUTCSeconds();
+                if(seconds<10)seconds='0'+seconds;
+                var milli=o.getUTCMilliseconds();
+                if(milli<100)milli='0'+milli;
+                if(milli<10)milli='0'+milli;
+                return'"'+year+'-'+month+'-'+day+'T'+
+                hours+':'+minutes+':'+seconds+'.'+milli+'Z"';
+            }
+            if(o.constructor===Array)
+            {
+                var ret=[];
+                for(var i=0;i<o.length;i++)
+                    ret.push($.toJSON(o[i])||"null");
+                return"["+ret.join(",")+"]";
+            }
+            var pairs=[];
+            for(var k in o){
+                var name;
+                var type=typeof k;
+                if(type=="number")
+                    name='"'+k+'"';
+                else if(type=="string")
+                    name=$.quoteString(k);else
+                    continue;
+                if(typeof o[k]=="function")
+                    continue;
+                var val=$.toJSON(o[k]);
+                pairs.push(name+":"+val);
+            }
+            return"{"+pairs.join(", ")+"}";
+        }
+    };
+
+    $.evalJSON=function(src)
+
+    {
+        if(typeof(JSON)=='object'&&JSON.parse)
+            return JSON.parse(src);
+        return eval("("+src+")");
+    };
+
+    $.secureEvalJSON=function(src)
+
+    {
+        if(typeof(JSON)=='object'&&JSON.parse)
+            return JSON.parse(src);
+        var filtered=src;
+        filtered=filtered.replace(/\\["\\\/bfnrtu]/g,'@');
+        filtered=filtered.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']');
+        filtered=filtered.replace(/(?:^|:|,)(?:\s*\[)+/g,'');
+        if(/^[\],:{}\s]*$/.test(filtered))
+            return eval("("+src+")");else
+            throw new SyntaxError("Error parsing JSON, source is not valid.");
+    };
+
+    $.quoteString=function(string)
+
+    {
+        if(string.match(_escapeable))
+
+        {
+            return'"'+string.replace(_escapeable,function(a)
+
+            {
+                    var c=_meta[a];
+                    if(typeof c==='string')return c;
+                    c=a.charCodeAt();
+                    return'\\u00'+Math.floor(c/16).toString(16)+(c%16).toString(16);
+                })+'"';
+        }
+        return'"'+string+'"';
+    };
+
+    var _escapeable=/["\\\x00-\x1f\x7f-\x9f]/g;
+    var _meta={
+        '\b':'\\b',
+        '\t':'\\t',
+        '\n':'\\n',
+        '\f':'\\f',
+        '\r':'\\r',
+        '"':'\\"',
+        '\\':'\\\\'
+    };
+}
 
 
-// init the drag selection tracker
-$R('body').bind('mouseup.rdr', RDR.actions.startSelect );
+// first, check if $ is jQuery, and if it is version 1.4.4.
+if( $().jquery ===  jQueryVersion) {
+    //
+    //$R = $.RBclone();// just make a copy of the current $ object
 
-RDR.actions.hashNodes();
+    //back to using this for now - figre out later how to clone properly..
+    $R = $;
+
+    //call $R dependent scripts
+    $RDependentFunctions($R);
+
+} else {
+// $ isn't jQuery 1.4.4...could be a different version, or a diff framework
+
+//none of this is working right now..
+//TODO: work out solution for making our own verion of jQuery
+/*
+    // Copy the client's jQuery
+    client$ = $.RBclone();
+
+    //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
+    loadScript("https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js", function(){
+        //callback
+
+        $R = jQuery.RBclone();
+        // set global $ back to the 1.3.2
+        $ = client$.RBclone();
+
+        //call $R dependent scripts
+        $RDependentFunctions($R);
+
+    });
+
+*/
+}
+
+function $RDependentFunctions($R){
+    //called after jQuery is either verified, or loaded
+
+    //init the jquery-json plugin
+    jqueryJSON($R);
+    //initiate our RDR object
+    RDR = readrBoard($R);
+
+    //run init functions
+    RDR.actions.init();
+
+    //
+    //testing:
+    var a = $R.evalJSON('[{"test":2}]');
+    console.log(a)
+
+}
