@@ -871,45 +871,31 @@ function jqueryJSON($){
     };
 }
 
-
-// first, check if $ is jQuery, and if it is version 1.4.4.
-if( $().jquery ===  jQueryVersion) {
-    //
-    //$R = $.RBclone();// just make a copy of the current $ object
-
-    //back to using this for now - figre out later how to clone properly..
-    $R = $;
-
-    //call $R dependent scripts
-    $RDependentFunctions($R);
-
-} else {
-// $ isn't jQuery 1.4.4...could be a different version, or a diff framework
-
-//none of this is working right now..
-//TODO: work out solution for making our own verion of jQuery
-/*
-    // Copy the client's jQuery
-    client$ = $.RBclone();
-
-    //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
-    loadScript("https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js", function(){
+//load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
+loadScript("https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js", function(){
+    //callback
+    
+    //load jQuery UI while the $ and jQuery still refers to our new version
+    loadScript("https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js", function(){
         //callback
+        
+        //test that $.ui versioning is working correctly
+        console.log("testing jQuery UI versioning...")
+        console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
+        var $R = $.noConflict(true);
+        
+        console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
+        console.log("of course $R.ui.version should show our version - version = " + $R.ui.version)
 
-        $R = jQuery.RBclone();
-        // set global $ back to the 1.3.2
-        $ = client$.RBclone();
-
-        //call $R dependent scripts
-        $RDependentFunctions($R);
+        //call scripts that depend on our jQuery version to be loaded
+        $RFunctions($R);
 
     });
+});
 
-*/
-}
 
-function $RDependentFunctions($R){
-    //called after jQuery is either verified, or loaded
+function $RFunctions($R){
+    //called after our version of jQuery is loaded
 
     //init the jquery-json plugin
     jqueryJSON($R);
@@ -919,9 +905,18 @@ function $RDependentFunctions($R){
     //run init functions
     RDR.actions.init();
 
-    //
     //testing:
     var a = $R.evalJSON('[{"test":2}]');
     console.log(a)
+
+
+    //show that objects really are unique
+    console.log("test that our jQuery copy is unique...")
+    $.client = "client";
+    $R.rb = "rb";
+    console.log($.client)   //"client"
+    console.log($R.client)  //undefined
+    console.log($R.rb)      //"rb"
+    console.log($.rb)       //undefined
 
 }
