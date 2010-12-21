@@ -71,6 +71,7 @@ function readrBoard($R){
                             $(this).removeClass('rdr_rewritable');
                         }
                     });
+
                 }
                 // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
                 var coords = RDR.util.stayInWindow(x,y,width,300);
@@ -386,10 +387,17 @@ function readrBoard($R){
                 this.initGroupData(groupShortName);
                 //this.initUserData(userShortName);
 
-                // init the drag selection tracker
-                console.log(this);
-                console.log('-------');
-                $('body').bind('mouseup.rdr', this.startSelect );
+                //$('body').bind('mouseup.rdr', this.startSelect );
+                //change to document instead of body - click events weren't getting picked up in the margin
+                $(document).bind('mouseup.rdr', this.startSelect );
+
+                //add escape keypress event to document to close all rindows
+                $(document).keyup(function(event) {
+                    if (event.keyCode == '27') { //esc
+                        RDR.rindow.closeAll();
+                        RDR.actionbar.close();
+                    }
+                });
 
             },
             hashNodes : function() {
@@ -496,6 +504,7 @@ function readrBoard($R){
                     rindow.find('button').click( function() {
                         RDR.actions.rateSend( rindow );
                     });
+
                 });
             },
             rateSend : function(rindow) {
@@ -872,11 +881,13 @@ function jqueryJSON($){
 }
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
-loadScript("https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js", function(){
+//for deployment we'll probably want to use the google cdn: https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js
+loadScript("js/jquery-1.4.4.min.js", function(){
     //callback
     
     //load jQuery UI while the $ and jQuery still refers to our new version
-    loadScript("https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js", function(){
+    //for deployment we'll probably want to use the google cdn: https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js
+    loadScript("js/jquery-ui-1.8.6.custom.min.js", function(){ 
         //callback
         
         //test that $.ui versioning is working correctly
