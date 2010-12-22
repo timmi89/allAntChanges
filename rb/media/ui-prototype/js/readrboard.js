@@ -31,13 +31,20 @@ RDR = {
 			{ name: "Great!", tid: 0 },
 			{ name: "Hate", tid: 1 },
 			{ name: "Interesting", tid: 2 },
-			{ name: "Boooooring", tid: 3 }
+			{ name: "Boooooring", tid: 3 },
+			{ name: "I don't get it", tid: 10 },
+			{ name: "What the...?!", tid: 11 },
+			{ name: "This is really cool", tid: 12 },
+			{ name: "omfg", tid: 13 }
 		],
 		hashable_nodes : "#module-article p"
 	},
 	rindow : {
 		// content comes later.  this is just to identify or draw the container.
 		draw: function() {
+			// for now, any window closes all tooltips
+			RDR.tooltip.closeAll();
+			
 			var width = arguments[0].width ? arguments[0].width:400;
 			var x = arguments[0].x ? arguments[0].x:100;
 			var y = arguments[0].y ? arguments[0].y:100;
@@ -67,25 +74,110 @@ RDR = {
 	},
 	actionbar : {
 		draw: function() {
+			/*IMAGES
+			
+			$R('img').live( 'hover', function() {
+				// check that the image is large enough?
+				// TODO keep the actionbar in the window
+				// TODO don't search
+				// TODO image needs to show in rate window
+				// TODO all image functions need CURRENT URL (incl. hash) + IMG SRC URL for rating, SHARING, etc.
+				// TODO show activity on an image, without breaking page nor covering up image.
+					// create a container for the image, give it same styles but more space?  
+					// like, inline or float, but with RDR stuff
+			    var this_img = $R(this);
+			    var x = this_img.offset().left + this_img.width() + 25;
+			    var y = this_img.offset().top + this_img.height() + 25;
+			    RDR.actionbar.draw({x:x, y:y});
+
+			    $('div.rdr.rdr_actionbar').css('overflow','hidden');
+			    $('div.rdr.rdr_actionbar').width(21);
+			    $('div.rdr.rdr_actionbar').hover( function() {
+			        $(this).animate( {width:174},100 );
+			    },
+			    function() { $(this).remove(); }
+			    );
+
+			}, function() {
+			//    $('div.rdr.rdr_actionbar').remove();
+			});
+			
+			*/
+			
 			if ( $R('div.rdr.rdr_actionbar').length == 0 ) {
 				var x = arguments[0].x ? (arguments[0].x-34) : 100;
 				var y = arguments[0].y ? (arguments[0].y-45) : 100;
 
 				var coords = RDR.util.stayInWindow(x,y,200,30);
 				var new_actionbar = $R('<div class="rdr rdr_actionbar" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.aboutReadrBoard();" class="rdr_about">Rate</a>' +
+					'<a href="javascript:void(0);" onclick="RDR.actions.aboutReadrBoard();" class="rdr_icon_about">What\' This?</a>' +
 					'<span class="rdr_divider">&nbsp;</span>' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.rateStart();" class="rdr_rate">Rate</a>' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.searchStart();" class="rdr_search">Search</a>' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.bookmarkStart();" class="rdr_bookmark">Bookmark</a>' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.commentStart();" class="rdr_comment">Comment</a>' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.shareStart();" class="rdr_share">Share</a>' +
+					'<a href="javascript:void(0);" onclick="RDR.actions.rateStart();" class="rdr_icon_rate">Rate This</a>' +
+					'<a href="javascript:void(0);" onclick="RDR.actions.searchStart();" class="rdr_icon_search">Search For This</a>' +
+					'<a href="javascript:void(0);" onclick="RDR.actions.bookmarkStart();" class="rdr_icon_bookmark">Bookmark This</a>' +
+					'<a href="javascript:void(0);" onclick="RDR.actions.commentStart();" class="rdr_icon_comment">Comment On This</a>' +
+					'<a href="javascript:void(0);" onclick="RDR.actions.shareStart();" class="rdr_icon_share">Share This</a>' +
 				'</div>');
+
 				$R('body').append( new_actionbar );
+				
+				$R('div.rdr_actionbar a').hover( 
+					function() {
+						var this_link = $R(this);
+						var tooltip_args = {
+							name: this_link.attr('class'),
+							message: this_link.text(),
+							offset_x: -35,
+							offset_y: -35,
+							obj: this_link
+						};
+						RDR.tooltip.draw( tooltip_args );
+					},
+					function () {
+						var this_link = $R(this);
+						$R( '#rdr_tooltip_' + this_link.attr('class') ).remove();
+					}
+				);
 			}
 		},
 		close: function() {
 			$R('div.rdr.rdr_actionbar').remove();
+		}
+	},
+	tooltip : {
+		draw: function() {
+			// expected arguments:
+			// message (HTML)
+			// obj (to position tooltip next to.  should be a jQ obj).  if absent, position with the mouse.
+			// offset_x, offset_y (optional): how many pixels to shit the tooltip from the passed-in object
+			var new_tooltip = $R('<div class="rdr rdr_tooltip" id="rdr_tooltip_' + arguments[0].name + '">' +
+				'<div class="rdr rdr_tooltip-content"> ' + arguments[0].message + '</div>'+
+				'<div class="rdr rdr_tooltip-arrow-border"></div>'+
+				'<div class="rdr rdr_tooltip-arrow"></div>'+
+			'</div>');
+			
+			if (arguments[0].obj) {
+				var coords = arguments[0].obj.offset();
+				var offset_x = (arguments[0].offset_x) ? arguments[0].offset_x:0;
+				var offset_y = (arguments[0].offset_y) ? arguments[0].offset_y:0;
+				var x = coords.left + parseInt( offset_x );
+				var y = coords.top + parseInt( offset_y );
+			} else {
+				// mouse, if we want it.
+			}
+			
+			if ( x && y ) {
+				// show the tooltip
+				$R('body').append( new_tooltip );
+				new_tooltip.animate( {opacity:1},333);
+				
+				// now that it's in the page, position it (in part based on its calculated height);
+				new_tooltip.css('left', x + 'px');
+				new_tooltip.css('top', (y - new_tooltip.height()) + 'px');
+			}
+		},
+		closeAll: function() {
+			$R( 'div.rdr_tooltip' ).remove();
 		}
 	},
 	user : {
