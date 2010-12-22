@@ -2,66 +2,13 @@ var RDR = RDR ? RDR : {};
 var $R = $R ? $R : $;  // make our own jquery object.  plugins will be at bottom of this page.
 
 // none of this obj's properties are definite.  just jotting down a few ideas.
-
-
-
 RDR = {
-    settings: (function(){
-
-        var defaults = {
-            groupPrefs: {
-                // defined by server after initial init call
-                blessedTags : [
-                {
-                    name: "Great!",
-                    tid: 0
-                },
-                {
-                    name: "Hate",
-                    tid: 1
-                },
-                {
-                    name: "Kewl",
-                    tid: 2
-                },
-                {
-                    name: "No Homo",
-                    tid: 3
-                }
-                ]
-            },
-            user:{
-                shortname:	"JoeReadrOnFB",
-                firstname:	"Joe",
-                lastname:	"Readr",
-                status:		"full"
-            //auth_token:       "1234567890"
-            }
-        };
-
-        var options = {
-            user:{
-                auth_token:  "1234567890"
-            }
-        };
-
-
-        // get the options
-        $R.ajax({
-            url: "/get-group-prefs/"+groupID+"/",
-            contentType: "application/json",
-            dataType: "jsonp",
-            success: function(msg) {
-
-            },
-            complete: function(msg) {
-                console.log('done');
-            }
-        });
-
-        return options ? $.extend(true, defaults, options) : defaults;
-
-    }()),
+    data : {
+        nodes : [],
+        rbgroup : {
+            public_id : "dc" //dailycandy
+        }
+    },
     errors : {
         tooltip: {
             rating:"",
@@ -71,38 +18,61 @@ RDR = {
     why : {},
     styles : {
     /*
-    page: 	"<style type='text/css'>"+
-                    "body 		{background:#fff;}" +
-                    "body p		{}" +
-                    "</style>"
-         */
+		page: 	"<style type='text/css'>"+
+				"body 		{background:#fff;}" +
+				"body p		{}" +
+				"</style>"
+		*/
     },
-    groupPrefs : settings.groupPrefs,
+    group_prefs : {
+        // defined by server after initial init call
+        blessed_tags : [
+        /*
+        {
+            name: "Great!",
+            tid: 0
+        },
+        {
+            name: "Hate",
+            tid: 1
+        },
+        {
+            name: "Kewl",
+            tid: 2
+        },
+        {
+            name: "No Homo",
+            tid: 3
+        }
+        */
+        ],
+        hashable_nodes : "#module-article p"
+    },
     rindow : {
         // content comes later.  this is just to identify or draw the container.
         draw: function() {
-            var width = arguments[0].width ? arguments[0].width:400; // eric: question --> instead of <arguments[0].width:400> , just <400> ?
+            var width = arguments[0].width ? arguments[0].width:400;
             var x = arguments[0].x ? arguments[0].x:100;
             var y = arguments[0].y ? arguments[0].y:100;
 
-            new_rindow = $R('div.rdr.window.rewritable'); // jquery obj of the rewritable window
+            new_rindow = $R('div.rdr.rdr_window.rdr.rdr_rewritable'); // jquery obj of the rewritable window
             if ( new_rindow.length == 0 ) { // oh, there's no rewritable window available, so make one
-                new_rindow = $R('<div class="rdr window rewritable" style="max-width:' + width + 'px;"></div>');
+                new_rindow = $R('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + width + 'px;"></div>');
                 $R('body').append( new_rindow );
             }
 			
             if ( new_rindow.find('h1').length == 0 ) {
                 new_rindow.html('');
-                new_rindow.append( '<div class="rdr-close">x</div><h1></h1><div class="rdr contentSpace"></div>' );
-                new_rindow.find('div.rdr-close').click( function() {
-                    $R(this).parents('div.rdr.window').remove();
+                new_rindow.append( '<div class="rdr_close">x</div><h1></h1><div class="rdr rdr_contentSpace"></div>' );
+                new_rindow.find('div.rdr_close').click( function() {
+                    $R(this).parents('div.rdr.rdr_window').remove();
                 } );
                 new_rindow.draggable({
                     handle:'h1',
                     containment:'document',
                     stack:'.RDR.window',
                     start:function() {
-                        $R(this).removeClass('rewritable');
+                        $R(this).removeClass('rdr_rewritable');
                     }
                 });
             }
@@ -114,36 +84,34 @@ RDR = {
             return new_rindow;
         },
         closeAll: function() {
-            $R('div.rdr.window').remove();
+            $R('div.rdr.rdr_window').remove();
         }
     },
     tooltip : {
         draw: function() {
-            if ( $R('div.rdr.tooltip').length == 0 ) {
-                var x = arguments[0].x ? arguments[0].x : 100;
+            if ( $R('div.rdr.rdr_tooltip').length == 0 ) {
+                var x = arguments[0].x ? (arguments[0].x-34) : 100;
                 var y = arguments[0].y ? (arguments[0].y-45) : 100;
 
                 var coords = RDR.util.stayInWindow(x,y,200,30);
-                var new_tooltip = $R('<div class="rdr tooltip" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
-                    '<a href="javascript:void(0);" onclick="RDR.actions.rateStart();">Rate</a>' +
+                var new_tooltip = $R('<div class="rdr rdr_tooltip" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
+                    '<a href="javascript:void(0);" onclick="RDR.actions.aboutReadrBoard();" class="rdr_about">Rate</a>' +
+                    '<a href="javascript:void(0);" onclick="RDR.actions.rateStart();" class="rdr_rate">Rate</a>' +
                     '</div>');
                 $R('body').append( new_tooltip );
-
-                //temp testing:
-                new_tooltip.append( $('<div/>')
-                    .css({
-                        height:200,
-                        background:'white'
-                    })
-                    .html("user : " +settings.user.firstname +"<br /> "+ "auth_token : " + settings.user.auth_token));
-
             }
         },
         close: function() {
-            $R('div.rdr.tooltip').remove();
+            $R('div.rdr.rdr_tooltip').remove();
         }
     },
-    user : settings.user,
+    user : {
+        shortname:		"JoeReadrOnFB",
+        firstname:		"Joe",
+        lastname:		"Readr",
+        status:			"full",
+        auth_token: 	"1234567890"
+    },
     util : {
         stayInWindow : function(x,y,w,h) {
             var coords = {};
@@ -292,28 +260,139 @@ RDR = {
                 }
                 return str;
             }
+        },
+        cleanPara : function(para) {
+            // common function for cleaning the paragraph.  right now, it's removing spaces, tabs, newlines, and then double spaces
+            if(para != "") {
+                return para.replace(/[\n\r\t]+/gi,' ').replace().replace(/\s{2,}/g,' ');
+            }
         }
     },
     actions : {
+        aboutReadrBoard : function() {
+            return true;
+        },
+        hashNodes : function() {
+            console.log('hashing nodes');
+            // snag all the nodes that we can set icons next to and send'em next
+            // TODO: restrict this to the viewport + a few, rather than all
+            var content_nodes = $R( RDR.group_prefs.hashable_nodes ).not('rdr-hashed');
+
+            content_nodes.each( function() {
+
+                // get the node's text and smash case
+                // TODO: <br> tags and block-level tags can screw up words.  ex:
+                // hello<br>how are you?   here becomes
+                // hellohow are you?    <-- no space where the <br> was.  bad.
+                var node_text = $R(this).html().replace(/< *br *\/?>/gi, '\n');
+                node_text = $R( "<div>" + node_text + "</div>" ).text().toLowerCase();
+
+                // if there's any content...
+                if ( node_text && node_text!="undefined" && node_text.length > 5 ) {
+                    // clean whitespace
+                    node_text = RDR.util.cleanPara ( node_text );
+				
+                    // hash the text
+                    var node_hash = RDR.util.md5.hex_md5( node_text );
+				
+                    // add an object with the text and hash to the nodes dictionary
+                    if ( !RDR.data.nodes[node_hash] ) RDR.data.nodes[node_hash] = node_text;
+				
+                    // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
+                    // this makes it easy to find on the page later
+                    $R(this).addClass( 'rdr-' + node_hash ).addClass('rdr-hashed');
+                }
+            });
+			
+            RDR.actions.sendHashes();
+        },
+        sendHashes : function() {
+            console.log('sending nodes');
+            // TODO: dont' send all hashes
+			
+            var md5_list = [];
+            for (var i in RDR.data.nodes ) {
+                md5_list.push( i );
+            }
+
+            // send the data!
+            $R.ajax({
+                url: "/api/nodes",
+                type: "get",
+                contentType: "application/json",
+                dataType: "jsonp",
+                data: {
+                    groupID : 1,
+                    pageID : 1,
+                    hashes : md5_list
+                },
+                success: function(data) {
+                    console.log('nodes call success')
+                    console.dir(data);
+                }
+            });
+
+            // request the RBGroup Data
+            console.log("requesting rbgroup data")
+            $R.ajax({
+                url: "/api/rbgroup",
+                type: "get",
+                contentType: "application/json",
+                dataType: "jsonp",
+                data: {
+                    public_id : RDR.data.rbgroup.public_id
+                },
+                success: function(data, textStatus, XHR) {
+
+                    console.log('rbgroup call success')
+                    console.dir(data);
+                    console.log(XHR)
+                        
+                    $.each(data, function(index, value){
+                        var rb_group = value;
+                        //Only expects back one user (index==0)
+                        console.log('current user is ' + rb_group.name)
+                        console.log(rb_group.name +' requests that RB not touch anything with the class ' + rb_group.selector_blacklist)
+                    });
+
+                    //expects back
+                    /*
+                        name = models.CharField(max_length=250)
+                        public_id = models.CharField(max_length=25)
+                        selector_whitelist = models.TextField(blank=True)
+                        selector_blacklist = models.TextField(blank=True)
+                        tag_whitelist = models.TextField(blank=True)
+                        tag_blacklist = models.TextField(blank=True)
+                        css_url = models.URLField() #do we need 'blank=True, null=True' here right?
+                    */
+                },
+                error: function(XHR){
+                    console.warn(XHR)
+                }
+            });
+
+
+
+        },
         rateStart : function() {
             // draw the window over the tooltip
-            var tooltipOffsets = $R('div.rdr.tooltip').offset();
-            $R('div.rdr.tooltip').removeClass('tooltip').addClass('window').addClass('rewritable');
+            var tooltipOffsets = $R('div.rdr.rdr_tooltip').offset();
+            $R('div.rdr.rdr_tooltip').removeClass('rdr_tooltip').addClass('rdr_window').addClass('rdr_rewritable');
             var rindow = RDR.rindow.draw({
                 x:tooltipOffsets.left,
                 y:tooltipOffsets.top
             });
 			
             // write content to the window
-            var rateStartContent = '<em class="rdr-selected-text"></em><ul class="rdr-tags preselected">';
-            for (var i=0,j=RDR.groupPrefs.blessedTags.length; i<j; i++) {
-                rateStartContent += '<li tid="'+RDR.groupPrefs.blessedTags[i].tid+'"><a href="javascript:void(0);">'+RDR.groupPrefs.blessedTags[i].name+'</a></li>';
+            var rateStartContent = '<em class="rdr_selected-text"></em><ul class="rdr_tags rdr_preselected">';
+            for (var i=0,j=RDR.group_prefs.blessed_tags.length; i<j; i++) {
+                rateStartContent += '<li tid="'+RDR.group_prefs.blessed_tags[i].tid+'"><a href="javascript:void(0);">'+RDR.group_prefs.blessed_tags[i].name+'</a></li>';
             }
             rateStartContent += '</ul>' +
-            '<div class="rdr-instruct">Add your own ratings, separated by comma:</div>' +
+            '<div class="rdr_instruct">Add your own ratings, separated by comma:</div>' +
             '<input type="text" name="unknown-tags" />' +
             '<button>Rate</button>' +
-            '<div class="rdr-help">e.g., Love this, autumn, insightful</div>';
+            '<div class="rdr_help">e.g., Love this, autumn, insightful</div>';
 
             // add content and animate the tooltip to accommodate it
             rindow.animate({
@@ -321,18 +400,18 @@ RDR = {
                 minHeight:'125px'
             }, 300, function() {
 
-                rindow.find('div.contentSpace').append( rateStartContent );
+                rindow.find('div.rdr_contentSpace').append( rateStartContent );
                 rindow.find('h1').text('Rate This');
-                rindow.find('em.rdr-selected-text').html( RDR.why.content );
+                rindow.find('em.rdr_selected-text').html( RDR.why.content );
 				
                 // enable the "click on a blessed tag to choose it" functionality.  just css class based.
-                rindow.find('ul.preselected li').toggle(
+                rindow.find('ul.rdr_preselected li').toggle(
                     function() {
-                        $R(this).addClass('selected');
-                        $R(this).parents('div.rdr.window').removeClass('rewritable');
+                        $R(this).addClass('rdr_selected');
+                        $R(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
                     },
                     function() {
-                        $R(this).removeClass('selected');
+                        $R(this).removeClass('rdr_selected');
                     }
                     );
 				
@@ -348,7 +427,7 @@ RDR = {
 			
             // get the blessed tags the user chose, by checking for the css class
             var known_tags = [];
-            rindow.find('ul.preselected li.selected').each( function() {
+            rindow.find('ul.rdr_preselected li.rdr_selected').each( function() {
                 known_tags.push( $R(this).attr('tid') );
             });
 			
@@ -359,7 +438,7 @@ RDR = {
             $R.ajax({
                 url: "/json-send/",
                 contentType: "application/json",
-                dataType: "json",
+                dataType: "jsonp",
                 data: {
                     unknown_tags:unknown_tags,
                     known_tags:known_tags,
@@ -369,10 +448,7 @@ RDR = {
                     content_type:"text"
                 },
                 success: function(msg) {
-					
-                },
-                complete: function(msg) {
-                    console.log('done');
+                    console.log('success');
                 }
             });
         },
@@ -384,7 +460,7 @@ RDR = {
             if ( !mouse_target.hasClass('rdr') && mouse_target.parents('div.rdr').length == 0 ) {
 				
                 // closes undragged windows
-                $R('div.rdr.window.rewritable, div.rdr.tooltip').remove();
+                $R('div.rdr.rdr_window.rdr.rdr_rewritable, div.rdr.rdr_tooltip').remove();
 
                 // see what the user selected
                 // TODO: need separate image function, which should then prevent event bubbling into this
@@ -421,8 +497,8 @@ RDR = {
                     if ( RDR.why.blockParent.text && RDR.why.blockParent.text.length > 0) {
 
                         // now, strip newlines and tabs -- and then the doublespaces that result
-                        RDR.why.blockParentTextClean = RDR.why.blockParent.text.replace(/[\n\r\t]+/gi,' ').replace(/\s{2,}/g,' ');
-                        RDR.why.selectionTextClean = RDR.why.content.replace(/[\n\r\t]+/gi,' ').replace(/\s{2,}/g,' ');
+                        RDR.why.blockParentTextClean = RDR.util.cleanPara ( RDR.why.blockParent.text );
+                        RDR.why.selectionTextClean = RDR.util.cleanPara ( RDR.why.content );
 
                         if ( RDR.why.blockParentTextClean.indexOf( RDR.why.selectionTextClean ) != -1 ) {
                             // this can be commented on if it's long enough and has at least one space (two words or more)
@@ -449,7 +525,7 @@ RDR = {
 			http://perplexed.co.uk/1020_text_selector_jquery_plugin.htm
 			we can remove all of his comments at runtime.  this seems to run fine for me in Firefox.
 			TODO: test in IE!
-             */
+			*/
 			
             var win = win ? win : window;
 
@@ -529,7 +605,7 @@ RDR = {
 						//Selected suceeding element text
 						obj = sel.focusNode.parentNode;
 					}
-                     */
+					*/
                 }
                 else if(sel.isCollapsed) {
                     obj = obj ? (obj.parentNode ? obj.parentNode:obj) : "";
@@ -691,6 +767,7 @@ RDR = {
 
 })($R);
 
-
 // init the drag selection tracker
 $R('body').bind('mouseup.rdr', RDR.actions.startSelect );
+
+RDR.actions.hashNodes();
