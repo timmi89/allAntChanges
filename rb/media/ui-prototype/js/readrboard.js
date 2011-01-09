@@ -5,6 +5,7 @@ RDR, //our global RDR object
 $R = {}, //init var: our clone of jQuery
 client$ = {}; //init var: clients copy of jQuery
 
+
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
 //This function gets called above in
 function readrBoard($R){
@@ -42,248 +43,24 @@ function readrBoard($R){
 				"body p		{}" +
 				"</style>"
 		*/
-<<<<<<< HEAD
-	},
-	group_prefs : {
-		// defined by server after initial init call
-		blessed_tags : [
-			{ name: "Great!", tid: 0 },
-			{ name: "Hate", tid: 1 },
-			{ name: "Interesting", tid: 2 },
-			{ name: "Boooooring", tid: 3 },
-			{ name: "I don't get it", tid: 10 },
-			{ name: "What the...?!", tid: 11 },
-			{ name: "This is really cool", tid: 12 },
-			{ name: "omfg", tid: 13 }
-		],
-		hashable_nodes : "#module-article p"
-	},
-	rindow : {
-		// content comes later.  this is just to identify or draw the container.
-		draw: function() {
-			// for now, any window closes all tooltips
-			RDR.tooltip.closeAll();
-			
-			var width = arguments[0].width ? arguments[0].width:400;
-			var x = arguments[0].x ? arguments[0].x:100;
-			var y = arguments[0].y ? arguments[0].y:100;
-
-			new_rindow = $R('div.rdr.rdr_window.rdr.rdr_rewritable'); // jquery obj of the rewritable window
-			if ( new_rindow.length == 0 ) { // oh, there's no rewritable window available, so make one
-				new_rindow = $R('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + width + 'px;"></div>');
-				$R('body').append( new_rindow );
-			}
-			
-			if ( new_rindow.find('h1').length == 0 ) {
-				new_rindow.html('');
-				new_rindow.append( '<div class="rdr_close">x</div><h1></h1><div class="rdr rdr_contentSpace"></div>' );	
-				new_rindow.find('div.rdr_close').click( function() { $R(this).parents('div.rdr.rdr_window').remove(); } );
-				new_rindow.draggable({handle:'h1', containment:'document', stack:'.RDR.window', start:function() { $R(this).removeClass('rdr_rewritable'); }});
-			}
-			// TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-			var coords = RDR.util.stayInWindow(x,y,width,300);
-			new_rindow.css('left', coords.x + 'px');
-			new_rindow.css('top', coords.y + 'px');
-			RDR.actionbar.close();
-			return new_rindow;
 		},
-		closeAll: function() {
-			$R('div.rdr.rdr_window').remove();
-		}
-	},
-	actionbar : {
-		draw: function() {
-			/*IMAGES
+		rindow : {
+			// content comes later.  this is just to identify or draw the container.
+			draw: function() {
+				// for now, any window closes all tooltips
+				RDR.tooltip.closeAll();
 			
-			$R('img').live( 'hover', function() {
-				// check that the image is large enough?
-				// TODO keep the actionbar in the window
-				// TODO don't search
-				// TODO image needs to show in rate window
-				// TODO all image functions need CURRENT URL (incl. hash) + IMG SRC URL for rating, SHARING, etc.
-				// TODO show activity on an image, without breaking page nor covering up image.
-					// create a container for the image, give it same styles but more space?  
-					// like, inline or float, but with RDR stuff
-			    var this_img = $R(this);
-			    var x = this_img.offset().left + this_img.width() + 25;
-			    var y = this_img.offset().top + this_img.height() + 25;
-			    RDR.actionbar.draw({x:x, y:y});
+				var width = arguments[0].width ? arguments[0].width:400;
+				var x = arguments[0].x ? arguments[0].x:100;
+				var y = arguments[0].y ? arguments[0].y:100;
 
-			    $('div.rdr.rdr_actionbar').css('overflow','hidden');
-			    $('div.rdr.rdr_actionbar').width(21);
-			    $('div.rdr.rdr_actionbar').hover( function() {
-			        $(this).animate( {width:174},100 );
-			    },
-			    function() { $(this).remove(); }
-			    );
-
-			}, function() {
-			//    $('div.rdr.rdr_actionbar').remove();
-			});
+				new_rindow = $('div.rdr.rdr_window.rdr.rdr_rewritable'); // jquery obj of the rewritable window
+				if ( new_rindow.length == 0 ) { // oh, there's no rewritable window available, so make one
+					new_rindow = $('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + width + 'px;"></div>');
+					$('body').append( new_rindow );
+				}
 			
-			*/
-			
-			if ( $R('div.rdr.rdr_actionbar').length == 0 ) {
-				var x = arguments[0].x ? (arguments[0].x-34) : 100;
-				var y = arguments[0].y ? (arguments[0].y-45) : 100;
-
-				var coords = RDR.util.stayInWindow(x,y,200,30);
-				var new_actionbar = $R('<div class="rdr rdr_actionbar" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.aboutReadrBoard();" class="rdr_icon_about">What\' This?</a>' +
-					'<span class="rdr_divider">&nbsp;</span>' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.rateStart();" class="rdr_icon_rate">Rate This</a>' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.searchStart();" class="rdr_icon_search">Search For This</a>' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.bookmarkStart();" class="rdr_icon_bookmark">Bookmark This</a>' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.commentStart();" class="rdr_icon_comment">Comment On This</a>' +
-					'<a href="javascript:void(0);" onclick="RDR.actions.shareStart();" class="rdr_icon_share">Share This</a>' +
-				'</div>');
-
-				$R('body').append( new_actionbar );
-				
-				$R('div.rdr_actionbar a').hover( 
-					function() {
-						var this_link = $R(this);
-						var tooltip_args = {
-							name: this_link.attr('class'),
-							message: this_link.text(),
-							offset_x: -35,
-							offset_y: -35,
-							obj: this_link
-						};
-						RDR.tooltip.draw( tooltip_args );
-					},
-					function () {
-						var this_link = $R(this);
-						$R( '#rdr_tooltip_' + this_link.attr('class') ).remove();
-					}
-				);
-			}
-		},
-		close: function() {
-			$R('div.rdr.rdr_actionbar').remove();
-		}
-	},
-	tooltip : {
-		draw: function() {
-			// expected arguments:
-			// message (HTML)
-			// obj (to position tooltip next to.  should be a jQ obj).  if absent, position with the mouse.
-			// offset_x, offset_y (optional): how many pixels to shit the tooltip from the passed-in object
-			var new_tooltip = $R('<div class="rdr rdr_tooltip" id="rdr_tooltip_' + arguments[0].name + '">' +
-				'<div class="rdr rdr_tooltip-content"> ' + arguments[0].message + '</div>'+
-				'<div class="rdr rdr_tooltip-arrow-border"></div>'+
-				'<div class="rdr rdr_tooltip-arrow"></div>'+
-			'</div>');
-			
-			if (arguments[0].obj) {
-				var coords = arguments[0].obj.offset();
-				var offset_x = (arguments[0].offset_x) ? arguments[0].offset_x:0;
-				var offset_y = (arguments[0].offset_y) ? arguments[0].offset_y:0;
-				var x = coords.left + parseInt( offset_x );
-				var y = coords.top + parseInt( offset_y );
-			} else {
-				// mouse, if we want it.
-			}
-			
-			if ( x && y ) {
-				// show the tooltip
-				$R('body').append( new_tooltip );
-				new_tooltip.animate( {opacity:1},333);
-				
-				// now that it's in the page, position it (in part based on its calculated height);
-				new_tooltip.css('left', x + 'px');
-				new_tooltip.css('top', (y - new_tooltip.height()) + 'px');
-			}
-		},
-		closeAll: function() {
-			$R( 'div.rdr_tooltip' ).remove();
-		}
-	},
-	user : {
-		shortname:		"JoeReadrOnFB",
-		firstname:		"Joe",
-		lastname:		"Readr",
-		status:			"full",
-		auth_token: 	"1234567890"
-	},
-	util : {
-		stayInWindow : function(x,y,w,h) {
-			var coords = {};
-			var rWin = $R(window);
-			var winWidth = rWin.width();
-			var winHeight = rWin.height();
-			var winScroll = rWin.scrollTop();
-			if ( x > winWidth ) { x = winWidth - w; }
-			if ( y > winHeight + winScroll ) { y = winHeight + winScroll - h; }
-			if ( x < 10 ) x = 10;
-			if ( y - winScroll < 10 ) y = winScroll + 10;
-			coords.x = x;
-			coords.y = y;
-			return coords;
-		},
-		md5 : {
-			hexcase:0,
-			b64pad:"",
-			chrsz:8,
-			hex_md5 : function(s){return RDR.util.md5.binl2hex(RDR.util.md5.core_md5(RDR.util.md5.str2binl(s),s.length*RDR.util.md5.chrsz));},
-			core_md5 : function(x,len){x[len>>5]|=0x80<<((len)%32);x[(((len+64)>>>9)<<4)+14]=len;var a=1732584193;var b=-271733879;var c=-1732584194;var d=271733878;for(var i=0;i<x.length;i+=16){var olda=a;var oldb=b;var oldc=c;var oldd=d;a=RDR.util.md5.md5_ff(a,b,c,d,x[i+0],7,-680876936);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+1],12,-389564586);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+2],17,606105819);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+3],22,-1044525330);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+4],7,-176418897);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+5],12,1200080426);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+6],17,-1473231341);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+7],22,-45705983);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+8],7,1770035416);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+9],12,-1958414417);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+10],17,-42063);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+11],22,-1990404162);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+12],7,1804603682);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+13],12,-40341101);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+14],17,-1502002290);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+15],22,1236535329);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+1],5,-165796510);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+6],9,-1069501632);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+11],14,643717713);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+0],20,-373897302);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+5],5,-701558691);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+10],9,38016083);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+15],14,-660478335);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+4],20,-405537848);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+9],5,568446438);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+14],9,-1019803690);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+3],14,-187363961);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+8],20,1163531501);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+13],5,-1444681467);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+2],9,-51403784);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+7],14,1735328473);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+12],20,-1926607734);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+5],4,-378558);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+8],11,-2022574463);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+11],16,1839030562);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+14],23,-35309556);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+1],4,-1530992060);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+4],11,1272893353);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+7],16,-155497632);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+10],23,-1094730640);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+13],4,681279174);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+0],11,-358537222);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+3],16,-722521979);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+6],23,76029189);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+9],4,-640364487);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+12],11,-421815835);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+15],16,530742520);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+2],23,-995338651);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+0],6,-198630844);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+7],10,1126891415);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+14],15,-1416354905);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+5],21,-57434055);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+12],6,1700485571);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+3],10,-1894986606);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+10],15,-1051523);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+1],21,-2054922799);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+8],6,1873313359);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+15],10,-30611744);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+6],15,-1560198380);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+13],21,1309151649);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+4],6,-145523070);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+11],10,-1120210379);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+2],15,718787259);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+9],21,-343485551);a=RDR.util.md5.safe_add(a,olda);b=RDR.util.md5.safe_add(b,oldb);c=RDR.util.md5.safe_add(c,oldc);d=RDR.util.md5.safe_add(d,oldd);} return Array(a,b,c,d);},
-			md5_cmn : function(q,a,b,x,s,t){return RDR.util.md5.safe_add(RDR.util.md5.bit_rol(RDR.util.md5.safe_add(RDR.util.md5.safe_add(a,q),RDR.util.md5.safe_add(x,t)),s),b);},
-			md5_ff : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn((b&c)|((~b)&d),a,b,x,s,t);},
-			md5_gg : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn((b&d)|(c&(~d)),a,b,x,s,t);},
-			md5_hh : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(b^c^d,a,b,x,s,t);},
-			md5_ii : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(c^(b|(~d)),a,b,x,s,t);},
-			safe_add : function(x,y){var lsw=(x&0xFFFF)+(y&0xFFFF);var msw=(x>>16)+(y>>16)+(lsw>>16);return(msw<<16)|(lsw&0xFFFF);},
-			bit_rol : function(num,cnt){return(num<<cnt)|(num>>>(32-cnt));},
-			str2binl : function(str){var bin=Array();var mask=(1<<RDR.util.md5.chrsz)-1;for(var i=0;i<str.length*RDR.util.md5.chrsz;i+=RDR.util.md5.chrsz){bin[i>>5]|=(str.charCodeAt(i/RDR.util.md5.chrsz)&mask)<<(i%32);}return bin;},
-			binl2hex : function(binarray){var hex_tab=RDR.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";var str="";for(var i=0;i<binarray.length*4;i++){str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);} return str;}
-		},
-		cleanPara : function(para) {
-			// common function for cleaning the paragraph.  right now, it's removing spaces, tabs, newlines, and then double spaces
-			if(para != "") {
-				return para.replace(/[\n\r\t]+/gi,' ').replace().replace(/\s{2,}/g,' ');
-			}
-		}
-	},
-	actions : {
-		aboutReadrBoard : function() {
-			return true;
-		},
-		hashNodes : function() {
-console.log('hashing nodes');
-			// snag all the nodes that we can set icons next to and send'em next 
-			// TODO: restrict this to the viewport + a few, rather than all
-			var content_nodes = $R( RDR.group_prefs.hashable_nodes ).not('rdr-hashed');
-
-			content_nodes.each( function() {
-
-				// get the node's text and smash case
-				// TODO: <br> tags and block-level tags can screw up words.  ex:
-					// hello<br>how are you?   here becomes
-					// hellohow are you?    <-- no space where the <br> was.  bad.
-				var node_text = $R(this).html().replace(/< *br *\/?>/gi, '\n');
-				node_text = $R( "<div>" + node_text + "</div>" ).text().toLowerCase();
-
-				// if there's any content...
-				if ( node_text && node_text!="undefined" && node_text.length > 5 ) {
-					// clean whitespace
-					node_text = RDR.util.cleanPara ( node_text );
-=======
-        },
-
-        rindow : {
-            // content comes later.  this is just to identify or draw the container.
-            draw: function() {
-                var width = arguments[0].width ? arguments[0].width:400;
-                var x = arguments[0].x ? arguments[0].x:100;
-                var y = arguments[0].y ? arguments[0].y:100;
-
-                new_rindow = $('div.rdr.rdr_window.rdr.rdr_rewritable'); // jquery obj of the rewritable window
-                if ( new_rindow.length == 0 ) { // oh, there's no rewritable window available, so make one
-                    new_rindow = $('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + width + 'px;"></div>');
-                    $('body').append( new_rindow );
-                }
-			
-                if ( new_rindow.find('h1').length == 0 ) {
+				if ( new_rindow.find('h1').length == 0 ) {
                     new_rindow.html('');
                     new_rindow.append( '<div class="rdr_close">x</div><h1></h1><div class="rdr rdr_contentSpace"></div>' );
                     new_rindow.find('div.rdr_close').click( function() {
@@ -304,53 +81,102 @@ console.log('hashing nodes');
                 new_rindow.css('top', coords.y + 'px');
                 RDR.actionbar.close();
                 return new_rindow;
-            },
-            closeAll: function() {
-                $('div.rdr.rdr_window').remove();
-            }
-        },
-        actionbar : {
-            draw: function() {
-                if ( $('div.rdr.rdr_actionbar').length == 0 ) {
-                    var x = arguments[0].x ? (arguments[0].x-34) : 100;
-                    var y = arguments[0].y ? (arguments[0].y-45) : 100;
+			},
+			closeAll: function() {
+				$('div.rdr.rdr_window').remove();
+			}
+		},
+		actionbar : {
+			draw: function() {
 
-                    var coords = RDR.util.stayInWindow(x,y,200,30);
-                    var new_actionbar = $('<div class="rdr rdr_actionbar" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
-                        '<a href="javascript:void(0);" onclick="RDR.actions.aboutReadrBoard();" class="rdr_about">Rate</a>' +
-                        '<span class="rdr_divider">&nbsp;</span>' +
-                        '<a href="javascript:void(0);" onclick="RDR.actions.rateStart();" class="rdr_rate">Rate</a>' +
-                        '<a href="javascript:void(0);" onclick="RDR.actions.searchStart();" class="rdr_search">Search</a>' +
-                        '<a href="javascript:void(0);" onclick="RDR.actions.bookmarkStart();" class="rdr_bookmark">Bookmark</a>' +
-                        '<a href="javascript:void(0);" onclick="RDR.actions.commentStart();" class="rdr_comment">Comment</a>' +
-                        '<a href="javascript:void(0);" onclick="RDR.actions.shareStart();" class="rdr_share">Share</a>' +
-                        '</div>');
-                    $('body').append( new_actionbar );
-                }
-            },
-            close: function() {
-                $('div.rdr.rdr_actionbar').remove();
-            }
-        },
-        user : {
-            shortname:		"JoeReadrOnFB",
-            firstname:		"Joe",
-            lastname:		"Readr",
-            status:             "full",
-            auth_token: 	"1234567890"
-        },
-        util : {
+				if ( $('div.rdr.rdr_actionbar').length == 0 ) {
+					var x = arguments[0].x ? (arguments[0].x-34) : 100;
+					var y = arguments[0].y ? (arguments[0].y-45) : 100;
+console.dir( arguments[0] );
+					var coords = RDR.util.stayInWindow(x,y,200,30);
+					var new_actionbar = $('<div class="rdr rdr_actionbar" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
+						'<a href="javascript:void(0);" onclick="RDR.actions.aboutReadrBoard();" class="rdr_icon_about">What\' This?</a>' +
+						'<span class="rdr_divider">&nbsp;</span>' +
+						'<a href="javascript:void(0);" onclick="RDR.actions.rateStart({content_type:\''+arguments[0].content_type+'\',content:\''+arguments[0].content+'\'});" class="rdr_icon_rate">Rate This</a>' +
+						'<a href="javascript:void(0);" onclick="RDR.actions.searchStart();" class="rdr_icon_search">Search For This</a>' +
+						'<a href="javascript:void(0);" onclick="RDR.actions.bookmarkStart();" class="rdr_icon_bookmark">Bookmark This</a>' +
+						'<a href="javascript:void(0);" onclick="RDR.actions.commentStart();" class="rdr_icon_comment">Comment On This</a>' +
+						'<a href="javascript:void(0);" onclick="RDR.actions.shareStart();" class="rdr_icon_share">Share This</a>' +
+					'</div>');
+
+					$('body').append( new_actionbar );
+				
+					$('div.rdr_actionbar a').hover( 
+						function() {
+							var this_link = $(this);
+							var tooltip_args = {
+								name: this_link.attr('class'),
+								message: this_link.text(),
+								offset_x: -35,
+								offset_y: -35,
+								obj: this_link
+							};
+							RDR.tooltip.draw( tooltip_args );
+						},
+						function () {
+							var this_link = $(this);
+							$( '#rdr_tooltip_' + this_link.attr('class') ).remove();
+						}
+					);
+				}
+			},
+			close: function() {
+				$('div.rdr.rdr_actionbar').remove();
+			}
+		},
+		tooltip : {
+			draw: function() {
+				// expected arguments:
+				// message (HTML)
+				// obj (to position tooltip next to.  should be a jQ obj).  if absent, position with the mouse.
+				// offset_x, offset_y (optional): how many pixels to shit the tooltip from the passed-in object
+				var new_tooltip = $('<div class="rdr rdr_tooltip" id="rdr_tooltip_' + arguments[0].name + '">' +
+					'<div class="rdr rdr_tooltip-content"> ' + arguments[0].message + '</div>'+
+					'<div class="rdr rdr_tooltip-arrow-border"></div>'+
+					'<div class="rdr rdr_tooltip-arrow"></div>'+
+				'</div>');
+			
+				if (arguments[0].obj) {
+					var coords = arguments[0].obj.offset();
+					var offset_x = (arguments[0].offset_x) ? arguments[0].offset_x:0;
+					var offset_y = (arguments[0].offset_y) ? arguments[0].offset_y:0;
+					var x = coords.left + parseInt( offset_x );
+					var y = coords.top + parseInt( offset_y );
+				} else {
+					// mouse, if we want it.
+				}
+			
+				if ( x && y ) {
+					// show the tooltip
+					$('body').append( new_tooltip );
+					new_tooltip.animate( {opacity:1},333);
+				
+					// now that it's in the page, position it (in part based on its calculated height);
+					new_tooltip.css('left', x + 'px');
+					new_tooltip.css('top', (y - new_tooltip.height()) + 'px');
+				}
+			},
+			closeAll: function() {
+				$( 'div.rdr_tooltip' ).remove();
+			}
+		},
+		util : {
             stayInWindow : function(x,y,w,h) {
                 var coords = {};
                 var rWin = $(window);
                 var winWidth = rWin.width();
                 var winHeight = rWin.height();
                 var winScroll = rWin.scrollTop();
-                if ( x > winWidth ) {
+                if ( (x+w) > winWidth ) {
                     x = winWidth - w;
                 }
-                if ( y > winHeight + winScroll ) {
-                    y = winHeight + winScroll - h;
+                if ( (y+h) > winHeight + winScroll ) {
+                    y = winHeight + winScroll - h + 75;
                 }
                 if ( x < 10 ) x = 10;
                 if ( y - winScroll < 10 ) y = winScroll + 10;
@@ -359,135 +185,21 @@ console.log('hashing nodes');
                 return coords;
             },
             md5 : {
-                hexcase:0,
-                b64pad:"",
-                chrsz:8,
-                hex_md5 : function(s){
-                    return RDR.util.md5.binl2hex(RDR.util.md5.core_md5(RDR.util.md5.str2binl(s),s.length*RDR.util.md5.chrsz));
-                },
-                core_md5 : function(x,len){
-                    x[len>>5]|=0x80<<((len)%32);
-                    x[(((len+64)>>>9)<<4)+14]=len;
-                    var a=1732584193;
-                    var b=-271733879;
-                    var c=-1732584194;
-                    var d=271733878;
-                    for(var i=0;i<x.length;i+=16){
-                        var olda=a;
-                        var oldb=b;
-                        var oldc=c;
-                        var oldd=d;
-                        a=RDR.util.md5.md5_ff(a,b,c,d,x[i+0],7,-680876936);
-                        d=RDR.util.md5.md5_ff(d,a,b,c,x[i+1],12,-389564586);
-                        c=RDR.util.md5.md5_ff(c,d,a,b,x[i+2],17,606105819);
-                        b=RDR.util.md5.md5_ff(b,c,d,a,x[i+3],22,-1044525330);
-                        a=RDR.util.md5.md5_ff(a,b,c,d,x[i+4],7,-176418897);
-                        d=RDR.util.md5.md5_ff(d,a,b,c,x[i+5],12,1200080426);
-                        c=RDR.util.md5.md5_ff(c,d,a,b,x[i+6],17,-1473231341);
-                        b=RDR.util.md5.md5_ff(b,c,d,a,x[i+7],22,-45705983);
-                        a=RDR.util.md5.md5_ff(a,b,c,d,x[i+8],7,1770035416);
-                        d=RDR.util.md5.md5_ff(d,a,b,c,x[i+9],12,-1958414417);
-                        c=RDR.util.md5.md5_ff(c,d,a,b,x[i+10],17,-42063);
-                        b=RDR.util.md5.md5_ff(b,c,d,a,x[i+11],22,-1990404162);
-                        a=RDR.util.md5.md5_ff(a,b,c,d,x[i+12],7,1804603682);
-                        d=RDR.util.md5.md5_ff(d,a,b,c,x[i+13],12,-40341101);
-                        c=RDR.util.md5.md5_ff(c,d,a,b,x[i+14],17,-1502002290);
-                        b=RDR.util.md5.md5_ff(b,c,d,a,x[i+15],22,1236535329);
-                        a=RDR.util.md5.md5_gg(a,b,c,d,x[i+1],5,-165796510);
-                        d=RDR.util.md5.md5_gg(d,a,b,c,x[i+6],9,-1069501632);
-                        c=RDR.util.md5.md5_gg(c,d,a,b,x[i+11],14,643717713);
-                        b=RDR.util.md5.md5_gg(b,c,d,a,x[i+0],20,-373897302);
-                        a=RDR.util.md5.md5_gg(a,b,c,d,x[i+5],5,-701558691);
-                        d=RDR.util.md5.md5_gg(d,a,b,c,x[i+10],9,38016083);
-                        c=RDR.util.md5.md5_gg(c,d,a,b,x[i+15],14,-660478335);
-                        b=RDR.util.md5.md5_gg(b,c,d,a,x[i+4],20,-405537848);
-                        a=RDR.util.md5.md5_gg(a,b,c,d,x[i+9],5,568446438);
-                        d=RDR.util.md5.md5_gg(d,a,b,c,x[i+14],9,-1019803690);
-                        c=RDR.util.md5.md5_gg(c,d,a,b,x[i+3],14,-187363961);
-                        b=RDR.util.md5.md5_gg(b,c,d,a,x[i+8],20,1163531501);
-                        a=RDR.util.md5.md5_gg(a,b,c,d,x[i+13],5,-1444681467);
-                        d=RDR.util.md5.md5_gg(d,a,b,c,x[i+2],9,-51403784);
-                        c=RDR.util.md5.md5_gg(c,d,a,b,x[i+7],14,1735328473);
-                        b=RDR.util.md5.md5_gg(b,c,d,a,x[i+12],20,-1926607734);
-                        a=RDR.util.md5.md5_hh(a,b,c,d,x[i+5],4,-378558);
-                        d=RDR.util.md5.md5_hh(d,a,b,c,x[i+8],11,-2022574463);
-                        c=RDR.util.md5.md5_hh(c,d,a,b,x[i+11],16,1839030562);
-                        b=RDR.util.md5.md5_hh(b,c,d,a,x[i+14],23,-35309556);
-                        a=RDR.util.md5.md5_hh(a,b,c,d,x[i+1],4,-1530992060);
-                        d=RDR.util.md5.md5_hh(d,a,b,c,x[i+4],11,1272893353);
-                        c=RDR.util.md5.md5_hh(c,d,a,b,x[i+7],16,-155497632);
-                        b=RDR.util.md5.md5_hh(b,c,d,a,x[i+10],23,-1094730640);
-                        a=RDR.util.md5.md5_hh(a,b,c,d,x[i+13],4,681279174);
-                        d=RDR.util.md5.md5_hh(d,a,b,c,x[i+0],11,-358537222);
-                        c=RDR.util.md5.md5_hh(c,d,a,b,x[i+3],16,-722521979);
-                        b=RDR.util.md5.md5_hh(b,c,d,a,x[i+6],23,76029189);
-                        a=RDR.util.md5.md5_hh(a,b,c,d,x[i+9],4,-640364487);
-                        d=RDR.util.md5.md5_hh(d,a,b,c,x[i+12],11,-421815835);
-                        c=RDR.util.md5.md5_hh(c,d,a,b,x[i+15],16,530742520);
-                        b=RDR.util.md5.md5_hh(b,c,d,a,x[i+2],23,-995338651);
-                        a=RDR.util.md5.md5_ii(a,b,c,d,x[i+0],6,-198630844);
-                        d=RDR.util.md5.md5_ii(d,a,b,c,x[i+7],10,1126891415);
-                        c=RDR.util.md5.md5_ii(c,d,a,b,x[i+14],15,-1416354905);
-                        b=RDR.util.md5.md5_ii(b,c,d,a,x[i+5],21,-57434055);
-                        a=RDR.util.md5.md5_ii(a,b,c,d,x[i+12],6,1700485571);
-                        d=RDR.util.md5.md5_ii(d,a,b,c,x[i+3],10,-1894986606);
-                        c=RDR.util.md5.md5_ii(c,d,a,b,x[i+10],15,-1051523);
-                        b=RDR.util.md5.md5_ii(b,c,d,a,x[i+1],21,-2054922799);
-                        a=RDR.util.md5.md5_ii(a,b,c,d,x[i+8],6,1873313359);
-                        d=RDR.util.md5.md5_ii(d,a,b,c,x[i+15],10,-30611744);
-                        c=RDR.util.md5.md5_ii(c,d,a,b,x[i+6],15,-1560198380);
-                        b=RDR.util.md5.md5_ii(b,c,d,a,x[i+13],21,1309151649);
-                        a=RDR.util.md5.md5_ii(a,b,c,d,x[i+4],6,-145523070);
-                        d=RDR.util.md5.md5_ii(d,a,b,c,x[i+11],10,-1120210379);
-                        c=RDR.util.md5.md5_ii(c,d,a,b,x[i+2],15,718787259);
-                        b=RDR.util.md5.md5_ii(b,c,d,a,x[i+9],21,-343485551);
-                        a=RDR.util.md5.safe_add(a,olda);
-                        b=RDR.util.md5.safe_add(b,oldb);
-                        c=RDR.util.md5.safe_add(c,oldc);
-                        d=RDR.util.md5.safe_add(d,oldd);
-                    }
-                    return Array(a,b,c,d);
-                },
-                md5_cmn : function(q,a,b,x,s,t){
-                    return RDR.util.md5.safe_add(RDR.util.md5.bit_rol(RDR.util.md5.safe_add(RDR.util.md5.safe_add(a,q),RDR.util.md5.safe_add(x,t)),s),b);
-                },
-                md5_ff : function(a,b,c,d,x,s,t){
-                    return RDR.util.md5.md5_cmn((b&c)|((~b)&d),a,b,x,s,t);
-                },
-                md5_gg : function(a,b,c,d,x,s,t){
-                    return RDR.util.md5.md5_cmn((b&d)|(c&(~d)),a,b,x,s,t);
-                },
-                md5_hh : function(a,b,c,d,x,s,t){
-                    return RDR.util.md5.md5_cmn(b^c^d,a,b,x,s,t);
-                },
-                md5_ii : function(a,b,c,d,x,s,t){
-                    return RDR.util.md5.md5_cmn(c^(b|(~d)),a,b,x,s,t);
-                },
-                safe_add : function(x,y){
-                    var lsw=(x&0xFFFF)+(y&0xFFFF);
-                    var msw=(x>>16)+(y>>16)+(lsw>>16);
-                    return(msw<<16)|(lsw&0xFFFF);
-                },
-                bit_rol : function(num,cnt){
-                    return(num<<cnt)|(num>>>(32-cnt));
-                },
-                str2binl : function(str){
-                    var bin=Array();
-                    var mask=(1<<RDR.util.md5.chrsz)-1;
-                    for(var i=0;i<str.length*RDR.util.md5.chrsz;i+=RDR.util.md5.chrsz){
-                        bin[i>>5]|=(str.charCodeAt(i/RDR.util.md5.chrsz)&mask)<<(i%32);
-                    }
-                    return bin;
-                },
-                binl2hex : function(binarray){
-                    var hex_tab=RDR.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";
-                    var str="";
-                    for(var i=0;i<binarray.length*4;i++){
-                        str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);
-                    }
-                    return str;
-                }
-            },
+				hexcase:0,
+				b64pad:"",
+				chrsz:8,
+				hex_md5 : function(s){return RDR.util.md5.binl2hex(RDR.util.md5.core_md5(RDR.util.md5.str2binl(s),s.length*RDR.util.md5.chrsz));},
+				core_md5 : function(x,len){x[len>>5]|=0x80<<((len)%32);x[(((len+64)>>>9)<<4)+14]=len;var a=1732584193;var b=-271733879;var c=-1732584194;var d=271733878;for(var i=0;i<x.length;i+=16){var olda=a;var oldb=b;var oldc=c;var oldd=d;a=RDR.util.md5.md5_ff(a,b,c,d,x[i+0],7,-680876936);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+1],12,-389564586);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+2],17,606105819);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+3],22,-1044525330);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+4],7,-176418897);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+5],12,1200080426);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+6],17,-1473231341);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+7],22,-45705983);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+8],7,1770035416);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+9],12,-1958414417);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+10],17,-42063);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+11],22,-1990404162);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+12],7,1804603682);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+13],12,-40341101);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+14],17,-1502002290);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+15],22,1236535329);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+1],5,-165796510);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+6],9,-1069501632);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+11],14,643717713);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+0],20,-373897302);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+5],5,-701558691);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+10],9,38016083);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+15],14,-660478335);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+4],20,-405537848);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+9],5,568446438);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+14],9,-1019803690);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+3],14,-187363961);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+8],20,1163531501);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+13],5,-1444681467);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+2],9,-51403784);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+7],14,1735328473);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+12],20,-1926607734);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+5],4,-378558);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+8],11,-2022574463);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+11],16,1839030562);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+14],23,-35309556);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+1],4,-1530992060);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+4],11,1272893353);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+7],16,-155497632);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+10],23,-1094730640);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+13],4,681279174);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+0],11,-358537222);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+3],16,-722521979);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+6],23,76029189);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+9],4,-640364487);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+12],11,-421815835);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+15],16,530742520);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+2],23,-995338651);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+0],6,-198630844);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+7],10,1126891415);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+14],15,-1416354905);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+5],21,-57434055);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+12],6,1700485571);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+3],10,-1894986606);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+10],15,-1051523);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+1],21,-2054922799);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+8],6,1873313359);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+15],10,-30611744);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+6],15,-1560198380);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+13],21,1309151649);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+4],6,-145523070);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+11],10,-1120210379);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+2],15,718787259);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+9],21,-343485551);a=RDR.util.md5.safe_add(a,olda);b=RDR.util.md5.safe_add(b,oldb);c=RDR.util.md5.safe_add(c,oldc);d=RDR.util.md5.safe_add(d,oldd);} return Array(a,b,c,d);},
+				md5_cmn : function(q,a,b,x,s,t){return RDR.util.md5.safe_add(RDR.util.md5.bit_rol(RDR.util.md5.safe_add(RDR.util.md5.safe_add(a,q),RDR.util.md5.safe_add(x,t)),s),b);},
+				md5_ff : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn((b&c)|((~b)&d),a,b,x,s,t);},
+				md5_gg : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn((b&d)|(c&(~d)),a,b,x,s,t);},
+				md5_hh : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(b^c^d,a,b,x,s,t);},
+				md5_ii : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(c^(b|(~d)),a,b,x,s,t);},
+				safe_add : function(x,y){var lsw=(x&0xFFFF)+(y&0xFFFF);var msw=(x>>16)+(y>>16)+(lsw>>16);return(msw<<16)|(lsw&0xFFFF);},
+				bit_rol : function(num,cnt){return(num<<cnt)|(num>>>(32-cnt));},
+				str2binl : function(str){var bin=Array();var mask=(1<<RDR.util.md5.chrsz)-1;for(var i=0;i<str.length*RDR.util.md5.chrsz;i+=RDR.util.md5.chrsz){bin[i>>5]|=(str.charCodeAt(i/RDR.util.md5.chrsz)&mask)<<(i%32);}return bin;},
+				binl2hex : function(binarray){var hex_tab=RDR.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";var str="";for(var i=0;i<binarray.length*4;i++){str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);} return str;}
+			},
             cleanPara : function(para) {
                 // common function for cleaning the paragraph.  right now, it's removing spaces, tabs, newlines, and then double spaces
                 if(para != "") {
@@ -565,9 +277,48 @@ console.log('hashing nodes');
                          */
                     },
                     error: function(XHR){
-                        console.warn(XHR)
+                        //console.warn(XHR)
                     }
                 });
+
+				// the following lines should go into the ajax call success function
+				// START
+				// TEST DATA
+				RDR.group.img_selector = "div.container img";
+				RDR.group.selector_whitelist = "";
+				
+				// init the img interactions
+				$( RDR.group.img_selector ).live( 'mouseenter', function() {
+					// check that the image is large enough?
+					// TODO keep the actionbar in the window
+					// TODO don't search
+					// TODO image needs to show in rate window
+					// TODO all image functions need CURRENT URL (incl. hash) + IMG SRC URL for rating, SHARING, etc.
+					// TODO show activity on an image, without breaking page nor covering up image.
+						// create a container for the image, give it same styles but more space?  
+						// like, inline or float, but with RDR stuff
+				    var this_img = $(this);
+				    var x = this_img.offset().left + 25;
+				    var y = this_img.offset().top + this_img.height() + 25;
+				    RDR.actionbar.draw({x:x, y:y, content_type:"image", content:this_img.attr('src') });
+
+				    $('div.rdr.rdr_actionbar').css('overflow','hidden');
+				    $('div.rdr.rdr_actionbar').width(23);
+				
+				    $('div.rdr.rdr_actionbar').hover( function() {
+						console.log('mouseentering actionbar')
+						clearTimeout( rdr_img_actionicon );
+				        $(this).animate( {width:174},100 );
+				    },
+				    function() {
+						$(this).remove();
+					}
+				    );
+
+				}).live('mouseleave', function() {
+					rdr_img_actionicon = setTimeout( "RDR.actionbar.close()", 250);
+				});
+				// END
             },
             initUserData : function(userShortName){
                 // request the RBGroup Data
@@ -637,7 +388,7 @@ console.log('hashing nodes');
                     if ( node_text && node_text!="undefined" && node_text.length > 5 ) {
                         // clean whitespace
                         node_text = RDR.util.cleanPara ( node_text );
->>>>>>> 4da350b6a4cd90e80f5d499d51e9e18ac00d08b6
+
 				
                         // hash the text
                         var node_hash = RDR.util.md5.hex_md5( node_text );
@@ -698,15 +449,54 @@ console.log('hashing nodes');
                 '<button>Rate</button>' +
                 '<div class="rdr_help">e.g., Love this, autumn, insightful</div>';
 
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				// TO GLOBAL OR NOT TO GLOBAL
+				// THIS IS THE QUESTION
+				
+				var content_type = arguments[0].content_type;
+				var content = arguments[0].content;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 // add content and animate the actionbar to accommodate it
                 rindow.animate({
                     width:'400px',
                     minHeight:'125px'
                 }, 300, function() {
-
                     rindow.find('div.rdr_contentSpace').append( rateStartContent );
                     rindow.find('h1').text('Rate This');
-                    rindow.find('em.rdr_selected-text').html( RDR.why.content );
+
+                    //if ( arguments[0].content_type == "text" ) {
+						rindow.find('em.rdr_selected-text').html( content );
+					//}
 				
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
                     rindow.find('ul.rdr_preselected li').toggle(
@@ -808,7 +598,9 @@ console.log('hashing nodes');
                                 // this can be commented on if it's long enough and has at least one space (two words or more)
                                 RDR.actionbar.draw({
                                     x:parseInt(e.pageX),
-                                    y:parseInt(e.pageY)
+                                    y:parseInt(e.pageY),
+									content_type:"text",
+									content:escape(RDR.why.content)
                                 });
 
                             // also should detect if selection has an image, embed, object, audio, or video tag in it
@@ -816,6 +608,8 @@ console.log('hashing nodes');
                                 RDR.actionbar.draw({
                                     x:parseInt(e.pageX),
                                     y:parseInt(e.pageY),
+									content_type:"text",
+									content:escape(RDR.why.content),
                                     cant_comment:true
                                 });
                             }
@@ -1099,11 +893,11 @@ function jqueryJSON($){
 }
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
-loadScript("https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js", function(){
+loadScript("/static/ui-prototype/js/jquery-1.4.4.min.js", function(){
     //callback
     
     //load jQuery UI while the $ and jQuery still refers to our new version
-    loadScript("https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js", function(){
+    loadScript("/static/ui-prototype/js/jquery-ui-1.8.6.custom.min.js", function(){
         //callback
         
         //test that $.ui versioning is working correctly
@@ -1146,4 +940,26 @@ function $RFunctions($R){
     console.log($R.rb)      //"rb"
     console.log($.rb)       //undefined
 
+	//////////////////// TEST DATA //////////////////
+	RDR.group.blessed_tags = [
+	{
+	    name: "Great!",
+	    tid: 0
+	},
+	{
+	    name: "Hate",
+	    tid: 1
+	},
+	{
+	    name: "Interesting",
+	    tid: 2
+	},
+	{
+	    name: "Boooooring",
+	    tid: 3
+	}
+	];
+	// don't want to remove Eric's console statements, but don't wanna see them right now, either
+	console.clear();
 }
+
