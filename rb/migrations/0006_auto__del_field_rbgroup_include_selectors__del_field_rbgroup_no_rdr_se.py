@@ -8,26 +8,26 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Deleting field 'RBPage.updated'
-        db.delete_column('rb_rbpage', 'updated')
+        # Deleting field 'RBGroup.include_selectors'
+        db.delete_column('rb_rbgroup', 'include_selectors')
 
-        # Deleting field 'RBPage.parent'
-        db.delete_column('rb_rbpage', 'parent_id')
+        # Deleting field 'RBGroup.no_rdr_selectors'
+        db.delete_column('rb_rbgroup', 'no_rdr_selectors')
 
-        # Deleting field 'RBPage.inserted'
-        db.delete_column('rb_rbpage', 'inserted')
+        # Deleting field 'RBGroup.css'
+        db.delete_column('rb_rbgroup', 'css')
 
 
     def backwards(self, orm):
         
-        # Adding field 'RBPage.updated'
-        db.add_column('rb_rbpage', 'updated', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, default=datetime.date(2010, 12, 17), blank=True), keep_default=False)
+        # Adding field 'RBGroup.include_selectors'
+        db.add_column('rb_rbgroup', 'include_selectors', self.gf('django.db.models.fields.CharField')(default='', max_length=250), keep_default=False)
 
-        # Adding field 'RBPage.parent'
-        db.add_column('rb_rbpage', 'parent', self.gf('django.db.models.fields.related.ForeignKey')(related_name='children', null=True, to=orm['rb.RBPage'], blank=True), keep_default=False)
+        # Adding field 'RBGroup.no_rdr_selectors'
+        db.add_column('rb_rbgroup', 'no_rdr_selectors', self.gf('django.db.models.fields.CharField')(default='', max_length=250), keep_default=False)
 
-        # Adding field 'RBPage.inserted'
-        db.add_column('rb_rbpage', 'inserted', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, default=datetime.date(2010, 12, 17), blank=True), keep_default=False)
+        # Adding field 'RBGroup.css'
+        db.add_column('rb_rbgroup', 'css', self.gf('django.db.models.fields.URLField')(default='http://www.blank.org/', max_length=200), keep_default=False)
 
 
     models = {
@@ -90,12 +90,14 @@ class Migration(SchemaMigration):
         },
         'rb.rbgroup': {
             'Meta': {'object_name': 'RBGroup'},
-            'css': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
+            'css_url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'include_selectors': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
-            'no_rdr_selectors': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
-            'short_name': ('django.db.models.fields.CharField', [], {'max_length': '25'})
+            'public_id': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'selector_blacklist': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'selector_whitelist': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'tag_blacklist': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'tag_whitelist': ('django.db.models.fields.TextField', [], {'blank': 'True'})
         },
         'rb.rbpage': {
             'Meta': {'object_name': 'RBPage'},

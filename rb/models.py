@@ -25,15 +25,18 @@ class Node(models.Model):
 class RBGroup(models.Model):
     name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=25)
-    include_selectors = models.CharField(max_length=250)
-    no_rdr_selectors = models.CharField(max_length=250)
-    css = models.URLField()
+    selector_whitelist = models.TextField(blank=True)
+    selector_blacklist = models.TextField(blank=True)
+    tag_whitelist = models.TextField(blank=True)
+    tag_blacklist = models.TextField(blank=True)
+    css_url = models.URLField() #do we need 'blank=True, null=True' here right?
 
     def __unicode__(self):
         return self.name
         
     class Meta:
     	ordering = ['short_name']
+
 
 class RBSite(Site):
 	rb_group = models.ForeignKey(RBGroup)

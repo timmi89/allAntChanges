@@ -5,35 +5,39 @@
          url('LeagueGothic.otf') format('truetype');
 }
 
+div.rdr {
+	font: normal 12px Arial, sans-serif;
+}
+
 div.rdr.rdr_window {
 	-moz-box-shadow: 0 0 10px 1px #aaa;
 	-webkit-box-shadow: 0 0 10px 1px #aaa;
 	box-shadow: 0 0 10px 1px #aaa;
 	padding: 8px 10px;
-	font: normal 12px Arial, sans-serif;
 	position:absolute;
-	z-index:1000;
+	z-index:10000;
 	top:100px;
 	left:100px;
 	background:#fff;
 }
 
-div.rdr.rdr_tooltip {
+/* the action bar */
+div.rdr.rdr_actionbar {
 	-moz-box-shadow: 0 0 10px 1px #aaa;
 	-webkit-box-shadow: 0 0 10px 1px #aaa;
 	box-shadow: 0 0 10px 1px #aaa;
 	background:url("/static/ui-prototype/images/rindow_bg.png") no-repeat 0 0;
-	padding: 3px;
+	padding: 0;
 	font: normal 12px Arial, sans-serif;
 	position:absolute;
-	z-index:1100;
+	z-index:11000;
 	background:#fff;
-	width:172px;
+	width:174px;
 	height:30px;
 }
 
-div.rdr.rdr_tooltip a {
-	background:url("/static/ui-prototype/images/tooltip_icons.png") no-repeat 0 0;
+div.rdr.rdr_actionbar a {
+	background:url("/static/ui-prototype/images/actionbar_icons.png") no-repeat 0 0 transparent;
 	display:block;
 	height:30px;
 	width:30px;
@@ -41,10 +45,22 @@ div.rdr.rdr_tooltip a {
 	float:left;
 }
 
-div.rdr.rdr_tooltip a.rdr_about		 	{ background-position: -4px 0; width:26px; }
-div.rdr.rdr_tooltip a.rdr_rate		 	{ background-position: -28px 0; }
-div.rdr.rdr_tooltip a.rdr_rate:hover	{ background-position: -172px 0; }
+div.rdr.rdr_actionbar a.rdr_icon_about		 	{ background-position: -2px 0; width:21px; }
+div.rdr.rdr_actionbar a.rdr_icon_rate		 	{ background-position: -27px -1px; }
+div.rdr.rdr_actionbar a.rdr_icon_search	 		{ background-position: -55px -1px; }
+div.rdr.rdr_actionbar a.rdr_icon_bookmark	 	{ background-position: -82px 0px; }
+div.rdr.rdr_actionbar a.rdr_icon_comment	 		{ background-position: -110px -2px; }
+div.rdr.rdr_actionbar a.rdr_icon_share		 	{ background-position: -141px -1px; }
+div.rdr.rdr_actionbar a:hover					{ background-color:#ffd3d3;}
+div.rdr.rdr_actionbar a.rdr_icon_about:hover 	{ background-color:transparent; }
+div.rdr.rdr_actionbar span.rdr_divider		{ background:url("/static/ui-prototype/images/actionbar_icons.png") no-repeat -25px 0; display:block; height:30px; width:3px; text-indent:-9999px; float:left;}
 
+/* the tooltip */
+div.rdr.rdr_tooltip { background-color:#fff; border:2px solid #e40000; margin:10px auto; padding:5px 10px; position:relative; text-align:center; min-width:80px; -moz-border-radius:5px; -webkit-border-radius:5px; -moz-box-shadow:0 0 5px #888888; -webkit-box-shadow:0 0 5px #888888; position:absolute; top:20px; left:20px; z-index:12000; opacity:0;}
+div.rdr.rdr_tooltip-arrow-border { border-color: #e40000 transparent transparent transparent; border-style: solid; border-width: 7px; height:0; width:0; position:absolute; bottom:-16px; left:43%;}
+div.rdr.rdr_tooltip-arrow { border-color: #fff transparent transparent transparent; border-style: solid; border-width: 7px; height:0; width:0; position:absolute; bottom:-14px; left:43%;}
+
+/* global tag defs */
 div.rdr h1, 
 div.rdr h2	{font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif; color:#e71f1f; margin: 0; }
 div.rdr h1	{font-size:21px; cursor:move; }
@@ -52,9 +68,9 @@ div.rdr h1	{font-size:21px; cursor:move; }
 em.rdr_selected-text 	{display:block; background:#eee; padding:5px; margin:5px 0; text-shadow:1px 1px 1px #999; font-size:18px; font-family:Georgia, serif;}
 
 ul.rdr_tags			{list-style-type:none; padding:0; margin:0; overflow:auto; }
-ul.rdr_tags li		{float:left; padding:5px 20px 5px 0; }
-ul.rdr_tags li.rdr_selected	{background:#ddd;}
-ul.rdr_preselected			{font-size:22px; font-family:ReadrLeague, Arial, sans-serif; margin:5px 0; }
+ul.rdr_tags li		{float:left; padding:5px 20px; }
+ul.rdr_tags li.rdr_selected	{background:#eee;}
+ul.rdr_preselected			{font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:5px 0; }
 ul.rdr_preselected a		{color:#000;text-decoration:none;}
 ul.rdr_preselected a:hover	{color:#e71f1f;}
 
