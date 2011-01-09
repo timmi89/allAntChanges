@@ -31,6 +31,9 @@ class RBGroup(models.Model):
 
     def __unicode__(self):
         return self.name
+        
+    class Meta:
+    	ordering = ['short_name']
 
 class RBSite(Site):
 	rb_group = models.ForeignKey(RBGroup)

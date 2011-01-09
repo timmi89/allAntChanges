@@ -1,4 +1,5 @@
 from piston.handler import BaseHandler, AnonymousBaseHandler
+from django.http import HttpResponse
 from rb.models import *
 
 class ContentNodeHandler(BaseHandler):
@@ -23,9 +24,18 @@ class RBGroupHandler(BaseHandler):
     fields = ('name', 'short_name', 'include_selectors', 'no_rdr_selectors', 'css')
 
     def read(self, request, group=None):
+    	host = request.get_host()
+    	path = request.path
+    	fp = request.get_full_path()
         if group:
             group = int(group)
-            return RBGroup.objects.filter(id=group)
+            #return RBGroup.objects.filter(id=group)
+            try:
+            	g = RBGroup.objects.get(id=group)
+            except RBGroup.DoesNotExist:
+            	return HttpResponse("Does not exist")
+            else:
+            	return g
         else:
             return RBGroup.objects.all()
 
