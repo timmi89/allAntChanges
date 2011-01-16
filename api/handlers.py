@@ -21,7 +21,24 @@ class ContentNodeHandler(BaseHandler):
 class RBGroupHandler(BaseHandler):
     allowed_methods = ('GET',)
     model = RBGroup
-    fields = ('name', 'short_name', 'include_selectors', 'no_rdr_selectors', 'css')
+    fields = ('name',
+              'short_name',
+              'language',
+              'blessed_tags',
+              'anno_whitelist',
+              'img_whitelist',
+              'img_blacklist',
+              'no_readr',
+              'feature_share',
+              'feaure_rate',
+              'feature_comment',
+              'feature_bookmark',
+              'feature_search',
+              'logo_url_sm',
+              'logo_url_med',
+              'logo_url_lg',
+              'css_url',
+             )
 
     def read(self, request, group=None):
     	host = request.get_host()
@@ -34,10 +51,14 @@ class RBGroupHandler(BaseHandler):
             	g = RBGroup.objects.get(id=group)
             except RBGroup.DoesNotExist:
             	return HttpResponse("Does not exist")
-            else:
-            	return g
+            setattr(g,'feature_share',g.get_feature('share'))
+            setattr(g,'feature_rate',g.get_feature('rate'))
+            setattr(g,'feature_comment',g.get_feature('comment'))
+            setattr(g,'feature_bookmark',g.get_feature('bookmark'))
+            setattr(g,'feature_search',g.get_feature('search'))
+            return g
         else:
-            return RBGroup.objects.all()
+            return ("Group not specified")
 
 """model = ContentNode()
     fields = ('id','user','hash')
