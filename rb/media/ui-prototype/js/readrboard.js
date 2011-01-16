@@ -93,7 +93,7 @@ function readrBoard($R){
 				if ( $('div.rdr.rdr_actionbar').length == 0 ) {
 					var x = arguments[0].x ? (arguments[0].x-34) : 100;
 					var y = arguments[0].y ? (arguments[0].y-45) : 100;
-console.dir( arguments[0] );
+//console.dir( arguments[0] );
 					var coords = RDR.util.stayInWindow(x,y,200,30);
 					
 					// TODO use settings check for certain features and content types to determine which of these to disable
@@ -171,13 +171,16 @@ console.dir( arguments[0] );
 		},
 		util : {
             stayInWindow : function(x,y,w,h) {
+
                 var coords = {};
                 var rWin = $(window);
                 var winWidth = rWin.width();
                 var winHeight = rWin.height();
                 var winScroll = rWin.scrollTop();
-                if ( (x+w) > winWidth ) {
-                    x = winWidth - w;
+	console.log('stayInWindow ',x,y,w,h, winWidth, winHeight);
+                if ( (x+w+16) >= winWidth ) {
+                    x = winWidth - w - 36;
+	console.log('running off -- new x: ',x);
                 }
                 if ( (y+h) > winHeight + winScroll ) {
                     y = winHeight + winScroll - h + 75;
@@ -292,7 +295,10 @@ console.dir( arguments[0] );
 				RDR.group.selector_whitelist = "";
 				
 				// init the img interactions
-				$( RDR.group.img_selector ).live( 'mouseenter', function() {
+				$( RDR.group.img_selector ).live( 'mouseover', function() {
+					if ( typeof rdr_img_actionicon != 'undefined' ) clearTimeout( rdr_img_actionicon );
+					RDR.actionbar.close();
+					
 					// check that the image is large enough?
 					// TODO keep the actionbar in the window
 					// TODO image needs to show in rate window
@@ -303,7 +309,7 @@ console.dir( arguments[0] );
 				    var this_img = $(this);
 				    var x = this_img.offset().left + 25;
 				    var y = this_img.offset().top + this_img.height() + 25;
-				    RDR.actionbar.draw({x:x, y:y, content_type:"image", content:this_img.attr('src') });
+				    RDR.actionbar.draw({ x:x, y:y, content_type:"image", content:this_img.attr('src') });
 
 				    $('div.rdr.rdr_actionbar').css('overflow','hidden');
 				    $('div.rdr.rdr_actionbar').width(23);
@@ -320,7 +326,7 @@ console.dir( arguments[0] );
 				    );
 
 				}).live('mouseleave', function() {
-					rdr_img_actionicon = setTimeout( "RDR.actionbar.close()", 250);
+					rdr_img_actionicon = setTimeout( "RDR.actionbar.close()", 150);
 				});
 				// END
             },
@@ -436,6 +442,9 @@ console.dir( arguments[0] );
             rateStart : function() {
                 // draw the window over the actionbar
                 var actionbarOffsets = $('div.rdr.rdr_actionbar').offset();
+				
+				$('.rdr_rewritable').removeClass('rdr_rewritable');
+
                 $('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
                 var rindow = RDR.rindow.draw({
                     x:actionbarOffsets.left,
@@ -467,7 +476,9 @@ console.dir( arguments[0] );
                     if ( content_type == "text" ) {
 						rindow.find('em.rdr_selected-text').html( unescape(content) );
 					} else if ( content_type == "image" ) {
-						rindow.find('em.rdr_selected-text').css('text-align','center').html( '<img style="max-width:100%;max-height:600px;" src=" ' + content + '" />' );
+						// rindow.find('em.rdr_selected-text').css('text-align','center').html( '<img style="max-width:100%;max-height:600px;" src=" ' + content + '" />' );
+						rindow.find('em.rdr_selected-text').hide();
+						rindow.find('h1').text('Rate This Image');
 					}
 				
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
@@ -490,7 +501,7 @@ console.dir( arguments[0] );
             rateSend : function(rindow) {
                 // get the user-added tags from the input field
                 var unknown_tags = rindow.find('input[name="unknown-tags"]').val();
-			
+			console.log(unknown_tags);
                 // get the blessed tags the user chose, by checking for the css class
                 var known_tags = [];
                 rindow.find('ul.rdr_preselected li.rdr_selected').each( function() {
@@ -499,22 +510,30 @@ console.dir( arguments[0] );
 			
                 // get the text that was highlighted
                 var content = RDR.why.sel.text;
-			
+
+				rindow.find('button').text('Rating...').attr('disabled','disabled');
+			console.log("1: ",unknown_tags);
                 // send the data!
                 $.ajax({
                     url: "/json-send/",
                     contentType: "application/json",
-                    dataType: "jsonp",
+                    //dataType: "jsonp",
+					dataType: "json",
                     data: {
-                        unknown_tags:unknown_tags,
-                        known_tags:known_tags,
-                        user:10,
-                        page:1,
-                        content:content,
-                        content_type:"text"
+                        "unknown_tags" : unknown_tags,
+                        "known_tags" : known_tags,
+                        "user" : 10,
+                        "page" : 1,
+                        "content" : content,
+                        "content_type" : "text"
                     },
-                    success: function(msg) {
-                        console.log('success');
+                    complete: function(msg, unknown_tags, known_tags) {
+	console.log("2: ",unknown_tags);
+						var share_content = unknown_tags + known_tags.join(', ') + ": " + content;
+                        rindow.find('ul, div, input').not('div.rdr_close').remove();
+						rindow.find('h1').html('Done!').after('<div>Now, <strong>share this</strong> with others!</div>' +
+						'<div><input type="text" value="' + share_content + '" /></div>' +
+						'<div><button>Facebook</button> <button>Twitter</button> <button>LinkedIn</button></div>');
                     }
                 });
             },
