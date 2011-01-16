@@ -28,6 +28,13 @@ class Node(models.Model):
     class Meta:
         abstract = True
 
+class Feature(models.Model):
+    kind = models.PositiveSmallIntegerField(choices=FEATURE_TYPES)
+    text = models.BooleanField()
+    images = models.BooleanField()
+    flash = models.BooleanField()
+    rb_group = models.ForeignKey(RBGroup)
+
 class RBGroup(models.Model):
     name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=25)
@@ -43,13 +50,6 @@ class RBGroup(models.Model):
         
     class Meta:
     	ordering = ['short_name']
-
-class Feature(models.Model):
-    kind = models.PositiveSmallIntegerField(choices=FEATURE_TYPES)
-    text = models.BooleanField()
-    images = models.BooleanField()
-    flash = models.BooleanField()
-    rb_group = models.ForeignKey(RBGroup)
 
 class RBSite(Site):
     rb_group = models.ForeignKey(RBGroup)
