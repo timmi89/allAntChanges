@@ -54,8 +54,8 @@ function readrBoard($R){
 				var x = arguments[0].x ? arguments[0].x:100;
 				var y = arguments[0].y ? arguments[0].y:100;
 
-				new_rindow = $('div.rdr.rdr_window.rdr.rdr_rewritable'); // jquery obj of the rewritable window
-				if ( new_rindow.length == 0 ) { // oh, there's no rewritable window available, so make one
+				new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
+				if ( new_rindow.length == 0 ) { // there's no rewritable window available, so make one
 					new_rindow = $('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + width + 'px;"></div>');
 					$('body').append( new_rindow );
 				}
@@ -83,6 +83,7 @@ function readrBoard($R){
                 return new_rindow;
 			},
 			closeAll: function() {
+				console.log('closeAll');
 				$('div.rdr.rdr_window').remove();
 			}
 		},
@@ -94,10 +95,13 @@ function readrBoard($R){
 					var y = arguments[0].y ? (arguments[0].y-45) : 100;
 console.dir( arguments[0] );
 					var coords = RDR.util.stayInWindow(x,y,200,30);
+					
+					// TODO use settings check for certain features and content types to determine which of these to disable
 					var new_actionbar = $('<div class="rdr rdr_actionbar" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
 						'<a href="javascript:void(0);" onclick="RDR.actions.aboutReadrBoard();" class="rdr_icon_about">What\' This?</a>' +
 						'<span class="rdr_divider">&nbsp;</span>' +
 						'<a href="javascript:void(0);" onclick="RDR.actions.rateStart({content_type:\''+arguments[0].content_type+'\',content:\''+arguments[0].content+'\'});" class="rdr_icon_rate">Rate This</a>' +
+						// TODO: make all of these also have a set of arguments pass in
 						'<a href="javascript:void(0);" onclick="RDR.actions.searchStart();" class="rdr_icon_search">Search For This</a>' +
 						'<a href="javascript:void(0);" onclick="RDR.actions.bookmarkStart();" class="rdr_icon_bookmark">Bookmark This</a>' +
 						'<a href="javascript:void(0);" onclick="RDR.actions.commentStart();" class="rdr_icon_comment">Comment On This</a>' +
@@ -283,7 +287,7 @@ console.dir( arguments[0] );
 
 				// the following lines should go into the ajax call success function
 				// START
-				// TEST DATA
+				// TODO: TEST DATA
 				RDR.group.img_selector = "div.container img";
 				RDR.group.selector_whitelist = "";
 				
@@ -291,7 +295,6 @@ console.dir( arguments[0] );
 				$( RDR.group.img_selector ).live( 'mouseenter', function() {
 					// check that the image is large enough?
 					// TODO keep the actionbar in the window
-					// TODO don't search
 					// TODO image needs to show in rate window
 					// TODO all image functions need CURRENT URL (incl. hash) + IMG SRC URL for rating, SHARING, etc.
 					// TODO show activity on an image, without breaking page nor covering up image.
@@ -306,12 +309,13 @@ console.dir( arguments[0] );
 				    $('div.rdr.rdr_actionbar').width(23);
 				
 				    $('div.rdr.rdr_actionbar').hover( function() {
-						console.log('mouseentering actionbar')
 						clearTimeout( rdr_img_actionicon );
-				        $(this).animate( {width:174},100 );
+						// the following if statement seems unnecessary, but it is not.
+				        if ( $(this).hasClass('rdr_actionbar') ) $(this).animate( {width:174},100 );
 				    },
 				    function() {
-						$(this).remove();
+						// the following if statement seems unnecessary, but it is not.
+						if ( $(this).hasClass('rdr_actionbar') ) $(this).remove();
 					}
 				    );
 
@@ -449,42 +453,8 @@ console.dir( arguments[0] );
                 '<button>Rate</button>' +
                 '<div class="rdr_help">e.g., Love this, autumn, insightful</div>';
 
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				// TO GLOBAL OR NOT TO GLOBAL
-				// THIS IS THE QUESTION
-				
 				var content_type = arguments[0].content_type;
 				var content = arguments[0].content;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                 // add content and animate the actionbar to accommodate it
                 rindow.animate({
@@ -494,9 +464,11 @@ console.dir( arguments[0] );
                     rindow.find('div.rdr_contentSpace').append( rateStartContent );
                     rindow.find('h1').text('Rate This');
 
-                    //if ( arguments[0].content_type == "text" ) {
-						rindow.find('em.rdr_selected-text').html( content );
-					//}
+                    if ( content_type == "text" ) {
+						rindow.find('em.rdr_selected-text').html( unescape(content) );
+					} else if ( content_type == "image" ) {
+						rindow.find('em.rdr_selected-text').css('text-align','center').html( '<img style="max-width:100%;max-height:600px;" src=" ' + content + '" />' );
+					}
 				
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
                     rindow.find('ul.rdr_preselected li').toggle(
@@ -940,7 +912,7 @@ function $RFunctions($R){
     console.log($R.rb)      //"rb"
     console.log($.rb)       //undefined
 
-	//////////////////// TEST DATA //////////////////
+	//////////////////// TODO: TEST DATA //////////////////
 	RDR.group.blessed_tags = [
 	{
 	    name: "Great!",
@@ -959,7 +931,7 @@ function $RFunctions($R){
 	    tid: 3
 	}
 	];
-	// don't want to remove Eric's console statements, but don't wanna see them right now, either
+	// TODO: don't want to remove Eric's console statements, but don't wanna see them right now, either
 	console.clear();
 }
 
