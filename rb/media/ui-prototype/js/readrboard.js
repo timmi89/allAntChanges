@@ -171,16 +171,13 @@ function readrBoard($R){
 		},
 		util : {
             stayInWindow : function(x,y,w,h) {
-
                 var coords = {};
                 var rWin = $(window);
                 var winWidth = rWin.width();
                 var winHeight = rWin.height();
                 var winScroll = rWin.scrollTop();
-	console.log('stayInWindow ',x,y,w,h, winWidth, winHeight);
                 if ( (x+w+16) >= winWidth ) {
                     x = winWidth - w - 36;
-	console.log('running off -- new x: ',x);
                 }
                 if ( (y+h) > winHeight + winScroll ) {
                     y = winHeight + winScroll - h + 75;
@@ -501,7 +498,6 @@ function readrBoard($R){
             rateSend : function(rindow) {
                 // get the user-added tags from the input field
                 var unknown_tags = rindow.find('input[name="unknown-tags"]').val();
-			console.log(unknown_tags);
                 // get the blessed tags the user chose, by checking for the css class
                 var known_tags = [];
                 rindow.find('ul.rdr_preselected li.rdr_selected').each( function() {
@@ -509,10 +505,9 @@ function readrBoard($R){
                 });
 			
                 // get the text that was highlighted
-                var content = RDR.why.sel.text;
+                var content = $.trim( RDR.why.sel.text );
 
 				rindow.find('button').text('Rating...').attr('disabled','disabled');
-			console.log("1: ",unknown_tags);
                 // send the data!
                 $.ajax({
                     url: "/json-send/",
@@ -527,13 +522,53 @@ function readrBoard($R){
                         "content" : content,
                         "content_type" : "text"
                     },
-                    complete: function(msg, unknown_tags, known_tags) {
-	console.log("2: ",unknown_tags);
-						var share_content = unknown_tags + known_tags.join(', ') + ": " + content;
+                    complete: function(msg) {
+						var tags = "";
+
+						for ( var i in known_tags ) {
+							if ( known_tags[i] && RDR.group.blessed_tags[ known_tags[i] ] ) {
+								tags += RDR.group.blessed_tags[ known_tags[i] ].name + ", ";
+							}
+						}
+						
+						if ( typeof unknown_tags != 'undefined' ) {
+							tags += unknown_tags;
+						}
+						
+						tags = $.trim(tags);
+						if ( tags.charAt( tags.length-1) == "," ) tags = tags.substring( 0, tags.length-1 );
+						tags += " - ";
+						
+						// TODO add short rdrbrd URL to end of this line, rather than the long URL
+						var url = window.location.href;
+						
+						// TODO this eneds to behave differently for images, video
+						// maybe just show short URL that leads directly to that image, video on the page
+						var share_content = tags + '"' + content + '" ' + url;
                         rindow.find('ul, div, input').not('div.rdr_close').remove();
-						rindow.find('h1').html('Done!').after('<div>Now, <strong>share this</strong> with others!</div>' +
-						'<div><input type="text" value="' + share_content + '" /></div>' +
-						'<div><button>Facebook</button> <button>Twitter</button> <button>LinkedIn</button></div>');
+						rindow.find('h1').html('Done!').after('<div><strong>Share your reaction</strong> with others:</div>' +
+						'<div id="rdr_share"><textarea>' + share_content + '</textarea>' +
+						'<div id="rdr_share_count"></div>' +
+						'<div><button>Facebook</button> <button>Twitter</button> <button>Tumblr</button> <button>LinkedIn</button></div>');
+						/*
+						TUMBLR SHARING URLs
+						http://www.tumblr.com/share?v=3&u=http%3A%2F%2Fjsbeautifier.org%2F&t=Online%20javascript%20beautifier&s=
+
+						-- QUOTE --
+						http://www.tumblr.com/share?v=3&
+						type=quote&
+						u=http%3A%2F%2Finstalyrics.com%2Fartists%2F121-u2%2Flyrics%2F682239-zooropa&
+						t=Zooropa%20-%20on%20InstaLyrics&
+						s=Zooropa%2C%20a%20bluer%20kind%20of%20white
+
+
+						-- IMAGE --
+						http://www.tumblr.com/share?v=3&type=photo&u=http%3A%2F%2Fwww.wired.com%2Fimages_blogs%2Fdangerroom%2F2011%2F01%2F28858.jpg&t=t%20value&s=s%20value
+						*/
+						$('#rdr_share_count').text( $('#rdr_share textarea').val().length + " characters");
+						$('#rdr_share textarea').keyup( function() {
+							$('#rdr_share_count').text( $('#rdr_share textarea').val().length + " characters");
+						});
                     }
                 });
             },

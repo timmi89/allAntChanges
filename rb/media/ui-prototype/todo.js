@@ -9,6 +9,7 @@ TODAY
 		"will close in 4..3..2..1.."
 
 	Rate
+		don't let rate if no blessed tags or new tags
 		if I have a rate window open, then open another, do both still work?
 
 	Chrome
@@ -17,6 +18,5 @@ TODAY
 ---------------------------------------------
 
 LATER
-	prevent font jump
 	write or embed the styles
 */
