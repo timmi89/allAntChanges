@@ -1,4 +1,3 @@
-
 console.log($)
 var jQueryVersion = "1.4.4",
 RDR, //our global RDR object
@@ -19,8 +18,10 @@ function readrBoard($R){
             nodes : []
         },
         group : {
-            group_id : {{ group_id }},
-            short_name : "dc",
+            //make it a string partly to make my IDE happy.
+            //It's getting sent over ajax anyway so it doesn't matter if it's 1 or "1"
+            group_id : "{{ group_id }}",
+            short_name : "{{ short_name }}",
             hashable_nodes : "#module-article p"
         },
         user : {
@@ -95,7 +96,7 @@ function readrBoard($R){
 				if ( $('div.rdr.rdr_actionbar').length == 0 ) {
 					var x = arguments[0].x ? (arguments[0].x-34) : 100;
 					var y = arguments[0].y ? (arguments[0].y-45) : 100;
-//console.dir( arguments[0] );
+                    //console.dir( arguments[0] );
 					var coords = RDR.util.stayInWindow(x,y,200,30);
 
 					// TODO use settings check for certain features and content types to determine which of these to disable
@@ -230,10 +231,9 @@ function readrBoard($R){
                         short_name : groupShortName
                     },
                     success: function(data, textStatus, XHR) {
-
                         console.log('rbgroup call success')
                         console.dir(data);
-                        console.log(XHR)
+                        //console.log(XHR)
 
                         //get this from the DB?
                         //this.hashable_nodes = "#module-article p";
@@ -269,17 +269,6 @@ function readrBoard($R){
                             }
                             ];
                         });
-
-                    //expects back
-                    /*
-                        name = models.CharField(max_length=250)
-                        short_name = models.CharField(max_length=25)
-                        selector_whitelist = models.TextField(blank=True)
-                        selector_blacklist = models.TextField(blank=True)
-                        tag_whitelist = models.TextField(blank=True)
-                        tag_blacklist = models.TextField(blank=True)
-                        css_url = models.URLField() #do we need 'blank=True, null=True' here right?
-                         */
                     },
                     error: function(XHR){
                         //console.warn(XHR)
@@ -342,8 +331,8 @@ function readrBoard($R){
                     success: function(data, textStatus, XHR) {
 
                         console.log('rbuser call success')
-                        console.dir(data);
-                        console.log(XHR)
+                        //console.dir(data);
+                        //console.log(XHR)
 
                         //get this from the DB?
                         //this.hashable_nodes = "#module-article p";
@@ -440,7 +429,7 @@ function readrBoard($R){
                         hashes : md5_list
                     },
                     success: function(data) {
-                        console.dir(data);
+                        //console.dir(data);
                     }
                 });
             },
@@ -936,12 +925,13 @@ loadScript("/static/ui-prototype/js/jquery-1.4.4.min.js", function(){
         //callback
 
         //test that $.ui versioning is working correctly
-        console.log("testing jQuery UI versioning...")
-        console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
+        //console.log("testing jQuery UI versioning...")
+        //console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
         var $R = $.noConflict(true);
 
-        console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
-        console.log("of course $R.ui.version should show our version - version = " + $R.ui.version)
+        //test that $.ui versioning is working correctly
+        //console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
+        //console.log("of course $R.ui.version should show our version - version = " + $R.ui.version)
 
         //call scripts that depend on our jQuery version to be loaded
         $RFunctions($R);
