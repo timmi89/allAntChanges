@@ -39,7 +39,6 @@ class RBGroupHandler(BaseHandler):
               'logo_url_lg',
               'css_url',
              )
-    exclude = (
 
     def read(self, request, group=None):
     	host = request.get_host()

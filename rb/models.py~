@@ -61,7 +61,7 @@ class RBGroup(models.Model):
             raise Exception("Invalid feature name")
 
         try:
-            return self.feature_set.get(kind=feature_id)
+            return self.feature_set.values('text','images','flash').get(kind=feature_id)
         except:
             raise Exception("Feature instance not yet created")
 

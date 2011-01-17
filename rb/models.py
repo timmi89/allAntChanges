@@ -36,6 +36,7 @@ class RBGroup(models.Model):
     short_name = models.CharField(max_length=25)
     language = models.CharField(max_length=25,default="en")
     blessed_tags = models.CharField(max_length=250,blank=True)
+    valid_domains = models.CharField(max_length=250,blank=True)
 
     # black/whitelist fields
     anno_whitelist = models.CharField(max_length=250,blank=True)
@@ -51,9 +52,6 @@ class RBGroup(models.Model):
     # css
     css_url = models.URLField(blank=True,verify_exists=False)
     
-    def get_features(self):
-        return self.feature_set.all()    
-
     def get_feature(self, name):
         try:
             feature_id = FEATURE_LOOKUP[name]
