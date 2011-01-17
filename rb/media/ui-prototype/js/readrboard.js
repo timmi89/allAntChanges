@@ -74,6 +74,7 @@ function readrBoard($R){
                             $(this).removeClass('rdr_rewritable');
                         }
                     });
+
                 }
                 // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
                 var coords = RDR.util.stayInWindow(x,y,width,300);
@@ -370,10 +371,17 @@ function readrBoard($R){
                 this.initGroupData(groupShortName);
                 //this.initUserData(userShortName);
 
-                // init the drag selection tracker
-                console.log(this);
-                console.log('-------');
-                $('body').bind('mouseup.rdr', this.startSelect );
+                //$('body').bind('mouseup.rdr', this.startSelect );
+                //change to document instead of body - click events weren't getting picked up in the margin
+                $(document).bind('mouseup.rdr', this.startSelect );
+
+                //add escape keypress event to document to close all rindows
+                $(document).keyup(function(event) {
+                    if (event.keyCode == '27') { //esc
+                        RDR.rindow.closeAll();
+                        RDR.actionbar.close();
+                    }
+                });
 
             },
             hashNodes : function() {
@@ -427,7 +435,7 @@ function readrBoard($R){
                     contentType: "application/json",
                     dataType: "jsonp",
                     data: {
-                        groupID : 1,
+                        short_name : RDR.group.short_name,
                         pageID : 1,
                         hashes : md5_list
                     },
@@ -493,6 +501,7 @@ function readrBoard($R){
                     rindow.find('button').click( function() {
                         RDR.actions.rateSend( rindow );
                     });
+
                 });
             },
             rateSend : function(rindow) {
