@@ -450,7 +450,7 @@ function readrBoard($R){
                     contentType: "application/json",
                     dataType: "jsonp",
                     data: {
-                        groupID : 1,
+                        short_name : RDR.group.short_name,
                         pageID : 1,
                         hashes : md5_list
                     },
