@@ -19,7 +19,7 @@ function readrBoard($R){
             nodes : []
         },
         group : {
-	    group_id : {{ group_id }}
+            group_id : {{ group_id }},
             short_name : "dc",
             hashable_nodes : "#module-article p"
         },
