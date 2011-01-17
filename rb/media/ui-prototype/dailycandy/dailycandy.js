@@ -348,19 +348,6 @@ DAILYCANDY = {
 			});
 		},
 		action: function() {
-			
-			/* Send to a friend */
-			$("#module-article-tools a.email, #module-dossier-tools a.email, #module-video-tools a.email, #module-account-lists a.email, #module-flipbook-content a.email, #module-flipbook-end-share a.email").fancybox({
-				'overlayShow': true,
-				'padding': 0,
-				'width': 505,
-				'height': 580,
-				'hideOnContentClick': false,
-				'centerOnScroll': false,
-				'zoomSpeedIn': 300,
-				'zoomSpeedOut': 300,
-				'type': 'iframe'
-			});
 
 			$("#module-article-tools a.print, #module-dossier-tools a.print").click(function() {
 				window.print();

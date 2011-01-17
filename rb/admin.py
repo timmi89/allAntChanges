@@ -7,6 +7,7 @@ admin.site.register(RBSite)
 admin.site.register(Tag)
 admin.site.register(Comment)
 admin.site.register(RBGroup)
+admin.site.register(Feature)
 
 #This replaces the line above to customize the admin page console
 #todo: it doesn't work yet though.. resolve bugs

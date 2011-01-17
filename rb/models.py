@@ -3,12 +3,22 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 import datetime
 
-Node_Types = (
-    ('TXT', 'Text'),
-    ('IMG', 'Image'),
-    ('VID', 'Video'),
-    ('SND', 'Sound'),
+NODE_TYPES = (
+    (0, 'text'),
+    (1, 'image'),
+    (2, 'video'),
+    (3, 'sound'),
 )
+
+FEATURE_TYPES = (
+    (0, 'share'),
+    (1, 'rate'),
+    (2, 'comment'),
+    (3, 'bookmark'),
+    (4, 'search'),
+)
+
+FEATURE_LOOKUP = dict([(a[1], a[0]) for a in FEATURE_TYPES])
 
 class Node(models.Model):
     parent = models.ForeignKey(
@@ -21,25 +31,62 @@ class Node(models.Model):
     class Meta:
         abstract = True
 
-        
 class RBGroup(models.Model):
     name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=25)
-    selector_whitelist = models.TextField(blank=True)
-    selector_blacklist = models.TextField(blank=True)
-    tag_whitelist = models.TextField(blank=True)
-    tag_blacklist = models.TextField(blank=True)
-    css_url = models.URLField() #do we need 'blank=True, null=True' here right?
+    language = models.CharField(max_length=25,default="en")
+    blessed_tags = models.CharField(max_length=250,blank=True)
+    valid_domains = models.CharField(max_length=250,blank=True)
+
+    # black/whitelist fields
+    anno_whitelist = models.CharField(max_length=250,blank=True)
+    img_whitelist = models.CharField(max_length=250,blank=True)
+    img_blacklist = models.CharField(max_length=250,blank=True)
+    no_readr = models.CharField(max_length=250,blank=True)
+    
+    # logo fields
+    logo_url_sm = models.URLField(blank=True,verify_exists=False)
+    logo_url_med = models.URLField(blank=True,verify_exists=False)
+    logo_url_lg = models.URLField(blank=True,verify_exists=False)
+    
+    # css
+    css_url = models.URLField(blank=True,verify_exists=False)
+    
+    def get_feature(self, name):
+        try:
+            feature_id = FEATURE_LOOKUP[name]
+        except:
+            raise Exception("Invalid feature name")
+
+        try:
+            return self.feature_set.values('text','images','flash').get(kind=feature_id)
+        except:
+            raise Exception("Feature instance not yet created")
+
+    # TODO: write code to overwrite save method + create feature instances on
+    # the first save of the model.
 
     def __unicode__(self):
         return self.name
+        
+    class Meta:
+    	ordering = ['short_name']
 
+class Feature(models.Model):
+    kind = models.PositiveSmallIntegerField(choices=FEATURE_TYPES,default=1)
+    text = models.BooleanField()
+    images = models.BooleanField()
+    flash = models.BooleanField()
+    rb_group = models.ForeignKey(RBGroup,default=1)
+
+    def __unicode__(self):
+        return (self.rb_group.short_name +":"+  FEATURE_TYPES[self.kind][1])
 
 class RBSite(Site):
-	rb_group = models.ForeignKey(RBGroup)
-	include_selectors = models.CharField(max_length=250, blank=True)
-	no_rdr_selectors = models.CharField(max_length=250, blank=True)
-	css = models.URLField(blank=True)
+    rb_group = models.ForeignKey(RBGroup)
+    include_selectors = models.CharField(max_length=250, blank=True)
+    no_rdr_selectors = models.CharField(max_length=250, blank=True)
+    css = models.URLField(blank=True)
 
 class RBPage(models.Model):
     rb_site = models.ForeignKey(RBSite)
@@ -66,7 +113,7 @@ class FacebookProfileModel(models.Model):
 
 class ContentNode(Node):
     user = models.ForeignKey(User)
-    type = models.CharField(max_length=3, choices=Node_Types)
+    type = models.CharField(max_length=3, choices=NODE_TYPES)
     rb_page = models.ForeignKey(RBPage)
     hash = models.CharField(max_length=32, editable=True)
     content = models.TextField() #make this something better

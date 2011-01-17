@@ -1,4 +1,5 @@
 from piston.handler import BaseHandler, AnonymousBaseHandler
+from django.http import HttpResponse
 from rb.models import *
 
 class ContentNodeHandler(BaseHandler):
@@ -8,7 +9,7 @@ class ContentNodeHandler(BaseHandler):
 
     def read(self, request):
         # called on GET requests
-        print request.GET.getlist('hashes[]')
+        #print request.GET.getlist('hashes[]')
         for node in request.GET.getlist('hashes[]'):
             print node
         return ContentNode.objects.all()
@@ -20,42 +21,44 @@ class ContentNodeHandler(BaseHandler):
 class RBGroupHandler(BaseHandler):
     allowed_methods = ('GET',)
     model = RBGroup
-    fields = ('name', 'short_name', 'selector_whitelist', 'selector_blacklist', 'tag_whitelist', 'tag_blacklist', 'css_url')
+    ordering = ('name','short_name')
+    fields = ('name',
+              'short_name',
+              'language',
+              'blessed_tags',
+              'anno_whitelist',
+              'img_whitelist',
+              'img_blacklist',
+              'no_readr',
+              'feature_share',
+              'feaure_rate',
+              'feature_comment',
+              'feature_bookmark',
+              'feature_search',
+              'logo_url_sm',
+              'logo_url_med',
+              'logo_url_lg',
+              'css_url',
+             )
 
-    def read(self, request, short_name=None):
-
-        # testing
-        #print request '''investigating request object'''
-        domain = request.META['REMOTE_ADDR'] # '127.0.0.1'  ...  # or do we use the tools in django sites instead? http://docs.djangoproject.com/en/dev/ref/contrib/sites/
-        print "domain is " + domain
-
-        #hack to get a string out of the single unicode list item  - how to do this for real?  str() didn't work.. look into it..
-        for str_short_name in request.GET.getlist('short_name'): #TODO: how and where is this data cleaned - investigate piston and forms
-            print str_short_name
-            return RBGroup.objects.filter(short_name=str_short_name)
+    def read(self, request, group=None):
+    	host = request.get_host()
+    	path = request.path
+    	fp = request.get_full_path()
+        if group:
+            group = int(group)
+            try:
+            	g = RBGroup.objects.get(id=group)
+            except RBGroup.DoesNotExist:
+            	return HttpResponse("Does not exist")
+            setattr(g,'feature_share',g.get_feature('share'))
+            setattr(g,'feature_rate',g.get_feature('rate'))
+            setattr(g,'feature_comment',g.get_feature('comment'))
+            setattr(g,'feature_bookmark',g.get_feature('bookmark'))
+            setattr(g,'feature_search',g.get_feature('search'))
+            return g
         else:
-            return RBGroup.objects.all()
-
-        """
-class RBUserHandler(BaseHandler):
-    allowed_methods = ('GET',)
-    model = RBGroup
-    fields = ('name', 'first_name', )
-
-    def read(self, request, short_name=None):
-
-        # testing
-        #print request '''investigating request object'''
-        domain = request.META['REMOTE_ADDR'] # '127.0.0.1'  ...  # or do we use the tools in django sites instead? http://docs.djangoproject.com/en/dev/ref/contrib/sites/
-        print "domain is " + domain
-
-        #hack to get a string out of the single unicode list item  - how to do this for real?  str() didn't work.. look into it..
-        for str_short_name in request.GET.getlist('short_name'): #TODO: how and where is this data cleaned - investigate piston and forms
-            print str_short_name
-            return RBGroup.objects.filter(short_name=str_short_name)
-        else:
-            return RBGroup.objects.all()
-"""
+            return ("Group not specified")
 
 """model = ContentNode()
     fields = ('id','user','hash')

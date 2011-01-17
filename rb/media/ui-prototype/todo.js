@@ -1,27 +1,22 @@
 /*
 TODAY
-	x JSON
-	
-	x Send Tags
-		force user, user_auth
-			dummy RDR.user
-		force page
-	Any validation?
-	Receive response
-	
-	tooltip icons
-		active based on activity
+	make tooltip icons active based on activity
+
+	Rate - success view
+		show small window:  "also share on..."
+		"interesting, booooring, lol: <content>"
+		X to close
+		"will close in 4..3..2..1.."
+
+	Rate
+		don't let rate if no blessed tags or new tags
+		if I have a rate window open, then open another, do both still work?
+
+	Chrome
+		occasionally draws the rindow too low?
 
 ---------------------------------------------
 
 LATER
-	jQuery noConflict
-	prevent font jump
-	
-	rindow z-index much higher (DC nav covers the rindows!)
-	
-	x MD5
-	placeholder group setting for blessed nodes
-	
-	write the styles, don't embed them as a <link>
+	write or embed the styles
 */
