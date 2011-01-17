@@ -21,6 +21,7 @@ class ContentNodeHandler(BaseHandler):
 class RBGroupHandler(BaseHandler):
     allowed_methods = ('GET',)
     model = RBGroup
+    ordering = ('name','short_name')
     fields = ('name',
               'short_name',
               'language',
@@ -46,7 +47,6 @@ class RBGroupHandler(BaseHandler):
     	fp = request.get_full_path()
         if group:
             group = int(group)
-            #return RBGroup.objects.filter(id=group)
             try:
             	g = RBGroup.objects.get(id=group)
             except RBGroup.DoesNotExist:
