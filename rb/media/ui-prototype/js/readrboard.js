@@ -159,7 +159,6 @@ function readrBoard($R){
 				if ( x && y ) {
 					// show the tooltip
 					$('body').append( new_tooltip );
-					new_tooltip.animate( {opacity:1},333);
 				
 					// now that it's in the page, position it (in part based on its calculated height);
 					new_tooltip.css('left', x + 'px');
@@ -305,15 +304,15 @@ function readrBoard($R){
 						// create a container for the image, give it same styles but more space?  
 						// like, inline or float, but with RDR stuff
 				    var this_img = $(this);
-				    var x = this_img.offset().left + 25;
-				    var y = this_img.offset().top + this_img.height() + 25;
+				    var x = this_img.offset().left + 33;
+				    var y = this_img.offset().top + this_img.height() + 15;
 				    RDR.actionbar.draw({ x:x, y:y, content_type:"image", content:this_img.attr('src') });
 
 				    $('div.rdr.rdr_actionbar').css('overflow','hidden');
 				    $('div.rdr.rdr_actionbar').width(23);
 				
 				    $('div.rdr.rdr_actionbar').hover( function() {
-						clearTimeout( rdr_img_actionicon );
+						if ( typeof rdr_img_actionicon != 'undefined' ) clearTimeout( rdr_img_actionicon );
 						// the following if statement seems unnecessary, but it is not.
 				        if ( $(this).hasClass('rdr_actionbar') ) $(this).animate( {width:174},100 );
 				    },
