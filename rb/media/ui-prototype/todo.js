@@ -1,6 +1,6 @@
 /*
 TODAY
-	make tooltip icons active based on activity
+	make actionbar icons active based on activity
 
 	Rate - success view
 		show small window:  "also share on..."

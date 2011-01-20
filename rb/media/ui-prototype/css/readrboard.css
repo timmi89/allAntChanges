@@ -56,7 +56,7 @@ div.rdr.rdr_actionbar a.rdr_icon_about:hover 	{ background-color:transparent; }
 div.rdr.rdr_actionbar span.rdr_divider		{ background:url("/static/ui-prototype/images/actionbar_icons.png") no-repeat -25px 0; display:block; height:30px; width:3px; text-indent:-9999px; float:left;}
 
 /* the tooltip */
-div.rdr.rdr_tooltip { background-color:#fff; border:2px solid #e40000; margin:10px auto; padding:5px 10px; position:relative; text-align:center; min-width:80px; -moz-border-radius:5px; -webkit-border-radius:5px; -moz-box-shadow:0 0 5px #888888; -webkit-box-shadow:0 0 5px #888888; position:absolute; top:20px; left:20px; z-index:10000; opacity:0;}
+div.rdr.rdr_tooltip { background-color:#fff; border:2px solid #e40000; margin:10px auto; padding:5px 10px; position:relative; text-align:center; min-width:80px; -moz-border-radius:5px; -webkit-border-radius:5px; -moz-box-shadow:0 0 5px #888888; -webkit-box-shadow:0 0 5px #888888; position:absolute; top:20px; left:20px; z-index:10000; }
 div.rdr.rdr_tooltip-arrow-border { border-color: #e40000 transparent transparent transparent; border-style: solid; border-width: 7px; height:0; width:0; position:absolute; bottom:-16px; left:43%;}
 div.rdr.rdr_tooltip-arrow { border-color: #fff transparent transparent transparent; border-style: solid; border-width: 7px; height:0; width:0; position:absolute; bottom:-14px; left:43%;}
 
@@ -74,7 +74,7 @@ ul.rdr_preselected			{font-size:24px; font-family:ReadrLeague, Arial, sans-serif
 ul.rdr_preselected a		{color:#000;text-decoration:none;}
 ul.rdr_preselected a:hover	{color:#e71f1f;}
 
-div.rdr_close		{float:right;color:#e50000;cursor:pointer;}
+div.rdr_close		{float:right;color:#999;cursor:pointer;font-size:18px;margin-top:-4px;}
 
 div.rdr_instruct	{color:#666; margin:5px 0;}
 div.rdr_help		{font-style:italic; font-size:11px; color:#aaa;}

@@ -30,8 +30,13 @@ def widget(request,sn):
     try:
         rbg = RBGroup.objects.get(short_name = sn)
     except:
+<<<<<<< HEAD
         raise Exception('RB group with this short_name does not exist')
     return render_to_response("widget.js",{'group_id': rbg.id})
+=======
+        raise Exception('short_name not unique, this sucks')
+    return render_to_response("widget.js",{'group_id': rbg.id, 'short_name' : sn})
+>>>>>>> 30cd8cf7148f69f70037f5c0a6f2b19988e75030
 
 def settings(request,group_id):
     # Get settings after widget code (including group ID has been sent)

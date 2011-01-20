@@ -1,4 +1,3 @@
-
 console.log($)
 var jQueryVersion = "1.4.4",
 RDR, //our global RDR object
@@ -19,8 +18,10 @@ function readrBoard($R){
             nodes : []
         },
         group : {
-	    group_id : {{ group_id }}
-            short_name : "dc",
+            //make it a string partly to make my IDE happy.
+            //It's getting sent over ajax anyway so it doesn't matter if it's 1 or "1"
+            group_id : "{{ group_id }}",
+            short_name : "{{ short_name }}",
             hashable_nodes : "#module-article p"
         },
         user : {
@@ -50,7 +51,7 @@ function readrBoard($R){
 			draw: function() {
 				// for now, any window closes all tooltips
 				RDR.tooltip.closeAll();
-			
+
 				var width = arguments[0].width ? arguments[0].width:400;
 				var x = arguments[0].x ? arguments[0].x:100;
 				var y = arguments[0].y ? arguments[0].y:100;
@@ -60,7 +61,7 @@ function readrBoard($R){
 					new_rindow = $('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + width + 'px;"></div>');
 					$('body').append( new_rindow );
 				}
-			
+
 				if ( new_rindow.find('h1').length == 0 ) {
                     new_rindow.html('');
                     new_rindow.append( '<div class="rdr_close">x</div><h1></h1><div class="rdr rdr_contentSpace"></div>' );
@@ -75,6 +76,7 @@ function readrBoard($R){
                             $(this).removeClass('rdr_rewritable');
                         }
                     });
+
                 }
                 // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
                 var coords = RDR.util.stayInWindow(x,y,width,300);
@@ -94,9 +96,9 @@ function readrBoard($R){
 				if ( $('div.rdr.rdr_actionbar').length == 0 ) {
 					var x = arguments[0].x ? (arguments[0].x-34) : 100;
 					var y = arguments[0].y ? (arguments[0].y-45) : 100;
-//console.dir( arguments[0] );
+                    //console.dir( arguments[0] );
 					var coords = RDR.util.stayInWindow(x,y,200,30);
-					
+
 					// TODO use settings check for certain features and content types to determine which of these to disable
 					var new_actionbar = $('<div class="rdr rdr_actionbar" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
 						'<a href="javascript:void(0);" onclick="RDR.actions.aboutReadrBoard();" class="rdr_icon_about">What\' This?</a>' +
@@ -110,7 +112,7 @@ function readrBoard($R){
 					'</div>');
 
 					$('body').append( new_actionbar );
-				
+
 					$('div.rdr_actionbar a').hover( 
 						function() {
 							var this_link = $(this);
@@ -145,7 +147,7 @@ function readrBoard($R){
 					'<div class="rdr rdr_tooltip-arrow-border"></div>'+
 					'<div class="rdr rdr_tooltip-arrow"></div>'+
 				'</div>');
-			
+
 				if (arguments[0].obj) {
 					var coords = arguments[0].obj.offset();
 					var offset_x = (arguments[0].offset_x) ? arguments[0].offset_x:0;
@@ -155,12 +157,11 @@ function readrBoard($R){
 				} else {
 					// mouse, if we want it.
 				}
-			
+
 				if ( x && y ) {
 					// show the tooltip
 					$('body').append( new_tooltip );
-					new_tooltip.animate( {opacity:1},333);
-				
+
 					// now that it's in the page, position it (in part based on its calculated height);
 					new_tooltip.css('left', x + 'px');
 					new_tooltip.css('top', (y - new_tooltip.height()) + 'px');
@@ -230,10 +231,9 @@ function readrBoard($R){
                         short_name : groupShortName
                     },
                     success: function(data, textStatus, XHR) {
-
                         console.log('rbgroup call success')
                         console.dir(data);
-                        console.log(XHR)
+                        //console.log(XHR)
 
                         //get this from the DB?
                         //this.hashable_nodes = "#module-article p";
@@ -269,17 +269,6 @@ function readrBoard($R){
                             }
                             ];
                         });
-
-                    //expects back
-                    /*
-                        name = models.CharField(max_length=250)
-                        short_name = models.CharField(max_length=25)
-                        selector_whitelist = models.TextField(blank=True)
-                        selector_blacklist = models.TextField(blank=True)
-                        tag_whitelist = models.TextField(blank=True)
-                        tag_blacklist = models.TextField(blank=True)
-                        css_url = models.URLField() #do we need 'blank=True, null=True' here right?
-                         */
                     },
                     error: function(XHR){
                         //console.warn(XHR)
@@ -291,12 +280,12 @@ function readrBoard($R){
 				// TODO: TEST DATA
 				RDR.group.img_selector = "div.container img";
 				RDR.group.selector_whitelist = "";
-				
+
 				// init the img interactions
 				$( RDR.group.img_selector ).live( 'mouseover', function() {
 					if ( typeof rdr_img_actionicon != 'undefined' ) clearTimeout( rdr_img_actionicon );
 					RDR.actionbar.close();
-					
+
 					// check that the image is large enough?
 					// TODO keep the actionbar in the window
 					// TODO image needs to show in rate window
@@ -305,15 +294,15 @@ function readrBoard($R){
 						// create a container for the image, give it same styles but more space?  
 						// like, inline or float, but with RDR stuff
 				    var this_img = $(this);
-				    var x = this_img.offset().left + 25;
-				    var y = this_img.offset().top + this_img.height() + 25;
+				    var x = this_img.offset().left + 33;
+				    var y = this_img.offset().top + this_img.height() + 15;
 				    RDR.actionbar.draw({ x:x, y:y, content_type:"image", content:this_img.attr('src') });
 
 				    $('div.rdr.rdr_actionbar').css('overflow','hidden');
 				    $('div.rdr.rdr_actionbar').width(23);
-				
+
 				    $('div.rdr.rdr_actionbar').hover( function() {
-						clearTimeout( rdr_img_actionicon );
+						if ( typeof rdr_img_actionicon != 'undefined' ) clearTimeout( rdr_img_actionicon );
 						// the following if statement seems unnecessary, but it is not.
 				        if ( $(this).hasClass('rdr_actionbar') ) $(this).animate( {width:174},100 );
 				    },
@@ -342,8 +331,8 @@ function readrBoard($R){
                     success: function(data, textStatus, XHR) {
 
                         console.log('rbuser call success')
-                        console.dir(data);
-                        console.log(XHR)
+                        //console.dir(data);
+                        //console.log(XHR)
 
                         //get this from the DB?
                         //this.hashable_nodes = "#module-article p";
@@ -371,10 +360,17 @@ function readrBoard($R){
                 this.initGroupData(groupShortName);
                 //this.initUserData(userShortName);
 
-                // init the drag selection tracker
-                console.log(this);
-                console.log('-------');
-                $('body').bind('mouseup.rdr', this.startSelect );
+                //$('body').bind('mouseup.rdr', this.startSelect );
+                //change to document instead of body - click events weren't getting picked up in the margin
+                $(document).bind('mouseup.rdr', this.startSelect );
+
+                //add escape keypress event to document to close all rindows
+                $(document).keyup(function(event) {
+                    if (event.keyCode == '27') { //esc
+                        RDR.rindow.closeAll();
+                        RDR.actionbar.close();
+                    }
+                });
 
             },
             hashNodes : function() {
@@ -397,25 +393,25 @@ function readrBoard($R){
                         // clean whitespace
                         node_text = RDR.util.cleanPara ( node_text );
 
-				
+
                         // hash the text
                         var node_hash = RDR.util.md5.hex_md5( node_text );
-				
+
                         // add an object with the text and hash to the nodes dictionary
                         if ( !RDR.data.nodes[node_hash] ) RDR.data.nodes[node_hash] = node_text;
-				
+
                         // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
                         // this makes it easy to find on the page later
                         $(this).addClass( 'rdr-' + node_hash ).addClass('rdr-hashed');
                     }
                 });
-			
+
                 RDR.actions.sendHashes();
             },
             sendHashes : function() {
                 console.log('sending nodes');
                 // TODO: dont' send all hashes
-			
+
                 var md5_list = [];
                 for (var i in RDR.data.nodes ) {
                     md5_list.push( i );
@@ -428,19 +424,19 @@ function readrBoard($R){
                     contentType: "application/json",
                     dataType: "jsonp",
                     data: {
-                        groupID : 1,
+                        short_name : RDR.group.short_name,
                         pageID : 1,
                         hashes : md5_list
                     },
                     success: function(data) {
-                        console.dir(data);
+                        //console.dir(data);
                     }
                 });
             },
             rateStart : function() {
                 // draw the window over the actionbar
                 var actionbarOffsets = $('div.rdr.rdr_actionbar').offset();
-				
+
 				$('.rdr_rewritable').removeClass('rdr_rewritable');
 
                 $('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
@@ -448,7 +444,7 @@ function readrBoard($R){
                     x:actionbarOffsets.left,
                     y:actionbarOffsets.top
                 });
-			
+
                 // write content to the window
                 var rateStartContent = '<em class="rdr_selected-text"></em><ul class="rdr_tags rdr_preselected">';
                 for (var i=0,j=RDR.group.blessed_tags.length; i<j; i++) {
@@ -478,7 +474,7 @@ function readrBoard($R){
 						rindow.find('em.rdr_selected-text').hide();
 						rindow.find('h1').text('Rate This Image');
 					}
-				
+
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
                     rindow.find('ul.rdr_preselected li').toggle(
                         function() {
@@ -489,11 +485,12 @@ function readrBoard($R){
                             $(this).removeClass('rdr_selected');
                         }
                         );
-				
+
                     // bind the button with a function (since this isn't in a <form>)
                     rindow.find('button').click( function() {
                         RDR.actions.rateSend( rindow );
                     });
+
                 });
             },
             rateSend : function(rindow) {
@@ -504,7 +501,7 @@ function readrBoard($R){
                 rindow.find('ul.rdr_preselected li.rdr_selected').each( function() {
                     known_tags.push( $(this).attr('tid') );
                 });
-			
+
                 // get the text that was highlighted
                 var content = $.trim( RDR.why.sel.text );
 
@@ -531,18 +528,18 @@ function readrBoard($R){
 								tags += RDR.group.blessed_tags[ known_tags[i] ].name + ", ";
 							}
 						}
-						
+
 						if ( typeof unknown_tags != 'undefined' ) {
 							tags += unknown_tags;
 						}
-						
+
 						tags = $.trim(tags);
 						if ( tags.charAt( tags.length-1) == "," ) tags = tags.substring( 0, tags.length-1 );
 						tags += " - ";
-						
+
 						// TODO add short rdrbrd URL to end of this line, rather than the long URL
 						var url = window.location.href;
-						
+
 						// TODO this eneds to behave differently for images, video
 						// maybe just show short URL that leads directly to that image, video on the page
 						var share_content = tags + '"' + content + '" ' + url;
@@ -579,7 +576,7 @@ function readrBoard($R){
 
                 // make sure it's not selecting inside the RDR windows.
                 if ( !mouse_target.hasClass('rdr') && mouse_target.parents('div.rdr').length == 0 ) {
-				
+
                     // closes undragged windows
                     $('div.rdr.rdr_window.rdr.rdr_rewritable, div.rdr.rdr_actionbar').remove();
 
@@ -587,7 +584,7 @@ function readrBoard($R){
                     // TODO: need separate image function, which should then prevent event bubbling into this
                     RDR.why.sel = RDR.actions.selectedText();
                     if ( RDR.why.sel.text && RDR.why.sel.text.length > 3 && RDR.why.sel.text.indexOf(" ") != -1 ) {
-					
+
                         // next line's redundant, but this way we just use .content in later functions, based on itemType
                         RDR.why.content = RDR.why.sel.text;
                         RDR.why.itemType = "text";
@@ -614,7 +611,7 @@ function readrBoard($R){
 
                         // cache the blockParent's text for slightly faster processing
                         RDR.why.blockParent.text = RDR.why.blockParent.text();
-				
+
                         if ( RDR.why.blockParent.text && RDR.why.blockParent.text.length > 0) {
 
                             // now, strip newlines and tabs -- and then the doublespaces that result
@@ -651,7 +648,7 @@ function readrBoard($R){
 			we can remove all of his comments at runtime.  this seems to run fine for me in Firefox.
 			TODO: test in IE!
 			*/
-			
+
                 var win = win ? win : window;
 
                 var obj = null;
@@ -665,12 +662,12 @@ function readrBoard($R){
                     // Mozilla seems to be selecting the wrong Node, the one that comes before the selected node.
                     // I'm not sure if there's a configuration to solve this,
                     var sel = win.getSelection();
-				
+
                     if(!sel.isCollapsed && $.browser.mozilla){
                     /*
 					TODO:  I don't think we need this, but we need to test more and see if we need it back.
 						   His code's a year old and I'm thinking Mozilla fixed the need for all this..?
-					
+
 					// If we've selected an element, (note: only works on Anchors, only checked bold and spans)
 					// we can use the anchorOffset to find the childNode that has been selected
 					if(sel.focusNode.nodeName !== '#text'){
@@ -922,18 +919,19 @@ function jqueryJSON($){
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
 loadScript("/static/ui-prototype/js/jquery-1.4.4.min.js", function(){
     //callback
-    
+
     //load jQuery UI while the $ and jQuery still refers to our new version
     loadScript("/static/ui-prototype/js/jquery-ui-1.8.6.custom.min.js", function(){
         //callback
-        
+
         //test that $.ui versioning is working correctly
-        console.log("testing jQuery UI versioning...")
-        console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
+        //console.log("testing jQuery UI versioning...")
+        //console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
         var $R = $.noConflict(true);
-        
-        console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
-        console.log("of course $R.ui.version should show our version - version = " + $R.ui.version)
+
+        //test that $.ui versioning is working correctly
+        //console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
+        //console.log("of course $R.ui.version should show our version - version = " + $R.ui.version)
 
         //call scripts that depend on our jQuery version to be loaded
         $RFunctions($R);
@@ -989,4 +987,3 @@ function $RFunctions($R){
 	// TODO: don't want to remove Eric's console statements, but don't wanna see them right now, either
 	console.clear();
 }
-
