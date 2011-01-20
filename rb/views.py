@@ -26,11 +26,17 @@ def search(request):
     return HttpResponse(message)
 
 def widget(request,sn):
+    # Widget code is retreived from the server using RBGroup shortname
     try:
         rbg = RBGroup.objects.get(short_name = sn)
     except:
-        raise Exception('short_name not unique, this sucks')
+        raise Exception('RB group with this short_name does not exist')
     return render_to_response("widget.js",{'group_id': rbg.id})
+
+def settings(request,group_id):
+    # Get settings after widget code (including group ID has been sent)
+    # TODO: retreive settings and send it back in JSONP using piston API
+    pass
 
 def display_meta(request):
     values = request.META.items()

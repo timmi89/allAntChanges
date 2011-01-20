@@ -65,6 +65,7 @@ class RBGroup(models.Model):
 
     # TODO: write code to overwrite save method + create feature instances on
     # the first save of the model.
+    # def save(self):
 
     def __unicode__(self):
         return self.name
