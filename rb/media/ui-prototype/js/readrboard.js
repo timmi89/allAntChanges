@@ -362,6 +362,27 @@ function readrBoard($R){
                     }
                 });
             },
+			getPageData : function(){
+				// TODO this is probably not quite right
+				var url = window.location.href + window.location.hash;
+				var canonical = ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href'):"";
+				
+				$.ajax({
+                    url: "/api/get-----page-----data",
+                    type: "get",
+                    contentType: "application/json",
+                    dataType: "jsonp",
+                    data: {
+                        group_id: RDR.group.group_id,
+						url: url,
+						canonical_url: canonical,
+						md5_hashes: {
+							
+						}
+						// not sending, use default:  items_requested:{}
+					}
+				});
+			},
             init : function(){
                 var groupShortName = RDR.group.short_name;
                 var userShortName = RDR.user.short_name;
