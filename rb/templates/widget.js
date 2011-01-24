@@ -1,6 +1,7 @@
 console.log($)
 var jQueryVersion = "1.4.4",
 RDR, //our global RDR object
+$RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
 $R = {}, //init var: our clone of jQuery
 client$ = {}; //init var: clients copy of jQuery
 
@@ -17,14 +18,13 @@ function readrBoard($R){
         data : {
             nodes : []
         },
-        group : {
-            //make it a string partly to make my IDE happy.
-            //It's getting sent over ajax anyway so it doesn't matter if it's 1 or "1"
-            group_id : "{{ group_id }}",
-            short_name : "{{ short_name }}",
-            hashable_nodes : "#module-article p"
+        groupPermData: {
+            group_id : "{{ group_id }}",  //make group_id a string partly to make my IDE happy - getting sent as ajax anyway
+            short_name : "{{ short_name }}"
         },
+        group : {}, //to be set by RDR.actions.initGroupData
         user : {
+            //later set these with RDR.actions.initUserData
             short_name:		"JoeReadrOnFB",
             first_name:		"Joe",
             last_name:		"Readr",
@@ -110,6 +110,9 @@ function readrBoard($R){
 						'<a href="javascript:void(0);" onclick="RDR.actions.commentStart();" class="rdr_icon_comment">Comment On This</a>' +
 						'<a href="javascript:void(0);" onclick="RDR.actions.shareStart();" class="rdr_icon_share">Share This</a>' +
 					'</div>');
+                    
+                    //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
+                    //but we're not sure yet if it's going to be the same function as this shareStart() above..
 
 					$('body').append( new_actionbar );
 
@@ -223,7 +226,7 @@ function readrBoard($R){
                 console.log("requesting rbgroup data")
                 console.log(groupShortName)
                 $.ajax({
-                    url: "/api/rbgroup",
+                    url: "/api/rbgroup/"+RDR.groupPermData.group_id,
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
@@ -232,90 +235,18 @@ function readrBoard($R){
                     },
                     success: function(data, textStatus, XHR) {
                         console.log('rbgroup call success')
-                        console.dir(data);
-                        //console.log(XHR)
+                        RDR.group = data;
 
-                        //get this from the DB?
-                        //this.hashable_nodes = "#module-article p";
-
-                        $.each(data, function(index, value){
-                            var rb_group = value;
-                            //Only expects back one group (index==0)
-                            console.log('current group is ' + rb_group.name)
-                            console.log(rb_group.name +' requests that RB not touch anything with the class ' + rb_group.selector_blacklist)
-
-                            //not working
-                            //console.log(rb_group.tag_whitelist);
-                            //var tag_whitelist = $.evalJSON(rb_group.tag_whitelist);
-                            //console.log(tag_whitelist);
-                            //console.log(3);
-                            //RDR.group.blessed_tags = tag_whitelist;
-                            RDR.group.blessed_tags = [
-                            {
-                                name: "Great!",
-                                tid: 0
-                            },
-                            {
-                                name: "Hate",
-                                tid: 1
-                            },
-                            {
-                                name: "Interesting",
-                                tid: 2
-                            },
-                            {
-                                name: "Boooooring",
-                                tid: 3
-                            }
-                            ];
-                        });
+                        //todo:just for testing for now: - add defaults:
+                        RDR.group.img_selector = RDR.group.img_selector || "div.container img";
+                        RDR.group.selector_whitelist = RDR.group.selector_whitelist || "";
+                        
+                        $RDR.dequeue('initAjax');
                     },
                     error: function(XHR){
                         //console.warn(XHR)
                     }
                 });
-
-				// the following lines should go into the ajax call success function
-				// START
-				// TODO: TEST DATA
-				RDR.group.img_selector = "div.container img";
-				RDR.group.selector_whitelist = "";
-
-				// init the img interactions
-				$( RDR.group.img_selector ).live( 'mouseover', function() {
-					if ( typeof rdr_img_actionicon != 'undefined' ) clearTimeout( rdr_img_actionicon );
-					RDR.actionbar.close();
-
-					// check that the image is large enough?
-					// TODO keep the actionbar in the window
-					// TODO image needs to show in rate window
-					// TODO all image functions need CURRENT URL (incl. hash) + IMG SRC URL for rating, SHARING, etc.
-					// TODO show activity on an image, without breaking page nor covering up image.
-						// create a container for the image, give it same styles but more space?  
-						// like, inline or float, but with RDR stuff
-				    var this_img = $(this);
-				    var x = this_img.offset().left + 33;
-				    var y = this_img.offset().top + this_img.height() + 15;
-				    RDR.actionbar.draw({ x:x, y:y, content_type:"image", content:this_img.attr('src') });
-
-				    $('div.rdr.rdr_actionbar').css('overflow','hidden');
-				    $('div.rdr.rdr_actionbar').width(23);
-
-				    $('div.rdr.rdr_actionbar').hover( function() {
-						if ( typeof rdr_img_actionicon != 'undefined' ) clearTimeout( rdr_img_actionicon );
-						// the following if statement seems unnecessary, but it is not.
-				        if ( $(this).hasClass('rdr_actionbar') ) $(this).animate( {width:174},100 );
-				    },
-				    function() {
-						// the following if statement seems unnecessary, but it is not.
-						if ( $(this).hasClass('rdr_actionbar') ) $(this).remove();
-					}
-				    );
-
-				}).live('mouseleave', function() {
-					rdr_img_actionicon = setTimeout( "RDR.actionbar.close()", 150);
-				});
-				// END
             },
             initUserData : function(userShortName){
                 // request the RBGroup Data
@@ -352,16 +283,80 @@ function readrBoard($R){
                     }
                 });
             },
+            initPageData : function(){
+               //? do we want to model this here to be symetrical with user and group data?
+
+               //to be normally called on success of ajax call
+               $RDR.dequeue('initAjax');
+            },
             init : function(){
-                var groupShortName = RDR.group.short_name;
-                var userShortName = RDR.user.short_name;
+                var that = this;
+                $RDR = $(RDR);
 
+                $RDR.queue('initAjax', function(next){
+                    that.initGroupData(RDR.groupPermData.short_name);
+
+                    //next fired on ajax success
+                });
+                $RDR.queue('initAjax', function(next){
+                    //todo: get this working later
+                    /*that.initUserData()*/
+
+                    //for now, just pass over this
+                    next();
+                });
+                $RDR.queue('initAjax', function(next){
+                    that.initPageData();
+                    //next fired on ajax success
+                });
+                $RDR.queue('initAjax', function(next){
+                   that.initEnvironment();
+                   //next fired on ajax success
+                });
+
+                //start the dequeue chain
+                $RDR.dequeue('initAjax');
+            },
+            initEnvironment : function(){
                 this.hashNodes();
-                this.initGroupData(groupShortName);
-                //this.initUserData(userShortName);
 
-                //$('body').bind('mouseup.rdr', this.startSelect );
-                //change to document instead of body - click events weren't getting picked up in the margin
+                // init the img interactions
+				$( RDR.group.img_selector ).live( 'mouseover', function() {
+					if ( typeof rdr_img_actionicon != 'undefined' ) clearTimeout( rdr_img_actionicon );
+					RDR.actionbar.close();
+
+					// check that the image is large enough?
+					// TODO keep the actionbar in the window
+					// TODO image needs to show in rate window
+					// TODO all image functions need CURRENT URL (incl. hash) + IMG SRC URL for rating, SHARING, etc.
+					// TODO show activity on an image, without breaking page nor covering up image.
+						// create a container for the image, give it same styles but more space?
+						// like, inline or float, but with RDR stuff
+				    var this_img = $(this);
+				    var x = this_img.offset().left + 33;
+				    var y = this_img.offset().top + this_img.height() + 15;
+				    RDR.actionbar.draw({ x:x, y:y, content_type:"image", content:this_img.attr('src') });
+
+				    $('div.rdr.rdr_actionbar').css('overflow','hidden');
+				    $('div.rdr.rdr_actionbar').width(23);
+
+				    $('div.rdr.rdr_actionbar').hover( function() {
+						if ( typeof rdr_img_actionicon != 'undefined' ) clearTimeout( rdr_img_actionicon );
+						// the following if statement seems unnecessary, but it is not.
+				        if ( $(this).hasClass('rdr_actionbar') ) $(this).animate( {width:174},100 );
+				    },
+				    function() {
+						// the following if statement seems unnecessary, but it is not.
+						if ( $(this).hasClass('rdr_actionbar') ) $(this).remove();
+					}
+				    );
+
+				}).live('mouseleave', function() {
+					rdr_img_actionicon = setTimeout( "RDR.actionbar.close()", 150);
+				});
+				// END
+
+
                 $(document).bind('mouseup.rdr', this.startSelect );
 
                 //add escape keypress event to document to close all rindows
@@ -369,7 +364,9 @@ function readrBoard($R){
                     if (event.keyCode == '27') { //esc
                         RDR.rindow.closeAll();
                         RDR.actionbar.close();
+                        RDR.tooltip.closeAll();
                     }
+                    //todo - consider unifying style of close vs closeAll.  Should any of these components 'own' the others?  IE. should tooltips belong to the actionbar?
                 });
 
             },
@@ -426,6 +423,7 @@ function readrBoard($R){
                     data: {
                         short_name : RDR.group.short_name,
                         pageID : 1,
+                        //todo: talk to Porter about how to Model the Page Data
                         hashes : md5_list
                     },
                     success: function(data) {
@@ -493,6 +491,57 @@ function readrBoard($R){
 
                 });
             },
+            shareStart : function(rindow, known_tags) {
+                //todo: for now, I'm just passing in known_tags as a param, but check with Porter about this model.
+                //Where is the 'source'/'point of origin' that is the authority of known_tags - I'd think we'd want to just reference that..
+
+                var tags = "";
+
+                for ( var i in known_tags ) {
+                    if ( known_tags[i] && RDR.group.blessed_tags[ known_tags[i] ] ) {
+                        tags += RDR.group.blessed_tags[ known_tags[i] ].name + ", ";
+                    }
+                }
+
+                if ( typeof unknown_tags != 'undefined' ) {
+                    tags += unknown_tags;
+                }
+
+                tags = $.trim(tags);
+                if ( tags.charAt( tags.length-1) == "," ) tags = tags.substring( 0, tags.length-1 );
+                tags += " - ";
+
+                // TODO add short rdrbrd URL to end of this line, rather than the long URL
+                var url = window.location.href;
+
+                // TODO this eneds to behave differently for images, video
+                // maybe just show short URL that leads directly to that image, video on the page
+                var share_content = tags + '"' + content + '" ' + url;
+                rindow.find('ul, div, input').not('div.rdr_close').remove();
+                rindow.find('h1').html('Done!').after('<div><strong>Share your reaction</strong> with others:</div>' +
+                '<div id="rdr_share"><textarea>' + share_content + '</textarea>' +
+                '<div id="rdr_share_count"></div>' +
+                '<div><button>Facebook</button> <button>Twitter</button> <button>Tumblr</button> <button>LinkedIn</button></div>');
+                /*
+                TUMBLR SHARING URLs
+                http://www.tumblr.com/share?v=3&u=http%3A%2F%2Fjsbeautifier.org%2F&t=Online%20javascript%20beautifier&s=
+
+                -- QUOTE --
+                http://www.tumblr.com/share?v=3&
+                type=quote&
+                u=http%3A%2F%2Finstalyrics.com%2Fartists%2F121-u2%2Flyrics%2F682239-zooropa&
+                t=Zooropa%20-%20on%20InstaLyrics&
+                s=Zooropa%2C%20a%20bluer%20kind%20of%20white
+
+
+                -- IMAGE --
+                http://www.tumblr.com/share?v=3&type=photo&u=http%3A%2F%2Fwww.wired.com%2Fimages_blogs%2Fdangerroom%2F2011%2F01%2F28858.jpg&t=t%20value&s=s%20value
+                */
+                $('#rdr_share_count').text( $('#rdr_share textarea').val().length + " characters");
+                $('#rdr_share textarea').keyup( function() {
+                    $('#rdr_share_count').text( $('#rdr_share textarea').val().length + " characters");
+                });
+            },
             rateSend : function(rindow) {
                 // get the user-added tags from the input field
                 var unknown_tags = rindow.find('input[name="unknown-tags"]').val();
@@ -521,52 +570,7 @@ function readrBoard($R){
                         "content_type" : "text"
                     },
                     complete: function(msg) {
-						var tags = "";
-
-						for ( var i in known_tags ) {
-							if ( known_tags[i] && RDR.group.blessed_tags[ known_tags[i] ] ) {
-								tags += RDR.group.blessed_tags[ known_tags[i] ].name + ", ";
-							}
-						}
-
-						if ( typeof unknown_tags != 'undefined' ) {
-							tags += unknown_tags;
-						}
-
-						tags = $.trim(tags);
-						if ( tags.charAt( tags.length-1) == "," ) tags = tags.substring( 0, tags.length-1 );
-						tags += " - ";
-
-						// TODO add short rdrbrd URL to end of this line, rather than the long URL
-						var url = window.location.href;
-
-						// TODO this eneds to behave differently for images, video
-						// maybe just show short URL that leads directly to that image, video on the page
-						var share_content = tags + '"' + content + '" ' + url;
-                        rindow.find('ul, div, input').not('div.rdr_close').remove();
-						rindow.find('h1').html('Done!').after('<div><strong>Share your reaction</strong> with others:</div>' +
-						'<div id="rdr_share"><textarea>' + share_content + '</textarea>' +
-						'<div id="rdr_share_count"></div>' +
-						'<div><button>Facebook</button> <button>Twitter</button> <button>Tumblr</button> <button>LinkedIn</button></div>');
-						/*
-						TUMBLR SHARING URLs
-						http://www.tumblr.com/share?v=3&u=http%3A%2F%2Fjsbeautifier.org%2F&t=Online%20javascript%20beautifier&s=
-
-						-- QUOTE --
-						http://www.tumblr.com/share?v=3&
-						type=quote&
-						u=http%3A%2F%2Finstalyrics.com%2Fartists%2F121-u2%2Flyrics%2F682239-zooropa&
-						t=Zooropa%20-%20on%20InstaLyrics&
-						s=Zooropa%2C%20a%20bluer%20kind%20of%20white
-
-
-						-- IMAGE --
-						http://www.tumblr.com/share?v=3&type=photo&u=http%3A%2F%2Fwww.wired.com%2Fimages_blogs%2Fdangerroom%2F2011%2F01%2F28858.jpg&t=t%20value&s=s%20value
-						*/
-						$('#rdr_share_count').text( $('#rdr_share textarea').val().length + " characters");
-						$('#rdr_share textarea').keyup( function() {
-							$('#rdr_share_count').text( $('#rdr_share textarea').val().length + " characters");
-						});
+                        RDR.actions.shareStart(rindow, known_tags);
                     }
                 });
             },
@@ -947,11 +951,11 @@ function $RFunctions($R){
     jqueryJSON($R);
     //initiate our RDR object
     RDR = readrBoard($R);
-
     //run init functions
     RDR.actions.init();
 
     //testing:
+    /*
     var a = $R.evalJSON('[{"test":2}]');
     console.log(a)
 
@@ -964,8 +968,11 @@ function $RFunctions($R){
     console.log($R.client)  //undefined
     console.log($R.rb)      //"rb"
     console.log($.rb)       //undefined
+    */  //end comment out testing:
 
 	//////////////////// TODO: TEST DATA //////////////////
+
+    //[eric]: blessed_tags is ready to be taken from the DB, but we need to decide what the model looks like - right now it's just a charfield
 	RDR.group.blessed_tags = [
 	{
 	    name: "Great!",
@@ -984,6 +991,4 @@ function $RFunctions($R){
 	    tid: 3
 	}
 	];
-	// TODO: don't want to remove Eric's console statements, but don't wanna see them right now, either
-	console.clear();
 }
