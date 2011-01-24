@@ -286,6 +286,28 @@ function readrBoard($R){
             initPageData : function(){
                //? do we want to model this here to be symetrical with user and group data?
 
+                // TODO flesh out Porter's code below and incorporate it into the queue
+				/*
+                var url = window.location.href + window.location.hash;
+				var canonical = ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href'):"";
+
+				$.ajax({
+                    url: "/api/get-----page-----data",
+                    type: "get",
+                    contentType: "application/json",
+                    dataType: "jsonp",
+                    data: {
+                        group_id: RDR.group.group_id,
+						url: url,
+						canonical_url: canonical,
+						md5_hashes: {
+
+						}
+						// not sending, use default:  items_requested:{}
+					}
+				});
+                */
+               
                //to be normally called on success of ajax call
                $RDR.dequeue('initAjax');
             },
