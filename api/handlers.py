@@ -42,7 +42,11 @@ class RBGroupHandler(BaseHandler):
              )
 
     def read(self, request, group=None):
-    	host = request.get_host()
+        #testing
+        #print request
+        #print request.GET['short_name']
+
+        host = request.get_host()
     	path = request.path
     	fp = request.get_full_path()
         if group:
@@ -56,6 +60,8 @@ class RBGroupHandler(BaseHandler):
             setattr(g,'feature_comment',g.get_feature('comment'))
             setattr(g,'feature_bookmark',g.get_feature('bookmark'))
             setattr(g,'feature_search',g.get_feature('search'))
+            print g.css_url
+            print "----------"
             return g
         else:
             return ("Group not specified")

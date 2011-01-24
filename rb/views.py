@@ -30,7 +30,7 @@ def widget(request,sn):
         rbg = RBGroup.objects.get(short_name = sn)
     except:
         raise Exception('short_name not unique, this sucks')
-    return render_to_response("widget.js",{'group_id': rbg.id, 'short_name' : sn})
+    return render_to_response("widget.js",{'group_id': rbg.id, 'short_name' : sn,})
 
 def display_meta(request):
     values = request.META.items()
