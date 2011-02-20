@@ -105,7 +105,7 @@ function readrBoard($R){
 						'<span class="rdr_divider">&nbsp;</span>' +
 						'<a href="javascript:void(0);" onclick="RDR.actions.rateStart({content_type:\''+arguments[0].content_type+'\',content:\''+arguments[0].content+'\'});" class="rdr_icon_rate">Rate This</a>' +
 						// TODO: make all of these also have a set of arguments pass in
-						'<a href="javascript:void(0);" onclick="RDR.actions.searchStart();" class="rdr_icon_search">Search For This</a>' +
+						// '<a href="javascript:void(0);" onclick="RDR.actions.searchStart();" class="rdr_icon_search">Search For This</a>' +
 						'<a href="javascript:void(0);" onclick="RDR.actions.bookmarkStart();" class="rdr_icon_bookmark">Bookmark This</a>' +
 						'<a href="javascript:void(0);" onclick="RDR.actions.commentStart();" class="rdr_icon_comment">Comment On This</a>' +
 						'<a href="javascript:void(0);" onclick="RDR.actions.shareStart();" class="rdr_icon_share">Share This</a>' +
@@ -240,7 +240,26 @@ function readrBoard($R){
                         //todo:just for testing for now: - add defaults:
                         RDR.group.img_selector = RDR.group.img_selector || "div.container img";
                         RDR.group.selector_whitelist = RDR.group.selector_whitelist || "";
-                        
+
+//todo: REMOVE THIS
+                        RDR.group.blessed_tags = [
+                        {
+                            name: "Great!",
+                            tid: 0
+                        },
+                        {
+                            name: "Hate",
+                            tid: 1
+                        },
+                        {
+                            name: "Interesting",
+                            tid: 2
+                        },
+                        {
+                            name: "Boooooring",
+                            tid: 3
+                        }
+                        ];
                         $RDR.dequeue('initAjax');
                     },
                     error: function(XHR){

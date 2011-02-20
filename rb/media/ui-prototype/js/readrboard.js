@@ -217,7 +217,7 @@ function readrBoard($R){
             },
             initGroupData : function(groupShortName){
                 // request the RBGroup Data
-
+console.dir(RDR.group);
                 console.log("requesting rbgroup data")
                 console.log(groupShortName)
                 $.ajax({
