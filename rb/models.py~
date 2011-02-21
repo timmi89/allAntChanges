@@ -135,14 +135,5 @@ class Tag(Node):
 
     def __unicode__(self):
         return unicode(self.tag)
-From tbrock Sun Feb  6 12:55:01 2011
-To: rb/models.py
-Subject: test
-
-
-
-From tbrock Sun Feb  6 12:55:12 2011
-To: rb/models.py
-Subject: test
 
 

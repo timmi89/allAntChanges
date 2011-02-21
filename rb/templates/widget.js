@@ -306,7 +306,7 @@ function readrBoard($R){
                //? do we want to model this here to be symetrical with user and group data?
 
                 // TODO flesh out Porter's code below and incorporate it into the queue
-				/*
+
                 var url = window.location.href + window.location.hash;
 				var canonical = ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href'):"";
 
@@ -325,7 +325,7 @@ function readrBoard($R){
 						// not sending, use default:  items_requested:{}
 					}
 				});
-                */
+
                
                //to be normally called on success of ajax call
                $RDR.dequeue('initAjax');
@@ -415,9 +415,10 @@ function readrBoard($R){
                 console.log('hashing nodes');
                 // snag all the nodes that we can set icons next to and send'em next
                 // TODO: restrict this to the viewport + a few, rather than all
-                var content_nodes = $( RDR.group.anno_whitelist ).not('.rdr-hashed');
+                var content_nodes = $( RDR.group.hashable_nodes ).not('rdr-hashed');
 
                 content_nodes.each( function() {
+
                     // get the node's text and smash case
                     // TODO: <br> tags and block-level tags can screw up words.  ex:
                     // hello<br>how are you?   here becomes
@@ -429,6 +430,7 @@ function readrBoard($R){
                     if ( node_text && node_text!="undefined" && node_text.length > 5 ) {
                         // clean whitespace
                         node_text = RDR.util.cleanPara ( node_text );
+
 
                         // hash the text
                         var node_hash = RDR.util.md5.hex_md5( node_text );
@@ -1012,7 +1014,6 @@ function $RFunctions($R){
 	//////////////////// TODO: TEST DATA //////////////////
 
     //[eric]: blessed_tags is ready to be taken from the DB, but we need to decide what the model looks like - right now it's just a charfield
-/*
 	RDR.group.blessed_tags = [
 	{
 	    name: "Great!",
@@ -1031,5 +1032,4 @@ function $RFunctions($R){
 	    tid: 3
 	}
 	];
-*/
 }

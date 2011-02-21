@@ -12,11 +12,12 @@ class ContentNodeHandler(BaseHandler):
         #print request.GET.getlist('hashes[]')
         print "These are the items in the get request:"
         for item in request.GET:
-            print item
+            print item, '=>', request.GET.get(item)
         print "These are the hashes:"
+        print "*" * 32
         for node in request.GET.getlist('hashes[]'):
             print node
-        print "Done printing hashes!"
+        print "*" * 32
         return ContentNode.objects.all()
 
     #def create(self, request):

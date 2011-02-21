@@ -4,10 +4,10 @@ from django.contrib.sites.models import Site
 import datetime
 
 NODE_TYPES = (
-    (0, 'text'),
-    (1, 'image'),
-    (2, 'video'),
-    (3, 'sound'),
+    ('txt', 'text'),
+    ('img', 'image'),
+    ('vid', 'video'),
+    ('snd', 'sound'),
 )
 
 FEATURE_TYPES = (
