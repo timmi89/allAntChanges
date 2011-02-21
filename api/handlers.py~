@@ -12,7 +12,7 @@ class ContentNodeHandler(BaseHandler):
         #print request.GET.getlist('hashes[]')
         print "These are the items in the get request:"
         for item in request.GET:
-            print item
+            print item, '=>', request.GET.get(item)
         print "These are the hashes:"
         print "*" * 32
         for node in request.GET.getlist('hashes[]'):
@@ -27,14 +27,21 @@ class ContentNodeHandler(BaseHandler):
 class RBPageHandler(BaseHandler):
     allowed_methods = ('GET',)
     model = RBPage
-    
     def read(self, request):
+        print "Items in RBPage request:"
+        print "*" * 32
         for item in request.GET:
-            print item
-        if (RBPage.objects.get(url=request.GET.url)):
-            print "hello"
+            print item, '=>', request.GET.get(item)
+        print "*" * 32
+        canonical = request.GET.get('canonical_url')
+        if canonical:
+            print "canonical url was sent in get request"
+            if canonical.find("#!") < 0:
+                print "did not find hashbang"
+            else:
+                print "found hashbang"
         else:
-            print "heyo"
+            print "cannonical url was not sent in get request"
         return HttpResponse("Page")
 
 class RBGroupHandler(AnonymousBaseHandler):

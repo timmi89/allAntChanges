@@ -318,7 +318,7 @@ function readrBoard($R){
                     contentType: "application/json",
                     dataType: "jsonp",
                     data: {
-                        group_id: RDR.group.group_id,
+                            group_id: RDR.group.group_id,
 						url: url,
 						canonical_url: canonical
 					}
