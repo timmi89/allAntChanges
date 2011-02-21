@@ -13,11 +13,8 @@ urlpatterns = patterns('',
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^search-form/$', 'rb.views.search_form'),
     (r'^nodes/$', 'rb.views.index'),
-<<<<<<< HEAD
     (r'^widget/(.{,25})$', 'rb.views.widget'),
-=======
     (r'^widget/(.{,25})/$', 'rb.views.widget'),
->>>>>>> 9bf6f0e33ed5308cd074cf2d0273f71d6db46843
     (r'^request-meta/$', 'rb.views.display_meta'),
     (r'^search/$', 'rb.views.search'),
     (r'^comments/', include('django.contrib.comments.urls')),
