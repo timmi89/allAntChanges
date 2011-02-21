@@ -285,7 +285,7 @@ function readrBoard($R){
                         //console.log(XHR)
 
                         //get this from the DB?
-                        //this.hashable_nodes = "#module-article p";
+                        //this.anno_whitelist = "#module-article p";
 
                         $.each(data, function(index, value){
                             var rb_group = value;
@@ -413,7 +413,7 @@ function readrBoard($R){
                 console.log('hashing nodes');
                 // snag all the nodes that we can set icons next to and send'em next
                 // TODO: restrict this to the viewport + a few, rather than all
-                var content_nodes = $( RDR.group.hashable_nodes ).not('rdr-hashed');
+                var content_nodes = $( RDR.group.anno_whitelist ).not('.rdr-hashed');
 
                 content_nodes.each( function() {
 
