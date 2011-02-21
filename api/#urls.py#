@@ -16,13 +16,9 @@ urlpatterns = patterns('',
     url(r'^nodes/$', ContentNodes),
     url(r'^nodes/(?P<emitter_format>.+)/$', ContentNodes),
     url(r'^nodes\.(?P<emitter_format>.+)', ContentNodes),
-<<<<<<< HEAD
-    url(r'^rbgroup/(\d+)', RBGroups),
-    url(r'^rbpage/$', RBPages),
-=======
-    url(r'^rbgroup/$', RBGroups),
-    # Is this right? - ask Tyler..
-    #url(r'^rbgroup/(\d+)', RBGroups),
+
+    #Url
+(r'^rbgroup/(\d+)', RBGroups),
     url(r'^rbgroup/(?P<group>\d+)', RBGroups),
 >>>>>>> 9bf6f0e33ed5308cd074cf2d0273f71d6db46843
 

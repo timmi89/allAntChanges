@@ -32,6 +32,8 @@ def widget(request,sn):
     except:
         raise Exception('RB group with this short_name does not exist')
     return render_to_response("widget.js",{'group_id': rbg.id, 'short_name' : sn})
+        raise Exception('short_name not unique, this sucks')
+    return render_to_response("widget.js",{'group_id': rbg.id, 'short_name' : sn,})
 
 def settings(request,group_id):
     # Get settings after widget code (including group ID has been sent)

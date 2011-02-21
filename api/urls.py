@@ -18,7 +18,10 @@ urlpatterns = patterns('',
     url(r'^nodes\.(?P<emitter_format>.+)', ContentNodes),
     url(r'^rbgroup/(\d+)', RBGroups),
     url(r'^rbpage/$', RBPages),
-
+    url(r'^rbgroup/$', RBGroups),
+    # Is this right? - ask Tyler..
+    #url(r'^rbgroup/(\d+)', RBGroups),
+    url(r'^rbgroup/(?P<group>\d+)', RBGroups),
     # automated documentation
     #url(r'^$', documentation_view),
 )

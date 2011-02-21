@@ -35,7 +35,7 @@ class RBPageHandler(BaseHandler):
             print "heyo"
         return HttpResponse("Page")
 
-class RBGroupHandler(BaseHandler):
+class RBGroupHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
     model = RBGroup
     ordering = ('name','short_name')
@@ -59,7 +59,11 @@ class RBGroupHandler(BaseHandler):
              )
 
     def read(self, request, group=None):
-    	host = request.get_host()
+        #testing
+        #print request
+        #print request.GET['short_name']
+
+        host = request.get_host()
     	path = request.path
     	fp = request.get_full_path()
         if group:
@@ -73,13 +77,15 @@ class RBGroupHandler(BaseHandler):
             setattr(g,'feature_comment',g.get_feature('comment'))
             setattr(g,'feature_bookmark',g.get_feature('bookmark'))
             setattr(g,'feature_search',g.get_feature('search'))
+<<<<<<< HEAD
             print "Sending RBGRoup data for RBGroup %d" % group
+=======
+            print g.css_url
+            print "----------"
+>>>>>>> 9bf6f0e33ed5308cd074cf2d0273f71d6db46843
             return g
         else:
             return ("Group not specified")
-
-class AnonymousRBGroupHandler(RBGroupHandler, AnonymousBaseHandler):
-    pass
 
 """model = ContentNode()
     fields = ('id','user','hash')
