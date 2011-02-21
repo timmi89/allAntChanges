@@ -310,6 +310,8 @@ function readrBoard($R){
                 var url = window.location.href + window.location.hash;
 				var canonical = ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href'):"";
 
+				//TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
+				//might not want to send canonical, or, send it separately if/only if it's different than URL
 				$.ajax({
                     url: "/api/rbpage",
                     type: "get",
