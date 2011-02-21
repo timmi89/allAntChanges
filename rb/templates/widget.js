@@ -311,18 +311,14 @@ function readrBoard($R){
 				var canonical = ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href'):"";
 
 				$.ajax({
-                    url: "/api/get-----page-----data",
+                    url: "/api/rbpage",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
                     data: {
                         group_id: RDR.group.group_id,
 						url: url,
-						canonical_url: canonical,
-						md5_hashes: {
-
-						}
-						// not sending, use default:  items_requested:{}
+						canonical_url: canonical
 					}
 				});
 
