@@ -10,6 +10,10 @@ class ContentNodeHandler(BaseHandler):
     def read(self, request):
         # called on GET requests
         #print request.GET.getlist('hashes[]')
+        print "These are the items in the get request:"
+        for item in request.GET:
+            print item
+        print "These are the hashes:"
         for node in request.GET.getlist('hashes[]'):
             print node
         return ContentNode.objects.all()
@@ -18,7 +22,20 @@ class ContentNodeHandler(BaseHandler):
         # called on POST and creates new
         # objects and should them or rc.CREATED
 
-class RBGroupHandler(BaseHandler):
+class RBPageHandler(BaseHandler):
+    allowed_methods = ('GET',)
+    model = RBPage
+    
+    def read(self, request):
+        for item in request.GET:
+            print item
+        if (RBPage.objects.get(url=request.GET.url)):
+            print "hello"
+        else:
+            print "heyo"
+        return HttpResponse("Page")
+
+class RBGroupHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
     model = RBGroup
     ordering = ('name','short_name')
@@ -56,6 +73,7 @@ class RBGroupHandler(BaseHandler):
             setattr(g,'feature_comment',g.get_feature('comment'))
             setattr(g,'feature_bookmark',g.get_feature('bookmark'))
             setattr(g,'feature_search',g.get_feature('search'))
+            print "Sending RBGRoup data for RBGroup %d" % group
             return g
         else:
             return ("Group not specified")

@@ -57,7 +57,6 @@ class RBGroup(models.Model):
             feature_id = FEATURE_LOOKUP[name]
         except:
             raise Exception("Invalid feature name")
-
         try:
             return self.feature_set.values('text','images','flash').get(kind=feature_id)
         except:
@@ -91,10 +90,11 @@ class RBSite(Site):
 
 class RBPage(models.Model):
     rb_site = models.ForeignKey(RBSite)
-    url = models.URLField()
+    url = models.URLField(verify_exists=False)
+    canonical_url = models.URLField(verify_exists=False)
 
     def __unicode__(self):
-        return self.url
+        return self.canonical_url
 
 class FacebookProfileModel(models.Model):
     about_me = models.TextField(blank=True, null=True)
@@ -135,3 +135,5 @@ class Tag(Node):
 
     def __unicode__(self):
         return unicode(self.tag)
+
+

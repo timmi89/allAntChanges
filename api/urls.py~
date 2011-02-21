@@ -8,7 +8,7 @@ from api.handlers import ContentNodeHandler, RBGroupHandler, RBPageHandler
 auth = HttpBasicAuthentication(realm='Test API')
 
 ContentNodes = Resource(handler=ContentNodeHandler, authentication=auth)
-RBGroups = Resource(handler=RBGroupHandler)
+RBGroups = Resource(handler=AnonymousRBGroupHandler)
 RBPages = Resource(handler=RBPageHandler, authentication=auth)
 
 urlpatterns = patterns('',
