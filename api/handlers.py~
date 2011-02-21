@@ -16,6 +16,7 @@ class ContentNodeHandler(BaseHandler):
         print "These are the hashes:"
         for node in request.GET.getlist('hashes[]'):
             print node
+        print "Done printing hashes"
         return ContentNode.objects.all()
 
     #def create(self, request):
@@ -77,12 +78,9 @@ class RBGroupHandler(AnonymousBaseHandler):
             setattr(g,'feature_comment',g.get_feature('comment'))
             setattr(g,'feature_bookmark',g.get_feature('bookmark'))
             setattr(g,'feature_search',g.get_feature('search'))
-<<<<<<< HEAD
             print "Sending RBGRoup data for RBGroup %d" % group
-=======
             print g.css_url
             print "----------"
->>>>>>> 9bf6f0e33ed5308cd074cf2d0273f71d6db46843
             return g
         else:
             return ("Group not specified")

@@ -16,6 +16,7 @@ class ContentNodeHandler(BaseHandler):
         print "These are the hashes:"
         for node in request.GET.getlist('hashes[]'):
             print node
+        print "Done printing hashes!"
         return ContentNode.objects.all()
 
     #def create(self, request):
