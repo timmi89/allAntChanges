@@ -231,11 +231,12 @@ function readrBoard($R){
                     contentType: "application/json",
                     dataType: "jsonp",
                     data: {
-                        short_name : groupShortName
+                        host_name : window.location.hostname
                     },
                     success: function(data, textStatus, XHR) {
                         console.log('rbgroup call success')
                         RDR.group = data;
+						RDR.group.group_id
 
                         //todo:just for testing for now: - add defaults:
                         RDR.group.img_selector = RDR.group.img_selector || "div.container img";
@@ -318,12 +319,11 @@ function readrBoard($R){
                     contentType: "application/json",
                     dataType: "jsonp",
                     data: {
-                            group_id: RDR.group.group_id,
+						group_id: RDR.groupPermData.group_id,
 						url: url,
 						canonical_url: canonical
 					}
 				});
-
                
                //to be normally called on success of ajax call
                $RDR.dequeue('initAjax');
