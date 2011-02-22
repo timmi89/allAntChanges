@@ -32,7 +32,6 @@ div.rdr.rdr_actionbar {
 	position:absolute;
 	z-index:11000;
 	background:#fff;
-	width:147px;
 	height:30px;
 }
 
@@ -45,11 +44,12 @@ div.rdr.rdr_actionbar a {
 	float:left;
 }
 
+
 div.rdr.rdr_actionbar a.rdr_icon_about		 	{ background-position: -2px 0; width:21px; }
 div.rdr.rdr_actionbar a.rdr_icon_rate		 	{ background-position: -27px -1px; }
 div.rdr.rdr_actionbar a.rdr_icon_search	 		{ background-position: -55px -1px; }
 div.rdr.rdr_actionbar a.rdr_icon_bookmark	 	{ background-position: -82px 0px; }
-div.rdr.rdr_actionbar a.rdr_icon_comment	 		{ background-position: -110px -2px; }
+div.rdr.rdr_actionbar a.rdr_icon_comment        { background-position: -110px -2px; }
 div.rdr.rdr_actionbar a.rdr_icon_share		 	{ background-position: -141px -1px; }
 div.rdr.rdr_actionbar a:hover					{ background-color:#ffd3d3;}
 div.rdr.rdr_actionbar a.rdr_icon_about:hover 	{ background-color:transparent; }
@@ -65,11 +65,14 @@ div.rdr h1,
 div.rdr h2	{font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif; color:#e71f1f; margin: 0; }
 div.rdr h1	{font-size:21px; cursor:move; }
 
-em.rdr_selected-text 	{display:block; background:#eee; padding:5px; margin:5px 0; text-shadow:1px 1px 1px #999; font-size:18px; font-family:Georgia, serif;}
-
+div.rdr_ratePanel div.rdr_selectedTextBox {display:block; background:#eee; padding:5px; margin:5px 0;}
+div.rdr_ratePanel div.rdr_quote {position: relative; text-shadow:1px 1px 1px #999; font-size:18px; font-family:Georgia, serif; z-index: 12020;}
+div.rdr_ratePanel div.rdr_quoteIcon { position: relative; z-index: 12010; }/*wrapper for z-index*/
+div.rdr_ratePanel div.rdr_quoteIcon span { position: absolute; font-family: ReadrLeague, Arial, sans-serif; font-size: 6em; top:-26px; left:-13px; color: #cccccc;}
+   
 ul.rdr_tags			{list-style-type:none; padding:0; margin:0; overflow:auto; }
-ul.rdr_tags li		{float:left; padding:5px 20px; margin:0 5px 0 0; }
-ul.rdr_tags li.rdr_selected	{background:#eee;}
+ul.rdr_tags li		{float:left; padding:5px 20px; margin:0 5px 0 0; background:url("/static/ui-prototype/images/tag-bg-sprite.png") repeat-x 0 -60px;}
+ul.rdr_tags li.rdr_selected	{ background:url("/static/ui-prototype/images/tag-bg-sprite.png") repeat-x 0 0;}
 ul.rdr_preselected			{font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:5px 0 10px; }
 ul.rdr_preselected a		{color:#000;text-decoration:none;}
 ul.rdr_preselected a:hover	{color:#e71f1f;}
@@ -81,6 +84,10 @@ div.rdr_help		{font-style:italic; font-size:11px; color:#aaa;}
 
 div#rdr_share textarea	{ width:390px; height:75px; font-size:14px; margin:5px 0;}
 div#rdr_share_count		{ color:#999999; font-style:italic; margin:-3px 0 5px; }
+
+ul#shareLinks           {padding:2px; margin: 0;}
+ul#shareLinks li        {padding: 5px 10px; display: inline-block; list-style: none;}
+ul#shareLinks img       {width:50px;}
 
 /* forms */
 div.rdr textarea,
