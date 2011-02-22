@@ -33,15 +33,18 @@ class RBPageHandler(BaseHandler):
         for item in request.GET:
             print item, '=>', request.GET.get(item)
         print "*" * 32
+        print "***URL INFO IN RBPAGE REQUEST***"
         canonical = request.GET.get('canonical_url')
         if canonical:
-            print "canonical url was sent in get request"
+            print "canonical url sent in get request"
             if canonical.find("#!") < 0:
                 print "did not find hashbang"
             else:
                 print "found hashbang"
         else:
             print "cannonical url was not sent in get request"
+        print "*" * 32
+        
         return HttpResponse("Page")
 
 class RBGroupHandler(AnonymousBaseHandler):
@@ -73,14 +76,25 @@ class RBGroupHandler(AnonymousBaseHandler):
         #print request.GET['short_name']
 
         host = request.get_host()
+        # Slice off port
+        host = host[0:host.find(":")]
     	path = request.path
-    	fp = request.get_full_path()
+        """
+        print "host: ", host[0:host.find(":")]
+        print "path: ", path
+        print "sent host: ", request.GET['host_name']
+        """
+        fp = request.get_full_path()
         if group:
             group = int(group)
             try:
             	g = RBGroup.objects.get(id=group)
             except RBGroup.DoesNotExist:
-            	return HttpResponse("Does not exist")
+            	return HttpResponse("RB Group does not exist!")
+            if host in g.valid_domains:
+                print "host %s is valid for group %d" % (host,group)
+            else:
+                print "host %s is not valid for group %d" % (host,group)
             setattr(g,'feature_share',g.get_feature('share'))
             setattr(g,'feature_rate',g.get_feature('rate'))
             setattr(g,'feature_comment',g.get_feature('comment'))
