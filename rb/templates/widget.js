@@ -103,20 +103,20 @@ function readrBoard($R){
 					var new_actionbar = $('<div class="rdr rdr_actionbar" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
 						'<a href="javascript:void(0);" onclick="RDR.actions.aboutReadrBoard();" class="rdr_icon_about">What\' This?</a>' +
 						'<span class="rdr_divider">&nbsp;</span>' +
-						'<a href="javascript:void(0);" onclick="RDR.actions.rateStart({content_type:\''+arguments[0].content_type+'\',content:\''+arguments[0].content+'\'});" class="rdr_icon_rate">Rate This</a>' +
+						//'<a href="javascript:void(0);" onclick="RDR.actions.rateStart({content_type:\''+arguments[0].content_type+'\',content:\''+arguments[0].content+'\'});" class="rdr_icon_rate">Rate This</a>' +
 						// TODO: make all of these also have a set of arguments pass in
 						// '<a href="javascript:void(0);" onclick="RDR.actions.searchStart();" class="rdr_icon_search">Search For This</a>' +
 						'<a href="javascript:void(0);" onclick="RDR.actions.bookmarkStart();" class="rdr_icon_bookmark">Bookmark This</a>' +
-						'<a href="javascript:void(0);" onclick="RDR.actions.commentStart();" class="rdr_icon_comment">Comment On This</a>' +
-						'<a href="javascript:void(0);" onclick="RDR.actions.shareStart();" class="rdr_icon_share">Share This</a>' +
+						'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentPanel({content_type:\''+arguments[0].content_type+'\',content:\''+arguments[0].content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
+						//'<a href="javascript:void(0);" onclick="RDR.actions.shareStart();" class="rdr_icon_share">Share This</a>' +
 					'</div>');
-                    
+
                     //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
                     //but we're not sure yet if it's going to be the same function as this shareStart() above..
 
 					$('body').append( new_actionbar );
 
-					$('div.rdr_actionbar a').hover( 
+					$('div.rdr_actionbar a').hover(
 						function() {
 							var this_link = $(this);
 							var tooltip_args = {
@@ -218,7 +218,38 @@ function readrBoard($R){
         },
         actions : {
             aboutReadrBoard : function() {
-                return true;
+                alert('Testing... Readrboard gives you more revenue and deeper engagement!');
+            },
+            bookmarkStart : function() {
+                alert('Testing... This will be bookmarked!  Thanks!');
+            },
+            init : function(){
+                var that = this;
+                $RDR = $(RDR);
+
+                $RDR.queue('initAjax', function(next){
+                    that.initGroupData(RDR.groupPermData.short_name);
+
+                    //next fired on ajax success
+                });
+                $RDR.queue('initAjax', function(next){
+                    //todo: get this working later
+                    /*that.initUserData()*/
+
+                    //for now, just pass over this
+                    next();
+                });
+                $RDR.queue('initAjax', function(next){
+                    that.initPageData();
+                    //next fired on ajax success
+                });
+                $RDR.queue('initAjax', function(next){
+                   that.initEnvironment();
+                   //next fired on ajax success
+                });
+
+                //start the dequeue chain
+                $RDR.dequeue('initAjax');
             },
             initGroupData : function(groupShortName){
                 // request the RBGroup Data
@@ -242,7 +273,7 @@ function readrBoard($R){
                         RDR.group.img_selector = RDR.group.img_selector || "div.container img";
                         RDR.group.selector_whitelist = RDR.group.selector_whitelist || "";
 
-//todo: REMOVE THIS
+                        //todo: REMOVE THIS
                         RDR.group.blessed_tags = [
                         {
                             name: "Great!",
@@ -257,7 +288,7 @@ function readrBoard($R){
                             tid: 2
                         },
                         {
-                            name: "Boooooring",
+                            name: "Booooring",
                             tid: 3
                         }
                         ];
@@ -327,34 +358,6 @@ function readrBoard($R){
                
                //to be normally called on success of ajax call
                $RDR.dequeue('initAjax');
-            },
-            init : function(){
-                var that = this;
-                $RDR = $(RDR);
-
-                $RDR.queue('initAjax', function(next){
-                    that.initGroupData(RDR.groupPermData.short_name);
-
-                    //next fired on ajax success
-                });
-                $RDR.queue('initAjax', function(next){
-                    //todo: get this working later
-                    /*that.initUserData()*/
-
-                    //for now, just pass over this
-                    next();
-                });
-                $RDR.queue('initAjax', function(next){
-                    that.initPageData();
-                    //next fired on ajax success
-                });
-                $RDR.queue('initAjax', function(next){
-                   that.initEnvironment();
-                   //next fired on ajax success
-                });
-
-                //start the dequeue chain
-                $RDR.dequeue('initAjax');
             },
             initEnvironment : function(){
                 this.hashNodes();
@@ -470,7 +473,7 @@ function readrBoard($R){
                     }
                 });
             },
-            rateStart : function() {
+            sentimentPanel : function() {
                 // draw the window over the actionbar
                 var actionbarOffsets = $('div.rdr.rdr_actionbar').offset();
 
@@ -482,16 +485,30 @@ function readrBoard($R){
                     y:actionbarOffsets.top
                 });
 
-                // write content to the window
-                var rateStartContent = '<em class="rdr_selected-text"></em><ul class="rdr_tags rdr_preselected">';
-                for (var i=0,j=RDR.group.blessed_tags.length; i<j; i++) {
-                    rateStartContent += '<li tid="'+RDR.group.blessed_tags[i].tid+'"><a href="javascript:void(0);">'+RDR.group.blessed_tags[i].name+'</a></li>';
-                }
-                rateStartContent += '</ul>' +
-                '<div class="rdr_instruct">Add your own ratings, separated by comma:</div>' +
-                '<input type="text" name="unknown-tags" />' +
-                '<button>Rate</button>' +
-                '<div class="rdr_help">e.g., Love this, autumn, insightful</div>';
+                //todo: figure out wht happened to selected text...
+                // build the ratePanel
+                var $ratePanel = $('<div class="rdr_ratePanel" />'),
+                $selectedTextBox = $('<div class="rdr_selectedTextBox" />'),
+                $blessedTags = $('<ul class="rdr_tags rdr_preselected"/>'),
+                $customTagBox = $('<div/>');
+
+                //must wrap the quoteIcon for proper z-index layering
+                $selectedTextBox.append(
+                '<div class="rdr_quoteIcon"><span>&ldquo;</span></div>',
+                '<div class="rdr_quote"><em></em></div>');
+
+                //populate blesed_tags
+                $.each(RDR.group.blessed_tags, function(idx, val){
+                    $blessedTags.append('<li tid="'+val.tid+'"><a href="javascript:void(0);">'+val.name+'</a></li>')
+                });
+
+                $customTagBox.append(
+                '<div class="rdr_instruct">Add your own ratings, separated by comma:</div>',
+                '<input type="text" id="freeformTagInput" name="unknown-tags" />',
+                '<button>Rate</button>',
+                '<div class="rdr_help">e.g., Love this, autumn, insightful</div>');
+
+                $ratePanel.append($selectedTextBox, $blessedTags, $customTagBox)
 
 				var content_type = arguments[0].content_type;
 				var content = arguments[0].content;
@@ -501,15 +518,15 @@ function readrBoard($R){
                     width:'400px',
                     minHeight:'125px'
                 }, 300, function() {
-                    rindow.find('div.rdr_contentSpace').append( rateStartContent );
-                    rindow.find('h1').text('Rate This');
+                    rindow.find('div.rdr_contentSpace').append( $ratePanel );
+                    rindow.find('h1').text("Rate this");
 
                     if ( content_type == "text" ) {
-						rindow.find('em.rdr_selected-text').html( unescape(content) );
+                        rindow.find('div.rdr_selectedTextBox em').html( unescape(content) );
 					} else if ( content_type == "image" ) {
-						// rindow.find('em.rdr_selected-text').css('text-align','center').html( '<img style="max-width:100%;max-height:600px;" src=" ' + content + '" />' );
-						rindow.find('em.rdr_selected-text').hide();
-						rindow.find('h1').text('Rate This Image');
+						// rindow.find('.rdr_selectedTextBox em').css('text-align','center').html( '<img style="max-width:100%;max-height:600px;" src=" ' + content + '" />' );
+						rindow.find('div.rdr_selectedTextBox').hide();
+						rindow.find('h1').text("Rate this");
 					}
 
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
@@ -550,17 +567,35 @@ function readrBoard($R){
                 if ( tags.charAt( tags.length-1) == "," ) tags = tags.substring( 0, tags.length-1 );
                 tags += " - ";
 
+                var $shareDialogueBox = $('<div class="rdr_shareBox"></div>')
+
                 // TODO add short rdrbrd URL to end of this line, rather than the long URL
-                var url = window.location.href;
+                //var url = window.location.href;
+                //TODO - replace this demo version with the real shortURL
+                var url = 'http://rdrbrd.com/ad4fta3';
+
+
 
                 // TODO this eneds to behave differently for images, video
                 // maybe just show short URL that leads directly to that image, video on the page
                 var share_content = tags + '"' + content + '" ' + url;
-                rindow.find('ul, div, input').not('div.rdr_close').remove();
-                rindow.find('h1').html('Done!').after('<div><strong>Share your reaction</strong> with others:</div>' +
-                '<div id="rdr_share"><textarea>' + share_content + '</textarea>' +
-                '<div id="rdr_share_count"></div>' +
-                '<div><button>Facebook</button> <button>Twitter</button> <button>Tumblr</button> <button>LinkedIn</button></div>');
+                //[eric] dont remove elements anymore, we're going to try adding this to the bottom of the sentimentPanel'
+                //[eric] -comment out: //rindow.find('ul, div, input').not('div.rdr_close').remove();
+
+                var socialNetworks = ["facebook","twitter","tumblr","linkedin"],
+                $shareLinks = $('<ul id="shareLinks"></ul>');
+                //quick mockup version of this code
+                $.each(socialNetworks, function(idx, val){
+                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img src="/static/ui-prototype/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
+                });
+
+                $shareDialogueBox.append('<div id="rdr_share"><textarea>' + share_content + '</textarea>' + '<div id="rdr_share_count"></div>',
+                '<div><strong>Share your reaction</strong> with others:</div>',
+                $shareLinks)//chain
+                //'<div><button>Facebook</button> <button>Twitter</button> <button>Tumblr</button> <button>LinkedIn</button></div>')//chain
+                .hide();
+                rindow.append($shareDialogueBox);
+                $shareDialogueBox.slideDown();
                 /*
                 TUMBLR SHARING URLs
                 http://www.tumblr.com/share?v=3&u=http%3A%2F%2Fjsbeautifier.org%2F&t=Online%20javascript%20beautifier&s=
@@ -738,8 +773,8 @@ function readrBoard($R){
 						obj = sel.anchorNode;
 					}
 					// If the element is the first child of another (no text appears before it)
-					else if( typeof sel.anchorNode.data !== 'undefined' 
-								&& sel.anchorOffset === 0 
+					else if( typeof sel.anchorNode.data !== 'undefined'
+								&& sel.anchorOffset === 0
 								&& sel.anchorOffset < sel.anchorNode.data.length ){
 						//Selected whole element at start of paragraph
 						obj = sel.anchorNode.parentNode
@@ -757,8 +792,8 @@ function readrBoard($R){
 					// The previous element length and the anchorOffset will be identical
 					// And the focus Offset is greater than zero
 					// So basically we are at the end of the preceeding element and have selected 0 of the current.
-					else if( typeof sel.anchorNode.data !== 'undefined' 
-							&& sel.anchorOffset === sel.anchorNode.data.length 
+					else if( typeof sel.anchorNode.data !== 'undefined'
+							&& sel.anchorOffset === sel.anchorNode.data.length
 							&& sel.focusOffset === 0 ){
 						//Selected whole element text
 						obj = (sel.anchorNode.nextSibling || sel.focusNode.previousSibling);
@@ -1026,7 +1061,7 @@ function $RFunctions($R){
 	    tid: 2
 	},
 	{
-	    name: "Boooooring",
+	    name: "Booooring",
 	    tid: 3
 	}
 	];
