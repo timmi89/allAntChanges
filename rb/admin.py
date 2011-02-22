@@ -2,6 +2,7 @@ from rb.models import *
 from django.contrib import admin
 #from django.contrib import comments
 
+admin.site.register(Edge)
 admin.site.register(Node)
 admin.site.register(Comment)
 admin.site.register(Tag)
