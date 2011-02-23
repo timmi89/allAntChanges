@@ -9,7 +9,7 @@ admin.site.register(Edge)
 admin.site.register(RBPage)
 admin.site.register(RBSite)
 admin.site.register(RBGroup)
-#admin.site.register(Feature)
+admin.site.register(Feature)
 
 #This replaces the line above to customize the admin page console
 #todo: it doesn't work yet though.. resolve bugs
@@ -24,6 +24,7 @@ class NodeAdmin(admin.ModelAdmin):
                     'updated',
                     'hash',
                     'user',
+                    'page',
                     'content',)
     list_filter = ('user',)
     #date_hierarchy = 'modified'

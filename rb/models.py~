@@ -31,6 +31,11 @@ class UserAwareModel(models.Model):
     class Meta:
         abstract = True
 
+class Feature(models.Model):
+    text = models.BooleanField()
+    images = models.BooleanField()
+    flash = models.BooleanField()
+
 class RBGroup(models.Model):
     name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=25)
@@ -110,12 +115,7 @@ class Tag(Node):
 
     def __unicode__(self):
         return "TagNode:" + self.content[:50]
-"""
-class Feature(models.Model):
-    text = models.BooleanField()
-    images = models.BooleanField()
-    flash = models.BooleanField()
-    
+"""    
 """
 class ContentNode(Node):
     content_type = models.CharField(max_length=3, choices=CONTENT_TYPES)
