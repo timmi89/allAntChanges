@@ -18,6 +18,11 @@ FEATURE_TYPES = (
     (4, 'search'),
 )
 
+NODE_TYPES = (
+    ('tag', 'Tag'),
+    ('com', 'Comment'),
+)
+
 FEATURE_LOOKUP = dict([(a[1], a[0]) for a in FEATURE_TYPES])
 
 class DateAwareModel(models.Model):
@@ -34,7 +39,8 @@ class UserAwareModel(models.Model):
         abstract = True
 
 class Node(DateAwareModel,UserAwareModel):
-    pass
+    type = models.CharField(max_length=3, choices=NODE_TYPES)
+    content = models.TextField()
 """
     parents = models.ForeignKey('self',related_name="Parent")
     children = models.ForeignKey('self',related_name="Children")
@@ -44,6 +50,7 @@ class Edge(models.Model):
     parent = models.ForeignKey(Node,related_name="Parent")
     child = models.ForeignKey(Node,related_name="Child")
 
+"""
 class Comment(Node):
     content = models.TextField(blank=True)
 
@@ -55,7 +62,7 @@ class Tag(Node):
 
     def __unicode__(self):
         return "TagNode:" + self.content[:50]
-
+"""
 class RBGroup(models.Model):
     name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=25)
@@ -123,7 +130,6 @@ class RBPage(models.Model):
 
 class ContentNode(Node):
     content_type = models.CharField(max_length=3, choices=CONTENT_TYPES)
-    content = models.TextField()
     rb_page = models.ForeignKey(RBPage)
     hash = models.CharField(max_length=32, editable=True)
 
