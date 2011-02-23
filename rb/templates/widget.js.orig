@@ -101,7 +101,7 @@ function readrBoard($R){
 
 					// TODO use settings check for certain features and content types to determine which of these to disable
 					var new_actionbar = $('<div class="rdr rdr_actionbar" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
-						'<a href="javascript:void(0);" onclick="RDR.actions.aboutReadrBoard();" class="rdr_icon_about">What\'s This?</a>' +
+						'<a href="javascript:void(0);" onclick="RDR.actions.aboutReadrBoard();" class="rdr_icon_about">What\' This?</a>' +
 						'<span class="rdr_divider">&nbsp;</span>' +
 						//'<a href="javascript:void(0);" onclick="RDR.actions.rateStart({content_type:\''+arguments[0].content_type+'\',content:\''+arguments[0].content+'\'});" class="rdr_icon_rate">Rate This</a>' +
 						// TODO: make all of these also have a set of arguments pass in
@@ -116,11 +116,9 @@ function readrBoard($R){
 
 					$('body').append( new_actionbar );
 
-                    //todo [e @ p] can I get your help figuring out the best way to realign the widget icons?  Let's talk. (We need a bug tracker setup! :) )
 					$('div.rdr_actionbar a').hover(
 						function() {
-							var this_link = $(this);brd
-
+							var this_link = $(this);
 							var tooltip_args = {
 								name: this_link.attr('class'),
 								message: this_link.text(),
@@ -357,7 +355,12 @@ function readrBoard($R){
 						canonical_url: canonical
 					}
 				});
+<<<<<<< HEAD
                
+=======
+                */
+
+>>>>>>> simple-widget
                //to be normally called on success of ajax call
                $RDR.dequeue('initAjax');
             },
@@ -386,8 +389,8 @@ function readrBoard($R){
 
 				    $('div.rdr.rdr_actionbar').hover( function() {
 						if ( typeof rdr_img_actionicon != 'undefined' ) clearTimeout( rdr_img_actionicon );
-						// the following if statement seems unnecessary, but it is not. //[e]haha
-				        if ( $(this).hasClass('rdr_actionbar') ) $(this).animate( {width:84},100 );
+						// the following if statement seems unnecessary, but it is not.
+				        if ( $(this).hasClass('rdr_actionbar') ) $(this).animate( {width:174},100 );
 				    },
 				    function() {
 						// the following if statement seems unnecessary, but it is not.
@@ -549,7 +552,7 @@ function readrBoard($R){
 
                 });
             },
-            shareStart : function(rindow, known_tags, unknown_tags_arr) {
+            shareStart : function(rindow, known_tags) {
                 //todo: for now, I'm just passing in known_tags as a param, but check with Porter about this model.
                 //Where is the 'source'/'point of origin' that is the authority of known_tags - I'd think we'd want to just reference that..
 
@@ -561,19 +564,14 @@ function readrBoard($R){
                     }
                 }
 
-                //.freeformTagInput
                 if ( typeof unknown_tags != 'undefined' ) {
                     tags += unknown_tags;
                 }
 
                 tags = $.trim(tags);
                 if ( tags.charAt( tags.length-1) == "," ) tags = tags.substring( 0, tags.length-1 );
-                $.each(unknown_tags_arr, function(idx, val){
-                   tags += (tags.length)? ", " : "";
-                   tags += val;
-                });
                 tags += " - ";
-                console.log(tags)
+
                 var $shareDialogueBox = $('<div class="rdr_shareBox"></div>')
 
                 // TODO add short rdrbrd URL to end of this line, rather than the long URL
@@ -625,14 +623,9 @@ function readrBoard($R){
             },
             rateSend : function(rindow) {
                 // get the user-added tags from the input field
-                var unknown_tags_raw = rindow.find('input[name="unknown-tags"]').val(),
-                //TODO IMPORTANT: temp demo solution.  Not sanitizing js, later send this to the server to be sanitized first?  Or sanitize it with js?
-                unknown_tags_arr = unknown_tags_raw.split(',');
-
-
+                var unknown_tags = rindow.find('input[name="unknown-tags"]').val();
                 // get the blessed tags the user chose, by checking for the css class
                 var known_tags = [];
-
                 rindow.find('ul.rdr_preselected li.rdr_selected').each( function() {
                     known_tags.push( $(this).attr('tid') );
                 });
@@ -648,7 +641,7 @@ function readrBoard($R){
                     //dataType: "jsonp",
 					dataType: "json",
                     data: {
-                        "unknown_tags" : unknown_tags_raw, //see note above
+                        "unknown_tags" : unknown_tags,
                         "known_tags" : known_tags,
                         "user" : 10,
                         "page" : 1,
@@ -656,7 +649,7 @@ function readrBoard($R){
                         "content_type" : "text"
                     },
                     complete: function(msg) {
-                        RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
+                        RDR.actions.shareStart(rindow, known_tags);
                     }
                 });
             },
