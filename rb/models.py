@@ -10,20 +10,13 @@ CONTENT_TYPES = (
     ('snd', 'sound'),
 )
 
-FEATURE_TYPES = (
-    (0, 'share'),
-    (1, 'rate'),
-    (2, 'comment'),
-    (3, 'bookmark'),
-    (4, 'search'),
-)
-
 NODE_TYPES = (
     ('tag', 'Tag'),
     ('com', 'Comment'),
+    ('cnt', 'Content'),
 )
 
-FEATURE_LOOKUP = dict([(a[1], a[0]) for a in FEATURE_TYPES])
+NODE_LOOKUP = dict([(a[0], a[1]) for a in NODE_TYPES])
 
 class DateAwareModel(models.Model):
     inserted = models.DateTimeField(auto_now_add=True, editable=False)
@@ -38,31 +31,11 @@ class UserAwareModel(models.Model):
     class Meta:
         abstract = True
 
-class Node(DateAwareModel,UserAwareModel):
-    type = models.CharField(max_length=3, choices=NODE_TYPES)
-    content = models.TextField()
-"""
-    parents = models.ForeignKey('self',related_name="Parent")
-    children = models.ForeignKey('self',related_name="Children")
-"""
+class Feature(models.Model):
+    text = models.BooleanField()
+    images = models.BooleanField()
+    flash = models.BooleanField()
 
-class Edge(models.Model):
-    parent = models.ForeignKey(Node,related_name="Parent")
-    child = models.ForeignKey(Node,related_name="Child")
-
-"""
-class Comment(Node):
-    content = models.TextField(blank=True)
-
-    def __unicode__(self):
-        return "CommentNode:" + self.content[:50]
- 
-class Tag(Node):
-    content = models.CharField(max_length=64)
-
-    def __unicode__(self):
-        return "TagNode:" + self.content[:50]
-"""
 class RBGroup(models.Model):
     name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=25)
@@ -81,38 +54,21 @@ class RBGroup(models.Model):
     logo_url_med = models.URLField(blank=True,verify_exists=False)
     logo_url_lg = models.URLField(blank=True,verify_exists=False)
     
+    # feature
+    share = models.OneToOneField(Feature,related_name='Sharables')
+    rate = models.OneToOneField(Feature,related_name='Ratables')
+    comment = models.OneToOneField(Feature,related_name='Commentables')
+    bookmark = models.OneToOneField(Feature,related_name='Bookmarkables')
+    search = models.OneToOneField(Feature,related_name='Searchables')
+
     # css
     css_url = models.URLField(blank=True,verify_exists=False)
     
-    def get_feature(self, name):
-        try:
-            feature_id = FEATURE_LOOKUP[name]
-        except:
-            raise Exception("Invalid feature name")
-        try:
-            return self.feature_set.values('text','images','flash').get(kind=feature_id)
-        except:
-            raise Exception("Feature instance not yet created")
-
-    # TODO: write code to overwrite save method + create feature instances on
-    # the first save of the model.
-    # def save(self):
-
     def __unicode__(self):
         return self.name
         
     class Meta:
     	ordering = ['short_name']
-
-class Feature(models.Model):
-    kind = models.PositiveSmallIntegerField(choices=FEATURE_TYPES,default=1)
-    text = models.BooleanField()
-    images = models.BooleanField()
-    flash = models.BooleanField()
-    rb_group = models.ForeignKey(RBGroup,default=1)
-
-    def __unicode__(self):
-        return (self.rb_group.short_name +":"+  FEATURE_TYPES[self.kind][1])
 
 class RBSite(Site):
     rb_group = models.ForeignKey(RBGroup)
@@ -128,6 +84,39 @@ class RBPage(models.Model):
     def __unicode__(self):
         return self.canonical_url
 
+class Node(DateAwareModel,UserAwareModel):
+    page = models.ForeignKey(RBPage)
+    type = models.CharField(max_length=3, choices=NODE_TYPES)
+    hash = models.CharField(max_length=32, editable=True,blank=True)
+    content = models.TextField()
+
+    def __unicode__(self):
+        return str(self.id) + " " + NODE_LOOKUP[self.type] + " " + str(self.user) + " " + self.content[:25] 
+"""
+    parents = models.ForeignKey('self',related_name="Parent")
+    children = models.ForeignKey('self',related_name="Children")
+"""
+
+class Edge(models.Model):
+    parent = models.ForeignKey(Node,related_name="Parent")
+    child = models.ForeignKey(Node,related_name="Child")
+
+    def __unicode__(self):
+        return str(self.parent.id) + " -> " + str(self.child.id)
+"""
+class Comment(Node):
+    content = models.TextField(blank=True)
+
+    def __unicode__(self):
+        return "CommentNode:" + self.content[:50]
+ 
+class Tag(Node):
+    content = models.CharField(max_length=64)
+
+    def __unicode__(self):
+        return "TagNode:" + self.content[:50]
+"""    
+"""
 class ContentNode(Node):
     content_type = models.CharField(max_length=3, choices=CONTENT_TYPES)
     rb_page = models.ForeignKey(RBPage)
@@ -135,3 +124,4 @@ class ContentNode(Node):
 
     def __unicode__(self):
         return "ContentNode:" + self.hash + ":" + self.content[:50]
+"""

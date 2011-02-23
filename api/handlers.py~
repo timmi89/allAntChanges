@@ -4,7 +4,7 @@ from rb.models import *
 
 class ContentNodeHandler(BaseHandler):
     allowed_methods = ('GET',)
-    model = ContentNode
+    model = Node
     fields = ('hash', 'type',)
 
     def read(self, request):
@@ -24,7 +24,7 @@ class ContentNodeHandler(BaseHandler):
         # called on POST and creates new
         # objects and should them or rc.CREATED
 
-class RBPageHandler(BaseHandler):
+class RBPageHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
     model = RBPage
     def read(self, request):
@@ -51,7 +51,8 @@ class RBGroupHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
     model = RBGroup
     ordering = ('name','short_name')
-    fields = ('name',
+    fields = ('id',
+              'name',
               'short_name',
               'language',
               'blessed_tags',
@@ -59,11 +60,11 @@ class RBGroupHandler(AnonymousBaseHandler):
               'img_whitelist',
               'img_blacklist',
               'no_readr',
-              'feature_share',
-              'feaure_rate',
-              'feature_comment',
-              'feature_bookmark',
-              'feature_search',
+              'share',
+              'rate',
+              'comment',
+              'bookmark',
+              'search',
               'logo_url_sm',
               'logo_url_med',
               'logo_url_lg',
@@ -76,7 +77,7 @@ class RBGroupHandler(AnonymousBaseHandler):
         #print request.GET['short_name']
 
         host = request.get_host()
-        # Slice off port
+        # Slice off port from hostname
         host = host[0:host.find(":")]
     	path = request.path
         """
@@ -95,11 +96,6 @@ class RBGroupHandler(AnonymousBaseHandler):
                 print "host %s is valid for group %d" % (host,group)
             else:
                 print "host %s is not valid for group %d" % (host,group)
-            setattr(g,'feature_share',g.get_feature('share'))
-            setattr(g,'feature_rate',g.get_feature('rate'))
-            setattr(g,'feature_comment',g.get_feature('comment'))
-            setattr(g,'feature_bookmark',g.get_feature('bookmark'))
-            setattr(g,'feature_search',g.get_feature('search'))
             print "Sending RBGRoup data for RBGroup %d" % group
             print g.css_url
             print "----------"
