@@ -34,8 +34,6 @@ class UserAwareModel(models.Model):
         abstract = True
 
 class Node(DateAwareModel,UserAwareModel):
-    pass
-"""
     parent = models.ForeignKey(
         'self',
         related_name='children',
@@ -45,7 +43,7 @@ class Node(DateAwareModel,UserAwareModel):
 class Edge(models.Model):
     parent = models.ForeignKey(Node)
     child = models.ForeignKey(Node)
-
+"""
 class Comment(Node):
     content = models.TextField(blank=True)
 

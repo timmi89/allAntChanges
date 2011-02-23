@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 import datetime
 
-NODE_TYPES = (
+CONTENT_TYPES = (
     ('txt', 'text'),
     ('img', 'image'),
     ('vid', 'video'),
@@ -20,16 +20,41 @@ FEATURE_TYPES = (
 
 FEATURE_LOOKUP = dict([(a[1], a[0]) for a in FEATURE_TYPES])
 
-class Node(models.Model):
-    parent = models.ForeignKey(
-        'self',
-        related_name='children',
-        blank=True,
-        null=True)
+class DateAwareModel(models.Model):
     inserted = models.DateTimeField(auto_now_add=True, editable=False)
-    updated = models.DateTimeField(auto_now=True, editable=False)
+    updated = models.DateTimeField(auto_now=True, editable=False)    
+
     class Meta:
         abstract = True
+
+class UserAwareModel(models.Model):
+    user = models.ForeignKey(User)
+
+    class Meta:
+        abstract = True
+
+class Node(DateAwareModel,UserAwareModel):
+    pass
+"""
+    parents = models.ForeignKey('self',related_name="Parent")
+    children = models.ForeignKey('self',related_name="Children")
+"""
+
+class Edge(models.Model):
+    parent = models.ForeignKey(Node,related_name="Parent")
+    child = models.ForeignKey(Node,related_name="Child")
+
+class Comment(Node):
+    content = models.TextField(blank=True)
+
+    def __unicode__(self):
+        return "CommentNode:" + self.content[:50]
+ 
+class Tag(Node):
+    content = models.CharField(max_length=64)
+
+    def __unicode__(self):
+        return "TagNode:" + self.content[:50]
 
 class RBGroup(models.Model):
     name = models.CharField(max_length=250)
@@ -96,44 +121,11 @@ class RBPage(models.Model):
     def __unicode__(self):
         return self.canonical_url
 
-class FacebookProfileModel(models.Model):
-    about_me = models.TextField(blank=True, null=True)
-    facebook_id = models.IntegerField(blank=True, null=True)
-    facebook_name = models.CharField(max_length=255, blank=True, null=True)
-    facebook_profile_url = models.TextField(blank=True, null=True)
-    website_url = models.TextField(blank=True, null=True)
-    blog_url = models.TextField(blank=True, null=True)
-    #image = models.ImageField(blank=True, null=True, upload_to='profile_images')
-    date_of_birth = models.DateField(blank=True, null=True)
-    
-    class Meta:
-        abstract = True
-
-#class ReadrUser(FacebookProfileModel):
-#    user = models.ForeignKey(User, unique=True)
-
 class ContentNode(Node):
-    user = models.ForeignKey(User)
-    type = models.CharField(max_length=3, choices=NODE_TYPES)
+    content_type = models.CharField(max_length=3, choices=CONTENT_TYPES)
+    content = models.TextField()
     rb_page = models.ForeignKey(RBPage)
     hash = models.CharField(max_length=32, editable=True)
-    content = models.TextField() #make this something better
 
     def __unicode__(self):
-        return self.hash
-
-class Comment(Node):
-    user = models.ForeignKey(User)
-    comment = models.TextField()
-
-    def __unicode__(self):
-        return unicode(self.user+":"+self.parent+":"+self.tag)
-
-class Tag(Node):
-    user = models.ForeignKey(User)
-    tag = models.CharField(max_length=160)
-
-    def __unicode__(self):
-        return unicode(self.tag)
-
-
+        return "ContentNode:" + self.hash + ":" + self.content[:50]

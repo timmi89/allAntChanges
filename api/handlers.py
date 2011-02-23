@@ -24,7 +24,7 @@ class ContentNodeHandler(BaseHandler):
         # called on POST and creates new
         # objects and should them or rc.CREATED
 
-class RBPageHandler(BaseHandler):
+class RBPageHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
     model = RBPage
     def read(self, request):
@@ -51,7 +51,8 @@ class RBGroupHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
     model = RBGroup
     ordering = ('name','short_name')
-    fields = ('name',
+    fields = ('id',
+              'name',
               'short_name',
               'language',
               'blessed_tags',
@@ -76,14 +77,25 @@ class RBGroupHandler(AnonymousBaseHandler):
         #print request.GET['short_name']
 
         host = request.get_host()
+        # Slice off port from hostname
+        host = host[0:host.find(":")]
     	path = request.path
-    	fp = request.get_full_path()
+        """
+        print "host: ", host[0:host.find(":")]
+        print "path: ", path
+        print "sent host: ", request.GET['host_name']
+        """
+        fp = request.get_full_path()
         if group:
             group = int(group)
             try:
             	g = RBGroup.objects.get(id=group)
             except RBGroup.DoesNotExist:
-            	return HttpResponse("Does not exist")
+            	return HttpResponse("RB Group does not exist!")
+            if host in g.valid_domains:
+                print "host %s is valid for group %d" % (host,group)
+            else:
+                print "host %s is not valid for group %d" % (host,group)
             setattr(g,'feature_share',g.get_feature('share'))
             setattr(g,'feature_rate',g.get_feature('rate'))
             setattr(g,'feature_comment',g.get_feature('comment'))
