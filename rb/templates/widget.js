@@ -106,8 +106,8 @@ function readrBoard($R){
 						//'<a href="javascript:void(0);" onclick="RDR.actions.rateStart({content_type:\''+arguments[0].content_type+'\',content:\''+arguments[0].content+'\'});" class="rdr_icon_rate">Rate This</a>' +
 						// TODO: make all of these also have a set of arguments pass in
 						// '<a href="javascript:void(0);" onclick="RDR.actions.searchStart();" class="rdr_icon_search">Search For This</a>' +
-						'<a href="javascript:void(0);" onclick="RDR.actions.bookmarkStart();" class="rdr_icon_bookmark">Bookmark This</a>' +
 						'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentPanel({content_type:\''+arguments[0].content_type+'\',content:\''+arguments[0].content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
+						'<a href="javascript:void(0);" onclick="RDR.actions.bookmarkStart();" class="rdr_icon_bookmark">Bookmark This</a>' +
 						//'<a href="javascript:void(0);" onclick="RDR.actions.shareStart();" class="rdr_icon_share">Share This</a>' +
 					'</div>');
 
@@ -492,7 +492,7 @@ function readrBoard($R){
                 var $ratePanel = $('<div class="rdr_ratePanel" />'),
                 $selectedTextBox = $('<div class="rdr_selectedTextBox" />'),
                 $blessedTags = $('<ul class="rdr_tags rdr_preselected"/>'),
-                $customTagBox = $('<div/>');
+                $customTagBox = $('<div id="rdr_customTags"/>');
 
                 //must wrap the quoteIcon for proper z-index layering
                 $selectedTextBox.append(
@@ -521,14 +521,14 @@ function readrBoard($R){
                     minHeight:'125px'
                 }, 300, function() {
                     rindow.find('div.rdr_contentSpace').append( $ratePanel );
-                    rindow.find('h1').text("Rate this");
+                    rindow.find('h1').text("Your Reaction:");
 
                     if ( content_type == "text" ) {
                         rindow.find('div.rdr_selectedTextBox em').html( unescape(content) );
 					} else if ( content_type == "image" ) {
 						// rindow.find('.rdr_selectedTextBox em').css('text-align','center').html( '<img style="max-width:100%;max-height:600px;" src=" ' + content + '" />' );
 						rindow.find('div.rdr_selectedTextBox').hide();
-						rindow.find('h1').text("Rate this");
+						rindow.find('h1').text("Your Reaction");
 					}
 
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
@@ -572,7 +572,7 @@ function readrBoard($R){
                    tags += (tags.length)? ", " : "";
                    tags += val;
                 });
-                tags += " - ";
+
                 console.log(tags)
                 var $shareDialogueBox = $('<div class="rdr_shareBox"></div>')
 
@@ -581,11 +581,12 @@ function readrBoard($R){
                 //TODO - replace this demo version with the real shortURL
                 var url = 'http://rdrbrd.com/ad4fta3';
 
-
+				// TODO: hiding the custom tags part here.  is that ok?  check.
+				$('#rdr_customTags').hide();
 
                 // TODO this eneds to behave differently for images, video
                 // maybe just show short URL that leads directly to that image, video on the page
-                var share_content = tags + '"' + content + '" ' + url;
+                var share_content = tags + ' because...';
                 //[eric] dont remove elements anymore, we're going to try adding this to the bottom of the sentimentPanel'
                 //[eric] -comment out: //rindow.find('ul, div, input').not('div.rdr_close').remove();
 
@@ -596,9 +597,12 @@ function readrBoard($R){
                     $shareLinks.append('<li><a href="http://' +val+ '.com" ><img src="/static/ui-prototype/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
                 });
 
-                $shareDialogueBox.append('<div id="rdr_share"><textarea>' + share_content + '</textarea>' + '<div id="rdr_share_count"></div>',
-                '<div><strong>Share your reaction</strong> with others:</div>',
-                $shareLinks)//chain
+//TODO this is prototype code for demo.  fix it.
+                $shareDialogueBox.append('<div><strong>Share your reaction</strong> with others:</div>',
+                $shareLinks,
+				'<hr/><div><strong>Comment on your reaction</strong>:</div>',
+				'<div id="rdr_share"><textarea>' + share_content + '</textarea>',// + '<div id="rdr_share_count"></div>'
+				'<button>Comment</button>')//chain
                 //'<div><button>Facebook</button> <button>Twitter</button> <button>Tumblr</button> <button>LinkedIn</button></div>')//chain
                 .hide();
                 rindow.append($shareDialogueBox);
@@ -618,10 +622,14 @@ function readrBoard($R){
                 -- IMAGE --
                 http://www.tumblr.com/share?v=3&type=photo&u=http%3A%2F%2Fwww.wired.com%2Fimages_blogs%2Fdangerroom%2F2011%2F01%2F28858.jpg&t=t%20value&s=s%20value
                 */
-                $('#rdr_share_count').text( $('#rdr_share textarea').val().length + " characters");
-                $('#rdr_share textarea').keyup( function() {
+
+                // TODO: removing character counter for moment.  not sure we'll have a textarea for sharing anymore.
+				/*
+				$('#rdr_share_count').text( $('#rdr_share textarea').val().length + " characters");
+				$('#rdr_share textarea').keyup( function() {
                     $('#rdr_share_count').text( $('#rdr_share textarea').val().length + " characters");
                 });
+				*/
             },
             rateSend : function(rindow) {
                 // get the user-added tags from the input field
