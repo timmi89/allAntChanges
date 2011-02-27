@@ -98,18 +98,46 @@ function readrBoard($R){
 					var y = arguments[0].y ? (arguments[0].y-45) : 100;
                     //console.dir( arguments[0] );
 					var coords = RDR.util.stayInWindow(x,y,200,30);
-
+                    //console.log(actionbarItems[2].item)
 					// TODO use settings check for certain features and content types to determine which of these to disable
-					var new_actionbar = $('<div class="rdr rdr_actionbar" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
-						'<a href="javascript:void(0);" onclick="RDR.actions.aboutReadrBoard();" class="rdr_icon_about">What\'s This?</a>' +
-						'<span class="rdr_divider">&nbsp;</span>' +
-						//'<a href="javascript:void(0);" onclick="RDR.actions.rateStart({content_type:\''+arguments[0].content_type+'\',content:\''+arguments[0].content+'\'});" class="rdr_icon_rate">Rate This</a>' +
-						// TODO: make all of these also have a set of arguments pass in
-						// '<a href="javascript:void(0);" onclick="RDR.actions.searchStart();" class="rdr_icon_search">Search For This</a>' +
-						'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentPanel({content_type:\''+arguments[0].content_type+'\',content:\''+arguments[0].content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
-						'<a href="javascript:void(0);" onclick="RDR.actions.bookmarkStart();" class="rdr_icon_bookmark">Bookmark This</a>' +
-						//'<a href="javascript:void(0);" onclick="RDR.actions.shareStart();" class="rdr_icon_share">Share This</a>' +
-					'</div>');
+					var new_actionbar = $('<div class="rdr rdr_actionbar" />').css({
+                       'left':coords.x,
+                       'top':coords.y
+                   });
+                   new_actionbar.items = [
+                            {
+                                'item':'about',
+                                'tipText':'What\'s This?',
+                                'onclick':'RDR.actions.aboutReadrBoard();'
+                            },
+                            {
+                                'item':'reaction',
+                                'tipText':'Comment on This',
+                                'onclick':'RDR.actions.sentimentPanel()'
+                            },
+                            {
+                                'item':'bookmark',
+                                'tipText':'Bookmark This',
+                                'onclick':'RDR.actions.bookmarkStart()'
+                            }
+                       ];
+
+                    $.each(new_actionbar.items, function(idx, val){
+                        if(idx === 0 ){
+
+                        }
+                        else{
+
+                        }
+                        var item = $('<div class="rdr_icon_'+val.item+'" />'),
+                        icon = $('<a class="icon" />'),
+                        tip = $('<span class="rdr_divider">&nbsp;</span>')
+                        tip = $('<span class="rdr_divider">&nbsp;</span>')
+                        */
+                        new_actionbar.append('<a href="javascript:void(0);" onclick="' + val.onclick + '" class="rdr_icon_' +val.item+ '">' + val.tipText + '</a>');
+                        //new_actionbar.append('<a href="javascript:void(0);" onclick="' + val.onclick + '" class="rdr_icon_' +val.item+ '">' + val.tipText + '</a>');
+                    });
+						//'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentPanel({content_type:\''+arguments[0].content_type+'\',content:\''+arguments[0].content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
 
                     //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
                     //but we're not sure yet if it's going to be the same function as this shareStart() above..
@@ -119,7 +147,7 @@ function readrBoard($R){
                     //todo [e @ p] can I get your help figuring out the best way to realign the widget icons?  Let's talk. (We need a bug tracker setup! :) )
 					$('div.rdr_actionbar a').hover(
 						function() {
-							var this_link = $(this);brd
+							var this_link = $(this);
 
 							var tooltip_args = {
 								name: this_link.attr('class'),
