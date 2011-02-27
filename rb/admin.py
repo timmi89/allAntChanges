@@ -3,9 +3,9 @@ from django.contrib import admin
 #from django.contrib import comments
 
 admin.site.register(Edge)
-admin.site.register(Node)
-admin.site.register(Comment)
-admin.site.register(Tag)
+#admin.site.register(Node)
+#admin.site.register(Comment)
+#admin.site.register(Tag)
 admin.site.register(RBPage)
 admin.site.register(RBSite)
 admin.site.register(RBGroup)
@@ -17,15 +17,18 @@ admin.site.register(Feature)
 #see http://docs.djangoproject.com/en/dev/intro/tutorial02/
 
 
-class ContentNodeAdmin(admin.ModelAdmin):
+class NodeAdmin(admin.ModelAdmin):
     list_display = ('id',
-                    'user',
+                    'type',
                     'inserted',
                     'updated',
-                    'hash',)
+                    'hash',
+                    'user',
+                    'page',
+                    'content',)
     list_filter = ('user',)
     #date_hierarchy = 'modified'
     search_fields = ('content',)
     #fields = ('user','parent','body')
 
-admin.site.register(ContentNode, ContentNodeAdmin)
+admin.site.register(Node, NodeAdmin)

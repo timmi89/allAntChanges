@@ -4,7 +4,7 @@ from rb.models import *
 
 class ContentNodeHandler(BaseHandler):
     allowed_methods = ('GET',)
-    model = ContentNode
+    model = Node
     fields = ('hash', 'type',)
 
     def read(self, request):
@@ -36,7 +36,7 @@ class RBPageHandler(AnonymousBaseHandler):
         print "***URL INFO IN RBPAGE REQUEST***"
         canonical = request.GET.get('canonical_url')
         if canonical:
-            print "canonical url sent in get request"
+            print "canonical url sent in get request: %s" % canonical
             if canonical.find("#!") < 0:
                 print "did not find hashbang"
             else:
@@ -60,11 +60,11 @@ class RBGroupHandler(AnonymousBaseHandler):
               'img_whitelist',
               'img_blacklist',
               'no_readr',
-              'feature_share',
-              'feaure_rate',
-              'feature_comment',
-              'feature_bookmark',
-              'feature_search',
+              'share',
+              'rate',
+              'comment',
+              'bookmark',
+              'search',
               'logo_url_sm',
               'logo_url_med',
               'logo_url_lg',
@@ -96,11 +96,6 @@ class RBGroupHandler(AnonymousBaseHandler):
                 print "host %s is valid for group %d" % (host,group)
             else:
                 print "host %s is not valid for group %d" % (host,group)
-            setattr(g,'feature_share',g.get_feature('share'))
-            setattr(g,'feature_rate',g.get_feature('rate'))
-            setattr(g,'feature_comment',g.get_feature('comment'))
-            setattr(g,'feature_bookmark',g.get_feature('bookmark'))
-            setattr(g,'feature_search',g.get_feature('search'))
             print "Sending RBGRoup data for RBGroup %d" % group
             print g.css_url
             print "----------"
