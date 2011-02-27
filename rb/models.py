@@ -10,13 +10,12 @@ CONTENT_TYPES = (
     ('snd', 'sound'),
 )
 
-NODE_TYPES = (
+INTERACTION_TYPES = (
     ('tag', 'Tag'),
     ('com', 'Comment'),
-    ('cnt', 'Content'),
 )
 
-NODE_LOOKUP = dict([(a[0], a[1]) for a in NODE_TYPES])
+#NODE_LOOKUP = dict([(a[0], a[1]) for a in NODE_TYPES])
 
 class DateAwareModel(models.Model):
     inserted = models.DateTimeField(auto_now_add=True, editable=False)
@@ -36,7 +35,7 @@ class Feature(models.Model):
     images = models.BooleanField()
     flash = models.BooleanField()
 
-class RBGroup(models.Model):
+class Group(models.Model):
     name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=25)
     language = models.CharField(max_length=25,default="en")
@@ -70,58 +69,43 @@ class RBGroup(models.Model):
     class Meta:
     	ordering = ['short_name']
 
-class RBSite(Site):
-    rb_group = models.ForeignKey(RBGroup)
+class Site(Site):
+    group = models.ForeignKey(Group)
     include_selectors = models.CharField(max_length=250, blank=True)
     no_rdr_selectors = models.CharField(max_length=250, blank=True)
     css = models.URLField(blank=True)
 
-class RBPage(models.Model):
-    rb_site = models.ForeignKey(RBSite)
+class Page(models.Model):
+    site = models.ForeignKey(Site)
     url = models.URLField(verify_exists=False)
     canonical_url = models.URLField(verify_exists=False)
 
     def __unicode__(self):
         return self.canonical_url
 
-class Node(DateAwareModel,UserAwareModel):
-    page = models.ForeignKey(RBPage)
-    type = models.CharField(max_length=3, choices=NODE_TYPES)
-    hash = models.CharField(max_length=32, editable=True,blank=True)
-    content = models.TextField()
+class Content(DateAwareModel):
+	hash = models.CharField(max_length=32)
+	kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
+	body = models.TextField()
+	
+	def __unicode__(self):
+		return "Content(Kind: {0}, Body: {1})".format(self.kind, self.body[:25])
+	
+	class Meta:
+		verbose_name_plural = "content"
 
-    def __unicode__(self):
-        return str(self.id) + " " + NODE_LOOKUP[self.type] + " " + str(self.user) + " " + self.content[:25] 
-"""
-    parents = models.ForeignKey('self',related_name="Parent")
-    children = models.ForeignKey('self',related_name="Children")
-"""
+class InteractionNode(models.Model):
+	type = models.CharField(max_length=3, choices=INTERACTION_TYPES)
+	body = models.TextField()
+	
+	def __unicode__(self):
+		return "Node(Type: {0}, Body: {1})".format(self.type, self.body[:25])
 
-class Edge(models.Model):
-    parent = models.ForeignKey(Node,related_name="Parent")
-    child = models.ForeignKey(Node,related_name="Child")
-
-    def __unicode__(self):
-        return str(self.parent.id) + " -> " + str(self.child.id)
-"""
-class Comment(Node):
-    content = models.TextField(blank=True)
-
-    def __unicode__(self):
-        return "CommentNode:" + self.content[:50]
- 
-class Tag(Node):
-    content = models.CharField(max_length=64)
-
-    def __unicode__(self):
-        return "TagNode:" + self.content[:50]
-"""    
-"""
-class ContentNode(Node):
-    content_type = models.CharField(max_length=3, choices=CONTENT_TYPES)
-    rb_page = models.ForeignKey(RBPage)
-    hash = models.CharField(max_length=32, editable=True)
-
-    def __unicode__(self):
-        return "ContentNode:" + self.hash + ":" + self.content[:50]
-"""
+class Interaction(DateAwareModel,UserAwareModel):
+	page = models.ForeignKey(Page)
+	content = models.ForeignKey(Content)
+	parent = models.ForeignKey('self',blank=True,null=True,default='Null')
+	node = models.ForeignKey(InteractionNode)
+	
+	def __unicode__(self):
+		return "Interaction(Page: {0}, Content: {1})".format(self.page, self.content)

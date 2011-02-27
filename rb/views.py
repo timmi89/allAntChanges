@@ -4,6 +4,20 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core import serializers
 
+def widget(request,sn):
+    # Widget code is retreived from the server using RBGroup shortname
+    try:
+        rbg = Group.objects.get(short_name = sn)
+    except:
+        raise Exception('RB group with this short_name does not exist')
+    return render_to_response("widget.js",{'group_id': rbg.id, 'short_name' : sn})
+
+def settings(request,group_id):
+    # Get settings after widget code (including group ID has been sent)
+    # TODO: retreive settings and send it back in JSONP using piston API
+    pass
+
+"""
 def index(request):
     return HttpResponse("index")
 
@@ -24,19 +38,6 @@ def search(request):
     else:
         message = 'You submitted an empty form.'
     return HttpResponse(message)
-
-def widget(request,sn):
-    # Widget code is retreived from the server using RBGroup shortname
-    try:
-        rbg = RBGroup.objects.get(short_name = sn)
-    except:
-        raise Exception('RB group with this short_name does not exist')
-    return render_to_response("widget.js",{'group_id': rbg.id, 'short_name' : sn})
-
-def settings(request,group_id):
-    # Get settings after widget code (including group ID has been sent)
-    # TODO: retreive settings and send it back in JSONP using piston API
-    pass
 
 def display_meta(request):
     values = request.META.items()
@@ -61,3 +62,4 @@ def json_users(request):
 def send(request):
     print request.GET
     return HttpResponse(request.GET)
+"""

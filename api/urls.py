@@ -3,25 +3,29 @@ from piston.resource import Resource
 from piston.authentication import HttpBasicAuthentication
 from piston.doc import documentation_view
 
-from api.handlers import ContentNodeHandler, RBGroupHandler, RBPageHandler
+#from api.handlers import ContentNodeHandler, RBGroupHandler, RBPageHandler
+from api.handlers import SettingsHandler, PageDataHandler
 
 auth = HttpBasicAuthentication(realm='Test API')
 
-ContentNodes = Resource(handler=ContentNodeHandler, authentication=auth)
-RBGroups = Resource(handler=RBGroupHandler)
-RBPages = Resource(handler=RBPageHandler, authentication=auth)
+#ContentNodes = Resource(handler=ContentNodeHandler, authentication=auth)
+#RBGroups = Resource(handler=RBGroupHandler)
+#RBPages = Resource(handler=RBPageHandler, authentication=auth)
+Settings = Resource(handler=SettingsHandler)
+PageData = Resource(handler=PageDataHandler)
 
 urlpatterns = patterns('',
-
-    url(r'^nodes/$', ContentNodes),
-    url(r'^nodes/(?P<emitter_format>.+)/$', ContentNodes),
-    url(r'^nodes\.(?P<emitter_format>.+)', ContentNodes),
-    url(r'^rbgroup/(\d+)', RBGroups),
-    url(r'^rbpage/$', RBPages),
-    url(r'^rbgroup/$', RBGroups),
+	url(r'^settings/(\d+)', Settings),
+	url(r'^page/', PageData)
+    #url(r'^nodes/$', ContentNodes),
+    #url(r'^nodes/(?P<emitter_format>.+)/$', ContentNodes),
+    #url(r'^nodes\.(?P<emitter_format>.+)', ContentNodes),
+    #url(r'^rbgroup/(\d+)', RBGroups),
+    #url(r'^rbpage/$', RBPages),
+    #url(r'^rbgroup/$', RBGroups),
     # Is this right? - ask Tyler..
     #url(r'^rbgroup/(\d+)', RBGroups),
-    url(r'^rbgroup/(?P<group>\d+)', RBGroups),
+    #url(r'^rbgroup/(?P<group>\d+)', RBGroups),
     # automated documentation
     #url(r'^$', documentation_view),
 )

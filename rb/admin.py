@@ -2,21 +2,22 @@ from rb.models import *
 from django.contrib import admin
 #from django.contrib import comments
 
-admin.site.register(Edge)
 #admin.site.register(Node)
 #admin.site.register(Comment)
 #admin.site.register(Tag)
-admin.site.register(RBPage)
-admin.site.register(RBSite)
-admin.site.register(RBGroup)
+admin.site.register(Page)
+admin.site.register(Site)
+admin.site.register(Group)
 admin.site.register(Feature)
-
+admin.site.register(InteractionNode)
+admin.site.register(Content)
+admin.site.register(Interaction)
 #This replaces the line above to customize the admin page console
 #todo: it doesn't work yet though.. resolve bugs
 #and get it back to the nice way Tyler had it before
 #see http://docs.djangoproject.com/en/dev/intro/tutorial02/
 
-
+"""
 class NodeAdmin(admin.ModelAdmin):
     list_display = ('id',
                     'type',
@@ -32,3 +33,4 @@ class NodeAdmin(admin.ModelAdmin):
     #fields = ('user','parent','body')
 
 admin.site.register(Node, NodeAdmin)
+"""

@@ -11,14 +11,14 @@ urlpatterns = patterns('',
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    (r'^search-form/$', 'rb.views.search_form'),
-    (r'^nodes/$', 'rb.views.index'),
+    #(r'^search-form/$', 'rb.views.search_form'),
+    #(r'^nodes/$', 'rb.views.index'),
     (r'^widget/(.{,25})/$', 'rb.views.widget'),
-    (r'^request-meta/$', 'rb.views.display_meta'),
-    (r'^search/$', 'rb.views.search'),
-    (r'^comments/', include('django.contrib.comments.urls')),
-    (r'^nodes/$', 'rb.views.index'),
-    (r'^request-meta/$', 'rb.views.display_meta'),	
+    #(r'^request-meta/$', 'rb.views.display_meta'),
+    #(r'^search/$', 'rb.views.search'),
+    #(r'^comments/', include('django.contrib.comments.urls')),
+    #(r'^nodes/$', 'rb.views.index'),
+    #(r'^request-meta/$', 'rb.views.display_meta'),	
     #(r'^nodes/(?P<node_id>\d+)/$', 'rb.views.detail'),
     #(r'^nodes/(?P<node_id>\d+)/$', 'rb.views.detail'),
     #(r'^nodes/(?P<node_id>\d+)/results/$', 'rb.views.results'),
@@ -26,11 +26,11 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     
     #testing 'packaging' the urlpatterns within the rb django project
-    (r'^tags/', include('rb.urls')),
+    #(r'^tags/', include('rb.urls')),
     (r'^api/', include('readrboard.api.urls')),
     (r'^admin/', include(admin.site.urls)),
-    (r'^json-nodes/', 'rb.views.json_content_node'),
-    (r'^json-send/', 'rb.views.send'),
+    #(r'^json-nodes/', 'rb.views.json_content_node'),
+    #(r'^json-send/', 'rb.views.send'),
 )
 
 if settings.DEBUG:
