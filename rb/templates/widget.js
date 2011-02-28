@@ -100,11 +100,11 @@ function readrBoard($R){
 					var coords = RDR.util.stayInWindow(x,y,200,30);
                     //console.log(actionbarItems[2].item)
 					// TODO use settings check for certain features and content types to determine which of these to disable
-					var new_actionbar = $('<div class="rdr rdr_actionbar" />').css({
+					var $new_actionbar = $('<div class="rdr rdr_actionbar" />').css({
                        'left':coords.x,
                        'top':coords.y
-                   });
-                   new_actionbar.items = [
+                    }).append('<ul/>');
+                    $new_actionbar.items = [
                             {
                                 'item':'about',
                                 'tipText':'What\'s This?',
@@ -121,28 +121,30 @@ function readrBoard($R){
                                 'onclick':'RDR.actions.bookmarkStart()'
                             }
                        ];
-
-                    $.each(new_actionbar.items, function(idx, val){
-                        if(idx === 0 ){
-
-                        }
-                        else{
-
-                        }
-                        var item = $('<div class="rdr_icon_'+val.item+'" />'),
-                        icon = $('<a class="icon" />'),
-                        tip = $('<span class="rdr_divider">&nbsp;</span>')
-                        tip = $('<span class="rdr_divider">&nbsp;</span>')
-                        */
-                        new_actionbar.append('<a href="javascript:void(0);" onclick="' + val.onclick + '" class="rdr_icon_' +val.item+ '">' + val.tipText + '</a>');
-                        //new_actionbar.append('<a href="javascript:void(0);" onclick="' + val.onclick + '" class="rdr_icon_' +val.item+ '">' + val.tipText + '</a>');
+                    $.each($new_actionbar.items, function(idx, val){
+                        var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
+                        $icon = $('<a onclick="' +val.onclick+ '">' +val.item+ '</a>'),
+                        $tooltip = $('<div class="rdr rdr_tooltip" id="rdr_tooltip_' +val.item+ '">' +
+                            '<div class="rdr rdr_tooltip-content"> ' +val.tipText+ '</div>'+
+                            '<div class="rdr rdr_tooltip-arrow-border" />'+
+                            '<div class="rdr rdr_tooltip-arrow" />'+
+                        '</div>');
+                        $item.append($icon,$tooltip).appendTo($new_actionbar.children('ul'));
                     });
-						//'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentPanel({content_type:\''+arguments[0].content_type+'\',content:\''+arguments[0].content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
+                    $('div.rdr_actionbar a').hover(
+						function() {
+							$(this).show();
+						},
+						function () {
+							$(this).hide();
+						}
+					);
+                    //'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentPanel({content_type:\''+arguments[0].content_type+'\',content:\''+arguments[0].content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
 
                     //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
                     //but we're not sure yet if it's going to be the same function as this shareStart() above..
 
-					$('body').append( new_actionbar );
+					$('body').append( $new_actionbar );
 
                     //todo [e @ p] can I get your help figuring out the best way to realign the widget icons?  Let's talk. (We need a bug tracker setup! :) )
 					$('div.rdr_actionbar a').hover(
