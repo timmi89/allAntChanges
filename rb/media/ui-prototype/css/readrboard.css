@@ -86,8 +86,8 @@ div#rdr_share textarea	{ width:390px; height:75px; font-size:14px; margin:5px 0;
 div#rdr_share_count		{ color:#999999; font-style:italic; margin:-3px 0 5px; }
 
 ul#shareLinks           {padding:2px; margin: 0;}
-ul#shareLinks li        {padding: 5px 10px; display: inline-block; list-style: none;}
-ul#shareLinks img       {width:50px;}
+ul#shareLinks li        {padding: 5px; display: inline-block; list-style: none;}
+ul#shareLinks img       {width:30px;}
 
 /* forms */
 div.rdr textarea,
