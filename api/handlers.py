@@ -1,6 +1,8 @@
 from piston.handler import BaseHandler, AnonymousBaseHandler
 from django.http import HttpResponse
+from settings import DEBUG
 from rb.models import Group, Page, Page, Interaction, InteractionNode
+from django.db.models import Count
 
 class PageDataHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
@@ -8,8 +10,14 @@ class PageDataHandler(AnonymousBaseHandler):
 
 	def read(self, request):
 		canonical = request.GET.get('canonical_url')
-		page = Page.objects.get(canonical_url=canonical)
+		if DEBUG:
+			page = Page.objects.get(id=1)
+		else:
+			page = Page.objects.get(canonical_url=canonical)
 		interactions = Interaction.objects.filter(page=page.id)
+		#aggregate = interactions.aggregate(Count("node__type"))
+		#Author.objects.annotate(average_rating=Avg('book__rating'))
+		aggregate = interactions.annotate(count=Count("node__type"))
 		return interactions
 
 class SettingsHandler(AnonymousBaseHandler):

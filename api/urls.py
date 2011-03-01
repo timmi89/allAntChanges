@@ -16,18 +16,18 @@ PageData = Resource(handler=PageDataHandler)
 
 urlpatterns = patterns('',
 	url(r'^settings/(\d+)', Settings),
-	url(r'^page/', PageData)
-    #url(r'^nodes/$', ContentNodes),
-    #url(r'^nodes/(?P<emitter_format>.+)/$', ContentNodes),
-    #url(r'^nodes\.(?P<emitter_format>.+)', ContentNodes),
-    #url(r'^rbgroup/(\d+)', RBGroups),
-    #url(r'^rbpage/$', RBPages),
-    #url(r'^rbgroup/$', RBGroups),
-    # Is this right? - ask Tyler..
-    #url(r'^rbgroup/(\d+)', RBGroups),
-    #url(r'^rbgroup/(?P<group>\d+)', RBGroups),
-    # automated documentation
-    #url(r'^$', documentation_view),
+	url(r'^page/', PageData),
+	#url(r'^nodes/$', ContentNodes),
+	#url(r'^nodes/(?P<emitter_format>.+)/$', ContentNodes),
+	#url(r'^nodes\.(?P<emitter_format>.+)', ContentNodes),
+	#url(r'^rbgroup/(\d+)', RBGroups),
+	#url(r'^rbpage/$', RBPages),
+	#url(r'^rbgroup/$', RBGroups),
+	# Is this right? - ask Tyler..
+	#url(r'^rbgroup/(\d+)', RBGroups),
+	#url(r'^rbgroup/(?P<group>\d+)', RBGroups),
+	# automated documentation
+	#url(r'^$', documentation_view),
 )
 
 """

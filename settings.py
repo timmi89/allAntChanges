@@ -100,4 +100,5 @@ INSTALLED_APPS = (
     'django.contrib.comments',
     'readrboard.api',
     'south',
+    'treebeard',
 )

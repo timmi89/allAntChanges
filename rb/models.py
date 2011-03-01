@@ -1,4 +1,5 @@
 from django.db import models
+from treebeard.mp_tree import MP_Node
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 import datetime
@@ -13,13 +14,15 @@ CONTENT_TYPES = (
 INTERACTION_TYPES = (
     ('tag', 'Tag'),
     ('com', 'Comment'),
+    ('bkm', 'Bookmark'),
+    ('shr', 'Share'),
 )
 
 #NODE_LOOKUP = dict([(a[0], a[1]) for a in NODE_TYPES])
 
 class DateAwareModel(models.Model):
-    inserted = models.DateTimeField(auto_now_add=True, editable=False)
-    updated = models.DateTimeField(auto_now=True, editable=False)    
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+    modified = models.DateTimeField(auto_now=True, editable=False)    
 
     class Meta:
         abstract = True
@@ -84,7 +87,6 @@ class Page(models.Model):
         return self.canonical_url
 
 class Content(DateAwareModel):
-	hash = models.CharField(max_length=32)
 	kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
 	body = models.TextField()
 	
@@ -94,6 +96,10 @@ class Content(DateAwareModel):
 	class Meta:
 		verbose_name_plural = "content"
 
+class Container(models.Model):
+	hash = models.CharField(max_length=32)
+	content = models.ManyToManyField(Content)
+
 class InteractionNode(models.Model):
 	type = models.CharField(max_length=3, choices=INTERACTION_TYPES)
 	body = models.TextField()
@@ -101,11 +107,10 @@ class InteractionNode(models.Model):
 	def __unicode__(self):
 		return "Node(Type: {0}, Body: {1})".format(self.type, self.body[:25])
 
-class Interaction(DateAwareModel,UserAwareModel):
+class Interaction(DateAwareModel,UserAwareModel,MP_Node):
 	page = models.ForeignKey(Page)
 	content = models.ForeignKey(Content)
-	parent = models.ForeignKey('self',blank=True,null=True,default='Null')
-	node = models.ForeignKey(InteractionNode)
+	node = models.ManyToManyField(InteractionNode)
 	
 	def __unicode__(self):
 		return "Interaction(Page: {0}, Content: {1})".format(self.page, self.content)

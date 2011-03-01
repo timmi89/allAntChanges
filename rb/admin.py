@@ -12,6 +12,7 @@ admin.site.register(Feature)
 admin.site.register(InteractionNode)
 admin.site.register(Content)
 admin.site.register(Interaction)
+admin.site.register(Container)
 #This replaces the line above to customize the admin page console
 #todo: it doesn't work yet though.. resolve bugs
 #and get it back to the nice way Tyler had it before

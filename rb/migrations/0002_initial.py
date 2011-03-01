@@ -65,32 +65,48 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('inserted', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('updated', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('hash', self.gf('django.db.models.fields.CharField')(max_length=32)),
-            ('type', self.gf('django.db.models.fields.CharField')(max_length=3)),
+            ('kind', self.gf('django.db.models.fields.CharField')(default='txt', max_length=3)),
             ('body', self.gf('django.db.models.fields.TextField')()),
         ))
         db.send_create_signal('rb', ['Content'])
 
+        # Adding model 'Container'
+        db.create_table('rb_container', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('hash', self.gf('django.db.models.fields.CharField')(max_length=32)),
+        ))
+        db.send_create_signal('rb', ['Container'])
+
+        # Adding M2M table for field content on 'Container'
+        db.create_table('rb_container_content', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('container', models.ForeignKey(orm['rb.container'], null=False)),
+            ('content', models.ForeignKey(orm['rb.content'], null=False))
+        ))
+        db.create_unique('rb_container_content', ['container_id', 'content_id'])
+
+        # Adding model 'InteractionNode'
+        db.create_table('rb_interactionnode', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('type', self.gf('django.db.models.fields.CharField')(max_length=3)),
+            ('body', self.gf('django.db.models.fields.TextField')()),
+        ))
+        db.send_create_signal('rb', ['InteractionNode'])
+
         # Adding model 'Interaction'
         db.create_table('rb_interaction', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('type', self.gf('django.db.models.fields.CharField')(max_length=3)),
-            ('content', self.gf('django.db.models.fields.TextField')()),
-        ))
-        db.send_create_signal('rb', ['Interaction'])
-
-        # Adding model 'Interactions'
-        db.create_table('rb_interactions', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('path', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
+            ('depth', self.gf('django.db.models.fields.PositiveIntegerField')()),
+            ('numchild', self.gf('django.db.models.fields.PositiveIntegerField')(default=0)),
             ('inserted', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('updated', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
             ('page', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rb.Page'])),
             ('content', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rb.Content'])),
-            ('parent', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['rb.Interactions'], unique=True)),
-            ('interaction', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rb.Interaction'])),
+            ('node', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rb.InteractionNode'])),
         ))
-        db.send_create_signal('rb', ['Interactions'])
+        db.send_create_signal('rb', ['Interaction'])
 
 
     def backwards(self, orm):
@@ -110,11 +126,17 @@ class Migration(SchemaMigration):
         # Deleting model 'Content'
         db.delete_table('rb_content')
 
+        # Deleting model 'Container'
+        db.delete_table('rb_container')
+
+        # Removing M2M table for field content on 'Container'
+        db.delete_table('rb_container_content')
+
+        # Deleting model 'InteractionNode'
+        db.delete_table('rb_interactionnode')
+
         # Deleting model 'Interaction'
         db.delete_table('rb_interaction')
-
-        # Deleting model 'Interactions'
-        db.delete_table('rb_interactions')
 
 
     models = {
@@ -154,13 +176,18 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        'rb.container': {
+            'Meta': {'object_name': 'Container'},
+            'content': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['rb.Content']", 'symmetrical': 'False'}),
+            'hash': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+        },
         'rb.content': {
             'Meta': {'object_name': 'Content'},
             'body': ('django.db.models.fields.TextField', [], {}),
-            'hash': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'inserted': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'type': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
+            'kind': ('django.db.models.fields.CharField', [], {'default': "'txt'", 'max_length': '3'}),
             'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
         },
         'rb.feature': {
@@ -194,20 +221,22 @@ class Migration(SchemaMigration):
         },
         'rb.interaction': {
             'Meta': {'object_name': 'Interaction'},
-            'content': ('django.db.models.fields.TextField', [], {}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'type': ('django.db.models.fields.CharField', [], {'max_length': '3'})
-        },
-        'rb.interactions': {
-            'Meta': {'object_name': 'Interactions'},
             'content': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.Content']"}),
+            'depth': ('django.db.models.fields.PositiveIntegerField', [], {}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'inserted': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'interaction': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.Interaction']"}),
+            'node': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.InteractionNode']"}),
+            'numchild': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
             'page': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.Page']"}),
-            'parent': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['rb.Interactions']", 'unique': 'True'}),
+            'path': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
             'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
+        },
+        'rb.interactionnode': {
+            'Meta': {'object_name': 'InteractionNode'},
+            'body': ('django.db.models.fields.TextField', [], {}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'type': ('django.db.models.fields.CharField', [], {'max_length': '3'})
         },
         'rb.page': {
             'Meta': {'object_name': 'Page'},

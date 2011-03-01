@@ -17,8 +17,8 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('rb', ['Feature'])
 
-        # Adding model 'RBGroup'
-        db.create_table('rb_rbgroup', (
+        # Adding model 'Group'
+        db.create_table('rb_group', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=250)),
             ('short_name', self.gf('django.db.models.fields.CharField')(max_length=25)),
@@ -39,47 +39,74 @@ class Migration(SchemaMigration):
             ('search', self.gf('django.db.models.fields.related.OneToOneField')(related_name='Searchables', unique=True, to=orm['rb.Feature'])),
             ('css_url', self.gf('django.db.models.fields.URLField')(max_length=200, blank=True)),
         ))
-        db.send_create_signal('rb', ['RBGroup'])
+        db.send_create_signal('rb', ['Group'])
 
-        # Adding model 'RBSite'
-        db.create_table('rb_rbsite', (
+        # Adding model 'Site'
+        db.create_table('rb_site', (
             ('site_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['sites.Site'], unique=True, primary_key=True)),
-            ('rb_group', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rb.RBGroup'])),
+            ('group', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rb.Group'])),
             ('include_selectors', self.gf('django.db.models.fields.CharField')(max_length=250, blank=True)),
             ('no_rdr_selectors', self.gf('django.db.models.fields.CharField')(max_length=250, blank=True)),
             ('css', self.gf('django.db.models.fields.URLField')(max_length=200, blank=True)),
         ))
-        db.send_create_signal('rb', ['RBSite'])
+        db.send_create_signal('rb', ['Site'])
 
-        # Adding model 'RBPage'
-        db.create_table('rb_rbpage', (
+        # Adding model 'Page'
+        db.create_table('rb_page', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('rb_site', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rb.RBSite'])),
+            ('site', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rb.Site'])),
             ('url', self.gf('django.db.models.fields.URLField')(max_length=200)),
             ('canonical_url', self.gf('django.db.models.fields.URLField')(max_length=200)),
         ))
-        db.send_create_signal('rb', ['RBPage'])
+        db.send_create_signal('rb', ['Page'])
 
-        # Adding model 'Node'
-        db.create_table('rb_node', (
+        # Adding model 'Content'
+        db.create_table('rb_content', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('inserted', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('updated', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('page', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rb.RBPage'])),
-            ('type', self.gf('django.db.models.fields.CharField')(max_length=3)),
-            ('hash', self.gf('django.db.models.fields.CharField')(max_length=32, blank=True)),
-            ('content', self.gf('django.db.models.fields.TextField')()),
+            ('kind', self.gf('django.db.models.fields.CharField')(default='txt', max_length=3)),
+            ('body', self.gf('django.db.models.fields.TextField')()),
         ))
-        db.send_create_signal('rb', ['Node'])
+        db.send_create_signal('rb', ['Content'])
 
-        # Adding model 'Edge'
-        db.create_table('rb_edge', (
+        # Adding model 'Container'
+        db.create_table('rb_container', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('parent', self.gf('django.db.models.fields.related.ForeignKey')(related_name='Parent', to=orm['rb.Node'])),
-            ('child', self.gf('django.db.models.fields.related.ForeignKey')(related_name='Child', to=orm['rb.Node'])),
+            ('hash', self.gf('django.db.models.fields.CharField')(max_length=32)),
         ))
-        db.send_create_signal('rb', ['Edge'])
+        db.send_create_signal('rb', ['Container'])
+
+        # Adding M2M table for field content on 'Container'
+        db.create_table('rb_container_content', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('container', models.ForeignKey(orm['rb.container'], null=False)),
+            ('content', models.ForeignKey(orm['rb.content'], null=False))
+        ))
+        db.create_unique('rb_container_content', ['container_id', 'content_id'])
+
+        # Adding model 'InteractionNode'
+        db.create_table('rb_interactionnode', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('type', self.gf('django.db.models.fields.CharField')(max_length=3)),
+            ('body', self.gf('django.db.models.fields.TextField')()),
+        ))
+        db.send_create_signal('rb', ['InteractionNode'])
+
+        # Adding model 'Interaction'
+        db.create_table('rb_interaction', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('path', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
+            ('depth', self.gf('django.db.models.fields.PositiveIntegerField')()),
+            ('numchild', self.gf('django.db.models.fields.PositiveIntegerField')(default=0)),
+            ('inserted', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('updated', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('page', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rb.Page'])),
+            ('content', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rb.Content'])),
+            ('node', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rb.InteractionNode'])),
+        ))
+        db.send_create_signal('rb', ['Interaction'])
 
 
     def backwards(self, orm):
@@ -87,20 +114,29 @@ class Migration(SchemaMigration):
         # Deleting model 'Feature'
         db.delete_table('rb_feature')
 
-        # Deleting model 'RBGroup'
-        db.delete_table('rb_rbgroup')
+        # Deleting model 'Group'
+        db.delete_table('rb_group')
 
-        # Deleting model 'RBSite'
-        db.delete_table('rb_rbsite')
+        # Deleting model 'Site'
+        db.delete_table('rb_site')
 
-        # Deleting model 'RBPage'
-        db.delete_table('rb_rbpage')
+        # Deleting model 'Page'
+        db.delete_table('rb_page')
 
-        # Deleting model 'Node'
-        db.delete_table('rb_node')
+        # Deleting model 'Content'
+        db.delete_table('rb_content')
 
-        # Deleting model 'Edge'
-        db.delete_table('rb_edge')
+        # Deleting model 'Container'
+        db.delete_table('rb_container')
+
+        # Removing M2M table for field content on 'Container'
+        db.delete_table('rb_container_content')
+
+        # Deleting model 'InteractionNode'
+        db.delete_table('rb_interactionnode')
+
+        # Deleting model 'Interaction'
+        db.delete_table('rb_interaction')
 
 
     models = {
@@ -140,11 +176,19 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
-        'rb.edge': {
-            'Meta': {'object_name': 'Edge'},
-            'child': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'Child'", 'to': "orm['rb.Node']"}),
+        'rb.container': {
+            'Meta': {'object_name': 'Container'},
+            'content': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['rb.Content']", 'symmetrical': 'False'}),
+            'hash': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+        },
+        'rb.content': {
+            'Meta': {'object_name': 'Content'},
+            'body': ('django.db.models.fields.TextField', [], {}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'parent': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'Parent'", 'to': "orm['rb.Node']"})
+            'inserted': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'kind': ('django.db.models.fields.CharField', [], {'default': "'txt'", 'max_length': '3'}),
+            'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
         },
         'rb.feature': {
             'Meta': {'object_name': 'Feature'},
@@ -153,19 +197,8 @@ class Migration(SchemaMigration):
             'images': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'text': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
-        'rb.node': {
-            'Meta': {'object_name': 'Node'},
-            'content': ('django.db.models.fields.TextField', [], {}),
-            'hash': ('django.db.models.fields.CharField', [], {'max_length': '32', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'inserted': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'page': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.RBPage']"}),
-            'type': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
-            'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
-        },
-        'rb.rbgroup': {
-            'Meta': {'ordering': "['short_name']", 'object_name': 'RBGroup'},
+        'rb.group': {
+            'Meta': {'ordering': "['short_name']", 'object_name': 'Group'},
             'anno_whitelist': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
             'blessed_tags': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
             'bookmark': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'Bookmarkables'", 'unique': 'True', 'to': "orm['rb.Feature']"}),
@@ -186,19 +219,38 @@ class Migration(SchemaMigration):
             'short_name': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'valid_domains': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'})
         },
-        'rb.rbpage': {
-            'Meta': {'object_name': 'RBPage'},
+        'rb.interaction': {
+            'Meta': {'object_name': 'Interaction'},
+            'content': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.Content']"}),
+            'depth': ('django.db.models.fields.PositiveIntegerField', [], {}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'inserted': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'node': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.InteractionNode']"}),
+            'numchild': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
+            'page': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.Page']"}),
+            'path': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
+            'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
+        },
+        'rb.interactionnode': {
+            'Meta': {'object_name': 'InteractionNode'},
+            'body': ('django.db.models.fields.TextField', [], {}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'type': ('django.db.models.fields.CharField', [], {'max_length': '3'})
+        },
+        'rb.page': {
+            'Meta': {'object_name': 'Page'},
             'canonical_url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'rb_site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.RBSite']"}),
+            'site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.Site']"}),
             'url': ('django.db.models.fields.URLField', [], {'max_length': '200'})
         },
-        'rb.rbsite': {
-            'Meta': {'ordering': "('domain',)", 'object_name': 'RBSite', '_ormbases': ['sites.Site']},
+        'rb.site': {
+            'Meta': {'ordering': "('domain',)", 'object_name': 'Site', '_ormbases': ['sites.Site']},
             'css': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
+            'group': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.Group']"}),
             'include_selectors': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
             'no_rdr_selectors': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
-            'rb_group': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.RBGroup']"}),
             'site_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['sites.Site']", 'unique': 'True', 'primary_key': 'True'})
         },
         'sites.site': {
