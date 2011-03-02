@@ -101,11 +101,11 @@ class Container(models.Model):
 	content = models.ManyToManyField(Content)
 
 class InteractionNode(models.Model):
-	type = models.CharField(max_length=3, choices=INTERACTION_TYPES)
+	kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)
 	body = models.TextField()
 	
 	def __unicode__(self):
-		return "Node(Type: {0}, Body: {1})".format(self.type, self.body[:25])
+		return "Node(Type: {0}, Body: {1})".format(self.kind, self.body[:25])
 
 class Interaction(DateAwareModel,UserAwareModel,MP_Node):
 	page = models.ForeignKey(Page)

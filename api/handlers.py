@@ -6,19 +6,22 @@ from django.db.models import Count
 
 class PageDataHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
-	model = Interaction
-
+	model = InteractionNode
+	#fields = ('page',('node', ('id', 'kind')),)
 	def read(self, request):
 		canonical = request.GET.get('canonical_url')
 		if DEBUG:
 			page = Page.objects.get(id=1)
 		else:
 			page = Page.objects.get(canonical_url=canonical)
-		interactions = Interaction.objects.filter(page=page.id)
-		#aggregate = interactions.aggregate(Count("node__type"))
-		#Author.objects.annotate(average_rating=Avg('book__rating'))
-		aggregate = interactions.annotate(count=Count("node__type"))
-		return interactions
+		
+		# Find all the interaction nodes on page
+		nop = InteractionNode.objects.filter(interaction__page=page.id)
+		# Filter values for 'kind'
+		values = nop.values('kind')
+		# Annotate values with count of interactions
+		annotated = values.annotate(Count('interaction'))
+		return annotated
 
 class SettingsHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
