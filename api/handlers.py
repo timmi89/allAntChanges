@@ -6,7 +6,7 @@ from django.db.models import Count
 
 class PageDataHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
-	model = InteractionNode
+	#model = InteractionNode
 	#fields = ('page',('node', ('id', 'kind')),)
 	def read(self, request):
 		canonical = request.GET.get('canonical_url')
@@ -15,13 +15,21 @@ class PageDataHandler(AnonymousBaseHandler):
 		else:
 			page = Page.objects.get(canonical_url=canonical)
 		
+		# ---Get page interaction counts, grouped by kind---
 		# Find all the interaction nodes on page
 		nop = InteractionNode.objects.filter(interaction__page=page.id)
 		# Filter values for 'kind'
 		values = nop.values('kind')
 		# Annotate values with count of interactions
 		annotated = values.annotate(Count('interaction'))
-		return annotated
+		
+		# ---Find top ten tags on a given page---
+		tags = InteractionNode.objects.filter(
+			interaction__page=page.id,
+			kind='tag'
+			).annotate(Count("id")).values("body").order_by()[:10]
+			
+		return annotated,tags
 
 class SettingsHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
