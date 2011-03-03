@@ -1,7 +1,7 @@
 from piston.handler import BaseHandler, AnonymousBaseHandler
 from django.http import HttpResponse
 from settings import DEBUG
-from rb.models import Group, Page, Page, Interaction, InteractionNode
+from rb.models import Group, Page, Page, Interaction, InteractionNode, User, Content
 from django.db.models import Count
 
 class PageDataHandler(AnonymousBaseHandler):
@@ -15,21 +15,31 @@ class PageDataHandler(AnonymousBaseHandler):
 		else:
 			page = Page.objects.get(canonical_url=canonical)
 		
-		# ---Get page interaction counts, grouped by kind---
 		# Find all the interaction nodes on page
 		nop = InteractionNode.objects.filter(interaction__page=page.id)
+		
+		# ---Get page interaction counts, grouped by kind---
 		# Filter values for 'kind'
 		values = nop.values('kind')
 		# Annotate values with count of interactions
 		annotated = values.annotate(Count('interaction'))
 		
-		# ---Find top ten tags on a given page---
-		tags = InteractionNode.objects.filter(
-			interaction__page=page.id,
-			kind='tag'
-			).annotate(Count("id")).values("body").order_by()[:10]
+		# ---Find top 10 tags on a given page---
+		tags = nop.filter(kind='tag')
+		tagcounts = tags.annotate(Count("id"))
+		toptags = tagcounts.values("body").order_by()[:10]
 			
-		return annotated,tags
+		# ---Find top 10 shares on a give page---
+		content = Content.objects.filter(interaction__page=page.id,interaction__node__kind='shr')
+		sharecounts = content.annotate(Count("id"))
+		topshares = sharecounts.values("body").order_by()[:10]	
+		
+		# ---Find top 10 users on a given page---
+		users = User.objects.filter(interaction__page=page.id)
+		usernames = users.values('first_name', 'last_name')
+		userinteract = usernames.annotate(interactions=Count('interaction'))[:10]
+		
+		return dict(summary=annotated, toptags=toptags, topusers=userinteract, topshares=topshares)
 
 class SettingsHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
