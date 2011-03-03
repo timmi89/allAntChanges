@@ -4,7 +4,7 @@ from piston.authentication import HttpBasicAuthentication
 from piston.doc import documentation_view
 
 #from api.handlers import ContentNodeHandler, RBGroupHandler, RBPageHandler
-from api.handlers import SettingsHandler, PageDataHandler
+from api.handlers import SettingsHandler, PageDataHandler, ContainerHandler
 
 auth = HttpBasicAuthentication(realm='Test API')
 
@@ -13,10 +13,12 @@ auth = HttpBasicAuthentication(realm='Test API')
 #RBPages = Resource(handler=RBPageHandler, authentication=auth)
 Settings = Resource(handler=SettingsHandler)
 PageData = Resource(handler=PageDataHandler)
+Containers = Resource(handler=ContainerHandler)
 
 urlpatterns = patterns('',
 	url(r'^settings/(\d+)', Settings),
-	url(r'^page/', PageData),
+	url(r'^page/(\d*)', PageData),
+	url(r'^containers/([a-fA-F\d]*)', Containers),
 	#url(r'^nodes/$', ContentNodes),
 	#url(r'^nodes/(?P<emitter_format>.+)/$', ContentNodes),
 	#url(r'^nodes\.(?P<emitter_format>.+)', ContentNodes),

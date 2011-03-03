@@ -1,19 +1,58 @@
 from piston.handler import BaseHandler, AnonymousBaseHandler
 from django.http import HttpResponse
-from settings import DEBUG
-from rb.models import Group, Page, Page, Interaction, InteractionNode, User, Content
+#from settings import DEBUG
+from rb.models import Group, Page, Interaction, InteractionNode, User, Content, Site, Container
 from django.db.models import Count
+
+def getPage(request, pageid):
+	canonical = request.GET.get('canonical_url')
+	fullurl = request.GET.get('url')
+	host = request.get_host()
+        host = host[0:host.find(":")]
+	site = Site.objects.get(domain=host)
+	if pageid:
+		return Page.objects.get(id=pageid)
+	elif canonical:
+		page = Page.objects.get_or_create(canonical_url=canonical, defaults={'url': fullurl, 'site': site})
+	else:
+		page = Page.objects.get_or_create(url=fullurl, defaults={'site': site.id})
+		
+	if page[1] == True: print "Created page {0}".format(page)
+
+	return page[0]
+
+class ContainerHandler(AnonymousBaseHandler):
+	allowed_methods = ('GET',)
+	
+	def read(self, request, container=None):
+		known = {}
+		unknown = []
+		if container: hashes = [container]
+		else: hashes = request.GET.getlist('hashes[]')
+		
+		for hash in hashes:
+			try:
+				known[hash] = Container.objects.get(hash=hash)
+			except Container.DoesNotExist:
+				unknown.append(hash)
+
+		for hash in known.keys():
+			info = {}
+			nodes = InteractionNode.objects.filter(interaction__content__container__hash=hash)
+			info['knowntags'] = nodes.filter(kind='tag').values('body')
+			info['comments'] = nodes.filter(kind='com').values('body')
+			info['bookmarks'] = nodes.filter(kind='bkm').values('body')
+			known[hash] = info
+			
+		return dict(known=known, unknown=unknown)
 
 class PageDataHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
 	#model = InteractionNode
 	#fields = ('page',('node', ('id', 'kind')),)
-	def read(self, request):
-		canonical = request.GET.get('canonical_url')
-		if DEBUG:
-			page = Page.objects.get(id=1)
-		else:
-			page = Page.objects.get(canonical_url=canonical)
+	
+	def read(self, request, pageid=None):
+		page = getPage(request, pageid)
 		
 		# Find all the interaction nodes on page
 		nop = InteractionNode.objects.filter(interaction__page=page.id)
@@ -22,7 +61,7 @@ class PageDataHandler(AnonymousBaseHandler):
 		# Filter values for 'kind'
 		values = nop.values('kind')
 		# Annotate values with count of interactions
-		annotated = values.annotate(Count('interaction'))
+		summary = values.annotate(Count('interaction'))
 		
 		# ---Find top 10 tags on a given page---
 		tags = nop.filter(kind='tag')
@@ -39,7 +78,7 @@ class PageDataHandler(AnonymousBaseHandler):
 		usernames = users.values('first_name', 'last_name')
 		userinteract = usernames.annotate(interactions=Count('interaction'))[:10]
 		
-		return dict(summary=annotated, toptags=toptags, topusers=userinteract, topshares=topshares)
+		return dict(summary=summary, toptags=toptags, topusers=userinteract, topshares=topshares)
 
 class SettingsHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)

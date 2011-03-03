@@ -460,7 +460,7 @@ function readrBoard($R){
 
                 // send the data!
                 $.ajax({
-                    url: "/api/nodes",
+                    url: "/api/containers",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",

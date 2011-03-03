@@ -81,10 +81,10 @@ class Site(Site):
 class Page(models.Model):
     site = models.ForeignKey(Site)
     url = models.URLField(verify_exists=False)
-    canonical_url = models.URLField(verify_exists=False)
+    canonical_url = models.URLField(verify_exists=False, blank=True)
 
     def __unicode__(self):
-        return self.canonical_url
+        return self.url
 
 class Content(DateAwareModel):
 	kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
@@ -98,8 +98,12 @@ class Content(DateAwareModel):
 
 class Container(models.Model):
 	hash = models.CharField(max_length=32)
-	content = models.ManyToManyField(Content)
-
+	content = models.ManyToManyField(Content, blank = True)
+	body = models.TextField()
+	
+	class Meta:
+		ordering = ['id']
+	
 class InteractionNode(models.Model):
 	kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)
 	body = models.TextField()
