@@ -4,9 +4,9 @@ from django.http import HttpResponse
 from rb.models import Group, Page, Interaction, InteractionNode, User, Content, Site, Container
 from django.db.models import Count
 
-def getPage(request, pageid):
-	canonical = request.GET.get('canonical_url')
-	fullurl = request.GET.get('url')
+def getPage(request, pageid=None):
+	canonical = request.GET['canonical_url']
+	fullurl = request.GET['url']
 	host = request.get_host()
         host = host[0:host.find(":")]
 	site = Site.objects.get(domain=host)
@@ -20,6 +20,33 @@ def getPage(request, pageid):
 	if page[1] == True: print "Created page {0}".format(page)
 
 	return page[0]
+
+class TagHandler(AnonymousBaseHandler):
+	allowed_methods = ('GET',)
+	
+	def read(self, request):
+		tag_bodies = request.GET.getlist('tags[]')
+		hash = request.GET['hash']
+		content = request.GET['content']
+		content_type = request.GET['content_type']
+		user = request.GET['user']
+		page = getPage(request)
+		
+		content = Content.get_or_create(kind=content_type, body=content)
+		containter = Container.get_or_create(hash=hash, content=content, defaults={'body': container_body})
+		
+		for tag in tag_bodies:
+			tag = InteractionNode.get_or_create(kind='tag', body=tag_body)
+			new_interaction = Interaction(page=page, content=content, node=tag, user=user)
+			new_interaction.save()
+
+class CreateContainerHandler(AnonymousBaseHandler):
+	allowed_methods = ('GET',)
+	
+	def read(self, request):
+		
+		
+		return request.GET
 
 class ContainerHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
