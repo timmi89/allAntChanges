@@ -56,19 +56,19 @@ function readrBoard($R){
 				var x = settings.x ? settings.x:100;
 				var y = settings.y ? settings.y:100;
 
-				new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
-				if ( new_rindow.length == 0 ) { // there's no rewritable window available, so make one
-					new_rindow = $('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + width + 'px;"></div>');
-					$('body').append( new_rindow );
+				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
+				if ( $new_rindow.length == 0 ) { // there's no rewritable window available, so make one
+					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + width + 'px;"></div>');
+					$('body').append( $new_rindow );
 				}
 
-				if ( new_rindow.find('h1').length == 0 ) {
-                    new_rindow.html('');
-                    new_rindow.append( '<div class="rdr_close">x</div><h1></h1><div class="rdr rdr_contentSpace"></div>' );
-                    new_rindow.find('div.rdr_close').click( function() {
+				if ( $new_rindow.find('h1').length == 0 ) {
+                    $new_rindow.html('');
+                    $new_rindow.append( '<div class="rdr_close">x</div><h1></h1><div class="rdr rdr_contentSpace"></div>' );
+                    $new_rindow.find('div.rdr_close').click( function() {
                         $(this).parents('div.rdr.rdr_window').remove();
                     } );
-                    new_rindow.draggable({
+                    $new_rindow.draggable({
                         handle:'h1',
                         containment:'document',
                         stack:'.RDR.window',
@@ -80,10 +80,11 @@ function readrBoard($R){
                 }
                 // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
                 var coords = RDR.util.stayInWindow(x,y,width,300);
-                new_rindow.css('left', coords.x + 'px');
-                new_rindow.css('top', coords.y + 'px');
+                $new_rindow.css('left', coords.x + 'px');
+                $new_rindow.css('top', coords.y + 'px');
                 RDR.actionbar.close();
-                return new_rindow;
+
+                return $new_rindow;
 			},
 			closeAll: function() {
 				console.log('closeAll');
@@ -139,6 +140,7 @@ function readrBoard($R){
                             return false;
                         });
                         $item.append($iconAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
+                        if(idx===0){$item.prepend($('<span class="rdr_divider" />'))}
                     });
                     //'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentPanel({content_type:\''+settings.content_type+'\',content:\''+settings.content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
 
@@ -154,7 +156,9 @@ function readrBoard($R){
                             $(this).siblings('.rdr_tooltip').hide();
                         }
                     );
-				}
+				}//end if
+
+                return $new_actionbar;
 			},
 			close: function() {
 				$('div.rdr.rdr_actionbar').remove();
@@ -166,7 +170,7 @@ function readrBoard($R){
 				// settings.message (HTML)
 				// settings.obj (to position tooltip next to.  should be a jQ obj).  if absent, position with the mouse.
 				// settings.offset_x, settings.offset_y (optional): how many pixels to shit the tooltip from the passed-in object
-				var new_tooltip = $('<div class="rdr rdr_tooltip" id="rdr_tooltip_' + settings.name + '">' +
+				var $new_tooltip = $('<div class="rdr rdr_tooltip" id="rdr_tooltip_' + settings.name + '">' +
 					'<div class="rdr rdr_tooltip-content"> ' + settings.message + '</div>'+
 					'<div class="rdr rdr_tooltip-arrow-border"></div>'+
 					'<div class="rdr rdr_tooltip-arrow"></div>'+
@@ -184,12 +188,13 @@ function readrBoard($R){
 
 				if ( x && y ) {
 					// show the tooltip
-					$('body').append( new_tooltip );
+					$('body').append( $new_tooltip );
 
 					// now that it's in the page, position it (in part based on its calculated height);
-					new_tooltip.css('left', x + 'px');
-					new_tooltip.css('top', (y - new_tooltip.height()) + 'px');
+					$new_tooltip.css('left', x + 'px');
+					$new_tooltip.css('top', (y - $new_tooltip.height()) + 'px');
 				}
+                return $new_tooltip;
 			},
 			closeAll: function() {
 				$( 'div.rdr_tooltip' ).remove();
@@ -395,22 +400,24 @@ function readrBoard($R){
 					// TODO show activity on an image, without breaking page nor covering up image.
 						// create a container for the image, give it same styles but more space?
 						// like, inline or float, but with RDR stuff
-				    var this_img = $(this);
-				    var x = this_img.offset().left + 33;
-				    var y = this_img.offset().top + this_img.height() + 15;
-				    RDR.actionbar.draw({ x:x, y:y, content_type:"image", content:this_img.attr('src') });
-
-				    $('div.rdr.rdr_actionbar').css('overflow','hidden');
-				    $('div.rdr.rdr_actionbar').width(23);
-
-				    $('div.rdr.rdr_actionbar').hover( function() {
-						if ( typeof rdr_img_actionicon != 'undefined' ) clearTimeout( rdr_img_actionicon );
-						// the following if statement seems unnecessary, but it is not. //[e]haha
-				        if ( $(this).hasClass('rdr_actionbar') ) $(this).animate( {width:84},100 );
+				    var this_img = $(this),
+				    x = this_img.offset().left + 33,
+				    y = this_img.offset().top + this_img.height() + 15,
+				    $actionBar = RDR.actionbar.draw({ x:x, y:y, content_type:"image", content:this_img.attr('src') }),
+                    $aboutIcon = $actionBar.find('li:first'),
+                    $otherIcons = $aboutIcon.siblings();
+                    $otherIcons.hide();
+                    var actionbarBlockHover = false;
+				    $actionBar.hover( function() {
+                        if(!actionbarBlockHover){
+                            $otherIcons.animate({width:'show'},150);
+                        }
 				    },
 				    function() {
-						// the following if statement seems unnecessary, but it is not.
-						if ( $(this).hasClass('rdr_actionbar') ) $(this).remove();
+                        actionbarBlockHover = true;
+						$otherIcons.animate({width:'hide'},150, function(){
+                            actionbarBlockHover = false;
+                        });
 					}
 				    );
 
