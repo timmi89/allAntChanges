@@ -106,30 +106,39 @@ function readrBoard($R){
                     }).append('<ul/>');
                     $new_actionbar.items = [
                             {
-                                'item':'about',
-                                'tipText':'What\'s This?',
-                                'onclick':'RDR.actions.aboutReadrBoard();'
+                                "item":"about",
+                                "tipText":"What's This?",
+                                "onclick": RDR.actions.aboutReadrBoard
                             },
                             {
-                                'item':'reaction',
-                                'tipText':'Comment on This',
-                                'onclick':'RDR.actions.sentimentPanel()'
+                                "item":"reaction",
+                                "tipText":"Comment on This",
+                                "onclick":function(){
+                                    RDR.actions.sentimentPanel({
+                                        "content_type": settings.content_type,
+                                        "content": settings.content
+                                    });
+                                }
                             },
                             {
-                                'item':'bookmark',
-                                'tipText':'Bookmark This',
-                                'onclick':'RDR.actions.bookmarkStart()'
+                                "item":"bookmark",
+                                "tipText":"Bookmark This",
+                                "onclick":RDR.actions.bookmarkStart
                             }
                        ];
                     $.each($new_actionbar.items, function(idx, val){
                         var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
-                        $icon = $('<a onclick="' +val.onclick+ '">' +val.item+ '</a>'),
+                        $iconAnchor = $('<a href="javascript:void(0);">' +val.item+ '</a>'),
                         $tooltip = $('<div class="rdr rdr_tooltip" id="rdr_tooltip_' +val.item+ '">' +
                             '<div class="rdr rdr_tooltip-content"> ' +val.tipText+ '</div>'+
                             '<div class="rdr rdr_tooltip-arrow-border" />'+
                             '<div class="rdr rdr_tooltip-arrow" />'+
                         '</div>').hide();
-                        $item.append($icon,$tooltip).appendTo($new_actionbar.children('ul'));
+                        $iconAnchor.click(function(){
+                            val.onclick();
+                            return false;
+                        });
+                        $item.append($iconAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
                     });
                     //'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentPanel({content_type:\''+settings.content_type+'\',content:\''+settings.content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
 
