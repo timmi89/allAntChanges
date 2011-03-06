@@ -6,7 +6,7 @@ from django.db.models import Count
 from django.core import serializers
 
 def getPage(request, pageid=None):
-	canonical = request.GET['canonical_url']
+	canonical = request.GET.get('canonical_url', None)
 	fullurl = request.GET['url']
 	host = request.get_host()
         host = host[0:host.find(":")]
