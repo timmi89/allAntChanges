@@ -48,27 +48,27 @@ function readrBoard($R){
 		},
 		rindow : {
 			// content comes later.  this is just to identify or draw the container.
-			draw: function() {
+			draw: function(settings) {
 				// for now, any window closes all tooltips
 				RDR.tooltip.closeAll();
 
-				var width = arguments[0].width ? arguments[0].width:400;
-				var x = arguments[0].x ? arguments[0].x:100;
-				var y = arguments[0].y ? arguments[0].y:100;
+				var width = settings.width ? settings.width:400;
+				var x = settings.x ? settings.x:100;
+				var y = settings.y ? settings.y:100;
 
-				new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
-				if ( new_rindow.length == 0 ) { // there's no rewritable window available, so make one
-					new_rindow = $('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + width + 'px;"></div>');
-					$('body').append( new_rindow );
+				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
+				if ( $new_rindow.length == 0 ) { // there's no rewritable window available, so make one
+					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + width + 'px;"></div>');
+					$('body').append( $new_rindow );
 				}
 
-				if ( new_rindow.find('h1').length == 0 ) {
-                    new_rindow.html('');
-                    new_rindow.append( '<div class="rdr_close">x</div><h1></h1><div class="rdr rdr_contentSpace"></div>' );
-                    new_rindow.find('div.rdr_close').click( function() {
+				if ( $new_rindow.find('h1').length == 0 ) {
+                    $new_rindow.html('');
+                    $new_rindow.append( '<div class="rdr_close">x</div><h1></h1><div class="rdr rdr_contentSpace"></div>' );
+                    $new_rindow.find('div.rdr_close').click( function() {
                         $(this).parents('div.rdr.rdr_window').remove();
                     } );
-                    new_rindow.draggable({
+                    $new_rindow.draggable({
                         handle:'h1',
                         containment:'document',
                         stack:'.RDR.window',
@@ -80,10 +80,11 @@ function readrBoard($R){
                 }
                 // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
                 var coords = RDR.util.stayInWindow(x,y,width,300);
-                new_rindow.css('left', coords.x + 'px');
-                new_rindow.css('top', coords.y + 'px');
+                $new_rindow.css('left', coords.x + 'px');
+                $new_rindow.css('top', coords.y + 'px');
                 RDR.actionbar.close();
-                return new_rindow;
+
+                return $new_rindow;
 			},
 			closeAll: function() {
 				console.log('closeAll');
@@ -91,72 +92,100 @@ function readrBoard($R){
 			}
 		},
 		actionbar : {
-			draw: function() {
+			draw: function(settings) {
 
 				if ( $('div.rdr.rdr_actionbar').length == 0 ) {
-					var x = arguments[0].x ? (arguments[0].x-34) : 100;
-					var y = arguments[0].y ? (arguments[0].y-45) : 100;
-                    //console.dir( arguments[0] );
+					var x = settings.x ? (settings.x-34) : 100;
+					var y = settings.y ? (settings.y-45) : 100;
+                    //console.dir( settings );
 					var coords = RDR.util.stayInWindow(x,y,200,30);
-
+                    //console.log(actionbarItems[2].item)
 					// TODO use settings check for certain features and content types to determine which of these to disable
-					var new_actionbar = $('<div class="rdr rdr_actionbar" style="left:' + coords.x + 'px;top:' + coords.y + 'px;">' +
-						'<a href="javascript:void(0);" onclick="RDR.actions.aboutReadrBoard();" class="rdr_icon_about">What\'s This?</a>' +
-						'<span class="rdr_divider">&nbsp;</span>' +
-						//'<a href="javascript:void(0);" onclick="RDR.actions.rateStart({content_type:\''+arguments[0].content_type+'\',content:\''+arguments[0].content+'\'});" class="rdr_icon_rate">Rate This</a>' +
-						// TODO: make all of these also have a set of arguments pass in
-						// '<a href="javascript:void(0);" onclick="RDR.actions.searchStart();" class="rdr_icon_search">Search For This</a>' +
-						'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentPanel({content_type:\''+arguments[0].content_type+'\',content:\''+arguments[0].content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
-						'<a href="javascript:void(0);" onclick="RDR.actions.bookmarkStart();" class="rdr_icon_bookmark">Bookmark This</a>' +
-						//'<a href="javascript:void(0);" onclick="RDR.actions.shareStart();" class="rdr_icon_share">Share This</a>' +
-					'</div>');
+					var $new_actionbar = $('<div class="rdr rdr_actionbar" />').css({
+                       'left':coords.x,
+                       'top':coords.y
+                    }).append('<ul/>');
+                    $new_actionbar.items = [
+                            {
+                                "item":"about",
+                                "tipText":"What's This?",
+                                "onclick": RDR.actions.aboutReadrBoard
+                            },
+                            {
+                                "item":"reaction",
+                                "tipText":"Comment on This",
+                                "onclick":function(){
+                                    RDR.actions.sentimentPanel({
+                                        "content_type": settings.content_type,
+                                        "content": settings.content
+                                    });
+                                }
+                            },
+                            {
+                                "item":"bookmark",
+                                "tipText":"Bookmark This",
+                                "onclick":RDR.actions.bookmarkStart
+                            }
+                       ];
+                    $.each($new_actionbar.items, function(idx, val){
+                        var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
+                        $iconAnchor = $('<a href="javascript:void(0);">' +val.item+ '</a>'),
+                        $tooltip = $('<div class="rdr rdr_tooltip" id="rdr_tooltip_' +val.item+ '">' +
+                            '<div class="rdr rdr_tooltip-content"> ' +val.tipText+ '</div>'+
+                            '<div class="rdr rdr_tooltip-arrow-border" />'+
+                            '<div class="rdr rdr_tooltip-arrow" />'+
+                        '</div>').hide();
+                        $iconAnchor.click(function(){
+                            val.onclick();
+                            return false;
+                        });
+                        $item.append($iconAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
+                        if(idx===0){$item.prepend($('<span class="rdr_divider" />'))}
+                    });
+                    //'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentPanel({content_type:\''+settings.content_type+'\',content:\''+settings.content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
 
                     //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
                     //but we're not sure yet if it's going to be the same function as this shareStart() above..
 
-					$('body').append( new_actionbar );
+					$('body').append( $new_actionbar );
+                    $('div.rdr_actionbar a').hover(
+                        function() {
+                            $(this).siblings('.rdr_tooltip').show();
+                        },
+                        function () {
+                            $(this).siblings('.rdr_tooltip').hide();
+                        }
+                    );
+				}//end if
 
-                    //todo [e @ p] can I get your help figuring out the best way to realign the widget icons?  Let's talk. (We need a bug tracker setup! :) )
-					$('div.rdr_actionbar a').hover(
-						function() {
-							var this_link = $(this);brd
-
-							var tooltip_args = {
-								name: this_link.attr('class'),
-								message: this_link.text(),
-								offset_x: -35,
-								offset_y: -35,
-								obj: this_link
-							};
-							RDR.tooltip.draw( tooltip_args );
-						},
-						function () {
-							var this_link = $(this);
-							$( '#rdr_tooltip_' + this_link.attr('class') ).remove();
-						}
-					);
-				}
+                return $new_actionbar;
 			},
-			close: function() {
-				$('div.rdr.rdr_actionbar').remove();
+			close: function(animation) {
+                if(typeof animation != undefined){
+                    $('div.rdr.rdr_actionbar').animate(animation, function(){
+                         $('div.rdr.rdr_actionbar').remove();
+                    });
+                }else{
+                    $('div.rdr.rdr_actionbar').remove();
+                }
 			}
 		},
 		tooltip : {
-			draw: function() {
-				// expected arguments:
-				// message (HTML)
-				// obj (to position tooltip next to.  should be a jQ obj).  if absent, position with the mouse.
-				// offset_x, offset_y (optional): how many pixels to shit the tooltip from the passed-in object
-				var new_tooltip = $('<div class="rdr rdr_tooltip" id="rdr_tooltip_' + arguments[0].name + '">' +
-					'<div class="rdr rdr_tooltip-content"> ' + arguments[0].message + '</div>'+
+			draw: function(settings) {
+				// expects a settings object with:
+				// settings.message (HTML)
+				// settings.obj (to position tooltip next to.  should be a jQ obj).  if absent, position with the mouse.
+				// settings.offset_x, settings.offset_y (optional): how many pixels to shit the tooltip from the passed-in object
+				var $new_tooltip = $('<div class="rdr rdr_tooltip" id="rdr_tooltip_' + settings.name + '">' +
+					'<div class="rdr rdr_tooltip-content"> ' + settings.message + '</div>'+
 					'<div class="rdr rdr_tooltip-arrow-border"></div>'+
 					'<div class="rdr rdr_tooltip-arrow"></div>'+
 				'</div>');
 
-				if (arguments[0].obj) {
-					var coords = arguments[0].obj.offset();
-					var offset_x = (arguments[0].offset_x) ? arguments[0].offset_x:0;
-					var offset_y = (arguments[0].offset_y) ? arguments[0].offset_y:0;
+				if (settings.obj) {
+					var coords = settings.obj.offset();
+					var offset_x = (settings.offset_x) ? settings.offset_x:0;
+					var offset_y = (settings.offset_y) ? settings.offset_y:0;
 					var x = coords.left + parseInt( offset_x );
 					var y = coords.top + parseInt( offset_y );
 				} else {
@@ -165,15 +194,17 @@ function readrBoard($R){
 
 				if ( x && y ) {
 					// show the tooltip
-					$('body').append( new_tooltip );
+					$('body').append( $new_tooltip );
 
 					// now that it's in the page, position it (in part based on its calculated height);
-					new_tooltip.css('left', x + 'px');
-					new_tooltip.css('top', (y - new_tooltip.height()) + 'px');
+					$new_tooltip.css('left', x + 'px');
+					$new_tooltip.css('top', (y - $new_tooltip.height()) + 'px');
 				}
+                return $new_tooltip;
 			},
 			closeAll: function() {
-				$( 'div.rdr_tooltip' ).remove();
+                /*todo fix this animation parameter thing - it's not really working yet..*/
+				$( 'div.rdr_tooltip' ).remove("{width:'show'},1500");
 			}
 		},
 		util : {
@@ -376,23 +407,28 @@ function readrBoard($R){
 					// TODO show activity on an image, without breaking page nor covering up image.
 						// create a container for the image, give it same styles but more space?
 						// like, inline or float, but with RDR stuff
-				    var this_img = $(this);
-				    var x = this_img.offset().left + 33;
-				    var y = this_img.offset().top + this_img.height() + 15;
-				    RDR.actionbar.draw({ x:x, y:y, content_type:"image", content:this_img.attr('src') });
-
-				    $('div.rdr.rdr_actionbar').css('overflow','hidden');
-				    $('div.rdr.rdr_actionbar').width(23);
-
-				    $('div.rdr.rdr_actionbar').hover( function() {
-						if ( typeof rdr_img_actionicon != 'undefined' ) clearTimeout( rdr_img_actionicon );
-						// the following if statement seems unnecessary, but it is not. //[e]haha
-				        if ( $(this).hasClass('rdr_actionbar') ) $(this).animate( {width:84},100 );
-				    },
-				    function() {
-						// the following if statement seems unnecessary, but it is not.
-						if ( $(this).hasClass('rdr_actionbar') ) $(this).remove();
-					}
+				    var this_img = $(this),
+				    x = this_img.offset().left + 33,
+				    y = this_img.offset().top + this_img.height() + 15,
+				    $actionBar = RDR.actionbar.draw({ x:x, y:y, content_type:"image", content:this_img.attr('src') }),
+                    $aboutIcon = $actionBar.find('li:first'),
+                    $otherIcons = $aboutIcon.siblings();
+                    $otherIcons.hide();
+                    var actionbarBlockHover = false;
+				    $actionBar.hover(
+                        function() {
+                            if ( typeof rdr_img_actionicon != 'undefined' ) clearTimeout( rdr_img_actionicon );
+                            if(!actionbarBlockHover){
+                                $otherIcons.animate({width:'show'},150);
+                            }
+                        },
+                        function() {
+                            actionbarBlockHover = true;
+                            $otherIcons.animate({width:'hide'},150, function(){
+                                actionbarBlockHover = false;
+                                RDR.actionbar.close();
+                            });
+                        }
 				    );
 
 				}).live('mouseleave', function() {
@@ -493,7 +529,7 @@ function readrBoard($R){
                     }
                 });
             },
-            sentimentPanel : function() {
+            sentimentPanel : function(settings) {
                 // draw the window over the actionbar
                 var actionbarOffsets = $('div.rdr.rdr_actionbar').offset();
 
@@ -530,8 +566,8 @@ function readrBoard($R){
 
                 $ratePanel.append($selectedTextBox, $blessedTags, $customTagBox)
 
-				var content_type = arguments[0].content_type;
-				var content = arguments[0].content;
+				var content_type = settings.content_type;
+				var content = settings.content;
 
                 // add content and animate the actionbar to accommodate it
                 rindow.animate({

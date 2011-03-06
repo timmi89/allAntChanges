@@ -35,7 +35,15 @@ div.rdr.rdr_actionbar {
 	height:30px;
 }
 
-div.rdr.rdr_actionbar a {
+div.rdr.rdr_actionbar ul {
+    margin: 0;
+}
+div.rdr.rdr_actionbar li {
+    display: inline-block;
+    position: relative;
+}
+
+div.rdr.rdr_actionbar li a {
 	background:url("/static/ui-prototype/images/actionbar_icons.png") no-repeat 0 0 transparent;
 	display:block;
 	height:30px;
@@ -44,21 +52,35 @@ div.rdr.rdr_actionbar a {
 	float:left;
 }
 
+div.rdr.rdr_actionbar li.rdr_icon_about a		 	{ background-position:  0 0; } /*overwritten below to compress width*/
+div.rdr.rdr_actionbar li.rdr_icon_reaction a		{ background-position: -30px 0; }
+div.rdr.rdr_actionbar li.rdr_icon_bookmark a        { background-position: -60px 0; }
 
-div.rdr.rdr_actionbar a.rdr_icon_about		 	{ background-position: -2px 0; width:21px; }
-div.rdr.rdr_actionbar a.rdr_icon_rate		 	{ background-position: -27px -1px; }
-div.rdr.rdr_actionbar a.rdr_icon_search	 		{ background-position: -55px -1px; }
-div.rdr.rdr_actionbar a.rdr_icon_bookmark	 	{ background-position: -82px 0px; }
-div.rdr.rdr_actionbar a.rdr_icon_comment        { background-position: -110px -2px; }
-div.rdr.rdr_actionbar a.rdr_icon_share		 	{ background-position: -141px -1px; }
-div.rdr.rdr_actionbar a:hover					{ background-color:#ffd3d3;}
-div.rdr.rdr_actionbar a.rdr_icon_about:hover 	{ background-color:transparent; }
-div.rdr.rdr_actionbar span.rdr_divider		{ background:url("/static/ui-prototype/images/actionbar_icons.png") no-repeat -25px 0; display:block; height:30px; width:3px; text-indent:-9999px; float:left;}
+div.rdr.rdr_actionbar a:hover                       { background-color:#ffd3d3;}
+div.rdr.rdr_actionbar li.rdr_icon_about a:hover 	{ background-color:transparent; }
+div.rdr.rdr_actionbar span.rdr_divider              { border-right: 1px solid #BBB; height: 70%; position: absolute; right: 0; top: 15%;}
 
 /* the tooltip */
-div.rdr.rdr_tooltip { background-color:#fff; border:2px solid #e40000; margin:10px auto; padding:5px 10px; position:relative; text-align:center; min-width:80px; -moz-border-radius:5px; -webkit-border-radius:5px; -moz-box-shadow:0 0 5px #888888; -webkit-box-shadow:0 0 5px #888888; position:absolute; top:20px; left:20px; z-index:10000; }
+div.rdr.rdr_tooltip {
+    -moz-border-radius:5px; -webkit-border-radius:5px; -moz-box-shadow:0 0 5px #888888; -webkit-box-shadow:0 0 5px #888888;
+    background-color:#fff;
+    border:2px solid #e40000;
+    margin:0 0 0 13px;/* 0.5 icon width with compensation for border*/
+    padding:5px 0;
+    position:absolute;
+    text-align:center;
+    left:-50px; /*0.5 tooltip width*/
+    top:-36px;
+    width:100px;
+    z-index:10000;
+}
 div.rdr.rdr_tooltip-arrow-border { border-color: #e40000 transparent transparent transparent; border-style: solid; border-width: 7px; height:0; width:0; position:absolute; bottom:-16px; left:43%;}
 div.rdr.rdr_tooltip-arrow { border-color: #fff transparent transparent transparent; border-style: solid; border-width: 7px; height:0; width:0; position:absolute; bottom:-14px; left:43%;}
+
+/*compress ths about icon width*/
+div.rdr.rdr_actionbar li.rdr_icon_about             { width: 24px; } /*normal width is 30px */
+div.rdr.rdr_actionbar li.rdr_icon_about a		 	{ background-position:  -3px 0; width: 24px;} /*from line above: (30-24)/2 = 3px left*/
+#rdr_tooltip_about                                  { margin:0 0 0 11px;/* 0.5 icon width*/ }
 
 /* global tag defs */
 div.rdr h1, 
