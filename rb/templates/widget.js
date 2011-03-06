@@ -460,7 +460,7 @@ function readrBoard($R){
 
                 // send the data!
                 $.ajax({
-                    url: "/api/containers",
+                    url: "/api/containers/",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
@@ -471,18 +471,22 @@ function readrBoard($R){
                         hashes : md5_list
                     },
                     success: function(data) {
-						var unknown_nodes = {}
+						var unknown_nodes = data.unknown;
+						var containers = {};
+						$.each(data.unknown,function(index, value){
+							containers[value] = RDR.data.nodes[value];
+						})
 						$.ajax({
-		                    url: "/api/containers/create",
+		                    url: "/api/containers/create/",
 		                    type: "get",
 		                    contentType: "application/json",
 		                    dataType: "jsonp",
 		                    data: {
-		                        hashes : unknown_nodes
+								"hashes" : unknown_nodes,
+		                        "containers" : containers
 		                    },
-		                    success: function(data) {
-								console.log("success");
-		                        console.dir(data);
+		                    success: function(res) {
+		                        console.dir(res);
 		                    }
 		                });
                         //console.dir(data);

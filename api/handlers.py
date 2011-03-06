@@ -3,6 +3,7 @@ from django.http import HttpResponse
 #from settings import DEBUG
 from rb.models import Group, Page, Interaction, InteractionNode, User, Content, Site, Container
 from django.db.models import Count
+from django.core import serializers
 
 def getPage(request, pageid=None):
 	canonical = request.GET['canonical_url']
@@ -25,7 +26,8 @@ class TagHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
 	
 	def read(self, request):
-		tag_bodies = request.GET.getlist('tags[]')
+		unknown_tags = request.GET.getlist('unknown_tags')
+		known_tags = request.GET.getlist('known_tags')
 		hash = request.GET['hash']
 		content = request.GET['content']
 		content_type = request.GET['content_type']
@@ -35,19 +37,22 @@ class TagHandler(AnonymousBaseHandler):
 		content = Content.get_or_create(kind=content_type, body=content)
 		containter = Container.get_or_create(hash=hash, content=content, defaults={'body': container_body})
 		
-		for tag in tag_bodies:
-			tag = InteractionNode.get_or_create(kind='tag', body=tag_body)
+		for tag in unknown_tags:
+			tag = InteractionNode.get_or_create(kind='tag', body=tag)
+			new_interaction = Interaction(page=page, content=content, node=tag, user=user)
+			new_interaction.save()
+			
+		for tag in known_tags:
 			new_interaction = Interaction(page=page, content=content, node=tag, user=user)
 			new_interaction.save()
 
 class CreateContainerHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
-	
 	def read(self, request):
 		result = {}
-		data = request.GET['data']
-		for hash in data.keys():
-			result[hash] = Container.get_or_create(hash=hash, body=data['hash'])[1]
+		hashes = request.GET.getlist('hashes[]')
+		for hash in hashes:
+			result[hash] = Container.objects.get_or_create(hash=hash, body=request.GET['containers['+hash+']'])[1]
 		return result
 
 class ContainerHandler(AnonymousBaseHandler):
