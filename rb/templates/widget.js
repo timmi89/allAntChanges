@@ -705,17 +705,17 @@ function readrBoard($R){
 				rindow.find('button').text('Rating...').attr('disabled','disabled');
                 // send the data!
                 $.ajax({
-                    url: "/json-send/",
+                    url: "/api/tag/",
+                    type: "get",
                     contentType: "application/json",
-                    //dataType: "jsonp",
 					dataType: "json",
                     data: {
                         "unknown_tags" : unknown_tags_raw, //see note above
                         "known_tags" : known_tags,
-                        "user" : 10,
-                        "page" : 1,
+                        "hash":"?",
                         "content" : content,
-                        "content_type" : "text"
+                        "content_type" : "text",
+                        "user" : 1
                     },
                     complete: function(msg) {
                         RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
