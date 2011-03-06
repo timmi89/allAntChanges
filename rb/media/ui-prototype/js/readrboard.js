@@ -1,20 +1,4 @@
-if (! ("console" in window) || !("firebug" in console)) {
-    var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml", "group"
-    , "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];
-    window.console = {};
-    for (var i = 0; i < names.length; ++i) window.console[names[i]] = function() {};
-}
-
-function log(msg){
-    console.log(msg);
-}
-
-jQuery.fn.log = function (msg) {
-    console.log("%s: %o", msg, this);
-    return this;
-};
-
-console.log($)
+//console.log($)
 var jQueryVersion = "1.4.4",
 RDR, //our global RDR object
 $R = {}, //init var: our clone of jQuery
@@ -99,7 +83,7 @@ function readrBoard($R){
                 return new_rindow;
 			},
 			closeAll: function() {
-				console.log('closeAll');
+				//console.log('closeAll');
 				$('div.rdr.rdr_window').remove();
 			}
 		},
@@ -109,7 +93,7 @@ function readrBoard($R){
 				if ( $('div.rdr.rdr_actionbar').length == 0 ) {
 					var x = arguments[0].x ? (arguments[0].x-34) : 100;
 					var y = arguments[0].y ? (arguments[0].y-45) : 100;
-//console.dir( arguments[0] );
+////console.dir( arguments[0] );
 					var coords = RDR.util.stayInWindow(x,y,200,30);
 					
 					// TODO use settings check for certain features and content types to determine which of these to disable
@@ -232,9 +216,9 @@ function readrBoard($R){
             },
             initGroupData : function(groupShortName){
                 // request the RBGroup Data
-console.dir(RDR.group);
-                console.log("requesting rbgroup data")
-                console.log(groupShortName)
+//console.dir(RDR.group);
+                //console.log("requesting rbgroup data")
+                //console.log(groupShortName)
                 $.ajax({
                     url: "/api/rbgroup",
                     type: "get",
@@ -245,9 +229,9 @@ console.dir(RDR.group);
                     },
                     success: function(data, textStatus, XHR) {
 
-                        console.log('rbgroup call success')
-                        console.dir(data);
-                        console.log(XHR)
+                        //console.log('rbgroup call success')
+                        //console.dir(data);
+                        //console.log(XHR)
 
                         //get this from the DB?
                         //this.hashable_nodes = "#module-article p";
@@ -255,14 +239,14 @@ console.dir(RDR.group);
                         $.each(data, function(index, value){
                             var rb_group = value;
                             //Only expects back one group (index==0)
-                            console.log('current group is ' + rb_group.name)
-                            console.log(rb_group.name +' requests that RB not touch anything with the class ' + rb_group.selector_blacklist)
+                            //console.log('current group is ' + rb_group.name)
+                            //console.log(rb_group.name +' requests that RB not touch anything with the class ' + rb_group.selector_blacklist)
 
                             //not working
-                            //console.log(rb_group.tag_whitelist);
+                            ////console.log(rb_group.tag_whitelist);
                             //var tag_whitelist = $.evalJSON(rb_group.tag_whitelist);
-                            //console.log(tag_whitelist);
-                            //console.log(3);
+                            ////console.log(tag_whitelist);
+                            ////console.log(3);
                             //RDR.group.blessed_tags = tag_whitelist;
                             RDR.group.blessed_tags = [
                             {
@@ -296,7 +280,7 @@ console.dir(RDR.group);
                          */
                     },
                     error: function(XHR){
-                        //console.warn(XHR)
+                        ////console.warn(XHR)
                     }
                 });
 
@@ -344,7 +328,7 @@ console.dir(RDR.group);
             },
             initUserData : function(userShortName){
                 // request the RBGroup Data
-                console.log("requesting user data")
+                //console.log("requesting user data")
                 $.ajax({
                     url: "/api/rbuser",
                     type: "get",
@@ -355,9 +339,9 @@ console.dir(RDR.group);
                     },
                     success: function(data, textStatus, XHR) {
 
-                        console.log('rbuser call success')
-                        console.dir(data);
-                        console.log(XHR)
+                        //console.log('rbuser call success')
+                        //console.dir(data);
+                        //console.log(XHR)
 
                         //get this from the DB?
                         //this.hashable_nodes = "#module-article p";
@@ -365,15 +349,15 @@ console.dir(RDR.group);
                         $.each(data, function(index, value){
                             var rb_group = value;
                             //Only expects back one user (index==0)
-                            console.log('current user is ' + rb_user.name)
+                            //console.log('current user is ' + rb_user.name)
 
                         });
 
                     },
                     error: function(XHR){
-                        console.warn(XHR)
-                        console.warn('failed, but thats cool, we were expecting it to');
-                        console.log('user is ', userShortName);
+                        //console.warn(XHR)
+                        //console.warn('failed, but thats cool, we were expecting it to');
+                        //console.log('user is ', userShortName);
                     }
                 });
             },
@@ -420,7 +404,7 @@ console.dir(RDR.group);
 
             },
             hashNodes : function() {
-                console.log('hashing nodes');
+                //console.log('hashing nodes');
                 // snag all the nodes that we can set icons next to and send'em next
                 // TODO: restrict this to the viewport + a few, rather than all
                 var content_nodes = $( RDR.group.hashable_nodes ).not('rdr-hashed');
@@ -455,7 +439,7 @@ console.dir(RDR.group);
                 RDR.actions.sendHashes();
             },
             sendHashes : function() {
-                console.log('sending nodes');
+                //console.log('sending nodes');
                 // TODO: dont' send all hashes
 			
                 var md5_list = [];
@@ -475,7 +459,7 @@ console.dir(RDR.group);
                         hashes : md5_list
                     },
                     success: function(data) {
-                        console.dir(data);
+                        //console.dir(data);
                     }
                 });
             },
@@ -971,12 +955,12 @@ loadScript("/static/ui-prototype/js/jquery-1.4.4.min.js", function(){
         //callback
         
         //test that $.ui versioning is working correctly
-        console.log("testing jQuery UI versioning...")
-        console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
+        //console.log("testing jQuery UI versioning...")
+        //console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
         var $R = $.noConflict(true);
         
-        console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
-        console.log("of course $R.ui.version should show our version - version = " + $R.ui.version)
+        //console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
+        //console.log("of course $R.ui.version should show our version - version = " + $R.ui.version)
 
         //call scripts that depend on our jQuery version to be loaded
         $RFunctions($R);
@@ -998,17 +982,17 @@ function $RFunctions($R){
 
     //testing:
     var a = $R.evalJSON('[{"test":2}]');
-    console.log(a)
+    //console.log(a)
 
 
     //show that objects really are unique
-    console.log("test that our jQuery copy is unique...")
+    //console.log("test that our jQuery copy is unique...")
     $.client = "client";
     $R.rb = "rb";
-    console.log($.client)   //"client"
-    console.log($R.client)  //undefined
-    console.log($R.rb)      //"rb"
-    console.log($.rb)       //undefined
+    //console.log($.client)   //"client"
+    //console.log($R.client)  //undefined
+    //console.log($R.rb)      //"rb"
+    //console.log($.rb)       //undefined
 
 	//////////////////// TODO: TEST DATA //////////////////
 	RDR.group.blessed_tags = [
@@ -1029,7 +1013,7 @@ function $RFunctions($R){
 	    tid: 3
 	}
 	];
-	// TODO: don't want to remove Eric's console statements, but don't wanna see them right now, either
-	console.clear();
+	// TODO: don't want to remove Eric's //console statements, but don't wanna see them right now, either
+	//console.clear();
 }
 
