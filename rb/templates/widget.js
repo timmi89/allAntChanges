@@ -160,8 +160,14 @@ function readrBoard($R){
 
                 return $new_actionbar;
 			},
-			close: function() {
-				$('div.rdr.rdr_actionbar').remove();
+			close: function(animation) {
+                if(typeof animation != undefined){
+                    $('div.rdr.rdr_actionbar').animate(animation, function(){
+                         $('div.rdr.rdr_actionbar').remove();
+                    });
+                }else{
+                    $('div.rdr.rdr_actionbar').remove();
+                }
 			}
 		},
 		tooltip : {
@@ -197,7 +203,8 @@ function readrBoard($R){
                 return $new_tooltip;
 			},
 			closeAll: function() {
-				$( 'div.rdr_tooltip' ).remove();
+                /*todo fix this animation parameter thing - it's not really working yet..*/
+				$( 'div.rdr_tooltip' ).remove("{width:'show'},1500");
 			}
 		},
 		util : {
@@ -408,17 +415,20 @@ function readrBoard($R){
                     $otherIcons = $aboutIcon.siblings();
                     $otherIcons.hide();
                     var actionbarBlockHover = false;
-				    $actionBar.hover( function() {
-                        if(!actionbarBlockHover){
-                            $otherIcons.animate({width:'show'},150);
+				    $actionBar.hover(
+                        function() {
+                            if ( typeof rdr_img_actionicon != 'undefined' ) clearTimeout( rdr_img_actionicon );
+                            if(!actionbarBlockHover){
+                                $otherIcons.animate({width:'show'},150);
+                            }
+                        },
+                        function() {
+                            actionbarBlockHover = true;
+                            $otherIcons.animate({width:'hide'},150, function(){
+                                actionbarBlockHover = false;
+                                RDR.actionbar.close();
+                            });
                         }
-				    },
-				    function() {
-                        actionbarBlockHover = true;
-						$otherIcons.animate({width:'hide'},150, function(){
-                            actionbarBlockHover = false;
-                        });
-					}
 				    );
 
 				}).live('mouseleave', function() {
