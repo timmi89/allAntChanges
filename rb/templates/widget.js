@@ -1,3 +1,11 @@
+if (! ("console" in window) || !("firebug" in console)) {
+    var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml", "group"
+                 , "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];
+    window.console = {};
+    for (var i = 0; i <names.length; ++i) window.console[names[i]] = function() {};
+}
+
+
 console.log($)
 var jQueryVersion = "1.4.4",
 RDR, //our global RDR object
@@ -97,9 +105,9 @@ function readrBoard($R){
 				if ( $('div.rdr.rdr_actionbar').length == 0 ) {
 					var x = settings.x ? (settings.x-34) : 100;
 					var y = settings.y ? (settings.y-45) : 100;
-                    //console.dir( settings );
+                    console.dir( settings );
 					var coords = RDR.util.stayInWindow(x,y,200,30);
-                    //console.log(actionbarItems[2].item)
+
 					// TODO use settings check for certain features and content types to determine which of these to disable
 					var $new_actionbar = $('<div class="rdr rdr_actionbar" />').css({
                        'left':coords.x,
@@ -204,7 +212,8 @@ function readrBoard($R){
 			},
 			closeAll: function() {
                 /*todo fix this animation parameter thing - it's not really working yet..*/
-				$( 'div.rdr_tooltip' ).remove("{width:'show'},1500");
+				// this was passed in as a param to remove() and causing breakage:  "{width:'show'},1500"
+				$( 'div.rdr_tooltip' ).remove();
 			}
 		},
 		util : {
@@ -328,7 +337,7 @@ function readrBoard($R){
                         $RDR.dequeue('initAjax');
                     },
                     error: function(XHR){
-                        //console.warn(XHR)
+                        console.warn(XHR)
                     }
                 });
             },
@@ -346,8 +355,8 @@ function readrBoard($R){
                     success: function(data, textStatus, XHR) {
 
                         console.log('rbuser call success')
-                        //console.dir(data);
-                        //console.log(XHR)
+                        console.dir(data);
+                        console.log(XHR)
 
                         //get this from the DB?
                         //this.anno_whitelist = "#module-article p";
@@ -525,7 +534,7 @@ function readrBoard($R){
 		                        console.dir(res);
 		                    }
 		                });
-                        //console.dir(data);
+                        console.dir(data);
                     }
                 });
             },
@@ -1077,13 +1086,13 @@ loadScript("/static/ui-prototype/js/jquery-1.4.4.min.js", function(){
         //callback
 
         //test that $.ui versioning is working correctly
-        //console.log("testing jQuery UI versioning...")
-        //console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
+        console.log("testing jQuery UI versioning...")
+        console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
         var $R = $.noConflict(true);
 
         //test that $.ui versioning is working correctly
-        //console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
-        //console.log("of course $R.ui.version should show our version - version = " + $R.ui.version)
+        console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
+        console.log("of course $R.ui.version should show our version - version = " + $R.ui.version)
 
         //call scripts that depend on our jQuery version to be loaded
         $RFunctions($R);
