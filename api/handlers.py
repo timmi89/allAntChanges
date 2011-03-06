@@ -7,7 +7,8 @@ from django.core import serializers
 
 def getPage(request, pageid=None):
 	canonical = request.GET.get('canonical_url', None)
-	fullurl = request.GET['url']
+	#fullurl = request.GET['url']
+	fullurl = request.get_full_path()
 	host = request.get_host()
         host = host[0:host.find(":")]
 	site = Site.objects.get(domain=host)
