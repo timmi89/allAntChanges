@@ -471,6 +471,20 @@ function readrBoard($R){
                         hashes : md5_list
                     },
                     success: function(data) {
+						var unknown_nodes = {}
+						$.ajax({
+		                    url: "/api/containers/create",
+		                    type: "get",
+		                    contentType: "application/json",
+		                    dataType: "jsonp",
+		                    data: {
+		                        hashes : unknown_nodes
+		                    },
+		                    success: function(data) {
+								console.log("success");
+		                        console.dir(data);
+		                    }
+		                });
                         //console.dir(data);
                     }
                 });

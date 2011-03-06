@@ -44,9 +44,11 @@ class CreateContainerHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
 	
 	def read(self, request):
-		
-		
-		return request.GET
+		result = {}
+		data = request.GET['data']
+		for hash in data.keys():
+			result[hash] = Container.get_or_create(hash=hash, body=data['hash'])[1]
+		return result
 
 class ContainerHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)

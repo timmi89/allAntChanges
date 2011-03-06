@@ -98,8 +98,8 @@ class Content(DateAwareModel):
 
 class Container(models.Model):
 	hash = models.CharField(max_length=32)
-	content = models.ManyToManyField(Content, blank = True)
 	body = models.TextField()
+	content = models.ManyToManyField(Content, blank = True)
 	
 	class Meta:
 		ordering = ['id']

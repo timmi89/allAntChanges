@@ -1,0 +1,1 @@
+curl -i -H "ContentType: application/json" -X GET -d 'crhash":"hashtest", "hash2":"hashtest2"}' http://localhost:8080/api/containers/create/
