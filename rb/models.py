@@ -115,6 +115,7 @@ class Interaction(DateAwareModel,UserAwareModel,MP_Node):
 	page = models.ForeignKey(Page)
 	content = models.ForeignKey(Content)
 	node = models.ManyToManyField(InteractionNode)
+	node_order_by = ['created']
 	
 	def __unicode__(self):
 		return "Interaction(Page: {0}, Content: {1})".format(self.page, self.content)
