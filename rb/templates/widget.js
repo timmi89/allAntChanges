@@ -121,9 +121,10 @@ function readrBoard($R){
                             },
                             {
                                 "item":"reaction",
-                                "tipText":"Comment on This",
+                                "tipText":"Tag This",
                                 "onclick":function(){
                                     RDR.actions.sentimentPanel({
+										"container": settings.container,
                                         "content_type": settings.content_type,
                                         "content": settings.content
                                     });
@@ -492,6 +493,7 @@ function readrBoard($R){
                         // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
                         // this makes it easy to find on the page later
                         $(this).addClass( 'rdr-' + node_hash ).addClass('rdr-hashed');
+						$(this).data('hash', node_hash);
                     }
                 });
 
@@ -712,8 +714,9 @@ function readrBoard($R){
                 });
 
                 // get the text that was highlighted
-                var content = $.trim( RDR.why.sel.text );
-
+                var content = $.trim( RDR.why.content ); //RDR.why.sel.text
+				var container = $.trim( RDR.why.container );
+				
 				rindow.find('button').text('Rating...').attr('disabled','disabled');
                 // send the data!
                 $.ajax({
@@ -724,7 +727,7 @@ function readrBoard($R){
                     data: {
                         "unknown_tags" : unknown_tags_raw, //see note above
                         "known_tags" : known_tags,
-                        "hash":"",
+                        "hash": container,
                         "content" : content,
                         "content_type" : "text",
                         "user_id" : 1,
@@ -747,6 +750,7 @@ function readrBoard($R){
 
                     // see what the user selected
                     // TODO: need separate image function, which should then prevent event bubbling into this
+						// ^ really?  why??
                     RDR.why.sel = RDR.actions.selectedText();
                     if ( RDR.why.sel.text && RDR.why.sel.text.length > 3 && RDR.why.sel.text.indexOf(" ") != -1 ) {
 
@@ -755,10 +759,7 @@ function readrBoard($R){
                         RDR.why.itemType = "text";
                         RDR.why.blockParent = null;
 
-                        // can we comment on the selection?
-                        // identify the selection's block parent (RDR.why.blockParent)
-                        // see it contains the whole selection text
-                        // and check for the rdr class.
+                        // first, identify the selection's block parent (RDR.why.blockParent)
                         if ( RDR.why.sel.obj.css('display') != "block" ) {
                             RDR.why.sel.obj.parents().each( function() {
                                 // cache the obj... faster!
@@ -777,12 +778,22 @@ function readrBoard($R){
                         // cache the blockParent's text for slightly faster processing
                         RDR.why.blockParent.text = RDR.why.blockParent.text();
 
-                        if ( RDR.why.blockParent.text && RDR.why.blockParent.text.length > 0) {
+						// does blockParent contain text that is long enough to be used here?
+						if ( RDR.why.blockParent.text && RDR.why.blockParent.text.length > 0) {
 
-                            // now, strip newlines and tabs -- and then the doublespaces that result
+							// is this inside a commentable-container?
+							RDR.why.container = "";
+							if ( mouse_target.hasClass('rdr-hashed') ) {
+								RDR.why.container = mouse_target.data('hash');
+							} else if ( mouse_target.parents('.rdr-hashed:first').length == 1 ) {
+								RDR.why.container = mouse_target.parents('.rdr-hashed:first').data('hash');
+							}
+
+                            // strip newlines and tabs -- and then the doublespaces that result
                             RDR.why.blockParentTextClean = RDR.util.cleanPara ( RDR.why.blockParent.text );
                             RDR.why.selectionTextClean = RDR.util.cleanPara ( RDR.why.content );
 
+							// see if it contains the whole selection text
                             if ( RDR.why.blockParentTextClean.indexOf( RDR.why.selectionTextClean ) != -1 ) {
                                 // this can be commented on if it's long enough and has at least one space (two words or more)
                                 RDR.actionbar.draw({
@@ -792,7 +803,7 @@ function readrBoard($R){
 									content:escape(RDR.why.content)
                                 });
 
-                            // also should detect if selection has an image, embed, object, audio, or video tag in it
+                            // TODO: also should detect if selection has an image, embed, object, audio, or video tag in it
                             } else {
                                 RDR.actionbar.draw({
                                     x:parseInt(e.pageX),
