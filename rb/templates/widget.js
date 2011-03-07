@@ -748,7 +748,7 @@ function readrBoard($R){
                         "hash": container,
                         "content" : content,
                         "content_type" : settings.content_type,
-                        "user" : 1
+                        "user" : 1,
 						"page_id" : RDR.page.id
                     },
                     complete: function(msg) {
