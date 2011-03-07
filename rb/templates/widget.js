@@ -395,6 +395,9 @@ function readrBoard($R){
 						group_id: RDR.groupPermData.group_id,
 						url: url,
 						canonical_url: canonical
+					},
+					success: function(pagedata) {
+						RDR.page = pagedata;
 					}
 				});
                
@@ -721,10 +724,11 @@ function readrBoard($R){
                     data: {
                         "unknown_tags" : unknown_tags_raw, //see note above
                         "known_tags" : known_tags,
-                        "hash":"?",
+                        "hash":"",
                         "content" : content,
                         "content_type" : "text",
-                        "user" : 1
+                        "user_id" : 1,
+						"page_id" : RDR.page.id
                     },
                     complete: function(msg) {
                         RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);

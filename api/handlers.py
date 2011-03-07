@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from rb.models import Group, Page, Interaction, InteractionNode, User, Content, Site, Container
 from django.db.models import Count
 from django.core import serializers
+from django.utils.encoding import smart_unicode
 
 def getPage(request, pageid=None):
 	canonical = request.GET.get('canonical_url', None)
@@ -17,7 +18,7 @@ def getPage(request, pageid=None):
 	elif canonical:
 		page = Page.objects.get_or_create(canonical_url=canonical, defaults={'url': fullurl, 'site': site})
 	else:
-		page = Page.objects.get_or_create(url=fullurl, defaults={'site': site.id})
+		page = Page.objects.get_or_create(url=fullurl, defaults={'site': site})
 		
 	if page[1] == True: print "Created page {0}".format(page)
 
@@ -27,24 +28,34 @@ class TagHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
 	
 	def read(self, request):
-		unknown_tags = request.GET.getlist('unknown_tags')
+		unknown_tags = request.GET.getlist('unknown_tags')	
 		known_tags = request.GET.getlist('known_tags')
 		hash = request.GET['hash']
-		content = request.GET['content']
+		content_data = request.GET['content']
 		content_type = request.GET['content_type']
-		user = request.GET['user']
-		page = getPage(request)
+		user_id = request.GET['user_id']
+		page_id = request.GET['page_id']
 		
-		content = Content.get_or_create(kind=content_type, body=content)
-		containter = Container.get_or_create(hash=hash, content=content, defaults={'body': container_body})
+		user = User.objects.get(id=user_id)
+		page = Page.objects.get(id=page_id)
+		content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
 		
-		for tag in unknown_tags:
-			tag = InteractionNode.get_or_create(kind='tag', body=tag)
-			new_interaction = Interaction(page=page, content=content, node=tag, user=user)
+		if hash:
+			container = Container.objects.get(hash=hash)
+			container.content = content
+			container.save()
+		
+		for utag in unknown_tags:
+			tag = InteractionNode.objects.get_or_create(kind='tag', body=smart_unicode(utag, encoding='utf-8', strings_only=False, errors='strict'))
+			new_interaction = Interaction.add_root(page=page, content=content, user=user)
+			new_interaction.save()
+			new_interaction.node = tag
 			new_interaction.save()
 			
 		for tag in known_tags:
-			new_interaction = Interaction(page=page, content=content, node=tag, user=user)
+			new_interaction = Interaction.add_root(page=page, content=content, user=user)
+			new_interaction.save()
+			new_interaction.node = tag
 			new_interaction.save()
 
 class CreateContainerHandler(AnonymousBaseHandler):
@@ -113,7 +124,7 @@ class PageDataHandler(AnonymousBaseHandler):
 		usernames = users.values('first_name', 'last_name')
 		userinteract = usernames.annotate(interactions=Count('interaction'))[:10]
 		
-		return dict(summary=summary, toptags=toptags, topusers=userinteract, topshares=topshares)
+		return dict(id=page.id, summary=summary, toptags=toptags, topusers=userinteract, topshares=topshares)
 
 class SettingsHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
