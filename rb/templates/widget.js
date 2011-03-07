@@ -105,7 +105,6 @@ function readrBoard($R){
 				if ( $('div.rdr.rdr_actionbar').length == 0 ) {
 					var x = settings.x ? (settings.x-34) : 100;
 					var y = settings.y ? (settings.y-45) : 100;
-                    console.dir( settings );
 					var coords = RDR.util.stayInWindow(x,y,200,30);
 
 					// TODO use settings check for certain features and content types to determine which of these to disable
@@ -410,7 +409,7 @@ function readrBoard($R){
 					if ( typeof rdr_img_actionicon != 'undefined' ) clearTimeout( rdr_img_actionicon );
 					RDR.actionbar.close();
 
-					// check that the image is large enough?
+					// TODO check that the image is large enough?
 					// TODO keep the actionbar in the window
 					// TODO image needs to show in rate window
 					// TODO all image functions need CURRENT URL (incl. hash) + IMG SRC URL for rating, SHARING, etc.
@@ -420,7 +419,27 @@ function readrBoard($R){
 				    var this_img = $(this),
 				    x = this_img.offset().left + 33,
 				    y = this_img.offset().top + this_img.height() + 15,
-				    $actionBar = RDR.actionbar.draw({ x:x, y:y, content_type:"image", content:this_img.attr('src') }),
+					src = this_img.attr('src');
+					
+					// kludgey(?) way of making sure we have the full image path
+					// $().attr('src') does not snag it...
+					// even though documentGetElementsByTagName('img')[0].src would.  argh.
+					if ( src.toLowerCase().substring(0,4) != "http" ) {
+						var prepend = window.location.protocol + "//" + window.location.host;
+						if ( src.charAt(0) == "/" ) {
+							src = prepend + src;
+						} else {
+							var pathname = window.location.pathname.split('/');
+							if ( pathname[ pathname.length-1 ].indexOf('.') != -1 ) { // there is a period in the last segment of the URL, meaning it's probably ".html" or similar
+								pathname.pop();
+							}
+							pathname = pathname.join('/');
+							src = prepend + pathname + "/" + src;
+						}
+					}
+					console.log(src);
+					
+				    $actionBar = RDR.actionbar.draw({ x:x, y:y, content_type:"image", content:src }),
                     $aboutIcon = $actionBar.find('li:first'),
                     $otherIcons = $aboutIcon.siblings();
                     $otherIcons.hide();
@@ -541,6 +560,7 @@ function readrBoard($R){
                 });
             },
             sentimentPanel : function(settings) {
+
                 // draw the window over the actionbar
                 var actionbarOffsets = $('div.rdr.rdr_actionbar').offset();
 
@@ -577,9 +597,6 @@ function readrBoard($R){
 
                 $ratePanel.append($selectedTextBox, $blessedTags, $customTagBox)
 
-				var content_type = settings.content_type;
-				var content = settings.content;
-
                 // add content and animate the actionbar to accommodate it
                 rindow.animate({
                     width:'400px',
@@ -588,10 +605,10 @@ function readrBoard($R){
                     rindow.find('div.rdr_contentSpace').append( $ratePanel );
                     rindow.find('h1').text("Your Reaction:");
 
-                    if ( content_type == "text" ) {
-                        rindow.find('div.rdr_selectedTextBox em').html( unescape(content) );
-					} else if ( content_type == "image" ) {
-						// rindow.find('.rdr_selectedTextBox em').css('text-align','center').html( '<img style="max-width:100%;max-height:600px;" src=" ' + content + '" />' );
+                    if ( settings.content_type == "text" ) {
+                        rindow.find('div.rdr_selectedTextBox em').html( unescape(settings.content) );
+					} else if ( settings.content_type == "image" ) {
+						// rindow.find('.rdr_selectedTextBox em').css('text-align','center').html( '<img style="max-width:100%;max-height:600px;" src=" ' + settings.content + '" />' );
 						rindow.find('div.rdr_selectedTextBox').hide();
 						rindow.find('h1').text("Your Reaction");
 					}
@@ -609,7 +626,7 @@ function readrBoard($R){
 
                     // bind the button with a function (since this isn't in a <form>)
                     rindow.find('button').click( function() {
-                        RDR.actions.rateSend( rindow );
+                        RDR.actions.rateSend( rindow, settings );
                     });
 
                 });
@@ -696,7 +713,8 @@ function readrBoard($R){
                 });
 				*/
             },
-            rateSend : function(rindow) {
+            rateSend : function(rindow, settings) {
+
                 // get the user-added tags from the input field
                 var unknown_tags_raw = rindow.find('input[name="unknown-tags"]').val(),
                 //TODO IMPORTANT: temp demo solution.  Not sanitizing js, later send this to the server to be sanitized first?  Or sanitize it with js?
@@ -711,7 +729,7 @@ function readrBoard($R){
                 });
 
                 // get the text that was highlighted
-                var content = $.trim( RDR.why.content ); //RDR.why.sel.text
+                var content = $.trim( settings.content ); //RDR.why.sel.text
 				var container = $.trim( RDR.why.container );
 				
 				rindow.find('button').text('Rating...').attr('disabled','disabled');
@@ -726,7 +744,7 @@ function readrBoard($R){
                         "known_tags" : known_tags,
                         "hash":container,
                         "content" : content,
-                        "content_type" : "text",
+                        "content_type" : settings.content_type,
                         "user" : 1
                     },
                     complete: function(msg) {
