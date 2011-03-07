@@ -804,7 +804,6 @@ function readrBoard($R){
                                 RDR.actionbar.draw({
                                     x:parseInt(e.pageX),
                                     y:parseInt(e.pageY),
-									container:container,
 									content_type:"text",
 									content:escape(RDR.why.content),
                                     cant_comment:true
