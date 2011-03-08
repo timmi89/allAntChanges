@@ -11,7 +11,7 @@ admin.site.register(Group)
 admin.site.register(Feature)
 admin.site.register(InteractionNode)
 admin.site.register(Content)
-admin.site.register(Interaction)
+
 #admin.site.register(Container)
 #This replaces the line above to customize the admin page console
 #todo: it doesn't work yet though.. resolve bugs
@@ -28,5 +28,10 @@ class ContainerAdmin(admin.ModelAdmin):
     search_fields = ('hash',)
     #fields = ('user','parent','body')
 
-admin.site.register(Container, ContainerAdmin)
+class InteractionAdmin(admin.ModelAdmin):
+	exclude = (	'path',
+				'depth',
+				'numchild')
 
+admin.site.register(Container, ContainerAdmin)
+admin.site.register(Interaction, InteractionAdmin)

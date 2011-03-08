@@ -91,7 +91,7 @@ class Content(DateAwareModel):
 	body = models.TextField()
 	
 	def __unicode__(self):
-		return "Content(Kind: {0}, Body: {1})".format(self.kind, self.body[:25])
+		return u"Content(Kind: {0}, Body: {1})".format(self.kind, self.body[:25])
 	
 	class Meta:
 		verbose_name_plural = "content"
@@ -109,13 +109,16 @@ class InteractionNode(models.Model):
 	body = models.TextField()
 	
 	def __unicode__(self):
-		return "Node(Type: {0}, Body: {1})".format(self.kind, self.body[:25])
+		return u"Node(Type: {0}, Body: {1})".format(self.kind, self.body[:25])
 
-class Interaction(DateAwareModel,UserAwareModel,MP_Node):
+class Interaction(DateAwareModel, UserAwareModel, MP_Node):
 	page = models.ForeignKey(Page)
 	content = models.ForeignKey(Content)
-	node = models.ManyToManyField(InteractionNode)
+	interaction_node = models.ForeignKey(InteractionNode)
 	node_order_by = ['created']
 	
+	class Meta:
+		ordering = ['path']
+
 	def __unicode__(self):
-		return "Interaction(Page: {0}, Content: {1})".format(self.page, self.content)
+		return u"Interaction(Page: {0}, Content: {1})".format(self.page, self.content)

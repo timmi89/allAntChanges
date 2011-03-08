@@ -5,6 +5,7 @@ from rb.models import Group, Page, Interaction, InteractionNode, User, Content, 
 from django.db.models import Count
 from django.core import serializers
 from django.utils.encoding import smart_unicode
+import datetime
 
 def getPage(request, pageid=None):
 	canonical = request.GET.get('canonical_url', None)
@@ -28,8 +29,8 @@ class TagHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
 	
 	def read(self, request):
-		unknown_tags = request.GET.getlist('unknown_tags')	
-		known_tags = request.GET.getlist('known_tags')
+		unknown_tags = request.GET.getlist('unknown_tags[]')	
+		known_tags = request.GET.getlist('known_tags[]')
 		hash = request.GET['hash']
 		content_data = request.GET['content']
 		content_type = request.GET['content_type']
@@ -40,23 +41,22 @@ class TagHandler(AnonymousBaseHandler):
 		page = Page.objects.get(id=page_id)
 		content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
 		
-		if hash:
+		if hash:	
 			container = Container.objects.get(hash=hash)
-			container.content = content
-			container.save()
+			container.content.add(content)
+
+		# Can't rely on Django's auto_now to create the time before storing the node
+		now = created=datetime.datetime.now()
 		
 		for utag in unknown_tags:
-			tag = InteractionNode.objects.get_or_create(kind='tag', body=smart_unicode(utag, encoding='utf-8', strings_only=False, errors='strict'))
-			new_interaction = Interaction.add_root(page=page, content=content, user=user)
-			new_interaction.save()
-			new_interaction.node = tag
-			new_interaction.save()
+			tag = InteractionNode.objects.get_or_create(kind='tag', body=utag)[0]
+			Interaction.add_root(page=page, content=content, user=user, interaction_node=tag, created=now)
 			
-		for tag in known_tags:
-			new_interaction = Interaction.add_root(page=page, content=content, user=user)
-			new_interaction.save()
-			new_interaction.node = tag
-			new_interaction.save()
+		for ktag in known_tags:
+			tag = InteractionNode.objects.get(id=ktag)
+			Interaction.add_root(page=page, content=content, user=user, interaction_node=tag, created=now)
+		
+		return "Success!"
 
 class CreateContainerHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
@@ -115,7 +115,7 @@ class PageDataHandler(AnonymousBaseHandler):
 		toptags = tagcounts.values("body").order_by()[:10]
 			
 		# ---Find top 10 shares on a give page---
-		content = Content.objects.filter(interaction__page=page.id,interaction__node__kind='shr')
+		content = Content.objects.filter(interaction__page=page.id,interaction__interaction_node__kind='shr')
 		sharecounts = content.annotate(Count("id"))
 		topshares = sharecounts.values("body").order_by()[:10]	
 		
