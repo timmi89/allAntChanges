@@ -319,19 +319,19 @@ function readrBoard($R){
                         RDR.group.blessed_tags = [
                         {
                             name: "Great!",
-                            tid: 0
-                        },
-                        {
-                            name: "Hate",
                             tid: 1
                         },
                         {
-                            name: "Interesting",
+                            name: "Hate",
                             tid: 2
                         },
                         {
-                            name: "Booooring",
+                            name: "Interesting",
                             tid: 3
+                        },
+                        {
+                            name: "Booooring",
+                            tid: 4
                         }
                         ];
                         $RDR.dequeue('initAjax');
@@ -722,6 +722,10 @@ function readrBoard($R){
                 var unknown_tags_raw = rindow.find('input[name="unknown-tags"]').val(),
                 //TODO IMPORTANT: temp demo solution.  Not sanitizing js, later send this to the server to be sanitized first?  Or sanitize it with js?
                 unknown_tags_arr = unknown_tags_raw.split(',');
+
+				for (var tags in unknown_tags_arr){
+					tags = tags.trim();
+				}
 
 
                 // get the blessed tags the user chose, by checking for the css class
@@ -1166,19 +1170,19 @@ function $RFunctions($R){
 	RDR.group.blessed_tags = [
 	{
 	    name: "Great!",
-	    tid: 0
-	},
-	{
-	    name: "Hate",
 	    tid: 1
 	},
 	{
-	    name: "Interesting",
+	    name: "Hate",
 	    tid: 2
 	},
 	{
-	    name: "Booooring",
+	    name: "Interesting",
 	    tid: 3
+	},
+	{
+	    name: "Booooring",
+	    tid: 4
 	}
 	];
 }

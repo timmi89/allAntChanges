@@ -49,8 +49,9 @@ class TagHandler(AnonymousBaseHandler):
 		now = created=datetime.datetime.now()
 		
 		for utag in unknown_tags:
-			tag = InteractionNode.objects.get_or_create(kind='tag', body=utag)[0]
-			Interaction.add_root(page=page, content=content, user=user, interaction_node=tag, created=now)
+			if utag:
+				tag = InteractionNode.objects.get_or_create(kind='tag', body=utag)[0]
+				Interaction.add_root(page=page, content=content, user=user, interaction_node=tag, created=now)
 			
 		for ktag in known_tags:
 			tag = InteractionNode.objects.get(id=ktag)
