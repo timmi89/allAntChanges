@@ -4,7 +4,7 @@ from piston.authentication import HttpBasicAuthentication
 from piston.doc import documentation_view
 
 #from api.handlers import ContentNodeHandler, RBGroupHandler, RBPageHandler
-from api.handlers import SettingsHandler, PageDataHandler, ContainerHandler, TagHandler, CreateContainerHandler
+from api.handlers import SettingsHandler, PageDataHandler, ContainerHandler, CreateTagHandler, CreateContainerHandler, InteractionHandler, CreateCommentHandler
 
 auth = HttpBasicAuthentication(realm='Test API')
 
@@ -15,14 +15,22 @@ Settings = Resource(handler=SettingsHandler)
 PageData = Resource(handler=PageDataHandler)
 Containers = Resource(handler=ContainerHandler)
 CreateContainers = Resource(handler=CreateContainerHandler)
-Tag = Resource(handler=TagHandler)
+CreateTags = Resource(handler=CreateTagHandler)
+#Tags = Resource(handler=TagHandler)
+Interaction = Resource(handler=InteractionHandler)
+CreateComments = Resource(handler=CreateCommentHandler)
+#Comments = Resource(handler=CommentsHandler)
 
 urlpatterns = patterns('',
 	url(r'^settings/(\d+)', Settings),
 	url(r'^page/(\d*)', PageData),
 	url(r'^containers/create/', CreateContainers),
 	url(r'^containers/([0-9a-zA-Z]]{32})?', Containers),
-	url(r'^tag/', Tag),
+	url(r'^tags/create/', CreateTags),
+	#url(r'^tags/(\d*)', Tags),
+	url(r'^comments/create/', CreateComments),
+	#url(r'^comments/', Comments),
+	url(r'^interaction/(\d+)', Interaction)
 	#url(r'^nodes/$', ContentNodes),
 	#url(r'^nodes/(?P<emitter_format>.+)/$', ContentNodes),
 	#url(r'^nodes\.(?P<emitter_format>.+)', ContentNodes),

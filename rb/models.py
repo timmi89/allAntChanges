@@ -120,5 +120,9 @@ class Interaction(DateAwareModel, UserAwareModel, MP_Node):
 	class Meta:
 		ordering = ['path']
 
+	@models.permalink
+	def get_absolute_url(self):
+		return ('api.urls.Interaction.read', (), {"id":str(self.id)})
+
 	def __unicode__(self):
 		return u"Interaction(Page: {0}, Content: {1})".format(self.page, self.content)

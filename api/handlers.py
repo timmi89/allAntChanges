@@ -1,7 +1,8 @@
 from piston.handler import BaseHandler, AnonymousBaseHandler
 from django.http import HttpResponse
 #from settings import DEBUG
-from rb.models import Group, Page, Interaction, InteractionNode, User, Content, Site, Container
+from rb.models import Group, Page, Interaction, InteractionNode, User, Content, Site, Container, Interaction
+from django.db import transaction
 from django.db.models import Count
 from django.core import serializers
 from django.utils.encoding import smart_unicode
@@ -25,7 +26,38 @@ def getPage(request, pageid=None):
 
 	return page[0]
 
+class InteractionHandler(AnonymousBaseHandler):
+	allowed_methods = ('GET',)
+	
+	def read(self, request, id):
+		interaction = Interaction.objects.get(id=id)
+		tree = Interaction.get_tree(interaction)
+		return tree
+
+class CreateCommentHandler(AnonymousBaseHandler):
+	allowed_methods = ('GET',)
+	
+	def read(self, request):
+		comment = request.GET['comment']
+		interaction_id = request.GET['interaction_id']
+		user_id = request.GET['user_id']
+		
+		user = User.objects.get(id=user_id)
+		parent = Interaction.objects.get(id=interaction_id)
+		
+		now = created=datetime.datetime.now()
+		
+		comment = InteractionNode.objects.get_or_create(kind='com', body=comment)[0]
+		parent.add_child(page=parent.page, content=parent.content, user=user, interaction_node=comment, created=now)
+
 class TagHandler(AnonymousBaseHandler):
+	allowed_methods = ('GET',)
+	
+	def read(self, request, id):
+		if tag:
+			tags = InteractionNode.objects.get_or_create(kind='tag', id=id)
+
+class CreateTagHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
 	
 	def read(self, request):
@@ -182,80 +214,3 @@ class SettingsHandler(AnonymousBaseHandler):
             return g
         else:
             return ("Group not specified")
-
-
-"""
-class ContentNodeHandler(BaseHandler):
-    allowed_methods = ('GET',)
-    model = Node
-    fields = ('hash', 'type',)
-
-    def read(self, request):
-        # called on GET requests
-        #print request.GET.getlist('hashes[]')
-        print "These are the items in the get request:"
-        for item in request.GET:
-            print item, '=>', request.GET.get(item)
-        print "These are the hashes:"
-        print "*" * 32
-        for node in request.GET.getlist('hashes[]'):
-            print node
-        print "*" * 32
-        return ContentNode.objects.all()
-
-    #def create(self, request):
-        # called on POST and creates new
-        # objects and should them or rc.CREATED
-
-class RBPageHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
-    model = RBPage
-    def read(self, request):
-        print "Items in RBPage request:"
-        print "*" * 32
-        for item in request.GET:
-            print item, '=>', request.GET.get(item)
-        print "*" * 32
-        print "***URL INFO IN RBPAGE REQUEST***"
-        canonical = request.GET.get('canonical_url')
-        if canonical:
-            print "canonical url sent in get request: %s" % canonical
-            if canonical.find("#!") < 0:
-                print "did not find hashbang"
-            else:
-                print "found hashbang"
-        else:
-            print "cannonical url was not sent in get request"
-        print "*" * 32
-        
-        return HttpResponse("Page")
-
-model = ContentNode()
-   fields = ('id','user','hash')
-
-   def read(self, request, hash=None):
-       #Returns a ContentNode, if hash is given,
-       #otherwise all the ContentNodes are returned.
-       ase = ContentNode.objects
-
-       if hash:
-           return base.get(hash.hash)
-       else:
-           return base.all()
-
-   def create(self, request):
-       Creates a new ContentNode
-       attrs = self.flatten_dict(request.POST)
-
-       if self.exists(**attrs):
-           return rc.DUPLICATE_ENTRY
-       else:
-           node = ConentNode(
-               user=attrs['user'],
-               type=attrs['type'],
-               page=attrs['page'],
-               hash=attrs['hash'],
-               content=attrs['content'])
-           node.save()
-           return node
-"""

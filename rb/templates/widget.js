@@ -742,7 +742,7 @@ function readrBoard($R){
 				rindow.find('button').text('Rating...').attr('disabled','disabled');
                 // send the data!
                 $.ajax({
-                    url: "/api/tag/",
+                    url: "/api/tags/create",
                     type: "get",
                     contentType: "application/json",
 					dataType: "json",
