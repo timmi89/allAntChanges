@@ -1,12 +1,4 @@
-if (! ("console" in window) || !("firebug" in console)) {
-    var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml", "group"
-                 , "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];
-    window.console = {};
-    for (var i = 0; i <names.length; ++i) window.console[names[i]] = function() {};
-}
-
-
-console.log($)
+// console.log($)
 var jQueryVersion = "1.4.4",
 RDR, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
@@ -95,7 +87,7 @@ function readrBoard($R){
                 return $new_rindow;
 			},
 			closeAll: function() {
-				console.log('closeAll');
+				// console.log('closeAll');
 				$('div.rdr.rdr_window').remove();
 			}
 		},
@@ -296,8 +288,8 @@ function readrBoard($R){
             initGroupData : function(groupShortName){
                 // request the RBGroup Data
 
-                console.log("requesting rbgroup data")
-                console.log(groupShortName)
+                // console.log("requesting rbgroup data")
+                // console.log(groupShortName)
                 $.ajax({
                     url: "/api/settings/"+RDR.groupPermData.group_id,
                     type: "get",
@@ -307,7 +299,7 @@ function readrBoard($R){
                         host_name : window.location.hostname
                     },
                     success: function(data, textStatus, XHR) {
-                        console.log('rbgroup call success')
+                        //console.log('rbgroup call success')
                         RDR.group = data;
 						RDR.group.group_id
 
@@ -650,8 +642,8 @@ function readrBoard($R){
                 var tags = "";
 
                 for ( var i in known_tags ) {
-                    if ( known_tags[i] && RDR.group.blessed_tags[ known_tags[i] ] ) {
-                        tags += RDR.group.blessed_tags[ known_tags[i] ].name + ", ";
+                    if ( known_tags[i] && RDR.group.blessed_tags[ parseInt(known_tags[i])-1 ] ) {
+                        tags += RDR.group.blessed_tags[ parseInt(known_tags[i])-1 ].name + ", ";
                     }
                 }
 
@@ -667,7 +659,6 @@ function readrBoard($R){
                    tags += val;
                 });
 
-                console.log(tags)
                 var $shareDialogueBox = $('<div class="rdr_shareBox"></div>')
 
                 // TODO add short rdrbrd URL to end of this line, rather than the long URL
@@ -749,21 +740,24 @@ function readrBoard($R){
 				var container = $.trim( RDR.why.container );
 				
 				rindow.find('button').text('Rating...').attr('disabled','disabled');
+				
+				var sendData = {
+                    "unknown_tags" : unknown_tags_arr, //see note above
+                    "known_tags" : known_tags,
+                    "hash": container,
+                    "content" : content,
+                    "content_type" : settings.content_type,
+                    "user_id" : 1,
+					"page_id" : RDR.page.id
+                };
+				
                 // send the data!
                 $.ajax({
                     url: "/api/tags/create/",
                     type: "get",
                     contentType: "application/json",
-				dataType: "json",
-                    data: {
-                        "unknown_tags" : unknown_tags_arr, //see note above
-                        "known_tags" : known_tags,
-                        "hash": container,
-                        "content" : content,
-                        "content_type" : settings.content_type,
-                        "user_id" : 1,
-						"page_id" : RDR.page.id
-                    },
+					dataType: "json",
+                    data: { json: JSON.stringify(sendData) },
                     complete: function(msg) {
                         RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
                     }
@@ -1132,13 +1126,13 @@ loadScript("/static/ui-prototype/js/jquery-1.4.4.min.js", function(){
         //callback
 
         //test that $.ui versioning is working correctly
-        console.log("testing jQuery UI versioning...")
-        console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
+        // console.log("testing jQuery UI versioning...")
+        // console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
         var $R = $.noConflict(true);
 
         //test that $.ui versioning is working correctly
-        console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
-        console.log("of course $R.ui.version should show our version - version = " + $R.ui.version)
+        // console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
+        // console.log("of course $R.ui.version should show our version - version = " + $R.ui.version)
 
         //call scripts that depend on our jQuery version to be loaded
         $RFunctions($R);
