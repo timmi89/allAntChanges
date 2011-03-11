@@ -101,9 +101,10 @@ class CreateContainerHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
 	def read(self, request):
 		result = {}
-		hashes = request.GET.getlist('hashes[]')
+		data = json.loads(request.GET['json'])
+		hashes = data['hashes']
 		for hash in hashes:
-			result[hash] = Container.objects.get_or_create(hash=hash, body=request.GET['containers['+hash+']'])[1]
+			result[hash] = Container.objects.get_or_create(hash=hash, body=hashes[hash])[1]
 		return result
 
 class ContainerHandler(AnonymousBaseHandler):

@@ -559,7 +559,7 @@ function readrBoard($R){
 		                    contentType: "application/json",
 		                    dataType: "jsonp",
 		                    data: {
-		                     json: JSON.stringify(data)
+		                     	json: JSON.stringify(data)
 		                     },
 		                    success: function(res) {
 		                        console.dir(res);
