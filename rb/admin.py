@@ -32,7 +32,7 @@ class InteractionAdmin(admin.ModelAdmin):
 	exclude = (	'path',
 			'depth',
 			'numchild')
-	list_display = ('id', 'page', 'anonymous', 'content', 'interaction_node')
+	list_display = ('id', 'user', 'page', 'content', 'interaction_node','anonymous')
 	
 
 admin.site.register(Container, ContainerAdmin)

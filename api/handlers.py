@@ -40,22 +40,19 @@ class UserHandler(AnonymousBaseHandler):
 	allower_methods = ('GET',)
 	
 	def read(self, request):
-		print "Creating anonymous user"
-		user = User.objects.create_user('temp', 'anonymous@readrboard')
-		user.set_unusable_password()
-		user.save()
-		return user.id
+		pass
 
 class CreateCommentHandler(BaseHandler):
 	allowed_methods = ('GET',)
 	
-	def read(self, request):
+	@staticmethod
+	@allow_lazy_user
+	def read(request):
 		data = json.loads(request.GET['json'])
 		comment = data['comment']
 		interaction_id = data['interaction_id']
-		user_id = data['user_id']
 		
-		user = User.objects.get(id=user_id)
+		user = request.user
 		parent = Interaction.objects.get(id=interaction_id)
 		
 		now = created=datetime.datetime.now()
@@ -82,10 +79,9 @@ class CreateTagHandler(BaseHandler):
 		hash = data['hash']
 		content_data = data['content']
 		content_type = data['content_type']
-		user_id = data['user_id']
 		page_id = data['page_id']
 		
-		user = User.objects.get(id=user_id)
+		user = request.user
 		page = Page.objects.get(id=page_id)
 		content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
 		
@@ -107,7 +103,7 @@ class CreateTagHandler(BaseHandler):
 		
 		return "Success!"
 
-class CreateContainerHandler(BaseHandler):
+class CreateContainerHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
 	def read(self, request):
 		result = {}
@@ -117,7 +113,7 @@ class CreateContainerHandler(BaseHandler):
 			result[hash] = Container.objects.get_or_create(hash=hash, body=hashes[hash])[1]
 		return result
 
-class ContainerHandler(BaseHandler):
+class ContainerHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
 	
 	def read(self, request, container=None):

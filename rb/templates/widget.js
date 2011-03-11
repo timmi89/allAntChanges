@@ -741,14 +741,14 @@ function readrBoard($R){
 				
 				rindow.find('button').text('Rating...').attr('disabled','disabled');
 				
-				var sendData = {
+		var sendData = {
                     "unknown_tags" : unknown_tags_arr, //see note above
                     "known_tags" : known_tags,
                     "hash": container,
                     "content" : content,
                     "content_type" : settings.content_type,
                     "user_id" : 1,
-					"page_id" : RDR.page.id
+		    "page_id" : RDR.page.id
                 };
 				
                 // send the data!
@@ -756,7 +756,7 @@ function readrBoard($R){
                     url: "/api/tags/create/",
                     type: "get",
                     contentType: "application/json",
-					dataType: "json",
+				dataType: "json",
                     data: { json: JSON.stringify(sendData) },
                     complete: function(msg) {
                         RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
