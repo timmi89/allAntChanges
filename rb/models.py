@@ -2,6 +2,7 @@ from django.db import models
 from treebeard.mp_tree import MP_Node
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
+from baseconv import base62
 import datetime
 
 CONTENT_TYPES = (
@@ -117,12 +118,31 @@ class Interaction(DateAwareModel, UserAwareModel, MP_Node):
 	interaction_node = models.ForeignKey(InteractionNode)
 	node_order_by = ['created']
 	
+	# Don't f-ing change this number
+	steplen = 10
+	
 	class Meta:
 		ordering = ['path']
 
 	@models.permalink
 	def get_absolute_url(self):
-		return ('api.urls.Interaction.read', (), {"id":str(self.id)})
+		return ('api.urls.Interaction.resource_uri()', [str(self.id)])
 
 	def __unicode__(self):
 		return u"Interaction(Page: {0}, Content: {1})".format(self.page, self.content)
+
+"""	
+class Links(models.Model):
+	url = models.URLField(verify_exists=True, unique=True)
+	date_submitted = models.DateTimeField(default=datetime.datetime.now())
+	usage_count = models.IntegerField(default=0)
+	
+	def to_base62(self):
+		return base62.from_decimal(self.id)
+
+	def short_url(self):
+		return settings.SITE_BASE_URL + self.to_base62()
+    
+	def __unicode__(self):
+		return self.to_base62() + ' : ' + self.url
+"""

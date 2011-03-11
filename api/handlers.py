@@ -4,13 +4,14 @@ from django.http import HttpResponse
 from rb.models import Group, Page, Interaction, InteractionNode, User, Content, Site, Container, Interaction
 from django.db import transaction
 from django.db.models import Count
-from django.core import serializers
+from django.shortcuts import get_object_or_404
 from django.utils.encoding import smart_unicode
+from urlparse import urlparse
 import datetime
+import json
 
 def getPage(request, pageid=None):
 	canonical = request.GET.get('canonical_url', None)
-	#fullurl = request.GET['url']
 	fullurl = request.get_full_path()
 	host = request.get_host()
         host = host[0:host.find(":")]
@@ -25,6 +26,11 @@ def getPage(request, pageid=None):
 	if page[1] == True: print "Created page {0}".format(page)
 
 	return page[0]
+
+class Serializer(AnonymousBaseHandler):
+	def read(self, request):
+		for obj in serializers.deserialize("json", request.GET['data']):
+			print obj
 
 class InteractionHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
@@ -104,11 +110,11 @@ class ContainerHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
 	
 	def read(self, request, container=None):
+		data = json.loads(request.GET['json'])
 		known = {}
 		unknown = []
 		if container: hashes = [container]
-		else: hashes = request.GET.getlist('hashes[]')
-		
+		else: hashes = data['hashes']
 		for hash in hashes:
 			try:
 				known[hash] = Container.objects.get(hash=hash)
@@ -184,10 +190,6 @@ class SettingsHandler(AnonymousBaseHandler):
              )
 
     def read(self, request, group=None):
-        #testing
-        #print request
-        #print request.GET['short_name']
-
         host = request.get_host()
         # Slice off port from hostname
         host = host[0:host.find(":")]

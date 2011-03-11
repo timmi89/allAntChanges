@@ -4,7 +4,7 @@ from piston.authentication import HttpBasicAuthentication
 from piston.doc import documentation_view
 
 #from api.handlers import ContentNodeHandler, RBGroupHandler, RBPageHandler
-from api.handlers import SettingsHandler, PageDataHandler, ContainerHandler, CreateTagHandler, CreateContainerHandler, InteractionHandler, CreateCommentHandler
+from api.handlers import SettingsHandler, PageDataHandler, ContainerHandler, CreateTagHandler, CreateContainerHandler, InteractionHandler, CreateCommentHandler, Serializer
 
 auth = HttpBasicAuthentication(realm='Test API')
 
@@ -20,6 +20,7 @@ CreateTags = Resource(handler=CreateTagHandler)
 Interaction = Resource(handler=InteractionHandler)
 CreateComments = Resource(handler=CreateCommentHandler)
 #Comments = Resource(handler=CommentsHandler)
+Serializer = Resource(handler=Serializer)
 
 urlpatterns = patterns('',
 	url(r'^settings/(\d+)', Settings),
@@ -30,7 +31,8 @@ urlpatterns = patterns('',
 	#url(r'^tags/(\d*)', Tags),
 	url(r'^comments/create/', CreateComments),
 	#url(r'^comments/', Comments),
-	url(r'^interaction/(\d+)', Interaction)
+	url(r'^interaction/(\d+)', Interaction),
+        url(r'^serialize/', Serializer),
 	#url(r'^nodes/$', ContentNodes),
 	#url(r'^nodes/(?P<emitter_format>.+)/$', ContentNodes),
 	#url(r'^nodes\.(?P<emitter_format>.+)', ContentNodes),

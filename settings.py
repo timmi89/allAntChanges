@@ -102,3 +102,7 @@ INSTALLED_APPS = (
     'south',
     'treebeard',
 )
+
+# Added for url shortener
+SITE_NAME = 'localhost:8000'
+SITE_BASE_URL = 'http://' + SITE_NAME + '/'
