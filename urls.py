@@ -29,6 +29,7 @@ urlpatterns = patterns('',
     #(r'^tags/', include('rb.urls')),
     (r'^api/', include('readrboard.api.urls')),
     (r'^admin/', include(admin.site.urls)),
+    (r'^convert/', include('lazysignup.urls')),
     #(r'^json-nodes/', 'rb.views.json_content_node'),
     #(r'^json-send/', 'rb.views.send'),
 )

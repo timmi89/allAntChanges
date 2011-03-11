@@ -100,7 +100,7 @@ class Content(DateAwareModel):
 class Container(models.Model):
 	hash = models.CharField(max_length=32)
 	body = models.TextField()
-	content = models.ManyToManyField(Content, blank = True)
+	content = models.ManyToManyField(Content, blank=True)
 	
 	class Meta:
 		ordering = ['id']
@@ -116,13 +116,14 @@ class Interaction(DateAwareModel, UserAwareModel, MP_Node):
 	page = models.ForeignKey(Page)
 	content = models.ForeignKey(Content)
 	interaction_node = models.ForeignKey(InteractionNode)
+	anonymous = models.BooleanField(default=False)
 	node_order_by = ['created']
 	
-	# Don't f-ing change this number
+	# Don't f-ing change this number - super important
 	steplen = 10
 	
 	class Meta:
-		ordering = ['path']
+		ordering = ['id']
 
 	@models.permalink
 	def get_absolute_url(self):

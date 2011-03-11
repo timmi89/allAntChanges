@@ -6,7 +6,8 @@ from django.db import transaction
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.utils.encoding import smart_unicode
-from urlparse import urlparse
+from django.contrib.auth.models import User
+from lazysignup.decorators import allow_lazy_user
 import datetime
 import json
 
@@ -27,12 +28,7 @@ def getPage(request, pageid=None):
 
 	return page[0]
 
-class Serializer(AnonymousBaseHandler):
-	def read(self, request):
-		for obj in serializers.deserialize("json", request.GET['data']):
-			print obj
-
-class InteractionHandler(AnonymousBaseHandler):
+class InteractionHandler(BaseHandler):
 	allowed_methods = ('GET',)
 	
 	def read(self, request, id):
@@ -40,7 +36,17 @@ class InteractionHandler(AnonymousBaseHandler):
 		tree = Interaction.get_tree(interaction)
 		return tree
 
-class CreateCommentHandler(AnonymousBaseHandler):
+class UserHandler(AnonymousBaseHandler):
+	allower_methods = ('GET',)
+	
+	def read(self, request):
+		print "Creating anonymous user"
+		user = User.objects.create_user('temp', 'anonymous@readrboard')
+		user.set_unusable_password()
+		user.save()
+		return user.id
+
+class CreateCommentHandler(BaseHandler):
 	allowed_methods = ('GET',)
 	
 	def read(self, request):
@@ -64,10 +70,12 @@ class TagHandler(AnonymousBaseHandler):
 		if tag:
 			tags = InteractionNode.objects.get_or_create(kind='tag', id=id)
 
-class CreateTagHandler(AnonymousBaseHandler):
+class CreateTagHandler(BaseHandler):
 	allowed_methods = ('GET',)
 	
-	def read(self, request):
+	@staticmethod
+	@allow_lazy_user
+	def read(request):
 		data = json.loads(request.GET['json'])
 		unknown_tags = data['unknown_tags']	
 		known_tags = data['known_tags']
@@ -99,7 +107,7 @@ class CreateTagHandler(AnonymousBaseHandler):
 		
 		return "Success!"
 
-class CreateContainerHandler(AnonymousBaseHandler):
+class CreateContainerHandler(BaseHandler):
 	allowed_methods = ('GET',)
 	def read(self, request):
 		result = {}
@@ -109,7 +117,7 @@ class CreateContainerHandler(AnonymousBaseHandler):
 			result[hash] = Container.objects.get_or_create(hash=hash, body=hashes[hash])[1]
 		return result
 
-class ContainerHandler(AnonymousBaseHandler):
+class ContainerHandler(BaseHandler):
 	allowed_methods = ('GET',)
 	
 	def read(self, request, container=None):
