@@ -30,9 +30,10 @@ class ContainerAdmin(admin.ModelAdmin):
 
 class InteractionAdmin(admin.ModelAdmin):
 	exclude = (	'path',
-				'depth',
-				'numchild')
-	list_display = ('id', 'page', 'content', 'interaction_node')
+			'depth',
+			'numchild')
+	list_display = ('id', 'user', 'page', 'content', 'interaction_node','anonymous')
+	
 
 admin.site.register(Container, ContainerAdmin)
 admin.site.register(Interaction, InteractionAdmin)

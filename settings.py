@@ -3,16 +3,10 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-# ReadrUser user profile
-AUTH_PROFILE_MODULE = 'rb.readruser'
-
 # Facebook shit
 LOGIN_REDIRECT_URL = '/'
 FACEBOOK_API_KEY = '457d702093ea6718adb6236ae72a2fc9'
 FACEBOOK_APPLICATION_SECRET = 'f14061a2ed9d7ae8ed1c3b231a8148c9'
-
-# Setting user profile to Author
-AUTH_PROFILE_MODULE = 'rb.ReadrUser'
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),    
@@ -101,6 +95,16 @@ INSTALLED_APPS = (
     'readrboard.api',
     'south',
     'treebeard',
+    'lazysignup',
+)
+
+# for sessions
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
+# for lazy signup
+AUTHENTICATION_BACKENDS = (
+  'django.contrib.auth.backends.ModelBackend',
+  'lazysignup.backends.LazySignupBackend',
 )
 
 # Added for url shortener

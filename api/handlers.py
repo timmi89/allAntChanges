@@ -6,7 +6,8 @@ from django.db import transaction
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.utils.encoding import smart_unicode
-from urlparse import urlparse
+from django.contrib.auth.models import User
+from lazysignup.decorators import allow_lazy_user
 import datetime
 import json
 
@@ -27,12 +28,7 @@ def getPage(request, pageid=None):
 
 	return page[0]
 
-class Serializer(AnonymousBaseHandler):
-	def read(self, request):
-		for obj in serializers.deserialize("json", request.GET['data']):
-			print obj
-
-class InteractionHandler(AnonymousBaseHandler):
+class InteractionHandler(BaseHandler):
 	allowed_methods = ('GET',)
 	
 	def read(self, request, id):
@@ -40,16 +36,23 @@ class InteractionHandler(AnonymousBaseHandler):
 		tree = Interaction.get_tree(interaction)
 		return tree
 
-class CreateCommentHandler(AnonymousBaseHandler):
-	allowed_methods = ('GET',)
+class UserHandler(AnonymousBaseHandler):
+	allower_methods = ('GET',)
 	
 	def read(self, request):
+		pass
+
+class CreateCommentHandler(BaseHandler):
+	allowed_methods = ('GET',)
+	
+	@staticmethod
+	@allow_lazy_user
+	def read(request):
 		data = json.loads(request.GET['json'])
 		comment = data['comment']
 		interaction_id = data['interaction_id']
-		user_id = data['user_id']
 		
-		user = User.objects.get(id=user_id)
+		user = request.user
 		parent = Interaction.objects.get(id=interaction_id)
 		
 		now = created=datetime.datetime.now()
@@ -64,20 +67,21 @@ class TagHandler(AnonymousBaseHandler):
 		if tag:
 			tags = InteractionNode.objects.get_or_create(kind='tag', id=id)
 
-class CreateTagHandler(AnonymousBaseHandler):
+class CreateTagHandler(BaseHandler):
 	allowed_methods = ('GET',)
 	
-	def read(self, request):
+	@staticmethod
+	@allow_lazy_user
+	def read(request):
 		data = json.loads(request.GET['json'])
 		unknown_tags = data['unknown_tags']	
 		known_tags = data['known_tags']
 		hash = data['hash']
 		content_data = data['content']
 		content_type = data['content_type']
-		user_id = data['user_id']
 		page_id = data['page_id']
 		
-		user = User.objects.get(id=user_id)
+		user = request.user
 		page = Page.objects.get(id=page_id)
 		content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
 		
