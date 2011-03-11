@@ -610,7 +610,7 @@ function readrBoard($R){
                     rindow.find('h1').text("Your Reaction:");
 
                     if ( settings.content_type == "text" ) {
-                        rindow.find('div.rdr_selectedTextBox em').html( unescape(settings.content) );
+                        rindow.find('div.rdr_selectedTextBox em').html( settings.content );
 					} else if ( settings.content_type == "image" ) {
 						// rindow.find('.rdr_selectedTextBox em').css('text-align','center').html( '<img style="max-width:100%;max-height:600px;" src=" ' + settings.content + '" />' );
 						rindow.find('div.rdr_selectedTextBox').hide();
@@ -750,13 +750,13 @@ function readrBoard($R){
                     "user_id" : 1,
 					"page_id" : RDR.page.id
                 };
-				
+			console.log(content);	
                 // send the data!
                 $.ajax({
                     url: "/api/tags/create/",
                     type: "get",
                     contentType: "application/json",
-					dataType: "json",
+					dataType: "jsonp",
                     data: { json: JSON.stringify(sendData) },
                     complete: function(msg) {
                         RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
@@ -825,7 +825,7 @@ function readrBoard($R){
                                     x:parseInt(e.pageX),
                                     y:parseInt(e.pageY),
 									content_type:"text",
-									content:escape(RDR.why.content)
+									content:RDR.why.content
                                 });
 
                             // TODO: also should detect if selection has an image, embed, object, audio, or video tag in it
@@ -834,7 +834,7 @@ function readrBoard($R){
                                     x:parseInt(e.pageX),
                                     y:parseInt(e.pageY),
 									content_type:"text",
-									content:escape(RDR.why.content),
+									content:RDR.why.content,
                                     cant_comment:true
                                 });
                             }
