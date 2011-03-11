@@ -650,8 +650,8 @@ function readrBoard($R){
                 var tags = "";
 
                 for ( var i in known_tags ) {
-                    if ( known_tags[i] && RDR.group.blessed_tags[ known_tags[i] ] ) {
-                        tags += RDR.group.blessed_tags[ known_tags[i] ].name + ", ";
+                    if ( known_tags[i] && RDR.group.blessed_tags[ parseInt(known_tags[i])-1 ] ) {
+                        tags += RDR.group.blessed_tags[ parseInt(known_tags[i])-1 ].name + ", ";
                     }
                 }
 
@@ -750,8 +750,7 @@ function readrBoard($R){
 				
 				rindow.find('button').text('Rating...').attr('disabled','disabled');
 				
-				var sendData = {};
-				sendData.hashes = {
+				var sendData = {
                     "unknown_tags" : unknown_tags_arr, //see note above
                     "known_tags" : known_tags,
                     "hash": container,
@@ -767,7 +766,7 @@ function readrBoard($R){
                     type: "get",
                     contentType: "application/json",
 					dataType: "json",
-                    data: JSON.stringify(sendData),
+                    data: { json: JSON.stringify(sendData) },
                     complete: function(msg) {
                         RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
                     }
