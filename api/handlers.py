@@ -67,13 +67,14 @@ class CreateTagHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
 	
 	def read(self, request):
-		unknown_tags = request.GET.getlist('unknown_tags[]')	
-		known_tags = request.GET.getlist('known_tags[]')
-		hash = request.GET['hash']
-		content_data = request.GET['content']
-		content_type = request.GET['content_type']
-		user_id = request.GET['user_id']
-		page_id = request.GET['page_id']
+		data = json.loads(request.GET['json'])
+		unknown_tags = data['unknown_tags']	
+		known_tags = data['known_tags[]']
+		hash = data['hash']
+		content_data = data['content']
+		content_type = data['content_type']
+		user_id = data['user_id']
+		page_id = data['page_id']
 		
 		user = User.objects.get(id=user_id)
 		page = Page.objects.get(id=page_id)
