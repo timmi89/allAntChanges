@@ -345,7 +345,7 @@ function readrBoard($R){
                 // request the RBGroup Data
                 console.log("requesting user data")
                 $.ajax({
-                    url: "/api/rbuser",
+                    url: "/api/rbuser/",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
@@ -751,7 +751,7 @@ function readrBoard($R){
 				rindow.find('button').text('Rating...').attr('disabled','disabled');
                 // send the data!
                 $.ajax({
-                    url: "/api/tags/create",
+                    url: "/api/tags/create/",
                     type: "get",
                     contentType: "application/json",
 				dataType: "json",
@@ -762,7 +762,7 @@ function readrBoard($R){
                         "content" : content,
                         "content_type" : settings.content_type,
                         "user_id" : 1,
-			"page_id" : RDR.page.id
+						"page_id" : RDR.page.id
                     },
                     complete: function(msg) {
                         RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
