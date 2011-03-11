@@ -69,7 +69,7 @@ class CreateTagHandler(AnonymousBaseHandler):
 	def read(self, request):
 		data = json.loads(request.GET['json'])
 		unknown_tags = data['unknown_tags']	
-		known_tags = data['known_tags[]']
+		known_tags = data['known_tags']
 		hash = data['hash']
 		content_data = data['content']
 		content_type = data['content_type']
