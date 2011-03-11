@@ -83,7 +83,7 @@ class CreateTagHandler(AnonymousBaseHandler):
 		
 		if hash:	
 			container = Container.objects.get(hash=hash)
-			container.content.add(codata = json.loads(request.GET['json'])ntent)
+			container.content.add(content)
 
 		# Can't rely on Django's auto_now to create the time before storing the node
 		now = created=datetime.datetime.now()
