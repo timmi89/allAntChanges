@@ -527,12 +527,12 @@ function readrBoard($R){
                     md5_list.push( i );
                 }
 
-		data = {
-                    	short_name : RDR.group.short_name,
-                        pageID : 1,
-                        //todo: talk to Porter about how to Model the Page Data
-                        hashes : md5_list
-                }
+				var sendData = {
+					short_name : RDR.group.short_name,
+					pageID : 1,
+					//todo: talk to Porter about how to Model the Page Data
+					hashes : md5_list
+				}
 
                 // send the data!
                 $.ajax({
@@ -541,34 +541,36 @@ function readrBoard($R){
                     contentType: "application/json",
                     dataType: "jsonp",
                     data: {
-                    	json: JSON.stringify(data)
+                    	json: JSON.stringify(sendData)
                     },
                     success: function(data) {
-				var unknown_nodes = data.unknown;
-				var containers = {};
-				$.each(data.unknown,function(index, value){
-					containers[value] = RDR.data.nodes[value];
-				})
-				data = {
-					"hashes" : unknown_nodes,
-		                        "containers" : containers
-		                }
-				$.ajax({
-		                    url: "/api/containers/create/",
-		                    type: "get",
-		                    contentType: "application/json",
-		                    dataType: "jsonp",
-		                    data: {
-		                     	json: JSON.stringify(data)
-		                     },
-		                    success: function(res) {
-		                        console.dir(res);
-		                    }
-		                });
-                        console.dir(data);
-                    }
-                });
-            },
+					// TODO: Eric, should this go in a jquery queue?
+					var sendData = {};
+					sendData.hashes = {};
+					console.log("data.unknown length: "+data.unknown.length);
+					
+					if ( data.unknown.length > 0 ) {
+						$.each( data.unknown, function( index, value ) {
+							sendData.hashes[value] = RDR.data.nodes[value];
+						});
+						console.dir(sendData);
+
+						$.ajax({
+			                    url: "/api/containers/create/",
+			                    type: "get",
+			                    contentType: "application/json",
+			                    dataType: "jsonp",
+			                    data: {
+			                     	json: JSON.stringify(sendData)
+			                     },
+			                    success: function(res) {
+			                        console.dir(res);
+			                    }
+						});
+					}
+					}
+				});
+			},
             sentimentPanel : function(settings) {
 
                 // draw the window over the actionbar
