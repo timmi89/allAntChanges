@@ -1,12 +1,4 @@
-if (! ("console" in window) || !("firebug" in console)) {
-    var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml", "group"
-                 , "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];
-    window.console = {};
-    for (var i = 0; i <names.length; ++i) window.console[names[i]] = function() {};
-}
-
-
-console.log($)
+// console.log($)
 var jQueryVersion = "1.4.4",
 RDR, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
@@ -95,7 +87,7 @@ function readrBoard($R){
                 return $new_rindow;
 			},
 			closeAll: function() {
-				console.log('closeAll');
+				// console.log('closeAll');
 				$('div.rdr.rdr_window').remove();
 			}
 		},
@@ -296,8 +288,8 @@ function readrBoard($R){
             initGroupData : function(groupShortName){
                 // request the RBGroup Data
 
-                console.log("requesting rbgroup data")
-                console.log(groupShortName)
+                // console.log("requesting rbgroup data")
+                // console.log(groupShortName)
                 $.ajax({
                     url: "/api/settings/"+RDR.groupPermData.group_id,
                     type: "get",
@@ -307,7 +299,7 @@ function readrBoard($R){
                         host_name : window.location.hostname
                     },
                     success: function(data, textStatus, XHR) {
-                        console.log('rbgroup call success')
+                        //console.log('rbgroup call success')
                         RDR.group = data;
 						RDR.group.group_id
 
@@ -667,7 +659,6 @@ function readrBoard($R){
                    tags += val;
                 });
 
-                console.log(tags)
                 var $shareDialogueBox = $('<div class="rdr_shareBox"></div>')
 
                 // TODO add short rdrbrd URL to end of this line, rather than the long URL
@@ -1135,13 +1126,13 @@ loadScript("/static/ui-prototype/js/jquery-1.4.4.min.js", function(){
         //callback
 
         //test that $.ui versioning is working correctly
-        console.log("testing jQuery UI versioning...")
-        console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
+        // console.log("testing jQuery UI versioning...")
+        // console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
         var $R = $.noConflict(true);
 
         //test that $.ui versioning is working correctly
-        console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
-        console.log("of course $R.ui.version should show our version - version = " + $R.ui.version)
+        // console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
+        // console.log("of course $R.ui.version should show our version - version = " + $R.ui.version)
 
         //call scripts that depend on our jQuery version to be loaded
         $RFunctions($R);
