@@ -44,9 +44,10 @@ class CreateCommentHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
 	
 	def read(self, request):
-		comment = request.GET['comment']
-		interaction_id = request.GET['interaction_id']
-		user_id = request.GET['user_id']
+		data = json.loads(request.GET['json'])
+		comment = data['comment']
+		interaction_id = data['interaction_id']
+		user_id = data['user_id']
 		
 		user = User.objects.get(id=user_id)
 		parent = Interaction.objects.get(id=interaction_id)
@@ -82,7 +83,7 @@ class CreateTagHandler(AnonymousBaseHandler):
 		
 		if hash:	
 			container = Container.objects.get(hash=hash)
-			container.content.add(content)
+			container.content.add(codata = json.loads(request.GET['json'])ntent)
 
 		# Can't rely on Django's auto_now to create the time before storing the node
 		now = created=datetime.datetime.now()
