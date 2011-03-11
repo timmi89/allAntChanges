@@ -22,7 +22,7 @@ admin.site.register(Content)
 class ContainerAdmin(admin.ModelAdmin):
     list_display = ('id',
                     'hash',
-                    'body',)
+                    'body')
     #list_filter = ('id',)
     #date_hierarchy = 'modified'
     search_fields = ('hash',)

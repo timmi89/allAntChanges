@@ -10,7 +10,7 @@ def widget(request,sn):
         rbg = Group.objects.get(short_name = sn)
     except:
         raise Exception('RB group with this short_name does not exist')
-    return render_to_response("widget.js",{'group_id': rbg.id, 'short_name' : sn})
+    return render_to_response("widget.js",{'group_id': rbg.id, 'short_name' : sn}, mimetype = 'application/javascript')
 
 """
 def index(request):
