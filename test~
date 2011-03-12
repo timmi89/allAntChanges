@@ -1,2 +1,0 @@
-#! /bin/bash
-curl -i -H "ContentType: application/json" -X GET --data-urlencode 'data={"hash":"hashtest", "hash2":"hashtest2"}' http://localhost:8080/api/containers/create/
