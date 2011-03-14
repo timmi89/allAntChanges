@@ -3,6 +3,7 @@ from rb.models import *
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core import serializers
+from settings import FACEBOOK_APP_ID
 
 def widget(request,sn):
     # Widget code is retreived from the server using RBGroup shortname
@@ -11,6 +12,11 @@ def widget(request,sn):
     except:
         raise Exception('RB group with this short_name does not exist')
     return render_to_response("widget.js",{'group_id': rbg.id, 'short_name' : sn}, mimetype = 'application/javascript')
+
+def fb(request):
+    # Widget code is retreived from the server using RBGroup shortname
+    return render_to_response("facebook.html",{'fb_client_id': FACEBOOK_APP_ID})
+
 
 """
 def index(request):
