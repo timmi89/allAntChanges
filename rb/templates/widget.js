@@ -92,15 +92,85 @@ function readrBoard($R){
 			}
 		},
 		actionbar : {
-			draw: function(settings) {
+			draw: function(settings, $new_actionbar) {
+                
+                    var $this = $('div.rdr.rdr_actionbar');
+                if ( $this.length == 0 ) {
+                    //alreday exists return it/
+                    return $this;
+                }
+                //(else)
 
-				if ( $('div.rdr.rdr_actionbar').length == 0 ) {
-					var x = settings.x ? (settings.x-34) : 100;
-					var y = settings.y ? (settings.y-45) : 100;
-					var coords = RDR.util.stayInWindow(x,y,200,30);
+                // TODO use settings check for certain features and content types to determine which of these to disable
+                var $new_actionbar = $('<div class="rdr rdr_actionbar" />').append('<ul/>');
+                $new_actionbar.items = [
+                        {
+                            "item":"about",
+                            "tipText":"What's This?",
+                            "onclick": RDR.actions.aboutReadrBoard
+                        },
+                        {
+                            "item":"reaction",
+                            "tipText":"Tag This",
+                            "onclick":function(){
+                                RDR.actions.sentimentPanel({
+                                    "container": settings.container,
+                                    "content_type": settings.content_type,
+                                    "content": settings.content
+                                });
+                            }
+                        },
+                        {
+                            "item":"bookmark",
+                            "tipText":"Bookmark This",
+                            "onclick":RDR.actions.bookmarkStart
+                        }
+                   ];
+                   $.each($new_actionbar.items, function(idx, val){
+                        var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
+                        $iconAnchor = $('<a href="javascript:void(0);">' +val.item+ '</a>'),
+                        $tooltip = $('<div class="rdr rdr_tooltip" id="rdr_tooltip_' +val.item+ '">' +
+                            '<div class="rdr rdr_tooltip-content"> ' +val.tipText+ '</div>'+
+                            '<div class="rdr rdr_tooltip-arrow-border" />'+
+                            '<div class="rdr rdr_tooltip-arrow" />'+
+                        '</div>').hide();
+                        $iconAnchor.click(function(){
+                            val.onclick();
+                            return false;
+                        });
+                        $item.append($iconAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
+                        if(idx===0){$item.prepend($('<span class="rdr_divider" />'))}
+                  });
+                    //'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentPanel({content_type:\''+settings.content_type+'\',content:\''+settings.content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
 
-					// TODO use settings check for certain features and content types to determine which of these to disable
-					var $new_actionbar = $('<div class="rdr rdr_actionbar" />').css({
+                    //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
+                    //but we're not sure yet if it's going to be the same function as this shareStart() above..
+
+                $('body').append( $new_actionbar );
+                $('div.rdr_actionbar a').hover(
+                    function() {
+                        $(this).siblings('.rdr_tooltip').show();
+                    },
+                    function () {
+                        $(this).siblings('.rdr_tooltip').hide();
+                    }
+                );
+				
+                RDR.actionbar.instance = $new_actionbar;
+                
+                var $this = $('div.rdr.rdr_actionbar');
+				if ( !$this.length == 0 ) {
+                    this.init(settings);
+                    // init will in turn call redraw
+                    return false;
+                }
+                else{
+                    var x = settings.x ? (settings.x-34) : 100,
+                    y = settings.y ? (settings.y-45) : 100,
+                    coords = RDR.util.stayInWindow(x,y,200,30);
+
+                    // TODO use settings check for certain features and content types to determine which of these to disable
+                    var $new_actionbar = $('<div class="rdr rdr_actionbar" />').css({
                        'left':coords.x,
                        'top':coords.y
                     }).append('<ul/>');
@@ -115,7 +185,7 @@ function readrBoard($R){
                                 "tipText":"Tag This",
                                 "onclick":function(){
                                     RDR.actions.sentimentPanel({
-										"container": settings.container,
+                                        "container": settings.container,
                                         "content_type": settings.content_type,
                                         "content": settings.content
                                     });
@@ -147,7 +217,7 @@ function readrBoard($R){
                     //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
                     //but we're not sure yet if it's going to be the same function as this shareStart() above..
 
-					$('body').append( $new_actionbar );
+                    $('body').append( $new_actionbar );
                     $('div.rdr_actionbar a').hover(
                         function() {
                             $(this).siblings('.rdr_tooltip').show();
@@ -156,10 +226,11 @@ function readrBoard($R){
                             $(this).siblings('.rdr_tooltip').hide();
                         }
                     );
-				}//end if
+                }//end if
 
+                RDR.actionbar.instance = $new_actionbar;
                 return $new_actionbar;
-			},
+            },
 			close: function(animation) {
                 if(typeof animation != undefined){
                     $('div.rdr.rdr_actionbar').animate(animation, function(){
@@ -168,7 +239,12 @@ function readrBoard($R){
                 }else{
                     $('div.rdr.rdr_actionbar').remove();
                 }
-			}
+			},
+            keepAlive: {
+                onImg:false,
+                onActionbar:false
+            },
+            instance : false
 		},
 		tooltip : {
 			draw: function(settings) {
@@ -401,9 +477,9 @@ function readrBoard($R){
 
                 // init the img interactions
 				$( RDR.group.img_selector ).live( 'mouseover', function() {
-					if ( typeof rdr_img_actionicon != 'undefined' ) clearTimeout( rdr_img_actionicon );
-					RDR.actionbar.close();
-
+                    RDR.actionbar.keepAlive.onImg = true;
+                    console.log(RDR.actionbar.keepAlive.onImg = true)
+					
 					// TODO check that the image is large enough?
 					// TODO keep the actionbar in the window
 					// TODO image needs to show in rate window
@@ -434,29 +510,42 @@ function readrBoard($R){
 					}
 					console.log(src);
 					
-				    $actionBar = RDR.actionbar.draw({ x:x, y:y, content_type:"image", content:src }),
+				    var $actionBar = RDR.actionbar.draw({ x:x, y:y, content_type:"image", content:src }),
                     $aboutIcon = $actionBar.find('li:first'),
                     $otherIcons = $aboutIcon.siblings();
                     $otherIcons.hide();
-                    var actionbarBlockHover = false;
 				    $actionBar.hover(
                         function() {
-                            if ( typeof rdr_img_actionicon != 'undefined' ) clearTimeout( rdr_img_actionicon );
-                            if(!actionbarBlockHover){
-                                $otherIcons.animate({width:'show'},150);
-                            }
+                            RDR.actionbar.keepAlive.onActionbar = true;
+                            //expand actionbar
+                            $aboutIcon.find('.rdr_divider').show();
+                            $otherIcons.animate({width:'show'},150);
                         },
                         function() {
-                            actionbarBlockHover = true;
+                            RDR.actionbar.keepAlive.onActionbar = false;
+                            //collapse actionbar
                             $otherIcons.animate({width:'hide'},150, function(){
-                                actionbarBlockHover = false;
-                                RDR.actionbar.close();
+                                $aboutIcon.find('.rdr_divider').hide();
+                                setTimeout(function(){
+                                    if(!RDR.actionbar.keepAlive.onImg){
+                                        $actionBar.fadeOut(200, function(){
+                                            RDR.actionbar.close();
+                                        });
+                                    }
+                                },400);
                             });
                         }
 				    );
 
 				}).live('mouseleave', function() {
-					rdr_img_actionicon = setTimeout( "RDR.actionbar.close()", 150);
+                    RDR.actionbar.keepAlive.onImg = false;
+                    setTimeout(function(){
+                        if(!RDR.actionbar.keepAlive.onActionbar){
+                            RDR.actionbar.instance.fadeOut(200, function(){
+                                RDR.actionbar.close();
+                            });
+                        }
+                    },400);
 				});
 				// END
 

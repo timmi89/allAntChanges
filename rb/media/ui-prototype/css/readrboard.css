@@ -58,7 +58,7 @@ div.rdr.rdr_actionbar li.rdr_icon_bookmark a        { background-position: -60px
 
 div.rdr.rdr_actionbar a:hover                       { background-color:#ffd3d3;}
 div.rdr.rdr_actionbar li.rdr_icon_about a:hover 	{ background-color:transparent; }
-div.rdr.rdr_actionbar span.rdr_divider              { border-right: 1px solid #BBB; height: 70%; position: absolute; right: 0; top: 15%;}
+div.rdr.rdr_actionbar span.rdr_divider              { border-right: 1px solid #BBB; height: 70%; position: absolute; right: 0; top: 15%; display:none;/*show dynamically*/}
 
 /* the tooltip */
 div.rdr.rdr_tooltip {
