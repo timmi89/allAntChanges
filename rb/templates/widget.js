@@ -473,7 +473,7 @@ function readrBoard($R){
                             keepAlive.onActionbar = false;
 
                             setTimeout(function(){
-                                
+                                //todo: organize and break out functions
                                 if(!keepAlive.onActionbar){
                                     //collapse actionbar
                                     $otherIcons.animate({width:'hide'},150, function(){
@@ -505,7 +505,8 @@ function readrBoard($R){
                     //just changes the settings (like the coordinates) and doens't rebuild the actionbar
                     
                     setTimeout(function(){
-                        if(!keepAlive.onImg && !keepAlive.onActionbar){
+                        if(!keepAlive.onImg && !keepAlive.onActionbar && RDR.actionbar.instance.length){
+                            
                             var $aboutIcon = RDR.actionbar.instance.find('li:first'),
                             $otherIcons = $aboutIcon.siblings();
 
@@ -513,6 +514,7 @@ function readrBoard($R){
                             $otherIcons.animate({width:'hide'},150, function(){
                                 $aboutIcon.find('.rdr_divider').hide();
                             });
+                            //simultaneous animations...
                             RDR.actionbar.instance.fadeOut(200, function(){
                                 //check one more time
                                 if(!keepAlive.onImg && !keepAlive.onActionbar){
@@ -523,7 +525,7 @@ function readrBoard($R){
                                 }
                             });
                         }
-                    },800);
+                    },600);
 				});
 				// END
 
