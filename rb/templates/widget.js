@@ -96,9 +96,6 @@ function readrBoard($R){
 			draw: function(settings) {
 
                 var $this = $('div.rdr.rdr_actionbar');
-                console.log($this);
-                console.log($this.length);
-                console.log('this.instance ... actionbar');
                 if ( $this.length !== 0 ) {
                     //alreday exists return it/
                     return $this;
@@ -158,14 +155,12 @@ function readrBoard($R){
                 //but we're not sure yet if it's going to be the same function as this shareStart() above..
 
                 $('body').append( $new_actionbar );
-                $('div.rdr_actionbar a').siblings('.rdr_tooltip').show();
+                $('div.rdr_actionbar a').siblings('.rdr_tooltip');
                 $('div.rdr_actionbar li').hover(
                     function() {
-                        console.log('in');
                         $(this).find('a').siblings('.rdr_tooltip').show();
                     },
                     function () {
-                        console.log('out');
                         $(this).find('a').siblings('.rdr_tooltip').hide();
                     }
                 );
@@ -197,9 +192,6 @@ function readrBoard($R){
 				// settings.offset_x, settings.offset_y (optional): how many pixels to shit the tooltip from the passed-in object
 
                 var $this = $('div.rdr.rdr_tooltip');
-                console.log($this);
-                console.log($this.length);
-                console.log('this.instance ... tooltip');
                 if ( $this.length !== 0 ) {
                     //alreday exists return it/
                     return $this;
@@ -428,8 +420,10 @@ function readrBoard($R){
 
                 // init the img interactions
 				$( RDR.group.img_selector ).live( 'mouseover', function() {
+
+                    //todo change this so that .live for imgs just resets coordinates, doesnt instantiate actionbar...
+
                     RDR.actionbar.keepAlive.onImg = true;
-                    console.log(RDR.actionbar.keepAlive.onImg = true)
 					
 					// TODO check that the image is large enough?
 					// TODO keep the actionbar in the window
@@ -465,51 +459,58 @@ function readrBoard($R){
                     var $aboutIcon = $actionBar.find('li:first'),
                     $otherIcons = $aboutIcon.siblings();
                     $otherIcons.hide();
+
 				    $actionBar.hover(
                         function() {
-                            console.log(RDR.actionbar.keepAlive);
-                            console.log('$actionBar.hover.on');
                             RDR.actionbar.keepAlive.onActionbar = true;
-                            console.log(RDR.actionbar.keepAlive);
                             //expand actionbar
                             $aboutIcon.find('.rdr_divider').show();
                             $otherIcons.animate({width:'show'},150);
                         },
                         function() {
+                            var keepAlive = RDR.actionbar.keepAlive;
+                            keepAlive.onActionbar = false;
 
-                            console.log(RDR.actionbar.keepAlive);
-                            console.log('$actionBar.hover.off');
-                            RDR.actionbar.keepAlive.onActionbar = false;
-                            console.log(RDR.actionbar.keepAlive);
-                            //collapse actionbar
-                            $otherIcons.animate({width:'hide'},150, function(){
-                                $aboutIcon.find('.rdr_divider').hide();
-                                setTimeout(function(){
+                            setTimeout(function(){
+                                //collapse actionbar
+                                $otherIcons.animate({width:'hide'},150, function(){
+                                    $aboutIcon.find('.rdr_divider').hide();
                                     //check if we should close it
-                                    if(!RDR.actionbar.keepAlive.onImg){
-                                        $actionBar.fadeOut(2000, function(){
+                                    if(!keepAlive.onImg && !keepAlive.onactionBar){
+                                        $actionBar.fadeOut(200, function(){
                                             //check one more time after fadeout
-                                            if(!RDR.actionbar.keepAlive.onImg){
+                                            if(!keepAlive.onImg && !keepAlive.onactionBar){
                                                 RDR.actionbar.close();
                                             }else{
                                                 $actionBar.show();
                                             }
                                         });
                                     }
-                                },400);
-                            });
+                                });
+                            },1000);
                         }
 				    );
 
 				}).live('mouseleave', function() {
-                    RDR.actionbar.keepAlive.onImg = false;
+                    var keepAlive = RDR.actionbar.keepAlive;
+                    keepAlive.onImg = false;
+                    //this isn't working right now because we are re-building the actionbar on img hover.
+                    //We can't tell that it's the same actionbar that just hasnt dissapeared yet.  We need to change the stucture so that the img hover
+                    //just changes the settings (like the coordinates) and doens't rebuild the actionbar
+                    /*
                     setTimeout(function(){
-                        if(!RDR.actionbar.keepAlive.onActionbar){
+                        if(!keepAlive.onImg && !keepAlive.onactionBar){
                             RDR.actionbar.instance.fadeOut(200, function(){
-                                RDR.actionbar.close();
+                                //check one more time
+                                if(!keepAlive.onImg && !keepAlive.onactionBar){
+                                    RDR.actionbar.close();
+                                }else{
+                                    RDR.actionbar.instance.show();
+                                }
                             });
                         }
-                    },400);
+                    },2000);
+                    */
 				});
 				// END
 
