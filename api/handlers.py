@@ -1,6 +1,6 @@
 from piston.handler import BaseHandler, AnonymousBaseHandler
 from django.http import HttpResponse
-#from settings import DEBUG
+from settings import FACEBOOK_APP_SECRET
 from rb.models import Group, Page, Interaction, InteractionNode, User, Content, Site, Container, Interaction
 from django.db import transaction
 from django.db.models import Count
@@ -10,6 +10,9 @@ from django.contrib.auth.models import User
 from lazysignup.decorators import allow_lazy_user
 import datetime
 import json
+import base64
+import hashlib
+import hmac
 
 def getPage(request, pageid=None):
 	canonical = request.GET.get('canonical_url', None)
@@ -27,6 +30,39 @@ def getPage(request, pageid=None):
 	if page[1] == True: print "Created page {0}".format(page)
 
 	return page[0]
+
+class LoginHandler(BaseHandler):
+	"""
+	Portions of this code are from the following URL:
+	http://sunilarora.org/parsing-signedrequest-parameter-in-python-bas
+	"""
+	allowed_methods = ('POST',)
+
+	def base64_url_decode(self, inp):
+	    padding_factor = (4 - len(inp) % 4) % 4
+	    inp += "="*padding_factor 
+	    return base64.b64decode(unicode(inp).translate(dict(zip(map(ord, u'-_'), u'+/'))))
+
+	def create(self, request):
+		signed_request = request.POST['signed_request']
+		srsplit = signed_request.split('.', 2)
+		encoded_sig = srsplit[0]
+		payload = srsplit[1]
+
+		sig = self.base64_url_decode(encoded_sig)
+		data = json.loads(self.base64_url_decode(payload))
+
+		if data.get('algorithm').upper() != 'HMAC-SHA256':
+			print 'Unknown FB Algo'
+			return None
+		else:
+			expected_sig = hmac.new(FACEBOOK_APP_SECRET, msg=payload, digestmod=hashlib.sha256).digest()
+
+		if sig != expected_sig:
+			return None
+		else:
+			print "Valid signed FB request received"
+			return data
 
 class InteractionHandler(BaseHandler):
 	allowed_methods = ('GET',)
