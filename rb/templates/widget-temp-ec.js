@@ -50,6 +50,7 @@ function readrBoard($R){
 			// content comes later.  this is just to identify or draw the container.
 			draw: function(settings) {
 				// for now, any window closes all tooltips
+				RDR.tooltip.closeAll();
 
 				var width = settings.width ? settings.width:400;
 				var x = settings.x ? settings.x:100;
@@ -94,82 +95,69 @@ function readrBoard($R){
 		},
 		actionbar : {
 			draw: function(settings) {
+				if ( $('div.rdr.rdr_actionbar').length == 0 ) {
+					var x = settings.x ? (settings.x-34) : 100;
+					var y = settings.y ? (settings.y-45) : 100;
+					var coords = RDR.util.stayInWindow(x,y,200,30);
 
-                var $this = $('div.rdr.rdr_actionbar');
-                console.log($this);
-                console.log($this.length);
-                console.log('this.instance ... actionbar');
-                if ( $this.length !== 0 ) {
-                    //alreday exists return it/
-                    return $this;
-                }
-                //(else)
-
-                var x = settings.x ? (settings.x-34) : 100;
-                var y = settings.y ? (settings.y-45) : 100;
-                var coords = RDR.util.stayInWindow(x,y,200,30);
-
-                // TODO use settings check for certain features and content types to determine which of these to disable
-                var $new_actionbar = $('<div class="rdr rdr_actionbar" />').css({
-                   'left':coords.x,
-                   'top':coords.y
-                }).append('<ul/>');
-                $new_actionbar.items = [
-                        {
-                            "item":"about",
-                            "tipText":"What's This?",
-                            "onclick": RDR.actions.aboutReadrBoard
-                        },
-                        {
-                            "item":"reaction",
-                            "tipText":"Tag This",
-                            "onclick":function(){
-                                RDR.actions.sentimentPanel({
-                                    "container": settings.container,
-                                    "content_type": settings.content_type,
-                                    "content": settings.content
-                                });
+					// TODO use settings check for certain features and content types to determine which of these to disable
+					var $new_actionbar = $('<div class="rdr rdr_actionbar" />').css({
+                       'left':coords.x,
+                       'top':coords.y
+                    }).append('<ul/>');
+                    $new_actionbar.items = [
+                            {
+                                "item":"about",
+                                "tipText":"What's This?",
+                                "onclick": RDR.actions.aboutReadrBoard
+                            },
+                            {
+                                "item":"reaction",
+                                "tipText":"Tag This",
+                                "onclick":function(){
+                                    RDR.actions.sentimentPanel({
+										"container": settings.container,
+                                        "content_type": settings.content_type,
+                                        "content": settings.content
+                                    });
+                                }
+                            },
+                            {
+                                "item":"bookmark",
+                                "tipText":"Bookmark This",
+                                "onclick":RDR.actions.bookmarkStart
                             }
-                        },
-                        {
-                            "item":"bookmark",
-                            "tipText":"Bookmark This",
-                            "onclick":RDR.actions.bookmarkStart
-                        }
-                ];
-                $.each($new_actionbar.items, function(idx, val){
-                    var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
-                    $iconAnchor = $('<a href="javascript:void(0);">' +val.item+ '</a>'),
-                    $tooltip = $('<div class="rdr rdr_tooltip" id="rdr_tooltip_' +val.item+ '">' +
-                        '<div class="rdr rdr_tooltip-content"> ' +val.tipText+ '</div>'+
-                        '<div class="rdr rdr_tooltip-arrow-border" />'+
-                        '<div class="rdr rdr_tooltip-arrow" />'+
-                    '</div>').hide();
-                    $iconAnchor.click(function(){
-                        val.onclick();
-                        return false;
+                       ];
+                    $.each($new_actionbar.items, function(idx, val){
+                        var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
+                        $iconAnchor = $('<a href="javascript:void(0);">' +val.item+ '</a>'),
+                        $tooltip = $('<div class="rdr rdr_tooltip" id="rdr_tooltip_' +val.item+ '">' +
+                            '<div class="rdr rdr_tooltip-content"> ' +val.tipText+ '</div>'+
+                            '<div class="rdr rdr_tooltip-arrow-border" />'+
+                            '<div class="rdr rdr_tooltip-arrow" />'+
+                        '</div>').hide();
+                        $iconAnchor.click(function(){
+                            val.onclick();
+                            return false;
+                        });
+                        $item.append($iconAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
+                        if(idx===0){$item.prepend($('<span class="rdr_divider" />'))}
                     });
-                    $item.append($iconAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
-                    if(idx===0){$item.prepend($('<span class="rdr_divider" />'))}
-                });
-                //'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentPanel({content_type:\''+settings.content_type+'\',content:\''+settings.content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
+                    //'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentPanel({content_type:\''+settings.content_type+'\',content:\''+settings.content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
 
-                //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
-                //but we're not sure yet if it's going to be the same function as this shareStart() above..
+                    //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
+                    //but we're not sure yet if it's going to be the same function as this shareStart() above..
 
-                $('body').append( $new_actionbar );
-                $('div.rdr_actionbar a').siblings('.rdr_tooltip').show();
-                $('div.rdr_actionbar li').hover(
-                    function() {
-                        console.log('in');
-                        $(this).find('a').siblings('.rdr_tooltip').show();
-                    },
-                    function () {
-                        console.log('out');
-                        $(this).find('a').siblings('.rdr_tooltip').hide();
-                    }
-                );
-				
+					$('body').append( $new_actionbar );
+                    $('div.rdr_actionbar a').hover(
+                        function() {
+                            $(this).siblings('.rdr_tooltip').show();
+                        },
+                        function () {
+                            $(this).siblings('.rdr_tooltip').hide();
+                        }
+                    );
+				}//end if
 
                 this.instance = $new_actionbar;
                 return this.instance;
@@ -195,17 +183,6 @@ function readrBoard($R){
 				// settings.message (HTML)
 				// settings.obj (to position tooltip next to.  should be a jQ obj).  if absent, position with the mouse.
 				// settings.offset_x, settings.offset_y (optional): how many pixels to shit the tooltip from the passed-in object
-
-                var $this = $('div.rdr.rdr_tooltip');
-                console.log($this);
-                console.log($this.length);
-                console.log('this.instance ... tooltip');
-                if ( $this.length !== 0 ) {
-                    //alreday exists return it/
-                    return $this;
-                }
-                //(else)
-
 				var $new_tooltip = $('<div class="rdr rdr_tooltip" id="rdr_tooltip_' + settings.name + '">' +
 					'<div class="rdr rdr_tooltip-content"> ' + settings.message + '</div>'+
 					'<div class="rdr rdr_tooltip-arrow-border"></div>'+
@@ -232,6 +209,11 @@ function readrBoard($R){
 				}
                 this.instance = $new_tooltip;
                 return this.instance;
+			},
+			closeAll: function() {
+                /*todo fix this animation parameter thing - it's not really working yet..*/
+				// this was passed in as a param to remove() and causing breakage:  "{width:'show'},1500"
+				$( 'div.rdr_tooltip' ).remove();
 			},
             instance: false
 		},
@@ -508,6 +490,7 @@ function readrBoard($R){
                     if (event.keyCode == '27') { //esc
                         RDR.rindow.closeAll();
                         RDR.actionbar.close();
+                        RDR.tooltip.closeAll();
                     }
                     //todo - consider unifying style of close vs closeAll.  Should any of these components 'own' the others?  IE. should tooltips belong to the actionbar?
                 });
