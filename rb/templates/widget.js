@@ -460,6 +460,7 @@ function readrBoard($R){
                     $otherIcons = $aboutIcon.siblings();
                     $otherIcons.hide();
 
+                    // todo: break out these animation effects into functions saved under actionBar.<collspase>
 				    $actionBar.hover(
                         function() {
                             RDR.actionbar.keepAlive.onActionbar = true;
@@ -473,20 +474,22 @@ function readrBoard($R){
 
                             setTimeout(function(){
                                 
-                                if(!keepAlive.onImg && !keepAlive.onActionbar){
+                                if(!keepAlive.onActionbar){
                                     //collapse actionbar
                                     $otherIcons.animate({width:'hide'},150, function(){
                                         $aboutIcon.find('.rdr_divider').hide();
-                                        //check if we should close it
-                                        $actionBar.fadeOut(200, function(){
-                                            //check one more time after fadeout
-                                            console.log(keepAlive)
-                                            if(!keepAlive.onImg && !keepAlive.onActionbar){
-                                                RDR.actionbar.close();
-                                            }else{
-                                                $actionBar.show();
-                                            }
-                                        });
+                                        //check if we should close it also
+                                        if(!keepAlive.onImg && !keepAlive.onActionbar){
+                                            $actionBar.fadeOut(200, function(){
+                                                //check one more time after fadeout
+                                                if(!keepAlive.onImg && !keepAlive.onActionbar){
+                                                    RDR.actionbar.close();
+                                                }else{
+                                                    //quick catch it before it fades out!
+                                                    $actionBar.show();
+                                                }
+                                            });
+                                        }
                                     });
                                 }
                             },500);
@@ -503,11 +506,19 @@ function readrBoard($R){
                     
                     setTimeout(function(){
                         if(!keepAlive.onImg && !keepAlive.onActionbar){
+                            var $aboutIcon = RDR.actionbar.instance.find('li:first'),
+                            $otherIcons = $aboutIcon.siblings();
+
+                            //simultaneous animations...
+                            $otherIcons.animate({width:'hide'},150, function(){
+                                $aboutIcon.find('.rdr_divider').hide();
+                            });
                             RDR.actionbar.instance.fadeOut(200, function(){
                                 //check one more time
                                 if(!keepAlive.onImg && !keepAlive.onActionbar){
                                     RDR.actionbar.close();
                                 }else{
+                                    //quick catch it before it fades out!
                                     RDR.actionbar.instance.show();
                                 }
                             });
