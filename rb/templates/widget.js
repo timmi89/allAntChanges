@@ -89,6 +89,7 @@ function readrBoard($R){
 			closeAll: function() {
 				// console.log('closeAll');
 				$('div.rdr.rdr_window').remove();
+                RDR.actionbar.close(); //organize how the actionbar should be a child of the rindow which would make this redundant
 			},
             instance: false //do we need multiple rindows?  If so change this to instances: $('.rdr_window') //find all..
 		},
@@ -170,13 +171,8 @@ function readrBoard($R){
                 return this.instance;
 			},
 			close: function(animation) {
-                if(typeof animation != undefined){
-                    $('div.rdr.rdr_actionbar').animate(animation, function(){
-                         $('div.rdr.rdr_actionbar').remove();
-                    });
-                }else{
-                    $('div.rdr.rdr_actionbar').remove();
-                }
+                $('div.rdr.rdr_actionbar').remove();
+                this.instance = false;
 			},
             keepAlive: {
                 onImg:false,
@@ -421,10 +417,14 @@ function readrBoard($R){
                 // init the img interactions
 				$( RDR.group.img_selector ).live( 'mouseover', function() {
 
+                    RDR.actionbar.keepAlive.onImg = true;
+                    
                     //todo change this so that .live for imgs just resets coordinates, doesnt instantiate actionbar...
 
-                    RDR.actionbar.keepAlive.onImg = true;
-					
+                    if(RDR.actionbar.instance.length){
+                        return false;
+                    }
+                    
 					// TODO check that the image is large enough?
 					// TODO keep the actionbar in the window
 					// TODO image needs to show in rate window
@@ -472,45 +472,47 @@ function readrBoard($R){
                             keepAlive.onActionbar = false;
 
                             setTimeout(function(){
-                                //collapse actionbar
-                                $otherIcons.animate({width:'hide'},150, function(){
-                                    $aboutIcon.find('.rdr_divider').hide();
-                                    //check if we should close it
-                                    if(!keepAlive.onImg && !keepAlive.onactionBar){
+                                
+                                if(!keepAlive.onImg && !keepAlive.onActionbar){
+                                    //collapse actionbar
+                                    $otherIcons.animate({width:'hide'},150, function(){
+                                        $aboutIcon.find('.rdr_divider').hide();
+                                        //check if we should close it
                                         $actionBar.fadeOut(200, function(){
                                             //check one more time after fadeout
-                                            if(!keepAlive.onImg && !keepAlive.onactionBar){
+                                            console.log(keepAlive)
+                                            if(!keepAlive.onImg && !keepAlive.onActionbar){
                                                 RDR.actionbar.close();
                                             }else{
                                                 $actionBar.show();
                                             }
                                         });
-                                    }
-                                });
-                            },1000);
+                                    });
+                                }
+                            },500);
                         }
 				    );
 
 				}).live('mouseleave', function() {
                     var keepAlive = RDR.actionbar.keepAlive;
                     keepAlive.onImg = false;
+
                     //this isn't working right now because we are re-building the actionbar on img hover.
                     //We can't tell that it's the same actionbar that just hasnt dissapeared yet.  We need to change the stucture so that the img hover
                     //just changes the settings (like the coordinates) and doens't rebuild the actionbar
-                    /*
+                    
                     setTimeout(function(){
-                        if(!keepAlive.onImg && !keepAlive.onactionBar){
+                        if(!keepAlive.onImg && !keepAlive.onActionbar){
                             RDR.actionbar.instance.fadeOut(200, function(){
                                 //check one more time
-                                if(!keepAlive.onImg && !keepAlive.onactionBar){
+                                if(!keepAlive.onImg && !keepAlive.onActionbar){
                                     RDR.actionbar.close();
                                 }else{
                                     RDR.actionbar.instance.show();
                                 }
                             });
                         }
-                    },2000);
-                    */
+                    },800);
 				});
 				// END
 
@@ -825,6 +827,9 @@ function readrBoard($R){
 
                     // closes undragged windows
                     $('div.rdr.rdr_window.rdr.rdr_rewritable, div.rdr.rdr_actionbar').remove();
+
+                    //todo - decide whether we want multiple actiobars, for now, kill them all.
+                    RDR.actionbar.close();
 
                     // see what the user selected
                     // TODO: need separate image function, which should then prevent event bubbling into this
