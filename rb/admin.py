@@ -1,23 +1,38 @@
 from rb.models import *
 from django.contrib import admin
-#from django.contrib import comments
+#from piston.models import Nonce, Consumer, Token 
+#admin.site.unregister(Consumer) 
+#admin.site.unregister(Nonce) 
+#admin.site.unregister(Token)
 
-#admin.site.register(Node)
-#admin.site.register(Comment)
-#admin.site.register(Tag)
-admin.site.register(Page)
-admin.site.register(Site)
-admin.site.register(Group)
 admin.site.register(Feature)
+admin.site.register(Page)
 admin.site.register(InteractionNode)
 admin.site.register(Content)
 
-#admin.site.register(Container)
-#This replaces the line above to customize the admin page console
-#todo: it doesn't work yet though.. resolve bugs
-#and get it back to the nice way Tyler had it before
-#see http://docs.djangoproject.com/en/dev/intro/tutorial02/
+class FeatureInline(admin.TabularInline):
+    model = Feature
 
+class GroupAdmin(admin.ModelAdmin):
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'short_name')
+        }),
+        ('Advanced', {
+            'fields': ('blessed_tags', 'valid_domains', 'anno_whitelist', 'img_whitelist', 'img_blacklist', 'no_readr')
+        }),
+        ('Logos', {
+            'fields': ('logo_url_sm', 'logo_url_med' , 'logo_url_lg')
+        }),
+        ('Features', {
+            'fields': ('share', 'rate' , 'comment', 'search', 'bookmark')
+        }),
+     )
+
+class SiteAdmin(admin.ModelAdmin):
+    list_display = ('name',
+                    'domain',
+                    'group')
 
 class ContainerAdmin(admin.ModelAdmin):
     list_display = ('id',
@@ -34,6 +49,7 @@ class InteractionAdmin(admin.ModelAdmin):
 			'numchild')
 	list_display = ('id', 'user', 'page', 'content', 'interaction_node','anonymous')
 	
-
+admin.site.register(Group, GroupAdmin)
+admin.site.register(Site, SiteAdmin)
 admin.site.register(Container, ContainerAdmin)
 admin.site.register(Interaction, InteractionAdmin)

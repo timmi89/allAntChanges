@@ -1,6 +1,8 @@
 from django.db import models
+from treebeard.mp_tree import MP_Node
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
+from baseconv import base62
 import datetime
 
 CONTENT_TYPES = (
@@ -10,17 +12,18 @@ CONTENT_TYPES = (
     ('snd', 'sound'),
 )
 
-NODE_TYPES = (
+INTERACTION_TYPES = (
     ('tag', 'Tag'),
     ('com', 'Comment'),
-    ('cnt', 'Content'),
+    ('bkm', 'Bookmark'),
+    ('shr', 'Share'),
 )
 
-NODE_LOOKUP = dict([(a[0], a[1]) for a in NODE_TYPES])
+#NODE_LOOKUP = dict([(a[0], a[1]) for a in NODE_TYPES])
 
 class DateAwareModel(models.Model):
-    inserted = models.DateTimeField(auto_now_add=True, editable=False)
-    updated = models.DateTimeField(auto_now=True, editable=False)    
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+    modified = models.DateTimeField(auto_now=True, editable=False)    
 
     class Meta:
         abstract = True
@@ -31,12 +34,7 @@ class UserAwareModel(models.Model):
     class Meta:
         abstract = True
 
-class Feature(models.Model):
-    text = models.BooleanField()
-    images = models.BooleanField()
-    flash = models.BooleanField()
-
-class RBGroup(models.Model):
+class Group(models.Model):
     name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=25)
     language = models.CharField(max_length=25,default="en")
@@ -54,12 +52,22 @@ class RBGroup(models.Model):
     logo_url_med = models.URLField(blank=True,verify_exists=False)
     logo_url_lg = models.URLField(blank=True,verify_exists=False)
     
-    # feature
-    share = models.OneToOneField(Feature,related_name='Sharables')
-    rate = models.OneToOneField(Feature,related_name='Ratables')
-    comment = models.OneToOneField(Feature,related_name='Commentables')
-    bookmark = models.OneToOneField(Feature,related_name='Bookmarkables')
-    search = models.OneToOneField(Feature,related_name='Searchables')
+    # features
+    share_text = models.BooleanField()
+    share_image = models.BooleanField()
+    share_flash = models.BooleanField()
+    rate_text = models.BooleanField()
+    rate_image = models.BooleanField()
+    rate_flash = models.BooleanField()
+    comment_text = models.BooleanField()
+    comment_image = models.BooleanField()
+    comment_flash = models.BooleanField()
+    bookmark_text = models.BooleanField()
+    bookmark_image = models.BooleanField()
+    bookmark_flash = models.BooleanField()
+    search_text = models.BooleanField()
+    search_image = models.BooleanField()
+    search_flash = models.BooleanField()
 
     # css
     css_url = models.URLField(blank=True,verify_exists=False)
@@ -70,58 +78,82 @@ class RBGroup(models.Model):
     class Meta:
     	ordering = ['short_name']
 
-class RBSite(Site):
-    rb_group = models.ForeignKey(RBGroup)
+class Site(models.Model):
+    name = models.CharField(max_length=100)
+    domain = models.CharField(max_length=50)
+    group = models.ForeignKey(Group)
     include_selectors = models.CharField(max_length=250, blank=True)
     no_rdr_selectors = models.CharField(max_length=250, blank=True)
     css = models.URLField(blank=True)
 
-class RBPage(models.Model):
-    rb_site = models.ForeignKey(RBSite)
+    def __unicode__(self):
+        return self.name
+
+class Page(models.Model):
+    site = models.ForeignKey(Site)
     url = models.URLField(verify_exists=False)
-    canonical_url = models.URLField(verify_exists=False)
+    canonical_url = models.URLField(verify_exists=False, blank=True)
 
     def __unicode__(self):
-        return self.canonical_url
+        return self.site + self.url[:25]
 
-class Node(DateAwareModel,UserAwareModel):
-    page = models.ForeignKey(RBPage)
-    type = models.CharField(max_length=3, choices=NODE_TYPES)
-    hash = models.CharField(max_length=32, editable=True,blank=True)
-    content = models.TextField()
+class Content(DateAwareModel):
+	kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
+	body = models.TextField()
+	
+	def __unicode__(self):
+		return u"Content(Kind: {0}, Body: {1})".format(self.kind, self.body[:25])
+	
+	class Meta:
+		verbose_name_plural = "content"
 
-    def __unicode__(self):
-        return str(self.id) + " " + NODE_LOOKUP[self.type] + " " + str(self.user) + " " + self.content[:25] 
-"""
-    parents = models.ForeignKey('self',related_name="Parent")
-    children = models.ForeignKey('self',related_name="Children")
-"""
+class Container(models.Model):
+	hash = models.CharField(max_length=32)
+	body = models.TextField()
+	content = models.ManyToManyField(Content, blank=True)
+	
+	class Meta:
+		ordering = ['id']
+	
+class InteractionNode(models.Model):
+	kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)
+	body = models.TextField(unique=True)
+	
+	def __unicode__(self):
+		return u"Node(Type: {0}, Body: {1})".format(self.kind, self.body[:25])
 
-class Edge(models.Model):
-    parent = models.ForeignKey(Node,related_name="Parent")
-    child = models.ForeignKey(Node,related_name="Child")
+class Interaction(DateAwareModel, UserAwareModel, MP_Node):
+	page = models.ForeignKey(Page)
+	content = models.ForeignKey(Content)
+	interaction_node = models.ForeignKey(InteractionNode)
+	anonymous = models.BooleanField(default=False)
+	node_order_by = ['created']
+	
+	# Don't f-ing change this number - super important
+	steplen = 10
+	
+	class Meta:
+		ordering = ['id']
 
-    def __unicode__(self):
-        return str(self.parent.id) + " -> " + str(self.child.id)
-"""
-class Comment(Node):
-    content = models.TextField(blank=True)
+	@models.permalink
+	def get_absolute_url(self):
+		return ('api.urls.Interaction.resource_uri()', [str(self.id)])
 
-    def __unicode__(self):
-        return "CommentNode:" + self.content[:50]
- 
-class Tag(Node):
-    content = models.CharField(max_length=64)
+	def __unicode__(self):
+		return u"Interaction(Page: {0}, Content: {1})".format(self.page, self.content)
 
-    def __unicode__(self):
-        return "TagNode:" + self.content[:50]
-"""    
-"""
-class ContentNode(Node):
-    content_type = models.CharField(max_length=3, choices=CONTENT_TYPES)
-    rb_page = models.ForeignKey(RBPage)
-    hash = models.CharField(max_length=32, editable=True)
+"""	
+class Links(models.Model):
+	url = models.URLField(verify_exists=True, unique=True)
+	date_submitted = models.DateTimeField(default=datetime.datetime.now())
+	usage_count = models.IntegerField(default=0)
+	
+	def to_base62(self):
+		return base62.from_decimal(self.id)
 
-    def __unicode__(self):
-        return "ContentNode:" + self.hash + ":" + self.content[:50]
+	def short_url(self):
+		return settings.SITE_BASE_URL + self.to_base62()
+    
+	def __unicode__(self):
+		return self.to_base62() + ' : ' + self.url
 """

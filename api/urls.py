@@ -4,8 +4,7 @@ from piston.authentication import HttpBasicAuthentication
 from piston.doc import documentation_view
 
 #from api.handlers import ContentNodeHandler, RBGroupHandler, RBPageHandler
-from api.handlers import SettingsHandler, PageDataHandler, ContainerHandler, CreateTagHandler, CreateContainerHandler, InteractionHandler, CreateCommentHandler, UserHandler, LoginHandler
-
+from api.handlers import *
 auth = HttpBasicAuthentication(realm='Test API')
 
 #ContentNodes = Resource(handler=ContentNodeHandler, authentication=auth)
@@ -16,36 +15,39 @@ PageData = Resource(handler=PageDataHandler)
 Containers = Resource(handler=ContainerHandler)
 CreateContainers = Resource(handler=CreateContainerHandler)
 CreateTags = Resource(handler=CreateTagHandler)
-#Tags = Resource(handler=TagHandler)
 Interaction = Resource(handler=InteractionHandler)
 CreateComments = Resource(handler=CreateCommentHandler)
-#Comments = Resource(handler=CommentsHandler)
 User = Resource(handler=UserHandler)
 Login = Resource(handler=LoginHandler)
 
+# Organized Resources
+Tags = Resource(handler=TagHandler)
+Comments = Resource(handler=CommentsHandler)
+
 urlpatterns = patterns('',
-	url(r'^settings/(\d+)', Settings),
-	url(r'^page/(\d*)', PageData),
+	url(r'^settings/(\d+)/', Settings),
+	# Page level data
+	url(r'^page/(?P<page_id>\d+)/$', PageData),
+	url(r'^page/(?P<page_id>\d+)/tags/$', Tags),
+	url(r'^page/(?P<page_id>\d+)/comments/$', Comments),
+	# Interaction level data
+	url(r'^interaction/(?P<interaction_id>\d+)$/', Interaction),
+	url(r'^interaction/(?P<interaction_id>\d+)/tags/$', Tags),
+	url(r'^interaction/(?P<interaction_id>\d+)/comments/$', Comments),
+	# Container level data
+	url(r'^container/(?P<hash>[0-9a-zA-Z]]{32})?', Container),
+	url(r'^container/(?P<hash>[0-9a-zA-Z]]{32})?/tags/$', Tags),
+	url(r'^container/(?P<hash>[0-9a-zA-Z]]{32})?/comments/$', Comments),
+	
+	# Older
 	url(r'^containers/create/', CreateContainers),
-	url(r'^containers/([0-9a-zA-Z]]{32})?', Containers),
+	url(r'^containers/([0-9a-zA-Z]]{32})?/', Containers),
 	url(r'^tags/create/', CreateTags),
 	#url(r'^tags/(\d*)', Tags),
 	url(r'^comments/create/', CreateComments),
 	#url(r'^comments/', Comments),
-	url(r'^interaction/(\d+)', Interaction),
 	url(r'^user/', User),
 	url(r'^login/', Login),
-	#url(r'^nodes/$', ContentNodes),
-	#url(r'^nodes/(?P<emitter_format>.+)/$', ContentNodes),
-	#url(r'^nodes\.(?P<emitter_format>.+)', ContentNodes),
-	#url(r'^rbgroup/(\d+)', RBGroups),
-	#url(r'^rbpage/$', RBPages),
-	#url(r'^rbgroup/$', RBGroups),
-	# Is this right? - ask Tyler..
-	#url(r'^rbgroup/(\d+)', RBGroups),
-	#url(r'^rbgroup/(?P<group>\d+)', RBGroups),
-	# automated documentation
-	#url(r'^$', documentation_view),
 )
 
 """

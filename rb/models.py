@@ -39,15 +39,18 @@ class Feature(models.Model):
     images = models.BooleanField()
     flash = models.BooleanField()
 
+    def __unicode__(self):
+        return u"Feature(Text: {0}, Images: {1}, Flash: {2})".format(self.text, self.images, self.flash) 
+
 class Group(models.Model):
     name = models.CharField(max_length=250)
-    short_name = models.CharField(max_length=25)
+    short_name = models.CharField(max_length=25, unique=True)
     language = models.CharField(max_length=25,default="en")
     blessed_tags = models.CharField(max_length=250,blank=True)
     valid_domains = models.CharField(max_length=250,blank=True)
 
     # black/whitelist fields
-    anno_whitelist = models.CharField(max_length=250,blank=True)
+    anno_whitelist = models.CharField(max_length=250,blank=True,default=u"p")
     img_whitelist = models.CharField(max_length=250,blank=True)
     img_blacklist = models.CharField(max_length=250,blank=True)
     no_readr = models.CharField(max_length=250,blank=True)
@@ -57,12 +60,12 @@ class Group(models.Model):
     logo_url_med = models.URLField(blank=True,verify_exists=False)
     logo_url_lg = models.URLField(blank=True,verify_exists=False)
     
-    # feature
-    share = models.OneToOneField(Feature,related_name='Sharables')
-    rate = models.OneToOneField(Feature,related_name='Ratables')
-    comment = models.OneToOneField(Feature,related_name='Commentables')
-    bookmark = models.OneToOneField(Feature,related_name='Bookmarkables')
-    search = models.OneToOneField(Feature,related_name='Searchables')
+    # features
+    share = models.OneToOneField(Feature, related_name = 'Share Feature')
+    rate = models.OneToOneField(Feature, related_name = 'Rate Feature')
+    comment = models.OneToOneField(Feature, related_name = 'Comment Feature')
+    bookmark = models.OneToOneField(Feature, related_name = 'Bookmark Feature')
+    search = models.OneToOneField(Feature, related_name = 'Search Feature')
 
     # css
     css_url = models.URLField(blank=True,verify_exists=False)
@@ -71,13 +74,18 @@ class Group(models.Model):
         return self.name
         
     class Meta:
-    	ordering = ['short_name']
+        ordering = ['short_name']
 
-class Site(Site):
+class Site(models.Model):
+    name = models.CharField(max_length=100)
+    domain = models.CharField(max_length=50)
     group = models.ForeignKey(Group)
     include_selectors = models.CharField(max_length=250, blank=True)
     no_rdr_selectors = models.CharField(max_length=250, blank=True)
     css = models.URLField(blank=True)
+
+    def __unicode__(self):
+        return self.name
 
 class Page(models.Model):
     site = models.ForeignKey(Site)
@@ -85,65 +93,65 @@ class Page(models.Model):
     canonical_url = models.URLField(verify_exists=False, blank=True)
 
     def __unicode__(self):
-        return self.url
+        return self.site + self.url[:25]
 
 class Content(DateAwareModel):
-	kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
-	body = models.TextField()
-	
-	def __unicode__(self):
-		return u"Content(Kind: {0}, Body: {1})".format(self.kind, self.body[:25])
-	
-	class Meta:
-		verbose_name_plural = "content"
+    kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
+    body = models.TextField()
+    
+    def __unicode__(self):
+        return u"Content(Kind: {0}, Body: {1})".format(self.kind, self.body[:25])
+    
+    class Meta:
+        verbose_name_plural = "content"
 
 class Container(models.Model):
-	hash = models.CharField(max_length=32)
-	body = models.TextField()
-	content = models.ManyToManyField(Content, blank=True)
-	
-	class Meta:
-		ordering = ['id']
-	
+    hash = models.CharField(max_length=32)
+    body = models.TextField()
+    content = models.ManyToManyField(Content, blank=True)
+    
+    class Meta:
+        ordering = ['id']
+    
 class InteractionNode(models.Model):
-	kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)
-	body = models.TextField()
-	
-	def __unicode__(self):
-		return u"Node(Type: {0}, Body: {1})".format(self.kind, self.body[:25])
+    kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)
+    body = models.TextField(unique=True)
+    
+    def __unicode__(self):
+        return u"Node(Type: {0}, Body: {1})".format(self.kind, self.body[:25])
 
 class Interaction(DateAwareModel, UserAwareModel, MP_Node):
-	page = models.ForeignKey(Page)
-	content = models.ForeignKey(Content)
-	interaction_node = models.ForeignKey(InteractionNode)
-	anonymous = models.BooleanField(default=False)
-	node_order_by = ['created']
-	
-	# Don't f-ing change this number - super important
-	steplen = 10
-	
-	class Meta:
-		ordering = ['id']
-
-	@models.permalink
-	def get_absolute_url(self):
-		return ('api.urls.Interaction.resource_uri()', [str(self.id)])
-
-	def __unicode__(self):
-		return u"Interaction(Page: {0}, Content: {1})".format(self.page, self.content)
-
-"""	
-class Links(models.Model):
-	url = models.URLField(verify_exists=True, unique=True)
-	date_submitted = models.DateTimeField(default=datetime.datetime.now())
-	usage_count = models.IntegerField(default=0)
-	
-	def to_base62(self):
-		return base62.from_decimal(self.id)
-
-	def short_url(self):
-		return settings.SITE_BASE_URL + self.to_base62()
+    page = models.ForeignKey(Page)
+    content = models.ForeignKey(Content)
+    interaction_node = models.ForeignKey(InteractionNode)
+    anonymous = models.BooleanField(default=False)
+    node_order_by = ['created']
     
-	def __unicode__(self):
-		return self.to_base62() + ' : ' + self.url
+    # Don't f-ing change this number - super important
+    steplen = 10
+    
+    class Meta:
+        ordering = ['id']
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('api.urls.Interaction.resource_uri()', [str(self.id)])
+
+    def __unicode__(self):
+        return u"Interaction(Page: {0}, Content: {1})".format(self.page, self.content)
+
+""" 
+class Links(models.Model):
+    url = models.URLField(verify_exists=True, unique=True)
+    date_submitted = models.DateTimeField(default=datetime.datetime.now())
+    usage_count = models.IntegerField(default=0)
+    
+    def to_base62(self):
+        return base62.from_decimal(self.id)
+
+    def short_url(self):
+        return settings.SITE_BASE_URL + self.to_base62()
+    
+    def __unicode__(self):
+        return self.to_base62() + ' : ' + self.url
 """

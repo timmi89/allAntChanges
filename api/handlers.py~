@@ -1,55 +1,217 @@
 from piston.handler import BaseHandler, AnonymousBaseHandler
 from django.http import HttpResponse
-from rb.models import *
+from settings import FACEBOOK_APP_SECRET
+from rb.models import Group, Page, Interaction, InteractionNode, User, Content, Site, Container, Interaction
+from django.db import transaction
+from django.db.models import Count
+from django.shortcuts import get_object_or_404
+from django.utils.encoding import smart_unicode
+from django.contrib.auth.models import User
+from lazysignup.decorators import allow_lazy_user
+import datetime
+import json
+import base64
+import hashlib
+import hmac
 
-class ContentNodeHandler(BaseHandler):
+def base64_url_decode(inp):
+    padding_factor = (4 - len(inp) % 4) % 4
+    inp += "="*padding_factor 
+    return base64.b64decode(unicode(inp).translate(dict(zip(map(ord, u'-_'), u'+/'))))
+
+def getPage(request, pageid=None):
+	canonical = request.GET.get('canonical_url', None)
+	fullurl = request.get_full_path()
+	host = request.get_host()
+        host = host[0:host.find(":")]
+	site = Site.objects.get(domain=host)
+	if pageid:
+		return Page.objects.get(id=pageid)
+	elif canonical:
+		page = Page.objects.get_or_create(canonical_url=canonical, defaults={'url': fullurl, 'site': site})
+	else:
+		page = Page.objects.get_or_create(url=fullurl, defaults={'site': site})
+		
+	if page[1] == True: print "Created page {0}".format(page)
+
+	return page[0]
+
+class LoginHandler(BaseHandler):
+	"""
+	Portions of this code are from the following URL:
+	http://sunilarora.org/parsing-signedrequest-parameter-in-python-bas
+	"""
+	allowed_methods = ('POST',)
+
+	@staticmethod
+	@allow_lazy_user
+	def create(request):
+		signed_request = request.POST['signed_request']
+		srsplit = signed_request.split('.', 2)
+		encoded_sig = srsplit[0]
+		payload = srsplit[1]
+
+		sig = base64_url_decode(encoded_sig)
+		data = json.loads(base64_url_decode(payload))
+
+		if data.get('algorithm').upper() != 'HMAC-SHA256':
+			print 'Unknown FB Algo'
+			return None
+		else:
+			expected_sig = hmac.new(FACEBOOK_APP_SECRET, msg=payload, digestmod=hashlib.sha256).digest()
+
+		if sig != expected_sig:
+			return None
+                
+                return data
+
+class InteractionHandler(BaseHandler):
+	allowed_methods = ('GET',)
+	
+	def read(self, request, id):
+		interaction = Interaction.objects.get(id=id)
+		tree = Interaction.get_tree(interaction)
+		return tree
+
+class UserHandler(AnonymousBaseHandler):
+	allower_methods = ('GET',)
+	
+	def read(self, request):
+		pass
+
+class CreateCommentHandler(BaseHandler):
+	allowed_methods = ('GET',)
+	
+	@staticmethod
+	@allow_lazy_user
+	def read(request):
+		data = json.loads(request.GET['json'])
+		comment = data['comment']
+		interaction_id = data['interaction_id']
+		
+		user = request.user
+		parent = Interaction.objects.get(id=interaction_id)
+		
+		now = created=datetime.datetime.now()
+		
+		comment = InteractionNode.objects.get_or_create(kind='com', body=comment)[0]
+		parent.add_child(page=parent.page, content=parent.content, user=user, interaction_node=comment, created=now)
+
+class TagHandler(AnonymousBaseHandler):
+	allowed_methods = ('GET',)
+	
+	def read(self, request, id):
+		if tag:
+			tags = InteractionNode.objects.get_or_create(kind='tag', id=id)
+
+class CreateTagHandler(BaseHandler):
+	allowed_methods = ('GET',)
+	
+	@staticmethod
+	@allow_lazy_user
+	def read(request):
+		data = json.loads(request.GET['json'])
+		unknown_tags = data['unknown_tags']	
+		known_tags = data['known_tags']
+		hash = data['hash']
+		content_data = data['content']
+		content_type = data['content_type']
+		page_id = data['page_id']
+		
+		user = request.user
+		page = Page.objects.get(id=page_id)
+		content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
+		
+		if hash:	
+			container = Container.objects.get(hash=hash)
+			container.content.add(content)
+
+		# Can't rely on Django's auto_now to create the time before storing the node
+		now = created=datetime.datetime.now()
+		
+		for utag in unknown_tags:
+			if utag:
+				tag = InteractionNode.objects.get_or_create(kind='tag', body=utag)[0]
+				Interaction.add_root(page=page, content=content, user=user, interaction_node=tag, created=now)
+			
+		for ktag in known_tags:
+			tag = InteractionNode.objects.get(id=ktag)
+			Interaction.add_root(page=page, content=content, user=user, interaction_node=tag, created=now)
+		
+		return "Success!"
+
+class CreateContainerHandler(AnonymousBaseHandler):
+	allowed_methods = ('GET',)
+	def read(self, request):
+		result = {}
+		data = json.loads(request.GET['json'])
+		hashes = data['hashes']
+		for hash in hashes:
+			result[hash] = Container.objects.get_or_create(hash=hash, body=hashes[hash])[1]
+		return result
+
+class ContainerHandler(AnonymousBaseHandler):
+	allowed_methods = ('GET',)
+	
+	def read(self, request, container=None):
+		data = json.loads(request.GET['json'])
+		known = {}
+		unknown = []
+		if container: hashes = [container]
+		else: hashes = data['hashes']
+		for hash in hashes:
+			try:
+				known[hash] = Container.objects.get(hash=hash)
+			except Container.DoesNotExist:
+				unknown.append(hash)
+
+		for hash in known.keys():
+			info = {}
+			nodes = InteractionNode.objects.filter(interaction__content__container__hash=hash)
+			info['knowntags'] = nodes.filter(kind='tag').values('body')
+			info['comments'] = nodes.filter(kind='com').values('body')
+			info['bookmarks'] = nodes.filter(kind='bkm').values('body')
+			known[hash] = info
+			
+		return dict(known=known, unknown=unknown)
+
+class PageDataHandler(AnonymousBaseHandler):
+	allowed_methods = ('GET',)
+	#model = InteractionNode
+	#fields = ('page',('node', ('id', 'kind')),)
+	
+	def read(self, request, pageid=None):
+		page = getPage(request, pageid)
+		
+		# Find all the interaction nodes on page
+		nop = InteractionNode.objects.filter(interaction__page=page.id)
+		
+		# ---Get page interaction counts, grouped by kind---
+		# Filter values for 'kind'
+		values = nop.values('kind')
+		# Annotate values with count of interactions
+		summary = values.annotate(Count('interaction'))
+		
+		# ---Find top 10 tags on a given page---
+		tags = nop.filter(kind='tag')
+		tagcounts = tags.annotate(Count("id"))
+		toptags = tagcounts.values("body").order_by()[:10]
+			
+		# ---Find top 10 shares on a give page---
+		content = Content.objects.filter(interaction__page=page.id,interaction__interaction_node__kind='shr')
+		sharecounts = content.annotate(Count("id"))
+		topshares = sharecounts.values("body").order_by()[:10]	
+		
+		# ---Find top 10 users on a given page---
+		users = User.objects.filter(interaction__page=page.id)
+		usernames = users.values('first_name', 'last_name')
+		userinteract = usernames.annotate(interactions=Count('interaction'))[:10]
+		
+		return dict(id=page.id, summary=summary, toptags=toptags, topusers=userinteract, topshares=topshares)
+
+class SettingsHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
-    model = Node
-    fields = ('hash', 'type',)
-
-    def read(self, request):
-        # called on GET requests
-        #print request.GET.getlist('hashes[]')
-        print "These are the items in the get request:"
-        for item in request.GET:
-            print item, '=>', request.GET.get(item)
-        print "These are the hashes:"
-        print "*" * 32
-        for node in request.GET.getlist('hashes[]'):
-            print node
-        print "*" * 32
-        return ContentNode.objects.all()
-
-    #def create(self, request):
-        # called on POST and creates new
-        # objects and should them or rc.CREATED
-
-class RBPageHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
-    model = RBPage
-    def read(self, request):
-        print "Items in RBPage request:"
-        print "*" * 32
-        for item in request.GET:
-            print item, '=>', request.GET.get(item)
-        print "*" * 32
-        print "***URL INFO IN RBPAGE REQUEST***"
-        canonical = request.GET.get('canonical_url')
-        if canonical:
-            print "canonical url sent in get request"
-            if canonical.find("#!") < 0:
-                print "did not find hashbang"
-            else:
-                print "found hashbang"
-        else:
-            print "cannonical url was not sent in get request"
-        print "*" * 32
-        
-        return HttpResponse("Page")
-
-class RBGroupHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
-    model = RBGroup
+    model = Group
     ordering = ('name','short_name')
     fields = ('id',
               'name',
@@ -60,11 +222,11 @@ class RBGroupHandler(AnonymousBaseHandler):
               'img_whitelist',
               'img_blacklist',
               'no_readr',
-              'share',
-              'rate',
-              'comment',
-              'bookmark',
-              'search',
+              ('share', ('images', 'text', 'flash')),
+              ('rate', ('images', 'text', 'flash')),
+              ('comment', ('images', 'text', 'flash')),
+              ('bookmark', ('images', 'text', 'flash')),
+              ('search', ('images', 'text', 'flash')),
               'logo_url_sm',
               'logo_url_med',
               'logo_url_lg',
@@ -72,10 +234,6 @@ class RBGroupHandler(AnonymousBaseHandler):
              )
 
     def read(self, request, group=None):
-        #testing
-        #print request
-        #print request.GET['short_name']
-
         host = request.get_host()
         # Slice off port from hostname
         host = host[0:host.find(":")]
@@ -89,8 +247,8 @@ class RBGroupHandler(AnonymousBaseHandler):
         if group:
             group = int(group)
             try:
-            	g = RBGroup.objects.get(id=group)
-            except RBGroup.DoesNotExist:
+            	g = Group.objects.get(id=group)
+            except Group.DoesNotExist:
             	return HttpResponse("RB Group does not exist!")
             if host in g.valid_domains:
                 print "host %s is valid for group %d" % (host,group)
@@ -102,33 +260,3 @@ class RBGroupHandler(AnonymousBaseHandler):
             return g
         else:
             return ("Group not specified")
-
-"""model = ContentNode()
-    fields = ('id','user','hash')
-
-    def read(self, request, hash=None):
-        #Returns a ContentNode, if hash is given,
-        #otherwise all the ContentNodes are returned.
-        ase = ContentNode.objects
-
-        if hash:
-            return base.get(hash.hash)
-        else:
-            return base.all()
-
-    def create(self, request):
-        Creates a new ContentNode
-        attrs = self.flatten_dict(request.POST)
-
-        if self.exists(**attrs):
-            return rc.DUPLICATE_ENTRY
-        else:
-            node = ConentNode(
-                user=attrs['user'],
-                type=attrs['type'],
-                page=attrs['page'],
-                hash=attrs['hash'],
-                content=attrs['content'])
-            node.save()
-            return node
-"""

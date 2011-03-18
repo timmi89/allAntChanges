@@ -1,33 +1,51 @@
 from rb.models import *
 from django.contrib import admin
-#from django.contrib import comments
+#from piston.models import Nonce, Consumer, Token 
+#admin.site.unregister(Consumer) 
+#admin.site.unregister(Nonce) 
+#admin.site.unregister(Token)
 
-admin.site.register(Edge)
-#admin.site.register(Node)
-#admin.site.register(Comment)
-#admin.site.register(Tag)
-admin.site.register(RBPage)
-admin.site.register(RBSite)
-admin.site.register(RBGroup)
-admin.site.register(Feature)
+admin.site.register(Page)
+admin.site.register(InteractionNode)
+admin.site.register(Content)
 
-#This replaces the line above to customize the admin page console
-#todo: it doesn't work yet though.. resolve bugs
-#and get it back to the nice way Tyler had it before
-#see http://docs.djangoproject.com/en/dev/intro/tutorial02/
+class GroupAdmin(admin.ModelAdmin):
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'short_name')
+        }),
+        ('Advanced', {
+            'fields': ('blessed_tags', 'valid_domains', 'anno_whitelist', 'img_whitelist', 'img_blacklist', 'no_readr')
+        }),
+        ('Logos', {
+            'fields': ('logo_url_sm', 'logo_url_med' , 'logo_url_lg')
+        }),
+        ('Features', {
+            'fields': ('share', 'rate' , 'comment', 'search', 'bookmark')
+        }),
+     )
 
+class SiteAdmin(admin.ModelAdmin):
+    list_display = ('name',
+                    'domain',
+                    'group')
 
-class NodeAdmin(admin.ModelAdmin):
+class ContainerAdmin(admin.ModelAdmin):
     list_display = ('id',
-                    'type',
-                    'inserted',
-                    'updated',
                     'hash',
-                    'user',
-                    'content',)
-    list_filter = ('user',)
+                    'body')
+    #list_filter = ('id',)
     #date_hierarchy = 'modified'
-    search_fields = ('content',)
+    search_fields = ('hash',)
     #fields = ('user','parent','body')
 
-admin.site.register(Node, NodeAdmin)
+class InteractionAdmin(admin.ModelAdmin):
+	exclude = (	'path',
+			'depth',
+			'numchild')
+	list_display = ('id', 'user', 'page', 'content', 'interaction_node','anonymous')
+	
+admin.site.register(Group, GroupAdmin)
+admin.site.register(Site, SiteAdmin)
+admin.site.register(Container, ContainerAdmin)
+admin.site.register(Interaction, InteractionAdmin)

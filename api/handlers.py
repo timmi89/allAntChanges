@@ -14,6 +14,11 @@ import base64
 import hashlib
 import hmac
 
+def base64_url_decode(inp):
+    padding_factor = (4 - len(inp) % 4) % 4
+    inp += "="*padding_factor 
+    return base64.b64decode(unicode(inp).translate(dict(zip(map(ord, u'-_'), u'+/'))))
+
 def getPage(request, pageid=None):
 	canonical = request.GET.get('canonical_url', None)
 	fullurl = request.get_full_path()
@@ -31,6 +36,22 @@ def getPage(request, pageid=None):
 
 	return page[0]
 
+class CommentsHandler(BaseHandler):
+	pass
+
+class TagHandler(BaseHandler):
+	allowed_methods = ('GET',)
+	
+	def read(self, request, **kwargs):
+		tags = InteractionNode.objects.filter(kind="tag")
+		if 'page_id' in kwargs:
+			tags = tags.filter(interaction__page=kwargs['page_id'])
+		if 'interaction_id' in kwargs:
+			tags = tags.filter(interaction__id=kwargs['interaction_id'])
+		if 'hash' in kwargs:
+			tags = tags.filter(interaction__container__hash=kwargs['hash'])
+		return tags
+
 class LoginHandler(BaseHandler):
 	"""
 	Portions of this code are from the following URL:
@@ -38,19 +59,16 @@ class LoginHandler(BaseHandler):
 	"""
 	allowed_methods = ('POST',)
 
-	def base64_url_decode(self, inp):
-	    padding_factor = (4 - len(inp) % 4) % 4
-	    inp += "="*padding_factor 
-	    return base64.b64decode(unicode(inp).translate(dict(zip(map(ord, u'-_'), u'+/'))))
-
-	def create(self, request):
+	@staticmethod
+	@allow_lazy_user
+	def create(request):
 		signed_request = request.POST['signed_request']
 		srsplit = signed_request.split('.', 2)
 		encoded_sig = srsplit[0]
 		payload = srsplit[1]
 
-		sig = self.base64_url_decode(encoded_sig)
-		data = json.loads(self.base64_url_decode(payload))
+		sig = base64_url_decode(encoded_sig)
+		data = json.loads(base64_url_decode(payload))
 
 		if data.get('algorithm').upper() != 'HMAC-SHA256':
 			print 'Unknown FB Algo'
@@ -60,9 +78,8 @@ class LoginHandler(BaseHandler):
 
 		if sig != expected_sig:
 			return None
-		else:
-			print "Valid signed FB request received"
-			return data
+                
+                return data
 
 class InteractionHandler(BaseHandler):
 	allowed_methods = ('GET',)
@@ -96,12 +113,14 @@ class CreateCommentHandler(BaseHandler):
 		comment = InteractionNode.objects.get_or_create(kind='com', body=comment)[0]
 		parent.add_child(page=parent.page, content=parent.content, user=user, interaction_node=comment, created=now)
 
+"""
 class TagHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
 	
 	def read(self, request, id):
 		if tag:
 			tags = InteractionNode.objects.get_or_create(kind='tag', id=id)
+"""
 
 class CreateTagHandler(BaseHandler):
 	allowed_methods = ('GET',)
@@ -211,7 +230,6 @@ class PageDataHandler(AnonymousBaseHandler):
 class SettingsHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
     model = Group
-    ordering = ('name','short_name')
     fields = ('id',
               'name',
               'short_name',
