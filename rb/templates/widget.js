@@ -634,47 +634,65 @@ function readrBoard($R){
             sentimentPanel : function(settings) {
 
                 // draw the window over the actionbar
-                var actionbarOffsets = $('div.rdr.rdr_actionbar').offset();
+                var actionbarOffsets = RDR.actionbar.instance.offset();
 
 				$('.rdr_rewritable').removeClass('rdr_rewritable');
 
-                $('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
+
+                //todo: weird, why did commenting this line out not do anything?...look into it
+                //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
+
                 var rindow = RDR.rindow.draw({
                     x:actionbarOffsets.left,
                     y:actionbarOffsets.top
                 });
 
-                //todo: figure out wht happened to selected text...
                 // build the ratePanel
-                var $ratePanel = $('<div class="rdr_ratePanel" />'),
-                $selectedTextBox = $('<div class="rdr_selectedTextBox" />'),
-                $blessedTags = $('<ul class="rdr_tags rdr_preselected"/>'),
-                $customTagBox = $('<div id="rdr_customTags"/>');
+                var $sentimentPanel = $('<div class="rdr_sentimentPanel" />'),
+                $selectedTextPanel = $('<div class="rdr_selectedTextPanel rdr_sntPnl" />'),
+                $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl" />'),
+                $whyPanel = $('<div class="rdr_whyPanel rdr_sntPnl" />'),
+                $blessedTagBox = $('<div id="rdr_blessedTagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
+                $customTagBox = $('<div id="rdr_customTagBox" />'),
+                $commentBox = $('<div id="rdr_commentBox" />'),
+                $shareBox = $('<div id="rdr_shareBox" />');
 
-                //must wrap the quoteIcon for proper z-index layering
-                $selectedTextBox.append(
-                '<div class="rdr_quoteIcon"><span>&ldquo;</span></div>',
-                '<div class="rdr_quote"><em></em></div>');
-
-                //populate blesed_tags
-                $.each(RDR.group.blessed_tags, function(idx, val){
-                    $blessedTags.append('<li tid="'+val.tid+'"><a href="javascript:void(0);">'+val.name+'</a></li>')
+                var headers = ["You selected", "What's your reaction?", "Why?"];
+                $sentimentPanel.append($selectedTextPanel, $reactionPanel, $whyPanel);
+                $sentimentPanel.children().each(function(idx){
+                    var $header = $('<div class="rdr_header" />').append('<h1>'+ headers[idx] +'</h1>'),
+                    $body = $('<div />').addClass('rdr_body').text('test....  '+ idx);
+                    $(this).append($header, $body);
                 });
 
+                //populate selectedTextPanel
+
+                //populate reactionPanel
+                $reactionPanel.append($blessedTagBox, $customTagBox);
+                ////populate blesed_tags
+                $.each(RDR.group.blessed_tags, function(idx, val){
+                    $blessedTagBox.children('ul.rdr_tags').append('<li tid="'+val.tid+'"><a href="javascript:void(0);">'+val.name+'</a></li>')
+                });
+                ////customTagDialogue - develop this...
+               $customTagBox.append('<div class="rdr_tags"><a href="javascript:void(0);">Add Your own</a></div>');
+                //populate whyPanel
+
+/*
                 $customTagBox.append(
                 '<div class="rdr_instruct">Add your own ratings, separated by comma:</div>',
                 '<input type="text" id="freeformTagInput" name="unknown-tags" />',
                 '<button>Rate</button>',
                 '<div class="rdr_help">e.g., Love this, autumn, insightful</div>');
 
-                $ratePanel.append($selectedTextBox, $blessedTags, $customTagBox)
-
+                $reactionPanel.append($selectedTextPanel, $blessedTagBox, $customTagBox)
+                */
                 // add content and animate the actionbar to accommodate it
                 rindow.animate({
                     width:'400px',
                     minHeight:'125px'
                 }, 300, function() {
-                    rindow.find('div.rdr_contentSpace').append( $ratePanel );
+                    /*
+                    rindow.find('div.rdr_contentSpace').append( $reactionPanel );
                     rindow.find('h1').text("Your Reaction:");
 
                     if ( settings.content_type == "text" ) {
@@ -700,7 +718,8 @@ function readrBoard($R){
                     rindow.find('button').click( function() {
                         RDR.actions.rateSend( rindow, settings );
                     });
-
+                    */
+                    rindow.append($sentimentPanel)
                 });
             },
             shareStart : function(rindow, known_tags, unknown_tags_arr) {
@@ -735,7 +754,7 @@ function readrBoard($R){
                 var url = 'http://rdrbrd.com/ad4fta3';
 
 				// TODO: hiding the custom tags part here.  is that ok?  check.
-				$('#rdr_customTags').hide();
+				$('#rdr_blessedTagBox').hide();
 
                 // TODO this eneds to behave differently for images, video
                 // maybe just show short URL that leads directly to that image, video on the page
