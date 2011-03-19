@@ -87,13 +87,15 @@ div.rdr h1,
 div.rdr h2	{font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif; color:#e71f1f; margin: 0; }
 div.rdr h1	{font-size:21px; cursor:move; }
 
-div.rdr_ratePanel div.rdr_selectedTextBox {display:block; background:#eee; padding:5px; margin:5px 0;}
-div.rdr_ratePanel div.rdr_quote {position: relative; text-shadow:1px 1px 1px #999; font-size:18px; font-family:Georgia, serif; z-index: 12020;}
-div.rdr_ratePanel div.rdr_quoteIcon { position: relative; z-index: 12010; }/*wrapper for z-index*/
-div.rdr_ratePanel div.rdr_quoteIcon span { position: absolute; font-family: ReadrLeague, Arial, sans-serif; font-size: 6em; top:-22px; left:-13px; color: #cccccc;}
-   
-ul.rdr_tags			{list-style-type:none; padding:0; margin:0; overflow:auto; }
-ul.rdr_tags li		{float:left; padding:5px 20px; margin:0 5px 0 0; background:url("/static/ui-prototype/images/tag-bg-sprite.png") repeat-x 0 -60px;}
+div.rdr_sntPnl {float:left; padding: 5px;}
+div.rdr_reactionPanel rdr_selectedTextPanel {display:block; background:#eee; padding:5px; margin:5px 0;}
+div.rdr_reactionPanel div.rdr_quote {position: relative; text-shadow:1px 1px 1px #999; font-size:18px; font-family:Georgia, serif; z-index: 12020;}
+div.rdr_reactionPanel div.rdr_quoteIcon { position: relative; z-index: 12010; }/*wrapper for z-index*/
+div.rdr_reactionPanel div.rdr_quoteIcon span { position: absolute; font-family: ReadrLeague, Arial, sans-serif; font-size: 6em; top:-22px; left:-13px; color: #cccccc;}
+
+.rdr_tags			{text-align: center;}
+ul.rdr_tags			{list-style-type:none; padding:0; margin:0; overflow:auto;}
+ul.rdr_tags li		{padding:5px; margin: 5px; background:url("/static/ui-prototype/images/tag-bg-sprite.png") repeat-x 0 -60px;}
 ul.rdr_tags li.rdr_selected	{ background:url("/static/ui-prototype/images/tag-bg-sprite.png") repeat-x 0 0;}
 ul.rdr_preselected			{font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:5px 0 10px; }
 ul.rdr_preselected a		{color:#000;text-decoration:none;}
