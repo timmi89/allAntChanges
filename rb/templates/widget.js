@@ -631,7 +631,35 @@ function readrBoard($R){
 					}
 				});
 			},
-            sentimentPanel : function(settings) {
+            loginPanel : function(settings) {
+
+				$('.rdr_rewritable').removeClass('rdr_rewritable');
+
+
+                //todo: weird, why did commenting this line out not do anything?...look into it
+				//porter says: the action bar used to just animate larger and get populated as a window
+                //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
+
+                var rindow = RDR.rindow.draw({
+                    x:100,
+                    y:100,
+					width:360
+                });
+
+				//TODO TYLER THIS IS FOR FACEBOOK
+				var $loginHtml = $('<div class="rdr_login" />');
+				$loginHtml.append( '<h1>Log In</h1>',
+				'<iframe src="/user/login" width="300" height="300" />'
+				);
+				
+				rindow.animate({
+                    width:'360px',
+                    minHeight:'125px'
+                }, 300, function() {
+					rindow.append( $loginHtml );
+				});
+			},
+			sentimentPanel : function(settings) {
 
                 // draw the window over the actionbar
                 var actionbarOffsets = RDR.actionbar.instance.offset();
