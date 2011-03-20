@@ -1,7 +1,7 @@
 from piston.handler import BaseHandler, AnonymousBaseHandler
 from django.http import HttpResponse
 from settings import FACEBOOK_APP_SECRET
-from rb.models import Group, Page, Interaction, InteractionNode, User, Content, Site, Container, Interaction
+from rb.models import *
 from django.db import transaction
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
@@ -113,15 +113,6 @@ class CreateCommentHandler(BaseHandler):
         comment = InteractionNode.objects.get_or_create(kind='com', body=comment)[0]
         parent.add_child(page=parent.page, content=parent.content, user=user, interaction_node=comment, created=now)
 
-"""
-class TagHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
-    
-    def read(self, request, id):
-        if tag:
-            tags = InteractionNode.objects.get_or_create(kind='tag', id=id)
-"""
-
 class CreateTagHandler(BaseHandler):
     allowed_methods = ('GET',)
     
@@ -146,7 +137,7 @@ class CreateTagHandler(BaseHandler):
 
         # Can't rely on Django's auto_now to create the time before storing the node
         now = created=datetime.datetime.now()
-        
+        interactions = {}
         for utag in unknown_tags:
             if utag:
                 tag = InteractionNode.objects.get_or_create(kind='tag', body=utag)[0]
@@ -255,11 +246,6 @@ class SettingsHandler(AnonymousBaseHandler):
         # Slice off port from hostname
         host = host[0:host.find(":")]
         path = request.path
-        """
-        print "host: ", host[0:host.find(":")]
-        print "path: ", path
-        print "sent host: ", request.GET['host_name']
-        """
         fp = request.get_full_path()
         if group:
             group = int(group)
