@@ -306,7 +306,7 @@ function readrBoard($R){
                 // console.log("requesting rbgroup data")
                 // console.log(groupShortName)
                 $.ajax({
-                    url: "/api/settings/"+RDR.groupPermData.group_id,
+                    url: "/api/settings/"+RDR.groupPermData.group_id+"/",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",

@@ -6,7 +6,6 @@ from django.contrib import admin
 #admin.site.unregister(Token)
 
 admin.site.register(Feature)
-admin.site.register(Page)
 admin.site.register(InteractionNode)
 admin.site.register(Content)
 
@@ -34,6 +33,12 @@ class SiteAdmin(admin.ModelAdmin):
                     'domain',
                     'group')
 
+class PageAdmin(admin.ModelAdmin):
+   list_display = ('id',
+                   'site',
+                   'url',
+				   'canonical_url')
+
 class ContainerAdmin(admin.ModelAdmin):
     list_display = ('id',
                     'hash',
@@ -48,7 +53,8 @@ class InteractionAdmin(admin.ModelAdmin):
 			'depth',
 			'numchild')
 	list_display = ('id', 'user', 'page', 'content', 'interaction_node','anonymous')
-	
+
+admin.site.register(Page, PageAdmin)
 admin.site.register(Group, GroupAdmin)
 admin.site.register(Site, SiteAdmin)
 admin.site.register(Container, ContainerAdmin)

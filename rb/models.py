@@ -93,7 +93,7 @@ class Page(models.Model):
     canonical_url = models.URLField(verify_exists=False, blank=True)
 
     def __unicode__(self):
-        return self.site + self.url[:25]
+        return u"Page %d" % self.id
 
 class Content(DateAwareModel):
     kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
@@ -106,9 +106,9 @@ class Content(DateAwareModel):
         verbose_name_plural = "content"
 
 class Container(models.Model):
-    hash = models.CharField(max_length=32)
+    hash = models.CharField(max_length=32,unique=True)
     body = models.TextField()
-    content = models.ManyToManyField(Content, blank=True)
+    content = models.ManyToManyField(Content, blank=True, editable=False)
     
     class Meta:
         ordering = ['id']
