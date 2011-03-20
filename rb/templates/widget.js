@@ -668,13 +668,13 @@ function readrBoard($R){
                 });
 
                 //populate selectedTextPanel
-				$selectedTextPanel.find('div.rdr_body').append( '<div class="rdr_selected"><em></em><div class="rdr_arrow-border"></div><div class="rdr_arrow"></div></div>' );
+				$selectedTextPanel.find('div.rdr_body').append( '<div class="rdr_selected"><em></em><div class="rdr_arrow"></div></div>' );
 
                 //populate reactionPanel
                 $reactionPanel.find('div.rdr_body').append($blessedTagBox, $customTagBox);
                 ////populate blesed_tags
                 $.each(RDR.group.blessed_tags, function(idx, val){
-                    $blessedTagBox.children('ul.rdr_tags').append('<li tid="'+val.tid+'"><a href="javascript:void(0);">'+val.name+'</a><div class="rdr_arrow-border"></div><div class="rdr_arrow"></div></li>')
+                    $blessedTagBox.children('ul.rdr_tags').append('<li tid="'+val.tid+'"><a href="javascript:void(0);">'+val.name+'</a><div class="rdr_arrow"></div></li>')
                 });
                 ////customTagDialogue - develop this...
                $customTagBox.append('<div class="rdr_tags"><a href="javascript:void(0);">Add Your Own</a></div>');
