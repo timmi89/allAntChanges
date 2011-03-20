@@ -7,13 +7,14 @@
 
 div.rdr {
 	font: normal 12px Arial, sans-serif;
+	/* need to add a css reset here */
 }
 
 div.rdr.rdr_window {
 	-moz-box-shadow: 0 0 10px 1px #aaa;
 	-webkit-box-shadow: 0 0 10px 1px #aaa;
 	box-shadow: 0 0 10px 1px #aaa;
-	padding: 8px 10px;
+	padding: 0px;
 	position:absolute;
 	z-index:12000;
 	top:100px;
@@ -87,31 +88,45 @@ div.rdr h1,
 div.rdr h2	{font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif; color:#e71f1f; margin: 0; }
 div.rdr h1	{font-size:21px; cursor:move; }
 
-div.rdr_sntPnl {float:left; padding: 5px;}
-div.rdr_reactionPanel rdr_selectedTextPanel {display:block; background:#eee; padding:5px; margin:5px 0;}
-div.rdr_reactionPanel div.rdr_quote {position: relative; text-shadow:1px 1px 1px #999; font-size:18px; font-family:Georgia, serif; z-index: 12020;}
-div.rdr_reactionPanel div.rdr_quoteIcon { position: relative; z-index: 12010; }/*wrapper for z-index*/
-div.rdr_reactionPanel div.rdr_quoteIcon span { position: absolute; font-family: ReadrLeague, Arial, sans-serif; font-size: 6em; top:-22px; left:-13px; color: #cccccc;}
+/* the widget */
+div.rdr div.rdr_sntPnl {float:left; width:180px; display:block; }
+div.rdr div.rdr_sntPnl div.rdr_body	{min-height:200px; padding:5px 0; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset;}
+div.rdr div.rdr_body .rdr_selected div.rdr_arrow 		{ border-color:transparent transparent transparent #feeded; border-style:solid; border-width:12px; height:0; margin-top:-10px; position:absolute; right:-23px; top:43%; width:0;}
+div.rdr div.rdr_body .rdr_selected div.rdr_arrow-border	{ border-color:transparent transparent transparent #ef9595; border-style:solid; border-width:12px; height:0; margin-top:-10px; position:absolute; right:-24px; top:43%; width:0;}
 
-.rdr_tags			{text-align: center;}
-ul.rdr_tags			{list-style-type:none; padding:0; margin:0; overflow:auto;}
-ul.rdr_tags li		{padding:5px; margin: 5px; background:url("/static/ui-prototype/images/tag-bg-sprite.png") repeat-x 0 -60px;}
-ul.rdr_tags li.rdr_selected	{ background:url("/static/ui-prototype/images/tag-bg-sprite.png") repeat-x 0 0;}
-ul.rdr_preselected			{font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:5px 0 10px; }
-ul.rdr_preselected a		{color:#000;text-decoration:none;}
-ul.rdr_preselected a:hover	{color:#e71f1f;}
+div.rdr div.rdr_selectedTextPanel div.rdr_body						{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; padding-top:5px;}
+div.rdr div.rdr_selectedTextPanel div.rdr_body div.rdr_selected		{font-family:Georgia; font-size:14px; padding:5px; background:#feeded; display:block; position:relative; border:1px solid #ef9595; border-left:0;}
+div.rdr div.rdr_reactionPanel div.rdr_body			{ xpadding-top:5px;}
+div.rdr div.rdr_selectedTextPanel			{background:#f0f0f0; position:relative; z-index:3;}
+div.rdr div.rdr_reactionPanel				{background:#f8f8f8; position:relative; z-index:2;}
+div.rdr div.rdr_whyPanel 					{background:#ffffff; position:absolute; left:180px; z-index:1;}
+div.rdr div.rdr_whyPanel div.rdr_body		{padding-top:5px;}
+div.rdr div.rdr_header {text-align:center; padding:3px; border-bottom:1px solid #dfdfdf; background:#fff; }
+div.rdr div.rdr_reactionPanel div.rdr_quote {position: relative; text-shadow:1px 1px 1px #999; font-size:18px; font-family:Georgia, serif; z-index: 12020;}
+div.rdr div.rdr_reactionPanel div.rdr_quoteIcon { position: relative; z-index: 12010; }/*wrapper for z-index*/
+div.rdr div.rdr_reactionPanel div.rdr_quoteIcon span { position: absolute; font-family: ReadrLeague, Arial, sans-serif; font-size: 6em; top:-22px; left:-13px; color: #cccccc;}
 
-div.rdr_close		{float:right;color:#999;cursor:pointer;font-size:18px;margin-top:-4px;}
+div.rdr .rdr_tags			{text-align:center; padding:0 0 10px;}
+div.rdr ul.rdr_tags			{list-style-type:none; padding:0; margin:0; xxxoverflow:auto;}
+div.rdr ul.rdr_tags li			{padding:2px 5px; margin:5px 15px; background:#d6d6d6; position:relative;}
+div.rdr ul.rdr_tags li:hover	{background:#feeded;cursor:pointer;}
+div.rdr ul.rdr_tags li:hover a,
+div.rdr ul.rdr_tags li.rdr_selected a	{color:#e71f1f;}
+div.rdr ul.rdr_tags li.rdr_selected	{color:#e71f1f; background:#feeded; margin:0; border:1px solid #ef9595; border-left:0; padding:1px 5px;}
+div.rdr ul.rdr_preselected			{font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0 0 10px; }
+div.rdr ul.rdr_preselected a		{color:#000;text-decoration:none;}
 
-div.rdr_instruct	{color:#666; margin:5px 0;}
-div.rdr_help		{font-style:italic; font-size:11px; color:#aaa;}
+div.rdr div.rdr_close		{position:absolute;top:8px;right:7px;color:#999;cursor:pointer;font-size:14px;margin-top:-4px;z-index:4;}
 
-div#rdr_share textarea	{ width:390px; height:75px; font-size:14px; margin:5px 0;}
-div#rdr_share_count		{ color:#999999; font-style:italic; margin:-3px 0 5px; }
+div.rdr div.rdr_instruct	{color:#666; margin:5px 0;}
+div.rdr div.rdr_help		{font-style:italic; font-size:11px; color:#aaa;}
 
-ul#shareLinks           {padding:2px; margin: 0;}
-ul#shareLinks li        {padding: 5px; display: inline-block; list-style: none;}
-ul#shareLinks img       {width:30px;}
+div.rdr div#rdr_share textarea	{ width:390px; height:75px; font-size:14px; margin:5px 0;}
+div.rdr div#rdr_share_count		{ color:#999999; font-style:italic; margin:-3px 0 5px; }
+
+div.rdr ul#shareLinks           {padding:2px; margin: 0;}
+div.rdr ul#shareLinks li        {padding: 5px; display: inline-block; list-style: none;}
+div.rdr ul#shareLinks img       {width:30px;}
 
 /* forms */
 div.rdr textarea,

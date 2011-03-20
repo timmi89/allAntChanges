@@ -120,7 +120,7 @@ function readrBoard($R){
                         },
                         {
                             "item":"reaction",
-                            "tipText":"Tag This",
+                            "tipText":"React to this",
                             "onclick":function(){
                                 RDR.actions.sentimentPanel({
                                     "container": settings.container,
@@ -640,11 +640,13 @@ function readrBoard($R){
 
 
                 //todo: weird, why did commenting this line out not do anything?...look into it
+				//porter says: the action bar used to just animate larger and get populated as a window
                 //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
 
                 var rindow = RDR.rindow.draw({
                     x:actionbarOffsets.left,
-                    y:actionbarOffsets.top
+                    y:actionbarOffsets.top,
+					width:360
                 });
 
                 // build the ratePanel
@@ -661,21 +663,23 @@ function readrBoard($R){
                 $sentimentPanel.append($selectedTextPanel, $reactionPanel, $whyPanel);
                 $sentimentPanel.children().each(function(idx){
                     var $header = $('<div class="rdr_header" />').append('<h1>'+ headers[idx] +'</h1>'),
-                    $body = $('<div />').addClass('rdr_body').text('test....  '+ idx);
+                    $body = $('<div />').addClass('rdr_body');
                     $(this).append($header, $body);
                 });
 
                 //populate selectedTextPanel
+				$selectedTextPanel.find('div.rdr_body').append( '<div class="rdr_selected"><em></em><div class="rdr_arrow-border"></div><div class="rdr_arrow"></div></div>' );
 
                 //populate reactionPanel
-                $reactionPanel.append($blessedTagBox, $customTagBox);
+                $reactionPanel.find('div.rdr_body').append($blessedTagBox, $customTagBox);
                 ////populate blesed_tags
                 $.each(RDR.group.blessed_tags, function(idx, val){
-                    $blessedTagBox.children('ul.rdr_tags').append('<li tid="'+val.tid+'"><a href="javascript:void(0);">'+val.name+'</a></li>')
+                    $blessedTagBox.children('ul.rdr_tags').append('<li tid="'+val.tid+'"><a href="javascript:void(0);">'+val.name+'</a><div class="rdr_arrow-border"></div><div class="rdr_arrow"></div></li>')
                 });
                 ////customTagDialogue - develop this...
-               $customTagBox.append('<div class="rdr_tags"><a href="javascript:void(0);">Add Your own</a></div>');
+               $customTagBox.append('<div class="rdr_tags"><a href="javascript:void(0);">Add Your Own</a></div>');
                 //populate whyPanel
+				$whyPanel.find('div.rdr_body').append( 'COMMENT &amp; SHARE' );
 
 /*
                 $customTagBox.append(
@@ -688,40 +692,54 @@ function readrBoard($R){
                 */
                 // add content and animate the actionbar to accommodate it
                 rindow.animate({
-                    width:'400px',
+                    width:'360px',
                     minHeight:'125px'
                 }, 300, function() {
-                    /*
-                    rindow.find('div.rdr_contentSpace').append( $reactionPanel );
-                    rindow.find('h1').text("Your Reaction:");
-
+					
+					rindow.append($sentimentPanel);
+					
                     if ( settings.content_type == "text" ) {
-                        rindow.find('div.rdr_selectedTextBox em').html( settings.content );
+                       rindow.find('div.rdr_selectedTextPanel em').text( settings.content );
 					} else if ( settings.content_type == "image" ) {
-						// rindow.find('.rdr_selectedTextBox em').css('text-align','center').html( '<img style="max-width:100%;max-height:600px;" src=" ' + settings.content + '" />' );
-						rindow.find('div.rdr_selectedTextBox').hide();
-						rindow.find('h1').text("Your Reaction");
+						rindow.find('div.rdr_selectedTextPanel em').css('text-align','center').html( '<img style="max-width:100%;max-height:600px;" src=" ' + settings.content + '" />' );
 					}
 
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
                     rindow.find('ul.rdr_preselected li').toggle(
                         function() {
                             $(this).addClass('rdr_selected');
+							$(this).siblings().removeClass('rdr_selected');
                             $(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+
+							// todo: at this point, cast the tag, THEN call this in the tag success function:
+							RDR.actions.whyPanel( rindow );
                         },
                         function() {
                             $(this).removeClass('rdr_selected');
                         }
                         );
 
+					/*
+                    rindow.find('div.rdr_contentSpace').append( $reactionPanel );
+                    rindow.find('h1').text("Your Reaction:");
+
                     // bind the button with a function (since this isn't in a <form>)
                     rindow.find('button').click( function() {
                         RDR.actions.rateSend( rindow, settings );
                     });
                     */
-                    rindow.append($sentimentPanel)
                 });
             },
+			whyPanel : function(rindow, interaction_id) {
+				rindow.find('div.rdr_whyPanel').animate({left:'360px'}, {queue:false, duration:300});
+				rindow.css('max-width','540px');
+				rindow.animate({
+                    width:'540px',
+                    minHeight:'125px'
+                }, 300, function() {
+					
+				});
+			},
             shareStart : function(rindow, known_tags, unknown_tags_arr) {
                 //todo: for now, I'm just passing in known_tags as a param, but check with Porter about this model.
                 //Where is the 'source'/'point of origin' that is the authority of known_tags - I'd think we'd want to just reference that..
