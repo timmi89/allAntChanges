@@ -104,7 +104,7 @@ function readrBoard($R){
                 //(else)
 
                 var x = settings.x ? (settings.x-34) : 100;
-                var y = settings.y ? (settings.y-45) : 100;
+                var y = settings.y ? (settings.y-50) : 100;
                 var coords = RDR.util.stayInWindow(x,y,200,30);
 
                 // TODO use settings check for certain features and content types to determine which of these to disable
@@ -138,7 +138,7 @@ function readrBoard($R){
                 $.each($new_actionbar.items, function(idx, val){
                     var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
                     $iconAnchor = $('<a href="javascript:void(0);">' +val.item+ '</a>'),
-                    $tooltip = $('<div class="rdr rdr_tooltip" id="rdr_tooltip_' +val.item+ '">' +
+                    $tooltip = $('<div class="rdr rdr_tooltip" class="rdr_tooltip_' +val.item+ '">' +
                         '<div class="rdr rdr_tooltip-content"> ' +val.tipText+ '</div>'+
                         '<div class="rdr rdr_tooltip-arrow-border" />'+
                         '<div class="rdr rdr_tooltip-arrow" />'+
@@ -194,7 +194,7 @@ function readrBoard($R){
                 }
                 //(else)
 
-				var $new_tooltip = $('<div class="rdr rdr_tooltip" id="rdr_tooltip_' + settings.name + '">' +
+				var $new_tooltip = $('<div class="rdr rdr_tooltip" class="rdr_tooltip_' + settings.name + '">' +
 					'<div class="rdr rdr_tooltip-content"> ' + settings.message + '</div>'+
 					'<div class="rdr rdr_tooltip-arrow-border"></div>'+
 					'<div class="rdr rdr_tooltip-arrow"></div>'+
@@ -434,7 +434,7 @@ function readrBoard($R){
 						// like, inline or float, but with RDR stuff
 				    var this_img = $(this),
 				    x = this_img.offset().left + 33,
-				    y = this_img.offset().top + this_img.height() + 15,
+				    y = this_img.offset().top + this_img.height() + 20,
 					src = this_img.attr('src');
 					
 					// kludgey(?) way of making sure we have the full image path
@@ -646,7 +646,7 @@ function readrBoard($R){
                 var rindow = RDR.rindow.draw({
                     x:actionbarOffsets.left,
                     y:actionbarOffsets.top,
-					width:360
+					width:400
                 });
 
                 // build the ratePanel
@@ -654,10 +654,10 @@ function readrBoard($R){
                 $selectedTextPanel = $('<div class="rdr_selectedTextPanel rdr_sntPnl" />'),
                 $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl" />'),
                 $whyPanel = $('<div class="rdr_whyPanel rdr_sntPnl" />'),
-                $blessedTagBox = $('<div id="rdr_blessedTagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
-                $customTagBox = $('<div id="rdr_customTagBox" />'),
-                $commentBox = $('<div id="rdr_commentBox" />'),
-                $shareBox = $('<div id="rdr_shareBox" />');
+                $blessedTagBox = $('<div class="rdr_blessedTagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
+                $customTagBox = $('<div class="rdr_customTagBox" />'),
+                $commentBox = $('<div class="rdr_commentBox" />'),
+                $shareBox = $('<div class="rdr_shareBox" />');
 
                 var headers = ["You selected", "What's your reaction?", "Why?"];
                 $sentimentPanel.append($selectedTextPanel, $reactionPanel, $whyPanel);
@@ -677,14 +677,19 @@ function readrBoard($R){
                     $blessedTagBox.children('ul.rdr_tags').append('<li tid="'+val.tid+'"><a href="javascript:void(0);">'+val.name+'</a><div class="rdr_arrow-border"></div><div class="rdr_arrow"></div></li>')
                 });
                 ////customTagDialogue - develop this...
-               $customTagBox.append('<div class="rdr_tags"><a href="javascript:void(0);">Add Your Own</a></div>');
+               $customTagBox.append(
+                '<input type="text" class="freeformTagInput" name="unknown-tags" />',
+                '<div class="rdr_help">Add your own (separated by commas)</div>',
+                '<button>Rate</button>'
+               //'<div class="rdr_tags"><a href="javascript:void(0);">Add Your Own</a></div>'
+                );
                 //populate whyPanel
-				$whyPanel.find('div.rdr_body').append( 'COMMENT &amp; SHARE' );
+				$whyPanel.find('div.rdr_body').append('<div class="rdr_subHeader" ><span>COMMENT &amp; SHARE </span></div>');
 
 /*
                 $customTagBox.append(
                 '<div class="rdr_instruct">Add your own ratings, separated by comma:</div>',
-                '<input type="text" id="freeformTagInput" name="unknown-tags" />',
+                '<input type="text" class="freeformTagInput" name="unknown-tags" />',
                 '<button>Rate</button>',
                 '<div class="rdr_help">e.g., Love this, autumn, insightful</div>');
 
@@ -692,7 +697,7 @@ function readrBoard($R){
                 */
                 // add content and animate the actionbar to accommodate it
                 rindow.animate({
-                    width:'360px',
+                    width:'400px',
                     minHeight:'125px'
                 }, 300, function() {
 					
@@ -731,10 +736,10 @@ function readrBoard($R){
                 });
             },
 			whyPanel : function(rindow, interaction_id) {
-				rindow.find('div.rdr_whyPanel').animate({left:'360px'}, {queue:false, duration:300});
-				rindow.css('max-width','540px');
+				rindow.find('div.rdr_whyPanel').animate({left:'400px'}, {queue:false, duration:300});
+				rindow.css('max-width','600px');
 				rindow.animate({
-                    width:'540px',
+                    width:'600px',
                     minHeight:'125px'
                 }, 300, function() {
 					
@@ -772,7 +777,7 @@ function readrBoard($R){
                 var url = 'http://rdrbrd.com/ad4fta3';
 
 				// TODO: hiding the custom tags part here.  is that ok?  check.
-				$('#rdr_blessedTagBox').hide();
+				$('.rdr_blessedTagBox').hide();
 
                 // TODO this eneds to behave differently for images, video
                 // maybe just show short URL that leads directly to that image, video on the page
@@ -781,7 +786,7 @@ function readrBoard($R){
                 //[eric] -comment out: //rindow.find('ul, div, input').not('div.rdr_close').remove();
 
                 var socialNetworks = ["facebook","twitter","tumblr","linkedin"],
-                $shareLinks = $('<ul id="shareLinks"></ul>');
+                $shareLinks = $('<ul class="shareLinks"></ul>');
                 //quick mockup version of this code
                 $.each(socialNetworks, function(idx, val){
                     $shareLinks.append('<li><a href="http://' +val+ '.com" ><img src="/static/ui-prototype/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
@@ -791,7 +796,7 @@ function readrBoard($R){
                 $shareDialogueBox.append('<div><strong>Share your reaction</strong> with others:</div>',
                 $shareLinks,
 				'<hr/><div><strong>Comment on your reaction</strong>:</div>',
-				'<div id="rdr_share"><textarea>' + share_content + '</textarea>',// + '<div id="rdr_share_count"></div>'
+				'<div class="rdr_share"><textarea>' + share_content + '</textarea>',// + '<div class="rdr_share_count"></div>'
 				'<button>Comment</button>')//chain
                 //'<div><button>Facebook</button> <button>Twitter</button> <button>Tumblr</button> <button>LinkedIn</button></div>')//chain
                 .hide();
@@ -815,9 +820,9 @@ function readrBoard($R){
 
                 // TODO: removing character counter for moment.  not sure we'll have a textarea for sharing anymore.
 				/*
-				$('#rdr_share_count').text( $('#rdr_share textarea').val().length + " characters");
-				$('#rdr_share textarea').keyup( function() {
-                    $('#rdr_share_count').text( $('#rdr_share textarea').val().length + " characters");
+				$('.rdr_share_count').text( $('.rdr_share textarea').val().length + " characters");
+				$('.rdr_share textarea').keyup( function() {
+                    $('.rdr_share_count').text( $('.rdr_share textarea').val().length + " characters");
                 });
 				*/
             },
