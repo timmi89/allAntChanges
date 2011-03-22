@@ -631,7 +631,35 @@ function readrBoard($R){
 					}
 				});
 			},
-            sentimentPanel : function(settings) {
+            loginPanel : function(settings) {
+
+				$('.rdr_rewritable').removeClass('rdr_rewritable');
+
+
+                //todo: weird, why did commenting this line out not do anything?...look into it
+				//porter says: the action bar used to just animate larger and get populated as a window
+                //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
+
+                var rindow = RDR.rindow.draw({
+                    x:100,
+                    y:100,
+					width:360
+                });
+
+				//TODO TYLER THIS IS FOR FACEBOOK
+				var $loginHtml = $('<div class="rdr_login" />');
+				$loginHtml.append( '<h1>Log In</h1>',
+				'<iframe src="/user/login" width="300" height="300" />'
+				);
+				
+				rindow.animate({
+                    width:'360px',
+                    minHeight:'125px'
+                }, 300, function() {
+					rindow.append( $loginHtml );
+				});
+			},
+			sentimentPanel : function(settings) {
 
                 // draw the window over the actionbar
                 var actionbarOffsets = RDR.actionbar.instance.offset();
@@ -668,13 +696,13 @@ function readrBoard($R){
                 });
 
                 //populate selectedTextPanel
-				$selectedTextPanel.find('div.rdr_body').append( '<div class="rdr_selected"><em></em><div class="rdr_arrow-border"></div><div class="rdr_arrow"></div></div>' );
+				$selectedTextPanel.find('div.rdr_body').append( '<div class="rdr_selected"><em></em><div class="rdr_arrow"></div></div>' );
 
                 //populate reactionPanel
                 $reactionPanel.find('div.rdr_body').append($blessedTagBox, $customTagBox);
                 ////populate blesed_tags
                 $.each(RDR.group.blessed_tags, function(idx, val){
-                    $blessedTagBox.children('ul.rdr_tags').append('<li tid="'+val.tid+'"><a href="javascript:void(0);">'+val.name+'</a><div class="rdr_arrow-border"></div><div class="rdr_arrow"></div></li>')
+                    $blessedTagBox.children('ul.rdr_tags').append('<li tid="'+val.tid+'"><a href="javascript:void(0);">'+val.name+'</a><div class="rdr_arrow"></div></li>')
                 });
                 ////customTagDialogue - develop this...
                $customTagBox.append(
@@ -851,15 +879,15 @@ function readrBoard($R){
 				
 				rindow.find('button').text('Rating...').attr('disabled','disabled');
 				
-		var sendData = {
-                    "unknown_tags" : unknown_tags_arr, //see note above
-                    "known_tags" : known_tags,
-                    "hash": container,
-                    "content" : content,
-                    "content_type" : settings.content_type,
-                    "user_id" : 1,
-		    "page_id" : RDR.page.id
-                };
+				var sendData = {
+					"unknown_tags" : unknown_tags_arr, //see note above
+					"known_tags" : known_tags,
+					"hash": container,
+					"content" : content,
+					"content_type" : settings.content_type,
+					"user_id" : 1,
+					"page_id" : RDR.page.id
+				};
 			console.log(content);	
                 // send the data!
                 $.ajax({
