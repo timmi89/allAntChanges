@@ -649,7 +649,7 @@ function readrBoard($R){
 				//TODO TYLER THIS IS FOR FACEBOOK
 				var $loginHtml = $('<div class="rdr_login" />');
 				$loginHtml.append( '<h1>Log In</h1>',
-				'<iframe src="/user/login" width="300" height="300" />'
+				'<iframe src="/fb/" width="300" height="300" />'
 				);
 				
 				rindow.animate({

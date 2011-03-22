@@ -653,7 +653,7 @@ function readrBoard($R){
 				);
 				
 				rindow.animate({
-                    width:'360px',
+                    width:'500px',
                     minHeight:'125px'
                 }, 300, function() {
 					rindow.append( $loginHtml );

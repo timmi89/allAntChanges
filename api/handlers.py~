@@ -1,40 +1,28 @@
 from piston.handler import BaseHandler, AnonymousBaseHandler
 from django.http import HttpResponse
 from settings import FACEBOOK_APP_SECRET
-from rb.models import Group, Page, Interaction, InteractionNode, User, Content, Site, Container, Interaction
 from django.db import transaction
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
-from django.utils.encoding import smart_unicode
 from django.contrib.auth.models import User
 from lazysignup.decorators import allow_lazy_user
-import datetime
-import json
-import base64
-import hashlib
-import hmac
+from utils import *
 
-def base64_url_decode(inp):
-    padding_factor = (4 - len(inp) % 4) % 4
-    inp += "="*padding_factor 
-    return base64.b64decode(unicode(inp).translate(dict(zip(map(ord, u'-_'), u'+/'))))
-
-def getPage(request, pageid=None):
-	canonical = request.GET.get('canonical_url', None)
-	fullurl = request.get_full_path()
-	host = request.get_host()
-        host = host[0:host.find(":")]
-	site = Site.objects.get(domain=host)
-	if pageid:
-		return Page.objects.get(id=pageid)
-	elif canonical:
-		page = Page.objects.get_or_create(canonical_url=canonical, defaults={'url': fullurl, 'site': site})
-	else:
-		page = Page.objects.get_or_create(url=fullurl, defaults={'site': site})
-		
-	if page[1] == True: print "Created page {0}".format(page)
-
-	return page[0]
+class InteractionsHandler(BaseHandler):
+	allowed_methods = ('GET',)
+	
+	def read(self, request, **kwargs):
+		nodes = InteractionNode.objects.all()
+		if 'kind' in kwargs:
+			nodes = nodes.filter(kind=kwargs['kind'])
+		elif 'page_id' in kwargs:
+			nodes = nodes.filter(interaction__page=kwargs['page_id'])
+		elif 'interaction_id' in kwargs:
+			nodes = nodes.filter(interaction__id=kwargs['interaction_id'])
+		elif 'hash' in kwargs:
+			containers = Container.objects.filter(hash=kwargs['hash'].lower())
+			nodes = nodes.filter(interaction__content__container=containers)
+		return nodes
 
 class LoginHandler(BaseHandler):
 	"""
@@ -62,8 +50,8 @@ class LoginHandler(BaseHandler):
 
 		if sig != expected_sig:
 			return None
-                
-                return data
+				
+		return data
 
 class InteractionHandler(BaseHandler):
 	allowed_methods = ('GET',)
@@ -92,17 +80,8 @@ class CreateCommentHandler(BaseHandler):
 		user = request.user
 		parent = Interaction.objects.get(id=interaction_id)
 		
-		now = created=datetime.datetime.now()
-		
-		comment = InteractionNode.objects.get_or_create(kind='com', body=comment)[0]
-		parent.add_child(page=parent.page, content=parent.content, user=user, interaction_node=comment, created=now)
-
-class TagHandler(AnonymousBaseHandler):
-	allowed_methods = ('GET',)
-	
-	def read(self, request, id):
-		if tag:
-			tags = InteractionNode.objects.get_or_create(kind='tag', id=id)
+		comment = createInteractionNode(kind='com', body=comment)
+		interaction = createInteraction(page=parent.page, content=parent.content, user=user, interaction_node=comment)
 
 class CreateTagHandler(BaseHandler):
 	allowed_methods = ('GET',)
@@ -111,7 +90,7 @@ class CreateTagHandler(BaseHandler):
 	@allow_lazy_user
 	def read(request):
 		data = json.loads(request.GET['json'])
-		unknown_tags = data['unknown_tags']	
+		unknown_tags = data['unknown_tags'] 
 		known_tags = data['known_tags']
 		hash = data['hash']
 		content_data = data['content']
@@ -126,22 +105,22 @@ class CreateTagHandler(BaseHandler):
 			container = Container.objects.get(hash=hash)
 			container.content.add(content)
 
-		# Can't rely on Django's auto_now to create the time before storing the node
-		now = created=datetime.datetime.now()
-		
+		interactions = []
 		for utag in unknown_tags:
 			if utag:
-				tag = InteractionNode.objects.get_or_create(kind='tag', body=utag)[0]
-				Interaction.add_root(page=page, content=content, user=user, interaction_node=tag, created=now)
-			
+				tag = createInteractionNode(kind='tag', body=utag)
+				new = createInteraction(page=page, content=content, user=user, interaction_node=tag)
+				interactions.append(new)
 		for ktag in known_tags:
 			tag = InteractionNode.objects.get(id=ktag)
-			Interaction.add_root(page=page, content=content, user=user, interaction_node=tag, created=now)
-		
-		return "Success!"
+			new = createInteraction(page=page, content=content, user=user, interaction_node=tag)
+			interactions.append(new)
+
+		return Interactions
 
 class CreateContainerHandler(AnonymousBaseHandler):
 	allowed_methods = ('GET',)
+	
 	def read(self, request):
 		result = {}
 		data = json.loads(request.GET['json'])
@@ -210,53 +189,47 @@ class PageDataHandler(AnonymousBaseHandler):
 		return dict(id=page.id, summary=summary, toptags=toptags, topusers=userinteract, topshares=topshares)
 
 class SettingsHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
-    model = Group
-    ordering = ('name','short_name')
-    fields = ('id',
-              'name',
-              'short_name',
-              'language',
-              'blessed_tags',
-              'anno_whitelist',
-              'img_whitelist',
-              'img_blacklist',
-              'no_readr',
-              ('share', ('images', 'text', 'flash')),
-              ('rate', ('images', 'text', 'flash')),
-              ('comment', ('images', 'text', 'flash')),
-              ('bookmark', ('images', 'text', 'flash')),
-              ('search', ('images', 'text', 'flash')),
-              'logo_url_sm',
-              'logo_url_med',
-              'logo_url_lg',
-              'css_url',
-             )
+	allowed_methods = ('GET',)
+	model = Group
+	fields = ('id',
+			  'name',
+			  'short_name',
+			  'language',
+			  'blessed_tags',
+			  'anno_whitelist',
+			  'img_whitelist',
+			  'img_blacklist',
+			  'no_readr',
+			  ('share', ('images', 'text', 'flash')),
+			  ('rate', ('images', 'text', 'flash')),
+			  ('comment', ('images', 'text', 'flash')),
+			  ('bookmark', ('images', 'text', 'flash')),
+			  ('search', ('images', 'text', 'flash')),
+			  'logo_url_sm',
+			  'logo_url_med',
+			  'logo_url_lg',
+			  'css_url',
+			 )
 
-    def read(self, request, group=None):
-        host = request.get_host()
-        # Slice off port from hostname
-        host = host[0:host.find(":")]
-    	path = request.path
-        """
-        print "host: ", host[0:host.find(":")]
-        print "path: ", path
-        print "sent host: ", request.GET['host_name']
-        """
-        fp = request.get_full_path()
-        if group:
-            group = int(group)
-            try:
-            	g = Group.objects.get(id=group)
-            except Group.DoesNotExist:
-            	return HttpResponse("RB Group does not exist!")
-            if host in g.valid_domains:
-                print "host %s is valid for group %d" % (host,group)
-            else:
-                print "host %s is not valid for group %d" % (host,group)
-            print "Sending RBGRoup data for RBGroup %d" % group
-            print g.css_url
-            print "----------"
-            return g
-        else:
-            return ("Group not specified")
+	def read(self, request, group=None):
+		host = request.get_host()
+		# Slice off port from hostname
+		host = host[0:host.find(":")]
+		path = request.path
+		fp = request.get_full_path()
+		if group:
+			group = int(group)
+			try:
+				g = Group.objects.get(id=group)
+			except Group.DoesNotExist:
+				return HttpResponse("RB Group does not exist!")
+			if host in g.valid_domains:
+				print "host %s is valid for group %d" % (host,group)
+			else:
+				print "host %s is not valid for group %d" % (host,group)
+			print "Sending RBGRoup data for RBGroup %d" % group
+			print g.css_url
+			print "----------"
+			return g
+		else:
+			return ("Group not specified")

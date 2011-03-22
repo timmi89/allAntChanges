@@ -81,7 +81,7 @@ class CreateCommentHandler(BaseHandler):
 		parent = Interaction.objects.get(id=interaction_id)
 		
 		comment = createInteractionNode(kind='com', body=comment)
-		interaction = createInteraction(page=parent.page, content=parent.content, user=user, interaction_node=comment)
+		interaction = createInteraction(parent.page, parent.content, user, comment)
 
 class CreateTagHandler(BaseHandler):
 	allowed_methods = ('GET',)
@@ -109,7 +109,7 @@ class CreateTagHandler(BaseHandler):
 		for utag in unknown_tags:
 			if utag:
 				tag = createInteractionNode(kind='tag', body=utag)
-				new = createInteraction(page=page, content=content, user=user, interaction_node=tag)
+				new = createInteraction(page, content, user, tag)
 				interactions.append(new)
 		for ktag in known_tags:
 			tag = InteractionNode.objects.get(id=ktag)
