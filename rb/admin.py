@@ -53,7 +53,15 @@ class InteractionAdmin(admin.ModelAdmin):
 			'depth',
 			'numchild')
 	list_display = ('id', 'user', 'page', 'content', 'interaction_node','anonymous')
+	
+class LinkAdmin(admin.ModelAdmin):
+    def base62(self, obj):
+            return obj.to_base62()
+    base62.short_description = 'Short Version'
+    list_display = ('id', 'base62', 'interaction', 'usage_count')
+    readonly_fields = ('usage_count',)
 
+admin.site.register(Link, LinkAdmin)
 admin.site.register(Page, PageAdmin)
 admin.site.register(Group, GroupAdmin)
 admin.site.register(Site, SiteAdmin)

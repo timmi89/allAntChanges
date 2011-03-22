@@ -37,6 +37,6 @@ def createInteraction(page, content, user, interaction_node, parent=None):
 		# Can't rely on Django's auto_now to create the time before storing the node
 		now = created=datetime.datetime.now()
 		if parent:
-			return parent.add_child(page=page, content=content, user=user, interaction_node=interaction_node, created=now)
+			return parent.add_child(page=page, content=content, user=user, interaction_node=tag, created=now)
 		else:
-			return Interactions.add_root(page=page, content=content, user=user, interaction_node=interaction_node, created=now)
+			return Interactions.add_root(page=page, content=content, user=user, interaction_node=tag, created=now)

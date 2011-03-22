@@ -140,11 +140,11 @@ class Interaction(DateAwareModel, UserAwareModel, MP_Node):
     def __unicode__(self):
         return u"Interaction(Page: {0}, Content: {1})".format(self.page, self.content)
 
-""" 
-class Links(models.Model):
-    url = models.URLField(verify_exists=True, unique=True)
-    date_submitted = models.DateTimeField(default=datetime.datetime.now())
-    usage_count = models.IntegerField(default=0)
+class Link(models.Model):
+    # I think we have this already from the interaction table
+    #url = models.URLField(verify_exists=True, unique=True)
+    interaction = models.ForeignKey(Interaction, unique=True)
+    usage_count = models.IntegerField(default=0, editable=False)
     
     def to_base62(self):
         return base62.from_decimal(self.id)
@@ -153,5 +153,4 @@ class Links(models.Model):
         return settings.SITE_BASE_URL + self.to_base62()
     
     def __unicode__(self):
-        return self.to_base62() + ' : ' + self.url
-"""
+        return self.to_base62() + ' : ' + self.interaction.page.url

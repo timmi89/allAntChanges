@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core import serializers
 from settings import FACEBOOK_APP_ID
+from baseconv import base62
 
 def widget(request,sn):
     # Widget code is retreived from the server using RBGroup shortname
@@ -20,6 +21,16 @@ def fb(request):
 
 def tags(request, interaction_id):
     return HttpResponse(get_object_or_404(Interaction, pk=interaction_id))
+    
+def expander(request, short):
+    link_id = base62.to_decimal(short);
+    link = Link.objects.get(id=link_id);
+    link.usage_count += 1
+    link.save()
+    interaction = Interaction.objects.get(id=link.interaction.id)
+    page = Page.objects.get(id=interaction.page.id)
+    url = page.url;
+    return HttpResponseRedirect(unicode(url)+ u"#" + unicode(interaction.id))
 
 """
 def index(request):
