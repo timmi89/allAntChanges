@@ -679,7 +679,7 @@ function readrBoard($R){
                 ////customTagDialogue - develop this...
                $customTagBox.append(
                 '<input type="text" class="freeformTagInput" name="unknown-tags" />',
-                '<div class="rdr_help">Add your own (separated by commas)</div>',
+                '<div class="rdr_help">Add your own, comma separated</div>',
                 '<button>Rate</button>'
                //'<div class="rdr_tags"><a href="javascript:void(0);">Add Your Own</a></div>'
                 );
