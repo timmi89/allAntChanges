@@ -2,7 +2,7 @@
 <h1>Test facebook page.</h1>
 <iframe src="https://www.facebook.com/plugins/registration.php?
              client_id={{ fb_client_id }}&
-             redirect_uri=http%3A%2F%2Flocalhost:8080%2Fapi/login%2F&
+             redirect_uri=.
              fields=name,birthday,gender,location,email,captcha&
 			 fb_only=true"
         scrolling="auto"
