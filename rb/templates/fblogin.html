@@ -4,6 +4,9 @@
    </head>
    <body>
      <div id="fb-root"></div>
+	<div id="fb-login-button" style="visibility:hidden;">
+		<fb:login-button perms="email">Login</fb:login-button>
+	</div>
      <script src="http://connect.facebook.net/en_US/all.js"></script>
      <script>
         FB.init({ 
@@ -11,6 +14,15 @@
            status:true, xfbml:true 
         });
      </script>
-     <fb:login-button>Login with Facebook</fb:login-button>
+	 <script>
+		FB.getLoginStatus(function(response) {
+	  		if (response.session) {
+				//user is logged in
+				document.write('ur likes totes logged in');
+	  		} else {
+				document.getElementById('fb-login-button').style.visiblity = 'visible';
+	  		}
+		});
+	</script>
    </body>
 </html>
