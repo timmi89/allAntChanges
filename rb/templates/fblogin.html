@@ -1,11 +1,19 @@
-<html>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US" xmlns:x2="http://www.w3.org/2002/06/xhtml2" xmlns:fb="http://www.facebook.com/2008/fbml">
    <head>
-     <title>My Facebook Login Page</title>
+     <title>Log In to ReadrBoard</title>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+	<style type="text/css">
+	img		{ border:0; }
+	</style>
    </head>
    <body>
      <div id="fb-root"></div>
-	<div id="fb-login-button" style="visibility:hidden;">
-		<fb:login-button perms="email">Login</fb:login-button>
+	<div id="fb-login-button" style="display:none;">
+		<a href="javascript:void(0);" onclick="doFBLogin();"><img src="/static/images/fb-login_to_readrboard.png" /></a>
+	</div>
+	<div id="fb-logged-in" style="display:none;">
+		<a href="javascript:void(0);" onclick="FB.logout( doFBlogout );">Log out</a>
 	</div>
      <script src="http://connect.facebook.net/en_US/all.js"></script>
      <script>
@@ -18,11 +26,39 @@
 		FB.getLoginStatus(function(response) {
 	  		if (response.session) {
 				//user is logged in
-				document.write('ur likes totes logged in');
+				$('#fb-logged-in').show();
+				$('#fb-login-button').hide();
+				console.dir(response);
+				
 	  		} else {
-				document.getElementById('fb-login-button').style.visiblity = 'visible';
+				$('#fb-logged-in').hide();
+				$('#fb-login-button').show();
 	  		}
 		});
+		
+		function doFBLogin() {
+			FB.login( function(response) {
+				if (response.session) {
+					// user is logged in
+					console.log('logged in!');
+					if (response.perms) {
+						// user granted some perms
+						console.log('got perms!');
+					} else {
+						// user granted NO perms
+						console.log('NO PERMS');
+					}
+					console.dir( response.session );
+				} else {
+					// user is not logged in
+					console.log('USER NOT LOGGED IN');
+ 				}
+			}, 'email');
+		}
+		
+		function doFBlogout() {
+			window.location.reload();
+		}
 	</script>
    </body>
 </html>
