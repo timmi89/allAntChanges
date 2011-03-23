@@ -18,6 +18,9 @@ def fb(request):
     # Widget code is retreived from the server using RBGroup shortname
     return render_to_response("facebook.html",{'fb_client_id': FACEBOOK_APP_ID})
 
+def fblogin(request):
+    # Widget code is retreived from the server using RBGroup shortname
+    return render_to_response("fblogin.html",{'fb_client_id': FACEBOOK_APP_ID})
 
 def tags(request, interaction_id):
     return HttpResponse(get_object_or_404(Interaction, pk=interaction_id))
