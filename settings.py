@@ -94,7 +94,6 @@ INSTALLED_APPS = (
     'readrboard.api',
     'south',
     'treebeard',
-    'lazysignup',
 )
 
 # for sessions
