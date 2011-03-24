@@ -40,3 +40,4 @@ def createInteraction(page, content, user, interaction_node, parent=None):
 			return parent.add_child(page=page, content=content, user=user, interaction_node=interaction_node, created=now)
 		else:
 			return Interactions.add_root(page=page, content=content, user=user, interaction_node=interaction_node, created=now)
+
