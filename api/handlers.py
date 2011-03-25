@@ -11,7 +11,7 @@ from extras.facebook import GraphAPI, GraphAPIError
 
 """
 Readrboard Widget API - Uses Piston
-Note: Anonymous Handlers only allow GET
+Note: By default, AnonymousBaseHandler has 'allow_methods' only set to 'GET'.
 """
 
 class InteractionsHandler(BaseHandler):

@@ -2,22 +2,20 @@ from django.conf.urls.defaults import *
 from piston.resource import Resource
 from piston.authentication import OAuthAuthentication
 from piston.doc import documentation_view
-
-#from api.handlers import ContentNodeHandler, RBGroupHandler, RBPageHandler
 from api.handlers import *
 auth = OAuthAuthentication
 
 #ContentNodes = Resource(handler=ContentNodeHandler, authentication=auth)
 #RBGroups = Resource(handler=RBGroupHandler)
 #RBPages = Resource(handler=RBPageHandler, authentication=auth)
-Settings = Resource(handler=SettingsHandler)
-PageData = Resource(handler=PageDataHandler)
-Containers = Resource(handler=ContainerHandler)
-CreateContainers = Resource(handler=CreateContainerHandler)
-CreateTags = Resource(handler=CreateTagHandler)
-Interaction = Resource(handler=InteractionHandler)
-CreateComments = Resource(handler=CreateCommentHandler)
-FBLogin = Resource(handler=FBHandler)
+Settings = Resource(handler=SettingsHandler, authentication=auth)
+PageData = Resource(handler=PageDataHandler, authentication=auth)
+Containers = Resource(handler=ContainerHandler, authentication=auth)
+CreateContainers = Resource(handler=CreateContainerHandler, authentication=auth)
+CreateTags = Resource(handler=CreateTagHandler, authentication=auth)
+Interaction = Resource(handler=InteractionHandler, authentication=auth)
+CreateComments = Resource(handler=CreateCommentHandler, authentication=auth)
+FBLogin = Resource(handler=FBHandler, authentication=auth)
 
 # Organized Resources
 Interactions = Resource(handler=InteractionsHandler)
