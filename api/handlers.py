@@ -9,6 +9,11 @@ from django.contrib.auth.decorators import login_required
 from utils import *
 from extras.facebook import GraphAPI, GraphAPIError
 
+"""
+Readrboard Widget API - Uses Piston
+Note: Anonymous Handlers only allow GET
+"""
+
 class InteractionsHandler(BaseHandler):
     allowed_methods = ('GET',)
     
@@ -93,7 +98,6 @@ class CreateTagHandler(BaseHandler):
         return Interactions
 
 class CreateContainerHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
     
     def read(self, request):
         result = {}
@@ -104,7 +108,6 @@ class CreateContainerHandler(AnonymousBaseHandler):
         return result
 
 class ContainerHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
     
     def read(self, request, container=None):
         data = json.loads(request.GET['json'])
@@ -129,10 +132,7 @@ class ContainerHandler(AnonymousBaseHandler):
         return dict(known=known, unknown=unknown)
 
 class PageDataHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
-    #model = InteractionNode
-    #fields = ('page',('node', ('id', 'kind')),)
-    
+
     def read(self, request, pageid=None):
         page = getPage(request, pageid)
         
@@ -163,7 +163,6 @@ class PageDataHandler(AnonymousBaseHandler):
         return dict(id=page.id, summary=summary, toptags=toptags, topusers=userinteract, topshares=topshares)
 
 class SettingsHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
     model = Group
     fields = ('id',
               'name',
@@ -201,9 +200,6 @@ class SettingsHandler(AnonymousBaseHandler):
                 print "host %s is valid for group %d" % (host,group)
             else:
                 print "host %s is not valid for group %d" % (host,group)
-            print "Sending RBGRoup data for RBGroup %d" % group
-            print g.css_url
-            print "----------"
             return g
         else:
             return ("Group not specified")
