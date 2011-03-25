@@ -1,11 +1,11 @@
 from django.conf.urls.defaults import *
 from piston.resource import Resource
-from piston.authentication import HttpBasicAuthentication
+from piston.authentication import OAuthAuthentication
 from piston.doc import documentation_view
 
 #from api.handlers import ContentNodeHandler, RBGroupHandler, RBPageHandler
 from api.handlers import *
-auth = HttpBasicAuthentication(realm='Test API')
+auth = OAuthAuthentication
 
 #ContentNodes = Resource(handler=ContentNodeHandler, authentication=auth)
 #RBGroups = Resource(handler=RBGroupHandler)

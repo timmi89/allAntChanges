@@ -28,8 +28,7 @@ class InteractionsHandler(BaseHandler):
 class FBHandler(BaseHandler):
     allowed_methods = ('GET',)
 
-    @login_required
-    def read(self, request=request, access_token=None):
+    def read(self, request, access_token=None):
         #access_token = request.GET['access_token']
         graph = GraphAPI(access_token)
         profile = graph.get_object("me")
@@ -49,7 +48,6 @@ class InteractionHandler(BaseHandler):
 class CreateCommentHandler(BaseHandler):
     allowed_methods = ('GET',)
     
-    @login_required
     def read(request):
         data = json.loads(request.GET['json'])
         comment = data['comment']
@@ -64,7 +62,6 @@ class CreateCommentHandler(BaseHandler):
 class CreateTagHandler(BaseHandler):
     allowed_methods = ('GET',)
 
-    @login_required
     def read(request):
         data = json.loads(request.GET['json'])
         unknown_tags = data['unknown_tags'] 

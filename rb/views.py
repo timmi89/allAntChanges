@@ -5,6 +5,10 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.core import serializers
 from settings import FACEBOOK_APP_ID
 from baseconv import base62
+from django.utils import simplejson
+from django.core import serializers
+from django.forms.models import model_to_dict
+
 
 def widget(request,sn):
     # Widget code is retreived from the server using RBGroup shortname
@@ -21,9 +25,34 @@ def fb(request):
 def fblogin(request):
     # Widget code is retreived from the server using RBGroup shortname
     return render_to_response("fblogin.html",{'fb_client_id': FACEBOOK_APP_ID})
-
-def tags(request, interaction_id):
-    return HttpResponse(get_object_or_404(Interaction, pk=interaction_id))
+    
+def settings(request, group=1):
+    host = request.get_host()
+    # Slice off port from hostname
+    host = host[0:host.find(":")]
+    path = request.path
+    fp = request.get_full_path()
+    if group:
+        group = int(group)
+        try:
+            g = Group.objects.get(id=group)
+        except Group.DoesNotExist:
+            return HttpResponse("RB Group does not exist!")
+            
+        if host in g.valid_domains:
+            print "host %s is valid for group %d" % (host,group)
+        else:
+            print "host %s is not valid for group %d" % (host,group)
+        
+        #model_to_dict(intance, fields=[], exclude=[])
+        d = model_to_dict(g)
+        for feature in ('rate', 'share', 'search', 'comment', 'bookmark'):
+            d[feature] = model_to_dict(Feature.objects.get(id=d[feature]))
+        settings = simplejson.dumps([{"settings": d}], sort_keys=True, indent=4);
+        #settings = serializers.serialize("json", [g], sort_keys=True, indent=4)
+        return HttpResponse(settings, mimetype='application/json')
+    else:
+        return HttpResponse("Group not specified")
     
 def expander(request, short):
     link_id = base62.to_decimal(short);
