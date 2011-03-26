@@ -898,9 +898,7 @@ function readrBoard($R){
                 // get the text that was highlighted
                 var content = $.trim( settings.content ); //RDR.why.sel.text
 				var container = $.trim( RDR.why.container );
-				
-				rindow.find('button').text('Rating...').attr('disabled','disabled');
-				
+
 				var sendData = {
 					"tag" : tag,
 					"hash": container,
@@ -909,8 +907,12 @@ function readrBoard($R){
 					"user_id" : 1,
 					"page_id" : RDR.page.id
 				};
+			
+			// TODO: 	this can be removed.  just for testing and making sure data looks good and simulating
+			//			the column animation before calling a not-working create tag
 			console.dir(sendData);
 			callback();
+
                 // send the data!
                 $.ajax({
                     url: "/api/tags/create/",
