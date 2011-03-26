@@ -691,30 +691,29 @@ function readrBoard($R){
 
 
                 //todo: weird, why did commenting this line out not do anything?...look into it
-				//porter says: the action bar used to just animate larger and get populated as a window
+				//porter says: the action bar used to just animate larger and get populated as a window.  we can remove this.
                 //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
 
                 var rindow = RDR.rindow.draw({
                     x:actionbarOffsets.left,
-                    y:actionbarOffsets.top
+                    y:actionbarOffsets.top,
+					pnlWidth:200,
+					pnls:1
                 });
 
                 // build the ratePanel
 
-                var $sentimentBox = $('<div class="rdr_sentimentBox" />'),
-                $selectedTextPanel = $('<div class="rdr_selectedTextPanel rdr_sntPnl" />'),
+                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new" />'),
+                // $selectedTextPanel = $('<div class="rdr_selectedTextPanel rdr_sntPnl" />'),
                 $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl" />'),
-                $whyPanel = $('<div class="rdr_whyPanel rdr_sntPnl" />').css({
-                    'position':'absolute',
-                    'right':0
-                }),
+                $whyPanel = $('<div class="rdr_whyPanel rdr_sntPnl" />'),
                 $blessedTagBox = $('<div class="rdr_blessedTagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
                 $customTagBox = $('<div class="rdr_customTagBox" />'),
                 $commentBox = $('<div class="rdr_commentBox" />'),
                 $shareBox = $('<div class="rdr_shareBox" />');
 
-                var headers = ["You selected", "What's your reaction?", "Why?"];
-                $sentimentBox.append($selectedTextPanel, $reactionPanel, $whyPanel);
+                var headers = ["Why?", "What's your reaction?"];
+                $sentimentBox.append($whyPanel, $reactionPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
                     var $header = $('<div class="rdr_header" />').append('<h1>'+ headers[idx] +'</h1>'),
                     $body = $('<div />').addClass('rdr_body');
@@ -724,7 +723,7 @@ function readrBoard($R){
                 });
 
                 //populate selectedTextPanel
-				$selectedTextPanel.find('div.rdr_body').append( '<div class="rdr_selected"><em></em><div class="rdr_arrow"></div></div>' );
+				//$selectedTextPanel.find('div.rdr_body').append( '<div class="rdr_selected"><em></em><div class="rdr_arrow"></div></div>' );
 
                 //populate reactionPanel
                 $reactionPanel.find('div.rdr_body').append($blessedTagBox, $customTagBox);
@@ -735,9 +734,7 @@ function readrBoard($R){
                 ////customTagDialogue - develop this...
                $customTagBox.append(
                 '<input type="text" class="freeformTagInput" name="unknown-tags" />',
-                '<div class="rdr_help">Add your own (ex. hip, woot)</div>',
-                '<div class="rdr_submitTag"><button>Rate</button></div>'
-               //'<div class="rdr_tags"><a href="javascript:void(0);">Add Your Own</a></div>'
+                '<div class="rdr_help">Add your own (ex. hip, woot)</div>'
                 ).add('div.rdr_help').click(function(){            
                     $('div.rdr_help').remove();
                     $('.freeformTagInput').focus();
@@ -764,11 +761,13 @@ function readrBoard($R){
 					
 					rindow.append($sentimentBox);
 					
-                    if ( settings.content_type == "text" ) {
+                    /*
+					if ( settings.content_type == "text" ) {
                        rindow.find('div.rdr_selectedTextPanel em').text( settings.content );
 					} else if ( settings.content_type == "image" ) {
 						rindow.find('div.rdr_selectedTextPanel em').css('text-align','center').html( '<img style="max-width:100%;max-height:600px;" src=" ' + settings.content + '" />' );
 					}
+					*/
 
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
                     rindow.find('ul.rdr_preselected li').toggle(
@@ -797,7 +796,7 @@ function readrBoard($R){
                 });
             },
 			whyPanel : function(rindow, interaction_id) {
-                rindow.settings.pnls = 3;                            
+                rindow.settings.pnls = 2;                            
                 //[eric] no need to animate whyPanel because it's aligned right now (right:0; position:absolute;) todo: delete this temp note. 
 				rindow.css('max-width', rindow.settings.width() +'px');
 				rindow.animate({
