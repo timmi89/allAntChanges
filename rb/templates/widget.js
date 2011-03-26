@@ -693,7 +693,10 @@ function readrBoard($R){
                 //todo: weird, why did commenting this line out not do anything?...look into it
 				//porter says: the action bar used to just animate larger and get populated as a window.  we can remove this.
                 //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
-
+				if ( settings.content_type == "text" ) {
+					actionbarOffsets.left = actionbarOffsets.left + 40;
+					actionbarOffsets.top = actionbarOffsets.top + 35;
+				}
                 var rindow = RDR.rindow.draw({
                     x:actionbarOffsets.left,
                     y:actionbarOffsets.top,
@@ -776,10 +779,13 @@ function readrBoard($R){
 							$(this).siblings().removeClass('rdr_selected');
                             $(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
 
-							// todo: at this point, cast the tag, THEN call this in the tag success function:
-							RDR.actions.whyPanel( rindow );
+							RDR.actions.rateSend( $(this).attr('tid'), rindow, settings, function() {
+								// todo: at this point, cast the tag, THEN call this in the tag success function:
+								RDR.actions.whyPanel( rindow );
+							});
                         },
                         function() {
+							// TODO: cast a "remove tag" vote, removing this user's vote of this tag
                             $(this).removeClass('rdr_selected');
                         }
                         );
@@ -797,7 +803,7 @@ function readrBoard($R){
             },
 			whyPanel : function(rindow, interaction_id) {
                 rindow.settings.pnls = 2;                            
-                //[eric] no need to animate whyPanel because it's aligned right now (right:0; position:absolute;) todo: delete this temp note. 
+                //[eric] no need to animate whyPanel because it's aligned right now ([porter] floating right)
 				rindow.css('max-width', rindow.settings.width() +'px');
 				rindow.animate({
                     width: rindow.settings.width() +'px',
@@ -887,24 +893,10 @@ function readrBoard($R){
                 });
 				*/
             },
-            rateSend : function(rindow, settings) {
-
-                // get the user-added tags from the input field
-                var unknown_tags_raw = rindow.find('input[name="unknown-tags"]').val(),
-                //TODO IMPORTANT: temp demo solution.  Not sanitizing js, later send this to the server to be sanitized first?  Or sanitize it with js?
-                unknown_tags_arr = unknown_tags_raw.split(',');
-
-				for (var tags in unknown_tags_arr){
-					tags = tags.trim();
-				}
-
-
-                // get the blessed tags the user chose, by checking for the css class
-                var known_tags = [];
-
-                rindow.find('ul.rdr_preselected li.rdr_selected').each( function() {
-                    known_tags.push( $(this).attr('tid') );
-                });
+            rateSend : function(tag, rindow, settings, callback) {
+				// tag can be an ID or a string.  if a string, we need to sanitize.
+				console.dir(settings);
+				callback();
 
                 // get the text that was highlighted
                 var content = $.trim( settings.content ); //RDR.why.sel.text
@@ -913,8 +905,7 @@ function readrBoard($R){
 				rindow.find('button').text('Rating...').attr('disabled','disabled');
 				
 				var sendData = {
-					"unknown_tags" : unknown_tags_arr, //see note above
-					"known_tags" : known_tags,
+					"tag" : tag,
 					"hash": container,
 					"content" : content,
 					"content_type" : settings.content_type,
@@ -930,7 +921,8 @@ function readrBoard($R){
 					dataType: "jsonp",
                     data: { json: JSON.stringify(sendData) },
                     complete: function(msg) {
-                        RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
+                        //RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
+						callback;
                     }
                 });
             },
@@ -997,7 +989,7 @@ function readrBoard($R){
                                 // this can be commented on if it's long enough and has at least one space (two words or more)
                                 RDR.actionbar.draw({
                                     x:parseInt(e.pageX),
-                                    y:parseInt(e.pageY),
+                                    y:parseInt(e.pageY)+7,
 									content_type:"text",
 									content:RDR.why.content
                                 });
