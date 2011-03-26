@@ -47,17 +47,21 @@ function readrBoard($R){
 		*/
 		},
 		rindow : {
+            defaults:{
+                width:400,
+                x:100,
+                y:100
+            },
 			// content comes later.  this is just to identify or draw the container.
-			draw: function(settings) {
+			draw: function(options) {
 				// for now, any window closes all tooltips
 
-				var width = settings.width ? settings.width:400;
-				var x = settings.x ? settings.x:100;
-				var y = settings.y ? settings.y:100;
+                //merge options and defaults
+                var settings = $.extend({}, this.defaults, options);
 
 				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
 				if ( $new_rindow.length == 0 ) { // there's no rewritable window available, so make one
-					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + width + 'px;"></div>');
+					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + settings.width + 'px;"></div>');
 					$('body').append( $new_rindow );
 				}
 
@@ -78,12 +82,13 @@ function readrBoard($R){
 
                 }
                 // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-                var coords = RDR.util.stayInWindow(x,y,width,300);
+                var coords = RDR.util.stayInWindow(settings.x, settings.y, settings.width, 300);
                 $new_rindow.css('left', coords.x + 'px');
-                $new_rindow.css('top', coords.y + 'px');
-                RDR.actionbar.close();
+                $new_rindow.css('top', coords.y + 'px');    
+                RDR.actionbar.close();  
 
                 this.instance = $new_rindow;
+                $new_rindow.settings = settings;
                 return this.instance;
 			},
 			closeAll: function() {
@@ -653,7 +658,7 @@ function readrBoard($R){
 				);
 				
 				rindow.animate({
-                    width:'360px',
+                    width: settings.width + 'px',
                     minHeight:'125px'
                 }, 300, function() {
 					rindow.append( $loginHtml );
@@ -674,7 +679,7 @@ function readrBoard($R){
                 var rindow = RDR.rindow.draw({
                     x:actionbarOffsets.left,
                     y:actionbarOffsets.top,
-					width:400
+					width:360
                 });
 
                 // build the ratePanel
@@ -707,10 +712,12 @@ function readrBoard($R){
                 ////customTagDialogue - develop this...
                $customTagBox.append(
                 '<input type="text" class="freeformTagInput" name="unknown-tags" />',
-                '<div class="rdr_help">Add your own, comma separated</div>',
-                '<button>Rate</button>'
+                '<div class="rdr_help">Add your own (comma separated)</div>',
+                '<div class="rdr_submitTag"><button>Rate</button></div>'
                //'<div class="rdr_tags"><a href="javascript:void(0);">Add Your Own</a></div>'
                 );
+
+                $()
                 //populate whyPanel
 				$whyPanel.find('div.rdr_body').append('<div class="rdr_subHeader" ><span>COMMENT &amp; SHARE </span></div>');
 
@@ -725,7 +732,7 @@ function readrBoard($R){
                 */
                 // add content and animate the actionbar to accommodate it
                 rindow.animate({
-                    width:'400px',
+                    width: RDR.rindow.defaults+'px',
                     minHeight:'125px'
                 }, 300, function() {
 					
@@ -764,7 +771,7 @@ function readrBoard($R){
                 });
             },
 			whyPanel : function(rindow, interaction_id) {
-				rindow.find('div.rdr_whyPanel').animate({left:'400px'}, {queue:false, duration:300});
+				rindow.find('div.rdr_whyPanel').animate({left: rindow.settings.width + 'px'}, {queue:false, duration:300});
 				rindow.css('max-width','600px');
 				rindow.animate({
                     width:'600px',

@@ -89,7 +89,7 @@ div.rdr h2	{font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif;
 div.rdr h1	{font-size:21px; cursor:move; }
 
 /* the widget */
-div.rdr div.rdr_sntPnl {float:left; width:200px; display:block; }
+div.rdr div.rdr_sntPnl {float:left; width:200px;/*var sntPnlWidth*/ display:block; }
 div.rdr div.rdr_sntPnl div.rdr_body	{min-height:200px; padding:5px 0; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset;}
 div.rdr div.rdr_body .rdr_selected div.rdr_arrow 		{ border-color:transparent transparent transparent #f2cfcf; border-style:solid; border-width:12px; height:0; margin-top:-10px; position:absolute; right:-23px; top:43%; width:0;}
 div.rdr div.rdr_reactionPanel div.rdr_body .rdr_selected div.rdr_arrow 		{ border-color:transparent transparent transparent #f7dddd; }
@@ -99,11 +99,14 @@ div.rdr div.rdr_selectedTextPanel div.rdr_body div.rdr_selected		{font-family:Ge
 div.rdr div.rdr_reactionPanel div.rdr_body			{ xpadding-top:5px;}
 div.rdr div.rdr_selectedTextPanel			{background:#f0f0f0; position:relative; z-index:3;}
 div.rdr div.rdr_reactionPanel				{background:#f8f8f8; position:relative; z-index:2;}
-div.rdr div.rdr_whyPanel 					{background:#ffffff; position:absolute; left:200px; z-index:1;}
+div.rdr div.rdr_whyPanel 					{background:#ffffff; position:absolute; left:200px;/*var sntPnlWidth*/ z-index:1;}
 div.rdr div.rdr_whyPanel div.rdr_body		{padding-top:5px;}
 div.rdr div.rdr_header                      {text-align:center; padding:3px; border-bottom:1px solid #dfdfdf; background:#fff; }
 div.rdr div.rdr_sntPnl div.rdr_subHeader    {text-align:center;}
 div.rdr div.rdr_sntPnl div.rdr_customTagBox {margin:0 15px;}
+div.rdr div.rdr_sntPnl .rdr_submitTag  					{width:100%; text-align:right;}
+div.rdr div.rdr_sntPnl .rdr_submitTag button 			{}
+
 
 div.rdr div.rdr_reactionPanel div.rdr_quote {position: relative; text-shadow:1px 1px 1px #999; font-size:18px; font-family:Georgia, serif; z-index: 12020;}
 div.rdr div.rdr_reactionPanel div.rdr_quoteIcon { position: relative; z-index: 12010; }/*wrapper for z-index*/
@@ -118,13 +121,13 @@ div.rdr ul.rdr_tags li.rdr_selected a	{color:#e71f1f;}
 div.rdr ul.rdr_tags li.rdr_selected	{color:#e71f1f; background:#f7dddd; margin:0; padding:1px 5px;-moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset;}
 div.rdr ul.rdr_preselected			{font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0 0 10px; }
 div.rdr ul.rdr_preselected a		{color:#000;text-decoration:none;}
-div.rdr div.rdr_customTagBox input.freeformTagInput  	{background-color: #D6D6D6; font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0 0 10px; text-align:center;}
+div.rdr div.rdr_customTagBox input.freeformTagInput  	{background-color: #D6D6D6; font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0 0 2px; text-align:center;}
 
 
 div.rdr div.rdr_close		{position:absolute;top:8px;right:7px;color:#999;cursor:pointer;font-size:14px;margin-top:-4px;z-index:4;}
 
 div.rdr div.rdr_instruct	{color:#666; margin:5px 0;}
-div.rdr div.rdr_help		{font-style:italic; font-size:11px; color:#aaa;}
+div.rdr div.rdr_help		{font-style:italic; font-size:11px; color:#aaa; padding:3px 0;}
 
 div.rdr div.rdr_share textarea	{ width:390px; height:75px; font-size:14px; margin:5px 0;}
 div.rdr div.rdr_share_count		{ color:#999999; font-style:italic; margin:-3px 0 5px; }
@@ -135,5 +138,5 @@ div.rdr ul.shareLinks img       {width:30px;}
 
 /* forms */
 div.rdr textarea,
-div.rdr input[type="text"]	{font-size:14px; color:#666; padding:4px; -moz-box-shadow: inset 0px 0px 5px #ddd;-webkit-box-shadow: inset 0px 0px 5px #ddd; box-shadow: inset 0px 0px 5px #ddd; border:1px solid #ddd; }
+div.rdr input[type="text"]	{font-size:14px; color:#666; padding:2px 4px; -moz-box-shadow: inset 0px 0px 5px #ddd;-webkit-box-shadow: inset 0px 0px 5px #ddd; box-shadow: inset 0px 0px 5px #ddd; border:1px solid #ddd; }
 div.rdr button				{font-size:14px; }
