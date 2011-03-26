@@ -48,9 +48,15 @@ function readrBoard($R){
 		},
 		rindow : {
             defaults:{
-                width:400,
                 x:100,
-                y:100
+                y:100,
+                pnlWidth:200,
+                pnls:2,
+                width:function(){
+                   return this.pnlWidth*this.pnls; 
+                },
+                animTime:300,
+                height:150
             },
 			// content comes later.  this is just to identify or draw the container.
 			draw: function(options) {
@@ -58,10 +64,9 @@ function readrBoard($R){
 
                 //merge options and defaults
                 var settings = $.extend({}, this.defaults, options);
-
 				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
 				if ( $new_rindow.length == 0 ) { // there's no rewritable window available, so make one
-					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + settings.width + 'px;"></div>');
+					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + settings.width() + 'px;"></div>');
 					$('body').append( $new_rindow );
 				}
 
@@ -87,8 +92,8 @@ function readrBoard($R){
                 $new_rindow.css('top', coords.y + 'px');    
                 RDR.actionbar.close();  
 
-                this.instance = $new_rindow;
                 $new_rindow.settings = settings;
+                this.instance = $new_rindow;
                 return this.instance;
 			},
 			closeAll: function() {
@@ -127,7 +132,7 @@ function readrBoard($R){
                             "item":"reaction",
                             "tipText":"React to this",
                             "onclick":function(){
-                                RDR.actions.sentimentPanel({
+                                RDR.actions.sentimentBox({
                                     "container": settings.container,
                                     "content_type": settings.content_type,
                                     "content": settings.content
@@ -155,7 +160,7 @@ function readrBoard($R){
                     $item.append($iconAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
                     if(idx===0){$item.prepend($('<span class="rdr_divider" />'))}
                 });
-                //'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentPanel({content_type:\''+settings.content_type+'\',content:\''+settings.content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
+                //'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentBox({content_type:\''+settings.content_type+'\',content:\''+settings.content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
 
                 //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
                 //but we're not sure yet if it's going to be the same function as this shareStart() above..
@@ -647,8 +652,7 @@ function readrBoard($R){
 
                 var rindow = RDR.rindow.draw({
                     x:100,
-                    y:100,
-					width:360
+                    y:100
                 });
 
 				//TODO TYLER THIS IS FOR FACEBOOK
@@ -657,14 +661,14 @@ function readrBoard($R){
 				'<iframe src="/user/login" width="300" height="300" />'
 				);
 				
-				rindow.animate({
-                    width: settings.width + 'px',
-                    minHeight:'125px'
-                }, 300, function() {
+                rindow.animate({
+                    width: rindow.settings.width() +'px',
+                    minHeight: rindow.settings.height +'px',
+                }, rindow.settings.animTime, function() {
 					rindow.append( $loginHtml );
 				});
 			},
-			sentimentPanel : function(settings) {
+			sentimentBox : function(settings) {
 
                 // draw the window over the actionbar
                 var actionbarOffsets = RDR.actionbar.instance.offset();
@@ -678,26 +682,31 @@ function readrBoard($R){
 
                 var rindow = RDR.rindow.draw({
                     x:actionbarOffsets.left,
-                    y:actionbarOffsets.top,
-					width:360
+                    y:actionbarOffsets.top
                 });
 
                 // build the ratePanel
-                var $sentimentPanel = $('<div class="rdr_sentimentPanel" />'),
+
+                var $sentimentBox = $('<div class="rdr_sentimentBox" />'),
                 $selectedTextPanel = $('<div class="rdr_selectedTextPanel rdr_sntPnl" />'),
                 $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl" />'),
-                $whyPanel = $('<div class="rdr_whyPanel rdr_sntPnl" />'),
+                $whyPanel = $('<div class="rdr_whyPanel rdr_sntPnl" />').css({
+                    'position':'absolute',
+                    'right':0
+                }),
                 $blessedTagBox = $('<div class="rdr_blessedTagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
                 $customTagBox = $('<div class="rdr_customTagBox" />'),
                 $commentBox = $('<div class="rdr_commentBox" />'),
                 $shareBox = $('<div class="rdr_shareBox" />');
 
                 var headers = ["You selected", "What's your reaction?", "Why?"];
-                $sentimentPanel.append($selectedTextPanel, $reactionPanel, $whyPanel);
-                $sentimentPanel.children().each(function(idx){
+                $sentimentBox.append($selectedTextPanel, $reactionPanel, $whyPanel);
+                $sentimentBox.children().each(function(idx){
                     var $header = $('<div class="rdr_header" />').append('<h1>'+ headers[idx] +'</h1>'),
                     $body = $('<div />').addClass('rdr_body');
-                    $(this).append($header, $body);
+                    $(this).append($header, $body).css({
+                        'width':rindow.settings.pnlWidth
+                    });
                 });
 
                 //populate selectedTextPanel
@@ -712,12 +721,14 @@ function readrBoard($R){
                 ////customTagDialogue - develop this...
                $customTagBox.append(
                 '<input type="text" class="freeformTagInput" name="unknown-tags" />',
-                '<div class="rdr_help">Add your own (comma separated)</div>',
+                '<div class="rdr_help">Add your own (ex. hip, woot)</div>',
                 '<div class="rdr_submitTag"><button>Rate</button></div>'
                //'<div class="rdr_tags"><a href="javascript:void(0);">Add Your Own</a></div>'
-                );
+                ).add('div.rdr_help').click(function(){            
+                    $('div.rdr_help').remove();
+                    $('.freeformTagInput').focus();
+                });
 
-                $()
                 //populate whyPanel
 				$whyPanel.find('div.rdr_body').append('<div class="rdr_subHeader" ><span>COMMENT &amp; SHARE </span></div>');
 
@@ -731,12 +742,13 @@ function readrBoard($R){
                 $reactionPanel.append($selectedTextPanel, $blessedTagBox, $customTagBox)
                 */
                 // add content and animate the actionbar to accommodate it
+
                 rindow.animate({
-                    width: RDR.rindow.defaults+'px',
-                    minHeight:'125px'
-                }, 300, function() {
+                    width: rindow.settings.width() +'px',
+                    minHeight: rindow.settings.height +'px',
+                }, rindow.settings.animTime, function() {
 					
-					rindow.append($sentimentPanel);
+					rindow.append($sentimentBox);
 					
                     if ( settings.content_type == "text" ) {
                        rindow.find('div.rdr_selectedTextPanel em').text( settings.content );
@@ -771,13 +783,14 @@ function readrBoard($R){
                 });
             },
 			whyPanel : function(rindow, interaction_id) {
-				rindow.find('div.rdr_whyPanel').animate({left: rindow.settings.width + 'px'}, {queue:false, duration:300});
-				rindow.css('max-width','600px');
+                rindow.settings.pnls = 3;                            
+                //[eric] no need to animate whyPanel because it's aligned right now (right:0; position:absolute;) todo: delete this temp note. 
+				rindow.css('max-width', rindow.settings.width() +'px');
 				rindow.animate({
-                    width:'600px',
-                    minHeight:'125px'
-                }, 300, function() {
-					
+                    width: rindow.settings.width() +'px',
+                    minHeight: rindow.settings.height +'px'
+                }, rindow.settings.animTime, function() {
+					//pass for now
 				});
 			},
             shareStart : function(rindow, known_tags, unknown_tags_arr) {
@@ -817,7 +830,7 @@ function readrBoard($R){
                 // TODO this eneds to behave differently for images, video
                 // maybe just show short URL that leads directly to that image, video on the page
                 var share_content = tags + ' because...';
-                //[eric] dont remove elements anymore, we're going to try adding this to the bottom of the sentimentPanel'
+                //[eric] dont remove elements anymore, we're going to try adding this to the bottom of the sentimentBox'
                 //[eric] -comment out: //rindow.find('ul, div, input').not('div.rdr_close').remove();
 
                 var socialNetworks = ["facebook","twitter","tumblr","linkedin"],
