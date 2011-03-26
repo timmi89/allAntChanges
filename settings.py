@@ -92,9 +92,9 @@ INSTALLED_APPS = (
     'readrboard.rb',
     'django.contrib.admin',
     'readrboard.api',
+    'piston',
     'south',
     'treebeard',
-    'lazysignup',
 )
 
 # for sessions

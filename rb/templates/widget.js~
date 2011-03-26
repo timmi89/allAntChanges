@@ -1,12 +1,4 @@
-if (! ("console" in window) || !("firebug" in console)) {
-    var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml", "group"
-                 , "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];
-    window.console = {};
-    for (var i = 0; i <names.length; ++i) window.console[names[i]] = function() {};
-}
-
-
-console.log($)
+// console.log($)
 var jQueryVersion = "1.4.4",
 RDR, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
@@ -58,7 +50,6 @@ function readrBoard($R){
 			// content comes later.  this is just to identify or draw the container.
 			draw: function(settings) {
 				// for now, any window closes all tooltips
-				RDR.tooltip.closeAll();
 
 				var width = settings.width ? settings.width:400;
 				var x = settings.x ? settings.x:100;
@@ -92,92 +83,102 @@ function readrBoard($R){
                 $new_rindow.css('top', coords.y + 'px');
                 RDR.actionbar.close();
 
-                return $new_rindow;
+                this.instance = $new_rindow;
+                return this.instance;
 			},
 			closeAll: function() {
-				console.log('closeAll');
+				// console.log('closeAll');
 				$('div.rdr.rdr_window').remove();
-			}
+                RDR.actionbar.close(); //organize how the actionbar should be a child of the rindow which would make this redundant
+			},
+            instance: false //do we need multiple rindows?  If so change this to instances: $('.rdr_window') //find all..
 		},
 		actionbar : {
 			draw: function(settings) {
 
-				if ( $('div.rdr.rdr_actionbar').length == 0 ) {
-					var x = settings.x ? (settings.x-34) : 100;
-					var y = settings.y ? (settings.y-45) : 100;
-                    console.dir( settings );
-					var coords = RDR.util.stayInWindow(x,y,200,30);
+                var $this = $('div.rdr.rdr_actionbar');
+                if ( $this.length !== 0 ) {
+                    //alreday exists return it/
+                    return $this;
+                }
+                //(else)
 
-					// TODO use settings check for certain features and content types to determine which of these to disable
-					var $new_actionbar = $('<div class="rdr rdr_actionbar" />').css({
-                       'left':coords.x,
-                       'top':coords.y
-                    }).append('<ul/>');
-                    $new_actionbar.items = [
-                            {
-                                "item":"about",
-                                "tipText":"What's This?",
-                                "onclick": RDR.actions.aboutReadrBoard
-                            },
-                            {
-                                "item":"reaction",
-                                "tipText":"Tag This",
-                                "onclick":function(){
-                                    RDR.actions.sentimentPanel({
-										"container": settings.container,
-                                        "content_type": settings.content_type,
-                                        "content": settings.content
-                                    });
-                                }
-                            },
-                            {
-                                "item":"bookmark",
-                                "tipText":"Bookmark This",
-                                "onclick":RDR.actions.bookmarkStart
-                            }
-                       ];
-                    $.each($new_actionbar.items, function(idx, val){
-                        var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
-                        $iconAnchor = $('<a href="javascript:void(0);">' +val.item+ '</a>'),
-                        $tooltip = $('<div class="rdr rdr_tooltip" id="rdr_tooltip_' +val.item+ '">' +
-                            '<div class="rdr rdr_tooltip-content"> ' +val.tipText+ '</div>'+
-                            '<div class="rdr rdr_tooltip-arrow-border" />'+
-                            '<div class="rdr rdr_tooltip-arrow" />'+
-                        '</div>').hide();
-                        $iconAnchor.click(function(){
-                            val.onclick();
-                            return false;
-                        });
-                        $item.append($iconAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
-                        if(idx===0){$item.prepend($('<span class="rdr_divider" />'))}
-                    });
-                    //'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentPanel({content_type:\''+settings.content_type+'\',content:\''+settings.content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
+                var x = settings.x ? (settings.x-34) : 100;
+                var y = settings.y ? (settings.y-45) : 100;
+                var coords = RDR.util.stayInWindow(x,y,200,30);
 
-                    //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
-                    //but we're not sure yet if it's going to be the same function as this shareStart() above..
-
-					$('body').append( $new_actionbar );
-                    $('div.rdr_actionbar a').hover(
-                        function() {
-                            $(this).siblings('.rdr_tooltip').show();
+                // TODO use settings check for certain features and content types to determine which of these to disable
+                var $new_actionbar = $('<div class="rdr rdr_actionbar" />').css({
+                   'left':coords.x,
+                   'top':coords.y
+                }).append('<ul/>');
+                $new_actionbar.items = [
+                        {
+                            "item":"about",
+                            "tipText":"What's This?",
+                            "onclick": RDR.actions.aboutReadrBoard
                         },
-                        function () {
-                            $(this).siblings('.rdr_tooltip').hide();
+                        {
+                            "item":"reaction",
+                            "tipText":"React to this",
+                            "onclick":function(){
+                                RDR.actions.sentimentPanel({
+                                    "container": settings.container,
+                                    "content_type": settings.content_type,
+                                    "content": settings.content
+                                });
+                            }
+                        },
+                        {
+                            "item":"bookmark",
+                            "tipText":"Bookmark This",
+                            "onclick":RDR.actions.bookmarkStart
                         }
-                    );
-				}//end if
+                ];
+                $.each($new_actionbar.items, function(idx, val){
+                    var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
+                    $iconAnchor = $('<a href="javascript:void(0);">' +val.item+ '</a>'),
+                    $tooltip = $('<div class="rdr rdr_tooltip" id="rdr_tooltip_' +val.item+ '">' +
+                        '<div class="rdr rdr_tooltip-content"> ' +val.tipText+ '</div>'+
+                        '<div class="rdr rdr_tooltip-arrow-border" />'+
+                        '<div class="rdr rdr_tooltip-arrow" />'+
+                    '</div>').hide();
+                    $iconAnchor.click(function(){
+                        val.onclick();
+                        return false;
+                    });
+                    $item.append($iconAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
+                    if(idx===0){$item.prepend($('<span class="rdr_divider" />'))}
+                });
+                //'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentPanel({content_type:\''+settings.content_type+'\',content:\''+settings.content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
 
-                return $new_actionbar;
+                //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
+                //but we're not sure yet if it's going to be the same function as this shareStart() above..
+
+                $('body').append( $new_actionbar );
+                $('div.rdr_actionbar a').siblings('.rdr_tooltip');
+                $('div.rdr_actionbar li').hover(
+                    function() {
+                        $(this).find('a').siblings('.rdr_tooltip').show();
+                    },
+                    function () {
+                        $(this).find('a').siblings('.rdr_tooltip').hide();
+                    }
+                );
+				
+
+                this.instance = $new_actionbar;
+                return this.instance;
 			},
 			close: function(animation) {
-                if(typeof animation != undefined){
-                    $('div.rdr.rdr_actionbar').animate(animation, function(){
-                         $('div.rdr.rdr_actionbar').remove();
-                    });
-                }else{
-                    $('div.rdr.rdr_actionbar').remove();
-                }
-			}
+                $('div.rdr.rdr_actionbar').remove();
+                this.instance = false;
+			},
+            keepAlive: {
+                onImg:false,
+                onActionbar:false
+            },
+            instance : false
 		},
 		tooltip : {
 			draw: function(settings) {
@@ -185,6 +186,14 @@ function readrBoard($R){
 				// settings.message (HTML)
 				// settings.obj (to position tooltip next to.  should be a jQ obj).  if absent, position with the mouse.
 				// settings.offset_x, settings.offset_y (optional): how many pixels to shit the tooltip from the passed-in object
+
+                var $this = $('div.rdr.rdr_tooltip');
+                if ( $this.length !== 0 ) {
+                    //alreday exists return it/
+                    return $this;
+                }
+                //(else)
+
 				var $new_tooltip = $('<div class="rdr rdr_tooltip" id="rdr_tooltip_' + settings.name + '">' +
 					'<div class="rdr rdr_tooltip-content"> ' + settings.message + '</div>'+
 					'<div class="rdr rdr_tooltip-arrow-border"></div>'+
@@ -209,13 +218,10 @@ function readrBoard($R){
 					$new_tooltip.css('left', x + 'px');
 					$new_tooltip.css('top', (y - $new_tooltip.height()) + 'px');
 				}
-                return $new_tooltip;
+                this.instance = $new_tooltip;
+                return this.instance;
 			},
-			closeAll: function() {
-                /*todo fix this animation parameter thing - it's not really working yet..*/
-				// this was passed in as a param to remove() and causing breakage:  "{width:'show'},1500"
-				$( 'div.rdr_tooltip' ).remove();
-			}
+            instance: false
 		},
 		util : {
             stayInWindow : function(x,y,w,h) {
@@ -297,10 +303,10 @@ function readrBoard($R){
             initGroupData : function(groupShortName){
                 // request the RBGroup Data
 
-                console.log("requesting rbgroup data")
-                console.log(groupShortName)
+                // console.log("requesting rbgroup data")
+                // console.log(groupShortName)
                 $.ajax({
-                    url: "/api/settings/"+RDR.groupPermData.group_id,
+                    url: "/api/settings/"+RDR.groupPermData.group_id+"/",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
@@ -308,7 +314,7 @@ function readrBoard($R){
                         host_name : window.location.hostname
                     },
                     success: function(data, textStatus, XHR) {
-                        console.log('rbgroup call success')
+                        //console.log('rbgroup call success')
                         RDR.group = data;
 						RDR.group.group_id
 
@@ -320,19 +326,19 @@ function readrBoard($R){
                         RDR.group.blessed_tags = [
                         {
                             name: "Great!",
-                            tid: 0
-                        },
-                        {
-                            name: "Hate",
                             tid: 1
                         },
                         {
-                            name: "Interesting",
+                            name: "Hate",
                             tid: 2
                         },
                         {
-                            name: "Booooring",
+                            name: "Interesting",
                             tid: 3
+                        },
+                        {
+                            name: "Booooring",
+                            tid: 4
                         }
                         ];
                         $RDR.dequeue('initAjax');
@@ -346,7 +352,7 @@ function readrBoard($R){
                 // request the RBGroup Data
                 console.log("requesting user data")
                 $.ajax({
-                    url: "/api/rbuser",
+                    url: "/api/rbuser/",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
@@ -388,7 +394,7 @@ function readrBoard($R){
 				//TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
 				//might not want to send canonical, or, send it separately if/only if it's different than URL
 				$.ajax({
-                    url: "/api/page",
+                    url: "/api/page/",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
@@ -410,10 +416,16 @@ function readrBoard($R){
 
                 // init the img interactions
 				$( RDR.group.img_selector ).live( 'mouseover', function() {
-					if ( typeof rdr_img_actionicon != 'undefined' ) clearTimeout( rdr_img_actionicon );
-					RDR.actionbar.close();
 
-					// check that the image is large enough?
+                    RDR.actionbar.keepAlive.onImg = true;
+                    
+                    //todo change this so that .live for imgs just resets coordinates, doesnt instantiate actionbar...
+
+                    if(RDR.actionbar.instance.length){
+                        return false;
+                    }
+                    
+					// TODO check that the image is large enough?
 					// TODO keep the actionbar in the window
 					// TODO image needs to show in rate window
 					// TODO all image functions need CURRENT URL (incl. hash) + IMG SRC URL for rating, SHARING, etc.
@@ -423,29 +435,97 @@ function readrBoard($R){
 				    var this_img = $(this),
 				    x = this_img.offset().left + 33,
 				    y = this_img.offset().top + this_img.height() + 15,
-				    $actionBar = RDR.actionbar.draw({ x:x, y:y, content_type:"image", content:this_img.attr('src') }),
-                    $aboutIcon = $actionBar.find('li:first'),
+					src = this_img.attr('src');
+					
+					// kludgey(?) way of making sure we have the full image path
+					// $().attr('src') does not snag it...
+					// even though documentGetElementsByTagName('img')[0].src would.  argh.
+					if ( src.toLowerCase().substring(0,4) != "http" ) {
+						var prepend = window.location.protocol + "//" + window.location.host;
+						if ( src.charAt(0) == "/" ) {
+							src = prepend + src;
+						} else {
+							var pathname = window.location.pathname.split('/');
+							if ( pathname[ pathname.length-1 ].indexOf('.') != -1 ) { // there is a period in the last segment of the URL, meaning it's probably ".html" or similar
+								pathname.pop();
+							}
+							pathname = pathname.join('/');
+							src = prepend + pathname + "/" + src;
+						}
+					}
+					console.log(src);
+					
+				    var $actionBar = RDR.actionbar.draw({ x:x, y:y, content_type:"image", content:src });
+                    var $aboutIcon = $actionBar.find('li:first'),
                     $otherIcons = $aboutIcon.siblings();
                     $otherIcons.hide();
-                    var actionbarBlockHover = false;
+
+                    // todo: break out these animation effects into functions saved under actionBar.<collspase>
 				    $actionBar.hover(
                         function() {
-                            if ( typeof rdr_img_actionicon != 'undefined' ) clearTimeout( rdr_img_actionicon );
-                            if(!actionbarBlockHover){
-                                $otherIcons.animate({width:'show'},150);
-                            }
+                            RDR.actionbar.keepAlive.onActionbar = true;
+                            //expand actionbar
+                            $aboutIcon.find('.rdr_divider').show();
+                            $otherIcons.animate({width:'show'},150);
                         },
                         function() {
-                            actionbarBlockHover = true;
-                            $otherIcons.animate({width:'hide'},150, function(){
-                                actionbarBlockHover = false;
-                                RDR.actionbar.close();
-                            });
+                            var keepAlive = RDR.actionbar.keepAlive;
+                            keepAlive.onActionbar = false;
+
+                            setTimeout(function(){
+                                //todo: organize and break out functions
+                                if(!keepAlive.onActionbar){
+                                    //collapse actionbar
+                                    $otherIcons.animate({width:'hide'},150, function(){
+                                        $aboutIcon.find('.rdr_divider').hide();
+                                        //check if we should close it also
+                                        if(!keepAlive.onImg && !keepAlive.onActionbar){
+                                            $actionBar.fadeOut(200, function(){
+                                                //check one more time after fadeout
+                                                if(!keepAlive.onImg && !keepAlive.onActionbar){
+                                                    RDR.actionbar.close();
+                                                }else{
+                                                    //quick catch it before it fades out!
+                                                    $actionBar.show();
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            },500);
                         }
 				    );
 
 				}).live('mouseleave', function() {
-					rdr_img_actionicon = setTimeout( "RDR.actionbar.close()", 150);
+                    var keepAlive = RDR.actionbar.keepAlive;
+                    keepAlive.onImg = false;
+
+                    //this isn't working right now because we are re-building the actionbar on img hover.
+                    //We can't tell that it's the same actionbar that just hasnt dissapeared yet.  We need to change the stucture so that the img hover
+                    //just changes the settings (like the coordinates) and doens't rebuild the actionbar
+                    
+                    setTimeout(function(){
+                        if(!keepAlive.onImg && !keepAlive.onActionbar && RDR.actionbar.instance.length){
+                            
+                            var $aboutIcon = RDR.actionbar.instance.find('li:first'),
+                            $otherIcons = $aboutIcon.siblings();
+
+                            //simultaneous animations...
+                            $otherIcons.animate({width:'hide'},150, function(){
+                                $aboutIcon.find('.rdr_divider').hide();
+                            });
+                            //simultaneous animations...
+                            RDR.actionbar.instance.fadeOut(200, function(){
+                                //check one more time
+                                if(!keepAlive.onImg && !keepAlive.onActionbar){
+                                    RDR.actionbar.close();
+                                }else{
+                                    //quick catch it before it fades out!
+                                    RDR.actionbar.instance.show();
+                                }
+                            });
+                        }
+                    },600);
 				});
 				// END
 
@@ -457,7 +537,6 @@ function readrBoard($R){
                     if (event.keyCode == '27') { //esc
                         RDR.rindow.closeAll();
                         RDR.actionbar.close();
-                        RDR.tooltip.closeAll();
                     }
                     //todo - consider unifying style of close vs closeAll.  Should any of these components 'own' the others?  IE. should tooltips belong to the actionbar?
                 });
@@ -508,6 +587,13 @@ function readrBoard($R){
                     md5_list.push( i );
                 }
 
+				var sendData = {
+					short_name : RDR.group.short_name,
+					pageID : 1,
+					//todo: talk to Porter about how to Model the Page Data
+					hashes : md5_list
+				}
+
                 // send the data!
                 $.ajax({
                     url: "/api/containers/",
@@ -515,108 +601,173 @@ function readrBoard($R){
                     contentType: "application/json",
                     dataType: "jsonp",
                     data: {
-                        short_name : RDR.group.short_name,
-                        pageID : 1,
-                        //todo: talk to Porter about how to Model the Page Data
-                        hashes : md5_list
+                    	json: JSON.stringify(sendData)
                     },
                     success: function(data) {
-						var unknown_nodes = data.unknown;
-						var containers = {};
-						$.each(data.unknown,function(index, value){
-							containers[value] = RDR.data.nodes[value];
-						})
+					// TODO: Eric, should this go in a jquery queue?
+					var sendData = {};
+					sendData.hashes = {};
+					console.log("data.unknown length: "+data.unknown.length);
+					
+					if ( data.unknown.length > 0 ) {
+						$.each( data.unknown, function( index, value ) {
+							sendData.hashes[value] = RDR.data.nodes[value];
+						});
+						console.dir(sendData);
+
 						$.ajax({
-		                    url: "/api/containers/create/",
-		                    type: "get",
-		                    contentType: "application/json",
-		                    dataType: "jsonp",
-		                    data: {
-								"hashes" : unknown_nodes,
-		                        "containers" : containers
-		                    },
-		                    success: function(res) {
-		                        console.dir(res);
-		                    }
-		                });
-                        console.dir(data);
-                    }
-                });
-            },
-            sentimentPanel : function(settings) {
-                // draw the window over the actionbar
-                var actionbarOffsets = $('div.rdr.rdr_actionbar').offset();
+			                    url: "/api/containers/create/",
+			                    type: "get",
+			                    contentType: "application/json",
+			                    dataType: "jsonp",
+			                    data: {
+			                     	json: JSON.stringify(sendData)
+			                     },
+			                    success: function(res) {
+			                        console.dir(res);
+			                    }
+						});
+					}
+					}
+				});
+			},
+            loginPanel : function(settings) {
 
 				$('.rdr_rewritable').removeClass('rdr_rewritable');
 
-                $('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
+
+                //todo: weird, why did commenting this line out not do anything?...look into it
+				//porter says: the action bar used to just animate larger and get populated as a window
+                //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
+
+                var rindow = RDR.rindow.draw({
+                    x:100,
+                    y:100,
+					width:360
+                });
+
+				//TODO TYLER THIS IS FOR FACEBOOK
+				var $loginHtml = $('<div class="rdr_login" />');
+				$loginHtml.append( '<h1>Log In</h1>',
+				'<iframe src="/fb/" width="300" height="300" />'
+				);
+				
+				rindow.animate({
+                    width:'360px',
+                    minHeight:'125px'
+                }, 300, function() {
+					rindow.append( $loginHtml );
+				});
+			},
+			sentimentPanel : function(settings) {
+
+                // draw the window over the actionbar
+                var actionbarOffsets = RDR.actionbar.instance.offset();
+
+				$('.rdr_rewritable').removeClass('rdr_rewritable');
+
+
+                //todo: weird, why did commenting this line out not do anything?...look into it
+				//porter says: the action bar used to just animate larger and get populated as a window
+                //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
+
                 var rindow = RDR.rindow.draw({
                     x:actionbarOffsets.left,
-                    y:actionbarOffsets.top
+                    y:actionbarOffsets.top,
+					width:360
                 });
 
-                //todo: figure out wht happened to selected text...
                 // build the ratePanel
-                var $ratePanel = $('<div class="rdr_ratePanel" />'),
-                $selectedTextBox = $('<div class="rdr_selectedTextBox" />'),
-                $blessedTags = $('<ul class="rdr_tags rdr_preselected"/>'),
-                $customTagBox = $('<div id="rdr_customTags"/>');
+                var $sentimentPanel = $('<div class="rdr_sentimentPanel" />'),
+                $selectedTextPanel = $('<div class="rdr_selectedTextPanel rdr_sntPnl" />'),
+                $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl" />'),
+                $whyPanel = $('<div class="rdr_whyPanel rdr_sntPnl" />'),
+                $blessedTagBox = $('<div id="rdr_blessedTagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
+                $customTagBox = $('<div id="rdr_customTagBox" />'),
+                $commentBox = $('<div id="rdr_commentBox" />'),
+                $shareBox = $('<div id="rdr_shareBox" />');
 
-                //must wrap the quoteIcon for proper z-index layering
-                $selectedTextBox.append(
-                '<div class="rdr_quoteIcon"><span>&ldquo;</span></div>',
-                '<div class="rdr_quote"><em></em></div>');
-
-                //populate blesed_tags
-                $.each(RDR.group.blessed_tags, function(idx, val){
-                    $blessedTags.append('<li tid="'+val.tid+'"><a href="javascript:void(0);">'+val.name+'</a></li>')
+                var headers = ["You selected", "What's your reaction?", "Why?"];
+                $sentimentPanel.append($selectedTextPanel, $reactionPanel, $whyPanel);
+                $sentimentPanel.children().each(function(idx){
+                    var $header = $('<div class="rdr_header" />').append('<h1>'+ headers[idx] +'</h1>'),
+                    $body = $('<div />').addClass('rdr_body');
+                    $(this).append($header, $body);
                 });
 
+                //populate selectedTextPanel
+				$selectedTextPanel.find('div.rdr_body').append( '<div class="rdr_selected"><em></em><div class="rdr_arrow"></div></div>' );
+
+                //populate reactionPanel
+                $reactionPanel.find('div.rdr_body').append($blessedTagBox, $customTagBox);
+                ////populate blesed_tags
+                $.each(RDR.group.blessed_tags, function(idx, val){
+                    $blessedTagBox.children('ul.rdr_tags').append('<li tid="'+val.tid+'"><a href="javascript:void(0);">'+val.name+'</a><div class="rdr_arrow"></div></li>')
+                });
+                ////customTagDialogue - develop this...
+               $customTagBox.append('<div class="rdr_tags"><a href="javascript:void(0);">Add Your Own</a></div>');
+                //populate whyPanel
+				$whyPanel.find('div.rdr_body').append( 'COMMENT &amp; SHARE' );
+
+/*
                 $customTagBox.append(
                 '<div class="rdr_instruct">Add your own ratings, separated by comma:</div>',
                 '<input type="text" id="freeformTagInput" name="unknown-tags" />',
                 '<button>Rate</button>',
                 '<div class="rdr_help">e.g., Love this, autumn, insightful</div>');
 
-                $ratePanel.append($selectedTextBox, $blessedTags, $customTagBox)
-
-				var content_type = settings.content_type;
-				var content = settings.content;
-
+                $reactionPanel.append($selectedTextPanel, $blessedTagBox, $customTagBox)
+                */
                 // add content and animate the actionbar to accommodate it
                 rindow.animate({
-                    width:'400px',
+                    width:'360px',
                     minHeight:'125px'
                 }, 300, function() {
-                    rindow.find('div.rdr_contentSpace').append( $ratePanel );
-                    rindow.find('h1').text("Your Reaction:");
-
-                    if ( content_type == "text" ) {
-                        rindow.find('div.rdr_selectedTextBox em').html( unescape(content) );
-					} else if ( content_type == "image" ) {
-						// rindow.find('.rdr_selectedTextBox em').css('text-align','center').html( '<img style="max-width:100%;max-height:600px;" src=" ' + content + '" />' );
-						rindow.find('div.rdr_selectedTextBox').hide();
-						rindow.find('h1').text("Your Reaction");
+					
+					rindow.append($sentimentPanel);
+					
+                    if ( settings.content_type == "text" ) {
+                       rindow.find('div.rdr_selectedTextPanel em').text( settings.content );
+					} else if ( settings.content_type == "image" ) {
+						rindow.find('div.rdr_selectedTextPanel em').css('text-align','center').html( '<img style="max-width:100%;max-height:600px;" src=" ' + settings.content + '" />' );
 					}
 
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
                     rindow.find('ul.rdr_preselected li').toggle(
                         function() {
                             $(this).addClass('rdr_selected');
+							$(this).siblings().removeClass('rdr_selected');
                             $(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+
+							// todo: at this point, cast the tag, THEN call this in the tag success function:
+							RDR.actions.whyPanel( rindow );
                         },
                         function() {
                             $(this).removeClass('rdr_selected');
                         }
                         );
 
+					/*
+                    rindow.find('div.rdr_contentSpace').append( $reactionPanel );
+                    rindow.find('h1').text("Your Reaction:");
+
                     // bind the button with a function (since this isn't in a <form>)
                     rindow.find('button').click( function() {
-                        RDR.actions.rateSend( rindow );
+                        RDR.actions.rateSend( rindow, settings );
                     });
-
+                    */
                 });
             },
+			whyPanel : function(rindow, interaction_id) {
+				rindow.find('div.rdr_whyPanel').animate({left:'360px'}, {queue:false, duration:300});
+				rindow.css('max-width','540px');
+				rindow.animate({
+                    width:'540px',
+                    minHeight:'125px'
+                }, 300, function() {
+					
+				});
+			},
             shareStart : function(rindow, known_tags, unknown_tags_arr) {
                 //todo: for now, I'm just passing in known_tags as a param, but check with Porter about this model.
                 //Where is the 'source'/'point of origin' that is the authority of known_tags - I'd think we'd want to just reference that..
@@ -624,8 +775,8 @@ function readrBoard($R){
                 var tags = "";
 
                 for ( var i in known_tags ) {
-                    if ( known_tags[i] && RDR.group.blessed_tags[ known_tags[i] ] ) {
-                        tags += RDR.group.blessed_tags[ known_tags[i] ].name + ", ";
+                    if ( known_tags[i] && RDR.group.blessed_tags[ parseInt(known_tags[i])-1 ] ) {
+                        tags += RDR.group.blessed_tags[ parseInt(known_tags[i])-1 ].name + ", ";
                     }
                 }
 
@@ -641,7 +792,6 @@ function readrBoard($R){
                    tags += val;
                 });
 
-                console.log(tags)
                 var $shareDialogueBox = $('<div class="rdr_shareBox"></div>')
 
                 // TODO add short rdrbrd URL to end of this line, rather than the long URL
@@ -650,7 +800,7 @@ function readrBoard($R){
                 var url = 'http://rdrbrd.com/ad4fta3';
 
 				// TODO: hiding the custom tags part here.  is that ok?  check.
-				$('#rdr_customTags').hide();
+				$('#rdr_blessedTagBox').hide();
 
                 // TODO this eneds to behave differently for images, video
                 // maybe just show short URL that leads directly to that image, video on the page
@@ -699,11 +849,16 @@ function readrBoard($R){
                 });
 				*/
             },
-            rateSend : function(rindow) {
+            rateSend : function(rindow, settings) {
+
                 // get the user-added tags from the input field
                 var unknown_tags_raw = rindow.find('input[name="unknown-tags"]').val(),
                 //TODO IMPORTANT: temp demo solution.  Not sanitizing js, later send this to the server to be sanitized first?  Or sanitize it with js?
                 unknown_tags_arr = unknown_tags_raw.split(',');
+
+				for (var tags in unknown_tags_arr){
+					tags = tags.trim();
+				}
 
 
                 // get the blessed tags the user chose, by checking for the css class
@@ -714,29 +869,28 @@ function readrBoard($R){
                 });
 
                 // get the text that was highlighted
-                var content = $.trim( RDR.why.content ); //RDR.why.sel.text
+                var content = $.trim( settings.content ); //RDR.why.sel.text
 				var container = $.trim( RDR.why.container );
 				
 				rindow.find('button').text('Rating...').attr('disabled','disabled');
+				
+				var sendData = {
+					"unknown_tags" : unknown_tags_arr, //see note above
+					"known_tags" : known_tags,
+					"hash": container,
+					"content" : content,
+					"content_type" : settings.content_type,
+					"user_id" : 1,
+					"page_id" : RDR.page.id
+				};
+			console.log(content);	
                 // send the data!
                 $.ajax({
-                    url: "/api/tag/",
+                    url: "/api/tags/create/",
                     type: "get",
                     contentType: "application/json",
-					dataType: "json",
-                    data: {
-                        "unknown_tags" : unknown_tags_raw, //see note above
-                        "known_tags" : known_tags,
-<<<<<<< HEAD
-                        "hash":"",
-=======
-                        "hash":container,
->>>>>>> b653eaa9998d947666a4dea6d6e67cfeaf8306f8
-                        "content" : content,
-                        "content_type" : "text",
-                        "user_id" : 1,
-						"page_id" : RDR.page.id
-                    },
+					dataType: "jsonp",
+                    data: { json: JSON.stringify(sendData) },
                     complete: function(msg) {
                         RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
                     }
@@ -751,6 +905,9 @@ function readrBoard($R){
 
                     // closes undragged windows
                     $('div.rdr.rdr_window.rdr.rdr_rewritable, div.rdr.rdr_actionbar').remove();
+
+                    //todo - decide whether we want multiple actiobars, for now, kill them all.
+                    RDR.actionbar.close();
 
                     // see what the user selected
                     // TODO: need separate image function, which should then prevent event bubbling into this
@@ -804,7 +961,7 @@ function readrBoard($R){
                                     x:parseInt(e.pageX),
                                     y:parseInt(e.pageY),
 									content_type:"text",
-									content:escape(RDR.why.content)
+									content:RDR.why.content
                                 });
 
                             // TODO: also should detect if selection has an image, embed, object, audio, or video tag in it
@@ -813,7 +970,7 @@ function readrBoard($R){
                                     x:parseInt(e.pageX),
                                     y:parseInt(e.pageY),
 									content_type:"text",
-									content:escape(RDR.why.content),
+									content:RDR.why.content,
                                     cant_comment:true
                                 });
                             }
@@ -1105,13 +1262,13 @@ loadScript("/static/ui-prototype/js/jquery-1.4.4.min.js", function(){
         //callback
 
         //test that $.ui versioning is working correctly
-        console.log("testing jQuery UI versioning...")
-        console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
+        // console.log("testing jQuery UI versioning...")
+        // console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
         var $R = $.noConflict(true);
 
         //test that $.ui versioning is working correctly
-        console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
-        console.log("of course $R.ui.version should show our version - version = " + $R.ui.version)
+        // console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
+        // console.log("of course $R.ui.version should show our version - version = " + $R.ui.version)
 
         //call scripts that depend on our jQuery version to be loaded
         $RFunctions($R);
@@ -1152,19 +1309,20 @@ function $RFunctions($R){
 	RDR.group.blessed_tags = [
 	{
 	    name: "Great!",
-	    tid: 0
-	},
-	{
-	    name: "Hate",
 	    tid: 1
 	},
 	{
-	    name: "Interesting",
+	    name: "Hate",
 	    tid: 2
 	},
 	{
-	    name: "Booooring",
+	    name: "Interesting",
 	    tid: 3
+	},
+	{
+	    name: "Booooring",
+	    tid: 4
 	}
 	];
 }
+//test commit...

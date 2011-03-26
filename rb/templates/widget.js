@@ -656,16 +656,30 @@ function readrBoard($R){
                 });
 
 				//TODO TYLER THIS IS FOR FACEBOOK
-				var $loginHtml = $('<div class="rdr_login" />');
+				// TODO: iframeURL and iframeHost must be hardcoded
+				var $loginHtml = $('<div class="rdr_login" />'),
+				iframeHost = "http://readr.local:8080",
+				iframeUrl = iframeHost + "/fblogin/",
+				parentUrl = window.location.href;
 				$loginHtml.append( '<h1>Log In</h1>',
-				'<iframe src="/user/login" width="300" height="300" />'
+				'<iframe id="rdr-xdm" src="' + iframeUrl + '?parentUrl= ' + parentUrl + '" width="300" height="300" />'
 				);
 				
-                rindow.animate({
-                    width: rindow.settings.width() +'px',
-                    minHeight: rindow.settings.height +'px',
-                }, rindow.settings.animTime, function() {
+				rindow.animate({
+                    width:'500px',
+                    minHeight:'125px'
+                }, 300, function() {
 					rindow.append( $loginHtml );
+					
+					$.receiveMessage(
+						function(e){
+							if ( e.data = "hello world" ) {
+								$('#rdr-xdm').css('border', '2px solid blue');
+								$('#rdr-xdm').css('height', '100px');
+							}
+						},
+						iframeHost
+					);
 				});
 			},
 			sentimentBox : function(settings) {
@@ -1161,7 +1175,7 @@ function loadScript(sScriptSrc,callbackfunction) {
 
 /* jquery json v2.2 */
 /* http://code.google.com/p/jquery-json/ */
-function jqueryJSON($){
+function rdr_jqueryJSON($){
     $.toJSON=function(o)
 
     {
@@ -1278,6 +1292,18 @@ function jqueryJSON($){
     };
 }
 
+function rdr_postMessage($) {
+	/*
+	 * jQuery postMessage - v0.5 - 9/11/2009
+	 * http://benalman.com/projects/jquery-postmessage-plugin/
+	 * 
+	 * Copyright (c) 2009 "Cowboy" Ben Alman
+	 * Dual licensed under the MIT and GPL licenses.
+	 * http://benalman.com/about/license/
+	 */
+	var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h]&&!$.browser.opera;$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
+}
+
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
 loadScript("/static/ui-prototype/js/jquery-1.4.4.min.js", function(){
     //callback
@@ -1306,9 +1332,14 @@ function $RFunctions($R){
     //called after our version of jQuery is loaded
 
     //init the jquery-json plugin
-    jqueryJSON($R);
+    rdr_jqueryJSON($R);
+
+	//init Ben Alman's postMessage jquery plugin
+	rdr_postMessage($R);
+	
     //initiate our RDR object
     RDR = readrBoard($R);
+
     //run init functions
     RDR.actions.init();
 

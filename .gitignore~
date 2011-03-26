@@ -2,6 +2,5 @@
 *.DS_Store
 nbproject/
 readrdb.db
+\#*\#
 *~
-*#
-.#*

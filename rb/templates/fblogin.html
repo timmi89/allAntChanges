@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US" xmlns:x2="http://www.w3.org/2002/06/xhtml2" xmlns:fb="http://www.facebook.com/2008/fbml">
+   <head>
+     <title>Log In to ReadrBoard</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
+	<script src="/static/js/jquery.ba-postmessage.min.js" type="text/javascript"></script>
+	<style type="text/css">
+	img		{ border:0; }
+	</style>
+   </head>
+   <body>
+     <div id="fb-root"></div>
+	<div id="fb-login-button" style="display:none;">
+		<a href="javascript:void(0);" onclick="doFBLogin();"><img src="/static/images/fb-login_to_readrboard.png" /></a>
+	</div>
+	<div id="fb-logged-in" style="display:none;">
+		<a href="javascript:void(0);" onclick="FB.logout( doFBlogout );">Log out</a>
+	</div>
+	<a href="javascript:void(0);" onclick="postMessageTest()">test postMessage</a>
+     <script src="http://connect.facebook.net/en_US/all.js"></script>
+     <script>
+		var parentUrl;
+		var qs = window.location.search.substr(1).split('&');
+		var qs_args = [];
+		for ( var i in qs ) {
+			var this_arg = qs[i].split('=');
+			qs_args[this_arg[0]] = this_arg[1];
+		}
+		
+		function postMessageTest() {
+			$.postMessage(
+				'hello world',
+				'http://localhost.com:8080/static/ui-prototype/dailycandy.html',
+				parent
+			);	
+		}
+		
+        FB.init({ 
+           appId:'{{ fb_client_id }}', cookie:true, 
+           status:true, xfbml:true 
+        });
+     </script>
+	 <script>
+		FB.getLoginStatus(function(response) {
+	  		if (response.session) {
+				//user is logged in
+				$('#fb-logged-in').show();
+				$('#fb-login-button').hide();
+				console.dir(response);
+				
+	  		} else {
+				$('#fb-logged-in').hide();
+				$('#fb-login-button').show();
+	  		}
+		});
+		
+		function doFBLogin() {
+			FB.login( function(response) {
+				if (response.session) {
+					// user is logged in
+					console.log('logged in!');
+					if (response.perms) {
+						// user granted some perms
+						console.log('got perms!');
+					} else {
+						// user granted NO perms
+						console.log('NO PERMS');
+					}
+					console.dir( response.session );
+				} else {
+					// user is not logged in
+					console.log('USER NOT LOGGED IN');
+ 				}
+			}, {perms:'email'});
+		}
+		
+		function doFBlogout() {
+			window.location.reload();
+		}
+	</script>
+   </body>
+</html>
