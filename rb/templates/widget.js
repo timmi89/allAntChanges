@@ -689,7 +689,6 @@ function readrBoard($R){
 
 				$('.rdr_rewritable').removeClass('rdr_rewritable');
 
-
                 //todo: weird, why did commenting this line out not do anything?...look into it
 				//porter says: the action bar used to just animate larger and get populated as a window.  we can remove this.
                 //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
@@ -895,8 +894,6 @@ function readrBoard($R){
             },
             rateSend : function(tag, rindow, settings, callback) {
 				// tag can be an ID or a string.  if a string, we need to sanitize.
-				console.dir(settings);
-				callback();
 
                 // get the text that was highlighted
                 var content = $.trim( settings.content ); //RDR.why.sel.text
@@ -912,7 +909,8 @@ function readrBoard($R){
 					"user_id" : 1,
 					"page_id" : RDR.page.id
 				};
-			console.log(content);	
+			console.dir(sendData);
+			callback();
                 // send the data!
                 $.ajax({
                     url: "/api/tags/create/",
