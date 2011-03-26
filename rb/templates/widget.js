@@ -653,7 +653,7 @@ function readrBoard($R){
 				iframeUrl = iframeHost + "/fblogin/",
 				parentUrl = window.location.href;
 				$loginHtml.append( '<h1>Log In</h1>',
-				'<iframe src="' + iframeUrl + '?parentUrl= ' + parentUrl + '" width="300" height="300" />'
+				'<iframe id="rdr-xdm" src="' + iframeUrl + '?parentUrl= ' + parentUrl + '" width="300" height="300" />'
 				);
 				
 				rindow.animate({
@@ -664,7 +664,10 @@ function readrBoard($R){
 					
 					$.receiveMessage(
 						function(e){
-							alert( e.data );
+							if ( e.data = "hello world" ) {
+								$('#rdr-xdm').css('border', '2px solid blue');
+								$('#rdr-xdm').css('height', '100px');
+							}
 						},
 						iframeHost
 					);
