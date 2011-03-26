@@ -9,6 +9,11 @@ from django.contrib.auth.decorators import login_required
 from utils import *
 from extras.facebook import GraphAPI, GraphAPIError
 
+"""
+Readrboard Widget API - Uses Piston
+Note: By default, AnonymousBaseHandler has 'allow_methods' only set to 'GET'.
+"""
+
 class InteractionsHandler(BaseHandler):
     allowed_methods = ('GET',)
     
@@ -28,8 +33,7 @@ class InteractionsHandler(BaseHandler):
 class FBHandler(BaseHandler):
     allowed_methods = ('GET',)
 
-    @login_required
-    def read(self, request=request, access_token=None):
+    def read(self, request, access_token=None):
         #access_token = request.GET['access_token']
         graph = GraphAPI(access_token)
         profile = graph.get_object("me")
@@ -49,7 +53,6 @@ class InteractionHandler(BaseHandler):
 class CreateCommentHandler(BaseHandler):
     allowed_methods = ('GET',)
     
-    @login_required
     def read(request):
         data = json.loads(request.GET['json'])
         comment = data['comment']
@@ -64,7 +67,6 @@ class CreateCommentHandler(BaseHandler):
 class CreateTagHandler(BaseHandler):
     allowed_methods = ('GET',)
 
-    @login_required
     def read(request):
         data = json.loads(request.GET['json'])
         unknown_tags = data['unknown_tags'] 
@@ -96,7 +98,6 @@ class CreateTagHandler(BaseHandler):
         return Interactions
 
 class CreateContainerHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
     
     def read(self, request):
         result = {}
@@ -107,7 +108,6 @@ class CreateContainerHandler(AnonymousBaseHandler):
         return result
 
 class ContainerHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
     
     def read(self, request, container=None):
         data = json.loads(request.GET['json'])
@@ -132,10 +132,7 @@ class ContainerHandler(AnonymousBaseHandler):
         return dict(known=known, unknown=unknown)
 
 class PageDataHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
-    #model = InteractionNode
-    #fields = ('page',('node', ('id', 'kind')),)
-    
+
     def read(self, request, pageid=None):
         page = getPage(request, pageid)
         
@@ -166,7 +163,6 @@ class PageDataHandler(AnonymousBaseHandler):
         return dict(id=page.id, summary=summary, toptags=toptags, topusers=userinteract, topshares=topshares)
 
 class SettingsHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
     model = Group
     fields = ('id',
               'name',
@@ -204,9 +200,6 @@ class SettingsHandler(AnonymousBaseHandler):
                 print "host %s is valid for group %d" % (host,group)
             else:
                 print "host %s is not valid for group %d" % (host,group)
-            print "Sending RBGRoup data for RBGroup %d" % group
-            print g.css_url
-            print "----------"
             return g
         else:
             return ("Group not specified")

@@ -22,9 +22,6 @@ def fblogin(request):
     # Widget code is retreived from the server using RBGroup shortname
     return render_to_response("fblogin.html",{'fb_client_id': FACEBOOK_APP_ID})
 
-def tags(request, interaction_id):
-    return HttpResponse(get_object_or_404(Interaction, pk=interaction_id))
-    
 def expander(request, short):
     link_id = base62.to_decimal(short);
     link = Link.objects.get(id=link_id);
@@ -34,50 +31,3 @@ def expander(request, short):
     page = Page.objects.get(id=interaction.page.id)
     url = page.url;
     return HttpResponseRedirect(unicode(url)+ u"#" + unicode(interaction.id))
-
-"""
-def index(request):
-    return HttpResponse("index")
-
-def detail(request, node_id):
-    return HttpResponse("You're looking at node %s." % node_id)
-
-#extra test added by eric
-def tag_detail(request, tag_id):
-	tag = get_object_or_404(Tag, pk=tag_id)
-	return render_to_response('main/tag.html', {"tag": tag})
-
-def search_form(request):
-    return render_to_response('search_form.html')
-
-def search(request):
-    if request.GET['q']:
-        message = 'You searched for: %s' % request.GET['q']
-    else:
-        message = 'You submitted an empty form.'
-    return HttpResponse(message)
-
-def display_meta(request):
-    values = request.META.items()
-    values.sort()
-    html = []
-    for k, v in values:
-        html.append('<tr><td>%s</td><td>%s</td></tr>' % (k, v))
-    return HttpResponse('<table>%s</table>' % '\n'.join(html))
-
-def json_content_node(request):
-    objects = ContentNode.objects.all()
-    js = serializers.get_serializer("json")()
-    serialized = js.serialize(objects, ensure_ascii=False)
-    return HttpResponse(serialized)
-
-def json_users(request):
-    objects = ReadrUser.objects.all()
-    js = serializers.get_serializer("json")()
-    serialized = js.serialize(objects, ensure_ascii=False)
-    return HttpResponse(serialized)
-
-def send(request):
-    print request.GET
-    return HttpResponse(request.GET)
-"""
