@@ -90,16 +90,16 @@ class CreateTagHandler(BaseHandler):
 
         new = None
 
-        if isinstance(tag, str):
-            if tag:
+        if tag:
+            if isinstance(tag, str):
                 node = createInteractionNode(kind='tag', body=tag)
                 new = createInteraction(page, content, user, node)
-            else:
-                reaturn HttpResponse("Blank tag error!")
-        elif isinstance(tag, int):
-            node = InteractionNode.objects.get(id=tag)
-            new = createInteraction(page=page, content=content, user=user, interaction_node=node)
-        return new.id
+            elif isinstance(tag, int):
+                node = InteractionNode.objects.get(id=tag)
+                new = createInteraction(page=page, content=content, user=user, interaction_node=node)
+                return new.id
+        else:
+            return HttpResponse("No tag provided to tag handler")
 
 class CreateTagsHandler(BaseHandler):
     allowed_methods = ('GET',)
