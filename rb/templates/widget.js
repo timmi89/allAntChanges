@@ -66,7 +66,7 @@ function readrBoard($R){
                 var settings = $.extend({}, this.defaults, options);
 				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
 				if ( $new_rindow.length == 0 ) { // there's no rewritable window available, so make one
-					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable" style="max-width:' + settings.width() + 'px;"></div>');
+					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable" ></div>');
 					$('body').append( $new_rindow );
 				}
 
@@ -708,7 +708,7 @@ function readrBoard($R){
                 var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new" />'),
                 // $selectedTextPanel = $('<div class="rdr_selectedTextPanel rdr_sntPnl" />'),
                 $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl" />'),
-                $whyPanel = $('<div class="rdr_whyPanel rdr_sntPnl" />'),
+                $whyPanel = $('<div class="rdr_whyPanel rdr_sntPnl" />').css('width',0),
                 $blessedTagBox = $('<div class="rdr_blessedTagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
                 $customTagBox = $('<div class="rdr_customTagBox" />'),
                 $commentBox = $('<div class="rdr_commentBox" />'),
@@ -731,10 +731,10 @@ function readrBoard($R){
                 $tagTooltip = $('<div class="rdr_help">Add your own (ex. hip, woot)</div>');
                 
                 var headers = ["Why?", "What's your reaction?"];
-                $sentimentBox.append($whyPanel, $reactionPanel); //$selectedTextPanel, 
+                $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
                     var $header = $('<div class="rdr_header" />').append('<div><h1>'+ headers[idx] +'</h1></div>'),
-                    $body = $('<div />').addClass('rdr_body');
+                    $body = $('<div class="rdr_body"/>').append('<div class="rdr_bodyWrap" />');
                     $(this).append($header, $body).css({
                         'width':rindow.settings.pnlWidth
                     });
@@ -744,7 +744,8 @@ function readrBoard($R){
 				//$selectedTextPanel.find('div.rdr_body').append( '<div class="rdr_selected"><em></em><div class="rdr_arrow"></div></div>' );
 
                 //populate reactionPanel
-                $reactionPanel.find('div.rdr_body').append($blessedTagBox, $customTagBox);
+
+                $reactionPanel.find('div.rdr_bodyWrap').append($blessedTagBox, $customTagBox);
                 ////populate blesed_tags
                 $.each(RDR.group.blessed_tags, function(idx, val){
                     var $li = $('<li />').data({
@@ -762,7 +763,7 @@ function readrBoard($R){
                 });
 
                 //populate whyPanel
-				$whyPanel.find('div.rdr_body').append('<div class="rdr_subHeader" ><span>COMMENT &amp; SHARE </span></div>');
+				$whyPanel.hide().find('div.rdr_bodyWrap').append('<div class="rdr_subHeader" ><span>COMMENT &amp; SHARE </span></div>');
 
 /*
                 $customTagBox.append(
@@ -779,7 +780,7 @@ function readrBoard($R){
                     width: rindow.settings.width() +'px',
                     minHeight: rindow.settings.height +'px',
                 }, rindow.settings.animTime, function() {
-					
+					$(this).css('width','auto');
 					rindow.append($sentimentBox);
 					
                     /*
@@ -822,13 +823,21 @@ function readrBoard($R){
 			whyPanel : function(rindow, interaction_id) {
                 rindow.settings.pnls = 2;                            
                 //[eric] no need to animate whyPanel because it's aligned right now ([porter] floating right)
-				rindow.css('max-width', rindow.settings.width() +'px');
-				rindow.animate({
-                    width: rindow.settings.width() +'px',
-                    minHeight: rindow.settings.height +'px'
+				//rindow.css('max-width', rindow.settings.width() +'px');
+                $('.rdr_whyPanel').show().width('0');
+				$('.rdr_whyPanel').animate({
+                    width: rindow.settings.pnlWidth +'px'
                 }, rindow.settings.animTime, function() {
 					//pass for now
 				});
+                $('.rdr_whyPanel > div').each(function(){
+                    $(this).children('div').css({
+                        'width':rindow.settings.pnlWidth,
+                        'right':'0',
+                        'position':'absolute'
+                    });
+                });
+
 			},
             shareStart : function(rindow, known_tags, unknown_tags_arr) {
                 //todo: for now, I'm just passing in known_tags as a param, but check with Porter about this model.
