@@ -117,8 +117,9 @@ function readrBoard($R){
                 var y = settings.y ? (settings.y-50) : 100;
                 var coords = RDR.util.stayInWindow(x,y,200,30);
 
+				var actionbar_id = "rdr" + new Date().getTime();
                 // TODO use settings check for certain features and content types to determine which of these to disable
-                var $new_actionbar = $('<div class="rdr rdr_actionbar" />').css({
+                var $new_actionbar = $('<div class="rdr rdr_actionbar" id="' + actionbar_id + '" />').css({
                    'left':coords.x,
                    'top':coords.y
                 }).append('<ul/>');
@@ -714,7 +715,7 @@ function readrBoard($R){
                 $commentBox = $('<div class="rdr_commentBox" />'),
                 $shareBox = $('<div class="rdr_shareBox" />');
 
-                var headers = ["Why?", "What's your reaction?"];
+                var headers = ["Say More", "What's your reaction?"];
                 $sentimentBox.append($whyPanel, $reactionPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
                     var $header = $('<div class="rdr_header" />').append('<h1>'+ headers[idx] +'</h1>'),
@@ -736,7 +737,7 @@ function readrBoard($R){
                 ////customTagDialogue - develop this...
                $customTagBox.append(
                 '<input type="text" class="freeformTagInput" name="unknown-tags" />',
-                '<div class="rdr_help">Add your own (ex. hip, woot)</div>'
+                '<div class="rdr_help">Add your own (i.e. Cool, No way)</div>'
                 ).add('div.rdr_help').click(function(){            
                     $('div.rdr_help').remove();
                     $('.freeformTagInput').focus();
