@@ -218,7 +218,7 @@ function readrBoard($R){
 					            }
 					        });
 					    }
-					},2000);
+					},500);
 				}
 			},
             keepAlive: {
