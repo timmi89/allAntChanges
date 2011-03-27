@@ -22,7 +22,7 @@ def getPage(request, pageid=None):
 def createInteractionNode(kind, body):
 	if kind and body:
 			node = InteractionNode.objects.get_or_create(kind=kind, body=comment)[0]
-			print "success creating node"
+			print "Success creating InteractionNode with id %s" % node.id
 			return node
 
 def createInteraction(page, content, user, interaction_node, parent=None):
@@ -31,8 +31,16 @@ def createInteraction(page, content, user, interaction_node, parent=None):
 		now = created=datetime.datetime.now()
 		if parent:
 			print "Creating Interaction with parent node"
-			new = parent.add_child(page=page, content=content, user=user, interaction_node=interaction_node, created=now)
+			new = parent.add_child(page=page, 
+					       content=content, 
+					       user=user, 
+					       interaction_node=interaction_node,
+					       created=now)
 		else:
 			print "Creating Interaction without parent node"
-			new = Interaction.add_root(page=page, content=content, user=user, interaction_node=interaction_node, created=now)
+			new = Interaction.add_root(page=page, 
+						   content=content, 
+						   user=user, 
+						   interaction_node=interaction_node, 
+						   created=now)
 		return new
