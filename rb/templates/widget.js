@@ -731,8 +731,13 @@ function readrBoard($R){
                 $reactionPanel.find('div.rdr_body').append($blessedTagBox, $customTagBox);
                 ////populate blesed_tags
                 $.each(RDR.group.blessed_tags, function(idx, val){
-                    $blessedTagBox.children('ul.rdr_tags').append('<li tid="'+val.tid+'"><a href="javascript:void(0);">'+val.name+'</a><div class="rdr_arrow"></div></li>')
+                    var $li = $('<li />').data({
+                        'tid':val.tid
+                    }).append('<a href="javascript:void(0);">'+val.name+'</a><div class="rdr_arrow"></div>');
+                    
+                    $blessedTagBox.children('ul.rdr_tags').append($li);
                 });
+
                 ////customTagDialogue - develop this...
                $customTagBox.append(
                 '<input type="text" class="freeformTagInput" name="unknown-tags" />',
@@ -778,7 +783,7 @@ function readrBoard($R){
 							$(this).siblings().removeClass('rdr_selected');
                             $(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
 
-							RDR.actions.rateSend( $(this).attr('tid'), rindow, settings, function() {
+							RDR.actions.rateSend( $(this).data('tid'), rindow, settings, function() {
 								// todo: at this point, cast the tag, THEN call this in the tag success function:
 								RDR.actions.whyPanel( rindow );
 							});
