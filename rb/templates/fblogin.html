@@ -56,6 +56,7 @@
 		function doFBLogin() {
 			FB.login( function(response) {
 				if (response.session) {
+					FB.getLoginStatus(response);
 					$.ajax({
 	                    url: "/api/fb/",
 	                    type: "get",
