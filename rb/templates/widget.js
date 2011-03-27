@@ -1,5 +1,6 @@
 // console.log($)
 var jQueryVersion = "1.4.4",
+RDRtimer,
 RDR, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
 $R = {}, //init var: our clone of jQuery
@@ -37,7 +38,6 @@ function readrBoard($R){
                 commenting:""
             }
         },
-        why : {},
         styles : {
         /*
 		page: 	"<style type='text/css'>"+
@@ -99,29 +99,38 @@ function readrBoard($R){
 				// console.log('closeAll');
 				$('div.rdr.rdr_window').remove();
                 RDR.actionbar.close(); //organize how the actionbar should be a child of the rindow which would make this redundant
-			},
-            instance: false //do we need multiple rindows?  If so change this to instances: $('.rdr_window') //find all..
+			}
 		},
 		actionbar : {
 			draw: function(settings) {
 
-                var $this = $('div.rdr.rdr_actionbar');
-                if ( $this.length !== 0 ) {
-                    //alreday exists return it/
-                    return $this;
-                }
+				var actionbar_id = "rdr"+RDR.util.md5.hex_md5( settings.content );
+				var $actionBars = $('div.rdr.rdr_actionbar');
+
+				if ( $('#'+actionbar_id).length == 1 ) return $('#'+actionbar_id);
+				else {
+					$('div.rdr.rdr_actionbar').remove();
+					
+					// TODO.  figure out why the fuck this fucking clearTimeout doesn't fucking clear the fucking timer.
+					clearTimeout( RDR.actionbar.timer );
+					RDR.actionbar.timer = 0;
+				}
 
                 var left = settings.left ? (settings.left-34) : 100;
                 var top = settings.top ? (settings.top-50) : 100;
                 var coords = RDR.util.stayInWindow(left,top,200,30);
 
-				var actionbar_id = "rdr" + new Date().getTime();
                 // TODO use settings check for certain features and content types to determine which of these to disable
                 var $new_actionbar = $('<div class="rdr rdr_actionbar" id="' + actionbar_id + '" />').css({
                    'left':coords.left,
                    'top':coords.top
                 }).append('<ul/>');
-                $new_actionbar.items = [
+
+				// store the content selected that spawned this actionbar
+				// used for determining later on if an actionbar is being called by the same interaction as a
+				// currently-visible actionbar
+
+                var items = [
                         {
                             "item":"about",
                             "tipText":"What's This?",
@@ -145,7 +154,8 @@ function readrBoard($R){
                             "onclick":RDR.actions.bookmarkStart
                         }
                 ];
-                $.each($new_actionbar.items, function(idx, val){
+
+                $.each( items, function(idx, val){
                     var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
                     $iconAnchor = $('<a href="javascript:void(0);">' +val.item+ '</a>'),
                     $tooltip = $('<div class="rdr rdr_tooltip" class="rdr_tooltip_' +val.item+ '">' +
@@ -160,6 +170,7 @@ function readrBoard($R){
                     $item.append($iconAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
                     if(idx===0){$item.prepend($('<span class="rdr_divider" />'))}
                 });
+
                 //'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentBox({content_type:\''+settings.content_type+'\',content:\''+settings.content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
 
                 //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
@@ -176,19 +187,44 @@ function readrBoard($R){
                     }
                 );
 
-                // this.instance = $new_actionbar;
-                // return this.instance;
 				return $new_actionbar;
 			},
 			close: function(animation) {
                 $('div.rdr.rdr_actionbar').remove();
-                // this.instance = false;
+			},
+			fade: function(id) {
+				var $actionBar = $('#'+id);
+				if ( $actionBar.length ) {
+					var $aboutIcon = $actionBar.find('li:first'),
+					$otherIcons = $aboutIcon.siblings();
+
+					RDR.actionbar.timer = setTimeout( function(){
+					    //todo: organize and break out functions
+					    if(!RDR.actionbar.keepAlive.onImg && !RDR.actionbar.keepAlive.onActionbar){ // if(!keepAlive.onImg && !keepAlive.onActionbar && $actionbar.length) or just onActionBar
+					        //collapse actionbar
+					        $otherIcons.animate({width:'hide'},150, function(){
+					            $aboutIcon.find('.rdr_divider').hide();
+					            //check if we should close it also
+					            if(!RDR.actionbar.keepAlive.onImg && !RDR.actionbar.keepAlive.onActionbar){
+					                $actionBar.fadeOut(200, function(){
+					                    //check one more time after fadeout
+					                    if(!RDR.actionbar.keepAlive.onImg && !RDR.actionbar.keepAlive.onActionbar){
+					                        RDR.actionbar.close();
+					                    } else {
+					                        //quick catch it before it fades out!
+					                        $actionBar.show();
+					                    }
+					                });
+					            }
+					        });
+					    }
+					},2000);
+				}
 			},
             keepAlive: {
                 onImg:false,
                 onActionbar:false
-            },
-            instance : false
+            }
 		},
 		tooltip : {
 			draw: function(settings) {
@@ -228,11 +264,8 @@ function readrBoard($R){
 					$new_tooltip.css('left', x + 'px');
 					$new_tooltip.css('top', (y - $new_tooltip.height()) + 'px');
 				}
-                // this.instance = $new_tooltip;
-                // return this.instance;
 				return $new_tooltip;
-			},
-            instance: false
+			}
 		},
 		util : {
             stayInWindow : function(left,top,w,h) {
@@ -431,10 +464,6 @@ function readrBoard($R){
                     RDR.actionbar.keepAlive.onImg = true;
                     
                     //todo change this so that .live for imgs just resets coordinates, doesnt instantiate actionbar...
-
-                    // if(RDR.actionbar.instance.length){
-                    //     return false;
-                    // }
                     
 					// TODO check that the image is large enough?
 					// TODO keep the actionbar in the window
@@ -474,17 +503,17 @@ function readrBoard($R){
                     // todo: break out these animation effects into functions saved under actionBar.<collspase>
 				    $actionBar.hover(
                         function() {
-                            // RDR.actionbar.keepAlive.onActionbar = true;
-							RDR.actionbar.keepAlive.onActionbar = ( $(this).attr('id') ) ? true:false;
+                            RDR.actionbar.keepAlive.onActionbar = true;
+							// RDR.actionbar.keepAlive.onActionbar = ( $(this).attr('id') ) ? true:false;
                             //expand actionbar
                             $aboutIcon.find('.rdr_divider').show();
                             $otherIcons.animate({width:'show'},150);
                         },
                         function() {
-                            var keepAlive = RDR.actionbar.keepAlive;
-                            keepAlive.onActionbar = false;
-
-                            setTimeout(function(){
+                            RDR.actionbar.keepAlive.onActionbar = false;
+							RDR.actionbar.fade( $actionBar.attr('id') );
+                            /*
+							setTimeout(function(){
                                 //todo: organize and break out functions
                                 if(!keepAlive.onActionbar){
                                     //collapse actionbar
@@ -505,21 +534,27 @@ function readrBoard($R){
                                     });
                                 }
                             },500);
+							*/
                         }
 				    );
 
 				}).live('mouseleave', function() {
-                    var keepAlive = RDR.actionbar.keepAlive;
-                    keepAlive.onImg = false;
+                    RDR.actionbar.keepAlive.onImg = false;
+					var actionbar_id = "rdr"+RDR.util.md5.hex_md5( $(this).attr('src') );
+					RDR.actionbar.fade(actionbar_id);
 
                     //this isn't working right now because we are re-building the actionbar on img hover.
                     //We can't tell that it's the same actionbar that just hasnt dissapeared yet.  We need to change the stucture so that the img hover
                     //just changes the settings (like the coordinates) and doens't rebuild the actionbar
-                    
-                    RDR.actionbar.keepAlive.timer = setTimeout(function(){
-                        if(!keepAlive.onImg && !keepAlive.onActionbar && RDR.actionbar.instance.length){
+                    /*
+                    var $actionbar = $('div.rdr.rdr_actionbar');
+					var $aboutIcon = $actionBar.find('li:first'),
+                    $otherIcons = $aboutIcon.siblings();
+
+					RDR.actionbar.keepAlive.timer = setTimeout(function(){
+                        if(!keepAlive.onImg && !keepAlive.onActionbar && $actionbar.length){
                             
-                            var $aboutIcon = RDR.actionbar.instance.find('li:first'),
+                            var $aboutIcon = $actionbar.find('li:first'),
                             $otherIcons = $aboutIcon.siblings();
 
                             //simultaneous animations...
@@ -527,17 +562,18 @@ function readrBoard($R){
                                 $aboutIcon.find('.rdr_divider').hide();
                             });
                             //simultaneous animations...
-                            RDR.actionbar.instance.fadeOut(200, function(){
+                            $actionbar.fadeOut(200, function(){
                                 //check one more time
                                 if(!keepAlive.onImg && !keepAlive.onActionbar){
                                     RDR.actionbar.close();
                                 }else{
                                     //quick catch it before it fades out!
-                                    RDR.actionbar.instance.show();
+                                    $actionbar.show();
                                 }
                             });
                         }
                     },600);
+					*/
 				});
 				// END
 
@@ -573,7 +609,6 @@ function readrBoard($R){
                     if ( node_text && node_text!="undefined" && node_text.length > 5 ) {
                         // clean whitespace
                         node_text = RDR.util.cleanPara ( node_text );
-
 
                         // hash the text
                         var node_hash = RDR.util.md5.hex_md5( node_text );
@@ -785,16 +820,16 @@ function readrBoard($R){
 							$(this).siblings().removeClass('rdr_selected');
                             $(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
 
-							RDR.actions.rateSend( $(this).data('tid'), rindow, settings, function() {
+							RDR.actions.rateSend({ tag:$(this).data('tid'), rindow:rindow, settings:settings, callback: function() {
 								// todo: at this point, cast the tag, THEN call this in the tag success function:
 								RDR.actions.whyPanel( rindow );
+							}
 							});
                         },
                         function() {
 							// TODO: cast a "remove tag" vote, removing this user's vote of this tag
                             $(this).removeClass('rdr_selected');
-                        }
-                        );
+                        });
                 });
             },
 			whyPanel : function(rindow, interaction_id) {
@@ -889,18 +924,20 @@ function readrBoard($R){
                 });
 				*/
             },
-            rateSend : function(tag, rindow, settings, callback) {
+            rateSend : function(args) {
 				// tag can be an ID or a string.  if a string, we need to sanitize.
+				
+				// tag, rindow, settings, callback
 
                 // get the text that was highlighted
-                var content = $.trim( settings.content );
-				var container = $.trim( RDR.why.container );
+                var content = $.trim( args.settings.content );
+				var container = $.trim( args.settings.container );
 
 				var sendData = {
-					"tag" : tag,
+					"tag" : args.tag,
 					"hash": container,
 					"content" : content,
-					"content_type" : settings.content_type,
+					"content_type" : args.settings.content_type,
 					"user_id" : 1,
 					"page_id" : RDR.page.id
 				};
@@ -908,7 +945,7 @@ function readrBoard($R){
     			// TODO: 	this can be removed.  just for testing and making sure data looks good and simulating
     			//			the column animation before calling a not-working create tag
     			console.dir(sendData);
-    			callback();
+    			// args.callback();
 
                 // send the data!
                 $.ajax({
@@ -919,14 +956,15 @@ function readrBoard($R){
                     data: { json: JSON.stringify(sendData) },
                     complete: function(msg) {
                         //RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
-						callback;
+						args.callback();
                     }
                 });
             },
             startSelect : function(e) {
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
-                var mouse_target = $(e.target);
-
+                var mouse_target = $(e.target),
+				selection = {};
+				
                 // make sure it's not selecting inside the RDR windows.
                 if ( !mouse_target.hasClass('rdr') && mouse_target.parents('div.rdr').length == 0 ) {
 
@@ -939,56 +977,57 @@ function readrBoard($R){
                     // see what the user selected
                     // TODO: need separate image function, which should then prevent event bubbling into this
 						// ^ really?  why??
-                    RDR.why.sel = RDR.actions.selectedText();
-                    if ( RDR.why.sel.text && RDR.why.sel.text.length > 3 && RDR.why.sel.text.indexOf(" ") != -1 ) {
+                    selection.sel = RDR.actions.selectedText();
+                    if ( selection.sel.text && selection.sel.text.length > 3 && selection.sel.text.indexOf(" ") != -1 ) {
 
                         // next line's redundant, but this way we just use .content in later functions, based on itemType
-                        RDR.why.content = RDR.why.sel.text;
-                        RDR.why.itemType = "text";
-                        RDR.why.blockParent = null;
+                        selection.content = selection.sel.text;
+                        selection.itemType = "text";
+                        selection.blockParent = null;
 
-                        // first, identify the selection's block parent (RDR.why.blockParent)
-                        if ( RDR.why.sel.obj.css('display') != "block" ) {
-                            RDR.why.sel.obj.parents().each( function() {
+                        // first, identify the selection's block parent (selection.blockParent)
+                        if ( selection.sel.obj.css('display') != "block" ) {
+                            selection.sel.obj.parents().each( function() {
                                 // cache the obj... faster!
                                 var aParent = $(this);
                                 if ( aParent.css('display') == "block" ) {
                                     // we've found the first parent of the selected text that is block-level
-                                    RDR.why.blockParent = aParent;
+                                    selection.blockParent = aParent;
                                     return false;  // exits out of a jQuery.each loop
                                 }
                             });
                         } else {
                             // the node initially clicked on is the first block level container
-                            RDR.why.blockParent = RDR.why.sel.obj;
+                            selection.blockParent = selection.sel.obj;
                         }
 
                         // cache the blockParent's text for slightly faster processing
-                        RDR.why.blockParent.text = RDR.why.blockParent.text();
+                        selection.blockParent.text = selection.blockParent.text();
 
 						// does blockParent contain text that is long enough to be used here?
-						if ( RDR.why.blockParent.text && RDR.why.blockParent.text.length > 0) {
+						if ( selection.blockParent.text && selection.blockParent.text.length > 0) {
 
 							// is this inside a commentable-container?
-							RDR.why.container = "";
+							selection.container = "";
 							if ( mouse_target.hasClass('rdr-hashed') ) {
-								RDR.why.container = mouse_target.data('hash');
+								selection.container = mouse_target.data('hash');
 							} else if ( mouse_target.parents('.rdr-hashed:first').length == 1 ) {
-								RDR.why.container = mouse_target.parents('.rdr-hashed:first').data('hash');
+								selection.container = mouse_target.parents('.rdr-hashed:first').data('hash');
 							}
 
                             // strip newlines and tabs -- and then the doublespaces that result
-                            RDR.why.blockParentTextClean = RDR.util.cleanPara ( RDR.why.blockParent.text );
-                            RDR.why.selectionTextClean = RDR.util.cleanPara ( RDR.why.content );
+                            selection.blockParentTextClean = RDR.util.cleanPara ( selection.blockParent.text );
+                            selection.selectionTextClean = RDR.util.cleanPara ( selection.content );
 
 							// see if it contains the whole selection text
-                            if ( RDR.why.blockParentTextClean.indexOf( RDR.why.selectionTextClean ) != -1 ) {
+                            if ( selection.blockParentTextClean.indexOf( selection.selectionTextClean ) != -1 ) {
                                 // this can be commented on if it's long enough and has at least one space (two words or more)
                                 RDR.actionbar.draw({
                                     left:parseInt(e.pageX),
                                     top:parseInt(e.pageY)+7,
 									content_type:"text",
-									content:RDR.why.content
+									content:selection.content,
+									container:selection.container
                                 });
 
                             // TODO: also should detect if selection has an image, embed, object, audio, or video tag in it
@@ -997,7 +1036,8 @@ function readrBoard($R){
                                     left:parseInt(e.pageX),
                                     top:parseInt(e.pageY),
 									content_type:"text",
-									content:RDR.why.content,
+									content:selection.content,
+									container:selection.container,
                                     cant_comment:true
                                 });
                             }
