@@ -56,7 +56,10 @@
 		function doFBLogin() {
 			FB.login( function(response) {
 				if (response.session) {
-					FB.getLoginStatus();
+					//user is logged in
+					$('#fb-logged-in').show();
+					$('#fb-login-button').hide();
+
 					
 					$.ajax({
 	                    url: "/api/fb/",
