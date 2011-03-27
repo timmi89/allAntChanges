@@ -117,9 +117,8 @@ function readrBoard($R){
                 var y = settings.y ? (settings.y-50) : 100;
                 var coords = RDR.util.stayInWindow(x,y,200,30);
 
-				var actionbar_id = "rdr" + new Date().getTime();
                 // TODO use settings check for certain features and content types to determine which of these to disable
-                var $new_actionbar = $('<div class="rdr rdr_actionbar" id="' + actionbar_id + '" />').css({
+                var $new_actionbar = $('<div class="rdr rdr_actionbar" />').css({
                    'left':coords.x,
                    'top':coords.y
                 }).append('<ul/>');
@@ -475,7 +474,6 @@ function readrBoard($R){
 				    $actionBar.hover(
                         function() {
                             RDR.actionbar.keepAlive.onActionbar = true;
-// RDR.actionbar.keepAlive.onActionbar = ( $(this).attr('id') ) ? true:false;
                             //expand actionbar
                             $aboutIcon.find('.rdr_divider').show();
                             $otherIcons.animate({width:'show'},150);
@@ -714,9 +712,25 @@ function readrBoard($R){
                 $blessedTagBox = $('<div class="rdr_blessedTagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
                 $customTagBox = $('<div class="rdr_customTagBox" />'),
                 $commentBox = $('<div class="rdr_commentBox" />'),
-                $shareBox = $('<div class="rdr_shareBox" />');
-
-                var headers = ["Say More", "What's your reaction?"];
+                $shareBox = $('<div class="rdr_shareBox" />'),
+                $freeformTagInput = $('<input type="text" class="freeformTagInput" name="unknown-tags" />')//chain
+                .blur(function(){
+                    if($('.freeformTagInput').val() == "" ){
+                        $('div.rdr_help').show();   
+                    }
+                }).keyup(function(event) {
+                    if (event.keyCode == '13' || event.keyCode == '188' ) { //enter or comma
+                        console.log('new tag here!');
+                    }
+                    else if (event.keyCode == '27') { //esc
+                        $('.freeformTagInput').val("").blur();
+                        $('div.rdr_help').show();
+                        return false;
+                    }
+                }),
+                $tagTooltip = $('<div class="rdr_help">Add your own (ex. hip, woot)</div>');
+                
+                var headers = ["Why?", "What's your reaction?"];
                 $sentimentBox.append($whyPanel, $reactionPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
                     var $header = $('<div class="rdr_header" />').append('<div><h1>'+ headers[idx] +'</h1></div>'),
@@ -741,12 +755,10 @@ function readrBoard($R){
                 });
 
                 ////customTagDialogue - develop this...
-               $customTagBox.append(
-                '<input type="text" class="freeformTagInput" name="unknown-tags" />',
-                '<div class="rdr_help">Add your own (i.e. Cool, No way)</div>'
-                ).add('div.rdr_help').click(function(){            
-                    $('div.rdr_help').remove();
-                    $('.freeformTagInput').focus();
+                $customTagBox.append($freeformTagInput, $tagTooltip)//chain
+                .add($tagTooltip).click(function(){            
+                    $tagTooltip.hide();
+                    $freeformTagInput.focus();
                 });
 
                 //populate whyPanel
