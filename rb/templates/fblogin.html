@@ -15,6 +15,8 @@
 	</div>
 	<div id="fb-logged-in" style="display:none;">
 		<a href="javascript:void(0);" onclick="FB.logout( doFBlogout );">Log out</a>
+		<br/><br/>
+		<a href="javascript:void(0);" onclick="sendFBData();">Send Facebook Response again</a>
 	</div>
 	<a href="javascript:void(0);" onclick="postMessageTest()">test postMessage</a>
      <script src="http://connect.facebook.net/en_US/all.js"></script>
@@ -53,26 +55,31 @@
 	  		}
 		});
 		
+		function sendFBData() {
+			$.ajax({
+				url: "/api/fb/",
+				type: "get",
+				contentType: "application/json",
+				dataType: "jsonp",
+				data: {
+					json: JSON.stringify(fb_response)
+				},
+				success: function(response){
+					console.dir( response );
+				}
+			});
+		}
+		
+		var fb_response = {};
 		function doFBLogin() {
 			FB.login( function(response) {
 				if (response.session) {
 					//user is logged in
 					$('#fb-logged-in').show();
 					$('#fb-login-button').hide();
-
+					fb_response = response;
+					sendFBData();
 					
-					$.ajax({
-	                    url: "/api/fb/",
-	                    type: "get",
-	                    contentType: "application/json",
-	                    dataType: "jsonp",
-	                    data: {
-                    		json: JSON.stringify(response)
-						},
-	                    success: function(response){
-							console.dir( response );
-						}
-					});
 				} else {
 					// user is not logged in
 					console.log('USER NOT LOGGED IN');
