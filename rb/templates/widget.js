@@ -87,14 +87,13 @@ function readrBoard($R){
 
                 }
                 // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-                var coords = RDR.util.stayInWindow(settings.x, settings.y, settings.width, 300);
-                $new_rindow.css('left', coords.x + 'px');
-                $new_rindow.css('top', coords.y + 'px');    
+                var coords = RDR.util.stayInWindow(settings.left, settings.top, settings.width, 300);
+                $new_rindow.css('left', coords.left + 'px');
+                $new_rindow.css('top', coords.top + 'px');    
                 RDR.actionbar.close();  
 
                 $new_rindow.settings = settings;
-                this.instance = $new_rindow;
-                return this.instance;
+                return $new_rindow;
 			},
 			closeAll: function() {
 				// console.log('closeAll');
@@ -111,17 +110,16 @@ function readrBoard($R){
                     //alreday exists return it/
                     return $this;
                 }
-                //(else)
 
-                var x = settings.x ? (settings.x-34) : 100;
-                var y = settings.y ? (settings.y-50) : 100;
-                var coords = RDR.util.stayInWindow(x,y,200,30);
+                var left = settings.left ? (settings.left-34) : 100;
+                var top = settings.top ? (settings.top-50) : 100;
+                var coords = RDR.util.stayInWindow(left,top,200,30);
 
 				var actionbar_id = "rdr" + new Date().getTime();
                 // TODO use settings check for certain features and content types to determine which of these to disable
                 var $new_actionbar = $('<div class="rdr rdr_actionbar" id="' + actionbar_id + '" />').css({
-                   'left':coords.x,
-                   'top':coords.y
+                   'left':coords.left,
+                   'top':coords.top
                 }).append('<ul/>');
                 $new_actionbar.items = [
                         {
@@ -136,7 +134,8 @@ function readrBoard($R){
                                 RDR.actions.sentimentBox({
                                     "container": settings.container,
                                     "content_type": settings.content_type,
-                                    "content": settings.content
+                                    "content": settings.content,
+									"coords": coords
                                 });
                             }
                         },
@@ -176,14 +175,14 @@ function readrBoard($R){
                         $(this).find('a').siblings('.rdr_tooltip').hide();
                     }
                 );
-				
 
-                this.instance = $new_actionbar;
-                return this.instance;
+                // this.instance = $new_actionbar;
+                // return this.instance;
+				return $new_actionbar;
 			},
 			close: function(animation) {
                 $('div.rdr.rdr_actionbar').remove();
-                this.instance = false;
+                // this.instance = false;
 			},
             keepAlive: {
                 onImg:false,
@@ -229,28 +228,29 @@ function readrBoard($R){
 					$new_tooltip.css('left', x + 'px');
 					$new_tooltip.css('top', (y - $new_tooltip.height()) + 'px');
 				}
-                this.instance = $new_tooltip;
-                return this.instance;
+                // this.instance = $new_tooltip;
+                // return this.instance;
+				return $new_tooltip;
 			},
             instance: false
 		},
 		util : {
-            stayInWindow : function(x,y,w,h) {
+            stayInWindow : function(left,top,w,h) {
                 var coords = {};
                 var rWin = $(window);
                 var winWidth = rWin.width();
                 var winHeight = rWin.height();
                 var winScroll = rWin.scrollTop();
-                if ( (x+w+16) >= winWidth ) {
-                    x = winWidth - w - 36;
+                if ( (left+w+16) >= winWidth ) {
+                    left = winWidth - w - 36;
                 }
-                if ( (y+h) > winHeight + winScroll ) {
-                    y = winHeight + winScroll - h + 75;
+                if ( (top+h) > winHeight + winScroll ) {
+                    top = winHeight + winScroll - h + 75;
                 }
-                if ( x < 10 ) x = 10;
-                if ( y - winScroll < 10 ) y = winScroll + 10;
-                coords.x = x;
-                coords.y = y;
+                if ( left < 10 ) left = 10;
+                if ( top - winScroll < 10 ) top = winScroll + 10;
+                coords.left = left;
+                coords.top = top;
                 return coords;
             },
             md5 : {
@@ -432,9 +432,9 @@ function readrBoard($R){
                     
                     //todo change this so that .live for imgs just resets coordinates, doesnt instantiate actionbar...
 
-                    if(RDR.actionbar.instance.length){
-                        return false;
-                    }
+                    // if(RDR.actionbar.instance.length){
+                    //     return false;
+                    // }
                     
 					// TODO check that the image is large enough?
 					// TODO keep the actionbar in the window
@@ -444,8 +444,8 @@ function readrBoard($R){
 						// create a container for the image, give it same styles but more space?
 						// like, inline or float, but with RDR stuff
 				    var this_img = $(this),
-				    x = this_img.offset().left + 33,
-				    y = this_img.offset().top + this_img.height() + 20,
+				    left = this_img.offset().left + 33,
+				    top = this_img.offset().top + this_img.height() + 20,
 					src = this_img.attr('src');
 					
 					// kludgey(?) way of making sure we have the full image path
@@ -466,7 +466,7 @@ function readrBoard($R){
 					}
 					console.log(src);
 					
-				    var $actionBar = RDR.actionbar.draw({ x:x, y:y, content_type:"image", content:src });
+				    var $actionBar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src });
                     var $aboutIcon = $actionBar.find('li:first'),
                     $otherIcons = $aboutIcon.siblings();
                     $otherIcons.hide();
@@ -474,8 +474,8 @@ function readrBoard($R){
                     // todo: break out these animation effects into functions saved under actionBar.<collspase>
 				    $actionBar.hover(
                         function() {
-                            RDR.actionbar.keepAlive.onActionbar = true;
-// RDR.actionbar.keepAlive.onActionbar = ( $(this).attr('id') ) ? true:false;
+                            // RDR.actionbar.keepAlive.onActionbar = true;
+							RDR.actionbar.keepAlive.onActionbar = ( $(this).attr('id') ) ? true:false;
                             //expand actionbar
                             $aboutIcon.find('.rdr_divider').show();
                             $otherIcons.animate({width:'show'},150);
@@ -516,7 +516,7 @@ function readrBoard($R){
                     //We can't tell that it's the same actionbar that just hasnt dissapeared yet.  We need to change the stucture so that the img hover
                     //just changes the settings (like the coordinates) and doens't rebuild the actionbar
                     
-                    setTimeout(function(){
+                    RDR.actionbar.keepAlive.timer = setTimeout(function(){
                         if(!keepAlive.onImg && !keepAlive.onActionbar && RDR.actionbar.instance.length){
                             
                             var $aboutIcon = RDR.actionbar.instance.find('li:first'),
@@ -653,8 +653,8 @@ function readrBoard($R){
                 //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
 
                 var rindow = RDR.rindow.draw({
-                    x:100,
-                    y:100
+                    left:100,
+                    top:100
                 });
 
 				//TODO TYLER THIS IS FOR FACEBOOK
@@ -687,7 +687,7 @@ function readrBoard($R){
 			sentimentBox : function(settings) {
 
                 // draw the window over the actionbar
-                var actionbarOffsets = RDR.actionbar.instance.offset();
+                var actionbarOffsets = settings.coords;
 
 				$('.rdr_rewritable').removeClass('rdr_rewritable');
 
@@ -699,8 +699,8 @@ function readrBoard($R){
 					actionbarOffsets.top = actionbarOffsets.top + 35;
 				}
                 var rindow = RDR.rindow.draw({
-                    x:actionbarOffsets.left,
-                    y:actionbarOffsets.top,
+                    left:actionbarOffsets.left,
+                    top:actionbarOffsets.top,
 					pnlWidth:200,
 					pnls:1
                 });
@@ -795,16 +795,6 @@ function readrBoard($R){
                             $(this).removeClass('rdr_selected');
                         }
                         );
-
-					/*
-                    rindow.find('div.rdr_contentSpace').append( $reactionPanel );
-                    rindow.find('h1').text("Your Reaction:");
-
-                    // bind the button with a function (since this isn't in a <form>)
-                    rindow.find('button').click( function() {
-                        RDR.actions.rateSend( rindow, settings );
-                    });
-                    */
                 });
             },
 			whyPanel : function(rindow, interaction_id) {
@@ -903,7 +893,7 @@ function readrBoard($R){
 				// tag can be an ID or a string.  if a string, we need to sanitize.
 
                 // get the text that was highlighted
-                var content = $.trim( settings.content ); //RDR.why.sel.text
+                var content = $.trim( settings.content );
 				var container = $.trim( RDR.why.container );
 
 				var sendData = {
@@ -995,8 +985,8 @@ function readrBoard($R){
                             if ( RDR.why.blockParentTextClean.indexOf( RDR.why.selectionTextClean ) != -1 ) {
                                 // this can be commented on if it's long enough and has at least one space (two words or more)
                                 RDR.actionbar.draw({
-                                    x:parseInt(e.pageX),
-                                    y:parseInt(e.pageY)+7,
+                                    left:parseInt(e.pageX),
+                                    top:parseInt(e.pageY)+7,
 									content_type:"text",
 									content:RDR.why.content
                                 });
@@ -1004,8 +994,8 @@ function readrBoard($R){
                             // TODO: also should detect if selection has an image, embed, object, audio, or video tag in it
                             } else {
                                 RDR.actionbar.draw({
-                                    x:parseInt(e.pageX),
-                                    y:parseInt(e.pageY),
+                                    left:parseInt(e.pageX),
+                                    top:parseInt(e.pageY),
 									content_type:"text",
 									content:RDR.why.content,
                                     cant_comment:true
