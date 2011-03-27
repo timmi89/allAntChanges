@@ -1,0 +1,40 @@
+from readrboard.rb.models import *
+import datetime
+import json
+
+def getPage(request, pageid=None):
+	canonical = request.GET.get('canonical_url', None)
+	fullurl = request.GET.get('url', None)
+	host = request.get_host()
+	host = host[0:host.find(":")]
+	site = Site.objects.get(domain=host)
+	if pageid:
+		return Page.objects.get(id=pageid)
+	elif canonical:
+		page = Page.objects.get_or_create(canonical_url=canonical, defaults={'url': fullurl, 'site': site})
+	else:
+		page = Page.objects.get_or_create(url=fullurl, defaults={'site': site})
+		
+	if page[1] == True: print "Created page {0}".format(page)
+
+	return page[0]
+
+def createInteractionNode(kind, body):
+	if kind and body:
+			node = InteractionNode.objects.get_or_create(kind=kind, body=comment)[0]
+			print "success creating node"
+			return node
+
+def createInteraction(page, content, user, interaction_node, parent=None):
+	if content and user and interaction_node:
+		# Can't rely on Django's auto_now to create the time before storing the node
+		now = created=datetime.datetime.now()
+		if parent:
+			print "Creating Interaction with parent"
+			return parent.add_child(page=page, content=content, user=user, interaction_node=interaction_node, created=now)
+		else:
+			print "Creating Interaction without parent"
+			print "-> has page %s, content %s, user %s, inode %s, created %s" % (page, content, user, interaction_node, now)
+			new = Interaction.add_root(page=page, content=content, user=user, interaction_node=interaction_node, created=now)
+			print "in utils created this shiz"
+			return new

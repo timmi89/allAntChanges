@@ -96,7 +96,9 @@ class CreateTagHandler(BaseHandler):
                 new = createInteraction(page, content, user, node)
             elif isinstance(tag, int):
                 node = InteractionNode.objects.get(id=tag)
+                print "about to create interaction"
                 new = createInteraction(page=page, content=content, user=user, interaction_node=node)
+                print "created interaction"
                 return new.id
         else:
             return HttpResponse("No tag provided to tag handler")
