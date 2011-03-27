@@ -475,6 +475,7 @@ function readrBoard($R){
 				    $actionBar.hover(
                         function() {
                             RDR.actionbar.keepAlive.onActionbar = true;
+// RDR.actionbar.keepAlive.onActionbar = ( $(this).attr('id') ) ? true:false;
                             //expand actionbar
                             $aboutIcon.find('.rdr_divider').show();
                             $otherIcons.animate({width:'show'},150);

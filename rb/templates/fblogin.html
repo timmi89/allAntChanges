@@ -26,11 +26,9 @@
 			var this_arg = qs[i].split('=');
 			qs_args[this_arg[0]] = this_arg[1];
 		}
-		// /api/fb/
-		// 
-		function postMessageTest() {
+		function postMessage(message) {
 			$.postMessage(
-				'hello world',
+				message,
 				'http://localhost:8080/static/ui-prototype/dailycandy.html',
 				parent
 			);	
@@ -58,16 +56,18 @@
 		function doFBLogin() {
 			FB.login( function(response) {
 				if (response.session) {
-					// user is logged in
-					console.log('logged in!');
-					if (response.perms) {
-						// user granted some perms
-						console.log('got perms!');
-					} else {
-						// user granted NO perms
-						console.log('NO PERMS');
-					}
-					console.dir( response.session );
+					$.ajax({
+	                    url: "/api/fb/",
+	                    type: "get",
+	                    contentType: "application/json",
+	                    dataType: "jsonp",
+	                    data: {
+                    		json: JSON.stringify(response)
+						},
+	                    success: function(response){
+							console.dir( response );
+						}
+					});
 				} else {
 					// user is not logged in
 					console.log('USER NOT LOGGED IN');
