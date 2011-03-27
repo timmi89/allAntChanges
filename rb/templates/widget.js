@@ -717,7 +717,7 @@ function readrBoard($R){
                 var headers = ["Why?", "What's your reaction?"];
                 $sentimentBox.append($whyPanel, $reactionPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
-                    var $header = $('<div class="rdr_header" />').append('<h1>'+ headers[idx] +'</h1>'),
+                    var $header = $('<div class="rdr_header" />').append('<div><h1>'+ headers[idx] +'</h1></div>'),
                     $body = $('<div />').addClass('rdr_body');
                     $(this).append($header, $body).css({
                         'width':rindow.settings.pnlWidth
@@ -908,10 +908,10 @@ function readrBoard($R){
 					"page_id" : RDR.page.id
 				};
 			
-			// TODO: 	this can be removed.  just for testing and making sure data looks good and simulating
-			//			the column animation before calling a not-working create tag
-			console.dir(sendData);
-			callback();
+    			// TODO: 	this can be removed.  just for testing and making sure data looks good and simulating
+    			//			the column animation before calling a not-working create tag
+    			console.dir(sendData);
+    			callback();
 
                 // send the data!
                 $.ajax({
