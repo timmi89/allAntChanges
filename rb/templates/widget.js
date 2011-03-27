@@ -718,7 +718,7 @@ function readrBoard($R){
                 var headers = ["Say More", "What's your reaction?"];
                 $sentimentBox.append($whyPanel, $reactionPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
-                    var $header = $('<div class="rdr_header" />').append('<h1>'+ headers[idx] +'</h1>'),
+                    var $header = $('<div class="rdr_header" />').append('<div><h1>'+ headers[idx] +'</h1></div>'),
                     $body = $('<div />').addClass('rdr_body');
                     $(this).append($header, $body).css({
                         'width':rindow.settings.pnlWidth
@@ -732,8 +732,13 @@ function readrBoard($R){
                 $reactionPanel.find('div.rdr_body').append($blessedTagBox, $customTagBox);
                 ////populate blesed_tags
                 $.each(RDR.group.blessed_tags, function(idx, val){
-                    $blessedTagBox.children('ul.rdr_tags').append('<li tid="'+val.tid+'"><a href="javascript:void(0);">'+val.name+'</a><div class="rdr_arrow"></div></li>')
+                    var $li = $('<li />').data({
+                        'tid':val.tid
+                    }).append('<a href="javascript:void(0);">'+val.name+'</a><div class="rdr_arrow"></div>');
+                    
+                    $blessedTagBox.children('ul.rdr_tags').append($li);
                 });
+
                 ////customTagDialogue - develop this...
                $customTagBox.append(
                 '<input type="text" class="freeformTagInput" name="unknown-tags" />',
@@ -779,7 +784,7 @@ function readrBoard($R){
 							$(this).siblings().removeClass('rdr_selected');
                             $(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
 
-							RDR.actions.rateSend( $(this).attr('tid'), rindow, settings, function() {
+							RDR.actions.rateSend( $(this).data('tid'), rindow, settings, function() {
 								// todo: at this point, cast the tag, THEN call this in the tag success function:
 								RDR.actions.whyPanel( rindow );
 							});
@@ -909,14 +914,14 @@ function readrBoard($R){
 					"page_id" : RDR.page.id
 				};
 			
-			// TODO: 	this can be removed.  just for testing and making sure data looks good and simulating
-			//			the column animation before calling a not-working create tag
-			console.dir(sendData);
-			callback();
+    			// TODO: 	this can be removed.  just for testing and making sure data looks good and simulating
+    			//			the column animation before calling a not-working create tag
+    			console.dir(sendData);
+    			callback();
 
                 // send the data!
                 $.ajax({
-                    url: "/api/tags/create/",
+                    url: "/api/tag/create/",
                     type: "get",
                     contentType: "application/json",
 					dataType: "jsonp",

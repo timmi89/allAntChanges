@@ -89,24 +89,34 @@ div.rdr h2	{font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif;
 div.rdr h1	{font-size:21px; cursor:move; }
 
 /* the widget */
-div.rdr div.rdr_sentimentBox							{height:200px; padding-bottom:42px;}
-div.rdr div.rdr_sntPnl 									{height:100%; float:left; display:block; width:50%; /*width is reset with js - rindow.settings.pnlWidth */ }
-div.rdr div.rdr_sntPnl div.rdr_body						{height:100%; xmin-height:200px; xmax-height:300px; overflow-x:hidden; overflow-y:auto; padding:5px 0; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset;}
+div.rdr div.rdr_sentimentBox							{height:250px;}
+div.rdr div.rdr_sntPnl 									{float:left; display:block; height:100%; width:50%; /*width is reset with js - rindow.settings.pnlWidth */ }
+/*var: rdr_body and rdr_sntPnl heights should add to 100%.  Should have no y padding. */
+div.rdr div.rdr_sntPnl div.rdr_body						{xmin-height:200px; xmax-height:300px; overflow-x:hidden; overflow-y:auto; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; height: 85%;}
+div.rdr div.rdr_sntPnl div.rdr_header 			      	{background:#fff; height: 15%; position:relative;}
+div.rdr div.rdr_sntPnl div.rdr_header > div           	{    background: none repeat scroll 0 0 #FFFFFF;
+    border-bottom: 1px solid #DFDFDF;
+    bottom: 0;
+    padding-bottom: 5px;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+}
 div.rdr div.rdr_body .rdr_selected div.rdr_arrow 		{ DISPLAY:NONE; border-color:transparent transparent transparent #f2cfcf; border-style:solid; border-width:12px; height:0; margin-top:-10px; position:absolute; right:-23px; top:43%; width:0;}
 div.rdr div.rdr_reactionPanel div.rdr_body .rdr_selected div.rdr_arrow 		{ border-color:transparent transparent transparent #f7dddd; }
 div.rdr div.rdr_selectedTextPanel div.rdr_body div.rdr_selected		{font-family:Georgia; font-size:14px; padding:7px; background:#f2cfcf; display:block; position:relative; }
 div.rdr div.rdr_selectedTextPanel				{position:relative; z-index:3;}
-div.rdr div.rdr_selectedTextPanel div.rdr_body 	{background:#f0f0f0; -moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; padding-top:5px;}
+div.rdr div.rdr_selectedTextPanel div.rdr_body 	{background:#f0f0f0; -moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
 div.rdr div.rdr_reactionPanel					{position:relative; z-index:2;}
 div.rdr div.rdr_reactionPanel div.rdr_body		{background:#f8f8f8; }
 div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
 div.rdr div.rdr_whyPanel 						{z-index:1; margin-left: -200px; z-index: 1; float:right; }
-div.rdr div.rdr_whyPanel div.rdr_body			{background:#ffffff; padding-top:5px;}
-div.rdr div.rdr_header                     		{text-align:center; padding:3px; border-bottom:1px solid #dfdfdf; background:#fff; }
-div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center;}
+div.rdr div.rdr_whyPanel div.rdr_body			{background:#ffffff;}
+div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top: 5px;}
 div.rdr div.rdr_sntPnl div.rdr_customTagBox 	{margin:0 15px; position:relative;}
 div.rdr div.rdr_sntPnl .rdr_submitTag  			{width:100%; text-align:right;}
 div.rdr div.rdr_sntPnl .rdr_submitTag button 	{}
+div.rdr div.rdr_sntPnl .rdr_blessedTagBox		{padding-top:4px;}
 
 
 div.rdr div.rdr_reactionPanel div.rdr_quote {position: relative; text-shadow:1px 1px 1px #999; font-size:18px; font-family:Georgia, serif; z-index: 12020;}
@@ -119,7 +129,7 @@ div.rdr ul.rdr_tags li			{padding:2px 5px; margin:5px 15px; background:#d6d6d6; 
 div.rdr ul.rdr_tags li:hover	{background:#f7dddd;cursor:pointer;}
 div.rdr ul.rdr_tags li:hover a,
 div.rdr ul.rdr_tags li.rdr_selected a				{color:#e71f1f; display:block;}
-div.rdr ul.rdr_tags li.rdr_selected					{color:#e71f1f; background:#f7dddd; margin:0; padding:1px 5px;-moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset;}
+div.rdr ul.rdr_tags li.rdr_selected					{color:#e71f1f; background:#f7dddd; margin: 5px 0; padding: 2px 5px; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset;}
 div.rdr div.rdr_new ul.rdr_tags li.rdr_selected 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
 div.rdr ul.rdr_preselected			{font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0 0 10px; }
 div.rdr ul.rdr_preselected a		{color:#000;text-decoration:none;}

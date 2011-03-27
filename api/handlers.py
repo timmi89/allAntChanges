@@ -41,6 +41,11 @@ class FBHandler(BaseHandler):
         profile['image_thumb'] = 'https://graph.facebook.com/me/picture?access_token=%s' % access_token
         
         return profile
+# Readrboard userid
+# Firstname
+# Fullname
+# url to facebook image (large+thumb)
+
 
 class InteractionHandler(BaseHandler):
     allowed_methods = ('GET',)
@@ -67,7 +72,41 @@ class CreateCommentHandler(BaseHandler):
 class CreateTagHandler(BaseHandler):
     allowed_methods = ('GET',)
 
-    def read(request):
+    def read(self, request):
+        data = json.loads(request.GET['json'])
+        tag = data['tag']
+        hash = data['hash']
+        content_data = data['content']
+        content_type = data['content_type']
+        page_id = data['page_id']
+        
+        user = request.user
+        page = Page.objects.get(id=page_id)
+        content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
+        
+        if hash:    
+            container = Container.objects.get(hash=hash)
+            container.content.add(content)
+
+        new = None
+
+        if tag:
+            if isinstance(tag, str):
+                node = createInteractionNode(kind='tag', body=tag)
+                new = createInteraction(page, content, user, node)
+            elif isinstance(tag, int):
+                node = InteractionNode.objects.get(id=tag)
+                print "about to create interaction"
+                new = createInteraction(page=page, content=content, user=user, interaction_node=node)
+                print "created interaction"
+                return new.id
+        else:
+            return HttpResponse("No tag provided to tag handler")
+
+class CreateTagsHandler(BaseHandler):
+    allowed_methods = ('GET',)
+
+    def read(self, request):
         data = json.loads(request.GET['json'])
         unknown_tags = data['unknown_tags'] 
         known_tags = data['known_tags']
