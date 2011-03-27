@@ -72,7 +72,7 @@ class CreateCommentHandler(BaseHandler):
 class CreateTagHandler(BaseHandler):
     allowed_methods = ('GET',)
 
-    def read(request):
+    def read(self, request):
         data = json.loads(request.GET['json'])
         tag = data['tag']
         hash = data['hash']
@@ -104,7 +104,7 @@ class CreateTagHandler(BaseHandler):
 class CreateTagsHandler(BaseHandler):
     allowed_methods = ('GET',)
 
-    def read(request):
+    def read(self, request):
         data = json.loads(request.GET['json'])
         unknown_tags = data['unknown_tags'] 
         known_tags = data['known_tags']
