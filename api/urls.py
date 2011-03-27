@@ -12,7 +12,8 @@ Settings = Resource(handler=SettingsHandler, authentication=auth)
 PageData = Resource(handler=PageDataHandler, authentication=auth)
 Containers = Resource(handler=ContainerHandler, authentication=auth)
 CreateContainers = Resource(handler=CreateContainerHandler, authentication=auth)
-CreateTags = Resource(handler=CreateTagHandler, authentication=auth)
+CreateTags = Resource(handler=CreateTagsHandler, authentication=auth)
+CreateTag = Resource(handler=CreateTagHandler, authentication=auth)
 Interaction = Resource(handler=InteractionHandler, authentication=auth)
 CreateComments = Resource(handler=CreateCommentHandler, authentication=auth)
 FBLogin = Resource(handler=FBHandler, authentication=auth)
@@ -43,6 +44,7 @@ urlpatterns = patterns('',
     url(r'^containers/create/', CreateContainers),
     url(r'^containers/', Containers),
     url(r'^tags/create/', CreateTags),
+    url(r'^tag/create', CreateTag),
     #url(r'^tags/(\d*)', Tags),
     url(r'^comments/create/', CreateComments),
     #url(r'^comments/', Comments),
