@@ -30,11 +30,9 @@ def createInteraction(page, content, user, interaction_node, parent=None):
 		# Can't rely on Django's auto_now to create the time before storing the node
 		now = created=datetime.datetime.now()
 		if parent:
-			print "Creating Interaction with parent"
-			return parent.add_child(page=page, content=content, user=user, interaction_node=interaction_node, created=now)
+			print "Creating Interaction with parent node"
+			new = parent.add_child(page=page, content=content, user=user, interaction_node=interaction_node, created=now)
 		else:
-			print "Creating Interaction without parent"
-			print "-> has page %s, content %s, user %s, inode %s, created %s" % (page, content, user, interaction_node, now)
+			print "Creating Interaction without parent node"
 			new = Interaction.add_root(page=page, content=content, user=user, interaction_node=interaction_node, created=now)
-			print "in utils created this shiz"
-			return new
+		return new
