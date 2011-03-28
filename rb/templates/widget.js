@@ -46,6 +46,9 @@ function readrBoard($R){
 				"</style>"
 		*/
 		},
+        rdrFrame:{
+            
+        },
 		rindow : {
             defaults:{
                 x:100,
@@ -104,8 +107,12 @@ function readrBoard($R){
 		actionbar : {
 			draw: function(settings) {
 
-				var actionbar_id = "rdr"+RDR.util.md5.hex_md5( settings.content );
+				var actionbar_id = "rdr_actionbar_"+RDR.util.md5.hex_md5( settings.content );
 				var $actionBars = $('div.rdr.rdr_actionbar');
+                
+                console.log($actionBars);
+                console.log('actionbar.draw');
+                console.log(actionbar_id);
 
 				if ( $('#'+actionbar_id).length == 1 ) return $('#'+actionbar_id);
 				else {
@@ -158,17 +165,13 @@ function readrBoard($R){
                 $.each( items, function(idx, val){
                     var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
                     $iconAnchor = $('<a href="javascript:void(0);">' +val.item+ '</a>'),
-                    $tooltip = $('<div class="rdr rdr_tooltip" class="rdr_tooltip_' +val.item+ '">' +
-                        '<div class="rdr rdr_tooltip-content"> ' +val.tipText+ '</div>'+
-                        '<div class="rdr rdr_tooltip-arrow-border" />'+
-                        '<div class="rdr rdr_tooltip-arrow" />'+
-                    '</div>').hide();
+                    $tooltip = RDR.tooltip.draw({"item":val.item,"tipText":val.tipText}).hide();
                     $iconAnchor.click(function(){
                         val.onclick();
                         return false;
                     });
                     $item.append($iconAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
-                    if(idx===0){$item.prepend($('<span class="rdr_divider" />'))}
+                    if(idx===0){$item.prepend($('<span class="rdr_icon_divider" />'))}
                 });
 
                 //'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentBox({content_type:\''+settings.content_type+'\',content:\''+settings.content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
@@ -189,9 +192,44 @@ function readrBoard($R){
 
 				return $new_actionbar;
 			},
-			close: function(animation) {
-                $('div.rdr.rdr_actionbar').remove();
+			close: function(brute) {
+                if (brute) {
+                    //$('div.rdr.rdr_actionbar').remove();
+                }
+                else{
+                    if(!RDR.actionbar.keepAlive.onImg && !RDR.actionbar.keepAlive.onActionbar){
+                        $(this).fadeOut(200, function(){
+                            //check one more time after fadeout
+                            if(!RDR.actionbar.keepAlive.onImg && !RDR.actionbar.keepAlive.onActionbar){
+                                //$('div.rdr.rdr_actionbar').remove();
+                            } else {
+                                //quick catch it before it fades out!
+                                $(this).show();
+                            }
+                        });
+                    }   
+                }
 			},
+            collapse: function(callback){
+                var $aboutIcon = $(this).find('li.rdr_icon_about'),
+                $otherIcons = $aboutIcon.siblings();
+                $aboutIcon.find('.rdr_icon_divider').show();
+                $otherIcons.animate({width:'show'},150);
+
+                $otherIcons.animate({width:'hide'},150, function(){
+                                $aboutIcon.find('.rdr_icon_divider').hide();
+                                
+
+                            });
+
+
+            },
+            expand: function(){
+                var $aboutIcon = $(this).find('li.rdr_icon_about'),
+                $otherIcons = $aboutIcon.siblings();
+                $aboutIcon.find('.rdr_icon_divider').show();
+                $otherIcons.animate({width:'show'},150);
+            },
 			fade: function(id) {
 				var $actionBar = $('#'+id);
 				if ( $actionBar.length ) {
@@ -203,7 +241,7 @@ function readrBoard($R){
 					    if(!RDR.actionbar.keepAlive.onImg && !RDR.actionbar.keepAlive.onActionbar){ // if(!keepAlive.onImg && !keepAlive.onActionbar && $actionbar.length) or just onActionBar
 					        //collapse actionbar
 					        $otherIcons.animate({width:'hide'},150, function(){
-					            $aboutIcon.find('.rdr_divider').hide();
+					            $aboutIcon.find('.rdr_icon_divider').hide();
 					            //check if we should close it also
 					            if(!RDR.actionbar.keepAlive.onImg && !RDR.actionbar.keepAlive.onActionbar){
 					                $actionBar.fadeOut(200, function(){
@@ -228,6 +266,16 @@ function readrBoard($R){
 		},
 		tooltip : {
 			draw: function(settings) {
+                return $('<div class="rdr rdr_tooltip" class="rdr_tooltip_' +settings.item+ '">' +
+                        '<div class="rdr rdr_tooltip-content"> ' +settings.tipText+ '</div>'+
+                        '<div class="rdr rdr_tooltip-arrow-border" />'+
+                        '<div class="rdr rdr_tooltip-arrow" />'+
+                        '</div>'
+                );
+
+                //not used. offsets are now relative to actionbar.
+                //Is there any other code here we want to integrate to make a more general tooltip function?
+                /* 
 				// expects a settings object with:
 				// settings.message (HTML)
 				// settings.obj (to position tooltip next to.  should be a jQ obj).  if absent, position with the mouse.
@@ -265,7 +313,8 @@ function readrBoard($R){
 					$new_tooltip.css('top', (y - $new_tooltip.height()) + 'px');
 				}
 				return $new_tooltip;
-			}
+                */
+            }
 		},
 		util : {
             stayInWindow : function(left,top,w,h) {
@@ -496,6 +545,7 @@ function readrBoard($R){
 					console.log(src);
 					
 				    var $actionBar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src });
+                    console.log($actionBar);
                     var $aboutIcon = $actionBar.find('li:first'),
                     $otherIcons = $aboutIcon.siblings();
                     $otherIcons.hide();
@@ -506,7 +556,7 @@ function readrBoard($R){
                             RDR.actionbar.keepAlive.onActionbar = true;
 
                             //expand actionbar
-                            $aboutIcon.find('.rdr_divider').show();
+                            $aboutIcon.find('.rdr_icon_divider').show();
                             $otherIcons.animate({width:'show'},150);
                         },
                         function() {
@@ -518,7 +568,7 @@ function readrBoard($R){
                                 if(!keepAlive.onActionbar){
                                     //collapse actionbar
                                     $otherIcons.animate({width:'hide'},150, function(){
-                                        $aboutIcon.find('.rdr_divider').hide();
+                                        $aboutIcon.find('.rdr_icon_divider').hide();
                                         //check if we should close it also
                                         if(!keepAlive.onImg && !keepAlive.onActionbar){
                                             $actionBar.fadeOut(200, function(){
@@ -559,7 +609,7 @@ function readrBoard($R){
 
                             //simultaneous animations...
                             $otherIcons.animate({width:'hide'},150, function(){
-                                $aboutIcon.find('.rdr_divider').hide();
+                                $aboutIcon.find('.rdr_icon_divider').hide();
                             });
                             //simultaneous animations...
                             $actionbar.fadeOut(200, function(){
