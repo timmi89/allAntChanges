@@ -13,7 +13,11 @@ function readrBoard($R){
 
     var $ = $R;
 
-    var RDR = RDR ? RDR : {}
+    //todo: [eric] this doesn't really do anything, cause even if we pick up the global RDR into the local version,
+    // we're just overwriting it in the next line anyway. 
+    //consider using <if (RDR.length) return;> or just omit it.
+    var RDR = RDR ? RDR : {};
+
     // none of this obj's properties are definite.  just jotting down a few ideas.
     RDR = {
         data : {
@@ -46,9 +50,6 @@ function readrBoard($R){
 				"</style>"
 		*/
 		},
-        rdrFrame:{
-            
-        },
 		rindow : {
             defaults:{
                 x:100,
@@ -894,7 +895,10 @@ function readrBoard($R){
                         function() {
 							// TODO: cast a "remove tag" vote, removing this user's vote of this tag
                             $(this).removeClass('rdr_selected');
-                        });
+                        }
+                    ); // [eric] whoa - i didn't know toggle could do that!
+                    //A bit confusing that jQuery has two seprate API listings for toggle() - took me a minute to find this one.
+                    //http://api.jquery.com/toggle-event/ as opposed to http://api.jquery.com/toggle/ 
                 });
             },
 			whyPanel : function(rindow, interaction_id) {
@@ -1413,7 +1417,9 @@ loadScript("/static/ui-prototype/js/jquery-1.4.4.min.js", function(){
         //test that $.ui versioning is working correctly
         // console.log("testing jQuery UI versioning...")
         // console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
-        var $R = $.noConflict(true);
+        
+        //within this scope while the $ refers to our version of jQuery, attach it to our Global var $R for access later
+        $R = $.noConflict(true);
 
         //test that $.ui versioning is working correctly
         // console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
