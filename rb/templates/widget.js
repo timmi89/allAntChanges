@@ -94,7 +94,7 @@ function readrBoard($R){
                 var coords = RDR.util.stayInWindow(settings.left, settings.top, settings.width, 300);
                 $new_rindow.css('left', coords.left + 'px');
                 $new_rindow.css('top', coords.top + 'px');    
-                RDR.actionbar.close();  
+                RDR.actionbar.closeAll();  
 
                 $new_rindow.settings = settings;
                 return $new_rindow;
@@ -102,28 +102,24 @@ function readrBoard($R){
 			closeAll: function() {
 				// console.log('closeAll');
 				$('div.rdr.rdr_window').remove();
-                RDR.actionbar.close(); //organize how the actionbar should be a child of the rindow which would make this redundant
 			}
 		},
 		actionbar : {
 			draw: function(settings) {
 
+
 				var actionbar_id = "rdr_actionbar_"+RDR.util.md5.hex_md5( settings.content );
+                console.log(settings.content);
+
 				var $actionBars = $('div.rdr.rdr_actionbar');
                 
-                console.log($actionBars);
-                console.log('actionbar.draw');
-                console.log(actionbar_id);
-
 				if ( $('#'+actionbar_id).length == 1 ) return $('#'+actionbar_id);
-				else {
-					$('div.rdr.rdr_actionbar').remove();
+				// else 
 					
-					// TODO.  figure out why the fuck this fucking clearTimeout doesn't fucking clear the fucking timer.
-					clearTimeout( RDR.actionbar.timer );
-					RDR.actionbar.timer = 0;
-				}
-
+				// TODO.  figure out why the fuck this fucking clearTimeout doesn't fucking clear the fucking timer.
+				clearTimeout( RDR.actionbar.timer );
+				RDR.actionbar.timer = 0;
+			
                 var left = settings.left ? (settings.left-34) : 100;
                 var top = settings.top ? (settings.top-50) : 100;
                 var coords = RDR.util.stayInWindow(left,top,200,30);
@@ -193,24 +189,30 @@ function readrBoard($R){
 
 				return $new_actionbar;
 			},
-			close: function(brute) {
-                if (brute) {
-                    //$('div.rdr.rdr_actionbar').remove();
-                }
-                else{
-                    if(!RDR.actionbar.keepAlive.onImg && !RDR.actionbar.keepAlive.onActionbar){
+			close: function(actionbars){
+                
+                //meant to reciveve a $(obj or list of objs), but be lenient 
+                var $actionbars = (actionbars.jquery) ? actionbars : $(actionbars)
+                
+                $actionbars.each(function(){
+                   if(!RDR.actionbar.keepAlive.onImg && !RDR.actionbar.keepAlive.onActionbar){
                         $(this).fadeOut(200, function(){
                             //check one more time after fadeout
                             if(!RDR.actionbar.keepAlive.onImg && !RDR.actionbar.keepAlive.onActionbar){
-                                //$('div.rdr.rdr_actionbar').remove();
-                            } else {
+                                console.log('closing...')
+                                $('div.rdr.rdr_actionbar').remove();
+                                } else {
                                 //quick catch it before it fades out!
-                                $(this).show();
+                                //$(this).show();
                             }
                         });
                     }   
-                }
+                });
 			},
+            closeAll: function(){
+                var $actionbars = $('.rdr_actionbar');
+                this.close($actionbars);
+            },
             collapse: function(callback){
                 var $aboutIcon = $(this).find('li.rdr_icon_about'),
                 $otherIcons = $aboutIcon.siblings();
@@ -233,6 +235,7 @@ function readrBoard($R){
             },
 			fade: function(id) {
 				var $actionBar = $('#'+id);
+                console.log(id)
 				if ( $actionBar.length ) {
 					var $aboutIcon = $actionBar.find('li:first'),
 					$otherIcons = $aboutIcon.siblings();
@@ -248,7 +251,7 @@ function readrBoard($R){
 					                $actionBar.fadeOut(200, function(){
 					                    //check one more time after fadeout
 					                    if(!RDR.actionbar.keepAlive.onImg && !RDR.actionbar.keepAlive.onActionbar){
-					                        RDR.actionbar.close();
+					                        RDR.actionbar.closeAll();
 					                    } else {
 					                        //quick catch it before it fades out!
 					                        $actionBar.show();
@@ -525,28 +528,11 @@ function readrBoard($R){
 				    var this_img = $(this),
 				    left = this_img.offset().left + 33,
 				    top = this_img.offset().top + this_img.height() + 20,
-					src = this_img.attr('src');
-					
-					// kludgey(?) way of making sure we have the full image path
-					// $().attr('src') does not snag it...
-					// even though documentGetElementsByTagName('img')[0].src would.  argh.
-					if ( src.toLowerCase().substring(0,4) != "http" ) {
-						var prepend = window.location.protocol + "//" + window.location.host;
-						if ( src.charAt(0) == "/" ) {
-							src = prepend + src;
-						} else {
-							var pathname = window.location.pathname.split('/');
-							if ( pathname[ pathname.length-1 ].indexOf('.') != -1 ) { // there is a period in the last segment of the URL, meaning it's probably ".html" or similar
-								pathname.pop();
-							}
-							pathname = pathname.join('/');
-							src = prepend + pathname + "/" + src;
-						}
-					}
-					console.log(src);
-					
+                    //use this instead of $().attr('src') to fix descrepencies between relative and absolute urls
+				    src = this.src;
+
 				    var $actionBar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src });
-                    console.log($actionBar);
+                    
                     var $aboutIcon = $actionBar.find('li:first'),
                     $otherIcons = $aboutIcon.siblings();
                     $otherIcons.hide();
@@ -591,7 +577,10 @@ function readrBoard($R){
 
 				}).live('mouseleave', function() {
                     RDR.actionbar.keepAlive.onImg = false;
-					var actionbar_id = "rdr"+RDR.util.md5.hex_md5( $(this).attr('src') );
+                    
+                    //use this instead of $().attr('src') to fix descrepencies between relative and absolute urls
+                    var src = this.src;
+					var actionbar_id = "rdr_actionbar_"+RDR.util.md5.hex_md5( src );
 					RDR.actionbar.fade(actionbar_id);
 
                     //this isn't working right now because we are re-building the actionbar on img hover.
@@ -635,7 +624,7 @@ function readrBoard($R){
                 $(document).keyup(function(event) {
                     if (event.keyCode == '27') { //esc
                         RDR.rindow.closeAll();
-                        RDR.actionbar.close();
+                        RDR.actionbar.closeAll();
                     }
                     //todo - consider unifying style of close vs closeAll.  Should any of these components 'own' the others?  IE. should tooltips belong to the actionbar?
                 });
@@ -1043,10 +1032,9 @@ function readrBoard($R){
                 if ( !mouse_target.hasClass('rdr') && mouse_target.parents('div.rdr').length == 0 ) {
 
                     // closes undragged windows
-                    $('div.rdr.rdr_window.rdr.rdr_rewritable, div.rdr.rdr_actionbar').remove();
+                    $('div.rdr.rdr_window.rdr.rdr_rewritable').remove();
 
-                    //todo - decide whether we want multiple actiobars, for now, kill them all.
-                    RDR.actionbar.close();
+                    RDR.actionbar.closeAll();
 
                     // see what the user selected
                     // TODO: need separate image function, which should then prevent event bubbling into this
