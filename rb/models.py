@@ -19,8 +19,6 @@ INTERACTION_TYPES = (
     ('shr', 'Share'),
 )
 
-#NODE_LOOKUP = dict([(a[0], a[1]) for a in NODE_TYPES])
-
 class DateAwareModel(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False)
     modified = models.DateTimeField(auto_now=True, editable=False)    
@@ -155,8 +153,17 @@ class Link(models.Model):
     def __unicode__(self):
         return self.to_base62() + ' : ' + self.interaction.page.url
 
-class LazyUserManager(models.Manager):
+class UserSocialAuth(models.Model):
+    """Social Auth association model"""
+    user = models.ForeignKey(User, related_name='social_auth')
+    provider = models.CharField(max_length=32)
+    uid = models.CharField(max_length=255)
 
+    class Meta:
+        """Meta data"""
+        unique_together = ('provider', 'uid')
+
+class LazyUserManager(models.Manager):
     def create_lazy_user(self, username):
         """
         Create a lazy user.

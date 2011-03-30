@@ -8,11 +8,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from utils import *
 from extras.facebook import GraphAPI, GraphAPIError
-from rb.decorators import allow_lazy_user
-from rb.exceptions import NotLazyError
-from rb.utils import is_lazy_user
 from django.contrib.auth import login
 from django.contrib.auth import authenticate
+from readrboard.social_auth.backends.facebook import FacebookAuth
 
 
 """
@@ -40,14 +38,18 @@ class FBHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
 
     def read(self, request):
+        args = []
+        kwargs = {}
         base = 'https://graph.facebook.com'
         data = json.loads(request.GET['json'])
         access_token = data['session']['access_token']
         graph = GraphAPI(access_token)
+
         profile = graph.get_object("me")
-        profile['image'] = base + '/me/picture?type=large&access_token=%s' % access_token
-        profile['image_thumb'] = base + '/me/picture?access_token=%s' % access_token
+        #profile['image'] = base + '/me/picture?type=large&access_token=%s' % access_token
+        #profile['image_thumb'] = base + '/me/picture?access_token=%s' % access_token
         
+        """
         user = User.objects.get_or_create(
             username=profile['id'],
             email=profile['email'],
@@ -55,8 +57,10 @@ class FBHandler(AnonymousBaseHandler):
             last_name=profile['last_name'],
         )
         User.objects.filter(user='old').delete
+        """
+        return profile
 
-        return 
+# Must returb the following:
 # Readrboard userid
 # Firstname
 # Fullname

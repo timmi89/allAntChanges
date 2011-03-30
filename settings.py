@@ -6,7 +6,6 @@ TEMPLATE_DEBUG = DEBUG
 # Facebook shit
 LOGIN_REDIRECT_URL = '/'
 FACEBOOK_APP_ID = '163759626987948'
-FACEBOOK_API_KEY = '457d702093ea6718adb6236ae72a2fc9'
 FACEBOOK_APP_SECRET = 'f14061a2ed9d7ae8ed1c3b231a8148c9'
 
 ADMINS = (
@@ -103,7 +102,12 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 # for lazy signup
 AUTHENTICATION_BACKENDS = (
   'django.contrib.auth.backends.ModelBackend',
-  'readrboard.rb.backends.LazySignupBackend',
+  'readrboard.social_auth.backends.facebook.FacebookBackend',
 )
+
+# for social auth
+SOCIAL_AUTH_ERROR_KEY = 'social_errors'
+SOCIAL_AUTH_EXPIRATION = 'expires'
+FACEBOOK_EXTENDED_PERMISSIONS = ('email')
 
 #SESSION_COOKIE_DOMAIN = '.readr.local'
