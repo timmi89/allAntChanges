@@ -696,7 +696,7 @@ function readrBoard($R){
 				// TODO: iframeURL and iframeHost must be hardcoded
 				var $loginHtml = $('<div class="rdr_login" />'),
 				iframeHost = "http://readr.local:8080",
-				iframeUrl = iframeHost + "/fblogin/",
+				iframeUrl = iframeHost + "/static/iframetest.html",
 				parentUrl = window.location.href;
 				$loginHtml.append( '<h1>Log In</h1>',
 				'<iframe id="rdr-xdm" src="' + iframeUrl + '?parentUrl= ' + parentUrl + '" width="300" height="300" />'
