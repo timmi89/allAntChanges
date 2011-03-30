@@ -162,7 +162,7 @@ class SocialUser(models.Model):
     """Social Auth association model"""
     user = models.ForeignKey(User, related_name='social_user')
     provider = models.CharField(max_length=32)
-    uid = models.CharField(max_length=255)
+    uid = models.CharField(max_length=255, unique=True)
     full_name = models.CharField(max_length=255)
 
     # Might not get these -> blank=True
@@ -173,8 +173,11 @@ class SocialUser(models.Model):
 
 class SocialAuth(models.Model):
     social_user = models.ForeignKey(SocialUser, related_name='social_auth')
-    auth_token = models.CharField(max_length=255)
-    expires = models.DateTimeField()
+    auth_token = models.CharField(max_length=103, unique=True)
+    expires = models.DateTimeField(null=True)
+
+    class Meta:
+        unique_together = ('auth_token', 'expires')
 
 class LazyUserManager(models.Manager):
     def create_lazy_user(self, username):
