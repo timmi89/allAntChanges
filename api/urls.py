@@ -8,15 +8,15 @@ auth = HttpBasicAuthentication()
 #ContentNodes = Resource(handler=ContentNodeHandler, authentication=auth)
 #RBGroups = Resource(handler=RBGroupHandler)
 #RBPages = Resource(handler=RBPageHandler, authentication=auth)
-Settings = Resource(handler=SettingsHandler, authentication=auth)
-PageData = Resource(handler=PageDataHandler, authentication=auth)
-Containers = Resource(handler=ContainerHandler, authentication=auth)
-CreateContainers = Resource(handler=CreateContainerHandler, authentication=auth)
-CreateTags = Resource(handler=CreateTagsHandler, authentication=auth)
-CreateTag = Resource(handler=CreateTagHandler, authentication=auth)
-Interaction = Resource(handler=InteractionHandler, authentication=auth)
-CreateComments = Resource(handler=CreateCommentHandler, authentication=auth)
-FBLogin = Resource(handler=FBHandler, authentication=auth)
+Settings = Resource(handler=SettingsHandler)
+PageData = Resource(handler=PageDataHandler)
+Containers = Resource(handler=ContainerHandler)
+CreateContainers = Resource(handler=CreateContainerHandler)
+CreateTags = Resource(handler=CreateTagsHandler)
+CreateTag = Resource(handler=CreateTagHandler)
+Interaction = Resource(handler=InteractionHandler)
+CreateComments = Resource(handler=CreateCommentHandler)
+FBLogin = Resource(handler=FBHandler)
 
 # Organized Resources
 Interactions = Resource(handler=InteractionsHandler)
@@ -37,7 +37,7 @@ urlpatterns = patterns('',
     url(r'^container/(?P<hash>[0-9a-fA-f]{32})+/comments/$', Interactions, kwargs={"kind":"com"}),
     
     # Facebook
-    url(r'^fb/(?P<access_token>.*)/$', FBLogin),
+    url(r'^fb/$', FBLogin),
     
     # Widget
     url(r'^page/', PageData),

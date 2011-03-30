@@ -103,9 +103,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 # for lazy signup
 AUTHENTICATION_BACKENDS = (
   'django.contrib.auth.backends.ModelBackend',
-  'lazysignup.backends.LazySignupBackend',
+  'readrboard.rb.backends.LazySignupBackend',
 )
 
-# Added for url shortener
-SITE_NAME = 'localhost:8000'
-SITE_BASE_URL = 'http://' + SITE_NAME + '/'
+#SESSION_COOKIE_DOMAIN = '.readr.local'

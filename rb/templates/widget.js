@@ -660,8 +660,8 @@ function readrBoard($R){
 				//TODO TYLER THIS IS FOR FACEBOOK
 				// TODO: iframeURL and iframeHost must be hardcoded
 				var $loginHtml = $('<div class="rdr_login" />'),
-				iframeHost = "http://readr.local:8080",
-				iframeUrl = iframeHost + "/fblogin/",
+				iframeHost = "http://graph.facebook.com",
+				iframeUrl = iframeHost + "/oauth/authorize?redirect_uri=http%3A%2F%2Freadr.local:8080%2Ffblogin%2F&client_id=163759626987948&display=popup",
 				parentUrl = window.location.href;
 				$loginHtml.append( '<h1>Log In</h1>',
 				'<iframe id="rdr-xdm" src="' + iframeUrl + '?parentUrl= ' + parentUrl + '" width="300" height="300" />'
