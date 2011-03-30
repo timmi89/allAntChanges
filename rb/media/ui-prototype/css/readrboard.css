@@ -90,19 +90,14 @@ div.rdr h1	{font-size:21px; cursor:move; }
 
 /* the widget */
 div.rdr div.rdr_sentimentBox							{height:250px;}
-div.rdr div.rdr_sntPnl 									{float:left; display:block; height:100%; width:50%; /*width is reset with js - rindow.settings.pnlWidth */ }
-/*var: rdr_body and rdr_sntPnl heights should add to 100%.  Should have no y padding. */
-div.rdr div.rdr_sntPnl div.rdr_body						{xmin-height:200px; xmax-height:300px; overflow-x:hidden; overflow-y:auto; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; height: 85%;}
-div.rdr div.rdr_sntPnl div.rdr_header 			      	{background:#fff; height: 15%; position:relative;}
-div.rdr div.rdr_sntPnl div.rdr_header > div           	{    background: none repeat scroll 0 0 #FFFFFF;
-    border-bottom: 1px solid #DFDFDF;
-    bottom: 0;
-    padding-bottom: 5px;
-    position: absolute;
-    text-align: center;
-    width: 100%;
-}
-div.rdr div.rdr_body .rdr_selected div.rdr_arrow 		{ DISPLAY:NONE; border-color:transparent transparent transparent #f2cfcf; border-style:solid; border-width:12px; height:0; margin-top:-10px; position:absolute; right:-23px; top:43%; width:0;}
+div.rdr div.rdr_sntPnl 									{float:left; position:relative; display:block; height:100%; overflow-x:hidden; /*width is reset with js - rindow.settings.pnlWidth */ }
+
+div.rdr div.rdr_sntPnl div.rdr_body						{width:100%; position:absolute; top: 35px; /*var rdr_headerHeight*/ ; z-index: 1; xmin-height:200px; xmax-height:300px; overflow-x:hidden; overflow-y:auto;}
+div.rdr div.rdr_sntPnl div.rdr_header 			      			{background:#fff; position: relative; height: 35px; /*var rdr_headerHeight*/ width:100%; z-index:3;}
+div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap	{background: none repeat scroll 0 0 #FFFFFF; border-bottom: 1px solid #DFDFDF; bottom: 0; padding-bottom: 3px; position: absolute; text-align: center; width: 100%; }
+div.rdr div.rdr_sntPnl .rdr_pnlShadow						{height: 100%; width:100px; position: absolute; z-index:2; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; }
+
+div.rdr div.rdr_body .rdr_selected div.rdr_arrow 		{ display:none; border-color:transparent transparent transparent #f2cfcf; border-style:solid; border-width:12px; height:0; margin-top:-10px; position:absolute; right:-23px; top:43%; width:0;}
 div.rdr div.rdr_reactionPanel div.rdr_body .rdr_selected div.rdr_arrow 		{ border-color:transparent transparent transparent #f7dddd; }
 div.rdr div.rdr_selectedTextPanel div.rdr_body div.rdr_selected		{font-family:Georgia; font-size:14px; padding:7px; background:#f2cfcf; display:block; position:relative; }
 div.rdr div.rdr_selectedTextPanel				{position:relative; z-index:3;}
@@ -110,7 +105,7 @@ div.rdr div.rdr_selectedTextPanel div.rdr_body 	{background:#f0f0f0; -moz-box-sh
 div.rdr div.rdr_reactionPanel					{position:relative; z-index:2;}
 div.rdr div.rdr_reactionPanel div.rdr_body		{background:#f8f8f8; }
 div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
-div.rdr div.rdr_whyPanel 						{z-index:1; margin-left: -200px; z-index: 1; float:right; }
+div.rdr div.rdr_whyPanel 						{z-index:1; float:right; }
 div.rdr div.rdr_whyPanel div.rdr_body			{background:#ffffff;}
 div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top: 5px;}
 div.rdr div.rdr_sntPnl div.rdr_customTagBox 	{margin:0 15px; position:relative;}
