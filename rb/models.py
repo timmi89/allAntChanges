@@ -19,6 +19,11 @@ INTERACTION_TYPES = (
     ('shr', 'Share'),
 )
 
+GENDER_CHOICES = (
+    ('M', 'Male'),
+    ('F', 'Female'),
+)
+
 class DateAwareModel(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False)
     modified = models.DateTimeField(auto_now=True, editable=False)    
@@ -153,15 +158,23 @@ class Link(models.Model):
     def __unicode__(self):
         return self.to_base62() + ' : ' + self.interaction.page.url
 
-class UserSocialAuth(models.Model):
+class SocialUser(models.Model):
     """Social Auth association model"""
-    user = models.ForeignKey(User, related_name='social_auth')
+    user = models.ForeignKey(User, related_name='social_user')
     provider = models.CharField(max_length=32)
     uid = models.CharField(max_length=255)
+    full_name = models.CharField(max_length=255)
 
-    class Meta:
-        """Meta data"""
-        unique_together = ('provider', 'uid')
+    # Might not get these -> blank=True
+    username = models.CharField(max_length=255, blank=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
+    hometown = models.CharField(max_length=255, blank=True)
+    bio = models.TextField(blank=True)
+
+class SocialAuth(models.Model):
+    social_user = models.ForeignKey(SocialUser, related_name='social_auth')
+    auth_token = models.CharField(max_length=255)
+    expires = models.DateTimeField()
 
 class LazyUserManager(models.Manager):
     def create_lazy_user(self, username):

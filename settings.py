@@ -102,12 +102,11 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 # for lazy signup
 AUTHENTICATION_BACKENDS = (
   'django.contrib.auth.backends.ModelBackend',
-  'readrboard.social_auth.backends.facebook.FacebookBackend',
 )
 
 # for social auth
-SOCIAL_AUTH_ERROR_KEY = 'social_errors'
-SOCIAL_AUTH_EXPIRATION = 'expires'
-FACEBOOK_EXTENDED_PERMISSIONS = ('email')
+#SOCIAL_AUTH_ERROR_KEY = 'social_errors'
+#SOCIAL_AUTH_EXPIRATION = 'expires'
+#FACEBOOK_EXTENDED_PERMISSIONS = ('email')
 
 #SESSION_COOKIE_DOMAIN = '.readr.local'
