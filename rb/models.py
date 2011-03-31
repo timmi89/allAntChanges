@@ -154,3 +154,18 @@ class Link(models.Model):
     
     def __unicode__(self):
         return self.to_base62() + ' : ' + self.interaction.page.url
+
+class LazyUserManager(models.Manager):
+
+    def create_lazy_user(self, username):
+        """
+        Create a lazy user.
+        """
+        user = User.objects.create_user(username, '')
+        self.create(user=user)
+        return user
+
+class LazyUser(models.Model):
+    user = models.ForeignKey('auth.User', unique=True)
+    objects = LazyUserManager()
+
