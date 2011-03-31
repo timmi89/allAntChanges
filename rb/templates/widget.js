@@ -14,8 +14,8 @@ function readrBoard($R){
     var $ = $R;
 
     //todo: [eric] this doesn't really do anything, cause even if we pick up the global RDR into the local version,
-    // we're just overwriting it in the next line anyway. 
-    //consider using <if (RDR.length) return;> or just omit it.
+        // we're just overwriting it in the next line anyway. 
+        //consider using <if (RDR.length) return;> or just omit it.
     var RDR = RDR ? RDR : {};
 
     // none of this obj's properties are definite.  just jotting down a few ideas.
@@ -100,7 +100,6 @@ function readrBoard($R){
                 return $new_rindow;
 			},
 			closeAll: function() {
-				// console.log('closeAll');
 				$('div.rdr.rdr_window').remove();
 			}
 		},
@@ -109,17 +108,12 @@ function readrBoard($R){
 
 
 				var actionbar_id = "rdr_actionbar_"+RDR.util.md5.hex_md5( settings.content );
-                console.log(settings.content);
 
-				var $actionBars = $('div.rdr.rdr_actionbar');
+				var $actionbars = $('div.rdr.rdr_actionbar');
                 
-				if ( $('#'+actionbar_id).length == 1 ) return $('#'+actionbar_id);
+				if ( $('#'+actionbar_id).length > 0 ) return $('#'+actionbar_id);
 				// else 
-					
-				// TODO.  figure out why the fuck this fucking clearTimeout doesn't fucking clear the fucking timer.
-				clearTimeout( RDR.actionbar.timer );
-				RDR.actionbar.timer = 0;
-			
+			 	
                 var left = settings.left ? (settings.left-34) : 100;
                 var top = settings.top ? (settings.top-50) : 100;
                 var coords = RDR.util.stayInWindow(left,top,200,30);
@@ -177,8 +171,7 @@ function readrBoard($R){
                 //but we're not sure yet if it's going to be the same function as this shareStart() above..
 
                 $('body').append( $new_actionbar );
-                $('div.rdr_actionbar a').siblings('.rdr_tooltip');
-                $('div.rdr_actionbar li').hover(
+                $new_actionbar.find('li').hover(
                     function() {
                         $(this).find('a').siblings('.rdr_tooltip').show();
                     },
@@ -187,85 +180,82 @@ function readrBoard($R){
                     }
                 );
 
+                //for images, only show the about icon, hide the rest
+                if(settings.content_type == "image"){
+                    var $aboutIcon = $new_actionbar.find('li:first'),
+                    $otherIcons = $aboutIcon.siblings();
+                    $aboutIcon.find('.rdr_icon_divider').hide();
+                    $otherIcons.hide();
+                }
+
 				return $new_actionbar;
 			},
-			close: function(actionbars){
-                
-                //meant to reciveve a $(obj or list of objs), but be lenient 
-                var $actionbars = (actionbars.jquery) ? actionbars : $(actionbars)
-                
+			close: function($actionbars, effect){
                 $actionbars.each(function(){
-                   if(!RDR.actionbar.keepAlive.onImg && !RDR.actionbar.keepAlive.onActionbar){
-                        $(this).fadeOut(200, function(){
-                            //check one more time after fadeout
-                            if(!RDR.actionbar.keepAlive.onImg && !RDR.actionbar.keepAlive.onActionbar){
-                                console.log('closing...')
-                                $('div.rdr.rdr_actionbar').remove();
-                                } else {
-                                //quick catch it before it fades out!
-                                //$(this).show();
-                            }
-                        });
-                    }   
+                    var $actionbar = $(this),
+                    cleanup = function(){
+                        var timeout = $actionbar.data('timeout');
+                        clearTimeout(timeout);
+                        $actionbar.remove();
+                    }
+                    if(typeof effect !== "undefined"){
+                        //make more robust if we want more animations
+                        $actionbar.fadeOut(200, cleanup);
+                    }
+                    else{
+                        cleanup();
+                    }
                 });
 			},
+            closeSuggest: function(actionbars) {
+                
+                var $actionbars = ( typeof actionbars == 'undefined' ) ? $('div.rdr.rdr_actionbar') ://cont
+                    (actionbars.jquery) ? actionbars : $(actionbars);
+                
+                var scope = this;
+                $actionbars.each(function(){
+                    var that = this,
+                    timeout = $(this).data('timeout');
+                    //each actionbar only has one timeout - if one exists, it gets reset here.
+                    //clearTimeout(timeout);
+                    timeout = setTimeout(function(){
+                        if( !$(that).data('hoverLock.parent') && !$(that).data('hoverLock.self') ){
+                            scope.close( $(that), "fade");
+                        }                         
+                    },500);
+                    $(this).data('timeout', timeout);
+                });
+            },
             closeAll: function(){
-                var $actionbars = $('.rdr_actionbar');
+                var $actionbars = $('div.rdr_actionbar');
                 this.close($actionbars);
             },
             collapse: function(callback){
-                var $aboutIcon = $(this).find('li.rdr_icon_about'),
+                //use call or apply to set 'this'
+                //not needed because $($(this)) doesn't hurt anything, but still.
+                var $this = (this.jquery) ? this : $(this),
+                $aboutIcon = $this.find('li.rdr_icon_about'),
                 $otherIcons = $aboutIcon.siblings();
-                $aboutIcon.find('.rdr_icon_divider').show();
-                $otherIcons.animate({width:'show'},150);
-
+                
+                //protect against the dreaded oscillating event loop
+                if ( $this.data('expanding') ) {return;}
+                //else
                 $otherIcons.animate({width:'hide'},150, function(){
-                                $aboutIcon.find('.rdr_icon_divider').hide();
-                                
-
-                            });
-
-
+                    $aboutIcon.find('.rdr_icon_divider').hide();
+                });
             },
-            expand: function(){
-                var $aboutIcon = $(this).find('li.rdr_icon_about'),
+            expand: function(callback){
+                //use call or apply to set 'this'
+                //not needed because $($(this)) doesn't hurt anything, but still.
+                var $this = (this.jquery) ? this : $(this),
+                $aboutIcon = $this.find('li.rdr_icon_about'),
                 $otherIcons = $aboutIcon.siblings();
-                $aboutIcon.find('.rdr_icon_divider').show();
-                $otherIcons.animate({width:'show'},150);
-            },
-			fade: function(id) {
-				var $actionBar = $('#'+id);
-                console.log(id)
-				if ( $actionBar.length ) {
-					var $aboutIcon = $actionBar.find('li:first'),
-					$otherIcons = $aboutIcon.siblings();
 
-					RDR.actionbar.timer = setTimeout( function(){
-					    //todo: organize and break out functions
-					    if(!RDR.actionbar.keepAlive.onImg && !RDR.actionbar.keepAlive.onActionbar){ // if(!keepAlive.onImg && !keepAlive.onActionbar && $actionbar.length) or just onActionBar
-					        //collapse actionbar
-					        $otherIcons.animate({width:'hide'},150, function(){
-					            $aboutIcon.find('.rdr_icon_divider').hide();
-					            //check if we should close it also
-					            if(!RDR.actionbar.keepAlive.onImg && !RDR.actionbar.keepAlive.onActionbar){
-					                $actionBar.fadeOut(200, function(){
-					                    //check one more time after fadeout
-					                    if(!RDR.actionbar.keepAlive.onImg && !RDR.actionbar.keepAlive.onActionbar){
-					                        RDR.actionbar.closeAll();
-					                    } else {
-					                        //quick catch it before it fades out!
-					                        $actionBar.show();
-					                    }
-					                });
-					            }
-					        });
-					    }
-					},500);
-				}
-			},
-            keepAlive: {
-                onImg:false,
-                onActionbar:false
+                $this.data('expanding',true);
+                $aboutIcon.find('.rdr_icon_divider').show();
+                $otherIcons.animate({width:'show'},150, function(){
+                    $this.data('expanding',false);
+                });
             }
 		},
 		tooltip : {
@@ -514,8 +504,6 @@ function readrBoard($R){
                 // init the img interactions
 				$( RDR.group.img_selector ).live( 'mouseover', function() {
 
-                    RDR.actionbar.keepAlive.onImg = true;
-                    
                     //todo change this so that .live for imgs just resets coordinates, doesnt instantiate actionbar...
                     
 					// TODO check that the image is large enough?
@@ -525,95 +513,43 @@ function readrBoard($R){
 					// TODO show activity on an image, without breaking page nor covering up image.
 						// create a container for the image, give it same styles but more space?
 						// like, inline or float, but with RDR stuff
+
+                    
 				    var this_img = $(this),
 				    left = this_img.offset().left + 33,
 				    top = this_img.offset().top + this_img.height() + 20,
                     //use this instead of $().attr('src') to fix descrepencies between relative and absolute urls
 				    src = this.src;
 
-				    var $actionBar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src });
-                    
-                    var $aboutIcon = $actionBar.find('li:first'),
-                    $otherIcons = $aboutIcon.siblings();
-                    $otherIcons.hide();
+                    // builds a new actionbar or just returns the existing $actionbar if it exists.
+				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src });
+                    $actionbar.data('hoverLock.parent',true)
 
-                    // todo: break out these animation effects into functions saved under actionBar.<collspase>
-				    $actionBar.hover(
+                    //kill all rivals!!
+                    var $rivals = $('div.rdr_actionbar').not($actionbar);
+                    RDR.actionbar.close( $rivals );
+
+                    // todo: break out these animation effects into functions saved under actionbar.<collspase>
+				    $actionbar.hover(
                         function() {
-                            RDR.actionbar.keepAlive.onActionbar = true;
-
-                            //expand actionbar
-                            $aboutIcon.find('.rdr_icon_divider').show();
-                            $otherIcons.animate({width:'show'},150);
+                            $actionbar.data('hoverLock.self',true);
+                            RDR.actionbar.expand.call(this);
                         },
                         function() {
-                            RDR.actionbar.keepAlive.onActionbar = false;
-							RDR.actionbar.fade( $actionBar.attr('id') );
-                            /*
-							setTimeout(function(){
-                                //todo: organize and break out functions
-                                if(!keepAlive.onActionbar){
-                                    //collapse actionbar
-                                    $otherIcons.animate({width:'hide'},150, function(){
-                                        $aboutIcon.find('.rdr_icon_divider').hide();
-                                        //check if we should close it also
-                                        if(!keepAlive.onImg && !keepAlive.onActionbar){
-                                            $actionBar.fadeOut(200, function(){
-                                                //check one more time after fadeout
-                                                if(!keepAlive.onImg && !keepAlive.onActionbar){
-                                                    RDR.actionbar.close();
-                                                }else{
-                                                    //quick catch it before it fades out!
-                                                    $actionBar.show();
-                                                }
-                                            });
-                                        }
-                                    });
-                                }
-                            },500);
-							*/
+                            $actionbar.data('hoverLock.self',false);
+                            RDR.actionbar.collapse.call(this);
+                            RDR.actionbar.closeSuggest($actionbar);
                         }
 				    );
 
 				}).live('mouseleave', function() {
-                    RDR.actionbar.keepAlive.onImg = false;
                     
                     //use this instead of $().attr('src') to fix descrepencies between relative and absolute urls
                     var src = this.src;
 					var actionbar_id = "rdr_actionbar_"+RDR.util.md5.hex_md5( src );
-					RDR.actionbar.fade(actionbar_id);
-
-                    //this isn't working right now because we are re-building the actionbar on img hover.
-                    //We can't tell that it's the same actionbar that just hasnt dissapeared yet.  We need to change the stucture so that the img hover
-                    //just changes the settings (like the coordinates) and doens't rebuild the actionbar
-                    /*
-                    var $actionbar = $('div.rdr.rdr_actionbar');
-					var $aboutIcon = $actionBar.find('li:first'),
-                    $otherIcons = $aboutIcon.siblings();
-
-					RDR.actionbar.keepAlive.timer = setTimeout(function(){
-                        if(!keepAlive.onImg && !keepAlive.onActionbar && $actionbar.length){
-                            
-                            var $aboutIcon = $actionbar.find('li:first'),
-                            $otherIcons = $aboutIcon.siblings();
-
-                            //simultaneous animations...
-                            $otherIcons.animate({width:'hide'},150, function(){
-                                $aboutIcon.find('.rdr_icon_divider').hide();
-                            });
-                            //simultaneous animations...
-                            $actionbar.fadeOut(200, function(){
-                                //check one more time
-                                if(!keepAlive.onImg && !keepAlive.onActionbar){
-                                    RDR.actionbar.close();
-                                }else{
-                                    //quick catch it before it fades out!
-                                    $actionbar.show();
-                                }
-                            });
-                        }
-                    },600);
-					*/
+                    var $actionbar = $('#'+actionbar_id);
+                    $actionbar.data('hoverLock.parent',false)
+                    RDR.actionbar.closeSuggest($actionbar);
 				});
 				// END
 
@@ -1034,6 +970,7 @@ function readrBoard($R){
                     // closes undragged windows
                     $('div.rdr.rdr_window.rdr.rdr_rewritable').remove();
 
+                    //destroy all other actionbars
                     RDR.actionbar.closeAll();
 
                     // see what the user selected
@@ -1406,7 +1343,8 @@ loadScript("/static/ui-prototype/js/jquery-1.4.4.min.js", function(){
         // console.log("testing jQuery UI versioning...")
         // console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
         
-        //within this scope while the $ refers to our version of jQuery, attach it to our Global var $R for access later
+        //within this scope while the $ refers to our version of jQuery, attach it to our Global var $R at least for now, for testing later
+        //todo - I don't think it really matters, but consider making this just local later
         $R = $.noConflict(true);
 
         //test that $.ui versioning is working correctly
