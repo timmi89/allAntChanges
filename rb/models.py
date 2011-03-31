@@ -19,7 +19,10 @@ INTERACTION_TYPES = (
     ('shr', 'Share'),
 )
 
-#NODE_LOOKUP = dict([(a[0], a[1]) for a in NODE_TYPES])
+GENDER_CHOICES = (
+    ('M', 'Male'),
+    ('F', 'Female'),
+)
 
 class DateAwareModel(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False)
@@ -154,3 +157,38 @@ class Link(models.Model):
     
     def __unicode__(self):
         return self.to_base62() + ' : ' + self.interaction.page.url
+
+class SocialUser(models.Model):
+    """Social Auth association model"""
+    user = models.ForeignKey(User, related_name='social_user')
+    provider = models.CharField(max_length=32)
+    uid = models.CharField(max_length=255, unique=True)
+    full_name = models.CharField(max_length=255)
+
+    # Might not get these -> blank=True
+    username = models.CharField(max_length=255, blank=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
+    hometown = models.CharField(max_length=255, blank=True)
+    bio = models.TextField(blank=True)
+
+class SocialAuth(models.Model):
+    social_user = models.ForeignKey(SocialUser, related_name='social_auth')
+    auth_token = models.CharField(max_length=103, unique=True)
+    expires = models.DateTimeField(null=True)
+
+    class Meta:
+        unique_together = ('auth_token', 'expires')
+
+class LazyUserManager(models.Manager):
+    def create_lazy_user(self, username):
+        """
+        Create a lazy user.
+        """
+        user = User.objects.create_user(username, '')
+        self.create(user=user)
+        return user
+
+class LazyUser(models.Model):
+    user = models.ForeignKey('auth.User', unique=True)
+    objects = LazyUserManager()
+

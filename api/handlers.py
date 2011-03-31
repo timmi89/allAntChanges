@@ -1,5 +1,5 @@
 from piston.handler import BaseHandler, AnonymousBaseHandler
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from settings import FACEBOOK_APP_SECRET
 from django.db import transaction
 from django.db.models import Count
@@ -8,13 +8,16 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from utils import *
 from extras.facebook import GraphAPI, GraphAPIError
+from django.contrib.auth import login
+from django.contrib.auth import authenticate
+from datetime import datetime, timedelta
 
 """
 Readrboard Widget API - Uses Piston
 Note: By default, AnonymousBaseHandler has 'allow_methods' only set to 'GET'.
 """
 
-class InteractionsHandler(BaseHandler):
+class InteractionsHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
     
     def read(self, request, **kwargs):
@@ -30,24 +33,65 @@ class InteractionsHandler(BaseHandler):
             nodes = nodes.filter(interaction__content__container=containers)
         return nodes
         
-class FBHandler(BaseHandler):
+class FBHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
 
-    def read(self, request, access_token=None):
-        #access_token = request.GET['access_token']
+    def read(self, request):
+        args = []
+        kwargs = {}
+        base = 'http://graph.facebook.com'
+        data = json.loads(request.GET['json'])
+        access_token = data['session']['access_token']
         graph = GraphAPI(access_token)
+
+        # Get user profile from facebook graph
         profile = graph.get_object("me")
-        profile['image'] = 'https://graph.facebook.com/me/picture?type=large&access_token=%s' % access_token
-        profile['image_thumb'] = 'https://graph.facebook.com/me/picture?access_token=%s' % access_token
+
+        user = User.objects.get_or_create(
+            username=profile['email'],
+            email=profile['email'],
+            first_name=profile['first_name'],
+            last_name=profile['last_name'],
+        )
+
+        if(user[1]): return HttpResonse("Error")
+        djangouser = user[0]
+
+        social = SocialUser.objects.get_or_create(
+            user = djangouser,
+            provider = 'Facebook',
+            uid = profile['id'],
+            full_name = profile['name'],
+            username = profile['username'],
+            gender = profile['gender'].capitalize()[:1],
+            hometown = profile['hometown']['name'],
+            bio = profile['bio'],
+        )[0]
         
-        return profile
+        dt = datetime.fromtimestamp(data['session']['expires'])
+
+        socal_auth = SocialAuth.objects.get_or_create(
+            social_user = social,
+            auth_token = access_token,
+            expires = dt
+            )
+
+        img_url = '%s/%s/picture' % (base, social.uid)
+        
+        return dict(django_user_id=djangouser.id,
+                    first_name=djangouser.first_name,
+                    full_name=social.full_name,
+                    image_url=img_url,
+               )
+
+# Must returb the following:
 # Readrboard userid
 # Firstname
 # Fullname
 # url to facebook image (large+thumb)
 
 
-class InteractionHandler(BaseHandler):
+class InteractionHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
     
     def read(self, request, id):
@@ -55,10 +99,10 @@ class InteractionHandler(BaseHandler):
         tree = Interaction.get_tree(interaction)
         return tree
 
-class CreateCommentHandler(BaseHandler):
+class CreateCommentHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
     
-    def read(request):
+    def read(self, request):
         data = json.loads(request.GET['json'])
         comment = data['comment']
         interaction_id = data['interaction_id']
@@ -69,7 +113,7 @@ class CreateCommentHandler(BaseHandler):
         comment = createInteractionNode(kind='com', body=comment)
         interaction = createInteraction(parent.page, parent.content, user, comment)
 
-class CreateTagHandler(BaseHandler):
+class CreateTagHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
 
     def read(self, request):
@@ -80,7 +124,7 @@ class CreateTagHandler(BaseHandler):
         content_type = data['content_type']
         page_id = data['page_id']
         
-        user = request.user
+        user = User.objects.get(id=data['user_id'])
         page = Page.objects.get(id=page_id)
         content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
         
@@ -103,7 +147,7 @@ class CreateTagHandler(BaseHandler):
         else:
             return HttpResponse("No tag provided to tag handler")
 
-class CreateTagsHandler(BaseHandler):
+class CreateTagsHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
 
     def read(self, request):
