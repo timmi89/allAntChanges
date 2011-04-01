@@ -4,6 +4,7 @@
      <title>Log In to ReadrBoard</title>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
 	<script src="/static/js/jquery.ba-postmessage.min.js" type="text/javascript"></script>
+	<script src="/static/js/jquery.cookie.js" type="text/javascript"></script>
 	<style type="text/css">
 	img		{ border:0; }
 	</style>
@@ -16,13 +17,13 @@
 	<div id="fb-logged-in" style="display:none;">
 		<a href="javascript:void(0);" onclick="FB.logout( RDRAuth.doFBlogout );">Log out</a>
 		<br/><br/>
-		<a href="javascript:void(0);" onclick="RDRAuth.sendFBData();">Send Facebook Response again</a>
+		<a href="javascript:void(0);" onclick="RDRAuth.getReadrToken();">Send Facebook Response again</a>
 	</div>
 	<a href="javascript:void(0);" onclick="RDRAuth.postMessageTest();">test postMessage</a>
      <script src="http://connect.facebook.net/en_US/all.js"></script>
      <script>
 		// querystring stuff
-		var parentUrl;
+		// TODO get the parentURL and use it in the postMessage call
 		var qs = window.location.search.substr(1).split('&');
 		var qs_args = [];
 		for ( var i in qs ) {
@@ -42,44 +43,28 @@
 			postMessage: function(params) {
 				$.postMessage(
 					params.message,
-					'http://localhost:8080/static/ui-prototype/dailycandy.html',
+					qs_args.parentUrl,
 					parent
 				);	
 			},
-			getReadrToken: function(){
-				if ( RDRAuth.rdr_user && typeof RDRAuth.rdr_user.django_user_id == "number" ) {
-				}
-				var sendData = {
-					django_user_id:RDRAuth.rdr_user.django_user_id,
-					domain:window.location.hostname
-				};
-				$.ajax({
-					url: "/api/getreadrtoken/",
-					type: "get",
-					contentType: "application/json",
-					dataType: "jsonp",
-					data: {
-						json: JSON.stringify(sendData)
-					},
-					success: function(response){
-						console.dir( response );
-					}
-				});
-			},
-			sendFBData: function() {
+			getReadrToken: function() {
 				if ( RDRAuth.fb_response && RDRAuth.fb_response.status == "connected" ) {
+					var sendData = {
+						fb: RDRAuth.fb_response,
+						group_id: qs_args.group_id
+					};
 					$.ajax({
 						url: "/api/fb/",
 						type: "get",
 						contentType: "application/json",
 						dataType: "jsonp",
 						data: {
-							json: JSON.stringify(RDRAuth.fb_response)
+							json: JSON.stringify( sendData )
 						},
 						success: function(response){
 							console.dir( response );
 							RDRAuth.rdr_user = response;
-							RDRAuth.getReadrToken();
+							// TODO send this info up to the widget!
 						}
 					});
 				} else {
@@ -93,7 +78,7 @@
 						$('#fb-logged-in').show();
 						$('#fb-login-button').hide();
 						RDRAuth.fb_response = response;
-						RDRAuth.sendFBData();
+						RDRAuth.getReadrToken();
 					
 					} else {
 						// user is not logged in
@@ -114,6 +99,7 @@
 				$('#fb-login-button').hide();
 				console.dir(response);
 				RDRAuth.fb_response = response;
+				RDRAuth.getReadrToken();
 	  		} else {
 				$('#fb-logged-in').hide();
 				$('#fb-login-button').show();
