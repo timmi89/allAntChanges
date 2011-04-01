@@ -91,7 +91,11 @@ function readrBoard($R){
 
                 }
                 // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-                var coords = RDR.util.stayInWindow(settings.left, settings.top, settings.width, 300);
+                if ( !settings.ignoreWindowEdges ) {
+					var coords = RDR.util.stayInWindow(settings.left, settings.top, settings.width, 300);
+				} else {
+					var coords = {left:settings.left, top:settings.top};
+				}
                 $new_rindow.css('left', coords.left + 'px');
                 $new_rindow.css('top', coords.top + 'px');    
                 RDR.actionbar.closeAll();  
@@ -716,7 +720,8 @@ function readrBoard($R){
                     left:actionbarOffsets.left,
                     top:actionbarOffsets.top,
 					pnlWidth:200,
-					pnls:1
+					pnls:1,
+					ignoreWindowEdges:true
                 });
 
                 // build the ratePanel
