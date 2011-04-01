@@ -40,6 +40,7 @@ class SocialUserAdmin(admin.ModelAdmin):
 class SocialAuthAdmin(admin.ModelAdmin):
     list_display = ('social_user',
                     'auth_token',
+                    'readr_token',
                     'expires')
 
 class SiteAdmin(admin.ModelAdmin):

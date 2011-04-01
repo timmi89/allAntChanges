@@ -5,9 +5,6 @@ from piston.doc import documentation_view
 from api.handlers import *
 auth = HttpBasicAuthentication()
 
-#ContentNodes = Resource(handler=ContentNodeHandler, authentication=auth)
-#RBGroups = Resource(handler=RBGroupHandler)
-#RBPages = Resource(handler=RBPageHandler, authentication=auth)
 Settings = Resource(handler=SettingsHandler)
 PageData = Resource(handler=PageDataHandler)
 Containers = Resource(handler=ContainerHandler)
@@ -17,6 +14,7 @@ CreateTag = Resource(handler=CreateTagHandler)
 Interaction = Resource(handler=InteractionHandler)
 CreateComments = Resource(handler=CreateCommentHandler)
 FBLogin = Resource(handler=FBHandler)
+TokenCheck = Resource(handler=TokenCheckHandler)
 
 # Organized Resources
 Interactions = Resource(handler=InteractionsHandler)
@@ -39,6 +37,9 @@ urlpatterns = patterns('',
     # Facebook
     url(r'^fb/$', FBLogin),
     
+    # Token auth
+    url(r'^token/$', TokenCheck),
+
     # Widget
     url(r'^page/', PageData),
     url(r'^containers/create/', CreateContainers),
@@ -48,4 +49,12 @@ urlpatterns = patterns('',
     #url(r'^tags/(\d*)', Tags),
     url(r'^comments/create/', CreateComments),
     #url(r'^comments/', Comments),
+)
+
+# OAuthTest
+urlpatterns += patterns(
+    'piston.authentication',
+    url(r'^oauth/request_token/$','oauth_request_token'),
+    url(r'^oauth/authorize/$','oauth_user_auth'),
+    url(r'^oauth/access_token/$','oauth_access_token'),
 )

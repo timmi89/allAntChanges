@@ -33,6 +33,9 @@ class InteractionsHandler(AnonymousBaseHandler):
             nodes = nodes.filter(interaction__content__container=containers)
         return nodes
         
+class TokenCheckHandler:
+    pass
+
 class FBHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
 
@@ -41,7 +44,7 @@ class FBHandler(AnonymousBaseHandler):
         kwargs = {}
         base = 'http://graph.facebook.com'
         data = json.loads(request.GET['json'])
-        access_token = data['session']['access_token']
+        access_token = data['fb']['session']['access_token']
         if(access_token):
             graph = GraphAPI(access_token)
         else:
@@ -95,13 +98,20 @@ class FBHandler(AnonymousBaseHandler):
             social_user.uid
         )
         
-        dt = datetime.fromtimestamp(data['session']['expires'])
+        dt = datetime.fromtimestamp(data['fb']['session']['expires'])
 
-        socal_auth = SocialAuth.objects.get_or_create(
+        group_secret = Group.objects.get(data['group_id']).secret
+        readr_token = utils.createToken(social_user.id, auth_token, group_secret)
+
+        social_auth = SocialAuth.objects.get_or_create(
             social_user = social_user,
             auth_token = access_token,
-            expires = dt
-            )
+            expires = dt,
+            readr_token = hash
+        )
+
+        # Remove stale tokens (if they exist)
+        SocialAuth.objects.all().filter(social_user=social_user).exclude(readr_token=readr_token).delete()
 
         img_url = '%s/%s/picture' % (base, social_user.uid)
         
@@ -109,14 +119,8 @@ class FBHandler(AnonymousBaseHandler):
                     first_name=djangouser.first_name,
                     full_name=social_user.full_name,
                     image_url=img_url,
+                    readr_token=social_auth[0].readr_token,
                )
-
-# Must returb the following:
-# Readrboard userid
-# Firstname
-# Fullname
-# url to facebook image (large+thumb)
-
 
 class InteractionHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
