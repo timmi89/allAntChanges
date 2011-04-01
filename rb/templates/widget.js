@@ -194,8 +194,10 @@ function readrBoard($R){
                 $actionbars.each(function(){
                     var $actionbar = $(this),
                     cleanup = function(){
-                        var timeout = $actionbar.data('timeout');
-                        clearTimeout(timeout);
+                        var timeoutCloseEvt = $actionbar.data('timeoutCloseEvt');
+                        var timeoutCollapseEvt = $actionbar.data('timeoutCollapseEvt');
+                        clearTimeout(timeoutCloseEvt);
+                        clearTimeout(timeoutCollapseEvt);
                         $actionbar.remove();
                     }
                     if(typeof effect !== "undefined"){
@@ -215,15 +217,16 @@ function readrBoard($R){
                 var scope = this;
                 $actionbars.each(function(){
                     var that = this,
-                    timeout = $(this).data('timeout');
-                    //each actionbar only has one timeout - if one exists, it gets reset here.
-                    //clearTimeout(timeout);
-                    timeout = setTimeout(function(){
-                        if( !$(that).data('hoverLock.parent') && !$(that).data('hoverLock.self') ){
+                    timeoutCloseEvt = $(this).data('timeoutCloseEvt');
+                    
+                    //each actionbar only has one timeout - if one exists, it gets cleared and reset here.
+                    clearTimeout(timeoutCloseEvt);
+                    timeoutCloseEvt = setTimeout(function(){
+                        if( !$(that).data('keepAlive.img') && !$(that).data('keepAlive.self') ){
                             scope.close( $(that), "fade");
-                        }                         
+                        }              
                     },500);
-                    $(this).data('timeout', timeout);
+                    $(this).data('timeoutCloseEvt', timeoutCloseEvt);
                 });
             },
             closeAll: function(){
@@ -236,13 +239,19 @@ function readrBoard($R){
                 var $this = (this.jquery) ? this : $(this),
                 $aboutIcon = $this.find('li.rdr_icon_about'),
                 $otherIcons = $aboutIcon.siblings();
-                
-                //protect against the dreaded oscillating event loop
-                if ( $this.data('expanding') ) {return;}
-                //else
-                $otherIcons.animate({width:'hide'},150, function(){
-                    $aboutIcon.find('.rdr_icon_divider').hide();
-                });
+                 
+                var timeoutCollapseEvt = $(this).data('timeoutCollapseEvt');
+                //each actionbar only has one timeoutCollapseEvt - if one exists, it gets reset here.
+                clearTimeout(timeoutCollapseEvt);
+                timeoutCollapseEvt = setTimeout(function(){
+                    if( !$this.data('keepAlive.self') ){
+                        $otherIcons.animate({width:'hide'},150, function(){
+                            $aboutIcon.find('.rdr_icon_divider').hide();
+                        });
+                    }
+                },250)
+                //in order to protect against the dreaded oscillating event loop,
+                //this timeoutCollapseEvt time should be at least as long as the collspase animate time
             },
             expand: function(callback){
                 //use call or apply to set 'this'
@@ -251,11 +260,8 @@ function readrBoard($R){
                 $aboutIcon = $this.find('li.rdr_icon_about'),
                 $otherIcons = $aboutIcon.siblings();
 
-                $this.data('expanding',true);
                 $aboutIcon.find('.rdr_icon_divider').show();
-                $otherIcons.animate({width:'show'},150, function(){
-                    $this.data('expanding',false);
-                });
+                $otherIcons.animate({width:'show'},150);
             }
 		},
 		tooltip : {
@@ -523,7 +529,7 @@ function readrBoard($R){
 
                     // builds a new actionbar or just returns the existing $actionbar if it exists.
 				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src });
-                    $actionbar.data('hoverLock.parent',true)
+                    $actionbar.data('keepAlive.img',true)
 
                     //kill all rivals!!
                     var $rivals = $('div.rdr_actionbar').not($actionbar);
@@ -532,11 +538,11 @@ function readrBoard($R){
                     // todo: break out these animation effects into functions saved under actionbar.<collspase>
 				    $actionbar.hover(
                         function() {
-                            $actionbar.data('hoverLock.self',true);
+                            $actionbar.data('keepAlive.self',true);
                             RDR.actionbar.expand.call(this);
                         },
                         function() {
-                            $actionbar.data('hoverLock.self',false);
+                            $actionbar.data('keepAlive.self',false);
                             RDR.actionbar.collapse.call(this);
                             RDR.actionbar.closeSuggest($actionbar);
                         }
@@ -548,7 +554,7 @@ function readrBoard($R){
                     var src = this.src;
 					var actionbar_id = "rdr_actionbar_"+RDR.util.md5.hex_md5( src );
                     var $actionbar = $('#'+actionbar_id);
-                    $actionbar.data('hoverLock.parent',false)
+                    $actionbar.data('keepAlive.img',false)
                     RDR.actionbar.closeSuggest($actionbar);
 				});
 				// END
