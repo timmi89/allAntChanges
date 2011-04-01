@@ -4,12 +4,12 @@ import datetime
 import json
 
 def createToken(soc_id, auth_token, group_secret):
-        hash = sha_constructor(
+	print "Creating readr_token"
+        return sha_constructor(
 	    unicode(soc_id) +
-            unicode(social_user.auth_token) +
+            unicode(auth_token) +
             unicode(group_secret)
         ).hexdigest()[::2]
-	return hash
 
 def getPage(request, pageid=None):
 	canonical = request.GET.get('canonical_url', None)

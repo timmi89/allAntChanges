@@ -18,7 +18,7 @@ class GroupAdmin(admin.ModelAdmin):
             'fields': ('name', 'short_name')
         }),
         ('Advanced', {
-            'fields': ('blessed_tags', 'valid_domains', 'anno_whitelist', 'img_whitelist', 'img_blacklist', 'no_readr')
+            'fields': ('blessed_tags', 'valid_domains', 'anno_whitelist', 'img_whitelist', 'img_blacklist', 'no_readr', 'secret')
         }),
         ('Logos', {
             'fields': ('logo_url_sm', 'logo_url_med' , 'logo_url_lg')
