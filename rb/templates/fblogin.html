@@ -38,6 +38,7 @@
 		var RDRAuth = RDRAuth ? RDRAuth : {};
 		RDRAuth = {
 			fb_response: {},
+			rdr_user: {},
 			postMessage: function(params) {
 				$.postMessage(
 					params.message,
@@ -45,19 +46,45 @@
 					parent
 				);	
 			},
-			sendFBData: function() {
+			getReadrToken: function(){
+				if ( RDRAuth.rdr_user && typeof RDRAuth.rdr_user.django_user_id == "number" ) {
+				}
+				var sendData = {
+					django_user_id:RDRAuth.rdr_user.django_user_id,
+					domain:window.location.hostname
+				};
 				$.ajax({
-					url: "/api/fb/",
+					url: "/api/getreadrtoken/",
 					type: "get",
 					contentType: "application/json",
 					dataType: "jsonp",
 					data: {
-						json: JSON.stringify(RDRAuth.fb_response)
+						json: JSON.stringify(sendData)
 					},
 					success: function(response){
 						console.dir( response );
 					}
 				});
+			},
+			sendFBData: function() {
+				if ( RDRAuth.fb_response && RDRAuth.fb_response.status == "connected" ) {
+					$.ajax({
+						url: "/api/fb/",
+						type: "get",
+						contentType: "application/json",
+						dataType: "jsonp",
+						data: {
+							json: JSON.stringify(RDRAuth.fb_response)
+						},
+						success: function(response){
+							console.dir( response );
+							RDRAuth.rdr_user = response;
+							RDRAuth.getReadrToken();
+						}
+					});
+				} else {
+					RDRAuth.doFBLogin();
+				}
 			},
 			doFBLogin: function() {
 				FB.login( function(response) {
@@ -70,13 +97,14 @@
 					
 					} else {
 						// user is not logged in
-						console.log('USER NOT LOGGED IN');
+						// TODO do something.  post to parent that there was a bug logging in to FB
 	 				}
 				}, {perms:'email'});
 			},		
 			doFBlogout: function() {
 				window.location.reload();
-			}
+			},
+			
 		}
 
 		FB.getLoginStatus(function(response) {

@@ -55,10 +55,6 @@ function readrBoard($R){
                 x:100,
                 y:100,
                 pnlWidth:200,
-                pnls:2,
-                width:function(){
-                   return this.pnlWidth*this.pnls; 
-                },
                 animTime:300,
                 height:150
             },
@@ -96,7 +92,7 @@ function readrBoard($R){
 
 
 				// TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-				var coords = RDR.util.stayInWindow({left:settings.left, top:settings.top, width:(settings.pnls*settings.pnlWidth), height:300, ignoreWindowEdges:settings.ignoreWindowEdges});
+				var coords = RDR.util.stayInWindow({left:settings.left, top:settings.top,height:300, ignoreWindowEdges:settings.ignoreWindowEdges});
 
                 $new_rindow.css('left', coords.left + 'px');
                 $new_rindow.css('top', coords.top + 'px');    
@@ -203,8 +199,10 @@ function readrBoard($R){
                 $actionbars.each(function(){
                     var $actionbar = $(this),
                     cleanup = function(){
-                        var timeout = $actionbar.data('timeout');
-                        clearTimeout(timeout);
+                        var timeoutCloseEvt = $actionbar.data('timeoutCloseEvt');
+                        var timeoutCollapseEvt = $actionbar.data('timeoutCollapseEvt');
+                        clearTimeout(timeoutCloseEvt);
+                        clearTimeout(timeoutCollapseEvt);
                         $actionbar.remove();
                     }
                     if(typeof effect !== "undefined"){
@@ -224,15 +222,16 @@ function readrBoard($R){
                 var scope = this;
                 $actionbars.each(function(){
                     var that = this,
-                    timeout = $(this).data('timeout');
-                    //each actionbar only has one timeout - if one exists, it gets reset here.
-                    //clearTimeout(timeout);
-                    timeout = setTimeout(function(){
-                        if( !$(that).data('hoverLock.parent') && !$(that).data('hoverLock.self') ){
+                    timeoutCloseEvt = $(this).data('timeoutCloseEvt');
+                    
+                    //each actionbar only has one timeout - if one exists, it gets cleared and reset here.
+                    clearTimeout(timeoutCloseEvt);
+                    timeoutCloseEvt = setTimeout(function(){
+                        if( !$(that).data('keepAlive.img') && !$(that).data('keepAlive.self') ){
                             scope.close( $(that), "fade");
-                        }                         
+                        }              
                     },500);
-                    $(this).data('timeout', timeout);
+                    $(this).data('timeoutCloseEvt', timeoutCloseEvt);
                 });
             },
             closeAll: function(){
@@ -245,13 +244,19 @@ function readrBoard($R){
                 var $this = (this.jquery) ? this : $(this),
                 $aboutIcon = $this.find('li.rdr_icon_about'),
                 $otherIcons = $aboutIcon.siblings();
-                
-                //protect against the dreaded oscillating event loop
-                if ( $this.data('expanding') ) {return;}
-                //else
-                $otherIcons.animate({width:'hide'},150, function(){
-                    $aboutIcon.find('.rdr_icon_divider').hide();
-                });
+                 
+                var timeoutCollapseEvt = $(this).data('timeoutCollapseEvt');
+                //each actionbar only has one timeoutCollapseEvt - if one exists, it gets reset here.
+                clearTimeout(timeoutCollapseEvt);
+                timeoutCollapseEvt = setTimeout(function(){
+                    if( !$this.data('keepAlive.self') ){
+                        $otherIcons.animate({width:'hide'},150, function(){
+                            $aboutIcon.find('.rdr_icon_divider').hide();
+                        });
+                    }
+                },250)
+                //in order to protect against the dreaded oscillating event loop,
+                //this timeoutCollapseEvt time should be at least as long as the collspase animate time
             },
             expand: function(callback){
                 //use call or apply to set 'this'
@@ -260,11 +265,8 @@ function readrBoard($R){
                 $aboutIcon = $this.find('li.rdr_icon_about'),
                 $otherIcons = $aboutIcon.siblings();
 
-                $this.data('expanding',true);
                 $aboutIcon.find('.rdr_icon_divider').show();
-                $otherIcons.animate({width:'show'},150, function(){
-                    $this.data('expanding',false);
-                });
+                $otherIcons.animate({width:'show'},150);
             }
 		},
 		tooltip : {
@@ -535,14 +537,14 @@ function readrBoard($R){
 
                     
 				    var this_img = $(this),
-				    left = this_img.offset().left + this_img.width() + 20,
-				    top = this_img.offset().top + this_img.height() + 30,
+				    left = this_img.offset().left + 34, // + this_img.width()
+				    top = this_img.offset().top + 50, // + this_img.height()
                     //use this instead of $().attr('src') to fix descrepencies between relative and absolute urls
 				    src = this.src;
 
                     // builds a new actionbar or just returns the existing $actionbar if it exists.
 				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src, ignoreWindowEdges:"rb" });
-                    $actionbar.data('hoverLock.parent',true)
+                    $actionbar.data('keepAlive.img',true)
 
                     //kill all rivals!!
                     var $rivals = $('div.rdr_actionbar').not($actionbar);
@@ -551,11 +553,11 @@ function readrBoard($R){
                     // todo: break out these animation effects into functions saved under actionbar.<collspase>
 				    $actionbar.hover(
                         function() {
-                            $actionbar.data('hoverLock.self',true);
+                            $actionbar.data('keepAlive.self',true);
                             RDR.actionbar.expand.call(this);
                         },
                         function() {
-                            $actionbar.data('hoverLock.self',false);
+                            $actionbar.data('keepAlive.self',false);
                             RDR.actionbar.collapse.call(this);
                             RDR.actionbar.closeSuggest($actionbar);
                         }
@@ -567,7 +569,7 @@ function readrBoard($R){
                     var src = this.src;
 					var actionbar_id = "rdr_actionbar_"+RDR.util.md5.hex_md5( src );
                     var $actionbar = $('#'+actionbar_id);
-                    $actionbar.data('hoverLock.parent',false)
+                    $actionbar.data('keepAlive.img',false)
                     RDR.actionbar.closeSuggest($actionbar);
 				});
 				// END
@@ -697,7 +699,7 @@ function readrBoard($R){
 				// iframeUrl = iframeHost + "/oauth/authorize?redirect_uri=http%3A%2F%2Freadr.local:8080%2Ffblogin%2F&client_id=163759626987948&display=popup",
 				parentUrl = window.location.href;
 				$loginHtml.append( '<h1>Log In</h1>',
-				'<iframe id="rdr-xdm" src="' + iframeUrl + '?parentUrl= ' + parentUrl + '" width="300" height="300" />'
+				'<iframe id="rdr-xdm" src="' + iframeUrl + '?parentUrl= ' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'" width="300" height="300" />'
 				);
 				
 				rindow.animate({
@@ -735,7 +737,6 @@ function readrBoard($R){
                     left:actionbarOffsets.left,
                     top:actionbarOffsets.top,
 					pnlWidth:200,
-					pnls:1,
 					ignoreWindowEdges:"bl",
 					noHeader:true
                 });
@@ -800,7 +801,9 @@ function readrBoard($R){
                 });
 
                 //populate whyPanel
-				$whyPanel.prepend($('<div class="rdr_pnlShadow"/>')).hide().find('div.rdr_body').append('<div class="rdr_subHeader" ><span>COMMENT &amp; SHARE </span></div>');
+				$whyPanel.prepend($('<div class="rdr_pnlShadow"/>')).hide().find('div.rdr_body')//chain
+                .append('<div class="rdr_subHeader" ><span>COMMENT &amp; SHARE </span></div>')//chain
+                .append('test, test');
 
 /*
                 $customTagBox.append(
@@ -814,7 +817,7 @@ function readrBoard($R){
                 // add content and animate the actionbar to accommodate it
 
                 rindow.animate({
-                    width: rindow.settings.width() +'px',
+                    width: rindow.settings.pnlWidth +'px',
                     minHeight: rindow.settings.height +'px',
                 }, rindow.settings.animTime, function() {
 					$(this).css('width','auto');
@@ -851,7 +854,6 @@ function readrBoard($R){
                 });
             },
 			whyPanel : function(rindow, interaction_id) {
-                rindow.settings.pnls = 2;                            
                 //[eric] no need to animate whyPanel because it's aligned right now ([porter] floating right)
 				//rindow.css('max-width', rindow.settings.width() +'px');
                 $('.rdr_whyPanel').width('0').show();
@@ -913,7 +915,7 @@ function readrBoard($R){
                     $shareLinks.append('<li><a href="http://' +val+ '.com" ><img src="/static/ui-prototype/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
                 });
 
-//TODO this is prototype code for demo.  fix it.
+                //TODO this is prototype code for demo.  fix it.
                 $shareDialogueBox.append('<div><strong>Share your reaction</strong> with others:</div>',
                 $shareLinks,
 				'<hr/><div><strong>Comment on your reaction</strong>:</div>',
