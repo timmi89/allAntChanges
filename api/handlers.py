@@ -40,8 +40,8 @@ class TokenCheckHandler(AnonymousBaseHandler):
         data = json.loads(request.GET['json'])
         group_secret = Group.objects.get(id=data['group_id']).secret
         auth = SocialAuth.objects.get(social_user__user=data['user_id'])
-        readr_token = createToken(data['user_id'], , group_secret)
-        
+        readr_token = createToken(data['user_id'], auth.access_token, group_secret)
+        return readr_token == auth.readr_token
 
 class FBHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
