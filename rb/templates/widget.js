@@ -532,8 +532,8 @@ function readrBoard($R){
 
                     
 				    var this_img = $(this),
-				    left = this_img.offset().left + this_img.width() - 5,
-				    top = this_img.offset().top + this_img.height() - 15,
+				    left = this_img.offset().left + this_img.width() + 20,
+				    top = this_img.offset().top + this_img.height() + 30,
                     //use this instead of $().attr('src') to fix descrepencies between relative and absolute urls
 				    src = this.src;
 
