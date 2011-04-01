@@ -547,10 +547,8 @@ function readrBoard($R){
 				    src = this.src;
 
                     // builds a new actionbar or just returns the existing $actionbar if it exists.
-				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src });
-                    $actionbar.data('keepAlive.img',true)
 				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src, ignoreWindowEdges:"rb" });
-                    $actionbar.data('hoverLock.parent',true)
+                    $actionbar.data('keepAlive.img',true)
 
                     //kill all rivals!!
                     var $rivals = $('div.rdr_actionbar').not($actionbar);
