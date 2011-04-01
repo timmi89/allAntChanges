@@ -80,6 +80,9 @@ function readrBoard($R){
                     $new_rindow.find('div.rdr_close').click( function() {
                         $(this).parents('div.rdr.rdr_window').remove();
                     } );
+					
+					if ( settings.noHeader ) $new_rindow.find('h1').remove();
+					
                     $new_rindow.draggable({
                         handle:'h1',
                         containment:'document',
@@ -733,7 +736,8 @@ function readrBoard($R){
                     top:actionbarOffsets.top,
 					pnlWidth:200,
 					pnls:1,
-					ignoreWindowEdges:"bl"
+					ignoreWindowEdges:"bl",
+					noHeader:true
                 });
 
                 // build the ratePanel
