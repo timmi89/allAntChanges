@@ -710,10 +710,10 @@ function readrBoard($R){
 					
 					$.receiveMessage(
 						function(e){
-							if ( e.data = "hello world" ) {
-								$('#rdr-xdm').css('border', '2px solid blue');
-								$('#rdr-xdm').css('height', '100px');
-							}
+							var message = e.data.split(':');
+							alert( "user id is " + message[0] + " and token is " + message[1] )
+							RDR.user.auth_token = message[1];
+							RDR.user.id = message[0];
 						},
 						iframeHost
 					);
@@ -963,7 +963,8 @@ function readrBoard($R){
 					"hash": container,
 					"content" : content,
 					"content_type" : args.settings.content_type,
-					"user_id" : 1,
+					"user_id" : RDR.user.id,
+					"auth_token" : RDR.user.auth_token,
 					"page_id" : RDR.page.id
 				};
 			

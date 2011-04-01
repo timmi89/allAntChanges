@@ -65,6 +65,9 @@
 							console.dir( response );
 							RDRAuth.rdr_user = response;
 							// TODO send this info up to the widget!
+							RDRAuth.postMessage({
+								message: RDRAuth.rdr_user.django_user_id+":"+RDRAuth.rdr_user.readr_token
+							});
 						}
 					});
 				} else {
