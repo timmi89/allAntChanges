@@ -42,45 +42,72 @@ class FBHandler(AnonymousBaseHandler):
         base = 'http://graph.facebook.com'
         data = json.loads(request.GET['json'])
         access_token = data['session']['access_token']
-        graph = GraphAPI(access_token)
+        if(access_token):
+            graph = GraphAPI(access_token)
+        else:
+            return HttpResponse("No access token")
 
         # Get user profile from facebook graph
         profile = graph.get_object("me")
 
+        # Create new Django user if one doesn't exist
         user = User.objects.get_or_create(
             username=profile['email'],
-            email=profile['email'],
-            first_name=profile['first_name'],
-            last_name=profile['last_name'],
+            defaults = {
+                "email": profile['email'],
+                "first_name": profile['first_name'].capitalize(),
+                "last_name": profile['last_name'].capitalize(),
+            },
         )
 
-        if(user[1]): return HttpResonse("Error")
+        # Print out the result
         djangouser = user[0]
+        result = "Created new" if user[1] else "Retreived existing"
+        print result, "django user %s %s (%s)" % (
+            djangouser.first_name, 
+            djangouser.last_name, 
+            djangouser.email
+        )
 
+        if 'gender' in profile.keys():
+            profile ['gender'] = profile['gender'].capitalize()[:1]
+
+        # Create social user object for user
         social = SocialUser.objects.get_or_create(
             user = djangouser,
             provider = 'Facebook',
             uid = profile['id'],
-            full_name = profile['name'],
-            username = profile['username'],
-            gender = profile['gender'].capitalize()[:1],
-            hometown = profile['hometown']['name'],
-            bio = profile['bio'],
-        )[0]
+            defaults = {
+                "full_name": profile['name'],
+                "username": profile.get('username', None),
+                "gender": profile.get('gender', None),
+                "hometown": profile['hometown']['name'] if (profile.get('hometown', None)) else None,
+                "bio": profile.get('bio', None)
+            }
+        )
+
+        # Print out the result
+        social_user = social[0]
+        result = ("Created new" if social[1] else "Retreived existing")
+        print result, "social user %s (%s: %s)" % (
+            social_user.full_name,
+            social_user.provider, 
+            social_user.uid
+        )
         
         dt = datetime.fromtimestamp(data['session']['expires'])
 
         socal_auth = SocialAuth.objects.get_or_create(
-            social_user = social,
+            social_user = social_user,
             auth_token = access_token,
             expires = dt
             )
 
-        img_url = '%s/%s/picture' % (base, social.uid)
+        img_url = '%s/%s/picture' % (base, social_user.uid)
         
         return dict(django_user_id=djangouser.id,
                     first_name=djangouser.first_name,
-                    full_name=social.full_name,
+                    full_name=social_user.full_name,
                     image_url=img_url,
                )
 
