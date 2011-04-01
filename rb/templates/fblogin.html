@@ -11,16 +11,17 @@
    <body>
      <div id="fb-root"></div>
 	<div id="fb-login-button" style="display:none;">
-		<a href="javascript:void(0);" onclick="doFBLogin();"><img src="/static/images/fb-login_to_readrboard.png" /></a>
+		<a href="javascript:void(0);" onclick="RDRAuth.doFBLogin();"><img src="/static/images/fb-login_to_readrboard.png" /></a>
 	</div>
 	<div id="fb-logged-in" style="display:none;">
-		<a href="javascript:void(0);" onclick="FB.logout( doFBlogout );">Log out</a>
+		<a href="javascript:void(0);" onclick="FB.logout( RDRAuth.doFBlogout );">Log out</a>
 		<br/><br/>
-		<a href="javascript:void(0);" onclick="sendFBData();">Send Facebook Response again</a>
+		<a href="javascript:void(0);" onclick="RDRAuth.sendFBData();">Send Facebook Response again</a>
 	</div>
-	<a href="javascript:void(0);" onclick="postMessageTest()">test postMessage</a>
+	<a href="javascript:void(0);" onclick="RDRAuth.postMessageTest();">test postMessage</a>
      <script src="http://connect.facebook.net/en_US/all.js"></script>
      <script>
+		// querystring stuff
 		var parentUrl;
 		var qs = window.location.search.substr(1).split('&');
 		var qs_args = [];
@@ -28,68 +29,68 @@
 			var this_arg = qs[i].split('=');
 			qs_args[this_arg[0]] = this_arg[1];
 		}
-		function postMessage(message) {
-			$.postMessage(
-				message,
-				'http://localhost:8080/static/ui-prototype/dailycandy.html',
-				parent
-			);	
-		}
 		
-        FB.init({ 
-           appId:'{{ fb_client_id }}', cookie:true, 
-           status:true, xfbml:true 
-        });
-     </script>
-	 <script>
+		FB.init({ 
+			appId:'{{ fb_client_id }}', cookie:true, 
+			status:true, xfbml:true 
+		});
+		
+		var RDRAuth = RDRAuth ? RDRAuth : {};
+		RDRAuth = {
+			fb_response: {},
+			postMessage: function(params) {
+				$.postMessage(
+					params.message,
+					'http://localhost:8080/static/ui-prototype/dailycandy.html',
+					parent
+				);	
+			},
+			sendFBData: function() {
+				$.ajax({
+					url: "/api/fb/",
+					type: "get",
+					contentType: "application/json",
+					dataType: "jsonp",
+					data: {
+						json: JSON.stringify(RDRAuth.fb_response)
+					},
+					success: function(response){
+						console.dir( response );
+					}
+				});
+			},
+			doFBLogin: function() {
+				FB.login( function(response) {
+					if (response.session) {
+						//user is logged in
+						$('#fb-logged-in').show();
+						$('#fb-login-button').hide();
+						RDRAuth.fb_response = response;
+						RDRAuth.sendFBData();
+					
+					} else {
+						// user is not logged in
+						console.log('USER NOT LOGGED IN');
+	 				}
+				}, {perms:'email'});
+			},		
+			doFBlogout: function() {
+				window.location.reload();
+			}
+		}
+
 		FB.getLoginStatus(function(response) {
 	  		if (response.session) {
 				//user is logged in
 				$('#fb-logged-in').show();
 				$('#fb-login-button').hide();
 				console.dir(response);
-				
+				RDRAuth.fb_response = response;
 	  		} else {
 				$('#fb-logged-in').hide();
 				$('#fb-login-button').show();
 	  		}
 		});
-		
-		function sendFBData() {
-			$.ajax({
-				url: "/api/fb/",
-				type: "get",
-				contentType: "application/json",
-				dataType: "jsonp",
-				data: {
-					json: JSON.stringify(fb_response)
-				},
-				success: function(response){
-					console.dir( response );
-				}
-			});
-		}
-		
-		var fb_response = {};
-		function doFBLogin() {
-			FB.login( function(response) {
-				if (response.session) {
-					//user is logged in
-					$('#fb-logged-in').show();
-					$('#fb-login-button').hide();
-					fb_response = response;
-					sendFBData();
-					
-				} else {
-					// user is not logged in
-					console.log('USER NOT LOGGED IN');
- 				}
-			}, {perms:'email'});
-		}
-		
-		function doFBlogout() {
-			window.location.reload();
-		}
 	</script>
    </body>
 </html>

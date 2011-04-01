@@ -33,7 +33,7 @@ function readrBoard($R){
             short_name:		"JoeReadrOnFB",
             first_name:		"Joe",
             last_name:		"Readr",
-            status:		"full",
+            status:			"full",
             auth_token: 	"1234567890"
         },
         errors : {
@@ -80,6 +80,9 @@ function readrBoard($R){
                     $new_rindow.find('div.rdr_close').click( function() {
                         $(this).parents('div.rdr.rdr_window').remove();
                     } );
+					
+					if ( settings.noHeader ) $new_rindow.find('h1').remove();
+					
                     $new_rindow.draggable({
                         handle:'h1',
                         containment:'document',
@@ -90,8 +93,11 @@ function readrBoard($R){
                     });
 
                 }
-                // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-                var coords = RDR.util.stayInWindow(settings.left, settings.top, settings.width, 300);
+
+
+				// TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
+				var coords = RDR.util.stayInWindow({left:settings.left, top:settings.top, width:(settings.pnls*settings.pnlWidth), height:300, ignoreWindowEdges:settings.ignoreWindowEdges});
+
                 $new_rindow.css('left', coords.left + 'px');
                 $new_rindow.css('top', coords.top + 'px');    
                 RDR.actionbar.closeAll();  
@@ -116,7 +122,10 @@ function readrBoard($R){
 			 	
                 var left = settings.left ? (settings.left-34) : 100;
                 var top = settings.top ? (settings.top-50) : 100;
-                var coords = RDR.util.stayInWindow(left,top,200,30);
+
+				// TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
+				var coords = RDR.util.stayInWindow({left:left, top:top, width:200, height:30, ignoreWindowEdges:settings.ignoreWindowEdges});
+
 
                 // TODO use settings check for certain features and content types to determine which of these to disable
                 var $new_actionbar = $('<div class="rdr rdr_actionbar" id="' + actionbar_id + '" />').css({
@@ -317,20 +326,30 @@ function readrBoard($R){
             }
 		},
 		util : {
-            stayInWindow : function(left,top,w,h) {
-                var coords = {};
-                var rWin = $(window);
-                var winWidth = rWin.width();
-                var winHeight = rWin.height();
-                var winScroll = rWin.scrollTop();
-                if ( (left+w+16) >= winWidth ) {
-                    left = winWidth - w - 36;
+            stayInWindow : function(settings) {
+                var coords = {},
+	                rWin = $(window),
+	                winWidth = rWin.width(),
+	                winHeight = rWin.height(),
+	                winScroll = rWin.scrollTop(),
+					w = settings.width,
+					h = settings.height,
+					left = settings.left,
+					top = settings.top,
+					ignoreWindowEdges = (settings.ignoreWindowEdges) ? settings.ignoreWindowEdges:""; // ignoreWindowEdges - check for index of t, r, b, l
+
+                if ( ( ignoreWindowEdges.indexOf('r') == -1 ) && (left+w+16) >= winWidth ) {
+                    left = winWidth - w - 10;
                 }
-                if ( (top+h) > winHeight + winScroll ) {
+                if ( ( ignoreWindowEdges.indexOf('b') == -1 ) &&  (top+h) > winHeight + winScroll ) {
                     top = winHeight + winScroll - h + 75;
                 }
-                if ( left < 10 ) left = 10;
-                if ( top - winScroll < 10 ) top = winScroll + 10;
+                if ( ( ignoreWindowEdges.indexOf('l') == -1 ) && left < 10 ) {
+					left = 10;
+				}
+                if ( ( ignoreWindowEdges.indexOf('t') == -1 ) && top - winScroll < 10 ) {
+					top = winScroll + 10;
+				}
                 coords.left = left;
                 coords.top = top;
                 return coords;
@@ -522,14 +541,16 @@ function readrBoard($R){
 
                     
 				    var this_img = $(this),
-				    left = this_img.offset().left + 33,
-				    top = this_img.offset().top + this_img.height() + 20,
+				    left = this_img.offset().left + this_img.width() + 20,
+				    top = this_img.offset().top + this_img.height() + 30,
                     //use this instead of $().attr('src') to fix descrepencies between relative and absolute urls
 				    src = this.src;
 
                     // builds a new actionbar or just returns the existing $actionbar if it exists.
 				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src });
                     $actionbar.data('keepAlive.img',true)
+				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src, ignoreWindowEdges:"rb" });
+                    $actionbar.data('hoverLock.parent',true)
 
                     //kill all rivals!!
                     var $rivals = $('div.rdr_actionbar').not($actionbar);
@@ -677,8 +698,11 @@ function readrBoard($R){
 				//TODO TYLER THIS IS FOR FACEBOOK
 				// TODO: iframeURL and iframeHost must be hardcoded
 				var $loginHtml = $('<div class="rdr_login" />'),
-				iframeHost = "http://graph.facebook.com",
-				iframeUrl = iframeHost + "/oauth/authorize?redirect_uri=http%3A%2F%2Freadr.local:8080%2Ffblogin%2F&client_id=163759626987948&display=popup",
+
+				iframeHost = "http://readr.local:8080",
+				iframeUrl = iframeHost + "/fblogin/",
+				// iframeHost = "http://graph.facebook.com",
+				// iframeUrl = iframeHost + "/oauth/authorize?redirect_uri=http%3A%2F%2Freadr.local:8080%2Ffblogin%2F&client_id=163759626987948&display=popup",
 				parentUrl = window.location.href;
 				$loginHtml.append( '<h1>Log In</h1>',
 				'<iframe id="rdr-xdm" src="' + iframeUrl + '?parentUrl= ' + parentUrl + '" width="300" height="300" />'
@@ -719,7 +743,9 @@ function readrBoard($R){
                     left:actionbarOffsets.left,
                     top:actionbarOffsets.top,
 					pnlWidth:200,
-					pnls:1
+					pnls:1,
+					ignoreWindowEdges:"bl",
+					noHeader:true
                 });
 
                 // build the ratePanel

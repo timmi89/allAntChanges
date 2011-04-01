@@ -166,10 +166,13 @@ class SocialUser(models.Model):
     full_name = models.CharField(max_length=255)
 
     # Might not get these -> blank=True
-    username = models.CharField(max_length=255, blank=True)
+    username = models.CharField(max_length=255, blank=True, unique=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
     hometown = models.CharField(max_length=255, blank=True)
     bio = models.TextField(blank=True)
+
+    class Meta:
+        unique_together = ('provider', 'uid')
 
 class SocialAuth(models.Model):
     social_user = models.ForeignKey(SocialUser, related_name='social_auth')
