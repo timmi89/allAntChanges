@@ -699,7 +699,7 @@ function readrBoard($R){
 				// iframeUrl = iframeHost + "/oauth/authorize?redirect_uri=http%3A%2F%2Freadr.local:8080%2Ffblogin%2F&client_id=163759626987948&display=popup",
 				parentUrl = window.location.href;
 				$loginHtml.append( '<h1>Log In</h1>',
-				'<iframe id="rdr-xdm" src="' + iframeUrl + '?parentUrl= ' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'" width="300" height="300" />'
+				'<iframe id="rdr-xdm" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'" width="300" height="300" />'
 				);
 				
 				rindow.animate({
