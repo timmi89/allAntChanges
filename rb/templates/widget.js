@@ -55,10 +55,6 @@ function readrBoard($R){
                 x:100,
                 y:100,
                 pnlWidth:200,
-                pnls:2,
-                width:function(){
-                   return this.pnlWidth*this.pnls; 
-                },
                 animTime:300,
                 height:150
             },
@@ -96,7 +92,7 @@ function readrBoard($R){
 
 
 				// TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-				var coords = RDR.util.stayInWindow({left:settings.left, top:settings.top, width:(settings.pnls*settings.pnlWidth), height:300, ignoreWindowEdges:settings.ignoreWindowEdges});
+				var coords = RDR.util.stayInWindow({left:settings.left, top:settings.top,height:300, ignoreWindowEdges:settings.ignoreWindowEdges});
 
                 $new_rindow.css('left', coords.left + 'px');
                 $new_rindow.css('top', coords.top + 'px');    
@@ -741,7 +737,6 @@ function readrBoard($R){
                     left:actionbarOffsets.left,
                     top:actionbarOffsets.top,
 					pnlWidth:200,
-					pnls:1,
 					ignoreWindowEdges:"bl",
 					noHeader:true
                 });
@@ -806,7 +801,9 @@ function readrBoard($R){
                 });
 
                 //populate whyPanel
-				$whyPanel.prepend($('<div class="rdr_pnlShadow"/>')).hide().find('div.rdr_body').append('<div class="rdr_subHeader" ><span>COMMENT &amp; SHARE </span></div>');
+				$whyPanel.prepend($('<div class="rdr_pnlShadow"/>')).hide().find('div.rdr_body')//chain
+                .append('<div class="rdr_subHeader" ><span>COMMENT &amp; SHARE </span></div>')//chain
+                .append('test, test');
 
 /*
                 $customTagBox.append(
@@ -820,7 +817,7 @@ function readrBoard($R){
                 // add content and animate the actionbar to accommodate it
 
                 rindow.animate({
-                    width: rindow.settings.width() +'px',
+                    width: rindow.settings.pnlWidth +'px',
                     minHeight: rindow.settings.height +'px',
                 }, rindow.settings.animTime, function() {
 					$(this).css('width','auto');
@@ -857,7 +854,6 @@ function readrBoard($R){
                 });
             },
 			whyPanel : function(rindow, interaction_id) {
-                rindow.settings.pnls = 2;                            
                 //[eric] no need to animate whyPanel because it's aligned right now ([porter] floating right)
 				//rindow.css('max-width', rindow.settings.width() +'px');
                 $('.rdr_whyPanel').width('0').show();
@@ -919,7 +915,7 @@ function readrBoard($R){
                     $shareLinks.append('<li><a href="http://' +val+ '.com" ><img src="/static/ui-prototype/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
                 });
 
-//TODO this is prototype code for demo.  fix it.
+                //TODO this is prototype code for demo.  fix it.
                 $shareDialogueBox.append('<div><strong>Share your reaction</strong> with others:</div>',
                 $shareLinks,
 				'<hr/><div><strong>Comment on your reaction</strong>:</div>',
