@@ -33,7 +33,7 @@ function readrBoard($R){
             short_name:		"JoeReadrOnFB",
             first_name:		"Joe",
             last_name:		"Readr",
-            status:		"full",
+            status:			"full",
             auth_token: 	"1234567890"
         },
         errors : {
