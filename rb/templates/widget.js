@@ -710,10 +710,18 @@ function readrBoard($R){
 					
 					$.receiveMessage(
 						function(e){
-							var message = e.data.split(':');
-							alert( "user id is " + message[0] + " and token is " + message[1] )
-							RDR.user.auth_token = message[1];
-							RDR.user.id = message[0];
+							var received = e.data.split('&'),
+								message = {};
+							
+							for ( var i in received) {
+								var thisPair = received[i].split('=');
+								message[thisPair[0]] = thisPair[1];
+							}
+							console.log('---------message---------');
+							console.dir(message);
+							// alert(callingAction);
+							// RDR.user.id = message[1];
+							// RDR.user.auth_token = message[2];
 						},
 						iframeHost
 					);
