@@ -114,9 +114,8 @@ def checkToken(data):
     """
     Check to see if token in request is good
     """
-    group_secret = Group.objects.get(id=data['group_id']).secret
     auth = SocialAuth.objects.get(social_user__user=data['user_id'])
-    readr_token = createToken(data['user_id'], auth.auth_token, group_secret)
+    readr_token = createToken(data['user_id'], auth.auth_token, data['group_id'])
     return (readr_token == data['readr_token'])
 
 def createToken(djangoid, auth_token, group_id):
