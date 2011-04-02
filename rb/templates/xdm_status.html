@@ -2,16 +2,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US" xmlns:x2="http://www.w3.org/2002/06/xhtml2" xmlns:fb="http://www.facebook.com/2008/fbml">
    <head>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
-	<script src="/static/js/readr_user_auth.js" type="text/javascript"></script>
 	<script src="/static/js/jquery.ba-postmessage.min.js" type="text/javascript"></script>
 	<script src="/static/js/jquery.cookie.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	var date = new Date();
+	// TODO use the following line.  it creates a cachebuster that represents the current day/week/month
+	// var cachebuster = String( parseInt( date.getDate() / 7 )+1 )+String(date.getMonth()) + String(date.getYear());
+	var cachebuster = date.getTime();
+	document.write(
+		unescape( '%3Cscript src="/static/js/readr_user_auth.js?' + cachebuster + '" type="text/javascript"%3E%3C/script%3E' )
+	);
+	</script>
    </head>
    <body style="padding:0;margin:0;color:#fff;background:transparent;">
 	<div id="fb-root"></div>
      <script src="http://connect.facebook.net/en_US/all.js" type="text/javascript"s></script>
      <script type="text/javascript">
 		RDRAuth.notifyParent = function(response) {
-			console.dir( response );
 			RDRAuth.rdr_user = response;
 			if ( RDRAuth.rdr_user.django_user_id ) $.cookie( 'django_user_id', RDRAuth.rdr_user.django_user_id );
 			if ( RDRAuth.rdr_user.readr_token ) $.cookie( 'readr_token', RDRAuth.rdr_user.readr_token );
@@ -43,14 +50,13 @@
 		var fb_session = FB.getSession();
 		console.log('fb_session: '+fb_session);
 		if ( fb_session ) {
-			console.log('xdm 1');
+			console.log('xdm fb session');
 			RDRAuth.getReadrToken( fb_session );
 		} else {
-			console.log('xdm 2');
+			console.log('xdm NO fb session');
 			FB.getLoginStatus(function(response) {
 		  		if (response.session) {
 					//user is logged in
-					console.dir(response);
 					RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
 		  		}
 			});

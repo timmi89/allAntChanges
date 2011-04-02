@@ -3,9 +3,17 @@
    <head>
      <title>Log In to ReadrBoard</title>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
-	<script src="/static/js/readr_user_auth.js" type="text/javascript"></script>
 	<script src="/static/js/jquery.ba-postmessage.min.js" type="text/javascript"></script>
 	<script src="/static/js/jquery.cookie.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	var date = new Date();
+	// TODO use the following line.  it creates a cachebuster that represents the current day/week/month
+	// var cachebuster = String( parseInt( date.getDate() / 7 )+1 )+String(date.getMonth()) + String(date.getYear());
+	var cachebuster = date.getTime();
+	document.write(
+		unescape( '%3Cscript src="/static/js/readr_user_auth.js?' + cachebuster + '" type="text/javascript"%3E%3C/script%3E' )
+	);
+	</script>
 	<style type="text/css">
 	img		{ border:0; }
 	</style>
@@ -24,7 +32,6 @@
      <script src="http://connect.facebook.net/en_US/all.js" type="text/javascript"s></script>
      <script type="text/javascript">
 		RDRAuth.notifyParent = function(response) {
-			console.dir( response );
 			RDRAuth.rdr_user = response;
 			if ( RDRAuth.rdr_user.django_user_id ) $.cookie( 'django_user_id', RDRAuth.rdr_user.django_user_id );
 			if ( RDRAuth.rdr_user.readr_token ) $.cookie( 'readr_token', RDRAuth.rdr_user.readr_token );
@@ -59,7 +66,6 @@
 				//user is logged in
 				$('#fb-logged-in').show();
 				$('#fb-login-button').hide();
-				console.dir(response);
 				RDRAuth.getReadrToken(response);
 	  		} else {
 				$('#fb-logged-in').hide();

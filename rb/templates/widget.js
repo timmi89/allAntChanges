@@ -378,7 +378,7 @@ function readrBoard($R){
 			iframeHost : "http://readr.local:8080", // TODO put this in a template var
 			createXDMframe : function() {
 				console.log('createXDMframe');
-				var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
+				var iframeUrl = RDR.session.iframeHost + "/xdm_status/?"+RDR.cachebuster,
 				parentUrl = window.location.href;
 				$xdmIframe = $('<iframe id="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
 				);
@@ -419,7 +419,7 @@ function readrBoard($R){
                 });
 
 				var $loginHtml = $('<div class="rdr_login" />'),
-				iframeUrl = RDR.session.iframeHost + "/fblogin/",
+				iframeUrl = RDR.session.iframeHost + "/fblogin/?"+RDR.cachebuster,
 				parentUrl = window.location.href;
 				$loginHtml.append( '<h1>Log In</h1>',
 				'<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'" width="300" height="300" />'
@@ -1255,7 +1255,6 @@ function readrBoard($R){
 }
 
 
-
 //clone object function taken from http://my.opera.com/GreyWyvern/blog/show.dml/1725165
 
 
@@ -1450,6 +1449,11 @@ function $RFunctions($R){
 	
     //initiate our RDR object
     RDR = readrBoard($R);
+    
+    RDR.date = new Date();
+    // TODO use the following line.  it creates a cachebuster that represents the current day/week/month
+    // RDR.cachebuster = String( parseInt( RDR.date.getDate() / 7 )+1 )+String(RDR.date.getMonth()) + String(RDR.date.getYear()),
+    RDR.cachebuster = RDR.date.getTime();
 
     //run init functions
     RDR.actions.init();
