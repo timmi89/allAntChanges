@@ -44,9 +44,11 @@ class FBHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
 
     def read(self, request):
-        base = 'http://graph.facebook.com'
         data = json.loads(request.GET['json'])
-        access_token = data['fb']['session']['access_token']
+        fb_session = data['fb']
+        group_id = data['group_id']
+        access_token = fb_session.get('access_token', None)
+
         if(access_token):
             graph = GraphAPI(access_token)
         else:
@@ -57,24 +59,21 @@ class FBHandler(AnonymousBaseHandler):
 
         django_user = createDjangoUser(profile);
 
-        if 'gender' in profile.keys():
-            profile ['gender'] = profile['gender'].capitalize()[:1]
-
         social_user = createSocialUser(django_user, profile)
         social_auth = createSocialAuth(
             social_user,
             django_user,
-            data['group_id'],
-            data['fb']['session']['expires']
+            group_id,
+            fb_session
         )
-
-        img_url = '%s/%s/picture' % (base, social_user.uid)
         
+        readr_token = createToken(django_user.id, social_auth.auth_token, group_id)
+
         return dict(user_id=django_user.id,
             first_name=django_user.first_name,
             full_name=social_user.full_name,
-            image_url=img_url,
-            readr_token=social_auth[0].readr_token,
+            img_url=social_user.img_url,
+            readr_token=readr_token
         )
 
 class InteractionHandler(AnonymousBaseHandler):

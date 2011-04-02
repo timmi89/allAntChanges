@@ -3,15 +3,15 @@ from django.utils.hashcompat import sha_constructor
 from datetime import datetime, timedelta
 import json
 
-def createSocialAuth(social_user, django_user, group_id, expiration):
-    # Create expiration time from Facebook timestamp
-    dt = datetime.fromtimestamp(expiration)
-
-    # Get the group secret which only we know
-    group_secret = Group.objects.get(id=group_id).secret
+def createSocialAuth(social_user, django_user, group_id, fb_session):
+    # Create expiration time from Facebook timestamp.
+    # We know this exists because we aren't asking for 
+    # offline access. If not we would need to check.
+    dt = datetime.fromtimestamp(fb_session['expires'])
+    access_token = fb_session['access_token']
 
     # Create the readr_token
-    readr_token = createToken(django_user.id, access_token, group_secret)
+    readr_token = createToken(django_user.id, access_token, group_id)
 
     # Store the information and link it to the SocialUser
     social_auth = SocialAuth.objects.get_or_create(
@@ -21,9 +21,18 @@ def createSocialAuth(social_user, django_user, group_id, expiration):
     )
 
     # Remove stale tokens (if they exist)
-    SocialAuth.objects.all().filter(social_user=social_user).exclude(readr_token=readr_token).delete()
+    SocialAuth.objects.all().filter(social_user=social_user).exclude(auth_token=access_token).delete()
+
+    return social_auth[0]
 
 def createSocialUser(django_user, profile):
+    base = 'http://graph.facebook.com'
+    profile['img_url'] = '%s/%s/picture' % (base, profile['id'])
+
+    # Make Gender key look like our model
+    if 'gender' in profile.keys():
+        profile ['gender'] = profile['gender'].capitalize()[:1]
+
     # Create social user object for user
     social = SocialUser.objects.get_or_create(
         user = django_user,
@@ -34,7 +43,8 @@ def createSocialUser(django_user, profile):
             "username": profile.get('username', None),
             "gender": profile.get('gender', None),
             "hometown": profile['hometown']['name'] if (profile.get('hometown', None)) else None,
-            "bio": profile.get('bio', None)
+            "bio": profile.get('bio', None),
+            "img_url": profile.get('img_url', None)
         }
     )
 
@@ -81,12 +91,14 @@ def checkToken(request):
     readr_token = createToken(data['user_id'], auth.access_token, group_secret)
     return (readr_token == data['readr_token'])
 
-def createToken(djangoid, auth_token, group_secret):
+def createToken(djangoid, auth_token, group_id):
     """
     Create an SHA token from django id, social network
     auth token and group secret
     """
     print "Creating readr_token"
+    # Get the group secret which only we know
+    group_secret = Group.objects.get(id=group_id).secret
     return sha_constructor(
         unicode(djangoid) +
         unicode(auth_token) +
