@@ -20,13 +20,13 @@ RDRAuth = {
 		);	
 	},
 	getReadrToken: function(fb_response) {
-		if ( fb_response && fb_response.status == "connected" ) {
-
+		if ( fb_response ) {
+            var fb_session = (fb_response.session) ? fb_response.session:fb_response
+            console.dir(fb_session);
 			var sendData = {
-				fb: fb_response,
+				fb: fb_session,
 				group_id: qs_args.group_id
 			};
-
 			$.ajax({
 				url: "/api/fb/",
 				type: "get",
