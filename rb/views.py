@@ -22,6 +22,10 @@ def fblogin(request):
     # Widget code is retreived from the server using RBGroup shortname
     return render_to_response("fblogin.html",{'fb_client_id': FACEBOOK_APP_ID})
 
+def xdm_status(request):
+    # Widget code is retreived from the server using RBGroup shortname
+    return render_to_response("xdm_status.html",{'fb_client_id': FACEBOOK_APP_ID})
+
 def expander(request, short):
     link_id = base62.to_decimal(short);
     link = Link.objects.get(id=link_id);

@@ -32,16 +32,6 @@ class InteractionsHandler(AnonymousBaseHandler):
             containers = Container.objects.filter(hash=kwargs['hash'].lower())
             nodes = nodes.filter(interaction__content__container=containers)
         return nodes
-        
-class TokenCheckHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
-
-    def read(self, request):
-        data = json.loads(request.GET['json'])
-        group_secret = Group.objects.get(id=data['group_id']).secret
-        auth = SocialAuth.objects.get(social_user__user=data['user_id'])
-        readr_token = createToken(data['user_id'], auth.access_token, group_secret)
-        return readr_token == auth.readr_token
 
 class FBHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
@@ -127,7 +117,7 @@ class FBHandler(AnonymousBaseHandler):
                     full_name=social_user.full_name,
                     image_url=img_url,
                     readr_token=social_auth[0].readr_token,
-               )
+                    )
 
 class InteractionHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)

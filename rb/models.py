@@ -180,7 +180,6 @@ class SocialUser(models.Model):
 class SocialAuth(models.Model):
     social_user = models.ForeignKey(SocialUser, related_name='social_auth')
     auth_token = models.CharField(max_length=103, unique=True)
-    readr_token = models.CharField(max_length=103, unique=True)
     expires = models.DateTimeField(null=True)
 
     class Meta:

@@ -14,7 +14,7 @@ CreateTag = Resource(handler=CreateTagHandler)
 Interaction = Resource(handler=InteractionHandler)
 CreateComments = Resource(handler=CreateCommentHandler)
 FBLogin = Resource(handler=FBHandler)
-TokenCheck = Resource(handler=TokenCheckHandler)
+TokenKill = Resource(handler=TokenKillHandler)
 
 # Organized Resources
 Interactions = Resource(handler=InteractionsHandler)
@@ -38,7 +38,7 @@ urlpatterns = patterns('',
     url(r'^fb/$', FBLogin),
     
     # Token auth
-    url(r'^token/$', TokenCheck),
+    url(r'^token/kill/$', TokenKill),
 
     # Widget
     url(r'^page/', PageData),
