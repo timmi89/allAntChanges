@@ -28,6 +28,7 @@ def createSocialAuth(social_user, django_user, group_id, fb_session):
 def createSocialUser(django_user, profile):
     base = 'http://graph.facebook.com'
     profile['img_url'] = '%s/%s/picture' % (base, profile['id'])
+    print profile['img_url']
 
     # Make Gender key look like our model
     if 'gender' in profile.keys():
