@@ -998,9 +998,18 @@ function readrBoard($R){
                         //RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
 
                         console.log(args)
-                        //for now, don't use params:
                         RDR.actions.shareStart(args.rindow, args.tag);
 						args.callback();
+                    },
+                    //for now, ignore error and carry on with mockup
+                    error: function(msg) {
+                        //[eric] - if we want these params still we need to get them from args:
+                        //do we really want to chain pass these through?  Or keep them in a shared scope?
+                        //RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
+
+                        console.log(args)
+                        RDR.actions.shareStart(args.rindow, args.tag);
+                        args.callback();
                     }
                 });
             },
