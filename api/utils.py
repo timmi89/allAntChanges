@@ -2,6 +2,34 @@ from readrboard.rb.models import *
 from django.utils.hashcompat import sha_constructor
 from datetime import datetime, timedelta
 import json
+import base64
+import hashlib
+import hmac
+
+def base64_url_decode(inp):
+    padding_factor = (4 - len(inp) % 4) % 4
+    inp += "="*padding_factor 
+    return base64.b64decode(unicode(inp).translate(dict(zip(map(ord, u'-_'), u'+/'))))
+
+def parse_signed_request(session):
+    encoded_sig = fb_session.get('sig')
+    payload = fb_session.get('access_token')
+
+    sig = base64_url_decode(encoded_sig)
+    data = json.loads(base64_url_decode(payload))
+
+    if data.get('algorithm').upper() != 'HMAC-SHA256':
+        log.error('Unknown algorithm')
+        return None
+    else:
+        expected_sig = hmac.new(secret, msg=payload, digestmod=hashlib.sha256).digest()
+
+    if sig != expected_sig:
+        return None
+    else:
+        log.debug('valid signed request received..')
+        return data
+
 
 def createSocialAuth(social_user, django_user, group_id, fb_session):
     # Create expiration time from Facebook timestamp.
@@ -82,11 +110,10 @@ def createDjangoUser(profile):
 
     return django_user
 
-def checkToken(request):
+def checkToken(data):
     """
     Check to see if token in request is good
     """
-    data = json.loads(request.GET['json'])
     group_secret = Group.objects.get(id=data['group_id']).secret
     auth = SocialAuth.objects.get(social_user__user=data['user_id'])
     readr_token = createToken(data['user_id'], auth.access_token, group_secret)

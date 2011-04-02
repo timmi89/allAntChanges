@@ -40,6 +40,7 @@ class TokenKillHandler(AnonymousBaseHandler):
     def read(self, request):
         data = json.loads(request.GET['json'])
 
+
 class FBHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
 
@@ -58,7 +59,6 @@ class FBHandler(AnonymousBaseHandler):
         profile = graph.get_object("me")
 
         django_user = createDjangoUser(profile);
-
         social_user = createSocialUser(django_user, profile)
         social_auth = createSocialAuth(
             social_user,
@@ -111,6 +111,8 @@ class CreateTagHandler(AnonymousBaseHandler):
         
         user = User.objects.get(id=data['user_id'])
         page = Page.objects.get(id=page_id)
+
+        if not checkToken(data): return HttpResponse("Invalid token!")
         content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
         
         if hash:    
