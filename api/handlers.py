@@ -95,6 +95,8 @@ class CreateCommentHandler(AnonymousBaseHandler):
         user = request.user
         parent = Interaction.objects.get(id=interaction_id)
         
+        if not checkToken(data): return HttpResponse("Invalid token!")
+
         comment = createInteractionNode(kind='com', body=comment)
         interaction = createInteraction(parent.page, parent.content, user, comment)
 
@@ -146,6 +148,7 @@ class CreateTagsHandler(AnonymousBaseHandler):
         
         user = request.user
         page = Page.objects.get(id=page_id)
+        if not checkToken(data): return HttpResponse("Invalid token!")
         content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
         
         if hash:    
