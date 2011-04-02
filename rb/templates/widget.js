@@ -378,9 +378,9 @@ function readrBoard($R){
 			iframeHost : "http://readr.local:8080", // TODO put this in a template var
 			createXDMframe : function() {
 				console.log('createXDMframe');
-				var iframeUrl = RDR.session.iframeHost + "/xdm_status/?"+RDR.cachebuster,
+				var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
 				parentUrl = window.location.href;
-				$xdmIframe = $('<iframe id="rdr-xdm-hidden" src="' + iframeUrl + '&parentUrl=' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
+				$xdmIframe = $('<iframe id="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
 				);
 				$('body').append( $xdmIframe );
 				/*
@@ -419,10 +419,10 @@ function readrBoard($R){
                 });
 
 				var $loginHtml = $('<div class="rdr_login" />'),
-				iframeUrl = RDR.session.iframeHost + "/fblogin/?"+RDR.cachebuster,
+				iframeUrl = RDR.session.iframeHost + "/fblogin/",
 				parentUrl = window.location.href;
 				$loginHtml.append( '<h1>Log In</h1>',
-				'<iframe id="rdr-xdm-login" src="' + iframeUrl + '&parentUrl=' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'" width="300" height="300" />'
+				'<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="300" height="300" />'
 				);
 				
 				rindow.animate({
