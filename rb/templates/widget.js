@@ -34,7 +34,8 @@ function readrBoard($R){
             first_name:		"Joe",
             last_name:		"Readr",
             status:			"full",
-            auth_token: 	"1234567890"
+            auth_token: 	"1234567890",
+            id: 1 //temp fake user
         },
         errors : {
             actionbar: {
@@ -710,10 +711,18 @@ function readrBoard($R){
 					
 					$.receiveMessage(
 						function(e){
-							var message = e.data.split(':');
-							alert( "user id is " + message[0] + " and token is " + message[1] )
-							RDR.user.auth_token = message[1];
-							RDR.user.id = message[0];
+							var received = e.data.split('&'),
+								message = {};
+							
+							for ( var i in received) {
+								var thisPair = received[i].split('=');
+								message[thisPair[0]] = thisPair[1];
+							}
+							console.log('---------message---------');
+							console.dir(message);
+							// alert(callingAction);
+							// RDR.user.id = message[1];
+							// RDR.user.auth_token = message[2];
 						},
 						iframeHost
 					);
@@ -748,7 +757,7 @@ function readrBoard($R){
                 $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl" />'),
                 $whyPanel = $('<div class="rdr_whyPanel rdr_sntPnl" />').css('width',0),
                 $blessedTagBox = $('<div class="rdr_blessedTagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
-                $customTagBox = $('<div class="rdr_customTagBox" />'),
+                $customTagBox = $('<div class="rdr_customTagBox rdr_sntPnl_padder" />'),
                 $commentBox = $('<div class="rdr_commentBox" />'),
                 $shareBox = $('<div class="rdr_shareBox" />'),
                 $freeformTagInput = $('<input type="text" class="freeformTagInput" name="unknown-tags" />')//chain
@@ -801,11 +810,10 @@ function readrBoard($R){
                 });
 
                 //populate whyPanel
-				$whyPanel.prepend($('<div class="rdr_pnlShadow"/>')).hide().find('div.rdr_body')//chain
-                .append('<div class="rdr_subHeader" ><span>COMMENT &amp; SHARE </span></div>')//chain
-                .append('test, test');
+				$whyPanel.prepend($('<div class="rdr_pnlShadow"/>')).hide().find('div.rdr_body');
+                //.append('<div class="rdr_subHeader" ><span>COMMENT &amp; SHARE </span></div>');
 
-/*
+                /*
                 $customTagBox.append(
                 '<div class="rdr_instruct">Add your own ratings, separated by comma:</div>',
                 '<input type="text" class="freeformTagInput" name="unknown-tags" />',
@@ -872,7 +880,11 @@ function readrBoard($R){
                 //todo: for now, I'm just passing in known_tags as a param, but check with Porter about this model.
                 //Where is the 'source'/'point of origin' that is the authority of known_tags - I'd think we'd want to just reference that..
 
+                //console.log(rindow, known_tags, unknown_tags_arr);
+                
+                /*        
                 var tags = "";
+                console.log(tags);
 
                 for ( var i in known_tags ) {
                     if ( known_tags[i] && RDR.group.blessed_tags[ parseInt(known_tags[i])-1 ] ) {
@@ -892,39 +904,39 @@ function readrBoard($R){
                    tags += val;
                 });
 
-                var $shareDialogueBox = $('<div class="rdr_shareBox"></div>')
+
+                console.log(tags)
+                
+                */
+
+                var $shareDialogueBox = $('<div class="rdr_shareBox rdr_sntPnl_padder"></div>')
 
                 // TODO add short rdrbrd URL to end of this line, rather than the long URL
                 //var url = window.location.href;
                 //TODO - replace this demo version with the real shortURL
                 var url = 'http://rdrbrd.com/ad4fta3';
 
-				// TODO: hiding the custom tags part here.  is that ok?  check.
-				$('.rdr_blessedTagBox').hide();
 
                 // TODO this eneds to behave differently for images, video
                 // maybe just show short URL that leads directly to that image, video on the page
-                var share_content = tags + ' because...';
+                var share_content = 'tags' + ' because...';
                 //[eric] dont remove elements anymore, we're going to try adding this to the bottom of the sentimentBox'
                 //[eric] -comment out: //rindow.find('ul, div, input').not('div.rdr_close').remove();
 
-                var socialNetworks = ["facebook","twitter","tumblr","linkedin"],
-                $shareLinks = $('<ul class="shareLinks"></ul>');
+                var $commentBox =  $('<div class="rdr_share"><textarea>' + share_content + '</textarea><button>Comment</button>'),
+                $socialBox = $('<div class="rdr_share_social"><strong>Share your reaction</strong></div>'),
+                $shareLinks = $('<ul class="shareLinks"></ul>'),
+                socialNetworks = ["facebook","twitter","tumblr","linkedin"];
+
                 //quick mockup version of this code
                 $.each(socialNetworks, function(idx, val){
                     $shareLinks.append('<li><a href="http://' +val+ '.com" ><img src="/static/ui-prototype/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
                 });
+                $socialBox.append($shareLinks);
 
                 //TODO this is prototype code for demo.  fix it.
-                $shareDialogueBox.append('<div><strong>Share your reaction</strong> with others:</div>',
-                $shareLinks,
-				'<hr/><div><strong>Comment on your reaction</strong>:</div>',
-				'<div class="rdr_share"><textarea>' + share_content + '</textarea>',// + '<div class="rdr_share_count"></div>'
-				'<button>Comment</button>')//chain
-                //'<div><button>Facebook</button> <button>Twitter</button> <button>Tumblr</button> <button>LinkedIn</button></div>')//chain
-                .hide();
-                rindow.append($shareDialogueBox);
-                $shareDialogueBox.slideDown();
+                $shareDialogueBox.append($commentBox, $socialBox);
+                rindow.find('.rdr_whyPanel .rdr_body').append($shareDialogueBox);
                 /*
                 TUMBLR SHARING URLs
                 http://www.tumblr.com/share?v=3&u=http%3A%2F%2Fjsbeautifier.org%2F&t=Online%20javascript%20beautifier&s=
@@ -950,6 +962,7 @@ function readrBoard($R){
 				*/
             },
             rateSend : function(args) {
+
 				// tag can be an ID or a string.  if a string, we need to sanitize.
 				
 				// tag, rindow, settings, callback
@@ -970,7 +983,7 @@ function readrBoard($R){
 			
     			// TODO: 	this can be removed.  just for testing and making sure data looks good and simulating
     			//			the column animation before calling a not-working create tag
-    			console.dir(sendData);
+    			//console.dir(sendData);
     			// args.callback();
 
                 // send the data!
@@ -981,8 +994,18 @@ function readrBoard($R){
 					dataType: "jsonp",
                     data: { json: JSON.stringify(sendData) },
                     complete: function(msg) {
+                        //[eric] - if we want these params still we need to get them from args:
+                        //do we really want to chain pass these through?  Or keep them in a shared scope?
                         //RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
+
+                        console.log(msg);
+                        console.log(args);
+                        RDR.actions.shareStart(args.rindow, args.tag);
 						args.callback();
+                    },
+                    //for now, ignore error and carry on with mockup
+                    error: function() {
+                        console.log("whoa, dude, you are totally not a user.  " );
                     }
                 });
             },
