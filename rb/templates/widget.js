@@ -34,7 +34,8 @@ function readrBoard($R){
             first_name:		"Joe",
             last_name:		"Readr",
             status:			"full",
-            auth_token: 	"1234567890"
+            auth_token: 	"1234567890",
+            id: 1 //temp fake user
         },
         errors : {
             actionbar: {
@@ -997,19 +998,14 @@ function readrBoard($R){
                         //do we really want to chain pass these through?  Or keep them in a shared scope?
                         //RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
 
-                        console.log(args)
+                        console.log(msg);
+                        console.log(args);
                         RDR.actions.shareStart(args.rindow, args.tag);
 						args.callback();
                     },
                     //for now, ignore error and carry on with mockup
-                    error: function(msg) {
-                        //[eric] - if we want these params still we need to get them from args:
-                        //do we really want to chain pass these through?  Or keep them in a shared scope?
-                        //RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
-
-                        console.log(args)
-                        RDR.actions.shareStart(args.rindow, args.tag);
-                        args.callback();
+                    error: function() {
+                        console.log("whoa, dude, you are totally not a user.  " );
                     }
                 });
             },
