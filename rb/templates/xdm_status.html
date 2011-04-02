@@ -27,7 +27,7 @@
 
 			// send this info up to the widget!
 			RDRAuth.postMessage({
-				message: "fbloginstatus," + RDRAuth.rdr_user.django_user_id + "," + RDRAuth.rdr_user.readr_token + "," + RDRAuth.rdr_user.full_name + "," + RDRAuth.rdr_user.image_url
+				message: RDRAuth.rdr_user
 			});
 		}
 		RDRAuth.FBLoginResponse = function(response) {
@@ -48,12 +48,9 @@
 		});
 		
 		var fb_session = FB.getSession();
-		console.log('fb_session: '+fb_session);
 		if ( fb_session ) {
-			console.log('xdm fb session');
 			RDRAuth.getReadrToken( fb_session );
 		} else {
-			console.log('xdm NO fb session');
 			FB.getLoginStatus(function(response) {
 		  		if (response.session) {
 					//user is logged in

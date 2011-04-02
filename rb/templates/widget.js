@@ -377,15 +377,15 @@ function readrBoard($R){
 		session : {
 			iframeHost : "http://readr.local:8080", // TODO put this in a template var
 			createXDMframe : function() {
-				console.log('createXDMframe');
 				var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
 				parentUrl = window.location.href;
 				$xdmIframe = $('<iframe id="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
 				);
 				$('body').append( $xdmIframe );
-				/*
+
 				$.receiveMessage(
 					function(e){
+					    console.log( e.data );
 						var received = e.data.split('&'),
 							message = {};
 						
@@ -401,7 +401,7 @@ function readrBoard($R){
 					},
 					RDR.session.iframeHost
 				);
-				*/
+
 			},
 			login : function() {},
 			showLoginPanel : function(settings) {
@@ -431,23 +431,23 @@ function readrBoard($R){
                 }, 300, function() {
 					rindow.append( $loginHtml );
 					
-					$.receiveMessage(
-						function(e){
-							var received = e.data.split('&'),
-								message = {};
-							
-							for ( var i in received) {
-								var thisPair = received[i].split('=');
-								message[thisPair[0]] = thisPair[1];
-							}
-							console.log('---------message---------');
-							console.dir(message);
-							// alert(callingAction);
-							// RDR.user.id = message[1];
-							// RDR.user.auth_token = message[2];
-						},
-						RDR.session.iframeHost
-					);
+                    // $.receiveMessage(
+                    //  function(e){
+                    //      var received = e.data.split('&'),
+                    //          message = {};
+                    //      
+                    //      for ( var i in received) {
+                    //          var thisPair = received[i].split('=');
+                    //          message[thisPair[0]] = thisPair[1];
+                    //      }
+                    //      console.log('---------message---------');
+                    //      console.dir(message);
+                    //      // alert(callingAction);
+                    //      // RDR.user.id = message[1];
+                    //      // RDR.user.auth_token = message[2];
+                    //  },
+                    //  RDR.session.iframeHost
+                    // );
 				});
 			},
 			logout : function() {}
@@ -470,7 +470,6 @@ function readrBoard($R){
                 $RDR.queue('initAjax', function(next){
                     //todo: get this working later
                     /*that.initUserData()*/
-	console.log('wtfaaa 1');
                     //for now, just pass over this
                     next();
                 });
@@ -490,11 +489,8 @@ function readrBoard($R){
                 $RDR.dequeue('initAjax');
             },
             initGroupData : function(groupShortName){
-		console.log('initGroupData');
                 // request the RBGroup Data
 
-                // console.log("requesting rbgroup data")
-                // console.log(groupShortName)
                 $.ajax({
                     url: "/api/settings/"+RDR.groupPermData.group_id+"/",
                     type: "get",
@@ -504,7 +500,6 @@ function readrBoard($R){
                         host_name : window.location.hostname
                     },
                     success: function(data, textStatus, XHR) {
-                        //console.log('rbgroup call success')
                         RDR.group = data;
 						RDR.group.group_id
 
@@ -574,7 +569,6 @@ function readrBoard($R){
                 });
             },
             initPageData : function(){
-		console.log('initPageData');
                //? do we want to model this here to be symetrical with user and group data?
 
                 // TODO flesh out Porter's code below and incorporate it into the queue
@@ -603,7 +597,6 @@ function readrBoard($R){
                $RDR.dequeue('initAjax');
             },
             initEnvironment : function(){
-		console.log('initEnvironment');
                 this.hashNodes();
 
                 // init the img interactions
