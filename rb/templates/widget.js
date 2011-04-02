@@ -785,7 +785,7 @@ function readrBoard($R){
                 }),
                 $tagTooltip = $('<div class="rdr_help">Add your own (ex. hip, woot)</div>');
                 
-                var headers = ["What's your reaction?", "Why?"];
+                var headers = ["What's your reaction?", "Say More"];
                 $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
                     var $header = $('<div class="rdr_header" />').append('<div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
@@ -986,6 +986,7 @@ function readrBoard($R){
 					"content_type" : args.settings.content_type,
 					"user_id" : RDR.user.user_id,
 					"readr_token" : RDR.user.readr_token,
+					"group_id" : RDR.groupPermData.group_id,
 					"page_id" : RDR.page.id
 				};
 			
