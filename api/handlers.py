@@ -34,7 +34,6 @@ class InteractionsHandler(AnonymousBaseHandler):
         return nodes
 
 class TokenKillHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
 
     # Finish this -- today
     def read(self, request):
@@ -42,7 +41,6 @@ class TokenKillHandler(AnonymousBaseHandler):
 
 
 class FBHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
 
     def read(self, request):
         data = json.loads(request.GET['json'])
@@ -77,7 +75,6 @@ class FBHandler(AnonymousBaseHandler):
         )
 
 class InteractionHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
     
     def read(self, request, id):
         interaction = Interaction.objects.get(id=id)
@@ -85,7 +82,6 @@ class InteractionHandler(AnonymousBaseHandler):
         return tree
 
 class CreateCommentHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
     
     def read(self, request):
         data = json.loads(request.GET['json'])
@@ -95,13 +91,12 @@ class CreateCommentHandler(AnonymousBaseHandler):
         user = request.user
         parent = Interaction.objects.get(id=interaction_id)
         
-        if not checkToken(data): return HttpResponse("Invalid token!")
+        if not checkToken(data): return {"Success": "False", "Error": "Invalid token!"}
 
         comment = createInteractionNode(kind='com', body=comment)
         interaction = createInteraction(parent.page, parent.content, user, comment)
 
 class CreateTagHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
 
     def read(self, request):
         data = json.loads(request.GET['json'])
@@ -135,7 +130,6 @@ class CreateTagHandler(AnonymousBaseHandler):
             return HttpResponse("No tag provided to tag handler")
 
 class CreateTagsHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
 
     def read(self, request):
         data = json.loads(request.GET['json'])
