@@ -989,11 +989,6 @@ function readrBoard($R){
 					"group_id" : RDR.groupPermData.group_id,
 					"page_id" : RDR.page.id
 				};
-			
-    			// TODO: 	this can be removed.  just for testing and making sure data looks good and simulating
-    			//			the column animation before calling a not-working create tag
-    			//console.dir(sendData);
-    			// args.callback();
 
                 // send the data!
                 $.ajax({
