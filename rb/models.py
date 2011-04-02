@@ -173,6 +173,7 @@ class SocialUser(models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
     hometown = models.CharField(max_length=255, blank=True)
     bio = models.TextField(blank=True)
+    image_url = models.URLField(blank=True, verify_exists=False)
 
     class Meta:
         unique_together = ('provider', 'uid')
