@@ -10,7 +10,7 @@ from utils import *
 from extras.facebook import GraphAPI, GraphAPIError
 from django.contrib.auth import login
 from django.contrib.auth import authenticate
-from datetime import datetime, timedelta
+from datetime import datetime
 
 """
 Readrboard Widget API - Uses Piston
@@ -33,12 +33,17 @@ class InteractionsHandler(AnonymousBaseHandler):
             nodes = nodes.filter(interaction__content__container=containers)
         return nodes
 
+class TokenKillHandler(AnonymousBaseHandler):
+    allowed_methods = ('GET',)
+
+    # Finish this -- today
+    def read(self, request):
+        data = json.loads(request.GET['json'])
+
 class FBHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
 
     def read(self, request):
-        args = []
-        kwargs = {}
         base = 'http://graph.facebook.com'
         data = json.loads(request.GET['json'])
         access_token = data['fb']['session']['access_token']
@@ -50,74 +55,27 @@ class FBHandler(AnonymousBaseHandler):
         # Get user profile from facebook graph
         profile = graph.get_object("me")
 
-        # Create new Django user if one doesn't exist
-        user = User.objects.get_or_create(
-            username=profile['email'],
-            defaults = {
-                "email": profile['email'],
-                "first_name": profile['first_name'].capitalize(),
-                "last_name": profile['last_name'].capitalize(),
-            },
-        )
-
-        # Print out the result
-        django_user = user[0]
-        result = "Created new" if user[1] else "Retreived existing"
-        print result, "django user %s %s (%s)" % (
-            django_user.first_name, 
-            django_user.last_name, 
-            django_user.email
-        )
+        django_user = createDjangoUser(profile);
 
         if 'gender' in profile.keys():
             profile ['gender'] = profile['gender'].capitalize()[:1]
 
-        # Create social user object for user
-        social = SocialUser.objects.get_or_create(
-            user = django_user,
-            provider = 'Facebook',
-            uid = profile['id'],
-            defaults = {
-                "full_name": profile['name'],
-                "username": profile.get('username', None),
-                "gender": profile.get('gender', None),
-                "hometown": profile['hometown']['name'] if (profile.get('hometown', None)) else None,
-                "bio": profile.get('bio', None)
-            }
+        social_user = createSocialUser(django_user, profile)
+        social_auth = createSocialAuth(
+            social_user,
+            django_user,
+            data['group_id'],
+            data['fb']['session']['expires']
         )
-
-        # Print out the result
-        social_user = social[0]
-        result = ("Created new" if social[1] else "Retreived existing")
-        print result, "social user %s (%s: %s)" % (
-            social_user.full_name,
-            social_user.provider, 
-            social_user.uid
-        )
-        
-        dt = datetime.fromtimestamp(data['fb']['session']['expires'])
-
-        group_secret = Group.objects.get(id=data['group_id']).secret
-        readr_token = createToken(django_user.id, access_token, group_secret)
-
-        social_auth = SocialAuth.objects.get_or_create(
-            social_user = social_user,
-            auth_token = access_token,
-            expires = dt,
-            defaults = {"readr_token": readr_token}
-        )
-
-        # Remove stale tokens (if they exist)
-        SocialAuth.objects.all().filter(social_user=social_user).exclude(readr_token=readr_token).delete()
 
         img_url = '%s/%s/picture' % (base, social_user.uid)
         
-        return dict(django_user_id=django_user.id,
-                    first_name=django_user.first_name,
-                    full_name=social_user.full_name,
-                    image_url=img_url,
-                    readr_token=social_auth[0].readr_token,
-                    )
+        return dict(user_id=django_user.id,
+            first_name=django_user.first_name,
+            full_name=social_user.full_name,
+            image_url=img_url,
+            readr_token=social_auth[0].readr_token,
+        )
 
 class InteractionHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
@@ -168,9 +126,7 @@ class CreateTagHandler(AnonymousBaseHandler):
                 new = createInteraction(page, content, user, node)
             elif isinstance(tag, int):
                 node = InteractionNode.objects.get(id=tag)
-                print "about to create interaction"
                 new = createInteraction(page=page, content=content, user=user, interaction_node=node)
-                print "created interaction"
                 return new.id
         else:
             return HttpResponse("No tag provided to tag handler")
