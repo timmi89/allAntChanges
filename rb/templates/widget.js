@@ -29,7 +29,7 @@ function readrBoard($R){
         },
         group : {}, //to be set by RDR.actions.initGroupData
         user : {
-            //later set these with RDR.actions.initUserData
+            // TODO later set these with RDR.actions.initUserData?
             short_name:		"JoeReadrOnFB",
             first_name:		"Joe",
             last_name:		"Readr",
@@ -374,6 +374,84 @@ function readrBoard($R){
                 }
             }
         },
+		session : {
+			iframeHost : "http://readr.local:8080", // TODO put this in a template var
+			createXDMframe : function() {
+				console.log('createXDMframe');
+				var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
+				parentUrl = window.location.href;
+				$xdmIframe = $('<iframe id="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
+				);
+				$('body').append( $xdmIframe );
+				/*
+				$.receiveMessage(
+					function(e){
+						var received = e.data.split('&'),
+							message = {};
+						
+						for ( var i in received) {
+							var thisPair = received[i].split('=');
+							message[thisPair[0]] = thisPair[1];
+						}
+						console.log('---------XDM Status message---------');
+						console.dir(message);
+						// alert(callingAction);
+						// RDR.user.id = message[1];
+						// RDR.user.auth_token = message[2];
+					},
+					RDR.session.iframeHost
+				);
+				*/
+			},
+			login : function() {},
+			showLoginPanel : function(settings) {
+
+				$('.rdr_rewritable').removeClass('rdr_rewritable');
+
+
+                //todo: weird, why did commenting this line out not do anything?...look into it
+				//porter says: the action bar used to just animate larger and get populated as a window
+                //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
+
+                var rindow = RDR.rindow.draw({
+                    left:100,
+                    top:100
+                });
+
+				var $loginHtml = $('<div class="rdr_login" />'),
+				iframeUrl = RDR.session.iframeHost + "/fblogin/",
+				parentUrl = window.location.href;
+				$loginHtml.append( '<h1>Log In</h1>',
+				'<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'" width="300" height="300" />'
+				);
+				
+				rindow.animate({
+                    width:'500px',
+                    minHeight:'125px'
+                }, 300, function() {
+					rindow.append( $loginHtml );
+					
+					$.receiveMessage(
+						function(e){
+							var received = e.data.split('&'),
+								message = {};
+							
+							for ( var i in received) {
+								var thisPair = received[i].split('=');
+								message[thisPair[0]] = thisPair[1];
+							}
+							console.log('---------message---------');
+							console.dir(message);
+							// alert(callingAction);
+							// RDR.user.id = message[1];
+							// RDR.user.auth_token = message[2];
+						},
+						RDR.session.iframeHost
+					);
+				});
+			},
+			logout : function() {}
+		},
         actions : {
             aboutReadrBoard : function() {
                 alert('Testing... Readrboard gives you more revenue and deeper engagement!');
@@ -384,7 +462,6 @@ function readrBoard($R){
             init : function(){
                 var that = this;
                 $RDR = $(RDR);
-
                 $RDR.queue('initAjax', function(next){
                     that.initGroupData(RDR.groupPermData.short_name);
 
@@ -393,7 +470,7 @@ function readrBoard($R){
                 $RDR.queue('initAjax', function(next){
                     //todo: get this working later
                     /*that.initUserData()*/
-
+	console.log('wtfaaa 1');
                     //for now, just pass over this
                     next();
                 });
@@ -405,11 +482,15 @@ function readrBoard($R){
                    that.initEnvironment();
                    //next fired on ajax success
                 });
-
+				$RDR.queue('initAjax', function(next){
+                   RDR.session.createXDMframe();
+                   //next fired on ajax success
+                });
                 //start the dequeue chain
                 $RDR.dequeue('initAjax');
             },
             initGroupData : function(groupShortName){
+		console.log('initGroupData');
                 // request the RBGroup Data
 
                 // console.log("requesting rbgroup data")
@@ -493,6 +574,7 @@ function readrBoard($R){
                 });
             },
             initPageData : function(){
+		console.log('initPageData');
                //? do we want to model this here to be symetrical with user and group data?
 
                 // TODO flesh out Porter's code below and incorporate it into the queue
@@ -521,6 +603,7 @@ function readrBoard($R){
                $RDR.dequeue('initAjax');
             },
             initEnvironment : function(){
+		console.log('initEnvironment');
                 this.hashNodes();
 
                 // init the img interactions
@@ -586,7 +669,7 @@ function readrBoard($R){
                     }
                     //todo - consider unifying style of close vs closeAll.  Should any of these components 'own' the others?  IE. should tooltips belong to the actionbar?
                 });
-
+				$RDR.dequeue('initAjax');
             },
             hashNodes : function() {
                 console.log('hashing nodes');
@@ -674,58 +757,6 @@ function readrBoard($R){
 						});
 					}
 					}
-				});
-			},
-            loginPanel : function(settings) {
-
-				$('.rdr_rewritable').removeClass('rdr_rewritable');
-
-
-                //todo: weird, why did commenting this line out not do anything?...look into it
-				//porter says: the action bar used to just animate larger and get populated as a window
-                //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
-
-                var rindow = RDR.rindow.draw({
-                    left:100,
-                    top:100
-                });
-
-				//TODO TYLER THIS IS FOR FACEBOOK
-				// TODO: iframeURL and iframeHost must be hardcoded
-				var $loginHtml = $('<div class="rdr_login" />'),
-
-				iframeHost = "http://readr.local:8080",
-				iframeUrl = iframeHost + "/fblogin/",
-				// iframeHost = "http://graph.facebook.com",
-				// iframeUrl = iframeHost + "/oauth/authorize?redirect_uri=http%3A%2F%2Freadr.local:8080%2Ffblogin%2F&client_id=163759626987948&display=popup",
-				parentUrl = window.location.href;
-				$loginHtml.append( '<h1>Log In</h1>',
-				'<iframe id="rdr-xdm" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'" width="300" height="300" />'
-				);
-				
-				rindow.animate({
-                    width:'500px',
-                    minHeight:'125px'
-                }, 300, function() {
-					rindow.append( $loginHtml );
-					
-					$.receiveMessage(
-						function(e){
-							var received = e.data.split('&'),
-								message = {};
-							
-							for ( var i in received) {
-								var thisPair = received[i].split('=');
-								message[thisPair[0]] = thisPair[1];
-							}
-							console.log('---------message---------');
-							console.dir(message);
-							// alert(callingAction);
-							// RDR.user.id = message[1];
-							// RDR.user.auth_token = message[2];
-						},
-						iframeHost
-					);
 				});
 			},
 			sentimentBox : function(settings) {

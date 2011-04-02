@@ -26,7 +26,7 @@ RDRAuth = {
 				fb: fb_response,
 				group_id: qs_args.group_id
 			};
-
+console.log('getReadrToken 1');
 			$.ajax({
 				url: "/api/fb/",
 				type: "get",
@@ -40,6 +40,7 @@ RDRAuth = {
 				}
 			});
 		} else {
+			console.log('getReadrToken 2');
 			RDRAuth.doFBLogin();
 		}
 	},

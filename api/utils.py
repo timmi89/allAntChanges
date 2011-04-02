@@ -19,11 +19,11 @@ def createToken(djangoid, auth_token, group_secret):
     auth token and group secret
     """
     print "Creating readr_token"
-        return sha_constructor(
-            unicode(djangoid) +
-            unicode(auth_token) +
-            unicode(group_secret)
-        ).hexdigest()[::2]
+    return sha_constructor(
+        unicode(djangoid) +
+        unicode(auth_token) +
+        unicode(group_secret)
+    ).hexdigest()[::2]
 
 def getPage(request, pageid=None):
     canonical = request.GET.get('canonical_url', None)
