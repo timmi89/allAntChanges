@@ -29,13 +29,11 @@ function readrBoard($R){
         },
         group : {}, //to be set by RDR.actions.initGroupData
         user : {
-            // TODO later set these with RDR.actions.initUserData?
-            short_name:		"JoeReadrOnFB",
-            first_name:		"Joe",
-            last_name:		"Readr",
-            status:			"full",
-            auth_token: 	"1234567890",
-            id: 1 //temp fake user
+            first_name:		"",
+            full_name:		"",
+            img_url:        "", 
+            readr_token: 	"",
+            user_id:        1
         },
         errors : {
             actionbar: {
@@ -383,6 +381,7 @@ function readrBoard($R){
 				);
 				$('body').append( $xdmIframe );
 
+				// this is the postMessage receiver for ALL messages posted.
 				$.receiveMessage(
 					function(e){
 					    console.log( e.data );
@@ -393,11 +392,19 @@ function readrBoard($R){
 							var thisPair = received[i].split('=');
 							message[thisPair[0]] = thisPair[1];
 						}
-						console.log('---------XDM Status message---------');
-						console.dir(message);
-						// alert(callingAction);
-						// RDR.user.id = message[1];
-						// RDR.user.auth_token = message[2];
+						
+						// the message should have an action associated.  use that to determine what to do.
+						if ( message.action ) {
+						switch (message.action) {
+						    case "readr_auth":
+                                RDR.user.first_name = message.first_name;
+                                RDR.user.full_name = message.full_name;
+                                RDR.user.img_url = message.img_url;
+                                RDR.user.readr_token = message.readr_token;
+                                RDR.user.user_id = message.user_id;
+						        break;
+					    }
+				        }
 					},
 					RDR.session.iframeHost
 				);
@@ -430,24 +437,6 @@ function readrBoard($R){
                     minHeight:'125px'
                 }, 300, function() {
 					rindow.append( $loginHtml );
-					
-                    // $.receiveMessage(
-                    //  function(e){
-                    //      var received = e.data.split('&'),
-                    //          message = {};
-                    //      
-                    //      for ( var i in received) {
-                    //          var thisPair = received[i].split('=');
-                    //          message[thisPair[0]] = thisPair[1];
-                    //      }
-                    //      console.log('---------message---------');
-                    //      console.dir(message);
-                    //      // alert(callingAction);
-                    //      // RDR.user.id = message[1];
-                    //      // RDR.user.auth_token = message[2];
-                    //  },
-                    //  RDR.session.iframeHost
-                    // );
 				});
 			},
 			logout : function() {}
@@ -468,12 +457,6 @@ function readrBoard($R){
                     //next fired on ajax success
                 });
                 $RDR.queue('initAjax', function(next){
-                    //todo: get this working later
-                    /*that.initUserData()*/
-                    //for now, just pass over this
-                    next();
-                });
-                $RDR.queue('initAjax', function(next){
                     that.initPageData();
                     //next fired on ajax success
                 });
@@ -482,6 +465,7 @@ function readrBoard($R){
                    //next fired on ajax success
                 });
 				$RDR.queue('initAjax', function(next){
+                   // this will check for FB login status, too, and set user data
                    RDR.session.createXDMframe();
                    //next fired on ajax success
                 });
@@ -1000,8 +984,8 @@ function readrBoard($R){
 					"hash": container,
 					"content" : content,
 					"content_type" : args.settings.content_type,
-					"user_id" : RDR.user.id,
-					"auth_token" : RDR.user.auth_token,
+					"user_id" : RDR.user.user_id,
+					"readr_token" : RDR.user.readr_token,
 					"page_id" : RDR.page.id
 				};
 			
