@@ -109,9 +109,15 @@ div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body 	{-moz-box-shadow:none;-w
 div.rdr div.rdr_whyPanel 						{z-index:1; float:right; }
 div.rdr div.rdr_whyPanel div.rdr_body			{background:#ffffff;}
 div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top: 5px;}
-div.rdr div.rdr_sntPnl div.rdr_customTagBox 	{margin:0 15px; position:relative;}
+div.rdr div.rdr_sntPnl_padder 					{margin:0 15px; position:relative; overflow:hidden;}
+div.rdr div.rdr_sntPnl_padder textarea,
+div.rdr div.rdr_sntPnl_padder input[type="text"]	{padding:2px 6px; width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
+div.rdr div.rdr_sntPnl_padder button			{width:100%; }
+div.rdr div.rdr_sntPnl_padder > div				{margin: 4px 0;}
+div.rdr div.rdr_share_social					{top: 8px; position:relative;}
 div.rdr div.rdr_sntPnl .rdr_submitTag  			{width:100%; text-align:right;}
 div.rdr div.rdr_sntPnl .rdr_submitTag button 	{}
+div.rdr div.rdr_sntPnl .rdr_commentButton	 	{width:100%;}
 div.rdr div.rdr_sntPnl .rdr_blessedTagBox		{padding-top:4px;}
 
 
@@ -135,9 +141,9 @@ div.rdr div.rdr_customTagBox input.freeformTagInput  	{background-color: #D6D6D6
 div.rdr div.rdr_close		{position:absolute;top:8px;right:7px;color:#999;cursor:pointer;font-size:14px;margin-top:-4px;z-index:4;}
 
 div.rdr div.rdr_instruct	{color:#666; margin:5px 0;}
-div.rdr div.rdr_help		{font-style:italic; font-size:11px; color:#767676; width:100%; position:absolute; top: 12px; text-align:center;}
+div.rdr div.rdr_help		{font-style:italic; font-size:11px; color:#767676; width:100%; position:absolute; top: 12px; text-align:center; margin:0 !important;}
 
-div.rdr div.rdr_share textarea	{ width:390px; height:75px; font-size:14px; margin:5px 0;}
+div.rdr div.rdr_share textarea	{ height:92px; font-size:14px; margin:5px 0;}
 div.rdr div.rdr_share_count		{ color:#999999; font-style:italic; margin:-3px 0 5px; }
 
 div.rdr ul.shareLinks           {padding:2px; margin: 0;}
@@ -146,5 +152,5 @@ div.rdr ul.shareLinks img       {width:30px;}
 
 /* forms */
 div.rdr textarea,
-div.rdr input[type="text"]	{font-size:14px; color:#666; padding:2px 6px; -moz-box-shadow: inset 0px 0px 5px #ddd;-webkit-box-shadow: inset 0px 0px 5px #ddd; box-shadow: inset 0px 0px 5px #ddd; border:1px solid #ddd; width:92%; /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */}
+div.rdr input[type="text"]	{font-size:14px; color:#666; -moz-box-shadow: inset 0px 0px 5px #ddd;-webkit-box-shadow: inset 0px 0px 5px #ddd; box-shadow: inset 0px 0px 5px #ddd; border:1px solid #ddd; }
 div.rdr button				{font-size:14px; }
