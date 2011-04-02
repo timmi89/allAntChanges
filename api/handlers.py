@@ -33,6 +33,16 @@ class InteractionsHandler(AnonymousBaseHandler):
             nodes = nodes.filter(interaction__content__container=containers)
         return nodes
         
+class TokenCheckHandler(AnonymousBaseHandler):
+    allowed_methods = ('GET',)
+
+    def read(self, request):
+        data = json.loads(request.GET['json'])
+        group_secret = Group.objects.get(id=data['group_id']).secret
+        auth = SocialAuth.objects.get(social_user__user=data['user_id'])
+        readr_token = createToken(data['user_id'], auth.access_token, group_secret)
+        return readr_token == auth.readr_token
+
 class FBHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
 
@@ -41,7 +51,7 @@ class FBHandler(AnonymousBaseHandler):
         kwargs = {}
         base = 'http://graph.facebook.com'
         data = json.loads(request.GET['json'])
-        access_token = data['session']['access_token']
+        access_token = data['fb']['session']['access_token']
         if(access_token):
             graph = GraphAPI(access_token)
         else:
@@ -61,12 +71,12 @@ class FBHandler(AnonymousBaseHandler):
         )
 
         # Print out the result
-        djangouser = user[0]
+        django_user = user[0]
         result = "Created new" if user[1] else "Retreived existing"
         print result, "django user %s %s (%s)" % (
-            djangouser.first_name, 
-            djangouser.last_name, 
-            djangouser.email
+            django_user.first_name, 
+            django_user.last_name, 
+            django_user.email
         )
 
         if 'gender' in profile.keys():
@@ -74,7 +84,7 @@ class FBHandler(AnonymousBaseHandler):
 
         # Create social user object for user
         social = SocialUser.objects.get_or_create(
-            user = djangouser,
+            user = django_user,
             provider = 'Facebook',
             uid = profile['id'],
             defaults = {
@@ -95,28 +105,29 @@ class FBHandler(AnonymousBaseHandler):
             social_user.uid
         )
         
-        dt = datetime.fromtimestamp(data['session']['expires'])
+        dt = datetime.fromtimestamp(data['fb']['session']['expires'])
 
-        socal_auth = SocialAuth.objects.get_or_create(
+        group_secret = Group.objects.get(id=data['group_id']).secret
+        readr_token = createToken(django_user.id, access_token, group_secret)
+
+        social_auth = SocialAuth.objects.get_or_create(
             social_user = social_user,
             auth_token = access_token,
-            expires = dt
-            )
+            expires = dt,
+            defaults = {"readr_token": readr_token}
+        )
+
+        # Remove stale tokens (if they exist)
+        SocialAuth.objects.all().filter(social_user=social_user).exclude(readr_token=readr_token).delete()
 
         img_url = '%s/%s/picture' % (base, social_user.uid)
         
-        return dict(django_user_id=djangouser.id,
-                    first_name=djangouser.first_name,
+        return dict(django_user_id=django_user.id,
+                    first_name=django_user.first_name,
                     full_name=social_user.full_name,
                     image_url=img_url,
+                    readr_token=social_auth[0].readr_token,
                )
-
-# Must returb the following:
-# Readrboard userid
-# Firstname
-# Fullname
-# url to facebook image (large+thumb)
-
 
 class InteractionHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)

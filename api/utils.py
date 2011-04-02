@@ -1,6 +1,15 @@
 from readrboard.rb.models import *
+from django.utils.hashcompat import sha_constructor
 import datetime
 import json
+
+def createToken(soc_id, auth_token, group_secret):
+	print "Creating readr_token"
+        return sha_constructor(
+	    unicode(soc_id) +
+            unicode(auth_token) +
+            unicode(group_secret)
+        ).hexdigest()[::2]
 
 def getPage(request, pageid=None):
 	canonical = request.GET.get('canonical_url', None)

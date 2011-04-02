@@ -73,6 +73,9 @@ class Group(models.Model):
     # css
     css_url = models.URLField(blank=True,verify_exists=False)
     
+    # for token
+    secret = models.CharField(max_length=128)
+
     def __unicode__(self):
         return self.name
         
@@ -177,6 +180,7 @@ class SocialUser(models.Model):
 class SocialAuth(models.Model):
     social_user = models.ForeignKey(SocialUser, related_name='social_auth')
     auth_token = models.CharField(max_length=103, unique=True)
+    readr_token = models.CharField(max_length=103, unique=True)
     expires = models.DateTimeField(null=True)
 
     class Meta:

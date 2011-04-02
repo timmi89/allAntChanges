@@ -699,7 +699,7 @@ function readrBoard($R){
 				// iframeUrl = iframeHost + "/oauth/authorize?redirect_uri=http%3A%2F%2Freadr.local:8080%2Ffblogin%2F&client_id=163759626987948&display=popup",
 				parentUrl = window.location.href;
 				$loginHtml.append( '<h1>Log In</h1>',
-				'<iframe id="rdr-xdm" src="' + iframeUrl + '?parentUrl= ' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'" width="300" height="300" />'
+				'<iframe id="rdr-xdm" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'" width="300" height="300" />'
 				);
 				
 				rindow.animate({
@@ -710,10 +710,18 @@ function readrBoard($R){
 					
 					$.receiveMessage(
 						function(e){
-							if ( e.data = "hello world" ) {
-								$('#rdr-xdm').css('border', '2px solid blue');
-								$('#rdr-xdm').css('height', '100px');
+							var received = e.data.split('&'),
+								message = {};
+							
+							for ( var i in received) {
+								var thisPair = received[i].split('=');
+								message[thisPair[0]] = thisPair[1];
 							}
+							console.log('---------message---------');
+							console.dir(message);
+							// alert(callingAction);
+							// RDR.user.id = message[1];
+							// RDR.user.auth_token = message[2];
 						},
 						iframeHost
 					);
@@ -967,7 +975,8 @@ function readrBoard($R){
 					"hash": container,
 					"content" : content,
 					"content_type" : args.settings.content_type,
-					"user_id" : 1,
+					"user_id" : RDR.user.id,
+					"auth_token" : RDR.user.auth_token,
 					"page_id" : RDR.page.id
 				};
 			
