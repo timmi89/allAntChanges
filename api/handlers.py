@@ -6,11 +6,14 @@ from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from utils import *
 from extras.facebook import GraphAPI, GraphAPIError
 from django.contrib.auth import login
 from django.contrib.auth import authenticate
 from datetime import datetime
+from decorators import JSONStatusResponse
+from exceptions import JSONException
+from utils import *
+
 
 """
 Readrboard Widget API - Uses Piston
@@ -18,8 +21,7 @@ Note: By default, AnonymousBaseHandler has 'allow_methods' only set to 'GET'.
 """
 
 class InteractionsHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
-    
+
     def read(self, request, **kwargs):
         nodes = InteractionNode.objects.all()
         if 'kind' in kwargs:
@@ -35,7 +37,6 @@ class InteractionsHandler(AnonymousBaseHandler):
 
 class TokenKillHandler(AnonymousBaseHandler):
 
-    # Finish this -- today
     def read(self, request):
         data = json.loads(request.GET['json'])
         SocialAuth.objects.filter(
@@ -47,9 +48,6 @@ class FBHandler(AnonymousBaseHandler):
     def read(self, request):
         data = json.loads(request.GET['json'])
         fb_session = data['fb']
-        print "***SESSION***"
-        for item in fb_session:
-            print item
         group_id = data['group_id']
         access_token = fb_session.get('access_token', None)
 
