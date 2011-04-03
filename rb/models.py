@@ -138,6 +138,7 @@ class Interaction(DateAwareModel, UserAwareModel, MP_Node):
     
     class Meta:
         ordering = ['id']
+        unique_together = ('page', 'content', 'interaction_node', 'user')
 
     @models.permalink
     def get_absolute_url(self):
@@ -145,6 +146,7 @@ class Interaction(DateAwareModel, UserAwareModel, MP_Node):
 
     def __unicode__(self):
         return u"Interaction(Page: {0}, Content: {1})".format(self.page, self.content)
+
 
 class Link(models.Model):
     # I think we have this already from the interaction table
@@ -173,6 +175,7 @@ class SocialUser(models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
     hometown = models.CharField(max_length=255, blank=True)
     bio = models.TextField(blank=True)
+    img_url = models.CharField(max_length=255, blank=True)
 
     class Meta:
         unique_together = ('provider', 'uid')
@@ -180,7 +183,6 @@ class SocialUser(models.Model):
 class SocialAuth(models.Model):
     social_user = models.ForeignKey(SocialUser, related_name='social_auth')
     auth_token = models.CharField(max_length=103, unique=True)
-    readr_token = models.CharField(max_length=103, unique=True)
     expires = models.DateTimeField(null=True)
 
     class Meta:

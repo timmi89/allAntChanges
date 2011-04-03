@@ -6,6 +6,7 @@ $RDR, //our global $RDR object (jquerified RDR object for attaching data and que
 $R = {}, //init var: our clone of jQuery
 client$ = {}; //init var: clients copy of jQuery
 
+var demoRindow;
 
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
 //This function gets called above in
@@ -20,22 +21,18 @@ function readrBoard($R){
 
     // none of this obj's properties are definite.  just jotting down a few ideas.
     RDR = {
-        data : {
-            nodes : []
-        },
+        content_nodes : {},
         groupPermData: {
             group_id : "{{ group_id }}",  //make group_id a string partly to make my IDE happy - getting sent as ajax anyway
             short_name : "{{ short_name }}"
         },
         group : {}, //to be set by RDR.actions.initGroupData
         user : {
-            //later set these with RDR.actions.initUserData
-            short_name:		"JoeReadrOnFB",
-            first_name:		"Joe",
-            last_name:		"Readr",
-            status:			"full",
-            auth_token: 	"1234567890",
-            id: 1 //temp fake user
+            first_name:		"",
+            full_name:		"",
+            img_url:        "", 
+            readr_token: 	"",
+            user_id:        1
         },
         errors : {
             actionbar: {
@@ -50,6 +47,43 @@ function readrBoard($R){
 				"body p		{}" +
 				"</style>"
 		*/
+		},
+		demo :{
+		    inPage_one : function(img) {
+                var offsets = img.offset();
+                
+		        var rindow = RDR.rindow.draw({
+                    left:offsets.left,
+                    top:offsets.top,
+					pnlWidth:200,
+					panels:2,
+					noHeader:true
+                });
+                demoRindow = rindow;
+                
+                var $demo = $('<div class="rdr_sentimentBox rdr_new" style="height:310px;width:358px;overflow:hidden;position:relative;" />'),
+                $img = $('<img src="/static/images/demo/two_columns.png" style="display:block;position:relative;z-index:2;float:left;" />');
+                $img.click( function() {
+                    $(this).attr('src', '/static/images/demo/two_columns_clicked.png');
+                    $(this).unbind('click');
+                    $(this).click( function() {
+                        var $img_three = $('<img src="/static/images/demo/three_columns.png" style="display:block;position:relative;z-index:1;float:right;margin-top:-310px;" />');
+                        $(this).attr('src', '/static/images/demo/two_columns_clicked_twice.png');
+                        $(this).after( $img_three );
+                        //$(this).attr('src', '/static/images/demo/two_columns_clicked_twice.png');
+                        demoRindow.find('div.rdr_sentimentBox').animate({width:538},300);
+                    });
+                });
+                $demo.append( $img );
+
+                rindow.animate({
+                    width: rindow.settings.pnlWidth +'px',
+                    minHeight: rindow.settings.height +'px',
+                }, rindow.settings.animTime, function() {
+					$(this).css('width','auto');
+					rindow.find('.rdr_contentSpace').append( $demo );
+				});
+		    }
 		},
 		rindow : {
             defaults:{
@@ -374,6 +408,75 @@ function readrBoard($R){
                 }
             }
         },
+		session : {
+			iframeHost : "http://readr.local:8080", // TODO put this in a template var
+			createXDMframe : function() {
+				var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
+				parentUrl = window.location.href;
+				$xdmIframe = $('<iframe id="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
+				);
+				$('body').append( $xdmIframe );
+
+				// this is the postMessage receiver for ALL messages posted.
+				$.receiveMessage(
+					function(e){
+					    console.log( e.data );
+						var received = e.data.split('&'),
+							message = {};
+						
+						for ( var i in received) {
+							var thisPair = received[i].split('=');
+							message[thisPair[0]] = thisPair[1];
+						}
+						
+						// the message should have an action associated.  use that to determine what to do.
+						if ( message.action ) {
+						switch (message.action) {
+						    case "readr_auth":
+                                RDR.user.first_name = message.first_name;
+                                RDR.user.full_name = message.full_name;
+                                RDR.user.img_url = message.img_url;
+                                RDR.user.readr_token = message.readr_token;
+                                RDR.user.user_id = message.user_id;
+						        break;
+					    }
+				        }
+					},
+					RDR.session.iframeHost
+				);
+
+			},
+			login : function() {},
+			showLoginPanel : function(settings) {
+
+				$('.rdr_rewritable').removeClass('rdr_rewritable');
+
+
+                //todo: weird, why did commenting this line out not do anything?...look into it
+				//porter says: the action bar used to just animate larger and get populated as a window
+                //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
+
+                var rindow = RDR.rindow.draw({
+                    left:100,
+                    top:100
+                });
+
+				var $loginHtml = $('<div class="rdr_login" />'),
+				iframeUrl = RDR.session.iframeHost + "/fblogin/",
+				parentUrl = window.location.href;
+				$loginHtml.append( '<h1>Log In</h1>',
+				'<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="300" height="300" />'
+				);
+				
+				rindow.animate({
+                    width:'500px',
+                    minHeight:'125px'
+                }, 300, function() {
+					rindow.append( $loginHtml );
+				});
+			},
+			logout : function() {}
+		},
         actions : {
             aboutReadrBoard : function() {
                 alert('Testing... Readrboard gives you more revenue and deeper engagement!');
@@ -384,18 +487,10 @@ function readrBoard($R){
             init : function(){
                 var that = this;
                 $RDR = $(RDR);
-
                 $RDR.queue('initAjax', function(next){
                     that.initGroupData(RDR.groupPermData.short_name);
 
                     //next fired on ajax success
-                });
-                $RDR.queue('initAjax', function(next){
-                    //todo: get this working later
-                    /*that.initUserData()*/
-
-                    //for now, just pass over this
-                    next();
                 });
                 $RDR.queue('initAjax', function(next){
                     that.initPageData();
@@ -405,15 +500,17 @@ function readrBoard($R){
                    that.initEnvironment();
                    //next fired on ajax success
                 });
-
+				$RDR.queue('initAjax', function(next){
+                   // this will check for FB login status, too, and set user data
+                   RDR.session.createXDMframe();
+                   //next fired on ajax success
+                });
                 //start the dequeue chain
                 $RDR.dequeue('initAjax');
             },
             initGroupData : function(groupShortName){
                 // request the RBGroup Data
 
-                // console.log("requesting rbgroup data")
-                // console.log(groupShortName)
                 $.ajax({
                     url: "/api/settings/"+RDR.groupPermData.group_id+"/",
                     type: "get",
@@ -423,7 +520,6 @@ function readrBoard($R){
                         host_name : window.location.hostname
                     },
                     success: function(data, textStatus, XHR) {
-                        //console.log('rbgroup call success')
                         RDR.group = data;
 						RDR.group.group_id
 
@@ -524,7 +620,7 @@ function readrBoard($R){
                 this.hashNodes();
 
                 // init the img interactions
-				$( RDR.group.img_selector ).live( 'mouseover', function() {
+				$( RDR.group.img_selector+":not('.no-rdr')" ).live( 'mouseover', function() {
 
                     //todo change this so that .live for imgs just resets coordinates, doesnt instantiate actionbar...
                     
@@ -538,8 +634,8 @@ function readrBoard($R){
 
                     
 				    var this_img = $(this),
-				    left = this_img.offset().left + 34, // + this_img.width()
-				    top = this_img.offset().top + 50, // + this_img.height()
+				    left = this_img.offset().left + 34,
+				    top = this_img.offset().top + this_img.height() + 20,
                     //use this instead of $().attr('src') to fix descrepencies between relative and absolute urls
 				    src = this.src;
 
@@ -586,7 +682,7 @@ function readrBoard($R){
                     }
                     //todo - consider unifying style of close vs closeAll.  Should any of these components 'own' the others?  IE. should tooltips belong to the actionbar?
                 });
-
+				$RDR.dequeue('initAjax');
             },
             hashNodes : function() {
                 console.log('hashing nodes');
@@ -612,7 +708,10 @@ function readrBoard($R){
                         var node_hash = RDR.util.md5.hex_md5( node_text );
 
                         // add an object with the text and hash to the nodes dictionary
-                        if ( !RDR.data.nodes[node_hash] ) RDR.data.nodes[node_hash] = node_text;
+                        if ( !RDR.content_nodes[node_hash] ) {
+                            RDR.content_nodes[node_hash] = {};
+                            RDR.content_nodes[node_hash].content = node_text;
+                        }
 
                         // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
                         // this makes it easy to find on the page later
@@ -628,7 +727,7 @@ function readrBoard($R){
                 // TODO: dont' send all hashes
 
                 var md5_list = [];
-                for (var i in RDR.data.nodes ) {
+                for (var i in RDR.content_nodes ) {
                     md5_list.push( i );
                 }
 
@@ -649,83 +748,31 @@ function readrBoard($R){
                     	json: JSON.stringify(sendData)
                     },
                     success: function(data) {
-					// TODO: Eric, should this go in a jquery queue?
-					var sendData = {};
-					sendData.hashes = {};
-					console.log("data.unknown length: "+data.unknown.length);
+    					// TODO: Eric, should this go in a jquery queue?
+    					var sendData = {};
+    					sendData.hashes = {};
+    					console.log("data.unknown length: "+data.unknown.length);
 					
-					if ( data.unknown.length > 0 ) {
-						$.each( data.unknown, function( index, value ) {
-							sendData.hashes[value] = RDR.data.nodes[value];
-						});
-						console.dir(sendData);
+    					if ( data.unknown.length > 0 ) {
+    						$.each( data.unknown, function( index, value ) {
+    							sendData.hashes[value] = RDR.content_nodes[value];
+    						});
+    						console.dir(sendData);
 
-						$.ajax({
-			                    url: "/api/containers/create/",
-			                    type: "get",
-			                    contentType: "application/json",
-			                    dataType: "jsonp",
-			                    data: {
-			                     	json: JSON.stringify(sendData)
-			                     },
-			                    success: function(res) {
-			                        console.dir(res);
-			                    }
-						});
+    						$.ajax({
+    			                    url: "/api/containers/create/",
+    			                    type: "get",
+    			                    contentType: "application/json",
+    			                    dataType: "jsonp",
+    			                    data: {
+    			                     	json: JSON.stringify(sendData)
+    			                     },
+    			                    success: function(res) {
+    			                        console.dir(res);
+    			                    }
+    						});
+    					}
 					}
-					}
-				});
-			},
-            loginPanel : function(settings) {
-
-				$('.rdr_rewritable').removeClass('rdr_rewritable');
-
-
-                //todo: weird, why did commenting this line out not do anything?...look into it
-				//porter says: the action bar used to just animate larger and get populated as a window
-                //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
-
-                var rindow = RDR.rindow.draw({
-                    left:100,
-                    top:100
-                });
-
-				//TODO TYLER THIS IS FOR FACEBOOK
-				// TODO: iframeURL and iframeHost must be hardcoded
-				var $loginHtml = $('<div class="rdr_login" />'),
-
-				iframeHost = "http://readr.local:8080",
-				iframeUrl = iframeHost + "/fblogin/",
-				// iframeHost = "http://graph.facebook.com",
-				// iframeUrl = iframeHost + "/oauth/authorize?redirect_uri=http%3A%2F%2Freadr.local:8080%2Ffblogin%2F&client_id=163759626987948&display=popup",
-				parentUrl = window.location.href;
-				$loginHtml.append( '<h1>Log In</h1>',
-				'<iframe id="rdr-xdm" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'" width="300" height="300" />'
-				);
-				
-				rindow.animate({
-                    width:'500px',
-                    minHeight:'125px'
-                }, 300, function() {
-					rindow.append( $loginHtml );
-					
-					$.receiveMessage(
-						function(e){
-							var received = e.data.split('&'),
-								message = {};
-							
-							for ( var i in received) {
-								var thisPair = received[i].split('=');
-								message[thisPair[0]] = thisPair[1];
-							}
-							console.log('---------message---------');
-							console.dir(message);
-							// alert(callingAction);
-							// RDR.user.id = message[1];
-							// RDR.user.auth_token = message[2];
-						},
-						iframeHost
-					);
 				});
 			},
 			sentimentBox : function(settings) {
@@ -789,11 +836,9 @@ function readrBoard($R){
                     $freeformTagInput.focus();
                 });
                 
-                var headers = ["What's your reaction?", "Why?"];
-                $sentimentBox.append($reactionPanel, $whyPanel)//chain
-                    //initial width
-                    .css({'width': rindow.settings.pnlWidth +'px'})//chain
-                    .children().each(function(idx){
+                var headers = ["What's your reaction?", "Say More"];
+                $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
+                $sentimentBox.children().each(function(idx){
                     var $header = $('<div class="rdr_header" />').append('<div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
                     $body = $('<div class="rdr_body"/>');
                     $(this).append($header, $body).css({
@@ -1039,15 +1084,11 @@ function readrBoard($R){
 					"hash": container,
 					"content" : content,
 					"content_type" : args.settings.content_type,
-					"user_id" : RDR.user.id,
-					"auth_token" : RDR.user.auth_token,
+					"user_id" : RDR.user.user_id,
+					"readr_token" : RDR.user.readr_token,
+					"group_id" : RDR.groupPermData.group_id,
 					"page_id" : RDR.page.id
 				};
-			
-    			// TODO: 	this can be removed.  just for testing and making sure data looks good and simulating
-    			//			the column animation before calling a not-working create tag
-    			//console.dir(sendData);
-    			// args.callback();
 
                 // send the data!
                 $.ajax({
@@ -1287,7 +1328,6 @@ function readrBoard($R){
 }
 
 
-
 //clone object function taken from http://my.opera.com/GreyWyvern/blog/show.dml/1725165
 
 
@@ -1482,6 +1522,11 @@ function $RFunctions($R){
 	
     //initiate our RDR object
     RDR = readrBoard($R);
+    
+    RDR.date = new Date();
+    // TODO use the following line.  it creates a cachebuster that represents the current day/week/month
+    // RDR.cachebuster = String( parseInt( RDR.date.getDate() / 7 )+1 )+String(RDR.date.getMonth()) + String(RDR.date.getYear()),
+    RDR.cachebuster = RDR.date.getTime();
 
     //run init functions
     RDR.actions.init();

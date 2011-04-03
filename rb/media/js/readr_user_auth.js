@@ -1,5 +1,5 @@
 // querystring stuff
-// TODO get the parentURL and use it in the postMessage call
+// used to create an array called qs_args which holds key/value paris from the querystring of the iframe
 var qs = window.location.search.substr(1).split('&');
 var qs_args = [];
 for ( var i in qs ) {
@@ -20,13 +20,12 @@ RDRAuth = {
 		);	
 	},
 	getReadrToken: function(fb_response) {
-		if ( fb_response && fb_response.status == "connected" ) {
-
+		if ( fb_response ) {
+            var fb_session = (fb_response.session) ? fb_response.session:fb_response
 			var sendData = {
-				fb: fb_response,
+				fb: fb_session,
 				group_id: qs_args.group_id
 			};
-
 			$.ajax({
 				url: "/api/fb/",
 				type: "get",
