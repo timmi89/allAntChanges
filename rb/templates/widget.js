@@ -6,6 +6,7 @@ $RDR, //our global $RDR object (jquerified RDR object for attaching data and que
 $R = {}, //init var: our clone of jQuery
 client$ = {}; //init var: clients copy of jQuery
 
+var demoRindow;
 
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
 //This function gets called above in
@@ -46,6 +47,43 @@ function readrBoard($R){
 				"body p		{}" +
 				"</style>"
 		*/
+		},
+		demo :{
+		    inPage_one : function(img) {
+                var offsets = img.offset();
+                
+		        var rindow = RDR.rindow.draw({
+                    left:offsets.left,
+                    top:offsets.top,
+					pnlWidth:200,
+					panels:2,
+					noHeader:true
+                });
+                demoRindow = rindow;
+                
+                var $demo = $('<div class="rdr_sentimentBox rdr_new" style="height:310px;width:358px;overflow:hidden;position:relative;" />'),
+                $img = $('<img src="/static/images/demo/two_columns.png" style="display:block;position:relative;z-index:2;float:left;" />');
+                $img.click( function() {
+                    $(this).attr('src', '/static/images/demo/two_columns_clicked.png');
+                    $(this).unbind('click');
+                    $(this).click( function() {
+                        var $img_three = $('<img src="/static/images/demo/three_columns.png" style="display:block;position:relative;z-index:1;float:right;margin-top:-310px;" />');
+                        $(this).attr('src', '/static/images/demo/two_columns_clicked_twice.png');
+                        $(this).after( $img_three );
+                        //$(this).attr('src', '/static/images/demo/two_columns_clicked_twice.png');
+                        demoRindow.find('div.rdr_sentimentBox').animate({width:538},300);
+                    });
+                });
+                $demo.append( $img );
+
+                rindow.animate({
+                    width: rindow.settings.pnlWidth +'px',
+                    minHeight: rindow.settings.height +'px',
+                }, rindow.settings.animTime, function() {
+					$(this).css('width','auto');
+					rindow.find('.rdr_contentSpace').append( $demo );
+				});
+		    }
 		},
 		rindow : {
             defaults:{
