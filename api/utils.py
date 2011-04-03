@@ -5,31 +5,27 @@ import json
 import base64
 import hashlib
 import hmac
+from exceptions import FBException
 
 def base64_url_decode(inp):
     padding_factor = (4 - len(inp) % 4) % 4
     inp += "="*padding_factor 
     return base64.b64decode(unicode(inp).translate(dict(zip(map(ord, u'-_'), u'+/'))))
 
-def parse_signed_request(session):
+def checkFBAuthenticity(fb_session):
     encoded_sig = fb_session.get('sig')
     payload = fb_session.get('access_token')
+    secret = fb_session.get('secret')
 
     sig = base64_url_decode(encoded_sig)
-    data = json.loads(base64_url_decode(payload))
+    #data = json.loads(base64_url_decode(payload))
 
-    if data.get('algorithm').upper() != 'HMAC-SHA256':
-        log.error('Unknown algorithm')
-        return None
-    else:
-        expected_sig = hmac.new(secret, msg=payload, digestmod=hashlib.sha256).digest()
+    expected_sig = hmac.new(secret, msg=payload, digestmod=hashlib.sha256).digest()
 
     if sig != expected_sig:
         return None
     else:
-        log.debug('valid signed request received..')
-        return data
-
+        return payload
 
 def createSocialAuth(social_user, django_user, group_id, fb_session):
     # Create expiration time from Facebook timestamp.
@@ -37,9 +33,6 @@ def createSocialAuth(social_user, django_user, group_id, fb_session):
     # offline access. If not we would need to check.
     dt = datetime.fromtimestamp(fb_session['expires'])
     access_token = fb_session['access_token']
-
-    # Create the readr_token
-    readr_token = createToken(django_user.id, access_token, group_id)
 
     # Store the information and link it to the SocialUser
     social_auth = SocialAuth.objects.get_or_create(
@@ -56,7 +49,6 @@ def createSocialAuth(social_user, django_user, group_id, fb_session):
 def createSocialUser(django_user, profile):
     base = 'http://graph.facebook.com'
     profile['img_url'] = '%s/%s/picture' % (base, profile['id'])
-    print profile['img_url']
 
     # Make Gender key look like our model
     if 'gender' in profile.keys():

@@ -38,13 +38,18 @@ class TokenKillHandler(AnonymousBaseHandler):
     # Finish this -- today
     def read(self, request):
         data = json.loads(request.GET['json'])
-
+        SocialAuth.objects.all().filter(
+            socialuser__user=data['user_id']
+        ).delete()
 
 class FBHandler(AnonymousBaseHandler):
 
     def read(self, request):
         data = json.loads(request.GET['json'])
         fb_session = data['fb']
+        print "***SESSION***"
+        for item in fb_session:
+            print item
         group_id = data['group_id']
         access_token = fb_session.get('access_token', None)
 
