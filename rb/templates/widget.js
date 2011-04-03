@@ -20,9 +20,7 @@ function readrBoard($R){
 
     // none of this obj's properties are definite.  just jotting down a few ideas.
     RDR = {
-        data : {
-            nodes : []
-        },
+        nodes : {},
         groupPermData: {
             group_id : "{{ group_id }}",  //make group_id a string partly to make my IDE happy - getting sent as ajax anyway
             short_name : "{{ short_name }}"
@@ -672,7 +670,10 @@ function readrBoard($R){
                         var node_hash = RDR.util.md5.hex_md5( node_text );
 
                         // add an object with the text and hash to the nodes dictionary
-                        if ( !RDR.data.nodes[node_hash] ) RDR.data.nodes[node_hash] = node_text;
+                        if ( !RDR.nodes[node_hash] ) {
+                            RDR.nodes[node_hash] = {};
+                            RDR.nodes[node_hash].content = node_text;
+                        }
 
                         // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
                         // this makes it easy to find on the page later
@@ -688,7 +689,7 @@ function readrBoard($R){
                 // TODO: dont' send all hashes
 
                 var md5_list = [];
-                for (var i in RDR.data.nodes ) {
+                for (var i in RDR.nodes ) {
                     md5_list.push( i );
                 }
 
@@ -709,30 +710,30 @@ function readrBoard($R){
                     	json: JSON.stringify(sendData)
                     },
                     success: function(data) {
-					// TODO: Eric, should this go in a jquery queue?
-					var sendData = {};
-					sendData.hashes = {};
-					console.log("data.unknown length: "+data.unknown.length);
+    					// TODO: Eric, should this go in a jquery queue?
+    					var sendData = {};
+    					sendData.hashes = {};
+    					console.log("data.unknown length: "+data.unknown.length);
 					
-					if ( data.unknown.length > 0 ) {
-						$.each( data.unknown, function( index, value ) {
-							sendData.hashes[value] = RDR.data.nodes[value];
-						});
-						console.dir(sendData);
+    					if ( data.unknown.length > 0 ) {
+    						$.each( data.unknown, function( index, value ) {
+    							sendData.hashes[value] = RDR.nodes[value];
+    						});
+    						console.dir(sendData);
 
-						$.ajax({
-			                    url: "/api/containers/create/",
-			                    type: "get",
-			                    contentType: "application/json",
-			                    dataType: "jsonp",
-			                    data: {
-			                     	json: JSON.stringify(sendData)
-			                     },
-			                    success: function(res) {
-			                        console.dir(res);
-			                    }
-						});
-					}
+    						$.ajax({
+    			                    url: "/api/containers/create/",
+    			                    type: "get",
+    			                    contentType: "application/json",
+    			                    dataType: "jsonp",
+    			                    data: {
+    			                     	json: JSON.stringify(sendData)
+    			                     },
+    			                    success: function(res) {
+    			                        console.dir(res);
+    			                    }
+    						});
+    					}
 					}
 				});
 			},
