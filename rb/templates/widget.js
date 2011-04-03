@@ -860,7 +860,7 @@ function readrBoard($R){
             },
 			whyPanel: {
                 draw: function(rindow, interaction_id) {
-                    var $whyPanel = $('<div class="rdr_whyPanel rdr_sntPnl" />').width('0').hide();
+                    var $whyPanel = $('<div class="rdr_whyPanel rdr_sntPnl" />').prepend($('<div class="rdr_pnlShadow"/>')).hide();
                     return $whyPanel;
                 },
                 setup: function(rindow){
@@ -873,17 +873,12 @@ function readrBoard($R){
                 expand: function(rindow){
                     $whyPanel = $(rindow).find('.rdr_whyPanel');
                     $whyPanel.show();
+                    $whyPanel.width('0');
                     $whyPanel.animate({
                         width: rindow.settings.pnlWidth +'px'
                     }, rindow.settings.animTime, function() {
     					//pass for now
     				});
-                    //todo: this is a temp work around - i don't like these simotaneous animations
-                    $('.rdr_sentimentBox').animate({
-                        width: 2* (rindow.settings.pnlWidth) +'px'
-                    }, rindow.settings.animTime, function() {
-                        //pass for now
-                    });
                 },
                 collapse: function(rindow){
                     $whyPanel = $(rindow).find('.rdr_whyPanel');
