@@ -62,12 +62,12 @@ function readrBoard($R){
                 demoRindow = rindow;
                 
                 var $demo = $('<div class="rdr_sentimentBox rdr_new" style="height:310px;width:358px;overflow:hidden;position:relative;" />'),
-                $img = $('<img src="/static/images/demo/two_columns.png" style="display:block;position:relative;z-index:2;float:left;" />');
+                $img = $('<img src="/static/images/demo/two_columns.png" style="display:block;position:relative;z-index:2;float:left;cursor:pointer;" />');
                 $img.click( function() {
                     $(this).attr('src', '/static/images/demo/two_columns_clicked.png');
                     $(this).unbind('click');
                     $(this).click( function() {
-                        var $img_three = $('<img src="/static/images/demo/three_columns.png" style="display:block;position:relative;z-index:1;float:right;margin-top:-310px;" />');
+                        var $img_three = $('<img src="/static/images/demo/three_columns.png" style="display:block;position:relative;z-index:1;float:right;margin-top:-310px;cursor:text;" />');
                         $(this).attr('src', '/static/images/demo/two_columns_clicked_twice.png');
                         $(this).after( $img_three );
                         //$(this).attr('src', '/static/images/demo/two_columns_clicked_twice.png');
