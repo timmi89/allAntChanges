@@ -20,7 +20,7 @@ function readrBoard($R){
 
     // none of this obj's properties are definite.  just jotting down a few ideas.
     RDR = {
-        nodes : {},
+        content_nodes : {},
         groupPermData: {
             group_id : "{{ group_id }}",  //make group_id a string partly to make my IDE happy - getting sent as ajax anyway
             short_name : "{{ short_name }}"
@@ -670,9 +670,9 @@ function readrBoard($R){
                         var node_hash = RDR.util.md5.hex_md5( node_text );
 
                         // add an object with the text and hash to the nodes dictionary
-                        if ( !RDR.nodes[node_hash] ) {
-                            RDR.nodes[node_hash] = {};
-                            RDR.nodes[node_hash].content = node_text;
+                        if ( !RDR.content_nodes[node_hash] ) {
+                            RDR.content_nodes[node_hash] = {};
+                            RDR.content_nodes[node_hash].content = node_text;
                         }
 
                         // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
@@ -689,7 +689,7 @@ function readrBoard($R){
                 // TODO: dont' send all hashes
 
                 var md5_list = [];
-                for (var i in RDR.nodes ) {
+                for (var i in RDR.content_nodes ) {
                     md5_list.push( i );
                 }
 
@@ -717,7 +717,7 @@ function readrBoard($R){
 					
     					if ( data.unknown.length > 0 ) {
     						$.each( data.unknown, function( index, value ) {
-    							sendData.hashes[value] = RDR.nodes[value];
+    							sendData.hashes[value] = RDR.content_nodes[value];
     						});
     						console.dir(sendData);
 
