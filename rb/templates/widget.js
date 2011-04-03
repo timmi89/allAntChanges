@@ -584,7 +584,7 @@ function readrBoard($R){
                 this.hashNodes();
 
                 // init the img interactions
-				$( RDR.group.img_selector ).live( 'mouseover', function() {
+				$( RDR.group.img_selector+":not('.no-rdr')" ).live( 'mouseover', function() {
 
                     //todo change this so that .live for imgs just resets coordinates, doesnt instantiate actionbar...
                     
@@ -598,8 +598,8 @@ function readrBoard($R){
 
                     
 				    var this_img = $(this),
-				    left = this_img.offset().left + 34, // + this_img.width()
-				    top = this_img.offset().top + 50, // + this_img.height()
+				    left = this_img.offset().left + 34,
+				    top = this_img.offset().top + this_img.height() + 20,
                     //use this instead of $().attr('src') to fix descrepencies between relative and absolute urls
 				    src = this.src;
 
