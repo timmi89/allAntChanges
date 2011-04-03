@@ -1,5 +1,5 @@
 // querystring stuff
-// TODO get the parentURL and use it in the postMessage call
+// used to create an array called qs_args which holds key/value paris from the querystring of the iframe
 var qs = window.location.search.substr(1).split('&');
 var qs_args = [];
 for ( var i in qs ) {

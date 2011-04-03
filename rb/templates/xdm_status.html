@@ -19,12 +19,8 @@
      <script src="http://connect.facebook.net/en_US/all.js" type="text/javascript"s></script>
      <script type="text/javascript">
 		RDRAuth.notifyParent = function(response) {
-			// RDRAuth.rdr_user = response;
-			// if ( RDRAuth.rdr_user.django_user_id ) $.cookie( 'django_user_id', RDRAuth.rdr_user.django_user_id );
-			// if ( RDRAuth.rdr_user.readr_token ) $.cookie( 'readr_token', RDRAuth.rdr_user.readr_token );
-			// if ( RDRAuth.rdr_user.full_name ) $.cookie( 'full_name', RDRAuth.rdr_user.full_name );
-			// if ( RDRAuth.rdr_user.image_url ) $.cookie( 'image_url', RDRAuth.rdr_user.image_url );
 			response.action = "readr_auth";
+
 			// send this info up to the widget!
 			RDRAuth.postMessage({
 				message: response
