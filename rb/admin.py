@@ -29,29 +29,37 @@ class GroupAdmin(admin.ModelAdmin):
      )
 
 class SocialUserAdmin(admin.ModelAdmin):
-    list_display = ('user',
-                    'provider',
-                    'uid',
-                    'full_name',
-                    'username',
-                    'gender',
-                    'hometown')
+    list_display = (
+        'user',
+        'provider',
+        'uid',
+        'full_name',
+        'username',
+        'gender',
+        'hometown'
+    )
 
 class SocialAuthAdmin(admin.ModelAdmin):
-    list_display = ('social_user',
-                    'auth_token',
-                    'expires')
+    list_display = (
+        'social_user',
+        'auth_token',
+        'expires'
+    )
 
 class SiteAdmin(admin.ModelAdmin):
-    list_display = ('name',
-                    'domain',
-                    'group')
+    list_display = (
+        'name',
+        'domain',
+        'group'
+    )
 
 class PageAdmin(admin.ModelAdmin):
-   list_display = ('id',
-                   'site',
-                   'url',
-		   'canonical_url')
+   list_display = (
+        'id',
+        'site',
+        'url',
+        'canonical_url'
+    )
 
 class ContainerAdmin(admin.ModelAdmin):
     list_display = ('id',
@@ -64,9 +72,9 @@ class ContainerAdmin(admin.ModelAdmin):
 
 class InteractionAdmin(admin.ModelAdmin):
 	exclude = (	'path',
-			'depth',
-			'numchild')
-	list_display = ('id', 'user', 'page', 'content', 'interaction_node','anonymous')
+			    'depth',
+			    'numchild')
+	list_display = ('id', 'user', 'page', 'content', 'interaction_node', 'created', 'modified', 'anonymous')
 	
 class LinkAdmin(admin.ModelAdmin):
     def base62(self, obj):

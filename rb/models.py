@@ -138,6 +138,7 @@ class Interaction(DateAwareModel, UserAwareModel, MP_Node):
     
     class Meta:
         ordering = ['id']
+        unique_together = ('page', 'content', 'interaction_node', 'user')
 
     @models.permalink
     def get_absolute_url(self):
@@ -145,6 +146,7 @@ class Interaction(DateAwareModel, UserAwareModel, MP_Node):
 
     def __unicode__(self):
         return u"Interaction(Page: {0}, Content: {1})".format(self.page, self.content)
+
 
 class Link(models.Model):
     # I think we have this already from the interaction table
