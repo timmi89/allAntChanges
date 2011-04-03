@@ -90,13 +90,13 @@ div.rdr h1	{font-size:21px; cursor:move; padding:3px 9px;}
 
 /* the widget */
 div.rdr div.rdr_sentimentBox							{height:250px;}
-div.rdr div.rdr_sntPnl 									{float:left; position:relative; display:block; height:100%; overflow-x:hidden; /*width is reset with js - rindow.settings.pnlWidth */ }
+div.rdr div.rdr_sntPnl 									{float:left; position:relative; display:block; height:100%; overflow-x:hidden; background:white;/*width is reset with js - rindow.settings.pnlWidth */ }
 
-div.rdr div.rdr_sntPnl div.rdr_body						{width:100%; position:absolute; top: 35px; /*var rdr_headerHeight*/ ; z-index: 1; xmin-height:200px; xmax-height:300px; overflow-x:hidden; overflow-y:auto;}
+div.rdr div.rdr_sntPnl div.rdr_body						{width:100%; position:absolute; top: 35px; /*var rdr_headerHeight*/ ; z-index: 3; overflow-x:hidden; overflow-y:auto; padding:6px 0 0 0;}
 div.rdr div.rdr_sntPnl div.rdr_header 			      			{background:#fff; position: relative; height: 35px; /*var rdr_headerHeight*/ width:100%; z-index:3;}
 div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap	{background: none repeat scroll 0 0 #FFFFFF; border-bottom: 1px solid #DFDFDF; bottom: 0; padding-bottom: 3px; position: absolute; text-align: center; width: 100%; }
 div.rdr div.rdr_sntPnl h1						{ padding:0 !important; }
-div.rdr div.rdr_sntPnl .rdr_pnlShadow						{height: 100%; width:100px; position: absolute; z-index:2; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; }
+div.rdr div.rdr_sntPnl .rdr_pnlShadow			{height: 100%; width:100px; position: absolute; z-index:2; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; }
 
 div.rdr div.rdr_body .rdr_selected div.rdr_arrow 		{ display:none; border-color:transparent transparent transparent #f2cfcf; border-style:solid; border-width:12px; height:0; margin-top:-10px; position:absolute; right:-23px; top:43%; width:0;}
 div.rdr div.rdr_reactionPanel div.rdr_body .rdr_selected div.rdr_arrow 		{ border-color:transparent transparent transparent #f7dddd; }
@@ -106,8 +106,7 @@ div.rdr div.rdr_selectedTextPanel div.rdr_body 	{background:#f0f0f0; -moz-box-sh
 div.rdr div.rdr_reactionPanel					{position:relative; z-index:2;}
 div.rdr div.rdr_reactionPanel div.rdr_body		{background:#f8f8f8; }
 div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
-div.rdr div.rdr_whyPanel 						{z-index:1; float:right; }
-div.rdr div.rdr_whyPanel div.rdr_body			{background:#ffffff;}
+div.rdr div.rdr_whyPanel 						{z-index:1; position:absolute; right:0;}
 div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top: 5px;}
 div.rdr div.rdr_sntPnl_padder 					{margin:0 15px; position:relative; overflow:hidden;}
 div.rdr div.rdr_sntPnl_padder textarea,
@@ -118,7 +117,8 @@ div.rdr div.rdr_share_social					{top: 8px; position:relative;}
 div.rdr div.rdr_sntPnl .rdr_submitTag  			{width:100%; text-align:right;}
 div.rdr div.rdr_sntPnl .rdr_submitTag button 	{}
 div.rdr div.rdr_sntPnl .rdr_commentButton	 	{width:100%;}
-div.rdr div.rdr_sntPnl .rdr_blessedTagBox		{padding-top:4px;}
+div.rdr div.rdr_sntPnl .commentBox				{height:67px; margin-top:5px; max-width:92%;}
+div.rdr div.rdr_sntPnl .rdr_tagFeedback			{font-style:italic;}
 
 
 div.rdr div.rdr_reactionPanel div.rdr_quote {position: relative; text-shadow:1px 1px 1px #999; font-size:18px; font-family:Georgia, serif; z-index: 12020;}
@@ -152,5 +152,5 @@ div.rdr ul.shareLinks img       {width:30px;}
 
 /* forms */
 div.rdr textarea,
-div.rdr input[type="text"]	{font-size:14px; color:#666; -moz-box-shadow: inset 0px 0px 5px #ddd;-webkit-box-shadow: inset 0px 0px 5px #ddd; box-shadow: inset 0px 0px 5px #ddd; border:1px solid #ddd; }
+div.rdr input[type="text"]	{font-size:14px; color:#666; -moz-box-shadow: inset 0px 0px 5px #ddd;-webkit-box-shadow: inset 0px 0px 5px #ddd; box-shadow: inset 0px 0px 5px #ddd; border:1px solid #ddd; height: auto; width: auto;}
 div.rdr button				{font-size:14px; }

@@ -802,7 +802,7 @@ function readrBoard($R){
                 var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new" />'),
                 // $selectedTextPanel = $('<div class="rdr_selectedTextPanel rdr_sntPnl" />'),
                 $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl" />'),
-                $whyPanel = $('<div class="rdr_whyPanel rdr_sntPnl" />').css('width',0),
+                $whyPanel = RDR.actions.whyPanel.draw( rindow ),
                 $blessedTagBox = $('<div class="rdr_blessedTagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
                 $customTagBox = $('<div class="rdr_customTagBox rdr_sntPnl_padder" />'),
                 $commentBox = $('<div class="rdr_commentBox" />'),
@@ -812,17 +812,29 @@ function readrBoard($R){
                     if($('.freeformTagInput').val() == "" ){
                         $('div.rdr_help').show();   
                     }
+                }).focus(function(){
+                   $tagTooltip.hide();
                 }).keyup(function(event) {
                     if (event.keyCode == '13' || event.keyCode == '188' ) { //enter or comma
-                        console.log('new tag here!');
+                        $whyPanel.find('.rdr_body').empty();
+                        var customTag = {
+                            name: $(this).val(),
+                            tid: false
+                        }
+                        RDR.actions.rateSend({ tag:customTag, rindow:rindow, settings:settings, callback: function() {
+                                // todo: at this point, cast the tag, THEN call this in the tag success function:
+                                RDR.actions.whyPanel.expand(rindow);
+                            }//end function
+                        });//end rateSend
                     }
                     else if (event.keyCode == '27') { //esc
-                        $('.freeformTagInput').val("").blur();
-                        $('div.rdr_help').show();
-                        return false;
+                        //return false;
                     }
-                }),
-                $tagTooltip = $('<div class="rdr_help">Add your own (ex. hip, woot)</div>');
+                });
+                var $tagTooltip = $('<div class="rdr_help">Add your own (ex. hip, woot)</div>').click(function(){            
+                    $tagTooltip.hide();
+                    $freeformTagInput.focus();
+                });
                 
                 var headers = ["What's your reaction?", "Say More"];
                 $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
@@ -833,6 +845,7 @@ function readrBoard($R){
                         'width':rindow.settings.pnlWidth
                     });
                 });
+                RDR.actions.whyPanel.setup(rindow);
 
                 //populate selectedTextPanel
 				//$selectedTextPanel.find('div.rdr_body').append( '<div class="rdr_selected"><em></em><div class="rdr_arrow"></div></div>' );
@@ -843,7 +856,7 @@ function readrBoard($R){
                 ////populate blesed_tags
                 $.each(RDR.group.blessed_tags, function(idx, val){
                     var $li = $('<li />').data({
-                        'tid':val.tid
+                        'tag':val
                     }).append('<a href="javascript:void(0);">'+val.name+'</a><div class="rdr_arrow"></div>');
                     
                     $blessedTagBox.children('ul.rdr_tags').append($li);
@@ -851,14 +864,7 @@ function readrBoard($R){
 
                 ////customTagDialogue - develop this...
                 $customTagBox.append($freeformTagInput, $tagTooltip)//chain
-                .add($tagTooltip).click(function(){            
-                    $tagTooltip.hide();
-                    $freeformTagInput.focus();
-                });
-
-                //populate whyPanel
-				$whyPanel.prepend($('<div class="rdr_pnlShadow"/>')).hide().find('div.rdr_body');
-                //.append('<div class="rdr_subHeader" ><span>COMMENT &amp; SHARE </span></div>');
+                .add($tagTooltip);
 
                 /*
                 $customTagBox.append(
@@ -878,52 +884,78 @@ function readrBoard($R){
 					$(this).css('width','auto');
 					rindow.append($sentimentBox);
 					
-                    /*
+                    
 					if ( settings.content_type == "text" ) {
                        rindow.find('div.rdr_selectedTextPanel em').text( settings.content );
 					} else if ( settings.content_type == "image" ) {
 						rindow.find('div.rdr_selectedTextPanel em').css('text-align','center').html( '<img style="max-width:100%;max-height:600px;" src=" ' + settings.content + '" />' );
 					}
-					*/
 
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
-                    rindow.find('ul.rdr_preselected li').toggle(
-                        function() {
-                            $(this).addClass('rdr_selected');
-							$(this).siblings().removeClass('rdr_selected');
-                            $(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-
-							RDR.actions.rateSend({ tag:$(this).data('tid'), rindow:rindow, settings:settings, callback: function() {
-								// todo: at this point, cast the tag, THEN call this in the tag success function:
-								RDR.actions.whyPanel( rindow );
-							}
-							});
-                        },
-                        function() {
-							// TODO: cast a "remove tag" vote, removing this user's vote of this tag
+                    rindow.find('ul.rdr_preselected li').click(function() {
+                        if ( $(this).hasClass('rdr_selected') ){
                             $(this).removeClass('rdr_selected');
+                        }else{
+                            $(this).addClass('rdr_selected');
+                            $(this).siblings().removeClass('rdr_selected');
+                            $(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+                                
+                            $whyPanel.find('.rdr_body').empty();
+                            RDR.actions.rateSend({ tag:$(this).data('tag'), rindow:rindow, settings:settings, callback: function() {
+                                    // todo: at this point, cast the tag, THEN call this in the tag success function:
+                                    RDR.actions.whyPanel.expand(rindow);
+                                }//end function
+                            });//end rateSend
                         }
-                    ); // [eric] whoa - i didn't know toggle could do that!
-                    //A bit confusing that jQuery has two seprate API listings for toggle() - took me a minute to find this one.
-                    //http://api.jquery.com/toggle-event/ as opposed to http://api.jquery.com/toggle/ 
+                    });
                 });
             },
-			whyPanel : function(rindow, interaction_id) {
-                //[eric] no need to animate whyPanel because it's aligned right now ([porter] floating right)
-				//rindow.css('max-width', rindow.settings.width() +'px');
-                $('.rdr_whyPanel').width('0').show();
-				$('.rdr_whyPanel').children('.rdr_header, .rdr_body').css({
-                    'width': rindow.settings.pnlWidth +'px',
-                    'right':'0',
-                    'position':'absolute'
-                });
-                $('.rdr_whyPanel').animate({
-                    width: rindow.settings.pnlWidth +'px'
-                }, rindow.settings.animTime, function() {
-					//pass for now
-				});
+			whyPanel: {
+                draw: function(rindow, interaction_id) {
+                    var $whyPanel = $('<div class="rdr_whyPanel rdr_sntPnl" />').prepend($('<div class="rdr_pnlShadow"/>'));
+                    return $whyPanel;
+                },
+                setup: function(rindow){
+                    $(rindow).find('.rdr_whyPanel').children('.rdr_header, .rdr_body').css({
+                        'width': rindow.settings.pnlWidth +'px',
+                        'right':'0',
+                        'position':'absolute'
+                    });
+                },
+                expand: function(rindow, interaction_id){
+                    $whyPanel = $(rindow).find('.rdr_whyPanel');
+                    //temp hack
+                    if( $whyPanel.data('expanded') ){
+
+                    }
+                    else{
+                        $(rindow).animate({
+                            width: (2 * rindow.settings.pnlWidth) +'px'
+                        }, rindow.settings.animTime, function() {
+                        });   
+                    }
+                    $whyPanel.data('expanded', true);
+                },
+                collapse: function(rindow){
+                    $whyPanel = $(rindow).find('.rdr_whyPanel');
+                    $whyPanel.animate({
+                        width: rindow.settings.pnlWidth +'px'
+                    }, rindow.settings.animTime, function() {
+                        //pass for now
+                    });
+                    //todo: this is a temp work around - i don't like these simotaneous animations
+                    $('.rdr_sentimentBox').animate({
+                        width: 2* (rindow.settings.pnlWidth) +'px'
+                    }, rindow.settings.animTime, function() {
+                        //pass for now
+                    });
+                },
+                //todo, fix naming
+                subBoxes: [],
+                newSubBox: function(){
+                }              
 			},
-            shareStart : function(rindow, known_tags, unknown_tags_arr) {
+            shareStart : function(rindow, tag) {
                 //todo: for now, I'm just passing in known_tags as a param, but check with Porter about this model.
                 //Where is the 'source'/'point of origin' that is the authority of known_tags - I'd think we'd want to just reference that..
 
@@ -970,8 +1002,33 @@ function readrBoard($R){
                 //[eric] dont remove elements anymore, we're going to try adding this to the bottom of the sentimentBox'
                 //[eric] -comment out: //rindow.find('ul, div, input').not('div.rdr_close').remove();
 
-                var $commentBox =  $('<div class="rdr_share"><textarea>' + share_content + '</textarea><button>Comment</button>'),
-                $socialBox = $('<div class="rdr_share_social"><strong>Share your reaction</strong></div>'),
+                //todo: combine this with the tooltip for the tags
+                var helpText = "because..."
+                var $commentBox =  $('<div class="rdr_share"><textarea class="commentBox">' + helpText+ '</textarea><button>Comment</button></div>');
+                $commentBox.find('textarea').focus(function(){
+                    if($('.commentBox').val() == helpText ){
+                        $('.commentBox').val('');
+                    }
+                }).blur(function(){
+                    if($('.commentBox').val() == "" ){
+                        $('.commentBox').val(helpText);
+                    }
+                }).keyup(function(event) {
+                    if (event.keyCode == '13') { //enter or comma
+                        //RDR.actions.whyPanel.expand(rindow);
+                    }
+                    else if (event.keyCode == '27') { //esc
+                        //return false;
+                    }
+                });
+
+                $commentBox.find('button').click(function(){
+                    $(this).closest('.rdr_share').css({'visibility':'hidden'});
+                    $(this).closest('.rdr_body').children('.rdr_commentFeedback')
+                    .find('.rdr_tagFeedback').hide().end()//chain
+                    .find('.rdr_commentComplete').text('Thanks for your comment.')
+                });
+                var $socialBox = $('<div class="rdr_share_social"><strong>Share your reaction</strong></div>'),
                 $shareLinks = $('<ul class="shareLinks"></ul>'),
                 socialNetworks = ["facebook","twitter","tumblr","linkedin"];
 
@@ -983,7 +1040,8 @@ function readrBoard($R){
 
                 //TODO this is prototype code for demo.  fix it.
                 $shareDialogueBox.append($commentBox, $socialBox);
-                rindow.find('.rdr_whyPanel .rdr_body').append($shareDialogueBox);
+                var $commentFeedback = $('<div class="rdr_commentFeedback rdr_sntPnl_padder"> <div class="rdr_tagFeedback">You tagged this '+tag.name+'</div> <div class="rdr_commentComplete"></div> </div>');
+                rindow.find('.rdr_whyPanel .rdr_body').append($commentFeedback, $shareDialogueBox);
                 /*
                 TUMBLR SHARING URLs
                 http://www.tumblr.com/share?v=3&u=http%3A%2F%2Fjsbeautifier.org%2F&t=Online%20javascript%20beautifier&s=
@@ -1009,8 +1067,11 @@ function readrBoard($R){
 				*/
             },
             rateSend : function(args) {
-
-				// tag can be an ID or a string.  if a string, we need to sanitize.
+                
+                //example:
+                //tag:{name, id}, rindow:rindow, settings:settings, callback: 
+			 	
+                // tag can be an ID or a string.  if a string, we need to sanitize.
 				
 				// tag, rindow, settings, callback
 
