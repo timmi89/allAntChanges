@@ -38,7 +38,7 @@ class TokenKillHandler(AnonymousBaseHandler):
     # Finish this -- today
     def read(self, request):
         data = json.loads(request.GET['json'])
-        SocialAuth.objects.all().filter(
+        SocialAuth.objects.filter(
             socialuser__user=data['user_id']
         ).delete()
 
@@ -210,15 +210,17 @@ class PageDataHandler(AnonymousBaseHandler):
         nop = InteractionNode.objects.filter(interaction__page=page.id)
         
         # ---Get page interaction counts, grouped by kind---
-        # Filter values for 'kind'
+        # Focus on values for 'kind'
         values = nop.values('kind')
         # Annotate values with count of interactions
-        summary = values.annotate(Count('interaction'))
+        summary = values.annotate(count=Count('interaction'))
         
         # ---Find top 10 tags on a given page---
         tags = nop.filter(kind='tag')
-        tagcounts = tags.annotate(Count("id"))
-        toptags = tagcounts.values("body").order_by()[:10]
+        # Annotate tags on page with count of interactions
+        tagcounts = tags.annotate(tag_count=Count('interaction'))
+        # Get tag_count and tag body ordered by tag count
+        toptags = tagcounts.values("tag_count","body").order_by('-tag_count')[:10]
             
         # ---Find top 10 shares on a give page---
         content = Content.objects.filter(interaction__page=page.id,interaction__interaction_node__kind='shr')
@@ -228,9 +230,10 @@ class PageDataHandler(AnonymousBaseHandler):
         # ---Find top 10 users on a given page---
         users = User.objects.filter(interaction__page=page.id)
         usernames = users.values('first_name', 'last_name')
-        userinteract = usernames.annotate(interactions=Count('interaction'))[:10]
+        userinteract = usernames.annotate(interactions=Count('interaction'))
+        topusers = userinteract.order_by('-interactions')[:10]
         
-        return dict(id=page.id, summary=summary, toptags=toptags, topusers=userinteract, topshares=topshares)
+        return dict(id=page.id, summary=summary, toptags=toptags, topusers=topusers, topshares=topshares)
 
 class SettingsHandler(AnonymousBaseHandler):
     model = Group

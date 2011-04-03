@@ -42,7 +42,7 @@ def createSocialAuth(social_user, django_user, group_id, fb_session):
     )
 
     # Remove stale tokens (if they exist)
-    SocialAuth.objects.all().filter(social_user=social_user).exclude(auth_token=access_token).delete()
+    SocialAuth.objects.filter(social_user=social_user).exclude(auth_token=access_token).delete()
 
     return social_auth[0]
 
@@ -149,6 +149,19 @@ def createInteractionNode(kind, body):
 
 def createInteraction(page, content, user, interaction_node, parent=None):
     if content and user and interaction_node:
+        # Check unique content_id, user_id, page_id, interaction_node_id
+        try:
+            existing = Interaction.objects.get(
+                page=page,
+                content=content,
+                user=user,
+                interaction_node=interaction_node
+            )
+            print "Found existing Interaction with id %s" % existing.id
+            return existing
+        except Interaction.DoesNotExist:
+            pass
+
         # Can't rely on Django's auto_now to create the time before storing the node
         now = created=datetime.now()
         if parent:
