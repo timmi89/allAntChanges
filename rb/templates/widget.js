@@ -530,19 +530,19 @@ function readrBoard($R){
                         //todo: REMOVE THIS
                         RDR.group.blessed_tags = [
                         {
-                            name: "Great!",
+                            name: "Cute",
                             tid: 1
                         },
                         {
-                            name: "Hate",
+                            name: "Great Tip",
                             tid: 2
                         },
                         {
-                            name: "Interesting",
+                            name: "Funny",
                             tid: 3
                         },
                         {
-                            name: "Booooring",
+                            name: "Wait, what?",
                             tid: 4
                         }
                         ];
