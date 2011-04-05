@@ -30,6 +30,7 @@ class GroupAdmin(admin.ModelAdmin):
 
 class SocialUserAdmin(admin.ModelAdmin):
     list_display = (
+        'id',
         'user',
         'provider',
         'uid',
@@ -71,10 +72,21 @@ class ContainerAdmin(admin.ModelAdmin):
     #fields = ('user','parent','body')
 
 class InteractionAdmin(admin.ModelAdmin):
-	exclude = (	'path',
-			    'depth',
-			    'numchild')
-	list_display = ('id', 'user', 'page', 'content', 'interaction_node', 'created', 'modified', 'anonymous')
+	exclude = (
+        'path',
+		'depth',
+		'numchild'
+    )
+	list_display = (
+        'id',
+        'user',
+        'page',
+        'content',
+        'interaction_node',
+        'created',
+        'modified',
+        'anonymous'
+    )
 	
 class LinkAdmin(admin.ModelAdmin):
     def base62(self, obj):

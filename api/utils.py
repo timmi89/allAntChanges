@@ -5,34 +5,16 @@ import json
 import base64
 import hashlib
 import hmac
+import random
+import uuid
 from exceptions import FBException
-
-def base64_url_decode(inp):
-    padding_factor = (4 - len(inp) % 4) % 4
-    inp += "="*padding_factor 
-    return base64.b64decode(unicode(inp).translate(dict(zip(map(ord, u'-_'), u'+/'))))
-
-def checkFB(fb_session):
-    encoded_sig = fb_session.get('sig')
-    payload = fb_session.get('access_token')
-    secret = fb_session.get('secret')
-
-    sig = base64_url_decode(encoded_sig)
-    #data = json.loads(base64_url_decode(payload))
-
-    expected_sig = hmac.new(secret, msg=payload, digestmod=hashlib.sha256).digest()
-
-    if sig != expected_sig:
-        return None
-    else:
-        return payload
 
 def convertUser(temp_user, new_user):
     Interaction.objects.filter(user=temp_user).update(user=new_user)
     User.objects.get(id=temp_user).delete()
 
-def generate_username():
-    username = str(random.randint(0,1000000))
+def generateUsername():
+    username = base64.b64encode(uuid.uuid4().bytes)[:-2]
 
     try:
         User.objects.get(username=username)
@@ -119,14 +101,18 @@ def checkToken(data):
     """
     Check to see if token in request is good
     """
-    auth = SocialAuth.objects.get(social_user__user=data['user_id'])
-    readr_token = createToken(data['user_id'], auth.auth_token, data['group_id'])
+    user_id = data['user_id']
+    if len(SocialUser.objects.filter(id=user_id)) == 1:
+        auth_token = SocialAuth.objects.get(social_user__user=data['user_id'])
+    else:
+        auth_token = 'R3dRB0aRdR0X'
+    readr_token = createToken(data['user_id'], auth_token, data['group_id'])
     return (readr_token == data['readr_token'])
 
 def createToken(djangoid, auth_token, group_id):
     """
     Create an SHA token from django id, social network
-    auth token and group secret
+    auth token and group secret.
     """
     print "Creating readr_token"
     # Get the group secret which only we know
