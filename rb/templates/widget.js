@@ -420,24 +420,28 @@ function readrBoard($R){
 				// this is the postMessage receiver for ALL messages posted.
 				$.receiveMessage(
 					function(e){
-					    console.log( e.data );
-						var received = e.data.split('&'),
-							message = {};
-						
-						for ( var i in received) {
-							var thisPair = received[i].split('=');
-							message[thisPair[0]] = thisPair[1];
-						}
-						
+					    console.log( JSON.parse( e.data ) );
+                        var message = JSON.parse( e.data );
+                        
+
+						// var received = e.data.split('&'),
+						// 	message = {};
+
+						// for ( var i in received) {
+						// 	var thisPair = received[i].split('=');
+						// 	message[thisPair[0]] = thisPair[1];
+						// }
+      //                   console.log('---- message --');
+      //       console.dir(message.data);						
 						// the message should have an action associated.  use that to determine what to do.
 						if ( message.action ) {
 						switch (message.action) {
 						    case "readr_auth":
-                                RDR.user.first_name = message.first_name;
-                                RDR.user.full_name = message.full_name;
-                                RDR.user.img_url = message.img_url;
-                                RDR.user.readr_token = message.readr_token;
-                                RDR.user.user_id = message.user_id;
+                                RDR.user.first_name = message.data.first_name;
+                                RDR.user.full_name = message.data.full_name;
+                                RDR.user.img_url = message.data.img_url;
+                                RDR.user.readr_token = message.data.readr_token;
+                                RDR.user.user_id = message.data.user_id;
 						        break;
 					    }
 				        }

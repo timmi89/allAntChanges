@@ -3,6 +3,7 @@
    <head>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
 	<script src="/static/js/jquery.ba-postmessage.min.js" type="text/javascript"></script>
+	<script src="/static/js/jquery.json-2.2.min.js" type="text/javascript"></script>
 	<script src="/static/js/jquery.cookie.js" type="text/javascript"></script>
 	<script type="text/javascript">
 	var date = new Date();
@@ -23,7 +24,7 @@
 
 			// send this info up to the widget!
 			RDRAuth.postMessage({
-				message: response
+				message: JSON.stringify( response )
 			});
 		}
 		RDRAuth.FBLoginResponse = function(response) {
