@@ -8,10 +8,10 @@
 	"buffers":
 	[
 		{
-			"file": "/Users/tbrock/Development/readrboard/api/handlers.py",
+			"file": "/Users/tbrock/Development/readrboard/api/decorators.py",
 			"settings":
 			{
-				"buffer_size": 10028,
+				"buffer_size": 391,
 				"line_ending": "Unix"
 			}
 		},
@@ -27,7 +27,7 @@
 			"file": "/Users/tbrock/Development/readrboard/api/utils.py",
 			"settings":
 			{
-				"buffer_size": 5769,
+				"buffer_size": 6207,
 				"line_ending": "Unix"
 			}
 		},
@@ -35,7 +35,7 @@
 			"file": "/Users/tbrock/Development/readrboard/api/exceptions.py",
 			"settings":
 			{
-				"buffer_size": 142,
+				"buffer_size": 227,
 				"line_ending": "Unix"
 			}
 		},
@@ -51,7 +51,7 @@
 			"file": "/Users/tbrock/Development/readrboard/rb/models.py",
 			"settings":
 			{
-				"buffer_size": 6539,
+				"buffer_size": 6614,
 				"line_ending": "Unix"
 			}
 		},
@@ -62,15 +62,23 @@
 				"buffer_size": 1895,
 				"line_ending": "Unix"
 			}
+		},
+		{
+			"file": "/Users/tbrock/Development/readrboard/rb/admin.py",
+			"settings":
+			{
+				"buffer_size": 2503,
+				"line_ending": "Unix"
+			}
 		}
 	],
 	"build_system": "",
 	"file_history":
 	[
+		"/Users/tbrock/Development/readrboard/api/handlers.py",
 		"/Users/tbrock/Development/readrboard/rb/models.py",
 		"/Users/tbrock/Development/readrboard/rb/admin.py",
 		"/Users/tbrock/Development/readrboard/settings.py",
-		"/Users/tbrock/Development/readrboard/api/handlers.py",
 		"/Users/tbrock/Development/readrboard/social_auth/views.py",
 		"/Users/tbrock/Development/readrboard/social_auth/backends/facebook.py",
 		"/Users/tbrock/Development/readrboard/social_auth/store.py",
@@ -96,6 +104,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"kwarg",
+			"filter",
+			".all().fil",
 			"createToken",
 			"datetime",
 			"extra",
@@ -134,18 +145,18 @@
 			[
 				{
 					"buffer": 0,
-					"file": "/Users/tbrock/Development/readrboard/api/handlers.py",
+					"file": "/Users/tbrock/Development/readrboard/api/decorators.py",
 					"settings":
 					{
-						"buffer_size": 10028,
+						"buffer_size": 391,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1627,
-								1627
+								266,
+								266
 							]
 						],
 						"settings":
@@ -155,7 +166,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0,
-						"translation.y": 267,
+						"translation.y": 0,
 						"zoom_level": 1
 					},
 					"type": "text"
@@ -172,8 +183,8 @@
 						"selection":
 						[
 							[
-								643,
-								643
+								747,
+								759
 							]
 						],
 						"settings":
@@ -193,24 +204,25 @@
 					"file": "/Users/tbrock/Development/readrboard/api/utils.py",
 					"settings":
 					{
-						"buffer_size": 5769,
+						"buffer_size": 6207,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								484,
-								484
+								181,
+								216
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0,
-						"translation.y": 1023,
+						"translation.y": 0,
 						"zoom_level": 1
 					},
 					"type": "text"
@@ -220,15 +232,15 @@
 					"file": "/Users/tbrock/Development/readrboard/api/exceptions.py",
 					"settings":
 					{
-						"buffer_size": 142,
+						"buffer_size": 227,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								119,
-								119
+								150,
+								163
 							]
 						],
 						"settings":
@@ -275,15 +287,15 @@
 					"file": "/Users/tbrock/Development/readrboard/rb/models.py",
 					"settings":
 					{
-						"buffer_size": 6539,
+						"buffer_size": 6614,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5819,
-								5819
+								4732,
+								4732
 							]
 						],
 						"settings":
@@ -293,7 +305,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0,
-						"translation.y": 2001,
+						"translation.y": 2059,
 						"zoom_level": 1
 					},
 					"type": "text"
@@ -312,6 +324,34 @@
 							[
 								1587,
 								1587
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0,
+						"translation.y": 0,
+						"zoom_level": 1
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/Users/tbrock/Development/readrboard/rb/admin.py",
+					"settings":
+					{
+						"buffer_size": 2503,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1779,
+								1779
 							]
 						],
 						"settings":

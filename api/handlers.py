@@ -5,14 +5,14 @@ from django.db import transaction
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
 from extras.facebook import GraphAPI, GraphAPIError
 from django.contrib.auth import login
 from django.contrib.auth import authenticate
 from datetime import datetime
-from decorators import JSONStatusResponse
+from decorators import status_response, json_data
 from exceptions import JSONException
 from utils import *
+import hashlib
 
 
 """
@@ -20,7 +20,19 @@ Readrboard Widget API - Uses Piston
 Note: By default, AnonymousBaseHandler has 'allow_methods' only set to 'GET'.
 """
 
-class InteractionsHandler(AnonymousBaseHandler):
+class CreateTempUser(BaseHandler):
+    def read():
+        user = User.objects.create_user(
+            username=CreateUsername(), 
+            email='tempuser@readrboard.com'
+        )
+        return user
+
+class InteractionNodeHandler(BaseHandler):
+    model = InteractionNode
+    fields = ('id', 'body', 'kind')
+
+class InteractionsHandler(BaseHandler):
 
     def read(self, request, **kwargs):
         nodes = InteractionNode.objects.all()
@@ -35,7 +47,7 @@ class InteractionsHandler(AnonymousBaseHandler):
             nodes = nodes.filter(interaction__content__container=containers)
         return nodes
 
-class TokenKillHandler(AnonymousBaseHandler):
+class TokenKillHandler(BaseHandler):
 
     def read(self, request):
         data = json.loads(request.GET['json'])
@@ -43,10 +55,12 @@ class TokenKillHandler(AnonymousBaseHandler):
             socialuser__user=data['user_id']
         ).delete()
 
-class FBHandler(AnonymousBaseHandler):
+class FBHandler(BaseHandler):
 
+    @status_response
     def read(self, request):
         data = json.loads(request.GET['json'])
+        #temp_user = data.get('user_id')
         fb_session = data['fb']
         group_id = data['group_id']
         access_token = fb_session.get('access_token', None)
@@ -54,7 +68,7 @@ class FBHandler(AnonymousBaseHandler):
         if(access_token):
             graph = GraphAPI(access_token)
         else:
-            return HttpResponse("No access token")
+            raise JSONException("No access token")
 
         # Get user profile from facebook graph
         profile = graph.get_object("me")
@@ -67,7 +81,8 @@ class FBHandler(AnonymousBaseHandler):
             group_id,
             fb_session
         )
-        
+
+        #if(temp_user): convertUser(temp_user, django_user)
         readr_token = createToken(django_user.id, social_auth.auth_token, group_id)
 
         return dict(user_id=django_user.id,
@@ -77,15 +92,16 @@ class FBHandler(AnonymousBaseHandler):
             readr_token=readr_token
         )
 
-class InteractionHandler(AnonymousBaseHandler):
+class InteractionHandler(BaseHandler):
     
     def read(self, request, id):
         interaction = Interaction.objects.get(id=id)
         tree = Interaction.get_tree(interaction)
         return tree
 
-class CreateCommentHandler(AnonymousBaseHandler):
+class CreateCommentHandler(BaseHandler):
     
+    @status_response
     def read(self, request):
         data = json.loads(request.GET['json'])
         comment = data['comment']
@@ -94,13 +110,14 @@ class CreateCommentHandler(AnonymousBaseHandler):
         user = request.user
         parent = Interaction.objects.get(id=interaction_id)
         
-        if not checkToken(data): return {"Success": "False", "Error": "Invalid token!"}
+        if not checkToken(data): raise JSONException("Token was invalid")
 
         comment = createInteractionNode(kind='com', body=comment)
         interaction = createInteraction(parent.page, parent.content, user, comment)
 
-class CreateTagHandler(AnonymousBaseHandler):
+class CreateTagHandler(BaseHandler):
 
+    @status_response
     def read(self, request):
         data = json.loads(request.GET['json'])
         tag = data['tag']
@@ -112,7 +129,7 @@ class CreateTagHandler(AnonymousBaseHandler):
         user = User.objects.get(id=data['user_id'])
         page = Page.objects.get(id=page_id)
 
-        if not checkToken(data): return HttpResponse("Invalid token!")
+        if not checkToken(data): raise JSONException("Token was invalid")
         content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
         
         if hash:    
@@ -127,13 +144,19 @@ class CreateTagHandler(AnonymousBaseHandler):
                 new = createInteraction(page, content, user, node)
             elif isinstance(tag, int):
                 node = InteractionNode.objects.get(id=tag)
-                new = createInteraction(page=page, content=content, user=user, interaction_node=node)
+                new = createInteraction(
+                    page=page,
+                    content=content,
+                    user=user,
+                    interaction_node=node
+                )
                 return new.id
         else:
             return HttpResponse("No tag provided to tag handler")
 
-class CreateTagsHandler(AnonymousBaseHandler):
+class CreateTagsHandler(BaseHandler):
 
+    @status_response
     def read(self, request):
         data = json.loads(request.GET['json'])
         unknown_tags = data['unknown_tags'] 
@@ -145,8 +168,11 @@ class CreateTagsHandler(AnonymousBaseHandler):
         
         user = request.user
         page = Page.objects.get(id=page_id)
-        if not checkToken(data): return HttpResponse("Invalid token!")
-        content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
+        if not checkToken(data): raise JSONException("Token was invalid")
+        content = Content.objects.get_or_create(
+            kind=content_type,
+            body=content_data
+        )[0]
         
         if hash:    
             container = Container.objects.get(hash=hash)
@@ -160,12 +186,17 @@ class CreateTagsHandler(AnonymousBaseHandler):
                 interactions.append(new)
         for ktag in known_tags:
             tag = InteractionNode.objects.get(id=ktag)
-            new = createInteraction(page=page, content=content, user=user, interaction_node=tag)
+            new = createInteraction(
+                page=page,
+                content=content,
+                user=user,
+                interaction_node=tag
+            )
             interactions.append(new)
 
         return Interactions
 
-class CreateContainerHandler(AnonymousBaseHandler):
+class CreateContainerHandler(BaseHandler):
     
     def read(self, request):
         result = {}
@@ -175,7 +206,7 @@ class CreateContainerHandler(AnonymousBaseHandler):
             result[hash] = Container.objects.get_or_create(hash=hash, body=hashes[hash])[1]
         return result
 
-class ContainerHandler(AnonymousBaseHandler):
+class ContainerHandler(BaseHandler):
     
     def read(self, request, container=None):
         data = json.loads(request.GET['json'])
@@ -199,7 +230,7 @@ class ContainerHandler(AnonymousBaseHandler):
             
         return dict(known=known, unknown=unknown)
 
-class PageDataHandler(AnonymousBaseHandler):
+class PageDataHandler(BaseHandler):
 
     def read(self, request, pageid=None):
         page = getPage(request, pageid)
@@ -221,7 +252,9 @@ class PageDataHandler(AnonymousBaseHandler):
         toptags = tagcounts.values("tag_count","body").order_by('-tag_count')[:10]
             
         # ---Find top 10 shares on a give page---
-        content = Content.objects.filter(interaction__page=page.id,interaction__interaction_node__kind='shr')
+        content = Content.objects.filter(
+            interaction__page=page.id,
+            interaction__interaction_node__kind='shr')
         sharecounts = content.annotate(Count("id"))
         topshares = sharecounts.values("body").order_by()[:10]  
         
@@ -231,9 +264,15 @@ class PageDataHandler(AnonymousBaseHandler):
         userinteract = usernames.annotate(interactions=Count('interaction'))
         topusers = userinteract.order_by('-interactions')[:10]
         
-        return dict(id=page.id, summary=summary, toptags=toptags, topusers=topusers, topshares=topshares)
+        return dict(
+            id=page.id,
+            summary=summary,
+            toptags=toptags,
+            topusers=topusers,
+            topshares=topshares
+        )
 
-class SettingsHandler(AnonymousBaseHandler):
+class SettingsHandler(BaseHandler):
     model = Group
     fields = ('id',
               'name',

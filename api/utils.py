@@ -12,7 +12,7 @@ def base64_url_decode(inp):
     inp += "="*padding_factor 
     return base64.b64decode(unicode(inp).translate(dict(zip(map(ord, u'-_'), u'+/'))))
 
-def checkFBAuthenticity(fb_session):
+def checkFB(fb_session):
     encoded_sig = fb_session.get('sig')
     payload = fb_session.get('access_token')
     secret = fb_session.get('secret')
@@ -26,6 +26,19 @@ def checkFBAuthenticity(fb_session):
         return None
     else:
         return payload
+
+def convertUser(temp_user, new_user):
+    Interaction.objects.filter(user=temp_user).update(user=new_user)
+    User.objects.get(id=temp_user).delete()
+
+def generate_username():
+    username = str(random.randint(0,1000000))
+
+    try:
+        User.objects.get(username=username)
+        return GenerateUsername()
+    except User.DoesNotExist:
+        return username;
 
 def createSocialAuth(social_user, django_user, group_id, fb_session):
     # Create expiration time from Facebook timestamp.
