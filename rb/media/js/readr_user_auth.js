@@ -69,8 +69,10 @@ RDRAuth = {
 		if ( RDRAuth.rdr_user && RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token ) {
 			console.log('just send back known values');
 			var sendData = {
-				user_id : RDRAuth.rdr_user.user_id,
-				readr_token : RDRAuth.rdr_user.readr_token
+				data : {
+					user_id : RDRAuth.rdr_user.user_id,
+					readr_token : RDRAuth.rdr_user.readr_token
+				}
 			};
 			RDRAuth.notifyParent(sendData, "got_user");
 		} else {
@@ -97,8 +99,10 @@ RDRAuth = {
 
 					console.log('send the temp user up');
 					var sendData = {
-						user_id : RDRAuth.rdr_user.user_id,
-						readr_token : RDRAuth.rdr_user.readr_token
+						data : {
+							user_id : RDRAuth.rdr_user.user_id,
+							readr_token : RDRAuth.rdr_user.readr_token
+						}
 					};
 					RDRAuth.notifyParent(response, "got_user");
 				}

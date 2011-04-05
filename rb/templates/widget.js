@@ -420,15 +420,34 @@ function readrBoard($R){
             checkUser : function(args, callback) {
                 console.log('checking user');
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
-                    console.log('checking user 11111');
                     callback(args);
                 } else {
-                    console.log('checking user 22222');
-                    // RDR.session.showLoginPanel(args, callback);
-                    // RDR.current.args = args;
-                    RDR.current.callback = callback;
+                    $.receiveMessage(
+                        function(e){
+                            console.log( JSON.parse( e.data ) );
+                            var message = JSON.parse( e.data );
 
-                    $('#rdr-xdm-hidden').data('callback', callback);
+                            if ( message.action ) {;
+                                switch (message.action) {
+                                    case "readr_auth":
+                                    case "got_user":
+                                        console.dir(message);
+                                        for ( var i in message.data ) {
+                                            RDR.user[ i ] = message.data[i];
+                                        }
+                                        args.user = RDR.user;
+                                        callback( args );
+                                        // TODO do we def want to remove the login panel if it was showing?
+                                        // user rdr-loginPanel for the temp user message, too
+                                        $('#rdr-loginPanel').remove();
+                                        break;
+                                }
+                            }
+                        },
+                        RDR.session.iframeHost
+                    );
+                    // posting this message then means we'll look in the $.receiveMessage for the response and what to do next
+                    // TODO need a timeout and/or try/catch?
                     $.postMessage(
                         "getUser",
                         RDR.session.iframeHost + "/xdm_status/",
@@ -459,8 +478,10 @@ function readrBoard($R){
                                         RDR.user[ i ] = message.data[i];
                                     }
                                     
-                                    RDR.current.callback();
+                                    RDR.current.callback( RDR.user );
                                     
+                                    // TODO do we def want to remove the login panel if it was showing?
+                                    // user rdr-loginPanel for the temp user message, too
                                     $('#rdr-loginPanel').remove();
                                     break;
     					    }
@@ -1107,18 +1128,18 @@ function readrBoard($R){
 				
 				// tag, rindow, settings, callback
 
-                RDR.session.checkUser( args, function() {
+                RDR.session.checkUser( args, function( params ) {
     
                     // get the text that was highlighted
-                    var content = $.trim( args.settings.content );
-                    var container = $.trim( args.settings.container );
+                    var content = $.trim( params.settings.content );
+                    var container = $.trim( params.settings.container );
 
 
                     var sendData = {
-                        "tag" : args.tag,
+                        "tag" : params.tag,
                         "hash": container,
                         "content" : content,
-                        "content_type" : args.settings.content_type,
+                        "content_type" : params.settings.content_type,
                         "user_id" : RDR.user.user_id,
                         "readr_token" : RDR.user.readr_token,
                         "group_id" : RDR.groupPermData.group_id,
@@ -1137,10 +1158,8 @@ function readrBoard($R){
                             //do we really want to chain pass these through?  Or keep them in a shared scope?
                             //RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
 
-                            console.log(msg);
-                            console.log(args);
-                            RDR.actions.shareStart(args.rindow, args.tag);
-                            args.callback();
+                            RDR.actions.shareStart(params.rindow, params.tag);
+                            // params.callback();
                         },
                         //for now, ignore error and carry on with mockup
                         error: function() {
