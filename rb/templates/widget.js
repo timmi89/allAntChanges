@@ -478,8 +478,6 @@ function readrBoard($R){
                                         RDR.user[ i ] = message.data[i];
                                     }
                                     
-                                    RDR.current.callback( RDR.user );
-                                    
                                     // TODO do we def want to remove the login panel if it was showing?
                                     // user rdr-loginPanel for the temp user message, too
                                     $('#rdr-loginPanel').remove();
