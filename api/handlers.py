@@ -6,14 +6,11 @@ from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from extras.facebook import GraphAPI, GraphAPIError
-from django.contrib.auth import login
-from django.contrib.auth import authenticate
-from datetime import datetime
 from decorators import status_response, json_data
 from exceptions import JSONException
 from utils import *
-import hashlib
-
+from userutils import *
+from token import *
 
 """
 Readrboard Widget API - Uses Piston
@@ -69,7 +66,7 @@ class FBHandler(BaseHandler):
     @status_response
     def read(self, request):
         data = json.loads(request.GET['json'])
-        #temp_user = data.get('user_id')
+
         fb_session = data['fb']
         group_id = data['group_id']
         access_token = fb_session.get('access_token', None)
