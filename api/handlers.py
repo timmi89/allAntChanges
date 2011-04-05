@@ -198,6 +198,7 @@ class CreateTagsHandler(BaseHandler):
 
 class CreateContainerHandler(BaseHandler):
     
+    @status_response
     def read(self, request):
         result = {}
         data = json.loads(request.GET['json'])
@@ -208,6 +209,7 @@ class CreateContainerHandler(BaseHandler):
 
 class ContainerHandler(BaseHandler):
     
+    @status_response
     def read(self, request, container=None):
         data = json.loads(request.GET['json'])
         known = {}
@@ -232,6 +234,7 @@ class ContainerHandler(BaseHandler):
 
 class PageDataHandler(BaseHandler):
 
+    @status_response
     def read(self, request, pageid=None):
         page = getPage(request, pageid)
         
@@ -294,6 +297,7 @@ class SettingsHandler(BaseHandler):
               'css_url',
              )
              
+    @status_response
     def read(self, request, group=None):
         host = request.get_host()
         # Slice off port from hostname
