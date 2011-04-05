@@ -32,7 +32,7 @@ function readrBoard($R){
             full_name:		"",
             img_url:        "", 
             readr_token: 	"",
-            user_id:        1
+            user_id:        ""
         },
         errors : {
             actionbar: {
@@ -102,6 +102,12 @@ function readrBoard($R){
 				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
 				if ( $new_rindow.length == 0 ) { // there's no rewritable window available, so make one
 					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable" ></div>');
+                    if ( settings.id ) {
+                        $('#'+settings.id).remove(); // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
+                                                     // reason I'm adding this: want a login panel with an ID and data attached to it, so after a user
+                                                     // logs in, the login rindow knows what function to then call
+                        $new_rindow.attr('id',settings.id);
+                    }
 					$('body').append( $new_rindow );
 				}
 
@@ -410,6 +416,10 @@ function readrBoard($R){
         },
 		session : {
 			iframeHost : "http://readr.local:8080", // TODO put this in a template var
+            checkUser : function(args, callback) {
+                if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) callback(args);
+                else RDR.session.showLoginPanel(args, callback);
+            },
 			createXDMframe : function() {
 				var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
 				parentUrl = window.location.href;
@@ -423,18 +433,6 @@ function readrBoard($R){
 					    console.log( JSON.parse( e.data ) );
                         var message = JSON.parse( e.data );
 
-
-						// var received = e.data.split('&'),
-						// 	message = {};
-
-						// for ( var i in received) {
-						// 	var thisPair = received[i].split('=');
-						// 	message[thisPair[0]] = thisPair[1];
-						// }
-      //                   console.log('---- message --');
-      //       console.dir(message.data);						
-						// the message should have an action associated.  use that to determine what to do.
-    console.dir(message.data);
 						if ( message.action ) {
 						switch (message.action) {
 						    case "readr_auth":
@@ -443,6 +441,13 @@ function readrBoard($R){
                                 RDR.user.img_url = message.data.img_url;
                                 RDR.user.readr_token = message.data.readr_token;
                                 RDR.user.user_id = message.data.user_id;
+                                
+                                $rindow = $('#rdr-loginPanel');
+                                if ( $rindow.length == 1 && $rindow.data('callback') ) {
+                                    // call the callback function attached to the login rindow, using the arguments also attached to that rindow.
+                                    $rindow.data('callback')();
+                                    $rindow.remove();
+                                }
 						        break;
                             case "temp_user":
                                 // RDR.user.first_name = message.data.first_name;
@@ -459,9 +464,9 @@ function readrBoard($R){
 
 			},
 			login : function() {},
-			showLoginPanel : function(settings) {
+			showLoginPanel : function(args, callback) {
 
-				$('.rdr_rewritable').removeClass('rdr_rewritable');
+                $('.rdr_rewritable').removeClass('rdr_rewritable');
 
 
                 //todo: weird, why did commenting this line out not do anything?...look into it
@@ -470,9 +475,15 @@ function readrBoard($R){
 
                 var rindow = RDR.rindow.draw({
                     left:100,
-                    top:100
+                    top:100,
+                    id: "rdr-loginPanel"
                 });
 
+                // store the arguments and callback function that were in progress when this Login panel was called
+                rindow.data( 'args', args );
+                rindow.data( 'callback', callback );
+
+                // create the iframe containing the login panel
 				var $loginHtml = $('<div class="rdr_login" />'),
 				iframeUrl = RDR.session.iframeHost + "/fblogin/",
 				parentUrl = window.location.href;
@@ -1088,42 +1099,46 @@ function readrBoard($R){
 				
 				// tag, rindow, settings, callback
 
-                // get the text that was highlighted
-                var content = $.trim( args.settings.content );
-				var container = $.trim( args.settings.container );
+                RDR.session.checkUser( args, function() {
+    
+                    // get the text that was highlighted
+                    var content = $.trim( args.settings.content );
+                    var container = $.trim( args.settings.container );
 
-				var sendData = {
-					"tag" : args.tag,
-					"hash": container,
-					"content" : content,
-					"content_type" : args.settings.content_type,
-					"user_id" : RDR.user.user_id,
-					"readr_token" : RDR.user.readr_token,
-					"group_id" : RDR.groupPermData.group_id,
-					"page_id" : RDR.page.id
-				};
 
-                // send the data!
-                $.ajax({
-                    url: "/api/tag/create/",
-                    type: "get",
-                    contentType: "application/json",
-					dataType: "jsonp",
-                    data: { json: JSON.stringify(sendData) },
-                    complete: function(msg) {
-                        //[eric] - if we want these params still we need to get them from args:
-                        //do we really want to chain pass these through?  Or keep them in a shared scope?
-                        //RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
+                    var sendData = {
+                        "tag" : args.tag,
+                        "hash": container,
+                        "content" : content,
+                        "content_type" : args.settings.content_type,
+                        "user_id" : RDR.user.user_id,
+                        "readr_token" : RDR.user.readr_token,
+                        "group_id" : RDR.groupPermData.group_id,
+                        "page_id" : RDR.page.id
+                    };
 
-                        console.log(msg);
-                        console.log(args);
-                        RDR.actions.shareStart(args.rindow, args.tag);
-						args.callback();
-                    },
-                    //for now, ignore error and carry on with mockup
-                    error: function() {
-                        console.log("whoa, dude, you are totally not a user.  " );
-                    }
+                    // send the data!
+                    $.ajax({
+                        url: "/api/tag/create/",
+                        type: "get",
+                        contentType: "application/json",
+                        dataType: "jsonp",
+                        data: { json: JSON.stringify(sendData) },
+                        complete: function(msg) {
+                            //[eric] - if we want these params still we need to get them from args:
+                            //do we really want to chain pass these through?  Or keep them in a shared scope?
+                            //RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
+
+                            console.log(msg);
+                            console.log(args);
+                            RDR.actions.shareStart(args.rindow, args.tag);
+                            args.callback();
+                        },
+                        //for now, ignore error and carry on with mockup
+                        error: function() {
+                            console.log("an error occurred while trying to tag");
+                        }
+                    });
                 });
             },
             startSelect : function(e) {
