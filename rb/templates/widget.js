@@ -21,6 +21,7 @@ function readrBoard($R){
 
     // none of this obj's properties are definite.  just jotting down a few ideas.
     RDR = {
+        current : {},
         content_nodes : {},
         groupPermData: {
             group_id : "{{ group_id }}",  //make group_id a string partly to make my IDE happy - getting sent as ajax anyway
@@ -417,9 +418,17 @@ function readrBoard($R){
 		session : {
 			iframeHost : "http://readr.local:8080", // TODO put this in a template var
             checkUser : function(args, callback) {
-                if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) callback(args);
-                else {
+                console.log('checking user');
+                if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
+                    console.log('checking user 11111');
+                    callback(args);
+                } else {
+                    console.log('checking user 22222');
                     // RDR.session.showLoginPanel(args, callback);
+                    // RDR.current.args = args;
+                    RDR.current.callback = callback;
+
+                    $('#rdr-xdm-hidden').data('callback', callback);
                     $.postMessage(
                         "getUser",
                         RDR.session.iframeHost + "/xdm_status/",
@@ -442,30 +451,19 @@ function readrBoard($R){
                         var message = JSON.parse( e.data );
 
 						if ( message.action ) {
-						switch (message.action) {
-						    case "readr_auth":
-                                RDR.user.first_name = message.data.first_name;
-                                RDR.user.full_name = message.data.full_name;
-                                RDR.user.img_url = message.data.img_url;
-                                RDR.user.readr_token = message.data.readr_token;
-                                RDR.user.user_id = message.data.user_id;
-                                
-                                $rindow = $('#rdr-loginPanel');
-                                if ( $rindow.length == 1 && $rindow.data('callback') ) {
-                                    // call the callback function attached to the login rindow, using the arguments also attached to that rindow.
-                                    $rindow.data('callback')();
-                                    $rindow.remove();
-                                }
-						        break;
-                            case "got_user":
-                            console.log('--parent got the user');
-                                // RDR.user.first_name = message.data.first_name;
-                                // RDR.user.full_name = message.data.full_name;
-                                // RDR.user.img_url = message.data.img_url;
-                                // RDR.user.readr_token = message.data.readr_token;
-                                // RDR.user.user_id = message.data.user_id;
-                                break;
-					    }
+    						switch (message.action) {
+    						    case "readr_auth":
+                                case "got_user":
+                                    console.dir(message);
+                                    for ( var i in message.data ) {
+                                        RDR.user[ i ] = message.data[i];
+                                    }
+                                    
+                                    RDR.current.callback();
+                                    
+                                    $('#rdr-loginPanel').remove();
+                                    break;
+    					    }
 				        }
 					},
 					RDR.session.iframeHost
