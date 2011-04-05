@@ -422,7 +422,7 @@ function readrBoard($R){
 					function(e){
 					    console.log( JSON.parse( e.data ) );
                         var message = JSON.parse( e.data );
-                        
+
 
 						// var received = e.data.split('&'),
 						// 	message = {};
@@ -524,7 +524,7 @@ function readrBoard($R){
                         host_name : window.location.hostname
                     },
                     success: function(data, textStatus, XHR) {
-                        RDR.group = data;
+                        RDR.group = data.data;
 						RDR.group.group_id
 
                         //todo:just for testing for now: - add defaults:
@@ -613,7 +613,7 @@ function readrBoard($R){
 						canonical_url: canonical
 					},
 					success: function(pagedata) {
-						RDR.page = pagedata;
+						RDR.page = pagedata.data;
 					}
 				});
                
@@ -751,7 +751,8 @@ function readrBoard($R){
                     data: {
                     	json: JSON.stringify(sendData)
                     },
-                    success: function(data) {
+                    success: function(response) {
+                        var data = response.data;
     					// TODO: Eric, should this go in a jquery queue?
     					var sendData = {};
     					sendData.hashes = {};
@@ -771,8 +772,8 @@ function readrBoard($R){
     			                    data: {
     			                     	json: JSON.stringify(sendData)
     			                     },
-    			                    success: function(res) {
-    			                        console.dir(res);
+    			                    success: function(response) {
+    			                        console.dir(response);
     			                    }
     						});
     					}
