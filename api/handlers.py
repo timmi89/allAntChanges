@@ -33,7 +33,8 @@ class InteractionNodeHandler(BaseHandler):
     fields = ('id', 'body', 'kind')
 
 class InteractionsHandler(BaseHandler):
-
+    
+    @status_response
     def read(self, request, **kwargs):
         nodes = InteractionNode.objects.all()
         if 'kind' in kwargs:
