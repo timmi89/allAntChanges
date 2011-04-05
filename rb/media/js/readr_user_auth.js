@@ -19,6 +19,14 @@ RDRAuth = {
 			parent
 		);	
 	},
+	notifyParent = function(response, action) {
+		response.action = action;
+
+		// send this info up to the widget!
+		RDRAuth.postMessage({
+			message: JSON.stringify( response )
+		});
+	},
 	getReadrToken: function(fb_response) {
 		if ( fb_response ) {
             var fb_session = (fb_response.session) ? fb_response.session:fb_response
@@ -35,7 +43,7 @@ RDRAuth = {
 					json: JSON.stringify( sendData )
 				},
 				success: function(response){
-					RDRAuth.notifyParent(response);
+					RDRAuth.notifyParent(response, "readr_auth");
 				}
 			});
 		} else {

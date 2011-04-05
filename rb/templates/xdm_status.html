@@ -19,14 +19,6 @@
 	<div id="fb-root"></div>
      <script src="http://connect.facebook.net/en_US/all.js" type="text/javascript"s></script>
      <script type="text/javascript">
-		RDRAuth.notifyParent = function(response) {
-			response.action = "readr_auth";
-
-			// send this info up to the widget!
-			RDRAuth.postMessage({
-				message: JSON.stringify( response )
-			});
-		}
 		RDRAuth.FBLoginResponse = function(response) {
 			if (response.session) {
 				//user is logged in

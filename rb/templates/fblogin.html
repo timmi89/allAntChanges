@@ -29,17 +29,11 @@
 		<br/><br/>
 		<a href="javascript:void(0);" onclick="RDRAuth.getReadrToken();">Send Facebook Response again</a>
 	</div>
-	<a href="javascript:void(0);" onclick="RDRAuth.postMessageTest();">test postMessage</a>
+	<p>
+		<a href="javascript:void(0);" onclick="RDRAuth.tempUser();">Create Temp User</a>
+	</p>
      <script src="http://connect.facebook.net/en_US/all.js" type="text/javascript"s></script>
      <script type="text/javascript">
-		RDRAuth.notifyParent = function(response) {
-			response.action = "readr_auth";
-
-			// send this info up to the widget!
-			RDRAuth.postMessage({
-				message: JSON.stringify( response )
-			});
-		}
 		RDRAuth.FBLoginResponse = function(response) {
 			if (response.session) {
 				//user is logged in
@@ -50,6 +44,24 @@
 				// user is not logged in
 				// TODO do something.  post to parent that there was a bug logging in to FB
 			}	
+		}
+
+		RDRAuth.tempUser = function() {
+			var sendData = {
+				group_id : qs_args.group_id
+			};
+			$.ajax({
+				url: "/api/tempuser/",
+				type: "get",
+				contentType: "application/json",
+				dataType: "jsonp",
+				data: {
+					json: JSON.stringify( sendData )
+				},
+				success: function(response){
+					RDRAuth.notifyParent(response, "temp_user");
+				}
+			});
 		}
 		
 		FB.init({ 

@@ -434,6 +434,7 @@ function readrBoard($R){
       //                   console.log('---- message --');
       //       console.dir(message.data);						
 						// the message should have an action associated.  use that to determine what to do.
+    console.dir(message.data);
 						if ( message.action ) {
 						switch (message.action) {
 						    case "readr_auth":
@@ -443,6 +444,13 @@ function readrBoard($R){
                                 RDR.user.readr_token = message.data.readr_token;
                                 RDR.user.user_id = message.data.user_id;
 						        break;
+                            case "temp_user":
+                                // RDR.user.first_name = message.data.first_name;
+                                // RDR.user.full_name = message.data.full_name;
+                                // RDR.user.img_url = message.data.img_url;
+                                // RDR.user.readr_token = message.data.readr_token;
+                                // RDR.user.user_id = message.data.user_id;
+                                break;
 					    }
 				        }
 					},
