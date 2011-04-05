@@ -1152,6 +1152,7 @@ function readrBoard($R){
                         dataType: "jsonp",
                         data: { json: JSON.stringify(sendData) },
                         complete: function(msg) {
+                            console.dir(msg);
                             //[eric] - if we want these params still we need to get them from args:
                             //do we really want to chain pass these through?  Or keep them in a shared scope?
                             //RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
