@@ -20,20 +20,28 @@ Readrboard Widget API - Uses Piston
 Note: By default, AnonymousBaseHandler has 'allow_methods' only set to 'GET'.
 """
 
-class CreateTempUser(BaseHandler):
-    def read():
+class TempUserHandler(BaseHandler):
+
+    @status_response
+    def read(self, request):
+        data = json.loads(request.GET['json'])
+        group_id = data['group_id']
         user = User.objects.create_user(
-            username=CreateUsername(), 
+            username=generateUsername(), 
             email='tempuser@readrboard.com'
         )
-        return user
+        readr_token = createToken(user.id, 'R3dRB0aRdR0X', group_id)
+        return dict(
+            user_id=user.id,
+            readr_token=readr_token
+        )
 
 class InteractionNodeHandler(BaseHandler):
     model = InteractionNode
     fields = ('id', 'body', 'kind')
 
 class InteractionsHandler(BaseHandler):
-    
+
     @status_response
     def read(self, request, **kwargs):
         nodes = InteractionNode.objects.all()
@@ -86,7 +94,8 @@ class FBHandler(BaseHandler):
         #if(temp_user): convertUser(temp_user, django_user)
         readr_token = createToken(django_user.id, social_auth.auth_token, group_id)
 
-        return dict(user_id=django_user.id,
+        return dict(
+            user_id=django_user.id,
             first_name=django_user.first_name,
             full_name=social_user.full_name,
             img_url=social_user.img_url,

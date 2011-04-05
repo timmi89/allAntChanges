@@ -177,6 +177,9 @@ class SocialUser(models.Model):
     bio = models.TextField(blank=True)
     img_url = models.CharField(max_length=255, blank=True)
 
+    def __unicode__(self):
+        return self.user.username
+
     class Meta:
         unique_together = ('provider', 'uid')
 
@@ -187,17 +190,3 @@ class SocialAuth(models.Model):
 
     class Meta:
         unique_together = ('auth_token', 'expires')
-
-class LazyUserManager(models.Manager):
-    def create_lazy_user(self, username):
-        """
-        Create a lazy user.
-        """
-        user = User.objects.create_user(username, '')
-        self.create(user=user)
-        return user
-
-class LazyUser(models.Model):
-    user = models.ForeignKey('auth.User', unique=True)
-    objects = LazyUserManager()
-

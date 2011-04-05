@@ -15,6 +15,7 @@ Interaction = Resource(handler=InteractionHandler)
 CreateComments = Resource(handler=CreateCommentHandler)
 FBLogin = Resource(handler=FBHandler)
 TokenKill = Resource(handler=TokenKillHandler)
+TempUser = Resource(handler=TempUserHandler)
 
 # Organized Resources
 Interactions = Resource(handler=InteractionsHandler)
@@ -37,8 +38,9 @@ urlpatterns = patterns('',
     # Facebook
     url(r'^fb/$', FBLogin),
     
-    # Token auth
+    # Auth
     url(r'^token/kill/$', TokenKill),
+    url(r'^tempuser/$', TempUser),
 
     # Widget
     url(r'^page/', PageData),
