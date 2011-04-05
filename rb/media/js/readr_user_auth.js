@@ -19,7 +19,7 @@ RDRAuth = {
 			parent
 		);	
 	},
-	notifyParent = function(response, action) {
+	notifyParent: function(response, action) {
 		response.action = action;
 
 		// send this info up to the widget!
