@@ -1,4 +1,5 @@
 from readrboard.rb.models import *
+from datetime import datetime
 
 def convertUser(temp_user, new_user):
     Interaction.objects.filter(user=temp_user).update(user=new_user)

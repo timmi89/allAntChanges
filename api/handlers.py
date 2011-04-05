@@ -88,7 +88,7 @@ class FBHandler(BaseHandler):
             fb_session
         )
 
-        if(temp_user): convertUser(temp_user, django_user)
+        #if(temp_user): convertUser(temp_user, django_user)
         readr_token = createToken(django_user.id, social_auth.auth_token, group_id)
 
         return dict(
