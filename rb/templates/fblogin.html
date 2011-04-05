@@ -45,41 +45,30 @@
 				// TODO do something.  post to parent that there was a bug logging in to FB
 			}	
 		}
-
-		RDRAuth.tempUser = function() {
-			var sendData = {
-				group_id : qs_args.group_id
-			};
-			$.ajax({
-				url: "/api/tempuser/",
-				type: "get",
-				contentType: "application/json",
-				dataType: "jsonp",
-				data: {
-					json: JSON.stringify( sendData )
-				},
-				success: function(response){
-					RDRAuth.notifyParent(response, "temp_user");
-				}
-			});
-		}
 		
 		FB.init({ 
 			appId:'{{ fb_client_id }}', cookie:true, 
 			status:true, xfbml:true 
 		});
 
-		FB.getLoginStatus(function(response) {
-	  		if (response.session) {
-				//user is logged in
-				$('#fb-logged-in').show();
-				$('#fb-login-button').hide();
-				RDRAuth.getReadrToken(response);
-	  		} else {
-				$('#fb-logged-in').hide();
-				$('#fb-login-button').show();
-	  		}
-		});
+		var fb_session = FB.getSession();
+		if ( fb_session ) {
+			RDRAuth.getReadrToken( fb_session );
+		} else {
+			FB.getLoginStatus(function(response) {
+		  		if (response.session) {
+					//user is logged in
+					$('#fb-logged-in').show();
+					$('#fb-login-button').hide();
+					RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
+		  		} else {
+		  			// TODO debug only?
+		  			// probably just throw a general error message
+					$('#fb-logged-in').hide();
+					$('#fb-login-button').show();
+	  			}
+			});
+		}
 	</script>
    </body>
 </html>

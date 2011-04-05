@@ -418,12 +418,20 @@ function readrBoard($R){
 			iframeHost : "http://readr.local:8080", // TODO put this in a template var
             checkUser : function(args, callback) {
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) callback(args);
-                else RDR.session.showLoginPanel(args, callback);
+                else {
+                    // RDR.session.showLoginPanel(args, callback);
+                    $.postMessage(
+                        "getUser",
+                        RDR.session.iframeHost + "/xdm_status/",
+                        window.frames['rdr-xdm-hidden']
+                    );
+                }
             },
 			createXDMframe : function() {
 				var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
-				parentUrl = window.location.href;
-				$xdmIframe = $('<iframe id="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
+				parentUrl = window.location.href,
+                parentHost = window.location.protocol + "//" + window.location.host;
+				$xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
 				);
 				$('body').append( $xdmIframe );
 
@@ -449,7 +457,8 @@ function readrBoard($R){
                                     $rindow.remove();
                                 }
 						        break;
-                            case "temp_user":
+                            case "got_user":
+                            console.log('--parent got the user');
                                 // RDR.user.first_name = message.data.first_name;
                                 // RDR.user.full_name = message.data.full_name;
                                 // RDR.user.img_url = message.data.img_url;
@@ -486,9 +495,10 @@ function readrBoard($R){
                 // create the iframe containing the login panel
 				var $loginHtml = $('<div class="rdr_login" />'),
 				iframeUrl = RDR.session.iframeHost + "/fblogin/",
-				parentUrl = window.location.href;
+				parentUrl = window.location.href,
+                parentHost = window.location.protocol + "//" + window.location.host;
 				$loginHtml.append( '<h1>Log In</h1>',
-				'<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="300" height="300" />'
+				'<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="300" height="300" />'
 				);
 				
 				rindow.animate({
