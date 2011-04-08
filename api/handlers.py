@@ -134,15 +134,20 @@ class TagHandler(BaseHandler):
             content_data = data['content']
             content_type = data['content_type']
             page_id = data['page_id']
+            group_id = data['group_id']
             
             try:
                 user = User.objects.get(id=data['user_id'])
             except User.DoesNotExist, User.MultipleObjectsReturned:
-                raise JSONException("Error getting user!")
+                raise JSONException(u"Error getting user!")
             try:
                 page = Page.objects.get(id=page_id)
             except Page.DoesNotExist, Page.MultipleObjectsReturned:
-                raise JSONException("Error getting page!")
+                raise JSONException(u"Error getting page!")
+            try:
+                group = Group.objects.get(id=group_id)
+            except Group.DoesNotExist, Group.MultipleObjectsReturned:
+                raise JSONException(u"Error getting group!")
 
             if not checkToken(data): raise JSONException("Token was invalid")
             content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
@@ -155,16 +160,17 @@ class TagHandler(BaseHandler):
             if tag:
                 if isinstance(tag, unicode):
                     node = createInteractionNode(kind='tag', body=tag)
-                    new = createInteraction(page, content, user, node)
+                    new = createInteraction(page, content, user, node, group)
                 elif isinstance(tag, int):
                     node = InteractionNode.objects.get(id=tag)
                     new = createInteraction(
                         page=page,
                         content=content,
                         user=user,
-                        interaction_node=node
+                        interaction_node=node,
+                        group=group
                     )
-                return new.id
+                return new
             else:
                 return JSONException("No tag provided to tag handler")
 

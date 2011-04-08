@@ -77,6 +77,9 @@ class Group(models.Model):
     bookmark = models.OneToOneField(Feature, related_name = 'Bookmark Feature')
     search = models.OneToOneField(Feature, related_name = 'Search Feature')
 
+    # temporary user settings
+    temp_interact = models.IntegerField(default=5)
+
     # css
     css_url = models.URLField(blank=True,verify_exists=False)
     
