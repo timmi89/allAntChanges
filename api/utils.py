@@ -32,14 +32,15 @@ def createInteractionNode(kind, body):
 def deleteInteraction(page, content, user, interaction_node):
     pass
 
-def createInteraction(page, content, user, interaction_node, parent=None):
+def createInteraction(page, content, user, interaction_node, group, parent=None):
     if content and user and interaction_node:
         # Check unique content_id, user_id, page_id, interaction_node_id
         interactions = Interaction.objects.filter(user=user)
+        num_interactions = len(interactions)
         if len(SocialUser.objects.filter(id=user.id)) == 0:
-            print "Temporary user trying to create interaction"
-            if not len(interactions) <10:
-                raise JSONException("10 Interactions already!")
+            max_interact = group.temp_interact
+            if num_interactions >= max_interact:
+                raise JSONException(u"Temporary user interaction limit reached: " + unicode(max_interact))
         try:
             existing = interactions.get(
                 page=page,
@@ -68,6 +69,5 @@ def createInteraction(page, content, user, interaction_node, parent=None):
                            user=user, 
                            interaction_node=interaction_node, 
                            created=now)
-        print "*******NEW******", new
         if new == None: raise JSONException("Error creating interaction")
-        return new
+        return dict(id=new.id, num_interactions=num_interactions+1)
