@@ -212,10 +212,8 @@ function readrBoard($R){
                     if(idx===0){$item.prepend($('<span class="rdr_icon_divider" />'))}
                 });
 
-                //'<a href="javascript:void(0);" onclick="(function(){RDR.actions.sentimentBox({content_type:\''+settings.content_type+'\',content:\''+settings.content+'\'});/*RDR.actions.shareStart();*/}())" class="rdr_icon_comment">Comment On This</a>' +
-
                 //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
-                //but we're not sure yet if it's going to be the same function as this shareStart() above..
+                //but we're not sure yet if it's going to be the same function as this shareStart () above..
 
                 $('body').append( $new_actionbar );
                 $new_actionbar.find('li').hover(
@@ -856,8 +854,8 @@ function readrBoard($R){
                     if (event.keyCode == '13' || event.keyCode == '188' ) { //enter or comma
                         $whyPanel.find('.rdr_body').empty();
                         var customTag = {
-                            name: $(this).val(),
-                            tid: false
+                            content: $(this).val(),
+                            name: $(this).val()
                         }
                         RDR.actions.rateSend({ tag:customTag, rindow:rindow, settings:settings, callback: function() {
                                 // todo: at this point, cast the tag, THEN call this in the tag success function:
@@ -894,7 +892,10 @@ function readrBoard($R){
                 ////populate blesed_tags
                 $.each(RDR.group.blessed_tags, function(idx, val){
                     var $li = $('<li />').data({
-                        'tag':parseInt( val.tid )
+                        'tag':{
+                            content:parseInt( val.tid ),
+                            name:val.name
+                        }
                     }).append('<a href="javascript:void(0);">'+val.name+'</a><div class="rdr_arrow"></div>');
                     
                     $blessedTagBox.children('ul.rdr_tags').append($li);
@@ -1032,7 +1033,7 @@ function readrBoard($R){
                             console.dir(response);
                             //[eric] - if we want these params still we need to get them from args:
                             //do we really want to chain pass these through?  Or keep them in a shared scope?
-                            //RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
+                            //RDR.actions.shareStart (rindow, known_tags, unknown_tags_arr);
 
                             RDR.actions.shareStart( {rindow:params.rindow, tag:params.tag, int_id:response.data });
                             // params.callback();
@@ -1045,9 +1046,12 @@ function readrBoard($R){
                 });
             },
             shareStart : function(args) {
+                console.log('------------rags----------');
+                console.dir(args);
                 var rindow = args.rindow, 
                     tag = args.tag,
                     int_id = args.int_id;
+                    console.dir(tag);
                 //todo: for now, I'm just passing in known_tags as a param, but check with Porter about this model.
                 //Where is the 'source'/'point of origin' that is the authority of known_tags - I'd think we'd want to just reference that..
 
@@ -1134,10 +1138,10 @@ function readrBoard($R){
                 $shareDialogueBox.append($commentBox, $socialBox);
                 var $commentFeedback = $('<div class="rdr_commentFeedback rdr_sntPnl_padder"> <div class="rdr_tagFeedback">You tagged this '+tag.name+'</div> <div class="rdr_commentComplete"></div> </div>');
                 rindow.find('.rdr_whyPanel .rdr_body').append($commentFeedback, $shareDialogueBox);
+                rindow.animate( {width:rindow.settings.pnlWidth * 2}, rindow.settings.animTime );
                 /*
                 TUMBLR SHARING URLs
                 http://www.tumblr.com/share?v=3&u=http%3A%2F%2Fjsbeautifier.org%2F&t=Online%20javascript%20beautifier&s=
-
                 -- QUOTE --
                 http://www.tumblr.com/share?v=3&
                 type=quote&
