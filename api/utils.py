@@ -25,7 +25,7 @@ def getPage(request, pageid=None):
 
 def createInteractionNode(kind, body):
     if kind and body:
-            node = InteractionNode.objects.get_or_create(kind=kind, body=comment)[0]
+            node = InteractionNode.objects.get_or_create(kind=kind, body=body)[0]
             print "Success creating InteractionNode with id %s" % node.id
             return node
 
@@ -66,5 +66,6 @@ def createInteraction(page, content, user, interaction_node, parent=None):
                            user=user, 
                            interaction_node=interaction_node, 
                            created=now)
+        print "*******NEW******", new
         if new == None: raise JSONException("Error creating interaction")
         return new

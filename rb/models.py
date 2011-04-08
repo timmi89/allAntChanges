@@ -43,13 +43,20 @@ class Feature(models.Model):
     flash = models.BooleanField()
 
     def __unicode__(self):
-        return u"Feature(Text: {0}, Images: {1}, Flash: {2})".format(self.text, self.images, self.flash) 
+        return u"Feature(Text: {0}, Images: {1}, Flash: {2})".format(self.text, self.images, self.flash)
+
+class InteractionNode(models.Model):
+    kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)
+    body = models.TextField(unique=True)
+    
+    def __unicode__(self):
+        return u"Node(Type: {0}, Body: {1})".format(self.kind, self.body[:25])
 
 class Group(models.Model):
     name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=25, unique=True)
     language = models.CharField(max_length=25,default="en")
-    blessed_tags = models.CharField(max_length=250,blank=True)
+    blessed_tags = models.ManyToManyField(InteractionNode)
     valid_domains = models.CharField(max_length=250,blank=True)
 
     # black/whitelist fields
@@ -118,13 +125,6 @@ class Container(models.Model):
     
     class Meta:
         ordering = ['id']
-    
-class InteractionNode(models.Model):
-    kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)
-    body = models.TextField(unique=True)
-    
-    def __unicode__(self):
-        return u"Node(Type: {0}, Body: {1})".format(self.kind, self.body[:25])
 
 class Interaction(DateAwareModel, UserAwareModel, MP_Node):
     page = models.ForeignKey(Page)

@@ -145,7 +145,7 @@ class CreateTagHandler(BaseHandler):
 
         new = None
         if tag:
-            if isinstance(tag, str):
+            if isinstance(tag, unicode):
                 node = createInteractionNode(kind='tag', body=tag)
                 new = createInteraction(page, content, user, node)
             elif isinstance(tag, int):
