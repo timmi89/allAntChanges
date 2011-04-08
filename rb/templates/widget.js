@@ -422,34 +422,8 @@ function readrBoard($R){
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
                     callback(args);
                 } else {
-                    // replaces last $.receiveMessage def
-                    $.receiveMessage(
-                        function(e){
-                            console.log( JSON.parse( e.data ) );
-                            var message = JSON.parse( e.data );
+                    // RECEIVE MESSAGE WILL 'execute'
 
-                            if ( message.action ) {;
-                                switch (message.action) {
-                                    // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
-                                    // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
-                                    case "fb_logged_in":
-                                    case "known_user":
-                                    case "got_temp_user":
-                                        console.dir(message.data);
-                                        for ( var i in message.data ) {
-                                            RDR.user[ i ] = message.data[i];
-                                        }
-                                        args.user = RDR.user;
-                                        callback( args );
-                                        // TODO do we def want to remove the login panel if it was showing?
-                                        // user rdr-loginPanel for the temp user message, too
-                                        $('#rdr-loginPanel').remove();
-                                        break;
-                                }
-                            }
-                        },
-                        RDR.session.iframeHost
-                    );
                     // posting this message then means we'll look in the $.receiveMessage for the response and what to do next
                     // TODO need a timeout and/or try/catch?
                     $.postMessage(
@@ -468,30 +442,36 @@ function readrBoard($R){
 				$('body').append( $xdmIframe );
 
 				// this is the postMessage receiver for ALL messages posted.
-				$.receiveMessage(
-					function(e){
-					    console.log( JSON.parse( e.data ) );
+                // TODO: put this elsewhere so it's more logically placed and easier to find??
+                $.receiveMessage(
+                    function(e){
+                        console.log( JSON.parse( e.data ) );
                         var message = JSON.parse( e.data );
 
-						if ( message.action ) {
-    						switch (message.action) {
-    						    case "fb_logged_in":
+                        if ( message.action ) {;
+                            switch (message.action) {
+                                // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
+                                // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
+                                case "fb_logged_in":
                                 case "known_user":
                                 case "got_temp_user":
                                     console.dir(message.data);
                                     for ( var i in message.data ) {
                                         RDR.user[ i ] = message.data[i];
                                     }
-                                    
+                                    if ( typeof args != "undefined" ) {
+                                        args.user = RDR.user;
+                                        callback( args );
+                                    }
                                     // TODO do we def want to remove the login panel if it was showing?
                                     // user rdr-loginPanel for the temp user message, too
                                     $('#rdr-loginPanel').remove();
                                     break;
-    					    }
-				        }
-					},
-					RDR.session.iframeHost
-				);
+                            }
+                        }
+                    },
+                    RDR.session.iframeHost
+                );
 
 			},
 			login : function() {},
