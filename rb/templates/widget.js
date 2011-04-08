@@ -914,7 +914,7 @@ function readrBoard($R){
                 ////populate blesed_tags
                 $.each(RDR.group.blessed_tags, function(idx, val){
                     var $li = $('<li />').data({
-                        'tag':val
+                        'tag':parseInt( val.tid )
                     }).append('<a href="javascript:void(0);">'+val.name+'</a><div class="rdr_arrow"></div>');
                     
                     $blessedTagBox.children('ul.rdr_tags').append($li);
@@ -1022,6 +1022,7 @@ function readrBoard($R){
 				
 				// tag, rindow, settings, callback
 
+                // TODO the args & params thing here is confusing
                 RDR.session.checkUser( args, function( params ) {
     
                     // get the text that was highlighted
