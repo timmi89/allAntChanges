@@ -415,14 +415,16 @@ function readrBoard($R){
         },
 		session : {
 			iframeHost : "http://readr.local:8080", // TODO put this in a template var
-            checkUser : function(args, callback) {
+            getUser : function(args, callback) {
                 console.log('checking user');
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
                     // we have a user id and token, be it temp or logged in user, so just run the callback
-                    callback(args);
+                    if ( callback && args ) callback(args);
+                    else if ( callback ) callback();
                 } else {
                     // define a new message receiver with this set of args and callback function
-                    RDR.session.receiveMessage( args, callback );
+                    if ( callback && args ) RDR.session.receiveMessage( args, callback );
+                    else if ( callback ) RDR.session.receiveMessage( false, callback );
 
                     // posting this message then means we'll look in the $.receiveMessage for the response and what to do next
                     // TODO need a timeout and/or try/catch?
@@ -435,7 +437,7 @@ function readrBoard($R){
             },
 			createXDMframe : function() {
                 RDR.session.receiveMessage();
-                
+
                 var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
                 parentUrl = window.location.href,
                 parentHost = window.location.protocol + "//" + window.location.host;
@@ -464,14 +466,17 @@ function readrBoard($R){
                                     for ( var i in message.data ) {
                                         RDR.user[ i ] = message.data[i];
                                     }
-                                    if ( typeof args != "undefined" ) {
+
+                                    if ( callback && args ) {
                                         args.user = RDR.user;
-                                        if ( typeof callback != "undefined" ) callback( args );
+                                        callback(args);
                                     }
+                                    else if ( callback ) callback();
+
                                     // TODO do we def want to remove the login panel if it was showing?
                                     // user rdr-loginPanel for the temp user message, too
                                     if ( RDR.user.first_name ) $('#rdr-loginPanel').remove();
-                                    break;
+                                break;
                             }
                         }
                     },
@@ -514,7 +519,14 @@ function readrBoard($R){
 					rindow.append( $loginHtml );
 				});
 			},
-			logout : function() {}
+			killUser : function() {
+                RDR.user = {};
+                $.postMessage(
+                    "killUser",
+                    RDR.session.iframeHost + "/xdm_status/",
+                    window.frames['rdr-xdm-hidden']
+                );
+            }
 		},
         actions : {
             aboutReadrBoard : function() {
@@ -1010,7 +1022,7 @@ function readrBoard($R){
 				// tag, rindow, settings, callback
 
                 // TODO the args & params thing here is confusing
-                RDR.session.checkUser( args, function( params ) {
+                RDR.session.getUser( args, function( params ) {
     
                     // get the text that was highlighted
                     var content = $.trim( params.settings.content );
@@ -1039,9 +1051,18 @@ function readrBoard($R){
                             console.dir(response);
                             //[eric] - if we want these params still we need to get them from args:
                             //do we really want to chain pass these through?  Or keep them in a shared scope?
-                            //RDR.actions.shareStart (rindow, known_tags, unknown_tags_arr);
 
-                            RDR.actions.shareStart( {rindow:params.rindow, tag:params.tag, int_id:response.data });
+                            if ( response.status == "fail" ) {
+                                if ( response.message == "Error getting user!" ) {  // user not found
+                                    // kill the user object and cookie
+                                    RDR.session.killUser();
+
+                                    // TODO tell the user something failed and ask them to try again
+                                    console.log('sorry there was a problem with your alleged user ID.  we just killed it, try again.');
+                                }
+                            } else {
+                                RDR.actions.shareStart( {rindow:params.rindow, tag:params.tag, int_id:response.data });
+                            }
                             // params.callback();
                         },
                         //for now, ignore error and carry on with mockup

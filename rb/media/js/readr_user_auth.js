@@ -13,6 +13,9 @@ $.receiveMessage(
 	    	case "getUser":
 	    		RDRAuth.returnUser(true);
 	    		break;
+	    	case "killUser":
+	    		RDRAuth.killUser();
+	    		break;
 	    }
 	},
 	qs_args.parentHost
@@ -141,6 +144,15 @@ RDRAuth = {
 		$.cookie('img_url', RDRAuth.rdr_user.img_url, { expires: 365, path: '/' });
 		$.cookie('user_id', RDRAuth.rdr_user.user_id, { expires: 365, path: '/' });
 		$.cookie('readr_token', RDRAuth.rdr_user.readr_token, { expires: 365, path: '/' });
+	},
+	killUser : function() {
+		console.log('killing the user...softly');
+		$.cookie('first_name', null, { path: '/' });
+		$.cookie('full_name', null, { path: '/' });
+		$.cookie('img_url', null, { path: '/' });
+		$.cookie('user_id', null, { path: '/' });
+		$.cookie('readr_token', null, { path: '/' });
+		RDRAuth.rdr_user = {};
 	},
 	doFBLogin: function() {
 		FB.login( function(response) {
