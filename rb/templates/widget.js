@@ -463,7 +463,7 @@ function readrBoard($R){
                                     }
                                     // TODO do we def want to remove the login panel if it was showing?
                                     // user rdr-loginPanel for the temp user message, too
-                                    $('#rdr-loginPanel').remove();
+                                    if ( RDR.user.first_name ) $('#rdr-loginPanel').remove();
                                     break;
                             }
                         }

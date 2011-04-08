@@ -75,6 +75,9 @@ RDRAuth = {
 			console.log('just send back known values');
 			var sendData = {
 				data : {
+					first_name : RDRAuth.rdr_user.first_name,
+					full_name : RDRAuth.rdr_user.full_name,
+					img_url : RDRAuth.rdr_user.img_url,
 					user_id : RDRAuth.rdr_user.user_id,
 					readr_token : RDRAuth.rdr_user.readr_token
 				}
@@ -102,6 +105,9 @@ RDRAuth = {
 					console.log('send the temp user up');
 					var sendData = {
 						data : {
+							first_name : RDRAuth.rdr_user.first_name,
+							full_name : RDRAuth.rdr_user.full_name,
+							img_url : RDRAuth.rdr_user.img_url,
 							user_id : RDRAuth.rdr_user.user_id,
 							readr_token : RDRAuth.rdr_user.readr_token
 						}
@@ -122,8 +128,14 @@ RDRAuth = {
 		else return false;
 	},
 	setUser : function(response) {
+		RDRAuth.rdr_user.first_name = response.data.first_name;
+		RDRAuth.rdr_user.full_name = response.data.full_name;
+		RDRAuth.rdr_user.img_url = response.data.img_url;
 		RDRAuth.rdr_user.user_id = response.data.user_id;
 		RDRAuth.rdr_user.readr_token = response.data.readr_token;
+		$.cookie('first_name', RDRAuth.rdr_user.first_name, { expires: 365, path: '/' });
+		$.cookie('full_name', RDRAuth.rdr_user.full_name, { expires: 365, path: '/' });
+		$.cookie('img_url', RDRAuth.rdr_user.img_url, { expires: 365, path: '/' });
 		$.cookie('user_id', RDRAuth.rdr_user.user_id, { expires: 365, path: '/' });
 		$.cookie('readr_token', RDRAuth.rdr_user.readr_token, { expires: 365, path: '/' });
 	},
