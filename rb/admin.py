@@ -5,7 +5,7 @@ from django.contrib import admin
 #admin.site.unregister(Nonce) 
 #admin.site.unregister(Token)
 
-admin.site.register(Feature)
+#admin.site.register(Feature)
 admin.site.register(InteractionNode)
 admin.site.register(Content)
 
