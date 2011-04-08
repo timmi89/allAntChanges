@@ -9,8 +9,7 @@ Settings = Resource(handler=SettingsHandler)
 PageData = Resource(handler=PageDataHandler)
 Containers = Resource(handler=ContainerHandler)
 CreateContainers = Resource(handler=CreateContainerHandler)
-CreateTags = Resource(handler=CreateTagsHandler)
-CreateTag = Resource(handler=CreateTagHandler)
+Tag = Resource(handler=TagHandler)
 Interaction = Resource(handler=InteractionHandler)
 CreateComments = Resource(handler=CreateCommentHandler)
 FBLogin = Resource(handler=FBHandler)
@@ -46,8 +45,8 @@ urlpatterns = patterns('',
     url(r'^page/', PageData),
     url(r'^containers/create/', CreateContainers),
     url(r'^containers/', Containers),
-    url(r'^tags/create/', CreateTags),
-    url(r'^tag/create', CreateTag),
+    url(r'^tag/create', Tag, kwargs={'action':'create'}),
+    url(r'^tag/delete', Tag, kwargs={'action':'delete'}),
     #url(r'^tags/(\d*)', Tags),
     url(r'^comments/create/', CreateComments),
     #url(r'^comments/', Comments),

@@ -122,85 +122,51 @@ class CreateCommentHandler(BaseHandler):
         comment = createInteractionNode(kind='com', body=comment)
         interaction = createInteraction(parent.page, parent.content, user, comment)
 
-class CreateTagHandler(BaseHandler):
+class TagHandler(BaseHandler):
 
     @status_response
-    def read(self, request):
-        data = json.loads(request.GET['json'])
-        tag = data['tag']['content']
-        hash = data['hash']
-        content_data = data['content']
-        content_type = data['content_type']
-        page_id = data['page_id']
-        
-        user = User.objects.get(id=data['user_id'])
-        page = Page.objects.get(id=page_id)
+    def read(self, request, **kwargs):
+        action = kwargs['action']
+        if action == 'create':
+            data = json.loads(request.GET['json'])
+            tag = data['tag']['content']
+            hash = data['hash']
+            content_data = data['content']
+            content_type = data['content_type']
+            page_id = data['page_id']
+            
+            try:
+                user = User.objects.get(id=data['user_id'])
+            except User.DoesNotExist, User.MultipleObjectsReturned:
+                raise JSONException("Error getting user!")
+            try:
+                page = Page.objects.get(id=page_id)
+            except Page.DoesNotExist, Page.MultipleObjectsReturned:
+                raise JSONException("Error getting page!")
 
-        if not checkToken(data): raise JSONException("Token was invalid")
-        content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
-        
-        if hash:    
-            container = Container.objects.get(hash=hash)
-            container.content.add(content)
+            if not checkToken(data): raise JSONException("Token was invalid")
+            content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
+            
+            if hash:    
+                container = Container.objects.get(hash=hash)
+                container.content.add(content)
 
-        new = None
-        if tag:
-            if isinstance(tag, unicode):
-                node = createInteractionNode(kind='tag', body=tag)
-                new = createInteraction(page, content, user, node)
-            elif isinstance(tag, int):
-                node = InteractionNode.objects.get(id=tag)
-                new = createInteraction(
-                    page=page,
-                    content=content,
-                    user=user,
-                    interaction_node=node
-                )
-            return new.id
-        else:
-            return JSONException("No tag provided to tag handler")
-
-class CreateTagsHandler(BaseHandler):
-
-    @status_response
-    def read(self, request):
-        data = json.loads(request.GET['json'])
-        unknown_tags = data['unknown_tags'] 
-        known_tags = data['known_tags']
-        hash = data['hash']
-        content_data = data['content']
-        content_type = data['content_type']
-        page_id = data['page_id']
-        
-        user = request.user
-        page = Page.objects.get(id=page_id)
-        if not checkToken(data): raise JSONException("Token was invalid")
-        content = Content.objects.get_or_create(
-            kind=content_type,
-            body=content_data
-        )[0]
-        
-        if hash:    
-            container = Container.objects.get(hash=hash)
-            container.content.add(content)
-
-        interactions = []
-        for utag in unknown_tags:
-            if utag:
-                tag = createInteractionNode(kind='tag', body=utag)
-                new = createInteraction(page, content, user, tag)
-                interactions.append(new)
-        for ktag in known_tags:
-            tag = InteractionNode.objects.get(id=ktag)
-            new = createInteraction(
-                page=page,
-                content=content,
-                user=user,
-                interaction_node=tag
-            )
-            interactions.append(new)
-
-        return Interactions
+            new = None
+            if tag:
+                if isinstance(tag, unicode):
+                    node = createInteractionNode(kind='tag', body=tag)
+                    new = createInteraction(page, content, user, node)
+                elif isinstance(tag, int):
+                    node = InteractionNode.objects.get(id=tag)
+                    new = createInteraction(
+                        page=page,
+                        content=content,
+                        user=user,
+                        interaction_node=node
+                    )
+                return new.id
+            else:
+                return JSONException("No tag provided to tag handler")
 
 class CreateContainerHandler(BaseHandler):
     

@@ -29,9 +29,11 @@ def createInteractionNode(kind, body):
             print "Success creating InteractionNode with id %s" % node.id
             return node
 
+def deleteInteraction(page, content, user, interaction_node):
+    pass
+
 def createInteraction(page, content, user, interaction_node, parent=None):
     if content and user and interaction_node:
-        print "***CREATING INTERACTION***"
         # Check unique content_id, user_id, page_id, interaction_node_id
         interactions = Interaction.objects.filter(user=user)
         if len(SocialUser.objects.filter(id=user.id)) == 0:
