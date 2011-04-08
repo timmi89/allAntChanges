@@ -435,7 +435,7 @@ function readrBoard($R){
                                     case "fb_logged_in":
                                     case "known_user":
                                     case "got_temp_user":
-                                        console.dir(message);
+                                        console.dir(message.data);
                                         for ( var i in message.data ) {
                                             RDR.user[ i ] = message.data[i];
                                         }
@@ -478,7 +478,7 @@ function readrBoard($R){
     						    case "fb_logged_in":
                                 case "known_user":
                                 case "got_temp_user":
-                                    console.dir(message);
+                                    console.dir(message.data);
                                     for ( var i in message.data ) {
                                         RDR.user[ i ] = message.data[i];
                                     }
@@ -574,8 +574,10 @@ function readrBoard($R){
                     data: {
                         host_name : window.location.hostname
                     },
-                    success: function(data, textStatus, XHR) {
-                        RDR.group = data.data;
+                    success: function(response, textStatus, XHR) {
+                        console.dir(response);
+                        console.log('--------------------');
+                        RDR.group = response.data;
 						RDR.group.group_id
 
                         //todo:just for testing for now: - add defaults:
@@ -603,8 +605,8 @@ function readrBoard($R){
                         ];
                         $RDR.dequeue('initAjax');
                     },
-                    error: function(XHR){
-                        console.warn(XHR)
+                    error: function(response){
+                        console.warn(response)
                     }
                 });
             },
@@ -619,16 +621,16 @@ function readrBoard($R){
                     data: {
                         short_name : userShortName
                     },
-                    success: function(data, textStatus, XHR) {
+                    success: function(response, textStatus, XHR) {
 
                         console.log('rbuser call success')
-                        console.dir(data);
+                        console.dir(response);
                         console.log(XHR)
 
                         //get this from the DB?
                         //this.anno_whitelist = "#module-article p";
 
-                        $.each(data, function(index, value){
+                        $.each(response, function(index, value){
                             var rb_group = value;
                             //Only expects back one user (index==0)
                             console.log('current user is ' + rb_user.name)
@@ -636,8 +638,8 @@ function readrBoard($R){
                         });
 
                     },
-                    error: function(XHR){
-                        console.warn(XHR)
+                    error: function(response){
+                        console.warn(response);
                         console.warn('failed, but thats cool, we were expecting it to');
                         console.log('user is ', userShortName);
                     }
@@ -663,8 +665,8 @@ function readrBoard($R){
 						url: url,
 						canonical_url: canonical
 					},
-					success: function(pagedata) {
-						RDR.page = pagedata.data;
+					success: function(response) {
+						RDR.page = response.data;
 					}
 				});
                
@@ -1156,8 +1158,8 @@ function readrBoard($R){
                         contentType: "application/json",
                         dataType: "jsonp",
                         data: { json: JSON.stringify(sendData) },
-                        complete: function(msg) {
-                            console.dir(msg);
+                        success: function(response) {
+                            console.dir(response);
                             //[eric] - if we want these params still we need to get them from args:
                             //do we really want to chain pass these through?  Or keep them in a shared scope?
                             //RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
@@ -1166,7 +1168,7 @@ function readrBoard($R){
                             // params.callback();
                         },
                         //for now, ignore error and carry on with mockup
-                        error: function() {
+                        error: function(response) {
                             console.log("an error occurred while trying to tag");
                         }
                     });
