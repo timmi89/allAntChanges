@@ -1,11 +1,9 @@
 from readrboard.rb.models import *
 from datetime import datetime, timedelta
 import json
-import base64
 import hashlib
 import hmac
 import random
-import uuid
 from exceptions import FBException
 
 def getPage(request, pageid=None):

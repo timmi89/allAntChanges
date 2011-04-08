@@ -69,8 +69,8 @@ TEMPLATE_LOADERS = (
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    #'django.contrib.sessions.middleware.SessionMiddleware',
+    #'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
 
 ROOT_URLCONF = 'readrboard.urls'
@@ -87,7 +87,7 @@ TEMPLATE_DIRS = (
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    #'django.contrib.sessions',
     'readrboard.rb',
     'django.contrib.admin',
     'readrboard.api',
