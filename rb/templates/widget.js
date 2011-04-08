@@ -1013,7 +1013,60 @@ function readrBoard($R){
                 newSubBox: function(){
                 }              
 			},
-            shareStart : function(rindow, tag) {
+            rateSend : function(args) {
+                
+                //example:
+                //tag:{name, id}, rindow:rindow, settings:settings, callback: 
+			 	
+                // tag can be an ID or a string.  if a string, we need to sanitize.
+				
+				// tag, rindow, settings, callback
+
+                RDR.session.checkUser( args, function( params ) {
+    
+                    // get the text that was highlighted
+                    var content = $.trim( params.settings.content );
+                    var container = $.trim( params.settings.container );
+
+
+                    var sendData = {
+                        "tag" : params.tag,
+                        "hash": container,
+                        "content" : content,
+                        "content_type" : params.settings.content_type,
+                        "user_id" : RDR.user.user_id,
+                        "readr_token" : RDR.user.readr_token,
+                        "group_id" : RDR.groupPermData.group_id,
+                        "page_id" : RDR.page.id
+                    };
+
+                    // send the data!
+                    $.ajax({
+                        url: "/api/tag/create/",
+                        type: "get",
+                        contentType: "application/json",
+                        dataType: "jsonp",
+                        data: { json: JSON.stringify(sendData) },
+                        success: function(response) {
+                            console.dir(response);
+                            //[eric] - if we want these params still we need to get them from args:
+                            //do we really want to chain pass these through?  Or keep them in a shared scope?
+                            //RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
+
+                            RDR.actions.shareStart( {rindow:params.rindow, tag:params.tag, int_id:response.data });
+                            // params.callback();
+                        },
+                        //for now, ignore error and carry on with mockup
+                        error: function(response) {
+                            console.log("an error occurred while trying to tag");
+                        }
+                    });
+                });
+            },
+            shareStart : function(args) {
+                var rindow = args.rindow, 
+                    tag = args.tag,
+                    int_id = args.int_id;
                 //todo: for now, I'm just passing in known_tags as a param, but check with Porter about this model.
                 //Where is the 'source'/'point of origin' that is the authority of known_tags - I'd think we'd want to just reference that..
 
@@ -1117,62 +1170,12 @@ function readrBoard($R){
                 */
 
                 // TODO: removing character counter for moment.  not sure we'll have a textarea for sharing anymore.
-				/*
-				$('.rdr_share_count').text( $('.rdr_share textarea').val().length + " characters");
-				$('.rdr_share textarea').keyup( function() {
+                /*
+                $('.rdr_share_count').text( $('.rdr_share textarea').val().length + " characters");
+                $('.rdr_share textarea').keyup( function() {
                     $('.rdr_share_count').text( $('.rdr_share textarea').val().length + " characters");
                 });
-				*/
-            },
-            rateSend : function(args) {
-                
-                //example:
-                //tag:{name, id}, rindow:rindow, settings:settings, callback: 
-			 	
-                // tag can be an ID or a string.  if a string, we need to sanitize.
-				
-				// tag, rindow, settings, callback
-
-                RDR.session.checkUser( args, function( params ) {
-    
-                    // get the text that was highlighted
-                    var content = $.trim( params.settings.content );
-                    var container = $.trim( params.settings.container );
-
-
-                    var sendData = {
-                        "tag" : params.tag,
-                        "hash": container,
-                        "content" : content,
-                        "content_type" : params.settings.content_type,
-                        "user_id" : RDR.user.user_id,
-                        "readr_token" : RDR.user.readr_token,
-                        "group_id" : RDR.groupPermData.group_id,
-                        "page_id" : RDR.page.id
-                    };
-
-                    // send the data!
-                    $.ajax({
-                        url: "/api/tag/create/",
-                        type: "get",
-                        contentType: "application/json",
-                        dataType: "jsonp",
-                        data: { json: JSON.stringify(sendData) },
-                        success: function(response) {
-                            console.dir(response);
-                            //[eric] - if we want these params still we need to get them from args:
-                            //do we really want to chain pass these through?  Or keep them in a shared scope?
-                            //RDR.actions.shareStart(rindow, known_tags, unknown_tags_arr);
-
-                            RDR.actions.shareStart(params.rindow, params.tag);
-                            // params.callback();
-                        },
-                        //for now, ignore error and carry on with mockup
-                        error: function(response) {
-                            console.log("an error occurred while trying to tag");
-                        }
-                    });
-                });
+                */
             },
             startSelect : function(e) {
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
