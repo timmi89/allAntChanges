@@ -127,7 +127,7 @@ class CreateTagHandler(BaseHandler):
     @status_response
     def read(self, request):
         data = json.loads(request.GET['json'])
-        tag = data['tag']
+        tag = data['tag']['content']
         hash = data['hash']
         content_data = data['content']
         content_type = data['content_type']
@@ -245,7 +245,11 @@ class PageDataHandler(BaseHandler):
         page = getPage(request, pageid)
         
         # Find all the interaction nodes on page
-        nop = InteractionNode.objects.filter(interaction__page=page.id)
+        #su = User.objects.filter(social_user__isnull=False)
+        nop = InteractionNode.objects.filter(
+            interaction__page=page.id,
+            #interaction__user__in=su
+        )
         
         # ---Get page interaction counts, grouped by kind---
         # Focus on values for 'kind'
@@ -263,12 +267,16 @@ class PageDataHandler(BaseHandler):
         # ---Find top 10 shares on a give page---
         content = Content.objects.filter(
             interaction__page=page.id,
-            interaction__interaction_node__kind='shr')
+            interaction__interaction_node__kind='shr',
+        )
         sharecounts = content.annotate(Count("id"))
         topshares = sharecounts.values("body").order_by()[:10]  
         
-        # ---Find top 10 users on a given page---
-        users = User.objects.filter(interaction__page=page.id)
+        # ---Find top 10 non-temp users on a given page---
+        users = User.objects.filter(
+            interaction__page=page.id,
+            social_user__isnull=False
+        )
         usernames = users.values('first_name', 'last_name')
         userinteract = usernames.annotate(interactions=Count('interaction'))
         topusers = userinteract.order_by('-interactions')[:10]
