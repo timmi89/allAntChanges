@@ -124,8 +124,8 @@ RDRAuth = {
 	setUser : function(response) {
 		RDRAuth.rdr_user.user_id = response.data.user_id;
 		RDRAuth.rdr_user.readr_token = response.data.readr_token;
-		$.cookie('user_id', RDRAuth.rdr_user.user_id);
-		$.cookie('readr_token', RDRAuth.rdr_user.readr_token);
+		$.cookie('user_id', RDRAuth.rdr_user.user_id, { expires: 365, path: '/' });
+		$.cookie('readr_token', RDRAuth.rdr_user.readr_token, { expires: 365, path: '/' });
 	},
 	doFBLogin: function() {
 		FB.login( function(response) {
