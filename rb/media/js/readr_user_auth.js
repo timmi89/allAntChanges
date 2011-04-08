@@ -48,8 +48,8 @@ RDRAuth = {
 			};
 			// TODO check cookie for a valid token, id
 			console.log('getuser');
-			if ( !RDRAuth.getUser() ) {
-				console.log('go getuser');
+			if ( !RDRAuth.rdr_user.first_name ) {
+				console.log('send fb user data to log in');
 				$.ajax({
 					url: "/api/fb/",
 					type: "get",
@@ -121,6 +121,9 @@ RDRAuth = {
 		console.log('getuser111111111');
 		// snag values from the cookie, if present
 		// if ( !RDRAuth.rdr_user.user_id || RDRAuth.rdr_user.readr_toke ) {
+			RDRAuth.rdr_user.first_name = $.cookie('first_name');
+			RDRAuth.rdr_user.full_name = $.cookie('full_name');
+			RDRAuth.rdr_user.img_url = $.cookie('img_url');
 			RDRAuth.rdr_user.user_id = $.cookie('user_id');
 			RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
 		// }

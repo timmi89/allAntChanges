@@ -418,9 +418,11 @@ function readrBoard($R){
             checkUser : function(args, callback) {
                 console.log('checking user');
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
+                    // we have a user id and token, be it temp or logged in user, so just run the callback
                     callback(args);
                 } else {
-                    // RECEIVE MESSAGE WILL 'execute'
+                    // define a new message receiver with this set of args and callback function
+                    RDR.session.receiveMessage( args, callback );
 
                     // posting this message then means we'll look in the $.receiveMessage for the response and what to do next
                     // TODO need a timeout and/or try/catch?
@@ -432,15 +434,20 @@ function readrBoard($R){
                 }
             },
 			createXDMframe : function() {
-				var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
-				parentUrl = window.location.href,
+                RDR.session.receiveMessage();
+                
+                var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
+                parentUrl = window.location.href,
                 parentHost = window.location.protocol + "//" + window.location.host;
-				$xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
-				);
-				$('body').append( $xdmIframe );
+                $xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
+                );
+                $('body').append( $xdmIframe );
+
 
 				// this is the postMessage receiver for ALL messages posted.
                 // TODO: put this elsewhere so it's more logically placed and easier to find??
+			},
+            receiveMessage : function(args, callback) {
                 $.receiveMessage(
                     function(e){
                         console.log( JSON.parse( e.data ) );
@@ -459,7 +466,7 @@ function readrBoard($R){
                                     }
                                     if ( typeof args != "undefined" ) {
                                         args.user = RDR.user;
-                                        callback( args );
+                                        if ( typeof callback != "undefined" ) callback( args );
                                     }
                                     // TODO do we def want to remove the login panel if it was showing?
                                     // user rdr-loginPanel for the temp user message, too
@@ -470,8 +477,7 @@ function readrBoard($R){
                     },
                     RDR.session.iframeHost
                 );
-
-			},
+            },
 			login : function() {},
 			showLoginPanel : function(args, callback) {
 
