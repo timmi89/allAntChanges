@@ -89,6 +89,14 @@ class Group(models.Model):
     class Meta:
         ordering = ['short_name']
 
+class NodeValue(models.Model):
+    group = models.ForeignKey(Group)
+    node = models.ForeignKey(InteractionNode)
+    value = models.IntegerField(default=0)
+
+    def __unicode__(self):
+        return unicode(self.value)
+
 class Site(models.Model):
     name = models.CharField(max_length=100)
     domain = models.CharField(max_length=50)

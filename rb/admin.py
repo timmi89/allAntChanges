@@ -87,6 +87,9 @@ class InteractionAdmin(admin.ModelAdmin):
         'modified',
         'anonymous'
     )
+
+class NodeValueAdmin(admin.ModelAdmin):
+    list_display = ('group', 'node', 'value')
 	
 class LinkAdmin(admin.ModelAdmin):
     def base62(self, obj):
@@ -103,3 +106,4 @@ admin.site.register(Site, SiteAdmin)
 admin.site.register(Container, ContainerAdmin)
 admin.site.register(Interaction, InteractionAdmin)
 admin.site.register(SocialUser, SocialUserAdmin)
+admin.site.register(NodeValue, NodeValueAdmin)
