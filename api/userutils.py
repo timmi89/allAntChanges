@@ -9,7 +9,6 @@ def convertUser(temp_user, new_user):
 
 def generateUsername():
     username = base64.b64encode(uuid.uuid4().bytes)[:-2]
-
     try:
         User.objects.get(username=username)
         return GenerateUsername()

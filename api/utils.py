@@ -4,7 +4,7 @@ import json
 import hashlib
 import hmac
 import random
-from exceptions import FBException
+from exceptions import FBException, JSONException
 
 def getPage(request, pageid=None):
     canonical = request.GET.get('canonical_url', None)
@@ -31,11 +31,13 @@ def createInteractionNode(kind, body):
 
 def createInteraction(page, content, user, interaction_node, parent=None):
     if content and user and interaction_node:
+        print "***CREATING INTERACTION***"
         # Check unique content_id, user_id, page_id, interaction_node_id
         interactions = Interaction.objects.filter(user=user)
-        if len(SocialUser.objects.filter(id=user_id)) == 0:
+        if len(SocialUser.objects.filter(id=user.id)) == 0:
+            print "Temporary user trying to create interaction"
             if not len(interactions) <10:
-                raise JSONError("10 Interactions already!")
+                raise JSONException("10 Interactions already!")
         try:
             existing = interactions.get(
                 page=page,
@@ -49,6 +51,7 @@ def createInteraction(page, content, user, interaction_node, parent=None):
 
         # Can't rely on Django's auto_now to create the time before storing the node
         now = created=datetime.now()
+
         if parent:
             print "Creating Interaction with parent node"
             new = parent.add_child(page=page, 
@@ -63,4 +66,5 @@ def createInteraction(page, content, user, interaction_node, parent=None):
                            user=user, 
                            interaction_node=interaction_node, 
                            created=now)
+        if new == None: raise JSONException("Error creating interaction")
         return new

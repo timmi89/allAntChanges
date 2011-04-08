@@ -144,7 +144,6 @@ class CreateTagHandler(BaseHandler):
             container.content.add(content)
 
         new = None
-
         if tag:
             if isinstance(tag, str):
                 node = createInteractionNode(kind='tag', body=tag)
@@ -157,9 +156,9 @@ class CreateTagHandler(BaseHandler):
                     user=user,
                     interaction_node=node
                 )
-                return new.id
+            return new.id
         else:
-            return HttpResponse("No tag provided to tag handler")
+            return JSONException("No tag provided to tag handler")
 
 class CreateTagsHandler(BaseHandler):
 
