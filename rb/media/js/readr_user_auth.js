@@ -69,6 +69,7 @@ RDRAuth = {
 		}
 	},
 	returnUser: function() {
+		RDRAuth.getUser();
 		console.log('start return user');
 		if ( RDRAuth.rdr_user && RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token ) {
 			console.log('just send back known values');
@@ -113,8 +114,10 @@ RDRAuth = {
 	getUser : function() {
 		console.log('getuser111111111');
 		// snag values from the cookie, if present
-		RDRAuth.rdr_user.user_id = $.cookie('user_id');
-		RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
+		// if ( !RDRAuth.rdr_user.user_id || RDRAuth.rdr_user.readr_toke ) {
+			RDRAuth.rdr_user.user_id = $.cookie('user_id');
+			RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
+		// }
 		if ( RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token ) return true;
 		else return false;
 	},
@@ -133,3 +136,4 @@ RDRAuth = {
 		window.location.reload();
 	}
 }
+RDRAuth.returnUser();

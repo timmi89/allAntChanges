@@ -475,8 +475,9 @@ function readrBoard($R){
 
 						if ( message.action ) {
     						switch (message.action) {
-    						    case "readr_auth":
-                                case "got_user":
+    						    case "fb_logged_in":
+                                case "known_user":
+                                case "got_temp_user":
                                     console.dir(message);
                                     for ( var i in message.data ) {
                                         RDR.user[ i ] = message.data[i];
