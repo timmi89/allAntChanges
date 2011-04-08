@@ -11,7 +11,7 @@ $.receiveMessage(
 		console.log('---receiving in the iframe---');
 	    switch( e.data ) {
 	    	case "getUser":
-	    		RDRAuth.returnUser();
+	    		RDRAuth.returnUser(true);
 	    		break;
 	    }
 	},
@@ -68,7 +68,7 @@ RDRAuth = {
 			RDRAuth.doFBLogin();
 		}
 	},
-	returnUser: function() {
+	returnUser: function(create_temp) {
 		RDRAuth.getUser();
 		console.log('start return user');
 		if ( RDRAuth.rdr_user && RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token ) {
@@ -80,7 +80,7 @@ RDRAuth = {
 				}
 			};
 			RDRAuth.notifyParent(sendData, "known_user");
-		} else {
+		} else if ( create_temp ) {
 			console.log('need a temp user');
 			// get a temp user
 			var sendData = {
@@ -136,4 +136,4 @@ RDRAuth = {
 		window.location.reload();
 	}
 }
-RDRAuth.returnUser();
+RDRAuth.returnUser(false);
