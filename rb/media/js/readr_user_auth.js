@@ -43,23 +43,27 @@ RDRAuth = {
 			var sendData = {
 				fb: fb_session,
 				group_id: qs_args.group_id,
-				temp_user: {
-					user_id: RDRAuth.rdr_user.user_id,
-					user_id: RDRAuth.rdr_user.readr_token
-				}
+				user_id: RDRAuth.rdr_user.user_id, // might be temp, might be the ID of a valid FB-created user
+				readr_token: RDRAuth.rdr_user.readr_token
 			};
-			$.ajax({
-				url: "/api/fb/",
-				type: "get",
-				contentType: "application/json",
-				dataType: "jsonp",
-				data: {
-					json: JSON.stringify( sendData )
-				},
-				success: function(response){
-					RDRAuth.notifyParent(response, "readr_auth");
-				}
-			});
+			// TODO check cookie for a valid token, id
+			console.log('getuser');
+			if ( !RDRAuth.getUser() ) {
+				console.log('go getuser');
+				$.ajax({
+					url: "/api/fb/",
+					type: "get",
+					contentType: "application/json",
+					dataType: "jsonp",
+					data: {
+						json: JSON.stringify( sendData )
+					},
+					success: function(response){
+						RDRAuth.setUser(response);
+						RDRAuth.notifyParent(response, "fb_logged_in");
+					}
+				});
+			} else console.log('already had user');
 		} else {
 			RDRAuth.doFBLogin();
 		}
@@ -74,7 +78,7 @@ RDRAuth = {
 					readr_token : RDRAuth.rdr_user.readr_token
 				}
 			};
-			RDRAuth.notifyParent(sendData, "got_user");
+			RDRAuth.notifyParent(sendData, "known_user");
 		} else {
 			console.log('need a temp user');
 			// get a temp user
@@ -92,10 +96,7 @@ RDRAuth = {
 				success: function(response){
 					console.log('got a temp user');
 					// store the data here and in a cookie
-					RDRAuth.rdr_user.user_id = response.data.user_id;
-					RDRAuth.rdr_user.readr_token = response.data.readr_token;
-					$.cookie('user_id', RDRAuth.rdr_user.user_id);
-					$.cookie('readr_token', RDRAuth.rdr_user.readr_token);
+					RDRAuth.setUser(response);
 
 					console.log('send the temp user up');
 					var sendData = {
@@ -104,10 +105,24 @@ RDRAuth = {
 							readr_token : RDRAuth.rdr_user.readr_token
 						}
 					};
-					RDRAuth.notifyParent(response, "got_user");
+					RDRAuth.notifyParent(response, "got_temp_user");
 				}
 			});
 		}
+	},
+	getUser : function() {
+		console.log('getuser111111111');
+		// snag values from the cookie, if present
+		RDRAuth.rdr_user.user_id = $.cookie('user_id');
+		RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
+		if ( RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token ) return true;
+		else return false;
+	},
+	setUser : function(response) {
+		RDRAuth.rdr_user.user_id = response.data.user_id;
+		RDRAuth.rdr_user.readr_token = response.data.readr_token;
+		$.cookie('user_id', RDRAuth.rdr_user.user_id);
+		$.cookie('readr_token', RDRAuth.rdr_user.readr_token);
 	},
 	doFBLogin: function() {
 		FB.login( function(response) {
@@ -118,7 +133,3 @@ RDRAuth = {
 		window.location.reload();
 	}
 }
-
-// snag values from the cookie, if present
-RDRAuth.rdr_user.user_id = $.cookie('user_id');
-RDRAuth.rdr_user.readr_token = $.cookie('readr_token');

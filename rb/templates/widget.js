@@ -422,6 +422,7 @@ function readrBoard($R){
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
                     callback(args);
                 } else {
+                    // replaces last $.receiveMessage def
                     $.receiveMessage(
                         function(e){
                             console.log( JSON.parse( e.data ) );
@@ -429,8 +430,11 @@ function readrBoard($R){
 
                             if ( message.action ) {;
                                 switch (message.action) {
-                                    case "readr_auth":
-                                    case "got_user":
+                                    // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
+                                    // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
+                                    case "fb_logged_in":
+                                    case "known_user":
+                                    case "got_temp_user":
                                         console.dir(message);
                                         for ( var i in message.data ) {
                                             RDR.user[ i ] = message.data[i];
