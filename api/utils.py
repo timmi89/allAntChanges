@@ -40,7 +40,7 @@ def createInteraction(page, content, user, interaction_node, group, parent=None)
         if len(SocialUser.objects.filter(id=user.id)) == 0:
             max_interact = group.temp_interact
             if num_interactions >= max_interact:
-                raise JSONException(u"Temporary user interaction limit reached: " + unicode(max_interact))
+                raise JSONException(u"Temporary user interaction limit reached:" + unicode(max_interact))
         try:
             existing = interactions.get(
                 page=page,
@@ -48,7 +48,7 @@ def createInteraction(page, content, user, interaction_node, group, parent=None)
                 interaction_node=interaction_node
             )
             print "Found existing Interaction with id %s" % existing.id
-            return existing
+            return dict(id=existing.id, num_interactions=num_interactions)
         except Interaction.DoesNotExist:
             pass
 
