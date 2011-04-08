@@ -562,25 +562,25 @@ function readrBoard($R){
                         RDR.group.img_selector = RDR.group.img_selector || "div.container img";
                         RDR.group.selector_whitelist = RDR.group.selector_whitelist || "";
 
-                        //todo: REMOVE THIS
-                        RDR.group.blessed_tags = [
-                        {
-                            name: "Cute",
-                            tid: 1
-                        },
-                        {
-                            name: "Great Tip",
-                            tid: 2
-                        },
-                        {
-                            name: "Funny",
-                            tid: 3
-                        },
-                        {
-                            name: "Wait, what?",
-                            tid: 4
-                        }
-                        ];
+                        // //todo: REMOVE THIS
+                        // RDR.group.blessed_tags = [
+                        // {
+                        //     name: "Cute",
+                        //     tid: 1
+                        // },
+                        // {
+                        //     name: "Great Tip",
+                        //     tid: 2
+                        // },
+                        // {
+                        //     name: "Funny",
+                        //     tid: 3
+                        // },
+                        // {
+                        //     name: "Wait, what?",
+                        //     tid: 4
+                        // }
+                        // ];
                         $RDR.dequeue('initAjax');
                     },
                     error: function(response){
@@ -893,10 +893,10 @@ function readrBoard($R){
                 $.each(RDR.group.blessed_tags, function(idx, val){
                     var $li = $('<li />').data({
                         'tag':{
-                            content:parseInt( val.tid ),
-                            name:val.name
+                            content:parseInt( val.id ),
+                            name:val.body
                         }
-                    }).append('<a href="javascript:void(0);">'+val.name+'</a><div class="rdr_arrow"></div>');
+                    }).append('<a href="javascript:void(0);">'+val.body+'</a><div class="rdr_arrow"></div>');
                     
                     $blessedTagBox.children('ul.rdr_tags').append($li);
                 });
@@ -1599,23 +1599,23 @@ function $RFunctions($R){
 	//////////////////// TODO: TEST DATA //////////////////
 
     //[eric]: blessed_tags is ready to be taken from the DB, but we need to decide what the model looks like - right now it's just a charfield
-	RDR.group.blessed_tags = [
-	{
-	    name: "Great!",
-	    tid: 1
-	},
-	{
-	    name: "Hate",
-	    tid: 2
-	},
-	{
-	    name: "Interesting",
-	    tid: 3
-	},
-	{
-	    name: "Booooring",
-	    tid: 4
-	}
-	];
+	// RDR.group.blessed_tags = [
+	// {
+	//     name: "Great!",
+	//     tid: 1
+	// },
+	// {
+	//     name: "Hate",
+	//     tid: 2
+	// },
+	// {
+	//     name: "Interesting",
+	//     tid: 3
+	// },
+	// {
+	//     name: "Booooring",
+	//     tid: 4
+	// }
+	// ];
 }
 //test commit...
