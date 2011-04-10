@@ -45,11 +45,12 @@ def checkLimit(user, group):
                 u"Temporary user interaction limit reached:" +
                 unicode(max_interact)
             )
+    return num_interactions
 
 def createInteraction(page, content, user, interaction_node, group, parent=None):
     if content and user and interaction_node and page:
         # Check to see if user has reached their interaction limit
-        checkLimit(user, group)
+        num_interactions = checkLimit(user, group)
 
         interactions = Interaction.objects.filter(user=user)
 

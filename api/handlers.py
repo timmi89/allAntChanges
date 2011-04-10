@@ -114,11 +114,14 @@ class CreateCommentHandler(BaseHandler):
         data = json.loads(request.GET['json'])
         comment = data['comment']
         interaction_id = data['interaction_id']
-        
-        user = request.user
-        parent = Interaction.objects.get(id=interaction_id)
+        user = data['user_id']
         
         if not checkToken(data): raise JSONException(u"Token was invalid")
+
+        try:
+            parent = Interaction.objects.get(id=interaction_id)
+        except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
+            raise JSONException(u'Could not find parent interaction specified')
 
         comment = createInteractionNode(kind='com', body=comment)
         interaction = createInteraction(parent.page, parent.content, user, comment)
