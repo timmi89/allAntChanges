@@ -1427,139 +1427,6 @@ function loadScript(sScriptSrc,callbackfunction) {
     }
 }
 
-// jquery plugins to be calld above with $R on the getjQuery callback
-
-/* jquery json v2.2 */
-/* http://code.google.com/p/jquery-json/ */
-function rdr_jqueryJSON($){
-    $.toJSON=function(o)
-
-    {
-        if(typeof(JSON)=='object'&&JSON.stringify)
-            return JSON.stringify(o);
-        var type=typeof(o);
-        if(o===null)
-            return"null";
-        if(type=="undefined")
-            return undefined;
-        if(type=="number"||type=="boolean")
-            return o+"";
-        if(type=="string")
-            return $.quoteString(o);
-        if(type=='object')
-
-        {
-            if(typeof o.toJSON=="function")
-                return $.toJSON(o.toJSON());
-            if(o.constructor===Date)
-
-            {
-                var month=o.getUTCMonth()+1;
-                if(month<10)month='0'+month;
-                var day=o.getUTCDate();
-                if(day<10)day='0'+day;
-                var year=o.getUTCFullYear();
-                var hours=o.getUTCHours();
-                if(hours<10)hours='0'+hours;
-                var minutes=o.getUTCMinutes();
-                if(minutes<10)minutes='0'+minutes;
-                var seconds=o.getUTCSeconds();
-                if(seconds<10)seconds='0'+seconds;
-                var milli=o.getUTCMilliseconds();
-                if(milli<100)milli='0'+milli;
-                if(milli<10)milli='0'+milli;
-                return'"'+year+'-'+month+'-'+day+'T'+
-                hours+':'+minutes+':'+seconds+'.'+milli+'Z"';
-            }
-            if(o.constructor===Array)
-            {
-                var ret=[];
-                for(var i=0;i<o.length;i++)
-                    ret.push($.toJSON(o[i])||"null");
-                return"["+ret.join(",")+"]";
-            }
-            var pairs=[];
-            for(var k in o){
-                var name;
-                var type=typeof k;
-                if(type=="number")
-                    name='"'+k+'"';
-                else if(type=="string")
-                    name=$.quoteString(k);else
-                    continue;
-                if(typeof o[k]=="function")
-                    continue;
-                var val=$.toJSON(o[k]);
-                pairs.push(name+":"+val);
-            }
-            return"{"+pairs.join(", ")+"}";
-        }
-    };
-
-    $.evalJSON=function(src)
-
-    {
-        if(typeof(JSON)=='object'&&JSON.parse)
-            return JSON.parse(src);
-        return eval("("+src+")");
-    };
-
-    $.secureEvalJSON=function(src)
-
-    {
-        if(typeof(JSON)=='object'&&JSON.parse)
-            return JSON.parse(src);
-        var filtered=src;
-        filtered=filtered.replace(/\\["\\\/bfnrtu]/g,'@');
-        filtered=filtered.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']');
-        filtered=filtered.replace(/(?:^|:|,)(?:\s*\[)+/g,'');
-        if(/^[\],:{}\s]*$/.test(filtered))
-            return eval("("+src+")");else
-            throw new SyntaxError("Error parsing JSON, source is not valid.");
-    };
-
-    $.quoteString=function(string)
-
-    {
-        if(string.match(_escapeable))
-
-        {
-            return'"'+string.replace(_escapeable,function(a)
-
-            {
-                    var c=_meta[a];
-                    if(typeof c==='string')return c;
-                    c=a.charCodeAt();
-                    return'\\u00'+Math.floor(c/16).toString(16)+(c%16).toString(16);
-                })+'"';
-        }
-        return'"'+string+'"';
-    };
-
-    var _escapeable=/["\\\x00-\x1f\x7f-\x9f]/g;
-    var _meta={
-        '\b':'\\b',
-        '\t':'\\t',
-        '\n':'\\n',
-        '\f':'\\f',
-        '\r':'\\r',
-        '"':'\\"',
-        '\\':'\\\\'
-    };
-}
-
-function rdr_postMessage($) {
-	/*
-	 * jQuery postMessage - v0.5 - 9/11/2009
-	 * http://benalman.com/projects/jquery-postmessage-plugin/
-	 * 
-	 * Copyright (c) 2009 "Cowboy" Ben Alman
-	 * Dual licensed under the MIT and GPL licenses.
-	 * http://benalman.com/about/license/
-	 */
-	var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h]&&!$.browser.opera;$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
-}
-
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
 loadScript("/static/ui-prototype/js/jquery-1.4.4.min.js", function(){
     //callback
@@ -1590,12 +1457,9 @@ loadScript("/static/ui-prototype/js/jquery-1.4.4.min.js", function(){
 function $RFunctions($R){
     //called after our version of jQuery is loaded
 
-    //init the jquery-json plugin
-    rdr_jqueryJSON($R);
-
-	//init Ben Alman's postMessage jquery plugin
-	rdr_postMessage($R);
-	
+    //init our jquery plugins
+    jQueryPlugins($R);
+    
     //initiate our RDR object
     RDR = readrBoard($R);
     
@@ -1645,4 +1509,407 @@ function $RFunctions($R){
 	// }
 	// ];
 }
-//test commit...
+
+function jQueryPlugins($R){
+        
+    (function($){
+        /* jquery json v2.2 */
+        /* http://code.google.com/p/jquery-json/ */
+        $.toJSON=function(o)
+
+        {
+            if(typeof(JSON)=='object'&&JSON.stringify)
+                return JSON.stringify(o);
+            var type=typeof(o);
+            if(o===null)
+                return"null";
+            if(type=="undefined")
+                return undefined;
+            if(type=="number"||type=="boolean")
+                return o+"";
+            if(type=="string")
+                return $.quoteString(o);
+            if(type=='object')
+
+            {
+                if(typeof o.toJSON=="function")
+                    return $.toJSON(o.toJSON());
+                if(o.constructor===Date)
+
+                {
+                    var month=o.getUTCMonth()+1;
+                    if(month<10)month='0'+month;
+                    var day=o.getUTCDate();
+                    if(day<10)day='0'+day;
+                    var year=o.getUTCFullYear();
+                    var hours=o.getUTCHours();
+                    if(hours<10)hours='0'+hours;
+                    var minutes=o.getUTCMinutes();
+                    if(minutes<10)minutes='0'+minutes;
+                    var seconds=o.getUTCSeconds();
+                    if(seconds<10)seconds='0'+seconds;
+                    var milli=o.getUTCMilliseconds();
+                    if(milli<100)milli='0'+milli;
+                    if(milli<10)milli='0'+milli;
+                    return'"'+year+'-'+month+'-'+day+'T'+
+                    hours+':'+minutes+':'+seconds+'.'+milli+'Z"';
+                }
+                if(o.constructor===Array)
+                {
+                    var ret=[];
+                    for(var i=0;i<o.length;i++)
+                        ret.push($.toJSON(o[i])||"null");
+                    return"["+ret.join(",")+"]";
+                }
+                var pairs=[];
+                for(var k in o){
+                    var name;
+                    var type=typeof k;
+                    if(type=="number")
+                        name='"'+k+'"';
+                    else if(type=="string")
+                        name=$.quoteString(k);else
+                        continue;
+                    if(typeof o[k]=="function")
+                        continue;
+                    var val=$.toJSON(o[k]);
+                    pairs.push(name+":"+val);
+                }
+                return"{"+pairs.join(", ")+"}";
+            }
+        };
+
+        $.evalJSON=function(src)
+
+        {
+            if(typeof(JSON)=='object'&&JSON.parse)
+                return JSON.parse(src);
+            return eval("("+src+")");
+        };
+
+        $.secureEvalJSON=function(src)
+
+        {
+            if(typeof(JSON)=='object'&&JSON.parse)
+                return JSON.parse(src);
+            var filtered=src;
+            filtered=filtered.replace(/\\["\\\/bfnrtu]/g,'@');
+            filtered=filtered.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']');
+            filtered=filtered.replace(/(?:^|:|,)(?:\s*\[)+/g,'');
+            if(/^[\],:{}\s]*$/.test(filtered))
+                return eval("("+src+")");else
+                throw new SyntaxError("Error parsing JSON, source is not valid.");
+        };
+
+        $.quoteString=function(string)
+
+        {
+            if(string.match(_escapeable))
+
+            {
+                return'"'+string.replace(_escapeable,function(a)
+
+                {
+                        var c=_meta[a];
+                        if(typeof c==='string')return c;
+                        c=a.charCodeAt();
+                        return'\\u00'+Math.floor(c/16).toString(16)+(c%16).toString(16);
+                    })+'"';
+            }
+            return'"'+string+'"';
+        };
+
+        var _escapeable=/["\\\x00-\x1f\x7f-\x9f]/g;
+        var _meta={
+            '\b':'\\b',
+            '\t':'\\t',
+            '\n':'\\n',
+            '\f':'\\f',
+            '\r':'\\r',
+            '"':'\\"',
+            '\\':'\\\\'
+        };
+    })($R);
+    
+    (function($){   
+        /*
+         * jQuery postMessage - v0.5 - 9/11/2009
+         * http://benalman.com/projects/jquery-postmessage-plugin/
+         * 
+         * Copyright (c) 2009 "Cowboy" Ben Alman
+         * Dual licensed under the MIT and GPL licenses.
+         * http://benalman.com/about/license/
+         */
+        var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h]&&!$.browser.opera;$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
+    })($R);
+
+
+
+    (function($){
+        $.fn.SearchHighlight = function(options) {
+            /**
+             * SearchHighlight plugin for jQuery
+             * http://www.jquery.info/spip.php?article50
+             * Thanks to Scott Yang <http://scott.yang.id.au/>
+             * for the original idea and some code
+             *    
+             * @author Renato Formato <renatoformato@virgilio.it> 
+             *  
+             * @version 0.33
+
+             * modified by eric@readrboard.com for readrboard.com
+            /*
+                  modifications by eric@readrboard.com:
+                  - quickly rerouted the code to not use the search engine part of the plugin - we don't need that
+                  - if if parent node is unspecified, it now defaults to the $() parent node, not the document body
+                  - added a param to let accents be considered unique chars
+                  - modified the word match to include apostrophes
+            */
+
+            /*
+             *
+             *  Options
+             *  - exact (string, default:"exact") 
+             *    "exact" : find and highlight the exact words.
+             *    "whole" : find partial matches but highlight whole words
+             *    "partial": find and highlight partial matches
+             *     
+             *  - style_name (string, default:'rdr_highlight')
+             *    The class given to the span wrapping the matched words.
+             *     
+             *  - style_name_suffix (boolean, default:true)
+             *    If true a different number is added to style_name for every different matched word.
+             *    
+             *    [ec] omit this functionalilty search engine feature not used     
+             *  x debug_referrer (string, default:null)
+             *    Set a referrer for debugging purpose.
+             *   
+             *    [ec] omit this functionalilty search engine feature not used       
+             *  x engines (array of regex, default:null)
+             *    Add a new search engine regex to highlight searches coming from new search engines.
+             *    The first element is the regex to match the domain.
+             *    The second element is the regex to match the query string. 
+             *    Ex: [/^http:\/\/my\.site\.net/i,/search=([^&]+)/i]        
+             *            
+             *  - highlight (string, default:null)
+             *    A jQuery selector or object to set the elements enabled for highlight.
+             *    If null or no elements are found, [ec edit] <remove>all the document is enabled for highlight.</remove>
+                  <add>the caller of the jq function is used instead.</add>
+             *        
+             *  - nohighlight (string, default:null)  
+             *    A jQuery selector or object to set the elements not enabled for highlight.
+             *    This option has priority on highlight. 
+             *    
+             *  - keys (string, default:null)
+             *    Disable the analisys of the referrer and search for the words given as argument    
+             *  
+             *  - [ec added] replace_accent (bool, default:true)
+             *    whether or not it will normalize accent characters i.e. to make é == e
+             */
+
+            /* search engine feature not used 
+            var ref = options.debug_referrer || document.referrer;
+            if(!ref && options.keys==undefined) return this;
+            */
+            SearchHighlight.options = $.extend({
+              exact:"exact",
+              style_name:'rdr_highlight',
+              style_name_suffix:true,
+              replace_accent:true
+              }, options);
+            
+            /* search engine feature not used 
+            if(options.engines) SearchHighlight.engines.unshift(options.engines);  
+            */
+
+            var q = options.keys;
+            if (typeof q === "string") q = [q]; //if a single string, make it an array.
+            if(q) {  
+              SearchHighlight.buildReplaceTools(q);
+              return this.each(function(){
+                var el = this;
+                if(el==document) el = $("body")[0];
+                SearchHighlight.hiliteElement(el, q); 
+              })
+            } else return this;
+          }    
+
+          var SearchHighlight = {
+            options: {},
+            regex: [],
+            /* search engine feature not used 
+            engines: [
+            [/^http:\/\/(www\.)?google\./i, /q=([^&]+)/i],                            // Google
+            [/^http:\/\/(www\.)?search\.yahoo\./i, /p=([^&]+)/i],                     // Yahoo
+            [/^http:\/\/(www\.)?search\.msn\./i, /q=([^&]+)/i],                       // MSN
+            [/^http:\/\/(www\.)?search\.live\./i, /query=([^&]+)/i],                  // MSN Live
+            [/^http:\/\/(www\.)?search\.aol\./i, /userQuery=([^&]+)/i],               // AOL
+            [/^http:\/\/(www\.)?ask\.com/i, /q=([^&]+)/i],                            // Ask.com
+            [/^http:\/\/(www\.)?altavista\./i, /q=([^&]+)/i],                         // AltaVista
+            [/^http:\/\/(www\.)?feedster\./i, /q=([^&]+)/i],                          // Feedster
+            [/^http:\/\/(www\.)?search\.lycos\./i, /q=([^&]+)/i],                     // Lycos
+            [/^http:\/\/(www\.)?alltheweb\./i, /q=([^&]+)/i],                         // AllTheWeb
+            [/^http:\/\/(www\.)?technorati\.com/i, /([^\?\/]+)(?:\?.*)$/i],           // Technorati
+            ],
+            */
+            subs: {},
+
+            /* search engine feature not used 
+            decodeURL: function(URL,reg) {
+              URL = decodeURIComponent(URL);
+              var query = null;
+              $.each(reg,function(i,n){
+                if(n[0].test(URL)) {
+                  var match = URL.match(n[1]);
+                  if(match) {
+                    query = match[1].toLowerCase();
+                    return false;
+                  }
+                }
+              })
+              
+              if (query) {
+              query = query.replace(/(\'|")/, '\$1');
+              query = query.split(/[\s,\+\.]+/);
+              }
+              
+              return query;
+            },
+            */
+
+            regexAccent : [
+              [/[\xC0-\xC5\u0100-\u0105]/ig,'a'],
+              [/[\xC7\u0106-\u010D]/ig,'c'],
+              [/[\xC8-\xCB]/ig,'e'],
+              [/[\xCC-\xCF]/ig,'i'],
+              [/\xD1/ig,'n'],
+              [/[\xD2-\xD6\xD8]/ig,'o'],
+              [/[\u015A-\u0161]/ig,'s'],
+              [/[\u0162-\u0167]/ig,'t'],
+              [/[\xD9-\xDC]/ig,'u'],
+              [/\xFF/ig,'y'],
+              [/[\x91\x92\u2018\u2019]/ig,'\'']
+            ],
+            matchAccent : /[\x91\x92\xC0-\xC5\xC7-\xCF\xD1-\xD6\xD8-\xDC\xFF\u0100-\u010D\u015A-\u0167\u2018\u2019]/ig,  
+            replaceAccent: function(q) {
+              SearchHighlight.matchAccent.lastIndex = 0;
+              if(SearchHighlight.matchAccent.test(q)) {
+                for(var i=0,l=SearchHighlight.regexAccent.length;i<l;i++)
+                  q = q.replace(SearchHighlight.regexAccent[i][0],SearchHighlight.regexAccent[i][1]);
+              }
+              return q;
+            },
+            escapeRegEx : /((?:\\{2})*)([[\]{}*?|])/g, //the special chars . and + are already gone at this point because they are considered split chars
+            buildReplaceTools : function(query) {
+                var re = [], regex;
+                $.each(query,function(i,n){
+                    if(SearchHighlight.options.replace_accent){
+                       if(n = n.replace(SearchHighlight.escapeRegEx,"$1\\$2"))
+                        re.push(n);         
+                    }else{
+                      if(n = SearchHighlight.replaceAccent(n).replace(SearchHighlight.escapeRegEx,"$1\\$2"))
+                        re.push(n);         
+                    }
+                });
+                regex = re.join("|");
+                switch(SearchHighlight.options.exact) {
+                  case "exact":
+                    regex = '\\b(?:'+regex+')\\b';
+                    break;
+                  case "whole":
+                    //regex = "\\b\\w*("+regex+")\\w*\\b";
+
+                    //todo: give this a second look.  Alt symbols for apostrophes?
+                    regex = "\\b(?:\\w|')*("+regex+")(?:\\w|')*\\b"; //[ec] modified to include apostrophes
+                    break;
+                }    
+                SearchHighlight.regex = new RegExp(regex, "gi");
+                $.each(re,function(i,n){
+                    SearchHighlight.subs[n] = SearchHighlight.options.style_name+
+                      (SearchHighlight.options.style_name_suffix?i+1:''); 
+                });       
+            },
+            nosearch: /s(?:cript|tyle)|textarea/i,
+            hiliteElement: function(el, query) {
+                var opt = SearchHighlight.options,
+                elHighlight,
+                noHighlight;
+                elHighlight = opt.highlight?$(opt.highlight):$(el); 
+                if(!elHighlight.length) elHighlight = $(el); 
+                noHighlight = opt.nohighlight?$(opt.nohighlight):$([]);
+                        
+                elHighlight.each(function(){
+                  SearchHighlight.hiliteTree(this,query,noHighlight);
+                });
+            },
+            hiliteTree : function(el,query,noHighlight) {
+                if(noHighlight.index(el)!=-1) return;
+                var matchIndex = SearchHighlight.options.exact=="whole"?1:0;
+                for(var startIndex=0,endIndex=el.childNodes.length;startIndex<endIndex;startIndex++) {
+                  var item = el.childNodes[startIndex];
+                  if ( item.nodeType != 8 ) {//comment node
+                          //text node
+                    if(item.nodeType==3) {            
+                      var text = item.data,
+                      textNoAcc = SearchHighlight.replaceAccent(text), //only used if flag is set
+                      reText = SearchHighlight.options.replace_accent ? textNoAcc : text,
+                      newtext="",
+                      match,
+                      index=0;
+                      
+                      SearchHighlight.regex.lastIndex = 0;
+                      
+                      while(match = SearchHighlight.regex.exec(reText)) {
+                        var className = SearchHighlight.subs[match[matchIndex].toLowerCase()];
+                        newtext += text.substr(index,match.index-index)+'<span class="'+className+'">'+
+                        text.substr(match.index,match[0].length)+"</span>";
+                        index = match.index+match[0].length;
+                      }
+                      if(newtext) {
+                        //add the last part of the text
+                        newtext += text.substring(index);
+                        var repl = $.merge([],$("<span>"+newtext+"</span>")[0].childNodes);
+                        endIndex += repl.length-1;
+                        startIndex += repl.length-1;
+                        $(item).before(repl).remove();
+                      }                
+                    } else {
+                      if(item.nodeType==1 && item.nodeName.search(SearchHighlight.nosearch)==-1)
+                          SearchHighlight.hiliteTree(item,query,noHighlight);
+                    }   
+                  }
+                }    
+            }
+          };
+    })($R);
+
+    (function($){
+        //improvedCSS.js  http://plugins.jquery.com/node/8726/release
+        /**
+        * @Keith Bentrup
+        */
+        $.fn.css2 = $.fn.css; 
+        $.fn.css = function () {
+            if (arguments.length) return $.fn.css2.apply(this,arguments);
+            var attr = ['font-family','font-size','font-weight','font-style','color',
+              'text-transform','text-decoration','letter-spacing','word-spacing',
+              'line-height','text-align','vertical-align','direction','background-color',
+              'background-image','background-repeat','background-position',
+              'background-attachment','opacity','width','height','top','right','bottom',
+              'left','margin-top','margin-right','margin-bottom','margin-left',
+              'padding-top','padding-right','padding-bottom','padding-left',
+              'border-top-width','border-right-width','border-bottom-width',
+              'border-left-width','border-top-color','border-right-color',
+              'border-bottom-color','border-left-color','border-top-style',
+              'border-right-style','border-bottom-style','border-left-style','position',
+              'display','visibility','z-index','overflow-x','overflow-y','white-space',
+              'clip','float','clear','cursor','list-style-image','list-style-position',
+              'list-style-type','marker-offset'
+            ];
+            var len = attr.length, obj = {}, val;
+            for (var i = 0; i < len; i++) obj[attr[i]] = $.fn.css2.call(this,attr[i]);
+            return obj;
+        }
+    })($R);
+
+}
