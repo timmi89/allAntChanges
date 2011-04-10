@@ -30,7 +30,7 @@ def createToken(django_id, auth_token, group_id):
     username = User.objects.get(id=django_id).username
     print "Creating readr_token %s %s %s" % (djangoid, auth_token, group_secret)
     token = sha_constructor(
-        unicode(djangoid) +
+        unicode(django_id) +
         unicode(auth_token) +
         unicode(group_secret)
     ).hexdigest()[::2]
