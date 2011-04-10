@@ -29,7 +29,7 @@ def createInteractionNode(kind, body):
             print "Success creating InteractionNode with id %s" % node.id
             return node
 
-def deleteInteraction(page, content, user, interaction_node):
+def deleteInteraction(interaction, data):
     pass
 
 def createInteraction(page, content, user, interaction_node, group, parent=None):
@@ -69,5 +69,5 @@ def createInteraction(page, content, user, interaction_node, group, parent=None)
                            user=user, 
                            interaction_node=interaction_node, 
                            created=now)
-        if new == None: raise JSONException("Error creating interaction")
+        if new == None: raise JSONException(u"Error creating interaction")
         return dict(id=new.id, num_interactions=num_interactions+1)

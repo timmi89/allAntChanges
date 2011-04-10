@@ -66,7 +66,7 @@ class FBHandler(BaseHandler):
     @status_response
     def read(self, request):
         data = json.loads(request.GET['json'])
-
+        user_id = data['user_id']
         fb_session = data['fb']
         group_id = data['group_id']
         access_token = fb_session.get('access_token', None)
@@ -74,7 +74,7 @@ class FBHandler(BaseHandler):
         if(access_token):
             graph = GraphAPI(access_token)
         else:
-            raise JSONException("No access token")
+            raise JSONException(u"No access token")
 
         # Get user profile from facebook graph
         profile = graph.get_object("me")
@@ -88,7 +88,9 @@ class FBHandler(BaseHandler):
             fb_session
         )
 
-        #if(temp_user): convertUser(temp_user, django_user)
+        if len(SocialUser.objects.filter(user__id=user_id)) == 0:
+            convertUser(user_id, django_user)
+
         readr_token = createToken(django_user.id, social_auth.auth_token, group_id)
 
         return dict(
@@ -117,13 +119,13 @@ class CreateCommentHandler(BaseHandler):
         user = request.user
         parent = Interaction.objects.get(id=interaction_id)
         
-        if not checkToken(data): raise JSONException("Token was invalid")
+        if not checkToken(data): raise JSONException(u"Token was invalid")
 
         comment = createInteractionNode(kind='com', body=comment)
         interaction = createInteraction(parent.page, parent.content, user, comment)
 
 class TagHandler(BaseHandler):
-
+    """ Create action ='delete'"""
     @status_response
     def read(self, request, **kwargs):
         action = kwargs['action']
@@ -149,7 +151,7 @@ class TagHandler(BaseHandler):
             except Group.DoesNotExist, Group.MultipleObjectsReturned:
                 raise JSONException(u"Error getting group!")
 
-            if not checkToken(data): raise JSONException("Token was invalid")
+            if not checkToken(data): raise JSONException(u"Token was invalid")
             content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
             
             if hash:    
@@ -172,7 +174,7 @@ class TagHandler(BaseHandler):
                     )
                 return new
             else:
-                return JSONException("No tag provided to tag handler")
+                return JSONException(u"No tag provided to tag handler")
 
 class CreateContainerHandler(BaseHandler):
     
