@@ -20,13 +20,14 @@ def checkToken(data):
     print "client side token is ", data['readr_token']
     return (readr_token == data['readr_token'])
 
-def createToken(djangoid, auth_token, group_id):
+def createToken(django_id, auth_token, group_id):
     """
     Create an SHA token from django id, social network
     auth token and group secret.
     """
     # Get the group secret which only we know
     group_secret = Group.objects.get(id=group_id).secret
+    username = User.objects.get(id=django_id).username
     print "Creating readr_token %s %s %s" % (djangoid, auth_token, group_secret)
     token = sha_constructor(
         unicode(djangoid) +
