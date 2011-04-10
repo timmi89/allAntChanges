@@ -1158,6 +1158,7 @@ function readrBoard($R){
                     var comment = $commentBox.find('textarea').val();
                     RDR.actions.comment({ comment:comment, int_id:int_id.id, rindow:rindow });
                 });
+                
                 var $socialBox = $('<div class="rdr_share_social"><strong>Share your reaction</strong></div>'),
                 $shareLinks = $('<ul class="shareLinks"></ul>'),
                 socialNetworks = ["facebook","twitter","tumblr","linkedin"];
