@@ -1664,6 +1664,7 @@ function jQueryPlugins($R){
                   - if if parent node is unspecified, it now defaults to the $() parent node, not the document body
                   - added a param to let accents be considered unique chars
                   - modified the word match to include apostrophes
+                  - doing saftey checks for query string instead of array of query strings, and for empty strings
             */
 
             /*
@@ -1730,19 +1731,54 @@ function jQueryPlugins($R){
             */
 
             var q = options.keys;
-            if (typeof q === "string") q = [q]; //if a single string, make it an array.
-            if(q) {  
-              SearchHighlight.buildReplaceTools(q);
-              return this.each(function(){
-                var el = this;
-                if(el==document) el = $("body")[0];
-                SearchHighlight.hiliteElement(el, q); 
-              })
+            console.log(q);
+            if(typeof q !== "undefined") {
+                if (typeof q === "string") {q = [q];} //if a single string, make it an array.
+                SearchHighlight.buildReplaceTools(q);
+                if( $.isEmptyObject( SearchHighlight.subs ) ) return this;
+                //else
+                return this.each(function(){
+                    var el = this;
+                    if( SearchHighlight.options.clone ){
+                        el = makeClone(el);
+                    }
+                    if(el==document) el = $("body")[0];
+                    SearchHighlight.hiliteElement(el);
+                });
             } else return this;
           }    
 
           var SearchHighlight = {
             options: {},
+            cloneNodes: [],
+            makeClone: function(el){
+                var $hostNode = $(el),
+                $cloneNode = $hostNode.clone(),
+                cloneNodeCss = function() {
+                    return {
+                        'position':'absolute',
+                        'top': $hostNode.offset().top,
+                        'left': $hostNode.offset().left,
+                        'margin': '0',
+                        'color':'transparent'
+                    }
+                };
+
+                //convert to straight text
+                //note - we'll want to do this later but we have to check first to make sure all the nodes are inline and the same size.
+                //$cloneNode.html($cloneNode.text());
+
+                
+                //start with cloned style from $hostNode
+                //NOTE: requires improvedCSS.js  http://plugins.jquery.com/node/8726/release
+                $cloneNode.css($hostNode.css());
+
+                // then absolute position it on body with offset
+                $cloneNode.appendTo(topContainerSelector).css( cloneNodeCss() );
+            
+                cloneNodes.push($cloneNode);
+                return $cloneNode;
+            },
             regex: [],
             /* search engine feature not used 
             engines: [
@@ -1810,6 +1846,7 @@ function jQueryPlugins($R){
             buildReplaceTools : function(query) {
                 var re = [], regex;
                 $.each(query,function(i,n){
+                    if ( n == "") return;
                     if(SearchHighlight.options.replace_accent){
                        if(n = n.replace(SearchHighlight.escapeRegEx,"$1\\$2"))
                         re.push(n);         
@@ -1834,22 +1871,20 @@ function jQueryPlugins($R){
                 $.each(re,function(i,n){
                     SearchHighlight.subs[n] = SearchHighlight.options.style_name+
                       (SearchHighlight.options.style_name_suffix?i+1:''); 
-                });       
-            },
-            nosearch: /s(?:cript|tyle)|textarea/i,
-            hiliteElement: function(el, query) {
-                var opt = SearchHighlight.options,
-                elHighlight,
-                noHighlight;
-                elHighlight = opt.highlight?$(opt.highlight):$(el); 
-                if(!elHighlight.length) elHighlight = $(el); 
-                noHighlight = opt.nohighlight?$(opt.nohighlight):$([]);
-                        
-                elHighlight.each(function(){
-                  SearchHighlight.hiliteTree(this,query,noHighlight);
                 });
             },
-            hiliteTree : function(el,query,noHighlight) {
+            nosearch: /s(?:cript|tyle)|textarea/i,
+            hiliteElement: function(el) {
+                var opt = SearchHighlight.options,
+                $elHighlight,
+                noHighlight;
+                $elHighlight = opt.highlight?$(opt.highlight):$(el);
+                noHighlight = opt.nohighlight?$(opt.nohighlight):$([]);                
+                $elHighlight.each(function(){
+                  SearchHighlight.hiliteTree(this,noHighlight);
+                });
+            },
+            hiliteTree : function(el,noHighlight) {
                 if(noHighlight.index(el)!=-1) return;
                 var matchIndex = SearchHighlight.options.exact=="whole"?1:0;
                 for(var startIndex=0,endIndex=el.childNodes.length;startIndex<endIndex;startIndex++) {
@@ -1882,7 +1917,7 @@ function jQueryPlugins($R){
                       }                
                     } else {
                       if(item.nodeType==1 && item.nodeName.search(SearchHighlight.nosearch)==-1)
-                          SearchHighlight.hiliteTree(item,query,noHighlight);
+                          SearchHighlight.hiliteTree(item,noHighlight);
                     }   
                   }
                 }    
