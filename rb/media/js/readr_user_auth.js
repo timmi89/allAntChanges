@@ -17,7 +17,7 @@ $.receiveMessage(
 	    		RDRAuth.killUser();
 	    		break;
 	    	case "checkSocialUser":
-	    		RDRAuth.checkSocialUser();
+	    		RDRAuth.checkSocialUser(true);
 	    		break;
 	    }
 	},
