@@ -156,12 +156,33 @@ RDRAuth = {
 	},
 	killUser : function() {
 		console.log('killing the user...softly');
-		$.cookie('first_name', null, { path: '/' });
-		$.cookie('full_name', null, { path: '/' });
-		$.cookie('img_url', null, { path: '/' });
-		$.cookie('user_id', null, { path: '/' });
-		$.cookie('readr_token', null, { path: '/' });
-		RDRAuth.rdr_user = {};
+
+		if ( RDRAuth.rdr_user && RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token ) {
+		var sendData = {
+			user_id : RDRAuth.rdr_user.user_id,
+			readr_token : RDRAuth.rdr_user.readr_token,
+			group_id : qs_args.group_id
+		};
+
+		$.ajax({
+			url: "/api/deauthorize/",
+			type: "get",
+			contentType: "application/json",
+			dataType: "jsonp",
+			data: {
+				json: JSON.stringify( sendData )
+			},
+			success: function(response){
+				$.cookie('first_name', null, { path: '/' });
+				$.cookie('full_name', null, { path: '/' });
+				$.cookie('img_url', null, { path: '/' });
+				$.cookie('user_id', null, { path: '/' });
+				$.cookie('readr_token', null, { path: '/' });
+				RDRAuth.rdr_user = {};
+			}
+		});
+
+		}
 	},
 	checkSocialUser : function(revalidate) {
 		console.log('checkSocialUser 1');
