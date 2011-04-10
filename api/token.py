@@ -11,7 +11,7 @@ def checkToken(data):
     print 'length is ', len(SocialUser.objects.filter(user__id=user_id))
     if len(SocialUser.objects.filter(user__id=user_id)) == 1:
         print "Checking token for registered user"
-        auth_token = SocialAuth.objects.get(social_user__user=data['user_id'])
+        auth_token = SocialAuth.objects.get(social_user__user=data['user_id']).auth_token
     else:
         print "Checking token for temporary user"
         auth_token = 'R3dRB0aRdR0X'
