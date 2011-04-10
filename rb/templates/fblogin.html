@@ -41,6 +41,9 @@
 			} else {
 				// user is not logged in
 				// TODO do something.  post to parent that there was a bug logging in to FB
+
+				$('#fb-logged-in').hide();
+				$('#fb-login-button').show();
 			}	
 		}
 		
@@ -49,24 +52,7 @@
 			status:true, xfbml:true 
 		});
 
-		var fb_session = FB.getSession();
-		if ( fb_session ) {
-			RDRAuth.getReadrToken( fb_session );
-		} else {
-			FB.getLoginStatus(function(response) {
-		  		if (response.session) {
-					//user is logged in
-					$('#fb-logged-in').show();
-					$('#fb-login-button').hide();
-					RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
-		  		} else {
-		  			// TODO debug only?
-		  			// probably just throw a general error message
-					$('#fb-logged-in').hide();
-					$('#fb-login-button').show();
-	  			}
-			});
-		}
+		RDRAuth.checkSocialUser();
 	</script>
    </body>
 </html>

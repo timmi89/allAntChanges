@@ -435,6 +435,9 @@ function readrBoard($R){
                     );
                 }
             },
+            handleGetUserResponse : function(args, callbacks) {
+                
+            },
 			createXDMframe : function() {
                 RDR.session.receiveMessage();
 
@@ -1059,7 +1062,13 @@ function readrBoard($R){
 
                                     // TODO tell the user something failed and ask them to try again
                                     console.log('sorry there was a problem with your alleged user ID.  we just killed it, try again.');
-                                }
+                                } else if ( response.message == "Token was invalid" ) {
+                                    $.postMessage(
+                                        "checkSocialUser",
+                                        RDR.session.iframeHost + "/xdm_status/",
+                                        window.frames['rdr-xdm-hidden']
+                                    );
+                                } 
                             } else {
                                 RDR.actions.shareStart( {rindow:params.rindow, tag:params.tag, int_id:response.data });
                             }
