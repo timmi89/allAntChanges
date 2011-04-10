@@ -1136,7 +1136,7 @@ function readrBoard($R){
 
                 //todo: combine this with the tooltip for the tags
                 var helpText = "because..."
-                var $commentBox =  $('<div class="rdr_share"><textarea class="commentBox">' + helpText+ '</textarea><button>Comment</button></div>');
+                var $commentBox =  $('<div class="rdr_share"><textarea class="commentBox">' + helpText+ '</textarea><button id="comment_on_'+int_id+'">Comment</button></div>');
                 $commentBox.find('textarea').focus(function(){
                     if($('.commentBox').val() == helpText ){
                         $('.commentBox').val('');
@@ -1154,11 +1154,9 @@ function readrBoard($R){
                     }
                 });
 
-                $commentBox.find('button').click(function(){
-                    $(this).closest('.rdr_share').css({'visibility':'hidden'});
-                    $(this).closest('.rdr_body').children('.rdr_commentFeedback')
-                    .find('.rdr_tagFeedback').hide().end()//chain
-                    .find('.rdr_commentComplete').text('Thanks for your comment.')
+                $commentBox.find('button').click(function() {
+                    var comment = $commentBox.find('textarea').val();
+                    RDR.actions.comment({ comment:comment, int_id:int_id.id, rindow:rindow });
                 });
                 var $socialBox = $('<div class="rdr_share_social"><strong>Share your reaction</strong></div>'),
                 $shareLinks = $('<ul class="shareLinks"></ul>'),
@@ -1197,6 +1195,50 @@ function readrBoard($R){
                     $('.rdr_share_count').text( $('.rdr_share textarea').val().length + " characters");
                 });
                 */
+            },
+            comment : function(args) {
+                RDR.session.getUser( args, function( params ) {
+    
+                    // get the text that was highlighted
+                    var comment = $.trim( params.comment ),
+                    int_id = params.int_id,
+                    rindow = params.rindow;
+
+
+                    var sendData = {
+                        "int_id" : int_id,
+                        "comment" : comment,
+                        "user_id" : RDR.user.user_id,
+                        "readr_token" : RDR.user.readr_token,
+                        "group_id" : RDR.groupPermData.group_id,
+                        "page_id" : RDR.page.id
+                    };
+
+                    console.log('--- sendData for comment: ---');
+                    console.dir(sendData);
+
+                    // send the data!
+                    $.ajax({
+                        url: "/api/comment/create/",
+                        type: "get",
+                        contentType: "application/json",
+                        dataType: "jsonp",
+                        data: { json: JSON.stringify(sendData) },
+                        success: function(response) {
+                            console.dir(response);
+
+                            $(this).closest('div.rdr_share').css({'visibility':'hidden'});
+                            $(this).closest('div.rdr_body').children('.rdr_commentFeedback')
+                            .find('.rdr_tagFeedback').hide().end()//chain
+                            .find('.rdr_commentComplete').text('Thanks for your comment.')
+
+                        },
+                        //for now, ignore error and carry on with mockup
+                        error: function(response) {
+                            console.log("an error occurred while trying to comment");
+                        }
+                    });
+                });
             },
             startSelect : function(e) {
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
