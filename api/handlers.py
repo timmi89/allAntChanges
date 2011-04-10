@@ -58,9 +58,12 @@ class Deauthorize(BaseHandler):
     def read(self, request):
         data = json.loads(request.GET['json'])
         if not checkToken(data): raise JSONException(u"Token was invalid")
-        SocialAuth.objects.filter(
-            social_user__user__id=data['user_id']
-        ).delete()
+        try:
+            SocialAuth.objects.filter(
+                social_user__user__id=data['user_id']
+            ).delete()
+        except:
+            raise JSONException(u'Error deauthorizing user')
 
 class FBHandler(BaseHandler):
 
