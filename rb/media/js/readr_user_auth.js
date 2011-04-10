@@ -163,10 +163,10 @@ RDRAuth = {
 		$.cookie('readr_token', null, { path: '/' });
 		RDRAuth.rdr_user = {};
 	},
-	checkSocialUser : function() {
+	checkSocialUser : function(revalidate) {
 		console.log('checkSocialUser 1');
 		// clear the rdr_user and get it again, b/c we're only here if we've been asked if this person is a valid FB user, meaning we think our local info is wrong
-		RDRAuth.rdr_user = {};
+		if (revalidate) RDRAuth.rdr_user = {};
 		// var fb_session = FB.getSession();
 		// if ( fb_session ) {
 			// RDRAuth.getReadrToken( fb_session );
