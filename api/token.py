@@ -8,8 +8,8 @@ def checkToken(data):
     user_id = data['user_id']
     print '***checking token***'
     print 'user_id is ', user_id
-    print 'length is ', len(SocialUser.objects.filter(id=user_id))
-    if len(SocialUser.objects.filter(id=user_id)) == 1:
+    print 'length is ', len(SocialUser.objects.filter(user__id=user_id))
+    if len(SocialUser.objects.filter(user__id=user_id)) == 1:
         print "Checking token for registered user"
         auth_token = SocialAuth.objects.get(social_user__user=data['user_id'])
     else:
