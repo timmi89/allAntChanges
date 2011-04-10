@@ -54,11 +54,12 @@ class InteractionsHandler(BaseHandler):
 
 class Deauthorize(BaseHandler):
 
+    @status_response
     def read(self, request):
         data = json.loads(request.GET['json'])
         if not checkToken(data): raise JSONException(u"Token was invalid")
         SocialAuth.objects.filter(
-            user__id=data['user_id']
+            social_user__user__id=data['user_id']
         ).delete()
 
 class FBHandler(BaseHandler):
