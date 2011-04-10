@@ -13,7 +13,7 @@ Tag = Resource(handler=TagHandler)
 Interaction = Resource(handler=InteractionHandler)
 CreateComments = Resource(handler=CreateCommentHandler)
 FBLogin = Resource(handler=FBHandler)
-TokenKill = Resource(handler=TokenKillHandler)
+Deauthorize = Resource(handler=Deauthorize)
 TempUser = Resource(handler=TempUserHandler)
 
 # Organized Resources
@@ -38,7 +38,7 @@ urlpatterns = patterns('',
     url(r'^fb/$', FBLogin),
     
     # Auth
-    url(r'^token/kill/$', TokenKill),
+    url(r'^deauthorize/$', Deauthorize),
     url(r'^tempuser/$', TempUser),
 
     # Widget

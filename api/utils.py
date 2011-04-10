@@ -25,22 +25,35 @@ def getPage(request, pageid=None):
 
 def createInteractionNode(kind, body):
     if kind and body:
-            node = InteractionNode.objects.get_or_create(kind=kind, body=body)[0]
-            print "Success creating InteractionNode with id %s" % node.id
-            return node
+        node = InteractionNode.objects.get_or_create(kind=kind, body=body)[0]
+        print "Success creating InteractionNode with id %s" % node.id
+        return node
 
 def deleteInteraction(interaction, data):
     pass
 
+def isTemporaryUser(user):
+    return len(SocialUser.objects.filter(id=user.id)) == 0
+
+def checkLimit(user, group):
+    interactions = Interaction.objects.filter(user=user)
+    num_interactions = len(interactions)
+    if isTemporaryUser(user):
+        max_interact = group.temp_interact
+        if num_interactions >= max_interact:
+            raise JSONException(
+                u"Temporary user interaction limit reached:" +
+                unicode(max_interact)
+            )
+
 def createInteraction(page, content, user, interaction_node, group, parent=None):
-    if content and user and interaction_node:
-        # Check unique content_id, user_id, page_id, interaction_node_id
+    if content and user and interaction_node and page:
+        # Check to see if user has reached their interaction limit
+        checkLimit(user, group)
+
         interactions = Interaction.objects.filter(user=user)
-        num_interactions = len(interactions)
-        if len(SocialUser.objects.filter(id=user.id)) == 0:
-            max_interact = group.temp_interact
-            if num_interactions >= max_interact:
-                raise JSONException(u"Temporary user interaction limit reached:" + unicode(max_interact))
+
+        # Check unique content_id, user_id, page_id, interaction_node_id
         try:
             existing = interactions.get(
                 page=page,
@@ -53,7 +66,7 @@ def createInteraction(page, content, user, interaction_node, group, parent=None)
             pass
 
         # Can't rely on Django's auto_now to create the time before storing the node
-        now = created=datetime.now()
+        now = datetime.now()
 
         if parent:
             print "Creating Interaction with parent node"

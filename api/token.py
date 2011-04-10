@@ -1,23 +1,30 @@
 from readrboard.rb.models import *
 from django.utils.hashcompat import sha_constructor
+from datetime import datetime
+from exceptions import JSONException
 
 def checkToken(data):
     """
     Check to see if token in request is good
     """
     user_id = data['user_id']
-    print '***checking token***'
-    print 'user_id is ', user_id
-    print 'length is ', len(SocialUser.objects.filter(user__id=user_id))
     if len(SocialUser.objects.filter(user__id=user_id)) == 1:
         print "Checking token for registered user"
-        auth_token = SocialAuth.objects.get(social_user__user=data['user_id']).auth_token
+        try:
+            social_auth = SocialAuth.objects.get(social_user__user=data['user_id'])
+        except SocialAuth.DoesNotExist:
+            raise JSONException(u'Social Auth does not exist for user')
+        now = datetime.now()
+        if social_auth.expires > now:
+            auth_token = social_auth.auth_token
+        else:
+            raise JSONException(u'Facebook token expired')
     else:
         print "Checking token for temporary user"
         auth_token = 'R3dRB0aRdR0X'
     readr_token = createToken(data['user_id'], auth_token, data['group_id'])
-    print "server side token is ", readr_token
-    print "client side token is ", data['readr_token']
+    #print "server side token is ", readr_token
+    #print "client side token is ", data['readr_token']
     return (readr_token == data['readr_token'])
 
 def createToken(django_id, auth_token, group_id):

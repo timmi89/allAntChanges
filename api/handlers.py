@@ -13,8 +13,7 @@ from userutils import *
 from token import *
 
 """
-Readrboard Widget API - Uses Piston
-Note: By default, AnonymousBaseHandler has 'allow_methods' only set to 'GET'.
+Readrboard Widget API
 """
 
 class TempUserHandler(BaseHandler):
@@ -53,7 +52,7 @@ class InteractionsHandler(BaseHandler):
             nodes = nodes.filter(interaction__content__container=containers)
         return nodes
 
-class TokenKillHandler(BaseHandler):
+class Deauthorize(BaseHandler):
 
     def read(self, request):
         data = json.loads(request.GET['json'])
@@ -154,9 +153,15 @@ class TagHandler(BaseHandler):
             if not checkToken(data): raise JSONException(u"Token was invalid")
             content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
             
-            if hash:    
-                container = Container.objects.get(hash=hash)
-                container.content.add(content)
+            if hash:
+                try:
+                    container = Container.objects.get(hash=hash)
+                except Container.DoesNotExist, Container.MultipleObjectsReturned:
+                    raise JSONException(u'Hash was sent but there was an error retreiving container')
+                try:
+                    container.content.add(content)
+                except:
+                    raise JSONException(u'Error adding content to container')
 
             new = None
             if tag:
