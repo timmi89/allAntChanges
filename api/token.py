@@ -28,9 +28,9 @@ def createToken(django_id, auth_token, group_id):
     # Get the group secret which only we know
     group_secret = Group.objects.get(id=group_id).secret
     username = User.objects.get(id=django_id).username
-    print "Creating readr_token %s %s %s" % (djangoid, auth_token, group_secret)
+    print "Creating readr_token %s %s %s" % (django_id, auth_token, group_secret)
     token = sha_constructor(
-        unicode(django_id) +
+        unicode(username) +
         unicode(auth_token) +
         unicode(group_secret)
     ).hexdigest()[::2]
