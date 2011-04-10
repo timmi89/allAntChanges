@@ -1740,7 +1740,7 @@ function jQueryPlugins($R){
                 return this.each(function(){
                     var el = this;
                     if( SearchHighlight.options.clone ){
-                        el = makeClone(el);
+                        el = SearchHighlight.makeClone(el);
                     }
                     if(el==document) el = $("body")[0];
                     SearchHighlight.hiliteElement(el);
@@ -1754,6 +1754,7 @@ function jQueryPlugins($R){
             makeClone: function(el){
                 var $hostNode = $(el),
                 $cloneNode = $hostNode.clone(),
+                topContainerSelector = $('body')[0],
                 cloneNodeCss = function() {
                     return {
                         'position':'absolute',
@@ -1773,10 +1774,28 @@ function jQueryPlugins($R){
                 //NOTE: requires improvedCSS.js  http://plugins.jquery.com/node/8726/release
                 $cloneNode.css($hostNode.css());
 
+                //change cloneNodes' identifying stuff
+                var atrs = ['id','class','title'];
+                $.each(atrs,function(i,atr){
+                    var iden = $cloneNode.attr(atr);
+                    if(iden == "") return;
+                    //else
+
+                    var idens = iden.split(" ");
+                    console.log(idens);
+                        $.each(idens,function(j,str){
+                            idens[j] = "rdr_clone-"+str;
+                        });
+                    iden = idens.join(" ");
+                    $cloneNode.attr(atr, iden);
+                });
+                //add one more class to identify it on it's own as a clone
+                $cloneNode.addClass("rdr_clone");
+
                 // then absolute position it on body with offset
                 $cloneNode.appendTo(topContainerSelector).css( cloneNodeCss() );
             
-                cloneNodes.push($cloneNode);
+                this.cloneNodes.push($cloneNode);
                 return $cloneNode;
             },
             regex: [],
