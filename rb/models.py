@@ -43,14 +43,17 @@ class Feature(models.Model):
     flash = models.BooleanField()
 
     def __unicode__(self):
-        return u"Feature(Text: {0}, Images: {1}, Flash: {2})".format(self.text, self.images, self.flash)
+        return u'Feature(Text: {0}, Images: {1}, Flash: {2})'.format(self.text, self.images, self.flash)
 
 class InteractionNode(models.Model):
     kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)
-    body = models.TextField(unique=True)
+    body = models.TextField()
     
     def __unicode__(self):
         return u"Node(Type: {0}, Body: {1})".format(self.kind, self.body[:25])
+
+    class Meta:
+        unique_together = ('kind', 'body')
 
 class Group(models.Model):
     name = models.CharField(max_length=250)
@@ -100,6 +103,9 @@ class NodeValue(models.Model):
     def __unicode__(self):
         return unicode(self.value)
 
+    class Meta:
+        unique_together = ('group', 'node', 'value')
+
 class Site(models.Model):
     name = models.CharField(max_length=100)
     domain = models.CharField(max_length=50)
@@ -124,7 +130,7 @@ class Content(DateAwareModel):
     body = models.TextField()
     
     def __unicode__(self):
-        return u"Content(Kind: {0}, Body: {1})".format(self.kind, self.body[:25])
+        return u'Content(Kind: {0}, Body: {1})'.format(self.kind, self.body[:25])
     
     class Meta:
         verbose_name_plural = "content"
@@ -156,7 +162,7 @@ class Interaction(DateAwareModel, UserAwareModel, MP_Node):
         return ('api.urls.Interaction.resource_uri()', [str(self.id)])
 
     def __unicode__(self):
-        return u"Interaction(Page: {0}, Content: {1})".format(self.page, self.content)
+        return u'Interaction(Page: {0}, Content: {1})'.format(self.page, self.content)
 
 
 class Link(models.Model):
