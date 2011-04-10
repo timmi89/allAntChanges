@@ -283,6 +283,7 @@ class SettingsHandler(BaseHandler):
               'logo_url_med',
               'logo_url_lg',
               'css_url',
+              'temp_interact'
              )
              
     @status_response
