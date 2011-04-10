@@ -42,6 +42,9 @@ class Feature(models.Model):
     images = models.BooleanField()
     flash = models.BooleanField()
 
+    class Meta:
+        unique_together = ('text', 'images', 'flash')
+
     def __unicode__(self):
         return u'Feature(Text: {0}, Images: {1}, Flash: {2})'.format(self.text, self.images, self.flash)
 
@@ -50,7 +53,7 @@ class InteractionNode(models.Model):
     body = models.TextField()
     
     def __unicode__(self):
-        return u"Node(Type: {0}, Body: {1})".format(self.kind, self.body[:25])
+        return u'Node(Type: {0}, Body: {1})'.format(self.kind, self.body[:25])
 
     class Meta:
         unique_together = ('kind', 'body')
