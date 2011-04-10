@@ -66,10 +66,10 @@ class FBHandler(BaseHandler):
     @status_response
     def read(self, request):
         data = json.loads(request.GET['json'])
-        user_id = data['user_id']
         fb_session = data['fb']
         group_id = data['group_id']
         access_token = fb_session.get('access_token', None)
+        user_id = data.get('user_id', None)
 
         if(access_token):
             graph = GraphAPI(access_token)
@@ -88,7 +88,7 @@ class FBHandler(BaseHandler):
             fb_session
         )
 
-        if len(SocialUser.objects.filter(user__id=user_id)) == 0:
+        if user_id and len(SocialUser.objects.filter(user__id=user_id)) == 0:
             convertUser(user_id, django_user)
 
         readr_token = createToken(django_user.id, social_auth.auth_token, group_id)
