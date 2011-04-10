@@ -2,16 +2,9 @@
 
 var hostSelector = ".rdr-345c1dfd92c4f46eca2f29adab9ce8cf",  //testing on our rb local site
 
-hostTargetText = ['kit'], //a string, or an array of strings
+hostTargetText = ['the'], //a string, or an array of strings
 topContainerSelector = "body", // todo: not used anymore - use offsetParent
 
-$pin,
-pinSettings = {
-	id:"pin",
-	offset:null,
-	html: "I may look inline, but i'm a new cloned node positioned absolute",
-	prepend: true
-},
 $hostNode = $(hostSelector).eq(0), //really this should be a unique id, but if not, just select the first one.
 $hostClone = $hostNode.clone(),
 hostCloneSettings = {
@@ -53,17 +46,8 @@ function stealHostStyle($hostClone, $hostNode){
 	});
 }
 
-function pinAdjustStyle(){
-	$pin.css({
-		'width': '400px'
-	})
-}
-
-
-//make pin
-// ? normally we would figure out if we were inside a span, then use div, else use span. (like  single or double quote 'escaping')
-
 //convert to straight text
+//note - we'll want to do this later but we have to check first to make sure all the nodes are inline and the same size.
 //$hostClone.html($hostClone.text());
 
 var $highlight;
@@ -83,7 +67,7 @@ if (hostTargetText){
  
   
   $hostClone.SearchHighlight({
-    keys: hostTargetText,
+    keys: "",
     exact: "whole",
     style_name: 'rdr_highlight rdr_highlight' //the second one will have a number appended to it
   });
@@ -113,38 +97,9 @@ if (hostTargetText){
 
 	$highlight.addClass('highlight');
 */
-	/*
-	//todo this assumes it occurs only once - be more robust later
-	var textStart = $hostClone.text().split(hostTargetText)[0],
-	textEnd = $hostClone.text().split(hostTargetText)[1],
-	targetTextSplice = $('<span></span>').attr('id',"textSplice_"+ pinSettings.id);
 
-	$hostClone.html(textStart + targetTextSplice + textEnd);
-	*/
 }
 //not needed anymore
 //stealHostStyle($hostClone, $hostNode);
-
-
-/*
-if (pinSettings.prepend) {
-	//$pin.prependTo($hostNode);
-	//hostClone
-}
-else{
-	$pin.appendTo($hostNode);
-}
-$pin.css(testFlowSamplerCSS);
-
-
-pinSettings.offset = $pin.offset();
-
-$pin
-	.appendTo(topContainer)
-	.css( pinCss() )
-	.html(pinSettings.html);	
-
-pinAdjustStyle();
-*/
 
 })($R)

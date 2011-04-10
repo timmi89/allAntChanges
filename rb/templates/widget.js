@@ -1703,8 +1703,13 @@ function jQueryPlugins($R){
              *  - keys (string, default:null)
              *    Disable the analisys of the referrer and search for the words given as argument    
              *  
-             *  - [ec added] replace_accent (bool, default:true)
+             *    [ec added]
+             *  - replace_accent (bool, default:true)
              *    whether or not it will normalize accent characters i.e. to make é == e
+             *
+             *    [ec added]
+             *  - clone (bool, default:true)
+             *    whether it will make a clone to do the highlighting on (style cloned and absolute positioned.)
              */
 
             /* search engine feature not used 
@@ -1712,11 +1717,13 @@ function jQueryPlugins($R){
             if(!ref && options.keys==undefined) return this;
             */
             SearchHighlight.options = $.extend({
-              exact:"exact",
-              style_name:'rdr_highlight',
-              style_name_suffix:true,
-              replace_accent:true
-              }, options);
+                keys:"",
+                exact:"whole",
+                style_name:'rdr_highlight rdr_highlight', //the second one will have a number appended to it
+                style_name_suffix:true,
+                replace_accent:true,
+                clone:true
+            }, options);
             
             /* search engine feature not used 
             if(options.engines) SearchHighlight.engines.unshift(options.engines);  
@@ -1883,6 +1890,8 @@ function jQueryPlugins($R){
           };
     })($R);
 
+    //todo: consider making this it's own function like cssAll, instead of cluttering the css() function.
+    //though, it's not much clutter, and I kind of like having it around;
     (function($){
         //improvedCSS.js  http://plugins.jquery.com/node/8726/release
         /**
