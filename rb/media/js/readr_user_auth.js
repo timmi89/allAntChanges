@@ -167,17 +167,17 @@ RDRAuth = {
 		console.log('checkSocialUser 1');
 		// clear the rdr_user and get it again, b/c we're only here if we've been asked if this person is a valid FB user, meaning we think our local info is wrong
 		RDRAuth.rdr_user = {};
-		var fb_session = FB.getSession();
-		if ( fb_session ) {
-			RDRAuth.getReadrToken( fb_session );
-		} else {
+		// var fb_session = FB.getSession();
+		// if ( fb_session ) {
+			// RDRAuth.getReadrToken( fb_session );
+		// } else {
 			FB.getLoginStatus(function(response) {
 		  		if (response.session) {
 					//user is logged in
 					RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
 		  		}
 			});
-		}
+		// }
 	},
 	doFBLogin: function() {
 		FB.login( function(response) {
