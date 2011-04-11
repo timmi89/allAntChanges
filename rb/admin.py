@@ -72,12 +72,12 @@ class ContainerAdmin(admin.ModelAdmin):
     #fields = ('user','parent','body')
 
 class InteractionAdmin(admin.ModelAdmin):
-	exclude = (
+    exclude = (
         'path',
-		'depth',
-		'numchild'
+        'depth',
+        'numchild',
     )
-	list_display = (
+    list_display = (
         'id',
         'user',
         'page',
@@ -90,7 +90,7 @@ class InteractionAdmin(admin.ModelAdmin):
 
 class NodeValueAdmin(admin.ModelAdmin):
     list_display = ('group', 'node', 'value')
-	
+    
 class LinkAdmin(admin.ModelAdmin):
     def base62(self, obj):
             return obj.to_base62()

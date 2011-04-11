@@ -112,24 +112,48 @@ class InteractionHandler(BaseHandler):
         tree = Interaction.get_tree(interaction)
         return tree
 
-class CreateCommentHandler(BaseHandler):
+class CommentHandler(BaseHandler):
     
     @status_response
-    def read(self, request):
-        data = json.loads(request.GET['json'])
-        comment = data['comment']
-        interaction_id = data['interaction_id']
-        user = data['user_id']
+    def read(self, request, **kwargs):
+        action = kwargs['action']
+        if action == 'create':
+            data = json.loads(request.GET['json'])
+            comment = data['comment']
+            interaction_id = data['int_id']
+            user = data['user_id']
+            group_id = data['group_id']
+            page_id = data['page_id']
         
-        if not checkToken(data): raise JSONException(u"Token was invalid")
+            if not checkToken(data): raise JSONException(u"Token was invalid")
 
-        try:
-            parent = Interaction.objects.get(id=interaction_id)
-        except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
-            raise JSONException(u'Could not find parent interaction specified')
+            try:
+                user = User.objects.get(id=data['user_id'])
+            except User.DoesNotExist, User.MultipleObjectsReturned:
+                raise JSONException(u"Error getting user!")
+            try:
+                page = Page.objects.get(id=page_id)
+            except Page.DoesNotExist, Page.MultipleObjectsReturned:
+                raise JSONException(u"Error getting page!")
+            try:
+                group = Group.objects.get(id=group_id)
+            except Group.DoesNotExist, Group.MultipleObjectsReturned:
+                raise JSONException(u"Error getting group!")
 
-        comment = createInteractionNode(kind='com', body=comment)
-        interaction = createInteraction(parent.page, parent.content, user, comment)
+            try:
+                parent = Interaction.objects.get(id=interaction_id)
+            except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
+                raise JSONException(u'Could not find parent interaction specified')
+
+            try:
+                comment = createInteractionNode(kind='com', body=comment)
+            except:
+                raise JSONException(u'Error creating comment interaction node')
+            #try:
+            interaction = createInteraction(parent.page, parent.content, user, comment, group)
+            #except:
+            #    raise JSONException(u'Error creating comment interaction')
+        return interaction
 
 class TagHandler(BaseHandler):
     """ Create action ='delete'"""
@@ -195,9 +219,13 @@ class CreateContainerHandler(BaseHandler):
     def read(self, request):
         result = {}
         data = json.loads(request.GET['json'])
+        print data
         hashes = data['hashes']
         for hash in hashes:
-            result[hash] = Container.objects.get_or_create(hash=hash, body=hashes[hash])[1]
+            result[hash] = Container.objects.get_or_create(
+                hash=hash,
+                body=hashes[hash]['content']
+            )[1]
         return result
 
 class ContainerHandler(BaseHandler):
