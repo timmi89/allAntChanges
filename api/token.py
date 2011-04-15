@@ -7,7 +7,10 @@ def checkToken(data):
     """
     Check to see if token in request is good
     """
-    user_id = data['user_id']
+    try:
+        user_id = data.get('user_id', None)
+    except KeyError:
+        raise JSONException("No user id supplied")
     if len(SocialUser.objects.filter(user__id=user_id)) == 1:
         print "Checking token for registered user"
         try:
