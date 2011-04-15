@@ -1212,6 +1212,8 @@ function readrBoard($R){
                     }
                 });
 
+                $commentBox.find('textarea').autogrow();
+
                 $commentBox.find('button').click(function() {
                     var comment = $commentBox.find('textarea').val();
                     RDR.actions.comment({ comment:comment, int_id:int_id.id, rindow:rindow });
@@ -1686,6 +1688,62 @@ function rdr_postMessage($) {
 	var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h]&&!$.browser.opera;$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
 }
 
+function rdr_autogrow($) {
+    /*
+     * modified by PB from...
+     * jQuery autoResize (textarea auto-resizer)
+     * @copyright James Padolsey http://james.padolsey.com
+     * @version 1.04
+     */
+
+    // a.fn.autogrow=function(j){var b=a.extend({onResize:function(){},animate:true,animateDuration:150,animateCallback:function(){},extraSpace:20,limit:1000},j);this.filter('textarea').each(function(){var c=a(this).css({resize:'none','overflow-y':'hidden'}),k=c.height(),f=(function(){var l=['height','width','lineHeight','textDecoration','letterSpacing'],h={};a.each(l,function(d,e){h[e]=c.css(e)});return c.clone().removeAttr('id').removeAttr('name').css({position:'absolute',top:0,left:-9999}).css(h).attr('tabIndex','-1').insertBefore(c)})(),i=null,g=function(){f.height(0).val(a(this).val()).scrollTop(10000);var d=Math.max(f.scrollTop(),k)+b.extraSpace,e=a(this).add(f);if(i===d){return}i=d;if(d>=b.limit){a(this).css('overflow-y','');return}b.onResize.call(this);b.animate&&c.css('display')==='block'?e.stop().animate({height:d},b.animateDuration,b.animateCallback):e.height(d)};c.unbind('.dynSiz').bind('keyup.dynSiz',g).bind('keydown.dynSiz',g).bind('change.dynSiz',g)});return this};
+    $.fn.autogrow = function() {
+        // this.filter('textarea').each(function() {
+            
+        var $this       = $(this),
+            minHeight   = 67,
+            lineHeight  = $this.css('lineHeight');
+
+        var shadow = $('<div></div>').css({
+            position:   'absolute',
+            top:        -10000,
+            left:       -10000,
+            width:      $(this).width() - parseInt($this.css('paddingLeft')) - parseInt($this.css('paddingRight')),
+            fontSize:   $this.css('fontSize'),
+            fontFamily: $this.css('fontFamily'),
+            lineHeight: $this.css('lineHeight'),
+            resize:     'none'
+        }).appendTo(document.body);
+
+        var update = function() {
+
+            var times = function(string, number) {
+                for (var i = 0, r = ''; i < number; i ++) r += string;
+                return r;
+            };
+            
+            var val = this.value.replace(/</g, '&lt;')
+                                .replace(/>/g, '&gt;')
+                                .replace(/&/g, '&amp;')
+                                .replace(/\n$/, '<br/>&nbsp;')
+                                .replace(/\n/g, '<br/>')
+                                .replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ' });
+            
+            shadow.html(val);
+            $(this).css('height', Math.max(shadow.height(), minHeight));
+
+        }
+
+        // $(this).change(update).keyup(update).keydown(update);
+        $(this).keyup(update);
+
+            // update.apply(this);
+
+        // });
+        return this;
+    }
+}
+
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
 loadScript("/static/ui-prototype/js/jquery-1.4.4.min.js", function(){
     //callback
@@ -1721,6 +1779,9 @@ function $RFunctions($R){
 
 	//init Ben Alman's postMessage jquery plugin
 	rdr_postMessage($R);
+    
+    // init James Padolsey's autoResize plugin
+    rdr_autogrow($R);
 	
     //initiate our RDR object
     RDR = readrBoard($R);
