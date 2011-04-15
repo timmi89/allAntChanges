@@ -435,8 +435,30 @@ function readrBoard($R){
                     );
                 }
             },
-            handleGetUserResponse : function(args, callbacks) {
-                
+            handleGetUserFail : function(response, callback) {
+                switch ( response.message ) {
+                    case "Error getting user!":
+                        // kill the user object and cookie
+                        RDR.session.killUser();
+
+                        // TODO tell the user something failed and ask them to try again
+                        // pass callback into the login panel
+                        console.log('sorry there was a problem with your alleged user ID.  we just killed it, try again.');
+                    break;
+
+                    case "Token was invalid":
+                    case "Facebook token expired":  // call fb login
+                    case "Social Auth does not exist for user": // call fb login
+                        // the token is out of sync.  could be a mistake or a hack.
+                        $.postMessage(
+                            "checkSocialUser",
+                            RDR.session.iframeHost + "/xdm_status/",
+                            window.frames['rdr-xdm-hidden']
+                        );
+                        // init a new receiveMessage handler to fire this callback if it's successful
+                        RDR.session.receiveMessage( false, callback );
+                    break;
+                }
             },
 			createXDMframe : function() {
                 RDR.session.receiveMessage();
@@ -458,8 +480,8 @@ function readrBoard($R){
                         console.log( JSON.parse( e.data ) );
                         var message = JSON.parse( e.data );
 
-                        if ( message.action ) {;
-                            switch (message.action) {
+                        if ( message.status ) {;
+                            switch ( message.status ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
                                 case "fb_logged_in":
@@ -479,6 +501,10 @@ function readrBoard($R){
                                     // TODO do we def want to remove the login panel if it was showing?
                                     // user rdr-loginPanel for the temp user message, too
                                     if ( RDR.user.first_name ) $('#rdr-loginPanel').remove();
+                                break;
+
+                                case "checkSocialUser fail":
+                                    console.log('show login panel with an error message about checkSocialUser failing');
                                 break;
                             }
                         }
@@ -1056,23 +1082,16 @@ function readrBoard($R){
                             //do we really want to chain pass these through?  Or keep them in a shared scope?
 
                             if ( response.status == "fail" ) {
-                                if ( response.message == "Error getting user!" ) {  // user not found
-                                    // kill the user object and cookie
-                                    RDR.session.killUser();
-
-                                    // TODO tell the user something failed and ask them to try again
-                                    console.log('sorry there was a problem with your alleged user ID.  we just killed it, try again.');
-                                } else if ( response.message == "Token was invalid" ) {
-                                    $.postMessage(
-                                        "checkSocialUser",
-                                        RDR.session.iframeHost + "/xdm_status/",
-                                        window.frames['rdr-xdm-hidden']
-                                    );
-                                } 
+                                // if it failed, see if we can fix it, and if so, try this function one more time
+                                RDR.session.handleGetUserFail( response, function() {
+                                    if ( !args.secondAttempt ) {
+                                        args.secondAttempt = true;
+                                        RDR.actions.rateSend( args );
+                                    }
+                                } );
                             } else {
                                 RDR.actions.shareStart( {rindow:params.rindow, tag:params.tag, int_id:response.data });
                             }
-                            // params.callback();
                         },
                         //for now, ignore error and carry on with mockup
                         error: function(response) {
@@ -1158,7 +1177,7 @@ function readrBoard($R){
                     var comment = $commentBox.find('textarea').val();
                     RDR.actions.comment({ comment:comment, int_id:int_id.id, rindow:rindow });
                 });
-                
+
                 var $socialBox = $('<div class="rdr_share_social"><strong>Share your reaction</strong></div>'),
                 $shareLinks = $('<ul class="shareLinks"></ul>'),
                 socialNetworks = ["facebook","twitter","tumblr","linkedin"];
@@ -1228,10 +1247,20 @@ function readrBoard($R){
                         success: function(response) {
                             console.dir(response);
 
-                            $(this).closest('div.rdr_share').css({'visibility':'hidden'});
-                            $(this).closest('div.rdr_body').children('.rdr_commentFeedback')
-                            .find('.rdr_tagFeedback').hide().end()//chain
-                            .find('.rdr_commentComplete').text('Thanks for your comment.')
+                            if ( response.status == "fail" ) {
+                                // if it failed, see if we can fix it, and if so, try this function one more time
+                                RDR.session.handleGetUserFail( response, function() {
+                                    if ( !args.secondAttempt ) {
+                                        args.secondAttempt = true;
+                                        RDR.actions.comment( args );
+                                    }
+                                } );
+                            } else {
+                                $(this).closest('div.rdr_share').css({'visibility':'hidden'});
+                                $(this).closest('div.rdr_body').children('.rdr_commentFeedback')
+                                .find('.rdr_tagFeedback').hide().end()//chain
+                                .find('.rdr_commentComplete').text('Thanks for your comment.')
+                            }
 
                         },
                         //for now, ignore error and carry on with mockup

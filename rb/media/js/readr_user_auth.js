@@ -26,7 +26,6 @@ $.receiveMessage(
 var RDRAuth = RDRAuth ? RDRAuth : {};
 RDRAuth = {
 	rdr_user: {},
-	notifyParent: function() {}, // define in the including HTML page
 	FBLoginResponse: function() {}, // define in the including HTML page
 	postMessage: function(params) {
 		$.postMessage(
@@ -35,8 +34,8 @@ RDRAuth = {
 			parent
 		);
 	},
-	notifyParent: function(response, action) {
-		response.action = action;
+	notifyParent: function(response, status) {
+		response.status = status;
 
 		// send this info up to the widget!
 		RDRAuth.postMessage({
@@ -83,6 +82,7 @@ RDRAuth = {
 		if ( RDRAuth.rdr_user && RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token ) {
 			console.log('just send back known values');
 			var sendData = {
+				// arguments are nested under data for consistency with passing values up to the parent
 				data : {
 					first_name : RDRAuth.rdr_user.first_name,
 					full_name : RDRAuth.rdr_user.full_name,
@@ -192,12 +192,15 @@ RDRAuth = {
 		// if ( fb_session ) {
 			// RDRAuth.getReadrToken( fb_session );
 		// } else {
-			FB.getLoginStatus(function(response) {
-		  		if (response.session) {
-					//user is logged in
-					RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
-		  		}
-			});
+		FB.getLoginStatus(function(response) {
+	  		if (response.session) {
+				//user is logged in
+				RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
+	  		} else {
+	  			// tell the parent that it failed for some reason
+	  			RDRAuth.notifyParent(false, "checkSocialUser fail");
+	  		}
+		});
 		// }
 	},
 	doFBLogin: function() {
