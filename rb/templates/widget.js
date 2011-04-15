@@ -1035,7 +1035,7 @@ function readrBoard($R){
                     });
                 });
             },
-			whyPanel: {
+			whyPanel : {
                 draw: function(rindow, interaction_id) {
                     var $whyPanel = $('<div class="rdr_whyPanel rdr_sntPnl" />').prepend($('<div class="rdr_pnlShadow"/>'));
                     return $whyPanel;
@@ -1139,13 +1139,54 @@ function readrBoard($R){
                     });
                 });
             },
+            unrateSend : function(args) {
+                var rindow = args.rindow, 
+                    tag = args.tag,
+                    int_id = args.int_id;
+
+                var sendData = {
+                    "tag" : args.tag,
+                    "int_id" : int_id,
+                    "user_id" : RDR.user.user_id,
+                    "readr_token" : RDR.user.readr_token,
+                    "group_id" : RDR.groupPermData.group_id,
+                    "page_id" : RDR.page.id
+                };
+
+                // send the data!
+                $.ajax({
+                    url: "/api/tag/delete/",
+                    type: "get",
+                    contentType: "application/json",
+                    dataType: "jsonp",
+                    data: { json: JSON.stringify(sendData) },
+                    success: function(response) {
+                        console.dir(response);
+                    },
+                    //for now, ignore error and carry on with mockup
+                    error: function(response) {
+                        console.log("an error occurred while trying to delete the tag");
+                    }
+                });
+                
+            },
             shareStart : function(args) {
                 console.log('------------rags----------');
                 console.dir(args);
                 var rindow = args.rindow, 
                     tag = args.tag,
                     int_id = args.int_id;
-                    console.dir(tag);
+
+                rindow.find('ul.rdr_preselected li').each( function() {
+                    if ( $(this).data('tag').content == tag.content ) {
+                        console.log('--- args ---');
+                        console.dir(args);
+                        $(this).after('<div id="delete_int_'+int_id.id+'" style="font-family:Arial;font-size:12px;"><a href="javascript:void(0);">Delete that tag</a></div>');
+                        $('#delete_int_'+int_id.id).click( function() {
+                            RDR.actions.unrateSend(args);
+                        });
+                    }
+                });
                 //todo: for now, I'm just passing in known_tags as a param, but check with Porter about this model.
                 //Where is the 'source'/'point of origin' that is the authority of known_tags - I'd think we'd want to just reference that..
 
@@ -1699,7 +1740,7 @@ function rdr_autogrow($) {
     // a.fn.autogrow=function(j){var b=a.extend({onResize:function(){},animate:true,animateDuration:150,animateCallback:function(){},extraSpace:20,limit:1000},j);this.filter('textarea').each(function(){var c=a(this).css({resize:'none','overflow-y':'hidden'}),k=c.height(),f=(function(){var l=['height','width','lineHeight','textDecoration','letterSpacing'],h={};a.each(l,function(d,e){h[e]=c.css(e)});return c.clone().removeAttr('id').removeAttr('name').css({position:'absolute',top:0,left:-9999}).css(h).attr('tabIndex','-1').insertBefore(c)})(),i=null,g=function(){f.height(0).val(a(this).val()).scrollTop(10000);var d=Math.max(f.scrollTop(),k)+b.extraSpace,e=a(this).add(f);if(i===d){return}i=d;if(d>=b.limit){a(this).css('overflow-y','');return}b.onResize.call(this);b.animate&&c.css('display')==='block'?e.stop().animate({height:d},b.animateDuration,b.animateCallback):e.height(d)};c.unbind('.dynSiz').bind('keyup.dynSiz',g).bind('keydown.dynSiz',g).bind('change.dynSiz',g)});return this};
     $.fn.autogrow = function() {
         // this.filter('textarea').each(function() {
-            
+
         var $this       = $(this),
             minHeight   = 67,
             lineHeight  = $this.css('lineHeight');
@@ -1730,12 +1771,12 @@ function rdr_autogrow($) {
                                 .replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ' });
             
             shadow.html(val);
-            $(this).css('height', Math.max(shadow.height(), minHeight));
+            $(this).css('height', Math.max(shadow.height()+20, minHeight));
 
         }
 
-        // $(this).change(update).keyup(update).keydown(update);
-        $(this).keyup(update);
+        $(this).change(update).keyup(update).keydown(update);
+        // $(this).keydown(update);
 
             // update.apply(this);
 
