@@ -1235,7 +1235,7 @@ function readrBoard($R){
 
 
                 // TODO un-dummify this temp user message
-                RDR.session.showTempUserMsg({ rindow: rindow, int_id:int_id });
+                if ( int_id.num_interactions ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:int_id });
 
 
                 /*
