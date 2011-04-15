@@ -42,8 +42,7 @@ def checkLimit(user, group):
         max_interact = group.temp_interact
         if num_interactions >= max_interact:
             raise JSONException(
-                u"Temporary user interaction limit reached:" +
-                unicode(max_interact)
+                u"Temporary user interaction limit reached:"
             )
     return num_interactions
 

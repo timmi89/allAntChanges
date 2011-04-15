@@ -7,104 +7,24 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "/Users/tbrock/Development/readrboard/api/userutils.py",
-			"settings":
-			{
-				"buffer_size": 2953,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/tbrock/Development/readrboard/api/utils.py",
-			"settings":
-			{
-				"buffer_size": 3233,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/tbrock/Development/readrboard/rb/admin.py",
-			"settings":
-			{
-				"buffer_size": 2763,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/tbrock/Development/readrboard/settings.py",
-			"settings":
-			{
-				"buffer_size": 3718,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/tbrock/Development/readrboard/api/exceptions.py",
-			"settings":
-			{
-				"buffer_size": 227,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/tbrock/Development/readrboard/api/handlers.py",
-			"settings":
-			{
-				"buffer_size": 12564,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/tbrock/Development/readrboard/rb/models.py",
-			"settings":
-			{
-				"buffer_size": 6817,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/tbrock/Development/readrboard/api/urls.py",
-			"settings":
-			{
-				"buffer_size": 2392,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/tbrock/Development/readrboard/api/decorators.py",
-			"settings":
-			{
-				"buffer_size": 590,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/tbrock/Development/readrboard/api/token.py",
-			"settings":
-			{
-				"buffer_size": 1687,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"file_history":
 	[
-		"/Users/tbrock/Development/readrboard/rb/fixtures/initial_data.xml",
-		"/Users/tbrock/Development/readrboard/api/decorators.py",
-		"/Users/tbrock/Development/readrboard/settings.py",
-		"/Users/tbrock/Development/readrboard/api/utils.py",
-		"/Users/tbrock/Development/readrboard/api/userutils.py",
-		"/Users/tbrock/Development/readrboard/api/handlers.py",
 		"/Users/tbrock/Development/readrboard/api/token.py",
+		"/Users/tbrock/Development/readrboard/api/decorators.py",
+		"/Users/tbrock/Development/readrboard/api/urls.py",
+		"/Users/tbrock/Development/readrboard/api/userutils.py",
+		"/Users/tbrock/Development/readrboard/api/utils.py",
+		"/Users/tbrock/Development/readrboard/rb/admin.py",
+		"/Users/tbrock/Development/readrboard/settings.py",
+		"/Users/tbrock/Development/readrboard/api/exceptions.py",
+		"/Users/tbrock/Development/readrboard/api/handlers.py",
+		"/Users/tbrock/Development/readrboard/rb/models.py",
+		"/Users/tbrock/Development/readrboard/rb/fixtures/initial_data.xml",
 		"/Users/tbrock/Development/readrboard/api/user.py",
 		"/Users/tbrock/Development/readrboard/rb/views.py",
-		"/Users/tbrock/Development/readrboard/api/urls.py",
-		"/Users/tbrock/Development/readrboard/rb/admin.py",
-		"/Users/tbrock/Development/readrboard/rb/models.py",
 		"/Users/tbrock/Development/readrboard/rb/templates/facebook.html",
-		"/Users/tbrock/Development/readrboard/api/exceptions.py",
 		"/Users/tbrock/Development/readrboard/rb/templates/widget.js",
 		"/Users/tbrock/Development/readrboard/rb/media/js/readr_user_auth.js",
 		"/Users/tbrock/Development/readrboard/rb/templates/xdm_status.html",
@@ -135,6 +55,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"Site",
+			"User",
 			"checkToken",
 			"Token",
 			"checkToken",
@@ -188,287 +110,8 @@
 	"groups":
 	[
 		{
-			"selected": 6,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "/Users/tbrock/Development/readrboard/api/userutils.py",
-					"settings":
-					{
-						"buffer_size": 2953,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								108,
-								112
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0,
-						"translation.y": 568,
-						"zoom_level": 1
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "/Users/tbrock/Development/readrboard/api/utils.py",
-					"settings":
-					{
-						"buffer_size": 3233,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1575,
-								1575
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0,
-						"translation.y": 585,
-						"zoom_level": 1
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "/Users/tbrock/Development/readrboard/rb/admin.py",
-					"settings":
-					{
-						"buffer_size": 2763,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1883,
-								1883
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0,
-						"translation.y": 915,
-						"zoom_level": 1
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "/Users/tbrock/Development/readrboard/settings.py",
-					"settings":
-					{
-						"buffer_size": 3718,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2600,
-								2600
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0,
-						"translation.y": 0,
-						"zoom_level": 1
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "/Users/tbrock/Development/readrboard/api/exceptions.py",
-					"settings":
-					{
-						"buffer_size": 227,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage"
-						},
-						"translation.x": 0,
-						"translation.y": 0,
-						"zoom_level": 1
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "/Users/tbrock/Development/readrboard/api/handlers.py",
-					"settings":
-					{
-						"buffer_size": 12564,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4480,
-								4480
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0,
-						"translation.y": 1602,
-						"zoom_level": 1
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "/Users/tbrock/Development/readrboard/rb/models.py",
-					"settings":
-					{
-						"buffer_size": 6817,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5161,
-								5161
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0,
-						"translation.y": 2021,
-						"zoom_level": 1
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "/Users/tbrock/Development/readrboard/api/urls.py",
-					"settings":
-					{
-						"buffer_size": 2392,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								563,
-								563
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0,
-						"translation.y": 77,
-						"zoom_level": 1
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "/Users/tbrock/Development/readrboard/api/decorators.py",
-					"settings":
-					{
-						"buffer_size": 590,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								275,
-								275
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0,
-						"translation.y": 0,
-						"zoom_level": 1
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "/Users/tbrock/Development/readrboard/api/token.py",
-					"settings":
-					{
-						"buffer_size": 1687,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								551,
-								551
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0,
-						"translation.y": 0,
-						"zoom_level": 1
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
