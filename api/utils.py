@@ -33,23 +33,25 @@ def deleteInteraction(interaction, data):
     pass
 
 def isTemporaryUser(user):
-    return len(SocialUser.objects.filter(id=user.id)) == 0
+    return len(SocialUser.objects.filter(user__id=user.id)) == 0
 
 def checkLimit(user, group):
     interactions = Interaction.objects.filter(user=user)
     num_interactions = len(interactions)
-    if isTemporaryUser(user):
-        max_interact = group.temp_interact
-        if num_interactions >= max_interact:
-            raise JSONException(
-                u"Temporary user interaction limit reached:"
-            )
+    max_interact = group.temp_interact
+    if num_interactions >= max_interact:
+        raise JSONException(
+            u"Temporary user interaction limit reached:"
+        )
     return num_interactions
 
 def createInteraction(page, content, user, interaction_node, group, parent=None):
     if content and user and interaction_node and page:
         # Check to see if user has reached their interaction limit
-        num_interactions = checkLimit(user, group)
+        tempuser = False
+        if isTemporaryUser(user):
+            num_interactions = checkLimit(user, group)
+            tempuser =True
 
         interactions = Interaction.objects.filter(user=user)
 
@@ -61,7 +63,7 @@ def createInteraction(page, content, user, interaction_node, group, parent=None)
                 interaction_node=interaction_node
             )
             print "Found existing Interaction with id %s" % existing.id
-            return dict(id=existing.id, num_interactions=num_interactions)
+            return dict(id=existing.id)
         except Interaction.DoesNotExist:
             pass
 
@@ -83,4 +85,5 @@ def createInteraction(page, content, user, interaction_node, group, parent=None)
                            interaction_node=interaction_node, 
                            created=now)
         if new == None: raise JSONException(u"Error creating interaction")
-        return dict(id=new.id, num_interactions=num_interactions+1)
+        if tempuser: return dict(id=new.id, num_interactions=num_interactions+1)
+        return dict(id=new.id)
