@@ -919,6 +919,11 @@ function readrBoard($R){
 					noHeader:true
                 });
 
+                // TODO this is used to constrain the initial width of this rindow
+                // and then it animates larger when we slide the whyPanel out.
+                // is there a cleaner way?
+                rindow.css({width:'200px'});
+
                 // build the ratePanel
 
                 var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new" />'),
@@ -964,7 +969,7 @@ function readrBoard($R){
                     var $header = $('<div class="rdr_header" />').append('<div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
                     $body = $('<div class="rdr_body"/>');
                     $(this).append($header, $body).css({
-                        'width':rindow.settings.pnlWidth
+                        // 'width':rindow.settings.pnlWidth
                     });
                 });
                 RDR.actions.whyPanel.setup(rindow);
@@ -1177,11 +1182,13 @@ function readrBoard($R){
                     tag = args.tag,
                     int_id = args.int_id;
 
+
+                // this is temporary, for testing tag deletion.
                 rindow.find('ul.rdr_preselected li').each( function() {
                     if ( $(this).data('tag').content == tag.content ) {
                         console.log('--- args ---');
                         console.dir(args);
-                        $(this).after('<div id="delete_int_'+int_id.id+'" style="font-family:Arial;font-size:12px;"><a href="javascript:void(0);">Delete that tag</a></div>');
+                        $(this).after('<div id="delete_int_'+int_id.id+'" style="font-family:Arial;font-size:12px;"><a href="javascript:void(0);">Undo that tag</a></div>');
                         $('#delete_int_'+int_id.id).click( function() {
                             RDR.actions.unrateSend(args);
                         });
@@ -1274,7 +1281,7 @@ function readrBoard($R){
                 $shareDialogueBox.append($commentBox, $socialBox);
                 var $commentFeedback = $('<div class="rdr_commentFeedback rdr_sntPnl_padder"> <div class="rdr_tagFeedback">You tagged this '+tag.name+'</div> <div class="rdr_commentComplete"></div> </div>');
                 rindow.find('.rdr_whyPanel .rdr_body').append($commentFeedback, $shareDialogueBox);
-                rindow.animate( {width:rindow.settings.pnlWidth * 2}, rindow.settings.animTime );
+                rindow.animate( {width:450}, rindow.settings.animTime );
 
 
                 // TODO un-dummify this temp user message
