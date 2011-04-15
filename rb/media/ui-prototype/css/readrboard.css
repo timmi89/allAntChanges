@@ -101,12 +101,12 @@ div.rdr div.rdr_sntPnl .rdr_pnlShadow			{height: 100%; width:100px; position: ab
 div.rdr div.rdr_body .rdr_selected div.rdr_arrow 		{ display:none; border-color:transparent transparent transparent #f2cfcf; border-style:solid; border-width:12px; height:0; margin-top:-10px; position:absolute; right:-23px; top:43%; width:0;}
 div.rdr div.rdr_reactionPanel div.rdr_body .rdr_selected div.rdr_arrow 		{ border-color:transparent transparent transparent #f7dddd; }
 div.rdr div.rdr_selectedTextPanel div.rdr_body div.rdr_selected		{font-family:Georgia; font-size:14px; padding:7px; background:#f2cfcf; display:block; position:relative; }
-div.rdr div.rdr_selectedTextPanel				{position:relative; z-index:3;}
+div.rdr div.rdr_selectedTextPanel				{position:relative; z-index:30;}
 div.rdr div.rdr_selectedTextPanel div.rdr_body 	{background:#f0f0f0; -moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
-div.rdr div.rdr_reactionPanel					{position:relative; z-index:2;}
+div.rdr div.rdr_reactionPanel					{position:relative; z-index:20;}
 div.rdr div.rdr_reactionPanel div.rdr_body		{background:#f8f8f8; }
 div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
-div.rdr div.rdr_whyPanel 						{z-index:1; position:absolute; right:0;}
+div.rdr div.rdr_whyPanel 						{position:absolute; z-index:10; right:0;}
 div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top: 5px;}
 div.rdr div.rdr_sntPnl_padder 					{margin:0 15px; position:relative; overflow:hidden;}
 div.rdr div.rdr_sntPnl_padder textarea,
@@ -120,6 +120,10 @@ div.rdr div.rdr_sntPnl .rdr_commentButton	 	{width:100%;}
 div.rdr div.rdr_sntPnl .commentBox				{height:67px; margin-top:5px; max-width:92%;}
 div.rdr div.rdr_sntPnl .rdr_tagFeedback			{font-style:italic;}
 
+div.rdr div.rdr_tempUserMsg 					{position:absolute; z-index:5; bottom:0px; background:#fff; padding:9px; -moz-box-shadow: 0px -45px 48px -50px #53aed9 inset, 0 0 10px 1px #AAAAAA; -webkit-box-shadow: 0px -45px 48px -50px #53aed9 inset, 0 0 10px 1px #AAAAAA; box-shadow: 0px -45px 48px -50px #53aed9 inset, 0 0 10px 1px #AAAAAA;}
+/*
+$('div.rdr_tempUserMsg').animate({bottom:'-48px'});
+*/
 
 div.rdr div.rdr_reactionPanel div.rdr_quote {position: relative; text-shadow:1px 1px 1px #999; font-size:18px; font-family:Georgia, serif; z-index: 12020;}
 div.rdr div.rdr_reactionPanel div.rdr_quoteIcon { position: relative; z-index: 12010; }/*wrapper for z-index*/
@@ -138,7 +142,7 @@ div.rdr ul.rdr_preselected a		{color:#000;text-decoration:none;}
 div.rdr div.rdr_customTagBox input.freeformTagInput  	{background-color: #D6D6D6; font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0 0 2px; text-align:center;}
 
 
-div.rdr div.rdr_close		{position:absolute;top:8px;right:7px;color:#999;cursor:pointer;font-size:14px;margin-top:-4px;z-index:4;}
+div.rdr div.rdr_close		{position:absolute;top:8px;right:7px;color:#999;cursor:pointer;font-size:14px;margin-top:-4px;z-index:15;}
 
 div.rdr div.rdr_instruct	{color:#666; margin:5px 0;}
 div.rdr div.rdr_help		{font-style:italic; font-size:11px; color:#767676; width:100%; position:absolute; top: 12px; text-align:center; margin:0 !important;}
