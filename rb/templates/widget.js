@@ -484,6 +484,7 @@ function readrBoard($R){
                         console.log( JSON.parse( e.data ) );
                         var message = JSON.parse( e.data );
 
+                        console.log('receiving: ' + message.status);
                         if ( message.status ) {;
                             switch ( message.status ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
@@ -507,11 +508,15 @@ function readrBoard($R){
 
                                     // TODO do we def want to remove the login panel if it was showing?
                                     // user rdr-loginPanel for the temp user message, too
-                                    if ( RDR.user.first_name ) $('#rdr-loginPanel').remove();
+                                    // if ( RDR.user.first_name ) $('#rdr-loginPanel').remove();
                                 break;
 
                                 case "checkSocialUser fail":
                                     console.log('show login panel with an error message about checkSocialUser failing');
+                                break;
+
+                                case "already had user":
+                                    $('#rdr-loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
                                 break;
                             }
                         }
@@ -555,10 +560,9 @@ function readrBoard($R){
 				iframeUrl = RDR.session.iframeHost + "/fblogin/",
 				parentUrl = window.location.href,
                 parentHost = window.location.protocol + "//" + window.location.host;
-				$loginHtml.append( '<h1>Log In</h1><div class="rdr_body">',
-				'<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="360" height="150" style="overflow:hidden;" />',
-                '</div>'
-				);
+				$loginHtml.append( '<h1>Log In</h1><div class="rdr_body" />');
+				$loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="360" height="150" style="overflow:hidden;" />' );
+
 				
 				// rindow.animate({
     //                 width:'500px',
@@ -578,7 +582,6 @@ function readrBoard($R){
             },
             showTempUserMsg : function(args) {
                 if ( args.rindow ) {
-                    console.clear();
                     console.dir(args);
                     var rindow = args.rindow,
                         num_interactions_left = 5 - parseInt( args.int_id.num_interactions );
@@ -1232,7 +1235,7 @@ function readrBoard($R){
 
 
                 // TODO un-dummify this temp user message
-                RDR.session.showTempUserMsg({ rindow: rindow, int_id:int_id });
+                if ( int_id.num_interactions ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:int_id });
 
 
                 /*
