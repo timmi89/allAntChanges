@@ -116,16 +116,16 @@ class CommentHandler(BaseHandler):
     
     @status_response
     def read(self, request, **kwargs):
+        data = json.loads(request.GET['json'])
+        if not checkToken(data): raise JSONException(u"Token was invalid")
+        print "Token looks good, going ahead with comment handler actions..."
         action = kwargs['action']
         if action == 'create':
-            data = json.loads(request.GET['json'])
             comment = data['comment']
             interaction_id = data['int_id']
             user = data['user_id']
             group_id = data['group_id']
             page_id = data['page_id']
-        
-            if not checkToken(data): raise JSONException(u"Token was invalid")
 
             try:
                 user = User.objects.get(id=data['user_id'])
@@ -150,18 +150,34 @@ class CommentHandler(BaseHandler):
             except:
                 raise JSONException(u'Error creating comment interaction node')
             #try:
-            interaction = createInteraction(parent.page, parent.content, user, comment, group)
+            interaction = createInteraction(parent.page, parent.content, user, comment, group, parent)
             #except:
             #    raise JSONException(u'Error creating comment interaction')
-        return interaction
+            return interaction
+
+        if action == 'delete':
+            interaction_id = data['int_id']['id']
+            try:
+                interaction = Interaction.objects.get(id=interaction_id)
+            except Interaction.DoesNotExist:
+                raise JSONException("Interaction did not exist!")
+            user_id = data['user_id']
+            try:
+                user = User.objects.get(id=user_id)
+            except Interaction.DoesNotExist:
+                raise JSONException("User did not exist!")
+
+            return deleteInteraction(interaction, user)
 
 class TagHandler(BaseHandler):
     """ Create action ='delete'"""
     @status_response
     def read(self, request, **kwargs):
+        data = json.loads(request.GET['json'])
+        if not checkToken(data): raise JSONException(u"Token was invalid")
+        print "Token looks good, going ahead with tag handler actions..."
         action = kwargs['action']
         if action == 'create':
-            data = json.loads(request.GET['json'])
             tag = data['tag']['content']
             hash = data['hash']
             content_data = data['content']
@@ -212,6 +228,20 @@ class TagHandler(BaseHandler):
                 return new
             else:
                 return JSONException(u"No tag provided to tag handler")
+                
+        if action == 'delete':
+            interaction_id = data['int_id']['id']
+            try:
+                interaction = Interaction.objects.get(id=interaction_id)
+            except Interaction.DoesNotExist:
+                raise JSONException("Interaction did not exist!")
+            user_id = data['user_id']
+            try:
+                user = User.objects.get(id=user_id)
+            except Interaction.DoesNotExist:
+                raise JSONException("User did not exist!")
+
+            return deleteInteraction(interaction, user)
 
 class CreateContainerHandler(BaseHandler):
     

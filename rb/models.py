@@ -133,7 +133,7 @@ class Content(DateAwareModel):
     body = models.TextField()
     
     def __unicode__(self):
-        return u'Content(Kind: {0}, Body: {1})'.format(self.kind, self.body[:25])
+        return u'Content(Kind: {0}, Body: {1})'.format(self.kind, self.body[:50])
     
     class Meta:
         verbose_name_plural = "content"

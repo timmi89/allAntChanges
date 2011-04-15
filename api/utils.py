@@ -29,9 +29,6 @@ def createInteractionNode(kind, body):
         print "Success creating InteractionNode with id %s" % node.id
         return node
 
-def deleteInteraction(interaction, data):
-    pass
-
 def isTemporaryUser(user):
     return len(SocialUser.objects.filter(user__id=user.id)) == 0
 
@@ -41,9 +38,27 @@ def checkLimit(user, group):
     max_interact = group.temp_interact
     if num_interactions >= max_interact:
         raise JSONException(
-            u"Temporary user interaction limit reached:"
+            u"Temporary user interaction limit reached"
         )
     return num_interactions
+
+def deleteInteraction(interaction, user):
+    if interaction and user:
+        tempuser = False
+        if interaction.user != user:
+            raise JSONException("User id and interaction's user id do not match")
+        if isTemporaryUser(user):
+            interactions = Interaction.objects.filter(user=user)
+            num_interactions = len(interactions)
+            tempuser =True
+        # This will delete an interaction and all of it's children
+        try:
+            interaction.delete();
+        except:
+            raise JSONException("Something bad happened when we tried to delete the interaction")
+        message="Deleting the interaction seems to have worked"
+        if tempuser: return dict(message=message,num_interactions=num_interactions-1)
+        return dict(message=message)
 
 def createInteraction(page, content, user, interaction_node, group, parent=None):
     if content and user and interaction_node and page:
