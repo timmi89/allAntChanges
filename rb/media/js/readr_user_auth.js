@@ -70,7 +70,9 @@ RDRAuth = {
 						RDRAuth.notifyParent(response, "fb_logged_in");
 					}
 				});
-			} else console.log('already had user');
+			} else {
+				RDRAuth.notifyParent({message:false}, "already had user");
+			}
 		} else {
 			RDRAuth.doFBLogin();
 		}
@@ -198,7 +200,7 @@ RDRAuth = {
 				RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
 	  		} else {
 	  			// tell the parent that it failed for some reason
-	  			RDRAuth.notifyParent(false, "checkSocialUser fail");
+	  			RDRAuth.notifyParent({message:false}, "checkSocialUser fail");
 	  		}
 		});
 		// }
