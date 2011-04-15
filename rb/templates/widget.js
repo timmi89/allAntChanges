@@ -446,6 +446,10 @@ function readrBoard($R){
                         console.log('sorry there was a problem with your alleged user ID.  we just killed it, try again.');
                     break;
 
+                    case "Temporary user interaction limit reached":
+                        // TODO: something.  anything at all.
+                    break;
+
                     case "Token was invalid":
                     case "Facebook token expired":  // call fb login
                     case "Social Auth does not exist for user": // call fb login
@@ -497,6 +501,9 @@ function readrBoard($R){
                                         callback(args);
                                     }
                                     else if ( callback ) callback();
+                                    // else if ( $('#rdr-loginPanel').length == 1 ) {
+                                    //     $('#rdr-loginPanel').find('rdr_body').html('Log in successful!  Welcome to ReadrBoard.');
+                                    // }
 
                                     // TODO do we def want to remove the login panel if it was showing?
                                     // user rdr-loginPanel for the temp user message, too
@@ -516,16 +523,27 @@ function readrBoard($R){
 			showLoginPanel : function(args, callback) {
 
                 $('.rdr_rewritable').removeClass('rdr_rewritable');
-
+                $('#rdr-loginPanel').remove();
 
                 //todo: weird, why did commenting this line out not do anything?...look into it
 				//porter says: the action bar used to just animate larger and get populated as a window
                 //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
 
+                var caller = args.rindow;
+                var offsets = caller.offset();
+                var left = offsets.left ? (offsets.left-34) : 100;
+                var top = offsets.top ? (offsets.top-50) : 100;
+
+                // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
+                // var coords = RDR.util.stayInWindow({left:left, top:top, width:360, height:185 });
+
                 var rindow = RDR.rindow.draw({
-                    left:100,
-                    top:100,
-                    id: "rdr-loginPanel"
+                    left:left,
+                    top:top,
+                    id: "rdr-loginPanel",
+                    pnlWidth:360,
+                    pnls:1,
+                    height:185
                 });
 
                 // store the arguments and callback function that were in progress when this Login panel was called
@@ -537,16 +555,18 @@ function readrBoard($R){
 				iframeUrl = RDR.session.iframeHost + "/fblogin/",
 				parentUrl = window.location.href,
                 parentHost = window.location.protocol + "//" + window.location.host;
-				$loginHtml.append( '<h1>Log In</h1>',
-				'<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="300" height="300" />'
+				$loginHtml.append( '<h1>Log In</h1><div class="rdr_body">',
+				'<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="360" height="150" style="overflow:hidden;" />',
+                '</div>'
 				);
 				
-				rindow.animate({
-                    width:'500px',
-                    minHeight:'125px'
-                }, 300, function() {
-					rindow.append( $loginHtml );
-				});
+				// rindow.animate({
+    //                 width:'500px',
+    //                 minHeight:'125px'
+    //             }, 300, function() {
+    //                 rindow.append( $loginHtml );
+    //             });
+				rindow.append( $loginHtml );
 			},
 			killUser : function() {
                 RDR.user = {};
@@ -555,6 +575,22 @@ function readrBoard($R){
                     RDR.session.iframeHost + "/xdm_status/",
                     window.frames['rdr-xdm-hidden']
                 );
+            },
+            showTempUserMsg : function(args) {
+                if ( args.rindow ) {
+                    console.clear();
+                    console.dir(args);
+                    var rindow = args.rindow,
+                        num_interactions_left = 5 - parseInt( args.int_id.num_interactions );
+                        $tempMsg = $('<div class="rdr_tempUserMsg">You can do ' + num_interactions_left + ' more interactions.  GOT IT?!  So you better log in, you better not pout.  <strong></strong></div>'),
+                        $loginLink = $('<a href="javascript:void(0);">Connect now with Facebook</a>');
+                    $loginLink.click( function() {
+                        RDR.session.showLoginPanel( args );
+                    });
+                    $tempMsg.find('strong').append( $loginLink );
+                    rindow.append( $tempMsg );
+                    rindow.find('div.rdr_tempUserMsg').animate({bottom:'-48px'});
+                }
             }
 		},
         actions : {
@@ -1193,6 +1229,12 @@ function readrBoard($R){
                 var $commentFeedback = $('<div class="rdr_commentFeedback rdr_sntPnl_padder"> <div class="rdr_tagFeedback">You tagged this '+tag.name+'</div> <div class="rdr_commentComplete"></div> </div>');
                 rindow.find('.rdr_whyPanel .rdr_body').append($commentFeedback, $shareDialogueBox);
                 rindow.animate( {width:rindow.settings.pnlWidth * 2}, rindow.settings.animTime );
+
+
+                // TODO un-dummify this temp user message
+                RDR.session.showTempUserMsg({ rindow: rindow, int_id:int_id });
+
+
                 /*
                 TUMBLR SHARING URLs
                 http://www.tumblr.com/share?v=3&u=http%3A%2F%2Fjsbeautifier.org%2F&t=Online%20javascript%20beautifier&s=
