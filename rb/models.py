@@ -42,6 +42,9 @@ class Feature(models.Model):
     images = models.BooleanField()
     flash = models.BooleanField()
 
+    class Meta:
+        unique_together = ('text', 'images', 'flash')
+
     def __unicode__(self):
         return u'Feature(Text: {0}, Images: {1}, Flash: {2})'.format(self.text, self.images, self.flash)
 
@@ -50,7 +53,7 @@ class InteractionNode(models.Model):
     body = models.TextField()
     
     def __unicode__(self):
-        return u"Node(Type: {0}, Body: {1})".format(self.kind, self.body[:25])
+        return u'Node(Type: {0}, Body: {1})'.format(self.kind, self.body[:25])
 
     class Meta:
         unique_together = ('kind', 'body')
@@ -74,11 +77,11 @@ class Group(models.Model):
     logo_url_lg = models.URLField(blank=True,verify_exists=False)
     
     # features
-    share = models.OneToOneField(Feature, related_name = 'Share Feature')
-    rate = models.OneToOneField(Feature, related_name = 'Rate Feature')
-    comment = models.OneToOneField(Feature, related_name = 'Comment Feature')
-    bookmark = models.OneToOneField(Feature, related_name = 'Bookmark Feature')
-    search = models.OneToOneField(Feature, related_name = 'Search Feature')
+    share = models.ForeignKey(Feature, related_name = 'Share Feature')
+    rate = models.ForeignKey(Feature, related_name = 'Rate Feature')
+    comment = models.ForeignKey(Feature, related_name = 'Comment Feature')
+    bookmark = models.ForeignKey(Feature, related_name = 'Bookmark Feature')
+    search = models.ForeignKey(Feature, related_name = 'Search Feature')
 
     # temporary user settings
     temp_interact = models.IntegerField(default=5)
@@ -115,7 +118,7 @@ class Site(models.Model):
     css = models.URLField(blank=True)
 
     def __unicode__(self):
-        return self.name
+        return unicode(self.name)
 
 class Page(models.Model):
     site = models.ForeignKey(Site)
@@ -123,7 +126,7 @@ class Page(models.Model):
     canonical_url = models.URLField(verify_exists=False, blank=True)
 
     def __unicode__(self):
-        return u"Page %d" % self.id
+        return u'Page {0}'.format(unicode(self.id))
 
 class Content(DateAwareModel):
     kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
@@ -139,6 +142,9 @@ class Container(models.Model):
     hash = models.CharField(max_length=32,unique=True)
     body = models.TextField()
     content = models.ManyToManyField(Content, blank=True, editable=False)
+
+    def __unicode__(self):
+        return self.hash
     
     class Meta:
         ordering = ['id']
@@ -157,10 +163,11 @@ class Interaction(DateAwareModel, UserAwareModel, MP_Node):
         ordering = ['id']
         unique_together = ('page', 'content', 'interaction_node', 'user')
 
+    
     @models.permalink
     def get_absolute_url(self):
         return ('api.urls.Interaction.resource_uri()', [str(self.id)])
-
+    
     def __unicode__(self):
         return u'Interaction(Page: {0}, Content: {1})'.format(self.page, self.content)
 
