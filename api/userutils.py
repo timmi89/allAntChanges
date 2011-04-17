@@ -3,8 +3,22 @@ from datetime import datetime
 import base64
 import uuid
 
-def convertUser(temp_user, new_user):
-    Interaction.objects.filter(user=temp_user).update(user=new_user)
+def convertUser(temp_user, existing_user):
+    existing = Interaction.objects.filter(user=existing_user)
+    new = Interaction.objects.filter(user=temp_user)
+
+    # Make sure there are no duplicate interactions
+    # Delete them if there are dupes
+    for existing_row in existing:
+        for new_row in new:
+            if (
+                new_row.page == existing_row.page and
+                new_row.content == existing_row.content and
+                new_row.interaction_node == existing_row.interaction_node
+            ):
+                new_row.delete();
+
+    new.update(user=existing_user)
     User.objects.get(id=temp_user).delete()
 
 def generateUsername():
@@ -13,7 +27,7 @@ def generateUsername():
         User.objects.get(username=username)
         return GenerateUsername()
     except User.DoesNotExist:
-        return username;
+        return username
 
 def createSocialAuth(social_user, django_user, group_id, fb_session):
     # Create expiration time from Facebook timestamp.

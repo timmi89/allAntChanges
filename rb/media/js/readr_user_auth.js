@@ -16,6 +16,9 @@ $.receiveMessage(
 	    	case "killUser":
 	    		RDRAuth.killUser();
 	    		break;
+	    	case "checkSocialUser":
+	    		RDRAuth.checkSocialUser(true);
+	    		break;
 	    }
 	},
 	qs_args.parentHost
@@ -23,7 +26,6 @@ $.receiveMessage(
 var RDRAuth = RDRAuth ? RDRAuth : {};
 RDRAuth = {
 	rdr_user: {},
-	notifyParent: function() {}, // define in the including HTML page
 	FBLoginResponse: function() {}, // define in the including HTML page
 	postMessage: function(params) {
 		$.postMessage(
@@ -32,8 +34,8 @@ RDRAuth = {
 			parent
 		);
 	},
-	notifyParent: function(response, action) {
-		response.action = action;
+	notifyParent: function(response, status) {
+		response.status = status;
 
 		// send this info up to the widget!
 		RDRAuth.postMessage({
@@ -49,6 +51,8 @@ RDRAuth = {
 				user_id: RDRAuth.rdr_user.user_id, // might be temp, might be the ID of a valid FB-created user
 				readr_token: RDRAuth.rdr_user.readr_token
 			};
+			console.log(' ----- sendData -----');
+			console.dir(sendData);
 			// TODO check cookie for a valid token, id
 			console.log('getuser');
 			if ( !RDRAuth.rdr_user.first_name ) {
@@ -66,17 +70,21 @@ RDRAuth = {
 						RDRAuth.notifyParent(response, "fb_logged_in");
 					}
 				});
-			} else console.log('already had user');
+			} else {
+				RDRAuth.notifyParent({message:false}, "already had user");
+			}
 		} else {
 			RDRAuth.doFBLogin();
 		}
 	},
+	// simply tell the widget what we currently know about the user
+	// optionally create a temp user
 	returnUser: function(create_temp) {
 		RDRAuth.getUser();
-		console.log('start return user');
 		if ( RDRAuth.rdr_user && RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token ) {
 			console.log('just send back known values');
 			var sendData = {
+				// arguments are nested under data for consistency with passing values up to the parent
 				data : {
 					first_name : RDRAuth.rdr_user.first_name,
 					full_name : RDRAuth.rdr_user.full_name,
@@ -89,36 +97,39 @@ RDRAuth = {
 		} else if ( create_temp ) {
 			console.log('need a temp user');
 			// get a temp user
-			var sendData = {
-				group_id : qs_args.group_id
-			};
-			$.ajax({
-				url: "/api/tempuser/",
-				type: "get",
-				contentType: "application/json",
-				dataType: "jsonp",
-				data: {
-					json: JSON.stringify( sendData )
-				},
-				success: function(response){
-					console.log('got a temp user');
-					// store the data here and in a cookie
-					RDRAuth.setUser(response);
-
-					console.log('send the temp user up');
-					var sendData = {
-						data : {
-							first_name : RDRAuth.rdr_user.first_name,
-							full_name : RDRAuth.rdr_user.full_name,
-							img_url : RDRAuth.rdr_user.img_url,
-							user_id : RDRAuth.rdr_user.user_id,
-							readr_token : RDRAuth.rdr_user.readr_token
-						}
-					};
-					RDRAuth.notifyParent(response, "got_temp_user");
-				}
-			});
+			RDRAuth.createTempUser();
 		}
+	},
+	createTempUser : function() {
+		var sendData = {
+			group_id : qs_args.group_id
+		};
+		$.ajax({
+			url: "/api/tempuser/",
+			type: "get",
+			contentType: "application/json",
+			dataType: "jsonp",
+			data: {
+				json: JSON.stringify( sendData )
+			},
+			success: function(response){
+				console.log('got a temp user');
+				// store the data here and in a cookie
+				RDRAuth.setUser(response);
+
+				console.log('send the temp user up');
+				var sendData = {
+					data : {
+						first_name : RDRAuth.rdr_user.first_name,
+						full_name : RDRAuth.rdr_user.full_name,
+						img_url : RDRAuth.rdr_user.img_url,
+						user_id : RDRAuth.rdr_user.user_id,
+						readr_token : RDRAuth.rdr_user.readr_token
+					}
+				};
+				RDRAuth.notifyParent(response, "got_temp_user");
+			}
+		});
 	},
 	getUser : function() {
 		console.log('getuser111111111');
@@ -147,12 +158,52 @@ RDRAuth = {
 	},
 	killUser : function() {
 		console.log('killing the user...softly');
-		$.cookie('first_name', null, { path: '/' });
-		$.cookie('full_name', null, { path: '/' });
-		$.cookie('img_url', null, { path: '/' });
-		$.cookie('user_id', null, { path: '/' });
-		$.cookie('readr_token', null, { path: '/' });
-		RDRAuth.rdr_user = {};
+
+		if ( RDRAuth.rdr_user && RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token ) {
+		var sendData = {
+			user_id : RDRAuth.rdr_user.user_id,
+			readr_token : RDRAuth.rdr_user.readr_token,
+			group_id : qs_args.group_id
+		};
+
+		$.ajax({
+			url: "/api/deauthorize/",
+			type: "get",
+			contentType: "application/json",
+			dataType: "jsonp",
+			data: {
+				json: JSON.stringify( sendData )
+			},
+			success: function(response){
+				$.cookie('first_name', null, { path: '/' });
+				$.cookie('full_name', null, { path: '/' });
+				$.cookie('img_url', null, { path: '/' });
+				$.cookie('user_id', null, { path: '/' });
+				$.cookie('readr_token', null, { path: '/' });
+				RDRAuth.rdr_user = {};
+			}
+		});
+
+		}
+	},
+	checkSocialUser : function(revalidate) {
+		console.log('checkSocialUser 1');
+		// clear the rdr_user and get it again, b/c we're only here if we've been asked if this person is a valid FB user, meaning we think our local info is wrong
+		if (revalidate) RDRAuth.rdr_user = {};
+		// var fb_session = FB.getSession();
+		// if ( fb_session ) {
+			// RDRAuth.getReadrToken( fb_session );
+		// } else {
+		FB.getLoginStatus(function(response) {
+	  		if (response.session) {
+				//user is logged in
+				RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
+	  		} else {
+	  			// tell the parent that it failed for some reason
+	  			RDRAuth.notifyParent({message:false}, "checkSocialUser fail");
+	  		}
+		});
+		// }
 	},
 	doFBLogin: function() {
 		FB.login( function(response) {

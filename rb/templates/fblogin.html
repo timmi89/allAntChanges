@@ -16,31 +16,48 @@
 	);
 	</script>
 	<style type="text/css">
+	body	{color: #666666; font-family: Arial; font-size: 12px; padding: 5px 0 0 0; margin:0 8px; border-top:1px solid #ccc; }
 	img		{ border:0; }
+	ul		{ padding:0;margin:0; list-style-type:none;}
+	li		{ padding:0 0 0 16px;margin:0;background:url(/static/images/checkmark.png) center left no-repeat; }
+	#fb-login-button	{margin:10px 0;}
 	</style>
    </head>
    <body>
-     <div id="fb-root"></div>
-	<div id="fb-login-button" style="display:none;">
-		<a href="javascript:void(0);" onclick="RDRAuth.doFBLogin();"><img src="/static/images/fb-login_to_readrboard.png" /></a>
+   	<div id="fb-root"></div>
+   	<div id="fb-logged-out">
+	   	Connect to ReadrBoard with Facebook
+		<div id="fb-login-button">
+			<a href="javascript:void(0);" onclick="RDRAuth.doFBLogin();"><img src="/static/images/fb-login_to_readrboard.png" /></a>
+		</div>
+		<strong>ReadrBoard values your privacy.</strong>
+		<ul>
+			<li>We will never post on your wall.</li>
+			<li>We only email you if someone comments on your reactions.</li>
+			<li>We do not give out your email address to anyone.</li>
+		</ul>
 	</div>
 	<div id="fb-logged-in" style="display:none;">
+		<div><strong>Welcome to ReadrBoard!</strong></div>
 		<a href="javascript:void(0);" onclick="FB.logout( RDRAuth.doFBlogout );">Log out</a>
 	</div>
-	<p>
+	<!-- <p>
 		<a href="javascript:void(0);" onclick="RDRAuth.tempUser();">Create Temp User</a>
-	</p>
+	</p> -->
      <script src="http://connect.facebook.net/en_US/all.js" type="text/javascript"s></script>
      <script type="text/javascript">
 		RDRAuth.FBLoginResponse = function(response) {
 			if (response.session) {
 				//user is logged in
 				$('#fb-logged-in').show();
-				$('#fb-login-button').hide();
+				$('#fb-logged-out').hide();
 				RDRAuth.getReadrToken(response);
 			} else {
 				// user is not logged in
 				// TODO do something.  post to parent that there was a bug logging in to FB
+
+				$('#fb-logged-in').hide();
+				$('#fb-logged-out').show();
 			}	
 		}
 		
@@ -49,24 +66,7 @@
 			status:true, xfbml:true 
 		});
 
-		var fb_session = FB.getSession();
-		if ( fb_session ) {
-			RDRAuth.getReadrToken( fb_session );
-		} else {
-			FB.getLoginStatus(function(response) {
-		  		if (response.session) {
-					//user is logged in
-					$('#fb-logged-in').show();
-					$('#fb-login-button').hide();
-					RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
-		  		} else {
-		  			// TODO debug only?
-		  			// probably just throw a general error message
-					$('#fb-logged-in').hide();
-					$('#fb-login-button').show();
-	  			}
-			});
-		}
+		RDRAuth.checkSocialUser();
 	</script>
    </body>
 </html>

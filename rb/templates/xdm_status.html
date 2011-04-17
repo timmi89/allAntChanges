@@ -36,17 +36,7 @@
 			status:true, xfbml:true 
 		});
 		
-		var fb_session = FB.getSession();
-		if ( fb_session ) {
-			RDRAuth.getReadrToken( fb_session );
-		} else {
-			FB.getLoginStatus(function(response) {
-		  		if (response.session) {
-					//user is logged in
-					RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
-		  		}
-			});
-		}
+		// RDRAuth.checkSocialUser();
 	</script>
    </body>
 </html>

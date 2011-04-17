@@ -11,9 +11,9 @@ Containers = Resource(handler=ContainerHandler)
 CreateContainers = Resource(handler=CreateContainerHandler)
 Tag = Resource(handler=TagHandler)
 Interaction = Resource(handler=InteractionHandler)
-CreateComments = Resource(handler=CreateCommentHandler)
+Comment = Resource(handler=CommentHandler)
 FBLogin = Resource(handler=FBHandler)
-TokenKill = Resource(handler=TokenKillHandler)
+Deauthorize = Resource(handler=Deauthorize)
 TempUser = Resource(handler=TempUserHandler)
 
 # Organized Resources
@@ -38,7 +38,7 @@ urlpatterns = patterns('',
     url(r'^fb/$', FBLogin),
     
     # Auth
-    url(r'^token/kill/$', TokenKill),
+    url(r'^deauthorize/$', Deauthorize),
     url(r'^tempuser/$', TempUser),
 
     # Widget
@@ -48,7 +48,7 @@ urlpatterns = patterns('',
     url(r'^tag/create', Tag, kwargs={'action':'create'}),
     url(r'^tag/delete', Tag, kwargs={'action':'delete'}),
     #url(r'^tags/(\d*)', Tags),
-    url(r'^comments/create/', CreateComments),
+    url(r'^comment/create/', Comment, kwargs={'action':'create'}),
     #url(r'^comments/', Comments),
 )
 

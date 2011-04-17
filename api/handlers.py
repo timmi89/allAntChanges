@@ -13,8 +13,7 @@ from userutils import *
 from token import *
 
 """
-Readrboard Widget API - Uses Piston
-Note: By default, AnonymousBaseHandler has 'allow_methods' only set to 'GET'.
+Readrboard Widget API
 """
 
 class TempUserHandler(BaseHandler):
@@ -53,28 +52,33 @@ class InteractionsHandler(BaseHandler):
             nodes = nodes.filter(interaction__content__container=containers)
         return nodes
 
-class TokenKillHandler(BaseHandler):
+class Deauthorize(BaseHandler):
 
+    @status_response
     def read(self, request):
         data = json.loads(request.GET['json'])
-        SocialAuth.objects.filter(
-            socialuser__user=data['user_id']
-        ).delete()
+        if not checkToken(data): raise JSONException(u"Token was invalid")
+        try:
+            SocialAuth.objects.filter(
+                social_user__user__id=data['user_id']
+            ).delete()
+        except:
+            raise JSONException(u'Error deauthorizing user')
 
 class FBHandler(BaseHandler):
 
     @status_response
     def read(self, request):
         data = json.loads(request.GET['json'])
-
         fb_session = data['fb']
         group_id = data['group_id']
         access_token = fb_session.get('access_token', None)
+        user_id = data.get('user_id', None)
 
         if(access_token):
             graph = GraphAPI(access_token)
         else:
-            raise JSONException("No access token")
+            raise JSONException(u"No access token")
 
         # Get user profile from facebook graph
         profile = graph.get_object("me")
@@ -88,7 +92,9 @@ class FBHandler(BaseHandler):
             fb_session
         )
 
-        #if(temp_user): convertUser(temp_user, django_user)
+        if user_id and len(SocialUser.objects.filter(user__id=user_id)) == 0:
+            convertUser(user_id, django_user)
+
         readr_token = createToken(django_user.id, social_auth.auth_token, group_id)
 
         return dict(
@@ -106,29 +112,72 @@ class InteractionHandler(BaseHandler):
         tree = Interaction.get_tree(interaction)
         return tree
 
-class CreateCommentHandler(BaseHandler):
+class CommentHandler(BaseHandler):
     
     @status_response
-    def read(self, request):
-        data = json.loads(request.GET['json'])
-        comment = data['comment']
-        interaction_id = data['interaction_id']
-        
-        user = request.user
-        parent = Interaction.objects.get(id=interaction_id)
-        
-        if not checkToken(data): raise JSONException("Token was invalid")
-
-        comment = createInteractionNode(kind='com', body=comment)
-        interaction = createInteraction(parent.page, parent.content, user, comment)
-
-class TagHandler(BaseHandler):
-
-    @status_response
     def read(self, request, **kwargs):
+        data = json.loads(request.GET['json'])
+        if not checkToken(data): raise JSONException(u"Token was invalid")
+        print "Token looks good, going ahead with comment handler actions..."
         action = kwargs['action']
         if action == 'create':
-            data = json.loads(request.GET['json'])
+            comment = data['comment']
+            interaction_id = data['int_id']
+            user = data['user_id']
+            group_id = data['group_id']
+            page_id = data['page_id']
+
+            try:
+                user = User.objects.get(id=data['user_id'])
+            except User.DoesNotExist, User.MultipleObjectsReturned:
+                raise JSONException(u"Error getting user!")
+            try:
+                page = Page.objects.get(id=page_id)
+            except Page.DoesNotExist, Page.MultipleObjectsReturned:
+                raise JSONException(u"Error getting page!")
+            try:
+                group = Group.objects.get(id=group_id)
+            except Group.DoesNotExist, Group.MultipleObjectsReturned:
+                raise JSONException(u"Error getting group!")
+
+            try:
+                parent = Interaction.objects.get(id=interaction_id)
+            except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
+                raise JSONException(u'Could not find parent interaction specified')
+
+            try:
+                comment = createInteractionNode(kind='com', body=comment)
+            except:
+                raise JSONException(u'Error creating comment interaction node')
+            #try:
+            interaction = createInteraction(parent.page, parent.content, user, comment, group, parent)
+            #except:
+            #    raise JSONException(u'Error creating comment interaction')
+            return interaction
+
+        if action == 'delete':
+            interaction_id = data['int_id']['id']
+            try:
+                interaction = Interaction.objects.get(id=interaction_id)
+            except Interaction.DoesNotExist:
+                raise JSONException("Interaction did not exist!")
+            user_id = data['user_id']
+            try:
+                user = User.objects.get(id=user_id)
+            except Interaction.DoesNotExist:
+                raise JSONException("User did not exist!")
+
+            return deleteInteraction(interaction, user)
+
+class TagHandler(BaseHandler):
+    """ Create action ='delete'"""
+    @status_response
+    def read(self, request, **kwargs):
+        data = json.loads(request.GET['json'])
+        if not checkToken(data): raise JSONException(u"Token was invalid")
+        print "Token looks good, going ahead with tag handler actions..."
+        action = kwargs['action']
+        if action == 'create':
             tag = data['tag']['content']
             hash = data['hash']
             content_data = data['content']
@@ -149,12 +198,18 @@ class TagHandler(BaseHandler):
             except Group.DoesNotExist, Group.MultipleObjectsReturned:
                 raise JSONException(u"Error getting group!")
 
-            if not checkToken(data): raise JSONException("Token was invalid")
+            if not checkToken(data): raise JSONException(u"Token was invalid")
             content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
             
-            if hash:    
-                container = Container.objects.get(hash=hash)
-                container.content.add(content)
+            if hash:
+                try:
+                    container = Container.objects.get(hash=hash)
+                except Container.DoesNotExist, Container.MultipleObjectsReturned:
+                    raise JSONException(u'Hash was sent but there was an error retreiving container')
+                try:
+                    container.content.add(content)
+                except:
+                    raise JSONException(u'Error adding content to container')
 
             new = None
             if tag:
@@ -172,7 +227,21 @@ class TagHandler(BaseHandler):
                     )
                 return new
             else:
-                return JSONException("No tag provided to tag handler")
+                return JSONException(u"No tag provided to tag handler")
+                
+        if action == 'delete':
+            interaction_id = data['int_id']['id']
+            try:
+                interaction = Interaction.objects.get(id=interaction_id)
+            except Interaction.DoesNotExist:
+                raise JSONException("Interaction did not exist!")
+            user_id = data['user_id']
+            try:
+                user = User.objects.get(id=user_id)
+            except Interaction.DoesNotExist:
+                raise JSONException("User did not exist!")
+
+            return deleteInteraction(interaction, user)
 
 class CreateContainerHandler(BaseHandler):
     
@@ -180,9 +249,13 @@ class CreateContainerHandler(BaseHandler):
     def read(self, request):
         result = {}
         data = json.loads(request.GET['json'])
+        print data
         hashes = data['hashes']
         for hash in hashes:
-            result[hash] = Container.objects.get_or_create(hash=hash, body=hashes[hash])[1]
+            result[hash] = Container.objects.get_or_create(
+                hash=hash,
+                body=hashes[hash]['content']
+            )[1]
         return result
 
 class ContainerHandler(BaseHandler):
@@ -281,6 +354,7 @@ class SettingsHandler(BaseHandler):
               'logo_url_med',
               'logo_url_lg',
               'css_url',
+              'temp_interact'
              )
              
     @status_response
