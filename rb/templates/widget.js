@@ -1977,7 +1977,6 @@ function jQueryPlugins($R){
                         'top': $hostNode.offset().top,
                         'left': $hostNode.offset().left,
                         'margin': '0',
-                        'color':'transparent',
                         /*cross browser disable textselect*/
                         '-webkit-user-select': 'none', 
                         '-khtml-user-select': 'none',
@@ -2212,13 +2211,15 @@ function jQueryPlugins($R){
             for (var i = 0; i < len; i++) {
                 //correct for ie
                 val = attr[i];
-                /*
-                if(attr[i] == "line-height"){
-                    val = (typeof val === "undefined") ? 'auto' :  attr[i];
+
+
+                obj[val] = $.fn.css2.call(this, val);
+
+                if(val == "line-height" && obj[val]=="1px"){
+                    obj[val] = $.fn.css2.call(this, "auto");
                 }
-                */
-                val = (typeof val === "undefined") ? 'auto' :  attr[i];
-                obj[attr[i]] = $.fn.css2.call(this, val);
+                // console.log(val, typeof val, obj[val]);
+                val = (typeof val === "undefined") ? 'auto' :  val;
             }
             return obj;
         }
