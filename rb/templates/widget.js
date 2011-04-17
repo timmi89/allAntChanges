@@ -732,6 +732,8 @@ function readrBoard($R){
                     if (event.keyCode == '27') { //esc
                         RDR.rindow.closeAll();
                         RDR.actionbar.closeAll();
+                        //todo: temp - control this better;
+                        $('.rdr_clone').remove()
                     }
                     //todo - consider unifying style of close vs closeAll.  Should any of these components 'own' the others?  IE. should tooltips belong to the actionbar?
                 });
@@ -1240,8 +1242,8 @@ function readrBoard($R){
 							selection.container = "";
 							if ( mouse_target.hasClass('rdr-hashed') ) {
 								selection.container = mouse_target.data('hash');
-							} else if ( mouse_target.parents('.rdr-hashed:first').length == 1 ) {
-								selection.container = mouse_target.parents('.rdr-hashed:first').data('hash');
+                            } else if ( mouse_target.parents('.rdr-hashed:first').length == 1 ) {
+                                selection.container = mouse_target.parents('.rdr-hashed:first').data('hash');
 							}
 
                             // strip newlines and tabs -- and then the doublespaces that result
@@ -1269,7 +1271,12 @@ function readrBoard($R){
 									container:selection.container,
                                     cant_comment:true
                                 });
-                            }
+                            } 
+                            var $hostNode = $('.rdr-'+selection.container);
+                            console.log(typeof selection.content);
+                            $hostNode.SearchHighlight({
+                                keys: ""+selection.content
+                            });
                         }
                     }
                 }
@@ -1665,8 +1672,8 @@ function jQueryPlugins($R){
                   - added a param to let accents be considered unique chars
                   - modified the word match to include apostrophes
                   - doing saftey checks for query string instead of array of query strings, and for empty strings
+                  - replaced the escapeRegEx function with a new one that covers more shtuff
             */
-
             /*
              *
              *  Options
@@ -1717,12 +1724,13 @@ function jQueryPlugins($R){
             var ref = options.debug_referrer || document.referrer;
             if(!ref && options.keys==undefined) return this;
             */
+            if (typeof options == "undefined" ) options = {};
             SearchHighlight.options = $.extend({
                 keys:"",
                 exact:"whole",
                 style_name:'rdr_highlight rdr_highlight', //the second one will have a number appended to it
                 style_name_suffix:true,
-                replace_accent:true,
+                replace_accent:false, //todo - this doesn't quite work
                 clone:true
             }, options);
             
@@ -1731,7 +1739,6 @@ function jQueryPlugins($R){
             */
 
             var q = options.keys;
-            console.log(q);
             if(typeof q !== "undefined") {
                 if (typeof q === "string") {q = [q];} //if a single string, make it an array.
                 SearchHighlight.buildReplaceTools(q);
@@ -1761,7 +1768,13 @@ function jQueryPlugins($R){
                         'top': $hostNode.offset().top,
                         'left': $hostNode.offset().left,
                         'margin': '0',
-                        'color':'transparent'
+                        'color':'transparent',
+                        /*cross browser disable textselect*/
+                        '-webkit-user-select': 'none', 
+                        '-khtml-user-select': 'none',
+                        '-moz-user-select': 'none',
+                        '-o-user-select': 'none',
+                        'user-select': 'none'
                     }
                 };
 
@@ -1782,7 +1795,6 @@ function jQueryPlugins($R){
                     //else
 
                     var idens = iden.split(" ");
-                    console.log(idens);
                         $.each(idens,function(j,str){
                             idens[j] = "rdr_clone-"+str;
                         });
@@ -1861,20 +1873,36 @@ function jQueryPlugins($R){
               }
               return q;
             },
-            escapeRegEx : /((?:\\{2})*)([[\]{}*?|])/g, //the special chars . and + are already gone at this point because they are considered split chars
+            escapeRegEx :function preg_quote( str ) {
+                // http://kevin.vanzonneveld.net
+                // +   original by: booeyOH
+                // +   improved by: Ates Goral (http://magnetiq.com)
+                // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+                // +   bugfixed by: Onno Marsman
+                // *     example 1: preg_quote("$40");
+                // *     returns 1: '\$40'
+                // *     example 2: preg_quote("*RRRING* Hello?");
+                // *     returns 2: '\*RRRING\* Hello\?'
+                // *     example 3: preg_quote("\\.+*?[^]$(){}=!<>|:");
+                // *     returns 3: '\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:'
+
+                return (str+'').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
+            },
+            /*
+            escapeRegEx: function(str){
+                var specials = new RegExp("[.*+?|()\\[\\]{}\\\\]", "g"); // .*+?|()[]{}\
+                return str.replace(specials, "\\$&");
+            },
+            */
             buildReplaceTools : function(query) {
-                var re = [], regex;
+                var re = [], regex, scope=this;
                 $.each(query,function(i,n){
                     if ( n == "") return;
-                    if(SearchHighlight.options.replace_accent){
-                       if(n = n.replace(SearchHighlight.escapeRegEx,"$1\\$2"))
-                        re.push(n);         
-                    }else{
-                      if(n = SearchHighlight.replaceAccent(n).replace(SearchHighlight.escapeRegEx,"$1\\$2"))
-                        re.push(n);         
-                    }
+                    n = scope.escapeRegEx(n);
+                    re.push(n); 
                 });
                 regex = re.join("|");
+                console.log(regex);
                 switch(SearchHighlight.options.exact) {
                   case "exact":
                     regex = '\\b(?:'+regex+')\\b';
@@ -1885,8 +1913,9 @@ function jQueryPlugins($R){
                     //todo: give this a second look.  Alt symbols for apostrophes?
                     regex = "\\b(?:\\w|')*("+regex+")(?:\\w|')*\\b"; //[ec] modified to include apostrophes
                     break;
-                }    
-                SearchHighlight.regex = new RegExp(regex, "gi");
+                }
+                console.log(regex);
+                SearchHighlight.regex = new RegExp(regex, "gim");
                 $.each(re,function(i,n){
                     SearchHighlight.subs[n] = SearchHighlight.options.style_name+
                       (SearchHighlight.options.style_name_suffix?i+1:''); 
@@ -1918,6 +1947,7 @@ function jQueryPlugins($R){
                       match,
                       index=0;
                       
+                      //console.log(reText)
                       SearchHighlight.regex.lastIndex = 0;
                       
                       while(match = SearchHighlight.regex.exec(reText)) {
