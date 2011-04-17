@@ -1254,7 +1254,7 @@ function readrBoard($R){
 
                 //todo: combine this with the tooltip for the tags
                 var helpText = "because..."
-                var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="comment_on_'+int_id+'">Comment</button></div>');
+                var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="comment_on_'+int_id.id+'">Comment</button></div>');
                 $leaveComment.find('textarea').focus(function(){
                     if($('.leaveComment').val() == helpText ){
                         $('.leaveComment').val('');

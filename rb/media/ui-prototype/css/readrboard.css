@@ -1,20 +1,20 @@
 @font-face {
-  font-family: ReadrLeague;
-  src: url('LeagueGothic.eot');
-  src: local('☺'),
+  font-family:ReadrLeague;
+  src:url('LeagueGothic.eot');
+  src:local('☺'),
          url('LeagueGothic.otf') format('truetype');
 }
 
 div.rdr {
-	font: normal 12px Arial, sans-serif;
+	font:normal 12px Arial, sans-serif;
 	/* need to add a css reset here */
 }
 
 div.rdr.rdr_window {
-	-moz-box-shadow: 0 0 10px 1px #aaa;
-	-webkit-box-shadow: 0 0 10px 1px #aaa;
-	box-shadow: 0 0 10px 1px #aaa;
-	padding: 0px;
+	-moz-box-shadow:0 0 10px 1px #aaa;
+	-webkit-box-shadow:0 0 10px 1px #aaa;
+	box-shadow:0 0 10px 1px #aaa;
+	padding:0px;
 	position:absolute;
 	z-index:12000;
 	top:100px;
@@ -25,12 +25,12 @@ div.rdr.rdr_window {
 
 /* the action bar */
 div.rdr.rdr_actionbar {
-	-moz-box-shadow: 0 0 10px 1px #aaa;
-	-webkit-box-shadow: 0 0 10px 1px #aaa;
-	box-shadow: 0 0 10px 1px #aaa;
+	-moz-box-shadow:0 0 10px 1px #aaa;
+	-webkit-box-shadow:0 0 10px 1px #aaa;
+	box-shadow:0 0 10px 1px #aaa;
 	background:url("/static/ui-prototype/images/rindow_bg.png") no-repeat 0 0;
-	padding: 0;
-	font: normal 12px Arial, sans-serif;
+	padding:0;
+	font:normal 12px Arial, sans-serif;
 	position:absolute;
 	z-index:11000;
 	background:#fff;
@@ -38,11 +38,11 @@ div.rdr.rdr_actionbar {
 }
 
 div.rdr.rdr_actionbar ul {
-    margin: 0;
+    margin:0;
 }
 div.rdr.rdr_actionbar li {
-    display: inline-block;
-    position: relative;
+    display:inline-block;
+    position:relative;
 }
 
 div.rdr.rdr_actionbar li a {
@@ -54,13 +54,13 @@ div.rdr.rdr_actionbar li a {
 	float:left;
 }
 
-div.rdr.rdr_actionbar li.rdr_icon_about a		 	{ background-position:  0 0; } /*overwritten below to compress width*/
-div.rdr.rdr_actionbar li.rdr_icon_reaction a		{ background-position: -30px 0; }
-div.rdr.rdr_actionbar li.rdr_icon_bookmark a        { background-position: -60px 0; }
+div.rdr.rdr_actionbar li.rdr_icon_about a		 	{ background-position: 0 0; } /*overwritten below to compress width*/
+div.rdr.rdr_actionbar li.rdr_icon_reaction a		{ background-position:-30px 0; }
+div.rdr.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-60px 0; }
 
 div.rdr.rdr_actionbar a:hover                       { background-color:#ffd3d3;}
 div.rdr.rdr_actionbar li.rdr_icon_about a:hover 	{ background-color:transparent; }
-div.rdr.rdr_actionbar span.rdr_icon_divider      	{ width: 1px; background: #BBB; height: 70%; position: absolute; top: 15%; right:0; display:none;/*show dynamically*/}
+div.rdr.rdr_actionbar span.rdr_icon_divider      	{ width:1px; background:#BBB; height:70%; position:absolute; top:15%; right:0; display:none;/*show dynamically*/}
 
 /* the tooltip */
 div.rdr.rdr_tooltip {
@@ -76,28 +76,28 @@ div.rdr.rdr_tooltip {
     width:100px;
     z-index:10000;
 }
-div.rdr.rdr_tooltip-arrow-border { border-color: #e40000 transparent transparent transparent; border-style: solid; border-width: 7px; height:0; width:0; position:absolute; bottom:-16px; left:43%;}
-div.rdr.rdr_tooltip-arrow { border-color: #fff transparent transparent transparent; border-style: solid; border-width: 7px; height:0; width:0; position:absolute; bottom:-14px; left:43%;}
+div.rdr.rdr_tooltip-arrow-border { border-color:#e40000 transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-16px; left:43%;}
+div.rdr.rdr_tooltip-arrow { border-color:#fff transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-14px; left:43%;}
 
 /*compress ths about icon width*/
-div.rdr.rdr_actionbar li.rdr_icon_about             { width: 24px; } /*normal width is 30px */
-div.rdr.rdr_actionbar li.rdr_icon_about a		 	{ background-position:  -3px 0; width: 24px;} /*from line above: (30-24)/2 = 3px left*/
+div.rdr.rdr_actionbar li.rdr_icon_about             { width:24px; } /*normal width is 30px */
+div.rdr.rdr_actionbar li.rdr_icon_about a		 	{ background-position: -3px 0; width:24px;} /*from line above:(30-24)/2 = 3px left*/
 .rdr_tooltip_about                                  { margin:0 0 0 11px;/* 0.5 icon width*/ }
 
 /* global tag defs */
 div.rdr h1, 
-div.rdr h2	{font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif; color:#e71f1f; margin: 0; }
+div.rdr h2	{font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif; color:#e71f1f; margin:0; }
 div.rdr h1	{font-size:21px; cursor:move; padding:3px 9px;}
 
 /* the widget */
 div.rdr div.rdr_sentimentBox							{height:250px;}
 div.rdr div.rdr_sntPnl 									{float:left; position:relative; display:block; height:100%; overflow:hidden; background:white;/*width is reset with js - rindow.settings.pnlWidth */ }
 
-div.rdr div.rdr_sntPnl div.rdr_body						{width:100%; position:absolute; top: 35px; /*var rdr_headerHeight*/ ; z-index: 3; overflow-x:hidden; overflow-y:auto; padding:6px 0 0 0;}
-div.rdr div.rdr_sntPnl div.rdr_header 			      	{background:#fff; position: relative; height: 35px; /*var rdr_headerHeight*/ width:100%; z-index:3;}
-div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap	{background: none repeat scroll 0 0 #FFFFFF; border-bottom: 1px solid #DFDFDF; bottom: 0; padding-bottom: 3px; position: absolute; text-align: center; width: 100%; }
+div.rdr div.rdr_sntPnl div.rdr_body						{width:100%; position:absolute; top:35px; /*var rdr_headerHeight*/ ; z-index:3; overflow-x:hidden; overflow-y:auto; padding:6px 0 0 0;}
+div.rdr div.rdr_sntPnl div.rdr_header 			      	{background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:3;}
+div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap	{background:none repeat scroll 0 0 #FFFFFF; border-bottom:1px solid #DFDFDF; bottom:0; padding-bottom:3px; position:absolute; text-align:center; width:100%; }
 div.rdr div.rdr_sntPnl h1						{ padding:0 !important; }
-div.rdr div.rdr_sntPnl .rdr_pnlShadow			{height: 100%; width:100px; position: absolute; z-index:2; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; }
+div.rdr div.rdr_sntPnl .rdr_pnlShadow			{height:100%; width:100px; position:absolute; z-index:2; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; }
 
 div.rdr div.rdr_body .rdr_selected div.rdr_arrow 		{ display:none; border-color:transparent transparent transparent #f2cfcf; border-style:solid; border-width:12px; height:0; margin-top:-10px; position:absolute; right:-23px; top:43%; width:0;}
 /*div.rdr div.rdr_reactionPanel div.rdr_body .rdr_selected div.rdr_arrow 		{ border-color:transparent transparent transparent #f7dddd; }*/
@@ -113,27 +113,27 @@ div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body 	{-moz-box-shadow:none;-w
 div.rdr div.rdr_whyPanel 						{position:absolute; z-index:10; right:0; width:250px;}
 div.rdr div.rdr_whyPanel div.rdr_body 			{width:250px; height:215px;}
 
-div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top: 5px;}
+div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top:5px;}
 div.rdr div.rdr_sntPnl_padder 					{margin:0 15px; position:relative; overflow:hidden;}
 div.rdr div.rdr_sntPnl_padder textarea,
 div.rdr div.rdr_sntPnl_padder input[type="text"]	{padding:2px 6px; width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
-div.rdr div.rdr_sntPnl_padder button				{border: 1px solid #aaa; border-radius: 3px 3px 3px 3px; box-shadow: 0 -6px 11px -6px #ccc inset; color: #454545; font-family: Arial; font-size: 12px; padding: 2px 5px; width: auto;}
-div.rdr div.rdr_sntPnl_padder > div					{margin: 4px 0;}
-div.rdr div.rdr_share_social						{top: 8px; position:relative;}
+div.rdr div.rdr_sntPnl_padder button				{border:1px solid #aaa; border-radius:3px 3px 3px 3px; box-shadow:0 -6px 11px -6px #ccc inset; color:#454545; font-family:Arial; font-size:12px; padding:2px 5px; width:auto; cursor:pointer;}
+div.rdr div.rdr_sntPnl_padder > div					{margin:4px 0;}
+div.rdr div.rdr_share_social						{top:8px; position:relative;}
 div.rdr div.rdr_sntPnl .rdr_submitTag  			{width:100%; text-align:right;}
 div.rdr div.rdr_sntPnl .rdr_submitTag button 	{}
 div.rdr div.rdr_sntPnl .rdr_commentButton	 	{width:100%;}
 div.rdr div.rdr_sntPnl .leaveComment			{height:67px; margin-top:5px; max-width:92%;font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;}
 div.rdr div.rdr_sntPnl .rdr_tagFeedback			{font-style:italic;}
 
-div.rdr div.rdr_tempUserMsg 					{position:absolute; z-index:5; bottom:0px; background:#fff; padding:9px; -moz-box-shadow: 0px -45px 48px -50px #53aed9 inset, 0 0 10px 1px #AAAAAA; -webkit-box-shadow: 0px -45px 48px -50px #53aed9 inset, 0 0 10px 1px #AAAAAA; box-shadow: 0px -45px 48px -50px #53aed9 inset, 0 0 10px 1px #AAAAAA;}
+div.rdr div.rdr_tempUserMsg 					{position:absolute; z-index:5; bottom:0px; background:#fff; padding:9px; -moz-box-shadow:0px -45px 48px -50px #53aed9 inset, 0 0 10px 1px #AAAAAA; -webkit-box-shadow:0px -45px 48px -50px #53aed9 inset, 0 0 10px 1px #AAAAAA; box-shadow:0px -45px 48px -50px #53aed9 inset, 0 0 10px 1px #AAAAAA;}
 /*
 $('div.rdr_tempUserMsg').animate({bottom:'-48px'});
 */
 
-div.rdr div.rdr_reactionPanel div.rdr_quote {position: relative; text-shadow:1px 1px 1px #999; font-size:18px; font-family:Georgia, serif; z-index: 12020;}
-div.rdr div.rdr_reactionPanel div.rdr_quoteIcon { position: relative; z-index: 12010; }/*wrapper for z-index*/
-div.rdr div.rdr_reactionPanel div.rdr_quoteIcon span { position: absolute; font-family: ReadrLeague, Arial, sans-serif; font-size: 6em; top:-22px; left:-13px; color: #cccccc;}
+div.rdr div.rdr_reactionPanel div.rdr_quote {position:relative; text-shadow:1px 1px 1px #999; font-size:18px; font-family:Georgia, serif; z-index:12020;}
+div.rdr div.rdr_reactionPanel div.rdr_quoteIcon { position:relative; z-index:12010; }/*wrapper for z-index*/
+div.rdr div.rdr_reactionPanel div.rdr_quoteIcon span { position:absolute; font-family:ReadrLeague, Arial, sans-serif; font-size:6em; top:-22px; left:-13px; color:#cccccc;}
 
 div.rdr .rdr_tags			{text-align:center; padding:0 0 10px;}
 div.rdr ul.rdr_tags			{list-style-type:none; padding:0; margin:0; }
@@ -141,53 +141,53 @@ div.rdr ul.rdr_tags li			{padding:2px 5px; margin:5px 15px; background:#d6d6d6; 
 div.rdr ul.rdr_tags li:hover	{background:#f7dddd;cursor:pointer;}
 div.rdr ul.rdr_tags li:hover a,
 div.rdr ul.rdr_tags li.rdr_selected a				{color:#e71f1f; display:block;}
-div.rdr ul.rdr_tags li.rdr_selected					{color:#e71f1f; background:#f7dddd; margin: 5px 0; padding: 2px 5px; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset;}
+div.rdr ul.rdr_tags li.rdr_selected					{color:#e71f1f; background:#f7dddd; margin:5px 0; padding:2px 5px; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset;}
 div.rdr div.rdr_new ul.rdr_tags li.rdr_selected 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
 div.rdr ul.rdr_preselected			{font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0 0 10px; }
 div.rdr ul.rdr_preselected a		{color:#000;text-decoration:none;}
-div.rdr div.rdr_customTagBox input.freeformTagInput  	{background-color: #D6D6D6; font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0 0 2px; text-align:center;}
+div.rdr div.rdr_customTagBox input.freeformTagInput  	{background-color:#D6D6D6; font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0 0 2px; text-align:center;}
 
 
 div.rdr div.rdr_close		{position:absolute;top:8px;right:7px;color:#999;cursor:pointer;font-size:14px;margin-top:-4px;z-index:15;}
 
 div.rdr div.rdr_instruct	{color:#666; margin:5px 0;}
-div.rdr div.rdr_help		{font-style:italic; font-size:11px; color:#767676; width:100%; position:absolute; top: 12px; text-align:center; margin:0 !important;}
+div.rdr div.rdr_help		{font-style:italic; font-size:11px; color:#767676; width:100%; position:absolute; top:12px; text-align:center; margin:0 !important;}
 
 div.rdr div.rdr_comment textarea	{ height:92px; font-size:14px; margin:5px 0; resize:none; padding-bottom:10px;}
 div.rdr div.rdr_share_count		{ color:#999999; font-style:italic; margin:-3px 0 5px; }
 
-div.rdr ul.shareLinks           {padding:2px; margin: 0;}
-div.rdr ul.shareLinks li        {padding: 5px; display: inline-block; list-style: none;}
+div.rdr ul.shareLinks           {padding:2px; margin:0;}
+div.rdr ul.shareLinks li        {padding:5px; display:inline-block; list-style:none;}
 div.rdr ul.shareLinks img       {width:30px;}
 
 /* forms */
 div.rdr textarea,
-div.rdr input[type="text"]	{font-size:14px; color:#666; -moz-box-shadow: inset 0px 0px 5px #ddd;-webkit-box-shadow: inset 0px 0px 5px #ddd; box-shadow: inset 0px 0px 5px #ddd; border:1px solid #ddd; height: auto; width: auto;}
+div.rdr input[type="text"]	{font-size:14px; color:#666; -moz-box-shadow:inset 0px 0px 5px #ddd;-webkit-box-shadow:inset 0px 0px 5px #ddd; box-shadow:inset 0px 0px 5px #ddd; border:1px solid #ddd; height:auto; width:auto;}
 div.rdr button				{font-size:14px; }
 
 .rdr_clone *{
-    opacity: 0.0 !important;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=00)" !important;
-    filter: alpha(opacity=00) !important;
-    -moz-opacity: 0.0 !important;
-    -khtml-opacity: 0.0 !important;
+    opacity:0.0 !important;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)" !important;
+    filter:alpha(opacity=00) !important;
+    -moz-opacity:0.0 !important;
+    -khtml-opacity:0.0 !important;
 }
 .rdr_highlight {
-    background-color: #E71C1C !important; /*deep cherry red, but will be faded out*/
+    background-color:#E71C1C !important; /*deep cherry red, but will be faded out*/
     color:#E71C1C !important; /*should match above color*/
-    -moz-border-radius: 4px; /* FF1+ */
-    -webkit-border-radius: 4px; /* Saf3-4 */
-    border-radius: 4px; /* Opera 10.5, IE 9, Saf5, Chrome */
-    -moz-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* FF3.5+ */
-    -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Saf3.0+, Chrome */
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Opera 10.5+, IE 9.0 */
+    -moz-border-radius:4px; /* FF1+ */
+    -webkit-border-radius:4px; /* Saf3-4 */
+    border-radius:4px; /* Opera 10.5, IE 9, Saf5, Chrome */
+    -moz-box-shadow:1px 1px 2px rgba(0, 0, 0, 0.5); /* FF3.5+ */
+    -webkit-box-shadow:1px 1px 2px rgba(0, 0, 0, 0.5); /* Saf3.0+, Chrome */
+    box-shadow:1px 1px 2px rgba(0, 0, 0, 0.5); /* Opera 10.5+, IE 9.0 */
     /*  padding:1px 4px !important;*/
     padding:0 !important;
     /* margin:0 -4px !important;*/
     margin:0 !important;
-    opacity: 0.3 !important;
-    filter: progid:DXImageTransform.Microsoft.Alpha(opacity=30);zoom:1;
-    -moz-opacity: 0.3 !important;
-    -khtml-opacity: 0.3 !important;
+    opacity:0.3 !important;
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=30);zoom:1;
+    -moz-opacity:0.3 !important;
+    -khtml-opacity:0.3 !important;
 }
 
