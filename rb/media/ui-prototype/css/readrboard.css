@@ -153,7 +153,7 @@ div.rdr div.rdr_close		{position:absolute;top:8px;right:7px;color:#999;cursor:po
 div.rdr div.rdr_instruct	{color:#666; margin:5px 0;}
 div.rdr div.rdr_help		{font-style:italic; font-size:11px; color:#767676; width:100%; position:absolute; top: 12px; text-align:center; margin:0 !important;}
 
-div.rdr div.rdr_comment textarea	{ height:92px; font-size:14px; margin:5px 0;}
+div.rdr div.rdr_comment textarea	{ height:92px; font-size:14px; margin:5px 0; resize:none;}
 div.rdr div.rdr_share_count		{ color:#999999; font-style:italic; margin:-3px 0 5px; }
 
 div.rdr ul.shareLinks           {padding:2px; margin: 0;}

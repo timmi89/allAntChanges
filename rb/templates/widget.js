@@ -2225,8 +2225,6 @@ function jQueryPlugins($R){
 
                 if(val == "lineHeight"){
                     // console.log('-----------%#%(#)(*%)(*#@()*%--------------');
-                    alert(val);
-                    alert(obj[val]);
                     obj[val] = $.fn.css2.call(this, "auto");
                 }
                 // console.log(val, typeof val, obj[val]);

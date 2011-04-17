@@ -23,6 +23,11 @@
 	right: 0;
 	width: 8px;
 	height: 100%;
+	display:none;
+}
+
+.jspContainer:hover .jspVerticalBar {
+	display:block;
 }
 
 .jspHorizontalBar
@@ -90,7 +95,7 @@
 
 .jspVerticalBar .jspArrow
 {
-	height: 16px;
+	height: 10px;
 }
 
 .jspHorizontalBar .jspArrow
