@@ -1,4 +1,4 @@
-// console.log($)
+// //console.log($)
 var jQueryVersion = "1.4.4",
 RDRtimer,
 RDR, //our global RDR object
@@ -80,7 +80,7 @@ function readrBoard($R){
 
                 rindow.animate({
                     width: rindow.settings.pnlWidth +'px',
-                    minHeight: rindow.settings.height +'px',
+                    minHeight: rindow.settings.height +'px'
                 }, rindow.settings.animTime, function() {
 					$(this).css('width','auto');
 					rindow.find('.rdr_contentSpace').append( $demo );
@@ -417,7 +417,7 @@ function readrBoard($R){
 		session : {
 			iframeHost : "http://readr.local:8080", // TODO put this in a template var
             getUser : function(args, callback) {
-                console.log('checking user');
+                //console.log('checking user');
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
                     // we have a user id and token, be it temp or logged in user, so just run the callback
                     if ( callback && args ) callback(args);
@@ -444,7 +444,7 @@ function readrBoard($R){
 
                         // TODO tell the user something failed and ask them to try again
                         // pass callback into the login panel
-                        console.log('sorry there was a problem with your alleged user ID.  we just killed it, try again.');
+                        //console.log('sorry there was a problem with your alleged user ID.  we just killed it, try again.');
                     break;
 
                     case "Temporary user interaction limit reached":
@@ -482,10 +482,10 @@ function readrBoard($R){
             receiveMessage : function(args, callback) {
                 $.receiveMessage(
                     function(e){
-                        console.log( JSON.parse( e.data ) );
+                        //console.log( JSON.parse( e.data ) );
                         var message = JSON.parse( e.data );
 
-                        console.log('receiving: ' + message.status);
+                        //console.log('receiving: ' + message.status);
                         if ( message.status ) {;
                             switch ( message.status ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
@@ -493,7 +493,7 @@ function readrBoard($R){
                                 case "fb_logged_in":
                                 case "known_user":
                                 case "got_temp_user":
-                                    console.dir(message.data);
+                                    //console.dir(message.data);
                                     for ( var i in message.data ) {
                                         RDR.user[ i ] = message.data[i];
                                     }
@@ -513,7 +513,7 @@ function readrBoard($R){
                                 break;
 
                                 case "checkSocialUser fail":
-                                    console.log('show login panel with an error message about checkSocialUser failing');
+                                    //console.log('show login panel with an error message about checkSocialUser failing');
                                 break;
 
                                 case "already had user":
@@ -583,7 +583,7 @@ function readrBoard($R){
             },
             showTempUserMsg : function(args) {
                 if ( args.rindow ) {
-                    console.dir(args);
+                    //console.dir(args);
                     var rindow = args.rindow,
                         num_interactions_left = 5 - parseInt( args.int_id.num_interactions );
                         $tempMsg = $('<div class="rdr_tempUserMsg">You can do ' + num_interactions_left + ' more interactions.  GOT IT?!  So you better log in, you better not pout.  <strong></strong></div>'),
@@ -640,8 +640,8 @@ function readrBoard($R){
                         host_name : window.location.hostname
                     },
                     success: function(response, textStatus, XHR) {
-                        console.dir(response);
-                        console.log('--------------------');
+                        //console.dir(response);
+                        //console.log('--------------------');
                         RDR.group = response.data;
 						RDR.group.group_id
 
@@ -671,13 +671,13 @@ function readrBoard($R){
                         $RDR.dequeue('initAjax');
                     },
                     error: function(response){
-                        console.warn(response)
+                        //console.warn(response)
                     }
                 });
             },
             initUserData : function(userShortName){
                 // request the RBGroup Data
-                console.log("requesting user data")
+                //console.log("requesting user data")
                 $.ajax({
                     url: "/api/rbuser/",
                     type: "get",
@@ -688,9 +688,9 @@ function readrBoard($R){
                     },
                     success: function(response, textStatus, XHR) {
 
-                        console.log('rbuser call success')
-                        console.dir(response);
-                        console.log(XHR)
+                        //console.log('rbuser call success')
+                        //console.dir(response);
+                        //console.log(XHR)
 
                         //get this from the DB?
                         //this.anno_whitelist = "#module-article p";
@@ -698,15 +698,15 @@ function readrBoard($R){
                         $.each(response, function(index, value){
                             var rb_group = value;
                             //Only expects back one user (index==0)
-                            console.log('current user is ' + rb_user.name)
+                            //console.log('current user is ' + rb_user.name)
 
                         });
 
                     },
                     error: function(response){
-                        console.warn(response);
-                        console.warn('failed, but thats cool, we were expecting it to');
-                        console.log('user is ', userShortName);
+                        //console.warn(response);
+                        //console.warn('failed, but thats cool, we were expecting it to');
+                        //console.log('user is ', userShortName);
                     }
                 });
             },
@@ -809,7 +809,7 @@ function readrBoard($R){
 				$RDR.dequeue('initAjax');
             },
             hashNodes : function() {
-                console.log('hashing nodes');
+                //console.log('hashing nodes');
                 // snag all the nodes that we can set icons next to and send'em next
                 // TODO: restrict this to the viewport + a few, rather than all
                 var content_nodes = $( RDR.group.anno_whitelist ).not('.rdr-hashed');
@@ -847,7 +847,7 @@ function readrBoard($R){
                 RDR.actions.sendHashes();
             },
             sendHashes : function() {
-                console.log('sending nodes');
+                //console.log('sending nodes');
                 // TODO: dont' send all hashes
 
                 var md5_list = [];
@@ -876,13 +876,13 @@ function readrBoard($R){
     					// TODO: Eric, should this go in a jquery queue?
     					var sendData = {};
     					sendData.hashes = {};
-    					console.log("data.unknown length: "+data.unknown.length);
+    					//console.log("data.unknown length: "+data.unknown.length);
 					
     					if ( data.unknown.length > 0 ) {
     						$.each( data.unknown, function( index, value ) {
     							sendData.hashes[value] = RDR.content_nodes[value];
     						});
-    						console.dir(sendData);
+    						//console.dir(sendData);
 
     						$.ajax({
     			                    url: "/api/containers/create/",
@@ -893,7 +893,7 @@ function readrBoard($R){
     			                     	json: JSON.stringify(sendData)
     			                     },
     			                    success: function(response) {
-    			                        console.dir(response);
+    			                        //console.dir(response);
     			                    }
     						});
     					}
@@ -1012,7 +1012,7 @@ function readrBoard($R){
 
                 rindow.animate({
                     width: rindow.settings.pnlWidth +'px',
-                    minHeight: rindow.settings.height +'px',
+                    minHeight: rindow.settings.height +'px'
                 }, rindow.settings.animTime, function() {
 					$(this).css('width','auto');
                     // rindow.append($sentimentBox);
@@ -1060,7 +1060,7 @@ function readrBoard($R){
                     });
                 },
                 expand: function(rindow, interaction_id){
-                    console.log('whypanel expand');
+                    //console.log('whypanel expand');
                     $whyPanel = $(rindow).find('.rdr_whyPanel');
                     //temp hack
                     if( $whyPanel.data('expanded') ){
@@ -1130,7 +1130,7 @@ function readrBoard($R){
                         dataType: "jsonp",
                         data: { json: JSON.stringify(sendData) },
                         success: function(response) {
-                            console.dir(response);
+                            //console.dir(response);
                             //[eric] - if we want these params still we need to get them from args:
                             //do we really want to chain pass these through?  Or keep them in a shared scope?
 
@@ -1148,7 +1148,7 @@ function readrBoard($R){
                         },
                         //for now, ignore error and carry on with mockup
                         error: function(response) {
-                            console.log("an error occurred while trying to tag");
+                            //console.log("an error occurred while trying to tag");
                         }
                     });
                 });
@@ -1175,18 +1175,18 @@ function readrBoard($R){
                     dataType: "jsonp",
                     data: { json: JSON.stringify(sendData) },
                     success: function(response) {
-                        console.dir(response);
+                        //console.dir(response);
                     },
                     //for now, ignore error and carry on with mockup
                     error: function(response) {
-                        console.log("an error occurred while trying to delete the tag");
+                        //console.log("an error occurred while trying to delete the tag");
                     }
                 });
                 
             },
             shareStart : function(args) {
-                console.log('------------rags----------');
-                console.dir(args);
+                //console.log('------------rags----------');
+                //console.dir(args);
                 var rindow = args.rindow, 
                     tag = args.tag,
                     int_id = args.int_id;
@@ -1195,8 +1195,8 @@ function readrBoard($R){
                 // this is temporary, for testing tag deletion.
                 rindow.find('ul.rdr_preselected li').each( function() {
                     if ( $(this).data('tag').content == tag.content ) {
-                        console.log('--- args ---');
-                        console.dir(args);
+                        //console.log('--- args ---');
+                        //console.dir(args);
                         $(this).after('<div id="delete_int_'+int_id.id+'" style="font-family:Arial;font-size:12px;"><a href="javascript:void(0);">Undo that tag</a></div>');
                         RDR.pane1.reinitialise();
                         $('#delete_int_'+int_id.id).click( function() {
@@ -1207,11 +1207,11 @@ function readrBoard($R){
                 //todo: for now, I'm just passing in known_tags as a param, but check with Porter about this model.
                 //Where is the 'source'/'point of origin' that is the authority of known_tags - I'd think we'd want to just reference that..
 
-                //console.log(rindow, known_tags, unknown_tags_arr);
+                ////console.log(rindow, known_tags, unknown_tags_arr);
                 
                 /*        
                 var tags = "";
-                console.log(tags);
+                //console.log(tags);
 
                 for ( var i in known_tags ) {
                     if ( known_tags[i] && RDR.group.blessed_tags[ parseInt(known_tags[i])-1 ] ) {
@@ -1232,7 +1232,7 @@ function readrBoard($R){
                 });
 
 
-                console.log(tags)
+                //console.log(tags)
                 
                 */
 
@@ -1293,7 +1293,7 @@ function readrBoard($R){
                 var $commentFeedback = $('<div class="rdr_commentFeedback rdr_sntPnl_padder"> <div class="rdr_tagFeedback">You tagged this '+tag.name+'</div> <div class="rdr_commentComplete"></div> </div>');
                 rindow.find('.rdr_whyPanel .rdr_body').append($commentFeedback, $shareDialogueBox);
                 
-                console.log('scrollpane the why panel');
+                //console.log('scrollpane the why panel');
                 $R('div.rdr_whyPanel div.rdr_body').data('jsp', null);
                 $('div.rdr_whyPanel div.rdr_body').jScrollPane();
                 RDR.pane2 = $R('div.rdr_whyPanel div.rdr_body').data('jsp');
@@ -1346,8 +1346,8 @@ function readrBoard($R){
                         "page_id" : RDR.page.id
                     };
 
-                    console.log('--- sendData for comment: ---');
-                    console.dir(sendData);
+                    //console.log('--- sendData for comment: ---');
+                    //console.dir(sendData);
 
                     // send the data!
                     $.ajax({
@@ -1357,7 +1357,7 @@ function readrBoard($R){
                         dataType: "jsonp",
                         data: { json: JSON.stringify(sendData) },
                         success: function(response) {
-                            console.dir(response);
+                            //console.dir(response);
 
                             if ( response.status == "fail" ) {
                                 // if it failed, see if we can fix it, and if so, try this function one more time
@@ -1368,7 +1368,7 @@ function readrBoard($R){
                                     }
                                 } );
                             } else {
-                                console.log( rindow.length );
+                                //console.log( rindow.length );
                                 rindow.closest('div.rdr_share').css({'visibility':'hidden'});
                                 rindow.closest('div.rdr_body').children('.rdr_commentFeedback')
                                 .find('.rdr_tagFeedback').hide().end()//chain
@@ -1378,7 +1378,7 @@ function readrBoard($R){
                         },
                         //for now, ignore error and carry on with mockup
                         error: function(response) {
-                            console.log("an error occurred while trying to comment");
+                            //console.log("an error occurred while trying to comment");
                         }
                     });
                 });
@@ -1465,7 +1465,7 @@ function readrBoard($R){
                                 });
                             } 
                             var $hostNode = $('.rdr-'+selection.container);
-                            console.log(typeof selection.content);
+                            //console.log(typeof selection.content);
                             $hostNode.SearchHighlight({
                                 keys: ""+selection.content
                             });
@@ -1635,16 +1635,16 @@ loadScript("/static/ui-prototype/js/jquery-1.4.4.min.js", function(){
         //callback
 
         //test that $.ui versioning is working correctly
-        // console.log("testing jQuery UI versioning...")
-        // console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
+        // //console.log("testing jQuery UI versioning...")
+        // //console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
         
         //within this scope while the $ refers to our version of jQuery, attach it to our Global var $R at least for now, for testing later
         //todo - I don't think it really matters, but consider making this just local later
         $R = $.noConflict(true);
 
         //test that $.ui versioning is working correctly
-        // console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
-        // console.log("of course $R.ui.version should show our version - version = " + $R.ui.version)
+        // //console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
+        // //console.log("of course $R.ui.version should show our version - version = " + $R.ui.version)
 
         //call scripts that depend on our jQuery version to be loaded
         $RFunctions($R);
@@ -1688,17 +1688,17 @@ function $RFunctions($R){
     //testing:
     /*
     var a = $R.evalJSON('[{"test":2}]');
-    console.log(a)
+    //console.log(a)
 
 
     //show that objects really are unique
-    console.log("test that our jQuery copy is unique...")
+    //console.log("test that our jQuery copy is unique...")
     $.client = "client";
     $R.rb = "rb";
-    console.log($.client)   //"client"
-    console.log($R.client)  //undefined
-    console.log($R.rb)      //"rb"
-    console.log($.rb)       //undefined
+    //console.log($.client)   //"client"
+    //console.log($R.client)  //undefined
+    //console.log($R.rb)      //"rb"
+    //console.log($.rb)       //undefined
     */  //end comment out testing:
 
 	//////////////////// TODO: TEST DATA //////////////////
@@ -2110,7 +2110,7 @@ function jQueryPlugins($R){
                     re.push(n); 
                 });
                 regex = re.join("|");
-                console.log(regex);
+                //console.log(regex);
                 switch(SearchHighlight.options.exact) {
                   case "exact":
                     regex = '\\b(?:'+regex+')\\b';
@@ -2122,7 +2122,7 @@ function jQueryPlugins($R){
                     regex = "\\b(?:\\w|')*("+regex+")(?:\\w|')*\\b"; //[ec] modified to include apostrophes
                     break;
                 }
-                console.log(regex);
+                //console.log(regex);
                 SearchHighlight.regex = new RegExp(regex, "gim");
                 $.each(re,function(i,n){
                     SearchHighlight.subs[n] = SearchHighlight.options.style_name+
@@ -2155,7 +2155,7 @@ function jQueryPlugins($R){
                       match,
                       index=0;
                       
-                      //console.log(reText)
+                      ////console.log(reText)
                       SearchHighlight.regex.lastIndex = 0;
                       
                       while(match = SearchHighlight.regex.exec(reText)) {

@@ -56,17 +56,17 @@ easingIn:"swing",easingOut:"swing",showCloseButton:true,showNavArrows:true,enabl
 var DAILYCANDY = DAILYCANDY ? DAILYCANDY : {};
 
 $(document).ready(function() {
-    DAILYCANDY.account.init();
-	DAILYCANDY.utils.searchGo();
-	DAILYCANDY.utils.dropDown();
-	DAILYCANDY.utils.tooltips();
-	DAILYCANDY.utils.shareBox();
-	DAILYCANDY.utils.action();
+ //    DAILYCANDY.account.init();
+	// DAILYCANDY.utils.searchGo();
+	// DAILYCANDY.utils.dropDown();
+	// DAILYCANDY.utils.tooltips();
+	// DAILYCANDY.utils.shareBox();
+	// DAILYCANDY.utils.action();
 //	DAILYCANDY.utils.autocompleteSearch();
-	DAILYCANDY.utils.photoGallery();
-	DAILYCANDY.utils.modalLogin();
-	DAILYCANDY.onestepsignup();
-	DAILYCANDY.video.init();	
+	// DAILYCANDY.utils.photoGallery();
+	// DAILYCANDY.utils.modalLogin();
+	// DAILYCANDY.onestepsignup();
+	// DAILYCANDY.video.init();	
 	
 	$('form.signup-form input[type="submit"]').attr("disabled", "false"); 
 	$('form.signup-form input[type="submit"]').removeAttr("disabled");
