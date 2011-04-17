@@ -1019,7 +1019,7 @@ function readrBoard($R){
                     // rindow.append($sentimentBox);
 					rindow.find('div.rdr_contentSpace').append($sentimentBox);
 					
-                    $('div.rdr_reactionPanel div.rdr_body').jScrollPane();
+                    $('div.rdr_reactionPanel div.rdr_body').jScrollPane({contentWidth:200, showArrows:true});
                     RDR.pane1 = $R('div.rdr_reactionPanel div.rdr_body').data('jsp');
                     
 					if ( settings.content_type == "text" ) {
@@ -1038,7 +1038,7 @@ function readrBoard($R){
                             $(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
                                 
                             // todo don't do this?
-                            $whyPanel.find('.rdr_body').html('');
+                            // $whyPanel.find('.rdr_body').html('');
                             RDR.actions.rateSend({ tag:$(this).data('tag'), rindow:rindow, settings:settings });//end rateSend
                         }
                     });
@@ -1233,7 +1233,13 @@ function readrBoard($R){
                 
                 */
 
-                var $shareDialogueBox = $('<div class="rdr_shareBox rdr_sntPnl_padder"></div>')
+                if ( $('div.rdr_shareBox.rdr_sntPnl_padder').length == 0 || $('div.rdr_commentBox.rdr_sntPnl_padder').length == 0 ) {
+                    rindow.find('div.rdr_whyPanel .rdr_body').html('<div class="rdr_commentBox rdr_sntPnl_padder"></div><div class="rdr_shareBox rdr_sntPnl_padder"></div>');
+                }
+                var $shareDialogueBox =  $('div.rdr_shareBox.rdr_sntPnl_padder');
+                var $commentBox = $('div.rdr_commentBox.rdr_sntPnl_padder');
+
+                $commentBox.html( '<div class="rdr_tagFeedback">You tagged this '+tag.name+'</div> <div class="rdr_commentComplete"></div>' );
 
                 // TODO add short rdrbrd URL to end of this line, rather than the long URL
                 //var url = window.location.href;
@@ -1249,14 +1255,14 @@ function readrBoard($R){
 
                 //todo: combine this with the tooltip for the tags
                 var helpText = "because..."
-                var $commentBox =  $('<div class="rdr_share"><textarea class="commentBox">' + helpText+ '</textarea><button id="comment_on_'+int_id+'">Comment</button></div>');
-                $commentBox.find('textarea').focus(function(){
-                    if($('.commentBox').val() == helpText ){
-                        $('.commentBox').val('');
+                var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="comment_on_'+int_id+'">Comment</button></div>');
+                $leaveComment.find('textarea').focus(function(){
+                    if($('.leaveComment').val() == helpText ){
+                        $('.leaveComment').val('');
                     }
                 }).blur(function(){
-                    if($('.commentBox').val() == "" ){
-                        $('.commentBox').val(helpText);
+                    if($('.leaveComment').val() == "" ){
+                        $('.leaveComment').val(helpText);
                     }
                 }).keyup(function(event) {
                     if (event.keyCode == '13') { //enter or comma
@@ -1267,12 +1273,14 @@ function readrBoard($R){
                     }
                 });
 
-                // $commentBox.find('textarea').autogrow();
+                $leaveComment.find('textarea').autogrow();
 
-                $commentBox.find('button').click(function() {
-                    var comment = $commentBox.find('textarea').val();
+                $leaveComment.find('button').click(function() {
+                    var comment = $leaveComment.find('textarea').val();
                     RDR.actions.comment({ comment:comment, int_id:int_id.id, rindow:rindow });
                 });
+
+                $commentBox.append( $leaveComment );
 
                 var $socialBox = $('<div class="rdr_share_social"><strong>Share your reaction</strong></div>'),
                 $shareLinks = $('<ul class="shareLinks"></ul>'),
@@ -1283,17 +1291,21 @@ function readrBoard($R){
                     $shareLinks.append('<li><a href="http://' +val+ '.com" ><img src="/static/ui-prototype/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
                 });
                 $socialBox.append($shareLinks);
-                $socialBox.append('<div>herro worrd</div><div>herro worrd</div><div>herro worrd</div><div>herro worrd</div><div>herro worrd</div>');
+                // $socialBox.append('<div>herro worrd</div><div>herro worrd</div><div>herro worrd</div><div>herro worrd</div><div>herro worrd</div>');
 
                 //TODO this is prototype code for demo.  fix it.
-                $shareDialogueBox.append($commentBox, $socialBox);
-                var $commentFeedback = $('<div class="rdr_commentFeedback rdr_sntPnl_padder"> <div class="rdr_tagFeedback">You tagged this '+tag.name+'</div> <div class="rdr_commentComplete"></div> </div>');
-                rindow.find('.rdr_whyPanel .rdr_body').append($commentFeedback, $shareDialogueBox);
+                $shareDialogueBox.html( $socialBox );
+                
+
+                // rindow.find('.rdr_whyPanel .rdr_body').append( $commentFeedback, $shareDialogueBox );
                 
                 //console.log('scrollpane the why panel');
-                $R('div.rdr_whyPanel div.rdr_body').data('jsp', null);
-                $('div.rdr_whyPanel div.rdr_body').jScrollPane();
-                RDR.pane2 = $R('div.rdr_whyPanel div.rdr_body').data('jsp');
+                if ( RDR.pane2 ) {
+                    RDR.pane2.reinitialise();
+                } else {
+                    $('div.rdr_whyPanel div.rdr_body').jScrollPane({contentWidth:250, showArrows:true});
+                    RDR.pane2 = $('div.rdr_whyPanel div.rdr_body').data('jsp');
+                }
 
                 rindow.animate( {width:450}, rindow.settings.animTime );
 
@@ -2280,6 +2292,7 @@ function jQueryPlugins($R){
                 
                 shadow.html(val);
                 $(this).css('height', Math.max(shadow.height()+20, minHeight));
+                RDR.pane2.reinitialise();
 
             }
 

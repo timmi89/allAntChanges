@@ -100,25 +100,30 @@ div.rdr div.rdr_sntPnl h1						{ padding:0 !important; }
 div.rdr div.rdr_sntPnl .rdr_pnlShadow			{height: 100%; width:100px; position: absolute; z-index:2; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; }
 
 div.rdr div.rdr_body .rdr_selected div.rdr_arrow 		{ display:none; border-color:transparent transparent transparent #f2cfcf; border-style:solid; border-width:12px; height:0; margin-top:-10px; position:absolute; right:-23px; top:43%; width:0;}
-div.rdr div.rdr_reactionPanel div.rdr_body .rdr_selected div.rdr_arrow 		{ border-color:transparent transparent transparent #f7dddd; }
+/*div.rdr div.rdr_reactionPanel div.rdr_body .rdr_selected div.rdr_arrow 		{ border-color:transparent transparent transparent #f7dddd; }*/
 div.rdr div.rdr_selectedTextPanel div.rdr_body div.rdr_selected		{font-family:Georgia; font-size:14px; padding:7px; background:#f2cfcf; display:block; position:relative; }
 div.rdr div.rdr_selectedTextPanel				{position:relative; z-index:30;}
 div.rdr div.rdr_selectedTextPanel div.rdr_body 	{background:#f0f0f0; -moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
-div.rdr div.rdr_reactionPanel					{position:relative; z-index:20; width:200px}
-div.rdr div.rdr_reactionPanel div.rdr_body		{background:#f8f8f8; }
+
+div.rdr div.rdr_reactionPanel							{position:relative; z-index:20; width:200px}
+div.rdr div.rdr_reactionPanel div.rdr_body				{background:#f8f8f8; }
+div.rdr div.rdr_reactionPanel div.rdr_body .jspPane		{width:200px !important; }
 div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; height:215px;}
+
 div.rdr div.rdr_whyPanel 						{position:absolute; z-index:10; right:0; width:250px;}
+div.rdr div.rdr_whyPanel div.rdr_body 			{width:250px; height:215px;}
+
 div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top: 5px;}
 div.rdr div.rdr_sntPnl_padder 					{margin:0 15px; position:relative; overflow:hidden;}
 div.rdr div.rdr_sntPnl_padder textarea,
 div.rdr div.rdr_sntPnl_padder input[type="text"]	{padding:2px 6px; width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
-div.rdr div.rdr_sntPnl_padder button			{width:100%; }
-div.rdr div.rdr_sntPnl_padder > div				{margin: 4px 0;}
-div.rdr div.rdr_share_social					{top: 8px; position:relative;}
+div.rdr div.rdr_sntPnl_padder button				{width:100%; }
+div.rdr div.rdr_sntPnl_padder > div					{margin: 4px 0;}
+div.rdr div.rdr_share_social						{top: 8px; position:relative;}
 div.rdr div.rdr_sntPnl .rdr_submitTag  			{width:100%; text-align:right;}
 div.rdr div.rdr_sntPnl .rdr_submitTag button 	{}
 div.rdr div.rdr_sntPnl .rdr_commentButton	 	{width:100%;}
-div.rdr div.rdr_sntPnl .commentBox				{height:67px; margin-top:5px; max-width:92%;font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;}
+div.rdr div.rdr_sntPnl .leaveComment			{height:67px; margin-top:5px; max-width:92%;font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;}
 div.rdr div.rdr_sntPnl .rdr_tagFeedback			{font-style:italic;}
 
 div.rdr div.rdr_tempUserMsg 					{position:absolute; z-index:5; bottom:0px; background:#fff; padding:9px; -moz-box-shadow: 0px -45px 48px -50px #53aed9 inset, 0 0 10px 1px #AAAAAA; -webkit-box-shadow: 0px -45px 48px -50px #53aed9 inset, 0 0 10px 1px #AAAAAA; box-shadow: 0px -45px 48px -50px #53aed9 inset, 0 0 10px 1px #AAAAAA;}
@@ -148,7 +153,7 @@ div.rdr div.rdr_close		{position:absolute;top:8px;right:7px;color:#999;cursor:po
 div.rdr div.rdr_instruct	{color:#666; margin:5px 0;}
 div.rdr div.rdr_help		{font-style:italic; font-size:11px; color:#767676; width:100%; position:absolute; top: 12px; text-align:center; margin:0 !important;}
 
-div.rdr div.rdr_share textarea	{ height:92px; font-size:14px; margin:5px 0;}
+div.rdr div.rdr_comment textarea	{ height:92px; font-size:14px; margin:5px 0;}
 div.rdr div.rdr_share_count		{ color:#999999; font-style:italic; margin:-3px 0 5px; }
 
 div.rdr ul.shareLinks           {padding:2px; margin: 0;}
