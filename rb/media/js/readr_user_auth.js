@@ -8,7 +8,7 @@ for ( var i in qs ) {
 }
 $.receiveMessage(
 	function(e){
-		console.log('---receiving in the iframe---');
+		//console.log('---receiving in the iframe---');
 	    switch( e.data ) {
 	    	case "getUser":
 	    		RDRAuth.returnUser(true);
@@ -51,12 +51,12 @@ RDRAuth = {
 				user_id: RDRAuth.rdr_user.user_id, // might be temp, might be the ID of a valid FB-created user
 				readr_token: RDRAuth.rdr_user.readr_token
 			};
-			console.log(' ----- sendData -----');
-			console.dir(sendData);
+			//console.log(' ----- sendData -----');
+			//console.dir(sendData);
 			// TODO check cookie for a valid token, id
-			console.log('getuser');
+			//console.log('getuser');
 			if ( !RDRAuth.rdr_user.first_name ) {
-				console.log('send fb user data to log in');
+				//console.log('send fb user data to log in');
 				$.ajax({
 					url: "/api/fb/",
 					type: "get",
@@ -82,7 +82,7 @@ RDRAuth = {
 	returnUser: function(create_temp) {
 		RDRAuth.getUser();
 		if ( RDRAuth.rdr_user && RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token ) {
-			console.log('just send back known values');
+			//console.log('just send back known values');
 			var sendData = {
 				// arguments are nested under data for consistency with passing values up to the parent
 				data : {
@@ -95,7 +95,7 @@ RDRAuth = {
 			};
 			RDRAuth.notifyParent(sendData, "known_user");
 		} else if ( create_temp ) {
-			console.log('need a temp user');
+			//console.log('need a temp user');
 			// get a temp user
 			RDRAuth.createTempUser();
 		}
@@ -113,11 +113,11 @@ RDRAuth = {
 				json: JSON.stringify( sendData )
 			},
 			success: function(response){
-				console.log('got a temp user');
+				//console.log('got a temp user');
 				// store the data here and in a cookie
 				RDRAuth.setUser(response);
 
-				console.log('send the temp user up');
+				//console.log('send the temp user up');
 				var sendData = {
 					data : {
 						first_name : RDRAuth.rdr_user.first_name,
@@ -132,7 +132,7 @@ RDRAuth = {
 		});
 	},
 	getUser : function() {
-		console.log('getuser111111111');
+		//console.log('getuser111111111');
 		// snag values from the cookie, if present
 		// if ( !RDRAuth.rdr_user.user_id || RDRAuth.rdr_user.readr_toke ) {
 			RDRAuth.rdr_user.first_name = $.cookie('first_name');
@@ -157,7 +157,7 @@ RDRAuth = {
 		$.cookie('readr_token', RDRAuth.rdr_user.readr_token, { expires: 365, path: '/' });
 	},
 	killUser : function() {
-		console.log('killing the user...softly');
+		//console.log('killing the user...softly');
 
 		if ( RDRAuth.rdr_user && RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token ) {
 		var sendData = {
@@ -187,7 +187,7 @@ RDRAuth = {
 		}
 	},
 	checkSocialUser : function(revalidate) {
-		console.log('checkSocialUser 1');
+		//console.log('checkSocialUser 1');
 		// clear the rdr_user and get it again, b/c we're only here if we've been asked if this person is a valid FB user, meaning we think our local info is wrong
 		if (revalidate) RDRAuth.rdr_user = {};
 		// var fb_session = FB.getSession();
