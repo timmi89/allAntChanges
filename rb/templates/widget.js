@@ -1035,7 +1035,7 @@ function readrBoard($R){
                             $(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
                                 
                             // todo don't do this?
-                            $whyPanel.find('.rdr_body').empty();
+                            $whyPanel.find('.rdr_body').html('');
                             RDR.actions.rateSend({ tag:$(this).data('tag'), rindow:rindow, settings:settings, callback: function() {
                                     // todo: at this point, cast the tag, THEN call this in the tag success function:
                                     RDR.actions.whyPanel.expand(rindow);
@@ -1058,6 +1058,7 @@ function readrBoard($R){
                     });
                 },
                 expand: function(rindow, interaction_id){
+                    console.log('whypanel expand');
                     $whyPanel = $(rindow).find('.rdr_whyPanel');
                     //temp hack
                     if( $whyPanel.data('expanded') ){
@@ -1891,7 +1892,7 @@ function $RFunctions($R){
     // scrollPane items
     rdr_mousewheel($R);
     rdr_mousewheelIntent($R);
-    rdr_scrollPane($R, window);
+    rdr_scrollPane($R);
     
     // init James Padolsey's autoResize plugin
     rdr_autogrow($R);
