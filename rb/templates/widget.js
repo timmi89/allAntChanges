@@ -17,31 +17,31 @@ function readrBoard($R){
     //todo: [eric] this doesn't really do anything, cause even if we pick up the global RDR into the local version,
         // we're just overwriting it in the next line anyway. 
         //consider using <if (RDR.length) return;> or just omit it.
-    var RDR = RDR ? RDR : {};
+    var RDR = RDR ? RDR: {};
 
     // none of this obj's properties are definite.  just jotting down a few ideas.
     RDR = {
-        current : {},
-        content_nodes : {},
+        current: {},
+        content_nodes: {},
         groupPermData: {
             group_id : "{{ group_id }}",  //make group_id a string partly to make my IDE happy - getting sent as ajax anyway
             short_name : "{{ short_name }}"
         },
-        group : {}, //to be set by RDR.actions.initGroupData
-        user : {
+        group: {}, //to be set by RDR.actions.initGroupData
+        user: {
             first_name:		"",
             full_name:		"",
             img_url:        "", 
             readr_token: 	"",
             user_id:        ""
         },
-        errors : {
+        errors: {
             actionbar: {
                 rating:"",
                 commenting:""
             }
         },
-        styles : {
+        styles: {
         /*
 		page: 	"<style type='text/css'>"+
 				"body 		{background:#fff;}" +
@@ -51,7 +51,7 @@ function readrBoard($R){
 		},
         // TODO kill this.
 		demo :{
-		    inPage_one : function(img) {
+		    inPage_one: function(img) {
                 var offsets = img.offset();
                 
 		        var rindow = RDR.rindow.draw({
@@ -87,7 +87,7 @@ function readrBoard($R){
 				});
 		    }
 		},
-		rindow : {
+		rindow: {
             defaults:{
                 x:100,
                 y:100,
@@ -148,7 +148,7 @@ function readrBoard($R){
 				$('div.rdr.rdr_window').remove();
 			}
 		},
-		actionbar : {
+		actionbar: {
 			draw: function(settings) {
 
 
@@ -310,7 +310,7 @@ function readrBoard($R){
                 $otherIcons.animate({width:'show'},150);
             }
 		},
-		tooltip : {
+		tooltip: {
 			draw: function(settings) {
                 return $('<div class="rdr rdr_tooltip" class="rdr_tooltip_' +settings.item+ '">' +
                         '<div class="rdr rdr_tooltip-content"> ' +settings.tipText+ '</div>'+
@@ -362,8 +362,8 @@ function readrBoard($R){
                 */
             }
 		},
-		util : {
-            stayInWindow : function(settings) {
+		util: {
+            stayInWindow: function(settings) {
                 var coords = {},
 	                rWin = $(window),
 	                winWidth = rWin.width(),
@@ -391,32 +391,32 @@ function readrBoard($R){
                 coords.top = top;
                 return coords;
             },
-            md5 : {
+            md5: {
 				hexcase:0,
 				b64pad:"",
 				chrsz:8,
-				hex_md5 : function(s){return RDR.util.md5.binl2hex(RDR.util.md5.core_md5(RDR.util.md5.str2binl(s),s.length*RDR.util.md5.chrsz));},
-				core_md5 : function(x,len){x[len>>5]|=0x80<<((len)%32);x[(((len+64)>>>9)<<4)+14]=len;var a=1732584193;var b=-271733879;var c=-1732584194;var d=271733878;for(var i=0;i<x.length;i+=16){var olda=a;var oldb=b;var oldc=c;var oldd=d;a=RDR.util.md5.md5_ff(a,b,c,d,x[i+0],7,-680876936);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+1],12,-389564586);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+2],17,606105819);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+3],22,-1044525330);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+4],7,-176418897);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+5],12,1200080426);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+6],17,-1473231341);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+7],22,-45705983);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+8],7,1770035416);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+9],12,-1958414417);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+10],17,-42063);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+11],22,-1990404162);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+12],7,1804603682);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+13],12,-40341101);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+14],17,-1502002290);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+15],22,1236535329);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+1],5,-165796510);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+6],9,-1069501632);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+11],14,643717713);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+0],20,-373897302);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+5],5,-701558691);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+10],9,38016083);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+15],14,-660478335);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+4],20,-405537848);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+9],5,568446438);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+14],9,-1019803690);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+3],14,-187363961);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+8],20,1163531501);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+13],5,-1444681467);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+2],9,-51403784);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+7],14,1735328473);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+12],20,-1926607734);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+5],4,-378558);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+8],11,-2022574463);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+11],16,1839030562);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+14],23,-35309556);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+1],4,-1530992060);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+4],11,1272893353);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+7],16,-155497632);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+10],23,-1094730640);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+13],4,681279174);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+0],11,-358537222);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+3],16,-722521979);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+6],23,76029189);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+9],4,-640364487);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+12],11,-421815835);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+15],16,530742520);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+2],23,-995338651);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+0],6,-198630844);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+7],10,1126891415);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+14],15,-1416354905);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+5],21,-57434055);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+12],6,1700485571);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+3],10,-1894986606);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+10],15,-1051523);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+1],21,-2054922799);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+8],6,1873313359);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+15],10,-30611744);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+6],15,-1560198380);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+13],21,1309151649);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+4],6,-145523070);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+11],10,-1120210379);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+2],15,718787259);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+9],21,-343485551);a=RDR.util.md5.safe_add(a,olda);b=RDR.util.md5.safe_add(b,oldb);c=RDR.util.md5.safe_add(c,oldc);d=RDR.util.md5.safe_add(d,oldd);} return Array(a,b,c,d);},
-				md5_cmn : function(q,a,b,x,s,t){return RDR.util.md5.safe_add(RDR.util.md5.bit_rol(RDR.util.md5.safe_add(RDR.util.md5.safe_add(a,q),RDR.util.md5.safe_add(x,t)),s),b);},
-				md5_ff : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn((b&c)|((~b)&d),a,b,x,s,t);},
-				md5_gg : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn((b&d)|(c&(~d)),a,b,x,s,t);},
-				md5_hh : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(b^c^d,a,b,x,s,t);},
-				md5_ii : function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(c^(b|(~d)),a,b,x,s,t);},
-				safe_add : function(x,y){var lsw=(x&0xFFFF)+(y&0xFFFF);var msw=(x>>16)+(y>>16)+(lsw>>16);return(msw<<16)|(lsw&0xFFFF);},
-				bit_rol : function(num,cnt){return(num<<cnt)|(num>>>(32-cnt));},
-				str2binl : function(str){var bin=Array();var mask=(1<<RDR.util.md5.chrsz)-1;for(var i=0;i<str.length*RDR.util.md5.chrsz;i+=RDR.util.md5.chrsz){bin[i>>5]|=(str.charCodeAt(i/RDR.util.md5.chrsz)&mask)<<(i%32);}return bin;},
-				binl2hex : function(binarray){var hex_tab=RDR.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";var str="";for(var i=0;i<binarray.length*4;i++){str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);} return str;}
+				hex_md5: function(s){return RDR.util.md5.binl2hex(RDR.util.md5.core_md5(RDR.util.md5.str2binl(s),s.length*RDR.util.md5.chrsz));},
+				core_md5: function(x,len){x[len>>5]|=0x80<<((len)%32);x[(((len+64)>>>9)<<4)+14]=len;var a=1732584193;var b=-271733879;var c=-1732584194;var d=271733878;for(var i=0;i<x.length;i+=16){var olda=a;var oldb=b;var oldc=c;var oldd=d;a=RDR.util.md5.md5_ff(a,b,c,d,x[i+0],7,-680876936);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+1],12,-389564586);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+2],17,606105819);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+3],22,-1044525330);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+4],7,-176418897);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+5],12,1200080426);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+6],17,-1473231341);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+7],22,-45705983);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+8],7,1770035416);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+9],12,-1958414417);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+10],17,-42063);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+11],22,-1990404162);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+12],7,1804603682);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+13],12,-40341101);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+14],17,-1502002290);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+15],22,1236535329);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+1],5,-165796510);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+6],9,-1069501632);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+11],14,643717713);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+0],20,-373897302);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+5],5,-701558691);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+10],9,38016083);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+15],14,-660478335);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+4],20,-405537848);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+9],5,568446438);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+14],9,-1019803690);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+3],14,-187363961);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+8],20,1163531501);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+13],5,-1444681467);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+2],9,-51403784);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+7],14,1735328473);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+12],20,-1926607734);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+5],4,-378558);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+8],11,-2022574463);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+11],16,1839030562);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+14],23,-35309556);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+1],4,-1530992060);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+4],11,1272893353);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+7],16,-155497632);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+10],23,-1094730640);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+13],4,681279174);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+0],11,-358537222);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+3],16,-722521979);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+6],23,76029189);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+9],4,-640364487);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+12],11,-421815835);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+15],16,530742520);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+2],23,-995338651);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+0],6,-198630844);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+7],10,1126891415);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+14],15,-1416354905);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+5],21,-57434055);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+12],6,1700485571);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+3],10,-1894986606);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+10],15,-1051523);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+1],21,-2054922799);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+8],6,1873313359);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+15],10,-30611744);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+6],15,-1560198380);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+13],21,1309151649);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+4],6,-145523070);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+11],10,-1120210379);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+2],15,718787259);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+9],21,-343485551);a=RDR.util.md5.safe_add(a,olda);b=RDR.util.md5.safe_add(b,oldb);c=RDR.util.md5.safe_add(c,oldc);d=RDR.util.md5.safe_add(d,oldd);} return Array(a,b,c,d);},
+				md5_cmn: function(q,a,b,x,s,t){return RDR.util.md5.safe_add(RDR.util.md5.bit_rol(RDR.util.md5.safe_add(RDR.util.md5.safe_add(a,q),RDR.util.md5.safe_add(x,t)),s),b);},
+				md5_ff: function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn((b&c)|((~b)&d),a,b,x,s,t);},
+				md5_gg: function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn((b&d)|(c&(~d)),a,b,x,s,t);},
+				md5_hh: function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(b^c^d,a,b,x,s,t);},
+				md5_ii: function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(c^(b|(~d)),a,b,x,s,t);},
+				safe_add: function(x,y){var lsw=(x&0xFFFF)+(y&0xFFFF);var msw=(x>>16)+(y>>16)+(lsw>>16);return(msw<<16)|(lsw&0xFFFF);},
+				bit_rol: function(num,cnt){return(num<<cnt)|(num>>>(32-cnt));},
+				str2binl: function(str){var bin=Array();var mask=(1<<RDR.util.md5.chrsz)-1;for(var i=0;i<str.length*RDR.util.md5.chrsz;i+=RDR.util.md5.chrsz){bin[i>>5]|=(str.charCodeAt(i/RDR.util.md5.chrsz)&mask)<<(i%32);}return bin;},
+				binl2hex: function(binarray){var hex_tab=RDR.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";var str="";for(var i=0;i<binarray.length*4;i++){str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);} return str;}
 			},
-            cleanPara : function(para) {
+            cleanPara: function(para) {
                 // common function for cleaning the paragraph.  right now, it's removing spaces, tabs, newlines, and then double spaces
                 if(para != "") {
                     return para.replace(/[\n\r\t]+/gi,' ').replace().replace(/\s{2,}/g,' ');
                 }
             }
         },
-		session : {
+		session: {
 			iframeHost : "http://readr.local:8080", // TODO put this in a template var
-            getUser : function(args, callback) {
+            getUser: function(args, callback) {
                 //console.log('checking user');
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
                     // we have a user id and token, be it temp or logged in user, so just run the callback
@@ -436,7 +436,7 @@ function readrBoard($R){
                     );
                 }
             },
-            handleGetUserFail : function(response, callback) {
+            handleGetUserFail: function(response, callback) {
                 switch ( response.message ) {
                     case "Error getting user!":
                         // kill the user object and cookie
@@ -465,7 +465,7 @@ function readrBoard($R){
                     break;
                 }
             },
-			createXDMframe : function() {
+			createXDMframe: function() {
                 RDR.session.receiveMessage();
 
                 var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
@@ -479,7 +479,7 @@ function readrBoard($R){
 				// this is the postMessage receiver for ALL messages posted.
                 // TODO: put this elsewhere so it's more logically placed and easier to find??
 			},
-            receiveMessage : function(args, callback) {
+            receiveMessage: function(args, callback) {
                 $.receiveMessage(
                     function(e){
                         //console.log( JSON.parse( e.data ) );
@@ -525,8 +525,8 @@ function readrBoard($R){
                     RDR.session.iframeHost
                 );
             },
-			login : function() {},
-			showLoginPanel : function(args, callback) {
+			login: function() {},
+			showLoginPanel: function(args, callback) {
 
                 $('.rdr_rewritable').removeClass('rdr_rewritable');
                 $('#rdr-loginPanel').remove();
@@ -573,7 +573,7 @@ function readrBoard($R){
     //             });
 				rindow.find('div.rdr_contentSpace').append( $loginHtml );
 			},
-			killUser : function() {
+			killUser: function() {
                 RDR.user = {};
                 $.postMessage(
                     "killUser",
@@ -581,7 +581,7 @@ function readrBoard($R){
                     window.frames['rdr-xdm-hidden']
                 );
             },
-            showTempUserMsg : function(args) {
+            showTempUserMsg: function(args) {
                 if ( args.rindow ) {
                     //console.dir(args);
                     var rindow = args.rindow,
@@ -597,14 +597,14 @@ function readrBoard($R){
                 }
             }
 		},
-        actions : {
-            aboutReadrBoard : function() {
+        actions: {
+            aboutReadrBoard: function() {
                 alert('Testing... Readrboard gives you more revenue and deeper engagement!');
             },
-            bookmarkStart : function() {
+            bookmarkStart: function() {
                 alert('Testing... This will be bookmarked!  Thanks!');
             },
-            init : function(){
+            init: function(){
                 var that = this;
                 $RDR = $(RDR);
                 $RDR.queue('initAjax', function(next){
@@ -628,7 +628,7 @@ function readrBoard($R){
                 //start the dequeue chain
                 $RDR.dequeue('initAjax');
             },
-            initGroupData : function(groupShortName){
+            initGroupData: function(groupShortName){
                 // request the RBGroup Data
 
                 $.ajax({
@@ -675,7 +675,7 @@ function readrBoard($R){
                     }
                 });
             },
-            initUserData : function(userShortName){
+            initUserData: function(userShortName){
                 // request the RBGroup Data
                 //console.log("requesting user data")
                 $.ajax({
@@ -710,7 +710,7 @@ function readrBoard($R){
                     }
                 });
             },
-            initPageData : function(){
+            initPageData: function(){
                //? do we want to model this here to be symetrical with user and group data?
 
                 // TODO flesh out Porter's code below and incorporate it into the queue
@@ -738,7 +738,7 @@ function readrBoard($R){
                //to be normally called on success of ajax call
                $RDR.dequeue('initAjax');
             },
-            initEnvironment : function(){
+            initEnvironment: function(){
                 this.hashNodes();
 
                 // init the img interactions
@@ -808,7 +808,7 @@ function readrBoard($R){
                 });
 				$RDR.dequeue('initAjax');
             },
-            hashNodes : function() {
+            hashNodes: function() {
                 //console.log('hashing nodes');
                 // snag all the nodes that we can set icons next to and send'em next
                 // TODO: restrict this to the viewport + a few, rather than all
@@ -846,7 +846,7 @@ function readrBoard($R){
 
                 RDR.actions.sendHashes();
             },
-            sendHashes : function() {
+            sendHashes: function() {
                 return;
                 //console.log('sending nodes');
                 // TODO: dont' send all hashes
@@ -901,7 +901,7 @@ function readrBoard($R){
 					}
 				});
 			},
-			sentimentBox : function(settings) {
+			sentimentBox: function(settings) {
 
                 // draw the window over the actionbar
                 var actionbarOffsets = settings.coords;
@@ -1039,16 +1039,12 @@ function readrBoard($R){
                                 
                             // todo don't do this?
                             $whyPanel.find('.rdr_body').html('');
-                            RDR.actions.rateSend({ tag:$(this).data('tag'), rindow:rindow, settings:settings, callback: function() {
-                                    // todo: at this point, cast the tag, THEN call this in the tag success function:
-                                    RDR.actions.whyPanel.expand(rindow);
-                                }//end function
-                            });//end rateSend
+                            RDR.actions.rateSend({ tag:$(this).data('tag'), rindow:rindow, settings:settings });//end rateSend
                         }
                     });
                 });
             },
-			whyPanel : {
+			whyPanel: {
                 draw: function(rindow, interaction_id) {
                     var $whyPanel = $('<div class="rdr_whyPanel rdr_sntPnl" />').prepend($('<div class="rdr_pnlShadow"/>'));
                     return $whyPanel;
@@ -1095,7 +1091,7 @@ function readrBoard($R){
                 newSubBox: function(){
                 }              
 			},
-            rateSend : function(args) {
+            rateSend: function(args) {
                 
                 //example:
                 //tag:{name, id}, rindow:rindow, settings:settings, callback: 
@@ -1154,7 +1150,7 @@ function readrBoard($R){
                     });
                 });
             },
-            unrateSend : function(args) {
+            unrateSend: function(args) {
                 var rindow = args.rindow, 
                     tag = args.tag,
                     int_id = args.int_id;
@@ -1185,7 +1181,7 @@ function readrBoard($R){
                 });
                 
             },
-            shareStart : function(args) {
+            shareStart: function(args) {
                 //console.log('------------rags----------');
                 //console.dir(args);
                 var rindow = args.rindow, 
@@ -1329,7 +1325,7 @@ function readrBoard($R){
                 });
                 */
             },
-            comment : function(args) {
+            comment: function(args) {
                 RDR.session.getUser( args, function( params ) {
     
                     // get the text that was highlighted
@@ -1384,7 +1380,7 @@ function readrBoard($R){
                     });
                 });
             },
-            startSelect : function(e) {
+            startSelect: function(e) {
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
                 var mouse_target = $(e.target),
 				selection = {};
@@ -1474,7 +1470,7 @@ function readrBoard($R){
                     }
                 }
             },
-            selectedText : function(win) {
+            selectedText: function(win) {
                 /**
 			modified from Drew Dodson's code here:
 			http://perplexed.co.uk/1020_text_selector_jquery_plugin.htm
@@ -1887,8 +1883,8 @@ function jQueryPlugins($R){
              *
              *  Options
              *  - exact (string, default:"exact") 
-             *    "exact" : find and highlight the exact words.
-             *    "whole" : find partial matches but highlight whole words
+             *    "exact": find and highlight the exact words.
+             *    "whole": find partial matches but highlight whole words
              *    "partial": find and highlight partial matches
              *     
              *  - style_name (string, default:'rdr_highlight')
@@ -2102,7 +2098,7 @@ function jQueryPlugins($R){
                 return str.replace(specials, "\\$&");
             },
             */
-            buildReplaceTools : function(query) {
+            buildReplaceTools: function(query) {
                 var re = [], regex, scope=this;
                 $.each(query,function(i,n){
                     if ( n == "") return;
@@ -2140,7 +2136,7 @@ function jQueryPlugins($R){
                   SearchHighlight.hiliteTree(this,noHighlight);
                 });
             },
-            hiliteTree : function(el,noHighlight) {
+            hiliteTree: function(el,noHighlight) {
                 if(noHighlight.index(el)!=-1) return;
                 var matchIndex = SearchHighlight.options.exact=="whole"?1:0;
                 for(var startIndex=0,endIndex=el.childNodes.length;startIndex<endIndex;startIndex++) {
@@ -2194,7 +2190,7 @@ function jQueryPlugins($R){
             if (arguments.length) return $.fn.css2.apply(this,arguments);
             var attr = ['font-family','font-size','font-weight','font-style','color',
               'text-transform','text-decoration','letter-spacing','word-spacing',
-              'line-height','text-align','vertical-align','direction','background-color',
+              'lineHeight','text-align','vertical-align','direction','background-color',
               'background-image','background-repeat','background-position',
               'background-attachment','opacity','width','height','top','right','bottom',
               'left','margin-top','margin-right','margin-bottom','margin-left',
@@ -2215,7 +2211,10 @@ function jQueryPlugins($R){
 
                 obj[val] = $.fn.css2.call(this, val);
 
-                if(val == "line-height" && obj[val]=="1px"){
+                if(val == "lineHeight"){
+                    // console.log('-----------%#%(#)(*%)(*#@()*%--------------');
+                    alert(val);
+                    alert(obj[val]);
                     obj[val] = $.fn.css2.call(this, "auto");
                 }
                 // console.log(val, typeof val, obj[val]);
