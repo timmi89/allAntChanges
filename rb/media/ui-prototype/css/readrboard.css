@@ -117,7 +117,7 @@ div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top: 5p
 div.rdr div.rdr_sntPnl_padder 					{margin:0 15px; position:relative; overflow:hidden;}
 div.rdr div.rdr_sntPnl_padder textarea,
 div.rdr div.rdr_sntPnl_padder input[type="text"]	{padding:2px 6px; width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
-div.rdr div.rdr_sntPnl_padder button				{border: 1px solid #AAAAAA; border-radius: 3px 3px 3px 3px; box-shadow: 0 -6px 11px -6px #CCCCCC inset; color: #454545; font-family: Arial; font-size: 12px; padding: 2px 5px; width: auto;}
+div.rdr div.rdr_sntPnl_padder button				{border: 1px solid #aaa; border-radius: 3px 3px 3px 3px; box-shadow: 0 -6px 11px -6px #ccc inset; color: #454545; font-family: Arial; font-size: 12px; padding: 2px 5px; width: auto;}
 div.rdr div.rdr_sntPnl_padder > div					{margin: 4px 0;}
 div.rdr div.rdr_share_social						{top: 8px; position:relative;}
 div.rdr div.rdr_sntPnl .rdr_submitTag  			{width:100%; text-align:right;}
@@ -153,7 +153,7 @@ div.rdr div.rdr_close		{position:absolute;top:8px;right:7px;color:#999;cursor:po
 div.rdr div.rdr_instruct	{color:#666; margin:5px 0;}
 div.rdr div.rdr_help		{font-style:italic; font-size:11px; color:#767676; width:100%; position:absolute; top: 12px; text-align:center; margin:0 !important;}
 
-div.rdr div.rdr_comment textarea	{ height:92px; font-size:14px; margin:5px 0; resize:none;}
+div.rdr div.rdr_comment textarea	{ height:92px; font-size:14px; margin:5px 0; resize:none; padding-bottom:10px;}
 div.rdr div.rdr_share_count		{ color:#999999; font-style:italic; margin:-3px 0 5px; }
 
 div.rdr ul.shareLinks           {padding:2px; margin: 0;}

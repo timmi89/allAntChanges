@@ -2260,7 +2260,7 @@ function jQueryPlugins($R){
 
             var $this       = $(this),
                 minHeight   = 67,
-                lineHeight  = $this.css('lineHeight');
+                lineHeight  = $this.css('fontSize'); // used to be 'lineHeight' but that made the textarea too tall
 
             var shadow = $('<div></div>').css({
                 position:   'absolute',
@@ -2269,7 +2269,7 @@ function jQueryPlugins($R){
                 width:      $(this).width() - parseInt($this.css('paddingLeft')) - parseInt($this.css('paddingRight')),
                 fontSize:   $this.css('fontSize'),
                 fontFamily: $this.css('fontFamily'),
-                lineHeight: $this.css('lineHeight'),
+                lineHeight: $this.css('fontSize'), // used to be 'lineHeight' but that made the textarea too tall
                 resize:     'none'
             }).appendTo(document.body);
 
@@ -2288,8 +2288,9 @@ function jQueryPlugins($R){
                                     .replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ' });
                 
                 shadow.html(val);
-                $(this).css('height', Math.max(shadow.height()+20, minHeight));
+                $(this).css('height', Math.max(shadow.height()-10, minHeight));
                 RDR.pane2.reinitialise();
+                RDR.pane2.scrollToPercentY(80);
 
             }
 
