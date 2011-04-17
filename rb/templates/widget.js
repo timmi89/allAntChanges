@@ -2209,7 +2209,17 @@ function jQueryPlugins($R){
               'list-style-type','marker-offset'
             ];
             var len = attr.length, obj = {}, val;
-            for (var i = 0; i < len; i++) obj[attr[i]] = $.fn.css2.call(this,attr[i]);
+            for (var i = 0; i < len; i++) {
+                //correct for ie
+                val = attr[i];
+                /*
+                if(attr[i] == "line-height"){
+                    val = (typeof val === "undefined") ? 'auto' :  attr[i];
+                }
+                */
+                val = (typeof val === "undefined") ? 'auto' :  attr[i];
+                obj[attr[i]] = $.fn.css2.call(this, val);
+            }
             return obj;
         }
     })($R);
