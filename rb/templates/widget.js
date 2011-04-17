@@ -847,7 +847,6 @@ function readrBoard($R){
                 RDR.actions.sendHashes();
             },
             sendHashes: function() {
-                return;
                 //console.log('sending nodes');
                 // TODO: dont' send all hashes
 

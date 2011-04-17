@@ -117,7 +117,7 @@ div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top: 5p
 div.rdr div.rdr_sntPnl_padder 					{margin:0 15px; position:relative; overflow:hidden;}
 div.rdr div.rdr_sntPnl_padder textarea,
 div.rdr div.rdr_sntPnl_padder input[type="text"]	{padding:2px 6px; width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
-div.rdr div.rdr_sntPnl_padder button				{width:100%; }
+div.rdr div.rdr_sntPnl_padder button				{border: 1px solid #AAAAAA; border-radius: 3px 3px 3px 3px; box-shadow: 0 -6px 11px -6px #CCCCCC inset; color: #454545; font-family: Arial; font-size: 12px; padding: 2px 5px; width: auto;}
 div.rdr div.rdr_sntPnl_padder > div					{margin: 4px 0;}
 div.rdr div.rdr_share_social						{top: 8px; position:relative;}
 div.rdr div.rdr_sntPnl .rdr_submitTag  			{width:100%; text-align:right;}
