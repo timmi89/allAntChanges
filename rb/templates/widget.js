@@ -99,7 +99,7 @@ function readrBoard($R){
             checkHeight: function( rindow, percentScroll ) {
                 rindow.find('div.rdr_reactionPanel div.rdr_body, div.rdr_whyPanel div.rdr_body').each( function() {
                     var $column = $(this);
-                    if ( $column.height() > 250 ) {
+                    if ( $column.height() > 300 ) {
                         if ( $column.data('jsp') ) {
                             $column.data('jsp').reinitialise();
                             // RDR.pane1 = $R('div.rdr_reactionPanel div.rdr_body').data('jsp');
@@ -1391,11 +1391,9 @@ function readrBoard($R){
                                     }
                                 } );
                             } else {
-                                //console.log( rindow.length );
-                                rindow.closest('div.rdr_share').css({'visibility':'hidden'});
-                                rindow.closest('div.rdr_body').children('.rdr_commentFeedback')
-                                .find('.rdr_tagFeedback').hide().end()//chain
-                                .find('.rdr_commentComplete').text('Thanks for your comment.')
+                                console.log( rindow.length );
+                                rindow.find('div.rdr_commentBox').find('div.rdr_commentComplete').html('Thank you for your comment.').show();
+                                rindow.find('div.rdr_commentBox').find('div.rdr_tagFeedback, div.rdr_comment').hide();
                             }
 
                         },
