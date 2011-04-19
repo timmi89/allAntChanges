@@ -746,6 +746,19 @@ function readrBoard($R){
 					},
 					success: function(response) {
 						RDR.page = response.data;
+                        var summary_widget = $('#rdr-summary'),
+                            $summary = $('<ul class="rdr-sum-totals" />');
+                        
+                        for ( var i in RDR.page.summary ) {
+                            $summary.append( '<li>' + RDR.page.summary[i].kind + 's: ' + RDR.page.summary[i].count );
+                        }
+                        summary_widget.append( $summary );
+
+                        var $toptags = $('<ul class="rdr-top-tags" />');
+                        for ( var i=0; i < 2; i++ ) {
+                            $summary.append( '<li>' + RDR.page.toptags[i].body + ': ' + RDR.page.toptags[i].tag_count );
+                        }
+                        summary_widget.append( $summary );
 					}
 				});
                
