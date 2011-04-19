@@ -96,6 +96,20 @@ function readrBoard($R){
                 height:150
             },
 			// content comes later.  this is just to identify or draw the container.
+            checkHeight: function( rindow, percentScroll ) {
+                rindow.find('div.rdr_reactionPanel div.rdr_body, div.rdr_whyPanel div.rdr_body').each( function() {
+                    var $column = $(this);
+                    if ( $column.height() > 250 ) {
+                        if ( $column.data('jsp') ) {
+                            $column.data('jsp').reinitialise();
+                            // RDR.pane1 = $R('div.rdr_reactionPanel div.rdr_body').data('jsp');
+                        } else {
+                            $column.jScrollPane({ contentWidth:200, showArrows:true });    
+                        }
+                        // if ( percentScroll ) $column.data('jsp').scrollToPercentY( percentScroll );
+                    }
+                });
+            },
 			draw: function(options) {
 				// for now, any window closes all tooltips
 
@@ -1017,9 +1031,6 @@ function readrBoard($R){
 					$(this).css('width','auto');
                     // rindow.append($sentimentBox);
 					rindow.find('div.rdr_contentSpace').append($sentimentBox);
-					
-                    $('div.rdr_reactionPanel div.rdr_body').jScrollPane({contentWidth:200, showArrows:true});
-                    RDR.pane1 = $R('div.rdr_reactionPanel div.rdr_body').data('jsp');
                     
 					if ( settings.content_type == "text" ) {
                        rindow.find('div.rdr_selectedTextPanel em').text( settings.content );
@@ -1035,7 +1046,7 @@ function readrBoard($R){
                             $(this).addClass('rdr_selected');
                             $(this).siblings().removeClass('rdr_selected');
                             $(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-                                
+                            
                             // todo don't do this?
                             // $whyPanel.find('.rdr_body').html('');
                             RDR.actions.rateSend({ tag:$(this).data('tag'), rindow:rindow, settings:settings });//end rateSend
@@ -1194,7 +1205,7 @@ function readrBoard($R){
                         //console.log('--- args ---');
                         //console.dir(args);
                         $(this).after('<div id="delete_int_'+int_id.id+'" style="font-family:Arial;font-size:12px;"><a href="javascript:void(0);">Undo that tag</a></div>');
-                        RDR.pane1.reinitialise();
+                        RDR.rindow.checkHeight( rindow );
                         $('#delete_int_'+int_id.id).click( function() {
                             RDR.actions.unrateSend(args);
                         });
@@ -1238,7 +1249,7 @@ function readrBoard($R){
                 var $shareDialogueBox =  $('div.rdr_shareBox.rdr_sntPnl_padder');
                 var $commentBox = $('div.rdr_commentBox.rdr_sntPnl_padder');
 
-                $commentBox.html( '<div class="rdr_tagFeedback">You tagged this '+tag.name+'</div> <div class="rdr_commentComplete"></div>' );
+                $commentBox.html( '<div class="rdr_tagFeedback">You tagged this <strong>'+tag.name+'</strong><br/>Leave a comment about that:</div> <div class="rdr_commentComplete"></div>' );
 
                 // TODO add short rdrbrd URL to end of this line, rather than the long URL
                 //var url = window.location.href;
@@ -1299,14 +1310,18 @@ function readrBoard($R){
                 // rindow.find('.rdr_whyPanel .rdr_body').append( $commentFeedback, $shareDialogueBox );
                 
                 //console.log('scrollpane the why panel');
-                if ( RDR.pane2 ) {
-                    RDR.pane2.reinitialise();
-                } else {
-                    $('div.rdr_whyPanel div.rdr_body').jScrollPane({contentWidth:250, showArrows:true});
-                    RDR.pane2 = $('div.rdr_whyPanel div.rdr_body').data('jsp');
-                }
+                // if ( RDR.pane2 ) {
+                    // RDR.pane2.reinitialise();
+                // } else {
+                    // $('div.rdr_whyPanel div.rdr_body').jScrollPane({contentWidth:250, showArrows:true});
+                    // RDR.pane2 = $('div.rdr_whyPanel div.rdr_body').data('jsp');
+                // }
 
-                rindow.animate( {width:450}, rindow.settings.animTime );
+                if ( rindow.width() < 450 ) {
+                    rindow.animate( {width:450}, rindow.settings.animTime, function() {
+                        $('div.rdr div.rdr_whyPanel').css('position', 'static');
+                    });
+                }
 
 
                 // TODO un-dummify this temp user message
@@ -2289,9 +2304,7 @@ function jQueryPlugins($R){
                 
                 shadow.html(val);
                 $(this).css('height', Math.max(shadow.height()-10, minHeight));
-                RDR.pane2.reinitialise();
-                RDR.pane2.scrollToPercentY(80);
-
+                RDR.rindow.checkHeight( $this.closest('div.rdr.rdr_window'), 80 );
             }
 
             $(this).change(update).keyup(update).keydown(update);
