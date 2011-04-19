@@ -95,7 +95,7 @@ div.rdr div.rdr_sntPnl 									{float:left; position:relative; display:block; h
 
 div.rdr div.rdr_sntPnl div.rdr_body						{width:100%; top:35px; /*var rdr_headerHeight*/ ; z-index:3; overflow-x:hidden; overflow-y:auto; padding:6px 0 0 0;}
 div.rdr div.rdr_sntPnl div.rdr_header 			      	{background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:3;}
-div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap	{background:none repeat scroll 0 0 #FFFFFF; border-bottom:1px solid #DFDFDF; bottom:0; padding-bottom:3px; text-align:center; width:100%; }
+div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap	{background:none repeat scroll 0 0 #FFFFFF; border-bottom:1px solid #DFDFDF; bottom:0; padding-bottom:3px; text-align:center; width:100%; position:absolute; }
 div.rdr div.rdr_sntPnl h1						{ padding:0 !important; }
 div.rdr div.rdr_sntPnl .rdr_pnlShadow			{height:100%; width:100px; position:absolute; z-index:0; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; }
 

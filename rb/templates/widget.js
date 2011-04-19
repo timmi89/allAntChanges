@@ -920,7 +920,7 @@ function readrBoard($R){
     			                     	json: JSON.stringify(sendData)
     			                     },
     			                    success: function(response) {
-    			                        //console.dir(response);
+    			                        
     			                    }
     						});
     					}
