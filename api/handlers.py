@@ -12,6 +12,7 @@ from utils import *
 from userutils import *
 from token import *
 
+
 """
 Readrboard Widget API
 """
@@ -35,6 +36,14 @@ class TempUserHandler(BaseHandler):
 class InteractionNodeHandler(BaseHandler):
     model = InteractionNode
     fields = ('id', 'body', 'kind')
+
+class ContentHandler(BaseHandler):
+    model = Content
+    fields = ('id', 'body', 'kind')
+
+class ContentHandler(BaseHandler):
+    model = Interaction
+    fields = ('id', 'content', 'user')
 
 class InteractionsHandler(BaseHandler):
 
@@ -92,9 +101,12 @@ class FBHandler(BaseHandler):
             fb_session
         )
 
+        # Check to see if user passed in was temporary, if yes, convert
+        # temporary user's interactions to social user interactions
         if user_id and len(SocialUser.objects.filter(user__id=user_id)) == 0:
             convertUser(user_id, django_user)
 
+        # Make a token for this guy
         readr_token = createToken(django_user.id, social_auth.auth_token, group_id)
 
         return dict(
@@ -262,11 +274,12 @@ class ContainerHandler(BaseHandler):
     
     @status_response
     def read(self, request, container=None):
-        data = json.loads(request.GET['json'])
         known = {}
         unknown = []
         if container: hashes = [container]
-        else: hashes = data['hashes']
+        else:
+            data = json.loads(request.GET['json'])
+            hashes = data['hashes']
         for hash in hashes:
             try:
                 known[hash] = Container.objects.get(hash=hash)
@@ -276,9 +289,20 @@ class ContainerHandler(BaseHandler):
         for hash in known.keys():
             info = {}
             nodes = InteractionNode.objects.filter(interaction__content__container__hash=hash)
-            info['knowntags'] = nodes.filter(kind='tag').values('body')
-            info['comments'] = nodes.filter(kind='com').values('body')
-            info['bookmarks'] = nodes.filter(kind='bkm').values('body')
+            info['aggregate'] = nodes.values('kind').order_by().annotate(count=Count('kind'))
+
+            content = {}
+            contents = Content.objects.filter(container__hash=hash, interaction__isnull=False)
+            for content_item in contents:
+                
+            #interactions = Interaction.objects.filter(content__container__hash=hash)
+            #testo = interactions.order_by('content','interaction_node__kind').values('content','interaction_node__kind').annotate(count=Count('interaction_node__kind'))
+
+            info['content'] = content.annotate(count=Count('interaction')).order_by('-count')[:5]
+            #info['test'] = testo
+            #info['tags'] = nodes.filter(kind='tag').annotate(count=Count('id')).values('id','body','count').order_by('-count')[:5]
+            #info['comments'] = nodes.filter(kind='com').values('id','body')
+            #info['bookmarks'] = nodes.filter(kind='bkm')
             known[hash] = info
             
         return dict(known=known, unknown=unknown)
@@ -307,7 +331,7 @@ class PageDataHandler(BaseHandler):
         # Annotate tags on page with count of interactions
         tagcounts = tags.annotate(tag_count=Count('interaction'))
         # Get tag_count and tag body ordered by tag count
-        toptags = tagcounts.values("tag_count","body").order_by('-tag_count')[:10]
+        toptags = tagcounts.values("tag_count","body").order_by('-tag_count')[:3]
             
         # ---Find top 10 shares on a give page---
         content = Content.objects.filter(

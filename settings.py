@@ -71,7 +71,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'readrboard.urls'
@@ -95,7 +95,8 @@ INSTALLED_APPS = (
     'piston',
     'south',
     'treebeard',
-    'debug_toolbar',
+    #'debug_toolbar',
+    #'autofixture',
 )
 
 # for sessions
@@ -120,6 +121,10 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.signals.SignalDebugPanel',
     'debug_toolbar.panels.logger.LoggingPanel',
 )
+
+DEBUG_TOOLBAR_CONFIG = {
+    "INTERCEPT_REDIRECTS": False
+}
 
 # for social auth
 #SOCIAL_AUTH_ERROR_KEY = 'social_errors'

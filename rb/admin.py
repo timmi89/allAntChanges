@@ -72,11 +72,11 @@ class ContainerAdmin(admin.ModelAdmin):
     #fields = ('user','parent','body')
 
 class InteractionAdmin(admin.ModelAdmin):
-    exclude = (
-        'path',
-        'depth',
-        'numchild',
-    )
+    #exclude = (
+    #    'path',
+    #    'depth',
+    #    'numchild',
+    #)
     list_display = (
         'id',
         'user',

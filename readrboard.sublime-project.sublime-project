@@ -12,14 +12,14 @@
 	"file_history":
 	[
 		"/Users/tbrock/Development/readrboard/rb/admin.py",
-		"/Users/tbrock/Development/readrboard/rb/models.py",
+		"/Users/tbrock/Development/readrboard/api/urls.py",
+		"/Users/tbrock/Development/readrboard/settings.py",
 		"/Users/tbrock/Development/readrboard/api/handlers.py",
+		"/Users/tbrock/Development/readrboard/rb/models.py",
 		"/Users/tbrock/Development/readrboard/api/userutils.py",
 		"/Users/tbrock/Development/readrboard/api/token.py",
 		"/Users/tbrock/Development/readrboard/api/utils.py",
 		"/Users/tbrock/Development/readrboard/api/decorators.py",
-		"/Users/tbrock/Development/readrboard/api/urls.py",
-		"/Users/tbrock/Development/readrboard/settings.py",
 		"/Users/tbrock/Development/readrboard/api/exceptions.py",
 		"/Users/tbrock/Development/readrboard/rb/fixtures/initial_data.xml",
 		"/Users/tbrock/Development/readrboard/api/user.py",
@@ -55,6 +55,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"Interactions",
+			"Interna",
 			"success",
 			";",
 			"Site",
