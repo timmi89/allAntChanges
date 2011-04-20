@@ -34,6 +34,10 @@ class TempUserHandler(BaseHandler):
         )
 
 class InteractionNodeHandler(BaseHandler):
+    model = User
+    fields = ('id', 'first_name', 'last_name')
+
+class InteractionNodeHandler(BaseHandler):
     model = InteractionNode
     fields = ('id', 'body', 'kind')
 
@@ -288,17 +292,56 @@ class ContainerHandler(BaseHandler):
 
         for hash in known.keys():
             info = {}
-            nodes = InteractionNode.objects.filter(interaction__content__container__hash=hash)
-            info['aggregate'] = nodes.values('kind').order_by().annotate(count=Count('kind'))
+            interactions = Interaction.objects.filter(content__container__hash=hash)
+            tags = interactions.filter(interaction_node__kind='tag')
+            comments = interactions.filter(interaction_node__kind='com')
+            info['tag_count'] = tags.count()
+            info['comment_count'] = comments.count()
 
-            content = {}
-            contents = Content.objects.filter(container__hash=hash, interaction__isnull=False)
-            for content_item in contents:
+            content = []
+            content_ids = interactions.order_by('content').distinct().values_list('content_id', flat=True)
+            for content_item in content_ids:
+                data = {}
+                data['body'] = Content.objects.get(id=content_item).body
+                interact = interactions.filter(content=content_item)
+                content_tags = interact.filter(interaction_node__kind='tag')
+                content_coms = interact.filter(interaction_node__kind='com')
+                data['tag_count'] = content_tags.count()
+                data['comment_count'] = content_coms.count()
                 
+                tags_data = []
+                tag_ids = tags.values_list('interaction_node__id', flat=True).distinct()
+                for tag in tag_ids:
+                    crap = {}
+                    crap['tag'] = InteractionNode.objects.get(id=tag).body
+                    crap['count'] = interact.filter(interaction_node__id=tag).count()
+                    comments = []
+                    for comment in content_coms.filter(parent__in=content_tags.filter(interaction_node__id=tag)):
+                        hello = {}
+                        hello['comment'] = comment.interaction_node.body
+                        hello['user'] = comment.user
+                        comments.append(hello)
+
+                    crap['comments'] = comments
+                    tags_data.append(crap);
+                data['tags'] = tags_data
+                content.append(data)
+
+            info['content'] = content
+
+            #info['content'] = interactions.order_by('content').values('content__id','content__body','interaction_node__kind').annotate(count=Count('id'))
+            #info['tag_data'] = interactions.filter(interaction_node__kind='tag').order_by('content','interaction_node__body').values('content_id','interaction_node__body').annotate(count=Count('id'))
+            #nodes = InteractionNode.objects.filter(interaction__content__container__hash=hash)
+            #info['aggregate'] = nodes.values('kind').order_by().annotate(count=Count('kind'))
+
+            #content = {}
+            #contents = Content.objects.filter(container__hash=hash, interaction__isnull=False)
+            #for content_item in contents:
+
             #interactions = Interaction.objects.filter(content__container__hash=hash)
             #testo = interactions.order_by('content','interaction_node__kind').values('content','interaction_node__kind').annotate(count=Count('interaction_node__kind'))
 
-            info['content'] = content.annotate(count=Count('interaction')).order_by('-count')[:5]
+            #info['content'] = content.annotate(count=Count('interaction')).order_by('-count')[:5]
             #info['test'] = testo
             #info['tags'] = nodes.filter(kind='tag').annotate(count=Count('id')).values('id','body','count').order_by('-count')[:5]
             #info['comments'] = nodes.filter(kind='com').values('id','body')

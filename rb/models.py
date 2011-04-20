@@ -149,11 +149,12 @@ class Container(models.Model):
     class Meta:
         ordering = ['id']
 
-class Interaction(DateAwareModel, UserAwareModel, MP_Node):
+class Interaction(DateAwareModel, UserAwareModel):
     page = models.ForeignKey(Page)
     content = models.ForeignKey(Content)
     interaction_node = models.ForeignKey(InteractionNode)
     anonymous = models.BooleanField(default=False)
+    parent= models.ForeignKey('self', blank=True, null=True)
     node_order_by = ['created']
     
     # Don't f-ing change this number - super important

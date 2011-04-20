@@ -87,18 +87,20 @@ def createInteraction(page, content, user, interaction_node, group, parent=None)
 
         if parent:
             print "Creating Interaction with parent node"
-            new = parent.add_child(page=page, 
+            new = Interaction(page=page, 
                            content=content, 
                            user=user, 
                            interaction_node=interaction_node,
-                           created=now)
+                           created=now,
+                           parent=parent)
         else:
             print "Creating Interaction without parent node"
-            new = Interaction.add_root(page=page, 
+            new = Interaction(page=page, 
                            content=content, 
                            user=user, 
                            interaction_node=interaction_node, 
                            created=now)
         if new == None: raise JSONException(u"Error creating interaction")
+        new.save()
         if tempuser: return dict(id=new.id, num_interactions=num_interactions+1)
         return dict(id=new.id)
