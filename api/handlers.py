@@ -310,7 +310,7 @@ class ContainerHandler(BaseHandler):
                 data['comment_count'] = content_coms.count()
                 
                 tags_data = []
-                tag_ids = tags.values_list('interaction_node__id', flat=True).distinct()
+                tag_ids = tags.order_by('interaction_node').distinct().values_list('interaction_node__id', flat=True)
                 for tag in tag_ids:
                     crap = {}
                     crap['tag'] = InteractionNode.objects.get(id=tag).body

@@ -170,7 +170,7 @@ class Interaction(DateAwareModel, UserAwareModel):
         return ('api.urls.Interaction.resource_uri()', [str(self.id)])
     
     def __unicode__(self):
-        return u'Interaction(Page: {0}, Content: {1})'.format(self.page, self.content)
+        return u'Interaction(id: {0})'.format(self.id)
 
 
 class Link(models.Model):

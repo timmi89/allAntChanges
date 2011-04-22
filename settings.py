@@ -96,7 +96,7 @@ INSTALLED_APPS = (
     'south',
     'treebeard',
     #'debug_toolbar',
-    #'autofixture',
+    'autofixture',
 )
 
 # for sessions
