@@ -158,7 +158,7 @@ class Interaction(DateAwareModel, UserAwareModel):
     node_order_by = ['created']
     
     # Don't f-ing change this number - super important
-    steplen = 10
+    # steplen = 10
     
     class Meta:
         ordering = ['id']
@@ -190,7 +190,7 @@ class Link(models.Model):
 
 class SocialUser(models.Model):
     """Social Auth association model"""
-    user = models.ForeignKey(User, related_name='social_user')
+    user = models.OneToOneField(User, related_name='social_user')
     provider = models.CharField(max_length=32)
     uid = models.CharField(max_length=255, unique=True)
     full_name = models.CharField(max_length=255)

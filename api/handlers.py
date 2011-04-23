@@ -303,7 +303,7 @@ class ContainerHandler(BaseHandler):
             for content_item in content_ids:
                 data = {}
                 data['body'] = Content.objects.get(id=content_item).body
-                interact = interactions.filter(content=content_item)
+                interact = interactions.filter(content=content_item).select_related('interaction_node')
                 content_tags = interact.filter(interaction_node__kind='tag')
                 content_coms = interact.filter(interaction_node__kind='com')
                 data['tag_count'] = content_tags.count()

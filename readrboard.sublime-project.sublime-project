@@ -11,9 +11,9 @@
 	"build_system": "",
 	"file_history":
 	[
-		"/Users/tbrock/Development/readrboard/api/utils.py",
-		"/Users/tbrock/Development/readrboard/rb/models.py",
 		"/Users/tbrock/Development/readrboard/api/handlers.py",
+		"/Users/tbrock/Development/readrboard/rb/models.py",
+		"/Users/tbrock/Development/readrboard/api/utils.py",
 		"/Users/tbrock/Development/readrboard/rb/admin.py",
 		"/Users/tbrock/Development/readrboard/api/urls.py",
 		"/Users/tbrock/Development/readrboard/settings.py",
@@ -55,6 +55,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"worn by",
 			"parent",
 			"root",
 			"Interactions",

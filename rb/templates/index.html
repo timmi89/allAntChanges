@@ -1,0 +1,25 @@
+<html>
+<title>Readrboard Homepage</title>
+<h1>Readrboard Homepage</h1>
+{% if is_logged_in %}
+	Thanks for logging in!
+{% else %}
+	Please <a href = "/fb/">log in</a>.
+{% endif %}
+<h2>Recent Interactions</h2>
+<ul>
+{% for interaction in interactions %}
+    <li>
+    	{% if interaction.user.social_user %}<img src = "{{ interaction.user.social_user.img_url }}">{% endif %}
+    	{{ interaction.created }} -> {{ interaction.page.url }}<br>
+    	<b>{{ interaction.user.first_name }} {{ interaction.uer.last_name }}</b>
+   		{% if interaction.interaction_node.kind == "tag" %} tagged
+    	{% else %} commented
+    	{% endif %}
+    	<i>"{{ interaction.interaction_node.body }}"</i> <b>on</b> "{{ interaction.content.body|slice:":50"}}"</li>
+{% endfor %}
+<br>
+
+Interactions here: {{ interactions.count }}
+</ul>
+</html>
