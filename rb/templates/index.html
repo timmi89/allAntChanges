@@ -17,6 +17,8 @@
     	{% else %} commented
     	{% endif %}
     	<i>"{{ interaction.interaction_node.body }}"</i> <b>on</b> "{{ interaction.content.body|slice:":50"}}"</li>
+        <br>
+        context: {{ interaction.container.body }}
 {% endfor %}
 <br>
 

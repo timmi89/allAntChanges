@@ -53,7 +53,7 @@ class InteractionNode(models.Model):
     body = models.TextField()
     
     def __unicode__(self):
-        return u'Node(Type: {0}, Body: {1})'.format(self.kind, self.body[:25])
+        return u'Node(Type: {0}, ID: {1})'.format(self.kind, self.id)
 
     class Meta:
         unique_together = ('kind', 'body')
@@ -133,7 +133,7 @@ class Content(DateAwareModel):
     body = models.TextField()
     
     def __unicode__(self):
-        return u'Content(Kind: {0}, Body: {1})'.format(self.kind, self.body[:50])
+        return u'Content(Kind: {0}, ID: {1})'.format(self.kind, self.id)
     
     class Meta:
         verbose_name_plural = "content"
@@ -141,7 +141,6 @@ class Content(DateAwareModel):
 class Container(models.Model):
     hash = models.CharField(max_length=32,unique=True)
     body = models.TextField()
-    content = models.ManyToManyField(Content, blank=True, editable=False)
 
     def __unicode__(self):
         return self.hash
@@ -151,6 +150,7 @@ class Container(models.Model):
 
 class Interaction(DateAwareModel, UserAwareModel):
     page = models.ForeignKey(Page)
+    container = models.ForeignKey(Container, blank=True, null=True)
     content = models.ForeignKey(Content)
     interaction_node = models.ForeignKey(InteractionNode)
     anonymous = models.BooleanField(default=False)

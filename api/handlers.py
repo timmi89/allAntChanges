@@ -62,7 +62,7 @@ class InteractionsHandler(BaseHandler):
             nodes = nodes.filter(interaction__id=kwargs['interaction_id'])
         elif 'hash' in kwargs:
             containers = Container.objects.filter(hash=kwargs['hash'].lower())
-            nodes = nodes.filter(interaction__content__container=containers)
+            nodes = nodes.filter(interaction__container=containers)
         return nodes
 
 class Deauthorize(BaseHandler):
@@ -166,7 +166,7 @@ class CommentHandler(BaseHandler):
             except:
                 raise JSONException(u'Error creating comment interaction node')
             #try:
-            interaction = createInteraction(parent.page, parent.content, user, comment, group, parent)
+            interaction = createInteraction(parent.page, parent.container, parent.content, user, comment, group, parent)
             #except:
             #    raise JSONException(u'Error creating comment interaction')
             return interaction
@@ -217,25 +217,20 @@ class TagHandler(BaseHandler):
             if not checkToken(data): raise JSONException(u"Token was invalid")
             content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
             
+            container = None
             if hash:
-                try:
-                    container = Container.objects.get(hash=hash)
-                except Container.DoesNotExist, Container.MultipleObjectsReturned:
-                    raise JSONException(u'Hash was sent but there was an error retreiving container')
-                try:
-                    container.content.add(content)
-                except:
-                    raise JSONException(u'Error adding content to container')
+                container = Container.objects.get(hash=hash)
 
             new = None
             if tag:
                 if isinstance(tag, unicode):
                     node = createInteractionNode(kind='tag', body=tag)
-                    new = createInteraction(page, content, user, node, group)
+                    new = createInteraction(page, container, content, user, node, group)
                 elif isinstance(tag, int):
                     node = InteractionNode.objects.get(id=tag)
                     new = createInteraction(
                         page=page,
+                        container=container,
                         content=content,
                         user=user,
                         interaction_node=node,
@@ -292,43 +287,62 @@ class ContainerHandler(BaseHandler):
 
         for hash in known.keys():
             info = {}
-            interactions = Interaction.objects.filter(content__container__hash=hash)
+            # Get everything we know about this hash
+            interactions = Interaction.objects.filter(container__hash=hash)
+
+            # Filter tag and comment interactions
             tags = interactions.filter(interaction_node__kind='tag')
             comments = interactions.filter(interaction_node__kind='com')
+
+            # Get counts of tags and comments -- container level
             info['tag_count'] = tags.count()
             info['comment_count'] = comments.count()
-
+            
+            # Content level data begins here
             content = []
-            content_ids = interactions.order_by('content').distinct().values_list('content_id', flat=True)
-            for content_item in content_ids:
+
+            # Make list of unique content and retrieve their Content objects
+            content_unique = interactions.order_by('content').distinct().values('content')#.values_list('content_id', flat=True)
+            content_objs = Content.objects.filter(id=content_unique)
+
+            for content_item in content_objs:
                 data = {}
-                data['body'] = Content.objects.get(id=content_item).body
-                interact = interactions.filter(content=content_item).select_related('interaction_node')
-                content_tags = interact.filter(interaction_node__kind='tag')
-                content_coms = interact.filter(interaction_node__kind='com')
+                data['body'] = content_item.body
+                
+                # Filter interactions for this piece of content and get count data
+                content_interactions = interactions.filter(content=content_item).select_related('interaction_node')
+                content_tags = content_interactions.filter(interaction_node__kind='tag')
+                content_coms = content_interactions.filter(interaction_node__kind='com')
                 data['tag_count'] = content_tags.count()
                 data['comment_count'] = content_coms.count()
                 
+                # Get information about the tags
                 tags_data = []
-                tag_ids = tags.order_by('interaction_node').distinct().values_list('interaction_node__id', flat=True)
-                for tag in tag_ids:
-                    crap = {}
-                    crap['tag'] = InteractionNode.objects.get(id=tag).body
-                    crap['count'] = interact.filter(interaction_node__id=tag).count()
-                    comments = []
-                    for comment in content_coms.filter(parent__in=content_tags.filter(interaction_node__id=tag)):
-                        hello = {}
-                        hello['comment'] = comment.interaction_node.body
-                        hello['user'] = comment.user
-                        comments.append(hello)
 
-                    crap['comments'] = comments
-                    tags_data.append(crap);
+                # Make list of unique content and grab the InteractionNode objects
+                tag_unique = content_tags.order_by('interaction_node').distinct().values('interaction_node')#values_list('interaction_node__id', flat=True)
+                tag_objs = InteractionNode.objects.filter(id__in=tag_unique)
+                
+                for tag_item in tag_objs:
+                    tag_data = {}
+                    tag_data['tag'] = tag_item.body
+                    tag_data['count'] = content_interactions.filter(interaction_node=tag_item).count()
+                    comments = []
+                
+                    for comment in content_coms.filter(parent=content_tags.filter(interaction_node=tag_item)):
+                        comment_data = {}
+                        comment_data['comment'] = comment.interaction_node.body
+                        comment_data['user'] = comment.user
+                        comments.append(comment_data)
+
+                    tag_data['comments'] = comments
+                    tags_data.append(tag_data);
                 data['tags'] = tags_data
+                
                 content.append(data)
 
             info['content'] = content
-
+            
             #info['content'] = interactions.order_by('content').values('content__id','content__body','interaction_node__kind').annotate(count=Count('id'))
             #info['tag_data'] = interactions.filter(interaction_node__kind='tag').order_by('content','interaction_node__body').values('content_id','interaction_node__body').annotate(count=Count('id'))
             #nodes = InteractionNode.objects.filter(interaction__content__container__hash=hash)

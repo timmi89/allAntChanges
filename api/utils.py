@@ -60,7 +60,7 @@ def deleteInteraction(interaction, user):
         if tempuser: return dict(message=message,num_interactions=num_interactions-1)
         return dict(message=message)
 
-def createInteraction(page, content, user, interaction_node, group, parent=None):
+def createInteraction(page, container, content, user, interaction_node, group, parent=None):
     if content and user and interaction_node and page:
         # Check to see if user has reached their interaction limit
         tempuser = False
@@ -87,19 +87,25 @@ def createInteraction(page, content, user, interaction_node, group, parent=None)
 
         if parent:
             print "Creating Interaction with parent node"
-            new = Interaction(page=page, 
-                           content=content, 
-                           user=user, 
-                           interaction_node=interaction_node,
-                           created=now,
-                           parent=parent)
+            new = Interaction(
+                page=page,
+                container=container,
+                content=content,
+                user=user, 
+                interaction_node=interaction_node,
+                created=now,
+                parent=parent
+            )
         else:
             print "Creating Interaction without parent node"
-            new = Interaction(page=page, 
-                           content=content, 
-                           user=user, 
-                           interaction_node=interaction_node, 
-                           created=now)
+            new = Interaction(
+                page=page,
+                container=container,
+                content=content, 
+                user=user, 
+                interaction_node=interaction_node, 
+                created=now
+            )
         if new == None: raise JSONException(u"Error creating interaction")
         new.save()
         if tempuser: return dict(id=new.id, num_interactions=num_interactions+1)
