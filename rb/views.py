@@ -24,7 +24,7 @@ def xdm_status(request):
     return render_to_response("xdm_status.html",{'fb_client_id': FACEBOOK_APP_ID})
 
 def home(request):
-    interactions = Interaction.objects.all().select_related()[:5]
+    interactions = Interaction.objects.all().select_related().order_by('-created')[:5]
     return render_to_response("index.html", {'interactions': interactions})
 
 def expander(request, short):
