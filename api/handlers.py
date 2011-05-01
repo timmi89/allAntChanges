@@ -343,23 +343,6 @@ class ContainerHandler(BaseHandler):
 
             info['content'] = content
             
-            #info['content'] = interactions.order_by('content').values('content__id','content__body','interaction_node__kind').annotate(count=Count('id'))
-            #info['tag_data'] = interactions.filter(interaction_node__kind='tag').order_by('content','interaction_node__body').values('content_id','interaction_node__body').annotate(count=Count('id'))
-            #nodes = InteractionNode.objects.filter(interaction__content__container__hash=hash)
-            #info['aggregate'] = nodes.values('kind').order_by().annotate(count=Count('kind'))
-
-            #content = {}
-            #contents = Content.objects.filter(container__hash=hash, interaction__isnull=False)
-            #for content_item in contents:
-
-            #interactions = Interaction.objects.filter(content__container__hash=hash)
-            #testo = interactions.order_by('content','interaction_node__kind').values('content','interaction_node__kind').annotate(count=Count('interaction_node__kind'))
-
-            #info['content'] = content.annotate(count=Count('interaction')).order_by('-count')[:5]
-            #info['test'] = testo
-            #info['tags'] = nodes.filter(kind='tag').annotate(count=Count('id')).values('id','body','count').order_by('-count')[:5]
-            #info['comments'] = nodes.filter(kind='com').values('id','body')
-            #info['bookmarks'] = nodes.filter(kind='bkm')
             known[hash] = info
             
         return dict(known=known, unknown=unknown)

@@ -1,0 +1,18 @@
+[
+  {
+    "model": "rb.InteractionNode",
+    "pk": 1,
+    "fields": {
+      "kind": "vot",
+      "body": "Readrboard Up Vote"
+    }
+  },
+  {
+    "model": "rb.InteractionNode",
+    "pk": 2,
+    "fields": {
+      "kind": "vot",
+      "body": "Readrboard Down Vote"
+    }
+  }
+]
