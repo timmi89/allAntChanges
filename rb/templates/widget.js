@@ -2360,9 +2360,9 @@ function jQueryPlugins($R){
          * gets or sets delicious raw textnode leafs within a $() set.
          * todo: confirm if we need anymore 'ignore' checks for other nodetypes
          */
-        $.fn.textNodes = function(injectText){
+        $.fn.textnodes = function(injectText){
             // If injectText is passed as a string or array of strings, replace 'this' content with corresponding textnodes.
-            // Else, return all offspring textNodes in a flattened array.
+            // Else, return all offspring textnodes in a flattened array.
             var $ret = $('<span/>'),
             $this = this,
             doc = ($this[0] && $this[0].ownerDocument || document);
@@ -2404,27 +2404,94 @@ function jQueryPlugins($R){
          *
          *
          */
-/*
-        //nothing to see here: starting to work on textSelection plugin
-        $.fn.textSelection = function(options){
-            var $this = this;
-            if (typeof options === "undefined" )
-                options = {};
-                //get currSelection and return TSrange
+        
+        //nothing to see here: starting to work on superRange plugin
+        //superRange or SR.
 
-            TS.options = $.extend({
-            }, options);
+        $.fn.superRange = function(options){
+            var $this = this,
+            options = options || {};
 
-            $this.each(function(){
-                var $this
-                //Make a wrapper for the closest common ansestor with range info
-                var container = {
-                    commonAnsestor:this
-                }
+            return $this.each(function(idx, val){
+                var contextNode = this,
+                superRange = $.extend({
+                    contextNode: contextNode,
+                    textnodes: $(contextNode).textnodes(),  //requires jquery.textnodes.js plugin
+                    start: null,
+                    end: null,
+                    startRange: null,   //set below
+                    endRange: null,     //set below
+                    text: "",           //set below
+                    hash: null,         //set below
+                }, options);
 
-            })    
+                //complete superRange
+                superRange = superRange._parse();
+                
+                //set text and hash
+                //todo: fix this
+                $.each(superRange.textnodes, function(idx, val){
+                    superRange.text += val.data; //data is textnode's string value
+                });
+                superRange.hash = "make hash here.."; //todo: make hash                
+            });
         }
-        */
+
+        //private functions
+        function _parse(superRange){
+            // if given an explicit startRange and endRange, use those and calculate the start and end.
+            // else do the inverse,
+
+            var stepIdx = 0,
+            superRange = (typeof superRange !== "undefined") ? superRange : this;
+            missingSuperOffsets = ( superRange.start === null || superRange.end === null ),
+            missingRanges =  ( superRange.startRange === null || superRange.endRange === null );
+
+            if ( missingSuperOffsets && missingRanges )
+                return false;
+            if ( !missingSuperOffsets && !missingRanges )
+                return superRange;
+            if ( missingSuperOffsets && !missingRanges )
+                //get start and end
+                $.each(superRange.textnodes, function(idx, textnode){
+                    if( textnode == superRange.startRange.node ){
+                        superRange.start = stepIdx + superRange.startRange.offset
+                    }
+                    if( textnode == superRange.endRange.node ){
+                        superRange.end = stepIdx + superRange.endRange.offset;
+                    }
+                    stepIdx += textnode.length;
+                });
+                return superRange
+
+            if ( !missingSuperOffsets && missingRanges )
+                //get startRange and endRange
+                $.each(superRange.textnodes, function(idx, textnode){
+                    var a = stepIdx,
+                    start = superRange.start,
+                    end = superRange.end,
+                    b = stepIdx + textnode.length;
+
+                    if( a > start && start < b ){
+                        superRange.startRange = {
+                            node: textnode,
+                            //nodeIndex: idx,
+                            offset: stepIdx - start;   //lookbehind to get rel start index for this textnode
+                        }
+                    }
+                    if( a > end && end < b ){
+                        superRange.endRange = {
+                            node: textnode,
+                            //nodeIndex: idx,
+                            offset: stepIdx - end;      //lookbehind to get rel end index for this textnode
+                        }
+                    }
+                    stepIdx = b;
+                });
+                return superRange
+            //else impossible
+        }
+        
     })($R);
 
     (function($){
