@@ -1,13 +1,12 @@
 {% extends "base.html" %}
 
 {% block header %}
-<h2>Home</h2>
+<h2>{{ user.social_user.full_name }}</h2>
 {% endblock header %}
-
 
 {% block content %}
 <ul>
-{% for interaction in interactions %}
+{% for interaction in interactions.object_list %}
 <li>
 	{% if interaction.user.social_user %}<img src = "{{ interaction.user.social_user.img_url }}">{% endif %} 
 	<strong>
@@ -25,4 +24,20 @@
 </li>
 {% endfor %}
 </ul>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if interactions.has_previous %}
+            <a href="?page={{ interactions.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ interactions.number }} of {{ interactions.paginator.num_pages }}
+        </span>
+
+        {% if interactions.has_next %}
+            <a href="?page={{ interactions.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
 {% endblock content %}
