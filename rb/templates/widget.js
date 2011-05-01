@@ -103,11 +103,15 @@ function readrBoard($R){
             checkHeight: function( rindow, percentScroll ) {
                 rindow.find('div.rdr_reactionPanel div.rdr_body, div.rdr_whyPanel div.rdr_body').each( function() {
                     var $column = $(this);
+                    console.log('checking height: ', $column.height());
                     if ( $column.height() > 300 ) {
+                        console.log('ok lets resize 1');
                         if ( $column.data('jsp') ) {
+                            console.log('ok lets resize a');
                             $column.data('jsp').reinitialise();
                             // RDR.pane1 = $R('div.rdr_reactionPanel div.rdr_body').data('jsp');
                         } else {
+                            console.log('ok lets resize b');
                             $column.jScrollPane({ contentWidth:200, showArrows:true });    
                         }
                         // if ( percentScroll ) $column.data('jsp').scrollToPercentY( percentScroll );
@@ -1205,7 +1209,7 @@ function readrBoard($R){
                         "group_id" : RDR.groupPermData.group_id,
                         "page_id" : RDR.page.id
                     };
-                    
+
                     if ( !tag_li.hasClass('rdr_tagged') ) {
                         // send the data!
                         $.ajax({
@@ -1229,7 +1233,6 @@ function readrBoard($R){
                                     } );
                                 } else {
                                     if ( tag_li.length == 1 ) {
-                                        RDR.rindow.checkHeight( rindow );
                                         tag_li.find('div.rdr_leftBox').unbind();
                                         tag_li.find('div.rdr_leftBox').click( function(e) {
                                             e.preventDefault();
@@ -1249,6 +1252,7 @@ function readrBoard($R){
                                             tag_li.append( '<a href="javascript:void(0);">'+tag.name+'</a>' );
                                             RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:params.settings});
                                         }
+                                        RDR.rindow.checkHeight( rindow, 80 );
                                     } 
                                     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:response.data });
                                 }
