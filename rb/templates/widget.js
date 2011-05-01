@@ -1005,33 +1005,9 @@ function readrBoard($R){
                 $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl" />'),
                 $whyPanel = RDR.actions.whyPanel.draw( rindow ),
                 $blessedTagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
-                $customTagBox = $('<li class="rdr_customTagBox"><div class="rdr_rightBox"></div><div class="rdr_leftBox"></div></li>'),
                 $commentBox = $('<div class="rdr_commentBox" />'),
-                $shareBox = $('<div class="rdr_shareBox" />'),
-                $freeformTagInput = $('<input type="text" class="freeformTagInput" name="unknown-tags" />')//chain
-                .blur(function(){
-                    if($('.freeformTagInput').val() == "" ){
-                        $('div.rdr_help').show();   
-                    }
-                }).focus(function(){
-                   $tagTooltip.hide();
-                }).keyup(function(event) {
-                    if (event.keyCode == '13' || event.keyCode == '188' ) { //enter or comma
-                        $whyPanel.find('.rdr_body').empty();
-                        RDR.actions.rateSend({ tag:$(this).closest('li.rdr_customTagBox'), rindow:rindow, settings:settings, callback: function() {
-                                // todo: at this point, cast the tag, THEN call this in the tag success function:
-                                RDR.actions.whyPanel.expand(rindow);
-                            }//end function
-                        });//end rateSend
-                    }
-                    else if (event.keyCode == '27') { //esc
-                        //return false;
-                    }
-                });
-                var $tagTooltip = $('<div class="rdr_help">Add your own (ex. hip, woot)</div>').click(function(){            
-                    $tagTooltip.hide();
-                    $freeformTagInput.focus();
-                });
+                $shareBox = $('<div class="rdr_shareBox" />');
+
                 
                 var headers = ["What's your reaction?", "Say More"];
                 $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
@@ -1059,10 +1035,9 @@ function readrBoard($R){
                     $blessedTagBox.children('ul.rdr_tags').append($li);
                 });
 
-                $blessedTagBox.find('ul.rdr_tags').append( $customTagBox );
+                rindow.find('div.rdr_contentSpace').append($sentimentBox);
+                RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:settings});
                 ////customTagDialogue - develop this...
-                $customTagBox.append($freeformTagInput, $tagTooltip)
-                .add($tagTooltip);
 
                 /*
                 $customTagBox.append(
@@ -1081,7 +1056,6 @@ function readrBoard($R){
                 }, rindow.settings.animTime, function() {
 					$(this).css('width','auto');
                     // rindow.append($sentimentBox);
-					rindow.find('div.rdr_contentSpace').append($sentimentBox);
                     
 					if ( settings.content_type == "text" ) {
                        rindow.find('div.rdr_selectedTextPanel em').text( settings.content );
@@ -1090,7 +1064,7 @@ function readrBoard($R){
 					}
 
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
-                    rindow.find('ul.rdr_preselected li').click(function() {
+                    $('ul.rdr_preselected li').live('click', function() {
                         var $this = $(this);
                         if ( !$this.hasClass('rdr_customTagBox') ) {
                             // if ( $this.hasClass('rdr_selected') ){
@@ -1158,6 +1132,50 @@ function readrBoard($R){
                 newSubBox: function(){
                 }              
 			},
+            // sentimentBox can be merged with / nested under this as sentimentPanel.draw at a later time mayhaps
+            sentimentPanel: {
+                addCustomTagBox: function(args) {
+                    var rindow = args.rindow,
+                        settings = args.settings,
+                        $whyPanel = RDR.actions.whyPanel.draw( rindow ),
+                        $customTagBox = $('<li class="rdr_customTagBox"><div class="rdr_rightBox"></div><div class="rdr_leftBox"></div></li>'),
+                        $freeformTagInput = $('<input type="text" class="freeformTagInput" name="unknown-tags" />')//chain
+                    .blur(function(){
+                        if($('input.freeformTagInput').val() == "" ){
+                            $('div.rdr_help').show();   
+                        }
+                    }).focus(function(){
+                       $tagTooltip.hide();
+                    }).keyup(function(event) {
+                        if (event.keyCode == '13' ) { //enter.  removed comma...  || event.keyCode == '188'
+                            $whyPanel.find('div.rdr_body').empty();
+                            var tag = $(this).closest('li.rdr_customTagBox');
+                            tag.data({
+                            'tag':{
+                                content:tag.find('input.freeformTagInput').val(),
+                                name:tag.find('input.freeformTagInput').val()
+                            }});
+                            RDR.actions.rateSend({ tag:tag, rindow:rindow, settings:settings, callback: function() {
+                                    // todo: at this point, cast the tag, THEN call this in the tag success function:
+                                    RDR.actions.whyPanel.expand(rindow);
+                                }//end function
+                            });//end rateSend
+                        }
+                        else if (event.keyCode == '27') { //esc
+                            //return false;
+                        }
+                    });
+
+                    var $tagTooltip = $('<div class="rdr_help">Add your own (ex. hip, woot)</div>').click(function(){            
+                        $tagTooltip.hide();
+                        $freeformTagInput.focus();
+                    });
+
+                    $customTagBox.append($freeformTagInput, $tagTooltip).add($tagTooltip);
+
+                    rindow.find('ul.rdr_tags').append( $customTagBox );
+                }
+            },
             rateSend: function(args) {
 
                 //example:
@@ -1187,7 +1205,7 @@ function readrBoard($R){
                         "group_id" : RDR.groupPermData.group_id,
                         "page_id" : RDR.page.id
                     };
-
+                    
                     if ( !tag_li.hasClass('rdr_tagged') ) {
                         // send the data!
                         $.ajax({
@@ -1218,8 +1236,19 @@ function readrBoard($R){
                                             RDR.actions.unrateSend(args);
                                             return false; // prevent the tag call applied to the parent <li> from firing
                                         });
-                                        tag_li.addClass('rdr_tagged');
+                                        tag_li.addClass('rdr_tagged').addClass('rdr_custom_'+response.data.id);
                                         tag_li.data('interaction_id', response.data.id);
+
+                                        // if it was a custom tag, do a few things
+                                        if ( tag_li.hasClass('rdr_customTagBox') ) {
+                                            tag_li.removeClass('rdr_customTagBox');
+                                            tag_li.siblings().removeClass('rdr_selected');
+                                            tag_li.addClass('rdr_selected');
+                                            tag_li.find('input').remove();
+                                            tag_li.find('div.rdr_help').remove();
+                                            tag_li.append( '<a href="javascript:void(0);">'+tag.name+'</a>' );
+                                            RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:params.settings});
+                                        }
                                     } 
                                     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:response.data });
                                 }
@@ -1303,14 +1332,14 @@ console.dir(args);
                 //console.log(tags)
                 
                 */
-
-                if ( $('div.rdr_shareBox.rdr_sntPnl_padder').length == 0 || $('div.rdr_commentBox.rdr_sntPnl_padder').length == 0 ) {
-                    rindow.find('div.rdr_whyPanel .rdr_body').html('<div class="rdr_commentBox rdr_sntPnl_padder"></div><div class="rdr_shareBox rdr_sntPnl_padder"></div>');
+                rindow.find('div.rdr_whyPanel div.rdr_body').empty();
+                if ( rindow.find('div.rdr_shareBox.rdr_sntPnl_padder').length == 0 || rindow.find('div.rdr_commentBox.rdr_sntPnl_padder').length == 0 ) {
+                    rindow.find('div.rdr_whyPanel .rdr_body').html('<div class="rdr_tagFeedback">You tagged this <strong>'+tag.name+'</strong></div><div class="rdr_shareBox rdr_sntPnl_padder"></div><div class="rdr_commentBox rdr_sntPnl_padder"></div>');
                 }
-                var $shareDialogueBox =  $('div.rdr_shareBox.rdr_sntPnl_padder');
-                var $commentBox = $('div.rdr_commentBox.rdr_sntPnl_padder');
+                var $shareDialogueBox =  rindow.find('div.rdr_shareBox.rdr_sntPnl_padder');
+                var $commentBox = rindow.find('div.rdr_commentBox.rdr_sntPnl_padder');
 
-                $commentBox.html( '<div class="rdr_tagFeedback">You tagged this <strong>'+tag.name+'</strong><br/>Leave a comment about that:</div> <div class="rdr_commentComplete"></div>' );
+                $commentBox.html( '<div><strong>Leave a comment about your reaction:</strong></div> <div class="rdr_commentComplete"></div>' );
 
                 // TODO add short rdrbrd URL to end of this line, rather than the long URL
                 //var url = window.location.href;
@@ -1353,7 +1382,7 @@ console.dir(args);
 
                 $commentBox.append( $leaveComment );
 
-                var $socialBox = $('<div class="rdr_share_social"><strong>Share your reaction</strong></div>'),
+                var $socialBox = $('<div class="rdr_share_social"><strong>Share your reaction about this on:</strong></div>'),
                 $shareLinks = $('<ul class="shareLinks"></ul>'),
                 socialNetworks = ["facebook","twitter","tumblr","linkedin"];
 
@@ -1453,7 +1482,7 @@ console.dir(args);
                                 } );
                             } else {
                                 console.log( rindow.length );
-                                rindow.find('div.rdr_commentBox').find('div.rdr_commentComplete').html('Thank you for your comment.').show();
+                                rindow.find('div.rdr_commentBox').find('div.rdr_commentComplete').html('Thank you for your comment. You and others can now read this by clicking on the (pin) icon next to the content you commented upon.').show();
                                 rindow.find('div.rdr_commentBox').find('div.rdr_tagFeedback, div.rdr_comment').hide();
                             }
 

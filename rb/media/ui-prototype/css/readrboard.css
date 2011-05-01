@@ -19,7 +19,7 @@ div.rdr.rdr_window {
 	z-index:12000;
 	top:100px;
 	left:100px;
-	background:#f8f8f8;
+	background:url(/static/images/rindow_bg.png);
 	overflow:hidden;
 }
 
@@ -117,12 +117,12 @@ div.rdr div.rdr_sntPnl_padder textarea,
 div.rdr div.rdr_sntPnl_padder input[type="text"]	{padding:2px 6px; width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
 div.rdr div.rdr_sntPnl_padder button				{border:1px solid #aaa; border-radius:3px 3px 3px 3px; box-shadow:0 -6px 11px -6px #ccc inset; color:#454545; font-family:Arial; font-size:12px; padding:2px 5px; width:auto; cursor:pointer;}
 div.rdr div.rdr_sntPnl_padder > div					{margin:4px 0;}
-div.rdr div.rdr_share_social						{top:8px; position:relative;}
+div.rdr div.rdr_share_social						{border-bottom:1px solid #aaa;}
 div.rdr div.rdr_sntPnl .rdr_submitTag  			{width:100%; text-align:right;}
 div.rdr div.rdr_sntPnl .rdr_submitTag button 	{}
 div.rdr div.rdr_sntPnl .rdr_commentButton	 	{width:100%;}
 div.rdr div.rdr_sntPnl .leaveComment			{height:67px; margin-top:5px; max-width:92%;font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;}
-div.rdr div.rdr_sntPnl .rdr_tagFeedback			{}
+div.rdr div.rdr_sntPnl .rdr_tagFeedback			{margin:5px 15px 0;}
 div.rdr div.rdr_sntPnl .rdr_tagFeedback strong	{font-weight:bold; color:#008be4;}
 
 div.rdr div.rdr_tempUserMsg 					{position:absolute; z-index:5; bottom:0px; height:27px; border-top:1px solid #aaa;background:#fff; padding:9px; -moz-box-shadow:0px -45px 48px -50px #53aed9 inset; -webkit-box-shadow:0px -45px 48px -50px #53aed9 inset; box-shadow:0px -45px 48px -50px #53aed9 inset;}
