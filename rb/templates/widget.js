@@ -103,15 +103,11 @@ function readrBoard($R){
             checkHeight: function( rindow, percentScroll ) {
                 rindow.find('div.rdr_reactionPanel div.rdr_body, div.rdr_whyPanel div.rdr_body').each( function() {
                     var $column = $(this);
-                    console.log('checking height: ', $column.height());
                     if ( $column.height() > 300 ) {
-                        console.log('ok lets resize 1');
                         if ( $column.data('jsp') ) {
-                            console.log('ok lets resize a');
                             $column.data('jsp').reinitialise();
                             // RDR.pane1 = $R('div.rdr_reactionPanel div.rdr_body').data('jsp');
                         } else {
-                            console.log('ok lets resize b');
                             $column.jScrollPane({ contentWidth:200, showArrows:true });    
                         }
                         // if ( percentScroll ) $column.data('jsp').scrollToPercentY( percentScroll );
