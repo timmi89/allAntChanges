@@ -556,7 +556,7 @@ function readrBoard($R){
                 var caller = args.rindow;
                 var offsets = caller.offset();
                 var left = offsets.left ? (offsets.left-34) : 100;
-                var top = offsets.top ? (offsets.top-50) : 100;
+                var top = offsets.top ? (offsets.top+50) : 100;
 
                 // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
                 // var coords = RDR.util.stayInWindow({left:left, top:top, width:360, height:185 });
@@ -605,7 +605,7 @@ function readrBoard($R){
                     var rindow = args.rindow,
                         num_interactions_left = 5 - parseInt( args.int_id.num_interactions ),
                         $tempMsgDiv = $('<div class="rdr_tempUserMsg"><span /><strong /></div>'),
-                        tempMsg = 'You can do ' + num_interactions_left + ' more interactions.  GOT IT?!  So you better log in, you better not pout.',
+                        tempMsg = 'You can do ' + num_interactions_left + ' more interactions.  GOT IT?!  So you better log in, you better not pout. ',
                         $loginLink = $('<a href="javascript:void(0);">Connect now with Facebook</a>.');
 
                     if ( rindow.find('div.rdr_tempUserMsg').length == 0 ){
