@@ -1899,329 +1899,500 @@ function jQueryPlugins($R){
 
 
 
-    (function($){
-        $.fn.SearchHighlight = function(options) {
-            /**
-             * SearchHighlight plugin for jQuery
-             * http://www.jquery.info/spip.php?article50
-             * Thanks to Scott Yang <http://scott.yang.id.au/>
-             * for the original idea and some code
-             *    
-             * @author Renato Formato <renatoformato@virgilio.it> 
-             *  
-             * @version 0.33
+    (function($){   
 
-             * modified by eric@readrboard.com for readrboard.com
-            /*
-                  modifications by eric@readrboard.com:
-                  - quickly rerouted the code to not use the search engine part of the plugin - we don't need that
-                  - if if parent node is unspecified, it now defaults to the $() parent node, not the document body
-                  - added a param to let accents be considered unique chars
-                  - modified the word match to include apostrophes
-                  - doing saftey checks for query string instead of array of query strings, and for empty strings
-                  - replaced the escapeRegEx function with a new one that covers more shtuff
-            */
-            /*
-             *
-             *  Options
-             *  - exact (string, default:"exact") 
-             *    "exact": find and highlight the exact words.
-             *    "whole": find partial matches but highlight whole words
-             *    "partial": find and highlight partial matches
-             *     
-             *  - style_name (string, default:'rdr_highlight')
-             *    The class given to the span wrapping the matched words.
-             *     
-             *  - style_name_suffix (boolean, default:true)
-             *    If true a different number is added to style_name for every different matched word.
-             *    
-             *    [ec] omit this functionalilty search engine feature not used     
-             *  x debug_referrer (string, default:null)
-             *    Set a referrer for debugging purpose.
-             *   
-             *    [ec] omit this functionalilty search engine feature not used       
-             *  x engines (array of regex, default:null)
-             *    Add a new search engine regex to highlight searches coming from new search engines.
-             *    The first element is the regex to match the domain.
-             *    The second element is the regex to match the query string. 
-             *    Ex: [/^http:\/\/my\.site\.net/i,/search=([^&]+)/i]        
-             *            
-             *  - highlight (string, default:null)
-             *    A jQuery selector or object to set the elements enabled for highlight.
-             *    If null or no elements are found, [ec edit] <remove>all the document is enabled for highlight.</remove>
-                  <add>the caller of the jq function is used instead.</add>
-             *        
-             *  - nohighlight (string, default:null)  
-             *    A jQuery selector or object to set the elements not enabled for highlight.
-             *    This option has priority on highlight. 
-             *    
-             *  - keys (string, default:null)
-             *    Disable the analisys of the referrer and search for the words given as argument    
-             *  
-             *    [ec added]
-             *  - replace_accent (bool, default:true)
-             *    whether or not it will normalize accent characters i.e. to make é == e
-             *
-             *    [ec added]
-             *  - clone (bool, default:true)
-             *    whether it will make a clone to do the highlighting on (style cloned and absolute positioned.)
-             */
-
-            /* search engine feature not used 
-            var ref = options.debug_referrer || document.referrer;
-            if(!ref && options.keys==undefined) return this;
-            */
-            if (typeof options == "undefined" ) options = {};
-            SearchHighlight.options = $.extend({
-                keys:"",
-                exact:"whole",
-                style_name:'rdr_highlight rdr_highlight', //the second one will have a number appended to it
-                style_name_suffix:true,
-                replace_accent:false, //todo - this doesn't quite work
-                clone:true
-            }, options);
-            
-            /* search engine feature not used 
-            if(options.engines) SearchHighlight.engines.unshift(options.engines);  
-            */
-
-            var q = options.keys;
-            if(typeof q !== "undefined") {
-                if (typeof q === "string") {q = [q];} //if a single string, make it an array.
-                SearchHighlight.buildReplaceTools(q);
-                if( $.isEmptyObject( SearchHighlight.subs ) ) return this;
-                //else
-                return this.each(function(){
-                    var el = this;
-                    if( SearchHighlight.options.clone ){
-                        el = SearchHighlight.makeClone(el);
-                    }
-                    if(el==document) el = $("body")[0];
-                    SearchHighlight.hiliteElement(el);
-                });
-            } else return this;
-          }    
-
-          var SearchHighlight = {
-            options: {},
-            cloneNodes: [],
-            makeClone: function(el){
-                var $hostNode = $(el),
-                $cloneNode = $hostNode.clone(),
-                topContainerSelector = $('body')[0],
-                cloneNodeCss = function() {
-                    return {
-                        'position':'absolute',
-                        'top': $hostNode.offset().top,
-                        'left': $hostNode.offset().left,
-                        'margin': '0',
-                        /*cross browser disable textselect*/
-                        '-webkit-user-select': 'none', 
-                        '-khtml-user-select': 'none',
-                        '-moz-user-select': 'none',
-                        '-o-user-select': 'none',
-                        'user-select': 'none'
-                    }
-                };
-
-                //convert to straight text
-                //note - we'll want to do this later but we have to check first to make sure all the nodes are inline and the same size.
-                //$cloneNode.html($cloneNode.text());
-
-                
-                //start with cloned style from $hostNode
-                //NOTE: requires improvedCSS.js  http://plugins.jquery.com/node/8726/release
-                $cloneNode.css($hostNode.css());
-
-                //change cloneNodes' identifying stuff
-                var atrs = ['id','class','title'];
-                $.each(atrs,function(i,atr){
-                    var iden = $cloneNode.attr(atr);
-                    if(iden == "") return;
-                    //else
-
-                    var idens = iden.split(" ");
-                        $.each(idens,function(j,str){
-                            idens[j] = "rdr_clone-"+str;
-                        });
-                    iden = idens.join(" ");
-                    $cloneNode.attr(atr, iden);
-                });
-                //add one more class to identify it on it's own as a clone
-                $cloneNode.addClass("rdr_clone");
-
-                // then absolute position it on body with offset
-                $cloneNode.appendTo(topContainerSelector).css( cloneNodeCss() );
-            
-                this.cloneNodes.push($cloneNode);
-                return $cloneNode;
-            },
-            regex: [],
-            /* search engine feature not used 
-            engines: [
-            [/^http:\/\/(www\.)?google\./i, /q=([^&]+)/i],                            // Google
-            [/^http:\/\/(www\.)?search\.yahoo\./i, /p=([^&]+)/i],                     // Yahoo
-            [/^http:\/\/(www\.)?search\.msn\./i, /q=([^&]+)/i],                       // MSN
-            [/^http:\/\/(www\.)?search\.live\./i, /query=([^&]+)/i],                  // MSN Live
-            [/^http:\/\/(www\.)?search\.aol\./i, /userQuery=([^&]+)/i],               // AOL
-            [/^http:\/\/(www\.)?ask\.com/i, /q=([^&]+)/i],                            // Ask.com
-            [/^http:\/\/(www\.)?altavista\./i, /q=([^&]+)/i],                         // AltaVista
-            [/^http:\/\/(www\.)?feedster\./i, /q=([^&]+)/i],                          // Feedster
-            [/^http:\/\/(www\.)?search\.lycos\./i, /q=([^&]+)/i],                     // Lycos
-            [/^http:\/\/(www\.)?alltheweb\./i, /q=([^&]+)/i],                         // AllTheWeb
-            [/^http:\/\/(www\.)?technorati\.com/i, /([^\?\/]+)(?:\?.*)$/i],           // Technorati
-            ],
-            */
-            subs: {},
-
-            /* search engine feature not used 
-            decodeURL: function(URL,reg) {
-              URL = decodeURIComponent(URL);
-              var query = null;
-              $.each(reg,function(i,n){
-                if(n[0].test(URL)) {
-                  var match = URL.match(n[1]);
-                  if(match) {
-                    query = match[1].toLowerCase();
-                    return false;
-                  }
-                }
-              })
-              
-              if (query) {
-              query = query.replace(/(\'|")/, '\$1');
-              query = query.split(/[\s,\+\.]+/);
-              }
-              
-              return query;
-            },
-            */
-
-            regexAccent : [
-              [/[\xC0-\xC5\u0100-\u0105]/ig,'a'],
-              [/[\xC7\u0106-\u010D]/ig,'c'],
-              [/[\xC8-\xCB]/ig,'e'],
-              [/[\xCC-\xCF]/ig,'i'],
-              [/\xD1/ig,'n'],
-              [/[\xD2-\xD6\xD8]/ig,'o'],
-              [/[\u015A-\u0161]/ig,'s'],
-              [/[\u0162-\u0167]/ig,'t'],
-              [/[\xD9-\xDC]/ig,'u'],
-              [/\xFF/ig,'y'],
-              [/[\x91\x92\u2018\u2019]/ig,'\'']
-            ],
-            matchAccent : /[\x91\x92\xC0-\xC5\xC7-\xCF\xD1-\xD6\xD8-\xDC\xFF\u0100-\u010D\u015A-\u0167\u2018\u2019]/ig,  
-            replaceAccent: function(q) {
-              SearchHighlight.matchAccent.lastIndex = 0;
-              if(SearchHighlight.matchAccent.test(q)) {
-                for(var i=0,l=SearchHighlight.regexAccent.length;i<l;i++)
-                  q = q.replace(SearchHighlight.regexAccent[i][0],SearchHighlight.regexAccent[i][1]);
-              }
-              return q;
-            },
-            escapeRegEx :function preg_quote( str ) {
-                // http://kevin.vanzonneveld.net
-                // +   original by: booeyOH
-                // +   improved by: Ates Goral (http://magnetiq.com)
-                // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-                // +   bugfixed by: Onno Marsman
-                // *     example 1: preg_quote("$40");
-                // *     returns 1: '\$40'
-                // *     example 2: preg_quote("*RRRING* Hello?");
-                // *     returns 2: '\*RRRING\* Hello\?'
-                // *     example 3: preg_quote("\\.+*?[^]$(){}=!<>|:");
-                // *     returns 3: '\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:'
-
-                return (str+'').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
-            },
-            /*
-            escapeRegEx: function(str){
-                var specials = new RegExp("[.*+?|()\\[\\]{}\\\\]", "g"); // .*+?|()[]{}\
-                return str.replace(specials, "\\$&");
-            },
-            */
-            buildReplaceTools: function(query) {
-                var re = [], regex, scope=this;
-                $.each(query,function(i,n){
-                    if ( n == "") return;
-                    n = scope.escapeRegEx(n);
-                    re.push(n); 
-                });
-                regex = re.join("|");
-                //console.log(regex);
-                switch(SearchHighlight.options.exact) {
-                  case "exact":
-                    regex = '\\b(?:'+regex+')\\b';
-                    break;
-                  case "whole":
-                    //regex = "\\b\\w*("+regex+")\\w*\\b";
-
-                    //todo: give this a second look.  Alt symbols for apostrophes?
-                    regex = "\\b(?:\\w|')*("+regex+")(?:\\w|')*\\b"; //[ec] modified to include apostrophes
-                    break;
-                }
-                //console.log(regex);
-                SearchHighlight.regex = new RegExp(regex, "gim");
-                $.each(re,function(i,n){
-                    SearchHighlight.subs[n] = SearchHighlight.options.style_name+
-                      (SearchHighlight.options.style_name_suffix?i+1:''); 
-                });
-            },
-            nosearch: /s(?:cript|tyle)|textarea/i,
-            hiliteElement: function(el) {
-                var opt = SearchHighlight.options,
-                $elHighlight,
-                noHighlight;
-                $elHighlight = opt.highlight?$(opt.highlight):$(el);
-                noHighlight = opt.nohighlight?$(opt.nohighlight):$([]);                
-                $elHighlight.each(function(){
-                  SearchHighlight.hiliteTree(this,noHighlight);
-                });
-            },
-            hiliteTree: function(el,noHighlight) {
-                if(noHighlight.index(el)!=-1) return;
-                var matchIndex = SearchHighlight.options.exact=="whole"?1:0;
-                for(var startIndex=0,endIndex=el.childNodes.length;startIndex<endIndex;startIndex++) {
-                  var item = el.childNodes[startIndex];
-                  if ( item.nodeType != 8 ) {//comment node
-                          //text node
-                    if(item.nodeType==3) {            
-                      var text = item.data,
-                      textNoAcc = SearchHighlight.replaceAccent(text), //only used if flag is set
-                      reText = SearchHighlight.options.replace_accent ? textNoAcc : text,
-                      newtext="",
-                      match,
-                      index=0;
-                      
-                      ////console.log(reText)
-                      SearchHighlight.regex.lastIndex = 0;
-                      
-                      while(match = SearchHighlight.regex.exec(reText)) {
-                        var className = SearchHighlight.subs[match[matchIndex].toLowerCase()];
-                        newtext += text.substr(index,match.index-index)+'<span class="'+className+'">'+
-                        text.substr(match.index,match[0].length)+"</span>";
-                        index = match.index+match[0].length;
-                      }
-                      if(newtext) {
-                        //add the last part of the text
-                        newtext += text.substring(index);
-                        var repl = $.merge([],$("<span>"+newtext+"</span>")[0].childNodes);
-                        endIndex += repl.length-1;
-                        startIndex += repl.length-1;
-                        $(item).before(repl).remove();
-                      }                
-                    } else {
-                      if(item.nodeType==1 && item.nodeName.search(SearchHighlight.nosearch)==-1)
-                          SearchHighlight.hiliteTree(item,noHighlight);
-                    }   
-                  }
-                }    
-            }
-          };
+        /**
+         * Enhanced .offset()
+         * Abstracts offset().right and offset().bottom into a built-in getter, and adds .offset(top, left) as a setter.
+         *
+         * @version 1.0
+         * @example $('#tester').offset().bottom
+         * @example $('#tester').offset().right
+         * @example $('#tester').offset(10, 20);
+         * @example $('#tester').offset(10, 20, 'fast');
+         * @example $('#tester').offset('+=10', '+=20');
+         * @example $('#tester').offset('+=5', '-=30');
+         * @author Brian Schweitzer (BrianFreud)
+         * @author Charles Phillips, first half of the return conditional ( http://groups.google.com/group/jquery-dev/browse_thread/thread/10fa400d3f9d9521/ )
+         *
+         * Dual licensed under the MIT and GPL licenses:
+         *   http://www.opensource.org/licenses/mit-license.php
+         *   http://www.gnu.org/licenses/gpl.html
+         */
+        var offsetMethod = $.fn.offset;
+        $.fn.offset = function () {
+            var offset = offsetMethod.call(this),
+                bottom = offset.top + this.outerHeight(),
+                right = offset.left + this.outerWidth(),
+                a = arguments;
+            return (a.length) ? this.animate({
+                                             top  : a[0].top  || a[0],
+                                             left : a[0].left || a[1]
+                                             }, (a[0].top ? a[1] : a[2]) || 1)
+                              : $.extend(offset, {
+                                                 bottom: bottom,
+                                                 right: right
+                                                 });
+        };
     })($R);
 
-    //todo: consider making this it's own function like cssAll, instead of cluttering the css() function.
-    //though, it's not much clutter, and I kind of like having it around;
+    (function($){
+        
+        $.fn.hilite = function(options) {
+            /**
+             * hilite
+             * losely based on searchHighlight plugin for jQuery
+             * http://www.jquery.info/spip.php?article50
+             * 
+             * modified by eric@readrboard.com for readrboard.com
+             *
+             */
+            
+            if (typeof options === "undefined" ) options = {};
+            Hilite.options = $.extend({
+                selRev:undefined,
+                WSO: rangy.getSelection(window) //Window Selection Object
+            }, options);
+            
+            var ranges = Hilite.options.selRev.ranges;
+            if(typeof ranges === "undefined") return this;
+            //else
+            Hilite.options.WSO.removeAllRanges();
+            //at least for now, don't deal with multiple ranges
+            var range = ranges[0];
+            var host = range.commonAncestorContainer;
+            //get the closest parent that isn't a textNode
+            //todo: check this..  any other weird nodes I need to think about?
+            while(host.nodeType == 3){ //Node.TEXT_NODE equals 3
+                host = host.parentNode;
+            }
+
+            Hilite.hiliteElement(host, range);
+            return this;
+        }
+  
+        var Hilite = {
+            //add generic class to pick up stlye, and numbered version to uniqely identify it.
+            brushClass: "rdr_hilite",
+            hiliteBrush: rangy.createCssClassApplier("rdr_hilite", true),
+            lastRange:null,
+            options: {}, //to be initialized
+            hiliteElement: function(el, range) {
+                if (Hilite.lastRange){
+                    //Hilite.hiliteBrush.undoToRange(Hilite.lastRange);
+                }
+                var opts = Hilite.options,
+                $el = $(el);
+                log(el)
+
+                Hilite.hiliteBrush.applyToRange(range);
+                Hilite.lastRange = range;
+                
+                $(range.startContainer).closest('.'+Hilite.brushClass).addClass(Hilite.brushClass+'_start')
+                $(range.endContainer).closest('.'+Hilite.brushClass).addClass(Hilite.brushClass+'_end')
+
+                //add escape keypress event to document to remove all hilites
+                $(document).keyup(function(event) {
+                    if (event.keyCode == '27') { //esc
+                        log(range)
+                        Hilite.hiliteBrush.undoToRange(range);
+                    }
+                });
+                
+            }
+        };
+
+    })($R);
+
+
+    (function($){
+
+        /*
+         * jquery.ui.rbRangy
+         * 
+         * readrboard.com - started by eric@readrboard.com
+         * 
+         * a plugin using the jquery widget pattern
+         * that utilizes the rangy library
+         * 
+         * the widget pattern:
+         * http://docs.jquery.com/UI_Developer_Guide#The_widget_factory
+         *
+         * to test in the live page, don't forget to use $R(), not $().
+         * $R() can't be empty, so use $R(window);
+        */
+
+        // ******* A note about concepts and objects used***********
+
+        // I am frustrated by Rangy's 'selection' object - I hate that there is only a getter and not a setter for it.
+        // Basically, if we want to create an object with custom ranges, rangy makes us use
+        // the function rangy.getSelection (which grabs the current selection) and then overwrite the ranges.  
+        // To work with this, I am adding a global copy of a selection object (I'm calling it a Window Selection Object or _WSO)
+        // then whenever I want to set the window's selection, I'm just setting the ranges of that WSO.
+        // Meanwhile, I'm passing around other 'inactive' selection objects as containers to hold ranges and other info.
+        // 
+        // I am using the idea of a selection revision (selRev) to indicate a new selection within a browser session.
+        // These selRevs are saved in a stack so that we can track them, later restore them, or modify one into another.
+        // Each selRev has a bunch of meta data including, most importantly, the selection which in turn has ranges that define the selection.
+        // A selRev is meant to be immutable - A new selRev doens't change a previous one but copies it, modifies and saves a new selRev to the stack.
+        
+        $.widget("ui.rbRangy", {
+            _selRevs:[
+            /*
+                //keep commented out:
+                //Example template: Set by saveSelRev and added to the stack.
+                 {
+                    selection: selectionObj || rangy.getSelection(),
+                    idx: selRevStack.length,
+                    timestamp: $.now(),
+                    selRevParent: null, //set below
+                    ranges: null,       //set below
+                    text: ""            //set below
+                }
+            */
+            ],
+            _style_name:'rdr_hilite',
+            _WSO: rangy.getSelection(), //Window Selection Object (see above).  Just used to later 'activate' custom selections 
+            _cloneSelRev: function(ranges){
+                var newRanges = $.map(ranges, function(range, idx){
+                    return( range.cloneRange() ); //rangy range function cloneRange
+                });
+                return newRanges;
+            },
+            _fetchSelRev: function(index){
+                var selRevStack = this._selRevs,
+                //set idx to declared idx, else last idx on the stack
+                idx = (typeof index == "string" || typeof index == "number" ) ? index : selRevStack.length-1,
+                selRev = selRevStack[idx];
+                if(!selRev) {
+                    console.warn('selRev.idx not in stack');
+                    return false;
+                }//else
+                return selRev;
+            },
+            saveSelRev: function(ranges){
+                //ranges is optional and will usually be ommited.  Defaults to current selection with ranges
+                var scope = this,
+                selRevStack = this._selRevs,
+                selRev = {
+                    //idx will give the next avail index in _selRevs.  Indexes should not be shifted.  Note that length is initially zero which is correct. 
+                    idx: selRevStack.length,
+                    timestamp: $.now(),
+                    rangySelection: null,   //set below - only set if ranges are not passed in
+                    selRevParent: null,     //set below
+                    ranges: null,           //set below
+                    text: ""                //set below
+                };
+                
+                if(typeof ranges === 'undefined'){
+                    selRev.rangySelection = rangy.getSelection();
+                    selRev.ranges = selRev.rangySelection.getAllRanges();
+                }else{
+                    selRev.ranges = ranges;
+                }
+                
+                $.each(selRev.ranges, function(idx, val){
+                    selRev.text += val.toString(); //rangy range toString function
+                });
+
+                //push selRev into stack
+                selRevStack[selRev.idx] = selRev;
+
+                //temp log to tempOutput    
+                var str,
+                txtLen = selRev.text.length; 
+                if(txtLen <= 30){
+                        str = selRev.text;
+                        log('str')
+                        log(str)
+                }
+                else{
+                    str = selRev.text.substring(0,15)+'...'+selRev.text.substring(txtLen-15,txtLen);
+                }
+                $('#rdr_tempOutput').append('<div><b>'+selRev.idx+'</b>: '+str+'</div>');
+                //end temp log to tempOutput
+                
+                log(selRev);
+                return selRev;
+            },
+            restoreSelRev: function(idx) {
+                var selRev = this._fetchSelRev(idx);
+                log(selRev);
+                if(!selRev) return false;
+                //else
+                this._WSO.setRanges(selRev.ranges);
+                return selRev;
+            },
+            reviseSelRev: function(idx) {
+                var iniSelRev = this._fetchSelRev(idx),
+                newSelRev, newRanges;
+                if(!iniSelRev) return false;
+                //else
+
+                newRanges = this._cloneSelRev(iniSelRev.ranges);
+                //filter the ranges
+                newRanges = this._filter(newRanges);
+                newSelRev = this.saveSelRev(newRanges);
+                this.restoreSelRev(newSelRev); //for testing, this should be prob seperate though
+                return newSelRev
+             },
+             _filter: function(ranges, listFilterNames){
+                // I think only firefox allows for multiple ranges to be selected, and no one really does it.
+                // Besides, for our tool, we'd prob have to just use the first one anyway..
+                // For now, just use only the first range on the rare case where someone tries to pass more than 1. (ranges[0])
+                var scope = this,
+                range = ranges[0];
+                var filters = {},
+                defaultFilters = {
+                    stripWhiteSpace: function(range){
+                        var rangeStr = range.toString(),
+                        s = {}, //start
+                        e = {}; //end
+                        //see rangy core for range attributes used here
+                        s.textnode = range.startContainer;
+                        s.offset = range.startOffset;
+                        s.regx = /^\s+/; //start, then one or more whitespace chars
+                        s.result = s.regx.exec(rangeStr);
+
+                        e.textnode = range.endContainer;
+                        e.offset = range.endOffset;
+                        e.regx = /\s+$/; //start, then one or more whitespace chars
+                        e.result = e.regx.exec(rangeStr);
+                        
+                        //change the range offsets by the length of the whitespace found
+                        if(s.result){
+                            s.resultStrLen = s.result[0].length;
+                            scope._rangeOffSet( range, {relOffset: (s.resultStrLen)} );
+                        }
+                        if(e.result){
+                            e.resultStrLen = e.result[0].length;
+                            scope._rangeOffSet( range, {relOffset: (-e.resultStrLen), start:false} );
+                        }
+                        return range;
+                    },
+                    firstWordSnap: function(range){
+                        //find the extra word characters the range cut off at the beginning of the selRev, and add em'.
+                        //and change the offset of the range
+                        var textnode = range.startContainer, //rangy attribute startContainer
+                        startOffset = range.startOffset,
+                        testRange;
+                        if (startOffset == 0) return range;
+                        //else 
+
+                        //NOTE: this assumes that the function and the range share the same document - change if we ever need to call between iframes.
+                        //create a helper object to find the word boundary
+                        var hlpr = {
+                            range: rangy.createRange() //rangy function createRange
+                        }
+                        hlpr.range.setStart(textnode, 0);
+                        hlpr.range.setEnd(textnode, startOffset);
+                        hlpr.str0 = (hlpr.range.toString());
+                        //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
+                        hlpr.regx1 = /\s*\S+$/;
+                        hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
+                        log(hlpr.result1);
+                        if (hlpr.result1 === null) return range;
+                        //else
+
+                        hlpr.str1 = hlpr.result1[0]; //result[0] is string representation of regex object - see exec() for info
+                        //strip any white space off beginning of string
+                        hlpr.str2 = hlpr.str1.replace(/\s*/,"");
+                        hlpr.extraWordChars = hlpr.str2.length;
+                        scope._rangeOffSet(range, {relOffset: (-hlpr.extraWordChars) });
+                        log(range)
+                        return range;
+                    },
+                    lastWordSnap: function(range){
+                        //find the extra word characters the range cut off at the end of the selRev, and add em'.
+                        var textnode = range.endContainer, //rangy attribute startContainer
+                        endOffset = range.endOffset,
+                        testRange;
+                        if (endOffset == 0) return range;
+                        //else
+                        
+                        //NOTE: this assumes that the function and the range share the same document - change if we ever need to call between iframes.
+                        //create a tester object to find the word boundary
+                        var hlpr = {
+                            range: rangy.createRange() //rangy function createRange
+                        }
+                        hlpr.range.setStart(textnode, endOffset);
+                        hlpr.range.setEnd(textnode, textnode.length);
+                        hlpr.str0 = (hlpr.range.toString());
+                        //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
+                        hlpr.regx1 = /^\S+(?=(\s|$))/;
+                        hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
+                        if (hlpr.result1 === null) return range;
+                        //else
+
+                        hlpr.str1 = hlpr.result1[0]; //result[0] is string representation of regex object - see exec() for info
+                        hlpr.extraWordChars = hlpr.str1.length;
+                        scope._rangeOffSet(range, {relOffset: (hlpr.extraWordChars), start:false});
+                        return range;
+                    }
+                };
+                //if filters not specifed, call all filters
+                if (typeof listFilterNames === "undefined"){
+                    filters = defaultFilters;
+                }
+                else{
+                    $.each(listFilterNames, function(idx, val){
+                        filters[val] = defaultFilters[val] || function(){console.error('bad filter name passed in param');return false};
+                    });
+                }                    
+                $.each(filters, function(){
+                    range = this(range);
+                });
+                return [range];
+            },
+            _rangeOffSet: function(range, opts){ 
+                // returns a range or false, which should trigger the caller to fail gracefully.
+                var defaults = {
+                    start: true, //start or end offset?
+                    offset: undefined, // absolute offset should be a positive or negative number to add to the offset
+                    relOffset: undefined // (relative offset) is ignored if offset is set
+                },
+                opts = $.extend({}, defaults, opts),
+                iniOffset = (opts.start) ? range.startOffset : range.endOffset; //rangy range properties startOffset, endOffset
+                if(typeof opts.offset === "undefined" ){
+                    if(typeof opts.relOffset === "undefined" ){
+                        return iniOffset;
+                    }//else
+                    opts.offset = iniOffset + opts.relOffset;
+                }
+                try{
+                    if(opts.start){
+                        range.setStart(range.startContainer, opts.offset); //rangy function setStart, attribute startContainer
+                    }else{
+                        range.setEnd(range.endContainer, opts.offset); //rangy function setEnd, attribute endContainer   
+                    }
+                    return range;
+                }catch(e){
+                    log(e); //range out of bounds
+                    return false;
+                }
+            }
+        });
+
+        var $tempButtons = $('<div class="rdr_blacklist"/>'),
+        buttonInfo= {
+            //note, remember to use $R instead of $ if calling in firebug
+            a:{
+                name:'save',
+                func:'saveSelRev',
+                attr:undefined
+            },
+            b:{
+                name:'restore',
+                func:'restoreSelRev',
+                attr:undefined
+            },
+            c:{
+                name:"revise",
+                func:'reviseSelRev',
+                attr:undefined
+            }
+        }
+        $.each(buttonInfo,function(idx, val){
+            var $button = $('<div class="rdr_tempButton"><a href=\"javascript:void(0);\">'+this.name+'</a><input /></div>');
+            $button.find('input').focus(function(){
+                //$R(window).rbRangy('saveSelRev');
+                //$R(window).rbRangy('restoreSelRev');
+            });
+            $button.find('a').click(function(){
+                var input = $(this).parent().find('input').val();
+                val.attr= (input == "" ) ? undefined : input;
+                var selrev = $(window).rbRangy(val.func, val.attr);
+            });
+            $tempButtons.append($button);
+        });
+        $tempButtons.find('input').eq(0).remove();
+        var $output = $('<div id="rdr_tempOutput" />').css({'font-size':'12px'}); //filled out for now with saveSelRev function
+        $tempButtons.append($output);
+
+        $tempButtons.css({'position':'fixed', 'margin-left':'5px'});
+        $tempButtons.children('.rdr_tempButton').css({'margin':'4px 0'});
+        $tempButtons.find('input').css({'left':'55px', 'width':'30px','position':'absolute'});
+        $('body').append($tempButtons);
+        
+        // At least for now, just init the window object here.
+        // We'll prob only use this.
+        $(window).rbRangy();
+
+    })($R);
+
+    (function($){
+        /*
+         * jQuery Plugin by eric@readrboard.com
+         * gets or sets delicious raw textnode leafs within a $() set.
+         * todo: confirm if we need anymore 'ignore' checks for other nodetypes
+         */
+        $.fn.textNodes = function(injectText){
+            // If injectText is passed as a string or array of strings, replace 'this' content with corresponding textnodes.
+            // Else, return all offspring textNodes in a flattened array.
+            var $ret = $('<span/>'),
+            $this = this,
+            doc = ($this[0] && $this[0].ownerDocument || document);
+
+            if ( typeof injectText != 'undefined' ){
+                $.each(injectText, function(idx, val){
+                    var textnode = doc.createTextNode( val );
+                    $ret.append(textnode);
+                });
+                $this.each(function(){
+                    $(this).empty();
+                    $(this).append($ret.contents());
+                });
+            }
+            //else no param: find textnodes
+
+            //recursive function to look depth first for textnodes
+            //param: a parent node, returns: an array of textnodes
+            function _mineParentForText(parent){
+                return $.map( parent.childNodes, function(child){
+                    if ( child.nodeType === 8) return    // comment node leaf, ignore.
+                    //else
+                    if ( child.nodeType !== 3 )          // if not textnode, look deeper
+                        return _mineParentForText(child);
+                    //else
+                    if ( child.nodeType === 3 )          // eureka. A textnode leaf.
+                        return child
+                });                
+            }
+
+            return $this.map(function(){
+                return _mineParentForText(this);
+            });
+        }
+    })($R);
+    
+    (function($){
+        /*
+         *
+         *
+         */
+/*
+        //nothing to see here: starting to work on textSelection plugin
+        $.fn.textSelection = function(options){
+            var $this = this;
+            if (typeof options === "undefined" )
+                options = {};
+                //get currSelection and return TSrange
+
+            TS.options = $.extend({
+            }, options);
+
+            $this.each(function(){
+                var $this
+                //Make a wrapper for the closest common ansestor with range info
+                var container = {
+                    commonAnsestor:this
+                }
+
+            })    
+        }
+        */
+    })($R);
+
     (function($){
         //improvedCSS.js  http://plugins.jquery.com/node/8726/release
         /**
@@ -2385,4 +2556,40 @@ function jQueryPlugins($R){
         }if(aK<0){aK=0}else{if(aK>k){aK=k}}if(s===c){s=aA.animateScroll}if(s){R.animate(i,"left",aK,af)}else{i.css("left",aK);af(aK)}}function af(aK){if(aK===c){aK=i.position().left}an.scrollTop(0);ab=aK;var aN=ab===0,aM=ab==k,aL=aK/k,s=-aL*(U-al);if(Q!=aN||l!=aM){Q=aN;l=aM;E.trigger("jsp-arrow-change",[ak,aI,Q,l])}t(aN,aM);Z.css("left",s);E.trigger("jsp-scroll-x",[-s,aN,aM]).trigger("scroll")}function v(aK,s){if(aA.showArrows){at[aK?"addClass":"removeClass"]("jspDisabled");ag[s?"addClass":"removeClass"]("jspDisabled")}}function t(aK,s){if(aA.showArrows){az[aK?"addClass":"removeClass"]("jspDisabled");y[s?"addClass":"removeClass"]("jspDisabled")}}function N(s,aK){var aL=s/(aa-w);W(aL*j,aK)}function O(aK,s){var aL=aK/(U-al);X(aL*k,s)}function ac(aX,aS,aL){var aP,aM,aN,s=0,aW=0,aK,aR,aQ,aU,aT,aV;try{aP=b(aX)}catch(aO){return}aM=aP.outerHeight();aN=aP.outerWidth();an.scrollTop(0);an.scrollLeft(0);while(!aP.is(".jspPane")){s+=aP.position().top;aW+=aP.position().left;aP=aP.offsetParent();if(/^body|html$/i.test(aP[0].nodeName)){return}}aK=aC();aQ=aK+w;if(s<aK||aS){aT=s-aA.verticalGutter}else{if(s+aM>aQ){aT=s-w+aM+aA.verticalGutter}}if(aT){N(aT,aL)}aR=aE();aU=aR+al;if(aW<aR||aS){aV=aW-aA.horizontalGutter}else{if(aW+aN>aU){aV=aW-al+aN+aA.horizontalGutter}}if(aV){O(aV,aL)}}function aE(){return -Z.position().left}function aC(){return -Z.position().top}function L(){var s=aa-w;return(s>20)&&(s-aC()<10)}function C(){var s=U-al;return(s>20)&&(s-aE()<10)}function ah(){an.unbind(ad).bind(ad,function(aN,aO,aM,aK){var aL=ab,s=J;R.scrollBy(aM*aA.mouseWheelSpeed,-aK*aA.mouseWheelSpeed,false);return aL==ab&&s==J})}function o(){an.unbind(ad)}function aD(){return false}function K(){Z.find(":input,a").unbind("focus.jsp").bind("focus.jsp",function(s){ac(s.target,false)})}function F(){Z.find(":input,a").unbind("focus.jsp")}function T(){var s,aK,aM=[];aG&&aM.push(ao[0]);aB&&aM.push(V[0]);Z.focus(function(){E.focus()});E.attr("tabindex",0).unbind("keydown.jsp keypress.jsp").bind("keydown.jsp",function(aP){if(aP.target!==this&&!(aM.length&&b(aP.target).closest(aM).length)){return}var aO=ab,aN=J;switch(aP.keyCode){case 40:case 38:case 34:case 32:case 33:case 39:case 37:s=aP.keyCode;aL();break;case 35:N(aa-w);s=null;break;case 36:N(0);s=null;break}aK=aP.keyCode==s&&aO!=ab||aN!=J;return !aK}).bind("keypress.jsp",function(aN){if(aN.keyCode==s){aL()}return !aK});if(aA.hideFocus){E.css("outline","none");if("hideFocus" in an[0]){E.attr("hideFocus",true)}}else{E.css("outline","");if("hideFocus" in an[0]){E.attr("hideFocus",false)}}function aL(){var aO=ab,aN=J;switch(s){case 40:R.scrollByY(aA.keyboardSpeed,false);break;case 38:R.scrollByY(-aA.keyboardSpeed,false);break;case 34:case 32:R.scrollByY(w*aA.scrollPagePercent,false);break;case 33:R.scrollByY(-w*aA.scrollPagePercent,false);break;case 39:R.scrollByX(aA.keyboardSpeed,false);break;case 37:R.scrollByX(-aA.keyboardSpeed,false);break}aK=aO!=ab||aN!=J;return aK}}function S(){E.attr("tabindex","-1").removeAttr("tabindex").unbind("keydown.jsp keypress.jsp")}function D(){if(location.hash&&location.hash.length>1){var aL,aK;try{aL=b(location.hash)}catch(s){return}if(aL.length&&Z.find(location.hash)){if(an.scrollTop()===0){aK=setInterval(function(){if(an.scrollTop()>0){ac(location.hash,true);b(document).scrollTop(an.position().top);clearInterval(aK)}},50)}else{ac(location.hash,true);b(document).scrollTop(an.position().top)}}}}function aj(){b("a.jspHijack").unbind("click.jsp-hijack").removeClass("jspHijack")}function n(){aj();b("a[href^=#]").addClass("jspHijack").bind("click.jsp-hijack",function(){var s=this.href.split("#"),aK;if(s.length>1){aK=s[1];if(aK.length>0&&Z.find("#"+aK).length>0){ac("#"+aK,true);return false}}})}function ap(){var aL,aK,aN,aM,aO,s=false;an.unbind("touchstart.jsp touchmove.jsp touchend.jsp click.jsp-touchclick").bind("touchstart.jsp",function(aP){var aQ=aP.originalEvent.touches[0];aL=aE();aK=aC();aN=aQ.pageX;aM=aQ.pageY;aO=false;s=true}).bind("touchmove.jsp",function(aS){if(!s){return}var aR=aS.originalEvent.touches[0],aQ=ab,aP=J;
         R.scrollTo(aL+aN-aR.pageX,aK+aM-aR.pageY);aO=aO||Math.abs(aN-aR.pageX)>5||Math.abs(aM-aR.pageY)>5;return aQ==ab&&aP==J}).bind("touchend.jsp",function(aP){s=false}).bind("click.jsp-touchclick",function(aP){if(aO){aO=false;return false}})}function h(){var s=aC(),aK=aE();E.removeClass("jspScrollable").unbind(".jsp");E.replaceWith(aq.append(Z.children()));aq.scrollTop(s);aq.scrollLeft(aK)}b.extend(R,{reinitialise:function(aK){aK=b.extend({},aA,aK);au(aK)},scrollToElement:function(aL,aK,s){ac(aL,aK,s)},scrollTo:function(aL,s,aK){O(aL,aK);N(s,aK)},scrollToX:function(aK,s){O(aK,s)},scrollToY:function(s,aK){N(s,aK)},scrollToPercentX:function(aK,s){O(aK*(U-al),s)},scrollToPercentY:function(aK,s){N(aK*(aa-w),s)},scrollBy:function(aK,s,aL){R.scrollByX(aK,aL);R.scrollByY(s,aL)},scrollByX:function(s,aL){var aK=aE()+s,aM=aK/(U-al);X(aM*k,aL)},scrollByY:function(s,aL){var aK=aC()+s,aM=aK/(aa-w);W(aM*j,aL)},positionDragX:function(s,aK){X(s,aK)},positionDragY:function(aK,s){X(aK,s)},animate:function(aK,aN,s,aM){var aL={};aL[aN]=s;aK.animate(aL,{duration:aA.animateDuration,ease:aA.animateEase,queue:false,step:aM})},getContentPositionX:function(){return aE()},getContentPositionY:function(){return aC()},getContentWidth:function(){return U},getContentHeight:function(){return aa},getPercentScrolledX:function(){return aE()/(U-al)},getPercentScrolledY:function(){return aC()/(aa-w)},getIsScrollableH:function(){return aG},getIsScrollableV:function(){return aB},getContentPane:function(){return Z},scrollToBottom:function(s){W(j,s)},hijackInternalLinks:function(){n()},destroy:function(){h()}});au(P)}f=b.extend({},b.fn.jScrollPane.defaults,f);b.each(["mouseWheelSpeed","arrowButtonSpeed","trackClickSpeed","keyboardSpeed"],function(){f[this]=f[this]||f.speed});var e;this.each(function(){var g=b(this),h=g.data("jsp");if(h){h.reinitialise(f)}else{h=new d(g,f);g.data("jsp",h)}e=e?e.add(g):g});return e};b.fn.jScrollPane.defaults={showArrows:false,maintainPosition:true,stickToBottom:false,stickToRight:false,clickOnTrack:true,autoReinitialise:false,autoReinitialiseDelay:500,verticalDragMinHeight:0,verticalDragMaxHeight:99999,horizontalDragMinWidth:0,horizontalDragMaxWidth:99999,contentWidth:c,animateScroll:false,animateDuration:300,animateEase:"linear",hijackInternalLinks:false,verticalGutter:4,horizontalGutter:4,mouseWheelSpeed:0,arrowButtonSpeed:0,arrowRepeatFreq:50,arrowScrollOnHover:false,trackClickSpeed:0,trackClickRepeatFreq:70,verticalArrowPositions:"split",horizontalArrowPositions:"split",enableKeyboardNavigation:true,hideFocus:false,keyboardSpeed:0,initialDelay:300,speed:30,scrollPagePercent:0.8}
     })($R);
+
+    (function($){
+        /*
+        * jquery.log helpers
+        */
+        // Log Taken from the firebug site: http://getfirebug.com/firebug/firebugx.js
+        // make calls to console harmless if there is no console.
+        if (!window.console || !console.firebug) {
+            var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml",
+            "group", "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];
+
+            window.console = {};
+            for (var i = 0; i < names.length; ++i){
+                window.console[names[i]] = function() {};
+            }
+        }
+
+        //alias console.log to global log
+        //in case client already has log defined (remove for production anyway)
+        if (typeof log === "undefined"){
+            log = function(msg){
+                console.log(msg);
+            }   
+        }
+
+        //use real jQuery instead of alias so we don't have to use $R
+        //in case client already has $.log defined (remove for production anyway)
+        if (typeof jQuery.fn.log === "undefined"){
+            //make $.log chain nicely
+            jQuery.fn.log = function (msg) {
+                console.log("%s: %o", msg, this);
+                return this;
+            };
+        }
+    })($R);
+
 }
