@@ -7,64 +7,67 @@
 
 
 <body>
-<div id="fb-root"></div>
+  <div id="wrap">
+    <div id="header">
+      <div id="banner">
+      <h1>Readrboard</h1>
+      {% block banner %}
+      {% endblock banner %}
+      </div>
+      <div id="nav">
+        <ul>
+            <li>
+            {% if user %}
+            <strong><a href="/profile/{{ user.id }}">{{ user.social_user.full_name }}</a></strong>
+            {% else %}
+            Please <fb:login-button>
+            {% endif %}
+            </li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/preferences/">Preferences</a></li>
+            <li><a href="/about/">About</a></li>
+            <li><a href="/logout/">Logout</a></li>
+        </ul>
+      </div> 
+    </div>
 
-<!-- Facebook -->
-<script type="text/javascript">
-  window.fbAsyncInit = function() {
-    FB.init({appId: '{{ fb_client_id }}', status: true, cookie: true,
-             xfbml: true});
-  };
-  (function() {
-    var e = document.createElement('script'); e.async = true;
-    e.src = document.location.protocol +
-      '//connect.facebook.net/en_US/all.js';
-    document.getElementById('fb-root').appendChild(e);
-  }());
-</script>
+    <div id="main">
+      <div id="sidebarLeft">
+        <ul>
+          <li>All</li>
+          <li>Tags</li>
+          <li>Comments</li>
+          <li>Shares</li>
+        </ul>
+      </div>
 
-<h1>Readrboard</h1>
-	
-<div id="header">
-{% block header %}
-{% endblock header %}
-</div>
+      <div id="content">
+      {% block content %}
+      {% endblock content %}
+      </div>
 
-<div id="nav">
-<ul>
-	<li>
-	{% if user %}
-	<strong><a href="/profile/{{ user.id }}">{{ user.social_user.full_name }}</a></strong>
-	{% else %}
-	Please <fb:login-button>
-	{% endif %}
-	</li>
-    <li><a href="/">Home</a></li>
-    <li><a href="/preferences/">Preferences</a></li>
-    <li><a href="/about/">About</a></li>
-    <li><a href="/logout/">Logout</a></li>
-</ul>
-</div>
+      <div id="footer">
+      {% block footer %}
+      Readrboard &#169; 2011
+      {% endblock footer %}
+      </div>
+    </div>
+  </div>
 
-<div id="show">
-<ul>
-<li>All</li>
-<li>Tags</li>
-<li>Comments</li>
-<li>Shares</li>
-</ul>
-</div>
+  <div id="fb-root"></div>
 
-<div id="content">
-{% block content %}
-{% endblock content %}
-</div>
-
-<div id="footer">
-{% block footer %}
-Readrboard &#169; 2011
-{% endblock footer %}
-</div>
-
+  <!-- Facebook -->
+  <script type="text/javascript">
+    window.fbAsyncInit = function() {
+      FB.init({appId: '{{ fb_client_id }}', status: true, cookie: true,
+               xfbml: true});
+    };
+    (function() {
+      var e = document.createElement('script'); e.async = true;
+      e.src = document.location.protocol +
+        '//connect.facebook.net/en_US/all.js';
+      document.getElementById('fb-root').appendChild(e);
+    }());
+  </script>
 </body>
 </html>

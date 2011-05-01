@@ -1,13 +1,31 @@
 body    		{ color: #666666; font-family: Arial; font-size: 12px; padding: 5px 0 0 0; margin:0 8px; border-top:1px solid #ccc; }
 img     		{ border:0; }
 ul      		{ padding:0;margin:0; list-style-type:none; }
-#content li 	{ padding:15px 0 15px 16px; margin:0; background:url(/static/images/checkmark.png) center left no-repeat; }
-#content img 	{float:left; padding: 0 5px 0 0; }
-#nav li 		{ float:left; padding-left: 15px; padding-bottom: 20px; }
-#nav 			{ overflow:auto; border-bottom:1px solid #000; }
-#show li 		{ float: right; padding-right: 10px; }
-#show			{ padding: 5px; }
-#footer 		{ text-align:center; padding-top: 20px; }
-#fb-login-button {margin: 10px 0; }
+
+h1, h2			{margin:10px;}
+
+#wrap			{ padding:10px;}
+
+#header			{ overflow: auto; width: 100%; padding:0px; border-bottom:1px solid;}
+
+#nav ul 		{ list-style:none;}
+#nav li 		{ display:inline; padding-left: 15px; }
+#nav 			{ float:right; text-align:right; width:400px; padding:15px 15px 0 0;}
+
+#main 			{ clear:both; }
+
+#banner			{ float:left; width:200px; padding-left:5px;}
+
+#sidebarLeft	{ float:left; padding:5px; width:160px; }
+#sidebarLeft li { padding: 10px; }
+
+#content		{ float:left; padding:20px;}
+#content li 	{ padding:20px 0 15px 35px; margin:0; background:url(/static/images/checkmark.png) center left no-repeat; }
+#content img 	{ float:left; padding: 0 5px 0 0; }
+
+#footer 		{ text-align:center; padding-top: 30px; clear:both; }
+
+#fb-login-button{ margin: 10px 0; }
+
 .pagination 	{ text-align:center; padding-top: 20px; }
 .context 		{ padding-top: 5px; }
