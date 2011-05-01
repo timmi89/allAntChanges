@@ -556,7 +556,7 @@ function readrBoard($R){
                 var caller = args.rindow;
                 var offsets = caller.offset();
                 var left = offsets.left ? (offsets.left-34) : 100;
-                var top = offsets.top ? (offsets.top+50) : 100;
+                var top = offsets.top ? (offsets.top-50) : 100;
 
                 // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
                 // var coords = RDR.util.stayInWindow({left:left, top:top, width:360, height:185 });
@@ -603,23 +603,15 @@ function readrBoard($R){
                 if ( args.rindow ) {
                     //console.dir(args);
                     var rindow = args.rindow,
-                        num_interactions_left = 5 - parseInt( args.int_id.num_interactions ),
-                        $tempMsgDiv = $('<div class="rdr_tempUserMsg"><span /><strong /></div>'),
-                        tempMsg = 'You can do ' + num_interactions_left + ' more interactions.  GOT IT?!  So you better log in, you better not pout. ',
-                        $loginLink = $('<a href="javascript:void(0);">Connect now with Facebook</a>.');
-
-                    if ( rindow.find('div.rdr_tempUserMsg').length == 0 ){
-                        $loginLink.click( function() {
-                            RDR.session.showLoginPanel( args );
-                        });
-                        $tempMsgDiv.find('span').html( tempMsg );
-                        $tempMsgDiv.find('strong').append( $loginLink );
-                        rindow.append( $tempMsgDiv );
-                        rindow.animate({height:(rindow.height()+103)+"px"});
-                    } else {
-                        $tempMsgDiv.find('span').html( tempMsg );
-                    }
-                    
+                        num_interactions_left = 5 - parseInt( args.int_id.num_interactions );
+                        $tempMsg = $('<div class="rdr_tempUserMsg">You can do ' + num_interactions_left + ' more interactions.  GOT IT?!  So you better log in, you better not pout.  <strong></strong></div>'),
+                        $loginLink = $('<a href="javascript:void(0);">Connect now with Facebook</a>');
+                    $loginLink.click( function() {
+                        RDR.session.showLoginPanel( args );
+                    });
+                    $tempMsg.find('strong').append( $loginLink );
+                    rindow.append( $tempMsg );
+                    rindow.find('div.rdr_tempUserMsg').animate({bottom:'-48px'});
                 }
             }
 		},
@@ -912,8 +904,6 @@ function readrBoard($R){
                     },
                     success: function(response) {
                         var data = response.data;
-
-                        RDR.data = data;
     					// TODO: Eric, should this go in a jquery queue?
     					var sendData = {};
     					sendData.hashes = {};
@@ -942,8 +932,6 @@ function readrBoard($R){
 				});
 			},
 			sentimentBox: function(settings) {
-                
-                /* keep commented out for now
 
                 var $hostNode = $('.rdr-'+settings.container);
                 //console.log(typeof selection.content);
@@ -951,12 +939,11 @@ function readrBoard($R){
                 //Trigger the smart text selection and highlight
                 var selRev = $(window).rbRangy('saveSelRev'),
                 revisedSelRev = $(window).rbRangy('reviseSelRev',selRev.idx);
-                
                 $hostNode.hilite({
                     selRev:revisedSelRev
                 });
-                */
-                
+                            
+
                 // draw the window over the actionbar
                 var actionbarOffsets = settings.coords;
 
@@ -969,10 +956,8 @@ function readrBoard($R){
 					actionbarOffsets.left = actionbarOffsets.left + 40;
 					actionbarOffsets.top = actionbarOffsets.top + 35;
 				}
-				
-				/*
-				//keep commented out for now
-				//testing adjusting the position with overrides from the hilite span 
+
+                //testing adjusting the position with overrides from the hilite span 
                 var $endSpan = $('.rdr_hilite_end');
                 
                 if($endSpan){
@@ -984,8 +969,7 @@ function readrBoard($R){
                     actionbarOffsets.left = strRight + 5; //with a little padding
                     actionbarOffsets.top = strBottom;
                 }
-                
-                */
+
                 var rindow = RDR.rindow.draw({
                     left:actionbarOffsets.left,
                     top:actionbarOffsets.top,
@@ -1002,12 +986,41 @@ function readrBoard($R){
                 // build the ratePanel
 
                 var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new" />'),
+                // $selectedTextPanel = $('<div class="rdr_selectedTextPanel rdr_sntPnl" />'),
                 $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl" />'),
                 $whyPanel = RDR.actions.whyPanel.draw( rindow ),
-                $blessedTagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
+                $blessedTagBox = $('<div class="rdr_blessedTagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
+                $customTagBox = $('<div class="rdr_customTagBox rdr_sntPnl_padder" />'),
                 $commentBox = $('<div class="rdr_commentBox" />'),
-                $shareBox = $('<div class="rdr_shareBox" />');
-
+                $shareBox = $('<div class="rdr_shareBox" />'),
+                $freeformTagInput = $('<input type="text" class="freeformTagInput" name="unknown-tags" />')//chain
+                .blur(function(){
+                    if($('.freeformTagInput').val() == "" ){
+                        $('div.rdr_help').show();   
+                    }
+                }).focus(function(){
+                   $tagTooltip.hide();
+                }).keyup(function(event) {
+                    if (event.keyCode == '13' || event.keyCode == '188' ) { //enter or comma
+                        $whyPanel.find('.rdr_body').empty();
+                        var customTag = {
+                            content: $(this).val(),
+                            name: $(this).val()
+                        }
+                        RDR.actions.rateSend({ tag:customTag, rindow:rindow, settings:settings, callback: function() {
+                                // todo: at this point, cast the tag, THEN call this in the tag success function:
+                                RDR.actions.whyPanel.expand(rindow);
+                            }//end function
+                        });//end rateSend
+                    }
+                    else if (event.keyCode == '27') { //esc
+                        //return false;
+                    }
+                });
+                var $tagTooltip = $('<div class="rdr_help">Add your own (ex. hip, woot)</div>').click(function(){            
+                    $tagTooltip.hide();
+                    $freeformTagInput.focus();
+                });
                 
                 var headers = ["What's your reaction?", "Say More"];
                 $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
@@ -1020,24 +1033,27 @@ function readrBoard($R){
                 });
                 RDR.actions.whyPanel.setup(rindow);
 
+                //populate selectedTextPanel
+				//$selectedTextPanel.find('div.rdr_body').append( '<div class="rdr_selected"><em></em><div class="rdr_arrow"></div></div>' );
+
                 //populate reactionPanel
-                $reactionPanel.find('div.rdr_body').append($blessedTagBox);
-                
+
+                $reactionPanel.find('div.rdr_body').append($blessedTagBox, $customTagBox);
                 ////populate blesed_tags
                 $.each(RDR.group.blessed_tags, function(idx, val){
-                    var $li = $('<li class="rdr_tag_'+val.id+'" />').data({
+                    var $li = $('<li />').data({
                         'tag':{
                             content:parseInt( val.id ),
                             name:val.body
                         }
-                    }).append('<div class="rdr_rightBox"></div><div class="rdr_leftBox"></div><a href="javascript:void(0);">'+val.body+'</a>');
+                    }).append('<a href="javascript:void(0);">'+val.body+'</a><div class="rdr_arrow"></div>');
                     
                     $blessedTagBox.children('ul.rdr_tags').append($li);
                 });
 
-                rindow.find('div.rdr_contentSpace').append($sentimentBox);
-                RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:settings});
                 ////customTagDialogue - develop this...
+                $customTagBox.append($freeformTagInput, $tagTooltip)//chain
+                .add($tagTooltip);
 
                 /*
                 $customTagBox.append(
@@ -1056,6 +1072,7 @@ function readrBoard($R){
                 }, rindow.settings.animTime, function() {
 					$(this).css('width','auto');
                     // rindow.append($sentimentBox);
+					rindow.find('div.rdr_contentSpace').append($sentimentBox);
                     
 					if ( settings.content_type == "text" ) {
                        rindow.find('div.rdr_selectedTextPanel em').text( settings.content );
@@ -1064,23 +1081,17 @@ function readrBoard($R){
 					}
 
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
-                    $('ul.rdr_preselected li').live('click', function() {
-                        var $this = $(this);
-                        if ( !$this.hasClass('rdr_customTagBox') ) {
-                            // if ( $this.hasClass('rdr_selected') ){
-                                // $this.removeClass('rdr_selected');
-                            // } else {
-                            $this.addClass('rdr_selected');
-                            $this.siblings().removeClass('rdr_selected');
-                            $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+                    rindow.find('ul.rdr_preselected li').click(function() {
+                        if ( $(this).hasClass('rdr_selected') ){
+                            $(this).removeClass('rdr_selected');
+                        }else{
+                            $(this).addClass('rdr_selected');
+                            $(this).siblings().removeClass('rdr_selected');
+                            $(this).parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
                             
                             // todo don't do this?
                             // $whyPanel.find('.rdr_body').html('');
-
-                            // show a loader...
-
-                            RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });//end rateSend
-                            // }
+                            RDR.actions.rateSend({ tag:$(this).data('tag'), rindow:rindow, settings:settings });//end rateSend
                         }
                     });
                 });
@@ -1132,52 +1143,8 @@ function readrBoard($R){
                 newSubBox: function(){
                 }              
 			},
-            // sentimentBox can be merged with / nested under this as sentimentPanel.draw at a later time mayhaps
-            sentimentPanel: {
-                addCustomTagBox: function(args) {
-                    var rindow = args.rindow,
-                        settings = args.settings,
-                        $whyPanel = RDR.actions.whyPanel.draw( rindow ),
-                        $customTagBox = $('<li class="rdr_customTagBox"><div class="rdr_rightBox"></div><div class="rdr_leftBox"></div></li>'),
-                        $freeformTagInput = $('<input type="text" class="freeformTagInput" name="unknown-tags" />')//chain
-                    .blur(function(){
-                        if($('input.freeformTagInput').val() == "" ){
-                            $('div.rdr_help').show();   
-                        }
-                    }).focus(function(){
-                       $tagTooltip.hide();
-                    }).keyup(function(event) {
-                        if (event.keyCode == '13' ) { //enter.  removed comma...  || event.keyCode == '188'
-                            $whyPanel.find('div.rdr_body').empty();
-                            var tag = $(this).closest('li.rdr_customTagBox');
-                            tag.data({
-                            'tag':{
-                                content:tag.find('input.freeformTagInput').val(),
-                                name:tag.find('input.freeformTagInput').val()
-                            }});
-                            RDR.actions.rateSend({ tag:tag, rindow:rindow, settings:settings, callback: function() {
-                                    // todo: at this point, cast the tag, THEN call this in the tag success function:
-                                    RDR.actions.whyPanel.expand(rindow);
-                                }//end function
-                            });//end rateSend
-                        }
-                        else if (event.keyCode == '27') { //esc
-                            //return false;
-                        }
-                    });
-
-                    var $tagTooltip = $('<div class="rdr_help">Add your own (ex. hip, woot)</div>').click(function(){            
-                        $tagTooltip.hide();
-                        $freeformTagInput.focus();
-                    });
-
-                    $customTagBox.append($freeformTagInput, $tagTooltip).add($tagTooltip);
-
-                    rindow.find('ul.rdr_tags').append( $customTagBox );
-                }
-            },
             rateSend: function(args) {
-
+                
                 //example:
                 //tag:{name, id}, rindow:rindow, settings:settings, callback: 
 			 	
@@ -1187,16 +1154,14 @@ function readrBoard($R){
 
                 // TODO the args & params thing here is confusing
                 RDR.session.getUser( args, function( params ) {
+    
                     // get the text that was highlighted
                     var content = $.trim( params.settings.content );
                     var container = $.trim( params.settings.container );
 
-                    var rindow = params.rindow,
-                        tag_li = params.tag,
-                        tag = params.tag.data('tag');
 
                     var sendData = {
-                        "tag" : tag,
+                        "tag" : params.tag,
                         "hash": container,
                         "content" : content,
                         "content_type" : params.settings.content_type,
@@ -1206,70 +1171,44 @@ function readrBoard($R){
                         "page_id" : RDR.page.id
                     };
 
-                    if ( !tag_li.hasClass('rdr_tagged') ) {
-                        // send the data!
-                        $.ajax({
-                            url: "/api/tag/create/",
-                            type: "get",
-                            contentType: "application/json",
-                            dataType: "jsonp",
-                            data: { json: JSON.stringify(sendData) },
-                            success: function(response) {
-                                //console.dir(response);
-                                //[eric] - if we want these params still we need to get them from args:
-                                //do we really want to chain pass these through?  Or keep them in a shared scope?
+                    // send the data!
+                    $.ajax({
+                        url: "/api/tag/create/",
+                        type: "get",
+                        contentType: "application/json",
+                        dataType: "jsonp",
+                        data: { json: JSON.stringify(sendData) },
+                        success: function(response) {
+                            //console.dir(response);
+                            //[eric] - if we want these params still we need to get them from args:
+                            //do we really want to chain pass these through?  Or keep them in a shared scope?
 
-                                if ( response.status == "fail" ) {
-                                    // if it failed, see if we can fix it, and if so, try this function one more time
-                                    RDR.session.handleGetUserFail( response, function() {
-                                        if ( !args.secondAttempt ) {
-                                            args.secondAttempt = true;
-                                            RDR.actions.rateSend( args );
-                                        }
-                                    } );
-                                } else {
-                                    if ( tag_li.length == 1 ) {
-                                        tag_li.find('div.rdr_leftBox').unbind();
-                                        tag_li.find('div.rdr_leftBox').click( function(e) {
-                                            e.preventDefault();
-                                            RDR.actions.unrateSend(args);
-                                            return false; // prevent the tag call applied to the parent <li> from firing
-                                        });
-                                        tag_li.addClass('rdr_tagged').addClass('rdr_custom_'+response.data.id);
-                                        tag_li.data('interaction_id', response.data.id);
-
-                                        // if it was a custom tag, do a few things
-                                        if ( tag_li.hasClass('rdr_customTagBox') ) {
-                                            tag_li.removeClass('rdr_customTagBox');
-                                            tag_li.siblings().removeClass('rdr_selected');
-                                            tag_li.addClass('rdr_selected');
-                                            tag_li.find('input').remove();
-                                            tag_li.find('div.rdr_help').remove();
-                                            tag_li.append( '<a href="javascript:void(0);">'+tag.name+'</a>' );
-                                            RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:params.settings});
-                                        }
-                                        RDR.rindow.checkHeight( rindow, 80 );
-                                    } 
-                                    RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:response.data });
-                                }
-                            },
-                            //for now, ignore error and carry on with mockup
-                            error: function(response) {
-                                //console.log("an error occurred while trying to tag");
+                            if ( response.status == "fail" ) {
+                                // if it failed, see if we can fix it, and if so, try this function one more time
+                                RDR.session.handleGetUserFail( response, function() {
+                                    if ( !args.secondAttempt ) {
+                                        args.secondAttempt = true;
+                                        RDR.actions.rateSend( args );
+                                    }
+                                } );
+                            } else {
+                                RDR.actions.shareStart( {rindow:params.rindow, tag:params.tag, int_id:response.data });
                             }
-                        });
-                    } else {
-                        RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:tag_li.data('interaction_id') });
-                    }
+                        },
+                        //for now, ignore error and carry on with mockup
+                        error: function(response) {
+                            //console.log("an error occurred while trying to tag");
+                        }
+                    });
                 });
             },
             unrateSend: function(args) {
                 var rindow = args.rindow, 
-                    tag = args.tag.data('tag'),
+                    tag = args.tag,
                     int_id = args.int_id;
-console.dir(args);
+
                 var sendData = {
-                    "tag" : tag,
+                    "tag" : args.tag,
                     "int_id" : int_id,
                     "user_id" : RDR.user.user_id,
                     "readr_token" : RDR.user.readr_token,
@@ -1301,6 +1240,19 @@ console.dir(args);
                     tag = args.tag,
                     int_id = args.int_id;
 
+
+                // this is temporary, for testing tag deletion.
+                rindow.find('ul.rdr_preselected li').each( function() {
+                    if ( $(this).data('tag').content == tag.content ) {
+                        //console.log('--- args ---');
+                        //console.dir(args);
+                        $(this).after('<div id="delete_int_'+int_id.id+'" style="font-family:Arial;font-size:12px;"><a href="javascript:void(0);">Undo that tag</a></div>');
+                        RDR.rindow.checkHeight( rindow );
+                        $('#delete_int_'+int_id.id).click( function() {
+                            RDR.actions.unrateSend(args);
+                        });
+                    }
+                });
                 //todo: for now, I'm just passing in known_tags as a param, but check with Porter about this model.
                 //Where is the 'source'/'point of origin' that is the authority of known_tags - I'd think we'd want to just reference that..
 
@@ -1332,14 +1284,14 @@ console.dir(args);
                 //console.log(tags)
                 
                 */
-                rindow.find('div.rdr_whyPanel div.rdr_body').empty();
-                if ( rindow.find('div.rdr_shareBox.rdr_sntPnl_padder').length == 0 || rindow.find('div.rdr_commentBox.rdr_sntPnl_padder').length == 0 ) {
-                    rindow.find('div.rdr_whyPanel .rdr_body').html('<div class="rdr_tagFeedback">You tagged this <strong>'+tag.name+'</strong></div><div class="rdr_shareBox rdr_sntPnl_padder"></div><div class="rdr_commentBox rdr_sntPnl_padder"></div>');
-                }
-                var $shareDialogueBox =  rindow.find('div.rdr_shareBox.rdr_sntPnl_padder');
-                var $commentBox = rindow.find('div.rdr_commentBox.rdr_sntPnl_padder');
 
-                $commentBox.html( '<div><strong>Leave a comment about your reaction:</strong></div> <div class="rdr_commentComplete"></div>' );
+                if ( $('div.rdr_shareBox.rdr_sntPnl_padder').length == 0 || $('div.rdr_commentBox.rdr_sntPnl_padder').length == 0 ) {
+                    rindow.find('div.rdr_whyPanel .rdr_body').html('<div class="rdr_commentBox rdr_sntPnl_padder"></div><div class="rdr_shareBox rdr_sntPnl_padder"></div>');
+                }
+                var $shareDialogueBox =  $('div.rdr_shareBox.rdr_sntPnl_padder');
+                var $commentBox = $('div.rdr_commentBox.rdr_sntPnl_padder');
+
+                $commentBox.html( '<div class="rdr_tagFeedback">You tagged this <strong>'+tag.name+'</strong><br/>Leave a comment about that:</div> <div class="rdr_commentComplete"></div>' );
 
                 // TODO add short rdrbrd URL to end of this line, rather than the long URL
                 //var url = window.location.href;
@@ -1382,7 +1334,7 @@ console.dir(args);
 
                 $commentBox.append( $leaveComment );
 
-                var $socialBox = $('<div class="rdr_share_social"><strong>Share your reaction about this on:</strong></div>'),
+                var $socialBox = $('<div class="rdr_share_social"><strong>Share your reaction</strong></div>'),
                 $shareLinks = $('<ul class="shareLinks"></ul>'),
                 socialNetworks = ["facebook","twitter","tumblr","linkedin"];
 
@@ -1482,7 +1434,7 @@ console.dir(args);
                                 } );
                             } else {
                                 console.log( rindow.length );
-                                rindow.find('div.rdr_commentBox').find('div.rdr_commentComplete').html('Thank you for your comment. You and others can now read this by clicking on the (pin) icon next to the content you commented upon.').show();
+                                rindow.find('div.rdr_commentBox').find('div.rdr_commentComplete').html('Thank you for your comment.').show();
                                 rindow.find('div.rdr_commentBox').find('div.rdr_tagFeedback, div.rdr_comment').hide();
                             }
 
@@ -1498,8 +1450,8 @@ console.dir(args);
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
                 var mouse_target = $(e.target),
 				selection = {};
-								
-                //ec: temp blacklist filter
+
+                //temp blacklist filter
                 if( $(mouse_target).parents().hasClass('rdr_blacklist')) return false;				
 
                 // make sure it's not selecting inside the RDR windows.
@@ -1957,23 +1909,9 @@ function jQueryPlugins($R){
     })($R);
     
     (function($){   
-        /*
-         * jQuery postMessage - v0.5 - 9/11/2009
-         * http://benalman.com/projects/jquery-postmessage-plugin/
-         * 
-         * Copyright (c) 2009 "Cowboy" Ben Alman
-         * Dual licensed under the MIT and GPL licenses.
-         * http://benalman.com/about/license/
-         */
-        var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h]&&!$.browser.opera;$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
-    })($R);
 
-
-
-    (function($){   
-
-        /**
-         * Enhanced .offset()
+            /**
+             * Enhanced .offset()
          * Abstracts offset().right and offset().bottom into a built-in getter, and adds .offset(top, left) as a setter.
          *
          * @version 1.0
@@ -2007,8 +1945,21 @@ function jQueryPlugins($R){
         };
     })($R);
 
+
+    (function($){   
+        /*
+         * jQuery postMessage - v0.5 - 9/11/2009
+         * http://benalman.com/projects/jquery-postmessage-plugin/
+         * 
+         * Copyright (c) 2009 "Cowboy" Ben Alman
+         * Dual licensed under the MIT and GPL licenses.
+         * http://benalman.com/about/license/
+         */
+        var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h]&&!$.browser.opera;$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
+    })($R);
+
     (function($){
-        
+      
         $.fn.hilite = function(options) {
             /**
              * hilite
@@ -2074,7 +2025,6 @@ function jQueryPlugins($R){
         };
 
     })($R);
-
 
     (function($){
 
@@ -2469,7 +2419,7 @@ function jQueryPlugins($R){
         /**
         * @Keith Bentrup
         */
-        $.fn.css2 = $.fn.css; 
+        $.fn.css2 = $.fn.css;
         $.fn.css = function () {
             if (arguments.length) return $.fn.css2.apply(this,arguments);
             var attr = ['font-family','font-size','font-weight','font-style','color',
@@ -2530,13 +2480,12 @@ function jQueryPlugins($R){
         // a.fn.autogrow=function(j){var b=a.extend({onResize:function(){},animate:true,animateDuration:150,animateCallback:function(){},extraSpace:20,limit:1000},j);this.filter('textarea').each(function(){var c=a(this).css({resize:'none','overflow-y':'hidden'}),k=c.height(),f=(function(){var l=['height','width','lineHeight','textDecoration','letterSpacing'],h={};a.each(l,function(d,e){h[e]=c.css(e)});return c.clone().removeAttr('id').removeAttr('name').css({position:'absolute',top:0,left:-9999}).css(h).attr('tabIndex','-1').insertBefore(c)})(),i=null,g=function(){f.height(0).val(a(this).val()).scrollTop(10000);var d=Math.max(f.scrollTop(),k)+b.extraSpace,e=a(this).add(f);if(i===d){return}i=d;if(d>=b.limit){a(this).css('overflow-y','');return}b.onResize.call(this);b.animate&&c.css('display')==='block'?e.stop().animate({height:d},b.animateDuration,b.animateCallback):e.height(d)};c.unbind('.dynSiz').bind('keyup.dynSiz',g).bind('keydown.dynSiz',g).bind('change.dynSiz',g)});return this};
         $.fn.autogrow = function() {
             // this.filter('textarea').each(function() {
-            $('#rdr_shadow').remove();
 
             var $this       = $(this),
                 minHeight   = 67,
                 lineHeight  = $this.css('fontSize'); // used to be 'lineHeight' but that made the textarea too tall
 
-            var shadow = $('<div id="rdr_shadow"></div>').css({
+            var shadow = $('<div></div>').css({
                 position:   'absolute',
                 top:        -10000,
                 left:       -10000,
@@ -2635,7 +2584,11 @@ function jQueryPlugins($R){
         */
         // Log Taken from the firebug site: http://getfirebug.com/firebug/firebugx.js
         // make calls to console harmless if there is no console.
-        if (!window.console || !console.firebug) {
+/*
+         if (!window.console || !console.firebug) {            
+*/
+        // Doesn't && seem more right than || on that first line.?  Seems to work..
+         if (!window.console || !console.firebug) {
             var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml",
             "group", "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];
 
@@ -2663,5 +2616,4 @@ function jQueryPlugins($R){
             };
         }
     })($R);
-
 }
