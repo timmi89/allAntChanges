@@ -17,6 +17,7 @@ INTERACTION_TYPES = (
     ('com', 'Comment'),
     ('bkm', 'Bookmark'),
     ('shr', 'Share'),
+    ('vot', 'Vote')
 )
 
 GENDER_CHOICES = (
