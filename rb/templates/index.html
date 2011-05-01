@@ -4,8 +4,17 @@
 <h2>Home</h2>
 {% endblock banner %}
 
+{% block sidebarFilters %}
+<ul>
+<li><a href="{% url home %}">All</a></li>
+<li><a href="{% url home %}tags/">Tags</a></li>
+<li><a href="{% url home %}comments/">Comments</a></li>
+<li><a href="{% url home %}shares/">Shares</a></li>
+</ul>
+{% endblock %}
 
 {% block content %}
+<h3>Interactions</h3>
 <ul>
 {% for interaction in interactions %}
 <li>

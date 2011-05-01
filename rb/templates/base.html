@@ -10,45 +10,62 @@
   <div id="wrap">
     <div id="header">
       <div id="banner">
-      <h1>Readrboard</h1>
-      {% block banner %}
-      {% endblock banner %}
+        <div id="readrboard"><a href="/"><h1>Readrboard</h1></a></div>
+        <div id="page">
+          {% block banner %}
+          {% endblock banner %}
+        </div>
+      </div>
+      <div id="search">
+        <form method="get" id="searchform" action="">
+          <fieldset>
+          <input type="text" value="" name="s" id="s" />
+          <input type="button" id="searchsubmit" value="Search" />
+          </fieldset>
+        </form>
       </div>
       <div id="nav">
         <ul>
-            <li>
+            <li id="user">
             {% if user %}
-            <strong><a href="/profile/{{ user.id }}">{{ user.social_user.full_name }}</a></strong>
+              <strong><a href="/profile/{{ user.id }}">{{ user.social_user.full_name }}</a></strong>
             {% else %}
-            Please <fb:login-button>
+              Please <fb:login-button>
             {% endif %}
             </li>
+
             <li><a href="/">Home</a></li>
             <li><a href="/preferences/">Preferences</a></li>
             <li><a href="/about/">About</a></li>
             <li><a href="/logout/">Logout</a></li>
         </ul>
-      </div> 
+      </div>
     </div>
 
     <div id="main">
       <div id="sidebarLeft">
+        {% block sidebarFilters %}
         <ul>
-          <li>All</li>
-          <li>Tags</li>
-          <li>Comments</li>
-          <li>Shares</li>
+          <li>
+            All
+          </li>
         </ul>
+        {% endblock sidebarFilters %}
       </div>
 
-      <div id="content">
-      {% block content %}
-      {% endblock content %}
+      <div id="maincontent">
+        <div id="content">
+            {% block content %}
+            {% endblock content %}
+        </div>
+
+        <div id="adspace">
+          Really annoying advertisement
+        </div>
       </div>
 
       <div id="footer">
       {% block footer %}
-      Readrboard &#169; 2011
       {% endblock footer %}
       </div>
     </div>

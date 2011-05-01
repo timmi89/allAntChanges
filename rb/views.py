@@ -25,10 +25,15 @@ def fblogin(request):
 def xdm_status(request):
     return render_to_response("xdm_status.html",{'fb_client_id': FACEBOOK_APP_ID})
 
-def profile(request, user_id):
+def profile(request, user_id, **kwargs):
     cookies = request.COOKIES
     readr_token = cookies.get('readr_token')
     interactions = Interaction.objects.filter(user=user_id).select_related().order_by('-created')
+    if 'view' in kwargs:
+        view = kwargs['view']
+        if view == 'tags': interactions=interactions.filter(interaction_node__kind="tag")
+        if view == 'comments': interactions=interactions.filter(interaction_node__kind="com")
+        if view == 'shares': interactions=interactions.filter(interaction_node__kind="shr")
     paginator = Paginator(interactions, 5)
 
     try:
@@ -52,11 +57,18 @@ def profile(request, user_id):
         context['user'] = user
     return render_to_response("profile.html", context)
 
-def home(request):
+def home(request, **kwargs):
     cookies = request.COOKIES
     user_id = cookies.get('user_id')
     readr_token = cookies.get('readr_token')
-    interactions = Interaction.objects.all().select_related().order_by('-created')[:5]
+    interactions = Interaction.objects.all().select_related().order_by('-created')
+    if 'view' in kwargs:
+        view = kwargs['view']
+        if view == 'tags': interactions=interactions.filter(interaction_node__kind="tag")
+        if view == 'comments': interactions=interactions.filter(interaction_node__kind="com")
+        if view == 'shares': interactions=interactions.filter(interaction_node__kind="shr")
+    interactions = interactions[:5]
+
     context = {'interactions': interactions, 'fb_client_id': FACEBOOK_APP_ID}
     if user_id:
         user = User.objects.get(id=user_id)

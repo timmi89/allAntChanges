@@ -5,40 +5,24 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Example:
-    # (r'^readrboard/', include('readrboard.foo.urls')),
+    url(r'^widget/(.{,25})/$', 'rb.views.widget'),
+    url(r'^fb/$', 'rb.views.fb'),
+    url(r'^fblogin/$', 'rb.views.fblogin'),
+	url(r'^xdm_status/$', 'rb.views.xdm_status'),
+    url(r'^s/(?P<short>[0-9a-zA-Z])+/$', 'rb.views.expander'),
 
-    # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
-    # to INSTALLED_APPS to enable admin documentation:
-    # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    #(r'^search-form/$', 'rb.views.search_form'),
-    #(r'^nodes/$', 'rb.views.index'),
-    (r'^widget/(.{,25})/$', 'rb.views.widget'),
-    (r'^fb/$', 'rb.views.fb'),
-    (r'^fblogin/$', 'rb.views.fblogin'),
-	(r'^xdm_status/$', 'rb.views.xdm_status'),
-    (r'^s/(?P<short>[0-9a-zA-Z])+/$', 'rb.views.expander'),
-    (r'^$', 'rb.views.home'),
-    (r'^profile/(?P<user_id>\d)/$', 'rb.views.profile'),
-    #(r'^tags/(?P<interaction_id>\d+)/$', 'rb.views.tags'),
-    #(r'^request-meta/$', 'rb.views.display_meta'),
-    #(r'^search/$', 'rb.views.search'),
-    #(r'^comments/', include('django.contrib.comments.urls')),
-    #(r'^nodes/$', 'rb.views.index'),
-    #(r'^request-meta/$', 'rb.views.display_meta'),	
-    #(r'^nodes/(?P<node_id>\d+)/$', 'rb.views.detail'),
-    #(r'^nodes/(?P<node_id>\d+)/$', 'rb.views.detail'),
-    #(r'^nodes/(?P<node_id>\d+)/results/$', 'rb.views.results'),
-    #(r'^nodes/(?P<node_id>\d+)/vote/$', 'rb.views.vote'),
-    # Uncomment the next line to enable the admin:
-    
-    #testing 'packaging' the urlpatterns within the rb django project
-    #(r'^tags/', include('rb.urls')),
-    (r'^api/', include('readrboard.api.urls')),
-    (r'^admin/', include(admin.site.urls)),
-    (r'^convert/', include('lazysignup.urls')),
-    #(r'^json-nodes/', 'rb.views.json_content_node'),
-    #(r'^json-send/', 'rb.views.send'),
+    url(r'^$', 'rb.views.home', name='home'),
+    url(r'^tags/$', 'rb.views.home', kwargs={"view":"tags"}),
+    url(r'^comments/$', 'rb.views.home', kwargs={"view":"comments"}),
+    url(r'^shares/$', 'rb.views.home', kwargs={"view":"shares"}),
+
+    url(r'^profile/(?P<user_id>\d)/$', 'rb.views.profile', name='profile'),
+    url(r'^profile/(?P<user_id>\d)/tags/$', 'rb.views.profile', kwargs={"view":"tags"}),
+    url(r'^profile/(?P<user_id>\d)/comments/$', 'rb.views.profile', kwargs={"view":"comments"}),
+    url(r'^profile/(?P<user_id>\d)/shares/$', 'rb.views.profile', kwargs={"view":"shares"}),
+
+    url(r'^api/', include('readrboard.api.urls')),
+    url(r'^admin/', include(admin.site.urls)),
 )
 
 if settings.DEBUG:

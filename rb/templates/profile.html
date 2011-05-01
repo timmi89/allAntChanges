@@ -1,10 +1,26 @@
 {% extends "base.html" %}
 
 {% block banner %}
-<h2>{{ user.social_user.full_name }}</h2>
+<h2>
+{% if user.social_user %}
+    {{ user.social_user.full_name }}
+{% else %}
+    Anonymous
+{% endif %}
+</h2>
 {% endblock banner %}
 
+{% block sidebarFilters %}
+<ul>
+<li><a href="{% url profile user_id=user.id %}">All</a></li>
+<li><a href="{% url profile user_id=user.id %}tags/">Tags</a></li>
+<li><a href="{% url profile user_id=user.id %}comments/">Comments</a></li>
+<li><a href="{% url profile user_id=user.id %}shares/">Shares</a></li>
+</ul>
+{% endblock %}
+
 {% block content %}
+<h3>Interactions</h3>
 <ul>
 {% for interaction in interactions.object_list %}
 <li>
