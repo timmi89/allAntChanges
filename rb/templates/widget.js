@@ -615,7 +615,7 @@ function readrBoard($R){
                         $tempMsgDiv.find('span').html( tempMsg );
                         $tempMsgDiv.find('strong').append( $loginLink );
                         rindow.append( $tempMsgDiv );
-                        rindow.animate({height:(rindow.height()+98)+"px"});
+                        rindow.animate({height:(rindow.height()+103)+"px"});
                     } else {
                         $tempMsgDiv.find('span').html( tempMsg );
                     }
