@@ -961,7 +961,7 @@ function readrBoard($R){
                 $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl" />'),
                 $whyPanel = RDR.actions.whyPanel.draw( rindow ),
                 $blessedTagBox = $('<div class="rdr_blessedTagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
-                $customTagBox = $('<div class="rdr_customTagBox rdr_sntPnl_padder" />'),
+                $customTagBox = $('<li class="rdr_customTagBox"><div class="rdr_rightBox"></div><div class="rdr_leftBox"></div></li>'),
                 $commentBox = $('<div class="rdr_commentBox" />'),
                 $shareBox = $('<div class="rdr_shareBox" />'),
                 $freeformTagInput = $('<input type="text" class="freeformTagInput" name="unknown-tags" />')//chain
@@ -1009,7 +1009,7 @@ function readrBoard($R){
 
                 //populate reactionPanel
 
-                $reactionPanel.find('div.rdr_body').append($blessedTagBox, $customTagBox);
+                $reactionPanel.find('div.rdr_body').append($blessedTagBox);
                 ////populate blesed_tags
                 $.each(RDR.group.blessed_tags, function(idx, val){
                     var $li = $('<li />').data({
@@ -1017,13 +1017,14 @@ function readrBoard($R){
                             content:parseInt( val.id ),
                             name:val.body
                         }
-                    }).append('<a href="javascript:void(0);">'+val.body+'</a><div class="rdr_arrow"></div>');
+                    }).append('<div class="rdr_rightBox"></div><div class="rdr_leftBox"></div><a href="javascript:void(0);">'+val.body+'</a>');
                     
                     $blessedTagBox.children('ul.rdr_tags').append($li);
                 });
 
+                $blessedTagBox.find('ul.rdr_tags').append( $customTagBox );
                 ////customTagDialogue - develop this...
-                $customTagBox.append($freeformTagInput, $tagTooltip)//chain
+                $customTagBox.append($freeformTagInput, $tagTooltip)
                 .add($tagTooltip);
 
                 /*
@@ -1217,7 +1218,7 @@ function readrBoard($R){
                     if ( $(this).data('tag').content == tag.content ) {
                         //console.log('--- args ---');
                         //console.dir(args);
-                        $(this).after('<div id="delete_int_'+int_id.id+'" style="font-family:Arial;font-size:12px;"><a href="javascript:void(0);">Undo that tag</a></div>');
+                        // $(this).after('<div id="delete_int_'+int_id.id+'" style="font-family:Arial;font-size:12px;"><a href="javascript:void(0);">Undo that tag</a></div>');
                         RDR.rindow.checkHeight( rindow );
                         $('#delete_int_'+int_id.id).click( function() {
                             RDR.actions.unrateSend(args);
