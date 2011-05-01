@@ -58,7 +58,7 @@ div.rdr.rdr_actionbar li.rdr_icon_about a		 	{ background-position: 0 0; } /*ove
 div.rdr.rdr_actionbar li.rdr_icon_reaction a		{ background-position:-30px 0; }
 div.rdr.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-60px 0; }
 
-div.rdr.rdr_actionbar a:hover                       { background-color:#ffd3d3;}
+div.rdr.rdr_actionbar a:hover                       { background-color:#e4f0f7;}
 div.rdr.rdr_actionbar li.rdr_icon_about a:hover 	{ background-color:transparent; }
 div.rdr.rdr_actionbar span.rdr_icon_divider      	{ width:1px; background:#BBB; height:70%; position:absolute; top:15%; right:0; display:none;/*show dynamically*/}
 
@@ -66,7 +66,7 @@ div.rdr.rdr_actionbar span.rdr_icon_divider      	{ width:1px; background:#BBB; 
 div.rdr.rdr_tooltip {
     -moz-border-radius:5px; -webkit-border-radius:5px; -moz-box-shadow:0 0 5px #888888; -webkit-box-shadow:0 0 5px #888888;
     background-color:#fff;
-    border:2px solid #008be4;
+    border:2px solid #80aec9;
     margin:0 0 0 13px;/* 0.5 icon width with compensation for border*/
     padding:5px 0;
     position:absolute;
@@ -76,7 +76,7 @@ div.rdr.rdr_tooltip {
     width:100px;
     z-index:10000;
 }
-div.rdr.rdr_tooltip-arrow-border { border-color:#e71f1f transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-16px; left:43%;}
+div.rdr.rdr_tooltip-arrow-border { border-color:#80aec9 transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-16px; left:43%;}
 div.rdr.rdr_tooltip-arrow { border-color:#fff transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-14px; left:43%;}
 
 /*compress ths about icon width*/
@@ -86,7 +86,7 @@ div.rdr.rdr_actionbar li.rdr_icon_about a		 	{ background-position: -3px 0; widt
 
 /* global tag defs */
 div.rdr h1, 
-div.rdr h2	{font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif; color:#888; margin:0; }
+div.rdr h2	{font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif; color:#666; margin:0; }
 div.rdr h1	{font-size:21px; cursor:move; padding:3px 9px; font-weight:100;}
 
 /* the widget */
@@ -123,7 +123,7 @@ div.rdr div.rdr_sntPnl .rdr_submitTag button 	{}
 div.rdr div.rdr_sntPnl .rdr_commentButton	 	{width:100%;}
 div.rdr div.rdr_sntPnl .leaveComment			{height:67px; margin-top:5px; max-width:92%;font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;}
 div.rdr div.rdr_sntPnl .rdr_tagFeedback			{}
-div.rdr div.rdr_sntPnl .rdr_tagFeedback strong	{font-weight:bold; color:#e71f1f;}
+div.rdr div.rdr_sntPnl .rdr_tagFeedback strong	{font-weight:bold; color:#008be4;}
 
 div.rdr div.rdr_tempUserMsg 					{position:absolute; z-index:5; bottom:0px; background:#fff; padding:9px; -moz-box-shadow:0px -45px 48px -50px #53aed9 inset, 0 0 10px 1px #AAAAAA; -webkit-box-shadow:0px -45px 48px -50px #53aed9 inset, 0 0 10px 1px #AAAAAA; box-shadow:0px -45px 48px -50px #53aed9 inset, 0 0 10px 1px #AAAAAA;}
 /*

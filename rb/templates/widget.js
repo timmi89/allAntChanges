@@ -900,6 +900,8 @@ function readrBoard($R){
                     },
                     success: function(response) {
                         var data = response.data;
+
+                        RDR.data = data;
     					// TODO: Eric, should this go in a jquery queue?
     					var sendData = {};
     					sendData.hashes = {};
@@ -1143,45 +1145,50 @@ function readrBoard($R){
                         "page_id" : RDR.page.id
                     };
 
-                    // send the data!
-                    $.ajax({
-                        url: "/api/tag/create/",
-                        type: "get",
-                        contentType: "application/json",
-                        dataType: "jsonp",
-                        data: { json: JSON.stringify(sendData) },
-                        success: function(response) {
-                            //console.dir(response);
-                            //[eric] - if we want these params still we need to get them from args:
-                            //do we really want to chain pass these through?  Or keep them in a shared scope?
+                    if ( !tag_li.hasClass('rdr_tagged') ) {
+                        // send the data!
+                        $.ajax({
+                            url: "/api/tag/create/",
+                            type: "get",
+                            contentType: "application/json",
+                            dataType: "jsonp",
+                            data: { json: JSON.stringify(sendData) },
+                            success: function(response) {
+                                //console.dir(response);
+                                //[eric] - if we want these params still we need to get them from args:
+                                //do we really want to chain pass these through?  Or keep them in a shared scope?
 
-                            if ( response.status == "fail" ) {
-                                // if it failed, see if we can fix it, and if so, try this function one more time
-                                RDR.session.handleGetUserFail( response, function() {
-                                    if ( !args.secondAttempt ) {
-                                        args.secondAttempt = true;
-                                        RDR.actions.rateSend( args );
-                                    }
-                                } );
-                            } else {
-                                if ( tag_li.length == 1 ) {
-                                    RDR.rindow.checkHeight( rindow );
-                                    tag_li.find('div.rdr_leftBox').unbind();
-                                    tag_li.find('div.rdr_leftBox').click( function(e) {
-                                        e.preventDefault();
-                                        RDR.actions.unrateSend(args);
-                                        return false; // prevent the tag call applied to the parent <li> from firing
-                                    });
-                                    tag_li.addClass('rdr_tagged');
-                                } 
-                                RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:response.data });
+                                if ( response.status == "fail" ) {
+                                    // if it failed, see if we can fix it, and if so, try this function one more time
+                                    RDR.session.handleGetUserFail( response, function() {
+                                        if ( !args.secondAttempt ) {
+                                            args.secondAttempt = true;
+                                            RDR.actions.rateSend( args );
+                                        }
+                                    } );
+                                } else {
+                                    if ( tag_li.length == 1 ) {
+                                        RDR.rindow.checkHeight( rindow );
+                                        tag_li.find('div.rdr_leftBox').unbind();
+                                        tag_li.find('div.rdr_leftBox').click( function(e) {
+                                            e.preventDefault();
+                                            RDR.actions.unrateSend(args);
+                                            return false; // prevent the tag call applied to the parent <li> from firing
+                                        });
+                                        tag_li.addClass('rdr_tagged');
+                                        tag_li.data('interaction_id', response.data.id);
+                                    } 
+                                    RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:response.data });
+                                }
+                            },
+                            //for now, ignore error and carry on with mockup
+                            error: function(response) {
+                                //console.log("an error occurred while trying to tag");
                             }
-                        },
-                        //for now, ignore error and carry on with mockup
-                        error: function(response) {
-                            //console.log("an error occurred while trying to tag");
-                        }
-                    });
+                        });
+                    } else {
+                        RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:tag_li.data('interaction_id') });
+                    }
                 });
             },
             unrateSend: function(args) {
