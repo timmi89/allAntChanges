@@ -26,8 +26,7 @@ def checkToken(data):
         print "Checking token for temporary user"
         auth_token = 'R3dRB0aRdR0X'
     readr_token = createToken(data['user_id'], auth_token, data['group_id'])
-    #print "server side token is ", readr_token
-    #print "client side token is ", data['readr_token']
+
     return (readr_token == data['readr_token'])
 
 def createToken(django_id, auth_token, group_id):
