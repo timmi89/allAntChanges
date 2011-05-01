@@ -599,15 +599,23 @@ function readrBoard($R){
                 if ( args.rindow ) {
                     //console.dir(args);
                     var rindow = args.rindow,
-                        num_interactions_left = 5 - parseInt( args.int_id.num_interactions );
-                        $tempMsg = $('<div class="rdr_tempUserMsg">You can do ' + num_interactions_left + ' more interactions.  GOT IT?!  So you better log in, you better not pout.  <strong></strong></div>'),
-                        $loginLink = $('<a href="javascript:void(0);">Connect now with Facebook</a>');
-                    $loginLink.click( function() {
-                        RDR.session.showLoginPanel( args );
-                    });
-                    $tempMsg.find('strong').append( $loginLink );
-                    rindow.append( $tempMsg );
-                    rindow.find('div.rdr_tempUserMsg').animate({bottom:'-48px'});
+                        num_interactions_left = 5 - parseInt( args.int_id.num_interactions ),
+                        $tempMsgDiv = $('<div class="rdr_tempUserMsg"><span /><strong /></div>'),
+                        tempMsg = 'You can do ' + num_interactions_left + ' more interactions.  GOT IT?!  So you better log in, you better not pout.',
+                        $loginLink = $('<a href="javascript:void(0);">Connect now with Facebook</a>.');
+
+                    if ( rindow.find('div.rdr_tempUserMsg').length == 0 ){
+                        $loginLink.click( function() {
+                            RDR.session.showLoginPanel( args );
+                        });
+                        $tempMsgDiv.find('span').html( tempMsg );
+                        $tempMsgDiv.find('strong').append( $loginLink );
+                        rindow.append( $tempMsgDiv );
+                        rindow.animate({height:(rindow.height()+98)+"px"});
+                    } else {
+                        $tempMsgDiv.find('span').html( tempMsg );
+                    }
+                    
                 }
             }
 		},
@@ -2288,12 +2296,13 @@ function jQueryPlugins($R){
         // a.fn.autogrow=function(j){var b=a.extend({onResize:function(){},animate:true,animateDuration:150,animateCallback:function(){},extraSpace:20,limit:1000},j);this.filter('textarea').each(function(){var c=a(this).css({resize:'none','overflow-y':'hidden'}),k=c.height(),f=(function(){var l=['height','width','lineHeight','textDecoration','letterSpacing'],h={};a.each(l,function(d,e){h[e]=c.css(e)});return c.clone().removeAttr('id').removeAttr('name').css({position:'absolute',top:0,left:-9999}).css(h).attr('tabIndex','-1').insertBefore(c)})(),i=null,g=function(){f.height(0).val(a(this).val()).scrollTop(10000);var d=Math.max(f.scrollTop(),k)+b.extraSpace,e=a(this).add(f);if(i===d){return}i=d;if(d>=b.limit){a(this).css('overflow-y','');return}b.onResize.call(this);b.animate&&c.css('display')==='block'?e.stop().animate({height:d},b.animateDuration,b.animateCallback):e.height(d)};c.unbind('.dynSiz').bind('keyup.dynSiz',g).bind('keydown.dynSiz',g).bind('change.dynSiz',g)});return this};
         $.fn.autogrow = function() {
             // this.filter('textarea').each(function() {
+            $('#rdr_shadow').remove();
 
             var $this       = $(this),
                 minHeight   = 67,
                 lineHeight  = $this.css('fontSize'); // used to be 'lineHeight' but that made the textarea too tall
 
-            var shadow = $('<div></div>').css({
+            var shadow = $('<div id="rdr_shadow"></div>').css({
                 position:   'absolute',
                 top:        -10000,
                 left:       -10000,
