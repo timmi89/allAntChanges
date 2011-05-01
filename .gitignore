@@ -7,3 +7,4 @@ readrdb.db
 .#*
 *.sublime-project
 *.sublime-project.*
+*.orig
