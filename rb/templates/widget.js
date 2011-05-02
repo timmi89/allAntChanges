@@ -861,7 +861,7 @@ function readrBoard($R){
                     // hello<br>how are you?   here becomes
                     // hellohow are you?    <-- no space where the <br> was.  bad.
                     var node_text = $(this).html().replace(/< *br *\/?>/gi, '\n');
-                    node_text = $( "<div>" + node_text + "</div>" ).text().toLowerCase();
+                    node_text = $.trim( $( "<div>" + node_text + "</div>" ).text().toLowerCase() );
 
                     // if there's any content...
                     if ( node_text && node_text!="undefined" && node_text.length > 5 ) {
@@ -913,8 +913,14 @@ function readrBoard($R){
                     },
                     success: function(response) {
                         var data = response.data;
-
-                        RDR.data = data;
+                        for ( var i in data.known ) {
+                            RDR.content_nodes[i].info = data.known[i];
+                            if ( RDR.content_nodes[i].info.comment_count + RDR.content_nodes[i].info.tag_count > 0 ) {
+                                RDR.actions.insertContainerIcons( i );
+                            }
+                        }
+                        // console.dir(RDR.content_nodes['cf3677ffb09818b086bc3d6dd53eb1f4']);
+                        // console.dir(RDR.content_nodes['345c1dfd92c4f46eca2f29adab9ce8cf']);
     					// TODO: Eric, should this go in a jquery queue?
     					var sendData = {};
     					sendData.hashes = {};
@@ -935,13 +941,20 @@ function readrBoard($R){
     			                     	json: JSON.stringify(sendData)
     			                     },
     			                    success: function(response) {
-    			                        
+    			                        // do nothing?  since we just added this container to the DB for the first time.
     			                    }
     						});
     					}
 					}
 				});
 			},
+            insertContainerIcons: function( hash ) {
+                // if ( RDR.content_nodes[i].info.comment_count + RDR.content_nodes[i].info.tag_count > 0 ) {
+                var container = $(RDR.group.anno_whitelist+'.rdr-'+hash);
+                container.append('<img src="/static/images/blank.png" width="5" height="5" id="rdr_helper_'+hash+'" />');
+                var helper_position = $('#rdr_helper_'+hash).offset();
+                $('body').append( '<div style="background:white;border:2px solid red;position:absolute;top:'+(helper_position.top-5)+'px;left:'+helper_position.left+'px;z-index:1000000;">icon here yo</div>' );
+            },
 			sentimentBox: function(settings) {
                 
                 /* keep commented out for now
@@ -1395,7 +1408,7 @@ console.dir(args);
 
                 //quick mockup version of this code
                 $.each(socialNetworks, function(idx, val){
-                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img src="/static/ui-prototype/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
+                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img src="/static/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
                 });
                 $socialBox.append($shareLinks);
                 // $socialBox.append('<div>herro worrd</div><div>herro worrd</div><div>herro worrd</div><div>herro worrd</div><div>herro worrd</div>');

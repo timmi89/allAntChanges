@@ -28,7 +28,7 @@ div.rdr.rdr_actionbar {
 	-moz-box-shadow:0 0 10px 1px #aaa;
 	-webkit-box-shadow:0 0 10px 1px #aaa;
 	box-shadow:0 0 10px 1px #aaa;
-	background:url("/static/ui-prototype/images/rindow_bg.png") no-repeat 0 0;
+	background:url("/static/images/actionbar_bg.png") no-repeat 0 0;
 	padding:0;
 	font:normal 12px Arial, sans-serif;
 	position:absolute;
@@ -46,7 +46,7 @@ div.rdr.rdr_actionbar li {
 }
 
 div.rdr.rdr_actionbar li a {
-	background:url("/static/ui-prototype/images/actionbar_icons.png") no-repeat 0 0 transparent;
+	background:url("/static/images/actionbar_icons.png") no-repeat 0 0 transparent;
 	display:block;
 	height:30px;
 	width:30px;
