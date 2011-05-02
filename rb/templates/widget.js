@@ -950,10 +950,22 @@ function readrBoard($R){
 			},
             insertContainerIcons: function( hash ) {
                 // if ( RDR.content_nodes[i].info.comment_count + RDR.content_nodes[i].info.tag_count > 0 ) {
+                    console.dir(RDR.content_nodes[hash].info);
                 var container = $(RDR.group.anno_whitelist+'.rdr-'+hash);
-                container.append('<img src="/static/images/blank.png" width="5" height="5" id="rdr_helper_'+hash+'" />');
+                container.append('<img src="/static/images/blank.png" width="20" height="20" id="rdr_helper_'+hash+'" />');
                 var helper_position = $('#rdr_helper_'+hash).offset();
-                $('body').append( '<div style="background:white;border:2px solid red;position:absolute;top:'+(helper_position.top-5)+'px;left:'+helper_position.left+'px;z-index:1000000;">icon here yo</div>' );
+                $('#rdr_helper_'+hash).remove();
+
+                var total = RDR.content_nodes[hash].info.comment_count + RDR.content_nodes[hash].info.tag_count;
+
+                var $icon = $('<div class="rdr rdr_indicator" style="top:'+(helper_position.bottom-16)+'px;left:'+helper_position.left+'px;"><img src="/static/images/blank.png" /> '+ total +'</div>');
+
+                $icon.click( function() {
+                    console.log('you just clicked on an embedded icon');
+                });
+
+                $('body').append( $icon );
+
             },
 			sentimentBox: function(settings) {
                 

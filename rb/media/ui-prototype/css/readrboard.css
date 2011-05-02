@@ -62,6 +62,18 @@ div.rdr.rdr_actionbar a:hover                       { background-color:#e4f0f7;}
 div.rdr.rdr_actionbar li.rdr_icon_about a:hover 	{ background-color:transparent; }
 div.rdr.rdr_actionbar span.rdr_icon_divider      	{ width:1px; background:#BBB; height:70%; position:absolute; top:15%; right:0; display:none;/*show dynamically*/}
 
+/* container icon */
+div.rdr_indicator {
+    padding:0;
+    font:normal 12px Arial, sans-serif;
+    position:absolute;
+    z-index:11000;
+    cursor:pointer;
+    color:#666;
+}
+
+div.rdr_indicator img   { background:url("/static/images/readr_icons.png") no-repeat 0 0; float:left; height:20px; margin-top:-1px; width:16px; }
+
 /* the tooltip */
 div.rdr.rdr_tooltip {
     -moz-border-radius:5px; -webkit-border-radius:5px; -moz-box-shadow:0 0 5px #888888; -webkit-box-shadow:0 0 5px #888888;
@@ -108,7 +120,7 @@ div.rdr div.rdr_selectedTextPanel div.rdr_body 	{background:#f0f0f0; -moz-box-sh
 div.rdr div.rdr_reactionPanel							{position:relative; z-index:20; width:200px}
 div.rdr div.rdr_reactionPanel div.rdr_body				{}
 div.rdr div.rdr_reactionPanel div.rdr_body .jspPane		{width:200px !important; }
-div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; }
+div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; background:url(/static/images/rindow_bg_column.png);}
 
 div.rdr div.rdr_whyPanel 						{position:absolute; z-index:10; right:0; width:250px;}
 div.rdr div.rdr_whyPanel div.rdr_body 			{width:250px; }
