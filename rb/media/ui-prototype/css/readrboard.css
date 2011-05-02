@@ -64,7 +64,7 @@ div.rdr.rdr_actionbar span.rdr_icon_divider      	{ width:1px; background:#BBB; 
 
 /* container icon */
 div.rdr_indicator { font:normal 12px Arial, sans-serif; position:absolute; z-index:11000; cursor:pointer; color:#666; padding: 5px 7px 4px 2px;}
-div.rdr_indicator:hover { -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa; background:#fff;  }
+div.rdr_indicator:hover { -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa; background:#fff; border:1px solid #ddd;}
 div.rdr_indicator img   { background:url("/static/images/readr_icons.png") no-repeat 0 0; float:left; margin-top:-1px; width:16px; }
 div.rdr_indicator span  {display:none;}
 div.rdr_indicator:hover span  {display:inline;}
@@ -143,11 +143,14 @@ $('div.rdr_tempUserMsg').animate({bottom:'-48px'});
 div.rdr .rdr_tags			{padding:0 0 10px;}
 div.rdr ul.rdr_tags			{list-style-type:none; padding:0; margin:0; }
 div.rdr ul.rdr_tags li	            {padding:0; margin:0; position:relative; overflow:auto; }
-div.rdr ul.rdr_tags li .rdr_leftBox     {width:30px; padding:0 3px; height:35px; border-right:1px solid #bababa; overflow:hidden; float:left; margin-right:5px; text-align:left;}
+div.rdr ul.rdr_tags li .rdr_leftBox     {width:30px; letter-spacing:1px; padding:4px 3px 0; height:35px; border-right:1px solid #bababa; overflow:hidden; float:left; margin-right:5px; text-align:center; font-size:21px;}
+div.rdr div.rdr_read ul.rdr_tags li .rdr_leftBox     {color:#008be4;}
 div.rdr ul.rdr_tags li:hover            {background:#e4f0f7;cursor:pointer;}
 div.rdr ul.rdr_tags li:hover a                      {color:#008be4; display:block; }
 div.rdr ul.rdr_tags li:hover .rdr_leftBox,
 div.rdr ul.rdr_tags li.rdr_tagged div.rdr_leftBox   {background:url(/static/images/widget_icons.png) 0px 0px no-repeat; }
+div.rdr div.rdr_read ul.rdr_tags li:hover div.rdr_leftBox,
+div.rdr div.rdr_read ul.rdr_tags li.rdr_tagged div.rdr_leftBox   {background-image:none; color:#008be4; }
 div.rdr ul.rdr_tags li.rdr_selected                 {color:#008be4; background:#e4f0f7; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; border:1px solid #bababa; border-right:0; border-left:0; height:33px; overflow:hidden; }
 div.rdr ul.rdr_tags li.rdr_selected a               {color:#008be4; display:block; margin-top:-1px;}
 div.rdr ul.rdr_tags li.rdr_selected .rdr_rightBox   {width:30px; padding:0 3px; height:35px; overflow:hidden; float:right; margin-left:5px; text-align:left; background:url(/static/images/widget_icons.png) -36px 0px no-repeat;}

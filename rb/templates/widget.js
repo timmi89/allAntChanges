@@ -963,15 +963,114 @@ function readrBoard($R){
                 var $icon = $('<div class="rdr rdr_indicator" style="top:'+(helper_position.bottom-36)+'px;left:'+(helper_position.left-3)+'px;"><img src="/static/images/blank.png" /> '+ total +' <span>reactions. Click to see them.</span></div>');
 
                 $icon.click( function() {
-                    RDR.actions.viewContainerReactions( hash );
+                    RDR.actions.viewContainerReactions( {hash:hash, icon:$(this)} );
                 });
 
                 $('body').append( $icon );
 
             },
-            viewContainerReactions: function( hash ) {
-                var info = RDR.content_nodes[hash].info;
+            viewContainerReactions: function( args ) {
+                console.clear();
+                var info = RDR.content_nodes[args.hash].info;
+                info.tag_totals = {
+                    0: {
+                        id: 1,
+                        name: "Great!",
+                        percentage: parseInt( 4 / info.tag_count * 100 )
+                    },
+                    1: {
+                        id: 2,
+                        name: "Hate",
+                        percentage: parseInt( 2 / info.tag_count * 100 )
+                    },
+                    2: {
+                        id: 3,
+                        name: "Interesting",
+                        percentage: parseInt( 1 / info.tag_count * 100 )
+                    }
+                };
+                console.dir( info.tag_totals );
 
+                var iconOffsets = args.icon.offset();
+
+                var rindow = RDR.rindow.draw({
+                    left:iconOffsets.left,
+                    top:iconOffsets.top,
+                    pnlWidth:200,
+                    ignoreWindowEdges:"bl",
+                    noHeader:true
+                });
+                rindow.css({width:'200px'});
+
+                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new" />'),
+                    $reactionPanel = $('<div class="rdr_reactionPanel rdr_read rdr_sntPnl" />'),
+                    $whyPanel = RDR.actions.whyPanel.draw( rindow ),
+                    $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />');
+                
+                var headers = ["Reactions <span>("+info.tag_count+")</span>", "CONTENT", "COMMENTS"];
+                $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
+                $sentimentBox.children().each(function(idx){
+                    var $header = $('<div class="rdr_header" />').append('<div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
+                    $body = $('<div class="rdr_body"/>');
+                    $(this).append($header, $body).css({
+                        // 'width':rindow.settings.pnlWidth
+                    });
+                });
+                RDR.actions.whyPanel.setup(rindow);
+
+                //populate reactionPanel
+                $reactionPanel.find('div.rdr_body').append($tagBox);
+                
+                ////populate blesed_tags
+                $.each(info.tag_totals, function(idx, val){
+                    var $li = $('<li class="rdr_tag_'+val.id+'" />').data({
+                        'tag':{
+                            content:parseInt( val.id ),
+                            name:val.name
+                        }
+                    }).append('<div class="rdr_rightBox"></div><div class="rdr_leftBox">'+val.percentage+'%</div><a href="javascript:void(0);">'+val.name+'</a>');
+                    
+                    $tagBox.children('ul.rdr_tags').append($li);
+                });
+
+                rindow.animate({
+                    width: rindow.settings.pnlWidth +'px',
+                    minHeight: rindow.settings.height +'px'
+                }, rindow.settings.animTime, function() {
+                    $(this).css('width','auto');
+                    // rindow.append($sentimentBox);
+                    rindow.find('div.rdr_contentSpace').append($sentimentBox);
+                    RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:rindow.settings});
+                    
+                    /* can remove I think:  PB, 5/1/2011
+                    if ( settings.content_type == "text" ) {
+                       rindow.find('div.rdr_selectedTextPanel em').text( settings.content );
+                    } else if ( settings.content_type == "image" ) {
+                        rindow.find('div.rdr_selectedTextPanel em').css('text-align','center').html( '<img style="max-width:100%;max-height:600px;" src=" ' + settings.content + '" />' );
+                    }
+                    */
+
+                    // enable the "click on a blessed tag to choose it" functionality.  just css class based.
+                    $('ul.rdr_preselected li').live('click', function() {
+                        var $this = $(this);
+                        if ( !$this.hasClass('rdr_customTagBox') ) {
+                            // if ( $this.hasClass('rdr_selected') ){
+                                // $this.removeClass('rdr_selected');
+                            // } else {
+                            $this.addClass('rdr_selected');
+                            $this.siblings().removeClass('rdr_selected');
+                            $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+                            
+                            // todo don't do this?
+                            // $whyPanel.find('.rdr_body').html('');
+
+                            // show a loader...
+
+                            console.log('ok lets view this tag');
+                            // }
+                        }
+                    });
+                });
             },
 			sentimentBox: function(settings) {
                 
