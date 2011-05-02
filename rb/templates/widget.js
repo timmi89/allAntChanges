@@ -958,7 +958,7 @@ function readrBoard($R){
 
                 var total = RDR.content_nodes[hash].info.comment_count + RDR.content_nodes[hash].info.tag_count;
 
-                var $icon = $('<div class="rdr rdr_indicator" style="top:'+(helper_position.bottom-16)+'px;left:'+helper_position.left+'px;"><img src="/static/images/blank.png" /> '+ total +'</div>');
+                var $icon = $('<div class="rdr rdr_indicator" style="top:'+(helper_position.bottom-21)+'px;left:'+(helper_position.left-5)+'px;"><img src="/static/images/blank.png" /> '+ total +' <span>reactions. Click to see them.</span></div>');
 
                 $icon.click( function() {
                     console.log('you just clicked on an embedded icon');
