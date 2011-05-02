@@ -96,7 +96,7 @@ function readrBoard($R){
                 x:100,
                 y:100,
                 pnlWidth:200,
-                animTime:300,
+                animTime:225,
                 height:150
             },
 			// content comes later.  this is just to identify or draw the container.
@@ -112,6 +112,7 @@ function readrBoard($R){
                         }
                         // if ( percentScroll ) $column.data('jsp').scrollToPercentY( percentScroll );
                     }
+
                 });
             },
 			draw: function(options) {
@@ -1035,8 +1036,6 @@ function readrBoard($R){
                     $blessedTagBox.children('ul.rdr_tags').append($li);
                 });
 
-                rindow.find('div.rdr_contentSpace').append($sentimentBox);
-                RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:settings});
                 ////customTagDialogue - develop this...
 
                 /*
@@ -1056,12 +1055,16 @@ function readrBoard($R){
                 }, rindow.settings.animTime, function() {
 					$(this).css('width','auto');
                     // rindow.append($sentimentBox);
+                    rindow.find('div.rdr_contentSpace').append($sentimentBox);
+                    RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:settings});
                     
+                    /* can remove I think:  PB, 5/1/2011
 					if ( settings.content_type == "text" ) {
                        rindow.find('div.rdr_selectedTextPanel em').text( settings.content );
 					} else if ( settings.content_type == "image" ) {
 						rindow.find('div.rdr_selectedTextPanel em').css('text-align','center').html( '<img style="max-width:100%;max-height:600px;" src=" ' + settings.content + '" />' );
 					}
+                    */
 
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
                     $('ul.rdr_preselected li').live('click', function() {
@@ -1179,7 +1182,7 @@ function readrBoard($R){
             rateSend: function(args) {
                 // optional loader.  it's a pacman pic.
                 args.tag.find('div.rdr_leftBox').html('<img src="/static/images/loader.gif" style="margin:6px 0 0 5px" />');
-                
+
                 //example:
                 //tag:{name, id}, rindow:rindow, settings:settings, callback: 
 			 	
@@ -1262,6 +1265,7 @@ function readrBoard($R){
                             }
                         });
                     } else {
+                        tag_li.find('div.rdr_leftBox').html('');
                         RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:tag_li.data('interaction_id') });
                     }
                 });
@@ -1337,7 +1341,7 @@ console.dir(args);
                 */
                 rindow.find('div.rdr_whyPanel div.rdr_body').empty();
                 if ( rindow.find('div.rdr_shareBox.rdr_sntPnl_padder').length == 0 || rindow.find('div.rdr_commentBox.rdr_sntPnl_padder').length == 0 ) {
-                    rindow.find('div.rdr_whyPanel .rdr_body').html('<div class="rdr_tagFeedback">You tagged this <strong>'+tag.name+'</strong></div><div class="rdr_shareBox rdr_sntPnl_padder"></div><div class="rdr_commentBox rdr_sntPnl_padder"></div>');
+                    rindow.find('div.rdr_whyPanel .rdr_body').html('<div class="rdr_tagFeedback">Your reaction to this: <strong>'+tag.name+'</strong></div><div class="rdr_shareBox rdr_sntPnl_padder"></div><div class="rdr_commentBox rdr_sntPnl_padder"></div>');
                 }
                 var $shareDialogueBox =  rindow.find('div.rdr_shareBox.rdr_sntPnl_padder');
                 var $commentBox = rindow.find('div.rdr_commentBox.rdr_sntPnl_padder');
