@@ -303,7 +303,7 @@ class ContainerHandler(BaseHandler):
 
             # Make list of unique content and retrieve their Content objects
             content_unique = interactions.order_by('content').distinct().values('content')#.values_list('content_id', flat=True)
-            content_objs = Content.objects.filter(id=content_unique)
+            content_objs = Content.objects.filter(id__in=content_unique)
 
             for content_item in content_objs:
                 data = {}
@@ -354,10 +354,8 @@ class PageDataHandler(BaseHandler):
         page = getPage(request, pageid)
         
         # Find all the interaction nodes on page
-        #su = User.objects.filter(social_user__isnull=False)
         nop = InteractionNode.objects.filter(
             interaction__page=page.id,
-            #interaction__user__in=su
         )
         
         # ---Get page interaction counts, grouped by kind---
@@ -371,7 +369,7 @@ class PageDataHandler(BaseHandler):
         # Annotate tags on page with count of interactions
         tagcounts = tags.annotate(tag_count=Count('interaction'))
         # Get tag_count and tag body ordered by tag count
-        toptags = tagcounts.values("tag_count","body").order_by('-tag_count')[:3]
+        toptags = tagcounts.values("tag_count","body").order_by('-tag_count')[:10]
             
         # ---Find top 10 shares on a give page---
         content = Content.objects.filter(
@@ -379,7 +377,7 @@ class PageDataHandler(BaseHandler):
             interaction__interaction_node__kind='shr',
         )
         sharecounts = content.annotate(Count("id"))
-        topshares = sharecounts.values("body").order_by()[:10]  
+        topshares = sharecounts.values("body").order_by()[:10]
         
         # ---Find top 10 non-temp users on a given page---
         users = User.objects.filter(

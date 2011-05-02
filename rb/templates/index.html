@@ -18,7 +18,11 @@
 <ul>
 {% for interaction in interactions %}
 <li>
-	{% if interaction.user.social_user %}<img src = "{{ interaction.user.social_user.img_url }}">{% endif %} 
+	{% if interaction.user.social_user %}
+        <img src = "{{ interaction.user.social_user.img_url }}">
+    {% else %}
+        <img src = "/static/images/anonymousplode.png">
+    {% endif %} 
 	<strong>
     {% if interaction.user.social_user %}
         <a href = "/profile/{{ interaction.user.id }}/">{{ interaction.user.first_name }} {{ interaction.user.last_name }}</a>
