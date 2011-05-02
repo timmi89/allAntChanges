@@ -1177,7 +1177,9 @@ function readrBoard($R){
                 }
             },
             rateSend: function(args) {
-
+                // optional loader.  it's a pacman pic.
+                args.tag.find('div.rdr_leftBox').html('<img src="/static/images/loader.gif" style="margin:6px 0 0 5px" />');
+                
                 //example:
                 //tag:{name, id}, rindow:rindow, settings:settings, callback: 
 			 	
@@ -1215,6 +1217,7 @@ function readrBoard($R){
                             dataType: "jsonp",
                             data: { json: JSON.stringify(sendData) },
                             success: function(response) {
+                                tag_li.find('div.rdr_leftBox').html('');
                                 //console.dir(response);
                                 //[eric] - if we want these params still we need to get them from args:
                                 //do we really want to chain pass these through?  Or keep them in a shared scope?
