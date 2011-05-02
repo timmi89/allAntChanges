@@ -950,21 +950,27 @@ function readrBoard($R){
 			},
             insertContainerIcons: function( hash ) {
                 // if ( RDR.content_nodes[i].info.comment_count + RDR.content_nodes[i].info.tag_count > 0 ) {
-                    console.dir(RDR.content_nodes[hash].info);
+                console.log('-- what we know about hash '+hash+' --');
+                console.dir(RDR.content_nodes[hash]);
+
                 var container = $(RDR.group.anno_whitelist+'.rdr-'+hash);
-                container.append('<img src="/static/images/blank.png" width="20" height="20" id="rdr_helper_'+hash+'" />');
+                container.append('<img src="/static/images/blank.png" width="32" height="24" id="rdr_helper_'+hash+'" />');
                 var helper_position = $('#rdr_helper_'+hash).offset();
                 $('#rdr_helper_'+hash).remove();
 
                 var total = RDR.content_nodes[hash].info.comment_count + RDR.content_nodes[hash].info.tag_count;
 
-                var $icon = $('<div class="rdr rdr_indicator" style="top:'+(helper_position.bottom-21)+'px;left:'+(helper_position.left-5)+'px;"><img src="/static/images/blank.png" /> '+ total +' <span>reactions. Click to see them.</span></div>');
+                var $icon = $('<div class="rdr rdr_indicator" style="top:'+(helper_position.bottom-36)+'px;left:'+(helper_position.left-3)+'px;"><img src="/static/images/blank.png" /> '+ total +' <span>reactions. Click to see them.</span></div>');
 
                 $icon.click( function() {
-                    console.log('you just clicked on an embedded icon');
+                    RDR.actions.viewContainerReactions( hash );
                 });
 
                 $('body').append( $icon );
+
+            },
+            viewContainerReactions: function( hash ) {
+                var info = RDR.content_nodes[hash].info;
 
             },
 			sentimentBox: function(settings) {
