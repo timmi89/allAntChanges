@@ -2031,6 +2031,7 @@ function jQueryPlugins($R){
                         log(range)
                         Hilite.hiliteBrush.undoToRange(range);
                     }
+                    $(this).unbind('keyup', arguments.callee); //remove this binding so it only happens once.
                 });
                 
             }
@@ -2086,7 +2087,6 @@ function jQueryPlugins($R){
             */
             ],
             _style_name:'rdr_hilite',
-            _WSO: rangy.getSelection(), //Window Selection Object (see above).  Just used to later 'activate' custom selections 
             _cloneSelRev: function(ranges){
                 var newRanges = $.map(ranges, function(range, idx){
                     return( range.cloneRange() ); //rangy range function cloneRange
@@ -2112,16 +2112,18 @@ function jQueryPlugins($R){
                     //idx will give the next avail index in _selRevs.  Indexes should not be shifted.  Note that length is initially zero which is correct. 
                     idx: selRevStack.length,
                     timestamp: $.now(),
-                    rangySelection: null,   //set below - only set if ranges are not passed in
+                    rangySelection: rangy.getSelection(),   //set below - only set if ranges are not passed in
                     selRevParent: null,     //set below
                     ranges: null,           //set below
                     text: ""                //set below
                 };
-                
+
                 if(typeof ranges === 'undefined'){
                     selRev.rangySelection = rangy.getSelection();
                     selRev.ranges = selRev.rangySelection.getAllRanges();
                 }else{
+                    selRev.rangySelection.removeAllRanges();
+                    selRev.rangySelection.setRanges(ranges);
                     selRev.ranges = ranges;
                 }
                 
@@ -2152,9 +2154,10 @@ function jQueryPlugins($R){
             restoreSelRev: function(idx) {
                 var selRev = this._fetchSelRev(idx);
                 log(selRev);
+                 log(selRev.rangySelection);
                 if(!selRev) return false;
                 //else
-                this._WSO.setRanges(selRev.ranges);
+                selRev.rangySelection.setRanges(selRev.ranges);
                 return selRev;
             },
             reviseSelRev: function(idx) {
