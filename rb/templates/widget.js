@@ -1984,16 +1984,19 @@ function jQueryPlugins($R){
             
             if (typeof options === "undefined" ) options = {};
             Hilite.options = $.extend({
-                selRev:undefined,
-                WSO: rangy.getSelection(window) //Window Selection Object
+                selRev:undefined
             }, options);
-            
-            var ranges = Hilite.options.selRev.ranges;
+            var selRev = Hilite.options.selRev,
+            ranges = selRev.ranges;
             if(typeof ranges === "undefined") return this;
             //else
-            Hilite.options.WSO.removeAllRanges();
+            selRev.rangySelection.removeAllRanges();
             //at least for now, don't deal with multiple ranges
             var range = ranges[0];
+
+            //test - serializer:
+            range = rangy.deserializeRange(selRev.serialRange);
+
             var host = range.commonAncestorContainer;
             //get the closest parent that isn't a textNode
             //todo: check this..  any other weird nodes I need to think about?
@@ -2009,31 +2012,22 @@ function jQueryPlugins($R){
             //add generic class to pick up stlye, and numbered version to uniqely identify it.
             brushClass: "rdr_hilite",
             hiliteBrush: rangy.createCssClassApplier("rdr_hilite", true),
-            lastRange:null,
-            options: {}, //to be initialized
-            hiliteElement: function(el, range) {
-                if (Hilite.lastRange){
-                    //Hilite.hiliteBrush.undoToRange(Hilite.lastRange);
-                }
-                var opts = Hilite.options,
-                $el = $(el);
-                log(el)
-
+            hiliteElement: function(range) {
+                //apply hilite
                 Hilite.hiliteBrush.applyToRange(range);
-                Hilite.lastRange = range;
-                
+                //apply css classes to start and end so we can style those specially
                 $(range.startContainer).closest('.'+Hilite.brushClass).addClass(Hilite.brushClass+'_start')
                 $(range.endContainer).closest('.'+Hilite.brushClass).addClass(Hilite.brushClass+'_end')
 
                 //add escape keypress event to document to remove all hilites
                 $(document).keyup(function(event) {
                     if (event.keyCode == '27') { //esc
-                        log(range)
+                        log('removing hilite for range:' + range)
                         Hilite.hiliteBrush.undoToRange(range);
                     }
-                    $(this).unbind('keyup', arguments.callee); //remove this binding so it only happens once.
+                    //remove this binding so that we don't try to keep removing the non-existant hilite.
+                    $(this).unbind('keyup', arguments.callee);
                 });
-                
             }
         };
 
@@ -2080,7 +2074,7 @@ function jQueryPlugins($R){
                     selection: selectionObj || rangy.getSelection(),
                     idx: selRevStack.length,
                     timestamp: $.now(),
-                    selRevParent: null, //set below
+                    revisionParent: null, //set below
                     ranges: null,       //set below
                     text: ""            //set below
                 }
@@ -2113,7 +2107,7 @@ function jQueryPlugins($R){
                     idx: selRevStack.length,
                     timestamp: $.now(),
                     rangySelection: rangy.getSelection(),   //set below - only set if ranges are not passed in
-                    selRevParent: null,     //set below
+                    revisionParent: null,     //set below
                     ranges: null,           //set below
                     text: ""                //set below
                 };
@@ -2125,8 +2119,9 @@ function jQueryPlugins($R){
                     selRev.rangySelection.removeAllRanges();
                     selRev.rangySelection.setRanges(ranges);
                     selRev.ranges = ranges;
+                    selRev.serialRange = rangy.serializeRange(ranges[0])
                 }
-                
+
                 $.each(selRev.ranges, function(idx, val){
                     selRev.text += val.toString(); //rangy range toString function
                 });
@@ -2135,17 +2130,15 @@ function jQueryPlugins($R){
                 selRevStack[selRev.idx] = selRev;
 
                 //temp log to tempOutput    
-                var str,
-                txtLen = selRev.text.length; 
-                if(txtLen <= 30){
+                    var str,
+                    txtLen = selRev.text.length; 
+                    if(txtLen <= 30){
                         str = selRev.text;
-                        log('str')
-                        log(str)
-                }
-                else{
-                    str = selRev.text.substring(0,15)+'...'+selRev.text.substring(txtLen-15,txtLen);
-                }
-                $('#rdr_tempOutput').append('<div><b>'+selRev.idx+'</b>: '+str+'</div>');
+                    }
+                    else{
+                        str = selRev.text.substring(0,15)+'...'+selRev.text.substring(txtLen-15,txtLen);
+                    }
+                    $('#rdr_tempOutput').append('<div><b>'+selRev.idx+'</b>: '+str+'</div>');
                 //end temp log to tempOutput
                 
                 log(selRev);
@@ -2154,7 +2147,6 @@ function jQueryPlugins($R){
             restoreSelRev: function(idx) {
                 var selRev = this._fetchSelRev(idx);
                 log(selRev);
-                 log(selRev.rangySelection);
                 if(!selRev) return false;
                 //else
                 selRev.rangySelection.setRanges(selRev.ranges);
@@ -2227,7 +2219,6 @@ function jQueryPlugins($R){
                         //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
                         hlpr.regx1 = /\s*\S+$/;
                         hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
-                        log(hlpr.result1);
                         if (hlpr.result1 === null) return range;
                         //else
 
@@ -2236,7 +2227,6 @@ function jQueryPlugins($R){
                         hlpr.str2 = hlpr.str1.replace(/\s*/,"");
                         hlpr.extraWordChars = hlpr.str2.length;
                         scope._rangeOffSet(range, {relOffset: (-hlpr.extraWordChars) });
-                        log(range)
                         return range;
                     },
                     lastWordSnap: function(range){
