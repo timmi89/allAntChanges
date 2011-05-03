@@ -191,7 +191,7 @@ class Link(models.Model):
 
 class SocialUser(models.Model):
     """Social Auth association model"""
-    user = models.OneToOneField(User, related_name='social_user')
+    user = models.OneToOneField(User, related_name='social_user', unique=True)
     provider = models.CharField(max_length=32)
     uid = models.CharField(max_length=255, unique=True)
     full_name = models.CharField(max_length=255)
