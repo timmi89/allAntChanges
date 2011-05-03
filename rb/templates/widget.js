@@ -935,7 +935,7 @@ function readrBoard($R){
 			},
 			sentimentBox: function(settings) {
                 
-                /* keep commented out for now
+                
 
                 var $hostNode = $('.rdr-'+settings.container);
                 //console.log(typeof selection.content);
@@ -947,7 +947,7 @@ function readrBoard($R){
                 $hostNode.hilite({
                     selRev:revisedSelRev
                 });
-                */
+                
                 
                 // draw the window over the actionbar
                 var actionbarOffsets = settings.coords;
@@ -962,7 +962,7 @@ function readrBoard($R){
 					actionbarOffsets.top = actionbarOffsets.top + 35;
 				}
 				
-				/*
+				
 				//keep commented out for now
 				//testing adjusting the position with overrides from the hilite span 
                 var $endSpan = $('.rdr_hilite_end');
@@ -977,7 +977,7 @@ function readrBoard($R){
                     actionbarOffsets.top = strBottom;
                 }
                 
-                */
+                
                 var rindow = RDR.rindow.draw({
                     left:actionbarOffsets.left,
                     top:actionbarOffsets.top,
@@ -2476,14 +2476,14 @@ function jQueryPlugins($R){
                         superRange.startRange = {
                             node: textnode,
                             //nodeIndex: idx,
-                            offset: stepIdx - start;   //lookbehind to get rel start index for this textnode
+                            offset: stepIdx - start   //lookbehind to get rel start index for this textnode
                         }
                     }
                     if( a > end && end < b ){
                         superRange.endRange = {
                             node: textnode,
                             //nodeIndex: idx,
-                            offset: stepIdx - end;      //lookbehind to get rel end index for this textnode
+                            offset: stepIdx - end     //lookbehind to get rel end index for this textnode
                         }
                     }
                     stepIdx = b;
