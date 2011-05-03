@@ -2015,15 +2015,15 @@ function jQueryPlugins($R){
             //use a unique indexed version of style to uniquely identify spans
             var styleClass = selRev.styleName,
             uniqueClass = styleClass+"_"+selRev.idx,
-            hiliteBrush = rangy.createCssClassApplier( uniqueClass, true ),
+            hiliteBrush = rangy.createCssClassApplier( styleClass, true ),
             $startBrushNode, $endBrushNode; //the start and end brush helper spans.
             
             hiliteBrush.applyToRange(range);
             
             //apply the visual styles with the generic classes
-            $('.'+uniqueClass).addClass(styleClass);
-            $startBrushNode = $(range.startContainer).closest('.'+uniqueClass);
-            $endBrushNode = $(range.endContainer).closest('.'+uniqueClass);
+            //$('.'+uniqueClass).addClass(styleClass);
+            $startBrushNode = $(range.startContainer).closest('.'+styleClass);
+            $endBrushNode = $(range.endContainer).closest('.'+styleClass);
             
             //apply css classes to start and end so we can style those specially
             $startBrushNode.addClass(styleClass+'_start');
@@ -2036,12 +2036,12 @@ function jQueryPlugins($R){
                     //remove the classes again so that the hilitebrush can normalize the selection (paste it back together)
                     $startBrushNode.removeClass(styleClass+'_start');
                     $endBrushNode.removeClass(styleClass+'_end');
-                    $('.'+uniqueClass).removeClass(styleClass);
+                    //$('.'+uniqueClass).removeClass(styleClass);
                     //finally, 
                     hiliteBrush.undoToRange(range);
                 }
                 //remove this binding so that we don't try to keep removing the non-existant hilite.
-                $(document).unbind('keyup', arguments.callee);
+                //$(document).unbind('keyup', arguments.callee);
             });
         }
     })($R);
