@@ -962,14 +962,16 @@ function readrBoard($R){
 					actionbarOffsets.top = actionbarOffsets.top + 35;
 				}
 				
-				
+				/*
 				//keep commented out for now
 				//testing adjusting the position with overrides from the hilite span 
-                var $endSpan = $("." +selRev.styleName+ "_end");
-                
-                if($endSpan){
+                var range = selRev.ranges[0];
+                log(range);
+                var $endBrushNode = $(range.endContainer);
+                log($endBrushNode )
+                if($endBrushNode){
                     var $helper = $('<span />');
-                    $helper.insertAfter($endSpan);
+                    $helper.insertAfter($endBrushNode);
                     var strRight = $helper.offset().right;
                     var strBottom = $helper.offset().bottom;
                     $helper.remove();
@@ -977,7 +979,7 @@ function readrBoard($R){
                     actionbarOffsets.top = strBottom;
                 }
                 
-                
+                */
                 var rindow = RDR.rindow.draw({
                     left:actionbarOffsets.left,
                     top:actionbarOffsets.top,
@@ -1992,13 +1994,15 @@ function jQueryPlugins($R){
             if(typeof ranges === "undefined") return this;
             //else
             log(selRev.text);
+            //todo: do a more proper targeting for an empty range
+            if(selRev.text.length == 0) return false;
             //don't trust when the rangySelection picks up the latest selection: clear it for now..
             selRev.rangySelection.removeAllRanges();
             //at least for now, don't deal with multiple ranges
             var range = ranges[0];
 
             //test - serializer:
-            range = rangy.deserializeRange(selRev.serialRange);
+            //range = rangy.deserializeRange(selRev.serialRange);
 
             var host = range.commonAncestorContainer;
             //get the closest parent that isn't a textNode
@@ -2015,15 +2019,15 @@ function jQueryPlugins($R){
             //use a unique indexed version of style to uniquely identify spans
             var styleClass = selRev.styleName,
             uniqueClass = styleClass+"_"+selRev.idx,
-            hiliteBrush = rangy.createCssClassApplier( styleClass, true ),
+            hiliteBrush = rangy.createCssClassApplier( uniqueClass, true ),
             $startBrushNode, $endBrushNode; //the start and end brush helper spans.
             
             hiliteBrush.applyToRange(range);
             
             //apply the visual styles with the generic classes
-            //$('.'+uniqueClass).addClass(styleClass);
-            $startBrushNode = $(range.startContainer).closest('.'+styleClass);
-            $endBrushNode = $(range.endContainer).closest('.'+styleClass);
+            $('.'+uniqueClass).addClass(styleClass);
+            $startBrushNode = $(range.startContainer).closest('.'+uniqueClass);
+            $endBrushNode = $(range.endContainer).closest('.'+uniqueClass);
             
             //apply css classes to start and end so we can style those specially
             $startBrushNode.addClass(styleClass+'_start');
@@ -2036,9 +2040,15 @@ function jQueryPlugins($R){
                     //remove the classes again so that the hilitebrush can normalize the selection (paste it back together)
                     $startBrushNode.removeClass(styleClass+'_start');
                     $endBrushNode.removeClass(styleClass+'_end');
-                    //$('.'+uniqueClass).removeClass(styleClass);
+                    $('.'+uniqueClass).removeClass(styleClass);
                     //finally, 
-                    hiliteBrush.undoToRange(range);
+                    if(hiliteBrush.isAppliedToRange(range)){
+                        hiliteBrush.undoToRange(range);
+                    }
+                    else{
+                        log('error ' + range)
+                        log(range)
+                    }
                 }
                 //remove this binding so that we don't try to keep removing the non-existant hilite.
                 //$(document).unbind('keyup', arguments.callee);
