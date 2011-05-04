@@ -19,14 +19,21 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE':   'django.db.backends.sqlite3',         # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME':     'readrdb.db',             # Or path to database file if using sqlite3.
-        'USER':     '',             # Not used with sqlite3.
-        'PASSWORD': '',         # Not used with sqlite3.
-        'HOST':     '',             # Set to empty string for localhost. Not used with sqlite3.
-        'PORT':     '',             # Set to empty string for default. Not used with sqlite3.
+        'ENGINE':   'django.db.backends.sqlite3',
+        'NAME':     'readrdb.db',
+        'USER':     '',
+        'PASSWORD': '',
+        'HOST':     '', 
+        'PORT':     '', 
     }
 }
+
+#CACHES = {
+#    'default': {
+#        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+#        'LOCATION': 'readr.cache'
+#    }
+#}
 
 FILE_REL_PATH = '/usr/share/'
 
@@ -75,7 +82,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    #'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'readrboard.urls'
@@ -93,7 +100,6 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     #'django.contrib.sessions',
-    'readrboard.rb',
     'django.contrib.admin',
     'readrboard.api',
     'piston',
@@ -101,13 +107,14 @@ INSTALLED_APPS = (
     'treebeard',
     'debug_toolbar',
     'autofixture',
+    'readrboard.rb',
 )
 
 # for get_profile()
 AUTH_PROFILE_MODULE = 'rb.SocialUser'
 
 # for sessions
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+#SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
 # for lazy signup
 AUTHENTICATION_BACKENDS = (

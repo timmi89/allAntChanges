@@ -1,37 +1,13 @@
-from piston.handler import BaseHandler, AnonymousBaseHandler
+from piston.handler import BaseHandler
 from django.http import HttpResponse, HttpResponseBadRequest
-from settings import FACEBOOK_APP_SECRET
-from django.db import transaction
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import User
-from extras.facebook import GraphAPI, GraphAPIError
 from decorators import status_response, json_data
 from exceptions import JSONException
 from utils import *
 from userutils import *
 from token import *
 
-
-"""
-Readrboard Widget API
-"""
-
-class TempUserHandler(BaseHandler):
-
-    @status_response
-    def read(self, request):
-        data = json.loads(request.GET['json'])
-        group_id = data['group_id']
-        user = User.objects.create_user(
-            username=generateUsername(), 
-            email='tempuser@readrboard.com'
-        )
-        readr_token = createToken(user.id, 'R3dRB0aRdR0X', group_id)
-        return dict(
-            user_id=user.id,
-            readr_token=readr_token
-        )
 
 class InteractionNodeHandler(BaseHandler):
     model = User
@@ -49,85 +25,46 @@ class ContentHandler(BaseHandler):
     model = Interaction
     fields = ('id', 'content', 'user')
 
-class InteractionsHandler(BaseHandler):
-
+"""
+class InteractionHandler(BaseHandler):
     @status_response
     def read(self, request, **kwargs):
-        nodes = InteractionNode.objects.all()
-        if 'kind' in kwargs:
-            nodes = nodes.filter(kind=kwargs['kind'])
-        elif 'page_id' in kwargs:
-            nodes = nodes.filter(interaction__page=kwargs['page_id'])
-        elif 'interaction_id' in kwargs:
-            nodes = nodes.filter(interaction__id=kwargs['interaction_id'])
-        elif 'hash' in kwargs:
-            containers = Container.objects.filter(hash=kwargs['hash'].lower())
-            nodes = nodes.filter(interaction__container=containers)
-        return nodes
-
-class Deauthorize(BaseHandler):
-
-    @status_response
-    def read(self, request):
+        # load the json data
         data = json.loads(request.GET['json'])
+
+        # check to see if user token is valid
         if not checkToken(data): raise JSONException(u"Token was invalid")
+
+        # get necessary variables from data
+        user = data.get('user_id')
+        group_id = data.get('group_id')
+        page_id = data.get('page_id')
+
         try:
-            SocialAuth.objects.filter(
-                social_user__user__id=data['user_id']
-            ).delete()
-        except:
-            raise JSONException(u'Error deauthorizing user')
+            user = User.objects.get(id=data['user_id'])
+        except User.DoesNotExist, User.MultipleObjectsReturned:
+            raise JSONException(u"Error getting user!")
+        try:
+            page = Page.objects.get(id=page_id)
+        except Page.DoesNotExist, Page.MultipleObjectsReturned:
+            raise JSONException(u"Error getting page!")
+        try:
+            group = Group.objects.get(id=group_id)
+        except Group.DoesNotExist, Group.MultipleObjectsReturned:
+            raise JSONException(u"Error getting group!")
 
-class FBHandler(BaseHandler):
+        action = kwargs['action']
 
-    @status_response
-    def read(self, request):
-        data = json.loads(request.GET['json'])
-        fb_session = data['fb']
-        group_id = data['group_id']
-        access_token = fb_session.get('access_token', None)
-        user_id = data.get('user_id', None)
+        if action == 'create':
+            self.createInteraction(self, request, user, group_id, page_id, **data)
 
-        if(access_token):
-            graph = GraphAPI(access_token)
-        else:
-            raise JSONException(u"No access token")
+        if action == 'delete':
+            self.deleteInteraction(self, request, **data)
 
-        # Get user profile from facebook graph
-        profile = graph.get_object("me")
+class CommentHandler(InteractionHandler):
+    def createInteraction(self, requst, **data):
 
-        django_user = createDjangoUser(profile);
-        social_user = createSocialUser(django_user, profile)
-        social_auth = createSocialAuth(
-            social_user,
-            django_user,
-            group_id,
-            fb_session
-        )
-
-        # Check to see if user passed in was temporary, if yes, convert
-        # temporary user's interactions to social user interactions
-        if user_id and len(SocialUser.objects.filter(user__id=user_id)) == 0:
-            convertUser(user_id, django_user)
-
-        # Make a token for this guy
-        readr_token = createToken(django_user.id, social_auth.auth_token, group_id)
-
-        return dict(
-            user_id=django_user.id,
-            first_name=django_user.first_name,
-            full_name=social_user.full_name,
-            img_url=social_user.img_url,
-            readr_token=readr_token
-        )
-
-class InteractionHandler(BaseHandler):
-    
-    def read(self, request, id):
-        interaction = Interaction.objects.get(id=id)
-        tree = Interaction.get_tree(interaction)
-        return tree
-
+"""
 class CommentHandler(BaseHandler):
     
     @status_response
@@ -326,6 +263,7 @@ class ContainerHandler(BaseHandler):
                 for tag_item in tag_objs:
                     tag_data = {}
                     tag_data['tag'] = tag_item.body
+                    tag_data['id'] = tag_item.id
                     tag_data['count'] = content_interactions.filter(interaction_node=tag_item).count()
                     comments = []
                 

@@ -1,7 +1,6 @@
 from django.db import models
-from treebeard.mp_tree import MP_Node
+#from treebeard.mp_tree import MP_Node
 from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
 from baseconv import base62
 import datetime
 
