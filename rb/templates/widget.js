@@ -9,7 +9,7 @@ client$ = {}; //init var: clients copy of jQuery
 //init rangy if it hasn't been already, we probably dont need this...
 rangy.init();
 var a;
-var rbRangy; //temp glob
+var selKeeper; //temp glob
 var demoRindow;
 
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
@@ -941,9 +941,9 @@ function readrBoard($R){
                 //console.log(typeof selection.content);
 
                 //Trigger the smart text selection and highlight
-                var selRev = $(window).rbRangy('saveSelRev');
+                var selRev = $(window).selKeeper('save');
                 log(selRev);
-                var revisedSelRev = $(window).rbRangy('reviseSelRev', selRev.idx);
+                var revisedSelRev = $(window).selKeeper('modify', selRev.idx);
                 log(revisedSelRev)
                
                 $hostNode.hilite(revisedSelRev);
@@ -2022,7 +2022,7 @@ function jQueryPlugins($R){
                     _settings = options ? $.extend(defaults, options) : defaults;
                 });
             },
-            saveSelRev: function(range){
+            save: function(range){
                 //ranges is optional and will usually be ommited.  Defaults to current selection with ranges
                 var scope = this,
                 selRevStack = _selRevs,
@@ -2073,7 +2073,7 @@ function jQueryPlugins($R){
                 log(selRev);
                 return selRev;
             },
-            restoreSelRev: function(idx) {
+            restore: function(idx) {
                 var selRev = _fetchSelRev(idx);
                 log(selRev);
                 if(!selRev) return false;
@@ -2081,7 +2081,7 @@ function jQueryPlugins($R){
                 _WSO().setSingleRange(selRev.range);
                 return selRev;
             },
-            reviseSelRev: function(idx) {
+            modify: function(idx) {
                 var iniSelRev = _fetchSelRev(idx),
                 newSelRev, newRange;
                 if(!iniSelRev) return false;
@@ -2090,14 +2090,14 @@ function jQueryPlugins($R){
                 newRange = iniSelRev.range.cloneRange();
                 //filter the ranges
                 newRange = _filter(newRange);
-                newSelRev = methods.saveSelRev(newRange);
-                //methods.restoreSelRev(newSelRev); //for testing, this should be prob seperate though
+                newSelRev = methods.save(newRange);
+                //methods.restore(newSelRev); //for testing, this should be prob seperate though
                 return newSelRev
              }
 
         };
 
-        $.fn.rbRangy = function( params ) {
+        $.fn.selKeeper = function( params ) {
 
             //jQuery plugin pattern :http://docs.jquery.com/Plugins/Authoring
             //'this' refers to the jQuery object the plugin was invoked on. It is already a jQuery object
@@ -2118,7 +2118,7 @@ function jQueryPlugins($R){
         var _selRevs = [
         /*
             //keep commented out:
-            //Example template: Set by saveSelRev and added to the stack.
+            //Example template: Set by save and added to the stack.
              {
                 todo: update this is old...
 
@@ -2290,35 +2290,35 @@ function jQueryPlugins($R){
                 //note, remember to use $R instead of $ if calling in firebug
                 a:{
                     name:'save',
-                    func:'saveSelRev',
+                    func:'save',
                     attr:undefined
                 },
                 b:{
                     name:'restore',
-                    func:'restoreSelRev',
+                    func:'restore',
                     attr:undefined
                 },
                 c:{
                     name:"revise",
-                    func:'reviseSelRev',
+                    func:'modify',
                     attr:undefined
                 }
             }
             $.each(buttonInfo,function(idx, val){
                 var $button = $('<div class="rdr_tempButton"><a href=\"javascript:void(0);\">'+this.name+'</a><input /></div>');
                 $button.find('input').focus(function(){
-                    //$R(window).rbRangy('saveSelRev');
-                    //$R(window).rbRangy('restoreSelRev');
+                    //$R(window).selKeeper('save');
+                    //$R(window).selKeeper('restore');
                 });
                 $button.find('a').click(function(){
                     var input = $(this).parent().find('input').val();
                     val.attr= (input == "" ) ? undefined : input;
-                    var selrev = $(window).rbRangy(val.func, val.attr);
+                    var selrev = $(window).selKeeper(val.func, val.attr);
                 });
                 $tempButtons.append($button);
             });
             $tempButtons.find('input').eq(0).remove();
-            var $output = $('<div id="rdr_tempOutput" />').css({'font-size':'12px'}); //filled out for now with saveSelRev function
+            var $output = $('<div id="rdr_tempOutput" />').css({'font-size':'12px'}); //filled out for now with save function
             $tempButtons.append($output);
 
             $tempButtons.css({'position':'fixed', 'margin-left':'5px'});
@@ -2328,9 +2328,9 @@ function jQueryPlugins($R){
         }
         //end private functions
 
-        //init rbRangy on window.
+        //init selKeeper on window.
         log('test about to init');
-        $(window).rbRangy();
+        $(window).selKeeper();
 
     })($R);
 
@@ -2415,7 +2415,7 @@ function jQueryPlugins($R){
     (function($){
 
         /*
-         * jquery.ui.rbRangy
+         * jquery.ui.selKeeper
          * 
          * readrboard.com - started by eric@readrboard.com
          * 
