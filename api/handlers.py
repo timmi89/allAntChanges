@@ -9,7 +9,7 @@ from userutils import *
 from token import *
 
 
-class InteractionNodeHandler(BaseHandler):
+class UserHandler(BaseHandler):
     model = User
     fields = ('id', 'first_name', 'last_name')
 
@@ -21,11 +21,12 @@ class ContentHandler(BaseHandler):
     model = Content
     fields = ('id', 'body', 'kind')
 
-class ContentHandler(BaseHandler):
+"""
+class InteractionHandler(BaseHandler):
     model = Interaction
     fields = ('id', 'content', 'user')
 
-
+"""
 class InteractionHandler(BaseHandler):
     @status_response
     def read(self, request, **kwargs):
@@ -35,8 +36,6 @@ class InteractionHandler(BaseHandler):
         # check to see if user's token is valid
         if not checkToken(data): raise JSONException(u"Token was invalid")
 
-        action = kwargs.get('action')
-
         # get user data
         user_id = data.get('user_id')
         try:
@@ -44,7 +43,10 @@ class InteractionHandler(BaseHandler):
         except User.DoesNotExist, User.MultipleObjectsReturned:
             raise JSONException(u"Interaction Handler: Error getting user!")
 
-        # do create action
+        # retrieve action flag
+        action = kwargs.get('action')
+
+        # do create action - varies per interaction
         if action == 'create':
             page_id = data.get('page_id')
             try:
@@ -61,7 +63,7 @@ class InteractionHandler(BaseHandler):
             # do create action for specific type
             return self.create(data, user, page, group)
 
-        # do delete action
+        # do delete action - same for all interactions
         if action == 'delete':
             interaction_id = data['int_id']['id']
             try:
@@ -113,14 +115,7 @@ class TagHandler(InteractionHandler):
                     new = createInteraction(page, container, content, user, node, group)
                 elif isinstance(tag, int):
                     node = InteractionNode.objects.get(id=tag)
-                    new = createInteraction(
-                        page=page,
-                        container=container,
-                        content=content,
-                        user=user,
-                        interaction_node=node,
-                        group=group
-                    )
+                    new = createInteraction(page, container, content, user, node, group)
                 return new
             else:
                 return JSONException(u"No tag provided to tag handler")

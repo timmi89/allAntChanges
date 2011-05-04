@@ -15,7 +15,10 @@ def getPage(request, pageid=None):
     if pageid:
         return Page.objects.get(id=pageid)
     elif canonical:
-        page = Page.objects.get_or_create(canonical_url=canonical, defaults={'url': fullurl, 'site': site})
+        page = Page.objects.get_or_create(
+            canonical_url=canonical,
+            defaults={'url': fullurl, 'site': site}
+        )
     else:
         page = Page.objects.get_or_create(url=fullurl, defaults={'site': site})
         
@@ -55,7 +58,7 @@ def deleteInteraction(interaction, user):
         try:
             interaction.delete();
         except:
-            raise JSONException("Something bad happened when we tried to delete the interaction")
+            raise JSONException("Error deleting the interaction")
         message="Deleting the interaction seems to have worked"
         if tempuser: return dict(message=message,num_interactions=num_interactions-1)
         return dict(message=message)
