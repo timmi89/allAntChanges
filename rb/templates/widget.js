@@ -953,7 +953,7 @@ function readrBoard($R){
                 console.log('-- what we know about hash '+hash+' --');
                 console.dir(RDR.content_nodes[hash]);
 
-                var container = $(RDR.group.anno_whitelist+'.rdr-'+hash);
+                var container = $(RDR.group.anno_whitelist+'.rdr-'+hash); // prepend with the anno_whitelist selector to speed finding the container
                 container.append('<img src="/static/images/blank.png" width="32" height="24" id="rdr_helper_'+hash+'" />');
                 var helper_position = $('#rdr_helper_'+hash).offset();
                 $('#rdr_helper_'+hash).remove();
@@ -961,6 +961,7 @@ function readrBoard($R){
                 var total = RDR.content_nodes[hash].info.comment_count + RDR.content_nodes[hash].info.tag_count;
 
                 var $icon = $('<div class="rdr rdr_indicator" style="top:'+(helper_position.bottom-36)+'px;left:'+(helper_position.left-3)+'px;"><img src="/static/images/blank.png" /> '+ total +' <span>reactions. Click to see them.</span></div>');
+                $icon.data('hash', hash);
 
                 $icon.click( function() {
                     RDR.actions.viewContainerReactions( {hash:hash, icon:$(this)} );
@@ -972,24 +973,39 @@ function readrBoard($R){
             viewContainerReactions: function( args ) {
                 console.clear();
                 var info = RDR.content_nodes[args.hash].info;
-                info.tag_totals = {
-                    0: {
-                        id: 1,
-                        name: "Great!",
-                        percentage: parseInt( 4 / info.tag_count * 100 )
-                    },
-                    1: {
-                        id: 2,
-                        name: "Hate",
-                        percentage: parseInt( 2 / info.tag_count * 100 )
-                    },
-                    2: {
-                        id: 3,
-                        name: "Interesting",
-                        percentage: parseInt( 1 / info.tag_count * 100 )
-                    }
-                };
-                console.dir( info.tag_totals );
+                info.tags = {};
+                info.tags.total = 0;
+
+                $.each( info.content, function( c_idx, content ) {
+                    console.dir(content);
+                    
+                    // $.each( content.tags, function(t_idx, tag) ) {
+                    for ( var i in content.tags ) {
+                        var tag = content.tags[i];
+                        if ( !info.tags[ tag.id ] ) info.tags[ tag.id ] = { total:0, content:{} };
+
+                        info.tags[ tag.id ].name = tag.tag;
+                        info.tags[ tag.id ].content[ c_idx ] = tag.count;
+                        info.tags.total += tag.count;
+                    };
+
+                    // {
+                    //     name: "Great!",
+                    //     // percentage: parseInt( 4 / info.tag_count * 100 ), // figure this at the end
+                    //     total: 34,
+                    //     content: {
+                    //         {
+                    //             tag_total:8,
+                    //             content_idx: 1, // a ref to RDR.content_nodes[args.hash].info.content[1]
+
+                    //         }
+                    //     }
+                    // }
+
+                });
+
+                console.dir( info.tags );
+                RDR.content_nodes[args.hash].info.tags = info.tags;
 
                 var iconOffsets = args.icon.offset();
 
