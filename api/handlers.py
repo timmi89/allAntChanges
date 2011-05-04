@@ -25,133 +25,81 @@ class ContentHandler(BaseHandler):
     model = Interaction
     fields = ('id', 'content', 'user')
 
-"""
+
 class InteractionHandler(BaseHandler):
     @status_response
     def read(self, request, **kwargs):
         # load the json data
         data = json.loads(request.GET['json'])
 
-        # check to see if user token is valid
+        # check to see if user's token is valid
         if not checkToken(data): raise JSONException(u"Token was invalid")
 
-        # get necessary variables from data
-        user = data.get('user_id')
-        group_id = data.get('group_id')
-        page_id = data.get('page_id')
+        action = kwargs.get('action')
 
+        # get user data
+        user_id = data.get('user_id')
         try:
-            user = User.objects.get(id=data['user_id'])
+            user = User.objects.get(id=user_id)
         except User.DoesNotExist, User.MultipleObjectsReturned:
-            raise JSONException(u"Error getting user!")
-        try:
-            page = Page.objects.get(id=page_id)
-        except Page.DoesNotExist, Page.MultipleObjectsReturned:
-            raise JSONException(u"Error getting page!")
-        try:
-            group = Group.objects.get(id=group_id)
-        except Group.DoesNotExist, Group.MultipleObjectsReturned:
-            raise JSONException(u"Error getting group!")
+            raise JSONException(u"Interaction Handler: Error getting user!")
 
-        action = kwargs['action']
-
+        # do create action
         if action == 'create':
-            self.createInteraction(self, request, user, group_id, page_id, **data)
-
-        if action == 'delete':
-            self.deleteInteraction(self, request, **data)
-
-class CommentHandler(InteractionHandler):
-    def createInteraction(self, requst, **data):
-
-"""
-class CommentHandler(BaseHandler):
-    
-    @status_response
-    def read(self, request, **kwargs):
-        data = json.loads(request.GET['json'])
-        if not checkToken(data): raise JSONException(u"Token was invalid")
-        print "Token looks good, going ahead with comment handler actions..."
-        action = kwargs['action']
-        if action == 'create':
-            comment = data['comment']
-            interaction_id = data['int_id']
-            user = data['user_id']
-            group_id = data['group_id']
-            page_id = data['page_id']
-
-            try:
-                user = User.objects.get(id=data['user_id'])
-            except User.DoesNotExist, User.MultipleObjectsReturned:
-                raise JSONException(u"Error getting user!")
+            page_id = data.get('page_id')
             try:
                 page = Page.objects.get(id=page_id)
             except Page.DoesNotExist, Page.MultipleObjectsReturned:
-                raise JSONException(u"Error getting page!")
+                raise JSONException(u"Interaction Handler: Error getting page!")
+            
+            group_id = data.get('group_id')
             try:
                 group = Group.objects.get(id=group_id)
             except Group.DoesNotExist, Group.MultipleObjectsReturned:
-                raise JSONException(u"Error getting group!")
+                raise JSONException(u"Interaction Handler: Error getting group!")
+            
+            # do create action for specific type
+            return self.create(data, user, page, group)
 
-            try:
-                parent = Interaction.objects.get(id=interaction_id)
-            except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
-                raise JSONException(u'Could not find parent interaction specified')
-
-            try:
-                comment = createInteractionNode(kind='com', body=comment)
-            except:
-                raise JSONException(u'Error creating comment interaction node')
-            #try:
-            interaction = createInteraction(parent.page, parent.container, parent.content, user, comment, group, parent)
-            #except:
-            #    raise JSONException(u'Error creating comment interaction')
-            return interaction
-
+        # do delete action
         if action == 'delete':
             interaction_id = data['int_id']['id']
             try:
                 interaction = Interaction.objects.get(id=interaction_id)
             except Interaction.DoesNotExist:
                 raise JSONException("Interaction did not exist!")
-            user_id = data['user_id']
-            try:
-                user = User.objects.get(id=user_id)
-            except Interaction.DoesNotExist:
-                raise JSONException("User did not exist!")
 
             return deleteInteraction(interaction, user)
 
-class TagHandler(BaseHandler):
-    """ Create action ='delete'"""
-    @status_response
-    def read(self, request, **kwargs):
-        data = json.loads(request.GET['json'])
-        if not checkToken(data): raise JSONException(u"Token was invalid")
-        print "Token looks good, going ahead with tag handler actions..."
-        action = kwargs['action']
-        if action == 'create':
+class CommentHandler(InteractionHandler):
+
+    def create(self, data, user, page, group):
+        comment = data['comment']
+        interaction_id = data['int_id']
+        try:
+            parent = Interaction.objects.get(id=interaction_id)
+        except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
+            raise JSONException(u'Could not find parent interaction specified')
+
+        try:
+            comment = createInteractionNode(kind='com', body=comment)
+        except:
+            raise JSONException(u'Error creating comment interaction node')
+        
+        try:
+            interaction = createInteraction(parent.page, parent.container, parent.content, user, comment, group, parent)
+        except:
+            raise JSONException(u'Error creating comment interaction')
+        return interaction
+
+class TagHandler(InteractionHandler):
+    
+    def create(self, data, user, page, group):
             tag = data['tag']['content']
             hash = data['hash']
             content_data = data['content']
             content_type = data['content_type']
-            page_id = data['page_id']
-            group_id = data['group_id']
             
-            try:
-                user = User.objects.get(id=data['user_id'])
-            except User.DoesNotExist, User.MultipleObjectsReturned:
-                raise JSONException(u"Error getting user!")
-            try:
-                page = Page.objects.get(id=page_id)
-            except Page.DoesNotExist, Page.MultipleObjectsReturned:
-                raise JSONException(u"Error getting page!")
-            try:
-                group = Group.objects.get(id=group_id)
-            except Group.DoesNotExist, Group.MultipleObjectsReturned:
-                raise JSONException(u"Error getting group!")
-
-            if not checkToken(data): raise JSONException(u"Token was invalid")
             content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
             
             container = None
@@ -176,20 +124,6 @@ class TagHandler(BaseHandler):
                 return new
             else:
                 return JSONException(u"No tag provided to tag handler")
-                
-        if action == 'delete':
-            interaction_id = data['int_id']['id']
-            try:
-                interaction = Interaction.objects.get(id=interaction_id)
-            except Interaction.DoesNotExist:
-                raise JSONException("Interaction did not exist!")
-            user_id = data['user_id']
-            try:
-                user = User.objects.get(id=user_id)
-            except Interaction.DoesNotExist:
-                raise JSONException("User did not exist!")
-
-            return deleteInteraction(interaction, user)
 
 class CreateContainerHandler(BaseHandler):
     
