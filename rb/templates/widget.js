@@ -8,7 +8,7 @@ client$ = {}; //init var: clients copy of jQuery
 
 //init rangy if it hasn't been already, we probably dont need this...
 rangy.init();
-
+var a;
 var rbRangy; //temp glob
 var demoRindow;
 
@@ -941,12 +941,12 @@ function readrBoard($R){
                 //console.log(typeof selection.content);
 
                 //Trigger the smart text selection and highlight
-                var selRev = $(window).rbRangy('saveSelRev'),
-                revisedSelRev = $(window).rbRangy('reviseSelRev', selRev.idx);
+                var selRev = $(window).rbRangy('saveSelRev');
+                log(selRev);
+                var revisedSelRev = $(window).rbRangy('reviseSelRev', selRev.idx);
+                log(revisedSelRev)
                
-                $hostNode.hilite({
-                    selRev:revisedSelRev
-                });
+                $hostNode.hilite(revisedSelRev);
 
                 // draw the window over the actionbar
                 var actionbarOffsets = settings.coords;
@@ -960,7 +960,7 @@ function readrBoard($R){
 				
 
                 //todo - combine with copy of this
-                var range = revisedSelRev.ranges[0],
+                var range = revisedSelRev.range,
                 styleClass = revisedSelRev.styleName,
                 uniqueClass = styleClass+"_"+revisedSelRev.idx,
                 $endBrushNode = $(range.endContainer).closest('.'+uniqueClass);
@@ -1971,7 +1971,7 @@ function jQueryPlugins($R){
 
     (function($){
         
-        $.fn.hilite = function(options) {
+        $.fn.hilite = function(selRev) {
             /**
              * hilite
              * losely based on searchHighlight plugin for jQuery
@@ -1981,22 +1981,17 @@ function jQueryPlugins($R){
              *
              */
             
-            if (typeof options === "undefined" ) options = {};
-            //todo: looks like we're only passing a selRev, don't need this extend pattern
-            options = $.extend({
-                selRev:undefined
-            }, options);
-            var selRev = options.selRev,
-            ranges = selRev.ranges;
-            if(typeof ranges === "undefined") return false;
+            if (typeof selRev === "undefined" )
+                return false;
+            
+            var range = selRev.range;
+            if(typeof range === "undefined") return false;
             //else
             log(selRev.text); 
             if(selRev.text.length == 0) return false;
             //don't trust when the rangySelection picks up the latest selection: clear it for now..
-            selRev.rangySelection.removeAllRanges();
-            //at least for now, don't deal with multiple ranges
-            var range = ranges[0];
-
+            //selRev.rangySelection.removeAllRanges(); 
+            
             //test - serializer:
             //range = rangy.deserializeRange(selRev.serialRange);
 
@@ -2084,6 +2079,9 @@ function jQueryPlugins($R){
         // A selRev is meant to be immutable - A new selRev doens't change a previous one but copies it, modifies and saves a new selRev to the stack.
         
         $.widget("ui.rbRangy", {
+            _WSO: function(){
+                return rangy.getSelection();  
+            },
             _selRevs:[
             /*
                 //keep commented out:
@@ -2100,12 +2098,6 @@ function jQueryPlugins($R){
                 }
             */
             ],
-            _cloneSelRev: function(ranges){
-                var newRanges = $.map(ranges, function(range, idx){
-                    return( range.cloneRange() ); //rangy range function cloneRange
-                });
-                return newRanges;
-            },
             _fetchSelRev: function(index){
                 var selRevStack = this._selRevs,
                 //set idx to declared idx, else last idx on the stack
@@ -2117,7 +2109,7 @@ function jQueryPlugins($R){
                 }//else
                 return selRev;
             },
-            saveSelRev: function(ranges){
+            saveSelRev: function(range){
                 //ranges is optional and will usually be ommited.  Defaults to current selection with ranges
                 var scope = this,
                 selRevStack = this._selRevs,
@@ -2125,27 +2117,30 @@ function jQueryPlugins($R){
                     //idx will give the next avail index in _selRevs.  Indexes should not be shifted.  Note that length is initially zero which is correct. 
                     idx: selRevStack.length,
                     timestamp: $.now(),
-                    rangySelection: rangy.getSelection(),   //set below - only set if ranges are not passed in
                     styleName: 'rdr_hilite',
                     revisionParent: null,     //set below
-                    ranges: null,           //set below
+                    range: null,           //set below
                     text: ""                //set below
                 };
 
-                if(typeof ranges === 'undefined'){
-                    selRev.ranges = selRev.rangySelection.getAllRanges();
+                if(typeof range === 'undefined'){
+                    log('was undefined')
+                    //todo remove this test crap;
+                    var sel = rangy.getSelection();
+                    var range = sel.getAllRanges()[0];
+                    log(range);
+                    a = range;
+                    var range = this._WSO().getRangeAt(0);
+                    selRev.range = range;
                 }else{
-                    selRev.rangySelection.removeAllRanges();
-                    selRev.rangySelection.setRanges(ranges);
-                    selRev.ranges = ranges;
-                    
+                    log('was undefined')
+                    this._WSO().setSingleRange(range);
+                    selRev.range = range;
                 }
 
-                selRev.serialRange = rangy.serializeRange(selRev.ranges[0])
+                selRev.serialRange = rangy.serializeRange(selRev.range)
                 
-                $.each(selRev.ranges, function(idx, val){
-                    selRev.text += val.toString(); //rangy range toString function
-                });
+                selRev.text = selRev.range.toString(); //rangy range toString function
 
                 //push selRev into stack
                 selRevStack[selRev.idx] = selRev;
@@ -2170,30 +2165,28 @@ function jQueryPlugins($R){
                 log(selRev);
                 if(!selRev) return false;
                 //else
-                selRev.rangySelection = rangy.getSelection();
-                selRev.rangySelection.setRanges(selRev.ranges);
+                this._WSO().setSingleRange(selRev.range);
                 return selRev;
             },
             reviseSelRev: function(idx) {
                 var iniSelRev = this._fetchSelRev(idx),
-                newSelRev, newRanges;
+                newSelRev, newRange;
                 if(!iniSelRev) return false;
                 //else
-
-                newRanges = this._cloneSelRev(iniSelRev.ranges);
+                a = iniSelRev.range;
+                newRange = iniSelRev.range.cloneRange();
                 //filter the ranges
-                newRanges = this._filter(newRanges);
-                newSelRev = this.saveSelRev(newRanges);
+                newRange = this._filter(newRange);
+                newSelRev = this.saveSelRev(newRange);
                 //this.restoreSelRev(newSelRev); //for testing, this should be prob seperate though
                 return newSelRev
              },
-             _filter: function(ranges, listFilterNames){
+             _filter: function(range, listFilterNames){
                 // I think only firefox allows for multiple ranges to be selected, and no one really does it.
                 // Besides, for our tool, we'd prob have to just use the first one anyway..
                 // For now, just use only the first range on the rare case where someone tries to pass more than 1. (ranges[0])
                 var scope = this,
-                range = ranges[0];
-                var filters = {},
+                filters = {},
                 defaultFilters = {
                     stripWhiteSpace: function(range){
                         var rangeStr = range.toString(),
@@ -2291,7 +2284,7 @@ function jQueryPlugins($R){
                 $.each(filters, function(){
                     range = this(range);
                 });
-                return [range];
+                return range;
             },
             _rangeOffSet: function(range, opts){ 
                 // returns a range or false, which should trigger the caller to fail gracefully.
