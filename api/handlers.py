@@ -97,28 +97,28 @@ class CommentHandler(InteractionHandler):
 class TagHandler(InteractionHandler):
     
     def create(self, data, user, page, group):
-            tag = data['tag']['content']
-            hash = data['hash']
-            content_data = data['content']
-            content_type = data['content_type']
-            
-            content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
-            
-            container = None
-            if hash:
-                container = Container.objects.get(hash=hash)
+        tag = data['tag']['content']
+        hash = data['hash']
+        content_data = data['content']
+        content_type = data['content_type']
+        
+        content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
+        
+        container = None
+        if hash:
+            container = Container.objects.get(hash=hash)
 
-            new = None
-            if tag:
-                if isinstance(tag, unicode):
-                    node = createInteractionNode(kind='tag', body=tag)
-                    new = createInteraction(page, container, content, user, node, group)
-                elif isinstance(tag, int):
-                    node = InteractionNode.objects.get(id=tag)
-                    new = createInteraction(page, container, content, user, node, group)
-                return new
-            else:
-                return JSONException(u"No tag provided to tag handler")
+        new = None
+        if tag:
+            if isinstance(tag, unicode):
+                node = createInteractionNode(kind='tag', body=tag)
+                new = createInteraction(page, container, content, user, node, group)
+            elif isinstance(tag, int):
+                node = InteractionNode.objects.get(id=tag)
+                new = createInteraction(page, container, content, user, node, group)
+            return new
+        else:
+            return JSONException(u"No tag provided to tag handler")
 
 class CreateContainerHandler(BaseHandler):
     
