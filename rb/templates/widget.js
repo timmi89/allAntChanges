@@ -942,32 +942,30 @@ function readrBoard($R){
 
                 //Trigger the smart text selection and highlight
                 var selRev = $(window).rbRangy('saveSelRev'),
-                revisedSelRev = $(window).rbRangy('reviseSelRev',selRev.idx);
-                
+                revisedSelRev = $(window).rbRangy('reviseSelRev', selRev.idx);
+               
                 $hostNode.hilite({
                     selRev:revisedSelRev
                 });
-                
-                
+
                 // draw the window over the actionbar
                 var actionbarOffsets = settings.coords;
 
 				$('.rdr_rewritable').removeClass('rdr_rewritable');
 
-                //todo: weird, why did commenting this line out not do anything?...look into it
-				//porter says: the action bar used to just animate larger and get populated as a window.  we can remove this.
-                //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
 				if ( settings.content_type == "text" ) {
 					actionbarOffsets.left = actionbarOffsets.left + 40;
 					actionbarOffsets.top = actionbarOffsets.top + 35;
 				}
 				
-				/*
+
+                //todo - combine with copy of this
+                var range = revisedSelRev.ranges[0],
+                styleClass = revisedSelRev.styleName,
+                uniqueClass = styleClass+"_"+revisedSelRev.idx,
+                $endBrushNode = $(range.endContainer).closest('.'+uniqueClass);
 				//keep commented out for now
 				//testing adjusting the position with overrides from the hilite span 
-                var range = selRev.ranges[0];
-                log(range);
-                var $endBrushNode = $(range.endContainer);
                 log($endBrushNode )
                 if($endBrushNode){
                     var $helper = $('<span />');
@@ -978,8 +976,7 @@ function readrBoard($R){
                     actionbarOffsets.left = strRight + 5; //with a little padding
                     actionbarOffsets.top = strBottom;
                 }
-                
-                */
+
                 var rindow = RDR.rindow.draw({
                     left:actionbarOffsets.left,
                     top:actionbarOffsets.top,
@@ -1991,10 +1988,9 @@ function jQueryPlugins($R){
             }, options);
             var selRev = options.selRev,
             ranges = selRev.ranges;
-            if(typeof ranges === "undefined") return this;
+            if(typeof ranges === "undefined") return false;
             //else
-            log(selRev.text);
-            //todo: do a more proper targeting for an empty range
+            log(selRev.text); 
             if(selRev.text.length == 0) return false;
             //don't trust when the rangySelection picks up the latest selection: clear it for now..
             selRev.rangySelection.removeAllRanges();
@@ -2044,14 +2040,13 @@ function jQueryPlugins($R){
                     //finally, 
                     if(hiliteBrush.isAppliedToRange(range)){
                         hiliteBrush.undoToRange(range);
+                        //remove this binding so that we don't try to keep removing the non-existant hilite.
+                        $(document).unbind('keyup', arguments.callee);
                     }
                     else{
                         log('error ' + range)
-                        log(range)
                     }
                 }
-                //remove this binding so that we don't try to keep removing the non-existant hilite.
-                //$(document).unbind('keyup', arguments.callee);
             });
         }
     })($R);
@@ -2138,15 +2133,16 @@ function jQueryPlugins($R){
                 };
 
                 if(typeof ranges === 'undefined'){
-                    selRev.rangySelection = rangy.getSelection();
                     selRev.ranges = selRev.rangySelection.getAllRanges();
                 }else{
                     selRev.rangySelection.removeAllRanges();
                     selRev.rangySelection.setRanges(ranges);
                     selRev.ranges = ranges;
-                    selRev.serialRange = rangy.serializeRange(ranges[0])
+                    
                 }
 
+                selRev.serialRange = rangy.serializeRange(selRev.ranges[0])
+                
                 $.each(selRev.ranges, function(idx, val){
                     selRev.text += val.toString(); //rangy range toString function
                 });
@@ -2174,6 +2170,7 @@ function jQueryPlugins($R){
                 log(selRev);
                 if(!selRev) return false;
                 //else
+                selRev.rangySelection = rangy.getSelection();
                 selRev.rangySelection.setRanges(selRev.ranges);
                 return selRev;
             },
@@ -2187,7 +2184,7 @@ function jQueryPlugins($R){
                 //filter the ranges
                 newRanges = this._filter(newRanges);
                 newSelRev = this.saveSelRev(newRanges);
-                this.restoreSelRev(newSelRev); //for testing, this should be prob seperate though
+                //this.restoreSelRev(newSelRev); //for testing, this should be prob seperate though
                 return newSelRev
              },
              _filter: function(ranges, listFilterNames){
