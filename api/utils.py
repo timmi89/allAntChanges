@@ -22,8 +22,6 @@ def getPage(request, pageid=None):
     else:
         page = Page.objects.get_or_create(url=fullurl, defaults={'site': site})
         
-    if page[1] == True: print "Created page {0}".format(page)
-
     return page[0]
 
 def createInteractionNode(kind, body):

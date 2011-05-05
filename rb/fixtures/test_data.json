@@ -1,0 +1,69 @@
+[
+  {
+    "model": "rb.InteractionNode",
+    "pk": 3,
+    "fields": {
+      "kind": "tag",
+      "body": "Great"
+    }
+  },
+  {
+    "model": "rb.InteractionNode",
+    "pk": 4,
+    "fields": {
+      "kind": "tag",
+      "body": "Awesome"
+    }
+  },
+  {
+    "model": "rb.InteractionNode",
+    "pk": 5,
+    "fields": {
+      "kind": "tag",
+      "body": "Sucks"
+    }
+  },
+  {
+    "model": "rb.InteractionNode",
+    "pk": 6,
+    "fields": {
+      "kind": "tag",
+      "body": "Wait, what?"
+    }
+  },
+
+  {
+    "model": "rb.Feature",
+    "pk": 1,
+    "fields": {
+      "text": "True",
+      "images": "True",
+      "flash": "True"
+    }
+  },
+
+  {
+    "model": "rb.Group",
+    "pk": 1,
+    "fields": {
+      "name": "Test Publisher",
+      "short_name": "testpub",
+      "valid_domains": "testserve",
+      "share": 1,
+      "rate": 1,
+      "comment": 1,
+      "bookmark": 1,
+      "search": 1
+    }
+  },
+
+  {
+    "model": "rb.Site",
+    "pk": 1,
+    "fields": {
+      "name": "Test Site",
+      "domain": "testserve",
+      "group": 1
+    }
+  }
+]

@@ -1,4 +1,4 @@
-from piston.handler import BaseHandler
+from piston.handler import AnonymousBaseHandler
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
@@ -9,25 +9,25 @@ from userutils import *
 from token import *
 
 
-class UserHandler(BaseHandler):
+class UserHandler(AnonymousBaseHandler):
     model = User
     fields = ('id', 'first_name', 'last_name')
 
-class InteractionNodeHandler(BaseHandler):
+class InteractionNodeHandler(AnonymousBaseHandler):
     model = InteractionNode
     fields = ('id', 'body', 'kind')
 
-class ContentHandler(BaseHandler):
+class ContentHandler(AnonymousBaseHandler):
     model = Content
     fields = ('id', 'body', 'kind')
 
 """
-class InteractionHandler(BaseHandler):
+class InteractionHandler(AnonymousBaseHandler):
     model = Interaction
     fields = ('id', 'content', 'user')
 
 """
-class InteractionHandler(BaseHandler):
+class InteractionHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, **kwargs):
         # load the json data
@@ -118,9 +118,9 @@ class TagHandler(InteractionHandler):
                 new = createInteraction(page, container, content, user, node, group)
             return new
         else:
-            return JSONException(u"No tag provided to tag handler")
+            raise JSONException(u"No tag provided to tag handler")
 
-class CreateContainerHandler(BaseHandler):
+class CreateContainerHandler(AnonymousBaseHandler):
     
     @status_response
     def read(self, request):
@@ -135,7 +135,7 @@ class CreateContainerHandler(BaseHandler):
             )[1]
         return result
 
-class ContainerHandler(BaseHandler):
+class ContainerHandler(AnonymousBaseHandler):
     
     @status_response
     def read(self, request, container=None):
@@ -214,7 +214,7 @@ class ContainerHandler(BaseHandler):
             
         return dict(known=known, unknown=unknown)
 
-class PageDataHandler(BaseHandler):
+class PageDataHandler(AnonymousBaseHandler):
 
     @status_response
     def read(self, request, pageid=None):
@@ -263,7 +263,7 @@ class PageDataHandler(BaseHandler):
             topshares=topshares
         )
 
-class SettingsHandler(BaseHandler):
+class SettingsHandler(AnonymousBaseHandler):
     model = Group
     fields = ('id',
               'name',
@@ -299,10 +299,12 @@ class SettingsHandler(BaseHandler):
                 g = Group.objects.get(id=group)
             except Group.DoesNotExist:
                 return HttpResponse("RB Group does not exist!")
-            if host in g.valid_domains:
-                print "host %s is valid for group %d" % (host,group)
+            sites = Site.objects.filter(group=g)
+            domains = sites.values_list('domain', flat=True)
+            if host in domains:
+                return g
             else:
-                print "host %s is not valid for group %d" % (host,group)
+                raise JSONException("Group (" + str(group) + ") settings request invalid for this domain (" + host + ")")
             return g
         else:
             return ("Group not specified")

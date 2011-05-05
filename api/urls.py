@@ -15,7 +15,7 @@ Deauthorize = Resource(handler=Deauthorize)
 TempUser = Resource(handler=TempUserHandler)
 
 urlpatterns = patterns('',
-    url(r'^settings/(\d+)/', Settings),
+    url(r'^settings/(\d+)/$', Settings),
     # Page level
     #url(r'^page/(?P<page_id>\d+)/$', Interactions),
     #url(r'^page/(?P<page_id>\d+)/tags/$', Interactions, kwargs={"kind":"tag"}),
