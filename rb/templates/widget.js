@@ -935,18 +935,11 @@ function readrBoard($R){
 			},
 			sentimentBox: function(settings) {
                 
-                
-
                 var $hostNode = $('.rdr-'+settings.container);
                 //console.log(typeof selection.content);
 
                 //Trigger the smart text selection and highlight
-                var selRev = $(window).selKeeper('save');
-                log(selRev);
-                var revisedSelRev = $(window).selKeeper('modify', selRev.idx);
-                log(revisedSelRev)
-               
-                $hostNode.hilite(revisedSelRev);
+                var newSel = $(window).selKeeper('helpers', 'smartHilite');
 
                 // draw the window over the actionbar
                 var actionbarOffsets = settings.coords;
@@ -958,23 +951,25 @@ function readrBoard($R){
 					actionbarOffsets.top = actionbarOffsets.top + 35;
 				}
 				
-
-                //todo - combine with copy of this
-                var range = revisedSelRev.range,
-                styleClass = revisedSelRev.styleName,
-                uniqueClass = styleClass+"_"+revisedSelRev.idx,
-                $endBrushNode = $(range.endContainer).closest('.'+uniqueClass);
-				//keep commented out for now
-				//testing adjusting the position with overrides from the hilite span 
-                log($endBrushNode )
-                if($endBrushNode){
-                    var $helper = $('<span />');
-                    $helper.insertAfter($endBrushNode);
-                    var strRight = $helper.offset().right;
-                    var strBottom = $helper.offset().bottom;
-                    $helper.remove();
-                    actionbarOffsets.left = strRight + 5; //with a little padding
-                    actionbarOffsets.top = strBottom;
+                //if sel exists, reset the offset coords
+                if(newSel){
+                    //todo - combine with copy of this
+                    var range = newSel.range,
+                    styleClass = newSel.styleName,
+                    uniqueClass = styleClass+"_"+newSel.idx,
+                    $endBrushNode = $(range.endContainer).closest('.'+uniqueClass);
+    				//keep commented out for now
+    				//testing adjusting the position with overrides from the hilite span 
+                    log($endBrushNode )
+                    if($endBrushNode){
+                        var $helper = $('<span />');
+                        $helper.insertAfter($endBrushNode);
+                        var strRight = $helper.offset().right;
+                        var strBottom = $helper.offset().bottom;
+                        $helper.remove();
+                        actionbarOffsets.left = strRight + 5; //with a little padding
+                        actionbarOffsets.top = strBottom;
+                    }
                 }
 
                 var rindow = RDR.rindow.draw({
@@ -2005,12 +2000,32 @@ function jQueryPlugins($R){
     })($R);
 
     (function($){
-        //consolodating and re-writting plugins under the same namespace
+        /*
+         * jquery.selKeeper.js
+         * 
+         * author: eric@readrboard.com
+         * 
+         * a jQuery plugin that extends the rangy plugins
+         * to save, restore, and manipulate a stack of 'selection objects' with stored ranges
+         *
+         * to test in the live page, don't forget to use $R(), not $().
+        */        
+
+        $.fn.selKeeper = function( params ) {
+            //jQuery plugin pattern :http://docs.jquery.com/Plugins/Authoring
+            if ( methods[params] ) {
+                return methods[params].apply( this, Array.prototype.slice.call( arguments, 1 ));
+            } else if ( typeof params === 'object' || ! params ) {
+                return methods.init.apply( this, arguments );
+            } else {
+                $.error( 'Method ' +  params + ' does not exist.' );
+            }
+        };
 
         var defaults = {};
 
         var methods = {
-            //'this' is the jQuery object the plugin was invoked on.  ( passed in using apply() )
+            //note: In these methods, 'this' is the jQuery object that the plugin was invoked on. See plugin pattern above.
             init : function( options ) {
                 var $this = this,
                 _settings;
@@ -2023,7 +2038,7 @@ function jQueryPlugins($R){
                 });
             },
             save: function(range){
-                //ranges is optional and will usually be ommited.  Defaults to current selection with ranges
+                //range is optional and will usually be ommited.  Defaults to current selection with ranges
                 var scope = this,
                 selRevStack = _selRevs,
                 selRev = {
@@ -2073,49 +2088,92 @@ function jQueryPlugins($R){
                 log(selRev);
                 return selRev;
             },
-            restore: function(idx) {
-                var selRev = _fetchSelRev(idx);
-                log(selRev);
+            restore: function(idxOrSelRev){
+                var selRev = _fetchSelRev(idxOrSelRev);
                 if(!selRev) return false;
-                //else
                 _WSO().setSingleRange(selRev.range);
                 return selRev;
             },
-            modify: function(idx) {
-                var iniSelRev = _fetchSelRev(idx),
+            modify: function(idxOrSelRev, filterList) {
+                
+                //let filterList be optionally called without idxOrSelRev - letting the selRev default to the latest.
+                if( idxOrSelRev instanceof Array ){
+                    filterList = idxOrSelRev;
+                    idxOrSelRev = undefined; //will trigger default latest idx
+                }
+
+                var iniSelRev = _fetchSelRev(idxOrSelRev),
                 newSelRev, newRange;
                 if(!iniSelRev) return false;
-                //else
-                a = iniSelRev.range;
+
                 newRange = iniSelRev.range.cloneRange();
                 //filter the ranges
-                newRange = _filter(newRange);
+
+                newRange = _filter(newRange, filterList);
                 newSelRev = methods.save(newRange);
                 //methods.restore(newSelRev); //for testing, this should be prob seperate though
                 return newSelRev
-             }
+            },
+            hilite: function(idx) {
+                /**
+                 * hilite
+                 * losely based on searchHighlight plugin for jQuery
+                 * http://www.jquery.info/spip.php?article50
+                 * 
+                 * modified by eric@readrboard.com for readrboard.com
+                 */
+                
+                //todo:checkout why first range is picking up new selRev range
 
-        };
+                var selRev = _fetchSelRev(idx);
+                if(!selRev) return false;
+                //else
+                                
+                if (typeof selRev === "undefined" )
+                    return false;
+                
+                var range = selRev.range;
+                if(typeof range === "undefined") return false;
+                //else
+                log(selRev.text); 
+                if(selRev.text.length == 0) return false;
+                //don't trust when the rangySelection picks up the latest selection: clear it for now..
+                //selRev.rangySelection.removeAllRanges(); 
+                
+                //test - serializer:
+                //range = rangy.deserializeRange(selRev.serialRange);
 
-        $.fn.selKeeper = function( params ) {
-
-            //jQuery plugin pattern :http://docs.jquery.com/Plugins/Authoring
-            //'this' refers to the jQuery object the plugin was invoked on. It is already a jQuery object
-            //params can be a method name with optional parameters passed along with it,
-            //if params is missing, or an object literal, the init method is called and passed
-            //the options object
-
-            if ( methods[params] ) {
-                return methods[params].apply( this, Array.prototype.slice.call( arguments, 1 ));
-            } else if ( typeof params === 'object' || ! params ) {
-                return methods.init.apply( this, arguments );
-            } else {
-                $.error( 'Method ' +  params + ' does not exist.' );
+                var host = range.commonAncestorContainer;
+                //get the closest parent that isn't a textNode
+                //todo: check this..  any other weird nodes I need to think about?
+                while(host.nodeType == 3){ //Node.TEXT_NODE equals 3
+                    host = host.parentNode;
+                }
+                
+                //_hilite returns the selRev
+                return _hilite(selRev, range);
+            },
+            helpers: function(helperPack){
+                var func = _helperPacks[helperPack];
+                return func ? func() : false;
             }
+
         };
 
         //private objects
-        var _selRevs = [
+        var _helperPacks = {
+            smartHilite: function(){
+                /*
+                var rawSel, modSel, newSel;
+                rawSel = methods.save();
+                modSel = methods.modify(rawSel);
+                newSel = methods.hilite(modSel);
+                return newSel;
+                */
+                return methods.hilite( methods.modify( methods.save() ) ); //oooh lispy.
+            }
+        },
+        _selRevs = [
         /*
             //keep commented out:
             //Example template: Set by save and added to the stack.
@@ -2130,58 +2188,8 @@ function jQueryPlugins($R){
                 text: ""            //set below
             }
         */
-        ];
-
-        
-        //private functions:
-        function _WSO(){
-            return rangy.getSelection();  
-        }
-        function _fetchSelRev(index){
-            var selRevStack = _selRevs,
-            //set idx to declared idx, else last idx on the stack
-            idx = (typeof index == "string" || typeof index == "number" ) ? index : selRevStack.length-1,
-            selRev = selRevStack[idx];
-            if(!selRev) {
-                console.warn('selRev.idx not in stack');
-                return false;
-            }//else
-            return selRev;
-        }
-        function _rangeOffSet(range, opts){ 
-            // returns a range or false, which should trigger the caller to fail gracefully.
-            var defaults = {
-                start: true, //start or end offset?
-                offset: undefined, // absolute offset should be a positive or negative number to add to the offset
-                relOffset: undefined // (relative offset) is ignored if offset is set
-            },
-            opts = $.extend({}, defaults, opts),
-            iniOffset = (opts.start) ? range.startOffset : range.endOffset; //rangy range properties startOffset, endOffset
-            if(typeof opts.offset === "undefined" ){
-                if(typeof opts.relOffset === "undefined" ){
-                    return iniOffset;
-                }//else
-                opts.offset = iniOffset + opts.relOffset;
-            }
-            try{
-                if(opts.start){
-                    range.setStart(range.startContainer, opts.offset); //rangy function setStart, attribute startContainer
-                }else{
-                    range.setEnd(range.endContainer, opts.offset); //rangy function setEnd, attribute endContainer   
-                }
-                return range;
-            }catch(e){
-                log(e); //range out of bounds
-                return false;
-            }
-        }
-        function _filter(range, listFilterNames){
-            // I think only firefox allows for multiple ranges to be selected, and no one really does it.
-            // Besides, for our tool, we'd prob have to just use the first one anyway..
-            // For now, just use only the first range on the rare case where someone tries to pass more than 1. (ranges[0])
-            var scope = this,
-            filters = {},
-            defaultFilters = {
+        ],
+        _modifierFilters = {
                 stripWhiteSpace: function(range){
                     var rangeStr = range.toString(),
                     s = {}, //start
@@ -2266,112 +2274,33 @@ function jQueryPlugins($R){
                     return range;
                 }
             };
-            //if filters not specifed, call all filters
-            if (typeof listFilterNames === "undefined"){
-                filters = defaultFilters;
-            }
-            else{
-                $.each(listFilterNames, function(idx, val){
-                    filters[val] = defaultFilters[val] || function(){console.error('bad filter name passed in param');return false};
-                });
-            }                    
-            $.each(filters, function(){
-                range = this(range);
-            });
-            return range;
-        }
 
-        function _tempTesting(){
-                /*
-            * testing temp function
-            */
-            var $tempButtons = $('<div class="rdr_blacklist"/>'),
-            buttonInfo= {
-                //note, remember to use $R instead of $ if calling in firebug
-                a:{
-                    name:'save',
-                    func:'save',
-                    attr:undefined
-                },
-                b:{
-                    name:'restore',
-                    func:'restore',
-                    attr:undefined
-                },
-                c:{
-                    name:"revise",
-                    func:'modify',
-                    attr:undefined
-                }
-            }
-            $.each(buttonInfo,function(idx, val){
-                var $button = $('<div class="rdr_tempButton"><a href=\"javascript:void(0);\">'+this.name+'</a><input /></div>');
-                $button.find('input').focus(function(){
-                    //$R(window).selKeeper('save');
-                    //$R(window).selKeeper('restore');
-                });
-                $button.find('a').click(function(){
-                    var input = $(this).parent().find('input').val();
-                    val.attr= (input == "" ) ? undefined : input;
-                    var selrev = $(window).selKeeper(val.func, val.attr);
-                });
-                $tempButtons.append($button);
-            });
-            $tempButtons.find('input').eq(0).remove();
-            var $output = $('<div id="rdr_tempOutput" />').css({'font-size':'12px'}); //filled out for now with save function
-            $tempButtons.append($output);
-
-            $tempButtons.css({'position':'fixed', 'margin-left':'5px'});
-            $tempButtons.children('.rdr_tempButton').css({'margin':'4px 0'});
-            $tempButtons.find('input').css({'left':'55px', 'width':'30px','position':'absolute'});
-            $('body').append($tempButtons);    
-        }
-        //end private functions
-
-        //init selKeeper on window.
-        log('test about to init');
-        $(window).selKeeper();
-
-    })($R);
-
-    (function($){
         
-        $.fn.hilite = function(selRev) {
-            /**
-             * hilite
-             * losely based on searchHighlight plugin for jQuery
-             * http://www.jquery.info/spip.php?article50
-             * 
-             * modified by eric@readrboard.com for readrboard.com
-             *
-             */
-            
-            if (typeof selRev === "undefined" )
-                return false;
-            
-            var range = selRev.range;
-            if(typeof range === "undefined") return false;
-            //else
-            log(selRev.text); 
-            if(selRev.text.length == 0) return false;
-            //don't trust when the rangySelection picks up the latest selection: clear it for now..
-            //selRev.rangySelection.removeAllRanges(); 
-            
-            //test - serializer:
-            //range = rangy.deserializeRange(selRev.serialRange);
-
-            var host = range.commonAncestorContainer;
-            //get the closest parent that isn't a textNode
-            //todo: check this..  any other weird nodes I need to think about?
-            while(host.nodeType == 3){ //Node.TEXT_NODE equals 3
-                host = host.parentNode;
-            }
-
-            hiliteSelRev(selRev, range);
-            return this;
+        //private functions:
+        function _WSO(){
+            return rangy.getSelection();  
         }
-  
-        function hiliteSelRev(selRev, range) {
+        function _fetchSelRev(idxOrSelRev){
+            //check if idxOrSelRev is selRev object,
+            //else, get the selRev from idx,
+            //else if param is undefined, return the latest on the stack
+
+            if(typeof idxOrSelRev === 'object')
+                return idxOrSelRev;
+                            
+            //else
+            var selRevStack = _selRevs,
+            //set idx to declared idx, else last idx on the stack
+            idx = (typeof index == "string" || typeof index == "number" ) ? idxOrSelRev : selRevStack.length-1,
+            selRev = selRevStack[idx];
+            if(selRev)
+                return selRev;
+            
+            //else
+            console.warn('selRev.idx not in stack');
+            return false;
+        }
+        function _hilite(selRev, range) {
             //use a unique indexed version of style to uniquely identify spans
             var styleClass = selRev.styleName,
             uniqueClass = styleClass+"_"+selRev.idx,
@@ -2408,41 +2337,105 @@ function jQueryPlugins($R){
                     }
                 }
             });
+            return selRev;
         }
-    })($R);
+        function _rangeOffSet(range, opts){ 
+            // returns a range or false, which should trigger the caller to fail gracefully.
+            var defaults = {
+                start: true, //start or end offset?
+                offset: undefined, // absolute offset should be a positive or negative number to add to the offset
+                relOffset: undefined // (relative offset) is ignored if offset is set
+            },
+            opts = $.extend({}, defaults, opts),
+            iniOffset = (opts.start) ? range.startOffset : range.endOffset; //rangy range properties startOffset, endOffset
+            if(typeof opts.offset === "undefined" ){
+                if(typeof opts.relOffset === "undefined" ){
+                    return iniOffset;
+                }//else
+                opts.offset = iniOffset + opts.relOffset;
+            }
+            try{
+                if(opts.start){
+                    range.setStart(range.startContainer, opts.offset); //rangy function setStart, attribute startContainer
+                }else{
+                    range.setEnd(range.endContainer, opts.offset); //rangy function setEnd, attribute endContainer   
+                }
+                return range;
+            }catch(e){
+                log(e); //range out of bounds
+                return false;
+            }
+        }
+        function _filter(range, filterList){
+            // I think only firefox allows for multiple ranges to be selected, and no one really does it.
+            // Besides, for our tool, we'd prob have to just use the first one anyway..
+            // For now, just use only the first range on the rare case where someone tries to pass more than 1. (ranges[0])
+            var scope = this,
+            filters = {},
+            defaultFilters = _modifierFilters; //make default all filters
+            //if filters not specifed, call all filters
+            if ( typeof filterList === "undefined" || filterList == null ){
+                filters = defaultFilters;
+            }
+            else{
+                $.each(filterList, function(idx, val){
+                    filters[val] = defaultFilters[val] || function(){console.error('bad filter name passed in param');return false};
+                });
+            }                    
+            $.each(filters, function(){
+                range = this(range);
+            });
+            return range;
+        }
 
+        function _tempTesting(){
+                /*
+            * testing temp function
+            */
+            //make $tempButtons output
+            //hide for now
+            var $tempButtons = $('<div class="rdr_blacklist"/>').hide(),
+            buttonInfo= {
+                //note, remember to use $R instead of $ if calling in firebug
+                a:{
+                    name:'save',
+                    func:'save',
+                    attr:undefined
+                },
+                b:{
+                    name:'restore',
+                    func:'restore',
+                    attr:undefined
+                },
+                c:{
+                    name:"revise",
+                    func:'modify',
+                    attr:undefined
+                }
+            }
+            $.each(buttonInfo,function(idx, val){
+                var $button = $('<div class="rdr_tempButton"><a href=\"javascript:void(0);\">'+this.name+'</a><input /></div>');
+                $button.find('a').click(function(){
+                    var input = $(this).parent().find('input').val();
+                    val.attr= (input == "" ) ? undefined : input;
+                    var selrev = $(window).selKeeper(val.func, val.attr);
+                });
+                $tempButtons.append($button);
+            });
+            $tempButtons.find('input').eq(0).remove();
+            var $output = $('<div id="rdr_tempOutput" />').css({'font-size':'12px'}); //filled out for now with save function
+            $tempButtons.append($output);
 
-    (function($){
+            $tempButtons.css({'position':'fixed', 'margin-left':'5px'});
+            $tempButtons.children('.rdr_tempButton').css({'margin':'4px 0'});
+            $tempButtons.find('input').css({'left':'55px', 'width':'30px','position':'absolute'});
+            $('body').append($tempButtons);    
+        }
+        //end private functions
 
-        /*
-         * jquery.ui.selKeeper
-         * 
-         * readrboard.com - started by eric@readrboard.com
-         * 
-         * a plugin using the jquery widget pattern
-         * that utilizes the rangy library
-         * 
-         * the widget pattern:
-         * http://docs.jquery.com/UI_Developer_Guide#The_widget_factory
-         *
-         * to test in the live page, don't forget to use $R(), not $().
-         * $R() can't be empty, so use $R(window);
-        */
-
-        // ******* A note about concepts and objects used***********
-
-        // I am frustrated by Rangy's 'selection' object - I hate that there is only a getter and not a setter for it.
-        // Basically, if we want to create an object with custom ranges, rangy makes us use
-        // the function rangy.getSelection (which grabs the current selection) and then overwrite the ranges.  
-        // To work with this, I am adding a global copy of a selection object (I'm calling it a Window Selection Object or _WSO)
-        // then whenever I want to set the window's selection, I'm just setting the ranges of that WSO.
-        // Meanwhile, I'm passing around other 'inactive' selection objects as containers to hold ranges and other info.
-        // 
-        // I am using the idea of a selection revision (selRev) to indicate a new selection within a browser session.
-        // These selRevs are saved in a stack so that we can track them, later restore them, or modify one into another.
-        // Each selRev has a bunch of meta data including, most importantly, the selection which in turn has ranges that define the selection.
-        // A selRev is meant to be immutable - A new selRev doens't change a previous one but copies it, modifies and saves a new selRev to the stack.
-        
+        //init selKeeper on window.
+        log('test about to init');
+        $(window).selKeeper();
 
     })($R);
 
@@ -2452,6 +2445,9 @@ function jQueryPlugins($R){
          * gets or sets delicious raw textnode leafs within a $() set.
          * todo: confirm if we need anymore 'ignore' checks for other nodetypes
          */
+
+         //this isn't being used right now - ec 
+
         $.fn.textnodes = function(injectText){
             // If injectText is passed as a string or array of strings, replace 'this' content with corresponding textnodes.
             // Else, return all offspring textnodes in a flattened array.
@@ -2499,6 +2495,7 @@ function jQueryPlugins($R){
         
         //nothing to see here: starting to work on superRange plugin
         //superRange or SR.
+        //this isn't being used right now - ec 
 
         $.fn.superRange = function(options){
             var $this = this,
