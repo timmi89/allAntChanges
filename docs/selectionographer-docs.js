@@ -65,7 +65,7 @@
 // hilite
 // hilites the selState range with styled span wraps around the selected text.
 // todo: right now, the un-hilite is just built in as a bound escape keypress...  later add to the API
-	$(window).selog( 'hilite', idxOrSelState );
+	$(window).selog( 'hilite', );
 	$(window).selog( 'hilite', idxOrSelState );
 	// idxOrSelState is optional and behaves as it does in the 'activate' method - see above.
 	// Uses the rangy CssClassApplier tool to add and remove styled span wraps.
@@ -83,4 +83,3 @@
 // saves and activates a range.
 // If you're trying to use the 'activate' method on a range instead of a selState, don't - use this instead.
 	$(window).selog('helpers', 'activateRange', rangeOrSerialRange);
-	//todo: test this.

@@ -940,7 +940,7 @@ function readrBoard($R){
 
                 //Trigger the smart text selection and highlight
                 var newSel = $(window).selog('helpers', 'smartHilite');
-
+                
                 // draw the window over the actionbar
                 var actionbarOffsets = settings.coords;
 
@@ -956,14 +956,11 @@ function readrBoard($R){
                     //todo - combine with copy of this
                     var range = newSel.range,
                     styleClass = newSel.styleName,
-                    uniqueClass = styleClass+"_"+newSel.idx,
-                    $endBrushNode = $(range.endContainer).closest('.'+uniqueClass);
-    				//keep commented out for now
+                    hiliter = newSel.hiliter;
     				//testing adjusting the position with overrides from the hilite span 
-                    log($endBrushNode )
-                    if($endBrushNode){
+                    if(hiliter.$end){
                         var $helper = $('<span />');
-                        $helper.insertAfter($endBrushNode);
+                        $helper.insertAfter(hiliter.$end);
                         var strRight = $helper.offset().right;
                         var strBottom = $helper.offset().bottom;
                         $helper.remove();
@@ -971,7 +968,7 @@ function readrBoard($R){
                         actionbarOffsets.top = strBottom;
                     }
                 }
-
+                
                 var rindow = RDR.rindow.draw({
                     left:actionbarOffsets.left,
                     top:actionbarOffsets.top,
@@ -2043,15 +2040,15 @@ function jQueryPlugins($R){
                     //idx will give the next avail index in _selStates.  Indexes should not be shifted.  Note that length is initially zero which is correct. 
                     idx: selStateStack.length,
                     styleName: 'rdr_hilite',
-                    timestamp: $.now(),         //don't really need this..
-                    interactionID: null,        //for later use
-                    revisionParent: null,       //set below
-                    serialRange: null,          //set below - overwritten by explicit range object
-                    range: null,                //set below - overwrites serial range
-                    text: ""                    //set below
+                    timestamp: $.now(),         // don't really need this..
+                    hiliter: null,          // used later for controling the custom hilite
+                    interactionID: null,        // for later use
+                    revisionParent: null,       // set below
+                    serialRange: null,          // set below - overwritten by explicit range object
+                    range: null,                // set below - overwrites serial range
+                    text: ""                    // set below
                 },
                 range, serialRange;
-
                 if(typeof rangeOrSerialRange === 'string'){
                     serialRange = rangeOrSerialRange;
                     range = rangy.deserializeRange(serialRange);
@@ -2067,10 +2064,11 @@ function jQueryPlugins($R){
                 selState.serialRange = serialRange;
                 selState.range = range;
                 selState.text = selState.range.toString(); //rangy range toString function
+                //check for empty selection..
+                if(selState.text.length == 0) return false;
 
                 //push selState into stack
                 selStateStack[selState.idx] = selState;
-
                 //temp log to tempOutput    
                     var str,
                     txtLen = selState.text.length; 
@@ -2082,6 +2080,7 @@ function jQueryPlugins($R){
                     }
                     $('#rdr_tempOutput').append('<div><b>'+selState.idx+'</b>: '+str+'</div>');
                 //end temp log to tempOutput
+                log('saved selState ' + selState.idx + ': ' + selState.text);
                 return selState;
             },
             activate: function(idxOrSelState){
@@ -2096,13 +2095,11 @@ function jQueryPlugins($R){
                 return selState;
             },
             modify: function(idxOrSelState, filterList) {
-                
                 //let filterList be optionally called without idxOrSelState - letting the selState default to the latest.
                 if( idxOrSelState instanceof Array ){
                     filterList = idxOrSelState;
                     idxOrSelState = undefined; //will trigger default latest idx
                 }
-
                 var iniSelState = _fetchselState(idxOrSelState),
                 newSelState, newRange;
                 if(!iniSelState) return false;
@@ -2114,25 +2111,45 @@ function jQueryPlugins($R){
                 newSelState = methods.save(newRange);
                 return newSelState
             },
-            hilite: function(idxOrSelState) {
+            hilite: function(idxOrSelState, switchOnOffToggle){
+                // switchOnOffToggle is optional.  Expects a string 'on', 'off', or 'toggle', or defaults to 'on'
+                // check if idxOrSelState is omited
+                if( typeof idxOrSelState === 'string' && isNaN( parseInt(idxOrSelState) ) ){
+                    log('after')
+                    switchOnOffToggle = idxOrSelState;
+                    idxOrSelState = undefined;
+                }
+                var switchOnOffToggle = switchOnOffToggle || 'on';
+
                 //todo:checkout why first range is picking up new selState range (not a big deal)
                 var selState = _fetchselState(idxOrSelState);
                 if(!selState) return false;
                 
                 var range = selState.range;
-                if(typeof range === "undefined") return false;
-                //else
-                if(selState.text.length == 0) return false;
-                
                 //todo: not using this yet..
                 var host = range.commonAncestorContainer;
                 //get the closest parent that isn't a textNode or CDATA node
                 while( host.nodeType == 3 || host.nodeType == 4 ){ //Node.TEXT_NODE equals 3, CDATA_SECTION_NODE = 4
                     host = host.parentNode;
                 }
+
+                //init hiliter if neccesary
+                selState.hiliter = selState.hiliter || _hiliteInit(selState);
+                log('selState.hiliter')
+                log(selState.hiliter)
                 
-                //_hilite returns the selState
-                return _hilite(selState, range);
+                selState = _hiliteSwitch(selState, switchOnOffToggle);
+
+                if( switchOnOffToggle === 'on' ){   
+                    //add escape keypress event to document to remove all hilites
+                    $(document).keyup(function(event) {
+                        //todo: merge all esc key events (use an array of functions that we can just dequeue?)
+                        if (event.keyCode == '27') { //esc
+                            _hiliteSwitch(selState, 'off'); 
+                        }
+                    });
+                }
+                return selState
             },
             helpers: function(helperPack){
                 var func = _helperPacks[helperPack];
@@ -2267,14 +2284,15 @@ function jQueryPlugins($R){
             return rangy.getSelection();  
         }
         function _fetchselState(idxOrSelState){
-            //check if idxOrSelState is selState object,
+            //check if idxOrSelState is selState false (error signal from up the chain - return false),
+            //else, if object, it's a selState,
             //else, get the selState from idx,
             //else if param is undefined, return the latest on the stack
+            
+            if( idxOrSelState === false ) return false;
 
-            if(typeof idxOrSelState === 'object')
-                return idxOrSelState;
+            if(typeof idxOrSelState === 'object') return idxOrSelState;
                             
-            //else
             var selStateStack = _selStates,
             //set idx to declared idx, else last idx on the stack
             idx = (typeof idxOrSelState == "string" || typeof idxOrSelState == "number" ) ? idxOrSelState : selStateStack.length-1,
@@ -2286,43 +2304,79 @@ function jQueryPlugins($R){
             console.warn('selState.idx not in stack');
             return false;
         }
-        function _hilite(selState, range) {
-            //use a unique indexed version of style to uniquely identify spans
-            var styleClass = selState.styleName,
-            uniqueClass = styleClass+"_"+selState.idx,
-            hiliteBrush = rangy.createCssClassApplier( uniqueClass, true ),
-            $startBrushNode, $endBrushNode; //the start and end brush helper spans.
-            
-            hiliteBrush.applyToRange(range);
-            
-            //apply the visual styles with the generic classes
-            $('.'+uniqueClass).addClass(styleClass);
-            $startBrushNode = $(range.startContainer).closest('.'+uniqueClass);
-            $endBrushNode = $(range.endContainer).closest('.'+uniqueClass);
-            
-            //apply css classes to start and end so we can style those specially
-            $startBrushNode.addClass(styleClass+'_start');
-            $endBrushNode.addClass(styleClass+'_end');
+        function _hiliteInit(selState){
+            //only init once
+            log(selState.hiliter)
+            if(selState.hiliter){
+                return selState.hiliter;
+            }
+            log('in')
+            // todo: make hiliter a proper js class object
+            var range = selState.range,
+            styleClass = selState.styleName,
+            hiliter;
 
-            //add escape keypress event to document to remove all hilites
-            $(document).keyup(function(event) {
-                if (event.keyCode == '27') { //esc
-                    log('removing hilite for range:' + range)
-                    //remove the classes again so that the hilitebrush can normalize the selection (paste it back together)
-                    $startBrushNode.removeClass(styleClass+'_start');
-                    $endBrushNode.removeClass(styleClass+'_end');
-                    $('.'+uniqueClass).removeClass(styleClass);
-                    //finally, 
-                    if(hiliteBrush.isAppliedToRange(range)){
-                        hiliteBrush.undoToRange(range);
-                        //remove this binding so that we don't try to keep removing the non-existant hilite.
-                        $(document).unbind('keyup', arguments.callee);
-                    }
-                    else{
-                        log('error ' + range)
-                    }
+        
+            //use a unique indexed version of style to uniquely identify spans
+            var uniqueClass = styleClass+"_"+selState.idx;
+            hiliter = rangy.createCssClassApplier( uniqueClass, true ); //see rangy docs for details
+            hiliter.class = uniqueClass;
+            hiliter.get$start = function(){
+                return $(range.startContainer).closest('.'+hiliter.class);
+            };
+            hiliter.get$end = function(){
+                return $(range.endContainer).closest('.'+hiliter.class); 
+            };
+            hiliter.isActive = function(){
+                return hiliter.isAppliedToRange(range);
+            };
+            
+            //activate it on init
+            hiliter.applyToRange(range);
+            log( hiliter.isActive() );
+            return hiliter;
+        }
+        function _hiliteSwitch(selState, switchOnOffToggle) {
+            //args required
+            //switchOnOffToggle must be a string 'on','off',or 'toggle'
+            var range = selState.range,
+            styleClass = selState.styleName,
+            hiliter = selState.hiliter,
+            isActive = hiliter.isActive();
+
+            if(dfgfdgd)
+            log(hiliter)
+            log(hiliter.isActive())
+            //on
+            if( hiliter.isActive() ){
+                hiliter.applyToRange(range);
+                log(hiliter)
+                log( hiliter.isActive );
+                //apply the visual styles with the generic classes
+                $('.'+hiliter.class).addClass(styleClass);
+                //apply css classes to start and end so we can style those specially
+                hiliter.get$start().addClass(styleClass+'_start');
+                hiliter.get$end().addClass(styleClass+'_end');
+            }
+
+            //off
+            else{
+                log('removing hilite for selState ' + selState.idx + ': ' + selState.text )
+                //remove the classes again so that the hiliter can normalize the selection (paste it back together)
+                hiliter.get$start().removeClass(styleClass+'_start');
+                hiliter.get$end().removeClass(styleClass+'_end');
+                $('.'+hiliter.class).removeClass(styleClass);
+                //finally, 
+                if(hiliter.isAppliedToRange(range)){
+                    hiliter.undoToRange(range);
+                    //remove this binding so that we don't try to keep removing the non-existant hilite.
+                    $(document).unbind('keyup', arguments.callee);
                 }
-            });
+                else{
+                    log('error ' + range)
+                }
+            }
+
             return selState;
         }
         function _rangeOffSet(range, opts){ 
