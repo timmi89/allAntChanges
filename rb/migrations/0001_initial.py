@@ -79,8 +79,8 @@ class Migration(SchemaMigration):
         # Adding model 'Site'
         db.create_table('rb_site', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('domain', self.gf('django.db.models.fields.CharField')(max_length=50)),
+            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=100)),
+            ('domain', self.gf('django.db.models.fields.CharField')(unique=True, max_length=50)),
             ('group', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rb.Group'])),
             ('include_selectors', self.gf('django.db.models.fields.CharField')(max_length=250, blank=True)),
             ('no_rdr_selectors', self.gf('django.db.models.fields.CharField')(max_length=250, blank=True)),
@@ -356,11 +356,11 @@ class Migration(SchemaMigration):
         'rb.site': {
             'Meta': {'object_name': 'Site'},
             'css': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
-            'domain': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'domain': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'}),
             'group': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.Group']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'include_selectors': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100'}),
             'no_rdr_selectors': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'})
         },
         'rb.socialauth': {

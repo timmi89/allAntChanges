@@ -972,43 +972,44 @@ function readrBoard($R){
             },
             viewContainerReactions: function( args ) {
                 console.clear();
-                var info = RDR.content_nodes[args.hash].info;
-                info.tags = {};
-                info.tags.total = 0;
 
-                $.each( info.content, function( c_idx, content ) {
-                    console.dir(content);
-                    
-                    // $.each( content.tags, function(t_idx, tag) ) {
+                function SortByTagCount(a,b) { return b.count - a.count; }
+
+                var info = RDR.content_nodes[args.hash].info;
+                info.tags = [];
+                info.tags.total_count = 0;
+                // info.tags_order = [];
+
+                for ( var j in info.content ) {
+                    // console.dir(content);
+                    var content = info.content[j];
+
                     for ( var i in content.tags ) {
                         var tag = content.tags[i];
-                        if ( !info.tags[ tag.id ] ) info.tags[ tag.id ] = { total:0, content:{} };
 
-                        info.tags[ tag.id ].name = tag.tag;
-                        info.tags[ tag.id ].content[ c_idx ] = tag.count;
-                        info.tags.total += tag.count;
+                        var tag_idx = -1;
+                        for ( var z in info.tags ) {
+                            if ( info.tags[z].id == tag.id ) {
+                                tag_idx = z;
+                                break;
+                            }
+                        }
+                        if ( tag_idx == -1 ) {
+                            info.tags.push({ id:tag.id, name:tag.tag, count:0, content:{} });
+                            tag_idx = ( info.tags.length - 1 );
+                        }
+
+                        info.tags[ tag_idx ].count += tag.count;
+                        info.tags[ tag_idx ].content[ j ] = tag.count;
+                        info.tags.total_count += tag.count;
+
+                        // info.tags_order[ tag.id ] += tag.count;
                     };
-
-                    // {
-                    //     name: "Great!",
-                    //     // percentage: parseInt( 4 / info.tag_count * 100 ), // figure this at the end
-                    //     total: 34,
-                    //     content: {
-                    //         {
-                    //             tag_total:8,
-                    //             content_idx: 1, // a ref to RDR.content_nodes[args.hash].info.content[1]
-
-                    //         }
-                    //     }
-                    // }
-
-                });
-
-                console.dir( info.tags );
-                RDR.content_nodes[args.hash].info.tags = info.tags;
+                };
+                info.tags.sort(SortByTagCount);
+                RDR.content_nodes[args.hash].info = info;
 
                 var iconOffsets = args.icon.offset();
-
                 var rindow = RDR.rindow.draw({
                     left:iconOffsets.left,
                     top:iconOffsets.top,
@@ -1016,8 +1017,8 @@ function readrBoard($R){
                     ignoreWindowEdges:"bl",
                     noHeader:true
                 });
-                rindow.css({width:'200px'});
 
+                rindow.css({width:'200px'});
                 var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new" />'),
                     $reactionPanel = $('<div class="rdr_reactionPanel rdr_read rdr_sntPnl" />'),
                     $whyPanel = RDR.actions.whyPanel.draw( rindow ),
@@ -1036,18 +1037,22 @@ function readrBoard($R){
 
                 //populate reactionPanel
                 $reactionPanel.find('div.rdr_body').append($tagBox);
-                
+
+
                 ////populate blesed_tags
-                $.each(info.tag_totals, function(idx, val){
-                    var $li = $('<li class="rdr_tag_'+val.id+'" />').data({
-                        'tag':{
-                            content:parseInt( val.id ),
-                            name:val.name
-                        }
-                    }).append('<div class="rdr_rightBox"></div><div class="rdr_leftBox">'+val.percentage+'%</div><a href="javascript:void(0);">'+val.name+'</a>');
-                    
-                    $tagBox.children('ul.rdr_tags').append($li);
-                });
+                for ( var i in info.tags ) {
+                    if ( info.tags[i].name ) {
+                        var percentage = Math.round( (info.tags[i].count / info.tags.total_count) * 100);
+                        var $li = $('<li class="rdr_tag_'+i+'" />').data({
+                            'tag':{
+                                content:parseInt( i ),
+                                name:info.tags[i].name
+                            }
+                        }).append('<div class="rdr_rightBox"></div><div class="rdr_leftBox">'+percentage+'%</div><a href="javascript:void(0);">'+info.tags[i].name+'</a>');
+                        
+                        $tagBox.children('ul.rdr_tags').append($li);
+                    }
+                };
 
                 rindow.animate({
                     width: rindow.settings.pnlWidth +'px',
@@ -1055,9 +1060,10 @@ function readrBoard($R){
                 }, rindow.settings.animTime, function() {
                     $(this).css('width','auto');
                     // rindow.append($sentimentBox);
+
                     rindow.find('div.rdr_contentSpace').append($sentimentBox);
                     RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:rindow.settings});
-                    
+
                     /* can remove I think:  PB, 5/1/2011
                     if ( settings.content_type == "text" ) {
                        rindow.find('div.rdr_selectedTextPanel em').text( settings.content );
@@ -1081,8 +1087,9 @@ function readrBoard($R){
                             // $whyPanel.find('.rdr_body').html('');
 
                             // show a loader...
-
-                            console.log('ok lets view this tag');
+console.clear();
+                            console.log('ok lets view tag: ');
+                            console.dir( $this );
                             // }
                         }
                     });
@@ -1890,11 +1897,11 @@ function loadScript(sScriptSrc,callbackfunction) {
 }
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
-loadScript("/static/ui-prototype/js/jquery-1.4.4.min.js", function(){
+loadScript("/static/js/jquery-1.6.js", function(){
     //callback
 
     //load jQuery UI while the $ and jQuery still refers to our new version
-    loadScript("/static/ui-prototype/js/jquery-ui-1.8.6.custom.min.js", function(){
+    loadScript("/static/js/jquery-ui-1.8.6.custom.min.js", function(){
         //callback
 
         //test that $.ui versioning is working correctly
