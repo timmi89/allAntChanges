@@ -6,6 +6,84 @@ import hmac
 import random
 from exceptions import FBException, JSONException
 
+def getTagCommentData(tag, tags, comments):
+    tag_comments = []        
+    for comment in comments.filter(parent=tags.filter(interaction_node=tag)):
+        comment_data = {}
+        comment_data['comment'] = comment.interaction_node.body
+        comment_data['user'] = comment.user
+        tag_comments.append(comment_data)
+
+    return tag_comments
+
+def getTagData(tags, comments):
+    # Get information about the tags
+    tags_data = []
+
+    # Make list of unique content and grab the InteractionNode objects
+    tag_unique = tags.order_by('interaction_node').distinct().values('interaction_node')
+    tag_objs = InteractionNode.objects.filter(id__in=tag_unique)
+    
+    for tag_item in tag_objs:
+        tag_data = {}
+        tag_data['tag'] = tag_item.body
+        tag_data['id'] = tag_item.id
+        tag_data['count'] = tags.filter(interaction_node=tag_item).count()
+        tag_data['comments'] = getTagCommentData(tag_item, tags, comments)
+        tags_data.append(tag_data)
+
+    return tags_data
+
+def getContentData(interactions, content_objs):
+    content = []
+
+    for content_item in content_objs:
+        data = {}
+        data['body'] = content_item.body
+        
+        # Filter interactions for this piece of content and get count data
+        content_interactions = interactions.filter(content=content_item).select_related('interaction_node')
+        content_tags = content_interactions.filter(interaction_node__kind='tag')
+        content_coms = content_interactions.filter(interaction_node__kind='com')
+        data['tag_count'] = content_tags.count()
+        data['comment_count'] = content_coms.count()
+        data['tags'] = getTagData(content_tags, content_coms)
+        
+        content.append(data)
+
+    return content
+
+def getContainerData(hash):
+    container_data = {}
+    # Get everything we know about this hash
+    interactions = Interaction.objects.filter(container__hash=hash)
+
+    # Filter tag and comment interactions
+    tags = interactions.filter(interaction_node__kind='tag')
+    comments = interactions.filter(interaction_node__kind='com')
+
+    # Get counts of tags and comments -- container level
+    container_data['tag_count'] = tags.count()
+    container_data['comment_count'] = comments.count()
+    
+    # Make list of unique content and retrieve their Content objects
+    content_unique = interactions.order_by('content').distinct().values('content')
+    content_objs = Content.objects.filter(id__in=content_unique)
+
+    container_data['content'] = getContentData(interactions, content_objs)
+
+    return container_data
+
+def interactionNodeCounts(interactions, kinds=[], content=None):
+    # Filter interactions for this piece of content and get count data
+    counts = []
+    if content:
+        interactions = interactions.filter(content=content_item)
+    for kind in kinds:
+        filtered = content_interactions.filter(interaction_node__kind=kind)
+        counts.append(filtered.count())
+    return counts
+
 def getPage(request, pageid=None):
     canonical = request.GET.get('canonical_url', None)
     fullurl = request.GET.get('url', None)
