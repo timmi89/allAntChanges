@@ -8,8 +8,8 @@ client$ = {}; //init var: clients copy of jQuery
 
 //init rangy if it hasn't been already, we probably dont need this...
 rangy.init();
-
-var rbRangy; //temp glob
+var a;
+var selog; //temp glob
 var demoRindow;
 
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
@@ -1127,49 +1127,42 @@ function readrBoard($R){
             },
 			sentimentBox: function(settings) {
                 
-                /* keep commented out for now
-
                 var $hostNode = $('.rdr-'+settings.container);
                 //console.log(typeof selection.content);
 
                 //Trigger the smart text selection and highlight
-                var selRev = $(window).rbRangy('saveSelRev'),
-                revisedSelRev = $(window).rbRangy('reviseSelRev',selRev.idx);
-                
-                $hostNode.hilite({
-                    selRev:revisedSelRev
-                });
-                */
+                var newSel = $(window).selog('helpers', 'smartHilite');
                 
                 // draw the window over the actionbar
                 var actionbarOffsets = settings.coords;
 
 				$('.rdr_rewritable').removeClass('rdr_rewritable');
 
-                //todo: weird, why did commenting this line out not do anything?...look into it
-				//porter says: the action bar used to just animate larger and get populated as a window.  we can remove this.
-                //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
 				if ( settings.content_type == "text" ) {
 					actionbarOffsets.left = actionbarOffsets.left + 40;
 					actionbarOffsets.top = actionbarOffsets.top + 35;
 				}
 				
-				/*
-				//keep commented out for now
-				//testing adjusting the position with overrides from the hilite span 
-                var $endSpan = $('.rdr_hilite_end');
-                
-                if($endSpan){
-                    var $helper = $('<span />');
-                    $helper.insertAfter($endSpan);
-                    var strRight = $helper.offset().right;
-                    var strBottom = $helper.offset().bottom;
-                    $helper.remove();
-                    actionbarOffsets.left = strRight + 5; //with a little padding
-                    actionbarOffsets.top = strBottom;
+                //if sel exists, reset the offset coords
+                if(newSel){
+                    //todo - combine with copy of this
+                    var range = newSel.range,
+                    styleClass = newSel.styleName,
+                    hiliter = newSel.hiliter,
+                    $hiliteEnd = hiliter.get$end();
+
+    				//testing adjusting the position with overrides from the hilite span 
+                    if( $hiliteEnd ){
+                        var $helper = $('<span />');
+                        $helper.insertAfter( $hiliteEnd );
+                        var strRight = $helper.offset().right;
+                        var strBottom = $helper.offset().bottom;
+                        $helper.remove();
+                        actionbarOffsets.left = strRight + 5; //with a little padding
+                        actionbarOffsets.top = strBottom;
+                    }
                 }
                 
-                */
                 var rindow = RDR.rindow.draw({
                     left:actionbarOffsets.left,
                     top:actionbarOffsets.top,
@@ -2032,6 +2025,41 @@ function $RFunctions($R){
 function jQueryPlugins($R){
 //All jquery plugins to be loaded using our $R version of jquery and before our widget code;
 
+  (function($){
+        /*
+        * jquery.log helpers
+        */
+        // Log Taken from the firebug site: http://getfirebug.com/firebug/firebugx.js
+        // make calls to console harmless if there is no console.
+        if (!window.console || !console.firebug) {
+            var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml",
+            "group", "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];
+
+            window.console = {};
+            for (var i = 0; i < names.length; ++i){
+                window.console[names[i]] = function() {};
+            }
+        }
+
+        //alias console.log to global log
+        //in case client already has log defined (remove for production anyway)
+        if (typeof log === "undefined"){
+            log = function(msg){
+                console.log(msg);
+            }   
+        }
+
+        //use real jQuery instead of alias so we don't have to use $R
+        //in case client already has $.log defined (remove for production anyway)
+        if (typeof jQuery.fn.log === "undefined"){
+            //make $.log chain nicely
+            jQuery.fn.log = function (msg) {
+                console.log("%s: %o", msg, this);
+                return this;
+            };
+        }
+    })($R);
+
     (function($){
         /* jquery json v2.2 */
         /* http://code.google.com/p/jquery-json/ */
@@ -2203,386 +2231,475 @@ function jQueryPlugins($R){
     })($R);
 
     (function($){
-        
-        $.fn.hilite = function(options) {
-            /**
-             * hilite
-             * losely based on searchHighlight plugin for jQuery
-             * http://www.jquery.info/spip.php?article50
-             * 
-             * modified by eric@readrboard.com for readrboard.com
-             *
-             */
-            
-            if (typeof options === "undefined" ) options = {};
-            Hilite.options = $.extend({
-                selRev:undefined,
-                WSO: rangy.getSelection(window) //Window Selection Object
-            }, options);
-            
-            var ranges = Hilite.options.selRev.ranges;
-            if(typeof ranges === "undefined") return this;
-            //else
-            Hilite.options.WSO.removeAllRanges();
-            //at least for now, don't deal with multiple ranges
-            var range = ranges[0];
-            var host = range.commonAncestorContainer;
-            //get the closest parent that isn't a textNode
-            //todo: check this..  any other weird nodes I need to think about?
-            while(host.nodeType == 3){ //Node.TEXT_NODE equals 3
-                host = host.parentNode;
-            }
-
-            Hilite.hiliteElement(host, range);
-            return this;
-        }
-  
-        var Hilite = {
-            //add generic class to pick up stlye, and numbered version to uniqely identify it.
-            brushClass: "rdr_hilite",
-            hiliteBrush: rangy.createCssClassApplier("rdr_hilite", true),
-            lastRange:null,
-            options: {}, //to be initialized
-            hiliteElement: function(el, range) {
-                if (Hilite.lastRange){
-                    //Hilite.hiliteBrush.undoToRange(Hilite.lastRange);
-                }
-                var opts = Hilite.options,
-                $el = $(el);
-                log(el)
-
-                Hilite.hiliteBrush.applyToRange(range);
-                Hilite.lastRange = range;
-                
-                $(range.startContainer).closest('.'+Hilite.brushClass).addClass(Hilite.brushClass+'_start')
-                $(range.endContainer).closest('.'+Hilite.brushClass).addClass(Hilite.brushClass+'_end')
-
-                //add escape keypress event to document to remove all hilites
-                $(document).keyup(function(event) {
-                    if (event.keyCode == '27') { //esc
-                        log(range)
-                        Hilite.hiliteBrush.undoToRange(range);
-                    }
-                });
-                
-            }
-        };
-
-    })($R);
-
-
-    (function($){
-
         /*
-         * jquery.ui.rbRangy
-         * 
-         * readrboard.com - started by eric@readrboard.com
-         * 
-         * a plugin using the jquery widget pattern
-         * that utilizes the rangy library
-         * 
-         * the widget pattern:
-         * http://docs.jquery.com/UI_Developer_Guide#The_widget_factory
+         * jquery.selectionographer.js
+         * $.fn.selog aliases to $.fn.selectionographer
+         * author: eric@readrboard.com
+         * see docs for more info /docs/selectionographer-docs.js
          *
          * to test in the live page, don't forget to use $R(), not $().
-         * $R() can't be empty, so use $R(window);
-        */
+        */        
+        $.fn.selectionographer = function( params ) {
+            //jQuery plugin pattern :http://docs.jquery.com/Plugins/Authoring
+            if ( methods[params] ) {
+                return methods[params].apply( this, Array.prototype.slice.call( arguments, 1 ));
+            } else if ( typeof params === 'object' || ! params ) {
+                return methods.init.apply( this, arguments );
+            } else {
+                $.error( 'Method ' +  params + ' does not exist.' );
+            }
+        };
+        $.fn.selog = $.fn.selectionographer;
 
-        // ******* A note about concepts and objects used***********
+        var defaults = {};
 
-        // I am frustrated by Rangy's 'selection' object - I hate that there is only a getter and not a setter for it.
-        // Basically, if we want to create an object with custom ranges, rangy makes us use
-        // the function rangy.getSelection (which grabs the current selection) and then overwrite the ranges.  
-        // To work with this, I am adding a global copy of a selection object (I'm calling it a Window Selection Object or _WSO)
-        // then whenever I want to set the window's selection, I'm just setting the ranges of that WSO.
-        // Meanwhile, I'm passing around other 'inactive' selection objects as containers to hold ranges and other info.
-        // 
-        // I am using the idea of a selection revision (selRev) to indicate a new selection within a browser session.
-        // These selRevs are saved in a stack so that we can track them, later restore them, or modify one into another.
-        // Each selRev has a bunch of meta data including, most importantly, the selection which in turn has ranges that define the selection.
-        // A selRev is meant to be immutable - A new selRev doens't change a previous one but copies it, modifies and saves a new selRev to the stack.
-        
-        $.widget("ui.rbRangy", {
-            _selRevs:[
-            /*
-                //keep commented out:
-                //Example template: Set by saveSelRev and added to the stack.
-                 {
-                    selection: selectionObj || rangy.getSelection(),
-                    idx: selRevStack.length,
-                    timestamp: $.now(),
-                    selRevParent: null, //set below
-                    ranges: null,       //set below
-                    text: ""            //set below
-                }
-            */
-            ],
-            _style_name:'rdr_hilite',
-            _WSO: rangy.getSelection(), //Window Selection Object (see above).  Just used to later 'activate' custom selections 
-            _cloneSelRev: function(ranges){
-                var newRanges = $.map(ranges, function(range, idx){
-                    return( range.cloneRange() ); //rangy range function cloneRange
+        var methods = {
+            //note: In these methods, 'this' is the jQuery object that the plugin was invoked on. See plugin pattern above.
+            init : function( options ) {
+                var $this = this;
+                options = options || {};
+                _tempTesting();
+
+                //todo: make _settings an object unique to each 'this';
+                return $this.each(function(){
+                    // merge default and user parameters
+                    _settings = $.extend(defaults, options);
                 });
-                return newRanges;
             },
-            _fetchSelRev: function(index){
-                var selRevStack = this._selRevs,
-                //set idx to declared idx, else last idx on the stack
-                idx = (typeof index == "string" || typeof index == "number" ) ? index : selRevStack.length-1,
-                selRev = selRevStack[idx];
-                if(!selRev) {
-                    console.warn('selRev.idx not in stack');
-                    return false;
-                }//else
-                return selRev;
-            },
-            saveSelRev: function(ranges){
-                //ranges is optional and will usually be ommited.  Defaults to current selection with ranges
+            save: function(rangeOrSerialRange){
+                //range is optional and will usually be ommited.  Defaults to current selection with ranges
                 var scope = this,
-                selRevStack = this._selRevs,
-                selRev = {
-                    //idx will give the next avail index in _selRevs.  Indexes should not be shifted.  Note that length is initially zero which is correct. 
-                    idx: selRevStack.length,
-                    timestamp: $.now(),
-                    rangySelection: null,   //set below - only set if ranges are not passed in
-                    selRevParent: null,     //set below
-                    ranges: null,           //set below
-                    text: ""                //set below
-                };
-                
-                if(typeof ranges === 'undefined'){
-                    selRev.rangySelection = rangy.getSelection();
-                    selRev.ranges = selRev.rangySelection.getAllRanges();
-                }else{
-                    selRev.ranges = ranges;
-                }
-                
-                $.each(selRev.ranges, function(idx, val){
-                    selRev.text += val.toString(); //rangy range toString function
-                });
-
-                //push selRev into stack
-                selRevStack[selRev.idx] = selRev;
-
-                //temp log to tempOutput    
-                var str,
-                txtLen = selRev.text.length; 
-                if(txtLen <= 30){
-                        str = selRev.text;
-                        log('str')
-                        log(str)
-                }
-                else{
-                    str = selRev.text.substring(0,15)+'...'+selRev.text.substring(txtLen-15,txtLen);
-                }
-                $('#rdr_tempOutput').append('<div><b>'+selRev.idx+'</b>: '+str+'</div>');
-                //end temp log to tempOutput
-                
-                log(selRev);
-                return selRev;
-            },
-            restoreSelRev: function(idx) {
-                var selRev = this._fetchSelRev(idx);
-                log(selRev);
-                if(!selRev) return false;
-                //else
-                this._WSO.setRanges(selRev.ranges);
-                return selRev;
-            },
-            reviseSelRev: function(idx) {
-                var iniSelRev = this._fetchSelRev(idx),
-                newSelRev, newRanges;
-                if(!iniSelRev) return false;
-                //else
-
-                newRanges = this._cloneSelRev(iniSelRev.ranges);
-                //filter the ranges
-                newRanges = this._filter(newRanges);
-                newSelRev = this.saveSelRev(newRanges);
-                this.restoreSelRev(newSelRev); //for testing, this should be prob seperate though
-                return newSelRev
-             },
-             _filter: function(ranges, listFilterNames){
-                // I think only firefox allows for multiple ranges to be selected, and no one really does it.
-                // Besides, for our tool, we'd prob have to just use the first one anyway..
-                // For now, just use only the first range on the rare case where someone tries to pass more than 1. (ranges[0])
-                var scope = this,
-                range = ranges[0];
-                var filters = {},
-                defaultFilters = {
-                    stripWhiteSpace: function(range){
-                        var rangeStr = range.toString(),
-                        s = {}, //start
-                        e = {}; //end
-                        //see rangy core for range attributes used here
-                        s.textnode = range.startContainer;
-                        s.offset = range.startOffset;
-                        s.regx = /^\s+/; //start, then one or more whitespace chars
-                        s.result = s.regx.exec(rangeStr);
-
-                        e.textnode = range.endContainer;
-                        e.offset = range.endOffset;
-                        e.regx = /\s+$/; //start, then one or more whitespace chars
-                        e.result = e.regx.exec(rangeStr);
-                        
-                        //change the range offsets by the length of the whitespace found
-                        if(s.result){
-                            s.resultStrLen = s.result[0].length;
-                            scope._rangeOffSet( range, {relOffset: (s.resultStrLen)} );
-                        }
-                        if(e.result){
-                            e.resultStrLen = e.result[0].length;
-                            scope._rangeOffSet( range, {relOffset: (-e.resultStrLen), start:false} );
-                        }
-                        return range;
-                    },
-                    firstWordSnap: function(range){
-                        //find the extra word characters the range cut off at the beginning of the selRev, and add em'.
-                        //and change the offset of the range
-                        var textnode = range.startContainer, //rangy attribute startContainer
-                        startOffset = range.startOffset,
-                        testRange;
-                        if (startOffset == 0) return range;
-                        //else 
-
-                        //NOTE: this assumes that the function and the range share the same document - change if we ever need to call between iframes.
-                        //create a helper object to find the word boundary
-                        var hlpr = {
-                            range: rangy.createRange() //rangy function createRange
-                        }
-                        hlpr.range.setStart(textnode, 0);
-                        hlpr.range.setEnd(textnode, startOffset);
-                        hlpr.str0 = (hlpr.range.toString());
-                        //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
-                        hlpr.regx1 = /\s*\S+$/;
-                        hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
-                        log(hlpr.result1);
-                        if (hlpr.result1 === null) return range;
-                        //else
-
-                        hlpr.str1 = hlpr.result1[0]; //result[0] is string representation of regex object - see exec() for info
-                        //strip any white space off beginning of string
-                        hlpr.str2 = hlpr.str1.replace(/\s*/,"");
-                        hlpr.extraWordChars = hlpr.str2.length;
-                        scope._rangeOffSet(range, {relOffset: (-hlpr.extraWordChars) });
-                        log(range)
-                        return range;
-                    },
-                    lastWordSnap: function(range){
-                        //find the extra word characters the range cut off at the end of the selRev, and add em'.
-                        var textnode = range.endContainer, //rangy attribute startContainer
-                        endOffset = range.endOffset,
-                        testRange;
-                        if (endOffset == 0) return range;
-                        //else
-                        
-                        //NOTE: this assumes that the function and the range share the same document - change if we ever need to call between iframes.
-                        //create a tester object to find the word boundary
-                        var hlpr = {
-                            range: rangy.createRange() //rangy function createRange
-                        }
-                        hlpr.range.setStart(textnode, endOffset);
-                        hlpr.range.setEnd(textnode, textnode.length);
-                        hlpr.str0 = (hlpr.range.toString());
-                        //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
-                        hlpr.regx1 = /^\S+(?=(\s|$))/;
-                        hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
-                        if (hlpr.result1 === null) return range;
-                        //else
-
-                        hlpr.str1 = hlpr.result1[0]; //result[0] is string representation of regex object - see exec() for info
-                        hlpr.extraWordChars = hlpr.str1.length;
-                        scope._rangeOffSet(range, {relOffset: (hlpr.extraWordChars), start:false});
-                        return range;
-                    }
-                };
-                //if filters not specifed, call all filters
-                if (typeof listFilterNames === "undefined"){
-                    filters = defaultFilters;
-                }
-                else{
-                    $.each(listFilterNames, function(idx, val){
-                        filters[val] = defaultFilters[val] || function(){console.error('bad filter name passed in param');return false};
-                    });
-                }                    
-                $.each(filters, function(){
-                    range = this(range);
-                });
-                return [range];
-            },
-            _rangeOffSet: function(range, opts){ 
-                // returns a range or false, which should trigger the caller to fail gracefully.
-                var defaults = {
-                    start: true, //start or end offset?
-                    offset: undefined, // absolute offset should be a positive or negative number to add to the offset
-                    relOffset: undefined // (relative offset) is ignored if offset is set
+                selStateStack = _selStates,
+                selState = {
+                    //idx will give the next avail index in _selStates.  Indexes should not be shifted.  Note that length is initially zero which is correct. 
+                    idx: selStateStack.length,
+                    styleName: 'rdr_hilite',
+                    timestamp: $.now(),         // don't really need this..
+                    hiliter: null,          // used later for controling the custom hilite
+                    interactionID: null,        // for later use
+                    revisionParent: null,       // set below
+                    serialRange: null,          // set below - overwritten by explicit range object
+                    range: null,                // set below - overwrites serial range
+                    text: ""                    // set below
                 },
-                opts = $.extend({}, defaults, opts),
-                iniOffset = (opts.start) ? range.startOffset : range.endOffset; //rangy range properties startOffset, endOffset
-                if(typeof opts.offset === "undefined" ){
-                    if(typeof opts.relOffset === "undefined" ){
-                        return iniOffset;
-                    }//else
-                    opts.offset = iniOffset + opts.relOffset;
+                range, serialRange;
+                if(typeof rangeOrSerialRange === 'string'){
+                    serialRange = rangeOrSerialRange;
+                    range = rangy.deserializeRange(serialRange);
                 }
-                try{
-                    if(opts.start){
-                        range.setStart(range.startContainer, opts.offset); //rangy function setStart, attribute startContainer
-                    }else{
-                        range.setEnd(range.endContainer, opts.offset); //rangy function setEnd, attribute endContainer   
+                else if(typeof rangeOrSerialRange !== 'undefined'){
+                    range = rangeOrSerialRange;
+                    serialRange = rangy.serializeRange(range);
+                }else{
+                    //assume it's undefined and overwrite it
+                    range = _WSO().getRangeAt(0);
+                    serialRange = rangy.serializeRange(range);
+                }
+                selState.serialRange = serialRange;
+                selState.range = range;
+                selState.text = selState.range.toString(); //rangy range toString function
+                //check for empty selection..
+                if(selState.text.length == 0) return false;
+
+                //push selState into stack
+                selStateStack[selState.idx] = selState;
+                //temp log to tempOutput    
+                    var str,
+                    txtLen = selState.text.length; 
+                    if(txtLen <= 30){
+                        str = selState.text;
+                    }
+                    else{
+                        str = selState.text.substring(0,15)+'...'+selState.text.substring(txtLen-15,txtLen);
+                    }
+                    $('#rdr_tempOutput').append('<div><b>'+selState.idx+'</b>: '+str+'</div>');
+                //end temp log to tempOutput
+                //log('saved selState ' + selState.idx + ': ' + selState.text); //selog temp logging
+                return selState;
+            },
+            activate: function(idxOrSelState){
+                var selState = _fetchselState(idxOrSelState);
+                if(!selState) return false;
+                //todo: do i need to clone it to be safe?
+                var newRange = selState.range.cloneRange();
+
+                _WSO().removeAllRanges();
+                _WSO().setSingleRange(newRange);
+                //var newSelState = methods.save(selState); //for testing, this should be prob seperate though
+                return selState;
+            },
+            modify: function(idxOrSelState, filterList) {
+                //let filterList be optionally called without idxOrSelState - letting the selState default to the latest.
+                if( idxOrSelState instanceof Array ){
+                    filterList = idxOrSelState;
+                    idxOrSelState = undefined; //will trigger default latest idx
+                }
+                var iniSelState = _fetchselState(idxOrSelState),
+                newSelState, newRange;
+                if(!iniSelState) return false;
+
+                newRange = iniSelState.range.cloneRange();
+                //filter the ranges
+
+                newRange = _filter(newRange, filterList);
+                newSelState = methods.save(newRange);
+                return newSelState
+            },
+            hilite: function(idxOrSelState, switchOnOffToggle){
+                // switchOnOffToggle is optional.  Expects a string 'on', 'off', or 'toggle', or defaults to 'on'
+                // check if idxOrSelState is omited
+                if( typeof idxOrSelState === 'string' && isNaN( parseInt(idxOrSelState) ) ){
+                    switchOnOffToggle = idxOrSelState;
+                    idxOrSelState = undefined;
+                }
+                var switchOnOffToggle = switchOnOffToggle || 'on';
+
+                //todo:checkout why first range is picking up new selState range (not a big deal)
+                var selState = _fetchselState(idxOrSelState);
+                if(!selState) return false;
+                
+                var range = selState.range;
+                //todo: not using this yet..
+                var host = range.commonAncestorContainer;
+                //get the closest parent that isn't a textNode or CDATA node
+                while( host.nodeType == 3 || host.nodeType == 4 ){ //Node.TEXT_NODE equals 3, CDATA_SECTION_NODE = 4
+                    host = host.parentNode;
+                }
+
+                //todo: consider moving this to the save method.
+                //init hiliter if neccesary
+                selState.hiliter = selState.hiliter || _hiliteInit(selState);
+                
+                //switch the hilite state
+                selState = _hiliteSwitch(selState, switchOnOffToggle);
+
+                return selState
+            },
+            helpers: function(helperPack){
+                var func = _helperPacks[helperPack];
+                return func ? func.apply( this, Array.prototype.slice.call( arguments, 1 ) ) : false;
+            }
+
+        };
+
+        //private objects
+        var _settings = {}, //set on init
+        _helperPacks = {
+            smartHilite: function(){
+                /*
+                var rawSel, modSel, newSel;
+                rawSel = methods.save();
+                modSel = methods.modify(rawSel);
+                newSel = methods.hilite(modSel);
+                return newSel;
+                */
+                //does the same as above
+                return methods.hilite( methods.modify( methods.save() ) ); //oooh lispy.
+            },
+            activateRange: function(rangeOrSerialRange){
+                return methods.activate( methods.save(rangeOrSerialRange) );
+            }
+        },
+        _selStates = [
+        /*
+            //keep commented out:
+            //Example template: Set by save and added to the stack.
+             {
+                todo: update this is old...
+
+                selection: selectionObj || rangy.getSelection(),
+                idx: selStateStack.length,
+                timestamp: $.now(),
+                revisionParent: null, //set below
+                ranges: null,       //set below
+                text: ""            //set below
+            }
+        */
+        ],
+        _modifierFilters = {
+                stripWhiteSpace: function(range){
+                    var rangeStr = range.toString(),
+                    s = {}, //start
+                    e = {}; //end
+                    //see rangy core for range attributes used here
+                    s.textnode = range.startContainer;
+                    s.offset = range.startOffset;
+                    s.regx = /^\s+/; //start, then one or more whitespace chars
+                    s.result = s.regx.exec(rangeStr);
+
+                    e.textnode = range.endContainer;
+                    e.offset = range.endOffset;
+                    e.regx = /\s+$/; //start, then one or more whitespace chars
+                    e.result = e.regx.exec(rangeStr);
+                    
+                    //change the range offsets by the length of the whitespace found
+                    if(s.result){
+                        s.resultStrLen = s.result[0].length;
+                        _rangeOffSet( range, {relOffset: (s.resultStrLen)} );
+                    }
+                    if(e.result){
+                        e.resultStrLen = e.result[0].length;
+                        _rangeOffSet( range, {relOffset: (-e.resultStrLen), start:false} );
                     }
                     return range;
-                }catch(e){
-                    log(e); //range out of bounds
-                    return false;
+                },
+                firstWordSnap: function(range){
+                    //find the extra word characters the range cut off at the beginning of the selState, and add em'.
+                    //and change the offset of the range
+                    var textnode = range.startContainer, //rangy attribute startContainer
+                    startOffset = range.startOffset,
+                    testRange;
+                    if (startOffset == 0) return range;
+                    //else 
+
+                    //NOTE: this assumes that the function and the range share the same document - change if we ever need to call between iframes.
+                    //create a helper object to find the word boundary
+                    var hlpr = {
+                        range: rangy.createRange() //rangy function createRange
+                    }
+                    hlpr.range.setStart(textnode, 0);
+                    hlpr.range.setEnd(textnode, startOffset);
+                    hlpr.str0 = (hlpr.range.toString());
+                    //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
+                    hlpr.regx1 = /\s*\S+$/;
+                    hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
+                    if (hlpr.result1 === null) return range;
+                    //else
+
+                    hlpr.str1 = hlpr.result1[0]; //result[0] is string representation of regex object - see exec() for info
+                    //strip any white space off beginning of string
+                    hlpr.str2 = hlpr.str1.replace(/\s*/,"");
+                    hlpr.extraWordChars = hlpr.str2.length;
+                    _rangeOffSet(range, {relOffset: (-hlpr.extraWordChars) });
+                    return range;
+                },
+                lastWordSnap: function(range){
+                    //find the extra word characters the range cut off at the end of the selState, and add em'.
+                    var textnode = range.endContainer, //rangy attribute startContainer
+                    endOffset = range.endOffset,
+                    testRange;
+                    if (endOffset == 0) return range;
+                    //else
+                    
+                    //NOTE: this assumes that the function and the range share the same document - change if we ever need to call between iframes.
+                    //create a tester object to find the word boundary
+                    var hlpr = {
+                        range: rangy.createRange() //rangy function createRange
+                    }
+                    hlpr.range.setStart(textnode, endOffset);
+                    hlpr.range.setEnd(textnode, textnode.length);
+                    hlpr.str0 = (hlpr.range.toString());
+                    //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
+                    hlpr.regx1 = /^\S+(?=(\s|$))/;
+                    hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
+                    if (hlpr.result1 === null) return range;
+                    //else
+
+                    hlpr.str1 = hlpr.result1[0]; //result[0] is string representation of regex object - see exec() for info
+                    hlpr.extraWordChars = hlpr.str1.length;
+                    _rangeOffSet(range, {relOffset: (hlpr.extraWordChars), start:false});
+                    return range;
+                }
+            };
+
+        
+        //private functions:
+        function _WSO(){
+            return rangy.getSelection();  
+        }
+        function _fetchselState(idxOrSelState){
+            //check if idxOrSelState is selState false (error signal from up the chain - return false),
+            //else, if object, it's a selState,
+            //else, get the selState from idx,
+            //else if param is undefined, return the latest on the stack
+            
+            if( idxOrSelState === false ) return false;
+
+            if(typeof idxOrSelState === 'object') return idxOrSelState;
+                            
+            var selStateStack = _selStates,
+            //set idx to declared idx, else last idx on the stack
+            idx = (typeof idxOrSelState == "string" || typeof idxOrSelState == "number" ) ? idxOrSelState : selStateStack.length-1,
+            selState = selStateStack[idx];
+            if(selState)
+                return selState;
+            
+            //else
+            console.warn('selState.idx not in stack');
+            return false;
+        }
+        function _hiliteInit(selState){
+            //only init once
+            //log('init hiliter for selState ' + selState.idx) //selog temp logging
+            if(selState.hiliter){
+                return selState.hiliter;
+            }
+            // todo: make hiliter a proper js class object
+            var range = selState.range,
+            styleClass = selState.styleName,
+            hiliter;
+
+        
+            //use a unique indexed version of style to uniquely identify spans
+            var uniqueClass = styleClass+"_"+selState.idx;
+            hiliter = rangy.createCssClassApplier( uniqueClass, true ); //see rangy docs for details
+            hiliter.class = uniqueClass;
+            hiliter.get$start = function(){
+                return $(range.startContainer).closest('.'+hiliter.class);
+            };
+            hiliter.get$end = function(){
+                return $(range.endContainer).closest('.'+hiliter.class); 
+            };
+            hiliter.isActive = function(){
+                return hiliter.isAppliedToRange(range);
+            };
+            
+            return hiliter;
+        }
+        function _hiliteSwitch(selState, switchOnOffToggle) {
+            //args required
+            //switchOnOffToggle must be a string 'on','off',or 'toggle'
+            var range = selState.range,
+            styleClass = selState.styleName,
+            hiliter = selState.hiliter,
+            isActive = hiliter.isActive();
+
+            if( !isActive && (switchOnOffToggle === "on" || switchOnOffToggle === "toggle" )){
+                //turn on
+                hiliter.applyToRange(range);
+                //apply the visual styles with the generic classes
+                $('.'+hiliter.class).addClass(styleClass);
+                //apply css classes to start and end so we can style those specially
+                hiliter.get$start().addClass(styleClass+'_start');
+                hiliter.get$end().addClass(styleClass+'_end');
+
+                //bind an escape keypress to clear it.
+                //todo: for a real public API, this should be an option, or passed in function or something
+                $(document).keyup(function(event) {
+                    //todo: merge all esc key events (use an array of functions that we can just dequeue?)
+                    if (event.keyCode == '27') { //esc
+                        _hiliteSwitch(selState, 'off');
+                        //remove the binding after it's been called.
+                        $(document).unbind('keyup', arguments.callee);
+                    }
+                });
+            
+            }else if( isActive && (switchOnOffToggle === "off" || switchOnOffToggle === "toggle" )){
+                //turn off
+                //log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
+                //remove the classes again so that the hiliter can normalize the selection (paste it back together)
+                hiliter.get$start().removeClass(styleClass+'_start');
+                hiliter.get$end().removeClass(styleClass+'_end');
+                $('.'+hiliter.class).removeClass(styleClass);
+                
+                //do one more check even though we shouldn't have to.
+                if(hiliter.isAppliedToRange(range)){
+                    hiliter.undoToRange(range);
+                }
+                else{
+                    log('error ' + range)
                 }
             }
-        });
-
-        var $tempButtons = $('<div class="rdr_blacklist"/>'),
-        buttonInfo= {
-            //note, remember to use $R instead of $ if calling in firebug
-            a:{
-                name:'save',
-                func:'saveSelRev',
-                attr:undefined
+            
+            return selState;
+        }
+        function _rangeOffSet(range, opts){ 
+            // returns a range or false, which should trigger the caller to fail gracefully.
+            var defaults = {
+                start: true, //start or end offset?
+                offset: undefined, // absolute offset should be a positive or negative number to add to the offset
+                relOffset: undefined // (relative offset) is ignored if offset is set
             },
-            b:{
-                name:'restore',
-                func:'restoreSelRev',
-                attr:undefined
-            },
-            c:{
-                name:"revise",
-                func:'reviseSelRev',
-                attr:undefined
+            opts = $.extend({}, defaults, opts),
+            iniOffset = (opts.start) ? range.startOffset : range.endOffset; //rangy range properties startOffset, endOffset
+            if(typeof opts.offset === "undefined" ){
+                if(typeof opts.relOffset === "undefined" ){
+                    return iniOffset;
+                }//else
+                opts.offset = iniOffset + opts.relOffset;
+            }
+            try{
+                if(opts.start){
+                    range.setStart(range.startContainer, opts.offset); //rangy function setStart, attribute startContainer
+                }else{
+                    range.setEnd(range.endContainer, opts.offset); //rangy function setEnd, attribute endContainer   
+                }
+                return range;
+            }catch(e){
+                log(e); //range out of bounds
+                return false;
             }
         }
-        $.each(buttonInfo,function(idx, val){
-            var $button = $('<div class="rdr_tempButton"><a href=\"javascript:void(0);\">'+this.name+'</a><input /></div>');
-            $button.find('input').focus(function(){
-                //$R(window).rbRangy('saveSelRev');
-                //$R(window).rbRangy('restoreSelRev');
+        function _filter(range, filterList){
+            // I think only firefox allows for multiple ranges to be selected, and no one really does it.
+            // Besides, for our tool, we'd prob have to just use the first one anyway..
+            // For now, just use only the first range on the rare case where someone tries to pass more than 1. (ranges[0])
+            var scope = this,
+            filters = {},
+            defaultFilters = _modifierFilters; //make default all filters
+            //if filters not specifed, call all filters
+            if ( typeof filterList === "undefined" || filterList == null ){
+                filters = defaultFilters;
+            }
+            else{
+                $.each(filterList, function(idx, val){
+                    filters[val] = defaultFilters[val] || function(){console.error('bad filter name passed in param');return false};
+                });
+            }                    
+            $.each(filters, function(){
+                range = this(range);
             });
-            $button.find('a').click(function(){
-                var input = $(this).parent().find('input').val();
-                val.attr= (input == "" ) ? undefined : input;
-                var selrev = $(window).rbRangy(val.func, val.attr);
-            });
-            $tempButtons.append($button);
-        });
-        $tempButtons.find('input').eq(0).remove();
-        var $output = $('<div id="rdr_tempOutput" />').css({'font-size':'12px'}); //filled out for now with saveSelRev function
-        $tempButtons.append($output);
+            return range;
+        }
 
-        $tempButtons.css({'position':'fixed', 'margin-left':'5px'});
-        $tempButtons.children('.rdr_tempButton').css({'margin':'4px 0'});
-        $tempButtons.find('input').css({'left':'55px', 'width':'30px','position':'absolute'});
-        $('body').append($tempButtons);
-        
-        // At least for now, just init the window object here.
-        // We'll prob only use this.
-        $(window).rbRangy();
+        function _tempTesting(){
+                /*
+            * testing temp function
+            */
+            //make $tempButtons output
+            //hide for now
+            var $tempButtons = $('<div class="rdr_blacklist"/>').hide(),
+            buttonInfo= {
+                //note, remember to use $R instead of $ if calling in firebug
+                a:{
+                    name:'save',
+                    func:'save',
+                    attr:undefined
+                },
+                b:{
+                    name:'activate',
+                    func:'activate',
+                    attr:undefined
+                },
+                c:{
+                    name:"modify",
+                    func:'modify',
+                    attr:undefined
+                }
+            }
+            $.each(buttonInfo,function(idx, val){
+                var $button = $('<div class="rdr_tempButton"><a href=\"javascript:void(0);\">'+this.name+'</a><input /></div>');
+                $button.find('a').click(function(){
+                    var input = $(this).parent().find('input').val();
+                    val.attr= (input == "" ) ? undefined : input;
+                    var selState = $(window).selog(val.func, val.attr);
+                });
+                $tempButtons.append($button);
+            });
+            $tempButtons.find('input').eq(0).remove();
+            var $output = $('<div id="rdr_tempOutput" />').css({'font-size':'12px'}); //filled out for now with save function
+            $tempButtons.append($output);
+
+            $tempButtons.css({'position':'fixed', 'margin-left':'5px'});
+            $tempButtons.children('.rdr_tempButton').css({'margin':'4px 0'});
+            $tempButtons.find('input').css({'left':'55px', 'width':'30px','position':'absolute'});
+            $('body').append($tempButtons);    
+        }
+        //end private functions
+
+        //init selog on window.
+        //log('test about to init'); //selog temp logging
+        $(window).selog();
 
     })($R);
 
@@ -2592,9 +2709,12 @@ function jQueryPlugins($R){
          * gets or sets delicious raw textnode leafs within a $() set.
          * todo: confirm if we need anymore 'ignore' checks for other nodetypes
          */
-        $.fn.textNodes = function(injectText){
+
+         //this isn't being used right now - ec 
+
+        $.fn.textnodes = function(injectText){
             // If injectText is passed as a string or array of strings, replace 'this' content with corresponding textnodes.
-            // Else, return all offspring textNodes in a flattened array.
+            // Else, return all offspring textnodes in a flattened array.
             var $ret = $('<span/>'),
             $this = this,
             doc = ($this[0] && $this[0].ownerDocument || document);
@@ -2636,27 +2756,95 @@ function jQueryPlugins($R){
          *
          *
          */
-/*
-        //nothing to see here: starting to work on textSelection plugin
-        $.fn.textSelection = function(options){
-            var $this = this;
-            if (typeof options === "undefined" )
-                options = {};
-                //get currSelection and return TSrange
+        
+        //nothing to see here: starting to work on superRange plugin
+        //superRange or SR.
+        //this isn't being used right now - ec 
 
-            TS.options = $.extend({
-            }, options);
+        $.fn.superRange = function(options){
+            var $this = this,
+            options = options || {};
 
-            $this.each(function(){
-                var $this
-                //Make a wrapper for the closest common ansestor with range info
-                var container = {
-                    commonAnsestor:this
-                }
+            return $this.each(function(idx, val){
+                var contextNode = this,
+                superRange = $.extend({
+                    contextNode: contextNode,
+                    textnodes: $(contextNode).textnodes(),  //requires jquery.textnodes.js plugin
+                    start: null,
+                    end: null,
+                    startRange: null,   //set below
+                    endRange: null,     //set below
+                    text: "",           //set below
+                    hash: null,         //set below
+                }, options);
 
-            })    
+                //complete superRange
+                superRange = superRange._parse();
+                
+                //set text and hash
+                //todo: fix this
+                $.each(superRange.textnodes, function(idx, val){
+                    superRange.text += val.data; //data is textnode's string value
+                });
+                superRange.hash = "make hash here.."; //todo: make hash                
+            });
         }
-        */
+
+        //private functions
+        function _parse(superRange){
+            // if given an explicit startRange and endRange, use those and calculate the start and end.
+            // else do the inverse,
+
+            var stepIdx = 0,
+            superRange = (typeof superRange !== "undefined") ? superRange : this;
+            missingSuperOffsets = ( superRange.start === null || superRange.end === null ),
+            missingRanges =  ( superRange.startRange === null || superRange.endRange === null );
+
+            if ( missingSuperOffsets && missingRanges )
+                return false;
+            if ( !missingSuperOffsets && !missingRanges )
+                return superRange;
+            if ( missingSuperOffsets && !missingRanges )
+                //get start and end
+                $.each(superRange.textnodes, function(idx, textnode){
+                    if( textnode == superRange.startRange.node ){
+                        superRange.start = stepIdx + superRange.startRange.offset
+                    }
+                    if( textnode == superRange.endRange.node ){
+                        superRange.end = stepIdx + superRange.endRange.offset;
+                    }
+                    stepIdx += textnode.length;
+                });
+                return superRange
+
+            if ( !missingSuperOffsets && missingRanges )
+                //get startRange and endRange
+                $.each(superRange.textnodes, function(idx, textnode){
+                    var a = stepIdx,
+                    start = superRange.start,
+                    end = superRange.end,
+                    b = stepIdx + textnode.length;
+
+                    if( a > start && start < b ){
+                        superRange.startRange = {
+                            node: textnode,
+                            //nodeIndex: idx,
+                            offset: stepIdx - start   //lookbehind to get rel start index for this textnode
+                        }
+                    }
+                    if( a > end && end < b ){
+                        superRange.endRange = {
+                            node: textnode,
+                            //nodeIndex: idx,
+                            offset: stepIdx - end     //lookbehind to get rel end index for this textnode
+                        }
+                    }
+                    stepIdx = b;
+                });
+                return superRange
+            //else impossible
+        }
+        
     })($R);
 
     (function($){
@@ -2822,41 +3010,6 @@ function jQueryPlugins($R){
         y=b('<a class="jspArrow jspArrowRight" />').bind("mousedown.jsp",aF(1,0)).bind("click.jsp",aD);if(aA.arrowScrollOnHover){az.bind("mouseover.jsp",aF(-1,0,az));y.bind("mouseover.jsp",aF(1,0,y))}am(H,aA.horizontalArrowPositions,az,y)}i.hover(function(){i.addClass("jspHover")},function(){i.removeClass("jspHover")}).bind("mousedown.jsp",function(aK){b("html").bind("dragstart.jsp selectstart.jsp",aD);i.addClass("jspActive");var s=aK.pageX-i.position().left;b("html").bind("mousemove.jsp",function(aL){X(aL.pageX-s,false)}).bind("mouseup.jsp mouseleave.jsp",ay);return false});m=an.innerWidth();ai()}}function ai(){an.find(">.jspHorizontalBar>.jspCap:visible,>.jspHorizontalBar>.jspArrow").each(function(){m-=b(this).outerWidth()});H.width(m+"px");ab=0}function G(){if(aG&&aB){var aK=H.outerHeight(),s=ar.outerWidth();u-=aK;b(ao).find(">.jspCap:visible,>.jspArrow").each(function(){m+=b(this).outerWidth()});m-=s;w-=s;al-=aK;H.parent().append(b('<div class="jspCorner" />').css("width",aK+"px"));p();ai()}if(aG){Z.width((an.outerWidth()-g)+"px")}aa=Z.outerHeight();r=aa/w;if(aG){av=Math.ceil(1/z*m);if(av>aA.horizontalDragMaxWidth){av=aA.horizontalDragMaxWidth}else{if(av<aA.horizontalDragMinWidth){av=aA.horizontalDragMinWidth}}i.width(av+"px");k=m-av;af(ab)}if(aB){B=Math.ceil(1/r*u);if(B>aA.verticalDragMaxHeight){B=aA.verticalDragMaxHeight}else{if(B<aA.verticalDragMinHeight){B=aA.verticalDragMinHeight}}aw.height(B+"px");j=u-B;ae(J)}}function am(aL,aN,aK,s){var aP="before",aM="after",aO;if(aN=="os"){aN=/Mac/.test(navigator.platform)?"after":"split"}if(aN==aP){aM=aN}else{if(aN==aM){aP=aN;aO=aK;aK=s;s=aO}}aL[aP](aK)[aM](s)}function aF(aK,s,aL){return function(){I(aK,s,this,aL);this.blur();return false}}function I(aN,aM,aQ,aP){aQ=b(aQ).addClass("jspActive");var aO,aL,aK=true,s=function(){if(aN!==0){R.scrollByX(aN*aA.arrowButtonSpeed)}if(aM!==0){R.scrollByY(aM*aA.arrowButtonSpeed)}aL=setTimeout(s,aK?aA.initialDelay:aA.arrowRepeatFreq);aK=false};s();aO=aP?"mouseout.jsp":"mouseup.jsp";aP=aP||b("html");aP.bind(aO,function(){aQ.removeClass("jspActive");aL&&clearTimeout(aL);aL=null;aP.unbind(aO)})}function q(){x();if(aB){ar.bind("mousedown.jsp",function(aP){if(aP.originalTarget===c||aP.originalTarget==aP.currentTarget){var aN=b(this),aQ=aN.offset(),aO=aP.pageY-aQ.top-J,aL,aK=true,s=function(){var aT=aN.offset(),aU=aP.pageY-aT.top-B/2,aR=w*aA.scrollPagePercent,aS=j*aR/(aa-w);if(aO<0){if(J-aS>aU){R.scrollByY(-aR)}else{W(aU)}}else{if(aO>0){if(J+aS<aU){R.scrollByY(aR)}else{W(aU)}}else{aM();return}}aL=setTimeout(s,aK?aA.initialDelay:aA.trackClickRepeatFreq);aK=false},aM=function(){aL&&clearTimeout(aL);aL=null;b(document).unbind("mouseup.jsp",aM)};s();b(document).bind("mouseup.jsp",aM);return false}})}if(aG){H.bind("mousedown.jsp",function(aP){if(aP.originalTarget===c||aP.originalTarget==aP.currentTarget){var aN=b(this),aQ=aN.offset(),aO=aP.pageX-aQ.left-ab,aL,aK=true,s=function(){var aT=aN.offset(),aU=aP.pageX-aT.left-av/2,aR=al*aA.scrollPagePercent,aS=k*aR/(U-al);if(aO<0){if(ab-aS>aU){R.scrollByX(-aR)}else{X(aU)}}else{if(aO>0){if(ab+aS<aU){R.scrollByX(aR)}else{X(aU)}}else{aM();return}}aL=setTimeout(s,aK?aA.initialDelay:aA.trackClickRepeatFreq);aK=false},aM=function(){aL&&clearTimeout(aL);aL=null;b(document).unbind("mouseup.jsp",aM)};s();b(document).bind("mouseup.jsp",aM);return false}})}}function x(){if(H){H.unbind("mousedown.jsp")}if(ar){ar.unbind("mousedown.jsp")}}function ay(){b("html").unbind("dragstart.jsp selectstart.jsp mousemove.jsp mouseup.jsp mouseleave.jsp");if(aw){aw.removeClass("jspActive")}if(i){i.removeClass("jspActive")}}function W(s,aK){if(!aB){return}if(s<0){s=0}else{if(s>j){s=j}}if(aK===c){aK=aA.animateScroll}if(aK){R.animate(aw,"top",s,ae)}else{aw.css("top",s);ae(s)}}function ae(aK){if(aK===c){aK=aw.position().top}an.scrollTop(0);J=aK;var aN=J===0,aL=J==j,aM=aK/j,s=-aM*(aa-w);if(ak!=aN||aI!=aL){ak=aN;aI=aL;E.trigger("jsp-arrow-change",[ak,aI,Q,l])}v(aN,aL);Z.css("top",s);E.trigger("jsp-scroll-y",[-s,aN,aL]).trigger("scroll")}function X(aK,s){if(!aG){return
         }if(aK<0){aK=0}else{if(aK>k){aK=k}}if(s===c){s=aA.animateScroll}if(s){R.animate(i,"left",aK,af)}else{i.css("left",aK);af(aK)}}function af(aK){if(aK===c){aK=i.position().left}an.scrollTop(0);ab=aK;var aN=ab===0,aM=ab==k,aL=aK/k,s=-aL*(U-al);if(Q!=aN||l!=aM){Q=aN;l=aM;E.trigger("jsp-arrow-change",[ak,aI,Q,l])}t(aN,aM);Z.css("left",s);E.trigger("jsp-scroll-x",[-s,aN,aM]).trigger("scroll")}function v(aK,s){if(aA.showArrows){at[aK?"addClass":"removeClass"]("jspDisabled");ag[s?"addClass":"removeClass"]("jspDisabled")}}function t(aK,s){if(aA.showArrows){az[aK?"addClass":"removeClass"]("jspDisabled");y[s?"addClass":"removeClass"]("jspDisabled")}}function N(s,aK){var aL=s/(aa-w);W(aL*j,aK)}function O(aK,s){var aL=aK/(U-al);X(aL*k,s)}function ac(aX,aS,aL){var aP,aM,aN,s=0,aW=0,aK,aR,aQ,aU,aT,aV;try{aP=b(aX)}catch(aO){return}aM=aP.outerHeight();aN=aP.outerWidth();an.scrollTop(0);an.scrollLeft(0);while(!aP.is(".jspPane")){s+=aP.position().top;aW+=aP.position().left;aP=aP.offsetParent();if(/^body|html$/i.test(aP[0].nodeName)){return}}aK=aC();aQ=aK+w;if(s<aK||aS){aT=s-aA.verticalGutter}else{if(s+aM>aQ){aT=s-w+aM+aA.verticalGutter}}if(aT){N(aT,aL)}aR=aE();aU=aR+al;if(aW<aR||aS){aV=aW-aA.horizontalGutter}else{if(aW+aN>aU){aV=aW-al+aN+aA.horizontalGutter}}if(aV){O(aV,aL)}}function aE(){return -Z.position().left}function aC(){return -Z.position().top}function L(){var s=aa-w;return(s>20)&&(s-aC()<10)}function C(){var s=U-al;return(s>20)&&(s-aE()<10)}function ah(){an.unbind(ad).bind(ad,function(aN,aO,aM,aK){var aL=ab,s=J;R.scrollBy(aM*aA.mouseWheelSpeed,-aK*aA.mouseWheelSpeed,false);return aL==ab&&s==J})}function o(){an.unbind(ad)}function aD(){return false}function K(){Z.find(":input,a").unbind("focus.jsp").bind("focus.jsp",function(s){ac(s.target,false)})}function F(){Z.find(":input,a").unbind("focus.jsp")}function T(){var s,aK,aM=[];aG&&aM.push(ao[0]);aB&&aM.push(V[0]);Z.focus(function(){E.focus()});E.attr("tabindex",0).unbind("keydown.jsp keypress.jsp").bind("keydown.jsp",function(aP){if(aP.target!==this&&!(aM.length&&b(aP.target).closest(aM).length)){return}var aO=ab,aN=J;switch(aP.keyCode){case 40:case 38:case 34:case 32:case 33:case 39:case 37:s=aP.keyCode;aL();break;case 35:N(aa-w);s=null;break;case 36:N(0);s=null;break}aK=aP.keyCode==s&&aO!=ab||aN!=J;return !aK}).bind("keypress.jsp",function(aN){if(aN.keyCode==s){aL()}return !aK});if(aA.hideFocus){E.css("outline","none");if("hideFocus" in an[0]){E.attr("hideFocus",true)}}else{E.css("outline","");if("hideFocus" in an[0]){E.attr("hideFocus",false)}}function aL(){var aO=ab,aN=J;switch(s){case 40:R.scrollByY(aA.keyboardSpeed,false);break;case 38:R.scrollByY(-aA.keyboardSpeed,false);break;case 34:case 32:R.scrollByY(w*aA.scrollPagePercent,false);break;case 33:R.scrollByY(-w*aA.scrollPagePercent,false);break;case 39:R.scrollByX(aA.keyboardSpeed,false);break;case 37:R.scrollByX(-aA.keyboardSpeed,false);break}aK=aO!=ab||aN!=J;return aK}}function S(){E.attr("tabindex","-1").removeAttr("tabindex").unbind("keydown.jsp keypress.jsp")}function D(){if(location.hash&&location.hash.length>1){var aL,aK;try{aL=b(location.hash)}catch(s){return}if(aL.length&&Z.find(location.hash)){if(an.scrollTop()===0){aK=setInterval(function(){if(an.scrollTop()>0){ac(location.hash,true);b(document).scrollTop(an.position().top);clearInterval(aK)}},50)}else{ac(location.hash,true);b(document).scrollTop(an.position().top)}}}}function aj(){b("a.jspHijack").unbind("click.jsp-hijack").removeClass("jspHijack")}function n(){aj();b("a[href^=#]").addClass("jspHijack").bind("click.jsp-hijack",function(){var s=this.href.split("#"),aK;if(s.length>1){aK=s[1];if(aK.length>0&&Z.find("#"+aK).length>0){ac("#"+aK,true);return false}}})}function ap(){var aL,aK,aN,aM,aO,s=false;an.unbind("touchstart.jsp touchmove.jsp touchend.jsp click.jsp-touchclick").bind("touchstart.jsp",function(aP){var aQ=aP.originalEvent.touches[0];aL=aE();aK=aC();aN=aQ.pageX;aM=aQ.pageY;aO=false;s=true}).bind("touchmove.jsp",function(aS){if(!s){return}var aR=aS.originalEvent.touches[0],aQ=ab,aP=J;
         R.scrollTo(aL+aN-aR.pageX,aK+aM-aR.pageY);aO=aO||Math.abs(aN-aR.pageX)>5||Math.abs(aM-aR.pageY)>5;return aQ==ab&&aP==J}).bind("touchend.jsp",function(aP){s=false}).bind("click.jsp-touchclick",function(aP){if(aO){aO=false;return false}})}function h(){var s=aC(),aK=aE();E.removeClass("jspScrollable").unbind(".jsp");E.replaceWith(aq.append(Z.children()));aq.scrollTop(s);aq.scrollLeft(aK)}b.extend(R,{reinitialise:function(aK){aK=b.extend({},aA,aK);au(aK)},scrollToElement:function(aL,aK,s){ac(aL,aK,s)},scrollTo:function(aL,s,aK){O(aL,aK);N(s,aK)},scrollToX:function(aK,s){O(aK,s)},scrollToY:function(s,aK){N(s,aK)},scrollToPercentX:function(aK,s){O(aK*(U-al),s)},scrollToPercentY:function(aK,s){N(aK*(aa-w),s)},scrollBy:function(aK,s,aL){R.scrollByX(aK,aL);R.scrollByY(s,aL)},scrollByX:function(s,aL){var aK=aE()+s,aM=aK/(U-al);X(aM*k,aL)},scrollByY:function(s,aL){var aK=aC()+s,aM=aK/(aa-w);W(aM*j,aL)},positionDragX:function(s,aK){X(s,aK)},positionDragY:function(aK,s){X(aK,s)},animate:function(aK,aN,s,aM){var aL={};aL[aN]=s;aK.animate(aL,{duration:aA.animateDuration,ease:aA.animateEase,queue:false,step:aM})},getContentPositionX:function(){return aE()},getContentPositionY:function(){return aC()},getContentWidth:function(){return U},getContentHeight:function(){return aa},getPercentScrolledX:function(){return aE()/(U-al)},getPercentScrolledY:function(){return aC()/(aa-w)},getIsScrollableH:function(){return aG},getIsScrollableV:function(){return aB},getContentPane:function(){return Z},scrollToBottom:function(s){W(j,s)},hijackInternalLinks:function(){n()},destroy:function(){h()}});au(P)}f=b.extend({},b.fn.jScrollPane.defaults,f);b.each(["mouseWheelSpeed","arrowButtonSpeed","trackClickSpeed","keyboardSpeed"],function(){f[this]=f[this]||f.speed});var e;this.each(function(){var g=b(this),h=g.data("jsp");if(h){h.reinitialise(f)}else{h=new d(g,f);g.data("jsp",h)}e=e?e.add(g):g});return e};b.fn.jScrollPane.defaults={showArrows:false,maintainPosition:true,stickToBottom:false,stickToRight:false,clickOnTrack:true,autoReinitialise:false,autoReinitialiseDelay:500,verticalDragMinHeight:0,verticalDragMaxHeight:99999,horizontalDragMinWidth:0,horizontalDragMaxWidth:99999,contentWidth:c,animateScroll:false,animateDuration:300,animateEase:"linear",hijackInternalLinks:false,verticalGutter:4,horizontalGutter:4,mouseWheelSpeed:0,arrowButtonSpeed:0,arrowRepeatFreq:50,arrowScrollOnHover:false,trackClickSpeed:0,trackClickRepeatFreq:70,verticalArrowPositions:"split",horizontalArrowPositions:"split",enableKeyboardNavigation:true,hideFocus:false,keyboardSpeed:0,initialDelay:300,speed:30,scrollPagePercent:0.8}
-    })($R);
-
-    (function($){
-        /*
-        * jquery.log helpers
-        */
-        // Log Taken from the firebug site: http://getfirebug.com/firebug/firebugx.js
-        // make calls to console harmless if there is no console.
-        if (!window.console || !console.firebug) {
-            var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml",
-            "group", "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];
-
-            window.console = {};
-            for (var i = 0; i < names.length; ++i){
-                window.console[names[i]] = function() {};
-            }
-        }
-
-        //alias console.log to global log
-        //in case client already has log defined (remove for production anyway)
-        if (typeof log === "undefined"){
-            log = function(msg){
-                console.log(msg);
-            }   
-        }
-
-        //use real jQuery instead of alias so we don't have to use $R
-        //in case client already has $.log defined (remove for production anyway)
-        if (typeof jQuery.fn.log === "undefined"){
-            //make $.log chain nicely
-            jQuery.fn.log = function (msg) {
-                console.log("%s: %o", msg, this);
-                return this;
-            };
-        }
     })($R);
 
 }
