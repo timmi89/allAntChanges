@@ -111,7 +111,7 @@ INSTALLED_APPS = (
 )
 
 # for get_profile()
-AUTH_PROFILE_MODULE = 'rb.SocialUser'
+AUTH_PROFILE_MODULE = 'rb.Profile'
 
 # for sessions
 #SESSION_ENGINE = 'django.contrib.sessions.backends.cache'

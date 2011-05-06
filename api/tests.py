@@ -105,6 +105,7 @@ class APITest(TestCase):
 		self.assertEqual(data['data']['unknown'], [])
 
 	def test_tag_create(self):
+
 		response = self.client.get('/api/tag/create/',
 			{"json": json.dumps(
 				{
@@ -114,12 +115,19 @@ class APITest(TestCase):
 						"name":"Suhwweeet"
 					},
 					"hash": "f7eda37fadd84ce1425ff3f77b65d85a",
-					"content": "test"
+					"content": "test",
+					"content_type":"text",
+					"user_id":"1",
+					"readr_token":"8e740723c1a88dc9abb3",
+					"group_id":"1",
+					"page_id":1
 				})
 			}
 		)
-		
 		self.assertEqual(response.status_code, 200)
+
+		#data = json.loads(response.content)
+		#self.assertEqual(data['status'], 'success')
 
 """
 	def test_tag_delete(self):

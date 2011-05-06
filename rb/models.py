@@ -188,6 +188,9 @@ class Link(models.Model):
     def __unicode__(self):
         return self.to_base62() + ' : ' + self.interaction.page.url
 
+class Profile(models.Model):
+    admin = models.ForeignKey(Group, blank=True, null=True)
+    
 class SocialUser(models.Model):
     """Social Auth association model"""
     user = models.OneToOneField(User, related_name='social_user', unique=True)
