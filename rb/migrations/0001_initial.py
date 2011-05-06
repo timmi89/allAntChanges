@@ -141,6 +141,13 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('rb', ['Link'])
 
+        # Adding model 'Profile'
+        db.create_table('rb_profile', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('admin', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rb.Group'], null=True, blank=True)),
+        ))
+        db.send_create_signal('rb', ['Profile'])
+
         # Adding model 'SocialUser'
         db.create_table('rb_socialuser', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -224,6 +231,9 @@ class Migration(SchemaMigration):
 
         # Deleting model 'Link'
         db.delete_table('rb_link')
+
+        # Deleting model 'Profile'
+        db.delete_table('rb_profile')
 
         # Deleting model 'SocialUser'
         db.delete_table('rb_socialuser')
@@ -352,6 +362,11 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.Site']"}),
             'url': ('django.db.models.fields.URLField', [], {'max_length': '200'})
+        },
+        'rb.profile': {
+            'Meta': {'object_name': 'Profile'},
+            'admin': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.Group']", 'null': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
         'rb.site': {
             'Meta': {'object_name': 'Site'},
