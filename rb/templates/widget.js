@@ -1072,6 +1072,7 @@ function readrBoard($R){
 
                     rindow.find('div.rdr_contentSpace').append($sentimentBox);
                     RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:rindow.settings});
+                    RDR.rindow.checkHeight( rindow, 0 );
 
                     /* can remove I think:  PB, 5/1/2011
                     if ( settings.content_type == "text" ) {

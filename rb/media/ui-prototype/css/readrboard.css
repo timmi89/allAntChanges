@@ -117,15 +117,15 @@ div.rdr div.rdr_selectedTextPanel div.rdr_body 	{background:#f0f0f0; -moz-box-sh
 */
 
 div.rdr div.rdr_reactionPanel							{position:relative; z-index:20; width:200px; }
-div.rdr div.rdr_reactionPanel div.rdr_body				{}
-div.rdr div.rdr_reactionPanel div.rdr_body .jspPane		{width:200px !important; }
+div.rdr div.rdr_reactionPanel div.rdr_body				{max-height:300px;}
+div.rdr div.rdr_reactionPanel div.rdr_body .jspPane		{width:200px !important; margin: 0 !important;}
 div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; background:url(/static/images/rindow_bg_column.png);}
 
 div.rdr div.rdr_whyPanel 						{position:absolute; z-index:10; right:0; width:250px;}
-div.rdr div.rdr_whyPanel div.rdr_body 			{width:250px; }
+div.rdr div.rdr_whyPanel div.rdr_body 			{width:250px; max-height:300px;}
 
 div.rdr div.rdr_contentPanel                        {position:absolute; z-index:11; right:0; width:200px;}
-div.rdr div.rdr_contentPanel div.rdr_body           {width:200px; }
+div.rdr div.rdr_contentPanel div.rdr_body           {width:200px; max-height:300px;}
 
 div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top:5px;}
 div.rdr div.rdr_sntPnl_padder 					{margin:0 15px; position:relative; overflow:hidden;}
