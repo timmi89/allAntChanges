@@ -9,7 +9,7 @@ client$ = {}; //init var: clients copy of jQuery
 //init rangy if it hasn't been already, we probably dont need this...
 rangy.init();
 var a;
-var selKeeper; //temp glob
+var selog; //temp glob
 var demoRindow;
 
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
@@ -939,7 +939,7 @@ function readrBoard($R){
                 //console.log(typeof selection.content);
 
                 //Trigger the smart text selection and highlight
-                var newSel = $(window).selKeeper('helpers', 'smartHilite');
+                var newSel = $(window).selog('helpers', 'smartHilite');
 
                 // draw the window over the actionbar
                 var actionbarOffsets = settings.coords;
@@ -2001,17 +2001,14 @@ function jQueryPlugins($R){
 
     (function($){
         /*
-         * jquery.selKeeper.js
-         * 
+         * jquery.selectionographer.js
+         * $.fn.selog aliases to $.fn.selectionographer
          * author: eric@readrboard.com
-         * 
-         * a jQuery plugin that extends the rangy plugins
-         * to save, restore, and manipulate a stack of 'selection objects' with stored ranges
+         * see docs for more info /docs/selectionographer-docs.js
          *
          * to test in the live page, don't forget to use $R(), not $().
         */        
-
-        $.fn.selKeeper = function( params ) {
+        $.fn.selectionographer = function( params ) {
             //jQuery plugin pattern :http://docs.jquery.com/Plugins/Authoring
             if ( methods[params] ) {
                 return methods[params].apply( this, Array.prototype.slice.call( arguments, 1 ));
@@ -2021,147 +2018,132 @@ function jQueryPlugins($R){
                 $.error( 'Method ' +  params + ' does not exist.' );
             }
         };
+        $.fn.selog = $.fn.selectionographer;
 
         var defaults = {};
 
         var methods = {
             //note: In these methods, 'this' is the jQuery object that the plugin was invoked on. See plugin pattern above.
             init : function( options ) {
-                var $this = this,
-                _settings;
-                
+                var $this = this;
+                options = options || {};
                 _tempTesting();
 
+                //todo: make _settings an object unique to each 'this';
                 return $this.each(function(){
                     // merge default and user parameters
-                    _settings = options ? $.extend(defaults, options) : defaults;
+                    _settings = $.extend(defaults, options);
                 });
             },
-            save: function(range){
+            save: function(rangeOrSerialRange){
                 //range is optional and will usually be ommited.  Defaults to current selection with ranges
                 var scope = this,
-                selRevStack = _selRevs,
-                selRev = {
-                    //idx will give the next avail index in _selRevs.  Indexes should not be shifted.  Note that length is initially zero which is correct. 
-                    idx: selRevStack.length,
-                    timestamp: $.now(),
+                selStateStack = _selStates,
+                selState = {
+                    //idx will give the next avail index in _selStates.  Indexes should not be shifted.  Note that length is initially zero which is correct. 
+                    idx: selStateStack.length,
                     styleName: 'rdr_hilite',
-                    revisionParent: null,     //set below
-                    range: null,           //set below
-                    text: ""                //set below
-                };
+                    timestamp: $.now(),         //don't really need this..
+                    interactionID: null,        //for later use
+                    revisionParent: null,       //set below
+                    serialRange: null,          //set below - overwritten by explicit range object
+                    range: null,                //set below - overwrites serial range
+                    text: ""                    //set below
+                },
+                range, serialRange;
 
-                if(typeof range === 'undefined'){
-                    log('was undefined')
-                    //todo remove this test crap;
-                    var sel = rangy.getSelection();
-                    var range = sel.getAllRanges()[0];
-                    log(range);
-                    a = range;
-                    var range = _WSO().getRangeAt(0);
-                    selRev.range = range;
-                }else{
-                    log('was undefined')
-                    _WSO().setSingleRange(range);
-                    selRev.range = range;
+                if(typeof rangeOrSerialRange === 'string'){
+                    serialRange = rangeOrSerialRange;
+                    range = rangy.deserializeRange(serialRange);
                 }
+                else if(typeof rangeOrSerialRange !== 'undefined'){
+                    range = rangeOrSerialRange;
+                    serialRange = rangy.serializeRange(range);
+                }else{
+                    //assume it's undefined and overwrite it
+                    range = _WSO().getRangeAt(0);
+                    serialRange = rangy.serializeRange(range);
+                }
+                selState.serialRange = serialRange;
+                selState.range = range;
+                selState.text = selState.range.toString(); //rangy range toString function
 
-                selRev.serialRange = rangy.serializeRange(selRev.range)
-                
-                selRev.text = selRev.range.toString(); //rangy range toString function
-
-                //push selRev into stack
-                selRevStack[selRev.idx] = selRev;
+                //push selState into stack
+                selStateStack[selState.idx] = selState;
 
                 //temp log to tempOutput    
                     var str,
-                    txtLen = selRev.text.length; 
+                    txtLen = selState.text.length; 
                     if(txtLen <= 30){
-                        str = selRev.text;
+                        str = selState.text;
                     }
                     else{
-                        str = selRev.text.substring(0,15)+'...'+selRev.text.substring(txtLen-15,txtLen);
+                        str = selState.text.substring(0,15)+'...'+selState.text.substring(txtLen-15,txtLen);
                     }
-                    $('#rdr_tempOutput').append('<div><b>'+selRev.idx+'</b>: '+str+'</div>');
+                    $('#rdr_tempOutput').append('<div><b>'+selState.idx+'</b>: '+str+'</div>');
                 //end temp log to tempOutput
-                
-                log(selRev);
-                return selRev;
+                return selState;
             },
-            restore: function(idxOrSelRev){
-                var selRev = _fetchSelRev(idxOrSelRev);
-                if(!selRev) return false;
-                _WSO().setSingleRange(selRev.range);
-                return selRev;
+            activate: function(idxOrSelState){
+                var selState = _fetchselState(idxOrSelState);
+                if(!selState) return false;
+                //todo: do i need to clone it to be safe?
+                var newRange = selState.range.cloneRange();
+
+                _WSO().removeAllRanges();
+                _WSO().setSingleRange(newRange);
+                //var newSelState = methods.save(selState); //for testing, this should be prob seperate though
+                return selState;
             },
-            modify: function(idxOrSelRev, filterList) {
+            modify: function(idxOrSelState, filterList) {
                 
-                //let filterList be optionally called without idxOrSelRev - letting the selRev default to the latest.
-                if( idxOrSelRev instanceof Array ){
-                    filterList = idxOrSelRev;
-                    idxOrSelRev = undefined; //will trigger default latest idx
+                //let filterList be optionally called without idxOrSelState - letting the selState default to the latest.
+                if( idxOrSelState instanceof Array ){
+                    filterList = idxOrSelState;
+                    idxOrSelState = undefined; //will trigger default latest idx
                 }
 
-                var iniSelRev = _fetchSelRev(idxOrSelRev),
-                newSelRev, newRange;
-                if(!iniSelRev) return false;
+                var iniSelState = _fetchselState(idxOrSelState),
+                newSelState, newRange;
+                if(!iniSelState) return false;
 
-                newRange = iniSelRev.range.cloneRange();
+                newRange = iniSelState.range.cloneRange();
                 //filter the ranges
 
                 newRange = _filter(newRange, filterList);
-                newSelRev = methods.save(newRange);
-                //methods.restore(newSelRev); //for testing, this should be prob seperate though
-                return newSelRev
+                newSelState = methods.save(newRange);
+                return newSelState
             },
-            hilite: function(idx) {
-                /**
-                 * hilite
-                 * losely based on searchHighlight plugin for jQuery
-                 * http://www.jquery.info/spip.php?article50
-                 * 
-                 * modified by eric@readrboard.com for readrboard.com
-                 */
+            hilite: function(idxOrSelState) {
+                //todo:checkout why first range is picking up new selState range (not a big deal)
+                var selState = _fetchselState(idxOrSelState);
+                if(!selState) return false;
                 
-                //todo:checkout why first range is picking up new selRev range
-
-                var selRev = _fetchSelRev(idx);
-                if(!selRev) return false;
-                //else
-                                
-                if (typeof selRev === "undefined" )
-                    return false;
-                
-                var range = selRev.range;
+                var range = selState.range;
                 if(typeof range === "undefined") return false;
                 //else
-                log(selRev.text); 
-                if(selRev.text.length == 0) return false;
-                //don't trust when the rangySelection picks up the latest selection: clear it for now..
-                //selRev.rangySelection.removeAllRanges(); 
+                if(selState.text.length == 0) return false;
                 
-                //test - serializer:
-                //range = rangy.deserializeRange(selRev.serialRange);
-
+                //todo: not using this yet..
                 var host = range.commonAncestorContainer;
-                //get the closest parent that isn't a textNode
-                //todo: check this..  any other weird nodes I need to think about?
-                while(host.nodeType == 3){ //Node.TEXT_NODE equals 3
+                //get the closest parent that isn't a textNode or CDATA node
+                while( host.nodeType == 3 || host.nodeType == 4 ){ //Node.TEXT_NODE equals 3, CDATA_SECTION_NODE = 4
                     host = host.parentNode;
                 }
                 
-                //_hilite returns the selRev
-                return _hilite(selRev, range);
+                //_hilite returns the selState
+                return _hilite(selState, range);
             },
             helpers: function(helperPack){
                 var func = _helperPacks[helperPack];
-                return func ? func() : false;
+                return func ? func.apply( this, Array.prototype.slice.call( arguments, 1 ) ) : false;
             }
 
         };
 
         //private objects
-        var _helperPacks = {
+        var _settings = {}, //set on init
+        _helperPacks = {
             smartHilite: function(){
                 /*
                 var rawSel, modSel, newSel;
@@ -2170,10 +2152,14 @@ function jQueryPlugins($R){
                 newSel = methods.hilite(modSel);
                 return newSel;
                 */
+                //does the same as above
                 return methods.hilite( methods.modify( methods.save() ) ); //oooh lispy.
+            },
+            activateRange: function(rangeOrSerialRange){
+                return methods.activate( methods.save(rangeOrSerialRange) );
             }
         },
-        _selRevs = [
+        _selStates = [
         /*
             //keep commented out:
             //Example template: Set by save and added to the stack.
@@ -2181,7 +2167,7 @@ function jQueryPlugins($R){
                 todo: update this is old...
 
                 selection: selectionObj || rangy.getSelection(),
-                idx: selRevStack.length,
+                idx: selStateStack.length,
                 timestamp: $.now(),
                 revisionParent: null, //set below
                 ranges: null,       //set below
@@ -2217,7 +2203,7 @@ function jQueryPlugins($R){
                     return range;
                 },
                 firstWordSnap: function(range){
-                    //find the extra word characters the range cut off at the beginning of the selRev, and add em'.
+                    //find the extra word characters the range cut off at the beginning of the selState, and add em'.
                     //and change the offset of the range
                     var textnode = range.startContainer, //rangy attribute startContainer
                     startOffset = range.startOffset,
@@ -2247,7 +2233,7 @@ function jQueryPlugins($R){
                     return range;
                 },
                 lastWordSnap: function(range){
-                    //find the extra word characters the range cut off at the end of the selRev, and add em'.
+                    //find the extra word characters the range cut off at the end of the selState, and add em'.
                     var textnode = range.endContainer, //rangy attribute startContainer
                     endOffset = range.endOffset,
                     testRange;
@@ -2280,30 +2266,30 @@ function jQueryPlugins($R){
         function _WSO(){
             return rangy.getSelection();  
         }
-        function _fetchSelRev(idxOrSelRev){
-            //check if idxOrSelRev is selRev object,
-            //else, get the selRev from idx,
+        function _fetchselState(idxOrSelState){
+            //check if idxOrSelState is selState object,
+            //else, get the selState from idx,
             //else if param is undefined, return the latest on the stack
 
-            if(typeof idxOrSelRev === 'object')
-                return idxOrSelRev;
+            if(typeof idxOrSelState === 'object')
+                return idxOrSelState;
                             
             //else
-            var selRevStack = _selRevs,
+            var selStateStack = _selStates,
             //set idx to declared idx, else last idx on the stack
-            idx = (typeof index == "string" || typeof index == "number" ) ? idxOrSelRev : selRevStack.length-1,
-            selRev = selRevStack[idx];
-            if(selRev)
-                return selRev;
+            idx = (typeof idxOrSelState == "string" || typeof idxOrSelState == "number" ) ? idxOrSelState : selStateStack.length-1,
+            selState = selStateStack[idx];
+            if(selState)
+                return selState;
             
             //else
-            console.warn('selRev.idx not in stack');
+            console.warn('selState.idx not in stack');
             return false;
         }
-        function _hilite(selRev, range) {
+        function _hilite(selState, range) {
             //use a unique indexed version of style to uniquely identify spans
-            var styleClass = selRev.styleName,
-            uniqueClass = styleClass+"_"+selRev.idx,
+            var styleClass = selState.styleName,
+            uniqueClass = styleClass+"_"+selState.idx,
             hiliteBrush = rangy.createCssClassApplier( uniqueClass, true ),
             $startBrushNode, $endBrushNode; //the start and end brush helper spans.
             
@@ -2337,7 +2323,7 @@ function jQueryPlugins($R){
                     }
                 }
             });
-            return selRev;
+            return selState;
         }
         function _rangeOffSet(range, opts){ 
             // returns a range or false, which should trigger the caller to fail gracefully.
@@ -2403,12 +2389,12 @@ function jQueryPlugins($R){
                     attr:undefined
                 },
                 b:{
-                    name:'restore',
-                    func:'restore',
+                    name:'activate',
+                    func:'activate',
                     attr:undefined
                 },
                 c:{
-                    name:"revise",
+                    name:"modify",
                     func:'modify',
                     attr:undefined
                 }
@@ -2418,7 +2404,7 @@ function jQueryPlugins($R){
                 $button.find('a').click(function(){
                     var input = $(this).parent().find('input').val();
                     val.attr= (input == "" ) ? undefined : input;
-                    var selrev = $(window).selKeeper(val.func, val.attr);
+                    var selState = $(window).selog(val.func, val.attr);
                 });
                 $tempButtons.append($button);
             });
@@ -2433,9 +2419,9 @@ function jQueryPlugins($R){
         }
         //end private functions
 
-        //init selKeeper on window.
+        //init selog on window.
         log('test about to init');
-        $(window).selKeeper();
+        $(window).selog();
 
     })($R);
 
