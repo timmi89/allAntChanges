@@ -95,15 +95,18 @@ div.rdr.rdr_actionbar li.rdr_icon_about a		 	{ background-position: -3px 0; widt
 /* global tag defs */
 div.rdr h1, 
 div.rdr h2	{font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif; color:#666; margin:0; }
-div.rdr h1	{font-size:21px; cursor:move; padding:3px 9px; font-weight:100;}
+div.rdr h1  {font-size:21px; cursor:move; padding:3px 9px; font-weight:100;}
+div.rdr h1 span	{font-size:18px; color:#008be4;}
 
 /* the widget */
 div.rdr div.rdr_sentimentBox							{}
 div.rdr div.rdr_sntPnl 									{float:left; position:relative; display:block; height:100%; overflow:hidden; /*width is reset with js - rindow.settings.pnlWidth */ }
 
 div.rdr div.rdr_sntPnl div.rdr_body						{width:100%; top:35px; /*var rdr_headerHeight*/ ; z-index:3; overflow-x:hidden; overflow-y:auto; padding:0;}
-div.rdr div.rdr_sntPnl div.rdr_header 			      	{background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:3;}
-div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap	{background:none repeat scroll 0 0 #FFFFFF; border-bottom:1px solid #bababa; bottom:0; padding-bottom:3px; text-align:center; width:100%; position:absolute; }
+div.rdr div.rdr_sntPnl div.rdr_header                   {background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:3;}
+div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header,
+div.rdr div.rdr_sntPnl.rdr_whyPanel div.rdr_header 		{background:url(/static/images/header_arrow.png) 0px -1px no-repeat #fff;}
+div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap	{background:none; border-bottom:1px solid #bababa; bottom:0; padding-bottom:3px; text-align:center; width:100%; position:absolute; }
 div.rdr div.rdr_sntPnl h1                               {padding:0 !important; }
 div.rdr div.rdr_sntPnl .rdr_pnlShadow			        {height:100%; width:100px; position:absolute; z-index:0; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; }
 
@@ -113,13 +116,16 @@ div.rdr div.rdr_selectedTextPanel				{position:relative; z-index:30;}
 div.rdr div.rdr_selectedTextPanel div.rdr_body 	{background:#f0f0f0; -moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
 */
 
-div.rdr div.rdr_reactionPanel							{position:relative; z-index:20; width:200px}
-div.rdr div.rdr_reactionPanel div.rdr_body				{}
-div.rdr div.rdr_reactionPanel div.rdr_body .jspPane		{width:200px !important; }
+div.rdr div.rdr_reactionPanel							{position:relative; z-index:20; width:200px; }
+div.rdr div.rdr_reactionPanel div.rdr_body				{max-height:300px;}
+div.rdr div.rdr_reactionPanel div.rdr_body .jspPane		{width:200px !important; margin: 0 !important;}
 div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; background:url(/static/images/rindow_bg_column.png);}
 
 div.rdr div.rdr_whyPanel 						{position:absolute; z-index:10; right:0; width:250px;}
-div.rdr div.rdr_whyPanel div.rdr_body 			{width:250px; }
+div.rdr div.rdr_whyPanel div.rdr_body 			{width:250px; max-height:300px;}
+
+div.rdr div.rdr_contentPanel                        {position:absolute; z-index:11; right:0; width:200px;}
+div.rdr div.rdr_contentPanel div.rdr_body           {width:200px; max-height:300px;}
 
 div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top:5px;}
 div.rdr div.rdr_sntPnl_padder 					{margin:0 15px; position:relative; overflow:hidden;}
@@ -143,7 +149,7 @@ $('div.rdr_tempUserMsg').animate({bottom:'-48px'});
 div.rdr .rdr_tags			{padding:0 0 10px;}
 div.rdr ul.rdr_tags			{list-style-type:none; padding:0; margin:0; }
 div.rdr ul.rdr_tags li	            {padding:0; margin:0; position:relative; overflow:auto; }
-div.rdr ul.rdr_tags li .rdr_leftBox     {width:30px; letter-spacing:1px; padding:4px 3px 0; height:35px; border-right:1px solid #bababa; overflow:hidden; float:left; margin-right:5px; text-align:center; font-size:21px;}
+div.rdr ul.rdr_tags li .rdr_leftBox     {width:30px; letter-spacing:1px; padding:4px 2px 0 6px; height:35px; border-right:1px solid #bababa; overflow:hidden; float:left; margin-right:5px; text-align:center; font-size:21px;}
 div.rdr div.rdr_read ul.rdr_tags li .rdr_leftBox     {color:#008be4;}
 div.rdr ul.rdr_tags li:hover            {background:#e4f0f7;cursor:pointer;}
 div.rdr ul.rdr_tags li:hover a                      {color:#008be4; display:block; }
@@ -163,6 +169,9 @@ div.rdr li.rdr_customTagBox input.freeformTagInput      {font-size:24px; font-fa
 div.rdr li.rdr_customTagBox div.rdr_help                {left:43px; width:auto;}
 div.rdr li.rdr_customTagBox div.rdr_help:hover          {text-decoration:underline;}
 
+
+/* contentSet */
+div.rdr div.rdr_contentSet {min-height:100px;}
 
 div.rdr div.rdr_close		{position:absolute;top:8px;right:7px;color:#999;cursor:pointer;font-size:14px;margin-top:-4px;z-index:15;}
 
