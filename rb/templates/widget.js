@@ -956,11 +956,13 @@ function readrBoard($R){
                     //todo - combine with copy of this
                     var range = newSel.range,
                     styleClass = newSel.styleName,
-                    hiliter = newSel.hiliter;
+                    hiliter = newSel.hiliter,
+                    $hiliteEnd = hiliter.get$end();
+
     				//testing adjusting the position with overrides from the hilite span 
-                    if(hiliter.$end){
+                    if( $hiliteEnd ){
                         var $helper = $('<span />');
-                        $helper.insertAfter(hiliter.$end);
+                        $helper.insertAfter( $hiliteEnd );
                         var strRight = $helper.offset().right;
                         var strBottom = $helper.offset().bottom;
                         $helper.remove();
@@ -2080,7 +2082,7 @@ function jQueryPlugins($R){
                     }
                     $('#rdr_tempOutput').append('<div><b>'+selState.idx+'</b>: '+str+'</div>');
                 //end temp log to tempOutput
-                log('saved selState ' + selState.idx + ': ' + selState.text);
+                //log('saved selState ' + selState.idx + ': ' + selState.text); //selog temp logging
                 return selState;
             },
             activate: function(idxOrSelState){
@@ -2115,7 +2117,6 @@ function jQueryPlugins($R){
                 // switchOnOffToggle is optional.  Expects a string 'on', 'off', or 'toggle', or defaults to 'on'
                 // check if idxOrSelState is omited
                 if( typeof idxOrSelState === 'string' && isNaN( parseInt(idxOrSelState) ) ){
-                    log('after')
                     switchOnOffToggle = idxOrSelState;
                     idxOrSelState = undefined;
                 }
@@ -2133,22 +2134,13 @@ function jQueryPlugins($R){
                     host = host.parentNode;
                 }
 
+                //todo: consider moving this to the save method.
                 //init hiliter if neccesary
                 selState.hiliter = selState.hiliter || _hiliteInit(selState);
-                log('selState.hiliter')
-                log(selState.hiliter)
                 
+                //switch the hilite state
                 selState = _hiliteSwitch(selState, switchOnOffToggle);
 
-                if( switchOnOffToggle === 'on' ){   
-                    //add escape keypress event to document to remove all hilites
-                    $(document).keyup(function(event) {
-                        //todo: merge all esc key events (use an array of functions that we can just dequeue?)
-                        if (event.keyCode == '27') { //esc
-                            _hiliteSwitch(selState, 'off'); 
-                        }
-                    });
-                }
                 return selState
             },
             helpers: function(helperPack){
@@ -2306,11 +2298,10 @@ function jQueryPlugins($R){
         }
         function _hiliteInit(selState){
             //only init once
-            log(selState.hiliter)
+            //log('init hiliter for selState ' + selState.idx) //selog temp logging
             if(selState.hiliter){
                 return selState.hiliter;
             }
-            log('in')
             // todo: make hiliter a proper js class object
             var range = selState.range,
             styleClass = selState.styleName,
@@ -2331,9 +2322,6 @@ function jQueryPlugins($R){
                 return hiliter.isAppliedToRange(range);
             };
             
-            //activate it on init
-            hiliter.applyToRange(range);
-            log( hiliter.isActive() );
             return hiliter;
         }
         function _hiliteSwitch(selState, switchOnOffToggle) {
@@ -2344,39 +2332,43 @@ function jQueryPlugins($R){
             hiliter = selState.hiliter,
             isActive = hiliter.isActive();
 
-            if(dfgfdgd)
-            log(hiliter)
-            log(hiliter.isActive())
-            //on
-            if( hiliter.isActive() ){
+            if( !isActive && (switchOnOffToggle === "on" || switchOnOffToggle === "toggle" )){
+                //turn on
                 hiliter.applyToRange(range);
-                log(hiliter)
-                log( hiliter.isActive );
                 //apply the visual styles with the generic classes
                 $('.'+hiliter.class).addClass(styleClass);
                 //apply css classes to start and end so we can style those specially
                 hiliter.get$start().addClass(styleClass+'_start');
                 hiliter.get$end().addClass(styleClass+'_end');
-            }
 
-            //off
-            else{
-                log('removing hilite for selState ' + selState.idx + ': ' + selState.text )
+                //bind an escape keypress to clear it.
+                //todo: for a real public API, this should be an option, or passed in function or something
+                $(document).keyup(function(event) {
+                    //todo: merge all esc key events (use an array of functions that we can just dequeue?)
+                    if (event.keyCode == '27') { //esc
+                        _hiliteSwitch(selState, 'off');
+                        //remove the binding after it's been called.
+                        $(document).unbind('keyup', arguments.callee);
+                    }
+                });
+            
+            }else if( isActive && (switchOnOffToggle === "off" || switchOnOffToggle === "toggle" )){
+                //turn off
+                //log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
                 //remove the classes again so that the hiliter can normalize the selection (paste it back together)
                 hiliter.get$start().removeClass(styleClass+'_start');
                 hiliter.get$end().removeClass(styleClass+'_end');
                 $('.'+hiliter.class).removeClass(styleClass);
-                //finally, 
+                
+                //do one more check even though we shouldn't have to.
                 if(hiliter.isAppliedToRange(range)){
                     hiliter.undoToRange(range);
-                    //remove this binding so that we don't try to keep removing the non-existant hilite.
-                    $(document).unbind('keyup', arguments.callee);
                 }
                 else{
                     log('error ' + range)
                 }
             }
-
+            
             return selState;
         }
         function _rangeOffSet(range, opts){ 
@@ -2474,7 +2466,7 @@ function jQueryPlugins($R){
         //end private functions
 
         //init selog on window.
-        log('test about to init');
+        //log('test about to init'); //selog temp logging
         $(window).selog();
 
     })($R);

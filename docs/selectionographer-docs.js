@@ -64,16 +64,25 @@
 
 // hilite
 // hilites the selState range with styled span wraps around the selected text.
-// todo: right now, the un-hilite is just built in as a bound escape keypress...  later add to the API
 	$(window).selog( 'hilite', );
 	$(window).selog( 'hilite', idxOrSelState );
+	$(window).selog( 'hilite', idxOrSelState, switchOnOffToggle);
 	// idxOrSelState is optional and behaves as it does in the 'activate' method - see above.
-	// Uses the rangy CssClassApplier tool to add and remove styled span wraps.
+	// switchOnOffToggle is optional and must be a string 'on', 'off', or 'toggle'.  Defaults to "on"
+	// Note: Uses the rangy CssClassApplier tool to add and remove styled span wraps.
 
+		// Example: (notice the $R - our jquery alias - if you use this in the console)
+		// toggles the hilite for the most recent selState on and off.  
+		$R(window).selog( 'hilite', 'toggle');
+
+		// Example:  Brain teaser for you.
+		// Without using out widget, saves the selected text to a selState, and then hilites it.
+		// works because the 'save' method returns a selState object.
+		$R(window).selog( 'hilite', $R(window).selog( 'save') )
 
 // ------------------------------------------------------------------------------------------------------------
 
-/*API Helper Methods*/
+/* some API Helper Methods*/
 
 // smartHilite
 // saves, modifies with the word-snap filters, and hilites the current user selection
@@ -83,3 +92,5 @@
 // saves and activates a range.
 // If you're trying to use the 'activate' method on a range instead of a selState, don't - use this instead.
 	$(window).selog('helpers', 'activateRange', rangeOrSerialRange);
+
+
