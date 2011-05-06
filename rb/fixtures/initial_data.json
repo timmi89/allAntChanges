@@ -14,5 +14,37 @@
       "kind": "vot",
       "body": "Readrboard Down Vote"
     }
+  },
+  {
+    "model": "rb.InteractionNode",
+    "pk": 3,
+    "fields": {
+      "kind": "tag",
+      "body": "Great!"
+    }
+  },
+  {
+    "model": "rb.InteractionNode",
+    "pk": 4,
+    "fields": {
+      "kind": "tag",
+      "body": "Hate"
+    }
+  },
+  {
+    "model": "rb.InteractionNode",
+    "pk": 5,
+    "fields": {
+      "kind": "tag",
+      "body": "Agree"
+    }
+  },
+  {
+    "model": "rb.InteractionNode",
+    "pk": 6,
+    "fields": {
+      "kind": "tag",
+      "body": "Tell me more"
+    }
   }
 ]

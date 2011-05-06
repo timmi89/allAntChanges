@@ -126,7 +126,6 @@ class CreateContainerHandler(AnonymousBaseHandler):
     def read(self, request):
         result = {}
         data = json.loads(request.GET['json'])
-        print data
         hashes = data['hashes']
         for hash in hashes:
             result[hash] = Container.objects.get_or_create(

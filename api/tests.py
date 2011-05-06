@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.test.client import Client
+from rb.models import *
 import json
 
 hashes = [
@@ -66,11 +67,28 @@ class APITest(TestCase):
 		data = json.loads(response.content)
 		self.assertEqual(data['status'], 'success')
 		self.assertEqual(data['data']['known'], {})
-		self.assertEqual(len(data['data']['unknown']), 15)
+		self.assertEqual(len(data['data']['unknown']), 3)
 
-"""
 	def test_containers_create(self):
-		response = self.client.get('/api/containers/create',
+		response = self.client.get('/api/containers/create/',
+			{"json": json.dumps(
+				{
+				"hashes": dict((h, {'content':c}) for h,c in zip(hashes, content))
+				})
+			}
+		)
+		self.assertEqual(response.status_code, 200)
+
+		data = json.loads(response.content)
+		self.assertEqual(data['status'], 'success')
+
+		for hash in data['data']:
+			self.assertEqual(data['data'][hash], True)
+
+		self.assertEqual(len(data['data'].keys()), 3)
+		self.assertEqual(len(Container.objects.all()), 3)
+
+		response = self.client.get('/api/containers/',
 			{"json": json.dumps(
 				{
 				"short_name": "testpub",
@@ -78,5 +96,39 @@ class APITest(TestCase):
 				"hashes": hashes
 				})
 			}
+		)
+		self.assertEqual(response.status_code, 200)
+
+		data = json.loads(response.content)
+		self.assertEqual(data['status'], 'success')
+		self.assertEqual(len(data['data']['known'].keys()), 3)
+		self.assertEqual(data['data']['unknown'], [])
+
+	def test_tag_create(self):
+		response = self.client.get('/api/tag/create/',
+			{"json": json.dumps(
+				{
+					"tag":
+					{
+						"content":"Suhwweeet",
+						"name":"Suhwweeet"
+					},
+					"hash": "f7eda37fadd84ce1425ff3f77b65d85a",
+					"content": "test"
+				})
+			}
+		)
+		
+		self.assertEqual(response.status_code, 200)
+
+"""
+	def test_tag_delete(self):
+		response = self.client.get('/api/tag/create/',
+			{"json": json.dumps(
+				{
+				"hashes": dict((h, {'content':c}) for h,c in zip(hashes, content))
+				})
+			}
+
 		)
 """

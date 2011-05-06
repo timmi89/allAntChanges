@@ -1,38 +1,5 @@
 [
   {
-    "model": "rb.InteractionNode",
-    "pk": 3,
-    "fields": {
-      "kind": "tag",
-      "body": "Great"
-    }
-  },
-  {
-    "model": "rb.InteractionNode",
-    "pk": 4,
-    "fields": {
-      "kind": "tag",
-      "body": "Awesome"
-    }
-  },
-  {
-    "model": "rb.InteractionNode",
-    "pk": 5,
-    "fields": {
-      "kind": "tag",
-      "body": "Sucks"
-    }
-  },
-  {
-    "model": "rb.InteractionNode",
-    "pk": 6,
-    "fields": {
-      "kind": "tag",
-      "body": "Wait, what?"
-    }
-  },
-
-  {
     "model": "rb.Feature",
     "pk": 1,
     "fields": {
