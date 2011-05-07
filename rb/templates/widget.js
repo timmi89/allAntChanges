@@ -2552,7 +2552,7 @@ function jQueryPlugins($R){
 
         
             //use a unique indexed version of style to uniquely identify spans
-            var uniqueClass = styleClass+"_"+selState.idx;
+            var uniqueClass = styleClass + "_" + selState.idx;
             hiliter = rangy.createCssClassApplier( uniqueClass, true ); //see rangy docs for details
             hiliter.class = uniqueClass;
             hiliter.get$start = function(){
