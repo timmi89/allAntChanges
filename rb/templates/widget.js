@@ -1101,8 +1101,6 @@ function readrBoard($R){
                 rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tag.name+' <span>('+tag.count+')</span>');
                 if ( rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp').destroy();
                 rindow.find('div.rdr_contentPanel div.rdr_body').empty();
-                // rindow.find('div.rdr_contentPanel div.rdr_body div.rdr_contentSet').remove();
-                console.log('length: '+rindow.find('div.rdr_contentPanel div.rdr_body').length);
 
                 // ok, get the content associated with this tag!
                 for ( var i in tag.content ) {
@@ -1112,7 +1110,8 @@ function readrBoard($R){
                         $header = $('<div class="rdr_contentHeader" />'),
                         $content = $('<div class="rdr_content"><div class="rdr_otherTags"></div></div>');
 
-                    $header.html( '(' + tag.content[i] + ') ' + tag.name );
+                    // $header.html( '(' + tag.content[i] + ') ' + tag.name );
+                    $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+tag.content[i]+')</span> '+tag.name+'</a>');
                     if ( this_content.comment_count > 0 ) {
                         $header.append( '<div class="rdr_has_comment">'+this_content.comment_count+'</div>' );
                     }

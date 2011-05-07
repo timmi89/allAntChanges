@@ -175,7 +175,9 @@ div.rdr li.rdr_customTagBox div.rdr_help:hover          {text-decoration:underli
 
 /* contentSet */
 div.rdr div.rdr_contentSet {margin-bottom:10px;}
-div.rdr div.rdr_contentSet div.rdr_contentHeader                        {background:#e1e1e1; font-size:11px; font-weight:bold; padding:3px 5px;}
+div.rdr div.rdr_contentSet div.rdr_contentHeader                        {background:#e1e1e1; font-size:11px; font-weight:bold; padding:3px 5px; overflow:auto;}
+div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag              {margin:0; background:none; font:inherit; color:#666; padding:0; }
+div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag:hover        {background:#ccc; }
 div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_has_comment    {background: url("/static/images/widget_icons.png") no-repeat scroll -121px -12px transparent; float:right; padding-left:16px; font-weight:normal; margin-right:5px;}
 div.rdr div.rdr_contentSet div.rdr_content                              {color:#787878; font:italic 13px Georgia; padding:5px 9px;}
 div.rdr div.rdr_contentSet div.rdr_content div.rdr_otherTags            {overflow:auto; clear:both; }
