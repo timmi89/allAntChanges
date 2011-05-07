@@ -118,13 +118,14 @@ div.rdr div.rdr_selectedTextPanel div.rdr_body 	{background:#f0f0f0; -moz-box-sh
 
 div.rdr div.rdr_reactionPanel							{position:relative; z-index:20; width:200px; }
 div.rdr div.rdr_reactionPanel div.rdr_body				{max-height:300px;}
-div.rdr div.rdr_reactionPanel div.rdr_body .jspPane		{width:200px !important; margin: 0 !important;}
+div.rdr div.rdr_reactionPanel div.rdr_body .jspPane,
+div.rdr div.rdr_contentPanel div.rdr_body .jspPane		{width:200px !important; margin: 0 !important;}
 div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; background:url(/static/images/rindow_bg_column.png);}
 
 div.rdr div.rdr_whyPanel 						{position:absolute; z-index:10; right:0; width:250px;}
 div.rdr div.rdr_whyPanel div.rdr_body 			{width:250px; max-height:300px;}
 
-div.rdr div.rdr_contentPanel                        {position:absolute; z-index:11; right:0; width:200px;}
+div.rdr div.rdr_contentPanel                        {position:absolute; z-index:11; left:200px; width:200px;}
 div.rdr div.rdr_contentPanel div.rdr_body           {width:200px; max-height:300px;}
 
 div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top:5px;}
@@ -178,7 +179,9 @@ div.rdr div.rdr_contentSet {margin-bottom:10px;}
 div.rdr div.rdr_contentSet div.rdr_contentHeader                        {background:#e1e1e1; font-size:11px; font-weight:bold; padding:3px 5px; overflow:auto;}
 div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag              {margin:0; background:none; font:inherit; color:#666; padding:0; }
 div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag:hover        {background:#ccc; }
-div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_has_comment    {background: url("/static/images/widget_icons.png") no-repeat scroll -121px -12px transparent; float:right; padding-left:16px; font-weight:normal; margin-right:5px;}
+div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_has_comment    {background: url("/static/images/widget_icons.png") no-repeat scroll -121px -12px transparent; float:right; padding-left:16px; font-weight:normal; margin-right:5px; cursor:pointer;}
+div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_can_comment    {background:none; float:right; font-weight:normal; margin-right:5px; text-transform:uppercase; font-size:9px; display:none; cursor:pointer; color:#666;}
+div.rdr div.rdr_contentSet:hover div.rdr_contentHeader div.rdr_can_comment    {display:block;}
 div.rdr div.rdr_contentSet div.rdr_content                              {color:#787878; font:italic 13px Georgia; padding:5px 9px;}
 div.rdr div.rdr_contentSet div.rdr_content div.rdr_otherTags            {overflow:auto; clear:both; }
 div.rdr div.rdr_contentSet div.rdr_content div.rdr_otherTags em         {color:#76a1ba; display: block; font-family:Arial; font-size:11px; margin-top:10px;}

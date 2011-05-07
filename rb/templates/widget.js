@@ -1113,8 +1113,15 @@ function readrBoard($R){
                     // $header.html( '(' + tag.content[i] + ') ' + tag.name );
                     $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+tag.content[i]+')</span> '+tag.name+'</a>');
                     if ( this_content.comment_count > 0 ) {
-                        $header.append( '<div class="rdr_has_comment">'+this_content.comment_count+'</div>' );
+                        $comment = $('<div class="rdr_has_comment">'+this_content.comment_count+'</div>');
+                        $comment.click( function() {
+                            RDR.actions.panel.expand("whyPanel", rindow);
+                            RDR.rindow.checkHeight( rindow, 0 );
+                        });
+                    } else {
+                        $comment = $('<div class="rdr_can_comment">Comment</div>');
                     }
+                    $header.append( $comment );
 
                     $content.find('div.rdr_otherTags').before( '"' + this_content.body + '"' );
 
@@ -1290,18 +1297,30 @@ function readrBoard($R){
                 },
                 expand: function(which, rindow, interaction_id){
                     var which = (which) ? which:"whyPanel";
-                    //console.log('whypanel expand');
                     $thisPanel = $(rindow).find('.rdr_'+which);
+                    
+                    var num_columns = rindow.find('div.rdr_sntPnl').length;
+                    switch (which) {
+                        case "contentPanel":
+                            var width = 400; // any time we're expanding the contentPanel, the rindow is gonna be 400px wide
+                            break;
+
+                        case "whyPanel":
+                            var width = ((num_columns-1)*200)+250;
+                            break;
+                    }
+                    var rindow_bg = (num_columns==3)?-450:0;
+
                     //temp hack
                     if( $thisPanel.data('expanded') ){
-
                     }
                     else{
                         // TODO is this being used anymore?  PB 4/16/2011
-                        $(rindow).animate({
-                            width: (2 * rindow.settings.pnlWidth) +'px'
+                        rindow.css('background-position',rindow_bg+'px');
+                        rindow.animate({
+                            width: width +'px'
                         }, rindow.settings.animTime, function() {
-                        });   
+                        });
                     }
                     $thisPanel.data('expanded', true);
                     // RDR.rindow.checkHeight( rindow, 0 );
