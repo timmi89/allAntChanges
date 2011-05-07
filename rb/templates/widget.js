@@ -1029,7 +1029,7 @@ function readrBoard($R){
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
                     $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />');
                 
-                var headers = ["Reactions <span>("+info.tag_count+")</span>", "CONTENT", "COMMENTS"];
+                var headers = ["Reactions <span>("+(info.tag_count+info.comment_count)+")</span>", "CONTENT", "COMMENTS"];
                 $sentimentBox.append($reactionPanel, $contentPanel, $whyPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
                     var $header = $('<div class="rdr_header" />').append('<div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
@@ -1099,6 +1099,10 @@ function readrBoard($R){
             },
             viewReactionContent: function(tag, hash, rindow){
                 rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tag.name+' <span>('+tag.count+')</span>');
+                if ( rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp').destroy();
+                rindow.find('div.rdr_contentPanel div.rdr_body').empty();
+                // rindow.find('div.rdr_contentPanel div.rdr_body div.rdr_contentSet').remove();
+                console.log('length: '+rindow.find('div.rdr_contentPanel div.rdr_body').length);
 
                 // ok, get the content associated with this tag!
                 for ( var i in tag.content ) {

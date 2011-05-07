@@ -185,7 +185,7 @@ div.rdr a.rdr_tag     { display:block; background:#d0dee6; float:left; margin:0 
 div.rdr a.rdr_tag span.rdr_tag_count    { display:block; width:12px; height:13px; float:left; background:none; margin:0 4px 0 0; padding: 0 3px; border-radius:3px; }
 div.rdr a.rdr_tag span.rdr_tag_share    { display:block; width:12px; height:13px; float:right; background:none; margin-left:3px; border-radius:3px; }
 
-div.rdr a.rdr_tag:hover     { text-decoration:underline; background:#fff; color:#008be4;}
+div.rdr a.rdr_tag:hover     { background:#fff; color:#008be4;}
 div.rdr a.rdr_tag:hover span.rdr_tag_count    { background:url(/static/images/tag_icons.png) -8px 0px no-repeat; text-indent:-9999px; }
 div.rdr a.rdr_tag:hover span.rdr_tag_share    { background:url(/static/images/tag_icons.png) -50px 0px no-repeat; }
 div.rdr a.rdr_tag:hover span.rdr_tag_count:hover    { display:block; width:12px; height:13px; float:left; background:url(/static/images/tag_icons.png) -8px -13px no-repeat; text-indent:-9999px;}
