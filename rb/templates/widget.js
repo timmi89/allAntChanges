@@ -1119,7 +1119,7 @@ function readrBoard($R){
                         $content.find('div.rdr_otherTags').append( '<em>Other Reactions</em>' );
                         for ( var j in this_content.tags ) {
                             if ( this_content.tags[j].id != tag.id ) {
-                                $content.find('div.rdr_otherTags').append( '<a href="javascript:void(0);">('+this_content.tags[j].count+') '+this_content.tags[j].tag+'</a>' );
+                                $content.find('div.rdr_otherTags').append( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+this_content.tags[j].count+')</span> '+this_content.tags[j].tag+'</a>' );
                             }
                         }
                     }
