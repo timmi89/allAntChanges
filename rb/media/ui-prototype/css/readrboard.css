@@ -150,6 +150,8 @@ div.rdr .rdr_tags			{padding:0 0 10px;}
 div.rdr ul.rdr_tags			{list-style-type:none; padding:0; margin:0; }
 div.rdr ul.rdr_tags li	            {padding:0; margin:0; position:relative; overflow:auto; }
 div.rdr ul.rdr_tags li .rdr_leftBox     {width:30px; letter-spacing:1px; padding:4px 2px 0 6px; height:35px; border-right:1px solid #bababa; overflow:hidden; float:left; margin-right:5px; text-align:center; font-size:21px;}
+div.rdr ul.rdr_tags li .rdr_rightBox     {width:30px; padding:0 3px; height:35px; overflow:hidden; float:right; margin-left:5px; text-align:left; background:url(/static/images/widget_icons.png) -5000px 0px no-repeat;}
+div.rdr ul.rdr_tags li.rdr_has_comment .rdr_rightBox     {background:url(/static/images/widget_icons.png) -107px 0px no-repeat;}
 div.rdr div.rdr_read ul.rdr_tags li .rdr_leftBox     {color:#008be4;}
 div.rdr ul.rdr_tags li:hover            {background:#e4f0f7;cursor:pointer;}
 div.rdr ul.rdr_tags li:hover a                      {color:#008be4; display:block; }
@@ -159,7 +161,8 @@ div.rdr div.rdr_read ul.rdr_tags li:hover div.rdr_leftBox,
 div.rdr div.rdr_read ul.rdr_tags li.rdr_tagged div.rdr_leftBox   {background-image:none; color:#008be4; }
 div.rdr ul.rdr_tags li.rdr_selected                 {color:#008be4; background:#e4f0f7; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; border:1px solid #bababa; border-right:0; border-left:0; height:33px; overflow:hidden; }
 div.rdr ul.rdr_tags li.rdr_selected a               {color:#008be4; display:block; margin-top:-1px;}
-div.rdr ul.rdr_tags li.rdr_selected .rdr_rightBox   {width:30px; padding:0 3px; height:35px; overflow:hidden; float:right; margin-left:5px; text-align:left; background:url(/static/images/widget_icons.png) -36px 0px no-repeat;}
+div.rdr ul.rdr_tags li:hover .rdr_rightBox,
+div.rdr ul.rdr_tags li.rdr_selected .rdr_rightBox   {background:url(/static/images/widget_icons.png) -36px 0px no-repeat;}
 div.rdr ul.rdr_tags li.rdr_selected .rdr_leftBox:hover,
 div.rdr ul.rdr_tags li.rdr_tagged .rdr_leftBox:hover    {background-position:-72px 0px;}
 div.rdr div.rdr_new ul.rdr_tags li.rdr_selected 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
@@ -171,7 +174,10 @@ div.rdr li.rdr_customTagBox div.rdr_help:hover          {text-decoration:underli
 
 
 /* contentSet */
-div.rdr div.rdr_contentSet {min-height:100px;}
+div.rdr div.rdr_contentSet {margin-bottom:20px;}
+div.rdr div.rdr_contentSet div.rdr_contentHeader                        {background:#e1e1e1; font-size:11px; font-weight:bold; padding:3px 5px;}
+div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_has_comment    {background: url("/static/images/widget_icons.png") no-repeat scroll -121px -12px transparent; float:right; padding-left:16px; font-weight:normal; margin-right:5px;}
+div.rdr div.rdr_contentSet div.rdr_content                              {color:#787878; font:italic 13px Georgia; padding:5px 9px;}
 
 div.rdr div.rdr_close		{position:absolute;top:8px;right:7px;color:#999;cursor:pointer;font-size:14px;margin-top:-4px;z-index:15;}
 

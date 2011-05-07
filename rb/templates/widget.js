@@ -997,20 +997,19 @@ function readrBoard($R){
                             }
                         }
                         if ( tag_idx == -1 ) {
-                            info.tags.push({ id:tag.id, name:tag.tag, count:0, content:{} });
+                            info.tags.push({ id:tag.id, name:tag.tag, count:0, comment_count:0, content:{} });
                             tag_idx = ( info.tags.length - 1 );
                         }
 
                         info.tags[ tag_idx ].count += tag.count;
+                        info.tags[ tag_idx ].comment_count += tag.comments.length;
                         info.tags[ tag_idx ].content[ j ] = tag.count;
                         info.tags.total_count += tag.count;
 
                         // info.tags_order[ tag.id ] += tag.count;
                     };
                 };
-                console.log('----------------');
-                console.dir(info.tags);
-                console.log('----------------');
+
                 info.tags.sort(SortByTagCount);
                 RDR.content_nodes[args.hash].info = info;
 
@@ -1054,11 +1053,12 @@ function readrBoard($R){
                                 id:parseInt( info.tags[i].id ),
                                 name:info.tags[i].name,
                                 content:info.tags[i].content,
-                                count:info.tags[i].count
+                                count:info.tags[i].count,
+                                comment_count:info.tags[i].comment_count
                             },
                             'hash':args.hash
                         }).append('<div class="rdr_rightBox"></div><div class="rdr_leftBox">'+percentage+'%</div><a href="javascript:void(0);">'+info.tags[i].name+'</a>');
-                        
+                        if ( info.tags[i].comment_count > 0 ) $li.addClass('rdr_has_comment');
                         $tagBox.children('ul.rdr_tags').append($li);
                     }
                 };
@@ -1103,17 +1103,24 @@ function readrBoard($R){
                 // ok, get the content associated with this tag!
                 for ( var i in tag.content ) {
                     var this_content = RDR.content_nodes[hash].info.content[i];
-                    console.dir( this_content );
+
                     var $contentSet = $('<div class="rdr_contentSet" />'),
                         $header = $('<div class="rdr_contentHeader" />'),
                         $content = $('<div class="rdr_content"><div class="rdr_otherTags"></div></div>');
 
                     $header.html( '(' + tag.content[i] + ') ' + tag.name );
-                    $content.find('div.rdr_otherTags').before( this_content.body );
+                    if ( this_content.comment_count > 0 ) {
+                        $header.append( '<div class="rdr_has_comment">'+this_content.comment_count+'</div>' );
+                    }
 
-                    for ( var j in this_content.tags ) {
-                        if ( this_content.tags[j].id != tag.id ) {
-                            $content.find('div.rdr_otherTags').append( '<a href="javascript:void(0);">('+this_content.tags[j].count+') '+this_content.tags[j].tag+'</a>' );
+                    $content.find('div.rdr_otherTags').before( '"' + this_content.body + '"' );
+
+                    if ( this_content.tags.length > 1 ) {
+                        $content.find('div.rdr_otherTags').append( '<em>Other Reactions</em>' );
+                        for ( var j in this_content.tags ) {
+                            if ( this_content.tags[j].id != tag.id ) {
+                                $content.find('div.rdr_otherTags').append( '<a href="javascript:void(0);">('+this_content.tags[j].count+') '+this_content.tags[j].tag+'</a>' );
+                            }
                         }
                     }
 
