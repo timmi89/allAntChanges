@@ -19,8 +19,12 @@ div.rdr.rdr_window {
 	z-index:12000;
 	top:100px;
 	left:100px;
-	background:url(/static/images/rindow_bg_column.png);
+	background:#fff;
 	overflow:hidden;
+}
+
+div.rdr.rdr_window.rdr_columns {
+    background:url(/static/images/rindow_bg_column.png);
 }
 
 /* the action bar */
@@ -102,13 +106,14 @@ div.rdr h1 span	{font-size:18px; color:#008be4;}
 div.rdr div.rdr_sentimentBox							{}
 div.rdr div.rdr_sntPnl 									{float:left; position:relative; display:block; height:100%; overflow:hidden; /*width is reset with js - rindow.settings.pnlWidth */ }
 
-div.rdr div.rdr_sntPnl div.rdr_body						{width:100%; z-index:3; overflow-x:hidden; overflow-y:auto; padding:0; position:relative;}
+div.rdr div.rdr_sntPnl div.rdr_body						{width:100%; height:100%; z-index:3; overflow-x:hidden; overflow-y:auto; padding:0; position:relative;}
 div.rdr div.rdr_sntPnl div.rdr_header                   {background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:3;}
 div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header,
 div.rdr div.rdr_sntPnl.rdr_whyPanel div.rdr_header 		{background:url(/static/images/header_arrow.png) 0px -1px no-repeat #fff;}
 div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap	{background:none; border-bottom:1px solid #bababa; bottom:0; padding-bottom:3px; text-align:center; width:100%; position:absolute; }
 div.rdr div.rdr_sntPnl h1                               {padding:0 !important; }
-div.rdr div.rdr_sntPnl .rdr_pnlShadow			        {height:100%; width:100px; position:absolute; z-index:0; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; }
+div.rdr div.rdr_sntPnl .rdr_pnlShadow                   {height:100%; width:16px; position:absolute; z-index:5; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; display:none;}
+div.rdr .rdr_leftShadow	{-moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; }
 
 /*
 div.rdr div.rdr_selectedTextPanel div.rdr_body div.rdr_selected		{font-family:Georgia; font-size:14px; padding:7px; background:#f2cfcf; display:block; position:relative; }
@@ -122,11 +127,12 @@ div.rdr div.rdr_reactionPanel div.rdr_body .jspPane,
 div.rdr div.rdr_contentPanel div.rdr_body .jspPane		{width:200px !important; margin: 0 !important;}
 div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; background:url(/static/images/rindow_bg_column.png);}
 
-div.rdr div.rdr_whyPanel 						{position:absolute; z-index:10; right:0; width:250px;}
-div.rdr div.rdr_whyPanel div.rdr_body 			{width:250px; max-height:300px;}
+div.rdr div.rdr_contentPanel                            {position:absolute; z-index:15; left:200px; width:200px; background:url(/static/images/rindow_bg_column.png) repeat -650px 0;}
+div.rdr div.rdr_contentPanel div.rdr_body               {width:200px; max-height:300px; }
 
-div.rdr div.rdr_contentPanel                        {position:absolute; z-index:11; left:200px; width:200px;}
-div.rdr div.rdr_contentPanel div.rdr_body           {width:200px; max-height:300px;}
+div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:250px; background:url(/static/images/rindow_bg_column.png) -200px 0;}
+div.rdr.rdr_columns3 div.rdr_whyPanel 				    {background-position:-850px 0;}
+div.rdr div.rdr_whyPanel div.rdr_body 			        {width:250px; max-height:300px; }
 
 div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top:5px;}
 div.rdr div.rdr_sntPnl_padder 					{margin:0 15px; position:relative; overflow:hidden;}
@@ -142,7 +148,7 @@ div.rdr div.rdr_sntPnl .leaveComment			{height:67px; margin-top:5px; max-width:9
 div.rdr div.rdr_sntPnl .rdr_tagFeedback			{background: none repeat scroll 0 0 #ddd; border: 1px solid #bbb; margin: 5px 10px 0; padding: 5px;}
 div.rdr div.rdr_sntPnl .rdr_tagFeedback strong	{font-weight:bold; color:#008be4;}
 
-div.rdr div.rdr_tempUserMsg 					{position:absolute; z-index:5; bottom:0px; height:27px; border-top:1px solid #aaa;background:#fff; padding:9px; -moz-box-shadow:0px -45px 48px -50px #53aed9 inset; -webkit-box-shadow:0px -45px 48px -50px #53aed9 inset; box-shadow:0px -45px 48px -50px #53aed9 inset;}
+div.rdr div.rdr_tempUserMsg 					{position:absolute; z-index:50; bottom:0px; height:27px; border-top:1px solid #aaa;background:#fff; padding:9px; -moz-box-shadow:0px -45px 48px -50px #53aed9 inset; -webkit-box-shadow:0px -45px 48px -50px #53aed9 inset; box-shadow:0px -45px 48px -50px #53aed9 inset;}
 /*
 $('div.rdr_tempUserMsg').animate({bottom:'-48px'});
 */
@@ -186,9 +192,26 @@ div.rdr div.rdr_contentSet div.rdr_content                              {color:#
 div.rdr div.rdr_contentSet div.rdr_content div.rdr_otherTags            {overflow:auto; clear:both; }
 div.rdr div.rdr_contentSet div.rdr_content div.rdr_otherTags em         {color:#76a1ba; display: block; font-family:Arial; font-size:11px; margin-top:10px;}
 
+div.rdr div.rdr_contentSet.rdr_selected div.rdr_contentHeader           {background:#d0dee6;}
+div.rdr div.rdr_contentSet.rdr_selected div.rdr_content                 {background:#e4f0f7;}
+div.rdr div.rdr_contentSet.rdr_selected div.rdr_contentHeader div.rdr_has_comment             {background-position: -46px -12px; text-indent: -9999px;}
+
+/* commentSet */
+div.rdr div.rdr_commentSet          {padding:5px 10px; overflow:auto;}
+div.rdr div.rdr_commentSet div.rdr_commentBy          {font: bold 11px Arial; color:#666; overflow:auto; padding-top:8px;}
+div.rdr div.rdr_commentSet div.rdr_commentBy img      {width:24px; height:24px; float:left; margin:-8px 5px 0 0; border:1px solid #d0dee6;}
+div.rdr div.rdr_commentSet div.rdr_comment            {font: italic 14px Georgia; color:#999;padding:3px; }
+div.rdr div.rdr_commentSet a.rdr_tag                            {margin-top:3px;}
+div.rdr div.rdr_commentSet a.rdr_tag span.rdr_tag_share         {margin-left:-12px;}
+div.rdr div.rdr_commentSet a.rdr_tag:hover span.rdr_tag_share   {margin-left:3px;}
+
+div.rdr div.rdr_leave_comment   {border-top:1px solid #CCCCCC; clear:both; display:block; padding:10px; margin:10px 0 0 0;}
+
+/* tags */
+
 div.rdr a.rdr_tag     { display:block; background:#d0dee6; float:left; margin:0 10px 3px 0; font:normal 11px Arial; color:#678ca2; text-decoration:none; padding:1px; border-radius:3px;}
-div.rdr a.rdr_tag span.rdr_tag_count    { display:block; width:12px; height:13px; float:left; background:none; margin:0 4px 0 0; padding: 0 3px; border-radius:3px; }
-div.rdr a.rdr_tag span.rdr_tag_share    { display:block; width:12px; height:13px; float:right; background:none; margin-left:3px; border-radius:3px; }
+div.rdr a.rdr_tag span.rdr_tag_count    { display:block; min-width:13px; width:auto; height:13px; float:left; background:none; margin:0; padding: 0 3px; border-radius:3px; }
+div.rdr a.rdr_tag span.rdr_tag_share    { display:block; min-width:13px; width:auto; height:13px; float:right; background:none; margin-left:3px; border-radius:3px; }
 
 div.rdr a.rdr_tag:hover     { background:#fff; color:#008be4;}
 div.rdr a.rdr_tag:hover span.rdr_tag_count    { background:url(/static/images/tag_icons.png) -8px 0px no-repeat; text-indent:-9999px; }
@@ -201,7 +224,7 @@ div.rdr div.rdr_close		{position:absolute;top:8px;right:7px;color:#999;cursor:po
 div.rdr div.rdr_instruct	{color:#666; margin:5px 0;}
 div.rdr div.rdr_help		{font:italic 11px Arial;color:#767676; width:100%; position:absolute; top:12px; text-align:center; margin:0 !important;}
 
-div.rdr div.rdr_comment textarea	{ height:92px; font-size:14px; margin:5px 0; resize:none; padding-bottom:10px;}
+div.rdr div.rdr_comment textarea	{ width:100%; height:92px; font-size:14px; margin:5px 0; resize:none; padding-bottom:10px;}
 div.rdr div.rdr_share_count		{ color:#999999; font-style:italic; margin:-3px 0 5px; }
 
 div.rdr ul.shareLinks           {padding:2px; margin:0;}

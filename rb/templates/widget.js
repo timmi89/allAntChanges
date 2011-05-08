@@ -97,21 +97,19 @@ function readrBoard($R){
                 y:100,
                 pnlWidth:200,
                 animTime:225,
-                height:150
+                height:150,
+                columns: false
             },
 			// content comes later.  this is just to identify or draw the container.
             checkHeight: function( rindow, percentScroll ) {
                 rindow.find('div.rdr_reactionPanel div.rdr_body, div.rdr_contentPanel div.rdr_body, div.rdr_whyPanel div.rdr_body').each( function() {
                     var $column = $(this);
-                    console.log( "height: "+$column.height() );
                     if ( $column.height() > 200 ) {
                         if ( $column.data('jsp') ) {
                             $column.data('jsp').reinitialise();
-                            console.log(1);
                             // RDR.pane1 = $R('div.rdr_reactionPanel div.rdr_body').data('jsp');
                         } else {
                             $column.jScrollPane({ contentWidth:200, showArrows:true });    
-                            console.log(2);
                         }
                         // if ( percentScroll ) $column.data('jsp').scrollToPercentY( percentScroll );
                     }
@@ -134,6 +132,8 @@ function readrBoard($R){
                     }
 					$('body').append( $new_rindow );
 				}
+
+                if ( options.columns == true ) $new_rindow.addClass('rdr_columns');
 
 				if ( $new_rindow.find('h1').length == 0 ) {
                     $new_rindow.html('');
@@ -607,17 +607,17 @@ function readrBoard($R){
                 if ( args.rindow ) {
                     //console.dir(args);
                     var rindow = args.rindow,
-                        num_interactions_left = 5 - parseInt( args.int_id.num_interactions ),
+                        num_interactions_left = RDR.group.temp_interact - parseInt( args.int_id.num_interactions ),
                         $tempMsgDiv = $('<div class="rdr_tempUserMsg"><span /><strong /></div>'),
-                        tempMsg = 'You can do ' + num_interactions_left + ' more interactions.  GOT IT?!  So you better log in, you better not pout. ',
-                        $loginLink = $('<a href="javascript:void(0);">Connect now with Facebook</a>.');
+                        tempMsg = 'You can react or comment <strong>' + num_interactions_left + ' more times</strong> before you must ',
+                        $loginLink = $('<a href="javascript:void(0);">Connect with Facebook</a>.');
 
                     if ( rindow.find('div.rdr_tempUserMsg').length == 0 ){
                         $loginLink.click( function() {
                             RDR.session.showLoginPanel( args );
                         });
                         $tempMsgDiv.find('span').html( tempMsg );
-                        $tempMsgDiv.find('strong').append( $loginLink );
+                        $tempMsgDiv.append( $loginLink );
                         rindow.append( $tempMsgDiv );
                         rindow.animate({height:(rindow.height()+103)+"px"});
                     } else {
@@ -849,6 +849,14 @@ function readrBoard($R){
                     }
                     //todo - consider unifying style of close vs closeAll.  Should any of these components 'own' the others?  IE. should tooltips belong to the actionbar?
                 });
+                $(document).dblclick(function(event) {
+                    var mouse_target = $(event.target);                                
+
+                    if ( !$(mouse_target).parents().hasClass('rdr')) {
+                        RDR.rindow.closeAll();
+                    }
+
+                });
 				$RDR.dequeue('initAjax');
             },
             hashNodes: function() {
@@ -975,13 +983,13 @@ function readrBoard($R){
             },
             viewContainerReactions: function( args ) {
 
-                function SortByTagCount(a,b) { return b.count - a.count; }
-
                 var info = RDR.content_nodes[args.hash].info;
                 info.tags = [];
                 info.tags.total_count = 0;
                 // info.tags_order = [];
 
+                // loop through the content object to create a similar object that has tags at the top of the hierarchy, 
+                // to prevent looping through .content over and over
                 for ( var j in info.content ) {
                     // console.dir(content);
                     var content = info.content[j];
@@ -1003,13 +1011,12 @@ function readrBoard($R){
 
                         info.tags[ tag_idx ].count += tag.count;
                         info.tags[ tag_idx ].comment_count += tag.comments.length;
-                        info.tags[ tag_idx ].content[ j ] = tag.count;
+                        info.tags[ tag_idx ].content[ j ] = { count:tag.count, tag_idx:parseInt(i) };
                         info.tags.total_count += tag.count;
-
-                        // info.tags_order[ tag.id ] += tag.count;
                     };
                 };
 
+                function SortByTagCount(a,b) { return b.count - a.count; }
                 info.tags.sort(SortByTagCount);
                 RDR.content_nodes[args.hash].info = info;
 
@@ -1029,7 +1036,7 @@ function readrBoard($R){
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
                     $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />');
                 
-                var headers = ["Reactions <span>("+(info.tag_count+info.comment_count)+")</span>", "CONTENT", "COMMENTS"];
+                var headers = ["Reactions <span>("+(info.tag_count+info.comment_count)+")</span>", "", ""];
                 $sentimentBox.append($reactionPanel, $contentPanel, $whyPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
                     var $header = $('<div class="rdr_header" />').append('<div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
@@ -1083,7 +1090,7 @@ function readrBoard($R){
                     */
 
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
-                    $('ul.rdr_preselected li').live('click', function() {
+                    rindow.find('ul.rdr_preselected li').bind('click', function() {
                         var $this = $(this);
                         if ( !$this.hasClass('rdr_customTagBox') ) {
                             // if ( $this.hasClass('rdr_selected') ){
@@ -1107,20 +1114,21 @@ function readrBoard($R){
                     var this_content = RDR.content_nodes[hash].info.content[i];
 
                     var $contentSet = $('<div class="rdr_contentSet" />'),
-                        $header = $('<div class="rdr_contentHeader" />'),
+                        $header = $('<div class="rdr_contentHeader rdr_leftShadow" />'),
                         $content = $('<div class="rdr_content"><div class="rdr_otherTags"></div></div>');
 
-                    // $header.html( '(' + tag.content[i] + ') ' + tag.name );
-                    $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+tag.content[i]+')</span> '+tag.name+'</a>');
+                    $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+tag.content[i].count+')</span> '+tag.name+'</a>');
                     if ( this_content.comment_count > 0 ) {
                         $comment = $('<div class="rdr_has_comment">'+this_content.comment_count+'</div>');
-                        $comment.click( function() {
-                            RDR.actions.panel.expand("whyPanel", rindow);
-                            RDR.rindow.checkHeight( rindow, 0 );
-                        });
                     } else {
                         $comment = $('<div class="rdr_can_comment">Comment</div>');
                     }
+                    var c_idx = i; // this seems unnecessary, but it is not.
+                    $comment.click( function() {
+                        $(this).closest('.rdr_contentSet').addClass('rdr_selected');
+                        RDR.actions.viewCommentContent( tag, hash, c_idx, rindow );
+                    });
+
                     $header.append( $comment );
 
                     $content.find('div.rdr_otherTags').before( '"' + this_content.body + '"' );
@@ -1140,7 +1148,70 @@ function readrBoard($R){
                 }
 
                 RDR.actions.panel.expand("contentPanel", rindow);
-                RDR.rindow.checkHeight( rindow, 0 );
+            },
+            viewCommentContent: function(tag, hash, c_idx, rindow){
+                if ( rindow.find('div.rdr_whyPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_whyPanel div.rdr_body').data('jsp').destroy();
+                rindow.find('div.rdr_whyPanel div.rdr_body').empty();
+                
+                if (tag && tag.comment_count && tag.comment_count > 0 ) {
+                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments <span>('+tag.comment_count+')</span>');
+
+                    var comments = RDR.content_nodes[hash].info.content[c_idx].tags[ tag.content[c_idx].tag_idx ].comments;
+
+                    // ok, get the content associated with this tag!
+                    for ( var i in comments ) {
+                        var this_comment = comments[i];
+                        console.clear();
+                        console.dir(this_comment);
+
+                        var $commentSet = $('<div class="rdr_commentSet" />'),
+                            $commentBy = $('<div class="rdr_commentBy" />'),
+                            $comment = $('<div class="rdr_comment" />');
+                        
+                        var user_image_url = ( this_comment.user.image_url ) ? this_comment.user.image_url:'/static/images/anonymousplode.png';
+                        $commentBy.html( '<img src="'+user_image_url+'" /> ' + this_comment.user.first_name + " " + this_comment.user.last_name);
+                        $comment.html( '"'+this_comment.comment+'"' );
+                        $comment.append( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">+5</span></a>' );
+
+                        $commentSet.append( $commentBy, $comment );
+
+                        rindow.find('div.rdr_whyPanel div.rdr_body').append( $commentSet );
+                    }
+                } else {
+                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Add a Comment');
+                }
+
+                //todo: combine this with the tooltip for the tags
+                var helpText = "because..."
+                var $leaveComment =  $('<div class="rdr_leave_comment" />');
+                $leaveComment.append( '<strong>Leave a comment here:</strong><div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button>Comment</button></div>' );
+                $leaveComment.find('textarea').focus(function(){
+                    if($('.leaveComment').val() == helpText ){
+                        $('.leaveComment').val('');
+                    }
+                }).blur(function(){
+                    if($('.leaveComment').val() == "" ){
+                        $('.leaveComment').val(helpText);
+                    }
+                }).keyup(function(event) {
+                    if (event.keyCode == '13') { //enter or comma
+                        //RDR.actions.panel.expand(rindow);
+                    }
+                    else if (event.keyCode == '27') { //esc
+                        //return false;
+                    }
+                });
+
+                $leaveComment.find('textarea').autogrow();
+
+                $leaveComment.find('button').click(function() {
+                    var comment = $leaveComment.find('textarea').val();
+                    RDR.actions.comment({ comment:comment, hash:hash, content:RDR.content_nodes[hash].info.content[c_idx].body, tag_id:RDR.content_nodes[hash].info.content[c_idx].tags[ tag.content[c_idx].tag_idx ].id, rindow:rindow });
+                });
+
+                rindow.find('div.rdr_whyPanel div.rdr_body').append( $leaveComment );
+
+                RDR.actions.panel.expand("whyPanel", rindow);
             },
 			sentimentBox: function(settings) {
                 
@@ -1184,6 +1255,7 @@ function readrBoard($R){
                     left:actionbarOffsets.left,
                     top:actionbarOffsets.top,
 					pnlWidth:200,
+                    columns:true,
 					ignoreWindowEdges:"bl",
 					noHeader:true
                 });
@@ -1260,7 +1332,7 @@ function readrBoard($R){
                     */
 
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
-                    $('ul.rdr_preselected li').live('click', function() {
+                    rindow.find('ul.rdr_preselected li').bind('click', function() {
                         var $this = $(this);
                         if ( !$this.hasClass('rdr_customTagBox') ) {
                             // if ( $this.hasClass('rdr_selected') ){
@@ -1284,7 +1356,7 @@ function readrBoard($R){
 			panel: {
                 draw: function(which, rindow, interaction_id) {
                     var which = (which) ? which:"whyPanel";
-                    var $thisPanel = $('<div class="rdr_'+which+' rdr_sntPnl" />').prepend($('<div class="rdr_pnlShadow"/>'));
+                    var $thisPanel = $('<div class="rdr_'+which+' rdr_sntPnl rdr_leftShadow" />');  // don't seem to need this anymore:  .prepend($('<div class="rdr_pnlShadow"/>'));
                     return $thisPanel;
                 },
                 setup: function(which, rindow){
@@ -1300,6 +1372,7 @@ function readrBoard($R){
                     $thisPanel = $(rindow).find('.rdr_'+which);
                     
                     var num_columns = rindow.find('div.rdr_sntPnl').length;
+                    rindow.addClass('rdr_columns'+num_columns);
                     switch (which) {
                         case "contentPanel":
                             var width = 400; // any time we're expanding the contentPanel, the rindow is gonna be 400px wide
@@ -1315,15 +1388,14 @@ function readrBoard($R){
                     if( $thisPanel.data('expanded') ){
                     }
                     else{
-                        // TODO is this being used anymore?  PB 4/16/2011
                         rindow.css('background-position',rindow_bg+'px');
                         rindow.animate({
                             width: width +'px'
                         }, rindow.settings.animTime, function() {
                         });
                     }
+                    RDR.rindow.checkHeight( rindow, 0 );
                     $thisPanel.data('expanded', true);
-                    // RDR.rindow.checkHeight( rindow, 0 );
                 },
                 collapse: function(which, rindow){
                     var which = (which) ? which:"whyPanel";
@@ -1572,7 +1644,7 @@ console.dir(args);
 
                 //todo: combine this with the tooltip for the tags
                 var helpText = "because..."
-                var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="comment_on_'+int_id.id+'">Comment</button></div>');
+                var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+int_id.id+'">Comment</button></div>');
                 $leaveComment.find('textarea').focus(function(){
                     if($('.leaveComment').val() == helpText ){
                         $('.leaveComment').val('');
@@ -1624,11 +1696,19 @@ console.dir(args);
                     // RDR.pane2 = $('div.rdr_whyPanel div.rdr_body').data('jsp');
                 // }
 
-                if ( rindow.width() < 450 ) {
-                    rindow.animate( {width:450}, rindow.settings.animTime, function() {
-                        $('div.rdr div.rdr_whyPanel').css('position', 'static');
-                    });
-                }
+                
+
+
+                // if ( rindow.width() < 450 ) {
+                //     rindow.animate( {width:450}, rindow.settings.animTime, function() {
+                //         $('div.rdr div.rdr_whyPanel').css('position', 'static');
+                //     });
+                // }
+
+                RDR.actions.panel.expand("whyPanel", rindow);
+
+
+
 
 
                 // TODO un-dummify this temp user message
@@ -1666,10 +1746,24 @@ console.dir(args);
                     int_id = params.int_id,
                     rindow = params.rindow;
 
+                    if (!int_id) {
+                        var content = params.content,
+                            tag_id = params.tag_id,
+                            int_id = "none";
+                    } else {
+                        var content = "",
+                            tag_id = ""
+                    }
+
+                    var hash = (params.hash) ? params.hash:"";
+
 
                     var sendData = {
                         "int_id" : int_id,
                         "comment" : comment,
+                        "content" : content,
+                        "tag_id" : tag_id,
+                        "hash" : hash,
                         "user_id" : RDR.user.user_id,
                         "readr_token" : RDR.user.readr_token,
                         "group_id" : RDR.groupPermData.group_id,
@@ -2610,6 +2704,14 @@ function jQueryPlugins($R){
                         _hiliteSwitch(selState, 'off');
                         //remove the binding after it's been called.
                         $(document).unbind('keyup', arguments.callee);
+                    }
+                });
+
+                $(document).dblclick(function(event) {
+                    var mouse_target = $(event.target);                                
+
+                    if ( !$(mouse_target).parents().hasClass('rdr')) {
+                        _hiliteSwitch(selState, 'off');
                     }
                 });
             
