@@ -1105,19 +1105,29 @@ function readrBoard($R){
                 });
             },
             viewReactionContent: function(tag, hash, rindow){
+                console.clear();
+                console.dir(tag);
+                var content = [];
+                for ( var i in tag.content ) {
+                    content.push( {idx:i, count:tag.content[i].count } );
+                }
+
+                function SortByTagCount(a,b) { return b.count - a.count; }
+                content.sort(SortByTagCount);
+
                 rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tag.name+' <span>('+tag.count+')</span>');
                 if ( rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp').destroy();
                 rindow.find('div.rdr_contentPanel div.rdr_body').empty();
 
                 // ok, get the content associated with this tag!
-                for ( var i in tag.content ) {
-                    var this_content = RDR.content_nodes[hash].info.content[i];
+                for ( var i in content ) {
+                    var this_content = RDR.content_nodes[hash].info.content[ content[i].idx ];
 
                     var $contentSet = $('<div class="rdr_contentSet" />'),
                         $header = $('<div class="rdr_contentHeader rdr_leftShadow" />'),
                         $content = $('<div class="rdr_content"><div class="rdr_otherTags"></div></div>');
 
-                    $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+tag.content[i].count+')</span> '+tag.name+'</a>');
+                    $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+content[i].count+')</span> '+tag.name+'</a>');
                     if ( this_content.comment_count > 0 ) {
                         $comment = $('<div class="rdr_has_comment">'+this_content.comment_count+'</div>');
                     } else {
