@@ -1105,8 +1105,6 @@ function readrBoard($R){
                 });
             },
             viewReactionContent: function(tag, hash, rindow){
-                console.clear();
-                console.dir(tag);
                 var content = [];
                 for ( var i in tag.content ) {
                     content.push( {idx:i, count:tag.content[i].count } );
@@ -1133,10 +1131,12 @@ function readrBoard($R){
                     } else {
                         $comment = $('<div class="rdr_can_comment">Comment</div>');
                     }
-                    var c_idx = i; // this seems unnecessary, but it is not.
+
+                    $comment.data('c_idx',content[i].idx);
                     $comment.click( function() {
-                        $(this).closest('.rdr_contentSet').addClass('rdr_selected');
-                        RDR.actions.viewCommentContent( tag, hash, c_idx, rindow );
+                        var $this = $(this);
+                        $this.closest('.rdr_contentSet').addClass('rdr_selected').siblings().removeClass('rdr_selected');
+                        RDR.actions.viewCommentContent( tag, hash, $(this).data('c_idx'), rindow );
                     });
 
                     $header.append( $comment );
@@ -1162,17 +1162,16 @@ function readrBoard($R){
             viewCommentContent: function(tag, hash, c_idx, rindow){
                 if ( rindow.find('div.rdr_whyPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_whyPanel div.rdr_body').data('jsp').destroy();
                 rindow.find('div.rdr_whyPanel div.rdr_body').empty();
-                
-                if (tag && tag.comment_count && tag.comment_count > 0 ) {
-                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments <span>('+tag.comment_count+')</span>');
+                var comments = RDR.content_nodes[hash].info.content[c_idx].tags[ tag.content[c_idx].tag_idx ].comments;
+                console.clear();
+                console.dir(comments);
+                if (comments && comments.length > 0 ) {
+                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments <span>('+comments.length+')</span>');
 
-                    var comments = RDR.content_nodes[hash].info.content[c_idx].tags[ tag.content[c_idx].tag_idx ].comments;
 
                     // ok, get the content associated with this tag!
                     for ( var i in comments ) {
                         var this_comment = comments[i];
-                        console.clear();
-                        console.dir(this_comment);
 
                         var $commentSet = $('<div class="rdr_commentSet" />'),
                             $commentBy = $('<div class="rdr_commentBy" />'),
@@ -1187,6 +1186,7 @@ function readrBoard($R){
 
                         rindow.find('div.rdr_whyPanel div.rdr_body').append( $commentSet );
                     }
+                    rindow.find('div.rdr_whyPanel div.rdr_body').append( '<hr />' );
                 } else {
                     rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Add a Comment');
                 }

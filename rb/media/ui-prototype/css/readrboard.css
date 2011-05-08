@@ -132,7 +132,8 @@ div.rdr div.rdr_contentPanel div.rdr_body               {width:200px; max-height
 
 div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:250px; background:url(/static/images/rindow_bg_column.png) -200px 0;}
 div.rdr.rdr_columns3 div.rdr_whyPanel 				    {background-position:-850px 0;}
-div.rdr div.rdr_whyPanel div.rdr_body 			        {width:250px; max-height:300px; }
+div.rdr div.rdr_whyPanel div.rdr_body                   {width:250px; max-height:300px; }
+div.rdr div.rdr_whyPanel hr 			                {background: #ddd; border: none; clear: both; color: #ddd; float: none; height: 1px; margin: 10px; }
 
 div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top:5px;}
 div.rdr div.rdr_sntPnl_padder 					{margin:0 15px; position:relative; overflow:hidden;}
@@ -205,7 +206,7 @@ div.rdr div.rdr_commentSet a.rdr_tag                            {margin-top:3px;
 div.rdr div.rdr_commentSet a.rdr_tag span.rdr_tag_share         {margin-left:-12px;}
 div.rdr div.rdr_commentSet a.rdr_tag:hover span.rdr_tag_share   {margin-left:3px;}
 
-div.rdr div.rdr_leave_comment   {border-top:1px solid #CCCCCC; clear:both; display:block; padding:10px; margin:10px 0 0 0;}
+div.rdr div.rdr_leave_comment   { clear:both; display:block; padding:10px; margin:0; }
 
 /* tags */
 
