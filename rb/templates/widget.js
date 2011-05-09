@@ -118,7 +118,8 @@ function readrBoard($R){
             },
 			draw: function(options) {
 				// for now, any window closes all tooltips
-
+console.clear();
+console.dir(options);
                 //merge options and defaults
                 var settings = $.extend({}, this.defaults, options);
 				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
@@ -130,7 +131,11 @@ function readrBoard($R){
                                                      // logs in, the login rindow knows what function to then call
                         $new_rindow.attr('id',settings.id);
                     }
-					$('body').append( $new_rindow );
+					if (options.selector) {
+                        $(options.selector).after( $new_rindow );
+                    } else {
+                        $('body').append( $new_rindow );
+                    }
 				}
 
                 if ( options.columns == true ) $new_rindow.addClass('rdr_columns');
@@ -965,19 +970,20 @@ function readrBoard($R){
                 console.dir(RDR.content_nodes[hash]);
 
                 var container = $(RDR.group.anno_whitelist+'.rdr-'+hash); // prepend with the anno_whitelist selector to speed finding the container
-                container.append('<img src="/static/images/blank.png" width="32" height="24" id="rdr_helper_'+hash+'" />');
+                container.append('<img src="/static/images/blank.png" width="18" height="18" id="rdr_helper_'+hash+'" style="display:inline-block;zoom:1;*display:inline;"/>');
                 var helper_position = $('#rdr_helper_'+hash).offset();
-                $('#rdr_helper_'+hash).remove();
+                $('#rdr_helper_'+hash).css('border','1px solid red');
 
                 var total = RDR.content_nodes[hash].info.comment_count + RDR.content_nodes[hash].info.tag_count;
 
-                var $icon = $('<div class="rdr rdr_indicator" style="top:'+(helper_position.bottom-36)+'px;left:'+(helper_position.left-3)+'px;"><img src="/static/images/blank.png" /> '+ total +' <span>reactions. Click to see them.</span></div>');
+                var $icon = $('<div class="rdr rdr_indicator" style="top:'+(helper_position.bottom-20)+'px;left:'+(helper_position.left-2)+'px;"><img src="/static/images/blank.png" /> '+ total +' <span>reactions. Click to see them.</span></div>');
                 $icon.data('hash', hash);
 
                 $icon.click( function() {
                     RDR.actions.viewContainerReactions( {hash:hash, icon:$(this)} );
                 });
 
+                $('#rdr_helper_'+hash).remove();
                 $('body').append( $icon );
 
             },
@@ -1026,7 +1032,8 @@ function readrBoard($R){
                     top:iconOffsets.top,
                     pnlWidth:200,
                     ignoreWindowEdges:"bl",
-                    noHeader:true
+                    noHeader:true,
+                    selector: RDR.group.anno_whitelist+".rdr-" + args.hash
                 });
 
                 rindow.css({width:'200px'});
