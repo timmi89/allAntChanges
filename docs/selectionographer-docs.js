@@ -34,6 +34,14 @@
 
 // save
 // saves a selection state.
+	$(window).selog( 'make' );
+	$(window).selog( 'make', idxOrSelState );
+	// rangeOrSerialRange is optional: defaults to active selection range.
+	// type should be a rangy range, or a rangy range serialization string,
+	// which can be accessed through the selState object - selState.range and selState.serialRange
+
+// save
+// saves a selection state.
 	$(window).selog( 'save' );
 	$(window).selog( 'save', rangeOrSerialRange );
 	// rangeOrSerialRange is optional: defaults to active selection range.

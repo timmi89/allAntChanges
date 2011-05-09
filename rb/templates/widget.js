@@ -2399,16 +2399,17 @@ function jQueryPlugins($R){
                     _settings = $.extend(defaults, options);
                 });
             },
-            save: function(rangeOrSerialRange){
-                //range is optional and will usually be ommited.  Defaults to current selection with ranges
+            make: function(settings){
+                //settings is optional.  If ommited, it uses the current selection to build the selState
                 var scope = this,
-                selStateStack = _selStates,
+                selStateStack = _selStateStack,
+                settings = settings || {},
                 selState = {
-                    //idx will give the next avail index in _selStates.  Indexes should not be shifted.  Note that length is initially zero which is correct. 
-                    idx: selStateStack.length,
-                    styleName: 'rdr_hilite',
+                    //idx will give the next avail index in _selStateStack.  Indexes should not be shifted.  Note that length is initially zero which is correct. 
+                    idx: selStateStack.length,  // can't overide
                     timestamp: $.now(),         // don't really need this..
-                    hiliter: null,          // used later for controling the custom hilite
+                    styleName: settings.styleName || 'rdr_hilite',
+                    hiliter: null,              // used later for controling the custom hilite
                     interactionID: null,        // for later use
                     revisionParent: null,       // set below
                     serialRange: null,          // set below - overwritten by explicit range object
@@ -2416,16 +2417,19 @@ function jQueryPlugins($R){
                     text: ""                    // set below
                 },
                 range, serialRange;
-                if(typeof rangeOrSerialRange === 'string'){
-                    serialRange = rangeOrSerialRange;
-                    range = rangy.deserializeRange(serialRange);
-                }
-                else if(typeof rangeOrSerialRange !== 'undefined'){
-                    range = rangeOrSerialRange;
-                    serialRange = rangy.serializeRange(range);
-                }else{
-                    //assume it's undefined and overwrite it
+                log(selState)
+                log(selState.text)
+                // if missing param or missing needed range data
+                if( !settings || ( !settings.range && !settings.serialRange) ){
+                    //try getting data from browser selection
                     range = _WSO().getRangeAt(0);
+                    serialRange = rangy.serializeRange(range);
+                }
+                else if(settings.serialRange){
+                    range = settings.range = rangy.deserializeRange(settings.serialRange);
+                }
+                else if(settings.range){
+                    range = settings.range;
                     serialRange = rangy.serializeRange(range);
                 }
                 selState.serialRange = serialRange;
@@ -2433,6 +2437,15 @@ function jQueryPlugins($R){
                 selState.text = selState.range.toString(); //rangy range toString function
                 //check for empty selection..
                 if(selState.text.length == 0) return false;
+                log(selState)
+                log(selState.text)
+                return selState;
+            },
+            save: function(selState){
+                //selState is optional.  If ommited, it will try to build one with the current selection.
+                var scope = this,
+                selStateStack = _selStateStack,
+                selState = selState || methods.make();
 
                 //push selState into stack
                 selStateStack[selState.idx] = selState;
@@ -2447,7 +2460,7 @@ function jQueryPlugins($R){
                     }
                     $('#rdr_tempOutput').append('<div><b>'+selState.idx+'</b>: '+str+'</div>');
                 //end temp log to tempOutput
-                //log('saved selState ' + selState.idx + ': ' + selState.text); //selog temp logging
+                log('saved selState ' + selState.idx + ': ' + selState.text); //selog temp logging
                 return selState;
             },
             activate: function(idxOrSelState){
@@ -2458,7 +2471,6 @@ function jQueryPlugins($R){
 
                 _WSO().removeAllRanges();
                 _WSO().setSingleRange(newRange);
-                //var newSelState = methods.save(selState); //for testing, this should be prob seperate though
                 return selState;
             },
             modify: function(idxOrSelState, filterList) {
@@ -2475,7 +2487,7 @@ function jQueryPlugins($R){
                 //filter the ranges
 
                 newRange = _filter(newRange, filterList);
-                newSelState = methods.save(newRange);
+                newSelState = methods.save({range:newRange});
                 return newSelState
             },
             hilite: function(idxOrSelState, switchOnOffToggle){
@@ -2519,21 +2531,22 @@ function jQueryPlugins($R){
         var _settings = {}, //set on init
         _helperPacks = {
             smartHilite: function(){
-                /*
-                var rawSel, modSel, newSel;
-                rawSel = methods.save();
-                modSel = methods.modify(rawSel);
-                newSel = methods.hilite(modSel);
-                return newSel;
-                */
-                //does the same as above
                 return methods.hilite( methods.modify( methods.save() ) ); //oooh lispy.
             },
             activateRange: function(rangeOrSerialRange){
-                return methods.activate( methods.save(rangeOrSerialRange) );
+                var settings = {};
+                if( typeof rangeOrSerialRange === "string" ){
+                    //assume it's a serialRange
+                    settings.serialRange = rangeOrSerialRange;
+                }
+                else{
+                    //assume it's a range
+                    settings.range = rangeOrSerialRange;
+                }
+                return methods.activate( methods.save(settings) );
             }
         },
-        _selStates = [
+        _selStateStack = [
         /*
             //keep commented out:
             //Example template: Set by save and added to the stack.
@@ -2650,7 +2663,7 @@ function jQueryPlugins($R){
 
             if(typeof idxOrSelState === 'object') return idxOrSelState;
                             
-            var selStateStack = _selStates,
+            var selStateStack = _selStateStack,
             //set idx to declared idx, else last idx on the stack
             idx = (typeof idxOrSelState == "string" || typeof idxOrSelState == "number" ) ? idxOrSelState : selStateStack.length-1,
             selState = selStateStack[idx];
@@ -2663,7 +2676,7 @@ function jQueryPlugins($R){
         }
         function _hiliteInit(selState){
             //only init once
-            //log('init hiliter for selState ' + selState.idx) //selog temp logging
+            log('init hiliter for selState ' + selState.idx) //selog temp logging
             if(selState.hiliter){
                 return selState.hiliter;
             }
@@ -2727,7 +2740,7 @@ function jQueryPlugins($R){
             
             }else if( isActive && (switchOnOffToggle === "off" || switchOnOffToggle === "toggle" )){
                 //turn off
-                //log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
+                log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
                 //remove the classes again so that the hiliter can normalize the selection (paste it back together)
                 hiliter.get$start().removeClass(styleClass+'_start');
                 hiliter.get$end().removeClass(styleClass+'_end');
@@ -2839,7 +2852,7 @@ function jQueryPlugins($R){
         //end private functions
 
         //init selog on window.
-        //log('test about to init'); //selog temp logging
+        log('test about to init'); //selog temp logging
         $(window).selog();
 
     })($R);
