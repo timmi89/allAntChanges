@@ -9,6 +9,7 @@ CONTENT_TYPES = (
     ('img', 'image'),
     ('vid', 'video'),
     ('snd', 'sound'),
+    ('fla', 'flash')
 )
 
 INTERACTION_TYPES = (
@@ -190,6 +191,8 @@ class Link(models.Model):
 
 class Profile(models.Model):
     admin = models.ForeignKey(Group, blank=True, null=True)
+    educated = models.BooleanField()
+    
     
 class SocialUser(models.Model):
     """Social Auth association model"""
@@ -202,7 +205,7 @@ class SocialUser(models.Model):
     username = models.CharField(max_length=255, blank=True, unique=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
     hometown = models.CharField(max_length=255, blank=True)
-    bio = models.TextField(blank=True)
+    bio = models.TextField(max_length=255, blank=True, null=True)
     img_url = models.CharField(max_length=255, blank=True)
 
     def __unicode__(self):

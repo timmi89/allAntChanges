@@ -34,28 +34,35 @@ def getTagData(tags, comments):
 
     return tags_data
 
-def getContentData(interactions, content_objs):
-    content = []
+def getContentData(content, interactions=None):
+    content_data = []
 
-    for content_item in content_objs:
+    for content_item in content:
         data = {}
         data['body'] = content_item.body
         
         # Filter interactions for this piece of content and get count data
-        content_interactions = interactions.filter(content=content_item).select_related('interaction_node')
+        if interactions:
+            content_interactions = interactions.filter(content=content_item)
+        else:
+            content_interactions = Interaction.objects.filter(content=content_item)
+            
+        content_interactions = content_interactions.select_related('interaction_node')
         content_tags = content_interactions.filter(interaction_node__kind='tag')
         content_coms = content_interactions.filter(interaction_node__kind='com')
         data['tag_count'] = content_tags.count()
         data['comment_count'] = content_coms.count()
+
+        # Retrieve data on individual tags
         data['tags'] = getTagData(content_tags, content_coms)
         
-        content.append(data)
+        content_data.append(data)
 
-    return content
+    return content_data
 
 def getContainerData(hash):
     container_data = {}
-    # Get everything we know about this hash
+    # Get interaction on the provided hash
     interactions = Interaction.objects.filter(container__hash=hash)
 
     # Filter tag and comment interactions
@@ -66,11 +73,11 @@ def getContainerData(hash):
     container_data['tag_count'] = tags.count()
     container_data['comment_count'] = comments.count()
     
-    # Make list of unique content and retrieve their Content objects
+    # Make list of unique content within container and retrieve their Content objects
     content_unique = interactions.order_by('content').distinct().values('content')
     content_objs = Content.objects.filter(id__in=content_unique)
 
-    container_data['content'] = getContentData(interactions, content_objs)
+    container_data['content'] = getContentData(content_objs, interactions)
 
     return container_data
 

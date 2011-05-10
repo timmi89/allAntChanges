@@ -181,11 +181,9 @@ class PageDataHandler(AnonymousBaseHandler):
         toptags = tagcounts.values("tag_count","body").order_by('-tag_count')[:10]
             
         # ---Find top 10 shares on a give page---
-        content = Content.objects.filter(
-            interaction__page=page.id,
-            interaction__interaction_node__kind='shr',
-        )
-        sharecounts = content.annotate(Count("id"))
+        content = Content.objects.filter(interaction__page=page.id)
+        shares = content.filter(interaction__interaction_node__kind='shr')
+        sharecounts = shares.annotate(Count("id"))
         topshares = sharecounts.values("body").order_by()[:10]
         
         # ---Find top 10 non-temp users on a given page---
@@ -193,13 +191,20 @@ class PageDataHandler(AnonymousBaseHandler):
 
         userinteract = socialusers.annotate(interactions=Count('user__interaction'))
         topusers = userinteract.order_by('-interactions').values('full_name','img_url','interactions')[:10]
+
+        imagedata = getContentData(content.filter(kind='image').order_by('id').distinct())
+        videodata = getContentData(content.filter(kind='video').order_by('id').distinct())
+        flashdata = getContentData(content.filter(kind='flash').order_by('id').distinct())
         
         return dict(
             id=page.id,
             summary=summary,
             toptags=toptags,
             topusers=topusers,
-            topshares=topshares
+            topshares=topshares,
+            imagedata=imagedata,
+            videodata=videodata,
+            flashdata=flashdata
         )
 
 class SettingsHandler(AnonymousBaseHandler):
