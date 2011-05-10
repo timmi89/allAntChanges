@@ -66,6 +66,8 @@ div.rdr.rdr_actionbar a:hover                       { background-color:#e4f0f7;}
 div.rdr.rdr_actionbar li.rdr_icon_about a:hover 	{ background-color:transparent; }
 div.rdr.rdr_actionbar span.rdr_icon_divider      	{ width:1px; background:#BBB; height:70%; position:absolute; top:15%; right:0; display:none;/*show dynamically*/}
 
+img.rdr_engage_img { -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa; }
+
 /* container icon */
 div.rdr_indicator { font:normal 12px Arial, sans-serif; position:absolute; z-index:11000; cursor:pointer; color:#666; padding: 5px 7px 4px 2px;}
 div.rdr_indicator:hover { -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa; background:#fff; *border:1px solid #ddd;}
@@ -133,6 +135,7 @@ div.rdr div.rdr_contentPanel div.rdr_body               {width:200px; max-height
 div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:250px; background:url(/static/images/rindow_bg_column.png) -200px 0;}
 div.rdr.rdr_columns3 div.rdr_whyPanel 				    {background-position:-850px 0;}
 div.rdr div.rdr_whyPanel div.rdr_body                   {width:250px; max-height:300px; }
+div.rdr.rdr_columns2 div.rdr_whyPanel div.rdr_body      {max-height:200px;}
 div.rdr div.rdr_whyPanel hr 			                {background: #ddd; border: none; clear: both; color: #ddd; float: none; height: 1px; margin: 10px; }
 
 div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top:5px;}
@@ -179,6 +182,8 @@ div.rdr ul.rdr_preselected a		{color:#666;text-decoration:none; display:block; p
 div.rdr li.rdr_customTagBox input.freeformTagInput      {font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0; text-align:left; width:75%; border:none; background:none; -moz-box-shadow:none; -webkit-box-shadow:none; box-shadow:none; }
 div.rdr li.rdr_customTagBox div.rdr_help                {left:43px; width:auto;}
 div.rdr li.rdr_customTagBox div.rdr_help:hover          {text-decoration:underline;}
+div.rdr li.rdr_customTagBox div.rdr_rightBox                {display:none;}
+div.rdr li.rdr_customTagBox.rdr_selected div.rdr_rightBox   {display:block;}
 
 
 /* contentSet */
@@ -250,8 +255,7 @@ div.rdr button				{font-size:14px; }
     -khtml-opacity:0.0 !important;
 }
 .rdr_hilite {
-    background-color: #265E88 !important;
-    color:white;
+    background-color: #E4F0F7 !important;
     -moz-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* FF3.5+ */
     -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Saf3.0+, Chrome */
     box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Opera 10.5+, IE 9.0 */

@@ -107,9 +107,11 @@ function readrBoard($R){
                     if ( $column.height() > 200 ) {
                         if ( $column.data('jsp') ) {
                             $column.data('jsp').reinitialise();
+                            console.log('checkHeight 1');
                             // RDR.pane1 = $R('div.rdr_reactionPanel div.rdr_body').data('jsp');
                         } else {
                             $column.jScrollPane({ contentWidth:200, showArrows:true });    
+                            console.log('checkHeight 2');
                         }
                         // if ( percentScroll ) $column.data('jsp').scrollToPercentY( percentScroll );
                     }
@@ -272,6 +274,7 @@ console.dir(options);
                         clearTimeout(timeoutCloseEvt);
                         clearTimeout(timeoutCollapseEvt);
                         $actionbar.remove();
+                        RDR.util.removeImageShadow();
                     }
                     if(typeof effect !== "undefined"){
                         //make more robust if we want more animations
@@ -297,8 +300,9 @@ console.dir(options);
                     timeoutCloseEvt = setTimeout(function(){
                         if( !$(that).data('keepAlive.img') && !$(that).data('keepAlive.self') ){
                             scope.close( $(that), "fade");
+                            RDR.util.removeImageShadow();
                         }              
-                    },500);
+                    },300);
                     $(this).data('timeoutCloseEvt', timeoutCloseEvt);
                 });
             },
@@ -439,6 +443,9 @@ console.dir(options);
                 if(para != "") {
                     return para.replace(/[\n\r\t]+/gi,' ').replace().replace(/\s{2,}/g,' ');
                 }
+            },
+            removeImageShadow: function() {
+                $( RDR.group.img_selector+":not('.no-rdr')" ).removeClass('rdr_engage_img');
             }
         },
 		session: {
@@ -808,6 +815,8 @@ console.dir(options);
 				    top = this_img.offset().top + this_img.height() + 20,
                     //use this instead of $().attr('src') to fix descrepencies between relative and absolute urls
 				    src = this.src;
+
+                    this_img.addClass('rdr_engage_img');
 
                     // builds a new actionbar or just returns the existing $actionbar if it exists.
 				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src, ignoreWindowEdges:"rb" });
@@ -1723,6 +1732,7 @@ console.dir(args);
                 // }
 
                 RDR.actions.panel.expand("whyPanel", rindow);
+                RDR.rindow.checkHeight( rindow, 80 );
 
 
 
