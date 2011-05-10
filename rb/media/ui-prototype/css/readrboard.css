@@ -247,6 +247,10 @@ div.rdr button				{font-size:14px; }
 #rdr-summary .rdr-sum-totals	{list-style-type:none;}
 #rdr-summary .rdr-top-tags	{list-style-type:none;}
 
+/* in-page styles */
+.rdr_highlightContainer {background:#E4F0F7;}
+
+/* custom in-page highlight */
 .rdr_clone *{
     opacity:0.0 !important;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)" !important;

@@ -992,6 +992,15 @@ console.dir(options);
                     RDR.actions.viewContainerReactions( {hash:hash, icon:$(this)} );
                 });
 
+                $icon.hover( 
+                    function() {
+                        $( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).addClass( 'rdr_highlightContainer' );
+                    },
+                    function() {
+                        $( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).removeClass( 'rdr_highlightContainer' );
+                    }
+                );
+
                 $('#rdr_helper_'+hash).remove();
                 $('body').append( $icon );
 
