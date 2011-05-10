@@ -107,9 +107,11 @@ function readrBoard($R){
                     if ( $column.height() > 200 ) {
                         if ( $column.data('jsp') ) {
                             $column.data('jsp').reinitialise();
+                            console.log('checkHeight 1');
                             // RDR.pane1 = $R('div.rdr_reactionPanel div.rdr_body').data('jsp');
                         } else {
                             $column.jScrollPane({ contentWidth:200, showArrows:true });    
+                            console.log('checkHeight 2');
                         }
                         // if ( percentScroll ) $column.data('jsp').scrollToPercentY( percentScroll );
                     }
@@ -272,6 +274,7 @@ console.dir(options);
                         clearTimeout(timeoutCloseEvt);
                         clearTimeout(timeoutCollapseEvt);
                         $actionbar.remove();
+                        RDR.util.removeImageShadow();
                     }
                     if(typeof effect !== "undefined"){
                         //make more robust if we want more animations
@@ -297,8 +300,9 @@ console.dir(options);
                     timeoutCloseEvt = setTimeout(function(){
                         if( !$(that).data('keepAlive.img') && !$(that).data('keepAlive.self') ){
                             scope.close( $(that), "fade");
+                            RDR.util.removeImageShadow();
                         }              
-                    },500);
+                    },300);
                     $(this).data('timeoutCloseEvt', timeoutCloseEvt);
                 });
             },
@@ -439,6 +443,9 @@ console.dir(options);
                 if(para != "") {
                     return para.replace(/[\n\r\t]+/gi,' ').replace().replace(/\s{2,}/g,' ');
                 }
+            },
+            removeImageShadow: function() {
+                $( RDR.group.img_selector+":not('.no-rdr')" ).removeClass('rdr_engage_img');
             }
         },
 		session: {
@@ -809,6 +816,8 @@ console.dir(options);
                     //use this instead of $().attr('src') to fix descrepencies between relative and absolute urls
 				    src = this.src;
 
+                    this_img.addClass('rdr_engage_img');
+
                     // builds a new actionbar or just returns the existing $actionbar if it exists.
 				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src, ignoreWindowEdges:"rb" });
                     $actionbar.data('keepAlive.img',true)
@@ -983,6 +992,15 @@ console.dir(options);
                     RDR.actions.viewContainerReactions( {hash:hash, icon:$(this)} );
                 });
 
+                $icon.hover( 
+                    function() {
+                        $( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).addClass( 'rdr_highlightContainer' );
+                    },
+                    function() {
+                        $( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).removeClass( 'rdr_highlightContainer' );
+                    }
+                );
+
                 $('#rdr_helper_'+hash).remove();
                 $('body').append( $icon );
 
@@ -1112,6 +1130,8 @@ console.dir(options);
                 });
             },
             viewReactionContent: function(tag, hash, rindow){
+                console.log('taaaaaaaaaaaaaaaaag');
+                console.dir(tag);
                 var content = [];
                 for ( var i in tag.content ) {
                     content.push( {idx:i, count:tag.content[i].count } );
@@ -1127,12 +1147,17 @@ console.dir(options);
                 // ok, get the content associated with this tag!
                 for ( var i in content ) {
                     var this_content = RDR.content_nodes[hash].info.content[ content[i].idx ];
+                    console.dir(this_content);
 
                     var $contentSet = $('<div class="rdr_contentSet" />'),
                         $header = $('<div class="rdr_contentHeader rdr_leftShadow" />'),
                         $content = $('<div class="rdr_content"><div class="rdr_otherTags"></div></div>');
 
                     $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+content[i].count+')</span> '+tag.name+'</a>');
+                    $header.find('span.rdr_tag_count').click( function() {
+                        RDR.actions.rateSendLite({ element:$(this), tag:{content:tag.id,name:tag.name}, rindow:rindow, content:this_content.body, hash:hash });
+                    });
+
                     if ( this_content.comment_count > 0 ) {
                         $comment = $('<div class="rdr_has_comment">'+this_content.comment_count+'</div>');
                     } else {
@@ -1154,7 +1179,11 @@ console.dir(options);
                         $content.find('div.rdr_otherTags').append( '<em>Other Reactions</em>' );
                         for ( var j in this_content.tags ) {
                             if ( this_content.tags[j].id != tag.id ) {
-                                $content.find('div.rdr_otherTags').append( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+this_content.tags[j].count+')</span> '+this_content.tags[j].tag+'</a>' );
+                                var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+this_content.tags[j].count+')</span> '+this_content.tags[j].tag+'</a>');
+                                $this_tag.find('span.rdr_tag_count').click( function() {
+                                    RDR.actions.rateSendLite({ element:$(this), tag:{content:this_content.tags[j].id,name:this_content.tags[j].name}, rindow:rindow, content:this_content.body, hash:hash });
+                                });
+                                $content.find('div.rdr_otherTags').append( $this_tag );
                             }
                         }
                     }
@@ -1569,6 +1598,70 @@ console.dir(options);
                     }
                 });
             },
+            // I KNOW!  THIS IS TERRIBLE CODE DUPLICATION.  I DIDN'T WANT TO ABSTRACT THIS FUNCTION AND THE LAST ONE INTO ONE HANDLER. 
+            rateSendLite: function(args) {
+
+                RDR.session.getUser( args, function( params ) {
+                    // get the text that was highlighted
+                    var content = $.trim( params.content );
+                    var container = $.trim( params.hash );
+
+                    var rindow = params.rindow,
+                        element = params.element,
+                        tag = params.tag;
+
+                    var sendData = {
+                        "tag" : tag,
+                        "hash": container,
+                        "content" : content,
+                        "content_type" : "text",
+                        "user_id" : RDR.user.user_id,
+                        "readr_token" : RDR.user.readr_token,
+                        "group_id" : RDR.groupPermData.group_id,
+                        "page_id" : RDR.page.id
+                    };
+
+                    if ( !element.hasClass('rdr_tagged') ) {
+                        // send the data!
+                        $.ajax({
+                            url: "/api/tag/create/",
+                            type: "get",
+                            contentType: "application/json",
+                            dataType: "jsonp",
+                            data: { json: JSON.stringify(sendData) },
+                            success: function(response) {
+                                //console.dir(response);
+                                //[eric] - if we want these params still we need to get them from args:
+                                //do we really want to chain pass these through?  Or keep them in a shared scope?
+
+                                if ( response.status == "fail" ) {
+                                    // if it failed, see if we can fix it, and if so, try this function one more time
+                                    RDR.session.handleGetUserFail( response, function() {
+                                        if ( !args.secondAttempt ) {
+                                            args.secondAttempt = true;
+                                            RDR.actions.rateSend( args );
+                                        }
+                                    });
+                                } else {
+                                    if ( element.length == 1 ) {
+                                        var count = element.text(); 
+                                        count = parseInt( count.substr(1, count.length-1) ) + 1;
+
+                                        element.text( '('+count+')' );
+                                        element.addClass('rdr_tagged');
+                                    }
+                                }
+                            },
+                            //for now, ignore error and carry on with mockup
+                            error: function(response) {
+                                //console.log("an error occurred while trying to tag");
+                            }
+                        });
+                    } else {
+                        // show user something to indicate they can't revote?  or to allow them to unvote?
+                    }
+                });
+            },
             unrateSend: function(args) {
                 var rindow = args.rindow, 
                     tag = args.tag.data('tag'),
@@ -1723,6 +1816,7 @@ console.dir(args);
                 // }
 
                 RDR.actions.panel.expand("whyPanel", rindow);
+                RDR.rindow.checkHeight( rindow, 80 );
 
 
 
