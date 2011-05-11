@@ -2399,53 +2399,15 @@ function jQueryPlugins($R){
                     _settings = $.extend(defaults, options);
                 });
             },
-            make: function(settings){
-                //settings is optional.  If ommited, it uses the current selection to build the selState
+            save: function(selStateOrPartial){
+                // selStateOrPartial is an optional object.
+                // If selStateOrPartial is a full selState, or has a range, or a serialRange, it will clone it and save a new one.
+                // If it is omited or if both selStateOrPartial.range and selStateOrPartial.serialRange are ommited,
+                // it will use the current selection to build the selState.  If nothing is selected it returns false;
+
                 var scope = this,
                 selStateStack = _selStateStack,
-                settings = settings || {},
-                selState = {
-                    //idx will give the next avail index in _selStateStack.  Indexes should not be shifted.  Note that length is initially zero which is correct. 
-                    idx: selStateStack.length,  // can't overide
-                    timestamp: $.now(),         // don't really need this..
-                    styleName: settings.styleName || 'rdr_hilite',
-                    hiliter: null,              // used later for controling the custom hilite
-                    interactionID: null,        // for later use
-                    revisionParent: null,       // set below
-                    serialRange: null,          // set below - overwritten by explicit range object
-                    range: null,                // set below - overwrites serial range
-                    text: ""                    // set below
-                },
-                range, serialRange;
-                log(selState)
-                log(selState.text)
-                // if missing param or missing needed range data
-                if( !settings || ( !settings.range && !settings.serialRange) ){
-                    //try getting data from browser selection
-                    range = _WSO().getRangeAt(0);
-                    serialRange = rangy.serializeRange(range);
-                }
-                else if(settings.serialRange){
-                    range = settings.range = rangy.deserializeRange(settings.serialRange);
-                }
-                else if(settings.range){
-                    range = settings.range;
-                    serialRange = rangy.serializeRange(range);
-                }
-                selState.serialRange = serialRange;
-                selState.range = range;
-                selState.text = selState.range.toString(); //rangy range toString function
-                //check for empty selection..
-                if(selState.text.length == 0) return false;
-                log(selState)
-                log(selState.text)
-                return selState;
-            },
-            save: function(selState){
-                //selState is optional.  If ommited, it will try to build one with the current selection.
-                var scope = this,
-                selStateStack = _selStateStack,
-                selState = selState || methods.make();
+                selState = _makeSelState(selStateOrPartial);
 
                 //push selState into stack
                 selStateStack[selState.idx] = selState;
@@ -2466,11 +2428,9 @@ function jQueryPlugins($R){
             activate: function(idxOrSelState){
                 var selState = _fetchselState(idxOrSelState);
                 if(!selState) return false;
-                //todo: do i need to clone it to be safe?
-                var newRange = selState.range.cloneRange();
 
                 _WSO().removeAllRanges();
-                _WSO().setSingleRange(newRange);
+                _WSO().setSingleRange( selState.range );
                 return selState;
             },
             modify: function(idxOrSelState, filterList) {
@@ -2483,11 +2443,12 @@ function jQueryPlugins($R){
                 newSelState, newRange;
                 if(!iniSelState) return false;
 
+                //todo: it looks like the rangy method cloneRange breaks the ability to re-activate it later?
+                //we shouldn't need that though, anyway, but maybe it will get fixed down the line.
                 newRange = iniSelState.range.cloneRange();
                 //filter the ranges
-
                 newRange = _filter(newRange, filterList);
-                newSelState = methods.save({range:newRange});
+                newSelState = methods.save({ range:newRange });
                 return newSelState
             },
             hilite: function(idxOrSelState, switchOnOffToggle){
@@ -2517,7 +2478,7 @@ function jQueryPlugins($R){
                 
                 //switch the hilite state
                 selState = _hiliteSwitch(selState, switchOnOffToggle);
-
+                methods.save( selState ); 
                 return selState
             },
             helpers: function(helperPack){
@@ -2652,6 +2613,47 @@ function jQueryPlugins($R){
         //private functions:
         function _WSO(){
             return rangy.getSelection();  
+        }
+        function _makeSelState(settings){
+            var scope = this,
+            selStateStack = _selStateStack,
+            settings = settings || {},
+            selState = {
+                idx: selStateStack.length,  // can't overide
+                timestamp: $.now(),         // don't really need this..
+                styleName: settings.styleName || 'rdr_hilite',
+                hiliter: null,              // used later for controling the custom hilite
+                interactionID: null,        // for later use
+                revisionParent: null,       // set below
+                serialRange: null,          // set below - overwritten by explicit range object
+                range: null,                // set below - overwrites serial range
+                text: ""                    // set below
+            },
+            range, serialRange;
+            log(selState)
+            log(selState.text)
+            // if missing param or missing needed range data
+            if( !settings.range && !settings.serialRange ){
+                //try getting data from browser selection
+                range = _WSO().getRangeAt(0);
+                serialRange = rangy.serializeRange(range);
+            }
+            else if(settings.range){
+                range = settings.range;
+                serialRange = rangy.serializeRange(range);
+            }
+            else if(settings.serialRange){
+                serialRange = settings.serialRange;
+                range = rangy.deserializeRange(serialRange);
+            }
+            selState.serialRange = serialRange;
+            selState.range = range;
+            selState.text = selState.range.toString(); //rangy range toString function
+            //check for empty selection..
+            if(selState.text.length == 0) return false;
+            log(selState)
+            log(selState.text)
+            return selState;
         }
         function _fetchselState(idxOrSelState){
             //check if idxOrSelState is selState false (error signal from up the chain - return false),
@@ -2812,7 +2814,7 @@ function jQueryPlugins($R){
             */
             //make $tempButtons output
             //hide for now
-            var $tempButtons = $('<div class="rdr_blacklist"/>').hide(),
+            var $tempButtons = $('<div class="rdr_blacklist"/>'),
             buttonInfo= {
                 //note, remember to use $R instead of $ if calling in firebug
                 a:{
