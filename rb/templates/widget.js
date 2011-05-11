@@ -796,7 +796,7 @@ console.dir(options);
             initEnvironment: function(){
                 this.hashNodes();
 
-                // init the img interactions
+                // init the img interactions img selector image selector  (those are keywords for easier-inpage searching)
 				$( RDR.group.img_selector+":not('.no-rdr')" ).live( 'mouseover', function() {
 
                     //todo change this so that .live for imgs just resets coordinates, doesnt instantiate actionbar...
@@ -813,13 +813,16 @@ console.dir(options);
 				    var this_img = $(this),
 				    left = this_img.offset().left + 34,
 				    top = this_img.offset().top + this_img.height() + 20,
-                    //use this instead of $().attr('src') to fix descrepencies between relative and absolute urls
-				    src = this.src;
+                    // $(this).attr('src') will yield relative path
+                    // this.src will yield absolute path
+                    // for jQuery selecting ( $(img[src$='foobar.png']) ), we want the relative path
+                    src = this_img.attr('src'),
+				    src_with_path = this.src;
 
                     this_img.addClass('rdr_engage_img');
 
                     // builds a new actionbar or just returns the existing $actionbar if it exists.
-				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src, ignoreWindowEdges:"rb" });
+				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src, src_with_path:src_with_path, ignoreWindowEdges:"rb" });
                     $actionbar.data('keepAlive.img',true)
 
                     //kill all rivals!!
@@ -1521,8 +1524,9 @@ console.dir(options);
                 // TODO the args & params thing here is confusing
                 RDR.session.getUser( args, function( params ) {
                     // get the text that was highlighted
-                    var content = $.trim( params.settings.content );
-                    var container = $.trim( params.settings.container );
+                    var content = $.trim( params.settings.content ),
+                        container = $.trim( params.settings.container ),
+                        src_with_path = $.trim( params.settings.src_with_path );
 
                     var rindow = params.rindow,
                         tag_li = params.tag,
@@ -1532,6 +1536,7 @@ console.dir(options);
                         "tag" : tag,
                         "hash": container,
                         "content" : content,
+                        "src_with_path" : src_with_path,
                         "content_type" : params.settings.content_type,
                         "user_id" : RDR.user.user_id,
                         "readr_token" : RDR.user.readr_token,
