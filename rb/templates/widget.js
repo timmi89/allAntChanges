@@ -773,20 +773,60 @@ console.dir(options);
 						canonical_url: canonical
 					},
 					success: function(response) {
+                        // don't forget a design for when there are no tags.
+
+
 						RDR.page = response.data;
                         var summary_widget = $('#rdr-summary'),
                             $summary = $('<ul class="rdr-sum-totals" />');
                         
-                        for ( var i in RDR.page.summary ) {
-                            $summary.append( '<li />' + RDR.page.summary[i].kind + 's: ' + RDR.page.summary[i].count );
+                        // summary widget: tags total
+                        if ( RDR.page.summary.length > 0 ) {
+                            for ( var i in RDR.page.summary ) {
+                                $summary.append( '<li />' + RDR.page.summary[i].kind + 's: ' + RDR.page.summary[i].count );
+                            }
+                            summary_widget.append( $summary );
                         }
-                        summary_widget.append( $summary );
 
-                        var $toptags = $('<ul class="rdr-top-tags" />');
-                        for ( var i=0; i < 2; i++ ) {
-                            $summary.append( '<li />' + RDR.page.toptags[i].body + ': ' + RDR.page.toptags[i].tag_count );
+                        // summary widget: specific tag totals
+                        if ( RDR.page.toptags.length > 0 ){
+                            var $toptags = $('<ul class="rdr-top-tags" />');
+                            for ( var i in RDR.page.toptags ) {
+                                if ( $toptags.children().length < 4 ) $toptags.append( '<li />' + RDR.page.toptags[i].body + ': ' + RDR.page.toptags[i].tag_count );
+                            }
+                            summary_widget.append( $toptags );
                         }
-                        summary_widget.append( $summary );
+
+                        // insert image icons
+                        for ( var i in RDR.page.imagedata ){
+                            var this_img_data = RDR.page.imagedata[i],
+                                $this_img = $('img[src$="' + this_img_data.body + '"]')
+                            var $icon = $('<div class="rdr rdr_indicator rdr_image"><img src="/static/images/blank.png" class="no-rdr" /></div>');
+
+                            var $tags = $('<div class="rdr_img_tags_list"></div>');  // absolute so that we can calculate content width on the fly
+                            $icon.append($tags);
+                            $this_img.after( $icon );
+
+                            for ( var j in this_img_data.tags ){
+                                var this_tag = this_img_data.tags[j];
+                                $tags.append(' <span>'+ this_tag.tag +' <em>('+this_tag.count+')</em></span>&nbsp;&nbsp;&nbsp;');
+                                
+                                // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
+                                if ( $tags.width() > $this_img.width() - 48 ) {
+                                    $tags.children().last().html('See More').addClass('rdr_see_more');
+                                    break;
+                                }
+                            }
+
+                            $icon.data('which', i );
+
+                            $icon.click( function() {
+                                RDR.actions.viewContainerReactions( { icon:$(this), type:"image" } );
+                            });
+
+                        }
+
+
 					}
 				});
                
@@ -989,10 +1029,10 @@ console.dir(options);
                 var total = RDR.content_nodes[hash].info.comment_count + RDR.content_nodes[hash].info.tag_count;
 
                 var $icon = $('<div class="rdr rdr_indicator" style="top:'+(helper_position.bottom-20)+'px;left:'+(helper_position.left-2)+'px;"><img src="/static/images/blank.png" /> '+ total +' <span>reactions. Click to see them.</span></div>');
-                $icon.data('hash', hash);
+                $icon.data('which', hash);
 
                 $icon.click( function() {
-                    RDR.actions.viewContainerReactions( {hash:hash, icon:$(this)} );
+                    RDR.actions.viewContainerReactions( {icon:$(this), type:"text"} );
                 });
 
                 $icon.hover( 
@@ -1010,7 +1050,7 @@ console.dir(options);
             },
             viewContainerReactions: function( args ) {
 
-                var info = RDR.content_nodes[args.hash].info;
+                var info = RDR.content_nodes[args.icon.data('which')].info;
                 info.tags = [];
                 info.tags.total_count = 0;
                 // info.tags_order = [];
