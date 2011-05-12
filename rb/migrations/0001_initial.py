@@ -145,6 +145,7 @@ class Migration(SchemaMigration):
         db.create_table('rb_profile', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('admin', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rb.Group'], null=True, blank=True)),
+            ('educated', self.gf('django.db.models.fields.BooleanField')(default=False)),
         ))
         db.send_create_signal('rb', ['Profile'])
 
@@ -158,7 +159,7 @@ class Migration(SchemaMigration):
             ('username', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255, blank=True)),
             ('gender', self.gf('django.db.models.fields.CharField')(max_length=1, blank=True)),
             ('hometown', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('bio', self.gf('django.db.models.fields.TextField')(blank=True)),
+            ('bio', self.gf('django.db.models.fields.TextField')(max_length=255, null=True, blank=True)),
             ('img_url', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
         ))
         db.send_create_signal('rb', ['SocialUser'])
@@ -366,6 +367,7 @@ class Migration(SchemaMigration):
         'rb.profile': {
             'Meta': {'object_name': 'Profile'},
             'admin': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.Group']", 'null': 'True', 'blank': 'True'}),
+            'educated': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
         'rb.site': {
@@ -387,7 +389,7 @@ class Migration(SchemaMigration):
         },
         'rb.socialuser': {
             'Meta': {'unique_together': "(('provider', 'uid'),)", 'object_name': 'SocialUser'},
-            'bio': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'bio': ('django.db.models.fields.TextField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
             'full_name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'gender': ('django.db.models.fields.CharField', [], {'max_length': '1', 'blank': 'True'}),
             'hometown': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),

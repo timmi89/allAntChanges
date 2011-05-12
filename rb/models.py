@@ -190,9 +190,9 @@ class Link(models.Model):
         return self.to_base62() + ' : ' + self.interaction.page.url
 
 class Profile(models.Model):
-    admin = models.ForeignKey(Group, blank=True, null=True)
+    user = models.OneToOneField(User)
+    admin = models.ForeignKey(Group)
     educated = models.BooleanField()
-    
     
 class SocialUser(models.Model):
     """Social Auth association model"""
