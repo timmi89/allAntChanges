@@ -120,8 +120,6 @@ function readrBoard($R){
             },
 			draw: function(options) {
 				// for now, any window closes all tooltips
-console.clear();
-console.dir(options);
                 //merge options and defaults
                 var settings = $.extend({}, this.defaults, options);
 				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
@@ -133,6 +131,8 @@ console.dir(options);
                                                      // logs in, the login rindow knows what function to then call
                         $new_rindow.attr('id',settings.id);
                     }
+
+                    // may not need selector.  was a test to see if we can embed the rindow within a document, optionally.
 					if (options.selector) {
                         $(options.selector).after( $new_rindow );
                     } else {
@@ -773,20 +773,65 @@ console.dir(options);
 						canonical_url: canonical
 					},
 					success: function(response) {
+                        // don't forget a design for when there are no tags.
+
+
 						RDR.page = response.data;
                         var summary_widget = $('#rdr-summary'),
                             $summary = $('<ul class="rdr-sum-totals" />');
                         
-                        for ( var i in RDR.page.summary ) {
-                            $summary.append( '<li />' + RDR.page.summary[i].kind + 's: ' + RDR.page.summary[i].count );
+                        // summary widget: tags total
+                        if ( RDR.page.summary.length > 0 ) {
+                            for ( var i in RDR.page.summary ) {
+                                $summary.append( '<li />' + RDR.page.summary[i].kind + 's: ' + RDR.page.summary[i].count );
+                            }
+                            summary_widget.append( $summary );
                         }
-                        summary_widget.append( $summary );
 
-                        var $toptags = $('<ul class="rdr-top-tags" />');
-                        for ( var i=0; i < 2; i++ ) {
-                            $summary.append( '<li />' + RDR.page.toptags[i].body + ': ' + RDR.page.toptags[i].tag_count );
+                        // summary widget: specific tag totals
+                        if ( RDR.page.toptags.length > 0 ){
+                            var $toptags = $('<ul class="rdr-top-tags" />');
+                            for ( var i in RDR.page.toptags ) {
+                                if ( $toptags.children().length < 4 ) $toptags.append( '<li />' + RDR.page.toptags[i].body + ': ' + RDR.page.toptags[i].tag_count );
+                            }
+                            summary_widget.append( $toptags );
                         }
-                        summary_widget.append( $summary );
+
+                        // insert image icons
+                        for ( var i in RDR.page.imagedata ){
+                            
+                            function SortByTagCount(a,b) { return b.count - a.count; }
+                            RDR.page.imagedata[ i ].tags.sort( SortByTagCount );
+
+                            var this_img_data = RDR.page.imagedata[i],
+                                $this_img = $('img[src$="' + this_img_data.body + '"]')
+                            var $icon = $('<div class="rdr rdr_indicator rdr_image"><img src="/static/images/blank.png" class="no-rdr" /></div>');
+
+                            var $tags = $('<div class="rdr_img_tags_list"></div>');  // absolute so that we can calculate content width on the fly
+                            $icon.append($tags);
+                            $this_img.after( $icon );
+
+                            for ( var j in this_img_data.tags ){
+                                var this_tag = this_img_data.tags[j];
+                                $tags.append(' <span>'+ this_tag.tag +' <em>('+this_tag.count+')</em></span>&nbsp;&nbsp;&nbsp;');
+                                
+                                // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
+                                if ( $tags.width() > $this_img.width() - 48 ) {
+                                    $tags.children().last().html('See More').addClass('rdr_see_more');
+                                    break;
+                                }
+                            }
+
+                            $icon.data('which', i );
+
+                            $icon.click( function(e) {
+                                RDR.actions.viewContainerReactions( { icon:$(this), type:"image" } );
+                                return false;
+                            });
+
+                        }
+
+
 					}
 				});
                
@@ -796,7 +841,7 @@ console.dir(options);
             initEnvironment: function(){
                 this.hashNodes();
 
-                // init the img interactions
+                // init the img interactions img selector image selector  (those are keywords for easier-inpage searching)
 				$( RDR.group.img_selector+":not('.no-rdr')" ).live( 'mouseover', function() {
 
                     //todo change this so that .live for imgs just resets coordinates, doesnt instantiate actionbar...
@@ -813,13 +858,16 @@ console.dir(options);
 				    var this_img = $(this),
 				    left = this_img.offset().left + 34,
 				    top = this_img.offset().top + this_img.height() + 20,
-                    //use this instead of $().attr('src') to fix descrepencies between relative and absolute urls
-				    src = this.src;
+                    // $(this).attr('src') will yield relative path
+                    // this.src will yield absolute path
+                    // for jQuery selecting ( $(img[src$='foobar.png']) ), we want the relative path
+                    src = this_img.attr('src'),
+				    src_with_path = this.src;
 
                     this_img.addClass('rdr_engage_img');
 
                     // builds a new actionbar or just returns the existing $actionbar if it exists.
-				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src, ignoreWindowEdges:"rb" });
+				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src, src_with_path:src_with_path, ignoreWindowEdges:"rb" });
                     $actionbar.data('keepAlive.img',true)
 
                     //kill all rivals!!
@@ -986,10 +1034,10 @@ console.dir(options);
                 var total = RDR.content_nodes[hash].info.comment_count + RDR.content_nodes[hash].info.tag_count;
 
                 var $icon = $('<div class="rdr rdr_indicator" style="top:'+(helper_position.bottom-20)+'px;left:'+(helper_position.left-2)+'px;"><img src="/static/images/blank.png" /> '+ total +' <span>reactions. Click to see them.</span></div>');
-                $icon.data('hash', hash);
+                $icon.data('which', hash);
 
                 $icon.click( function() {
-                    RDR.actions.viewContainerReactions( {hash:hash, icon:$(this)} );
+                    RDR.actions.viewContainerReactions( {icon:$(this), type:"text"} );
                 });
 
                 $icon.hover( 
@@ -1007,55 +1055,102 @@ console.dir(options);
             },
             viewContainerReactions: function( args ) {
 
-                var info = RDR.content_nodes[args.hash].info;
-                info.tags = [];
-                info.tags.total_count = 0;
-                // info.tags_order = [];
-
-                // loop through the content object to create a similar object that has tags at the top of the hierarchy, 
-                // to prevent looping through .content over and over
-                for ( var j in info.content ) {
-                    // console.dir(content);
-                    var content = info.content[j];
-
-                    for ( var i in content.tags ) {
-                        var tag = content.tags[i];
-
-                        var tag_idx = -1;
-                        for ( var z in info.tags ) {
-                            if ( info.tags[z].id == tag.id ) {
-                                tag_idx = z;
-                                break;
-                            }
-                        }
-                        if ( tag_idx == -1 ) {
-                            info.tags.push({ id:tag.id, name:tag.tag, count:0, comment_count:0, content:{} });
-                            tag_idx = ( info.tags.length - 1 );
-                        }
-
-                        info.tags[ tag_idx ].count += tag.count;
-                        info.tags[ tag_idx ].comment_count += tag.comments.length;
-                        info.tags[ tag_idx ].content[ j ] = { count:tag.count, tag_idx:parseInt(i) };
-                        info.tags.total_count += tag.count;
-                    };
-                };
+                var icon = args.icon,
+                    which = args.icon.data('which'),
+                    type = args.type;
 
                 function SortByTagCount(a,b) { return b.count - a.count; }
-                info.tags.sort(SortByTagCount);
-                RDR.content_nodes[args.hash].info = info;
+
+
+                if (args.type == "text") {
+                    var info = RDR.content_nodes[ which ].info;
+                    info.tags = [];
+                    info.tags.total_count = 0;
+                    // info.tags_order = [];
+
+                    // loop through the content object to create a similar object that has tags at the top of the hierarchy, 
+                    // to prevent looping through .content over and over
+                    for ( var j in info.content ) {
+                        // console.dir(content);
+                        var content = info.content[j];
+
+                        for ( var i in content.tags ) {
+                            var tag = content.tags[i];
+
+                            var tag_idx = -1;
+                            for ( var z in info.tags ) {
+                                if ( info.tags[z].id == tag.id ) {
+                                    tag_idx = z;
+                                    break;
+                                }
+                            }
+                            if ( tag_idx == -1 ) {
+                                info.tags.push({ id:tag.id, name:tag.tag, count:0, comment_count:0, content:{} });
+                                tag_idx = ( info.tags.length - 1 );
+                            }
+
+                            info.tags[ tag_idx ].count += tag.count;
+                            if (tag.comments) info.tags[ tag_idx ].comment_count += tag.comments.length;
+                            info.tags[ tag_idx ].content[ j ] = { count:tag.count, tag_idx:parseInt(i) };
+                            info.tags.total_count += tag.count;
+                        };
+                    };
+
+                    info.tags.sort(SortByTagCount);
+
+                    RDR.content_nodes[ which ].info = info;
+
+                    var selector = RDR.group.anno_whitelist+".rdr-" + which;
+
+                } else if (args.type == "image") {
+                    var info = RDR.page.imagedata[ which ];
+console.clear();
+                    // var tag = info.tags;
+
+                    // var tag_idx = -1;
+                    // for ( var z in info.tags ) {
+                    //     console.log(info.tags[z].id, tag.id);
+                    //     if ( info.tags[z].id == tag.id ) {
+                    //         tag_idx = z;
+                    //         break;
+                    //     }
+                    // }
+
+                    // console.log(tag_idx);
+
+                    // if ( tag_idx == -1 ) {
+                    //     info.tags.push({ id:tag.id, name:tag.tag, count:0, comment_count:0, content:{} });
+                    //     tag_idx = ( info.tags.length - 1 );
+                    // }
+
+                    // THERE IS NO CONTENT TO LOOP THROUGH SO THIS CAN SIMPLIFY
+                    // info.tags[ tag_idx ].count += tag.count;
+                    // if (tag.comments) info.tags[ tag_idx ].comment_count += tag.comments.length;
+                    // info.tags[ tag_idx ].content[ j ] = { count:tag.count, tag_idx:parseInt(i) };
+
+                    // for ( var i in info.tags ) {
+                    //     if ( info.tags[i].count ) info.tags.total_count += info.tags[i].count;
+                    // }
+
+console.dir( RDR.page.imagedata );
+                    var selector = "";
+                    RDR.page.imagedata[ which ] = info;
+                }
 
                 var iconOffsets = args.icon.offset();
+console.dir( iconOffsets );
+
                 var rindow = RDR.rindow.draw({
                     left:iconOffsets.left,
                     top:iconOffsets.top,
                     pnlWidth:200,
                     ignoreWindowEdges:"bl",
                     noHeader:true,
-                    selector: RDR.group.anno_whitelist+".rdr-" + args.hash
+                    selector:selector
                 });
 
                 rindow.css({width:'200px'});
-                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new" />'),
+                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new rdr_'+type+'_reactions" />'),
                     $reactionPanel = $('<div class="rdr_reactionPanel rdr_read rdr_sntPnl" />'),
                     $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
@@ -1078,19 +1173,33 @@ console.dir(options);
 
                 ////populate blesed_tags
                 for ( var i in info.tags ) {
-                    if ( info.tags[i].name ) {
+                    console.log(i);
+                    if ( type == "text") {
                         var percentage = Math.round( (info.tags[i].count / info.tags.total_count) * 100);
+                        var name = info.tags[i].name;
+                        var content = info.tags[i].content;
+                        var comment_count = info.tags[i].comment_count;
+                    } else if ( type == "image" ) {
+                        var percentage = Math.round( (info.tags[i].count / info.tag_count) * 100);
+                        var name = info.tags[i].tag;
+                        var content = "";
+                        var comment_count = info.tags[i].comments.length;
+                    }
+                    
+                    
+                    if ( name ) {
+
                         var $li = $('<li class="rdr_tag_'+info.tags[i].id+'" />').data({
                             'tag':{
                                 id:parseInt( info.tags[i].id ),
-                                name:info.tags[i].name,
-                                content:info.tags[i].content,
+                                name:name,
+                                content:content,
                                 count:info.tags[i].count,
-                                comment_count:info.tags[i].comment_count
+                                comment_count:comment_count
                             },
-                            'hash':args.hash
-                        }).append('<div class="rdr_rightBox"></div><div class="rdr_leftBox">'+percentage+'%</div><a href="javascript:void(0);">'+info.tags[i].name+'</a>');
-                        if ( info.tags[i].comment_count > 0 ) $li.addClass('rdr_has_comment');
+                            'which':which
+                        }).append('<div class="rdr_rightBox"></div><div class="rdr_leftBox">'+percentage+'%</div><a href="javascript:void(0);">'+name+'</a>');
+                        if ( comment_count > 0 ) $li.addClass('rdr_has_comment');
                         $tagBox.children('ul.rdr_tags').append($li);
                     }
                 };
@@ -1106,30 +1215,26 @@ console.dir(options);
                     RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:rindow.settings});
                     RDR.rindow.checkHeight( rindow, 0 );
 
-                    /* can remove I think:  PB, 5/1/2011
-                    if ( settings.content_type == "text" ) {
-                       rindow.find('div.rdr_selectedTextPanel em').text( settings.content );
-                    } else if ( settings.content_type == "image" ) {
-                        rindow.find('div.rdr_selectedTextPanel em').css('text-align','center').html( '<img style="max-width:100%;max-height:600px;" src=" ' + settings.content + '" />' );
-                    }
-                    */
-
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
-                    rindow.find('ul.rdr_preselected li').bind('click', function() {
-                        var $this = $(this);
-                        if ( !$this.hasClass('rdr_customTagBox') ) {
-                            // if ( $this.hasClass('rdr_selected') ){
-                                // $this.removeClass('rdr_selected');
-                            // } else {
-                            $this.addClass('rdr_selected');
-                            $this.siblings().removeClass('rdr_selected');
-                            $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-                            RDR.actions.viewReactionContent( $this.data('tag'), $this.data('hash'), rindow );
-                        }
-                    });
+                    if ( type == "text") {
+                        rindow.find('ul.rdr_preselected li').bind('click', function() {
+                            var $this = $(this);
+                            if ( !$this.hasClass('rdr_customTagBox') ) {
+                                // if ( $this.hasClass('rdr_selected') ){
+                                    // $this.removeClass('rdr_selected');
+                                // } else {
+                                $this.addClass('rdr_selected');
+                                $this.siblings().removeClass('rdr_selected');
+                                $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+                                RDR.actions.viewReactionContent( $this.data('tag'), $this.data('which'), rindow );
+                            }
+                        });
+                    } else {
+                        // skip the CONTENT PANEL and jump to the WHYPANEL
+                    }
                 });
             },
-            viewReactionContent: function(tag, hash, rindow){
+            viewReactionContent: function(tag, which, rindow){
                 console.log('taaaaaaaaaaaaaaaaag');
                 console.dir(tag);
                 var content = [];
@@ -1146,7 +1251,7 @@ console.dir(options);
 
                 // ok, get the content associated with this tag!
                 for ( var i in content ) {
-                    var this_content = RDR.content_nodes[hash].info.content[ content[i].idx ];
+                    var this_content = RDR.content_nodes[which].info.content[ content[i].idx ];
                     console.dir(this_content);
 
                     var $contentSet = $('<div class="rdr_contentSet" />'),
@@ -1155,7 +1260,7 @@ console.dir(options);
 
                     $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+content[i].count+')</span> '+tag.name+'</a>');
                     $header.find('span.rdr_tag_count').click( function() {
-                        RDR.actions.rateSendLite({ element:$(this), tag:{content:tag.id,name:tag.name}, rindow:rindow, content:this_content.body, hash:hash });
+                        RDR.actions.rateSendLite({ element:$(this), tag:{content:tag.id,name:tag.name}, rindow:rindow, content:this_content.body, which:which });
                     });
 
                     if ( this_content.comment_count > 0 ) {
@@ -1168,7 +1273,7 @@ console.dir(options);
                     $comment.click( function() {
                         var $this = $(this);
                         $this.closest('.rdr_contentSet').addClass('rdr_selected').siblings().removeClass('rdr_selected');
-                        RDR.actions.viewCommentContent( tag, hash, $(this).data('c_idx'), rindow );
+                        RDR.actions.viewCommentContent( tag, which, $(this).data('c_idx'), rindow );
                     });
 
                     $header.append( $comment );
@@ -1181,7 +1286,7 @@ console.dir(options);
                             if ( this_content.tags[j].id != tag.id ) {
                                 var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+this_content.tags[j].count+')</span> '+this_content.tags[j].tag+'</a>');
                                 $this_tag.find('span.rdr_tag_count').click( function() {
-                                    RDR.actions.rateSendLite({ element:$(this), tag:{content:this_content.tags[j].id,name:this_content.tags[j].name}, rindow:rindow, content:this_content.body, hash:hash });
+                                    RDR.actions.rateSendLite({ element:$(this), tag:{content:this_content.tags[j].id,name:this_content.tags[j].name}, rindow:rindow, content:this_content.body, which:which });
                                 });
                                 $content.find('div.rdr_otherTags').append( $this_tag );
                             }
@@ -1195,10 +1300,10 @@ console.dir(options);
 
                 RDR.actions.panel.expand("contentPanel", rindow);
             },
-            viewCommentContent: function(tag, hash, c_idx, rindow){
+            viewCommentContent: function(tag, which, c_idx, rindow){
                 if ( rindow.find('div.rdr_whyPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_whyPanel div.rdr_body').data('jsp').destroy();
                 rindow.find('div.rdr_whyPanel div.rdr_body').empty();
-                var comments = RDR.content_nodes[hash].info.content[c_idx].tags[ tag.content[c_idx].tag_idx ].comments;
+                var comments = RDR.content_nodes[which].info.content[c_idx].tags[ tag.content[c_idx].tag_idx ].comments;
                 console.clear();
                 console.dir(comments);
                 if (comments && comments.length > 0 ) {
@@ -1252,7 +1357,7 @@ console.dir(options);
 
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
-                    RDR.actions.comment({ comment:comment, hash:hash, content:RDR.content_nodes[hash].info.content[c_idx].body, tag_id:RDR.content_nodes[hash].info.content[c_idx].tags[ tag.content[c_idx].tag_idx ].id, rindow:rindow });
+                    RDR.actions.comment({ comment:comment, which:which, content:RDR.content_nodes[which].info.content[c_idx].body, tag_id:RDR.content_nodes[which].info.content[c_idx].tags[ tag.content[c_idx].tag_idx ].id, rindow:rindow });
                 });
 
                 rindow.find('div.rdr_whyPanel div.rdr_body').append( $leaveComment );
@@ -1521,8 +1626,9 @@ console.dir(options);
                 // TODO the args & params thing here is confusing
                 RDR.session.getUser( args, function( params ) {
                     // get the text that was highlighted
-                    var content = $.trim( params.settings.content );
-                    var container = $.trim( params.settings.container );
+                    var content = $.trim( params.settings.content ),
+                        container = $.trim( params.settings.container ),
+                        src_with_path = $.trim( params.settings.src_with_path );
 
                     var rindow = params.rindow,
                         tag_li = params.tag,
@@ -1532,6 +1638,7 @@ console.dir(options);
                         "tag" : tag,
                         "hash": container,
                         "content" : content,
+                        "src_with_path" : src_with_path,
                         "content_type" : params.settings.content_type,
                         "user_id" : RDR.user.user_id,
                         "readr_token" : RDR.user.readr_token,
