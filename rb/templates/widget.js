@@ -777,24 +777,31 @@ function readrBoard($R){
 
 
 						RDR.page = response.data;
-                        var summary_widget = $('#rdr-summary'),
-                            $summary = $('<ul class="rdr-sum-totals" />');
+                        var $summary_widget = $('#rdr-summary');
                         
-                        // summary widget: tags total
-                        if ( RDR.page.summary.length > 0 ) {
-                            for ( var i in RDR.page.summary ) {
-                                $summary.append( '<li />' + RDR.page.summary[i].kind + 's: ' + RDR.page.summary[i].count );
-                            }
-                            summary_widget.append( $summary );
-                        }
+                        $summary_widget.append('<div class="rdr-sum-headline">'+RDR.page.summary[0].count+' reactions from 3 people</div>');
 
                         // summary widget: specific tag totals
                         if ( RDR.page.toptags.length > 0 ){
-                            var $toptags = $('<ul class="rdr-top-tags" />');
-                            for ( var i in RDR.page.toptags ) {
-                                if ( $toptags.children().length < 4 ) $toptags.append( '<li />' + RDR.page.toptags[i].body + ': ' + RDR.page.toptags[i].tag_count );
+                            var $toptags = $('<div class="rdr-top-tags" />');
+
+
+//  if ( $toptags.children().length < 4 ) $toptags.append( '<li />' + RDR.page.toptags[i].body + ': ' + RDR.page.toptags[i].tag_count );
+
+                            for ( var i = 0, j=5; i < j; i++ ) {
+                                var this_tag = RDR.page.toptags[i];
+                                $toptags.append(' <span>'+ this_tag.body +' <em>('+this_tag.tag_count+')</em></span>&nbsp;&nbsp;&nbsp;');
+                                
+                                // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
+                                if ( $toptags.width() > $summary_widget.width() - 48 ) {
+                                    $toptags.children().last().html('See More').addClass('rdr_see_more');
+                                    break;
+                                }
                             }
-                            summary_widget.append( $toptags );
+    
+                            if ( $toptags.children().length < 4 ) $toptags.append( '<li />' + RDR.page.toptags[i].body + ': ' + RDR.page.toptags[i].tag_count );
+
+                            $summary_widget.append( $toptags );
                         }
 
                         // insert image icons

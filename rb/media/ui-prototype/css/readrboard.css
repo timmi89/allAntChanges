@@ -75,7 +75,7 @@ div.rdr_indicator img   { background:url("/static/images/readr_icons.png") no-re
 div.rdr_indicator span  {display:none;}
 div.rdr_indicator:hover span  {display:inline;}
 
-div.rdr_indicator.rdr_image { position:relative; margin-bottom:10px; margin-top:-3px; overflow:hidden;}
+div.rdr_indicator.rdr_image { position:relative; margin-bottom:10px; margin-top:-3px; overflow:hidden; border-bottom:1px solid #ddd;}
 div.rdr_indicator.rdr_image span { display:inline-block; *display:inline; font-weight:bold; background:#fff; }
 div.rdr_indicator.rdr_image span em { font-weight:normal; font-style:normal;}
 div.rdr_indicator.rdr_image span.rdr_see_more { font-size:11px; font-weight:normal;}
@@ -105,7 +105,7 @@ div.rdr.rdr_actionbar li.rdr_icon_about a		 	{ background-position: -3px 0; widt
 
 /* global tag defs */
 div.rdr h1, 
-div.rdr h2	{font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif; color:#666; margin:0; }
+div.rdr h2	{font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif; color:#666; margin:0; line-height:1.1em !important;}
 div.rdr h1  {font-size:21px; cursor:move; padding:3px 9px; font-weight:100;}
 div.rdr h1 span	{font-size:18px; color:#008be4;}
 
@@ -248,9 +248,11 @@ div.rdr input[type="text"]	{font-size:14px; color:#666; -moz-box-shadow:inset 0p
 div.rdr button				{font-size:14px; }
 
 /* summary widget */
-#rdr-summary 					{}
-#rdr-summary .rdr-sum-totals	{list-style-type:none;}
-#rdr-summary .rdr-top-tags	{list-style-type:none;}
+#rdr-summary 					{border:1px solid #ccc; box-shadow:0 -14px 28px -11px #ccc inset; border-radius:4px; }
+#rdr-summary div.rdr-sum-headline   {background:url(/static/images/readr_icons.png) -162px 5px no-repeat; padding:7px 5px 5px 38px; }
+#rdr-summary div.rdr-top-tags   {padding:0px 7px 7px;}
+#rdr-summary div.rdr-top-tags span  {white-space:nowrap; font-weight:bold; color:#666;}
+#rdr-summary div.rdr-top-tags span em	{font-style:normal; color:#aaa;}
 
 /* in-page styles */
 .rdr_highlightContainer {background:#E4F0F7;}
