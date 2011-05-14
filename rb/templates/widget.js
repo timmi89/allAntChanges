@@ -2426,12 +2426,18 @@ function jQueryPlugins($R){
                 return selState;
             },
             activate: function(idxOrSelState){
+                log('trying to activate ')
+                log(idxOrSelState)
                 var selState = _fetchselState(idxOrSelState);
                 if(!selState) return false;
-
-                _WSO().removeAllRanges();
+                methods.clear();
                 _WSO().setSingleRange( selState.range );
+                log('activated ..')
+                log(selState.range)
                 return selState;
+            },
+            clear: function(){
+                _WSO().removeAllRanges();  
             },
             modify: function(idxOrSelState, filterList) {
                 //let filterList be optionally called without idxOrSelState - letting the selState default to the latest.
@@ -2452,6 +2458,7 @@ function jQueryPlugins($R){
                 return newSelState
             },
             hilite: function(idxOrSelState, switchOnOffToggle){
+                
                 // switchOnOffToggle is optional.  Expects a string 'on', 'off', or 'toggle', or defaults to 'on'
                 // check if idxOrSelState is omited
                 if( typeof idxOrSelState === 'string' && isNaN( parseInt(idxOrSelState) ) ){
@@ -2464,18 +2471,16 @@ function jQueryPlugins($R){
                 var selState = _fetchselState(idxOrSelState);
                 if(!selState) return false;
                 
-                var range = selState.range;
                 //todo: not using this yet..
+                /*
+                var range = selState.range;
                 var host = range.commonAncestorContainer;
                 //get the closest parent that isn't a textNode or CDATA node
                 while( host.nodeType == 3 || host.nodeType == 4 ){ //Node.TEXT_NODE equals 3, CDATA_SECTION_NODE = 4
                     host = host.parentNode;
                 }
+                */
 
-                //todo: consider moving this to the save method.
-                //init hiliter if neccesary
-                selState.hiliter = selState.hiliter || _hiliteInit(selState);
-                
                 //switch the hilite state
                 selState = _hiliteSwitch(selState, switchOnOffToggle);
                 methods.save( selState ); 
@@ -2484,6 +2489,9 @@ function jQueryPlugins($R){
             helpers: function(helperPack){
                 var func = _helperPacks[helperPack];
                 return func ? func.apply( this, Array.prototype.slice.call( arguments, 1 ) ) : false;
+            },
+            data: function(name){
+                return _data[name];
             }
 
         };
@@ -2524,91 +2532,93 @@ function jQueryPlugins($R){
         */
         ],
         _modifierFilters = {
-                stripWhiteSpace: function(range){
-                    var rangeStr = range.toString(),
-                    s = {}, //start
-                    e = {}; //end
-                    //see rangy core for range attributes used here
-                    s.textnode = range.startContainer;
-                    s.offset = range.startOffset;
-                    s.regx = /^\s+/; //start, then one or more whitespace chars
-                    s.result = s.regx.exec(rangeStr);
+            stripWhiteSpace: function(range){
+                var rangeStr = range.toString(),
+                s = {}, //start
+                e = {}; //end
+                //see rangy core for range attributes used here
+                s.textnode = range.startContainer;
+                s.offset = range.startOffset;
+                s.regx = /^\s+/; //start, then one or more whitespace chars
+                s.result = s.regx.exec(rangeStr);
 
-                    e.textnode = range.endContainer;
-                    e.offset = range.endOffset;
-                    e.regx = /\s+$/; //start, then one or more whitespace chars
-                    e.result = e.regx.exec(rangeStr);
-                    
-                    //change the range offsets by the length of the whitespace found
-                    if(s.result){
-                        s.resultStrLen = s.result[0].length;
-                        _rangeOffSet( range, {relOffset: (s.resultStrLen)} );
-                    }
-                    if(e.result){
-                        e.resultStrLen = e.result[0].length;
-                        _rangeOffSet( range, {relOffset: (-e.resultStrLen), start:false} );
-                    }
-                    return range;
-                },
-                firstWordSnap: function(range){
-                    //find the extra word characters the range cut off at the beginning of the selState, and add em'.
-                    //and change the offset of the range
-                    var textnode = range.startContainer, //rangy attribute startContainer
-                    startOffset = range.startOffset,
-                    testRange;
-                    if (startOffset == 0) return range;
-                    //else 
-
-                    //NOTE: this assumes that the function and the range share the same document - change if we ever need to call between iframes.
-                    //create a helper object to find the word boundary
-                    var hlpr = {
-                        range: rangy.createRange() //rangy function createRange
-                    }
-                    hlpr.range.setStart(textnode, 0);
-                    hlpr.range.setEnd(textnode, startOffset);
-                    hlpr.str0 = (hlpr.range.toString());
-                    //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
-                    hlpr.regx1 = /\s*\S+$/;
-                    hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
-                    if (hlpr.result1 === null) return range;
-                    //else
-
-                    hlpr.str1 = hlpr.result1[0]; //result[0] is string representation of regex object - see exec() for info
-                    //strip any white space off beginning of string
-                    hlpr.str2 = hlpr.str1.replace(/\s*/,"");
-                    hlpr.extraWordChars = hlpr.str2.length;
-                    _rangeOffSet(range, {relOffset: (-hlpr.extraWordChars) });
-                    return range;
-                },
-                lastWordSnap: function(range){
-                    //find the extra word characters the range cut off at the end of the selState, and add em'.
-                    var textnode = range.endContainer, //rangy attribute startContainer
-                    endOffset = range.endOffset,
-                    testRange;
-                    if (endOffset == 0) return range;
-                    //else
-                    
-                    //NOTE: this assumes that the function and the range share the same document - change if we ever need to call between iframes.
-                    //create a tester object to find the word boundary
-                    var hlpr = {
-                        range: rangy.createRange() //rangy function createRange
-                    }
-                    hlpr.range.setStart(textnode, endOffset);
-                    hlpr.range.setEnd(textnode, textnode.length);
-                    hlpr.str0 = (hlpr.range.toString());
-                    //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
-                    hlpr.regx1 = /^\S+(?=(\s|$))/;
-                    hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
-                    if (hlpr.result1 === null) return range;
-                    //else
-
-                    hlpr.str1 = hlpr.result1[0]; //result[0] is string representation of regex object - see exec() for info
-                    hlpr.extraWordChars = hlpr.str1.length;
-                    _rangeOffSet(range, {relOffset: (hlpr.extraWordChars), start:false});
-                    return range;
+                e.textnode = range.endContainer;
+                e.offset = range.endOffset;
+                e.regx = /\s+$/; //start, then one or more whitespace chars
+                e.result = e.regx.exec(rangeStr);
+                
+                //change the range offsets by the length of the whitespace found
+                if(s.result){
+                    s.resultStrLen = s.result[0].length;
+                    _rangeOffSet( range, {relOffset: (s.resultStrLen)} );
                 }
-            };
+                if(e.result){
+                    e.resultStrLen = e.result[0].length;
+                    _rangeOffSet( range, {relOffset: (-e.resultStrLen), start:false} );
+                }
+                return range;
+            },
+            firstWordSnap: function(range){
+                //find the extra word characters the range cut off at the beginning of the selState, and add em'.
+                //and change the offset of the range
+                var textnode = range.startContainer, //rangy attribute startContainer
+                startOffset = range.startOffset,
+                testRange;
+                if (startOffset == 0) return range;
+                //else 
 
+                //NOTE: this assumes that the function and the range share the same document - change if we ever need to call between iframes.
+                //create a helper object to find the word boundary
+                var hlpr = {
+                    range: rangy.createRange() //rangy function createRange
+                }
+                hlpr.range.setStart(textnode, 0);
+                hlpr.range.setEnd(textnode, startOffset);
+                hlpr.str0 = (hlpr.range.toString());
+                //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
+                hlpr.regx1 = /\s*\S+$/;
+                hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
+                if (hlpr.result1 === null) return range;
+                //else
+
+                hlpr.str1 = hlpr.result1[0]; //result[0] is string representation of regex object - see exec() for info
+                //strip any white space off beginning of string
+                hlpr.str2 = hlpr.str1.replace(/\s*/,"");
+                hlpr.extraWordChars = hlpr.str2.length;
+                _rangeOffSet(range, {relOffset: (-hlpr.extraWordChars) });
+                return range;
+            },
+            lastWordSnap: function(range){
+                //find the extra word characters the range cut off at the end of the selState, and add em'.
+                var textnode = range.endContainer, //rangy attribute startContainer
+                endOffset = range.endOffset,
+                testRange;
+                if (endOffset == 0) return range;
+                //else
+                
+                //NOTE: this assumes that the function and the range share the same document - change if we ever need to call between iframes.
+                //create a tester object to find the word boundary
+                var hlpr = {
+                    range: rangy.createRange() //rangy function createRange
+                }
+                hlpr.range.setStart(textnode, endOffset);
+                hlpr.range.setEnd(textnode, textnode.length);
+                hlpr.str0 = (hlpr.range.toString());
+                //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
+                hlpr.regx1 = /^\S+(?=(\s|$))/;
+                hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
+                if (hlpr.result1 === null) return range;
+                //else
+
+                hlpr.str1 = hlpr.result1[0]; //result[0] is string representation of regex object - see exec() for info
+                hlpr.extraWordChars = hlpr.str1.length;
+                _rangeOffSet(range, {relOffset: (hlpr.extraWordChars), start:false});
+                return range;
+            }
+        },
+        _data = {
+            stack: _selStateStack
+        }
         
         //private functions:
         function _WSO(){
@@ -2617,42 +2627,48 @@ function jQueryPlugins($R){
         function _makeSelState(settings){
             var scope = this,
             selStateStack = _selStateStack,
+            range, serialRange,
             settings = settings || {},
-            selState = {
+            defaults = {
+                styleName: 'rdr_hilite',
+                serialRange: null,          // set below - overwritten by explicit range object
+                range: null                // set below - overwrites serial range
+            },
+            overrides = {
                 idx: selStateStack.length,  // can't overide
                 timestamp: $.now(),         // don't really need this..
-                styleName: settings.styleName || 'rdr_hilite',
-                hiliter: null,              // used later for controling the custom hilite
                 interactionID: null,        // for later use
+                hiliter: null,              // set below
                 revisionParent: null,       // set below
-                serialRange: null,          // set below - overwritten by explicit range object
-                range: null,                // set below - overwrites serial range
                 text: ""                    // set below
             },
-            range, serialRange;
-            log(selState)
+            selState = $.extend({}, defaults, settings, overrides);
+
             log(selState.text)
+            //set properties that depend on the others already being initiated
+
             // if missing param or missing needed range data
-            if( !settings.range && !settings.serialRange ){
+            if( !selState.range && !selState.serialRange ){
                 //try getting data from browser selection
                 range = _WSO().getRangeAt(0);
-                serialRange = rangy.serializeRange(range);
+                serialRange = rangy.serializeRange(range, false, $('#testpara')[0] );
             }
-            else if(settings.range){
-                range = settings.range;
-                serialRange = rangy.serializeRange(range);
+            else if(selState.range){
+                range = selState.range;
+                serialRange = rangy.serializeRange(range, false, $('#testpara')[0] );
             }
-            else if(settings.serialRange){
-                serialRange = settings.serialRange;
-                range = rangy.deserializeRange(serialRange);
+            else if(selState.serialRange){
+                serialRange = selState.serialRange;
+                range = rangy.deserializeRange(serialRange, $('#testpara')[0]);
             }
             selState.serialRange = serialRange;
             selState.range = range;
             selState.text = selState.range.toString(); //rangy range toString function
             //check for empty selection..
             if(selState.text.length == 0) return false;
-            log(selState)
-            log(selState.text)
+            //set hiliter - depends on idx, range, etc. being set already.
+            selState.hiliter = _hiliteInit(selState);
+            log(selState);
             return selState;
         }
         function _fetchselState(idxOrSelState){
@@ -2705,6 +2721,10 @@ function jQueryPlugins($R){
             return hiliter;
         }
         function _hiliteSwitch(selState, switchOnOffToggle) {
+            
+            // it looks like the rangy cssClassApplier is still buggy.  Keep this commented out for a while and see how things go.
+            return selState
+            
             //args required
             //switchOnOffToggle must be a string 'on','off',or 'toggle'
             var range = selState.range,
