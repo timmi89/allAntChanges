@@ -2405,9 +2405,14 @@ function jQueryPlugins($R){
                 // If it is omited or if both selStateOrPartial.range and selStateOrPartial.serialRange are ommited,
                 // it will use the current selection to build the selState.  If nothing is selected it returns false;
 
-                var scope = this,
+                var $this = this,
                 selStateStack = _selStateStack,
-                selState = _makeSelState(selStateOrPartial);
+                selStateOrPartial = selStateOrPartial || {},
+                selState;
+
+                //todo: solution for multiple $objects?
+                selStateOrPartial.container = $this[0] || window;
+                selState = _makeSelState( selStateOrPartial );
 
                 //push selState into stack
                 selStateStack[selState.idx] = selState;
@@ -2490,10 +2495,68 @@ function jQueryPlugins($R){
                 var func = _helperPacks[helperPack];
                 return func ? func.apply( this, Array.prototype.slice.call( arguments, 1 ) ) : false;
             },
-            data: function(name){
-                return _data[name];
-            }
+            find: function(string){
+                var re = [],
+                $this = this,
+                regex;
+                
+                if( !string ) return false;
 
+                /*
+                function escapeRegEx( str ) {
+                    // http://kevin.vanzonneveld.net
+                    return (str+'').replace(/(\\)/g, "\\$1");
+                }
+                */
+
+                //todo: verify that this is best practice
+                //http://simonwillison.net/2006/Jan/20/escape/
+                RegExp.escape = function(text) {
+                    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+                }
+
+                /*
+                //if a single string, make it an array.
+                if (typeof strings === "string"){
+                    strings = [strings];
+                }
+                */
+
+                /*
+                var re = [], regex, scope=this;
+                $.each(strings,function(i,str){
+                    if ( str == "") return;
+                    str = scope.escapeRegEx(n);
+                    re.push(str); 
+                });
+                regex = re.join("|"); //or
+                regex = '(?:'+regex+')';
+                */              
+                
+                string = RegExp.escape(string);
+                console.log(string);
+                regex = new RegExp(string, "gim");
+                
+                return $this.each(function(){
+                    var text = $(this).text(),
+                    match = 0,
+                    check = 0, //while testing, avoid infiniteloops
+                    ret = [];
+                    while( (match = regex.exec(text)) && check < 5 ) {
+                        log(match)
+                        log(match.index)
+                        log(check)
+                        ret.push(match.index);
+                        check++;
+                    }
+                    // log(this);
+                    // log(text);
+                    return ret;
+                });
+            },
+            data: function(name){
+               return _data[name];
+            }
         };
 
         //private objects
@@ -2631,8 +2694,9 @@ function jQueryPlugins($R){
             settings = settings || {},
             defaults = {
                 styleName: 'rdr_hilite',
+                container: document,        // likely passed in by save()
                 serialRange: null,          // set below - overwritten by explicit range object
-                range: null                // set below - overwrites serial range
+                range: null                 // set below - overwrites serial range
             },
             overrides = {
                 idx: selStateStack.length,  // can't overide
