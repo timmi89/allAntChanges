@@ -2909,6 +2909,11 @@ function jQueryPlugins($R){
                     attr:undefined
                 },
                 {
+                    name:'clear',
+                    func:'clear',
+                    attr:undefined
+                },
+                {
                     name:'activate',
                     func:'activate',
                     attr:undefined
@@ -2932,8 +2937,7 @@ function jQueryPlugins($R){
                     input = $(this).parent().find('input').eq(0).val();
                     context = $context.find('input').val();
                     val.attr= (input == "" ) ? undefined : input;
-                    if(idx == 3){
-                        //for find
+                    if(val.name == "find"){
                         result = $(context).selog(val.func, val.attr);
                         log(result);
                     }
@@ -2943,7 +2947,7 @@ function jQueryPlugins($R){
                 });
                 $tempButtons.append($button);
             });
-            $tempButtons.find('input').eq(0).remove();
+            $tempButtons.find('input:lt(2)').remove();
             var $output = $('<div id="rdr_tempOutput" />').css({'font-size':'12px'}); //filled out for now with save function
             var $context = $('<div><span style="margin-left:13px;"> in: </span><input class="input2" value="#testpara" /></div>'); /*default testpara*/
             $tempButtons.append($context, $output);
