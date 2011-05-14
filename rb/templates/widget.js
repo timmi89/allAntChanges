@@ -2609,7 +2609,7 @@ function jQueryPlugins($R){
 
                 e.textnode = range.endContainer;
                 e.offset = range.endOffset;
-                e.regx = /\s+$/; //start, then one or more whitespace chars
+                e.regx = /\s+$/; //one or more whitespace chars, then end
                 e.result = e.regx.exec(rangeStr);
                 
                 //change the range offsets by the length of the whitespace found
@@ -2655,7 +2655,7 @@ function jQueryPlugins($R){
             },
             lastWordSnap: function(range){
                 //find the extra word characters the range cut off at the end of the selState, and add em'.
-                var textnode = range.endContainer, //rangy attribute startContainer
+                var textnode = range.endContainer, //rangy attribute endContainer
                 endOffset = range.endOffset,
                 testRange;
                 if (endOffset == 0) return range;
@@ -2894,48 +2894,64 @@ function jQueryPlugins($R){
             return range;
         }
 
-        function _tempTesting(){
+        function _tempTesting(){ 
                 /*
             * testing temp function
             */
             //make $tempButtons output
             //hide for now
             var $tempButtons = $('<div class="rdr_blacklist"/>'),
-            buttonInfo= {
+            buttonInfo= [
                 //note, remember to use $R instead of $ if calling in firebug
-                a:{
+                {
                     name:'save',
                     func:'save',
                     attr:undefined
                 },
-                b:{
+                {
                     name:'activate',
                     func:'activate',
                     attr:undefined
                 },
-                c:{
-                    name:"modify",
+                {
+                    name:'modify',
                     func:'modify',
                     attr:undefined
+                },
+                {
+                    name:'find',
+                    func:'find',
+                    attr:undefined
                 }
-            }
+            ]
             $.each(buttonInfo,function(idx, val){
-                var $button = $('<div class="rdr_tempButton"><a href=\"javascript:void(0);\">'+this.name+'</a><input /></div>');
+                var $button = $('<div class="rdr_tempButton"><a href=\"javascript:void(0);\">'+this.name+'</a><input class="input1" /></div>');
+                
                 $button.find('a').click(function(){
-                    var input = $(this).parent().find('input').val();
+                    var result,
+                    input = $(this).parent().find('input').eq(0).val();
+                    context = $context.find('input').val();
                     val.attr= (input == "" ) ? undefined : input;
-                    var selState = $(window).selog(val.func, val.attr);
+                    if(idx == 3){
+                        //for find
+                        result = $(context).selog(val.func, val.attr);
+                        log(result);
+                    }
+                    else{
+                        var selState = $(context).selog(val.func, val.attr);
+                    }
                 });
                 $tempButtons.append($button);
             });
             $tempButtons.find('input').eq(0).remove();
             var $output = $('<div id="rdr_tempOutput" />').css({'font-size':'12px'}); //filled out for now with save function
-            $tempButtons.append($output);
+            var $context = $('<div><span style="margin-left:13px;"> in: </span><input class="input2" value="#testpara" /></div>'); /*default testpara*/
+            $tempButtons.append($context, $output);
 
             $tempButtons.css({'position':'fixed', 'margin-left':'5px'});
             $tempButtons.children('.rdr_tempButton').css({'margin':'4px 0'});
-            $tempButtons.find('input').css({'left':'55px', 'width':'30px','position':'absolute'});
-            $('body').append($tempButtons);    
+            $tempButtons.find('input').css({'left':'55px', 'width':'60px','position':'absolute'});
+            $('body').append($tempButtons);
         }
         //end private functions
 
