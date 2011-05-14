@@ -1,0 +1,49 @@
+.sponsoredText1_147 {
+    padding-right:5px;
+    color:#AAAAAA;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:10px;
+    height:20px;
+    vertical-align: top;
+}
+.adImage1_147 {
+    width:105px; 
+    padding-right: 2px;
+}
+
+.adBlock1_147 {
+    width:298px;
+    height:80px;
+    overflow:hidden;
+}
+
+.adItem1_147 {
+  height: 80px;
+  overflow: hidden;
+}
+
+.adTitle1_147,
+.adTitle1_147:link,
+.adTitle1_147:visited,
+.adTitle1_147:hover {
+    color:blue;
+    font:bold 12px Arial,Helvetica,sans-serif;
+    text-decoration: none;
+}
+.adDescription1_147,
+.adDescription1_147:link,
+.adDescription1_147:visited,
+.adDescription1_147:hover {
+    display: inline;
+    color:#000;
+    font:12px l,Helvetica,sans-serif;
+    text-decoration: none;
+}
+.adLearnMoreLink1_147,
+.adLearnMoreLink1_147:link,
+.adLearnMoreLink1_147:visited,
+.adLearnMoreLink1_147:hover {
+    color:blue;
+    font:bold 12px 'Times New Roman', Times, serif;
+    text-decoration: underline;
+}

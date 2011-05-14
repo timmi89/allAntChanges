@@ -47,6 +47,9 @@ div.rdr.rdr_actionbar ul {
 div.rdr.rdr_actionbar li {
     display:inline-block;
     position:relative;
+    list-style: none !important;
+    background: none !important;
+    padding: 0 !important;
 }
 
 div.rdr.rdr_actionbar li a {
@@ -69,15 +72,16 @@ div.rdr.rdr_actionbar span.rdr_icon_divider      	{ width:1px; background:#BBB; 
 img.rdr_engage_img { -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa; }
 
 /* container icon */
-div.rdr_indicator { font:normal 12px Arial, sans-serif; position:absolute; z-index:11000; cursor:pointer; color:#666; padding: 5px 7px 4px 2px;}
+div.rdr_indicator { font:normal 12px Arial, sans-serif; position:absolute; z-index:11000; cursor:pointer; color:#666; padding: 5px 7px 4px 2px; }
+div.rdr_indicator.rdr_text { max-width:300px;}
 div.rdr_indicator:hover { -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa; background:#fff; *border:1px solid #ddd;}
 div.rdr_indicator img   { background:url("/static/images/readr_icons.png") no-repeat 0 0; float:left; margin-top:-1px; width:16px; }
 div.rdr_indicator span  {display:none;}
 div.rdr_indicator:hover span  {display:inline;}
+div.rdr_indicator span em { font-weight:normal; font-style:normal;}
 
 div.rdr_indicator.rdr_image { position:relative; margin-bottom:10px; margin-top:-3px; overflow:hidden; border-bottom:1px solid #ddd;}
 div.rdr_indicator.rdr_image span { display:inline-block; *display:inline; font-weight:bold; background:#fff; }
-div.rdr_indicator.rdr_image span em { font-weight:normal; font-style:normal;}
 div.rdr_indicator.rdr_image span.rdr_see_more { font-size:11px; font-weight:normal;}
 div.rdr_img_tags_list       {position:absolute; margin-left:20px; white-space:nowrap;}
  
@@ -109,12 +113,15 @@ div.rdr h2	{font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif;
 div.rdr h1  {font-size:21px; cursor:move; padding:3px 9px; font-weight:100;}
 div.rdr h1 span	{font-size:18px; color:#008be4;}
 
+div.rdr li {background:none; padding:0;}
+
 /* the widget */
 div.rdr div.rdr_sentimentBox							{}
 div.rdr div.rdr_sntPnl 									{float:left; position:relative; display:block; height:100%; overflow:hidden; /*width is reset with js - rindow.settings.pnlWidth */ }
 
 div.rdr div.rdr_sntPnl div.rdr_body						{width:100%; height:100%; z-index:3; overflow-x:hidden; overflow-y:auto; padding:0; position:relative;}
 div.rdr div.rdr_sntPnl div.rdr_header                   {background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:3;}
+div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("/static/images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
 div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header,
 div.rdr div.rdr_sntPnl.rdr_whyPanel div.rdr_header 		{background:url(/static/images/header_arrow.png) 0px -1px no-repeat #fff;}
 div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap	{background:none; border-bottom:1px solid #bababa; bottom:0; padding-bottom:3px; text-align:center; width:100%; position:absolute; }
@@ -137,17 +144,17 @@ div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body 	{-moz-box-shadow:none;-w
 div.rdr div.rdr_contentPanel                            {position:absolute; z-index:15; left:200px; width:200px; background:url(/static/images/rindow_bg_column.png) repeat -650px 0;}
 div.rdr div.rdr_contentPanel div.rdr_body               {width:200px; max-height:300px; }
 
-div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:250px; background:url(/static/images/rindow_bg_column.png) -200px 0;}
+div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:250px; background:url(/static/images/rindow_bg_column.png) -200px 0; }
 div.rdr.rdr_columns3 div.rdr_whyPanel 				    {background-position:-850px 0;}
 div.rdr div.rdr_whyPanel div.rdr_body                   {width:250px; max-height:300px; }
-div.rdr.rdr_columns2 div.rdr_whyPanel div.rdr_body      {max-height:200px;}
+div.rdr.rdr_columns2 div.rdr_whyPanel div.rdr_body      {xmax-height:200px;}
 div.rdr div.rdr_whyPanel hr 			                {background: #ddd; border: none; clear: both; color: #ddd; float: none; height: 1px; margin: 10px; }
 
 div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top:5px;}
 div.rdr div.rdr_sntPnl_padder 					{margin:0 15px; position:relative; overflow:hidden;}
-div.rdr div.rdr_sntPnl_padder textarea,
-div.rdr div.rdr_sntPnl_padder input[type="text"]	{padding:2px 6px; width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
-div.rdr div.rdr_sntPnl_padder button				{border:1px solid #aaa; border-radius:3px 3px 3px 3px; box-shadow:0 -6px 11px -6px #ccc inset; color:#454545; font-family:Arial; font-size:12px; padding:2px 5px; width:auto; cursor:pointer;}
+div.rdr div.rdr_sntPnl textarea,
+div.rdr div.rdr_sntPnl input[type="text"]	{padding:2px 6px; width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
+div.rdr div.rdr_sntPnl button				{border:1px solid #aaa; border-radius:3px 3px 3px 3px; box-shadow:0 -6px 11px -6px #ccc inset; color:#454545; font-family:Arial; font-size:12px; padding:2px 5px; width:auto; cursor:pointer;}
 div.rdr div.rdr_sntPnl_padder > div					{margin:4px 0;}
 div.rdr div.rdr_share_social						{border-bottom:1px solid #aaa;}
 div.rdr div.rdr_sntPnl .rdr_submitTag  			{width:100%; text-align:right;}
@@ -164,27 +171,27 @@ $('div.rdr_tempUserMsg').animate({bottom:'-48px'});
 
 div.rdr .rdr_tags			{padding:0 0 10px;}
 div.rdr ul.rdr_tags			{list-style-type:none; padding:0; margin:0; }
-div.rdr ul.rdr_tags li	            {padding:0; margin:0; position:relative; overflow:auto; }
+div.rdr ul.rdr_tags li	            {padding:0; margin:0; position:relative; overflow:auto; background:none !important;text-align:left !important;}
 div.rdr ul.rdr_tags li .rdr_leftBox     {width:30px; letter-spacing:1px; padding:4px 2px 0 6px; height:35px; border-right:1px solid #bababa; overflow:hidden; float:left; margin-right:5px; text-align:center; font-size:21px;}
 div.rdr ul.rdr_tags li .rdr_rightBox     {width:30px; padding:0 3px; height:35px; overflow:hidden; float:right; margin-left:5px; text-align:left; background:url(/static/images/widget_icons.png) -5000px 0px no-repeat;}
 div.rdr ul.rdr_tags li.rdr_has_comment .rdr_rightBox     {background:url(/static/images/widget_icons.png) -107px 0px no-repeat;}
 div.rdr div.rdr_read ul.rdr_tags li .rdr_leftBox     {color:#008be4;}
 div.rdr ul.rdr_tags li:hover            {background:#e4f0f7;cursor:pointer;}
-div.rdr ul.rdr_tags li:hover a                      {color:#008be4; display:block; }
 div.rdr ul.rdr_tags li:hover .rdr_leftBox,
 div.rdr ul.rdr_tags li.rdr_tagged div.rdr_leftBox   {background:url(/static/images/widget_icons.png) 0px 0px no-repeat; }
 div.rdr div.rdr_read ul.rdr_tags li:hover div.rdr_leftBox,
 div.rdr div.rdr_read ul.rdr_tags li.rdr_tagged div.rdr_leftBox   {background-image:none; color:#008be4; }
-div.rdr ul.rdr_tags li.rdr_selected                 {color:#008be4; background:#e4f0f7; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; border:1px solid #bababa; border-right:0; border-left:0; height:33px; overflow:hidden; }
-div.rdr ul.rdr_tags li.rdr_selected a               {color:#008be4; display:block; margin-top:-1px;}
+div.rdr ul.rdr_tags li.rdr_selected                 {color:#008be4; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; border:1px solid #bababa; border-right:0; border-left:0; height:33px; overflow:hidden; }
+div.rdr ul.rdr_tags li:hover a,
+div.rdr ul.rdr_tags li.rdr_selected a               {color:#008be4; background:#e4f0f7; display:block; margin-top:-1px; border:1px solid #e4f0f7; border-right:0; border-left:0;}
 div.rdr ul.rdr_tags li:hover .rdr_rightBox          {background:url(/static/images/widget_icons.png) -142px 0px no-repeat;}
 div.rdr ul.rdr_tags li.rdr_selected .rdr_rightBox   {background:url(/static/images/widget_icons.png) -36px 0px no-repeat;}
 div.rdr ul.rdr_tags li.rdr_selected .rdr_leftBox:hover,
 div.rdr ul.rdr_tags li.rdr_tagged .rdr_leftBox:hover    {background-position:-72px 0px;}
 div.rdr div.rdr_new ul.rdr_tags li.rdr_selected 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
-div.rdr ul.rdr_preselected			{font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:-1px 0 0; }
+div.rdr ul.rdr_preselected			{font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:-1px 0 0; min-height:120px;}
 div.rdr ul.rdr_preselected a		{color:#666;text-decoration:none; display:block; padding:3px 0;}
-div.rdr li.rdr_customTagBox input.freeformTagInput      {font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0; text-align:left; width:75%; border:none; background:none; -moz-box-shadow:none; -webkit-box-shadow:none; box-shadow:none; }
+div.rdr li.rdr_customTagBox input.freeformTagInput      {font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0; text-align:left; width:75%; border:none; background:none; -moz-box-shadow:none; -webkit-box-shadow:none; box-shadow:none; padding:2px 0;}
 div.rdr li.rdr_customTagBox div.rdr_help                {left:43px; width:auto;}
 div.rdr li.rdr_customTagBox div.rdr_help:hover          {text-decoration:underline;}
 div.rdr li.rdr_customTagBox div.rdr_rightBox                {display:none;}
@@ -230,7 +237,7 @@ div.rdr a.rdr_tag:hover span.rdr_tag_share    { background:url(/static/images/ta
 div.rdr a.rdr_tag:hover span.rdr_tag_count:hover    { display:block; width:12px; height:13px; float:left; background:url(/static/images/tag_icons.png) -8px -13px no-repeat; text-indent:-9999px;}
 div.rdr a.rdr_tag:hover span.rdr_tag_share:hover    { display:block; width:12px; height:13px; float:right; background:url(/static/images/tag_icons.png) -50px -13px no-repeat;}
 
-div.rdr div.rdr_close		{position:absolute;top:8px;right:7px;color:#999;cursor:pointer;font-size:14px;margin-top:-4px;z-index:15;}
+div.rdr div.rdr_close		{position:absolute;top:8px;right:7px;color:#999;cursor:pointer;font-size:14px;z-index:150;}
 
 div.rdr div.rdr_instruct	{color:#666; margin:5px 0;}
 div.rdr div.rdr_help		{font:italic 11px Arial;color:#767676; width:100%; position:absolute; top:12px; text-align:center; margin:0 !important;}
@@ -248,11 +255,13 @@ div.rdr input[type="text"]	{font-size:14px; color:#666; -moz-box-shadow:inset 0p
 div.rdr button				{font-size:14px; }
 
 /* summary widget */
-#rdr-summary 					{border:1px solid #ccc; box-shadow:0 -14px 28px -11px #ccc inset; border-radius:4px; }
-#rdr-summary div.rdr-sum-headline   {background:url(/static/images/readr_icons.png) -162px 5px no-repeat; padding:7px 5px 5px 38px; }
-#rdr-summary div.rdr-top-tags   {padding:0px 7px 7px;}
+#rdr-summary 					{box-shadow:0 0 6px 0 #aaa; background:#f7f7f7; padding-bottom:2px; margin-bottom:10px; overflow:auto;}
+#rdr-summary div.rdr-sum-headline   {background:url(/static/images/readr_icons.png) -162px 5px no-repeat; padding:7px 5px 5px 38px; float:left; color:#787878;}
+#rdr-summary div.rdr-top-tags   {padding:8px 5px 0px 8px;float:left;}
 #rdr-summary div.rdr-top-tags span  {white-space:nowrap; font-weight:bold; color:#666;}
-#rdr-summary div.rdr-top-tags span em	{font-style:normal; color:#aaa;}
+#rdr-summary div.rdr-top-tags span em   {font-style:normal; color:#aaa;}
+#rdr-summary div.rdr-top-users      {padding:7px; overflow:hidden; height:16px;float:left;}
+#rdr-summary div.rdr-top-users img  {width:20px;height:20px; margin-right:3px;}
 
 /* in-page styles */
 .rdr_highlightContainer {background:#E4F0F7;}

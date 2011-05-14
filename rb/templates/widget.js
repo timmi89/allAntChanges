@@ -779,18 +779,27 @@ function readrBoard($R){
 						RDR.page = response.data;
                         var $summary_widget = $('#rdr-summary');
                         
-                        $summary_widget.append('<div class="rdr-sum-headline">'+RDR.page.summary[0].count+' reactions from 3 people</div>');
+                        var total_interactions = 0;
+                        for ( var i in RDR.page.summary ) {
+                            if ( RDR.page.summary[i].count ) total_interactions += RDR.page.summary[i].count;
+                        }
+
+                        if ( total_interactions > 0 ) {
+                            var people = ( RDR.page.topusers.length > 1 ) ? RDR.page.topusers.length + " people" : "1 person";
+                            $summary_widget.append('<div class="rdr-sum-headline">'+total_interactions+' reactions from '+people+'</div>');
+                        } else {
+                            $summary_widget.append('<div class="rdr-sum-headline">No reactions yet.  Select something and react!</div>');
+                        }
 
                         // summary widget: specific tag totals
                         if ( RDR.page.toptags.length > 0 ){
                             var $toptags = $('<div class="rdr-top-tags" />');
 
-
-//  if ( $toptags.children().length < 4 ) $toptags.append( '<li />' + RDR.page.toptags[i].body + ': ' + RDR.page.toptags[i].tag_count );
-
-                            for ( var i = 0, j=5; i < j; i++ ) {
+                            for ( var i = 0, j=4; i < j; i++ ) {
                                 var this_tag = RDR.page.toptags[i];
-                                $toptags.append(' <span>'+ this_tag.body +' <em>('+this_tag.tag_count+')</em></span>&nbsp;&nbsp;&nbsp;');
+                                if ( this_tag ) {
+                                    $toptags.append(' <span>'+ this_tag.body +' <em>('+this_tag.tag_count+')</em></span>&nbsp;&nbsp;&nbsp;');
+                                }
                                 
                                 // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
                                 if ( $toptags.width() > $summary_widget.width() - 48 ) {
@@ -798,11 +807,23 @@ function readrBoard($R){
                                     break;
                                 }
                             }
-    
-                            if ( $toptags.children().length < 4 ) $toptags.append( '<li />' + RDR.page.toptags[i].body + ': ' + RDR.page.toptags[i].tag_count );
 
                             $summary_widget.append( $toptags );
                         }
+
+                        if ( RDR.page.topusers.length > 0 ){
+                            var $topusers = $('<div class="rdr-top-users" />');
+
+                            for ( var i = 0, j=10; i < j; i++ ) {
+                                var this_user = RDR.page.topusers[i];
+                                if ( this_user ) {
+                                    $topusers.append('<img src="'+this_user.img_url+'" class="no-rdr" />');
+                                }
+                            }
+
+                            $summary_widget.append( $topusers );
+                        }
+
 
                         // insert image icons
                         for ( var i in RDR.page.imagedata ){
@@ -1040,7 +1061,51 @@ function readrBoard($R){
 
                 var total = RDR.content_nodes[hash].info.comment_count + RDR.content_nodes[hash].info.tag_count;
 
-                var $icon = $('<div class="rdr rdr_indicator" style="top:'+(helper_position.bottom-20)+'px;left:'+(helper_position.left-2)+'px;"><img src="/static/images/blank.png" /> '+ total +' <span>reactions. Click to see them.</span></div>');
+                
+                // order the container's tags by tag_count
+                function SortByTagCount(a,b) { return b.count - a.count; }
+                var info = RDR.content_nodes[ hash ].info;
+                info.tags = [];
+                info.tags.total_count = 0;
+                // info.tags_order = [];
+
+                // loop through the content object to create a similar object that has tags at the top of the hierarchy, 
+                // to prevent looping through .content over and over
+                for ( var j in info.content ) {
+                    // console.dir(content);
+                    var content = info.content[j];
+
+                    for ( var i in content.tags ) {
+                        var tag = content.tags[i];
+
+                        var tag_idx = -1;
+                        for ( var z in info.tags ) {
+                            if ( info.tags[z].id == tag.id ) {
+                                tag_idx = z;
+                                break;
+                            }
+                        }
+                        if ( tag_idx == -1 ) {
+                            info.tags.push({ id:tag.id, name:tag.tag, count:0, comment_count:0, content:{} });
+                            tag_idx = ( info.tags.length - 1 );
+                        }
+
+                        info.tags[ tag_idx ].count += tag.count;
+                        if (tag.comments) info.tags[ tag_idx ].comment_count += tag.comments.length;
+                        info.tags[ tag_idx ].content[ j ] = { count:tag.count, tag_idx:parseInt(i) };
+                        info.tags.total_count += tag.count;
+                    };
+                };
+
+                info.tags.sort(SortByTagCount);
+                RDR.content_nodes[ hash ].info = info;
+
+                var $icon = $('<div class="rdr rdr_indicator rdr_text" style="top:'+(helper_position.bottom-20)+'px;left:'+(helper_position.left-2)+'px;"><img src="/static/images/blank.png" /> '+ total +' <span>reactions including </span></div>');
+                var some_reactions = [];
+                for ( var i=0, j=3; i < j; i++ ) {
+                    if ( RDR.content_nodes[hash].info.tags[i] ) some_reactions.push( '<strong>'+RDR.content_nodes[hash].info.tags[i].name+' <em>('+RDR.content_nodes[hash].info.tags[i].count+')</em></strong>' )
+                }
+                $icon.find('span').append( some_reactions.join(', ') );
                 $icon.data('which', hash);
 
                 $icon.click( function() {
@@ -1071,81 +1136,15 @@ function readrBoard($R){
 
                 if (args.type == "text") {
                     var info = RDR.content_nodes[ which ].info;
-                    info.tags = [];
-                    info.tags.total_count = 0;
-                    // info.tags_order = [];
-
-                    // loop through the content object to create a similar object that has tags at the top of the hierarchy, 
-                    // to prevent looping through .content over and over
-                    for ( var j in info.content ) {
-                        // console.dir(content);
-                        var content = info.content[j];
-
-                        for ( var i in content.tags ) {
-                            var tag = content.tags[i];
-
-                            var tag_idx = -1;
-                            for ( var z in info.tags ) {
-                                if ( info.tags[z].id == tag.id ) {
-                                    tag_idx = z;
-                                    break;
-                                }
-                            }
-                            if ( tag_idx == -1 ) {
-                                info.tags.push({ id:tag.id, name:tag.tag, count:0, comment_count:0, content:{} });
-                                tag_idx = ( info.tags.length - 1 );
-                            }
-
-                            info.tags[ tag_idx ].count += tag.count;
-                            if (tag.comments) info.tags[ tag_idx ].comment_count += tag.comments.length;
-                            info.tags[ tag_idx ].content[ j ] = { count:tag.count, tag_idx:parseInt(i) };
-                            info.tags.total_count += tag.count;
-                        };
-                    };
-
-                    info.tags.sort(SortByTagCount);
-
-                    RDR.content_nodes[ which ].info = info;
-
                     var selector = RDR.group.anno_whitelist+".rdr-" + which;
 
                 } else if (args.type == "image") {
                     var info = RDR.page.imagedata[ which ];
-console.clear();
-                    // var tag = info.tags;
-
-                    // var tag_idx = -1;
-                    // for ( var z in info.tags ) {
-                    //     console.log(info.tags[z].id, tag.id);
-                    //     if ( info.tags[z].id == tag.id ) {
-                    //         tag_idx = z;
-                    //         break;
-                    //     }
-                    // }
-
-                    // console.log(tag_idx);
-
-                    // if ( tag_idx == -1 ) {
-                    //     info.tags.push({ id:tag.id, name:tag.tag, count:0, comment_count:0, content:{} });
-                    //     tag_idx = ( info.tags.length - 1 );
-                    // }
-
-                    // THERE IS NO CONTENT TO LOOP THROUGH SO THIS CAN SIMPLIFY
-                    // info.tags[ tag_idx ].count += tag.count;
-                    // if (tag.comments) info.tags[ tag_idx ].comment_count += tag.comments.length;
-                    // info.tags[ tag_idx ].content[ j ] = { count:tag.count, tag_idx:parseInt(i) };
-
-                    // for ( var i in info.tags ) {
-                    //     if ( info.tags[i].count ) info.tags.total_count += info.tags[i].count;
-                    // }
-
-console.dir( RDR.page.imagedata );
                     var selector = "";
                     RDR.page.imagedata[ which ] = info;
                 }
 
                 var iconOffsets = args.icon.offset();
-console.dir( iconOffsets );
 
                 var rindow = RDR.rindow.draw({
                     left:iconOffsets.left,
@@ -1155,6 +1154,8 @@ console.dir( iconOffsets );
                     noHeader:true,
                     selector:selector
                 });
+
+                rindow.find('div.rdr_contentSpace').empty();  // empty this out in case it's just repositioning the rindow.
 
                 rindow.css({width:'200px'});
                 var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new rdr_'+type+'_reactions" />'),
@@ -1166,7 +1167,7 @@ console.dir( iconOffsets );
                 var headers = ["Reactions <span>("+(info.tag_count+info.comment_count)+")</span>", "", ""];
                 $sentimentBox.append($reactionPanel, $contentPanel, $whyPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
-                    var $header = $('<div class="rdr_header" />').append('<div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
+                    var $header = $('<div class="rdr_header" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
                     $body = $('<div class="rdr_body"/>');
                     $(this).append($header, $body).css({
                         // 'width':rindow.settings.pnlWidth
@@ -1218,8 +1219,8 @@ console.dir( iconOffsets );
                     $(this).css('width','auto');
                     // rindow.append($sentimentBox);
 
-                    rindow.find('div.rdr_contentSpace').append($sentimentBox);
-                    RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:rindow.settings});
+                    rindow.find('div.rdr_contentSpace').html($sentimentBox);
+                    // RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:rindow.settings});
                     RDR.rindow.checkHeight( rindow, 0 );
 
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
@@ -1242,11 +1243,14 @@ console.dir( iconOffsets );
                 });
             },
             viewReactionContent: function(tag, which, rindow){
+                rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
+                rindow.find('div.rdr_whyPanel div.rdr_body').html('<div class="rdr_commentSet">Select something in the column to the left to leave a comment on it.</div>');
+
                 console.log('taaaaaaaaaaaaaaaaag');
                 console.dir(tag);
                 var content = [];
                 for ( var i in tag.content ) {
-                    content.push( {idx:i, count:tag.content[i].count } );
+                    content.push( {idx:parseInt(i), tag_idx:tag.content[i].tag_idx, count:tag.content[i].count } );
                 }
 
                 function SortByTagCount(a,b) { return b.count - a.count; }
@@ -1255,7 +1259,8 @@ console.dir( iconOffsets );
                 rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tag.name+' <span>('+tag.count+')</span>');
                 if ( rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp').destroy();
                 rindow.find('div.rdr_contentPanel div.rdr_body').empty();
-
+console.log('---content---');
+console.dir(content);
                 // ok, get the content associated with this tag!
                 for ( var i in content ) {
                     var this_content = RDR.content_nodes[which].info.content[ content[i].idx ];
@@ -1270,7 +1275,7 @@ console.dir( iconOffsets );
                         RDR.actions.rateSendLite({ element:$(this), tag:{content:tag.id,name:tag.name}, rindow:rindow, content:this_content.body, which:which });
                     });
 
-                    if ( this_content.comment_count > 0 ) {
+                    if ( this_content.tags[ content[i].tag_idx ].comments.length > 0 ) {
                         $comment = $('<div class="rdr_has_comment">'+this_content.comment_count+'</div>');
                     } else {
                         $comment = $('<div class="rdr_can_comment">Comment</div>');
@@ -1324,11 +1329,12 @@ console.dir( iconOffsets );
                         var $commentSet = $('<div class="rdr_commentSet" />'),
                             $commentBy = $('<div class="rdr_commentBy" />'),
                             $comment = $('<div class="rdr_comment" />');
-                        
+
                         var user_image_url = ( this_comment.user.image_url ) ? this_comment.user.image_url:'/static/images/anonymousplode.png';
-                        $commentBy.html( '<img src="'+user_image_url+'" /> ' + this_comment.user.first_name + " " + this_comment.user.last_name);
-                        $comment.html( '"'+this_comment.comment+'"' );
-                        $comment.append( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">+5</span></a>' );
+                        var user_name = ( this_comment.user.first_name == "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
+                        $commentBy.html( '<img src="'+user_image_url+'" /> ' + user_name );
+                        $comment.html( '<div class="rdr_comment_body">"'+this_comment.comment+'"</div>' );
+                        $comment.append( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">+1</span></a>' );
 
                         $commentSet.append( $commentBy, $comment );
 
@@ -1360,7 +1366,7 @@ console.dir( iconOffsets );
                     }
                 });
 
-                $leaveComment.find('textarea').autogrow();
+                // $leaveComment.find('textarea').autogrow();
 
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
@@ -1886,7 +1892,7 @@ console.dir(args);
                     }
                 });
 
-                $leaveComment.find('textarea').autogrow();
+                // $leaveComment.find('textarea').autogrow();
 
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
@@ -2372,6 +2378,13 @@ function $RFunctions($R){
 
 function jQueryPlugins($R){
 //All jquery plugins to be loaded using our $R version of jquery and before our widget code;
+    
+    // parents filter:  http://stackoverflow.com/questions/965816/what-jquery-selector-excludes-items-with-a-parent-that-matches-a-given-selector
+    // doesn't seem to be working tho.
+    $R.expr[':'].parents = function(a,i,m){
+        return $R(a).parents(m[3]).length < 1;
+    };
+
 
   (function($){
         /*

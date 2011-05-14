@@ -1,0 +1,12 @@
+/*
+ * Author: Duo Consulting
+ * Contact: www.duoconsulting.com
+ * 
+ * Description:
+ * Import screen specific css files.
+ *
+ */
+ 
+@import url("global_base.css");
+@import url("print_base.css");
+@import url("print_content.css");
