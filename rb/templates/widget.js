@@ -1241,6 +1241,8 @@ function readrBoard($R){
 					actionbarOffsets.top = actionbarOffsets.top + 35;
 				}
 				
+                // keep commented out until we fix rangy's css class applier.
+                /*
                 //if sel exists, reset the offset coords
                 if(newSel){
                     //todo - combine with copy of this
@@ -1260,7 +1262,7 @@ function readrBoard($R){
                         actionbarOffsets.top = strBottom;
                     }
                 }
-                
+                */
                 var rindow = RDR.rindow.draw({
                     left:actionbarOffsets.left,
                     top:actionbarOffsets.top,
