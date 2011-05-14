@@ -1229,7 +1229,7 @@ function readrBoard($R){
                 //console.log(typeof selection.content);
 
                 //Trigger the smart text selection and highlight
-                var newSel = $(window).selog('helpers', 'smartHilite');
+                var newSel = $(document).selog('helpers', 'smartHilite');
                 
                 // draw the window over the actionbar
                 var actionbarOffsets = settings.coords;
@@ -2412,8 +2412,9 @@ function jQueryPlugins($R){
                 selStateOrPartial = selStateOrPartial || {},
                 selState;
 
+                //only take the first container for now
                 //todo: solution for multiple $objects?
-                selStateOrPartial.container = $this[0] || window;
+                selStateOrPartial.container = $this[0] || document;
                 selState = _makeSelState( selStateOrPartial );
 
                 //push selState into stack
@@ -2717,15 +2718,16 @@ function jQueryPlugins($R){
             if( !selState.range && !selState.serialRange ){
                 //try getting data from browser selection
                 range = _WSO().getRangeAt(0);
-                serialRange = rangy.serializeRange(range, false, $('#testpara')[0] );
+                //serializing relative to the parent container. The false is omitChecksum=false.
+                serialRange = rangy.serializeRange(range, false, selState.container ); //see rangy function serializeRange
             }
             else if(selState.range){
                 range = selState.range;
-                serialRange = rangy.serializeRange(range, false, $('#testpara')[0] );
+                serialRange = rangy.serializeRange(range, false, selState.container ); //see rangy function serializeRange
             }
             else if(selState.serialRange){
                 serialRange = selState.serialRange;
-                range = rangy.deserializeRange(serialRange, $('#testpara')[0]);
+                range = rangy.deserializeRange(serialRange, selState.container ); //see rangy function deserializeRange
             }
             selState.serialRange = serialRange;
             selState.range = range;
@@ -2935,14 +2937,14 @@ function jQueryPlugins($R){
                 $button.find('a').click(function(){
                     var result,
                     input = $(this).parent().find('input').eq(0).val();
-                    context = $context.find('input').val();
+                    contextStr = $context.find('input').val();
                     val.attr= (input == "" ) ? undefined : input;
                     if(val.name == "find"){
-                        result = $(context).selog(val.func, val.attr);
+                        result = $(contextStr).selog(val.func, val.attr);
                         log(result);
                     }
                     else{
-                        var selState = $(context).selog(val.func, val.attr);
+                        var selState = $(contextStr).selog(val.func, val.attr);
                     }
                 });
                 $tempButtons.append($button);
@@ -2961,7 +2963,7 @@ function jQueryPlugins($R){
 
         //init selog on window.
         log('test about to init'); //selog temp logging
-        $(window).selog();
+        $(document).selog();
 
     })($R);
 
