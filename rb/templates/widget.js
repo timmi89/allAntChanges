@@ -2403,7 +2403,6 @@ function jQueryPlugins($R){
                 // If selStateOrPartial is a full selState, or has a range, or a serialRange, it will clone it and save a new one.
                 // If it is omited or if both selStateOrPartial.range and selStateOrPartial.serialRange are ommited,
                 // it will use the current selection to build the selState.  If nothing is selected it returns false;
-                log(this);
                 var $this = this,
                 selStateStack = _selStateStack,
                 selStateOrPartial = selStateOrPartial || {},
@@ -2431,13 +2430,11 @@ function jQueryPlugins($R){
                 return selState;
             },
             activate: function(idxOrSelState){
-                log('trying to activate ')
-                log(idxOrSelState)
                 var selState = _fetchselState(idxOrSelState);
                 if(!selState) return false;
                 methods.clear();
                 _WSO().setSingleRange( selState.range );
-                log('activated ..')
+                log('activated range selection: ')
                 log(selState.range)
                 return selState;
             },
@@ -2497,8 +2494,6 @@ function jQueryPlugins($R){
                 return selState
             },
             helpers: function(helperPack){
-                log('this in helpers');
-                log(this);
                 var func = _helperPacks[helperPack];
                 return func ? func.apply( this, Array.prototype.slice.call( arguments, 1 ) ) : false;
             },
@@ -2717,7 +2712,6 @@ function jQueryPlugins($R){
             },
             selState = $.extend({}, defaults, settings, overrides);
 
-            log(selState.text)
             //set properties that depend on the others already being initiated
 
             // if missing param or missing needed range data
@@ -2742,6 +2736,7 @@ function jQueryPlugins($R){
             if(selState.text.length == 0) return false;
             //set hiliter - depends on idx, range, etc. being set already.
             selState.hiliter = _hiliteInit(selState);
+            log('created new selState: ');
             log(selState);
             return selState;
         }
@@ -2768,7 +2763,6 @@ function jQueryPlugins($R){
         }
         function _hiliteInit(selState){
             //only init once
-            log('init hiliter for selState ' + selState.idx) //selog temp logging
             if(selState.hiliter){
                 return selState.hiliter;
             }
@@ -2909,7 +2903,7 @@ function jQueryPlugins($R){
             */
             //make $tempButtons output
             //hide for now
-            var $tempButtons = $('<div class="rdr_blacklist"/>'),
+            var $tempButtons = $('<div id="rdr_selectionographer_tester" class="rdr_blacklist"/>'),
             buttonInfo= [
                 //note, remember to use $R instead of $ if calling in firebug
                 {
@@ -2953,11 +2947,9 @@ function jQueryPlugins($R){
                     val.attr= (input == "" ) ? undefined : input;
                     if(val.name == "find"){
                         result = $(contextStr).selog(val.func, val.attr);
-                        log(result);
                     }
                     if(val.name == "hilite"){
                         input2 = $(this).parent().find('input').eq(1).val();
-                        log(input2)
                         var selState = $(contextStr).selog(val.func, val.attr, input2);
                     }
                     else{
@@ -2984,7 +2976,6 @@ function jQueryPlugins($R){
         //end private functions
 
         //init selog on window.
-        log('test about to init'); //selog temp logging
         $(document).selog();
 
     })($R);
