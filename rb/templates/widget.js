@@ -8,8 +8,6 @@ client$ = {}; //init var: clients copy of jQuery
 
 //init rangy if it hasn't been already, we probably dont need this...
 rangy.init();
-var a;
-var selog; //temp glob
 var demoRindow;
 
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
@@ -1383,7 +1381,7 @@ console.log(which);
                 //console.log(typeof selection.content);
 
                 //Trigger the smart text selection and highlight
-                var newSel = $(window).selog('helpers', 'smartHilite');
+                var newSel = $hostNode.selog('helpers', 'smartHilite');
                 
                 // draw the window over the actionbar
                 var actionbarOffsets = settings.coords;
@@ -1395,6 +1393,7 @@ console.log(which);
 					actionbarOffsets.top = actionbarOffsets.top + 35;
 				}
 				
+            
                 //if sel exists, reset the offset coords
                 if(newSel){
                     //todo - combine with copy of this
@@ -1414,7 +1413,7 @@ console.log(which);
                         actionbarOffsets.top = strBottom;
                     }
                 }
-                
+            
                 var rindow = RDR.rindow.draw({
                     left:actionbarOffsets.left,
                     top:actionbarOffsets.top,
@@ -2665,40 +2664,20 @@ function jQueryPlugins($R){
                     _settings = $.extend(defaults, options);
                 });
             },
-            save: function(rangeOrSerialRange){
-                //range is optional and will usually be ommited.  Defaults to current selection with ranges
-                var scope = this,
-                selStateStack = _selStates,
-                selState = {
-                    //idx will give the next avail index in _selStates.  Indexes should not be shifted.  Note that length is initially zero which is correct. 
-                    idx: selStateStack.length,
-                    styleName: 'rdr_hilite',
-                    timestamp: $.now(),         // don't really need this..
-                    hiliter: null,          // used later for controling the custom hilite
-                    interactionID: null,        // for later use
-                    revisionParent: null,       // set below
-                    serialRange: null,          // set below - overwritten by explicit range object
-                    range: null,                // set below - overwrites serial range
-                    text: ""                    // set below
-                },
-                range, serialRange;
-                if(typeof rangeOrSerialRange === 'string'){
-                    serialRange = rangeOrSerialRange;
-                    range = rangy.deserializeRange(serialRange);
-                }
-                else if(typeof rangeOrSerialRange !== 'undefined'){
-                    range = rangeOrSerialRange;
-                    serialRange = rangy.serializeRange(range);
-                }else{
-                    //assume it's undefined and overwrite it
-                    range = _WSO().getRangeAt(0);
-                    serialRange = rangy.serializeRange(range);
-                }
-                selState.serialRange = serialRange;
-                selState.range = range;
-                selState.text = selState.range.toString(); //rangy range toString function
-                //check for empty selection..
-                if(selState.text.length == 0) return false;
+            save: function(selStateOrPartial){
+                // selStateOrPartial is an optional object.
+                // If selStateOrPartial is a full selState, or has a range, or a serialRange, it will clone it and save a new one.
+                // If it is omited or if both selStateOrPartial.range and selStateOrPartial.serialRange are ommited,
+                // it will use the current selection to build the selState.  If nothing is selected it returns false;
+                var $this = this,
+                selStateStack = _selStateStack,
+                selStateOrPartial = selStateOrPartial || {},
+                selState;
+
+                //only take the first container for now
+                //todo: solution for multiple $objects?
+                selStateOrPartial.container = selStateOrPartial.container || $this[0] || document;
+                selState = _makeSelState( selStateOrPartial );
 
                 //push selState into stack
                 selStateStack[selState.idx] = selState;
@@ -2713,19 +2692,20 @@ function jQueryPlugins($R){
                     }
                     $('#rdr_tempOutput').append('<div><b>'+selState.idx+'</b>: '+str+'</div>');
                 //end temp log to tempOutput
-                //log('saved selState ' + selState.idx + ': ' + selState.text); //selog temp logging
+                log('saved selState ' + selState.idx + ': ' + selState.text); //selog temp logging
                 return selState;
             },
             activate: function(idxOrSelState){
                 var selState = _fetchselState(idxOrSelState);
                 if(!selState) return false;
-                //todo: do i need to clone it to be safe?
-                var newRange = selState.range.cloneRange();
-
-                _WSO().removeAllRanges();
-                _WSO().setSingleRange(newRange);
-                //var newSelState = methods.save(selState); //for testing, this should be prob seperate though
+                methods.clear();
+                _WSO().setSingleRange( selState.range );
+                log('activated range selection: ')
+                log(selState.range)
                 return selState;
+            },
+            clear: function(){
+                _WSO().removeAllRanges();  
             },
             modify: function(idxOrSelState, filterList) {
                 //let filterList be optionally called without idxOrSelState - letting the selState default to the latest.
@@ -2734,17 +2714,25 @@ function jQueryPlugins($R){
                     idxOrSelState = undefined; //will trigger default latest idx
                 }
                 var iniSelState = _fetchselState(idxOrSelState),
-                newSelState, newRange;
+                newSettings, newRange,
+                newSelState;
+
                 if(!iniSelState) return false;
 
+                //todo: it looks like the rangy method cloneRange breaks the ability to re-activate it later?
+                //we shouldn't need that though, anyway, but maybe it will get fixed down the line.
                 newRange = iniSelState.range.cloneRange();
                 //filter the ranges
-
                 newRange = _filter(newRange, filterList);
-                newSelState = methods.save(newRange);
+                newSettings = {
+                    range:newRange,
+                    container:iniSelState.container
+                }
+                newSelState = methods.save( newSettings );
                 return newSelState
             },
             hilite: function(idxOrSelState, switchOnOffToggle){
+                
                 // switchOnOffToggle is optional.  Expects a string 'on', 'off', or 'toggle', or defaults to 'on'
                 // check if idxOrSelState is omited
                 if( typeof idxOrSelState === 'string' && isNaN( parseInt(idxOrSelState) ) ){
@@ -2757,49 +2745,110 @@ function jQueryPlugins($R){
                 var selState = _fetchselState(idxOrSelState);
                 if(!selState) return false;
                 
-                var range = selState.range;
                 //todo: not using this yet..
+                /*
+                var range = selState.range;
                 var host = range.commonAncestorContainer;
                 //get the closest parent that isn't a textNode or CDATA node
                 while( host.nodeType == 3 || host.nodeType == 4 ){ //Node.TEXT_NODE equals 3, CDATA_SECTION_NODE = 4
                     host = host.parentNode;
                 }
+                */
 
-                //todo: consider moving this to the save method.
-                //init hiliter if neccesary
-                selState.hiliter = selState.hiliter || _hiliteInit(selState);
-                
                 //switch the hilite state
-                selState = _hiliteSwitch(selState, switchOnOffToggle);
-
+                _hiliteSwitch(selState, switchOnOffToggle);
                 return selState
             },
             helpers: function(helperPack){
                 var func = _helperPacks[helperPack];
                 return func ? func.apply( this, Array.prototype.slice.call( arguments, 1 ) ) : false;
-            }
+            },
+            find: function(string){
+                var re = [],
+                $this = this,
+                regex;
+                
+                if( !string ) return false;
 
+                /*
+                function escapeRegEx( str ) {
+                    // http://kevin.vanzonneveld.net
+                    return (str+'').replace(/(\\)/g, "\\$1");
+                }
+                */
+
+                //todo: verify that this is best practice
+                //http://simonwillison.net/2006/Jan/20/escape/
+                RegExp.escape = function(text) {
+                    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+                }
+
+                /*
+                //if a single string, make it an array.
+                if (typeof strings === "string"){
+                    strings = [strings];
+                }
+                */
+
+                /*
+                var re = [], regex, scope=this;
+                $.each(strings,function(i,str){
+                    if ( str == "") return;
+                    str = scope.escapeRegEx(n);
+                    re.push(str); 
+                });
+                regex = re.join("|"); //or
+                regex = '(?:'+regex+')';
+                */              
+                
+                string = RegExp.escape(string);
+                console.log(string);
+                regex = new RegExp(string, "gim");
+                
+                return $this.each(function(){
+                    var text = $(this).text(),
+                    match = 0,
+                    check = 0, //while testing, avoid infiniteloops
+                    ret = [];
+                    while( (match = regex.exec(text)) && check < 5 ) {
+                        log(match)
+                        log(match.index)
+                        log(check)
+                        ret.push(match.index);
+                        check++;
+                    }
+                    // log(this);
+                    // log(text);
+                    return ret;
+                });
+            },
+            data: function(name){
+               return _data[name];
+            }
         };
 
         //private objects
         var _settings = {}, //set on init
+        //for all helperPacks, 'this' is passed in with apply.
         _helperPacks = {
             smartHilite: function(){
-                /*
-                var rawSel, modSel, newSel;
-                rawSel = methods.save();
-                modSel = methods.modify(rawSel);
-                newSel = methods.hilite(modSel);
-                return newSel;
-                */
-                //does the same as above
-                return methods.hilite( methods.modify( methods.save() ) ); //oooh lispy.
+                return methods.hilite( methods.modify( methods.save.apply(this) ) ); //oooh lispy.
             },
             activateRange: function(rangeOrSerialRange){
-                return methods.activate( methods.save(rangeOrSerialRange) );
+                //todo: not using this anyway, but not sure if this still works completely..
+                var settings = {};
+                if( typeof rangeOrSerialRange === "string" ){
+                    //assume it's a serialRange
+                    settings.serialRange = rangeOrSerialRange;
+                }
+                else{
+                    //assume it's a range
+                    settings.range = rangeOrSerialRange;
+                }
+                return methods.activate( methods.save(settings) );
             }
         },
-        _selStates = [
+        _selStateStack = [
         /*
             //keep commented out:
             //Example template: Set by save and added to the stack.
@@ -2816,95 +2865,146 @@ function jQueryPlugins($R){
         */
         ],
         _modifierFilters = {
-                stripWhiteSpace: function(range){
-                    var rangeStr = range.toString(),
-                    s = {}, //start
-                    e = {}; //end
-                    //see rangy core for range attributes used here
-                    s.textnode = range.startContainer;
-                    s.offset = range.startOffset;
-                    s.regx = /^\s+/; //start, then one or more whitespace chars
-                    s.result = s.regx.exec(rangeStr);
+            stripWhiteSpace: function(range){
+                var rangeStr = range.toString(),
+                s = {}, //start
+                e = {}; //end
+                //see rangy core for range attributes used here
+                s.textnode = range.startContainer;
+                s.offset = range.startOffset;
+                s.regx = /^\s+/; //start, then one or more whitespace chars
+                s.result = s.regx.exec(rangeStr);
 
-                    e.textnode = range.endContainer;
-                    e.offset = range.endOffset;
-                    e.regx = /\s+$/; //start, then one or more whitespace chars
-                    e.result = e.regx.exec(rangeStr);
-                    
-                    //change the range offsets by the length of the whitespace found
-                    if(s.result){
-                        s.resultStrLen = s.result[0].length;
-                        _rangeOffSet( range, {relOffset: (s.resultStrLen)} );
-                    }
-                    if(e.result){
-                        e.resultStrLen = e.result[0].length;
-                        _rangeOffSet( range, {relOffset: (-e.resultStrLen), start:false} );
-                    }
-                    return range;
-                },
-                firstWordSnap: function(range){
-                    //find the extra word characters the range cut off at the beginning of the selState, and add em'.
-                    //and change the offset of the range
-                    var textnode = range.startContainer, //rangy attribute startContainer
-                    startOffset = range.startOffset,
-                    testRange;
-                    if (startOffset == 0) return range;
-                    //else 
-
-                    //NOTE: this assumes that the function and the range share the same document - change if we ever need to call between iframes.
-                    //create a helper object to find the word boundary
-                    var hlpr = {
-                        range: rangy.createRange() //rangy function createRange
-                    }
-                    hlpr.range.setStart(textnode, 0);
-                    hlpr.range.setEnd(textnode, startOffset);
-                    hlpr.str0 = (hlpr.range.toString());
-                    //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
-                    hlpr.regx1 = /\s*\S+$/;
-                    hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
-                    if (hlpr.result1 === null) return range;
-                    //else
-
-                    hlpr.str1 = hlpr.result1[0]; //result[0] is string representation of regex object - see exec() for info
-                    //strip any white space off beginning of string
-                    hlpr.str2 = hlpr.str1.replace(/\s*/,"");
-                    hlpr.extraWordChars = hlpr.str2.length;
-                    _rangeOffSet(range, {relOffset: (-hlpr.extraWordChars) });
-                    return range;
-                },
-                lastWordSnap: function(range){
-                    //find the extra word characters the range cut off at the end of the selState, and add em'.
-                    var textnode = range.endContainer, //rangy attribute startContainer
-                    endOffset = range.endOffset,
-                    testRange;
-                    if (endOffset == 0) return range;
-                    //else
-                    
-                    //NOTE: this assumes that the function and the range share the same document - change if we ever need to call between iframes.
-                    //create a tester object to find the word boundary
-                    var hlpr = {
-                        range: rangy.createRange() //rangy function createRange
-                    }
-                    hlpr.range.setStart(textnode, endOffset);
-                    hlpr.range.setEnd(textnode, textnode.length);
-                    hlpr.str0 = (hlpr.range.toString());
-                    //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
-                    hlpr.regx1 = /^\S+(?=(\s|$))/;
-                    hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
-                    if (hlpr.result1 === null) return range;
-                    //else
-
-                    hlpr.str1 = hlpr.result1[0]; //result[0] is string representation of regex object - see exec() for info
-                    hlpr.extraWordChars = hlpr.str1.length;
-                    _rangeOffSet(range, {relOffset: (hlpr.extraWordChars), start:false});
-                    return range;
+                e.textnode = range.endContainer;
+                e.offset = range.endOffset;
+                e.regx = /\s+$/; //one or more whitespace chars, then end
+                e.result = e.regx.exec(rangeStr);
+                
+                //change the range offsets by the length of the whitespace found
+                if(s.result){
+                    s.resultStrLen = s.result[0].length;
+                    _rangeOffSet( range, {relOffset: (s.resultStrLen)} );
                 }
-            };
+                if(e.result){
+                    e.resultStrLen = e.result[0].length;
+                    _rangeOffSet( range, {relOffset: (-e.resultStrLen), start:false} );
+                }
+                return range;
+            },
+            firstWordSnap: function(range){
+                //find the extra word characters the range cut off at the beginning of the selState, and add em'.
+                //and change the offset of the range
+                var textnode = range.startContainer, //rangy attribute startContainer
+                startOffset = range.startOffset,
+                testRange;
+                if (startOffset == 0) return range;
+                //else 
 
+                //NOTE: this assumes that the function and the range share the same document - change if we ever need to call between iframes.
+                //create a helper object to find the word boundary
+                var hlpr = {
+                    range: rangy.createRange() //rangy function createRange
+                }
+                hlpr.range.setStart(textnode, 0);
+                hlpr.range.setEnd(textnode, startOffset);
+                hlpr.str0 = (hlpr.range.toString());
+                //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
+                hlpr.regx1 = /\s*\S+$/;
+                hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
+                if (hlpr.result1 === null) return range;
+                //else
+
+                hlpr.str1 = hlpr.result1[0]; //result[0] is string representation of regex object - see exec() for info
+                //strip any white space off beginning of string
+                hlpr.str2 = hlpr.str1.replace(/\s*/,"");
+                hlpr.extraWordChars = hlpr.str2.length;
+                _rangeOffSet(range, {relOffset: (-hlpr.extraWordChars) });
+                return range;
+            },
+            lastWordSnap: function(range){
+                //find the extra word characters the range cut off at the end of the selState, and add em'.
+                var textnode = range.endContainer, //rangy attribute endContainer
+                endOffset = range.endOffset,
+                testRange;
+                if (endOffset == 0) return range;
+                //else
+                
+                //NOTE: this assumes that the function and the range share the same document - change if we ever need to call between iframes.
+                //create a tester object to find the word boundary
+                var hlpr = {
+                    range: rangy.createRange() //rangy function createRange
+                }
+                hlpr.range.setStart(textnode, endOffset);
+                hlpr.range.setEnd(textnode, textnode.length);
+                hlpr.str0 = (hlpr.range.toString());
+                //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
+                hlpr.regx1 = /^\S+(?=(\s|$))/;
+                hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
+                if (hlpr.result1 === null) return range;
+                //else
+
+                hlpr.str1 = hlpr.result1[0]; //result[0] is string representation of regex object - see exec() for info
+                hlpr.extraWordChars = hlpr.str1.length;
+                _rangeOffSet(range, {relOffset: (hlpr.extraWordChars), start:false});
+                return range;
+            }
+        },
+        _data = {
+            stack: _selStateStack
+        }
         
         //private functions:
         function _WSO(){
             return rangy.getSelection();  
+        }
+        function _makeSelState(settings){
+            var scope = this,
+            selStateStack = _selStateStack,
+            range, serialRange,
+            settings = settings || {},
+            defaults = {
+                styleName: 'rdr_hilite',
+                container: document,        // likely passed in by save()
+                serialRange: null,          // set below - overwritten by explicit range object
+                range: null                 // set below - overwrites serial range
+            },
+            overrides = {
+                idx: selStateStack.length,  // can't overide
+                timestamp: $.now(),         // don't really need this..
+                interactionID: null,        // for later use
+                hiliter: null,              // set below
+                revisionParent: null,       // set below
+                text: ""                    // set below
+            },
+            selState = $.extend({}, defaults, settings, overrides);
+
+            //set properties that depend on the others already being initiated
+
+            // if missing param or missing needed range data
+            if( !selState.range && !selState.serialRange ){
+                //try getting data from browser selection
+                range = _WSO().getRangeAt(0);
+                //serializing relative to the parent container. The false is omitChecksum=false.
+                serialRange = rangy.serializeRange(range, true, selState.container ); //see rangy function serializeRange
+            }
+            else if(selState.range){
+                range = selState.range;
+                serialRange = rangy.serializeRange(range, true, selState.container ); //see rangy function serializeRange
+            }
+            else if(selState.serialRange){
+                serialRange = selState.serialRange;
+                range = rangy.deserializeRange(serialRange, selState.container ); //see rangy function deserializeRange
+            }
+            selState.serialRange = serialRange;
+            selState.range = range;
+            selState.text = selState.range.toString(); //rangy range toString function
+            //check for empty selection..
+            if(selState.text.length == 0) return false;
+            //set hiliter - depends on idx, range, etc. being set already.
+            selState.hiliter = _hiliteInit(selState);
+            log('created new selState: ');
+            log(selState);
+            return selState;
         }
         function _fetchselState(idxOrSelState){
             //check if idxOrSelState is selState false (error signal from up the chain - return false),
@@ -2916,7 +3016,7 @@ function jQueryPlugins($R){
 
             if(typeof idxOrSelState === 'object') return idxOrSelState;
                             
-            var selStateStack = _selStates,
+            var selStateStack = _selStateStack,
             //set idx to declared idx, else last idx on the stack
             idx = (typeof idxOrSelState == "string" || typeof idxOrSelState == "number" ) ? idxOrSelState : selStateStack.length-1,
             selState = selStateStack[idx];
@@ -2929,7 +3029,6 @@ function jQueryPlugins($R){
         }
         function _hiliteInit(selState){
             //only init once
-            //log('init hiliter for selState ' + selState.idx) //selog temp logging
             if(selState.hiliter){
                 return selState.hiliter;
             }
@@ -2941,6 +3040,7 @@ function jQueryPlugins($R){
         
             //use a unique indexed version of style to uniquely identify spans
             var uniqueClass = styleClass + "_" + selState.idx;
+            methods.clear();
             hiliter = rangy.createCssClassApplier( uniqueClass, true ); //see rangy docs for details
             hiliter.class = uniqueClass;
             hiliter.get$start = function(){
@@ -2956,12 +3056,16 @@ function jQueryPlugins($R){
             return hiliter;
         }
         function _hiliteSwitch(selState, switchOnOffToggle) {
+            
+            // it looks like the rangy cssClassApplier is still buggy.  Keep this commented out for a while and see how things go.
+
             //args required
             //switchOnOffToggle must be a string 'on','off',or 'toggle'
             var range = selState.range,
             styleClass = selState.styleName,
             hiliter = selState.hiliter,
             isActive = hiliter.isActive();
+            methods.clear();
 
             if( !isActive && (switchOnOffToggle === "on" || switchOnOffToggle === "toggle" )){
                 //turn on
@@ -2982,7 +3086,7 @@ function jQueryPlugins($R){
                         $(document).unbind('keyup', arguments.callee);
                     }
                 });
-
+                /*
                 $(document).dblclick(function(event) {
                     var mouse_target = $(event.target);                                
 
@@ -2990,10 +3094,10 @@ function jQueryPlugins($R){
                         _hiliteSwitch(selState, 'off');
                     }
                 });
-            
+                */
             }else if( isActive && (switchOnOffToggle === "off" || switchOnOffToggle === "toggle" )){
                 //turn off
-                //log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
+                log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
                 //remove the classes again so that the hiliter can normalize the selection (paste it back together)
                 hiliter.get$start().removeClass(styleClass+'_start');
                 hiliter.get$end().removeClass(styleClass+'_end');
@@ -3059,54 +3163,86 @@ function jQueryPlugins($R){
             return range;
         }
 
-        function _tempTesting(){
+        function _tempTesting(){ 
                 /*
             * testing temp function
             */
             //make $tempButtons output
             //hide for now
-            var $tempButtons = $('<div class="rdr_blacklist"/>').hide(),
-            buttonInfo= {
+            var $tempButtons = $('<div id="rdr_selectionographer_tester" class="rdr_blacklist"/>'),
+            buttonInfo= [
                 //note, remember to use $R instead of $ if calling in firebug
-                a:{
+                {
                     name:'save',
                     func:'save',
                     attr:undefined
                 },
-                b:{
+                {
+                    name:'clear',
+                    func:'clear',
+                    attr:undefined
+                },
+                {
                     name:'activate',
                     func:'activate',
                     attr:undefined
                 },
-                c:{
-                    name:"modify",
+                {
+                    name:'modify',
                     func:'modify',
                     attr:undefined
+                },
+                {
+                    name:'hilite',
+                    func:'hilite',
+                    attr:undefined
+                },
+                {
+                    name:'find',
+                    func:'find',
+                    attr:undefined
                 }
-            }
+            ]
             $.each(buttonInfo,function(idx, val){
-                var $button = $('<div class="rdr_tempButton"><a href=\"javascript:void(0);\">'+this.name+'</a><input /></div>');
+                var $button = $('<div class="rdr_tempButton rdr_tempButton_'+this.name+'"><a href=\"javascript:void(0);\">'+this.name+'</a><input class="input1" /></div>');
+                
                 $button.find('a').click(function(){
-                    var input = $(this).parent().find('input').val();
+                    var result,
+                    input = $(this).parent().find('input').eq(0).val();
+                    contextStr = $context.find('input').val();
                     val.attr= (input == "" ) ? undefined : input;
-                    var selState = $(window).selog(val.func, val.attr);
+                    if(val.name == "find"){
+                        result = $(contextStr).selog(val.func, val.attr);
+                    }
+                    if(val.name == "hilite"){
+                        input2 = $(this).parent().find('input').eq(1).val();
+                        var selState = $(contextStr).selog(val.func, val.attr, input2);
+                    }
+                    else{
+                        var selState = $(contextStr).selog(val.func, val.attr);
+                    }
                 });
                 $tempButtons.append($button);
             });
-            $tempButtons.find('input').eq(0).remove();
+            
             var $output = $('<div id="rdr_tempOutput" />').css({'font-size':'12px'}); //filled out for now with save function
-            $tempButtons.append($output);
+            var $context = $('<div><span style="margin-left:13px;"> in: </span><input class="input2"  /></div>');
+            $tempButtons.append($context, $output);
 
-            $tempButtons.css({'position':'fixed', 'margin-left':'5px'});
+            $tempButtons.css({'position':'fixed', 'margin-left':'5px', 'top': '75px'});
             $tempButtons.children('.rdr_tempButton').css({'margin':'4px 0'});
-            $tempButtons.find('input').css({'left':'55px', 'width':'30px','position':'absolute'});
-            $('body').append($tempButtons);    
+            $tempButtons.find('input').css({'left':'55px', 'width':'60px','position':'absolute'});
+
+            $tempButtons.find('input:lt(2)').remove();
+            $tempButtons.find('.rdr_tempButton_hilite')//cont
+            .append('<input class="" style="left: 100px; position: relative; width:50px;" value="toggle"/>'); /*default toggle*/
+
+            $('body').append($tempButtons);
         }
         //end private functions
 
         //init selog on window.
-        //log('test about to init'); //selog temp logging
-        $(window).selog();
+        $(document).selog();
 
     })($R);
 

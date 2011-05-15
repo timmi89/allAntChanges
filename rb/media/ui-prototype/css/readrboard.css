@@ -309,3 +309,6 @@ div.rdr button				{font-size:14px; }
     margin-right:-1px;
     padding-right:1px;
 }
+#rdr_selectionographer_tester{
+	display:none;
+}
