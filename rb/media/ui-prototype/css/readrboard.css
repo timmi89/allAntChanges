@@ -38,7 +38,7 @@ div.rdr.rdr_actionbar {
 	position:absolute;
 	z-index:11000;
 	background:#fff;
-	height:30px;
+	height:22px;
 }
 
 div.rdr.rdr_actionbar ul {
@@ -55,15 +55,15 @@ div.rdr.rdr_actionbar li {
 div.rdr.rdr_actionbar li a {
 	background:url("/static/images/actionbar_icons.png") no-repeat 0 0 transparent;
 	display:block;
-	height:30px;
-	width:30px;
+	height:22px;
+	width:22px;
 	text-indent:-9999px;
 	float:left;
 }
 
-div.rdr.rdr_actionbar li.rdr_icon_about a		 	{ background-position: 0 0; } /*overwritten below to compress width*/
-div.rdr.rdr_actionbar li.rdr_icon_reaction a		{ background-position:-30px 0; }
-div.rdr.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-60px 0; }
+/*div.rdr.rdr_actionbar li.rdr_icon_about a		 	{ background-position: 0 0; }*/ /*overwritten below to compress width*/
+div.rdr.rdr_actionbar li.rdr_icon_reaction a		{ background-position:-4px -4px; }
+/*div.rdr.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-60px 0; }*/
 
 div.rdr.rdr_actionbar a:hover                       { background-color:#e4f0f7;}
 div.rdr.rdr_actionbar li.rdr_icon_about a:hover 	{ background-color:transparent; }

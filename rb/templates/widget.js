@@ -210,16 +210,16 @@ function readrBoard($R){
 		actionbar: {
 			draw: function(settings) {
 
-
 				var actionbar_id = "rdr_actionbar_"+RDR.util.md5.hex_md5( settings.content );
 
 				var $actionbars = $('div.rdr.rdr_actionbar');
                 
 				if ( $('#'+actionbar_id).length > 0 ) return $('#'+actionbar_id);
 				// else 
-			 	
-                var left = settings.left ? (settings.left-34) : 100;
-                var top = settings.top ? (settings.top-50) : 100;
+
+                var left = (settings.left) ? (settings.content_type == "image") ? settings.left-34 : settings.left+2 : 100;
+                var top_modifier = ( $.browser.msie ) ? (settings.content_type == "image") ? 0:-35:3;  // if IE, position higher so we're not behind IE's "Accelerator" arrow
+                var top = (settings.top) ? (settings.content_type == "image") ? (settings.top + top_modifier-42):(settings.top + top_modifier) : 100;
 
 				// TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
 				var coords = RDR.util.stayInWindow({left:left, top:top, width:200, height:30, ignoreWindowEdges:settings.ignoreWindowEdges});
@@ -237,11 +237,6 @@ function readrBoard($R){
 
                 var items = [
                         {
-                            "item":"about",
-                            "tipText":"What's This?",
-                            "onclick": RDR.actions.aboutReadrBoard
-                        },
-                        {
                             "item":"reaction",
                             "tipText":"React to this",
                             "onclick":function(){
@@ -252,11 +247,6 @@ function readrBoard($R){
 									"coords": coords
                                 });
                             }
-                        },
-                        {
-                            "item":"bookmark",
-                            "tipText":"Bookmark This",
-                            "onclick":RDR.actions.bookmarkStart
                         }
                 ];
 
@@ -284,14 +274,6 @@ function readrBoard($R){
                         $(this).find('a').siblings('.rdr_tooltip').hide();
                     }
                 );
-
-                //for images, only show the about icon, hide the rest
-                if(settings.content_type == "image"){
-                    var $aboutIcon = $new_actionbar.find('li:first'),
-                    $otherIcons = $aboutIcon.siblings();
-                    $aboutIcon.find('.rdr_icon_divider').hide();
-                    $otherIcons.hide();
-                }
 
 				return $new_actionbar;
 			},
@@ -1475,7 +1457,7 @@ console.log(which);
                 var headers = ["What's your reaction?", "Say More"];
                 $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
-                    var $header = $('<div class="rdr_header" />').append('<div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
+                    var $header = $('<div class="rdr_header" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
                     $body = $('<div class="rdr_body"/>');
                     $(this).append($header, $body).css({
                         // 'width':rindow.settings.pnlWidth
