@@ -1059,7 +1059,7 @@ function readrBoard($R){
                 var helper_position = $('#rdr_helper_'+hash).offset();
                 $('#rdr_helper_'+hash).css('border','1px solid red');
 
-                var total = RDR.content_nodes[hash].info.comment_count + RDR.content_nodes[hash].info.tag_count;
+                var total = RDR.content_nodes[hash].info.tag_count;  // removing comment count for now: RDR.content_nodes[hash].info.comment_count
 
                 
                 // order the container's tags by tag_count
@@ -1100,12 +1100,12 @@ function readrBoard($R){
                 info.tags.sort(SortByTagCount);
                 RDR.content_nodes[ hash ].info = info;
 
-                var $icon = $('<div class="rdr rdr_indicator rdr_text" style="top:'+(helper_position.bottom-20)+'px;left:'+(helper_position.left-2)+'px;"><img src="/static/images/blank.png" /> '+ total +' <span>reactions including </span></div>');
+                var $icon = $('<div class="rdr rdr_indicator rdr_text" style="top:'+(helper_position.bottom-20)+'px;left:'+(helper_position.left-2)+'px;"><img src="/static/images/blank.png" /> <span class="rdr_count">'+ total +'</span> <span class="rdr_details">reactions including </span></div>');
                 var some_reactions = [];
                 for ( var i=0, j=3; i < j; i++ ) {
                     if ( RDR.content_nodes[hash].info.tags[i] ) some_reactions.push( '<strong>'+RDR.content_nodes[hash].info.tags[i].name+' <em>('+RDR.content_nodes[hash].info.tags[i].count+')</em></strong>' )
                 }
-                $icon.find('span').append( some_reactions.join(', ') );
+                $icon.find('span.rdr_details').append( some_reactions.join(', ') );
                 $icon.data('which', hash);
 
                 $icon.click( function() {
@@ -1164,7 +1164,7 @@ function readrBoard($R){
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
                     $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />');
                 
-                var headers = ["Reactions <span>("+(info.tag_count+info.comment_count)+")</span>", "", ""];
+                var headers = ["Reactions <span>("+(info.tag_count)+")</span>", "", ""];  // removing comment count for now +info.comment_count
                 $sentimentBox.append($reactionPanel, $contentPanel, $whyPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
                     var $header = $('<div class="rdr_header" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
@@ -1259,8 +1259,8 @@ function readrBoard($R){
                 rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tag.name+' <span>('+tag.count+')</span>');
                 if ( rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp').destroy();
                 rindow.find('div.rdr_contentPanel div.rdr_body').empty();
-console.log('---content---');
-console.dir(content);
+console.log('---which---');
+console.log(which);
                 // ok, get the content associated with this tag!
                 for ( var i in content ) {
                     var this_content = RDR.content_nodes[which].info.content[ content[i].idx ];
@@ -1718,13 +1718,13 @@ console.dir(content);
                     }
                 });
             },
-            // I KNOW!  THIS IS TERRIBLE CODE DUPLICATION.  I DIDN'T WANT TO ABSTRACT THIS FUNCTION AND THE LAST ONE INTO ONE HANDLER. 
+            // I KNOW!  THIS IS TERRIBLE CODE DUPLICATION.  I DIDN'T WANT TO ABSTRACT THIS FUNCTION AND THE LAST ONE INTO ONE HANDLER. TOO IN-A-HURRY.
             rateSendLite: function(args) {
 
                 RDR.session.getUser( args, function( params ) {
                     // get the text that was highlighted
                     var content = $.trim( params.content );
-                    var container = $.trim( params.hash );
+                    var container = $.trim( params.which );
 
                     var rindow = params.rindow,
                         element = params.element,
@@ -1764,11 +1764,7 @@ console.dir(content);
                                     });
                                 } else {
                                     if ( element.length == 1 ) {
-                                        var count = element.text(); 
-                                        count = parseInt( count.substr(1, count.length-1) ) + 1;
-
-                                        element.text( '('+count+')' );
-                                        element.addClass('rdr_tagged');
+                                        RDR.actions.updateData( { type:"tag", element:element, hash:container, rindow:rindow, content:content, tag:tag });
                                     }
                                 }
                             },
@@ -1781,6 +1777,48 @@ console.dir(content);
                         // show user something to indicate they can't revote?  or to allow them to unvote?
                     }
                 });
+            },
+            updateData: function(args) {
+                if ( args.type == "tag" ) {
+                    var rindow = args.rindow,
+                        hash = args.hash;
+
+                    if ( args.element ) {
+                        var count = args.element.text(); 
+                        count = parseInt( count.substr(1, count.length-1) ) + 1;
+
+                        args.element.text( '('+count+')' );
+                        args.element.addClass('rdr_tagged');
+                    }
+
+                    var total_count = rindow.find('div.rdr_contentPanel h1 span').text();
+                    total_count = parseInt( total_count.substr(1, total_count.length-1) ) + 1;
+                    rindow.find('div.rdr_contentPanel h1 span').text('('+total_count+')');
+
+                    var total_reactions = rindow.find('div.rdr_reactionPanel h1 span').text();
+                    total_reactions = parseInt( total_reactions.substr(1, total_reactions.length-1) ) + 1;
+
+                    var percentage = Math.round( (count / total_reactions) * 100);
+                    rindow.find('div.rdr_reactionPanel h1 span').text('('+total_reactions+')');
+                    // this should update all of the counts
+                    rindow.find('div.rdr_reactionPanel li.rdr_tag_'+args.tag.content+' div.rdr_leftBox').text(percentage+'%');
+
+                    $('div.rdr_indicator').each( function() {
+                        $this = $(this);
+                        if ( $this.data('which') == hash ) $this.find('span.rdr_count').text(total_reactions);
+                    });
+
+                    // update the data objects too
+                    for ( var i in RDR.content_nodes[hash].info.content ) {
+                        if ( RDR.content_nodes[hash].info.content[i].body == content ) {
+                            for ( var j in RDR.content_nodes[hash].info.content[i].tags ) {
+                                if ( RDR.content_nodes[hash].info.content[i].tags[j].id == args.tag.id ) RDR.content_nodes[hash].info.content[i].tags[j].count++;
+                            }
+                        }
+                    }
+
+                    // need to do tags now
+                }
             },
             unrateSend: function(args) {
                 var rindow = args.rindow, 
