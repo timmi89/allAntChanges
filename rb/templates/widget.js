@@ -1378,39 +1378,35 @@ console.log(which);
 			sentimentBox: function(settings) {
                 
                 var $hostNode = $('.rdr-'+settings.container);
-                //console.log(typeof selection.content);
-
-                //Trigger the smart text selection and highlight
-                var newSel = $hostNode.selog('helpers', 'smartHilite');
                 
                 // draw the window over the actionbar
                 var actionbarOffsets = settings.coords;
 
 				$('.rdr_rewritable').removeClass('rdr_rewritable');
 
-				if ( settings.content_type == "text" ) {
+                if( settings.content_type === "text" ){
+                    //Trigger the smart text selection and highlight
+                    var newSel = $hostNode.selog('helpers', 'smartHilite');
+
 					actionbarOffsets.left = actionbarOffsets.left + 40;
 					actionbarOffsets.top = actionbarOffsets.top + 35;
-				}
-				
-            
-                //if sel exists, reset the offset coords
-                if(newSel){
-                    //todo - combine with copy of this
-                    var range = newSel.range,
-                    styleClass = newSel.styleName,
-                    hiliter = newSel.hiliter,
-                    $hiliteEnd = hiliter.get$end();
+                
+                    //if sel exists, reset the offset coords
+                    if(newSel){
+                        //todo - combine with copy of this
+                        var hiliter = newSel.hiliter,
+                        $hiliteEnd = hiliter.get$end();
 
-    				//testing adjusting the position with overrides from the hilite span 
-                    if( $hiliteEnd ){
-                        var $helper = $('<span />');
-                        $helper.insertAfter( $hiliteEnd );
-                        var strRight = $helper.offset().right;
-                        var strBottom = $helper.offset().bottom;
-                        $helper.remove();
-                        actionbarOffsets.left = strRight + 5; //with a little padding
-                        actionbarOffsets.top = strBottom;
+        				//testing adjusting the position with overrides from the hilite span 
+                        if( $hiliteEnd ){
+                            var $helper = $('<span />');
+                            $helper.insertAfter( $hiliteEnd );
+                            var strRight = $helper.offset().right;
+                            var strBottom = $helper.offset().bottom;
+                            $helper.remove();
+                            actionbarOffsets.left = strRight + 5; //with a little padding
+                            actionbarOffsets.top = strBottom;
+                        }
                     }
                 }
             
@@ -2094,7 +2090,9 @@ console.dir(args);
                     // TODO: need separate image function, which should then prevent event bubbling into this
 						// ^ really?  why??
                     selection.sel = RDR.actions.selectedText();
-                    if ( selection.sel.text && selection.sel.text.length > 3 && selection.sel.text.indexOf(" ") != -1 ) {
+
+                    //ensure something is selected and it's not just white space
+                    if ( selection.sel.text && !(/^\s*$/g.test(selection.sel.text)) ) {
 
                         // next line's redundant, but this way we just use .content in later functions, based on itemType
                         selection.content = selection.sel.text;
@@ -2137,7 +2135,6 @@ console.dir(args);
 
 							// see if it contains the whole selection text
                             if ( selection.blockParentTextClean.indexOf( selection.selectionTextClean ) != -1 ) {
-                                // this can be commented on if it's long enough and has at least one space (two words or more)
                                 RDR.actionbar.draw({
                                     left:parseInt(e.pageX),
                                     top:parseInt(e.pageY)+7,
@@ -2145,19 +2142,8 @@ console.dir(args);
 									content:selection.content,
 									container:selection.container
                                 });
-
-                            // TODO: also should detect if selection has an image, embed, object, audio, or video tag in it
-                            } else {
-                                RDR.actionbar.draw({
-                                    left:parseInt(e.pageX),
-                                    top:parseInt(e.pageY),
-									content_type:"text",
-									content:selection.content,
-									container:selection.container,
-                                    cant_comment:true
-                                });
                             } 
-
+                            //if not text, just ignore it.
                         }
                     }
                 }
