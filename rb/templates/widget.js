@@ -8,8 +8,6 @@ client$ = {}; //init var: clients copy of jQuery
 
 //init rangy if it hasn't been already, we probably dont need this...
 rangy.init();
-var a;
-var selog; //temp glob
 var demoRindow;
 
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
@@ -1229,7 +1227,7 @@ function readrBoard($R){
                 //console.log(typeof selection.content);
 
                 //Trigger the smart text selection and highlight
-                var newSel = $(document).selog('helpers', 'smartHilite');
+                var newSel = $hostNode.selog('helpers', 'smartHilite');
                 
                 // draw the window over the actionbar
                 var actionbarOffsets = settings.coords;
@@ -1241,8 +1239,7 @@ function readrBoard($R){
 					actionbarOffsets.top = actionbarOffsets.top + 35;
 				}
 				
-                // keep commented out until we fix rangy's css class applier.
-                /*
+            
                 //if sel exists, reset the offset coords
                 if(newSel){
                     //todo - combine with copy of this
@@ -1262,7 +1259,7 @@ function readrBoard($R){
                         actionbarOffsets.top = strBottom;
                     }
                 }
-                */
+            
                 var rindow = RDR.rindow.draw({
                     left:actionbarOffsets.left,
                     top:actionbarOffsets.top,
@@ -2406,7 +2403,7 @@ function jQueryPlugins($R){
                 // If selStateOrPartial is a full selState, or has a range, or a serialRange, it will clone it and save a new one.
                 // If it is omited or if both selStateOrPartial.range and selStateOrPartial.serialRange are ommited,
                 // it will use the current selection to build the selState.  If nothing is selected it returns false;
-
+                log(this);
                 var $this = this,
                 selStateStack = _selStateStack,
                 selStateOrPartial = selStateOrPartial || {},
@@ -2414,7 +2411,7 @@ function jQueryPlugins($R){
 
                 //only take the first container for now
                 //todo: solution for multiple $objects?
-                selStateOrPartial.container = $this[0] || document;
+                selStateOrPartial.container = selStateOrPartial.container || $this[0] || document;
                 selState = _makeSelState( selStateOrPartial );
 
                 //push selState into stack
@@ -2454,7 +2451,9 @@ function jQueryPlugins($R){
                     idxOrSelState = undefined; //will trigger default latest idx
                 }
                 var iniSelState = _fetchselState(idxOrSelState),
-                newSelState, newRange;
+                newSettings, newRange,
+                newSelState;
+
                 if(!iniSelState) return false;
 
                 //todo: it looks like the rangy method cloneRange breaks the ability to re-activate it later?
@@ -2462,7 +2461,11 @@ function jQueryPlugins($R){
                 newRange = iniSelState.range.cloneRange();
                 //filter the ranges
                 newRange = _filter(newRange, filterList);
-                newSelState = methods.save({ range:newRange });
+                newSettings = {
+                    range:newRange,
+                    container:iniSelState.container
+                }
+                newSelState = methods.save( newSettings );
                 return newSelState
             },
             hilite: function(idxOrSelState, switchOnOffToggle){
@@ -2495,6 +2498,8 @@ function jQueryPlugins($R){
                 return selState
             },
             helpers: function(helperPack){
+                log('this in helpers');
+                log(this);
                 var func = _helperPacks[helperPack];
                 return func ? func.apply( this, Array.prototype.slice.call( arguments, 1 ) ) : false;
             },
@@ -2564,11 +2569,13 @@ function jQueryPlugins($R){
 
         //private objects
         var _settings = {}, //set on init
+        //for all helperPacks, 'this' is passed in with apply.
         _helperPacks = {
             smartHilite: function(){
-                return methods.hilite( methods.modify( methods.save() ) ); //oooh lispy.
+                return methods.hilite( methods.modify( methods.save.apply(this), [] ) ); //oooh lispy.
             },
             activateRange: function(rangeOrSerialRange){
+                //todo: not using this anyway, but not sure if this still works completely..
                 var settings = {};
                 if( typeof rangeOrSerialRange === "string" ){
                     //assume it's a serialRange
@@ -2719,11 +2726,11 @@ function jQueryPlugins($R){
                 //try getting data from browser selection
                 range = _WSO().getRangeAt(0);
                 //serializing relative to the parent container. The false is omitChecksum=false.
-                serialRange = rangy.serializeRange(range, false, selState.container ); //see rangy function serializeRange
+                serialRange = rangy.serializeRange(range, true, selState.container ); //see rangy function serializeRange
             }
             else if(selState.range){
                 range = selState.range;
-                serialRange = rangy.serializeRange(range, false, selState.container ); //see rangy function serializeRange
+                serialRange = rangy.serializeRange(range, true, selState.container ); //see rangy function serializeRange
             }
             else if(selState.serialRange){
                 serialRange = selState.serialRange;
@@ -2774,6 +2781,7 @@ function jQueryPlugins($R){
         
             //use a unique indexed version of style to uniquely identify spans
             var uniqueClass = styleClass + "_" + selState.idx;
+            methods.clear();
             hiliter = rangy.createCssClassApplier( uniqueClass, true ); //see rangy docs for details
             hiliter.class = uniqueClass;
             hiliter.get$start = function(){
@@ -2791,14 +2799,14 @@ function jQueryPlugins($R){
         function _hiliteSwitch(selState, switchOnOffToggle) {
             
             // it looks like the rangy cssClassApplier is still buggy.  Keep this commented out for a while and see how things go.
-            return selState
-            
+
             //args required
             //switchOnOffToggle must be a string 'on','off',or 'toggle'
             var range = selState.range,
             styleClass = selState.styleName,
             hiliter = selState.hiliter,
             isActive = hiliter.isActive();
+            methods.clear();
 
             if( !isActive && (switchOnOffToggle === "on" || switchOnOffToggle === "toggle" )){
                 //turn on
