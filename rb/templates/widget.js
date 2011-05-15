@@ -2493,8 +2493,7 @@ function jQueryPlugins($R){
                 */
 
                 //switch the hilite state
-                selState = _hiliteSwitch(selState, switchOnOffToggle);
-                methods.save( selState ); 
+                _hiliteSwitch(selState, switchOnOffToggle);
                 return selState
             },
             helpers: function(helperPack){
@@ -2572,7 +2571,7 @@ function jQueryPlugins($R){
         //for all helperPacks, 'this' is passed in with apply.
         _helperPacks = {
             smartHilite: function(){
-                return methods.hilite( methods.modify( methods.save.apply(this), [] ) ); //oooh lispy.
+                return methods.hilite( methods.modify( methods.save.apply(this) ) ); //oooh lispy.
             },
             activateRange: function(rangeOrSerialRange){
                 //todo: not using this anyway, but not sure if this still works completely..
@@ -2827,7 +2826,7 @@ function jQueryPlugins($R){
                         $(document).unbind('keyup', arguments.callee);
                     }
                 });
-
+                /*
                 $(document).dblclick(function(event) {
                     var mouse_target = $(event.target);                                
 
@@ -2835,7 +2834,7 @@ function jQueryPlugins($R){
                         _hiliteSwitch(selState, 'off');
                     }
                 });
-            
+                */
             }else if( isActive && (switchOnOffToggle === "off" || switchOnOffToggle === "toggle" )){
                 //turn off
                 log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
@@ -2934,13 +2933,18 @@ function jQueryPlugins($R){
                     attr:undefined
                 },
                 {
+                    name:'hilite',
+                    func:'hilite',
+                    attr:undefined
+                },
+                {
                     name:'find',
                     func:'find',
                     attr:undefined
                 }
             ]
             $.each(buttonInfo,function(idx, val){
-                var $button = $('<div class="rdr_tempButton"><a href=\"javascript:void(0);\">'+this.name+'</a><input class="input1" /></div>');
+                var $button = $('<div class="rdr_tempButton rdr_tempButton_'+this.name+'"><a href=\"javascript:void(0);\">'+this.name+'</a><input class="input1" /></div>');
                 
                 $button.find('a').click(function(){
                     var result,
@@ -2951,20 +2955,30 @@ function jQueryPlugins($R){
                         result = $(contextStr).selog(val.func, val.attr);
                         log(result);
                     }
+                    if(val.name == "hilite"){
+                        input2 = $(this).parent().find('input').eq(1).val();
+                        log(input2)
+                        var selState = $(contextStr).selog(val.func, val.attr, input2);
+                    }
                     else{
                         var selState = $(contextStr).selog(val.func, val.attr);
                     }
                 });
                 $tempButtons.append($button);
             });
-            $tempButtons.find('input:lt(2)').remove();
+            
             var $output = $('<div id="rdr_tempOutput" />').css({'font-size':'12px'}); //filled out for now with save function
-            var $context = $('<div><span style="margin-left:13px;"> in: </span><input class="input2" value="#testpara" /></div>'); /*default testpara*/
+            var $context = $('<div><span style="margin-left:13px;"> in: </span><input class="input2"  /></div>');
             $tempButtons.append($context, $output);
 
-            $tempButtons.css({'position':'fixed', 'margin-left':'5px'});
+            $tempButtons.css({'position':'fixed', 'margin-left':'5px', 'top': '75px'});
             $tempButtons.children('.rdr_tempButton').css({'margin':'4px 0'});
             $tempButtons.find('input').css({'left':'55px', 'width':'60px','position':'absolute'});
+
+            $tempButtons.find('input:lt(2)').remove();
+            $tempButtons.find('.rdr_tempButton_hilite')//cont
+            .append('<input class="" style="left: 100px; position: relative; width:50px;" value="toggle"/>'); /*default toggle*/
+
             $('body').append($tempButtons);
         }
         //end private functions
