@@ -182,6 +182,7 @@ function readrBoard($R){
                         if ( RDR.lastHeight != 0 ) {
                             var diff = e.pageY - RDR.lastHeight;
                             rindow.find('div.rdr_sntPnl div.rdr_body').each( function() {
+                                // $(this).css('min-height','none');
                                 $(this).height( height + diff );
                             } );
                         }
