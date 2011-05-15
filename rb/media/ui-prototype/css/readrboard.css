@@ -285,5 +285,10 @@ div.rdr button				{font-size:14px; }
     -moz-user-select:none; 
     user-select:none;
 }
+
 .rdr_hilite_start{}
 .rdr_hilite_end{}
+
+#rdr_selectionographer_tester{
+	display:none;
+}

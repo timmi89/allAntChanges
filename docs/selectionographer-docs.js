@@ -35,10 +35,12 @@
 // save
 // saves a selection state.
 	$(window).selog( 'save' );
-	$(window).selog( 'save', rangeOrSerialRange );
-	// rangeOrSerialRange is optional: defaults to active selection range.
-	// type should be a rangy range, or a rangy range serialization string,
-	// which can be accessed through the selState object - selState.range and selState.serialRange
+	$(window).selog( 'save', selStateOrPartial );
+	// selStateOrPartial is an optional object.
+    // If selStateOrPartial is a full selState, or has a range, or a serialRange, it will clone it and save a new one.
+	// type of selStateOrPartial.range should be a rangy range, and selStateOrPartial.serialRange should be a rangy range-serialization string.
+    // If it is selStateOrPartial or if both selStateOrPartial.range and selStateOrPartial.serialRange are ommited,
+    // it will use the current selection to build the selState.  In this case if nothing is selected it returns false;
 
 
 // activate
