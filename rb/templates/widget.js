@@ -218,8 +218,8 @@ function readrBoard($R){
 				// else 
 
                 var left = (settings.left) ? (settings.content_type == "image") ? settings.left-34 : settings.left+2 : 100;
-                var top_modifier = ( $.browser.msie ) ? (settings.content_type == "image") ? 0:-35:3;  // if IE, position higher so we're not behind IE's "Accelerator" arrow
-                var top = (settings.top) ? (settings.content_type == "image") ? (settings.top + top_modifier-42):(settings.top + top_modifier) : 100;
+                var top_modifier = (settings.content_type == "image") ? -43:-35;  // if IE, position higher so we're not behind IE's "Accelerator" arrow
+                var top = (settings.top) ? (settings.content_type == "image") ? (settings.top + top_modifier):(settings.top + top_modifier) : 100;
 
 				// TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
 				var coords = RDR.util.stayInWindow({left:left, top:top, width:200, height:30, ignoreWindowEdges:settings.ignoreWindowEdges});
