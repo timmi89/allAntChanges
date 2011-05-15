@@ -1209,6 +1209,8 @@ function readrBoard($R){
                         }).append('<div class="rdr_rightBox"></div><div class="rdr_leftBox">'+percentage+'%</div><a href="javascript:void(0);">'+name+'</a>');
                         if ( comment_count > 0 ) $li.addClass('rdr_has_comment');
                         $tagBox.children('ul.rdr_tags').append($li);
+console.log('--------------------------li data');
+                        console.dir( $li.data() );
                     }
                 };
 
@@ -1219,7 +1221,7 @@ function readrBoard($R){
                     $(this).css('width','auto');
                     // rindow.append($sentimentBox);
 
-                    rindow.find('div.rdr_contentSpace').html($sentimentBox);
+                    rindow.find('div.rdr_contentSpace').html( $sentimentBox );
                     // RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:rindow.settings});
                     RDR.rindow.checkHeight( rindow, 0 );
 
@@ -1243,6 +1245,7 @@ function readrBoard($R){
                 });
             },
             viewReactionContent: function(tag, which, rindow){
+                // zero out the content in the whyPanel, since they just selected a new tag and the comments would not reflect the now-selected tag.
                 rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
                 rindow.find('div.rdr_whyPanel div.rdr_body').html('<div class="rdr_commentSet">Select something in the column to the left to leave a comment on it.</div>');
 
@@ -1295,10 +1298,13 @@ console.log(which);
                     if ( this_content.tags.length > 1 ) {
                         $content.find('div.rdr_otherTags').append( '<em>Other Reactions</em>' );
                         for ( var j in this_content.tags ) {
-                            if ( this_content.tags[j].id != tag.id ) {
+                            if ( this_content.tags[j] && this_content.tags[j].id != tag.id ) {
+                                console.log('---this_content---');
+                                console.dir(this_content);
                                 var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+this_content.tags[j].count+')</span> '+this_content.tags[j].tag+'</a>');
+                                var tag_obj = this_content.tags[j];
                                 $this_tag.find('span.rdr_tag_count').click( function() {
-                                    RDR.actions.rateSendLite({ element:$(this), tag:{content:this_content.tags[j].id,name:this_content.tags[j].name}, rindow:rindow, content:this_content.body, which:which });
+                                    RDR.actions.rateSendLite({ element:$(this), tag:{content:tag_obj.id,name:tag_obj.name}, rindow:rindow, content:this_content.body, which:which });
                                 });
                                 $content.find('div.rdr_otherTags').append( $this_tag );
                             }
@@ -1779,29 +1785,47 @@ console.log(which);
                 });
             },
             updateData: function(args) {
+console.clear();
                 if ( args.type == "tag" ) {
                     var rindow = args.rindow,
-                        hash = args.hash;
+                        hash = args.hash,
+                        content = args.content
+                        tag = args.tag;
 
                     if ( args.element ) {
-                        var count = args.element.text(); 
-                        count = parseInt( count.substr(1, count.length-1) ) + 1;
+                        var element_text = args.element.parent().text(); 
+                        count = parseInt( element_text.substr(1, element_text.indexOf(')')+1) ) + 1;
 
+                        var tag_text = element_text.substr(element_text.indexOf(')')+2);
                         args.element.text( '('+count+')' );
                         args.element.addClass('rdr_tagged');
+                    } else {
+                        
                     }
 
-                    var total_count = rindow.find('div.rdr_contentPanel h1 span').text();
-                    total_count = parseInt( total_count.substr(1, total_count.length-1) ) + 1;
-                    rindow.find('div.rdr_contentPanel h1 span').text('('+total_count+')');
+                    var headline_tag = rindow.find('div.rdr_contentPanel h1').text();
+                    headline_tag = headline_tag.substr(0, headline_tag.lastIndexOf('(')-1);
+
+console.log( "headline_tag", headline_tag , "tag_text",tag_text );
+                    // make sure that the tag just clicked matches the tag of the column we're in before incrementing the count in the column header
+                    if ( headline_tag == tag_text ) {
+                        var total_count = rindow.find('div.rdr_contentPanel h1 span').text();
+                        total_count = parseInt( total_count.substr(1, total_count.length-1) ) + 1;
+                        rindow.find('div.rdr_contentPanel h1 span').text('('+total_count+')');
+                    }
 
                     var total_reactions = rindow.find('div.rdr_reactionPanel h1 span').text();
                     total_reactions = parseInt( total_reactions.substr(1, total_reactions.length-1) ) + 1;
-
-                    var percentage = Math.round( (count / total_reactions) * 100);
                     rindow.find('div.rdr_reactionPanel h1 span').text('('+total_reactions+')');
-                    // this should update all of the counts
-                    rindow.find('div.rdr_reactionPanel li.rdr_tag_'+args.tag.content+' div.rdr_leftBox').text(percentage+'%');
+
+                    rindow.find('div.rdr_reactionPanel ul.rdr_tags li').each( function() {
+                        var $this = $(this);
+                        var this_count = ( $this.data('tag').id == tag.content ) ? count : $this.data('tag').count;
+                        var percentage = Math.round( ( this_count / total_reactions) * 100);
+                        // this should update all of the counts
+                        $this.find(' div.rdr_leftBox').text( percentage+'%' );
+                    });
+
 
                     $('div.rdr_indicator').each( function() {
                         $this = $(this);
@@ -1812,19 +1836,31 @@ console.log(which);
                     for ( var i in RDR.content_nodes[hash].info.content ) {
                         if ( RDR.content_nodes[hash].info.content[i].body == content ) {
                             for ( var j in RDR.content_nodes[hash].info.content[i].tags ) {
-                                if ( RDR.content_nodes[hash].info.content[i].tags[j].id == args.tag.id ) RDR.content_nodes[hash].info.content[i].tags[j].count++;
+                                if ( RDR.content_nodes[hash].info.content[i].tags[j].id == tag.content ) {
+                                    RDR.content_nodes[hash].info.content[i].tags[j].count++;
+                                
+                                    // need to increment the .tags count, too
+                                    for ( var k in RDR.content_nodes[hash].info.tags ) {
+                                        if ( RDR.content_nodes[hash].info.tags[k].id == tag.content ) {
+                                            if ( RDR.content_nodes[hash].info.tags[k].content[i] ) {
+                                                RDR.content_nodes[hash].info.tags[k].count++;
+                                                RDR.content_nodes[hash].info.tags[k].content[i].count++;
+                                                RDR.content_nodes[hash].info.tag_count++;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
 
-                    // need to do tags now
                 }
             },
             unrateSend: function(args) {
                 var rindow = args.rindow, 
                     tag = args.tag.data('tag'),
                     int_id = args.int_id;
-console.dir(args);
+
                 var sendData = {
                     "tag" : tag,
                     "int_id" : int_id,
