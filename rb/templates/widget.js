@@ -2409,39 +2409,47 @@ function jQueryPlugins($R){
     };
 
 
-  (function($){
-        /*
-        * jquery.log helpers
-        */
-        // Log Taken from the firebug site: http://getfirebug.com/firebug/firebugx.js
-        // make calls to console harmless if there is no console.
-        if (!window.console || !console.firebug) {
-            var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml",
-            "group", "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];
-
-            window.console = {};
-            for (var i = 0; i < names.length; ++i){
-                window.console[names[i]] = function() {};
+    (function($){
+        /**
+         * jQuery Log
+         * Fast & safe logging in Firebug console
+         * 
+         * @param mixed - as many parameters as needed
+         * @return void
+         * 
+         * @url http://plugins.jquery.com/project/jQueryLog
+         * @author Amal Samally [amal.samally(at)gmail.com]
+         * @version 1.0
+         * @example:
+         *      $.log(someObj, someVar);
+         *      $.log("%s is %d years old.", "Bob", 42);
+         *      $('div.someClass').log().hide();
+         */
+        $.log = function () {
+            if (window.console && window.console.log) {
+                console.log.apply(window.console, arguments)
             }
+        };
+        $.fn.log = function () {
+            var logArgs = arguments || this;
+            $.log(logArgs);
+            return this
         }
 
         //alias console.log to global log
         //in case client already has log defined (remove for production anyway)
         if (typeof log === "undefined"){
-            log = function(msg){
-                console.log(msg);
+            log = function(){
+                $.each(arguments, function(idx, val){    
+                    $.log(val);
+                });
             }   
         }
 
-        //use real jQuery instead of alias so we don't have to use $R
-        //in case client already has $.log defined (remove for production anyway)
-        if (typeof jQuery.fn.log === "undefined"){
-            //make $.log chain nicely
-            jQuery.fn.log = function (msg) {
-                console.log("%s: %o", msg, this);
-                return this;
-            };
-        }
+        //add in alias temporaily to client $ so we can use regular $ instead of $R if we want
+        jQuery.log = $.log;
+        jQuery.fn.log = $.fn.log;
+
     })($R);
 
     (function($){
