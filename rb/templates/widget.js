@@ -1579,17 +1579,36 @@ console.log(which);
                 collapse: function(which, rindow){
                     var which = (which) ? which:"whyPanel";
                     $thisPanel = $(rindow).find('.rdr_'+which);
-                    $thisPanel.animate({
-                        width: rindow.settings.pnlWidth +'px'
-                    }, rindow.settings.animTime, function() {
-                        //pass for now
-                    });
-                    //todo: this is a temp work around - i don't like these simotaneous animations
-                    $('.rdr_sentimentBox').animate({
-                        width: 2* (rindow.settings.pnlWidth) +'px'
-                    }, rindow.settings.animTime, function() {
-                        //pass for now
-                    });
+                    
+                    var num_columns = rindow.find('div.rdr_sntPnl').length;
+                    rindow.addClass('rdr_columns'+num_columns);
+                    switch (which) {
+                        case "contentPanel":
+                            var width = 200;
+                            break;
+
+                        case "whyPanel":
+                            var width = ((num_columns-1)*200);
+                            break;
+                    }
+                    var rindow_bg = (num_columns==3)?-450:0;
+
+                    if ( rindow.find('div.rdr_tempUserMsg').length > 0 ) {
+                        rindow.height( rindow.height()-103 );
+                        rindow.find('div.rdr_tempUserMsg').remove();
+                    }
+                    //temp hack
+                    if( !$thisPanel.data('expanded') ){
+                    }
+                    else{
+                        rindow.css('background-position',rindow_bg+'px');
+                        rindow.animate({
+                            width: width +'px'
+                        }, rindow.settings.animTime, function() {
+                        });
+                    }
+                    RDR.rindow.checkHeight( rindow, 0 );
+                    $thisPanel.data('expanded', false);
                 },
                 //todo, fix naming
                 subBoxes: [],
@@ -1867,7 +1886,7 @@ console.log( "headline_tag", headline_tag , "tag_text",tag_text );
             },
             unrateSend: function(args) {
                 var rindow = args.rindow, 
-                    tag = args.tag.data('tag'),
+                    tag = (args.tag.data) ? args.tag.data('tag'):args.tag,
                     int_id = args.int_id;
 
                 var sendData = {
@@ -1878,7 +1897,15 @@ console.log( "headline_tag", headline_tag , "tag_text",tag_text );
                     "group_id" : RDR.groupPermData.group_id,
                     "page_id" : RDR.page.id
                 };
-
+log('unratesend tag');
+console.dir(tag);
+log( 'li.rdr_tag_'+tag.content );
+log( rindow.length );
+console.dir( rindow );
+log( rindow.find('div.rdr_reactionPanel').length );
+log( rindow.find('div.rdr_reactionPanel ul.rdr_tags').length );
+log( rindow.find('div.rdr_reactionPanel ul.rdr_tags li').length );
+log( rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_tag_'+tag.content).length );
                 // send the data!
                 $.ajax({
                     url: "/api/tag/delete/",
@@ -1887,7 +1914,8 @@ console.log( "headline_tag", headline_tag , "tag_text",tag_text );
                     dataType: "jsonp",
                     data: { json: JSON.stringify(sendData) },
                     success: function(response) {
-                        //console.dir(response);
+                        RDR.actions.panel.collapse("whyPanel", rindow);
+                        rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_tag_'+tag.content).removeClass('rdr_selected').removeClass('rdr_tagged');
                     },
                     //for now, ignore error and carry on with mockup
                     error: function(response) {
@@ -1936,7 +1964,10 @@ console.log( "headline_tag", headline_tag , "tag_text",tag_text );
                 */
                 rindow.find('div.rdr_whyPanel div.rdr_body').empty();
                 if ( rindow.find('div.rdr_shareBox.rdr_sntPnl_padder').length == 0 || rindow.find('div.rdr_commentBox.rdr_sntPnl_padder').length == 0 ) {
-                    rindow.find('div.rdr_whyPanel .rdr_body').html('<div class="rdr_tagFeedback">Your reaction to this: <strong>'+tag.name+'</strong></div><div class="rdr_shareBox rdr_sntPnl_padder"></div><div class="rdr_commentBox rdr_sntPnl_padder"></div>');
+                    rindow.find('div.rdr_whyPanel .rdr_body').html('<div class="rdr_tagFeedback">Your reaction to this: <strong>'+tag.name+'</strong>. </div><div class="rdr_shareBox rdr_sntPnl_padder"></div><div class="rdr_commentBox rdr_sntPnl_padder"></div>');
+                    var $undoLink = $('<a style="text-decoration:underline;" href="javascript:void(0);">Undo?</a>');
+                    $undoLink.bind('click.rdr', function() { RDR.actions.unrateSend(args); });
+                    rindow.find('div.rdr_tagFeedback').append( $undoLink );
                 }
                 var $shareDialogueBox =  rindow.find('div.rdr_shareBox.rdr_sntPnl_padder');
                 var $commentBox = rindow.find('div.rdr_commentBox.rdr_sntPnl_padder');
