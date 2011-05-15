@@ -1720,6 +1720,7 @@ console.log(which);
                                         tag_li.find('div.rdr_leftBox').unbind();
                                         tag_li.find('div.rdr_leftBox').click( function(e) {
                                             e.preventDefault();
+                                            args.int_id = response.data; // add the interaction_id info in, we need it for unrateSend
                                             RDR.actions.unrateSend(args);
                                             return false; // prevent the tag call applied to the parent <li> from firing
                                         });
@@ -1897,15 +1898,7 @@ console.log( "headline_tag", headline_tag , "tag_text",tag_text );
                     "group_id" : RDR.groupPermData.group_id,
                     "page_id" : RDR.page.id
                 };
-log('unratesend tag');
-console.dir(tag);
-log( 'li.rdr_tag_'+tag.content );
-log( rindow.length );
-console.dir( rindow );
-log( rindow.find('div.rdr_reactionPanel').length );
-log( rindow.find('div.rdr_reactionPanel ul.rdr_tags').length );
-log( rindow.find('div.rdr_reactionPanel ul.rdr_tags li').length );
-log( rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_tag_'+tag.content).length );
+
                 // send the data!
                 $.ajax({
                     url: "/api/tag/delete/",
