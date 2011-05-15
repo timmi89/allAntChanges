@@ -3103,15 +3103,15 @@ function jQueryPlugins($R){
             var uniqueClass = styleClass + "_" + selState.idx;
             methods.clear();
             hiliter = rangy.createCssClassApplier( uniqueClass, true ); //see rangy docs for details
-            hiliter.class = uniqueClass;
-            hiliter.get$start = function(){
-                return $(range.startContainer).closest('.'+hiliter.class);
+            hiliter['class'] = uniqueClass;
+            hiliter['get$start'] = function(){
+                return $(range.startContainer).closest('.'+hiliter['class']);
             };
-            hiliter.get$end = function(){
-                return $(range.endContainer).closest('.'+hiliter.class); 
+            hiliter['get$end'] = function(){
+                return $(range.endContainer).closest('.'+hiliter['class']); 
             };
-            hiliter.isActive = function(){
-                return hiliter.isAppliedToRange(range);
+            hiliter['isActive'] = function(){
+                return hiliter['isAppliedToRange'](range);
             };
             
             return hiliter;
@@ -3125,18 +3125,19 @@ function jQueryPlugins($R){
             var range = selState.range,
             styleClass = selState.styleName,
             hiliter = selState.hiliter,
-            isActive = hiliter.isActive();
+            isActive = hiliter['isActive']();
             methods.clear();
 
             if( !isActive && (switchOnOffToggle === "on" || switchOnOffToggle === "toggle" )){
                 //turn on
                 hiliter.applyToRange(range);
                 //apply the visual styles with the generic classes
-                $('.'+hiliter.class).addClass(styleClass);
+                $('.'+hiliter['class']).addClass(styleClass);
                 //apply css classes to start and end so we can style those specially
-                hiliter.get$start().addClass(styleClass+'_start');
-                hiliter.get$end().addClass(styleClass+'_end');
-
+                hiliter['get$start']().addClass(styleClass+'_start');
+                hiliter['get$end']().addClass(styleClass+'_end');
+                log('.util')
+                log(hiliter.util)
                 //bind an escape keypress to clear it.
                 //todo: for a real public API, this should be an option, or passed in function or something
                 $(document).bind('keyup.rdr', function(event) {
@@ -3161,9 +3162,9 @@ function jQueryPlugins($R){
                 //turn off
                 log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
                 //remove the classes again so that the hiliter can normalize the selection (paste it back together)
-                hiliter.get$start().removeClass(styleClass+'_start');
-                hiliter.get$end().removeClass(styleClass+'_end');
-                $('.'+hiliter.class).removeClass(styleClass);
+                hiliter['get$start']().removeClass(styleClass+'_start');
+                hiliter['get$end']().removeClass(styleClass+'_end');
+                $('.'+hiliter['class']).removeClass(styleClass);
                 
                 //do one more check even though we shouldn't have to.
                 if(hiliter.isAppliedToRange(range)){
