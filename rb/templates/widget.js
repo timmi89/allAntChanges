@@ -1428,6 +1428,10 @@ console.log(which);
                             actionbarOffsets.top = strBottom;
                         }
                     }
+
+                    var type = "text";
+                } else {
+                    var type = "image";
                 }
             
                 var rindow = RDR.rindow.draw({
@@ -1446,7 +1450,7 @@ console.log(which);
 
                 // build the ratePanel
 
-                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new" />'),
+                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new rdr_'+type+'_reactions" />'),
                 $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl" />'),
                 $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
                 $blessedTagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),

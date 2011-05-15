@@ -184,7 +184,8 @@ div.rdr div.rdr_read ul.rdr_tags li.rdr_tagged div.rdr_leftBox   {background-ima
 div.rdr ul.rdr_tags li.rdr_selected                 {color:#008be4; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; border:1px solid #bababa; border-right:0; border-left:0; height:33px; overflow:hidden; }
 div.rdr ul.rdr_tags li:hover a,
 div.rdr ul.rdr_tags li.rdr_selected a               {color:#008be4; background:#e4f0f7; display:block; margin-top:-1px; border:1px solid #e4f0f7; border-right:0; border-left:0;}
-div.rdr ul.rdr_tags li:hover .rdr_rightBox          {background:url(/static/images/widget_icons.png) -142px 0px no-repeat;}
+div.rdr div.rdr_text_reactions  ul.rdr_tags li:hover .rdr_rightBox,
+div.rdr div.rdr_image_reactions  ul.rdr_tags li.rdr_has_comment:hover .rdr_rightBox          {background:url(/static/images/widget_icons.png) -142px 0px no-repeat;}
 div.rdr ul.rdr_tags li.rdr_selected .rdr_rightBox   {background:url(/static/images/widget_icons.png) -36px 0px no-repeat;}
 div.rdr ul.rdr_tags li.rdr_selected .rdr_leftBox:hover,
 div.rdr ul.rdr_tags li.rdr_tagged .rdr_leftBox:hover    {background-position:-72px 0px;}
