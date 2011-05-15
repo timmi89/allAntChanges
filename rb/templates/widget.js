@@ -169,6 +169,37 @@ function readrBoard($R){
                 RDR.actionbar.closeAll();  
 
                 $new_rindow.settings = settings;
+
+                $dragHandle = $('<div style="width:100%;height:8px;position:absolute;bottom:0;right:0;z-index:1000;cursor:s-resize;"/>');
+
+                $dragHandle.bind('mousedown.rdr', function() {
+
+                    var $this = $(this);
+                    var rindow = $this.parents('div.rdr.rdr_window');
+
+                    $(document).bind('mousemove.rdr', function(e) {
+                        var height = rindow.find('div.rdr_sntPnl div.rdr_body').first().height();
+                        if ( RDR.lastHeight != 0 ) {
+                            var diff = e.pageY - RDR.lastHeight;
+                            rindow.find('div.rdr_sntPnl div.rdr_body').each( function() {
+                                $(this).height( height + diff );
+                            } );
+                        }
+                        RDR.lastHeight = e.pageY
+                    });
+
+                    $('body').bind('mouseup.rdr', function() {
+                        $('body').unbind('mouseup.rdr');
+                        $(document).unbind('mousemove.rdr');
+                        RDR.lastHeight = 0;
+                    });
+                    RDR.rindow.checkHeight( rindow, 100 );
+                    return false;
+
+                });
+
+                $new_rindow.append( $dragHandle );
+
                 return $new_rindow;
 			},
 			closeAll: function() {
