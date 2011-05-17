@@ -867,7 +867,7 @@ function readrBoard($R){
             initEnvironment: function(){
                 
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
-                var $indicators = $('<div id="rdr_indicators" />').appendTo('body').hide();
+                var $indicators = $('<div id="rdr_indicator_details" />').appendTo('body').hide();
 
 
                 this.hashNodes();
@@ -1025,7 +1025,8 @@ function readrBoard($R){
                                 RDR.actions.indicators.make( i );
                             }
                         }
-                        $('#rdr_indicators').fadeIn('150');
+                        $('.rdr_indicator').fadeIn('300');
+                        $('#rdr_indicator_details').show(); //todo: change this in the css
 
                         // console.dir(RDR.content_nodes['cf3677ffb09818b086bc3d6dd53eb1f4']);
                         // console.dir(RDR.content_nodes['345c1dfd92c4f46eca2f29adab9ce8cf']);
@@ -1063,19 +1064,49 @@ function readrBoard($R){
                     console.log('-- what we know about hash '+hash+' --');
                     console.dir(RDR.content_nodes[hash]);
 
-                    var host = $('#rdr_helper_'+hash),
-                    $indicator = $('<div id="rdr_indicator_' +hash+ '" class="rdr_indicator rdr_text" '),
-                    container = $(RDR.group.anno_whitelist+'.rdr-'+hash), // prepend with the anno_whitelist selector 
+                    var $container = $(RDR.group.anno_whitelist+'.rdr-'+hash), // prepend with the anno_whitelist selector 
+                    $indicator = $('<div id="rdr_indicator_' +hash+ '" class="rdr_indicator" />'), //hidden in css, shown on load.
+                    $indicator_details = $('<div id="rdr_indicator_details_' +hash+ '" class="rdr_indicator_details rdr_text" />'),
                     total = RDR.content_nodes[hash].info.tag_count;  // removing comment count for now: 
 
                     $indicator.append(
-                        $('<img src="/static/images/blank.png" />'),
-                        $('<span class="rdr_count">'+ total +'</span>'),
-                        $('<span class="rdr_details">reactions including </span>')
-                    );
+                        $('<img src="/static/images/blank.png" class="no-rdr" />'),
+                        $('<span class="rdr_count">'+ total +'</span>')
+                    )//chain
+                    .click( function() {
+                        RDR.actions.viewContainerReactions( {icon:$(this), type:"text"} );
+                    })//chain
+                    .hover( 
+                        function() {
+                            //todo: what does this do?
+                            //$( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).addClass( 'rdr_highlightContainer' );
+                            log($indicator.offset().top);
+                            log($indicator.offset().left);
+                            log($('#rdr_indicator_details_' +hash));
+                            $('#rdr_indicator_details_' +hash).css({
+                                'position': 'absolute',
+                                'display': 'inline',
+                                'top': $indicator.offset().top,
+                                'left':$indicator.offset().left
+                            });
+                        },
+                        function() {
+                            //todo: what does this do?
+                            //$( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).removeClass( 'rdr_highlightContainer' );
+                            $('#rdr_indicator_details_' +hash).hide();
+                        }
+                    )//chain                    
+                    .data('which', hash)//chain
+                    .appendTo($container); 
+                    
+                    //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the body.
+                    //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
+                    var some_reactions = RDR.actions.indicators.sortReactions( hash );
+                    $indicator_details.append('<span class="rdr_details">reactions: </span>',  some_reactions, " ...");
+                    $('#rdr_indicator_details').append($indicator_details);
 
-                    //todo: think this was just for testing
-                    //$('#rdr_helper_'+hash).css('border','1px solid red');
+                },
+                sortReactions: function( hash ){
 
                     //todo: consider sorting on the backend
                     // order the container's tags by tag_count
@@ -1118,27 +1149,13 @@ function readrBoard($R){
                     info.tags.sort(SortByTagCount);
                     RDR.content_nodes[ hash ].info = info;
 
-                    var some_reactions = [];
+                    var some_reactions_arr = [];
                     for ( var i=0, j=3; i < j; i++ ) {
-                        if ( RDR.content_nodes[hash].info.tags[i] ) some_reactions.push( '<strong>'+RDR.content_nodes[hash].info.tags[i].name+' <em>('+RDR.content_nodes[hash].info.tags[i].count+')</em></strong>' )
+                        if ( RDR.content_nodes[hash].info.tags[i] ) some_reactions_arr.push( '<strong>'+RDR.content_nodes[hash].info.tags[i].name+' <em>('+RDR.content_nodes[hash].info.tags[i].count+')</em></strong>' )
                     }
-                    $indicator.find('span.rdr_details').append( some_reactions.join(', ') );
-                    $indicator.data('which', hash);
-
-                    $indicator.click( function() {
-                        RDR.actions.viewContainerReactions( {icon:$(this), type:"text"} );
-                    });
-
-                    $indicator.hover( 
-                        function() {
-                            $( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).addClass( 'rdr_highlightContainer' );
-                        },
-                        function() {
-                            $( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).removeClass( 'rdr_highlightContainer' );
-                        }
-                    );
-
-                    $('#rdr_indicators').append( $indicator );                
+                    
+                    var some_reactions = some_reactions_arr.join(", ");
+                    return some_reactions;
                 },
                 summaryToggle:{
                     
