@@ -52,7 +52,7 @@ function readrBoard($R){
 		*/
 		},
         // TODO kill this.
-		demo :{
+		demo: {
 		    inPage_one: function(img) {
                 var offsets = img.offset();
                 
@@ -90,6 +90,9 @@ function readrBoard($R){
 		    }
 		},
 		rindow: {
+            stack{
+              
+            },
             defaults:{
                 x:100,
                 y:100,
@@ -1074,6 +1077,9 @@ function readrBoard($R){
                 });
             },
             indicators: {
+                stack: {
+                        
+                },
                 make: function( hash ){
                     //todo: I think these event functions here could be more efficient if they weren't anonymous and were cosolodated.
                     
@@ -1113,7 +1119,7 @@ function readrBoard($R){
 
                             //ensure smooth hover behavior
                             setTimeout(function(){
-                                if( !$indicator_details.data('hoverLock') ){
+                                if( $(this).data('hoverLock') ){
                                     $indicator_details.hide();
                                 }
                             },500)
@@ -1130,16 +1136,17 @@ function readrBoard($R){
                         some_reactions, " ..."
                     )//chain
                     .click( function() {
+                        $indicator.data('sentimentPanelLock', true);
                         RDR.actions.viewContainerReactions( {icon:$indicator, type:"text"} );
                         $(this).hide();
                     })//chain
                     .hover(
                         function() {
-                            $(this).data('hoverLock', true)
+                            $indicator.data('hoverLock', true)
                             //do nothing
                         },
                         function() {
-                            $(this).data('hoverLock', false)
+                            $indicator.data('hoverLock', false)
                             $(this).hide();
                         }
                     )//chain
@@ -1206,7 +1213,8 @@ function readrBoard($R){
 
                 var icon = args.icon,
                     which = args.icon.data('which'),
-                    type = args.type;
+                    type = args.type,
+                    tempLock = args.tempLock;
 
                 function SortByTagCount(a,b) { return b.count - a.count; }
 
@@ -1286,7 +1294,7 @@ function readrBoard($R){
                         }).append('<div class="rdr_rightBox"></div><div class="rdr_leftBox">'+percentage+'%</div><a href="javascript:void(0);">'+name+'</a>');
                         if ( comment_count > 0 ) $li.addClass('rdr_has_comment');
                         $tagBox.children('ul.rdr_tags').append($li);
-console.log('--------------------------li data');
+                        console.log('--------------------------li data');
                         console.dir( $li.data() );
                     }
                 };
