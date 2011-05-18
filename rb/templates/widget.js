@@ -252,13 +252,13 @@ function readrBoard($R){
 
                 $.each( items, function(idx, val){
                     var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
-                    $iconAnchor = $('<a href="javascript:void(0);">' +val.item+ '</a>'),
+                    $indicatorAnchor = $('<a href="javascript:void(0);">' +val.item+ '</a>'),
                     $tooltip = RDR.tooltip.draw({"item":val.item,"tipText":val.tipText}).hide();
-                    $iconAnchor.click(function(){
+                    $indicatorAnchor.click(function(){
                         val.onclick();
                         return false;
                     });
-                    $item.append($iconAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
+                    $item.append($indicatorAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
                     if(idx===0){$item.prepend($('<span class="rdr_icon_divider" />'))}
                 });
 
@@ -845,11 +845,11 @@ function readrBoard($R){
 
                             var this_img_data = RDR.page.imagedata[i],
                                 $this_img = $('img[src$="' + this_img_data.body + '"]')
-                            var $icon = $('<div class="rdr rdr_indicator rdr_image"><img src="/static/images/blank.png" class="no-rdr" /></div>');
+                            var $indicator = $('<div class="rdr rdr_indicator rdr_image"><img src="/static/images/blank.png" class="no-rdr" /></div>');
 
                             var $tags = $('<div class="rdr_img_tags_list"></div>');  // absolute so that we can calculate content width on the fly
-                            $icon.append($tags);
-                            $this_img.after( $icon );
+                            $indicator.append($tags);
+                            $this_img.after( $indicator );
 
                             for ( var j in this_img_data.tags ){
                                 var this_tag = this_img_data.tags[j];
@@ -862,9 +862,9 @@ function readrBoard($R){
                                 }
                             }
 
-                            $icon.data('which', i );
+                            $indicator.data('which', i );
 
-                            $icon.click( function(e) {
+                            $indicator.click( function(e) {
                                 RDR.actions.viewContainerReactions( { icon:$(this), type:"image" } );
                                 return false;
                             });
@@ -879,6 +879,10 @@ function readrBoard($R){
                $RDR.dequeue('initAjax');
             },
             initEnvironment: function(){
+                
+                //div to hold indicators, filled with insertContainerIcon(), and then shown.
+                var $indicatorDetailsWrapper = $('<div id="rdr_indicator_details_wrapper" />').appendTo('body');
+
                 this.hashNodes();
 
                 // init the img interactions img selector image selector  (those are keywords for easier-inpage searching)
@@ -962,6 +966,7 @@ function readrBoard($R){
 				$RDR.dequeue('initAjax');
             },
             hashNodes: function() {
+                
                 //console.log('hashing nodes');
                 // snag all the nodes that we can set icons next to and send'em next
                 // TODO: restrict this to the viewport + a few, rather than all
@@ -1026,12 +1031,19 @@ function readrBoard($R){
                     },
                     success: function(response) {
                         var data = response.data;
+                        //todo: probably do this sorting on the server side and send us a (cached + latest diff) version to us.
                         for ( var i in data.known ) {
                             RDR.content_nodes[i].info = data.known[i];
                             if ( RDR.content_nodes[i].info.comment_count + RDR.content_nodes[i].info.tag_count > 0 ) {
-                                RDR.actions.insertContainerIcons( i );
+                                RDR.actions.indicators.make( i );
                             }
                         }
+
+                        $('.rdr_indicator').css({
+                            'opacity':'0',
+                            'display':'inline'
+                        }).fadeTo('300', '0.4');
+                                                
                         // console.dir(RDR.content_nodes['cf3677ffb09818b086bc3d6dd53eb1f4']);
                         // console.dir(RDR.content_nodes['345c1dfd92c4f46eca2f29adab9ce8cf']);
     					// TODO: Eric, should this go in a jquery queue?
@@ -1055,88 +1067,139 @@ function readrBoard($R){
     			                     },
     			                    success: function(response) {
     			                        // do nothing?  since we just added this container to the DB for the first time.
-    			                    }
-    						});
-    					}
-					}
-				});
-			},
-            insertContainerIcons: function( hash ) {
-                // if ( RDR.content_nodes[i].info.comment_count + RDR.content_nodes[i].info.tag_count > 0 ) {
-                console.log('-- what we know about hash '+hash+' --');
-                console.dir(RDR.content_nodes[hash]);
-
-                var container = $(RDR.group.anno_whitelist+'.rdr-'+hash); // prepend with the anno_whitelist selector to speed finding the container
-                container.append('<img src="/static/images/blank.png" width="18" height="18" id="rdr_helper_'+hash+'" style="display:inline-block;zoom:1;*display:inline;"/>');
-                var helper_position = $('#rdr_helper_'+hash).offset();
-                $('#rdr_helper_'+hash).css('border','1px solid red');
-
-                var total = RDR.content_nodes[hash].info.tag_count;  // removing comment count for now: RDR.content_nodes[hash].info.comment_count
-
-                
-                // order the container's tags by tag_count
-                function SortByTagCount(a,b) { return b.count - a.count; }
-                var info = RDR.content_nodes[ hash ].info;
-                info.tags = [];
-                info.tags.total_count = 0;
-                // info.tags_order = [];
-
-                // loop through the content object to create a similar object that has tags at the top of the hierarchy, 
-                // to prevent looping through .content over and over
-                for ( var j in info.content ) {
-                    // console.dir(content);
-                    var content = info.content[j];
-
-                    for ( var i in content.tags ) {
-                        var tag = content.tags[i];
-
-                        var tag_idx = -1;
-                        for ( var z in info.tags ) {
-                            if ( info.tags[z].id == tag.id ) {
-                                tag_idx = z;
-                                break;
-                            }
+                                    }
+                            });
                         }
-                        if ( tag_idx == -1 ) {
-                            info.tags.push({ id:tag.id, name:tag.tag, count:0, comment_count:0, content:{} });
-                            tag_idx = ( info.tags.length - 1 );
-                        }
-
-                        info.tags[ tag_idx ].count += tag.count;
-                        if (tag.comments) info.tags[ tag_idx ].comment_count += tag.comments.length;
-                        info.tags[ tag_idx ].content[ j ] = { count:tag.count, tag_idx:parseInt(i) };
-                        info.tags.total_count += tag.count;
-                    };
-                };
-
-                info.tags.sort(SortByTagCount);
-                RDR.content_nodes[ hash ].info = info;
-
-                var $icon = $('<div class="rdr rdr_indicator rdr_text" style="top:'+(helper_position.bottom-20)+'px;left:'+(helper_position.left-2)+'px;"><img src="/static/images/blank.png" /> <span class="rdr_count">'+ total +'</span> <span class="rdr_details">reactions including </span></div>');
-                var some_reactions = [];
-                for ( var i=0, j=3; i < j; i++ ) {
-                    if ( RDR.content_nodes[hash].info.tags[i] ) some_reactions.push( '<strong>'+RDR.content_nodes[hash].info.tags[i].name+' <em>('+RDR.content_nodes[hash].info.tags[i].count+')</em></strong>' )
-                }
-                $icon.find('span.rdr_details').append( some_reactions.join(', ') );
-                $icon.data('which', hash);
-
-                $icon.click( function() {
-                    RDR.actions.viewContainerReactions( {icon:$(this), type:"text"} );
-                });
-
-                $icon.hover( 
-                    function() {
-                        $( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).addClass( 'rdr_highlightContainer' );
-                    },
-                    function() {
-                        $( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).removeClass( 'rdr_highlightContainer' );
                     }
-                );
-
-                $('#rdr_helper_'+hash).remove();
-                $('body').append( $icon );
-
+                });
             },
+            indicators: {
+                make: function( hash ){
+                    //todo: I think these event functions here could be more efficient if they weren't anonymous and were cosolodated.
+                    
+                    // if ( RDR.content_nodes[i].info.comment_count + RDR.content_nodes[i].info.tag_count > 0 ) {
+                    console.log('-- what we know about hash '+hash+' --');
+                    console.dir(RDR.content_nodes[hash]);
+
+                    var $container = $(RDR.group.anno_whitelist+'.rdr-'+hash), // prepend with the anno_whitelist selector 
+                    $indicator = $('<div id="rdr_indicator_' +hash+ '" class="rdr_indicator" />').hide(), //hidden for now, shown on load.
+                    $indicator_details = $('<div id="rdr_indicator_details_' +hash+ '" class="rdr_indicator_details rdr_text" />'),
+                    total = RDR.content_nodes[hash].info.tag_count;  // removing comment count for now: 
+
+                    $indicator.append(
+                        '<img src="/static/images/blank.png" class="no-rdr" />',
+                        '<span class="rdr_count">'+ total +'</span>'
+                    )//chain
+                    .data('which', hash)//chain
+                    .appendTo($container)//chain
+                    .click( function() {
+                        RDR.actions.viewContainerReactions( {icon:$(this), type:"text"} );
+                    })//chain
+                    .hover( 
+                        function() {
+                            //todo: what does this do?
+                            //$( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).addClass( 'rdr_highlightContainer' );
+                            
+                            //todo: maybe make more efficient
+                            $indicator_details.find('.rdr_statsClone').html( $indicator.html() );
+                            $indicator_details.css({
+                                'display': 'inline',
+                                'top': $indicator.offset().top,
+                                'left':$indicator.offset().left
+                            });
+                        },
+                        function() {
+                            //todo: what does this do?
+                            //$( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).removeClass( 'rdr_highlightContainer' );
+                            //dont hide it again here, because we need to do that on the hoveroff event of the rdr_indicator_details
+
+                            //ensure smooth hover behavior
+                            setTimeout(function(){
+                                if( !$indicator_details.data('hoverLock') ){
+                                    $indicator_details.hide();
+                                }
+                            },500)
+                        }
+                    );                   
+                                        
+
+                    //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the body.
+                    //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
+                    var some_reactions = RDR.actions.indicators.sortReactions( hash );
+                    $indicator_details.append(
+                        '<div class="rdr_statsClone" />',
+                        '<span class="rdr_details"> reactions: </span>',
+                        some_reactions, " ..."
+                    )//chain
+                    .hover(
+                        function() {
+                            $(this).data('hoverLock', true)
+                            //do nothing
+                        },
+                        function() {
+                            $(this).data('hoverLock', false)
+                            $(this).hide();
+                        }
+                    )//chain
+                    .appendTo('#rdr_indicator_details_wrapper');
+
+                },
+                sortReactions: function( hash ){
+
+                    //todo: consider sorting on the backend
+                    // order the container's tags by tag_count
+                    function SortByTagCount(a,b) { return b.count - a.count; }
+                    var info = RDR.content_nodes[ hash ].info;
+                    log('info')
+                    log(info)
+                    info.tags = [];
+                    info.tags.total_count = 0;
+                    // info.tags_order = [];
+
+                    // loop through the content object to create a similar object that has tags at the top of the hierarchy, 
+                    // to prevent looping through .content over and over
+                    for ( var j in info.content ) {
+                        // console.dir(content);
+                        var content = info.content[j];
+
+                        for ( var i in content.tags ) {
+                            var tag = content.tags[i];
+
+                            var tag_idx = -1;
+                            for ( var z in info.tags ) {
+                                if ( info.tags[z].id == tag.id ) {
+                                    tag_idx = z;
+                                    break;
+                                }
+                            }
+                            if ( tag_idx == -1 ) {
+                                info.tags.push({ id:tag.id, name:tag.tag, count:0, comment_count:0, content:{} });
+                                tag_idx = ( info.tags.length - 1 );
+                            }
+
+                            info.tags[ tag_idx ].count += tag.count;
+                            if (tag.comments) info.tags[ tag_idx ].comment_count += tag.comments.length;
+                            info.tags[ tag_idx ].content[ j ] = { count:tag.count, tag_idx:parseInt(i) };
+                            info.tags.total_count += tag.count;
+                        };
+                    };
+
+                    info.tags.sort(SortByTagCount);
+                    RDR.content_nodes[ hash ].info = info;
+
+                    var some_reactions_arr = [];
+                    for ( var i=0, j=3; i < j; i++ ) {
+                        if ( RDR.content_nodes[hash].info.tags[i] ) some_reactions_arr.push( '<strong>'+RDR.content_nodes[hash].info.tags[i].name+' <em>('+RDR.content_nodes[hash].info.tags[i].count+')</em></strong>' )
+                    }
+                    
+                    var some_reactions = some_reactions_arr.join(", ");
+                    return some_reactions;
+                },
+                summaryToggle:{
+                    
+                }
+            },
+            insertContainerIcon: function( hash ) {},
             viewContainerReactions: function( args ) {
 
                 var icon = args.icon,

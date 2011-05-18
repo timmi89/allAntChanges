@@ -71,18 +71,49 @@ div.rdr.rdr_actionbar span.rdr_icon_divider      	{ width:1px; background:#BBB; 
 
 img.rdr_engage_img { -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa; }
 
-/* container icon */
-div.rdr_indicator { font:normal 12px Arial, sans-serif; position:absolute; z-index:11000; cursor:pointer; color:#666; padding: 5px 7px 4px 2px; opacity:0.5;}
-div.rdr_indicator.rdr_text { max-width:300px;}
-div.rdr_indicator:hover { -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa; background:#fff; opacity:1; *border:1px solid #ddd;}
-div.rdr_indicator img   { background:url("/static/images/readr_icons.png") no-repeat 0 0; float:left; margin-top:-1px; width:16px; }
-div.rdr_indicator span.rdr_details  {display:none;}
-div.rdr_indicator:hover span.rdr_details  {display:inline;}
-div.rdr_indicator span em { font-weight:normal; font-style:normal;}
+
+/* container indicator icons */
+
+#rdr_indicator_details_wrapper{
+	z-index:12000;
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	background:transparent;
+}
+#rdr_indicator_details_wrapper div.rdr_indicator_details { 
+	-moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa;
+	background:#fff;
+  	color: #666666;
+    font: 12px Arial,sans-serif;
+	border:1px solid #ddd; max-width:300px;
+	margin:-1px;
+	/*extra pixel margin to make up for border in details (and some mystery space) */
+}
+
+#rdr_indicator_details_wrapper div.rdr_statsClone{ display:inline !important; }
+
+#rdr_indicator_details_wrapper div.rdr_indicator_details, div.rdr_indicator {
+	/*keep the same for both indicator and details so that they overlap nicely*/
+	padding:3px;
+	color: #666666;
+    font: 12px Arial,sans-serif;
+    position:absolute;
+    cursor: pointer;
+}
+/* opacity for .rdr_indicator set in js instead of here. Fade it in on load so we can still use display:inline; */
+div.rdr_indicator { z-index:11000; display:inline; }
+
+div.rdr_indicator img, div.rdr_indicator_details img{ 
+	background:url("/static/images/readr_icons.png") no-repeat 0 0; width:16px; 
+	float:left; margin-top:-1px; margin-left: -1px; 
+}
 
 div.rdr_indicator.rdr_image { position:relative; margin-bottom:10px; margin-top:-3px; overflow:hidden; border-bottom:1px solid #ddd;}
 div.rdr_indicator.rdr_image span { display:inline-block; *display:inline; font-weight:bold; background:#fff; }
 div.rdr_indicator.rdr_image span.rdr_see_more { font-size:11px; font-weight:normal;}
+
 div.rdr_img_tags_list       {position:absolute; margin-left:20px; white-space:nowrap;}
  
 /* the tooltip */
