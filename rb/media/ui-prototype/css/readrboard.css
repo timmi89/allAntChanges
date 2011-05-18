@@ -110,11 +110,13 @@ div.rdr_indicator img, div.rdr_indicator_details img{
 	float:left; margin-top:-1px; margin-left: -1px; 
 }
 
-div.rdr_indicator.rdr_image { position:relative; margin-bottom:10px; margin-top:-3px; overflow:hidden; border-bottom:1px solid #ddd;}
-div.rdr_indicator.rdr_image span { display:inline-block; *display:inline; font-weight:bold; background:#fff; }
+div.rdr_indicator.rdr_image { position:relative; border-bottom:1px solid #ddd; display:block !important; margin-bottom:5px;}
 div.rdr_indicator.rdr_image span.rdr_see_more { font-size:11px; font-weight:normal;}
-
-div.rdr_img_tags_list       {position:absolute; margin-left:20px; white-space:nowrap;}
+/* not needed*/
+/*
+div.rdr_indicator.rdr_image span { display:inline; font-weight:bold; background:#fff; }
+div.rdr_img_tags_list       {position:relative; white-space:nowrap; display:inline;}
+*/
  
 /* the tooltip */
 div.rdr.rdr_tooltip {

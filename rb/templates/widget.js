@@ -1081,20 +1081,18 @@ function readrBoard($R){
                     console.log('-- what we know about hash '+hash+' --');
                     console.dir(RDR.content_nodes[hash]);
 
+                    //hide indicators and indicatorDetails and show on load.
                     var $container = $(RDR.group.anno_whitelist+'.rdr-'+hash), // prepend with the anno_whitelist selector 
-                    $indicator = $('<div id="rdr_indicator_' +hash+ '" class="rdr_indicator" />').hide(), //hidden for now, shown on load.
-                    $indicator_details = $('<div id="rdr_indicator_details_' +hash+ '" class="rdr_indicator_details rdr_text" />'),
+                    $indicator = $('<div id="rdr_indicator_' +hash+ '" class="rdr_indicator" />').hide(),
+                    $indicator_details = $('<div id="rdr_indicator_details_' +hash+ '" class="rdr_indicator_details rdr_text" />').hide(),
                     total = RDR.content_nodes[hash].info.tag_count;  // removing comment count for now: 
 
                     $indicator.append(
                         '<img src="/static/images/blank.png" class="no-rdr" />',
                         '<span class="rdr_count">'+ total +'</span>'
                     )//chain
-                    .data('which', hash)//chain
                     .appendTo($container)//chain
-                    .click( function() {
-                        RDR.actions.viewContainerReactions( {icon:$(this), type:"text"} );
-                    })//chain
+                    .data('which', hash)//chain
                     .hover( 
                         function() {
                             //todo: what does this do?
@@ -1131,6 +1129,10 @@ function readrBoard($R){
                         '<span class="rdr_details"> reactions: </span>',
                         some_reactions, " ..."
                     )//chain
+                    .click( function() {
+                        RDR.actions.viewContainerReactions( {icon:$indicator, type:"text"} );
+                        $(this).hide();
+                    })//chain
                     .hover(
                         function() {
                             $(this).data('hoverLock', true)
