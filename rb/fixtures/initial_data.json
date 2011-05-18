@@ -1,49 +1,170 @@
 [
   {
+    "model": "rb.Group",
+    "pk": 1,
+    "fields":{
+      "name": "Test Group",
+      "short_name": "test",
+      "share": 1,
+      "comment": 1,
+      "rate": 1,
+      "bookmark": 1,
+      "search": 1,
+      "secret": "secret123%awesome%test!"
+    }
+  },
+
+  {
+    "model": "rb.Group_Blessed_Tags",
+    "pk": 1,
+    "fields": {
+      "group": 1,
+      "interactionnode": 1 
+    }
+  },
+
+  {
+    "model": "rb.Group_Blessed_Tags",
+    "pk": 2,
+    "fields": {
+      "group": 1,
+      "interactionnode": 2 
+    }
+  },
+
+  {
+    "model": "rb.Group_Blessed_Tags",
+    "pk": 3,
+    "fields": {
+      "group": 1,
+      "interactionnode": 3 
+    }
+  },
+
+  {
+    "model": "rb.Group_Blessed_Tags",
+    "pk": 4,
+    "fields": {
+      "group": 1,
+      "interactionnode": 4 
+    }
+  },
+
+  {
+    "model": "rb.Feature",
+    "pk": 1,
+    "fields": {
+      "text": "True",
+      "images": "True",
+      "flash": "True"
+    }
+  },
+
+  {
+    "model": "rb.Feature",
+    "pk": 2,
+    "fields": {
+      "text": "True",
+      "images": "False",
+      "flash": "True"
+    }
+  },
+
+  {
+    "model": "rb.Feature",
+    "pk": 3,
+    "fields": {
+      "text": "False",
+      "images": "True",
+      "flash": "True"
+    }
+  },
+
+  {
+    "model": "rb.Feature",
+    "pk": 4,
+    "fields": {
+      "text": "False",
+      "images": "False",
+      "flash": "True"
+    }
+  },
+
+  {
+    "model": "rb.Feature",
+    "pk": 5,
+    "fields": {
+      "text": "True",
+      "images": "True",
+      "flash": "False"
+    }
+  },
+
+  {
+    "model": "rb.Feature",
+    "pk": 6,
+    "fields": {
+      "text": "False",
+      "images": "True",
+      "flash": "False"
+    }
+  },
+
+  {
+    "model": "rb.Feature",
+    "pk": 7,
+    "fields": {
+      "text": "True",
+      "images": "False",
+      "flash": "False"
+    }
+  },
+
+  {
+    "model": "rb.Feature",
+    "pk": 8,
+    "fields": {
+      "text": "False",
+      "images": "False",
+      "flash": "False"
+    }
+  },
+
+  {
+    "model": "rb.Site",
+    "pk": 1,
+    "fields": {
+      "name": "localhost",
+      "domain": "localhost",
+      "group": 1
+    }
+  },
+
+  {
     "model": "rb.InteractionNode",
     "pk": 1,
     "fields": {
-      "kind": "vot",
-      "body": "Readrboard Up Vote"
+      "body": "Great!"
     }
   },
   {
     "model": "rb.InteractionNode",
     "pk": 2,
     "fields": {
-      "kind": "vot",
-      "body": "Readrboard Down Vote"
+      "body": "Hate"
     }
   },
   {
     "model": "rb.InteractionNode",
     "pk": 3,
     "fields": {
-      "kind": "tag",
-      "body": "Great!"
+      "body": "Agree"
     }
   },
   {
     "model": "rb.InteractionNode",
     "pk": 4,
     "fields": {
-      "kind": "tag",
-      "body": "Hate"
-    }
-  },
-  {
-    "model": "rb.InteractionNode",
-    "pk": 5,
-    "fields": {
-      "kind": "tag",
-      "body": "Agree"
-    }
-  },
-  {
-    "model": "rb.InteractionNode",
-    "pk": 6,
-    "fields": {
-      "kind": "tag",
       "body": "Tell me more"
     }
   }

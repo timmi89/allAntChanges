@@ -46,10 +46,9 @@ def getContentData(content, interactions=None):
             content_interactions = interactions.filter(content=content_item)
         else:
             content_interactions = Interaction.objects.filter(content=content_item)
-            
-        content_interactions = content_interactions.select_related('interaction_node')
-        content_tags = content_interactions.filter(interaction_node__kind='tag')
-        content_coms = content_interactions.filter(interaction_node__kind='com')
+
+        content_tags = content_interactions.filter(kind='tag')
+        content_coms = content_interactions.filter(kind='com')
         data['tag_count'] = content_tags.count()
         data['comment_count'] = content_coms.count()
 
@@ -66,8 +65,8 @@ def getContainerData(hash):
     interactions = Interaction.objects.filter(container__hash=hash)
 
     # Filter tag and comment interactions
-    tags = interactions.filter(interaction_node__kind='tag')
-    comments = interactions.filter(interaction_node__kind='com')
+    tags = interactions.filter(kind='tag')
+    comments = interactions.filter(kind='com')
 
     # Get counts of tags and comments -- container level
     container_data['tag_count'] = tags.count()
@@ -109,9 +108,9 @@ def getPage(request, pageid=None):
         
     return page[0]
 
-def createInteractionNode(kind, body):
-    if kind and body:
-        node = InteractionNode.objects.get_or_create(kind=kind, body=body)[0]
+def createInteractionNode(body=None):
+    if body:
+        node = InteractionNode.objects.get_or_create(body=body)[0]
         print "Success creating InteractionNode with id %s" % node.id
         return node
 
@@ -120,11 +119,11 @@ def isTemporaryUser(user):
 
 def checkLimit(user, group):
     interactions = Interaction.objects.filter(user=user)
-    num_interactions = len(interactions)
+    num_interactions = interactions.count()
     max_interact = group.temp_interact
     if num_interactions >= max_interact:
         raise JSONException(
-            u"Temporary user interaction limit reached"
+            u"Temporary user interaction limit reached for user " + unicode(user.id)
         )
     return num_interactions
 
@@ -146,8 +145,8 @@ def deleteInteraction(interaction, user):
         if tempuser: return dict(message=message,num_interactions=num_interactions-1)
         return dict(message=message)
 
-def createInteraction(page, container, content, user, interaction_node, group, parent=None):
-    if content and user and interaction_node and page:
+def createInteraction(page, container, content, user, kind, interaction_node, group, parent=None):
+    if content and user and kind and interaction_node and page:
         # Check to see if user has reached their interaction limit
         tempuser = False
         if isTemporaryUser(user):
@@ -177,7 +176,8 @@ def createInteraction(page, container, content, user, interaction_node, group, p
                 page=page,
                 container=container,
                 content=content,
-                user=user, 
+                user=user,
+                kind=kind,
                 interaction_node=interaction_node,
                 created=now,
                 parent=parent
@@ -188,7 +188,8 @@ def createInteraction(page, container, content, user, interaction_node, group, p
                 page=page,
                 container=container,
                 content=content, 
-                user=user, 
+                user=user,
+                kind=kind, 
                 interaction_node=interaction_node, 
                 created=now
             )

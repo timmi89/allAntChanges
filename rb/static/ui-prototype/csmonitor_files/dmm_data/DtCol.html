@@ -1,0 +1,50 @@
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title></title><style type="text/css">body {margin-left: 0px;margin-top: 0px;margin-right: 0px;margin-bottom: 0px;}</style></head><body><script type="text/javascript">function InterClickCookie(document, name, hours, path, domain, secure) { this.$document = document; this.$name = name; if (hours) { this.$expiration = new Date((new Date()).getTime() + hours * 3600000); } else { this.$expiration = null; } if (path) { this.$path = path; } else { this.$path = null; } if (domain) { this.$domain = domain; } else { this.$domain = null; } if (secure) { this.$secure = true; } else { this.$secure = false; } }
+InterClickCookie.prototype.store = function() { var cookieval = ""; for (var prop in this) { if ((prop.charAt(0) == '$') || ((typeof this[prop]) == 'function')) { continue; } if (cookieval != "") { cookieval += '&'; } cookieval += prop + '=' + escape(this[prop]); } var cookie = this.$name + '=' + cookieval; if (this.$expiration) { cookie += '; expires=' + this.$expiration.toGMTString(); } if (this.$path) cookie += '; path=' + this.$path; if (this.$domain) cookie += '; domain=' + this.$domain; if (this.$secure) cookie += '; secure'; this.$document.cookie = cookie; }
+InterClickCookie.prototype.load = function() { var allcookies = this.$document.cookie; if (allcookies == "") { return false; } var start = allcookies.indexOf(this.$name + '='); if (start == -1) { return false; } start += this.$name.length + 1; var end = allcookies.indexOf(';', start); if (end == -1) { end = allcookies.length; } var cookieval = allcookies.substring(start, end); var a = cookieval.split('&'); for (var i = 0; i < a.length; i++) { a[i] = a[i].split('='); } for (var i = 0; i < a.length; i++) { this[a[i][0]] = unescape(a[i][1]); } return true; }
+</script><script type="text/javascript">
+function isExpired(name) {
+  try {
+  if (name) {
+    var dt = new Date();
+    var now = dt.getTime();
+    var expr = eval("cookie." + name);
+    if (expr) {
+      return now > expr;
+    }
+  }
+  } catch(err) {}
+  return true;
+};
+document.write('<div id="icD249872342399" style="display:none"></div>');document.write('<div id="icD249874562399" style="display:none"></div>');try {
+var domain = ".interclick.com";var cookie = new InterClickCookie(document, "tpd", 720, "/", domain);
+cookie.load();
+var rnd = Math.floor(Math.random() * 100);
+var col = [];
+var exptc = [];
+var lgrslt = "";
+if (isExpired('e90') && (rnd < 100)) {
+col.push("http://ic.nexac.com/DlCkRd.aspx");exptc.push(90);
+}
+if (isExpired('e100') && (rnd < 100)) {
+col.push("http://cdn.interclick.com/ticolscr.aspx");exptc.push(100);
+}
+if (isExpired('e20') && (rnd < 100)) {
+col.push("http://cdn.interclick.com/bkdp.aspx");exptc.push(20);
+}
+if (isExpired('e50') && (rnd < 100)) {
+col.push("http://cdn.interclick.com/gtpdp.aspx?i=50");exptc.push(50);
+}
+var xtpc = "";if (rnd < 4) {
+  xtpc = '?i=' + exptc.join();lgrslt='l=1';
+  var colxdp = 'http://a1.interclick.com/Caexdp.aspx' + xtpc;
+  document.getElementById('icD249874562399').innerHTML ='<img src="' + colxdp + '" />';
+}
+var sep = "";var total = col.length;
+var reported = 0;
+for (var i = 0; i < total; i++) {
+if (lgrslt) {sep = (col[i].indexOf("?") == -1) ? "?" : "&";}
+document.write('<iframe src=' + col[i] + sep + lgrslt + '></iframe>');
+}
+} catch(err) {}
+function Report(i, r, e){try{reported++;eval("cookie.i"+i+" = '"+r+"';");if (e) {eval("cookie.e"+i+" = '"+e+"';");}if (reported == total){ReportAll();} } catch(err){} };function ReportAll(){try{cookie.store();document.getElementById('icD249872342399').innerHTML = '<img src="http://a1.interclick.com/ColDta.aspx' + xtpc + '"/>';} catch(err) {}};</script><div id="icD249872342399" style="display:none"><img src="DtCol_data/ColDta.gif"></div><div id="icD249874562399" style="display:none"></div><iframe src="DtCol_data/DlCkRd.html"></iframe>
+</body></html>

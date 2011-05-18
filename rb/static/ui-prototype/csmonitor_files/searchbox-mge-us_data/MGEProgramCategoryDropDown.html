@@ -1,0 +1,550 @@
+	grouping = '';
+
+	function getCareer(el){
+		if(typeof(el) == "undefined"){
+			el = document.mainform;
+		}
+		if(typeof(el) == "undefined" || typeof(el) == null ){
+			return false;
+		}
+		
+		pos = el.programcategory_main.length;
+		if(typeof(pos) == "undefined"){
+		}else{
+			for(i = el.programcategory_main.length-1; i >= 0;i--){
+					el.programcategory_main.options[i] = null;
+			}
+		}
+		
+		pos = el.program_type.length;
+		if(typeof(pos) == "undefined"){
+			var the_selected = el.program_type.value;
+		}else{
+			if( pos > 0 )
+			{
+				var the_index = el.program_type.selectedIndex;
+				var the_selected = el.program_type.options[the_index].value;
+			}
+			else
+			{
+				the_selected = '';
+			}
+		}
+		
+		switch (the_selected){
+		case "":
+			AddCareer("Select One:","", el);
+			AddCareer("Arts / Design / Fashion","1", el);
+			AddCareer("Aviation","9", el);
+			AddCareer("Beauty","413", el);
+			AddCareer("Business","2", el);
+			AddCareer("Criminal Justice & Law","279", el);
+			AddCareer("Culinary Arts","3", el);
+			AddCareer("Education","287", el);
+			AddCareer("Health Care / Human Services","4", el);
+			AddCareer("Liberal Arts","343", el);
+			AddCareer("Massage / Wellness","256", el);
+			AddCareer("Technology / Computer / IT","5", el);
+			AddCareer("Trade","286", el);
+			break;
+		default:
+			AddCareer("Select One:","", el);
+			AddCareer("Arts / Design / Fashion","1", el);
+			AddCareer("Aviation","9", el);
+			AddCareer("Beauty","413", el);
+			AddCareer("Business","2", el);
+			AddCareer("Criminal Justice & Law","279", el);
+			AddCareer("Culinary Arts","3", el);
+			AddCareer("Education","287", el);
+			AddCareer("Health Care / Human Services","4", el);
+			AddCareer("Liberal Arts","343", el);
+			AddCareer("Massage / Wellness","256", el);
+			AddCareer("Technology / Computer / IT","5", el);
+			AddCareer("Trade","286", el);
+			break;
+		}
+		getDegree(el);
+	}
+
+	function setCareer(id, el){
+		if(typeof(el) == "undefined"){
+			el = document.mainform;
+		}
+		if(typeof(el) == "undefined" || typeof(el) == null ){
+			return false;
+		}
+		pos = el.programcategory_main.length;
+		if(typeof(pos) != "undefined"){
+			if( typeof(id) != "undefined" && id != "" )
+			{
+				for(i = el.programcategory_main.length-1; i >= 0;i--){
+					if( id == el.programcategory_main.options[i].value ){
+						el.programcategory_main.options[i].selected = true;
+					}else{
+						el.programcategory_main.options[i].selected = false;
+					}
+				}
+			}
+			else
+			{
+				if(el.programcategory_main.length == 2){
+					el.programcategory_main.selectedIndex = 1;
+				}
+			}
+		}
+	}
+
+	function getDegree(el){
+		if(typeof(el) == "undefined"){
+			el = document.mainform;
+		}
+		if(typeof(el) == "undefined" || typeof(el) == null ){
+			return false;
+		}
+		pos = el.programcategory_id.length;
+		if(typeof(pos) == "undefined"){
+		}else{
+			for(i = el.programcategory_id.length-1; i >= 0;i--){
+					el.programcategory_id.options[i] = null;
+			}
+		}
+
+		pos = el.programcategory_main.length;
+		if(typeof(pos) == "undefined"){
+			var the_selected = el.programcategory_main.value;
+		}else{
+			if( pos > 0 )
+			{
+				var the_index = el.programcategory_main.selectedIndex;
+				var the_selected = el.programcategory_main.options[the_index].value;
+			}
+			else
+			{
+				the_selected = '';
+			}
+		}
+		switch (the_selected){
+		case "":
+			AddDegree("Select an Education Type","", el);
+			break;
+		case "1":
+			AddDegree("Select One:","", el);
+					AddDegree("Acting","289", el);
+					AddDegree("Advertising & Design","13", el);
+					AddDegree("Animation","187", el);
+					AddDegree("Architecture","210", el);
+					AddDegree("Arts & Design","199", el);
+					AddDegree("Audio Engineering","242", el);
+					AddDegree("Broadcasting","137", el);
+					AddDegree("Commercial Art","14", el);
+					AddDegree("Computer Design","27", el);
+					AddDegree("Computer Drafting","16", el);
+					AddDegree("Dance","485", el);
+					AddDegree("Digital Arts & Design","17", el);
+					AddDegree("Fashion Design","18", el);
+					AddDegree("Fashion Marketing","19", el);
+					AddDegree("Fashion Merchandising","176", el);
+					AddDegree("Film & Video","20", el);
+					AddDegree("Fine Arts","22", el);
+					AddDegree("Game Art & Development","21", el);
+					AddDegree("Graphic Art & Design","12", el);
+					AddDegree("Industrial Design","23", el);
+					AddDegree("Interactive Media","24", el);
+					AddDegree("Interior Design","25", el);
+					AddDegree("Jewelry Design","513", el);
+					AddDegree("John","789", el);
+					AddDegree("Journalism","309", el);
+					AddDegree("Media Arts","28", el);
+					AddDegree("Media Production","29", el);
+					AddDegree("Music","235", el);
+					AddDegree("Musical Theatre","290", el);
+					AddDegree("Painting","32", el);
+					AddDegree("Photography","33", el);
+					AddDegree("Recording Arts","107", el);
+					AddDegree("Script & Screenwriting","310", el);
+					AddDegree("Visual Arts & Comm.","35", el);
+					AddDegree("Web Design & Multimedia","30", el);
+					AddDegree("Yacht & Marine Design","36", el);
+			break;
+		case "9":
+			AddDegree("Select One:","", el);
+					AddDegree("Aircraft Dispatcher","380", el);
+					AddDegree("Airframe and Powerplant","194", el);
+					AddDegree("Airline/Travel Specialist","234", el);
+					AddDegree("Aviation Maintenance Technician","196", el);
+					AddDegree("Avionics","195", el);
+					AddDegree("General Aviation","82", el);
+					AddDegree("Helicopter Flight","325", el);
+					AddDegree("Professional Flight","212", el);
+					AddDegree("Professional Pilot","515", el);
+					AddDegree("Quality Control","213", el);
+			break;
+		case "413":
+			AddDegree("Select One:","", el);
+					AddDegree("Beauty - Advanced Training","327", el);
+					AddDegree("Cosmetology","181", el);
+					AddDegree("Electrology","406", el);
+					AddDegree("Esthetics / Skincare","263", el);
+					AddDegree("Hair Design / Barbering","183", el);
+					AddDegree("Instructor Training","293", el);
+					AddDegree("Makeup","265", el);
+					AddDegree("Nail Technician / Hand & Foot Therapist","264", el);
+					AddDegree("Permanent Makeup","394", el);
+					AddDegree("Spa","294", el);
+			break;
+		case "2":
+			AddDegree("Select One:","", el);
+					AddDegree("Accounting/Payroll Administrator","134", el);
+					AddDegree("Administrative","132", el);
+					AddDegree("Administrative Support Specialist","203", el);
+					AddDegree("Advertising","133", el);
+					AddDegree("Auditing","140", el);
+					AddDegree("Bookkeeping","224", el);
+					AddDegree("Business Admin. & Mgmt.","138", el);
+					AddDegree("Call Center Mgmt.","139", el);
+					AddDegree("Communications Mgmt.","159", el);
+					AddDegree("Computer Management","141", el);
+					AddDegree("Customer Support","237", el);
+					AddDegree("Database Admin. / Management","189", el);
+					AddDegree("Doctor of Business Administration","311", el);
+					AddDegree("E-Commerce / E-Business","146", el);
+					AddDegree("Economics","384", el);
+					AddDegree("Entertainment Business","148", el);
+					AddDegree("Executive Assistant","149", el);
+					AddDegree("Finance","135", el);
+					AddDegree("Financial Planning","188", el);
+					AddDegree("Global Management","150", el);
+					AddDegree("Hospitality Management","398", el);
+					AddDegree("Human Resources","334", el);
+					AddDegree("Information Security","153", el);
+					AddDegree("International Business","155", el);
+					AddDegree("IT Management","154", el);
+					AddDegree("Law and Justice","75", el);
+					AddDegree("Management","156", el);
+					AddDegree("Marketing","157", el);
+					AddDegree("Master of Business Administration","312", el);
+					AddDegree("Merchandising","158", el);
+					AddDegree("Network Management","31", el);
+					AddDegree("Office Admin. / Management","160", el);
+					AddDegree("Office Clerical","228", el);
+					AddDegree("Operations Management","161", el);
+					AddDegree("Project Management","162", el);
+					AddDegree("Public Administration","313", el);
+					AddDegree("Sales","163", el);
+					AddDegree("Small Business Mgmt.","177", el);
+					AddDegree("Sports Management","273", el);
+					AddDegree("Supply Chain Mgmt.","124", el);
+					AddDegree("System Admin.","34", el);
+					AddDegree("Telecommunications","166", el);
+					AddDegree("Travel and Tourism","167", el);
+			break;
+		case "279":
+			AddDegree("Select One:","", el);
+					AddDegree("Corrections","391", el);
+					AddDegree("Court Reporting","269", el);
+					AddDegree("Criminal Justice","142", el);
+					AddDegree("Homeland Security","151", el);
+					AddDegree("International Law","813", el);
+					AddDegree("Justice Business Tech.","26", el);
+					AddDegree("Justice/Security Administration","314", el);
+					AddDegree("Law","341", el);
+					AddDegree("Law Enforcement / Police","390", el);
+					AddDegree("Legal Nurse Consultant","190", el);
+					AddDegree("Legal Office Admin. / Technology","204", el);
+					AddDegree("Legal Studies","814", el);
+					AddDegree("Paralegal / Legal Assistant","192", el);
+			break;
+		case "3":
+			AddDegree("Select One:","", el);
+					AddDegree("Baking and Pastry","300", el);
+					AddDegree("Catering Management","79", el);
+					AddDegree("Culinary Arts","76", el);
+					AddDegree("Culinary Management","78", el);
+					AddDegree("Hospitality Management","476", el);
+					AddDegree("Restaurant Management","77", el);
+					AddDegree("Wine Studies","243", el);
+			break;
+		case "287":
+			AddDegree("Select One:","", el);
+					AddDegree("Curriculum & Instruction","144", el);
+					AddDegree("Early Childhood Education","296", el);
+					AddDegree("Education","147", el);
+					AddDegree("ESL","315", el);
+					AddDegree("General Studies","174", el);
+					AddDegree("Instructional Leadership","316", el);
+					AddDegree("Secondary Education","297", el);
+					AddDegree("Special Ed.","317", el);
+					AddDegree("Teaching","295", el);
+					AddDegree("Theology / Ministry / Religion","331", el);
+			break;
+		case "4":
+			AddDegree("Select One:","", el);
+					AddDegree("Addictions Worker","240", el);
+					AddDegree("Alternative Medicine","283", el);
+					AddDegree("Animal Study","397", el);
+					AddDegree("Bachelor of Nursing","681", el);
+					AddDegree("Cardio-Phlebotomy Technician","226", el);
+					AddDegree("Cardiovascular Tech.","40", el);
+					AddDegree("Chiropractic","209", el);
+					AddDegree("Clinical Medical Assistant","42", el);
+					AddDegree("Conflict Resolution","55", el);
+					AddDegree("Counseling","54", el);
+					AddDegree("Dental Assisting","211", el);
+					AddDegree("Dental Hygienist","43", el);
+					AddDegree("Dental Lab Technician","835", el);
+					AddDegree("Dialysis Technician","45", el);
+					AddDegree("Echocardiographer","46", el);
+					AddDegree("Electrocardiography","238", el);
+					AddDegree("EMS / Paramedic","514", el);
+					AddDegree("General","267", el);
+					AddDegree("Gerontology","332", el);
+					AddDegree("Health Care Admin. / Management","48", el);
+					AddDegree("Health Care Reimbursement","51", el);
+					AddDegree("Health Information Management","679", el);
+					AddDegree("Health Information Tech.","49", el);
+					AddDegree("Health Sciences","689", el);
+					AddDegree("Health Unit Coordinator","50", el);
+					AddDegree("Health/Biomedical Informatics","39", el);
+					AddDegree("Human Services","136", el);
+					AddDegree("Insurance Billing / Coding","178", el);
+					AddDegree("Legal Nurse Consultant","52", el);
+					AddDegree("LPN to BSN","682", el);
+					AddDegree("LPN to RN","683", el);
+					AddDegree("LPN/PN - Practical Nursing","469", el);
+					AddDegree("Marriage & Family Therapy","169", el);
+					AddDegree("Masters of Science in Nursing","680", el);
+					AddDegree("Medical Admin. & Mgmt.","56", el);
+					AddDegree("Medical Assisting","57", el);
+					AddDegree("Medical Billing and Coding","58", el);
+					AddDegree("Medical Clinical Specialist","60", el);
+					AddDegree("Medical Diagnostics","44", el);
+					AddDegree("Medical Laboratory Technician","62", el);
+					AddDegree("Medical Office Assistant","227", el);
+					AddDegree("Medical Radiography","53", el);
+					AddDegree("Medical Sonographer","207", el);
+					AddDegree("Medical Specialization","63", el);
+					AddDegree("Medical Transcription","64", el);
+					AddDegree("Mental Health Counseling","171", el);
+					AddDegree("Nursing","65", el);
+					AddDegree("Nursing - RN to BSN","326", el);
+					AddDegree("Nursing Assistant (CNA)","41", el);
+					AddDegree("Orthopedic","239", el);
+					AddDegree("Patient Care","67", el);
+					AddDegree("Pharmacy Technician","68", el);
+					AddDegree("Phlebotomy","69", el);
+					AddDegree("Physical Therapist","205", el);
+					AddDegree("Psychology","168", el);
+					AddDegree("Radiology","70", el);
+					AddDegree("Rehabilitation Therapy Assistant","236", el);
+					AddDegree("Respiratory Care & Therapy","71", el);
+					AddDegree("Skin Care","328", el);
+					AddDegree("Sport-Exercise Psychology","170", el);
+					AddDegree("Surgical Technology","73", el);
+					AddDegree("Ultrasound Technologist","206", el);
+					AddDegree("Veterinary","175", el);
+					AddDegree("Vocational Nursing (LVN)","471", el);
+					AddDegree("X-Ray Technician","74", el);
+			break;
+		case "343":
+			AddDegree("Select One:","", el);
+					AddDegree("American Studies","344", el);
+					AddDegree("Anthropology","345", el);
+					AddDegree("Archaeology","346", el);
+					AddDegree("Art History","347", el);
+					AddDegree("Biochemistry &  Molecular Biology","349", el);
+					AddDegree("Bioinformatics","350", el);
+					AddDegree("Biology","352", el);
+					AddDegree("Chemistry","353", el);
+					AddDegree("English / Creative Writing","355", el);
+					AddDegree("English Literature","356", el);
+					AddDegree("Environmental Science","357", el);
+					AddDegree("General Arts and Sciences","358", el);
+					AddDegree("General Studies","360", el);
+					AddDegree("Geography","361", el);
+					AddDegree("History","362", el);
+					AddDegree("Human Biology","363", el);
+					AddDegree("Italian","411", el);
+					AddDegree("Languages and Literature","367", el);
+					AddDegree("Languages Other than English","368", el);
+					AddDegree("Liberal Arts","371", el);
+					AddDegree("Library Science","373", el);
+					AddDegree("Literature","374", el);
+					AddDegree("Mathematics","385", el);
+					AddDegree("Political Science","386", el);
+					AddDegree("Psychology","375", el);
+					AddDegree("Social Sciences","376", el);
+					AddDegree("Sociology","377", el);
+					AddDegree("Spanish","410", el);
+			break;
+		case "256":
+			AddDegree("Select One:","", el);
+					AddDegree("Acupuncture & Oriental Medicine","257", el);
+					AddDegree("Alternative Medicine","291", el);
+					AddDegree("Chiropractic","259", el);
+					AddDegree("Herbal Studies","308", el);
+					AddDegree("Holistic Health / Homeopathy","260", el);
+					AddDegree("Hypnotherapy / Polarity / Reiki","268", el);
+					AddDegree("Manual Medicine","412", el);
+					AddDegree("Massage Therapy","37", el);
+					AddDegree("Massage Therapy CEUs","266", el);
+					AddDegree("Metaphysics / Healtheology / Divinity","276", el);
+					AddDegree("Personal Training / Fitness","47", el);
+					AddDegree("Physical Therapy","258", el);
+					AddDegree("Polarity","321", el);
+					AddDegree("Reflexology","262", el);
+					AddDegree("Spa Therapies","72", el);
+			break;
+		case "5":
+			AddDegree("Select One:","", el);
+					AddDegree("A+ Certification","83", el);
+					AddDegree("Advanced Electronics","81", el);
+					AddDegree("Architectural Engineering","84", el);
+					AddDegree("Audio Technology","274", el);
+					AddDegree("Biomedical Engineering","38", el);
+					AddDegree("Cable Network Technician","87", el);
+					AddDegree("Certified Internet Webmaster","185", el);
+					AddDegree("Cisco&reg;","90", el);
+					AddDegree("Communication Technician","214", el);
+					AddDegree("CompTIA","186", el);
+					AddDegree("Computer & Telecom. Electronics","92", el);
+					AddDegree("Computer Aided Design Tech.","93", el);
+					AddDegree("Computer Applications","85", el);
+					AddDegree("Computer Engineering","94", el);
+					AddDegree("Computer Hardware","105", el);
+					AddDegree("Computer Information Systems - CIS/IT","330", el);
+					AddDegree("Computer Networking","95", el);
+					AddDegree("Computer Office Technologies","96", el);
+					AddDegree("Computer Programming","97", el);
+					AddDegree("Computer Repair","98", el);
+					AddDegree("Computer Science","99", el);
+					AddDegree("Computer Systems Security","100", el);
+					AddDegree("Computer Systems Technician","102", el);
+					AddDegree("Computer Technical Support","103", el);
+					AddDegree("Computer Technology","104", el);
+					AddDegree("Computerized Office Applications","106", el);
+					AddDegree("Corporate Training","389", el);
+					AddDegree("Database Development","179", el);
+					AddDegree("Desktop & Web Publishing","285", el);
+					AddDegree("Engineering Management","220", el);
+					AddDegree("Enterprise Applications Developer","111", el);
+					AddDegree("Game Software Development","112", el);
+					AddDegree("Information Technology","832", el);
+					AddDegree("Instructional Technology","117", el);
+					AddDegree("Internet  Programmer","118", el);
+					AddDegree("Java Programming","119", el);
+					AddDegree("MCSE","335", el);
+					AddDegree("Mechanical Engineering","121", el);
+					AddDegree("Microsoft Certification","122", el);
+					AddDegree("Mobile App Development","829", el);
+					AddDegree("Network & Communications Management","318", el);
+					AddDegree("Network Administration Security","218", el);
+					AddDegree("Oracle","184", el);
+					AddDegree("PC Support Specialist","125", el);
+					AddDegree("Programming","127", el);
+					AddDegree("Robotics","129", el);
+					AddDegree("Software Development","101", el);
+					AddDegree("Software Engineering","219", el);
+					AddDegree("Software Technologies","130", el);
+					AddDegree("Technology Management","180", el);
+					AddDegree("Visual Communications","131", el);
+					AddDegree("Web Development","89", el);
+			break;
+		case "286":
+			AddDegree("Select One:","", el);
+					AddDegree("Air Conditioning / Refrigeration","128", el);
+					AddDegree("Animal Grooming","775", el);
+					AddDegree("Animal Training","455", el);
+					AddDegree("Auto Body Technology","86", el);
+					AddDegree("Automotive Technology","173", el);
+					AddDegree("CDL/Commercial Driving","468", el);
+					AddDegree("Construction Management","304", el);
+					AddDegree("Diving - Commercial","320", el);
+					AddDegree("Diving - Scuba","339", el);
+					AddDegree("Electrical Engineering","108", el);
+					AddDegree("Electrician","109", el);
+					AddDegree("Electronic  Engineering","110", el);
+					AddDegree("Electronic Service Technician","221", el);
+					AddDegree("Fire Science","342", el);
+					AddDegree("Green Technology","827", el);
+					AddDegree("Gunsmithing","336", el);
+					AddDegree("Heavy Equipment Training","653", el);
+					AddDegree("Home Inspection Training","329", el);
+					AddDegree("Horticulture","826", el);
+					AddDegree("HVAC","172", el);
+					AddDegree("Industrial Technology","113", el);
+					AddDegree("Marine Mechanics","120", el);
+					AddDegree("Motorcycle Mechanics","382", el);
+					AddDegree("NASCAR Technician","383", el);
+					AddDegree("Plumber","126", el);
+					AddDegree("Real Estate Appraisal","684", el);
+					AddDegree("Solar Technology","828", el);
+					AddDegree("Watch-Clock Making / Repair","381", el);
+					AddDegree("Welding","241", el);
+					AddDegree("Wind Turbine","788", el);
+			break;
+		}
+	}
+
+	function setDegree(id,el){
+		if(typeof(el) == "undefined"){
+			el = document.mainform;
+		}
+		if(typeof(el) == "undefined" || typeof(el) == null ){
+			return false;
+		}
+		if( typeof(id) != "undefined" && id != "" )
+		{
+			for(i = el.programcategory_id.length-1; i >= 0;i--){
+				if( id == el.programcategory_id.options[i].value ){
+					el.programcategory_id.options[i].selected = true;
+				}else{
+					el.programcategory_id.options[i].selected = false;
+				}
+			}
+		}
+		else
+		{
+			if(el.programcategory_id.length == 2){
+				el.programcategory_id.selectedIndex = 1;
+			}
+		}
+	}
+
+	function AddCareer(name,value,el)
+	{
+		if(typeof(el) == "undefined"){
+			el = document.mainform;
+		}
+		if(typeof(el) == "undefined" || typeof(el) == null ){
+			return false;
+		}
+		pos = el.programcategory_main.length;
+		if(typeof(pos) == "undefined"){
+			el.programcategory_main.value = value;
+		}else{
+			el.programcategory_main.options[pos] = new Option(name,value,false,false);
+		}
+	}
+
+	function AddDegree(name,value,el)
+	{
+		if(typeof(el) == "undefined"){
+			el = document.mainform;
+		}
+		if(typeof(el) == "undefined" || typeof(el) == null ){
+			return false;
+		}
+		pos = el.programcategory_id.length;
+		if(typeof(pos) == "undefined"){
+			el.programcategory_id.value = value;
+		}else{
+			el.programcategory_id.options[pos] = new Option(name,value,false,false);
+		}
+	}
+
+	getCareer();
+	setCareer();
+	getDegree();
+	setDegree();
+
+	

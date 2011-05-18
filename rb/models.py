@@ -4,27 +4,6 @@ from django.contrib.auth.models import User
 from baseconv import base62
 import datetime
 
-CONTENT_TYPES = (
-    ('txt', 'text'),
-    ('img', 'image'),
-    ('vid', 'video'),
-    ('snd', 'sound'),
-    ('fla', 'flash')
-)
-
-INTERACTION_TYPES = (
-    ('tag', 'Tag'),
-    ('com', 'Comment'),
-    ('bkm', 'Bookmark'),
-    ('shr', 'Share'),
-    ('vot', 'Vote')
-)
-
-GENDER_CHOICES = (
-    ('M', 'Male'),
-    ('F', 'Female'),
-)
-
 class DateAwareModel(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False)
     modified = models.DateTimeField(auto_now=True, editable=False)    
@@ -38,33 +17,28 @@ class UserAwareModel(models.Model):
     class Meta:
         abstract = True
 
+class InteractionNode(models.Model):
+    body = models.TextField(unique=True)
+    
+    def __unicode__(self):
+        return u'ID: {0}, Body: {1}'.format(self.id, self.body[:25])
+
 class Feature(models.Model):
-    text = models.BooleanField()
-    images = models.BooleanField()
-    flash = models.BooleanField()
+    text = models.BooleanField(editable=False)
+    images = models.BooleanField(editable=False)
+    flash = models.BooleanField(editable=False)
 
     class Meta:
-        unique_together = ('text', 'images', 'flash')
+        unique_together = ('text','images','flash')
 
     def __unicode__(self):
         return u'Feature(Text: {0}, Images: {1}, Flash: {2})'.format(self.text, self.images, self.flash)
-
-class InteractionNode(models.Model):
-    kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)
-    body = models.TextField()
-    
-    def __unicode__(self):
-        return u'Node(Type: {0}, ID: {1})'.format(self.kind, self.id)
-
-    class Meta:
-        unique_together = ('kind', 'body')
 
 class Group(models.Model):
     name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=25, unique=True)
     language = models.CharField(max_length=25,default="en")
     blessed_tags = models.ManyToManyField(InteractionNode)
-    valid_domains = models.CharField(max_length=250,blank=True)
 
     # black/whitelist fields
     anno_whitelist = models.CharField(max_length=250,blank=True,default=u"p")
@@ -76,7 +50,7 @@ class Group(models.Model):
     logo_url_sm = models.URLField(blank=True,verify_exists=False)
     logo_url_med = models.URLField(blank=True,verify_exists=False)
     logo_url_lg = models.URLField(blank=True,verify_exists=False)
-    
+
     # features
     share = models.ForeignKey(Feature, related_name = 'Share Feature')
     rate = models.ForeignKey(Feature, related_name = 'Rate Feature')
@@ -125,22 +99,35 @@ class Page(models.Model):
     site = models.ForeignKey(Site)
     url = models.URLField(verify_exists=False)
     canonical_url = models.URLField(verify_exists=False, blank=True)
+    #interaction_count = models.PositiveIntegerField()
+    #tag_count = models.PositiveIntegerField()
+    #comment_count = models.PositiveIntegerField()
+    #share_count = models.PositiveIntegerField()
 
     def __unicode__(self):
-        return u'Page {0}'.format(unicode(self.id))
+        return unicode(self.id)
 
 class Content(DateAwareModel):
+    CONTENT_TYPES = (
+        ('txt', 'text'),
+        ('img', 'image'),
+        ('vid', 'video'),
+        ('snd', 'sound'),
+        ('fla', 'flash')
+    )
+
     kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
     body = models.TextField()
+    location = models.CharField(max_length=255)
     
     def __unicode__(self):
-        return u'Content(Kind: {0}, ID: {1})'.format(self.kind, self.id)
+        return u'Kind: {0}, ID: {1}'.format(self.kind, self.id)
     
     class Meta:
         verbose_name_plural = "content"
 
 class Container(models.Model):
-    hash = models.CharField(max_length=32,unique=True)
+    hash = models.CharField(max_length=32, unique=True, db_index=True)
     body = models.TextField()
 
     def __unicode__(self):
@@ -150,28 +137,31 @@ class Container(models.Model):
         ordering = ['id']
 
 class Interaction(DateAwareModel, UserAwareModel):
+    INTERACTION_TYPES = (
+        ('tag', 'Tag'),
+        ('com', 'Comment'),
+        ('bkm', 'Bookmark'),
+        ('shr', 'Share'),
+        ('vup', 'Vote Up'),
+        ('vdn', 'Vote Down')
+    )
     page = models.ForeignKey(Page)
     container = models.ForeignKey(Container, blank=True, null=True)
     content = models.ForeignKey(Content)
     interaction_node = models.ForeignKey(InteractionNode)
     anonymous = models.BooleanField(default=False)
     parent= models.ForeignKey('self', blank=True, null=True)
-    node_order_by = ['created']
+    kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)
     
     # Don't f-ing change this number - super important
     # steplen = 10
     
     class Meta:
         ordering = ['id']
-        unique_together = ('page', 'content', 'interaction_node', 'user')
-
-    
-    @models.permalink
-    def get_absolute_url(self):
-        return ('api.urls.Interaction.resource_uri()', [str(self.id)])
-    
+        unique_together = ('page', 'content', 'kind', 'interaction_node', 'user')
+   
     def __unicode__(self):
-        return u'Interaction(id: {0})'.format(self.id)
+        return u'id: {0}'.format(self.id)
 
 
 class Link(models.Model):
@@ -195,6 +185,11 @@ class Profile(models.Model):
     educated = models.BooleanField()
     
 class SocialUser(models.Model):
+    GENDER_CHOICES = (
+        ('M', 'Male'),
+        ('F', 'Female'),
+    )
+
     """Social Auth association model"""
     user = models.OneToOneField(User, related_name='social_user', unique=True)
     provider = models.CharField(max_length=32)
@@ -206,7 +201,7 @@ class SocialUser(models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
     hometown = models.CharField(max_length=255, blank=True)
     bio = models.TextField(max_length=255, blank=True, null=True)
-    img_url = models.CharField(max_length=255, blank=True)
+    img_url = models.URLField(blank=True)
 
     def __unicode__(self):
         return self.user.username
