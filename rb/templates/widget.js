@@ -867,8 +867,7 @@ function readrBoard($R){
             initEnvironment: function(){
                 
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
-                var $indicators = $('<div id="rdr_indicator_details" />').appendTo('body').hide();
-
+                var $indicatorDetailsWrapper = $('<div id="rdr_indicator_details_wrapper" />').appendTo('body');
 
                 this.hashNodes();
 
@@ -1025,9 +1024,12 @@ function readrBoard($R){
                                 RDR.actions.indicators.make( i );
                             }
                         }
-                        $('.rdr_indicator').fadeIn('300');
-                        $('#rdr_indicator_details').show(); //todo: change this in the css
 
+                        $('.rdr_indicator').css({
+                            'opacity':'0',
+                            'display':'inline'
+                        }).fadeTo('300', '0.4');
+                                                
                         // console.dir(RDR.content_nodes['cf3677ffb09818b086bc3d6dd53eb1f4']);
                         // console.dir(RDR.content_nodes['345c1dfd92c4f46eca2f29adab9ce8cf']);
     					// TODO: Eric, should this go in a jquery queue?
@@ -1051,28 +1053,31 @@ function readrBoard($R){
     			                     },
     			                    success: function(response) {
     			                        // do nothing?  since we just added this container to the DB for the first time.
-    			                    }
-    						});
-    					}
-					}
-				});
-			},
+                                    }
+                            });
+                        }
+                    }
+                });
+            },
             indicators: {
                 make: function( hash ){
+                    //todo: I think these event functions here could be more efficient if they weren't anonymous and were cosolodated.
                     
                     // if ( RDR.content_nodes[i].info.comment_count + RDR.content_nodes[i].info.tag_count > 0 ) {
                     console.log('-- what we know about hash '+hash+' --');
                     console.dir(RDR.content_nodes[hash]);
 
                     var $container = $(RDR.group.anno_whitelist+'.rdr-'+hash), // prepend with the anno_whitelist selector 
-                    $indicator = $('<div id="rdr_indicator_' +hash+ '" class="rdr_indicator" />'), //hidden in css, shown on load.
+                    $indicator = $('<div id="rdr_indicator_' +hash+ '" class="rdr_indicator" />').hide(), //hidden for now, shown on load.
                     $indicator_details = $('<div id="rdr_indicator_details_' +hash+ '" class="rdr_indicator_details rdr_text" />'),
                     total = RDR.content_nodes[hash].info.tag_count;  // removing comment count for now: 
 
                     $indicator.append(
-                        $('<img src="/static/images/blank.png" class="no-rdr" />'),
-                        $('<span class="rdr_count">'+ total +'</span>')
+                        '<img src="/static/images/blank.png" class="no-rdr" />',
+                        '<span class="rdr_count">'+ total +'</span>'
                     )//chain
+                    .data('which', hash)//chain
+                    .appendTo($container)//chain
                     .click( function() {
                         RDR.actions.viewContainerReactions( {icon:$(this), type:"text"} );
                     })//chain
@@ -1080,11 +1085,10 @@ function readrBoard($R){
                         function() {
                             //todo: what does this do?
                             //$( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).addClass( 'rdr_highlightContainer' );
-                            log($indicator.offset().top);
-                            log($indicator.offset().left);
-                            log($('#rdr_indicator_details_' +hash));
-                            $('#rdr_indicator_details_' +hash).css({
-                                'position': 'absolute',
+                            
+                            //todo: maybe make more efficient
+                            $indicator_details.find('.rdr_statsClone').html( $indicator.html() );
+                            $indicator_details.css({
                                 'display': 'inline',
                                 'top': $indicator.offset().top,
                                 'left':$indicator.offset().left
@@ -1093,17 +1097,37 @@ function readrBoard($R){
                         function() {
                             //todo: what does this do?
                             //$( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).removeClass( 'rdr_highlightContainer' );
-                            $('#rdr_indicator_details_' +hash).hide();
+                            //dont hide it again here, because we need to do that on the hoveroff event of the rdr_indicator_details
+
+                            //ensure smooth hover behavior
+                            setTimeout(function(){
+                                if( !$indicator_details.data('hoverLock') ){
+                                    $indicator_details.hide();
+                                }
+                            },500)
                         }
-                    )//chain                    
-                    .data('which', hash)//chain
-                    .appendTo($container); 
-                    
+                    );                   
+                                        
+
                     //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the body.
                     //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
                     var some_reactions = RDR.actions.indicators.sortReactions( hash );
-                    $indicator_details.append('<span class="rdr_details">reactions: </span>',  some_reactions, " ...");
-                    $('#rdr_indicator_details').append($indicator_details);
+                    $indicator_details.append(
+                        '<div class="rdr_statsClone" />',
+                        '<span class="rdr_details"> reactions: </span>',
+                        some_reactions, " ..."
+                    )//chain
+                    .hover(
+                        function() {
+                            $(this).data('hoverLock', true)
+                            //do nothing
+                        },
+                        function() {
+                            $(this).data('hoverLock', false)
+                            $(this).hide();
+                        }
+                    )//chain
+                    .appendTo('#rdr_indicator_details_wrapper');
 
                 },
                 sortReactions: function( hash ){
