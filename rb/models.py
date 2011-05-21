@@ -18,7 +18,7 @@ class UserAwareModel(models.Model):
         abstract = True
 
 class InteractionNode(models.Model):
-    body = models.TextField(unique=True)
+    body = models.CharField(max_length=2048)
     
     def __unicode__(self):
         return u'ID: {0}, Body: {1}'.format(self.id, self.body[:25])

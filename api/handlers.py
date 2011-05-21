@@ -8,8 +8,6 @@ from utils import *
 from userutils import *
 from token import *
 
-from django.db import connection
-
 class UserHandler(AnonymousBaseHandler):
     model = User
     fields = ('id', 'first_name', 'last_name')
@@ -139,27 +137,56 @@ class CreateContainerHandler(AnonymousBaseHandler):
                 body=hashes[hash]['content']
             )[1]
         return result
-
+"""
 class ContainerHandler(AnonymousBaseHandler):
     
     @status_response
     def read(self, request, container=None):
         known = {}
-        unknown = []
         if container: hashes = [container]
         else:
             data = json.loads(request.GET['json'])
             hashes = data['hashes']
-        for hash in hashes:
-            try:
-                known[hash] = Container.objects.get(hash=hash)
-            except Container.DoesNotExist:
-                unknown.append(hash)
+            page = data['page']
 
-        for hash in known.keys():
-            known[hash] = getContainerData(hash)
-        
-        print connection.queries
+        db_hashes = dict((obj.hash, obj) for obj in Container.objects.filter(hash__in=hashes))
+        unknown = list(set(hashes) - set(db_hashes.keys()))
+
+        for hash in db_hashes.keys():
+            known[hash] = getContainerData(hash,page)
+
+        return dict(known=known, unknown=unknown)
+"""
+
+class ContainerHandler(AnonymousBaseHandler):
+    
+    @status_response
+    def read(self, request):
+        known = {}
+
+        data = json.loads(request.GET['json'])
+        hashes = data['hashes']
+        page = data['pageID']
+
+        # Force evaluation by making lists
+        containers = list(Container.objects.filter(hash__in=hashes))
+        interactions = list(Interaction.objects.filter(container__in=containers, page=page))
+        inodes = list(InteractionNode.objects.filter(interaction__in=interactions))
+        content = list(Content.objects.filter(interaction__in=interactions))
+
+        known = dict((
+            (container.hash, getContainerData(container,interactions,inodes,content)) for container in containers    
+        ))
+
+        unknown = list(set(hashes) - set(known.keys()))
+
+        #containers = Container.objects.filter(hash__in=hashes)
+        #containers = containers.select_related('interaction')
+        #containers = containers.filter(interaction__page=page,interaction__isnull=False)
+        #containers = containers.values('id','hash','body','interaction__kind')
+        #containers = containers.annotate(count=Count('interaction__kind'))
+        #db_hashes = dict(((obj,getContainerData(obj['id'],page)) for obj in containers))
+
         return dict(known=known, unknown=unknown)
 
 class PageDataHandler(AnonymousBaseHandler):

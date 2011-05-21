@@ -34,50 +34,44 @@ def getTagData(tags, comments):
 
     return tags_data
 
-def getContentData(content, interactions=None):
-    content_data = []
+def getContentData(content_item, interactions, inodes):
+    data = {}
 
-    for content_item in content:
-        data = {}
-        data['body'] = content_item.body
-        
-        # Filter interactions for this piece of content and get count data
-        if interactions:
-            content_interactions = interactions.filter(content=content_item)
-        else:
-            content_interactions = Interaction.objects.filter(content=content_item)
+    data['body'] = content_item.body
+    
+    content_interactions = filter(lambda x: x.container==hash, interactions)
 
-        content_tags = content_interactions.filter(kind='tag')
-        content_coms = content_interactions.filter(kind='com')
-        data['tag_count'] = content_tags.count()
-        data['comment_count'] = content_coms.count()
+    tags = filter(lambda x: x.kind=='tag', content_interactions)
+    comments = filter(lambda x: x.kind=='com', content_interactions)
 
-        # Retrieve data on individual tags
-        data['tags'] = getTagData(content_tags, content_coms)
-        
-        content_data.append(data)
+    data['tag_count'] = len(content_tags)
+    data['comment_count'] = len(content_coms)
 
+    # Retrieve data on individual tags
+    #data['tags'] = getTagData(content_tags, content_coms)
+    
     return content_data
 
-def getContainerData(hash):
+def getContainerData(hash, interactions, inodes, content):
     container_data = {}
     # Get interaction on the provided hash
-    interactions = Interaction.objects.filter(container__hash=hash)
+    hash_interactions = filter(lambda x: x.container==hash, interactions)
 
     # Filter tag and comment interactions
-    tags = interactions.filter(kind='tag')
-    comments = interactions.filter(kind='com')
+    tags = filter(lambda x: x.kind=='tag', hash_interactions)
+    comments = filter(lambda x: x.kind=='com', hash_interactions)
 
     # Get counts of tags and comments -- container level
-    container_data['tag_count'] = tags.count()
-    container_data['comment_count'] = comments.count()
+    container_data['tag_count'] = len(tags)
+    container_data['comment_count'] = len(comments)
     
     # Make list of unique content within container and retrieve their Content objects
-    content_unique = interactions.order_by('content').distinct().values('content')
-    content_objs = Content.objects.filter(id__in=content_unique)
+    content_unique = set((interaction.content for interaction in interactions))
 
-    container_data['content'] = getContentData(content_objs, interactions)
-
+    container_data['content'] = dict((
+        (content_item.body, getContentData(content_item, interactions, inodes)) for content_item in content_unique
+    ))
+    
     return container_data
 
 def interactionNodeCounts(interactions, kinds=[], content=None):
