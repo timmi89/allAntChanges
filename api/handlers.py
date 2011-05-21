@@ -170,12 +170,11 @@ class ContainerHandler(AnonymousBaseHandler):
 
         # Force evaluation by making lists
         containers = list(Container.objects.filter(hash__in=hashes))
-        interactions = list(Interaction.objects.filter(container__in=containers, page=page))
-        inodes = list(InteractionNode.objects.filter(interaction__in=interactions))
+        interactions = list(Interaction.objects.filter(container__in=containers, page=page).select_related('interaction_node'))
         content = list(Content.objects.filter(interaction__in=interactions))
 
         known = dict((
-            (container.hash, getContainerData(container,interactions,inodes,content)) for container in containers    
+            (container.hash, getContainerData(container,interactions,content)) for container in containers    
         ))
 
         unknown = list(set(hashes) - set(known.keys()))
@@ -222,9 +221,9 @@ class PageDataHandler(AnonymousBaseHandler):
         userinteract = socialusers.annotate(interactions=Count('user__interaction'))
         topusers = userinteract.order_by('-interactions').values('full_name','img_url','interactions')[:10]
 
-        imagedata = getContentData(content.filter(kind='image').order_by('id').distinct())
-        videodata = getContentData(content.filter(kind='video').order_by('id').distinct())
-        flashdata = getContentData(content.filter(kind='flash').order_by('id').distinct())
+        #imagedata = getContentData(content.filter(kind='image').order_by('id').distinct())
+        #videodata = getContentData(content.filter(kind='video').order_by('id').distinct())
+        #flashdata = getContentData(content.filter(kind='flash').order_by('id').distinct())
         
         return dict(
             id=page.id,
@@ -232,9 +231,9 @@ class PageDataHandler(AnonymousBaseHandler):
             toptags=toptags,
             topusers=topusers,
             topshares=topshares,
-            imagedata=imagedata,
-            videodata=videodata,
-            flashdata=flashdata
+            #imagedata=imagedata,
+            #videodata=videodata,
+            #flashdata=flashdata
         )
 
 class SettingsHandler(AnonymousBaseHandler):

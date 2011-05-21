@@ -6,53 +6,50 @@ import hmac
 import random
 from exceptions import FBException, JSONException
 
-def getTagCommentData(tag, tags, comments):
-    tag_comments = []        
-    for comment in comments.filter(parent=tags.filter(interaction_node=tag)):
-        comment_data = {}
-        comment_data['comment'] = comment.interaction_node.body
-        comment_data['user'] = comment.user
-        tag_comments.append(comment_data)
+def getTagCommentData(comment):
+    print comment
+    comment_data = {}
+    comment_data['comment'] = comment.interaction_node.body
+    comment_data['user'] = comment.user
 
-    return tag_comments
+    return comment_data
 
-def getTagData(tags, comments):
-    # Get information about the tags
-    tags_data = []
-
+def getTagData(tag, tags, comments):
     # Make list of unique content and grab the InteractionNode objects
-    tag_unique = tags.order_by('interaction_node').distinct().values('interaction_node')
-    tag_objs = InteractionNode.objects.filter(id__in=tag_unique)
     
-    for tag_item in tag_objs:
-        tag_data = {}
-        tag_data['tag'] = tag_item.body
-        tag_data['id'] = tag_item.id
-        tag_data['count'] = tags.filter(interaction_node=tag_item).count()
-        tag_data['comments'] = getTagCommentData(tag_item, tags, comments)
-        tags_data.append(tag_data)
+    tags = filter(lambda x: x.interaction_node==tag, tags)
+    comments = filter(lambda x: x.parent in tags, comments)
 
-    return tags_data
+    tag_data = {}
+    tag_data['tag'] = tag.body
+    tag_data['id'] = tag.id
+    tag_data['count'] = len(tags)
+    
+    tag_data['comments'] = [getTagCommentData(comment) for comment in comments]
 
-def getContentData(content_item, interactions, inodes):
+    return tag_data
+
+def getContentData(content_item, interactions):
     data = {}
-
     data['body'] = content_item.body
     
-    content_interactions = filter(lambda x: x.container==hash, interactions)
+    content_interactions = filter(lambda x: x.content==content_item, interactions)
 
-    tags = filter(lambda x: x.kind=='tag', content_interactions)
-    comments = filter(lambda x: x.kind=='com', content_interactions)
+    # Filter tag and comment interactions
+    content_tags = filter(lambda x: x.kind=='tag', content_interactions)
+    content_coms = filter(lambda x: x.kind=='com', content_interactions)
 
     data['tag_count'] = len(content_tags)
-    data['comment_count'] = len(content_coms)
+    data['com_count'] = len(content_coms)
+
+    tags = set((tag.interaction_node for tag in content_tags))
 
     # Retrieve data on individual tags
-    #data['tags'] = getTagData(content_tags, content_coms)
+    data['tags'] = [getTagData(tag, content_tags, content_coms) for tag in tags]
     
-    return content_data
+    return data
 
-def getContainerData(hash, interactions, inodes, content):
+def getContainerData(hash, interactions, content):
     container_data = {}
     # Get interaction on the provided hash
     hash_interactions = filter(lambda x: x.container==hash, interactions)
@@ -63,14 +60,12 @@ def getContainerData(hash, interactions, inodes, content):
 
     # Get counts of tags and comments -- container level
     container_data['tag_count'] = len(tags)
-    container_data['comment_count'] = len(comments)
+    container_data['com_count'] = len(comments)
     
     # Make list of unique content within container and retrieve their Content objects
-    content_unique = set((interaction.content for interaction in interactions))
-
-    container_data['content'] = dict((
-        (content_item.body, getContentData(content_item, interactions, inodes)) for content_item in content_unique
-    ))
+    content_unique = set((interaction.content for interaction in hash_interactions))
+    
+    container_data['content'] = [getContentData(content_item, hash_interactions) for content_item in content_unique]
     
     return container_data
 

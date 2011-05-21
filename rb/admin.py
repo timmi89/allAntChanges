@@ -84,6 +84,7 @@ class InteractionAdmin(admin.ModelAdmin):
         'container',
         'content',
         'kind',
+        'parent',
         'interaction_node',
         'created',
         'modified',
