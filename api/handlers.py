@@ -137,26 +137,6 @@ class CreateContainerHandler(AnonymousBaseHandler):
                 body=hashes[hash]['content']
             )[1]
         return result
-"""
-class ContainerHandler(AnonymousBaseHandler):
-    
-    @status_response
-    def read(self, request, container=None):
-        known = {}
-        if container: hashes = [container]
-        else:
-            data = json.loads(request.GET['json'])
-            hashes = data['hashes']
-            page = data['page']
-
-        db_hashes = dict((obj.hash, obj) for obj in Container.objects.filter(hash__in=hashes))
-        unknown = list(set(hashes) - set(db_hashes.keys()))
-
-        for hash in db_hashes.keys():
-            known[hash] = getContainerData(hash,page)
-
-        return dict(known=known, unknown=unknown)
-"""
 
 class ContainerHandler(AnonymousBaseHandler):
     
@@ -171,20 +151,12 @@ class ContainerHandler(AnonymousBaseHandler):
         # Force evaluation by making lists
         containers = list(Container.objects.filter(hash__in=hashes))
         interactions = list(Interaction.objects.filter(container__in=containers, page=page).select_related('interaction_node'))
-        content = list(Content.objects.filter(interaction__in=interactions))
 
         known = dict((
-            (container.hash, getContainerData(container,interactions,content)) for container in containers    
+            (container.hash, getData(interactions, container=container)) for container in containers    
         ))
 
         unknown = list(set(hashes) - set(known.keys()))
-
-        #containers = Container.objects.filter(hash__in=hashes)
-        #containers = containers.select_related('interaction')
-        #containers = containers.filter(interaction__page=page,interaction__isnull=False)
-        #containers = containers.values('id','hash','body','interaction__kind')
-        #containers = containers.annotate(count=Count('interaction__kind'))
-        #db_hashes = dict(((obj,getContainerData(obj['id'],page)) for obj in containers))
 
         return dict(known=known, unknown=unknown)
 
