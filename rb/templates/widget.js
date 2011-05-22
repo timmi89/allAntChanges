@@ -1810,13 +1810,19 @@ function readrBoard($R){
                                 //do we really want to chain pass these through?  Or keep them in a shared scope?
 
                                 if ( response.status == "fail" ) {
-                                    // if it failed, see if we can fix it, and if so, try this function one more time
-                                    RDR.session.handleGetUserFail( response, function() {
-                                        if ( !args.secondAttempt ) {
-                                            args.secondAttempt = true;
-                                            RDR.actions.rateSend( args );
-                                        }
-                                    } );
+                                    console.log('failllllllllll');
+                                    if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
+                                        console.log('uh oh better login, tempy');
+                                        RDR.session.showLoginPanel( args );
+                                    } else {
+                                        // if it failed, see if we can fix it, and if so, try this function one more time
+                                        RDR.session.handleGetUserFail( response, function() {
+                                            if ( !args.secondAttempt ) {
+                                                args.secondAttempt = true;
+                                                RDR.actions.rateSend( args );
+                                            }
+                                        });
+                                    }
                                 } else {
                                     if ( tag_li.length == 1 ) {
                                         tag_li.find('div.rdr_leftBox').unbind();
@@ -1841,6 +1847,8 @@ function readrBoard($R){
                                         }
                                     } 
                                     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:response.data });
+                                    if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
+                                    else RDR.session.showLoginPanel( args );
                                 }
                             },
                             //for now, ignore error and carry on with mockup
@@ -1887,18 +1895,26 @@ function readrBoard($R){
                             success: function(response) {
                                 //[eric] - if we want these params still we need to get them from args:
                                 //do we really want to chain pass these through?  Or keep them in a shared scope?
-
                                 if ( response.status == "fail" ) {
-                                    // if it failed, see if we can fix it, and if so, try this function one more time
-                                    RDR.session.handleGetUserFail( response, function() {
-                                        if ( !args.secondAttempt ) {
-                                            args.secondAttempt = true;
-                                            RDR.actions.rateSend( args );
-                                        }
-                                    });
+                                    console.log('failllllllllll');
+                                    if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
+                                        console.log('uh oh better login, tempy');
+                                        RDR.session.showLoginPanel( args );
+                                    } else {
+                                        // if it failed, see if we can fix it, and if so, try this function one more time
+                                        RDR.session.handleGetUserFail( response, function() {
+                                            if ( !args.secondAttempt ) {
+                                                args.secondAttempt = true;
+                                                RDR.actions.rateSend( args );
+                                            }
+                                        });
+                                    }
                                 } else {
                                     if ( element.length == 1 ) {
                                         RDR.actions.updateData( { type:"tag", element:element, hash:container, rindow:rindow, content:content, tag:tag });
+
+                                        if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
+                                        else RDR.session.showLoginPanel( args );
                                     }
                                 }
                             },
@@ -2133,13 +2149,6 @@ function readrBoard($R){
                 // }
 
                 RDR.actions.panel.expand("whyPanel", rindow);
-
-
-
-
-
-                // TODO un-dummify this temp user message
-                if ( int_id.num_interactions ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:int_id });
 
 
                 /*
