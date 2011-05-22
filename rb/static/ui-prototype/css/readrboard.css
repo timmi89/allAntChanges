@@ -330,7 +330,7 @@ div.rdr button				{font-size:14px; }
 }
 
 /* user education bar */
-#rdr_ed_user 		{ position:fixed; top:-40px; left:0; width:100%; background:#f0f0f0; height:35px;}
+#rdr_ed_user 		{ position:fixed; top:-40px; left:0; width:100%; background:#f0f0f0; height:35px; -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa; padding:0px; z-index:12000; overflow:hidden;}
 #rdr_ed_user_1 		{ float:left; background: #fff; width:240px; height:35px;}
 #rdr_ed_user_1 h1 	{ padding-top:6px;}
 #rdr_ed_user_1 span	{ font-size:21px;}

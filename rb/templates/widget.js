@@ -657,7 +657,7 @@ function readrBoard($R){
                 }
             },
             educateUser: function() {
-                var $educateUser = $('<div id="rdr_ed_user" class="rdr rdr_window"><div id="rdr_ed_user_1"><h1>Rate or discuss <span>anything</span> on this page!</h1></div><div id="rdr_ed_user_2">Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.</div><div id="rdr_ed_user_x">x</div>');
+                var $educateUser = $('<div id="rdr_ed_user" class="rdr"><div id="rdr_ed_user_1"><h1>Rate or discuss <span>anything</span> on this page!</h1></div><div id="rdr_ed_user_2">Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.</div><div id="rdr_ed_user_x">x</div>');
                 $('body').append( $educateUser );
                 $('#rdr_ed_user_x').click( function() {
                     RDR.session.educateUserClose();
