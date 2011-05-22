@@ -102,7 +102,7 @@ function readrBoard($R){
                 columns: false
             },
 			// content comes later.  this is just to identify or draw the container.
-            checkHeight: function( rindow, percentScroll ) {
+            checkHeight: function( rindow, percentScroll, which ) {
 
                 // console.log('----- checkHeight -----');
                 rindow.find('div.rdr_body').each( function() {
@@ -110,9 +110,9 @@ function readrBoard($R){
                     var $column = $(this);
                     // if ( $column.height() > 150 ) {
                         
-                    if ( $column.parents().hasClass('rdr_whyPanel') ) log( '-----which: whyPanel' );
-                    if ( $column.parents().hasClass('rdr_contentPanel') ) log( '-----which: contentPanel' );
-                    if ( $column.parents().hasClass('rdr_reactionPanel') ) log( '-----which: reactionPanel' );
+                    if ( $column.parents().hasClass('rdr_whyPanel') ) { var this_column_name="whyPanel"; log( '-----which: whyPanel' ); }
+                    if ( $column.parents().hasClass('rdr_contentPanel') ) { var this_column_name="contentPanel"; log( '-----which: contentPanel' ); }
+                    if ( $column.parents().hasClass('rdr_reactionPanel') ) { var this_column_name="reactionPanel"; log( '-----which: reactionPanel' ); }
                     // log('height is '+$column.height());
 
                     var paneHeight = (rindow.height()-35);
@@ -120,6 +120,9 @@ function readrBoard($R){
                     // paneHeight = ( paneHeight > contentHeight ) ? paneHeight:contentHeight;
 log(contentHeight, paneHeight);
                     if ( contentHeight >= 300 ) {
+                        rindow.find('div.rdr_reactionPanel div.rdr_body').animate({
+                            minHeight:"300px"
+                        }, rindow.settings.animTime );
                         if ( $column.find('.jspVerticalBar').length > 0 ) {
                             console.log('reinit jScrollpane');
                             $column.data('jsp').reinitialise({ contentWidth:200, showArrows:true });
@@ -130,9 +133,20 @@ log(contentHeight, paneHeight);
                             $column.jScrollPane({ contentWidth:200, showArrows:true });
                         }
                         // if ( percentScroll ) $column.data('jsp').scrollToPercentY( percentScroll );
-                    } else {
-                        rindow.find('div.rdr_body').animate({
-                            minHeight:contentHeight
+                    } else if (which && which == this_column_name) {
+                        // switch (which) {
+                        // case "contentPanel":
+                        // case "reactionPanel":
+                        //     var minHeight = "auto";
+                        //     break;
+
+                        // case "whyPanel":
+                        //     var minHeight = "280px";
+                        //     break;
+                        // }
+                        console.log('animate!!!!!!!!!!!!!!!!!!!!! ' + contentHeight+"px");
+                        rindow.find('div.rdr_reactionPanel div.rdr_body').animate({
+                            minHeight:contentHeight+"px"
                         }, rindow.settings.animTime );
                     }
                 });
@@ -1319,15 +1333,15 @@ log(contentHeight, paneHeight);
                 };
 
                 rindow.animate({
-                    width: rindow.settings.pnlWidth +'px',
-                    minHeight: rindow.settings.height +'px'
+                    width: rindow.settings.pnlWidth +'px'
+                    // minHeight: rindow.settings.height +'px'
                 }, rindow.settings.animTime, function() {
                     $(this).css('width','auto');
                     // rindow.append($sentimentBox);
 
                     rindow.find('div.rdr_contentSpace').html( $sentimentBox );
                     // RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:rindow.settings});
-                    RDR.rindow.checkHeight( rindow, 0 );
+                    RDR.rindow.checkHeight( rindow, 0, "reactionPanel" );
 
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
                     if ( type == "text") {
@@ -1648,7 +1662,7 @@ console.log(which);
                     log('expand '+which);
                     var which = (which) ? which:"whyPanel";
                     $thisPanel = $(rindow).find('.rdr_'+which);
-                    
+                    log("$whyBody height now: "+$('#whyPanel div.rdr_body').height() );
                     var num_columns = rindow.find('div.rdr_sntPnl').length;
                     rindow.addClass('rdr_columns'+num_columns);
                     switch (which) {
@@ -1669,16 +1683,13 @@ console.log(which);
                     }
                     else{
                         rindow.css('background-position',rindow_bg+'px');
-                        log('animate');
                         rindow.animate({
                             width: width +'px'
                         }, rindow.settings.animTime, function() {
-                            rindow.find('div.rdr_body').animate({
-                                minHeight:minHeight
-                            }, rindow.settings.animTime, function() {
-                                console.log('now we checkHeight');
-                                RDR.rindow.checkHeight( rindow, 0 );
-                            });
+                            // rindow.find('div.rdr_body').animate({
+                            //     minHeight:minHeight
+                            // }, rindow.settings.animTime );
+                            RDR.rindow.checkHeight( rindow, 0, which );
                         });
 
                         // rindow.animate({
@@ -1723,7 +1734,7 @@ console.log(which);
                         }, rindow.settings.animTime ).animate({
                             minHeight:minHeight
                         }, rindow.settings.animTime, function() {
-                            RDR.rindow.checkHeight( rindow, 0 );
+                            RDR.rindow.checkHeight( rindow, 0, which );
                         });
                     }
                     $thisPanel.data('expanded', false);
@@ -3763,7 +3774,7 @@ function jQueryPlugins($R){
 
             function initialise(s)
             {
-
+log("$whyBody height now 1: "+$('#whyPanel div.rdr_body').height() );
                 var /*firstChild, lastChild, */isMaintainingPositon, lastContentX, lastContentY,
                         hasContainingSpaceChanged, originalScrollTop, originalScrollLeft,
                         maintainAtBottom = false, maintainAtRight = false;
@@ -3818,7 +3829,9 @@ console.log('paneHeight ',paneHeight);
                     firstChild.css('margin-top', 0);
                     lastChild.css('margin-bottom', 0);
                     */
+log("$whyBody height now 2: "+$('#whyPanel div.rdr_body').height() );
                 } else {
+log("$whyBody height now 3: "+$('#whyPanel div.rdr_body').height() );
                     log('pane!!');
 
                     elem.css('width', '');
@@ -3856,6 +3869,7 @@ console.log('paneHeight ',paneHeight);
                     elem.width(paneWidth);
 
                     container.find('>.jspVerticalBar,>.jspHorizontalBar').remove().end();
+log("$whyBody height now 4: "+$('#whyPanel div.rdr_body').height() );
                 }
 
                 pane.css('overflow', 'auto');
@@ -3873,13 +3887,13 @@ console.log('paneHeight ',paneHeight);
 
                 
                 pane.css('overflow', '');
-
+log("$whyBody height now 5: "+$('#whyPanel div.rdr_body').height() );
                 percentInViewH = contentWidth / paneWidth;
                 percentInViewV = contentHeight / paneHeight;
                 // TODO fix this to > 1
                 isScrollableV = percentInViewV >= 1;
                 isScrollableH = percentInViewH > 1;
-
+log("$whyBody height now 5: "+$('#whyPanel div.rdr_body').height() );
                 //console.log(paneWidth, paneHeight, contentWidth, contentHeight, percentInViewH, percentInViewV, isScrollableH, isScrollableV);
 
                 if (!(isScrollableH || isScrollableV)) {
