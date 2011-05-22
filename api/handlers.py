@@ -152,10 +152,7 @@ class ContainerHandler(AnonymousBaseHandler):
         containers = list(Container.objects.filter(hash__in=hashes))
         interactions = list(Interaction.objects.filter(container__in=containers, page=page).select_related('interaction_node'))
 
-        known = dict((
-            (container.hash, getData(interactions, container=container)) for container in containers    
-        ))
-
+        known = getContainers(interactions, containers)
         unknown = list(set(hashes) - set(known.keys()))
 
         return dict(known=known, unknown=unknown)
@@ -193,9 +190,9 @@ class PageDataHandler(AnonymousBaseHandler):
         userinteract = socialusers.annotate(interactions=Count('user__interaction'))
         topusers = userinteract.order_by('-interactions').values('full_name','img_url','interactions')[:10]
 
-        #imagedata = getContentData(content.filter(kind='image').order_by('id').distinct())
-        #videodata = getContentData(content.filter(kind='video').order_by('id').distinct())
-        #flashdata = getContentData(content.filter(kind='flash').order_by('id').distinct())
+        imagedata = dict(((content.body, getData(iop, content=content)) for content in content.filter(kind='image').order_by('id').distinct()))
+        videodata = dict(((content.body, getData(iop, content=content)) for content in content.filter(kind='video').order_by('id').distinct()))
+        flashdata = dict(((content.body, getData(iop, content=content)) for content in content.filter(kind='flash').order_by('id').distinct()))
         
         return dict(
             id=page.id,
@@ -203,9 +200,9 @@ class PageDataHandler(AnonymousBaseHandler):
             toptags=toptags,
             topusers=topusers,
             topshares=topshares,
-            #imagedata=imagedata,
-            #videodata=videodata,
-            #flashdata=flashdata
+            imagedata=imagedata,
+            videodata=videodata,
+            flashdata=flashdata
         )
 
 class SettingsHandler(AnonymousBaseHandler):

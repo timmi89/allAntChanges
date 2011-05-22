@@ -117,8 +117,8 @@ class Content(DateAwareModel):
     )
 
     kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
-    body = models.TextField()
     location = models.CharField(max_length=255)
+    body = models.TextField()
     
     def __unicode__(self):
         return u'Kind: {0}, ID: {1}'.format(self.kind, self.id)
@@ -157,7 +157,7 @@ class Interaction(DateAwareModel, UserAwareModel):
     # steplen = 10
     
     class Meta:
-        ordering = ['id']
+        ordering = ['page','container','kind','interaction_node']
         unique_together = ('page', 'content', 'kind', 'interaction_node', 'user')
    
     def __unicode__(self):
