@@ -114,20 +114,24 @@ function readrBoard($R){
 
                     var paneHeight = (rindow.height()-35);
                     var contentHeight = $column.height();
+                    // paneHeight = ( paneHeight > contentHeight ) ? paneHeight:contentHeight;
 log(contentHeight, paneHeight);
-                    if ( contentHeight >= paneHeight ) {
-                        // if ( $column.data('jsp') ) {
+                    if ( contentHeight >= 300 ) {
                         if ( $column.find('.jspVerticalBar').length > 0 ) {
                             console.log('reinit jScrollpane');
-                            $column.data('jsp').reinitialise();
+                            $column.data('jsp').reinitialise({ contentWidth:200, showArrows:true });
                             // RDR.pane1 = $R('div.rdr_reactionPanel div.rdr_body').data('jsp');
                         } else {
                             console.log('create jScrollpane');
-                            $column.jScrollPane({ contentWidth:200, contentHeight:contentHeight, paneHeight:paneHeight, showArrows:true });    
+                            //contentHeight:contentHeight, paneHeight:paneHeight, 
+                            $column.jScrollPane({ contentWidth:200, showArrows:true });
                         }
                         // if ( percentScroll ) $column.data('jsp').scrollToPercentY( percentScroll );
+                    } else {
+                        rindow.find('div.rdr_body').animate({
+                            minHeight:contentHeight
+                        }, rindow.settings.animTime );
                     }
-
                 });
             },
 			draw: function(options) {
@@ -621,7 +625,7 @@ log(contentHeight, paneHeight);
 				iframeUrl = RDR.session.iframeHost + "/fblogin/",
 				parentUrl = window.location.href,
                 parentHost = window.location.protocol + "//" + window.location.host;
-				$loginHtml.append( '<h1>Log In</h1><div class="rdr_body" />');
+				$loginHtml.append( '<h1>Log In</h1><div class="rdr_body rdr_leftShadow" />');
 				$loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="360" height="150" style="overflow:hidden;" />' );
 
 				
@@ -1040,9 +1044,11 @@ log(contentHeight, paneHeight);
                     },
                     success: function(response) {
                         var data = response.data;
+log('sendHashes success');
+                        log(data);
                         for ( var i in data.known ) {
                             RDR.content_nodes[i].info = data.known[i];
-                            if ( RDR.content_nodes[i].info.comment_count + RDR.content_nodes[i].info.tag_count > 0 ) {
+                            if ( RDR.content_nodes[i].info.com_count + RDR.content_nodes[i].info.tag_count > 0 ) {
                                 RDR.actions.insertContainerIcons( i );
                             }
                         }
@@ -1076,7 +1082,7 @@ log(contentHeight, paneHeight);
 				});
 			},
             insertContainerIcons: function( hash ) {
-                // if ( RDR.content_nodes[i].info.comment_count + RDR.content_nodes[i].info.tag_count > 0 ) {
+                // if ( RDR.content_nodes[i].info.com_count + RDR.content_nodes[i].info.tag_count > 0 ) {
                 console.log('-- what we know about hash '+hash+' --');
                 console.dir(RDR.content_nodes[hash]);
 
@@ -1085,7 +1091,7 @@ log(contentHeight, paneHeight);
                 var helper_position = $('#rdr_helper_'+hash).offset();
                 $('#rdr_helper_'+hash).css('border','1px solid red');
 
-                var total = RDR.content_nodes[hash].info.tag_count;  // removing comment count for now: RDR.content_nodes[hash].info.comment_count
+                var total = RDR.content_nodes[hash].info.tag_count;  // removing comment count for now: RDR.content_nodes[hash].info.com_count
 
                 
                 // order the container's tags by tag_count
@@ -1112,12 +1118,12 @@ log(contentHeight, paneHeight);
                             }
                         }
                         if ( tag_idx == -1 ) {
-                            info.tags.push({ id:tag.id, name:tag.tag, count:0, comment_count:0, content:{} });
+                            info.tags.push({ id:tag.id, name:tag.tag, count:0, com_count:0, content:{} });
                             tag_idx = ( info.tags.length - 1 );
                         }
 
                         info.tags[ tag_idx ].count += tag.count;
-                        if (tag.comments) info.tags[ tag_idx ].comment_count += tag.comments.length;
+                        if (tag.comments) info.tags[ tag_idx ].com_count += tag.comments.length;
                         info.tags[ tag_idx ].content[ j ] = { count:tag.count, tag_idx:parseInt(i) };
                         info.tags.total_count += tag.count;
                     };
@@ -1190,7 +1196,7 @@ log(contentHeight, paneHeight);
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
                     $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />');
                 
-                var headers = ["Reactions <span>("+(info.tag_count)+")</span>", "", ""];  // removing comment count for now +info.comment_count
+                var headers = ["Reactions <span>("+(info.tag_count)+")</span>", "", ""];  // removing comment count for now +info.com_count
                 $sentimentBox.append($reactionPanel, $contentPanel, $whyPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
                     var $header = $('<div class="rdr_header" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
@@ -1212,12 +1218,12 @@ log(contentHeight, paneHeight);
                         var percentage = Math.round( (info.tags[i].count / info.tags.total_count) * 100);
                         var name = info.tags[i].name;
                         var content = info.tags[i].content;
-                        var comment_count = info.tags[i].comment_count;
+                        var com_count = info.tags[i].com_count;
                     } else if ( type == "image" ) {
                         var percentage = Math.round( (info.tags[i].count / info.tag_count) * 100);
                         var name = info.tags[i].tag;
                         var content = "";
-                        var comment_count = info.tags[i].comments.length;
+                        var com_count = info.tags[i].comments.length;
                     }
                     
                     
@@ -1229,11 +1235,11 @@ log(contentHeight, paneHeight);
                                 name:name,
                                 content:content,
                                 count:info.tags[i].count,
-                                comment_count:comment_count
+                                com_count:com_count
                             },
                             'which':which
                         }).append('<div class="rdr_rightBox"></div><div class="rdr_leftBox">'+percentage+'%</div><a href="javascript:void(0);">'+name+'</a>');
-                        if ( comment_count > 0 ) $li.addClass('rdr_has_comment');
+                        if ( com_count > 0 ) $li.addClass('rdr_has_comment');
                         $tagBox.children('ul.rdr_tags').append($li);
 console.log('--------------------------li data');
                         console.dir( $li.data() );
@@ -1305,7 +1311,7 @@ console.log(which);
                     });
 
                     if ( this_content.tags[ content[i].tag_idx ].comments.length > 0 ) {
-                        $comment = $('<div class="rdr_has_comment">'+this_content.comment_count+'</div>');
+                        $comment = $('<div class="rdr_has_comment">'+this_content.com_count+'</div>');
                     } else {
                         $comment = $('<div class="rdr_can_comment">Comment</div>');
                     }
@@ -1345,8 +1351,10 @@ console.log(which);
                 RDR.actions.panel.expand("contentPanel", rindow);
             },
             viewCommentContent: function(tag, which, c_idx, rindow){
-                if ( rindow.find('div.rdr_whyPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_whyPanel div.rdr_body').data('jsp').destroy();
-                // rindow.find('div.rdr_whyPanel div.rdr_body').empty();
+                var $whyBody = rindow.find('div.rdr_whyPanel div.rdr_body');
+                // if ( $whyBody.data('jsp') ) $whyBody.data('jsp').destroy();
+                $whyBody.empty();
+                // $whyBody.empty();
                 var comments = RDR.content_nodes[which].info.content[c_idx].tags[ tag.content[c_idx].tag_idx ].comments;
                 console.clear();
                 console.dir(comments);
@@ -1370,9 +1378,8 @@ console.log(which);
 
                         $commentSet.append( $commentBy, $comment );
 
-                        rindow.find('div.rdr_whyPanel div.rdr_body').append( $commentSet );
                     }
-                    rindow.find('div.rdr_whyPanel div.rdr_body').append( '<hr />' );
+                    $commentSet.append( '<hr />' );
                 } else {
                     rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Add a Comment');
                 }
@@ -1405,7 +1412,8 @@ console.log(which);
                     RDR.actions.comment({ comment:comment, which:which, content:RDR.content_nodes[which].info.content[c_idx].body, tag_id:RDR.content_nodes[which].info.content[c_idx].tags[ tag.content[c_idx].tag_idx ].id, rindow:rindow });
                 });
 
-                rindow.find('div.rdr_whyPanel div.rdr_body').append( $leaveComment );
+                $whyBody.html( $commentSet );
+                $whyBody.append( $leaveComment  );
 
                 RDR.actions.panel.expand("whyPanel", rindow);
             },
@@ -1476,7 +1484,7 @@ console.log(which);
                 $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
                     var $header = $('<div class="rdr_header" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
-                    $body = $('<div class="rdr_body"/>');
+                    $body = $('<div class="rdr_body rdr_leftShadow"/>');
                     $(this).append($header, $body).css({
                         // 'width':rindow.settings.pnlWidth
                     });
@@ -1589,14 +1597,16 @@ console.log(which);
                     }
                     else{
                         rindow.css('background-position',rindow_bg+'px');
+                        log('animate');
                         rindow.animate({
                             width: width +'px'
-                        }, rindow.settings.animTime ).animate({
-                            minHeight:minHeight
                         }, rindow.settings.animTime, function() {
-                            console.log('now we checkHeight');
-                            log( rindow.find('div.rdr_reactionPanel').height(),  rindow.find('div.rdr_reactionPanel div.rdr_body').height() );
-                            RDR.rindow.checkHeight( rindow, 0 );
+                            rindow.find('div.rdr_body').animate({
+                                minHeight:minHeight
+                            }, rindow.settings.animTime, function() {
+                                console.log('now we checkHeight');
+                                RDR.rindow.checkHeight( rindow, 0 );
+                            });
                         });
 
                         // rindow.animate({
@@ -3705,7 +3715,7 @@ function jQueryPlugins($R){
                     
                     // porter addition:
                     if (s.paneHeight) {
-                        log('passing in paneHeight of '+s.paneHeight);
+                        log('11 passing in paneHeight of '+s.paneHeight);
                         paneHeight = s.paneHeight;
                     } else {
                         paneHeight = elem.innerHeight();
@@ -3751,7 +3761,7 @@ console.log('paneHeight ',paneHeight);
                         
                         // porter addition:
                         if (s.paneHeight) {
-                            log('passing in paneHeight of '+s.paneHeight);
+                            log('22 passing in paneHeight of '+s.paneHeight);
                             paneHeight = s.paneHeight;
                         } else {
                             paneHeight = elem.innerHeight();
@@ -3866,9 +3876,7 @@ console.log('paneHeight ',paneHeight);
 
             function initialiseVerticalScroll()
             {
-                log('initialiseVerticalScroll 1');
                 if (isScrollableV) {
-log('initialiseVerticalScroll 2');
                     container.append(
                         $('<div class="jspVerticalBar" />').append(
                             $('<div class="jspCap jspCapTop" />'),
@@ -3881,7 +3889,6 @@ log('initialiseVerticalScroll 2');
                             $('<div class="jspCap jspCapBottom" />')
                         )
                     );
-log('initialiseVerticalScroll 3');
                     verticalBar = container.find('>.jspVerticalBar');
                     verticalTrack = verticalBar.find('>.jspTrack');
                     verticalDrag = verticalTrack.find('>.jspDrag');
@@ -3900,15 +3907,14 @@ log('initialiseVerticalScroll 3');
 
                         appendArrows(verticalTrack, settings.verticalArrowPositions, arrowUp, arrowDown);
                     }
-log('initialiseVerticalScroll 4');
                     verticalTrackHeight = paneHeight;
+                    
                     container.find('>.jspVerticalBar>.jspCap:visible,>.jspVerticalBar>.jspArrow').each(
                         function()
                         {
                             verticalTrackHeight -= $(this).outerHeight();
                         }
                     );
-log('initialiseVerticalScroll 5');
 
                     verticalDrag.hover(
                         function()
@@ -4048,6 +4054,7 @@ log('initialiseVerticalScroll 5');
 
             function resizeScrollbars()
             {
+                log('-----------------------------------resizeScrollbars');
                 if (isScrollableH && isScrollableV) {
                     var horizontalTrackHeight = horizontalTrack.outerHeight(),
                         verticalTrackWidth = verticalTrack.outerWidth();
