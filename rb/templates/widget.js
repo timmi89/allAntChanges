@@ -567,6 +567,10 @@ function readrBoard($R){
                                 case "already had user":
                                     $('#rdr-loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
                                 break;
+
+                                case "educate user":
+                                    RDR.session.educateUser();
+                                break;
                             }
                         }
                     },
@@ -651,6 +655,38 @@ function readrBoard($R){
                     }
                     
                 }
+            },
+            educateUser: function() {
+                var $educateUser = $('<div id="rdr_ed_user" class="rdr rdr_window"><div id="rdr_ed_user_1"><h1>Rate or discuss <span>anything</span> on this page!</h1></div><div id="rdr_ed_user_2">Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.</div><div id="rdr_ed_user_x">x</div>');
+                $('body').append( $educateUser );
+                $('#rdr_ed_user_x').click( function() {
+                    RDR.session.educateUserClose();
+                });
+                RDR.group.educateUserLocation = "top";
+                if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
+                    $educateUser.css('top','auto');
+                    $educateUser.css('bottom','-40px');
+                    $('#rdr_ed_user').animate({bottom:0});
+                } else {
+                    var bodyPaddingTop = parseInt( $('body').css('padding-top') );
+                    $('body').animate({ paddingTop: (bodyPaddingTop+35)+"px" });
+                    $('#rdr_ed_user').animate({top:0});
+                }
+            },
+            educateUserClose: function() {
+                if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
+                    $('#rdr_ed_user').animate({bottom:-40});
+                } else {
+                    var bodyPaddingTop = parseInt( $('body').css('padding-top') );
+                    $('body').animate({ paddingTop: (bodyPaddingTop-35)+"px" });
+                    $('#rdr_ed_user').animate({top:-40});
+                }
+                // set a cookie in the iframe saying not to show this anymore
+                $.postMessage(
+                    "educatedUser",
+                    RDR.session.iframeHost + "/xdm_status/",
+                    window.frames['rdr-xdm-hidden']
+                );
             }
 		},
         actions: {
@@ -756,6 +792,7 @@ function readrBoard($R){
                 });
             },
             initPageData: function(){
+                // RDR.session.educateUser();
                //? do we want to model this here to be symetrical with user and group data?
 
                 // TODO flesh out Porter's code below and incorporate it into the queue

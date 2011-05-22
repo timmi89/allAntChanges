@@ -37,6 +37,9 @@
 		});
 		
 		// RDRAuth.checkSocialUser();
+		if ( !$.cookie('educatedUser') ) {
+			RDRAuth.notifyParent({message:false}, "educate user");
+		}
 	</script>
    </body>
 </html>
