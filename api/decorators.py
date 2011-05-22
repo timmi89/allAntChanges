@@ -2,7 +2,6 @@ from exceptions import JSONException
 import json
 
 def status_response(func):
-
     def wrapper(*args, **kwargs):
         res = {"status": 'success'}
         try:
@@ -16,10 +15,8 @@ def status_response(func):
     return wrapper
 
 def json_data(func):
-
-    def wrapper(self, request, **kwargs):
+    def wrapper(self, request):
         data = {}
-        if(request):
-            data = json.loads(request.GET['json'])
+        data = json.loads(request.GET['json'])
         return func(self, request, **data)
     return wrapper

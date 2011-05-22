@@ -15,8 +15,6 @@ def getTagCommentData(comment):
     return comment_data
 
 def getTagData(tag, tags, comments):
-    # Make list of unique content and grab the InteractionNode objects
-    
     tags = filter(lambda x: x.interaction_node==tag, tags)
     comments = filter(lambda x: x.parent in tags, comments)
 
@@ -52,6 +50,12 @@ def getData(interactions, container=None, content=None, data=None):
         unique = set((tag.interaction_node for tag in tags))
         data['tags'] = [getTagData(tag, tags, comments) for tag in unique]
 
+    return data
+
+def getContainers(interactions, containers):
+    data = dict((
+        (container.hash, getData(interactions, container=container)) for container in containers    
+    ))
     return data
 
 def interactionNodeCounts(interactions, kinds=[], content=None):

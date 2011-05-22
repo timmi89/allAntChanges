@@ -31,9 +31,9 @@ def profile(request, user_id, **kwargs):
     interactions = Interaction.objects.filter(user=user_id).select_related().order_by('-created')
     if 'view' in kwargs:
         view = kwargs['view']
-        if view == 'tags': interactions=interactions.filter(interaction_node__kind="tag")
-        if view == 'comments': interactions=interactions.filter(interaction_node__kind="com")
-        if view == 'shares': interactions=interactions.filter(interaction_node__kind="shr")
+        if view == 'tags': interactions=interactions.filter(kind="tag")
+        if view == 'comments': interactions=interactions.filter(kind="com")
+        if view == 'shares': interactions=interactions.filter(kind="shr")
     paginator = Paginator(interactions, 5)
 
     try:
@@ -64,9 +64,9 @@ def home(request, **kwargs):
     interactions = Interaction.objects.all().select_related().order_by('-created')
     if 'view' in kwargs:
         view = kwargs['view']
-        if view == 'tags': interactions=interactions.filter(interaction_node__kind="tag")
-        if view == 'comments': interactions=interactions.filter(interaction_node__kind="com")
-        if view == 'shares': interactions=interactions.filter(interaction_node__kind="shr")
+        if view == 'tags': interactions=interactions.filter(kind="tag")
+        if view == 'comments': interactions=interactions.filter(kind="com")
+        if view == 'shares': interactions=interactions.filter(kind="shr")
     interactions = interactions[:5]
 
     context = {'interactions': interactions, 'fb_client_id': FACEBOOK_APP_ID}
