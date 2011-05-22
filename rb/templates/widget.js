@@ -90,7 +90,7 @@ function readrBoard($R){
 		    }
 		},
 		rindow: {
-            stack{
+            stack:{
               
             },
             defaults:{
@@ -1051,11 +1051,12 @@ log(contentHeight, paneHeight);
                         //todo: probably do this sorting on the server side and send us a (cached + latest diff) version to us.
                         for ( var i in data.known ) {
                             RDR.content_nodes[i].info = data.known[i];
-                            if ( RDR.content_nodes[i].info.comment_count + RDR.content_nodes[i].info.tag_count > 0 ) {
+                            if ( RDR.content_nodes[i].info.com_count + RDR.content_nodes[i].info.tag_count > 0 ) {
                                 RDR.actions.indicators.make( i );
                             }
                         }
 
+                        //fade in indicators
                         $('.rdr_indicator').css({
                             'opacity':'0',
                             'display':'inline'
@@ -1097,7 +1098,7 @@ log(contentHeight, paneHeight);
                 make: function( hash ){
                     //todo: I think these event functions here could be more efficient if they weren't anonymous and were cosolodated.
                     
-                    // if ( RDR.content_nodes[i].info.comment_count + RDR.content_nodes[i].info.tag_count > 0 ) {
+                    // if ( RDR.content_nodes[i].info.com_count + RDR.content_nodes[i].info.tag_count > 0 ) {
                     console.log('-- what we know about hash '+hash+' --');
                     console.dir(RDR.content_nodes[hash]);
 
@@ -1196,12 +1197,12 @@ log(contentHeight, paneHeight);
                                 }
                             }
                             if ( tag_idx == -1 ) {
-                                info.tags.push({ id:tag.id, name:tag.tag, count:0, comment_count:0, content:{} });
+                                info.tags.push({ id:tag.id, name:tag.tag, count:0, com_count:0, content:{} });
                                 tag_idx = ( info.tags.length - 1 );
                             }
 
                             info.tags[ tag_idx ].count += tag.count;
-                            if (tag.comments) info.tags[ tag_idx ].comment_count += tag.comments.length;
+                            if (tag.comments) info.tags[ tag_idx ].com_count += tag.comments.length;
                             info.tags[ tag_idx ].content[ j ] = { count:tag.count, tag_idx:parseInt(i) };
                             info.tags.total_count += tag.count;
                         };
@@ -1263,7 +1264,7 @@ log(contentHeight, paneHeight);
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
                     $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />');
                 
-                var headers = ["Reactions <span>("+(info.tag_count)+")</span>", "", ""];  // removing comment count for now +info.comment_count
+                var headers = ["Reactions <span>("+(info.tag_count)+")</span>", "", ""];  // removing comment count for now +info.com_count
                 $sentimentBox.append($reactionPanel, $contentPanel, $whyPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
                     var $header = $('<div class="rdr_header" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
@@ -1285,12 +1286,12 @@ log(contentHeight, paneHeight);
                         var percentage = Math.round( (info.tags[i].count / info.tags.total_count) * 100);
                         var name = info.tags[i].name;
                         var content = info.tags[i].content;
-                        var comment_count = info.tags[i].comment_count;
+                        var com_count = info.tags[i].com_count;
                     } else if ( type == "image" ) {
                         var percentage = Math.round( (info.tags[i].count / info.tag_count) * 100);
                         var name = info.tags[i].tag;
                         var content = "";
-                        var comment_count = info.tags[i].comments.length;
+                        var com_count = info.tags[i].comments.length;
                     }
                     
                     
@@ -1302,11 +1303,11 @@ log(contentHeight, paneHeight);
                                 name:name,
                                 content:content,
                                 count:info.tags[i].count,
-                                comment_count:comment_count
+                                com_count:com_count
                             },
                             'which':which
                         }).append('<div class="rdr_rightBox"></div><div class="rdr_leftBox">'+percentage+'%</div><a href="javascript:void(0);">'+name+'</a>');
-                        if ( comment_count > 0 ) $li.addClass('rdr_has_comment');
+                        if ( com_count > 0 ) $li.addClass('rdr_has_comment');
                         $tagBox.children('ul.rdr_tags').append($li);
                         console.log('--------------------------li data');
                         console.dir( $li.data() );
@@ -1378,7 +1379,7 @@ console.log(which);
                     });
 
                     if ( this_content.tags[ content[i].tag_idx ].comments.length > 0 ) {
-                        $comment = $('<div class="rdr_has_comment">'+this_content.comment_count+'</div>');
+                        $comment = $('<div class="rdr_has_comment">'+this_content.com_count+'</div>');
                     } else {
                         $comment = $('<div class="rdr_can_comment">Comment</div>');
                     }
