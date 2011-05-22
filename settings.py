@@ -35,8 +35,6 @@ DATABASES = {
 #    }
 #}
 
-FILE_REL_PATH = '/usr/share/'
-
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -53,6 +51,7 @@ SITE_ID = 1
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
+USE_L10N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
@@ -61,12 +60,30 @@ MEDIA_ROOT = 'rb/media'
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/static/'
+MEDIA_URL = '/media/'
 
-# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
-# trailing slash.
-# Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+STATIC_ROOT = ''
+
+# For static media
+STATIC_URL = '/static/'
+
+# URL prefix for admin static files -- CSS, JavaScript and images.                    
+# Make sure to use a trailing slash.                                                  
+# Examples: "http://foo.com/static/admin/", "/static/admin/".                         
+ADMIN_MEDIA_PREFIX = '/static/admin/'
+
+# Additional locations of static files                                                
+STATICFILES_DIRS = (
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".           
+    # Always use forward slashes, even on Windows.                                    
+    # Don't forget to use absolute paths, not relative paths.                         
+)
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#    'django.contrib.staticfiles.finders.DefaultStorageFinder',                       
+)
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'g^+j%4z)3ddwqu^tt)(w8phq&r6-y8f0!e&w^z68xo3(@jxgc!'
@@ -81,7 +98,9 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
@@ -101,6 +120,8 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.admin',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
     'readrboard.api',
     'readrboard.rb',
     'piston',
@@ -108,6 +129,7 @@ INSTALLED_APPS = (
     'treebeard',
     'debug_toolbar',
     'autofixture',
+    'django_extensions',
 )
 
 # for get_profile()
@@ -138,6 +160,24 @@ DEBUG_TOOLBAR_PANELS = (
 
 DEBUG_TOOLBAR_CONFIG = {
     "INTERCEPT_REDIRECTS": False
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+    'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler'
+    }
+    },
+    'loggers': {
+    'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+    },
+    }
 }
 
 # for social auth

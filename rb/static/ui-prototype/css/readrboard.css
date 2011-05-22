@@ -150,7 +150,7 @@ div.rdr li {background:none; padding:0;}
 div.rdr div.rdr_sentimentBox							{}
 div.rdr div.rdr_sntPnl 									{float:left; position:relative; display:block; height:100%; overflow:hidden; /*width is reset with js - rindow.settings.pnlWidth */ }
 
-div.rdr div.rdr_sntPnl div.rdr_body						{width:100%; height:100%; z-index:3; overflow-x:hidden; overflow-y:auto; padding:0; position:relative; min-height:125px;}
+div.rdr div.rdr_sntPnl div.rdr_body						{width:100%; height:100%; z-index:3; overflow-x:hidden; overflow-y:hidden; padding:0; position:relative; min-height:161px;}
 div.rdr div.rdr_sntPnl div.rdr_header                   {background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:3;}
 div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("/static/images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
 div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header,
@@ -170,6 +170,7 @@ div.rdr div.rdr_reactionPanel							{position:relative; z-index:20; width:200px;
 div.rdr div.rdr_reactionPanel div.rdr_body				{max-height:300px;}
 div.rdr div.rdr_reactionPanel div.rdr_body .jspPane,
 div.rdr div.rdr_contentPanel div.rdr_body .jspPane		{width:200px !important; margin: 0 !important;}
+div.rdr div.rdr_whyPanel div.rdr_body .jspPane		{width:250px !important; margin: 0 !important;}
 div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; background:url(/static/images/rindow_bg_column.png);}
 
 div.rdr div.rdr_contentPanel                            {position:absolute; z-index:15; left:200px; width:200px; background:url(/static/images/rindow_bg_column.png) repeat -650px 0;}
@@ -178,7 +179,6 @@ div.rdr div.rdr_contentPanel div.rdr_body               {width:200px; max-height
 div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:250px; background:url(/static/images/rindow_bg_column.png) -200px 0; }
 div.rdr.rdr_columns3 div.rdr_whyPanel 				    {background-position:-850px 0;}
 div.rdr div.rdr_whyPanel div.rdr_body                   {width:250px; max-height:300px; }
-div.rdr.rdr_columns2 div.rdr_whyPanel div.rdr_body      {xmax-height:200px;}
 div.rdr div.rdr_whyPanel hr 			                {background: #ddd; border: none; clear: both; color: #ddd; float: none; height: 1px; margin: 10px; }
 
 div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top:5px;}

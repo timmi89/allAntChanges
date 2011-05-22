@@ -23,4 +23,3 @@ def json_data(func):
             data = json.loads(request.GET['json'])
         return func(self, request, **data)
     return wrapper
-

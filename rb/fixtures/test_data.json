@@ -9,33 +9,8 @@
   },
 
   {
-    "model": "rb.Feature",
-    "pk": 1,
-    "fields": {
-      "text": "True",
-      "images": "True",
-      "flash": "True"
-    }
-  },
-
-  {
-    "model": "rb.Group",
-    "pk": 1,
-    "fields": {
-      "name": "Test Publisher",
-      "short_name": "testpub",
-      "valid_domains": "testserve",
-      "share": 1,
-      "rate": 1,
-      "comment": 1,
-      "bookmark": 1,
-      "search": 1
-    }
-  },
-
-  {
     "model": "rb.Site",
-    "pk": 1,
+    "pk": 2,
     "fields": {
       "name": "Test Site",
       "domain": "testserve",
