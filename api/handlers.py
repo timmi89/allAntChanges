@@ -8,7 +8,6 @@ from utils import *
 from userutils import *
 from token import *
 
-
 class UserHandler(AnonymousBaseHandler):
     model = User
     fields = ('id', 'first_name', 'last_name')
@@ -20,6 +19,10 @@ class InteractionNodeHandler(AnonymousBaseHandler):
 class ContentHandler(AnonymousBaseHandler):
     model = Content
     fields = ('id', 'body', 'kind')
+
+class FeatureHandler(AnonymousBaseHandler):
+    model = Feature
+    fields = ('feature_type', 'text', 'images', 'flash')
 
 """
 class InteractionHandler(AnonymousBaseHandler):
@@ -85,12 +88,12 @@ class CommentHandler(InteractionHandler):
             raise JSONException(u'Could not find parent interaction specified')
 
         try:
-            comment = createInteractionNode(kind='com', body=comment)
+            comment = createInteractionNode(body=comment)
         except:
             raise JSONException(u'Error creating comment interaction node')
         
         try:
-            interaction = createInteraction(parent.page, parent.container, parent.content, user, comment, group, parent)
+            interaction = createInteraction(parent.page, parent.container, parent.content, user, 'com', comment, group, parent)
         except:
             raise JSONException(u'Error creating comment interaction')
         return interaction
@@ -112,11 +115,11 @@ class TagHandler(InteractionHandler):
         new = None
         if tag:
             if isinstance(tag, unicode):
-                node = createInteractionNode(kind='tag', body=tag)
-                new = createInteraction(page, container, content, user, node, group)
+                node = createInteractionNode(body=tag)
+                new = createInteraction(page, container, content, user, 'tag', node, group)
             elif isinstance(tag, int):
                 node = InteractionNode.objects.get(id=tag)
-                new = createInteraction(page, container, content, user, node, group)
+                new = createInteraction(page, container, content, user, 'tag', node, group)
             return new
         else:
             raise JSONException(u"No tag provided to tag handler")
@@ -138,22 +141,23 @@ class CreateContainerHandler(AnonymousBaseHandler):
 class ContainerHandler(AnonymousBaseHandler):
     
     @status_response
-    def read(self, request, container=None):
+    def read(self, request):
         known = {}
-        unknown = []
-        if container: hashes = [container]
-        else:
-            data = json.loads(request.GET['json'])
-            hashes = data['hashes']
-        for hash in hashes:
-            try:
-                known[hash] = Container.objects.get(hash=hash)
-            except Container.DoesNotExist:
-                unknown.append(hash)
 
-        for hash in known.keys():
-            known[hash] = getContainerData(hash)
-            
+        data = json.loads(request.GET['json'])
+        hashes = data['hashes']
+        page = data['pageID']
+
+        # Force evaluation by making lists
+        containers = list(Container.objects.filter(hash__in=hashes))
+        interactions = list(Interaction.objects.filter(container__in=containers, page=page).select_related('interaction_node'))
+
+        known = dict((
+            (container.hash, getData(interactions, container=container)) for container in containers    
+        ))
+
+        unknown = list(set(hashes) - set(known.keys()))
+
         return dict(known=known, unknown=unknown)
 
 class PageDataHandler(AnonymousBaseHandler):
@@ -162,39 +166,36 @@ class PageDataHandler(AnonymousBaseHandler):
     def read(self, request, pageid=None):
         page = getPage(request, pageid)
         
-        # Find all the interaction nodes on page
-        nop = InteractionNode.objects.filter(
-            interaction__page=page.id,
-        )
+        # Find all the interactions on page
+        iop = Interaction.objects.filter(page=page)
         
         # ---Get page interaction counts, grouped by kind---
         # Focus on values for 'kind'
-        values = nop.values('kind')
+        values = iop.order_by('kind').values('kind')
         # Annotate values with count of interactions
-        summary = values.annotate(count=Count('interaction'))
+        summary = values.annotate(count=Count('id'))
         
         # ---Find top 10 tags on a given page---
-        tags = nop.filter(kind='tag')
-        # Annotate tags on page with count of interactions
-        tagcounts = tags.annotate(tag_count=Count('interaction'))
-        # Get tag_count and tag body ordered by tag count
-        toptags = tagcounts.values("tag_count","body").order_by('-tag_count')[:10]
-            
+        tags = InteractionNode.objects.filter(interaction__kind='tag', interaction__page=page)
+        ordered_tags = tags.order_by('body')
+        tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
+        toptags = tagcounts.order_by('-tag_count')[:10].values('tag_count','body')
+          
         # ---Find top 10 shares on a give page---
         content = Content.objects.filter(interaction__page=page.id)
-        shares = content.filter(interaction__interaction_node__kind='shr')
+        shares = content.filter(interaction__kind='shr')
         sharecounts = shares.annotate(Count("id"))
         topshares = sharecounts.values("body").order_by()[:10]
-        
+
         # ---Find top 10 non-temp users on a given page---
         socialusers = SocialUser.objects.filter(user__interaction__page=page.id)
 
         userinteract = socialusers.annotate(interactions=Count('user__interaction'))
         topusers = userinteract.order_by('-interactions').values('full_name','img_url','interactions')[:10]
 
-        imagedata = getContentData(content.filter(kind='image').order_by('id').distinct())
-        videodata = getContentData(content.filter(kind='video').order_by('id').distinct())
-        flashdata = getContentData(content.filter(kind='flash').order_by('id').distinct())
+        #imagedata = getContentData(content.filter(kind='image').order_by('id').distinct())
+        #videodata = getContentData(content.filter(kind='video').order_by('id').distinct())
+        #flashdata = getContentData(content.filter(kind='flash').order_by('id').distinct())
         
         return dict(
             id=page.id,
@@ -202,9 +203,9 @@ class PageDataHandler(AnonymousBaseHandler):
             toptags=toptags,
             topusers=topusers,
             topshares=topshares,
-            imagedata=imagedata,
-            videodata=videodata,
-            flashdata=flashdata
+            #imagedata=imagedata,
+            #videodata=videodata,
+            #flashdata=flashdata
         )
 
 class SettingsHandler(AnonymousBaseHandler):
@@ -249,6 +250,5 @@ class SettingsHandler(AnonymousBaseHandler):
                 return g
             else:
                 raise JSONException("Group (" + str(group) + ") settings request invalid for this domain (" + host + ")")
-            return g
         else:
             return ("Group not specified")

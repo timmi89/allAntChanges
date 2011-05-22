@@ -6,80 +6,53 @@ import hmac
 import random
 from exceptions import FBException, JSONException
 
-def getTagCommentData(tag, tags, comments):
-    tag_comments = []        
-    for comment in comments.filter(parent=tags.filter(interaction_node=tag)):
-        comment_data = {}
-        comment_data['comment'] = comment.interaction_node.body
-        comment_data['user'] = comment.user
-        tag_comments.append(comment_data)
+def getTagCommentData(comment):
+    print comment
+    comment_data = {}
+    comment_data['comment'] = comment.interaction_node.body
+    comment_data['user'] = comment.user
 
-    return tag_comments
+    return comment_data
 
-def getTagData(tags, comments):
-    # Get information about the tags
-    tags_data = []
-
+def getTagData(tag, tags, comments):
     # Make list of unique content and grab the InteractionNode objects
-    tag_unique = tags.order_by('interaction_node').distinct().values('interaction_node')
-    tag_objs = InteractionNode.objects.filter(id__in=tag_unique)
     
-    for tag_item in tag_objs:
-        tag_data = {}
-        tag_data['tag'] = tag_item.body
-        tag_data['id'] = tag_item.id
-        tag_data['count'] = tags.filter(interaction_node=tag_item).count()
-        tag_data['comments'] = getTagCommentData(tag_item, tags, comments)
-        tags_data.append(tag_data)
+    tags = filter(lambda x: x.interaction_node==tag, tags)
+    comments = filter(lambda x: x.parent in tags, comments)
 
-    return tags_data
+    tag_data = {}
+    tag_data['tag'] = tag.body
+    tag_data['id'] = tag.id
+    tag_data['count'] = len(tags)
+    
+    tag_data['comments'] = [getTagCommentData(comment) for comment in comments]
 
-def getContentData(content, interactions=None):
-    content_data = []
+    return tag_data
 
-    for content_item in content:
-        data = {}
-        data['body'] = content_item.body
-        
-        # Filter interactions for this piece of content and get count data
-        if interactions:
-            content_interactions = interactions.filter(content=content_item)
-        else:
-            content_interactions = Interaction.objects.filter(content=content_item)
-            
-        content_interactions = content_interactions.select_related('interaction_node')
-        content_tags = content_interactions.filter(interaction_node__kind='tag')
-        content_coms = content_interactions.filter(interaction_node__kind='com')
-        data['tag_count'] = content_tags.count()
-        data['comment_count'] = content_coms.count()
-
-        # Retrieve data on individual tags
-        data['tags'] = getTagData(content_tags, content_coms)
-        
-        content_data.append(data)
-
-    return content_data
-
-def getContainerData(hash):
-    container_data = {}
-    # Get interaction on the provided hash
-    interactions = Interaction.objects.filter(container__hash=hash)
-
+def getData(interactions, container=None, content=None, data=None):
+    if not data: data = {}
+    
+    if container:
+        interactions = filter(lambda x: x.container==container, interactions)
+    elif content:
+        interactions = filter(lambda x: x.content==content, interactions)
+        data['body'] = content.body
+    
     # Filter tag and comment interactions
-    tags = interactions.filter(interaction_node__kind='tag')
-    comments = interactions.filter(interaction_node__kind='com')
+    tags = filter(lambda x: x.kind=='tag', interactions)
+    comments = filter(lambda x: x.kind=='com', interactions)
 
-    # Get counts of tags and comments -- container level
-    container_data['tag_count'] = tags.count()
-    container_data['comment_count'] = comments.count()
-    
-    # Make list of unique content within container and retrieve their Content objects
-    content_unique = interactions.order_by('content').distinct().values('content')
-    content_objs = Content.objects.filter(id__in=content_unique)
+    data['tag_count'] = len(tags)
+    data['com_count'] = len(comments)
 
-    container_data['content'] = getContentData(content_objs, interactions)
+    if container:
+        unique = set((interaction.content for interaction in interactions))
+        data['content'] = [getData(interactions, content=content_item) for content_item in unique]
+    if content:
+        unique = set((tag.interaction_node for tag in tags))
+        data['tags'] = [getTagData(tag, tags, comments) for tag in unique]
 
-    return container_data
+    return data
 
 def interactionNodeCounts(interactions, kinds=[], content=None):
     # Filter interactions for this piece of content and get count data
@@ -109,9 +82,9 @@ def getPage(request, pageid=None):
         
     return page[0]
 
-def createInteractionNode(kind, body):
-    if kind and body:
-        node = InteractionNode.objects.get_or_create(kind=kind, body=body)[0]
+def createInteractionNode(body=None):
+    if body:
+        node = InteractionNode.objects.get_or_create(body=body)[0]
         print "Success creating InteractionNode with id %s" % node.id
         return node
 
@@ -120,11 +93,11 @@ def isTemporaryUser(user):
 
 def checkLimit(user, group):
     interactions = Interaction.objects.filter(user=user)
-    num_interactions = len(interactions)
+    num_interactions = interactions.count()
     max_interact = group.temp_interact
     if num_interactions >= max_interact:
         raise JSONException(
-            u"Temporary user interaction limit reached"
+            u"Temporary user interaction limit reached for user " + unicode(user.id)
         )
     return num_interactions
 
@@ -146,8 +119,8 @@ def deleteInteraction(interaction, user):
         if tempuser: return dict(message=message,num_interactions=num_interactions-1)
         return dict(message=message)
 
-def createInteraction(page, container, content, user, interaction_node, group, parent=None):
-    if content and user and interaction_node and page:
+def createInteraction(page, container, content, user, kind, interaction_node, group, parent=None):
+    if content and user and kind and interaction_node and page:
         # Check to see if user has reached their interaction limit
         tempuser = False
         if isTemporaryUser(user):
@@ -177,7 +150,8 @@ def createInteraction(page, container, content, user, interaction_node, group, p
                 page=page,
                 container=container,
                 content=content,
-                user=user, 
+                user=user,
+                kind=kind,
                 interaction_node=interaction_node,
                 created=now,
                 parent=parent
@@ -188,7 +162,8 @@ def createInteraction(page, container, content, user, interaction_node, group, p
                 page=page,
                 container=container,
                 content=content, 
-                user=user, 
+                user=user,
+                kind=kind, 
                 interaction_node=interaction_node, 
                 created=now
             )
