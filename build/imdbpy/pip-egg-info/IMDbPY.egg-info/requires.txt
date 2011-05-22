@@ -1,4 +1,0 @@
-SQLObject
-SQLAlchemy
-sqlalchemy-migrate
-lxml
