@@ -104,47 +104,26 @@ function readrBoard($R){
 			// content comes later.  this is just to identify or draw the container.
             checkHeight: function( rindow, percentScroll, which ) {
 
-                // console.log('----- checkHeight -----');
                 rindow.find('div.rdr_body').each( function() {
-                    // log('found a rindow');
                     var $column = $(this);
-                    // if ( $column.height() > 150 ) {
                         
-                    if ( $column.parents().hasClass('rdr_whyPanel') ) { var this_column_name="whyPanel"; log( '-----which: whyPanel' ); }
-                    if ( $column.parents().hasClass('rdr_contentPanel') ) { var this_column_name="contentPanel"; log( '-----which: contentPanel' ); }
-                    if ( $column.parents().hasClass('rdr_reactionPanel') ) { var this_column_name="reactionPanel"; log( '-----which: reactionPanel' ); }
-                    // log('height is '+$column.height());
+                    if ( $column.parents().hasClass('rdr_whyPanel') ) { var this_column_name="whyPanel"; }
+                    if ( $column.parents().hasClass('rdr_contentPanel') ) { var this_column_name="contentPanel"; }
+                    if ( $column.parents().hasClass('rdr_reactionPanel') ) { var this_column_name="reactionPanel"; }
 
                     var paneHeight = (rindow.height()-35);
                     var contentHeight = $column.height();
-                    // paneHeight = ( paneHeight > contentHeight ) ? paneHeight:contentHeight;
-log(contentHeight, paneHeight);
+
                     if ( contentHeight >= 300 ) {
                         rindow.find('div.rdr_reactionPanel div.rdr_body').animate({
                             minHeight:"300px"
                         }, rindow.settings.animTime );
                         if ( $column.find('.jspVerticalBar').length > 0 ) {
-                            console.log('reinit jScrollpane');
                             $column.data('jsp').reinitialise({ contentWidth:200, showArrows:true });
-                            // RDR.pane1 = $R('div.rdr_reactionPanel div.rdr_body').data('jsp');
                         } else {
-                            console.log('create jScrollpane');
-                            //contentHeight:contentHeight, paneHeight:paneHeight, 
                             $column.jScrollPane({ contentWidth:200, showArrows:true });
                         }
-                        // if ( percentScroll ) $column.data('jsp').scrollToPercentY( percentScroll );
                     } else if (which && which == this_column_name) {
-                        // switch (which) {
-                        // case "contentPanel":
-                        // case "reactionPanel":
-                        //     var minHeight = "auto";
-                        //     break;
-
-                        // case "whyPanel":
-                        //     var minHeight = "280px";
-                        //     break;
-                        // }
-                        console.log('animate!!!!!!!!!!!!!!!!!!!!! ' + contentHeight+"px");
                         rindow.find('div.rdr_reactionPanel div.rdr_body').animate({
                             minHeight:contentHeight+"px"
                         }, rindow.settings.animTime );
@@ -498,7 +477,6 @@ log(contentHeight, paneHeight);
 		session: {
 			iframeHost : "http://readr.local:8080", // TODO put this in a template var
             getUser: function(args, callback) {
-                //console.log('checking user');
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
                     // we have a user id and token, be it temp or logged in user, so just run the callback
                     if ( callback && args ) callback(args);
@@ -525,7 +503,6 @@ log(contentHeight, paneHeight);
 
                         // TODO tell the user something failed and ask them to try again
                         // pass callback into the login panel
-                        //console.log('sorry there was a problem with your alleged user ID.  we just killed it, try again.');
                     break;
 
                     case "Temporary user interaction limit reached":
@@ -563,10 +540,8 @@ log(contentHeight, paneHeight);
             receiveMessage: function(args, callback) {
                 $.receiveMessage(
                     function(e){
-                        //console.log( JSON.parse( e.data ) );
                         var message = JSON.parse( e.data );
 
-                        //console.log('receiving: ' + message.status);
                         if ( message.status ) {;
                             switch ( message.status ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
@@ -584,17 +559,9 @@ log(contentHeight, paneHeight);
                                         callback(args);
                                     }
                                     else if ( callback ) callback();
-                                    // else if ( $('#rdr-loginPanel').length == 1 ) {
-                                    //     $('#rdr-loginPanel').find('rdr_body').html('Log in successful!  Welcome to ReadrBoard.');
-                                    // }
-
-                                    // TODO do we def want to remove the login panel if it was showing?
-                                    // user rdr-loginPanel for the temp user message, too
-                                    // if ( RDR.user.first_name ) $('#rdr-loginPanel').remove();
                                 break;
 
                                 case "checkSocialUser fail":
-                                    //console.log('show login panel with an error message about checkSocialUser failing');
                                 break;
 
                                 case "already had user":
@@ -729,8 +696,6 @@ log(contentHeight, paneHeight);
                         host_name : window.location.hostname
                     },
                     success: function(response, textStatus, XHR) {
-                        //console.dir(response);
-                        //console.log('--------------------');
                         RDR.group = response.data;
 						RDR.group.group_id
 
@@ -766,7 +731,6 @@ log(contentHeight, paneHeight);
             },
             initUserData: function(userShortName){
                 // request the RBGroup Data
-                //console.log("requesting user data")
                 $.ajax({
                     url: "/api/rbuser/",
                     type: "get",
@@ -777,25 +741,17 @@ log(contentHeight, paneHeight);
                     },
                     success: function(response, textStatus, XHR) {
 
-                        //console.log('rbuser call success')
-                        //console.dir(response);
-                        //console.log(XHR)
-
                         //get this from the DB?
                         //this.anno_whitelist = "#module-article p";
 
                         $.each(response, function(index, value){
                             var rb_group = value;
                             //Only expects back one user (index==0)
-                            //console.log('current user is ' + rb_user.name)
 
                         });
 
                     },
                     error: function(response){
-                        //console.warn(response);
-                        //console.warn('failed, but thats cool, we were expecting it to');
-                        //console.log('user is ', userShortName);
                     }
                 });
             },
@@ -1002,7 +958,6 @@ log(contentHeight, paneHeight);
             },
             hashNodes: function() {
                 
-                //console.log('hashing nodes');
                 // snag all the nodes that we can set icons next to and send'em next
                 // TODO: restrict this to the viewport + a few, rather than all
                 var content_nodes = $( RDR.group.anno_whitelist ).not('.rdr-hashed');
@@ -1040,7 +995,6 @@ log(contentHeight, paneHeight);
                 RDR.actions.sendHashes();
             },
             sendHashes: function() {
-                //console.log('sending nodes');
                 // TODO: dont' send all hashes
 
                 var md5_list = [];
@@ -1080,12 +1034,9 @@ log(contentHeight, paneHeight);
                             'display':'inline'
                         }).fadeTo('300', '0.4');
                                                 
-                        // console.dir(RDR.content_nodes['cf3677ffb09818b086bc3d6dd53eb1f4']);
-                        // console.dir(RDR.content_nodes['345c1dfd92c4f46eca2f29adab9ce8cf']);
     					// TODO: Eric, should this go in a jquery queue?
     					var sendData = {};
     					sendData.hashes = {};
-    					//console.log("data.unknown length: "+data.unknown.length);
 					
     					if ( data.unknown.length > 0 ) {
     						$.each( data.unknown, function( index, value ) {
@@ -1192,8 +1143,6 @@ log(contentHeight, paneHeight);
                     // order the container's tags by tag_count
                     function SortByTagCount(a,b) { return b.count - a.count; }
                     var info = RDR.content_nodes[ hash ].info;
-                    log('info')
-                    log(info)
                     info.tags = [];
                     info.tags.total_count = 0;
                     // info.tags_order = [];
@@ -1299,7 +1248,6 @@ log(contentHeight, paneHeight);
 
                 ////populate blesed_tags
                 for ( var i in info.tags ) {
-                    console.log(i);
                     if ( type == "text") {
                         var percentage = Math.round( (info.tags[i].count / info.tags.total_count) * 100);
                         var name = info.tags[i].name;
@@ -1327,8 +1275,6 @@ log(contentHeight, paneHeight);
                         }).append('<div class="rdr_rightBox"></div><div class="rdr_leftBox">'+percentage+'%</div><a href="javascript:void(0);">'+name+'</a>');
                         if ( com_count > 0 ) $li.addClass('rdr_has_comment');
                         $tagBox.children('ul.rdr_tags').append($li);
-                        console.log('--------------------------li data');
-                        console.dir( $li.data() );
                     }
                 };
 
@@ -1367,8 +1313,6 @@ log(contentHeight, paneHeight);
                 rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
                 rindow.find('div.rdr_whyPanel div.rdr_body').html('<div class="rdr_commentSet">Select something in the column to the left to leave a comment on it.</div>');
 
-                console.log('taaaaaaaaaaaaaaaaag');
-                console.dir(tag);
                 var content = [];
                 for ( var i in tag.content ) {
                     content.push( {idx:parseInt(i), tag_idx:tag.content[i].tag_idx, count:tag.content[i].count } );
@@ -1380,12 +1324,10 @@ log(contentHeight, paneHeight);
                 rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tag.name+' <span>('+tag.count+')</span>');
                 if ( rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp').destroy();
                 rindow.find('div.rdr_contentPanel div.rdr_body').empty();
-console.log('---which---');
-console.log(which);
+
                 // ok, get the content associated with this tag!
                 for ( var i in content ) {
                     var this_content = RDR.content_nodes[which].info.content[ content[i].idx ];
-                    console.dir(this_content);
 
                     var $contentSet = $('<div class="rdr_contentSet" />'),
                         $header = $('<div class="rdr_contentHeader rdr_leftShadow" />'),
@@ -1417,8 +1359,6 @@ console.log(which);
                         $content.find('div.rdr_otherTags').append( '<em>Other Reactions</em>' );
                         for ( var j in this_content.tags ) {
                             if ( this_content.tags[j] && this_content.tags[j].id != tag.id ) {
-                                console.log('---this_content---');
-                                console.dir(this_content);
                                 var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+this_content.tags[j].count+')</span> '+this_content.tags[j].tag+'</a>');
                                 var tag_obj = this_content.tags[j];
                                 $this_tag.find('span.rdr_tag_count').click( function() {
@@ -1442,8 +1382,7 @@ console.log(which);
                 $whyBody.empty();
                 // $whyBody.empty();
                 var comments = RDR.content_nodes[which].info.content[c_idx].tags[ tag.content[c_idx].tag_idx ].comments;
-                console.clear();
-                console.dir(comments);
+
                 if (comments && comments.length > 0 ) {
                     rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments <span>('+comments.length+')</span>');
 
@@ -1659,10 +1598,8 @@ console.log(which);
                     });
                 },
                 expand: function(which, rindow, interaction_id){
-                    log('expand '+which);
                     var which = (which) ? which:"whyPanel";
                     $thisPanel = $(rindow).find('.rdr_'+which);
-                    log("$whyBody height now: "+$('#whyPanel div.rdr_body').height() );
                     var num_columns = rindow.find('div.rdr_sntPnl').length;
                     rindow.addClass('rdr_columns'+num_columns);
                     switch (which) {
@@ -1832,7 +1769,6 @@ console.log(which);
                             data: { json: JSON.stringify(sendData) },
                             success: function(response) {
                                 tag_li.find('div.rdr_leftBox').html('');
-                                //console.dir(response);
                                 //[eric] - if we want these params still we need to get them from args:
                                 //do we really want to chain pass these through?  Or keep them in a shared scope?
 
@@ -1872,7 +1808,6 @@ console.log(which);
                             },
                             //for now, ignore error and carry on with mockup
                             error: function(response) {
-                                //console.log("an error occurred while trying to tag");
                             }
                         });
                     } else {
@@ -1913,7 +1848,6 @@ console.log(which);
                             dataType: "jsonp",
                             data: { json: JSON.stringify(sendData) },
                             success: function(response) {
-                                //console.dir(response);
                                 //[eric] - if we want these params still we need to get them from args:
                                 //do we really want to chain pass these through?  Or keep them in a shared scope?
 
@@ -1933,7 +1867,6 @@ console.log(which);
                             },
                             //for now, ignore error and carry on with mockup
                             error: function(response) {
-                                //console.log("an error occurred while trying to tag");
                             }
                         });
                     } else {
@@ -1942,7 +1875,6 @@ console.log(which);
                 });
             },
             updateData: function(args) {
-console.clear();
                 if ( args.type == "tag" ) {
                     var rindow = args.rindow,
                         hash = args.hash,
@@ -1963,7 +1895,6 @@ console.clear();
                     var headline_tag = rindow.find('div.rdr_contentPanel h1').text();
                     headline_tag = headline_tag.substr(0, headline_tag.lastIndexOf('(')-1);
 
-console.log( "headline_tag", headline_tag , "tag_text",tag_text );
                     // make sure that the tag just clicked matches the tag of the column we're in before incrementing the count in the column header
                     if ( headline_tag == tag_text ) {
                         var total_count = rindow.find('div.rdr_contentPanel h1 span').text();
@@ -2040,26 +1971,21 @@ console.log( "headline_tag", headline_tag , "tag_text",tag_text );
                     },
                     //for now, ignore error and carry on with mockup
                     error: function(response) {
-                        //console.log("an error occurred while trying to delete the tag");
+
                     }
                 });
                 
             },
             shareStart: function(args) {
-                //console.log('------------rags----------');
-                //console.dir(args);
                 var rindow = args.rindow, 
                     tag = args.tag,
                     int_id = args.int_id;
 
                 //todo: for now, I'm just passing in known_tags as a param, but check with Porter about this model.
                 //Where is the 'source'/'point of origin' that is the authority of known_tags - I'd think we'd want to just reference that..
-
-                ////console.log(rindow, known_tags, unknown_tags_arr);
                 
                 /*        
                 var tags = "";
-                //console.log(tags);
 
                 for ( var i in known_tags ) {
                     if ( known_tags[i] && RDR.group.blessed_tags[ parseInt(known_tags[i])-1 ] ) {
@@ -2078,9 +2004,6 @@ console.log( "headline_tag", headline_tag , "tag_text",tag_text );
                    tags += (tags.length)? ", " : "";
                    tags += val;
                 });
-
-
-                //console.log(tags)
                 
                 */
                 var $whyPanel_body = rindow.find('div.rdr_whyPanel div.rdr_body');
@@ -2156,7 +2079,6 @@ console.log( "headline_tag", headline_tag , "tag_text",tag_text );
 
                 // rindow.find('.rdr_whyPanel .rdr_body').append( $commentFeedback, $shareDialogueBox );
                 
-                //console.log('scrollpane the why panel');
                 // if ( RDR.pane2 ) {
                     // RDR.pane2.reinitialise();
                 // } else {
@@ -2238,9 +2160,6 @@ console.log( "headline_tag", headline_tag , "tag_text",tag_text );
                         "page_id" : RDR.page.id
                     };
 
-                    //console.log('--- sendData for comment: ---');
-                    //console.dir(sendData);
-
                     // send the data!
                     $.ajax({
                         url: "/api/comment/create/",
@@ -2249,7 +2168,6 @@ console.log( "headline_tag", headline_tag , "tag_text",tag_text );
                         dataType: "jsonp",
                         data: { json: JSON.stringify(sendData) },
                         success: function(response) {
-                            //console.dir(response);
 
                             if ( response.status == "fail" ) {
                                 // if it failed, see if we can fix it, and if so, try this function one more time
@@ -2260,7 +2178,6 @@ console.log( "headline_tag", headline_tag , "tag_text",tag_text );
                                     }
                                 } );
                             } else {
-                                console.log( rindow.length );
                                 rindow.find('div.rdr_commentBox').find('div.rdr_commentComplete').html('Thank you for your comment. You and others can now read this by clicking on the (pin) icon next to the content you commented upon.').show();
                                 rindow.find('div.rdr_commentBox').find('div.rdr_tagFeedback, div.rdr_comment').hide();
                             }
@@ -2268,7 +2185,6 @@ console.log( "headline_tag", headline_tag , "tag_text",tag_text );
                         },
                         //for now, ignore error and carry on with mockup
                         error: function(response) {
-                            //console.log("an error occurred while trying to comment");
                         }
                     });
                 });
@@ -2514,16 +2430,12 @@ loadScript("/static/js/jquery-1.6.js", function(){
         //callback
 
         //test that $.ui versioning is working correctly
-        // //console.log("testing jQuery UI versioning...")
-        // //console.log("before the $.noConflict call the $.ui.version still refers to ours version = " + $.ui.version)
         
         //within this scope while the $ refers to our version of jQuery, attach it to our Global var $R at least for now, for testing later
         //todo - I don't think it really matters, but consider making this just local later
         $R = $.noConflict(true);
 
         //test that $.ui versioning is working correctly
-        // //console.log("after the $.noConflict call, the $.ui.version reverts back to refering to the clients - version = " + $.ui.version)
-        // //console.log("of course $R.ui.version should show our version - version = " + $R.ui.version)
 
         //call scripts that depend on our jQuery version to be loaded
         $RFunctions($R);
@@ -2567,11 +2479,10 @@ function $RFunctions($R){
     //testing:
     /*
     var a = $R.evalJSON('[{"test":2}]');
-    //console.log(a)
 
 
     //show that objects really are unique
-    //console.log("test that our jQuery copy is unique...")
+
     $.client = "client";
     $R.rb = "rb";
     //console.log($.client)   //"client"
@@ -3622,10 +3533,8 @@ function jQueryPlugins($R){
                 obj[val] = $.fn.css2.call(this, val);
 
                 if(val == "lineHeight"){
-                    // console.log('-----------%#%(#)(*%)(*#@()*%--------------');
                     obj[val] = $.fn.css2.call(this, "auto");
                 }
-                // console.log(val, typeof val, obj[val]);
                 val = (typeof val === "undefined") ? 'auto' :  val;
             }
             return obj;
@@ -3749,1366 +3658,9 @@ function jQueryPlugins($R){
         a = window,
         c = undefined;
 
-
-    $.fn.jScrollPane = function(settings)
-    {
-        // JScrollPane "class" - public methods are available through $('selector').data('jsp')
-        function JScrollPane(elem, s)
-        {
-            var settings, jsp = this, pane, paneWidth, paneHeight, container, contentWidth, contentHeight,
-                percentInViewH, percentInViewV, isScrollableV, isScrollableH, verticalDrag, dragMaxY,
-                verticalDragPosition, horizontalDrag, dragMaxX, horizontalDragPosition,
-                verticalBar, verticalTrack, scrollbarWidth, verticalTrackHeight, verticalDragHeight, arrowUp, arrowDown,
-                horizontalBar, horizontalTrack, horizontalTrackWidth, horizontalDragWidth, arrowLeft, arrowRight,
-                reinitialiseInterval, originalPadding, originalPaddingTotalWidth, previousContentWidth,
-                wasAtTop = true, wasAtLeft = true, wasAtBottom = false, wasAtRight = false,
-                originalElement = elem.clone(false, false).empty(),
-                mwEvent = $.fn.mwheelIntent ? 'mwheelIntent.jsp' : 'mousewheel.jsp';
-
-            originalPadding = elem.css('paddingTop') + ' ' +
-                                elem.css('paddingRight') + ' ' +
-                                elem.css('paddingBottom') + ' ' +
-                                elem.css('paddingLeft');
-            originalPaddingTotalWidth = (parseInt(elem.css('paddingLeft'), 10) || 0) +
-                                        (parseInt(elem.css('paddingRight'), 10) || 0);
-
-            function initialise(s)
-            {
-log("$whyBody height now 1: "+$('#whyPanel div.rdr_body').height() );
-                var /*firstChild, lastChild, */isMaintainingPositon, lastContentX, lastContentY,
-                        hasContainingSpaceChanged, originalScrollTop, originalScrollLeft,
-                        maintainAtBottom = false, maintainAtRight = false;
-
-                settings = s;
-
-                if (pane === undefined) {
-                    log('no pane');
-                    originalScrollTop = elem.scrollTop();
-                    originalScrollLeft = elem.scrollLeft();
-
-                    elem.css(
-                        {
-                            overflow: 'hidden',
-                            padding: 0
-                        }
-                    );
-                    // TODO: Deal with where width/ height is 0 as it probably means the element is hidden and we should
-                    // come back to it later and check once it is unhidden...
-                    paneWidth = elem.innerWidth() + originalPaddingTotalWidth;
-                    
-                    // porter addition:
-                    if (s.paneHeight) {
-                        log('11 passing in paneHeight of '+s.paneHeight);
-                        paneHeight = s.paneHeight;
-                    } else {
-                        paneHeight = elem.innerHeight();
-                    }
-
-                    elem.width(paneWidth);
-console.log('paneHeight ',paneHeight);
-                    
-                    pane = $('<div class="jspPane" />').css('padding', originalPadding).append(elem.children());
-                    container = $('<div class="jspContainer" />')
-                        .css({
-                            'width': paneWidth + 'px',
-                            'height': paneHeight + 'px'
-                        }
-                    ).append(pane).appendTo(elem);
-
-                    /*
-                    // Move any margins from the first and last children up to the container so they can still
-                    // collapse with neighbouring elements as they would before jScrollPane 
-                    firstChild = pane.find(':first-child');
-                    lastChild = pane.find(':last-child');
-                    elem.css(
-                        {
-                            'margin-top': firstChild.css('margin-top'),
-                            'margin-bottom': lastChild.css('margin-bottom')
-                        }
-                    );
-                    firstChild.css('margin-top', 0);
-                    lastChild.css('margin-bottom', 0);
-                    */
-log("$whyBody height now 2: "+$('#whyPanel div.rdr_body').height() );
-                } else {
-log("$whyBody height now 3: "+$('#whyPanel div.rdr_body').height() );
-                    log('pane!!');
-
-                    elem.css('width', '');
-
-                    maintainAtBottom = settings.stickToBottom && isCloseToBottom();
-                    maintainAtRight  = settings.stickToRight  && isCloseToRight();
-
-                    hasContainingSpaceChanged = elem.innerWidth() + originalPaddingTotalWidth != paneWidth || elem.outerHeight() != paneHeight;
-
-                    if (hasContainingSpaceChanged) {
-                        paneWidth = elem.innerWidth() + originalPaddingTotalWidth;
-                        
-                        // porter addition:
-                        if (s.paneHeight) {
-                            log('22 passing in paneHeight of '+s.paneHeight);
-                            paneHeight = s.paneHeight;
-                        } else {
-                            paneHeight = elem.innerHeight();
-                        }
-
-                        container.css({
-                            width: paneWidth + 'px',
-                            height: paneHeight + 'px'
-                        });
-                    }
-
-                    // If nothing changed since last check...
-                    if (!hasContainingSpaceChanged && previousContentWidth == contentWidth && pane.outerHeight() == contentHeight) {
-                        elem.width(paneWidth);
-                        return;
-                    }
-                    previousContentWidth = contentWidth;
-                    
-                    pane.css('width', '');
-                    elem.width(paneWidth);
-
-                    container.find('>.jspVerticalBar,>.jspHorizontalBar').remove().end();
-log("$whyBody height now 4: "+$('#whyPanel div.rdr_body').height() );
-                }
-
-                pane.css('overflow', 'auto');
-                if (s.contentWidth) {
-                    contentWidth = s.contentWidth;
-                } else {
-                    contentWidth = pane[0].scrollWidth;
-                }
-                if (s.contentHeight) {
-                    log('passing in height of '+s.contentHeight);
-                    contentHeight = s.contentHeight;
-                } else {
-                    contentHeight = pane[0].scrollHeight;
-                }
-
-                
-                pane.css('overflow', '');
-log("$whyBody height now 5: "+$('#whyPanel div.rdr_body').height() );
-                percentInViewH = contentWidth / paneWidth;
-                percentInViewV = contentHeight / paneHeight;
-                // TODO fix this to > 1
-                isScrollableV = percentInViewV >= 1;
-                isScrollableH = percentInViewH > 1;
-log("$whyBody height now 5: "+$('#whyPanel div.rdr_body').height() );
-                //console.log(paneWidth, paneHeight, contentWidth, contentHeight, percentInViewH, percentInViewV, isScrollableH, isScrollableV);
-
-                if (!(isScrollableH || isScrollableV)) {
-                    elem.removeClass('jspScrollable');
-                    pane.css({
-                        top: 0,
-                        width: container.width() - originalPaddingTotalWidth
-                    });
-                    removeMousewheel();
-                    removeFocusHandler();
-                    removeKeyboardNav();
-                    removeClickOnTrack();
-                    unhijackInternalLinks();
-                } else {
-                    elem.addClass('jspScrollable');
-
-                    isMaintainingPositon = settings.maintainPosition && (verticalDragPosition || horizontalDragPosition);
-                    if (isMaintainingPositon) {
-                        lastContentX = contentPositionX();
-                        lastContentY = contentPositionY();
-                    }
-
-                    initialiseVerticalScroll();
-                    initialiseHorizontalScroll();
-                    resizeScrollbars();
-
-                    if (isMaintainingPositon) {
-                        scrollToX(maintainAtRight  ? (contentWidth  - paneWidth ) : lastContentX, false);
-                        scrollToY(maintainAtBottom ? (contentHeight - paneHeight) : lastContentY, false);
-                    }
-
-                    initFocusHandler();
-                    initMousewheel();
-                    initTouch();
-                    
-                    if (settings.enableKeyboardNavigation) {
-                        initKeyboardNav();
-                    }
-                    if (settings.clickOnTrack) {
-                        initClickOnTrack();
-                    }
-                    
-                    observeHash();
-                    if (settings.hijackInternalLinks) {
-                        hijackInternalLinks();
-                    }
-                }
-
-                if (settings.autoReinitialise && !reinitialiseInterval) {
-                    reinitialiseInterval = setInterval(
-                        function()
-                        {
-                            initialise(settings);
-                        },
-                        settings.autoReinitialiseDelay
-                    );
-                } else if (!settings.autoReinitialise && reinitialiseInterval) {
-                    clearInterval(reinitialiseInterval);
-                }
-
-                originalScrollTop && elem.scrollTop(0) && scrollToY(originalScrollTop, false);
-                originalScrollLeft && elem.scrollLeft(0) && scrollToX(originalScrollLeft, false);
-
-                elem.trigger('jsp-initialised', [isScrollableH || isScrollableV]);
-            }
-
-            function initialiseVerticalScroll()
-            {
-                if (isScrollableV) {
-                    container.append(
-                        $('<div class="jspVerticalBar" />').append(
-                            $('<div class="jspCap jspCapTop" />'),
-                            $('<div class="jspTrack" />').append(
-                                $('<div class="jspDrag" />').append(
-                                    $('<div class="jspDragTop" />'),
-                                    $('<div class="jspDragBottom" />')
-                                )
-                            ),
-                            $('<div class="jspCap jspCapBottom" />')
-                        )
-                    );
-                    verticalBar = container.find('>.jspVerticalBar');
-                    verticalTrack = verticalBar.find('>.jspTrack');
-                    verticalDrag = verticalTrack.find('>.jspDrag');
-
-                    if (settings.showArrows) {
-                        arrowUp = $('<a class="jspArrow jspArrowUp" />').bind(
-                            'mousedown.jsp', getArrowScroll(0, -1)
-                        ).bind('click.jsp', nil);
-                        arrowDown = $('<a class="jspArrow jspArrowDown" />').bind(
-                            'mousedown.jsp', getArrowScroll(0, 1)
-                        ).bind('click.jsp', nil);
-                        if (settings.arrowScrollOnHover) {
-                            arrowUp.bind('mouseover.jsp', getArrowScroll(0, -1, arrowUp));
-                            arrowDown.bind('mouseover.jsp', getArrowScroll(0, 1, arrowDown));
-                        }
-
-                        appendArrows(verticalTrack, settings.verticalArrowPositions, arrowUp, arrowDown);
-                    }
-                    verticalTrackHeight = paneHeight;
-                    
-                    container.find('>.jspVerticalBar>.jspCap:visible,>.jspVerticalBar>.jspArrow').each(
-                        function()
-                        {
-                            verticalTrackHeight -= $(this).outerHeight();
-                        }
-                    );
-
-                    verticalDrag.hover(
-                        function()
-                        {
-                            verticalDrag.addClass('jspHover');
-                        },
-                        function()
-                        {
-                            verticalDrag.removeClass('jspHover');
-                        }
-                    ).bind(
-                        'mousedown.jsp',
-                        function(e)
-                        {
-                            // Stop IE from allowing text selection
-                            $('html').bind('dragstart.jsp selectstart.jsp', nil);
-
-                            verticalDrag.addClass('jspActive');
-
-                            var startY = e.pageY - verticalDrag.position().top;
-
-                            $('html').bind(
-                                'mousemove.jsp',
-                                function(e)
-                                {
-                                    positionDragY(e.pageY - startY, false);
-                                }
-                            ).bind('mouseup.jsp mouseleave.jsp', cancelDrag);
-                            return false;
-                        }
-                    );
-                    sizeVerticalScrollbar();
-                }
-            }
-
-            function sizeVerticalScrollbar()
-            {
-                verticalTrack.height(verticalTrackHeight + 'px');
-                verticalDragPosition = 0;
-                scrollbarWidth = settings.verticalGutter + verticalTrack.outerWidth();
-
-                // Make the pane thinner to allow for the vertical scrollbar
-                pane.width(paneWidth - scrollbarWidth - originalPaddingTotalWidth);
-
-                // Add margin to the left of the pane if scrollbars are on that side (to position
-                // the scrollbar on the left or right set it's left or right property in CSS)
-                try {
-                    if (verticalBar.position().left === 0) {
-                        pane.css('margin-left', scrollbarWidth + 'px');
-                    }
-                } catch (err) {
-                }
-            }
-
-            function initialiseHorizontalScroll()
-            {
-                if (isScrollableH) {
-
-                    container.append(
-                        $('<div class="jspHorizontalBar" />').append(
-                            $('<div class="jspCap jspCapLeft" />'),
-                            $('<div class="jspTrack" />').append(
-                                $('<div class="jspDrag" />').append(
-                                    $('<div class="jspDragLeft" />'),
-                                    $('<div class="jspDragRight" />')
-                                )
-                            ),
-                            $('<div class="jspCap jspCapRight" />')
-                        )
-                    );
-
-                    horizontalBar = container.find('>.jspHorizontalBar');
-                    horizontalTrack = horizontalBar.find('>.jspTrack');
-                    horizontalDrag = horizontalTrack.find('>.jspDrag');
-
-                    if (settings.showArrows) {
-                        arrowLeft = $('<a class="jspArrow jspArrowLeft" />').bind(
-                            'mousedown.jsp', getArrowScroll(-1, 0)
-                        ).bind('click.jsp', nil);
-                        arrowRight = $('<a class="jspArrow jspArrowRight" />').bind(
-                            'mousedown.jsp', getArrowScroll(1, 0)
-                        ).bind('click.jsp', nil);
-                        if (settings.arrowScrollOnHover) {
-                            arrowLeft.bind('mouseover.jsp', getArrowScroll(-1, 0, arrowLeft));
-                            arrowRight.bind('mouseover.jsp', getArrowScroll(1, 0, arrowRight));
-                        }
-                        appendArrows(horizontalTrack, settings.horizontalArrowPositions, arrowLeft, arrowRight);
-                    }
-
-                    horizontalDrag.hover(
-                        function()
-                        {
-                            horizontalDrag.addClass('jspHover');
-                        },
-                        function()
-                        {
-                            horizontalDrag.removeClass('jspHover');
-                        }
-                    ).bind(
-                        'mousedown.jsp',
-                        function(e)
-                        {
-                            // Stop IE from allowing text selection
-                            $('html').bind('dragstart.jsp selectstart.jsp', nil);
-
-                            horizontalDrag.addClass('jspActive');
-
-                            var startX = e.pageX - horizontalDrag.position().left;
-
-                            $('html').bind(
-                                'mousemove.jsp',
-                                function(e)
-                                {
-                                    positionDragX(e.pageX - startX, false);
-                                }
-                            ).bind('mouseup.jsp mouseleave.jsp', cancelDrag);
-                            return false;
-                        }
-                    );
-                    horizontalTrackWidth = container.innerWidth();
-                    sizeHorizontalScrollbar();
-                }
-            }
-
-            function sizeHorizontalScrollbar()
-            {
-                container.find('>.jspHorizontalBar>.jspCap:visible,>.jspHorizontalBar>.jspArrow').each(
-                    function()
-                    {
-                        horizontalTrackWidth -= $(this).outerWidth();
-                    }
-                );
-
-                horizontalTrack.width(horizontalTrackWidth + 'px');
-                horizontalDragPosition = 0;
-            }
-
-            function resizeScrollbars()
-            {
-                log('-----------------------------------resizeScrollbars');
-                if (isScrollableH && isScrollableV) {
-                    var horizontalTrackHeight = horizontalTrack.outerHeight(),
-                        verticalTrackWidth = verticalTrack.outerWidth();
-                    verticalTrackHeight -= horizontalTrackHeight;
-                    $(horizontalBar).find('>.jspCap:visible,>.jspArrow').each(
-                        function()
-                        {
-                            horizontalTrackWidth += $(this).outerWidth();
-                        }
-                    );
-                    horizontalTrackWidth -= verticalTrackWidth;
-                    paneHeight -= verticalTrackWidth;
-                    paneWidth -= horizontalTrackHeight;
-                    horizontalTrack.parent().append(
-                        $('<div class="jspCorner" />').css('width', horizontalTrackHeight + 'px')
-                    );
-                    sizeVerticalScrollbar();
-                    sizeHorizontalScrollbar();
-                }
-                // reflow content
-                if (isScrollableH) {
-                    pane.width((container.outerWidth() - originalPaddingTotalWidth) + 'px');
-                }
-                contentHeight = pane.outerHeight();
-                percentInViewV = contentHeight / paneHeight;
-
-                if (isScrollableH) {
-                    horizontalDragWidth = Math.ceil(1 / percentInViewH * horizontalTrackWidth);
-                    if (horizontalDragWidth > settings.horizontalDragMaxWidth) {
-                        horizontalDragWidth = settings.horizontalDragMaxWidth;
-                    } else if (horizontalDragWidth < settings.horizontalDragMinWidth) {
-                        horizontalDragWidth = settings.horizontalDragMinWidth;
-                    }
-                    horizontalDrag.width(horizontalDragWidth + 'px');
-                    dragMaxX = horizontalTrackWidth - horizontalDragWidth;
-                    _positionDragX(horizontalDragPosition); // To update the state for the arrow buttons
-                }
-                if (isScrollableV) {
-                    verticalDragHeight = Math.ceil(1 / percentInViewV * verticalTrackHeight);
-                    if (verticalDragHeight > settings.verticalDragMaxHeight) {
-                        verticalDragHeight = settings.verticalDragMaxHeight;
-                    } else if (verticalDragHeight < settings.verticalDragMinHeight) {
-                        verticalDragHeight = settings.verticalDragMinHeight;
-                    }
-                    verticalDrag.height(verticalDragHeight + 'px');
-                    dragMaxY = verticalTrackHeight - verticalDragHeight;
-                    _positionDragY(verticalDragPosition); // To update the state for the arrow buttons
-                }
-            }
-
-            function appendArrows(ele, p, a1, a2)
-            {
-                var p1 = "before", p2 = "after", aTemp;
-                
-                // Sniff for mac... Is there a better way to determine whether the arrows would naturally appear
-                // at the top or the bottom of the bar?
-                if (p == "os") {
-                    p = /Mac/.test(navigator.platform) ? "after" : "split";
-                }
-                if (p == p1) {
-                    p2 = p;
-                } else if (p == p2) {
-                    p1 = p;
-                    aTemp = a1;
-                    a1 = a2;
-                    a2 = aTemp;
-                }
-
-                ele[p1](a1)[p2](a2);
-            }
-
-            function getArrowScroll(dirX, dirY, ele)
-            {
-                return function()
-                {
-                    arrowScroll(dirX, dirY, this, ele);
-                    this.blur();
-                    return false;
-                };
-            }
-
-            function arrowScroll(dirX, dirY, arrow, ele)
-            {
-                arrow = $(arrow).addClass('jspActive');
-
-                var eve,
-                    scrollTimeout,
-                    isFirst = true,
-                    doScroll = function()
-                    {
-                        if (dirX !== 0) {
-                            jsp.scrollByX(dirX * settings.arrowButtonSpeed);
-                        }
-                        if (dirY !== 0) {
-                            jsp.scrollByY(dirY * settings.arrowButtonSpeed);
-                        }
-                        scrollTimeout = setTimeout(doScroll, isFirst ? settings.initialDelay : settings.arrowRepeatFreq);
-                        isFirst = false;
-                    };
-
-                doScroll();
-
-                eve = ele ? 'mouseout.jsp' : 'mouseup.jsp';
-                ele = ele || $('html');
-                ele.bind(
-                    eve,
-                    function()
-                    {
-                        arrow.removeClass('jspActive');
-                        scrollTimeout && clearTimeout(scrollTimeout);
-                        scrollTimeout = null;
-                        ele.unbind(eve);
-                    }
-                );
-            }
-
-            function initClickOnTrack()
-            {
-                removeClickOnTrack();
-                if (isScrollableV) {
-                    verticalTrack.bind(
-                        'mousedown.jsp',
-                        function(e)
-                        {
-                            if (e.originalTarget === undefined || e.originalTarget == e.currentTarget) {
-                                var clickedTrack = $(this),
-                                    offset = clickedTrack.offset(),
-                                    direction = e.pageY - offset.top - verticalDragPosition,
-                                    scrollTimeout,
-                                    isFirst = true,
-                                    doScroll = function()
-                                    {
-                                        var offset = clickedTrack.offset(),
-                                            pos = e.pageY - offset.top - verticalDragHeight / 2,
-                                            contentDragY = paneHeight * settings.scrollPagePercent,
-                                            dragY = dragMaxY * contentDragY / (contentHeight - paneHeight);
-                                        if (direction < 0) {
-                                            if (verticalDragPosition - dragY > pos) {
-                                                jsp.scrollByY(-contentDragY);
-                                            } else {
-                                                positionDragY(pos);
-                                            }
-                                        } else if (direction > 0) {
-                                            if (verticalDragPosition + dragY < pos) {
-                                                jsp.scrollByY(contentDragY);
-                                            } else {
-                                                positionDragY(pos);
-                                            }
-                                        } else {
-                                            cancelClick();
-                                            return;
-                                        }
-                                        scrollTimeout = setTimeout(doScroll, isFirst ? settings.initialDelay : settings.trackClickRepeatFreq);
-                                        isFirst = false;
-                                    },
-                                    cancelClick = function()
-                                    {
-                                        scrollTimeout && clearTimeout(scrollTimeout);
-                                        scrollTimeout = null;
-                                        $(document).unbind('mouseup.jsp', cancelClick);
-                                    };
-                                doScroll();
-                                $(document).bind('mouseup.jsp', cancelClick);
-                                return false;
-                            }
-                        }
-                    );
-                }
-                
-                if (isScrollableH) {
-                    horizontalTrack.bind(
-                        'mousedown.jsp',
-                        function(e)
-                        {
-                            if (e.originalTarget === undefined || e.originalTarget == e.currentTarget) {
-                                var clickedTrack = $(this),
-                                    offset = clickedTrack.offset(),
-                                    direction = e.pageX - offset.left - horizontalDragPosition,
-                                    scrollTimeout,
-                                    isFirst = true,
-                                    doScroll = function()
-                                    {
-                                        var offset = clickedTrack.offset(),
-                                            pos = e.pageX - offset.left - horizontalDragWidth / 2,
-                                            contentDragX = paneWidth * settings.scrollPagePercent,
-                                            dragX = dragMaxX * contentDragX / (contentWidth - paneWidth);
-                                        if (direction < 0) {
-                                            if (horizontalDragPosition - dragX > pos) {
-                                                jsp.scrollByX(-contentDragX);
-                                            } else {
-                                                positionDragX(pos);
-                                            }
-                                        } else if (direction > 0) {
-                                            if (horizontalDragPosition + dragX < pos) {
-                                                jsp.scrollByX(contentDragX);
-                                            } else {
-                                                positionDragX(pos);
-                                            }
-                                        } else {
-                                            cancelClick();
-                                            return;
-                                        }
-                                        scrollTimeout = setTimeout(doScroll, isFirst ? settings.initialDelay : settings.trackClickRepeatFreq);
-                                        isFirst = false;
-                                    },
-                                    cancelClick = function()
-                                    {
-                                        scrollTimeout && clearTimeout(scrollTimeout);
-                                        scrollTimeout = null;
-                                        $(document).unbind('mouseup.jsp', cancelClick);
-                                    };
-                                doScroll();
-                                $(document).bind('mouseup.jsp', cancelClick);
-                                return false;
-                            }
-                        }
-                    );
-                }
-            }
-
-            function removeClickOnTrack()
-            {
-                if (horizontalTrack) {
-                    horizontalTrack.unbind('mousedown.jsp');
-                }
-                if (verticalTrack) {
-                    verticalTrack.unbind('mousedown.jsp');
-                }
-            }
-
-            function cancelDrag()
-            {
-                $('html').unbind('dragstart.jsp selectstart.jsp mousemove.jsp mouseup.jsp mouseleave.jsp');
-
-                if (verticalDrag) {
-                    verticalDrag.removeClass('jspActive');
-                }
-                if (horizontalDrag) {
-                    horizontalDrag.removeClass('jspActive');
-                }
-            }
-
-            function positionDragY(destY, animate)
-            {
-                if (!isScrollableV) {
-                    return;
-                }
-                if (destY < 0) {
-                    destY = 0;
-                } else if (destY > dragMaxY) {
-                    destY = dragMaxY;
-                }
-
-                // can't just check if(animate) because false is a valid value that could be passed in...
-                if (animate === undefined) {
-                    animate = settings.animateScroll;
-                }
-                if (animate) {
-                    jsp.animate(verticalDrag, 'top', destY, _positionDragY);
-                } else {
-                    verticalDrag.css('top', destY);
-                    _positionDragY(destY);
-                }
-
-            }
-
-            function _positionDragY(destY)
-            {
-                if (destY === undefined) {
-                    destY = verticalDrag.position().top;
-                }
-
-                container.scrollTop(0);
-                verticalDragPosition = destY;
-
-                var isAtTop = verticalDragPosition === 0,
-                    isAtBottom = verticalDragPosition == dragMaxY,
-                    percentScrolled = destY/ dragMaxY,
-                    destTop = -percentScrolled * (contentHeight - paneHeight);
-
-                if (wasAtTop != isAtTop || wasAtBottom != isAtBottom) {
-                    wasAtTop = isAtTop;
-                    wasAtBottom = isAtBottom;
-                    elem.trigger('jsp-arrow-change', [wasAtTop, wasAtBottom, wasAtLeft, wasAtRight]);
-                }
-                
-                updateVerticalArrows(isAtTop, isAtBottom);
-                pane.css('top', destTop);
-                elem.trigger('jsp-scroll-y', [-destTop, isAtTop, isAtBottom]).trigger('scroll');
-            }
-
-            function positionDragX(destX, animate)
-            {
-                if (!isScrollableH) {
-                    return;
-                }
-                if (destX < 0) {
-                    destX = 0;
-                } else if (destX > dragMaxX) {
-                    destX = dragMaxX;
-                }
-
-                if (animate === undefined) {
-                    animate = settings.animateScroll;
-                }
-                if (animate) {
-                    jsp.animate(horizontalDrag, 'left', destX,  _positionDragX);
-                } else {
-                    horizontalDrag.css('left', destX);
-                    _positionDragX(destX);
-                }
-            }
-
-            function _positionDragX(destX)
-            {
-                if (destX === undefined) {
-                    destX = horizontalDrag.position().left;
-                }
-
-                container.scrollTop(0);
-                horizontalDragPosition = destX;
-
-                var isAtLeft = horizontalDragPosition === 0,
-                    isAtRight = horizontalDragPosition == dragMaxX,
-                    percentScrolled = destX / dragMaxX,
-                    destLeft = -percentScrolled * (contentWidth - paneWidth);
-
-                if (wasAtLeft != isAtLeft || wasAtRight != isAtRight) {
-                    wasAtLeft = isAtLeft;
-                    wasAtRight = isAtRight;
-                    elem.trigger('jsp-arrow-change', [wasAtTop, wasAtBottom, wasAtLeft, wasAtRight]);
-                }
-                
-                updateHorizontalArrows(isAtLeft, isAtRight);
-                pane.css('left', destLeft);
-                elem.trigger('jsp-scroll-x', [-destLeft, isAtLeft, isAtRight]).trigger('scroll');
-            }
-
-            function updateVerticalArrows(isAtTop, isAtBottom)
-            {
-                if (settings.showArrows) {
-                    arrowUp[isAtTop ? 'addClass' : 'removeClass']('jspDisabled');
-                    arrowDown[isAtBottom ? 'addClass' : 'removeClass']('jspDisabled');
-                }
-            }
-
-            function updateHorizontalArrows(isAtLeft, isAtRight)
-            {
-                if (settings.showArrows) {
-                    arrowLeft[isAtLeft ? 'addClass' : 'removeClass']('jspDisabled');
-                    arrowRight[isAtRight ? 'addClass' : 'removeClass']('jspDisabled');
-                }
-            }
-
-            function scrollToY(destY, animate)
-            {
-                var percentScrolled = destY / (contentHeight - paneHeight);
-                positionDragY(percentScrolled * dragMaxY, animate);
-            }
-
-            function scrollToX(destX, animate)
-            {
-                var percentScrolled = destX / (contentWidth - paneWidth);
-                positionDragX(percentScrolled * dragMaxX, animate);
-            }
-
-            function scrollToElement(ele, stickToTop, animate)
-            {
-                var e, eleHeight, eleWidth, eleTop = 0, eleLeft = 0, viewportTop, viewportLeft, maxVisibleEleTop, maxVisibleEleLeft, destY, destX;
-
-                // Legal hash values aren't necessarily legal jQuery selectors so we need to catch any
-                // errors from the lookup...
-                try {
-                    e = $(ele);
-                } catch (err) {
-                    return;
-                }
-                eleHeight = e.outerHeight();
-                eleWidth= e.outerWidth();
-
-                container.scrollTop(0);
-                container.scrollLeft(0);
-                
-                // loop through parents adding the offset top of any elements that are relatively positioned between
-                // the focused element and the jspPane so we can get the true distance from the top
-                // of the focused element to the top of the scrollpane...
-                while (!e.is('.jspPane')) {
-                    eleTop += e.position().top;
-                    eleLeft += e.position().left;
-                    e = e.offsetParent();
-                    if (/^body|html$/i.test(e[0].nodeName)) {
-                        // we ended up too high in the document structure. Quit!
-                        return;
-                    }
-                }
-
-                viewportTop = contentPositionY();
-                maxVisibleEleTop = viewportTop + paneHeight;
-                if (eleTop < viewportTop || stickToTop) { // element is above viewport
-                    destY = eleTop - settings.verticalGutter;
-                } else if (eleTop + eleHeight > maxVisibleEleTop) { // element is below viewport
-                    destY = eleTop - paneHeight + eleHeight + settings.verticalGutter;
-                }
-                if (destY) {
-                    scrollToY(destY, animate);
-                }
-                
-                viewportLeft = contentPositionX();
-                maxVisibleEleLeft = viewportLeft + paneWidth;
-                if (eleLeft < viewportLeft || stickToTop) { // element is to the left of viewport
-                    destX = eleLeft - settings.horizontalGutter;
-                } else if (eleLeft + eleWidth > maxVisibleEleLeft) { // element is to the right viewport
-                    destX = eleLeft - paneWidth + eleWidth + settings.horizontalGutter;
-                }
-                if (destX) {
-                    scrollToX(destX, animate);
-                }
-
-            }
-
-            function contentPositionX()
-            {
-                return -pane.position().left;
-            }
-
-            function contentPositionY()
-            {
-                return -pane.position().top;
-            }
-
-            function isCloseToBottom()
-            {
-                var scrollableHeight = contentHeight - paneHeight;
-                return (scrollableHeight > 20) && (scrollableHeight - contentPositionY() < 10);
-            }
-
-            function isCloseToRight()
-            {
-                var scrollableWidth = contentWidth - paneWidth;
-                return (scrollableWidth > 20) && (scrollableWidth - contentPositionX() < 10);
-            }
-
-            function initMousewheel()
-            {
-                container.unbind(mwEvent).bind(
-                    mwEvent,
-                    function (event, delta, deltaX, deltaY) {
-                        var dX = horizontalDragPosition, dY = verticalDragPosition;
-                        jsp.scrollBy(deltaX * settings.mouseWheelSpeed, -deltaY * settings.mouseWheelSpeed, false);
-                        // return true if there was no movement so rest of screen can scroll
-                        return dX == horizontalDragPosition && dY == verticalDragPosition;
-                    }
-                );
-            }
-
-            function removeMousewheel()
-            {
-                container.unbind(mwEvent);
-            }
-
-            function nil()
-            {
-                return false;
-            }
-
-            function initFocusHandler()
-            {
-                pane.find(':input,a').unbind('focus.jsp').bind(
-                    'focus.jsp',
-                    function(e)
-                    {
-                        scrollToElement(e.target, false);
-                    }
-                );
-            }
-
-            function removeFocusHandler()
-            {
-                pane.find(':input,a').unbind('focus.jsp');
-            }
-            
-            function initKeyboardNav()
-            {
-                var keyDown, elementHasScrolled, validParents = [];
-                isScrollableH && validParents.push(horizontalBar[0]);
-                isScrollableV && validParents.push(verticalBar[0]);
-                
-                // IE also focuses elements that don't have tabindex set.
-                pane.focus(
-                    function()
-                    {
-                        elem.focus();
-                    }
-                );
-                
-                elem.attr('tabindex', 0)
-                    .unbind('keydown.jsp keypress.jsp')
-                    .bind(
-                        'keydown.jsp',
-                        function(e)
-                        {
-                            if (e.target !== this && !(validParents.length && $(e.target).closest(validParents).length)){
-                                return;
-                            }
-                            var dX = horizontalDragPosition, dY = verticalDragPosition;
-                            switch(e.keyCode) {
-                                case 40: // down
-                                case 38: // up
-                                case 34: // page down
-                                case 32: // space
-                                case 33: // page up
-                                case 39: // right
-                                case 37: // left
-                                    keyDown = e.keyCode;
-                                    keyDownHandler();
-                                    break;
-                                case 35: // end
-                                    scrollToY(contentHeight - paneHeight);
-                                    keyDown = null;
-                                    break;
-                                case 36: // home
-                                    scrollToY(0);
-                                    keyDown = null;
-                                    break;
-                            }
-
-                            elementHasScrolled = e.keyCode == keyDown && dX != horizontalDragPosition || dY != verticalDragPosition;
-                            return !elementHasScrolled;
-                        }
-                    ).bind(
-                        'keypress.jsp', // For FF/ OSX so that we can cancel the repeat key presses if the JSP scrolls...
-                        function(e)
-                        {
-                            if (e.keyCode == keyDown) {
-                                keyDownHandler();
-                            }
-                            return !elementHasScrolled;
-                        }
-                    );
-                
-                if (settings.hideFocus) {
-                    elem.css('outline', 'none');
-                    if ('hideFocus' in container[0]){
-                        elem.attr('hideFocus', true);
-                    }
-                } else {
-                    elem.css('outline', '');
-                    if ('hideFocus' in container[0]){
-                        elem.attr('hideFocus', false);
-                    }
-                }
-                
-                function keyDownHandler()
-                {
-                    var dX = horizontalDragPosition, dY = verticalDragPosition;
-                    switch(keyDown) {
-                        case 40: // down
-                            jsp.scrollByY(settings.keyboardSpeed, false);
-                            break;
-                        case 38: // up
-                            jsp.scrollByY(-settings.keyboardSpeed, false);
-                            break;
-                        case 34: // page down
-                        case 32: // space
-                            jsp.scrollByY(paneHeight * settings.scrollPagePercent, false);
-                            break;
-                        case 33: // page up
-                            jsp.scrollByY(-paneHeight * settings.scrollPagePercent, false);
-                            break;
-                        case 39: // right
-                            jsp.scrollByX(settings.keyboardSpeed, false);
-                            break;
-                        case 37: // left
-                            jsp.scrollByX(-settings.keyboardSpeed, false);
-                            break;
-                    }
-
-                    elementHasScrolled = dX != horizontalDragPosition || dY != verticalDragPosition;
-                    return elementHasScrolled;
-                }
-            }
-            
-            function removeKeyboardNav()
-            {
-                elem.attr('tabindex', '-1')
-                    .removeAttr('tabindex')
-                    .unbind('keydown.jsp keypress.jsp');
-            }
-
-            function observeHash()
-            {
-                if (location.hash && location.hash.length > 1) {
-                    var e, retryInt;
-                    try {
-                        e = $(location.hash);
-                    } catch (err) {
-                        return;
-                    }
-
-                    if (e.length && pane.find(location.hash)) {
-                        // nasty workaround but it appears to take a little while before the hash has done its thing
-                        // to the rendered page so we just wait until the container's scrollTop has been messed up.
-                        if (container.scrollTop() === 0) {
-                            retryInt = setInterval(
-                                function()
-                                {
-                                    if (container.scrollTop() > 0) {
-                                        scrollToElement(location.hash, true);
-                                        $(document).scrollTop(container.position().top);
-                                        clearInterval(retryInt);
-                                    }
-                                },
-                                50
-                            );
-                        } else {
-                            scrollToElement(location.hash, true);
-                            $(document).scrollTop(container.position().top);
-                        }
-                    }
-                }
-            }
-
-            function unhijackInternalLinks()
-            {
-                $('a.jspHijack').unbind('click.jsp-hijack').removeClass('jspHijack');
-            }
-
-            function hijackInternalLinks()
-            {
-                unhijackInternalLinks();
-                $('a[href^=#]').addClass('jspHijack').bind(
-                    'click.jsp-hijack',
-                    function()
-                    {
-                        var uriParts = this.href.split('#'), hash;
-                        if (uriParts.length > 1) {
-                            hash = uriParts[1];
-                            if (hash.length > 0 && pane.find('#' + hash).length > 0) {
-                                scrollToElement('#' + hash, true);
-                                // Need to return false otherwise things mess up... Would be nice to maybe also scroll
-                                // the window to the top of the scrollpane?
-                                return false;
-                            }
-                        }
-                    }
-                );
-            }
-            
-            // Init touch on iPad, iPhone, iPod, Android
-            function initTouch()
-            {
-                var startX,
-                    startY,
-                    touchStartX,
-                    touchStartY,
-                    moved,
-                    moving = false;
-  
-                container.unbind('touchstart.jsp touchmove.jsp touchend.jsp click.jsp-touchclick').bind(
-                    'touchstart.jsp',
-                    function(e)
-                    {
-                        var touch = e.originalEvent.touches[0];
-                        startX = contentPositionX();
-                        startY = contentPositionY();
-                        touchStartX = touch.pageX;
-                        touchStartY = touch.pageY;
-                        moved = false;
-                        moving = true;
-                    }
-                ).bind(
-                    'touchmove.jsp',
-                    function(ev)
-                    {
-                        if(!moving) {
-                            return;
-                        }
-                        
-                        var touchPos = ev.originalEvent.touches[0],
-                            dX = horizontalDragPosition, dY = verticalDragPosition;
-                        
-                        jsp.scrollTo(startX + touchStartX - touchPos.pageX, startY + touchStartY - touchPos.pageY);
-                        
-                        moved = moved || Math.abs(touchStartX - touchPos.pageX) > 5 || Math.abs(touchStartY - touchPos.pageY) > 5;
-                        
-                        // return true if there was no movement so rest of screen can scroll
-                        return dX == horizontalDragPosition && dY == verticalDragPosition;
-                    }
-                ).bind(
-                    'touchend.jsp',
-                    function(e)
-                    {
-                        moving = false;
-                        /*if(moved) {
-                            return false;
-                        }*/
-                    }
-                ).bind(
-                    'click.jsp-touchclick',
-                    function(e)
-                    {
-                        if(moved) {
-                            moved = false;
-                            return false;
-                        }
-                    }
-                );
-            }
-            
-            function destroy(){
-                var currentY = contentPositionY(),
-                    currentX = contentPositionX();
-                elem.removeClass('jspScrollable').unbind('.jsp');
-                elem.replaceWith(originalElement.append(pane.children()));
-                originalElement.scrollTop(currentY);
-                originalElement.scrollLeft(currentX);
-            }
-
-            // Public API
-            $.extend(
-                jsp,
-                {
-                    // Reinitialises the scroll pane (if it's internal dimensions have changed since the last time it
-                    // was initialised). The settings object which is passed in will override any settings from the
-                    // previous time it was initialised - if you don't pass any settings then the ones from the previous
-                    // initialisation will be used.
-                    reinitialise: function(s)
-                    {
-                        s = $.extend({}, settings, s);
-                        initialise(s);
-                    },
-                    // Scrolls the specified element (a jQuery object, DOM node or jQuery selector string) into view so
-                    // that it can be seen within the viewport. If stickToTop is true then the element will appear at
-                    // the top of the viewport, if it is false then the viewport will scroll as little as possible to
-                    // show the element. You can also specify if you want animation to occur. If you don't provide this
-                    // argument then the animateScroll value from the settings object is used instead.
-                    scrollToElement: function(ele, stickToTop, animate)
-                    {
-                        scrollToElement(ele, stickToTop, animate);
-                    },
-                    // Scrolls the pane so that the specified co-ordinates within the content are at the top left
-                    // of the viewport. animate is optional and if not passed then the value of animateScroll from
-                    // the settings object this jScrollPane was initialised with is used.
-                    scrollTo: function(destX, destY, animate)
-                    {
-                        scrollToX(destX, animate);
-                        scrollToY(destY, animate);
-                    },
-                    // Scrolls the pane so that the specified co-ordinate within the content is at the left of the
-                    // viewport. animate is optional and if not passed then the value of animateScroll from the settings
-                    // object this jScrollPane was initialised with is used.
-                    scrollToX: function(destX, animate)
-                    {
-                        scrollToX(destX, animate);
-                    },
-                    // Scrolls the pane so that the specified co-ordinate within the content is at the top of the
-                    // viewport. animate is optional and if not passed then the value of animateScroll from the settings
-                    // object this jScrollPane was initialised with is used.
-                    scrollToY: function(destY, animate)
-                    {
-                        scrollToY(destY, animate);
-                    },
-                    // Scrolls the pane to the specified percentage of its maximum horizontal scroll position. animate
-                    // is optional and if not passed then the value of animateScroll from the settings object this
-                    // jScrollPane was initialised with is used.
-                    scrollToPercentX: function(destPercentX, animate)
-                    {
-                        scrollToX(destPercentX * (contentWidth - paneWidth), animate);
-                    },
-                    // Scrolls the pane to the specified percentage of its maximum vertical scroll position. animate
-                    // is optional and if not passed then the value of animateScroll from the settings object this
-                    // jScrollPane was initialised with is used.
-                    scrollToPercentY: function(destPercentY, animate)
-                    {
-                        scrollToY(destPercentY * (contentHeight - paneHeight), animate);
-                    },
-                    // Scrolls the pane by the specified amount of pixels. animate is optional and if not passed then
-                    // the value of animateScroll from the settings object this jScrollPane was initialised with is used.
-                    scrollBy: function(deltaX, deltaY, animate)
-                    {
-                        jsp.scrollByX(deltaX, animate);
-                        jsp.scrollByY(deltaY, animate);
-                    },
-                    // Scrolls the pane by the specified amount of pixels. animate is optional and if not passed then
-                    // the value of animateScroll from the settings object this jScrollPane was initialised with is used.
-                    scrollByX: function(deltaX, animate)
-                    {
-                        // Scroll by at least one pixel (useful on sensitive trackpads)
-                        deltaX = (deltaX >= 0) ? Math.max(deltaX, 1.0) : Math.min(deltaX, -1.0);
-                        var destX = contentPositionX() + deltaX,
-                            percentScrolled = destX / (contentWidth - paneWidth);
-                        positionDragX(percentScrolled * dragMaxX, animate);
-                    },
-                    // Scrolls the pane by the specified amount of pixels. animate is optional and if not passed then
-                    // the value of animateScroll from the settings object this jScrollPane was initialised with is used.
-                    scrollByY: function(deltaY, animate)
-                    {
-                        // Scroll by at least one pixel (useful on sensitive trackpads)
-                        deltaY = (deltaY >= 0) ? Math.max(deltaY, 1.0) : Math.min(deltaY, -1.0);
-                        var destY = contentPositionY() + deltaY,
-                            percentScrolled = destY / (contentHeight - paneHeight);
-                        positionDragY(percentScrolled * dragMaxY, animate);
-                    },
-                    // Positions the horizontal drag at the specified x position (and updates the viewport to reflect
-                    // this). animate is optional and if not passed then the value of animateScroll from the settings
-                    // object this jScrollPane was initialised with is used.
-                    positionDragX: function(x, animate)
-                    {
-                        positionDragX(x, animate);
-                    },
-                    // Positions the vertical drag at the specified y position (and updates the viewport to reflect
-                    // this). animate is optional and if not passed then the value of animateScroll from the settings
-                    // object this jScrollPane was initialised with is used.
-                    positionDragY: function(y, animate)
-                    {
-                        positionDragY(y, animate);
-                    },
-                    // This method is called when jScrollPane is trying to animate to a new position. You can override
-                    // it if you want to provide advanced animation functionality. It is passed the following arguments:
-                    //  * ele          - the element whose position is being animated
-                    //  * prop         - the property that is being animated
-                    //  * value        - the value it's being animated to
-                    //  * stepCallback - a function that you must execute each time you update the value of the property
-                    // You can use the default implementation (below) as a starting point for your own implementation.
-                    animate: function(ele, prop, value, stepCallback)
-                    {
-                        var params = {};
-                        params[prop] = value;
-                        ele.animate(
-                            params,
-                            {
-                                'duration'  : settings.animateDuration,
-                                'ease'      : settings.animateEase,
-                                'queue'     : false,
-                                'step'      : stepCallback
-                            }
-                        );
-                    },
-                    // Returns the current x position of the viewport with regards to the content pane.
-                    getContentPositionX: function()
-                    {
-                        return contentPositionX();
-                    },
-                    // Returns the current y position of the viewport with regards to the content pane.
-                    getContentPositionY: function()
-                    {
-                        return contentPositionY();
-                    },
-                    // Returns the width of the content within the scroll pane.
-                    getContentWidth: function()
-                    {
-                        return contentWidth;
-                    },
-                    // Returns the height of the content within the scroll pane.
-                    getContentHeight: function()
-                    {
-                        return contentHeight;
-                    },
-                    // Returns the horizontal position of the viewport within the pane content.
-                    getPercentScrolledX: function()
-                    {
-                        return contentPositionX() / (contentWidth - paneWidth);
-                    },
-                    // Returns the vertical position of the viewport within the pane content.
-                    getPercentScrolledY: function()
-                    {
-                        return contentPositionY() / (contentHeight - paneHeight);
-                    },
-                    // Returns whether or not this scrollpane has a horizontal scrollbar.
-                    getIsScrollableH: function()
-                    {
-                        return isScrollableH;
-                    },
-                    // Returns whether or not this scrollpane has a vertical scrollbar.
-                    getIsScrollableV: function()
-                    {
-                        return isScrollableV;
-                    },
-                    // Gets a reference to the content pane. It is important that you use this method if you want to
-                    // edit the content of your jScrollPane as if you access the element directly then you may have some
-                    // problems (as your original element has had additional elements for the scrollbars etc added into
-                    // it).
-                    getContentPane: function()
-                    {
-                        return pane;
-                    },
-                    // Scrolls this jScrollPane down as far as it can currently scroll. If animate isn't passed then the
-                    // animateScroll value from settings is used instead.
-                    scrollToBottom: function(animate)
-                    {
-                        positionDragY(dragMaxY, animate);
-                    },
-                    // Hijacks the links on the page which link to content inside the scrollpane. If you have changed
-                    // the content of your page (e.g. via AJAX) and want to make sure any new anchor links to the
-                    // contents of your scroll pane will work then call this function.
-                    hijackInternalLinks: function()
-                    {
-                        hijackInternalLinks();
-                    },
-                    // Removes the jScrollPane and returns the page to the state it was in before jScrollPane was
-                    // initialised.
-                    destroy: function()
-                    {
-                            destroy();
-                    }
-                }
-            );
-            
-            initialise(s);
-        }
-
-        // Pluginifying code...
-        settings = $.extend({}, $.fn.jScrollPane.defaults, settings);
-        
-        // Apply default speed
-        $.each(['mouseWheelSpeed', 'arrowButtonSpeed', 'trackClickSpeed', 'keyboardSpeed'], function() {
-            settings[this] = settings[this] || settings.speed;
-        });
-
-        return this.each(
-            function()
-            {
-                var elem = $(this), jspApi = elem.data('jsp');
-                if (jspApi) {
-                    jspApi.reinitialise(settings);
-                } else {
-                    jspApi = new JScrollPane(elem, settings);
-                    elem.data('jsp', jspApi);
-                }
-            }
-        );
-    };
-
-    $.fn.jScrollPane.defaults = {
-        showArrows                  : false,
-        maintainPosition            : true,
-        stickToBottom               : false,
-        stickToRight                : false,
-        clickOnTrack                : true,
-        autoReinitialise            : false,
-        autoReinitialiseDelay       : 500,
-        verticalDragMinHeight       : 0,
-        verticalDragMaxHeight       : 99999,
-        horizontalDragMinWidth      : 0,
-        horizontalDragMaxWidth      : 99999,
-        contentWidth                : undefined,
-        contentHeight               : undefined,
-        animateScroll               : false,
-        animateDuration             : 300,
-        animateEase                 : 'linear',
-        hijackInternalLinks         : false,
-        verticalGutter              : 4,
-        horizontalGutter            : 4,
-        mouseWheelSpeed             : 0,
-        arrowButtonSpeed            : 0,
-        arrowRepeatFreq             : 50,
-        arrowScrollOnHover          : false,
-        trackClickSpeed             : 0,
-        trackClickRepeatFreq        : 70,
-        verticalArrowPositions      : 'split',
-        horizontalArrowPositions    : 'split',
-        enableKeyboardNavigation    : true,
-        hideFocus                   : false,
-        keyboardSpeed               : 0,
-        initialDelay                : 300,        // Delay before starting repeating
-        speed                       : 30,       // Default speed when others falsey
-        scrollPagePercent           : .8        // Percent of visible area scrolled when pageUp/Down or track area pressed
-    };
-    })($R);
+        b.fn.jScrollPane=function(e){function d(D,O){var az,Q=this,Y,ak,v,am,T,Z,y,q,aA,aF,av,i,I,h,j,aa,U,aq,X,t,A,ar,af,an,G,l,au,ay,x,aw,aI,f,L,aj=true,P=true,aH=false,k=false,ap=D.clone(false,false).empty(),ac=b.fn.mwheelIntent?"mwheelIntent.jsp":"mousewheel.jsp";aI=D.css("paddingTop")+" "+D.css("paddingRight")+" "+D.css("paddingBottom")+" "+D.css("paddingLeft");f=(parseInt(D.css("paddingLeft"),10)||0)+(parseInt(D.css("paddingRight"),10)||0);function at(aR){var aM,aO,aN,aK,aJ,aQ,aP=false,aL=false;az=aR;if(Y===c){aJ=D.scrollTop();aQ=D.scrollLeft();D.css({overflow:"hidden",padding:0});ak=D.innerWidth()+f;v=D.innerHeight();D.width(ak);Y=b('<div class="jspPane" />').css("padding",aI).append(D.children());am=b('<div class="jspContainer" />').css({width:ak+"px",height:v+"px"}).append(Y).appendTo(D)}else{D.css("width","");aP=az.stickToBottom&&K();aL=az.stickToRight&&B();aK=D.innerWidth()+f!=ak||D.outerHeight()!=v;if(aK){ak=D.innerWidth()+f;v=D.innerHeight();am.css({width:ak+"px",height:v+"px"})}if(!aK&&L==T&&Y.outerHeight()==Z){D.width(ak);return}L=T;Y.css("width","");D.width(ak);am.find(">.jspVerticalBar,>.jspHorizontalBar").remove().end()}Y.css("overflow","auto");if(aR.contentWidth){T=aR.contentWidth}else{T=Y[0].scrollWidth}Z=Y[0].scrollHeight;Y.css("overflow","");y=T/ak;q=Z/v;aA=q>1;aF=y>1;if(!(aF||aA)){D.removeClass("jspScrollable");Y.css({top:0,width:am.width()-f});n();E();R();w();ai()}else{D.addClass("jspScrollable");aM=az.maintainPosition&&(I||aa);if(aM){aO=aD();aN=aB()}aG();z();F();if(aM){N(aL?(T-ak):aO,false);M(aP?(Z-v):aN,false)}J();ag();ao();if(az.enableKeyboardNavigation){S()}if(az.clickOnTrack){p()}C();if(az.hijackInternalLinks){m()}}if(az.autoReinitialise&&!aw){aw=setInterval(function(){at(az)},az.autoReinitialiseDelay)}else{if(!az.autoReinitialise&&aw){clearInterval(aw)}}aJ&&D.scrollTop(0)&&M(aJ,false);aQ&&D.scrollLeft(0)&&N(aQ,false);D.trigger("jsp-initialised",[aF||aA])}function aG(){if(aA){am.append(b('<div class="jspVerticalBar" />').append(b('<div class="jspCap jspCapTop" />'),b('<div class="jspTrack" />').append(b('<div class="jspDrag" />').append(b('<div class="jspDragTop" />'),b('<div class="jspDragBottom" />'))),b('<div class="jspCap jspCapBottom" />')));U=am.find(">.jspVerticalBar");aq=U.find(">.jspTrack");av=aq.find(">.jspDrag");if(az.showArrows){ar=b('<a class="jspArrow jspArrowUp" />').bind("mousedown.jsp",aE(0,-1)).bind("click.jsp",aC);af=b('<a class="jspArrow jspArrowDown" />').bind("mousedown.jsp",aE(0,1)).bind("click.jsp",aC);if(az.arrowScrollOnHover){ar.bind("mouseover.jsp",aE(0,-1,ar));af.bind("mouseover.jsp",aE(0,1,af))}al(aq,az.verticalArrowPositions,ar,af)}t=v;am.find(">.jspVerticalBar>.jspCap:visible,>.jspVerticalBar>.jspArrow").each(function(){t-=b(this).outerHeight()});av.hover(function(){av.addClass("jspHover")},function(){av.removeClass("jspHover")}).bind("mousedown.jsp",function(aJ){b("html").bind("dragstart.jsp selectstart.jsp",aC);av.addClass("jspActive");var s=aJ.pageY-av.position().top;b("html").bind("mousemove.jsp",function(aK){V(aK.pageY-s,false)}).bind("mouseup.jsp mouseleave.jsp",ax);return false});o()}}function o(){aq.height(t+"px");I=0;X=az.verticalGutter+aq.outerWidth();Y.width(ak-X-f);try{if(U.position().left===0){Y.css("margin-left",X+"px")}}catch(s){}}function z(){if(aF){am.append(b('<div class="jspHorizontalBar" />').append(b('<div class="jspCap jspCapLeft" />'),b('<div class="jspTrack" />').append(b('<div class="jspDrag" />').append(b('<div class="jspDragLeft" />'),b('<div class="jspDragRight" />'))),b('<div class="jspCap jspCapRight" />')));an=am.find(">.jspHorizontalBar");G=an.find(">.jspTrack");h=G.find(">.jspDrag");if(az.showArrows){ay=b('<a class="jspArrow jspArrowLeft" />').bind("mousedown.jsp",aE(-1,0)).bind("click.jsp",aC);x=b('<a class="jspArrow jspArrowRight" />').bind("mousedown.jsp",aE(1,0)).bind("click.jsp",aC);
+        if(az.arrowScrollOnHover){ay.bind("mouseover.jsp",aE(-1,0,ay));x.bind("mouseover.jsp",aE(1,0,x))}al(G,az.horizontalArrowPositions,ay,x)}h.hover(function(){h.addClass("jspHover")},function(){h.removeClass("jspHover")}).bind("mousedown.jsp",function(aJ){b("html").bind("dragstart.jsp selectstart.jsp",aC);h.addClass("jspActive");var s=aJ.pageX-h.position().left;b("html").bind("mousemove.jsp",function(aK){W(aK.pageX-s,false)}).bind("mouseup.jsp mouseleave.jsp",ax);return false});l=am.innerWidth();ah()}}function ah(){am.find(">.jspHorizontalBar>.jspCap:visible,>.jspHorizontalBar>.jspArrow").each(function(){l-=b(this).outerWidth()});G.width(l+"px");aa=0}function F(){if(aF&&aA){var aJ=G.outerHeight(),s=aq.outerWidth();t-=aJ;b(an).find(">.jspCap:visible,>.jspArrow").each(function(){l+=b(this).outerWidth()});l-=s;v-=s;ak-=aJ;G.parent().append(b('<div class="jspCorner" />').css("width",aJ+"px"));o();ah()}if(aF){Y.width((am.outerWidth()-f)+"px")}Z=Y.outerHeight();q=Z/v;if(aF){au=Math.ceil(1/y*l);if(au>az.horizontalDragMaxWidth){au=az.horizontalDragMaxWidth}else{if(au<az.horizontalDragMinWidth){au=az.horizontalDragMinWidth}}h.width(au+"px");j=l-au;ae(aa)}if(aA){A=Math.ceil(1/q*t);if(A>az.verticalDragMaxHeight){A=az.verticalDragMaxHeight}else{if(A<az.verticalDragMinHeight){A=az.verticalDragMinHeight}}av.height(A+"px");i=t-A;ad(I)}}function al(aK,aM,aJ,s){var aO="before",aL="after",aN;if(aM=="os"){aM=/Mac/.test(navigator.platform)?"after":"split"}if(aM==aO){aL=aM}else{if(aM==aL){aO=aM;aN=aJ;aJ=s;s=aN}}aK[aO](aJ)[aL](s)}function aE(aJ,s,aK){return function(){H(aJ,s,this,aK);this.blur();return false}}function H(aM,aL,aP,aO){aP=b(aP).addClass("jspActive");var aN,aK,aJ=true,s=function(){if(aM!==0){Q.scrollByX(aM*az.arrowButtonSpeed)}if(aL!==0){Q.scrollByY(aL*az.arrowButtonSpeed)}aK=setTimeout(s,aJ?az.initialDelay:az.arrowRepeatFreq);aJ=false};s();aN=aO?"mouseout.jsp":"mouseup.jsp";aO=aO||b("html");aO.bind(aN,function(){aP.removeClass("jspActive");aK&&clearTimeout(aK);aK=null;aO.unbind(aN)})}function p(){w();if(aA){aq.bind("mousedown.jsp",function(aO){if(aO.originalTarget===c||aO.originalTarget==aO.currentTarget){var aM=b(this),aP=aM.offset(),aN=aO.pageY-aP.top-I,aK,aJ=true,s=function(){var aS=aM.offset(),aT=aO.pageY-aS.top-A/2,aQ=v*az.scrollPagePercent,aR=i*aQ/(Z-v);if(aN<0){if(I-aR>aT){Q.scrollByY(-aQ)}else{V(aT)}}else{if(aN>0){if(I+aR<aT){Q.scrollByY(aQ)}else{V(aT)}}else{aL();return}}aK=setTimeout(s,aJ?az.initialDelay:az.trackClickRepeatFreq);aJ=false},aL=function(){aK&&clearTimeout(aK);aK=null;b(document).unbind("mouseup.jsp",aL)};s();b(document).bind("mouseup.jsp",aL);return false}})}if(aF){G.bind("mousedown.jsp",function(aO){if(aO.originalTarget===c||aO.originalTarget==aO.currentTarget){var aM=b(this),aP=aM.offset(),aN=aO.pageX-aP.left-aa,aK,aJ=true,s=function(){var aS=aM.offset(),aT=aO.pageX-aS.left-au/2,aQ=ak*az.scrollPagePercent,aR=j*aQ/(T-ak);if(aN<0){if(aa-aR>aT){Q.scrollByX(-aQ)}else{W(aT)}}else{if(aN>0){if(aa+aR<aT){Q.scrollByX(aQ)}else{W(aT)}}else{aL();return}}aK=setTimeout(s,aJ?az.initialDelay:az.trackClickRepeatFreq);aJ=false},aL=function(){aK&&clearTimeout(aK);aK=null;b(document).unbind("mouseup.jsp",aL)};s();b(document).bind("mouseup.jsp",aL);return false}})}}function w(){if(G){G.unbind("mousedown.jsp")}if(aq){aq.unbind("mousedown.jsp")}}function ax(){b("html").unbind("dragstart.jsp selectstart.jsp mousemove.jsp mouseup.jsp mouseleave.jsp");if(av){av.removeClass("jspActive")}if(h){h.removeClass("jspActive")}}function V(s,aJ){if(!aA){return}if(s<0){s=0}else{if(s>i){s=i}}if(aJ===c){aJ=az.animateScroll}if(aJ){Q.animate(av,"top",s,ad)}else{av.css("top",s);ad(s)}}function ad(aJ){if(aJ===c){aJ=av.position().top}am.scrollTop(0);I=aJ;var aM=I===0,aK=I==i,aL=aJ/i,s=-aL*(Z-v);if(aj!=aM||aH!=aK){aj=aM;aH=aK;D.trigger("jsp-arrow-change",[aj,aH,P,k])}u(aM,aK);Y.css("top",s);D.trigger("jsp-scroll-y",[-s,aM,aK]).trigger("scroll")}function W(aJ,s){if(!aF){return}if(aJ<0){aJ=0}else{if(aJ>j){aJ=j}}if(s===c){s=az.animateScroll}if(s){Q.animate(h,"left",aJ,ae)
+        }else{h.css("left",aJ);ae(aJ)}}function ae(aJ){if(aJ===c){aJ=h.position().left}am.scrollTop(0);aa=aJ;var aM=aa===0,aL=aa==j,aK=aJ/j,s=-aK*(T-ak);if(P!=aM||k!=aL){P=aM;k=aL;D.trigger("jsp-arrow-change",[aj,aH,P,k])}r(aM,aL);Y.css("left",s);D.trigger("jsp-scroll-x",[-s,aM,aL]).trigger("scroll")}function u(aJ,s){if(az.showArrows){ar[aJ?"addClass":"removeClass"]("jspDisabled");af[s?"addClass":"removeClass"]("jspDisabled")}}function r(aJ,s){if(az.showArrows){ay[aJ?"addClass":"removeClass"]("jspDisabled");x[s?"addClass":"removeClass"]("jspDisabled")}}function M(s,aJ){var aK=s/(Z-v);V(aK*i,aJ)}function N(aJ,s){var aK=aJ/(T-ak);W(aK*j,s)}function ab(aW,aR,aK){var aO,aL,aM,s=0,aV=0,aJ,aQ,aP,aT,aS,aU;try{aO=b(aW)}catch(aN){return}aL=aO.outerHeight();aM=aO.outerWidth();am.scrollTop(0);am.scrollLeft(0);while(!aO.is(".jspPane")){s+=aO.position().top;aV+=aO.position().left;aO=aO.offsetParent();if(/^body|html$/i.test(aO[0].nodeName)){return}}aJ=aB();aP=aJ+v;if(s<aJ||aR){aS=s-az.verticalGutter}else{if(s+aL>aP){aS=s-v+aL+az.verticalGutter}}if(aS){M(aS,aK)}aQ=aD();aT=aQ+ak;if(aV<aQ||aR){aU=aV-az.horizontalGutter}else{if(aV+aM>aT){aU=aV-ak+aM+az.horizontalGutter}}if(aU){N(aU,aK)}}function aD(){return -Y.position().left}function aB(){return -Y.position().top}function K(){var s=Z-v;return(s>20)&&(s-aB()<10)}function B(){var s=T-ak;return(s>20)&&(s-aD()<10)}function ag(){am.unbind(ac).bind(ac,function(aM,aN,aL,aJ){var aK=aa,s=I;Q.scrollBy(aL*az.mouseWheelSpeed,-aJ*az.mouseWheelSpeed,false);return aK==aa&&s==I})}function n(){am.unbind(ac)}function aC(){return false}function J(){Y.find(":input,a").unbind("focus.jsp").bind("focus.jsp",function(s){ab(s.target,false)})}function E(){Y.find(":input,a").unbind("focus.jsp")}function S(){var s,aJ,aL=[];aF&&aL.push(an[0]);aA&&aL.push(U[0]);Y.focus(function(){D.focus()});D.attr("tabindex",0).unbind("keydown.jsp keypress.jsp").bind("keydown.jsp",function(aO){if(aO.target!==this&&!(aL.length&&b(aO.target).closest(aL).length)){return}var aN=aa,aM=I;switch(aO.keyCode){case 40:case 38:case 34:case 32:case 33:case 39:case 37:s=aO.keyCode;aK();break;case 35:M(Z-v);s=null;break;case 36:M(0);s=null;break}aJ=aO.keyCode==s&&aN!=aa||aM!=I;return !aJ}).bind("keypress.jsp",function(aM){if(aM.keyCode==s){aK()}return !aJ});if(az.hideFocus){D.css("outline","none");if("hideFocus" in am[0]){D.attr("hideFocus",true)}}else{D.css("outline","");if("hideFocus" in am[0]){D.attr("hideFocus",false)}}function aK(){var aN=aa,aM=I;switch(s){case 40:Q.scrollByY(az.keyboardSpeed,false);break;case 38:Q.scrollByY(-az.keyboardSpeed,false);break;case 34:case 32:Q.scrollByY(v*az.scrollPagePercent,false);break;case 33:Q.scrollByY(-v*az.scrollPagePercent,false);break;case 39:Q.scrollByX(az.keyboardSpeed,false);break;case 37:Q.scrollByX(-az.keyboardSpeed,false);break}aJ=aN!=aa||aM!=I;return aJ}}function R(){D.attr("tabindex","-1").removeAttr("tabindex").unbind("keydown.jsp keypress.jsp")}function C(){if(location.hash&&location.hash.length>1){var aK,aJ;try{aK=b(location.hash)}catch(s){return}if(aK.length&&Y.find(location.hash)){if(am.scrollTop()===0){aJ=setInterval(function(){if(am.scrollTop()>0){ab(location.hash,true);b(document).scrollTop(am.position().top);clearInterval(aJ)}},50)}else{ab(location.hash,true);b(document).scrollTop(am.position().top)}}}}function ai(){b("a.jspHijack").unbind("click.jsp-hijack").removeClass("jspHijack")}function m(){ai();b("a[href^=#]").addClass("jspHijack").bind("click.jsp-hijack",function(){var s=this.href.split("#"),aJ;if(s.length>1){aJ=s[1];if(aJ.length>0&&Y.find("#"+aJ).length>0){ab("#"+aJ,true);return false}}})}function ao(){var aK,aJ,aM,aL,aN,s=false;am.unbind("touchstart.jsp touchmove.jsp touchend.jsp click.jsp-touchclick").bind("touchstart.jsp",function(aO){var aP=aO.originalEvent.touches[0];aK=aD();aJ=aB();aM=aP.pageX;aL=aP.pageY;aN=false;s=true}).bind("touchmove.jsp",function(aR){if(!s){return}var aQ=aR.originalEvent.touches[0],aP=aa,aO=I;Q.scrollTo(aK+aM-aQ.pageX,aJ+aL-aQ.pageY);aN=aN||Math.abs(aM-aQ.pageX)>5||Math.abs(aL-aQ.pageY)>5;
+        return aP==aa&&aO==I}).bind("touchend.jsp",function(aO){s=false}).bind("click.jsp-touchclick",function(aO){if(aN){aN=false;return false}})}function g(){var s=aB(),aJ=aD();D.removeClass("jspScrollable").unbind(".jsp");D.replaceWith(ap.append(Y.children()));ap.scrollTop(s);ap.scrollLeft(aJ)}b.extend(Q,{reinitialise:function(aJ){aJ=b.extend({},az,aJ);at(aJ)},scrollToElement:function(aK,aJ,s){ab(aK,aJ,s)},scrollTo:function(aK,s,aJ){N(aK,aJ);M(s,aJ)},scrollToX:function(aJ,s){N(aJ,s)},scrollToY:function(s,aJ){M(s,aJ)},scrollToPercentX:function(aJ,s){N(aJ*(T-ak),s)},scrollToPercentY:function(aJ,s){M(aJ*(Z-v),s)},scrollBy:function(aJ,s,aK){Q.scrollByX(aJ,aK);Q.scrollByY(s,aK)},scrollByX:function(s,aK){s=(s>=0)?Math.max(s,1):Math.min(s,-1);var aJ=aD()+s,aL=aJ/(T-ak);W(aL*j,aK)},scrollByY:function(s,aK){s=(s>=0)?Math.max(s,1):Math.min(s,-1);var aJ=aB()+s,aL=aJ/(Z-v);V(aL*i,aK)},positionDragX:function(s,aJ){W(s,aJ)},positionDragY:function(aJ,s){V(aJ,s)},animate:function(aJ,aM,s,aL){var aK={};aK[aM]=s;aJ.animate(aK,{duration:az.animateDuration,ease:az.animateEase,queue:false,step:aL})},getContentPositionX:function(){return aD()},getContentPositionY:function(){return aB()},getContentWidth:function(){return T},getContentHeight:function(){return Z},getPercentScrolledX:function(){return aD()/(T-ak)},getPercentScrolledY:function(){return aB()/(Z-v)},getIsScrollableH:function(){return aF},getIsScrollableV:function(){return aA},getContentPane:function(){return Y},scrollToBottom:function(s){V(i,s)},hijackInternalLinks:function(){m()},destroy:function(){g()}});at(O)}e=b.extend({},b.fn.jScrollPane.defaults,e);b.each(["mouseWheelSpeed","arrowButtonSpeed","trackClickSpeed","keyboardSpeed"],function(){e[this]=e[this]||e.speed});return this.each(function(){var f=b(this),g=f.data("jsp");if(g){g.reinitialise(e)}else{g=new d(f,e);f.data("jsp",g)}})};b.fn.jScrollPane.defaults={showArrows:false,maintainPosition:true,stickToBottom:false,stickToRight:false,clickOnTrack:true,autoReinitialise:false,autoReinitialiseDelay:500,verticalDragMinHeight:0,verticalDragMaxHeight:99999,horizontalDragMinWidth:0,horizontalDragMaxWidth:99999,contentWidth:c,animateScroll:false,animateDuration:300,animateEase:"linear",hijackInternalLinks:false,verticalGutter:4,horizontalGutter:4,mouseWheelSpeed:0,arrowButtonSpeed:0,arrowRepeatFreq:50,arrowScrollOnHover:false,trackClickSpeed:0,trackClickRepeatFreq:70,verticalArrowPositions:"split",horizontalArrowPositions:"split",enableKeyboardNavigation:true,hideFocus:false,keyboardSpeed:0,initialDelay:300,speed:30,scrollPagePercent:0.8}})($R);
 
 }
