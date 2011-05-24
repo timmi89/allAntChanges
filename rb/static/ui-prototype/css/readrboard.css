@@ -62,7 +62,7 @@ div.rdr.rdr_actionbar li a {
 }
 
 /*div.rdr.rdr_actionbar li.rdr_icon_about a		 	{ background-position: 0 0; }*/ /*overwritten below to compress width*/
-div.rdr.rdr_actionbar li.rdr_icon_reaction a		{ background-position:-4px -4px; }
+div.rdr.rdr_actionbar li.rdr_icon_reaction a		{ background-position:-4px -5px; }
 /*div.rdr.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-60px 0; }*/
 
 div.rdr.rdr_actionbar a:hover                       { background-color:#e4f0f7;}
@@ -335,4 +335,19 @@ div.rdr button				{font-size:14px; }
 
 #rdr_selectionographer_tester{
 	display:none;
+}
+
+/* user education bar */
+#rdr_ed_user 		{ position:fixed; top:-40px; left:0; width:100%; background:#f0f0f0; height:35px; -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa; padding:0px; z-index:12000; overflow:hidden;}
+#rdr_ed_user_1 		{ float:left; background: #fff; width:240px; height:35px;}
+#rdr_ed_user_1 h1 	{ padding-top:6px;}
+#rdr_ed_user_1 span	{ font-size:21px;}
+#rdr_ed_user_2 		{ position:absolute; left:240px; background: url("/static/images/header_arrow.png") no-repeat scroll 0 -37px #f0f0f0; height:25px; padding:10px 0 0 18px; font-size:14px; color:#666; width:570px; white-space:nowrap; }
+#rdr_ed_user_x		{ position:absolute; right:10px; top:5px; font-size:18px; cursor:pointer; }
+div#rdr_ed_user_2 span {
+	background:url("/static/images/actionbar_icons.png") no-repeat -8px -8px transparent;
+	display:inline-block;
+	height:22px;
+	width:16px;
+	text-indent:-9999px;
 }

@@ -19,6 +19,9 @@ $.receiveMessage(
 	    	case "checkSocialUser":
 	    		RDRAuth.checkSocialUser(true);
 	    		break;
+	    	case "educatedUser":
+	    		$.cookie('educatedUser', true);
+	    		break;
 	    }
 	},
 	qs_args.parentHost

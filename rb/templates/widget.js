@@ -567,6 +567,10 @@ function readrBoard($R){
                                 case "already had user":
                                     $('#rdr-loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
                                 break;
+
+                                case "educate user":
+                                    RDR.session.educateUser();
+                                break;
                             }
                         }
                     },
@@ -651,6 +655,38 @@ function readrBoard($R){
                     }
                     
                 }
+            },
+            educateUser: function() {
+                var $educateUser = $('<div id="rdr_ed_user" class="rdr"><div id="rdr_ed_user_1"><h1>Rate or discuss <span>anything</span> on this page!</h1></div><div id="rdr_ed_user_2">Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.</div><div id="rdr_ed_user_x">x</div>');
+                $('body').append( $educateUser );
+                $('#rdr_ed_user_x').click( function() {
+                    RDR.session.educateUserClose();
+                });
+                RDR.group.educateUserLocation = "top";
+                if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
+                    $educateUser.css('top','auto');
+                    $educateUser.css('bottom','-40px');
+                    $('#rdr_ed_user').animate({bottom:0});
+                } else {
+                    var bodyPaddingTop = parseInt( $('body').css('padding-top') );
+                    $('body').animate({ paddingTop: (bodyPaddingTop+35)+"px" });
+                    $('#rdr_ed_user').animate({top:0});
+                }
+            },
+            educateUserClose: function() {
+                if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
+                    $('#rdr_ed_user').animate({bottom:-40});
+                } else {
+                    var bodyPaddingTop = parseInt( $('body').css('padding-top') );
+                    $('body').animate({ paddingTop: (bodyPaddingTop-35)+"px" });
+                    $('#rdr_ed_user').animate({top:-40});
+                }
+                // set a cookie in the iframe saying not to show this anymore
+                $.postMessage(
+                    "educatedUser",
+                    RDR.session.iframeHost + "/xdm_status/",
+                    window.frames['rdr-xdm-hidden']
+                );
             }
 		},
         actions: {
@@ -756,6 +792,7 @@ function readrBoard($R){
                 });
             },
             initPageData: function(){
+                // RDR.session.educateUser();
                //? do we want to model this here to be symetrical with user and group data?
 
                 // TODO flesh out Porter's code below and incorporate it into the queue
@@ -1836,13 +1873,19 @@ function readrBoard($R){
                                 //do we really want to chain pass these through?  Or keep them in a shared scope?
 
                                 if ( response.status == "fail" ) {
-                                    // if it failed, see if we can fix it, and if so, try this function one more time
-                                    RDR.session.handleGetUserFail( response, function() {
-                                        if ( !args.secondAttempt ) {
-                                            args.secondAttempt = true;
-                                            RDR.actions.rateSend( args );
-                                        }
-                                    } );
+                                    console.log('failllllllllll');
+                                    if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
+                                        console.log('uh oh better login, tempy');
+                                        RDR.session.showLoginPanel( args );
+                                    } else {
+                                        // if it failed, see if we can fix it, and if so, try this function one more time
+                                        RDR.session.handleGetUserFail( response, function() {
+                                            if ( !args.secondAttempt ) {
+                                                args.secondAttempt = true;
+                                                RDR.actions.rateSend( args );
+                                            }
+                                        });
+                                    }
                                 } else {
                                     if ( tag_li.length == 1 ) {
                                         tag_li.find('div.rdr_leftBox').unbind();
@@ -1867,6 +1910,8 @@ function readrBoard($R){
                                         }
                                     } 
                                     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:response.data });
+                                    if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
+                                    else RDR.session.showLoginPanel( args );
                                 }
                             },
                             //for now, ignore error and carry on with mockup
@@ -1913,18 +1958,26 @@ function readrBoard($R){
                             success: function(response) {
                                 //[eric] - if we want these params still we need to get them from args:
                                 //do we really want to chain pass these through?  Or keep them in a shared scope?
-
                                 if ( response.status == "fail" ) {
-                                    // if it failed, see if we can fix it, and if so, try this function one more time
-                                    RDR.session.handleGetUserFail( response, function() {
-                                        if ( !args.secondAttempt ) {
-                                            args.secondAttempt = true;
-                                            RDR.actions.rateSend( args );
-                                        }
-                                    });
+                                    console.log('failllllllllll');
+                                    if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
+                                        console.log('uh oh better login, tempy');
+                                        RDR.session.showLoginPanel( args );
+                                    } else {
+                                        // if it failed, see if we can fix it, and if so, try this function one more time
+                                        RDR.session.handleGetUserFail( response, function() {
+                                            if ( !args.secondAttempt ) {
+                                                args.secondAttempt = true;
+                                                RDR.actions.rateSend( args );
+                                            }
+                                        });
+                                    }
                                 } else {
                                     if ( element.length == 1 ) {
                                         RDR.actions.updateData( { type:"tag", element:element, hash:container, rindow:rindow, content:content, tag:tag });
+
+                                        if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
+                                        else RDR.session.showLoginPanel( args );
                                     }
                                 }
                             },
@@ -2159,13 +2212,6 @@ function readrBoard($R){
                 // }
 
                 RDR.actions.panel.expand("whyPanel", rindow);
-
-
-
-
-
-                // TODO un-dummify this temp user message
-                if ( int_id.num_interactions ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:int_id });
 
 
                 /*
