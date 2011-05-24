@@ -75,7 +75,7 @@ img.rdr_engage_img { -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 1
 /* container indicator icons */
 
 #rdr_indicator_details_wrapper{
-	z-index:11000;
+	z-index:12000;
 	position:absolute;
 	top:0;
 	left:0;
@@ -110,15 +110,7 @@ div.rdr_indicator img, div.rdr_indicator_details img{
 	float:left; margin-top:-1px; margin-left: -1px; 
 }
 
-div.rdr_indicator.rdr_image { position:relative; border-bottom:1px solid #ddd; display:block !important; margin-bottom:5px; clear:both;
-/*start with 0 opacity so it can fade in properly*/
-    opacity:0.0;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
-    filter:alpha(opacity=00);
-    -moz-opacity:0.0;
-    -khtml-opacity:0.0;
-}
-div.rdr_img_tags_list { width:auto; display:inline; white-space:nowrap;}
+div.rdr_indicator.rdr_image { position:relative; border-bottom:1px solid #ddd; display:block !important; margin-bottom:5px;}
 div.rdr_indicator.rdr_image span.rdr_see_more { font-size:11px; font-weight:normal;}
 /* not needed*/
 /*
@@ -160,7 +152,7 @@ div.rdr li {background:none; padding:0;}
 div.rdr div.rdr_sentimentBox							{}
 div.rdr div.rdr_sntPnl 									{float:left; position:relative; display:block; height:100%; overflow:hidden; /*width is reset with js - rindow.settings.pnlWidth */ }
 
-div.rdr div.rdr_sntPnl div.rdr_body						{width:100%; xheight:100%; z-index:3; overflow-x:hidden; overflow-y:hidden; padding:0; position:relative; min-height:125px;}
+div.rdr div.rdr_sntPnl div.rdr_body						{width:100%; height:100%; z-index:3; overflow-x:hidden; overflow-y:auto; padding:0; position:relative; min-height:125px;}
 div.rdr div.rdr_sntPnl div.rdr_header                   {background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:3;}
 div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("/static/images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
 div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header,
@@ -168,9 +160,7 @@ div.rdr div.rdr_sntPnl.rdr_whyPanel div.rdr_header 		{background:url(/static/ima
 div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap	{background:none; border-bottom:1px solid #bababa; bottom:0; padding-bottom:3px; text-align:center; width:100%; position:absolute; }
 div.rdr div.rdr_sntPnl h1                               {padding:0 !important; }
 div.rdr div.rdr_sntPnl .rdr_pnlShadow                   {height:100%; width:16px; position:absolute; z-index:5; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; display:none;}
-div.rdr .rdr_leftShadow .rdr_selected .rdr_content.rdr_leftShadow,
 div.rdr .rdr_leftShadow	{-moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; }
-div.rdr .rdr_leftShadow .rdr_content.rdr_leftShadow	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; }
 
 /*
 div.rdr div.rdr_selectedTextPanel div.rdr_body div.rdr_selected		{font-family:Georgia; font-size:14px; padding:7px; background:#f2cfcf; display:block; position:relative; }
@@ -182,7 +172,6 @@ div.rdr div.rdr_reactionPanel							{position:relative; z-index:20; width:200px;
 div.rdr div.rdr_reactionPanel div.rdr_body				{max-height:300px;}
 div.rdr div.rdr_reactionPanel div.rdr_body .jspPane,
 div.rdr div.rdr_contentPanel div.rdr_body .jspPane		{width:200px !important; margin: 0 !important;}
-div.rdr div.rdr_whyPanel div.rdr_body .jspPane		{width:250px !important; margin: 0 !important;}
 div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; background:url(/static/images/rindow_bg_column.png);}
 
 div.rdr div.rdr_contentPanel                            {position:absolute; z-index:15; left:200px; width:200px; background:url(/static/images/rindow_bg_column.png) repeat -650px 0;}
@@ -191,7 +180,8 @@ div.rdr div.rdr_contentPanel div.rdr_body               {width:200px; max-height
 div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:250px; background:url(/static/images/rindow_bg_column.png) -200px 0; }
 div.rdr.rdr_columns3 div.rdr_whyPanel 				    {background-position:-850px 0;}
 div.rdr div.rdr_whyPanel div.rdr_body                   {width:250px; max-height:300px; }
-div.rdr div.rdr_whyPanel hr 			                {background: #ddd; border: none; clear: both; color: #ddd; float: none; height: 1px; margin: 10px 0; }
+div.rdr.rdr_columns2 div.rdr_whyPanel div.rdr_body      {xmax-height:200px;}
+div.rdr div.rdr_whyPanel hr 			                {background: #ddd; border: none; clear: both; color: #ddd; float: none; height: 1px; margin: 10px; }
 
 div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top:5px;}
 div.rdr div.rdr_sntPnl_padder 					{margin:0 15px; position:relative; overflow:hidden;}
@@ -267,7 +257,7 @@ div.rdr div.rdr_commentSet a.rdr_tag                            {margin-top:3px;
 div.rdr div.rdr_commentSet a.rdr_tag span.rdr_tag_share         {margin-left:-12px;}
 div.rdr div.rdr_commentSet a.rdr_tag:hover span.rdr_tag_share   {margin-left:3px;}
 
-div.rdr div.rdr_leave_comment   { clear:both; display:block; padding:0 10px 10px; margin:0; }
+div.rdr div.rdr_leave_comment   { clear:both; display:block; padding:10px; margin:0; }
 
 /* tags */
 

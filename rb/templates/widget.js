@@ -776,6 +776,8 @@ function readrBoard($R){
 						canonical_url: canonical
 					},
 					success: function(response) {
+                       log('response')
+                       log(response)
                         // don't forget a design for when there are no tags.
 
 
@@ -831,34 +833,12 @@ function readrBoard($R){
                         // insert image icons
                         for ( var i in RDR.page.imagedata ){
                             
-                            function SortByTagCount(a,b) { return b.count - a.count; }
-                            RDR.page.imagedata[ i ].tags.sort( SortByTagCount );
+                            //todo: combine this with the other indicator code and make the imagedata give us a hash from the db
+                            var hash = RDR.util.md5.hex_md5(i);
+                            RDR.page.imagedata[i].hash = hash; //todo: list these by hash in the first place.
+                            log(hash);
 
-                            var this_img_data = RDR.page.imagedata[i],
-                                $this_img = $('img[src$="' + this_img_data.body + '"]')
-                            var $indicator = $('<div class="rdr rdr_indicator rdr_image"><img src="/static/images/blank.png" class="no-rdr" /></div>');
-
-                            var $tags = $('<div class="rdr_img_tags_list"></div>');  // absolute so that we can calculate content width on the fly
-                            $indicator.append($tags);
-                            $this_img.after( $indicator );
-
-                            for ( var j in this_img_data.tags ){
-                                var this_tag = this_img_data.tags[j];
-                                $tags.append(' <span>'+ this_tag.tag +' <em>('+this_tag.count+')</em></span>&nbsp;&nbsp;&nbsp;');
-                                
-                                // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                                if ( $tags.width() > $this_img.width() - 48 ) {
-                                    $tags.children().last().html('See More').addClass('rdr_see_more');
-                                    break;
-                                }
-                            }
-
-                            $indicator.data('which', i );
-
-                            $indicator.click( function(e) {
-                                RDR.actions.viewContainerReactions( { icon:$(this), type:"image" } );
-                                return false;
-                            });
+                            RDR.actions.indicators.make( hash, 'img' );
 
                         }
 
@@ -1065,19 +1045,89 @@ function readrBoard($R){
                 stack: {
                         
                 },
-                make: function( hash ){
+                make: function(hash, type){
                     //todo: I think these event functions here could be more efficient if they weren't anonymous and were cosolodated.
                     
                     // if ( RDR.content_nodes[i].info.com_count + RDR.content_nodes[i].info.tag_count > 0 ) {
                     console.log('-- what we know about hash '+hash+' --');
                     console.dir(RDR.content_nodes[hash]);
 
-                    //hide indicators and indicatorDetails and show on load.
-                    var $container = $(RDR.group.anno_whitelist+'.rdr-'+hash), // prepend with the anno_whitelist selector 
-                    $indicator = $('<div id="rdr_indicator_' +hash+ '" class="rdr_indicator" />').hide(),
-                    $indicator_details = $('<div id="rdr_indicator_details_' +hash+ '" class="rdr_indicator_details rdr_text" />').hide(),
-                    total = RDR.content_nodes[hash].info.tag_count;  // removing comment count for now: 
+                    var $container, $indicator, $indicator_details, some_reactions, total;
 
+                    //hide indicators and indicatorDetails and show on load.
+                    if( type !== 'img' ){
+                        $container = $(RDR.group.anno_whitelist+'.rdr-'+hash); // prepend with the anno_whitelist selector 
+                        total = RDR.content_nodes[hash].info.tag_count; // removing comment count for now:
+                        some_reactions = RDR.actions.indicators.sortReactions( hash );
+                    }   
+                    else{
+                        //is an image
+
+                        //todo: this is all a temp hack.  Consolodate this code!
+                        var $this_img, $tagList, imageData;
+
+                        $.each(RDR.page.imagedata, function(i,v){
+                            console.log(v.hash);
+                            if(v.hash == hash){
+                                imageData = v;
+                            }
+                        });
+
+                        $this_img = $('img[src$="' + imageData.body + '"]')
+
+                        function SortByTagCount(a,b) { return b.count - a.count; }
+                        imageData.tags.sort( SortByTagCount );
+                        log(hash)
+                        
+                        total = imageData.tag_count;
+                        some_reactions = imageData.tags;
+
+                        $indicator = $('<div class="rdr rdr_indicator rdr_image"></div>').hide();
+                        $indicator.append(
+                            '<img src="/static/images/blank.png" class="no-rdr" />',
+                            '<span class="rdr_count">'+ total +' reactions: </span>'
+                        );
+
+                        $tagList = $('<div class="rdr_img_tags_list"></div>');  // absolute so that we can calculate content width on the fly
+                        $indicator.append($tagList);
+
+                        $this_img.after( $indicator );
+                        
+                        for ( var j in imageData.tags ){
+                            var this_tag = imageData.tags[j],
+                            $tag = $('<strong/>').append(this_tag.tag),
+                            $count = $('<em/>').append( '('+this_tag.count+')' ),
+                            prefix = (j==0) ? "" :  ", "; 
+                            
+                            $tagList.append( $('<span />').append( prefix, $tag, $count) );
+                            
+                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
+                            if ( $tagList.width() > $this_img.width() - 48 ) {
+                                $tagList.children().last().html('...').addClass('rdr_see_more');
+                                break;
+                            }
+                        }
+                       
+                        $indicator.data({ 'which':hash, 'imageData':imageData })//chain
+                        .click( function() {
+                            RDR.actions.viewContainerReactions( {icon:$indicator, type:"image"} );
+                            return false;
+                        })//chain
+                        .hover(
+                            function() {
+                                $(this).css('opacity','0.9');
+                            },
+                            function() {
+                                $(this).css('opacity','0.4')
+                            }
+                        );
+                        $indicator.hide();
+                        return;
+                    }   
+
+                    $indicator = $('<div id="rdr_indicator_' +hash+ '" class="rdr_indicator" />').hide(),
+                    $indicator_details = $('<div id="rdr_indicator_details_' +hash+ '" class="rdr_indicator_details rdr_text" />').hide();
+                    
                     $indicator.append(
                         '<img src="/static/images/blank.png" class="no-rdr" />',
                         '<span class="rdr_count">'+ total +'</span>'
@@ -1114,7 +1164,7 @@ function readrBoard($R){
 
                     //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the body.
                     //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
-                    var some_reactions = RDR.actions.indicators.sortReactions( hash );
+                    
                     $indicator_details.append(
                         '<div class="rdr_statsClone" />',
                         '<span class="rdr_details"> reactions: </span>',
@@ -1123,7 +1173,6 @@ function readrBoard($R){
                     .click( function() {
                         $indicator.data('sentimentPanelLock', true);
                         RDR.actions.viewContainerReactions( {icon:$indicator, type:"text"} );
-                        $(this).hide();
                     })//chain
                     .hover(
                         function() {
@@ -1197,18 +1246,21 @@ function readrBoard($R){
                     which = args.icon.data('which'),
                     type = args.type,
                     tempLock = args.tempLock;
-
+                
                 function SortByTagCount(a,b) { return b.count - a.count; }
 
 
                 if (args.type == "text") {
                     var info = RDR.content_nodes[ which ].info;
+                    log(info)
                     var selector = RDR.group.anno_whitelist+".rdr-" + which;
 
                 } else if (args.type == "image") {
-                    var info = RDR.page.imagedata[ which ];
+                    //todo: this is a temp fix - consolodate.
+                    var info = icon.data('imageData');
                     var selector = "";
-                    RDR.page.imagedata[ which ] = info;
+                    log('img which');
+                    log(info);
                 }
 
                 var iconOffsets = args.icon.offset();
