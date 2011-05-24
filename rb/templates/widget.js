@@ -1131,9 +1131,9 @@ function readrBoard($R){
                         
                         for ( var j in imageData.tags ){
                             var this_tag = imageData.tags[j],
+                            prefix = (j==0) ? "" :  ", ",
                             $tag = $('<strong/>').append(this_tag.tag),
-                            $count = $('<em/>').append( '('+this_tag.count+')' ),
-                            prefix = (j==0) ? "" :  ", "; 
+                            $count = $('<em/>').append( '('+this_tag.count+')' );
                             
                             $tagList.append( $('<span />').append( prefix, $tag, $count) );
                             
@@ -1187,11 +1187,13 @@ function readrBoard($R){
                             //dont hide it again here, because we need to do that on the hoveroff event of the rdr_indicator_details
 
                             //ensure smooth hover behavior
+                            /*
                             setTimeout(function(){
                                 if( $(this).data('hoverLock') ){
                                     $indicator_details.hide();
                                 }
                             },500)
+                            */
                         }
                     );                   
                                         
@@ -1211,9 +1213,9 @@ function readrBoard($R){
                     $indicator_details.css({ 'visiblity':'hidden' }).show();
                     for ( var j in info.tags ){
                         var this_tag = info.tags[j],
+                        prefix = (j==0) ? "" :  ", ",
                         $tag = $('<strong/>').append(this_tag.name),
-                        $count = $('<em/>').append( '('+this_tag.count+')' ),
-                        prefix = (j==0) ? "" :  ", "; 
+                        $count = $('<em/>').append( '('+this_tag.count+')' );
                         
                         $tagList.append( $('<span />').append( prefix, $tag, $count) );
 
@@ -1225,7 +1227,6 @@ function readrBoard($R){
                     $indicator_details.css({ 'visiblity':'visible' }).hide();
 
                     $indicator_details.click( function() {
-                        $indicator.data('sentimentPanelLock', true);
                         RDR.actions.viewContainerReactions( {icon:$indicator, type:"text"} );
                     })//chain
                     .hover(
@@ -1554,6 +1555,10 @@ function readrBoard($R){
                 if( settings.content_type === "text" ){
                     //Trigger the smart text selection and highlight
                     var newSel = $hostNode.selog('helpers', 'smartHilite');
+                    
+                    //temp fix to set the content (the text) of the selection to the new selection
+                    //todo: make selog more integrated with the rest of the code
+                    settings.content = newSel.text;
 
 					actionbarOffsets.left = actionbarOffsets.left + 40;
 					actionbarOffsets.top = actionbarOffsets.top + 35;
