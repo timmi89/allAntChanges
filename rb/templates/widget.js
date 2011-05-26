@@ -1555,7 +1555,8 @@ function readrBoard($R){
                 if( settings.content_type === "text" ){
                     //Trigger the smart text selection and highlight
                     var newSel = $hostNode.selog('helpers', 'smartHilite');
-                    
+                    if(!newSel) return false;
+
                     //temp fix to set the content (the text) of the selection to the new selection
                     //todo: make selog more integrated with the rest of the code
                     settings.content = newSel.text;
@@ -2901,6 +2902,8 @@ function jQueryPlugins($R){
                 //todo: solution for multiple $objects?
                 selStateOrPartial.container = selStateOrPartial.container || $this[0] || document;
                 selState = _makeSelState( selStateOrPartial );
+                //make sure selState didn't fail (i.e. if it was an empty range)
+                if(!selState) return false;
 
                 //push selState into stack
                 selStateStack[selState.idx] = selState;
@@ -3206,7 +3209,10 @@ function jQueryPlugins($R){
             // if missing param or missing needed range data
             if( !selState.range && !selState.serialRange ){
                 //try getting data from browser selection
-                range = _WSO().getRangeAt(0);
+                var WSO = _WSO();
+                if(WSO.isCollapsed) return false;
+                //else
+                range = WSO.getRangeAt(0);
                 //serializing relative to the parent container. The false is omitChecksum=false.
                 serialRange = rangy.serializeRange(range, true, selState.container ); //see rangy function serializeRange
             }
