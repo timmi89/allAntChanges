@@ -3214,18 +3214,19 @@ function jQueryPlugins($R){
                 //else
                 range = WSO.getRangeAt(0);
                 //serializing relative to the parent container. The false is omitChecksum=false.
-                serialRange = rangy.serializeRange(range, true, selState.container ); //see rangy function serializeRange
+                serialRange = rangy.serializeRange(range, false, selState.container ); //see rangy function serializeRange
             }
             else if(selState.range){
                 range = selState.range;
-                serialRange = rangy.serializeRange(range, true, selState.container ); //see rangy function serializeRange
+                serialRange = rangy.serializeRange(range, false, selState.container ); //see rangy function serializeRange
             }
             else if(selState.serialRange){
                 serialRange = selState.serialRange;
                 range = rangy.deserializeRange(serialRange, selState.container ); //see rangy function deserializeRange
             }
             selState.serialRange = serialRange;
-            selState.range = range;
+            //todo: low: could think more about when to cloneRange to make it a tiny bit more efficient.
+            selState.range = range.cloneRange();
             selState.text = selState.range.toString(); //rangy range toString function
             //check for empty selection..
             if(selState.text.length == 0) return false;
