@@ -1132,7 +1132,7 @@ function readrBoard($R){
                         for ( var j in imageData.tags ){
                             var this_tag = imageData.tags[j],
                             prefix = (j==0) ? "" :  ", ",
-                            $tag = $('<strong/>').append(this_tag.tag),
+                            $tag = $('<strong/>').append(this_tag.tag).append(" "),
                             $count = $('<em/>').append( '('+this_tag.count+')' );
                             
                             $tagList.append( $('<span />').append( prefix, $tag, $count) );
@@ -1214,7 +1214,7 @@ function readrBoard($R){
                     for ( var j in info.tags ){
                         var this_tag = info.tags[j],
                         prefix = (j==0) ? "" :  ", ",
-                        $tag = $('<strong/>').append(this_tag.name),
+                        $tag = $('<strong/>').append(this_tag.name).append(" "),
                         $count = $('<em/>').append( '('+this_tag.count+')' );
                         
                         $tagList.append( $('<span />').append( prefix, $tag, $count) );
