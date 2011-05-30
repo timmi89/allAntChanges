@@ -8,6 +8,8 @@ from django.contrib import admin
 admin.site.register(Feature)
 admin.site.register(InteractionNode)
 admin.site.register(Content)
+admin.site.register(InteractionCount)
+admin.site.register(TagCount)
 
 class FeatureInline(admin.TabularInline):
     model = Feature

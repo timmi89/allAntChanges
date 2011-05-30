@@ -1037,18 +1037,20 @@ function readrBoard($R){
                     success: function(response) {
                         var data = response.data;
                         //todo: probably do this sorting on the server side and send us a (cached + latest diff) version to us.
-                        for ( var i in data.known ) {
-                            RDR.content_nodes[i].info = data.known[i];
-                            if ( RDR.content_nodes[i].info.com_count + RDR.content_nodes[i].info.tag_count > 0 ) {
-                                RDR.actions.indicators.make( i );
-                            }
+                        if( data.known.length > 0 ){
+                            for ( var i in data.known ) {
+                                RDR.content_nodes[i].info = data.known[i];
+                                if ( RDR.content_nodes[i].info.com_count + RDR.content_nodes[i].info.tag_count > 0 ) {
+                                    RDR.actions.indicators.make( i );
+                                }
+                            }   
+                        
+                            //fade in indicators
+                            $('.rdr_indicator').css({
+                                'opacity':'0',
+                                'display':'inline'
+                            }).fadeTo('300', '0.4');
                         }
-
-                        //fade in indicators
-                        $('.rdr_indicator').css({
-                            'opacity':'0',
-                            'display':'inline'
-                        }).fadeTo('300', '0.4');
                                                 
     					// TODO: Eric, should this go in a jquery queue?
     					var sendData = {};

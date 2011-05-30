@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 from baseconv import base62
 import datetime
 
+"""
+Abstract Models
+"""
 class DateAwareModel(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False)
     modified = models.DateTimeField(auto_now=True, editable=False)    
@@ -17,6 +20,9 @@ class UserAwareModel(models.Model):
     class Meta:
         abstract = True
 
+"""
+ReadrBoard Models
+"""
 class InteractionNode(models.Model):
     body = models.CharField(max_length=2048)
     
@@ -99,10 +105,7 @@ class Page(models.Model):
     site = models.ForeignKey(Site)
     url = models.URLField(verify_exists=False)
     canonical_url = models.URLField(verify_exists=False, blank=True)
-    #interaction_count = models.PositiveIntegerField()
-    #tag_count = models.PositiveIntegerField()
-    #comment_count = models.PositiveIntegerField()
-    #share_count = models.PositiveIntegerField()
+    interaction_count = models.PositiveIntegerField(default=0)
 
     def __unicode__(self):
         return unicode(self.id)
@@ -134,7 +137,28 @@ class Container(models.Model):
         return self.hash
     
     class Meta:
-        ordering = ['id']
+        ordering = ['-id']
+
+""" Accelerators """
+class TagCount(models.Model):
+    container = models.ForeignKey(Container)
+    page = models.ForeignKey(Page)
+    tag = models.ForeignKey(InteractionNode)
+    count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = ('container', 'page', 'tag')
+        ordering = ['page','container','count']
+
+class InteractionCount(models.Model):
+    container = models.ForeignKey(Container)
+    page = models.ForeignKey(Page)
+    tag_count = models.PositiveIntegerField(default=0)
+    comment_count = models.PositiveIntegerField(default=0)
+    interaction_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = ('container', 'page')
 
 class Interaction(DateAwareModel, UserAwareModel):
     INTERACTION_TYPES = (
