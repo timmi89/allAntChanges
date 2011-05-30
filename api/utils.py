@@ -6,28 +6,65 @@ import hmac
 import random
 from exceptions import FBException, JSONException
 
-def combineData(container, container_counts, tag_counts):
-    result = {}
-    container_count = container_counts.get(container=container)
-    tag_count = tag_counts.filter(container=container)[:10]
-    print container_count
-    print tag_count
-    print " *******"
-    #result['tag_count'] = container_count.tag_count
-    #result['comment_count'] = container_count.comment_count
-    #reuslt['top_tags'] = tag_count
-    return result
-
 def containerData(containers, page):
-    container_data = InteractionCount.objects.filter(page=page, container__in=containers)
-    container_counts = container_data.values('container','comment_count','tag_count','interaction_count')
-    tag_counts = TagCount.objects.filter(page=page, container__in=containers)
-    
+    interaction_counts = list(InteractionCount.objects.filter(page=page))
+    tag_counts = list(TagCount.objects.filter(page=page).select_related('tag'))
+
     container_data = dict((
-        (container.hash, combineData(container, container_counts, tag_counts)) for container in containers
+        (container[1],
+            dict(
+                interaction_counts = filter(lambda x: x.container_id == container[0], interaction_counts),
+                top_tags = filter(lambda x: x.container_id == container[0], tag_counts)
+        )) for container in containers
     ))
 
     return container_data
+
+def getTagCommentData(comment):
+      print comment
+      comment_data = {}
+      comment_data['comment'] = comment.interaction_node.body
+      comment_data['user'] = comment.user
+  
+      return comment_data
+  
+def getTagData(tag, tags, comments):
+  tags = filter(lambda x: x.interaction_node==tag, tags)
+  comments = filter(lambda x: x.parent in tags, comments)
+
+  tag_data = {}
+  tag_data['tag'] = tag.body
+  tag_data['id'] = tag.id
+  tag_data['count'] = len(tags)
+ 
+  tag_data['comments'] = [getTagCommentData(comment) for comment in comments]
+
+  return tag_data
+
+def getData(interactions, container=None, content=None, data=None):
+  if not data: data = {}
+ 
+  if container:
+      interactions = filter(lambda x: x.container==container, interactions)
+  elif content:
+      interactions = filter(lambda x: x.content==content, interactions)
+      data['body'] = content.body
+ 
+  # Filter tag and comment interactions
+  tags = filter(lambda x: x.kind=='tag', interactions)
+  comments = filter(lambda x: x.kind=='com', interactions)
+
+  data['tag_count'] = len(tags)
+  data['com_count'] = len(comments)
+
+  if container:
+      unique = set((interaction.content for interaction in interactions))
+      data['content'] = [getData(interactions, content=content_item) for content_item in unique]
+  if content:
+      unique = set((tag.interaction_node for tag in tags))
+      data['tags'] = [getTagData(tag, tags, comments) for tag in unique]
+
+  return data
 
 def interactionNodeCounts(interactions, kinds=[], content=None):
     # Filter interactions for this piece of content and get count data
@@ -60,7 +97,7 @@ def getPage(request, pageid=None):
 def createInteractionNode(body=None):
     if body:
         node = InteractionNode.objects.get_or_create(body=body)[0]
-        print "Success creating InteractionNode with id %s" % node.id
+        print "Success getting/creating InteractionNode with id %s" % node.id
         return node
 
 def isTemporaryUser(user):
@@ -107,9 +144,11 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         # Check unique content_id, user_id, page_id, interaction_node_id
         try:
             existing = interactions.get(
+                user=user,
                 page=page,
                 content=content,
-                interaction_node=interaction_node
+                interaction_node=interaction_node,
+                kind=kind
             )
             print "Found existing Interaction with id %s" % existing.id
             return dict(id=existing.id)
@@ -124,27 +163,34 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         else:
             print "Creating Interaction without parent node"
             parent = None
-
-        new = Interaction(
-            page=page,
-            container=container,
-            content=content,
-            user=user,
-            kind=kind,
-            interaction_node=interaction_node,
-            created=now,
-            parent=parent
-        )
+        
+        try:
+            new = Interaction(
+                page=page,
+                container=container,
+                content=content,
+                user=user,
+                kind=kind,
+                interaction_node=interaction_node,
+                created=now,
+                parent=parent
+            )
+        except:
+            raise JSONError(u"Error creating interaction object")
 
         if new == None: raise JSONException(u"Error creating interaction")
         else:
             ic = InteractionCount.objects.get_or_create(container=container, page=page,)[0]
             if kind == 'tag':
                 ic.tag_count += 1
-                tc = TagCount.objects.get_or_create(container=container, page=page, tag=interaction_node)[0]
+                try:
+                    tc = TagCount.objects.get_or_create(container=container, page=page, tag=interaction_node)[0]
+                    print "done!"
+                except:
+                    raise JSONError("Failed creating Tag count object!")
                 tc.count += 1
                 tc.save()
-            if kind == 'com': cd.comment_count += 1
+            if kind == 'com': ic.comment_count += 1
             ic.interaction_count += 1
             ic.save()
             new.save()

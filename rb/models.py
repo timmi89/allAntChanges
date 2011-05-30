@@ -104,6 +104,7 @@ class Site(models.Model):
 class Page(models.Model):
     site = models.ForeignKey(Site)
     url = models.URLField(verify_exists=False)
+    title = models.TextField(blank=True)
     canonical_url = models.URLField(verify_exists=False, blank=True)
     interaction_count = models.PositiveIntegerField(default=0)
 
@@ -128,20 +129,18 @@ class Content(DateAwareModel):
     
     class Meta:
         verbose_name_plural = "content"
+        unique_together = ('kind','body')
 
 class Container(models.Model):
     hash = models.CharField(max_length=32, unique=True, db_index=True)
     body = models.TextField()
 
     def __unicode__(self):
-        return self.hash
-    
-    class Meta:
-        ordering = ['-id']
+        return unicode(self.id) + " : " + self.hash
 
 """ Accelerators """
 class TagCount(models.Model):
-    container = models.ForeignKey(Container)
+    container = models.ForeignKey(Container, blank=True, null=True)
     page = models.ForeignKey(Page)
     tag = models.ForeignKey(InteractionNode)
     count = models.PositiveIntegerField(default=0)
@@ -151,7 +150,7 @@ class TagCount(models.Model):
         ordering = ['page','container','count']
 
 class InteractionCount(models.Model):
-    container = models.ForeignKey(Container)
+    container = models.ForeignKey(Container, blank=True, null=True)
     page = models.ForeignKey(Page)
     tag_count = models.PositiveIntegerField(default=0)
     comment_count = models.PositiveIntegerField(default=0)

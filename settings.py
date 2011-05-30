@@ -129,7 +129,8 @@ INSTALLED_APPS = (
     'treebeard',
     'debug_toolbar',
     'autofixture',
-    'django_extensions',
+    #'django_extensions',
+    'devserver',
 )
 
 # for get_profile()
@@ -179,6 +180,20 @@ LOGGING = {
     },
     }
 }
+
+DEVSERVER_MODULES = (
+    'devserver.modules.sql.SQLRealTimeModule',
+    'devserver.modules.sql.SQLSummaryModule',
+    'devserver.modules.profile.ProfileSummaryModule',
+
+    # Modules not enabled by default
+    #'devserver.modules.ajax.AjaxDumpModule',
+    #'devserver.modules.profile.MemoryUseModule',
+    #'devserver.modules.cache.CacheSummaryModule',
+    #'devserver.modules.profile.LineProfilerModule',
+)
+
+DEVSERVER_IGNORED_PREFIXES = ['/media', '/uploads']
 
 # for social auth
 #SOCIAL_AUTH_ERROR_KEY = 'social_errors'

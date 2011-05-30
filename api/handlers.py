@@ -24,7 +24,7 @@ class FeatureHandler(AnonymousBaseHandler):
     model = Feature
     fields = ('feature_type', 'text', 'images', 'flash')
 
-class ContainerDataHandler(AnonymousBaseHandler):
+class InteractionCountHandler(AnonymousBaseHandler):
     model = InteractionCount
     fields = (
         'tag_count',
@@ -32,11 +32,13 @@ class ContainerDataHandler(AnonymousBaseHandler):
         'interaction_count'
     )
 
-"""
-class InteractionHandler(AnonymousBaseHandler):
-    model = Interaction
-    fields = ('count','id', 'content', 'user')
-"""
+class TagCountHandler(AnonymousBaseHandler):
+    model = TagCount
+    fields = (
+        'count',
+        'tag'
+    )
+
 class InteractionHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, **kwargs):
@@ -140,7 +142,7 @@ class CreateContainerHandler(AnonymousBaseHandler):
                 body=hashes[hash]['content']
             )[1]
         return result
-"""
+
 class ContainerHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request):
@@ -149,32 +151,12 @@ class ContainerHandler(AnonymousBaseHandler):
         data = json.loads(request.GET['json'])
         hashes = data['hashes']
         page = data['pageID']
+        containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash'))
 
-        # Force evaluation by making lists
-        containers = list(Container.objects.filter(hash__in=hashes))
-        interactions = list(Interaction.objects.filter(container__in=containers, page=page).select_related('interaction_node'))
-
-        known = getContainers(interactions, containers)
+        known = containerData(containers, page)
         unknown = list(set(hashes) - set(known.keys()))
 
         return dict(known=known, unknown=unknown)
-"""
-
-class ContainerHandler(AnonymousBaseHandler):
-    @status_response
-    def read(self, request):
-        known = {}
-
-        containers = Container.objects.all()
-        if request.GET.get('json'):
-            data = json.loads(request.GET['json'])
-            hashes = data['hashes']
-            page = data['pageID']
-            containers = Container.objects.filter(hash__in=hashes)
-        else:
-            page = 1
-
-        return containerData(containers, page)
 
 class PageDataHandler(AnonymousBaseHandler):
     @status_response
