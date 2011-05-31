@@ -151,9 +151,13 @@ class ContainerHandler(AnonymousBaseHandler):
         data = json.loads(request.GET['json'])
         hashes = data['hashes']
         page = data['pageID']
-        containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash'))
 
-        known = getCountsAndTags(page, containers)
+        # Force evaluation by making lists
+        containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash'))
+        ids = [container[0] for container in containers]
+        interactions = list(Interaction.objects.filter(container__in=ids, page=page).select_related('interaction_node','content'))
+
+        known = getContainers(interactions, containers)
         unknown = list(set(hashes) - set(known.keys()))
 
         return dict(known=known, unknown=unknown)

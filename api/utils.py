@@ -6,19 +6,56 @@ import hmac
 import random
 from exceptions import FBException, JSONException
 
-def getCountsAndTags(page, containers=None, content=None):
-    interaction_counts = list(InteractionCount.objects.filter(page=page))
-    tag_counts = list(TagCount.objects.filter(page=page).select_related('tag'))
+def getTagCommentData(comment):
+    print comment
+    comment_data = {}
+    comment_data['comment'] = comment.interaction_node.body
+    comment_data['user'] = comment.user
 
-    if containers:
-      data = dict((
-          (container[1],
-              dict(
-                  interaction_counts = filter(lambda x: x.container_id == container[0], interaction_counts),
-                  top_tags = filter(lambda x: x.container_id == container[0], tag_counts)
-          )) for container in containers
-      ))
+    return comment_data
 
+def getTagData(tag, tags, comments):
+    tags = filter(lambda x: x.interaction_node==tag, tags)
+    comments = filter(lambda x: x.parent in tags, comments)
+
+    tag_data = {}
+    tag_data['tag'] = tag.body
+    tag_data['id'] = tag.id
+    tag_data['count'] = len(tags)
+    
+    tag_data['comments'] = [getTagCommentData(comment) for comment in comments]
+
+    return tag_data
+
+def getData(interactions, container=None, content=None, data=None):
+    if not data: data = {}
+    
+    if container:
+        interactions = filter(lambda x: x.container_id==container, interactions)
+    elif content:
+        interactions = filter(lambda x: x.content==content, interactions)
+        data['body'] = content.body
+    
+    # Filter tag and comment interactions
+    tags = filter(lambda x: x.kind=='tag', interactions)
+    comments = filter(lambda x: x.kind=='com', interactions)
+
+    data['tag_count'] = len(tags)
+    data['com_count'] = len(comments)
+
+    if container:
+        unique = set((interaction.content for interaction in interactions))
+        data['content'] = [getData(interactions, content=content_item) for content_item in unique]
+    if content:
+        unique = set((tag.interaction_node for tag in tags))
+        data['tags'] = [getTagData(tag, tags, comments) for tag in unique]
+    
+    return data
+
+def getContainers(interactions, containers):
+    data = dict((
+        (container[1], getData(interactions, container=container[0])) for container in containers    
+    ))
     return data
 
 def interactionNodeCounts(interactions, kinds=[], content=None):
@@ -86,43 +123,6 @@ def deleteInteraction(interaction, user):
         if tempuser: return dict(message=message,num_interactions=num_interactions-1)
         return dict(message=message)
 
-def updateCounts(user, page, container, kind, content, interaction_node):
-    #updateUserCount(user)
-    updateInteractionCounts(page,container,kind)
-    #updateInteractionCounts(page,container,kind,content)
-    updateTagCounts(page,container,interaction_node)
-    updatePageCount(page)
-
-def updateUserCount(user):
-    profile = user.get_profile()
-    profile.interaction_count += 1
-    profile.save()
-
-def updateInteractionCounts(page, container, kind, content=None):
-    try:
-      ic = InteractionCount.objects.get_or_create(page=page, container=container, content=content)[0]
-      if kind == 'tag': ic.tag_count += 1
-      if kind == 'com': ic.comment_count += 1
-      ic.interaction_count += 1
-      ic.save()
-    except:
-      raise JSONException("Failed creating/updating InteractionCount object!")
-
-def updateTagCounts(page, container, interaction_node):
-    try:
-        tc = TagCount.objects.get_or_create(container=container, page=page, tag=interaction_node)[0]
-        tc.count += 1
-        tc.save()
-    except:
-       raise JSONException("Failed creating/updating TagCount object!")
-
-def updatePageCount(page):
-    try:
-        page.interaction_count += 1
-        page.save()
-    except:
-        raise JSONException("Failed creating/updating Page interaction count")
-
 def createInteraction(page, container, content, user, kind, interaction_node, group=None, parent=None):
     # Check to see if user has reached their interaction limit
     tempuser = False
@@ -167,7 +167,6 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
 
     if new == None: raise JSONException(u"Error creating interaction")
     else:
-        updateCounts(user,page,container,kind,content,interaction_node)
         new.save()
     if tempuser: return dict(id=new.id, num_interactions=num_interactions+1)
     return dict(id=new.id)
