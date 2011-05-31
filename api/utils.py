@@ -31,7 +31,7 @@ def getData(interactions, container=None, content=None, data=None):
     if not data: data = {}
     
     if container:
-        interactions = filter(lambda x: x.container==container, interactions)
+        interactions = filter(lambda x: x.container_id==container, interactions)
     elif content:
         interactions = filter(lambda x: x.content==content, interactions)
         data['body'] = content.body
@@ -49,12 +49,12 @@ def getData(interactions, container=None, content=None, data=None):
     if content:
         unique = set((tag.interaction_node for tag in tags))
         data['tags'] = [getTagData(tag, tags, comments) for tag in unique]
-
+    
     return data
 
 def getContainers(interactions, containers):
     data = dict((
-        (container.hash, getData(interactions, container=container)) for container in containers    
+        (container[1], getData(interactions, container=container[0])) for container in containers    
     ))
     return data
 
