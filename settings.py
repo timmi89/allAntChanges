@@ -17,16 +17,30 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': {
-        'ENGINE':   'django.db.backends.sqlite3',
-        'NAME':     'readrdb.db',
-        'USER':     '',
-        'PASSWORD': '',
-        'HOST':     '', 
-        'PORT':     '', 
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE':   'django.db.backends.sqlite3',
+            'NAME':     'readrdb.db',
+            'USER':     '',
+            'PASSWORD': '',
+            'HOST':     '', 
+            'PORT':     '', 
+            }
     }
-}
+
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE':   'django.db.backends.sqlite3',
+            'NAME':     'readrdb.db',
+            'USER':     '',
+            'PASSWORD': '',
+            'HOST':     '',
+            'PORT':     '',
+            }
+    }
+
 
 #CACHES = {
 #    'default': {
