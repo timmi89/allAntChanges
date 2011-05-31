@@ -144,6 +144,7 @@ class Container(models.Model):
 class TagCount(models.Model):
     container = models.ForeignKey(Container, blank=True, null=True)
     page = models.ForeignKey(Page)
+    content = models.ForeignKey(Content, blank=True, null=True)
     tag = models.ForeignKey(InteractionNode)
     count = models.PositiveIntegerField(default=0)
 
@@ -154,6 +155,7 @@ class TagCount(models.Model):
 class InteractionCount(models.Model):
     container = models.ForeignKey(Container, blank=True, null=True)
     page = models.ForeignKey(Page)
+    content = models.ForeignKey(Content, blank=True, null=True)
     tag_count = models.PositiveIntegerField(default=0)
     comment_count = models.PositiveIntegerField(default=0)
     interaction_count = models.PositiveIntegerField(default=0)
@@ -206,8 +208,10 @@ class Link(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User)
-    admin = models.ForeignKey(Group)
+    group_admin = models.ForeignKey(Group, blank=True, null=True)
     educated = models.BooleanField()
+    interaction_count = models.PositiveIntegerField(default=0)
+    follower_count = models.PositiveIntegerField(default=0)
     
 class SocialUser(models.Model):
     GENDER_CHOICES = (

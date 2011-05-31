@@ -6,7 +6,7 @@ import hmac
 import random
 from exceptions import FBException, JSONException
 
-def containerData(containers, page):
+def getData(page, containers, content=None):
     interaction_counts = list(InteractionCount.objects.filter(page=page))
     tag_counts = list(TagCount.objects.filter(page=page).select_related('tag'))
 
@@ -40,7 +40,7 @@ def getTagData(tag, tags, comments):
   tag_data['comments'] = [getTagCommentData(comment) for comment in comments]
 
   return tag_data
-
+"""
 def getData(interactions, container=None, content=None, data=None):
   if not data: data = {}
  
@@ -65,6 +65,12 @@ def getData(interactions, container=None, content=None, data=None):
       data['tags'] = [getTagData(tag, tags, comments) for tag in unique]
 
   return data
+"""
+def getContainers(interactions, containers): 
+      data = dict(( 
+          (container.hash, getData(interactions, container=container)) for container in containers     
+      )) 
+      return data 
 
 def interactionNodeCounts(interactions, kinds=[], content=None):
     # Filter interactions for this piece of content and get count data
@@ -180,7 +186,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
 
         if new == None: raise JSONException(u"Error creating interaction")
         else:
-            ic = InteractionCount.objects.get_or_create(container=container, page=page,)[0]
+            ic = InteractionCount.objects.get_or_create(container=container, page=page)[0]
             if kind == 'tag':
                 ic.tag_count += 1
                 try:

@@ -151,13 +151,29 @@ class ContainerHandler(AnonymousBaseHandler):
         data = json.loads(request.GET['json'])
         hashes = data['hashes']
         page = data['pageID']
+        containers = Container.objects.filter(hash__in=hashes)
+        interactions = Interaction.objects.filter(page=page, container__in=containers)
+
+        known = getContainers(interactions, containers)
+        unknown = list(set(hashes) - set(known.keys()))
+
+        return dict(known=known, unknown=unknown)
+"""
+class ContainerHandler(AnonymousBaseHandler):
+    @status_response
+    def read(self, request):
+        known = {}
+
+        data = json.loads(request.GET['json'])
+        hashes = data['hashes']
+        page = data['pageID']
         containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash'))
 
         known = containerData(containers, page)
         unknown = list(set(hashes) - set(known.keys()))
 
         return dict(known=known, unknown=unknown)
-
+"""
 class PageDataHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, pageid=None):

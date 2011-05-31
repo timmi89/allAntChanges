@@ -7,7 +7,6 @@ from django.contrib import admin
 
 admin.site.register(Feature)
 admin.site.register(InteractionNode)
-admin.site.register(TagCount)
 
 class ContentAdmin(admin.ModelAdmin):
     list_display = (
@@ -21,13 +20,33 @@ class InteractionCountAdmin(admin.ModelAdmin):
         'id',
         'page',
         'container',
+        'content',
         'tag_count',
         'comment_count',
         'interaction_count',
     )
 
+class TagCountAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'page',
+        'container',
+        'content',
+        'tag',
+        'count',
+    )
+
 class FeatureInline(admin.TabularInline):
     model = Feature
+
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = (
+        'user',
+        'admin',
+        'educated',
+        'interaction_count',
+        'follower_count'
+    )
 
 class GroupAdmin(admin.ModelAdmin):
     fieldsets = (
@@ -129,3 +148,4 @@ admin.site.register(SocialUser, SocialUserAdmin)
 admin.site.register(NodeValue, NodeValueAdmin)
 admin.site.register(Content, ContentAdmin)
 admin.site.register(InteractionCount, InteractionCountAdmin)
+admin.site.register(TagCount, TagCountAdmin)
