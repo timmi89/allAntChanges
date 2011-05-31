@@ -131,7 +131,7 @@ class Content(DateAwareModel):
     
     class Meta:
         verbose_name_plural = "content"
-        unique_together = ('kind','body')
+        #unique_together = ('kind','body')
 
 class Container(models.Model):
     hash = models.CharField(max_length=32, unique=True, db_index=True)
