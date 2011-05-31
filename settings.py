@@ -32,12 +32,12 @@ if DEBUG:
 else:
     DATABASES = {
         'default': {
-            'ENGINE':   'django.db.backends.sqlite3',
-            'NAME':     'readrdb.db',
+            'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
             'USER':     '',
             'PASSWORD': '',
-            'HOST':     '',
-            'PORT':     '',
+            'HOST':     'localhost',
+            'PORT':     '3306',
             }
     }
 
