@@ -840,7 +840,12 @@ function readrBoard($R){
                             for ( var i = 0, j=4; i < j; i++ ) {
                                 var this_tag = RDR.page.toptags[i];
                                 if ( this_tag ) {
-                                    $toptags.append(' <span>'+ this_tag.body +' <em>('+this_tag.tag_count+')</em></span>&nbsp;&nbsp;&nbsp;');
+                
+                                    //todo: consolodate truncate functions
+                                    var maxHeaderLen = 20;
+                                    var tagName = this_tag.body.length > maxHeaderLen ? this_tag.body.slice(0, maxHeaderLen)+"..." : this_tag.body;
+
+                                    $toptags.append(' <span>'+ tagName +' <em>('+this_tag.tag_count+')</em></span>&nbsp;&nbsp;&nbsp;');
                                 }
                                 
                                 // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
@@ -1330,7 +1335,8 @@ function readrBoard($R){
                     $reactionPanel = $('<div class="rdr_reactionPanel rdr_read rdr_sntPnl" />'),
                     $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
-                    $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />');
+                    $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
+                    $borderLine = $('<div class="rdr_borderLine" />');
                 
                 var headers = ["Reactions <span>("+(info.tag_count)+")</span>", "", ""];  // removing comment count for now +info.com_count
                 $sentimentBox.append($reactionPanel, $contentPanel, $whyPanel); //$selectedTextPanel, 
@@ -1344,7 +1350,7 @@ function readrBoard($R){
                 RDR.actions.panel.setup("contentPanel", rindow);
 
                 //populate reactionPanel
-                $reactionPanel.find('div.rdr_body').append($tagBox);
+                $reactionPanel.find('div.rdr_body').append($borderLine, $tagBox);
 
 
                 ////populate blesed_tags
@@ -1373,7 +1379,12 @@ function readrBoard($R){
                                 com_count:com_count
                             },
                             'which':which
-                        }).append('<div class="rdr_rightBox"></div><div class="rdr_leftBox">'+percentage+'%</div><a href="javascript:void(0);">'+name+'</a>');
+                        }),
+                        $leftBox = '<div class="rdr_leftBox">'+percentage+'%</div>',
+                        $tagText = '<div class="rdr_tagText">'+name+'</div>',
+                        $rightBox = '<div class="rdr_rightBox" />';
+
+                        $li.append($leftBox,$tagText,$rightBox);
                         if ( com_count > 0 ) $li.addClass('rdr_has_comment');
                         $tagBox.children('ul.rdr_tags').append($li);
                     }
@@ -1422,7 +1433,12 @@ function readrBoard($R){
                 function SortByTagCount(a,b) { return b.count - a.count; }
                 content.sort(SortByTagCount);
 
-                rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tag.name+' <span>('+tag.count+')</span>');
+                //todo: consolodate truncate functions
+                var maxHeaderLen = 20;
+                var tagName = tag.name.length > maxHeaderLen ? tag.name.slice(0, maxHeaderLen)+"..." : tag.name;
+                log (tagName);
+
+                rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tagName+' <span>('+tag.count+')</span>');
                 if ( rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp').destroy();
                 rindow.find('div.rdr_contentPanel div.rdr_body').empty();
 
@@ -1604,13 +1620,14 @@ function readrBoard($R){
                 // build the ratePanel
 
                 var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new rdr_'+type+'_reactions" />'),
-                $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl" />'),
-                $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
-                $blessedTagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
-                $commentBox = $('<div class="rdr_commentBox" />'),
-                $shareBox = $('<div class="rdr_shareBox" />');
+                    $reactionPanel = $('<div class="rdr_reactionPanel rdr_read rdr_sntPnl" />'),
+                    $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
+                    $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
+                    $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
+                    $borderLine = $('<div class="rdr_borderLine" />'),
+                    $commentBox = $('<div class="rdr_commentBox" />'),
+                    $shareBox = $('<div class="rdr_shareBox" />');
 
-                
                 var headers = ["What's your reaction?", "Say More"];
                 $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
@@ -1622,19 +1639,42 @@ function readrBoard($R){
                 });
                 RDR.actions.panel.setup("whyPanel", rindow);
 
+
+                /* temp... ignore..
+                        $sentimentBox.children().each(function(idx){
+                                    var $header = $('<div class="rdr_header" />'),
+                                    hedText = headers[idx].length > maxHeaderLen ? headers[idx].slice(0, maxHeaderLen)+"..." : headers[idx],
+                                    $hedTag = $('<h1>'+ hedText +'</h1>'),
+                                    $hedInner = $('<div class="rdr_headerInnerWrap" />').append($hedTag),
+                                    $body = $('<div class="rdr_body rdr_leftShadow"/>');
+                                    
+                                    
+                                    $header.append($hedInner);
+                                    $(this).append($header, $body).css({
+                                        // 'width':rindow.settings.pnlWidth
+                                    });
+                                });
+                */
+
                 //populate reactionPanel
-                $reactionPanel.find('div.rdr_body').append($blessedTagBox);
+                $reactionPanel.find('div.rdr_body').append($borderLine, $tagBox);
                 
                 ////populate blesed_tags
                 $.each(RDR.group.blessed_tags, function(idx, val){
+
                     var $li = $('<li class="rdr_tag_'+val.id+'" />').data({
                         'tag':{
                             content:parseInt( val.id ),
                             name:val.body
                         }
-                    }).append('<div class="rdr_rightBox"></div><div class="rdr_leftBox"></div><a href="javascript:void(0);">'+val.body+'</a>');
-                    
-                    $blessedTagBox.children('ul.rdr_tags').append($li);
+                    }),
+                    $leftBox = '<div class="rdr_leftBox" />',
+                    $tagText = '<div class="rdr_tagText">'+val.body+'</div>',
+                    $rightBox = '<div class="rdr_rightBox" />';
+
+                    $li.append($leftBox,$tagText,$rightBox);
+                    $tagBox.children('ul.rdr_tags').append($li);
+
                 });
 
                 ////customTagDialogue - develop this...
@@ -3305,8 +3345,7 @@ function jQueryPlugins($R){
                 //apply css classes to start and end so we can style those specially
                 hiliter['get$start']().addClass(styleClass+'_start');
                 hiliter['get$end']().addClass(styleClass+'_end');
-                log('.util')
-                log(hiliter.util)
+                
                 //bind an escape keypress to clear it.
                 //todo: for a real public API, this should be an option, or passed in function or something
                 $(document).bind('keyup.rdr', function(event) {
