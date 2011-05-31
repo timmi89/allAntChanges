@@ -161,7 +161,7 @@ class InteractionCount(models.Model):
     interaction_count = models.PositiveIntegerField(default=0)
 
     class Meta:
-        unique_together = ('container', 'page')
+        unique_together = ('container', 'page', 'content')
 
 class Interaction(DateAwareModel, UserAwareModel):
     INTERACTION_TYPES = (
