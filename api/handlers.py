@@ -24,21 +24,6 @@ class FeatureHandler(AnonymousBaseHandler):
     model = Feature
     fields = ('feature_type', 'text', 'images', 'flash')
 
-class InteractionCountHandler(AnonymousBaseHandler):
-    model = InteractionCount
-    fields = (
-        'tag_count',
-        'comment_count',
-        'interaction_count'
-    )
-
-class TagCountHandler(AnonymousBaseHandler):
-    model = TagCount
-    fields = (
-        'count',
-        'tag'
-    )
-
 class InteractionHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, **kwargs):

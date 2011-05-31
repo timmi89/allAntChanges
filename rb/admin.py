@@ -15,27 +15,6 @@ class ContentAdmin(admin.ModelAdmin):
         'body',
     )
 
-class InteractionCountAdmin(admin.ModelAdmin):
-    list_display = (
-        'id',
-        'page',
-        'container',
-        'content',
-        'tag_count',
-        'comment_count',
-        'interaction_count',
-    )
-
-class TagCountAdmin(admin.ModelAdmin):
-    list_display = (
-        'id',
-        'page',
-        'container',
-        'content',
-        'tag',
-        'count',
-    )
-
 class FeatureInline(admin.TabularInline):
     model = Feature
 
@@ -147,6 +126,4 @@ admin.site.register(Interaction, InteractionAdmin)
 admin.site.register(SocialUser, SocialUserAdmin)
 admin.site.register(NodeValue, NodeValueAdmin)
 admin.site.register(Content, ContentAdmin)
-admin.site.register(InteractionCount, InteractionCountAdmin)
-admin.site.register(TagCount, TagCountAdmin)
 admin.site.register(Profile)

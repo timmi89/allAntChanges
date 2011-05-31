@@ -140,29 +140,6 @@ class Container(models.Model):
     def __unicode__(self):
         return unicode(self.id) + " : " + self.hash
 
-""" Accelerators """
-class TagCount(models.Model):
-    container = models.ForeignKey(Container, blank=True, null=True)
-    page = models.ForeignKey(Page)
-    content = models.ForeignKey(Content, blank=True, null=True)
-    tag = models.ForeignKey(InteractionNode)
-    count = models.PositiveIntegerField(default=0)
-
-    class Meta:
-        unique_together = ('container', 'page', 'tag')
-        ordering = ['page','container','count']
-
-class InteractionCount(models.Model):
-    container = models.ForeignKey(Container, blank=True, null=True)
-    page = models.ForeignKey(Page)
-    content = models.ForeignKey(Content, blank=True, null=True)
-    tag_count = models.PositiveIntegerField(default=0)
-    comment_count = models.PositiveIntegerField(default=0)
-    interaction_count = models.PositiveIntegerField(default=0)
-
-    class Meta:
-        unique_together = ('container', 'page', 'content')
-
 class Interaction(DateAwareModel, UserAwareModel):
     INTERACTION_TYPES = (
         ('tag', 'Tag'),
@@ -210,8 +187,6 @@ class Profile(models.Model):
     user = models.OneToOneField(User)
     group_admin = models.ForeignKey(Group, blank=True, null=True)
     educated = models.BooleanField()
-    interaction_count = models.PositiveIntegerField(default=0)
-    follower_count = models.PositiveIntegerField(default=0)
     
 class SocialUser(models.Model):
     GENDER_CHOICES = (
