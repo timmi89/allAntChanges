@@ -701,7 +701,6 @@ function readrBoard($R){
                 $RDR = $(RDR);
                 $RDR.queue('initAjax', function(next){
                     that.initGroupData(RDR.groupPermData.short_name);
-
                     //next fired on ajax success
                 });
                 $RDR.queue('initAjax', function(next){
@@ -760,8 +759,10 @@ function readrBoard($R){
                         // ];
                         $RDR.dequeue('initAjax');
                     },
-                    error: function(response){
-                        //console.warn(response)
+                    error: function(response) {
+                        //for now, ignore error and carry on with mockup
+                        console.warn('ajax error');
+                        console.log(response);
                     }
                 });
             },
@@ -787,7 +788,10 @@ function readrBoard($R){
                         });
 
                     },
-                    error: function(response){
+                    error: function(response) {
+                        //for now, ignore error and carry on with mockup
+                        console.warn('ajax error');
+                        console.log(response);
                     }
                 });
             },
@@ -815,82 +819,87 @@ function readrBoard($R){
 					success: function(response) {
                        log('response')
                        log(response)
-                        // don't forget a design for when there are no tags.
-
-
-						RDR.page = response.data;
-                        var $summary_widget = $('#rdr-summary');
                         
-                        var total_interactions = 0;
-                        for ( var i in RDR.page.summary ) {
-                            if ( RDR.page.summary[i].count ) total_interactions += RDR.page.summary[i].count;
-                        }
-
-                        if ( total_interactions > 0 ) {
-                            var people = ( RDR.page.topusers.length > 1 ) ? RDR.page.topusers.length + " people" : "1 person";
-                            $summary_widget.append('<div class="rdr-sum-headline">'+total_interactions+' reactions from '+people+'</div>');
-                        } else {
-                            $summary_widget.append('<div class="rdr-sum-headline">No reactions yet.  Select something and react!</div>');
-                        }
-
-                        // summary widget: specific tag totals
-                        if ( RDR.page.toptags.length > 0 ){
-                            var $toptags = $('<div class="rdr-top-tags" />');
-
-                            for ( var i = 0, j=4; i < j; i++ ) {
-                                var this_tag = RDR.page.toptags[i];
-                                if ( this_tag ) {
-                                    $toptags.append(' <span>'+ this_tag.body +' <em>('+this_tag.tag_count+')</em></span>&nbsp;&nbsp;&nbsp;');
-                                }
-                                
-                                // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                                if ( $toptags.width() > $summary_widget.width() - 48 ) {
-                                    $toptags.children().last().html('See More').addClass('rdr_see_more');
-                                    break;
-                                }
-                            }
-
-                            $summary_widget.append( $toptags );
-                        }
-
-                        if ( RDR.page.topusers.length > 0 ){
-                            var $topusers = $('<div class="rdr-top-users" />');
-
-                            for ( var i = 0, j=10; i < j; i++ ) {
-                                var this_user = RDR.page.topusers[i];
-                                if ( this_user ) {
-                                    $topusers.append('<img src="'+this_user.img_url+'" class="no-rdr" />');
-                                }
-                            }
-
-                            $summary_widget.append( $topusers );
-                        }
-
-
-                        // insert image icons
-                        for ( var i in RDR.page.imagedata ){
-                            
-                            //todo: combine this with the other indicator code and make the imagedata give us a hash from the db
-                            var hash = RDR.util.md5.hex_md5(i);
-                            RDR.page.imagedata[i].hash = hash; //todo: list these by hash in the first place.
-
-                            RDR.actions.indicators.make( hash, 'img' );
-
-                        }
-
-
-					}
+                        makeSummaryWidget(response);
+                        insertImgIcons(response);
+                                                   
+                        //to be normally called on success of ajax call
+                        $RDR.dequeue('initAjax');
+                    },
+                    error: function(response) {
+                        //for now, ignore error and carry on with mockup
+                        console.warn('ajax error');
+                        console.log(response);
+                    }
 				});
-               
-               //to be normally called on success of ajax call
-               $RDR.dequeue('initAjax');
+
+                //helper functions for ajax above
+                function makeSummaryWidget(response){
+                    // don't forget a design for when there are no tags.
+                    RDR.page = response.data;
+                    var $summary_widget = $('#rdr-summary');
+                    
+                    var total_interactions = 0;
+                    for ( var i in RDR.page.summary ) {
+                        if ( RDR.page.summary[i].count ) total_interactions += RDR.page.summary[i].count;
+                    }
+
+                    if ( total_interactions > 0 ) {
+                        var people = ( RDR.page.topusers.length > 1 ) ? RDR.page.topusers.length + " people" : "1 person";
+                        $summary_widget.append('<div class="rdr-sum-headline">'+total_interactions+' reactions from '+people+'</div>');
+                    } else {
+                        $summary_widget.append('<div class="rdr-sum-headline">No reactions yet.  Select something and react!</div>');
+                    }
+
+                    // summary widget: specific tag totals
+                    if ( RDR.page.toptags.length > 0 ){
+                        var $toptags = $('<div class="rdr-top-tags" />');
+
+                        for ( var i = 0, j=4; i < j; i++ ) {
+                            var this_tag = RDR.page.toptags[i];
+                            if ( this_tag ) {
+                                $toptags.append(' <span>'+ this_tag.body +' <em>('+this_tag.tag_count+')</em></span>&nbsp;&nbsp;&nbsp;');
+                            }
+                            
+                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
+                            if ( $toptags.width() > $summary_widget.width() - 48 ) {
+                                $toptags.children().last().html('See More').addClass('rdr_see_more');
+                                break;
+                            }
+                        }
+
+                        $summary_widget.append( $toptags );
+                    }
+
+                    if ( RDR.page.topusers.length > 0 ){
+                        var $topusers = $('<div class="rdr-top-users" />');
+
+                        for ( var i = 0, j=10; i < j; i++ ) {
+                            var this_user = RDR.page.topusers[i];
+                            if ( this_user ) {
+                                $topusers.append('<img src="'+this_user.img_url+'" class="no-rdr" />');
+                            }
+                        }
+
+                        $summary_widget.append( $topusers );
+                    }
+                }
+
+                function insertImgIcons(response){
+                    for ( var i in RDR.page.imagedata ){
+                        //todo: combine this with the other indicator code and make the imagedata give us a hash from the db
+                        var hash = RDR.util.md5.hex_md5(i);
+                        RDR.page.imagedata[i].hash = hash; //todo: list these by hash in the first place.
+
+                        RDR.actions.indicators.make( hash, 'img' );
+                    }
+                }
+           
             },
             initEnvironment: function(){
                 
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
                 var $indicatorDetailsWrapper = $('<div id="rdr_indicator_details_wrapper" />').appendTo('body');
-
-                this.hashNodes();
 
                 // init the img interactions img selector image selector  (those are keywords for easier-inpage searching)
 				$( RDR.group.img_selector+":not('.no-rdr')" ).live( 'mouseover', function() {
@@ -970,6 +979,8 @@ function readrBoard($R){
                     }
 
                 });
+
+                this.hashNodes();
 				$RDR.dequeue('initAjax');
             },
             hashNodes: function() {
@@ -1071,19 +1082,29 @@ function readrBoard($R){
     						//console.dir(sendData);
 
     						$.ajax({
-    			                    url: "/api/containers/create/",
-    			                    type: "get",
-    			                    contentType: "application/json",
-    			                    dataType: "jsonp",
-    			                    data: {
-    			                     	json: JSON.stringify(sendData)
-    			                     },
-    			                    success: function(response) {
-    			                        // do nothing?  since we just added this container to the DB for the first time.
-
-                                    }
+                                url: "/api/containers/create/",
+                                type: "get",
+                                contentType: "application/json",
+                                dataType: "jsonp",
+                                data: {
+                                    json: JSON.stringify(sendData)
+                                },
+                                success: function(response) {
+                                    // do nothing?  since we just added this container to the DB for the first time.
+                                    //todo: verify that there weren't any problems.  If there were, do approprate UI (try again, or whatevs)
+                                },
+                                error: function(response) {
+                                    //for now, ignore error and carry on with mockup
+                                    console.warn('ajax error');
+                                    console.log(response);
+                                }
                             });
                         }
+                    },
+                    error: function(response) {
+                        //for now, ignore error and carry on with mockup
+                        console.warn('ajax error');
+                        console.log(response);
                     }
                 });
             },
@@ -1932,8 +1953,10 @@ function readrBoard($R){
                                     else RDR.session.showLoginPanel( args );
                                 }
                             },
-                            //for now, ignore error and carry on with mockup
                             error: function(response) {
+                                //for now, ignore error and carry on with mockup
+                                console.warn('ajax error');
+                                console.log(response);
                             }
                         });
                     } else {
@@ -1999,8 +2022,10 @@ function readrBoard($R){
                                     }
                                 }
                             },
-                            //for now, ignore error and carry on with mockup
                             error: function(response) {
+                                //for now, ignore error and carry on with mockup
+                                console.warn('ajax error');
+                                console.log(response);
                             }
                         });
                     } else {
@@ -2103,9 +2128,10 @@ function readrBoard($R){
                         RDR.actions.panel.collapse("whyPanel", rindow);
                         rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_tag_'+tag.content).removeClass('rdr_selected').removeClass('rdr_tagged');
                     },
-                    //for now, ignore error and carry on with mockup
                     error: function(response) {
-
+                        //for now, ignore error and carry on with mockup
+                        console.warn('ajax error');
+                        console.log(response);
                     }
                 });
                 
@@ -2310,8 +2336,10 @@ function readrBoard($R){
                             }
 
                         },
-                        //for now, ignore error and carry on with mockup
                         error: function(response) {
+                            //for now, ignore error and carry on with mockup
+                            console.warn('ajax error');
+                            console.log(response);
                         }
                     });
                 });
