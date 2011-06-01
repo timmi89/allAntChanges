@@ -7,7 +7,24 @@ from django.contrib import admin
 
 admin.site.register(Feature)
 admin.site.register(InteractionNode)
-admin.site.register(Content)
+admin.site.register(TagCount)
+
+class ContentAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'kind',
+        'body',
+    )
+
+class InteractionCountAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'page',
+        'container',
+        'tag_count',
+        'comment_count',
+        'interaction_count',
+    )
 
 class FeatureInline(admin.TabularInline):
     model = Feature
@@ -110,3 +127,5 @@ admin.site.register(Container, ContainerAdmin)
 admin.site.register(Interaction, InteractionAdmin)
 admin.site.register(SocialUser, SocialUserAdmin)
 admin.site.register(NodeValue, NodeValueAdmin)
+admin.site.register(Content, ContentAdmin)
+admin.site.register(InteractionCount, InteractionCountAdmin)

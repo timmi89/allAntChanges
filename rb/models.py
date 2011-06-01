@@ -1,9 +1,14 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 #from treebeard.mp_tree import MP_Node
 from django.contrib.auth.models import User
 from baseconv import base62
 import datetime
 
+"""
+Abstract Models
+"""
 class DateAwareModel(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False)
     modified = models.DateTimeField(auto_now=True, editable=False)    
@@ -17,6 +22,9 @@ class UserAwareModel(models.Model):
     class Meta:
         abstract = True
 
+"""
+ReadrBoard Models
+"""
 class InteractionNode(models.Model):
     body = models.CharField(max_length=2048)
     
@@ -98,11 +106,9 @@ class Site(models.Model):
 class Page(models.Model):
     site = models.ForeignKey(Site)
     url = models.URLField(verify_exists=False)
+    title = models.TextField(blank=True)
     canonical_url = models.URLField(verify_exists=False, blank=True)
-    #interaction_count = models.PositiveIntegerField()
-    #tag_count = models.PositiveIntegerField()
-    #comment_count = models.PositiveIntegerField()
-    #share_count = models.PositiveIntegerField()
+    interaction_count = models.PositiveIntegerField(default=0)
 
     def __unicode__(self):
         return unicode(self.id)
@@ -125,16 +131,35 @@ class Content(DateAwareModel):
     
     class Meta:
         verbose_name_plural = "content"
+        unique_together = ('kind','body')
 
 class Container(models.Model):
     hash = models.CharField(max_length=32, unique=True, db_index=True)
     body = models.TextField()
 
     def __unicode__(self):
-        return self.hash
-    
+        return unicode(self.id) + " : " + self.hash
+
+""" Accelerators """
+class TagCount(models.Model):
+    container = models.ForeignKey(Container, blank=True, null=True)
+    page = models.ForeignKey(Page)
+    tag = models.ForeignKey(InteractionNode)
+    count = models.PositiveIntegerField(default=0)
+
     class Meta:
-        ordering = ['id']
+        unique_together = ('container', 'page', 'tag')
+        ordering = ['page','container','count']
+
+class InteractionCount(models.Model):
+    container = models.ForeignKey(Container, blank=True, null=True)
+    page = models.ForeignKey(Page)
+    tag_count = models.PositiveIntegerField(default=0)
+    comment_count = models.PositiveIntegerField(default=0)
+    interaction_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = ('container', 'page')
 
 class Interaction(DateAwareModel, UserAwareModel):
     INTERACTION_TYPES = (

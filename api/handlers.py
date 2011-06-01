@@ -24,12 +24,20 @@ class FeatureHandler(AnonymousBaseHandler):
     model = Feature
     fields = ('feature_type', 'text', 'images', 'flash')
 
-"""
-class InteractionHandler(AnonymousBaseHandler):
-    model = Interaction
-    fields = ('id', 'content', 'user')
+class InteractionCountHandler(AnonymousBaseHandler):
+    model = InteractionCount
+    fields = (
+        'tag_count',
+        'comment_count',
+        'interaction_count'
+    )
 
-"""
+class TagCountHandler(AnonymousBaseHandler):
+    model = TagCount
+    fields = (
+        'count',
+        'tag'
+    )
 
 class InteractionHandler(AnonymousBaseHandler):
     @status_response
@@ -78,7 +86,6 @@ class InteractionHandler(AnonymousBaseHandler):
             return deleteInteraction(interaction, user)
 
 class CommentHandler(InteractionHandler):
-
     def create(self, data, user, page, group):
         comment = data['comment']
         interaction_id = data['int_id']
@@ -99,7 +106,6 @@ class CommentHandler(InteractionHandler):
         return interaction
 
 class TagHandler(InteractionHandler):
-    
     def create(self, data, user, page, group):
         tag = data['tag']['content']
         hash = data['hash']
@@ -125,7 +131,6 @@ class TagHandler(InteractionHandler):
             raise JSONException(u"No tag provided to tag handler")
 
 class CreateContainerHandler(AnonymousBaseHandler):
-    
     @status_response
     def read(self, request):
         result = {}
@@ -139,7 +144,6 @@ class CreateContainerHandler(AnonymousBaseHandler):
         return result
 
 class ContainerHandler(AnonymousBaseHandler):
-    
     @status_response
     def read(self, request):
         known = {}
@@ -147,18 +151,14 @@ class ContainerHandler(AnonymousBaseHandler):
         data = json.loads(request.GET['json'])
         hashes = data['hashes']
         page = data['pageID']
+        containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash'))
 
-        # Force evaluation by making lists
-        containers = list(Container.objects.filter(hash__in=hashes))
-        interactions = list(Interaction.objects.filter(container__in=containers, page=page).select_related('interaction_node'))
-
-        known = getContainers(interactions, containers)
+        known = containerData(containers, page)
         unknown = list(set(hashes) - set(known.keys()))
 
         return dict(known=known, unknown=unknown)
 
 class PageDataHandler(AnonymousBaseHandler):
-
     @status_response
     def read(self, request, pageid=None):
         page = getPage(request, pageid)
