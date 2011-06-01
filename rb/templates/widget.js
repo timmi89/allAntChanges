@@ -1244,10 +1244,6 @@ function readrBoard($R){
                     $indicator_details.css({ 'visiblity':'hidden' }).show();
                     var top_tags = info.top_tags;
                     for ( var j in top_tags ){
-                        
-                        log(top_tags[j])
-                        log(top_tags[j])
-                        log(top_tags[j])
                         var this_tag = top_tags[j],
                         prefix = (j==0) ? "" :  ", ",
                         $tag = $('<strong/>').append(this_tag.tag.body),
@@ -1383,9 +1379,6 @@ function readrBoard($R){
                 //populate reactionPanel
                 $reactionPanel.find('div.rdr_body').append($borderLine, $tagBox);
 
-                log('info in viewcontainerractions');
-                log(info);
-
                 var topTags = (type == "text") ? info.top_tags : info.tags,
                 totalTags = (type == "text") ? info.interaction_counts[0]['interaction_count'] : info.tag_count,
                 totalComs = (type == "text") ? info.interaction_counts[0]['comment_count'] : info.com_count;
@@ -1393,7 +1386,7 @@ function readrBoard($R){
                 ////populate blesed_tags
                 $.each( topTags, function( idx, tag ){
                     var name, percentage, tag_count, com_count;
-                    log(tag)
+
                     if ( type == "text") {
                         //todo: make this naming less confusing
                         name = tag.tag.body;
