@@ -7,10 +7,25 @@ from django.contrib import admin
 
 admin.site.register(Feature)
 admin.site.register(InteractionNode)
-admin.site.register(Content)
+
+class ContentAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'kind',
+        'body',
+    )
 
 class FeatureInline(admin.TabularInline):
     model = Feature
+
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = (
+        'user',
+        'admin',
+        'educated',
+        'interaction_count',
+        'follower_count'
+    )
 
 class GroupAdmin(admin.ModelAdmin):
     fieldsets = (
@@ -110,3 +125,5 @@ admin.site.register(Container, ContainerAdmin)
 admin.site.register(Interaction, InteractionAdmin)
 admin.site.register(SocialUser, SocialUserAdmin)
 admin.site.register(NodeValue, NodeValueAdmin)
+admin.site.register(Content, ContentAdmin)
+admin.site.register(Profile)

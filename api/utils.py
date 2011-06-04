@@ -31,7 +31,7 @@ def getData(interactions, container=None, content=None, data=None):
     if not data: data = {}
     
     if container:
-        interactions = filter(lambda x: x.container==container, interactions)
+        interactions = filter(lambda x: x.container_id==container, interactions)
     elif content:
         interactions = filter(lambda x: x.content==content, interactions)
         data['body'] = content.body
@@ -49,12 +49,12 @@ def getData(interactions, container=None, content=None, data=None):
     if content:
         unique = set((tag.interaction_node for tag in tags))
         data['tags'] = [getTagData(tag, tags, comments) for tag in unique]
-
+    
     return data
 
 def getContainers(interactions, containers):
     data = dict((
-        (container.hash, getData(interactions, container=container)) for container in containers    
+        (container[1], getData(interactions, container=container[0])) for container in containers    
     ))
     return data
 
@@ -89,7 +89,7 @@ def getPage(request, pageid=None):
 def createInteractionNode(body=None):
     if body:
         node = InteractionNode.objects.get_or_create(body=body)[0]
-        print "Success creating InteractionNode with id %s" % node.id
+        print "Success getting/creating InteractionNode with id %s" % node.id
         return node
 
 def isTemporaryUser(user):
@@ -123,55 +123,50 @@ def deleteInteraction(interaction, user):
         if tempuser: return dict(message=message,num_interactions=num_interactions-1)
         return dict(message=message)
 
-def createInteraction(page, container, content, user, kind, interaction_node, group, parent=None):
-    if content and user and kind and interaction_node and page:
-        # Check to see if user has reached their interaction limit
-        tempuser = False
-        if isTemporaryUser(user):
-            num_interactions = checkLimit(user, group)
-            tempuser =True
+def createInteraction(page, container, content, user, kind, interaction_node, group=None, parent=None):
+    # Check to see if user has reached their interaction limit
+    tempuser = False
+    if isTemporaryUser(user):
+        num_interactions = checkLimit(user, group)
+        tempuser =True
 
-        interactions = Interaction.objects.filter(user=user)
+    interactions = Interaction.objects.filter(user=user)
 
-        # Check unique content_id, user_id, page_id, interaction_node_id
-        try:
-            existing = interactions.get(
-                page=page,
-                content=content,
-                interaction_node=interaction_node
-            )
-            print "Found existing Interaction with id %s" % existing.id
-            return dict(id=existing.id)
-        except Interaction.DoesNotExist:
-            pass
+    # Check unique content_id, user_id, page_id, interaction_node_id
+    try:
+        existing = interactions.get(
+            user=user,
+            page=page,
+            content=content,
+            interaction_node=interaction_node,
+            kind=kind
+        )
+        print "Found existing Interaction with id %s" % existing.id
+        return dict(id=existing.id)
+    except Interaction.DoesNotExist:
+        pass
 
-        # Can't rely on Django's auto_now to create the time before storing the node
-        now = datetime.now()
+    if parent:
+        print "Creating Interaction with parent node"
+    else:
+        print "Creating Interaction without parent node"
+        parent = None
+    
+    try:
+        new = Interaction(
+            page=page,
+            container=container,
+            content=content,
+            user=user,
+            kind=kind,
+            interaction_node=interaction_node,
+            parent=parent
+        )
+    except:
+        raise JSONException(u"Error creating interaction object")
 
-        if parent:
-            print "Creating Interaction with parent node"
-            new = Interaction(
-                page=page,
-                container=container,
-                content=content,
-                user=user,
-                kind=kind,
-                interaction_node=interaction_node,
-                created=now,
-                parent=parent
-            )
-        else:
-            print "Creating Interaction without parent node"
-            new = Interaction(
-                page=page,
-                container=container,
-                content=content, 
-                user=user,
-                kind=kind, 
-                interaction_node=interaction_node, 
-                created=now
-            )
-        if new == None: raise JSONException(u"Error creating interaction")
+    if new == None: raise JSONException(u"Error creating interaction")
+    else:
         new.save()
-        if tempuser: return dict(id=new.id, num_interactions=num_interactions+1)
-        return dict(id=new.id)
+    if tempuser: return dict(id=new.id, num_interactions=num_interactions+1)
+    return dict(id=new.id)

@@ -24,13 +24,6 @@ class FeatureHandler(AnonymousBaseHandler):
     model = Feature
     fields = ('feature_type', 'text', 'images', 'flash')
 
-"""
-class InteractionHandler(AnonymousBaseHandler):
-    model = Interaction
-    fields = ('id', 'content', 'user')
-
-"""
-
 class InteractionHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, **kwargs):
@@ -78,7 +71,6 @@ class InteractionHandler(AnonymousBaseHandler):
             return deleteInteraction(interaction, user)
 
 class CommentHandler(InteractionHandler):
-
     def create(self, data, user, page, group):
         comment = data['comment']
         interaction_id = data['int_id']
@@ -99,7 +91,6 @@ class CommentHandler(InteractionHandler):
         return interaction
 
 class TagHandler(InteractionHandler):
-    
     def create(self, data, user, page, group):
         tag = data['tag']['content']
         hash = data['hash']
@@ -125,7 +116,6 @@ class TagHandler(InteractionHandler):
             raise JSONException(u"No tag provided to tag handler")
 
 class CreateContainerHandler(AnonymousBaseHandler):
-    
     @status_response
     def read(self, request):
         result = {}
@@ -139,7 +129,6 @@ class CreateContainerHandler(AnonymousBaseHandler):
         return result
 
 class ContainerHandler(AnonymousBaseHandler):
-    
     @status_response
     def read(self, request):
         known = {}
@@ -149,8 +138,9 @@ class ContainerHandler(AnonymousBaseHandler):
         page = data['pageID']
 
         # Force evaluation by making lists
-        containers = list(Container.objects.filter(hash__in=hashes))
-        interactions = list(Interaction.objects.filter(container__in=containers, page=page).select_related('interaction_node'))
+        containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash'))
+        ids = [container[0] for container in containers]
+        interactions = list(Interaction.objects.filter(container__in=ids, page=page).select_related('interaction_node','content'))
 
         known = getContainers(interactions, containers)
         unknown = list(set(hashes) - set(known.keys()))
@@ -158,7 +148,6 @@ class ContainerHandler(AnonymousBaseHandler):
         return dict(known=known, unknown=unknown)
 
 class PageDataHandler(AnonymousBaseHandler):
-
     @status_response
     def read(self, request, pageid=None):
         page = getPage(request, pageid)
