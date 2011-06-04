@@ -1054,6 +1054,8 @@ function readrBoard($R){
                     	json: JSON.stringify(sendData)
                     },
                     success: function(response) {
+                        log(' sendhashes response')
+                        log(response)
                         var summaries = response.data,
                         unknownContainerHashes = [];
                         //todo: probably do this sorting on the server side and send us a (cached + latest diff) version to us.
@@ -1126,17 +1128,20 @@ function readrBoard($R){
                     console.dir(RDR.content_nodes[hash]);
 
                     var summary = RDR.summaries[hash];
+                    log('summary');
+                    log(summary);
                     console.dir(summary);
 
                     var $container, $indicator, $indicator_details, some_reactions, total, info;
 
                     //todo: prop down var change
                     type = summary.type;
-
+ 
                     //hide indicators and indicatorDetails and show on load.
                     if( type !== 'img' ){
                         $container = $(RDR.group.anno_whitelist+'.rdr-'+hash); // prepend with the anno_whitelist selector
-                        total = summary.counts.tags;
+                        //todo: FIX
+                        total = 0;
 
                         //todo: clean this out.
                         //info = RDR.actions.indicators.sortReactions( hash );
@@ -1163,7 +1168,7 @@ function readrBoard($R){
                         imageData.tags.sort( SortByTagCount );
                         
                         //total = imageData.tag_count;
-                        total = summary.counts.tags;
+                        total = 0;
                         var top_tags = summary.top_interactions.tags;
 
                         $indicator = $('<div class="rdr rdr_indicator rdr_image"></div>').hide();
