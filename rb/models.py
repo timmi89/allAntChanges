@@ -7,6 +7,11 @@ from baseconv import base62
 import datetime
 
 """
+Custom Managers
+"""
+
+
+"""
 Abstract Models
 """
 class DateAwareModel(models.Model):
@@ -108,7 +113,6 @@ class Page(models.Model):
     url = models.URLField(verify_exists=False)
     title = models.TextField(blank=True)
     canonical_url = models.URLField(verify_exists=False, blank=True)
-    interaction_count = models.PositiveIntegerField(default=0)
 
     def __unicode__(self):
         return unicode(self.id)

@@ -58,6 +58,20 @@ def getContainers(interactions, containers):
     ))
     return data
 
+def getTagCounts(interactions, containers=None, content=None, data=None):
+    pass
+
+def getCounts(interactions, containers=None, content=None, data=None):
+    if not data: data = {}
+
+    if containers: interactions = interactions.filter(container__in=containers)
+    if content: interactions = interactions.filter(content__in=content)
+
+    data['tag_count'] = len(interactions.filter(kind='tag'))
+    data['comment_count'] = len(interactions.filter(kind='tag'))
+
+    return data
+
 def interactionNodeCounts(interactions, kinds=[], content=None):
     # Filter interactions for this piece of content and get count data
     counts = []
