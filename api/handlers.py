@@ -142,10 +142,8 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         ids = [container[0] for container in containers]
         interactions = list(Interaction.objects.filter(container__in=ids, page=page).select_related('interaction_node','content'))
 
-        container_summaries = getContainers(interactions, containers)
+        known = getContainers(interactions, containers)
         unknown = list(set(hashes) - set(container_summaries.keys()))
-
-        known['container_summaries'] = container_summaries
 
         return dict(known=known, unknown=unknown)
 
