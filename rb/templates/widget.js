@@ -23,6 +23,10 @@ function readrBoard($R){
 
     // none of this obj's properties are definite.  just jotting down a few ideas.
     RDR = {
+        summaries:{
+            containers:{},
+            tags:{}
+        }
         current: {},
         content_nodes: {},
         groupPermData: {
@@ -1012,7 +1016,7 @@ function readrBoard($R){
                         // add an object with the text and hash to the nodes dictionary
                         if ( !RDR.content_nodes[node_hash] ) {
                             RDR.content_nodes[node_hash] = {};
-                            RDR.content_nodes[node_hash].content = node_text;
+                            RDR.content_nodes[node_hash].body = node_text;
                         }
 
                         // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
@@ -1042,7 +1046,7 @@ function readrBoard($R){
                 log(sendData)
                 // send the data!
                 $.ajax({
-                    url: "/api/containers/",
+                    url: "/api/summary/containers/",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
@@ -1050,17 +1054,46 @@ function readrBoard($R){
                     	json: JSON.stringify(sendData)
                     },
                     success: function(response) {
-                        log('containers call');
-                        var data = $.extend( {}, response.data );
-                        log(data);
+                        var summaries = response.data,
+                        unknownContainerHashes = [];
                         //todo: probably do this sorting on the server side and send us a (cached + latest diff) version to us.
-                        RDR.known = data.known;
-                        $.each(data.known, function(key,val){
-                            //temp fix
-                            if (val.interaction_counts.length){
-                                RDR.actions.indicators.make( key );
-                            }
+                        $.each(summaries, function(hash,summary){
+                            if ( $.isEmptyObject(summary) ){
+                                unknownContainers.push(summary);
+                                return;
+                            }//else
+                            RDR.summaries[hash] = summary;
+                            RDR.actions.indicators.make( hash );
                         })
+                        
+                        if ( unknownContainerHashes.length > 0 ) {
+                            $.each( unknownContainerHashes, function(idx, hash) {
+                                sendData[hash] = RDR.content_nodes[hash];
+                            });
+                            //console.dir(sendData);
+
+                            $.ajax({
+                                url: "/api/containers/create/",
+                                type: "get",
+                                contentType: "application/json",
+                                dataType: "jsonp",
+                                data: {
+                                    json: JSON.stringify(sendData)
+                                },
+                                success: function(response) {
+                                    var summaries = response.data;
+                                    $.each(summaries, function(key,summary){
+                                        RDR.summaries[hash] = summary;
+                                    });
+                                },
+                                error: function(response) {
+                                    //for now, ignore error and carry on with mockup
+                                    console.warn('ajax error');
+                                    console.log(response);
+                                }
+                            });
+                        }
+
 
                         //fade in indicators
                         $('.rdr_indicator').css({
@@ -1072,32 +1105,7 @@ function readrBoard($R){
     					// TODO: Eric, should this go in a jquery queue?
     					var sendData = {};
     					sendData.hashes = {};
-					
-    					if ( data.unknown.length > 0 ) {
-    						$.each( data.unknown, function( index, value ) {
-    							sendData.hashes[value] = RDR.content_nodes[value];
-    						});
-    						//console.dir(sendData);
 
-    						$.ajax({
-                                url: "/api/containers/create/",
-                                type: "get",
-                                contentType: "application/json",
-                                dataType: "jsonp",
-                                data: {
-                                    json: JSON.stringify(sendData)
-                                },
-                                success: function(response) {
-                                    // do nothing?  since we just added this container to the DB for the first time.
-                                    //todo: verify that there weren't any problems.  If there were, do approprate UI (try again, or whatevs)
-                                },
-                                error: function(response) {
-                                    //for now, ignore error and carry on with mockup
-                                    console.warn('ajax error');
-                                    console.log(response);
-                                }
-                            });
-                        }
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
@@ -1114,8 +1122,11 @@ function readrBoard($R){
                     //type is optional - defaults to text
                     
                     // if ( RDR.content_nodes[i].info.com_count + RDR.content_nodes[i].info.tag_count > 0 ) {
-                    console.log('-- what we know about hash '+hash+' --');
+                    console.log('-- what we know about container with hash '+hash+' --');
                     console.dir(RDR.content_nodes[hash]);
+
+                    var summary = RDR.summaries[hash];
+                    console.dir(summary);
 
                     var $container, $indicator, $indicator_details, some_reactions, total, info;
 
