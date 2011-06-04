@@ -26,7 +26,7 @@ function readrBoard($R){
         summaries:{
             containers:{},
             tags:{}
-        }
+        },
         current: {},
         content_nodes: {},
         groupPermData: {
@@ -1176,8 +1176,9 @@ function readrBoard($R){
                         $indicator.append($tagList);
 
                         $this_img.after( $indicator );
-                        
+                        var kill = false;
                         $.each( summary.top_interactions.tags, function(hash, tag){
+                            if(kill) return;
                             prefix = (j==0) ? "" :  ", ",
                             $tag = $('<strong/>').append(tag.body),
                             $count = $('<em/>').append( '('+tag.count+')' );
@@ -1187,7 +1188,7 @@ function readrBoard($R){
                             // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
                             if ( $tagList.width() > $this_img.width() - 58 ) {
                                 $tagList.children().last().html('...').addClass('rdr_see_more');
-                                break;
+                                kill = true;
                             }
                         });
                        
