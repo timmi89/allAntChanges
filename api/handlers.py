@@ -128,7 +128,7 @@ class CreateContainerHandler(AnonymousBaseHandler):
         for container in containers:
             result[container] = Container.objects.get_or_create(
                 hash=container,
-                body=hashes[container]['body']
+                body=containers[container]['body']
             )[1]
         return result
 
