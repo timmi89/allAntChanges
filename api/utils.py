@@ -41,7 +41,7 @@ def getSummary(interactions, container=None, content=None, data=None):
     data['counts'] = counts
     
     if container:
-        tag_counts = dict((
+        tag_counts = dict(( 
             (tag.interaction_node.id, getTagSummary(tag.interaction_node, tags)) for tag in tags
         ))
         sorted_counts = sorted(tag_counts.items(), key=lambda x: x.count, reverse=True)
