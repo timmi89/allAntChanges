@@ -191,9 +191,9 @@ class PageDataHandler(AnonymousBaseHandler):
             toptags=toptags,
             topusers=topusers,
             topshares=topshares,
-            imagedata=imagedata,
-            videodata=videodata,
-            flashdata=flashdata
+            #imagedata=imagedata,
+            #videodata=videodata,
+            #flashdata=flashdata
         )
 
 class SettingsHandler(AnonymousBaseHandler):
