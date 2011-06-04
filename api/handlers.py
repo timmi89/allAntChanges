@@ -119,16 +119,16 @@ class CreateContainerHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request):
         result = {}
-        data = json.loads(request.GET['json'])
-        hashes = data['hashes']
-        for hash in hashes:
-            result[hash] = Container.objects.get_or_create(
-                hash=hash,
-                body=hashes[hash]['content']
+        containers = json.loads(request.GET['json'])
+        
+        for container in containers:
+            result[container] = Container.objects.get_or_create(
+                hash=container,
+                body=hashes[container]['body']
             )[1]
         return result
 
-class ContainerHandler(AnonymousBaseHandler):
+class ContainerSummaryHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request):
         known = {}
@@ -142,8 +142,10 @@ class ContainerHandler(AnonymousBaseHandler):
         ids = [container[0] for container in containers]
         interactions = list(Interaction.objects.filter(container__in=ids, page=page).select_related('interaction_node','content'))
 
-        known = getContainers(interactions, containers)
-        unknown = list(set(hashes) - set(known.keys()))
+        container_summaries = getContainers(interactions, containers)
+        unknown = list(set(hashes) - set(container_summaries.keys()))
+
+        known['container_summaries'] = container_summaries
 
         return dict(known=known, unknown=unknown)
 
