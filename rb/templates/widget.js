@@ -1130,11 +1130,13 @@ function readrBoard($R){
 
                     var $container, $indicator, $indicator_details, some_reactions, total, info;
 
+                    //todo: prop down var change
+                    type = summary.type;
+
                     //hide indicators and indicatorDetails and show on load.
                     if( type !== 'img' ){
                         $container = $(RDR.group.anno_whitelist+'.rdr-'+hash); // prepend with the anno_whitelist selector
-                        info = RDR.known[hash];
-                        total = info.interaction_counts[0]['interaction_count'];
+                        total = summary.counts.tags;
 
                         //todo: clean this out.
                         //info = RDR.actions.indicators.sortReactions( hash );
@@ -1146,19 +1148,23 @@ function readrBoard($R){
                         //todo: this is all a temp hack.  Consolodate this code!
                         var $this_img, $tagList, imageData;
 
+                        /*
                         $.each(RDR.page.imagedata, function(i,v){
                             if(v.hash == hash){
                                 imageData = v;
                             }
                         });
-
-                        $this_img = $('img[src$="' + imageData.body + '"]')
+                        */
+                        //todo: prop down this change var change
+                        
+                        $this_img = $('img[src$="' + summary.body + '"]')
 
                         function SortByTagCount(a,b) { return b.count - a.count; }
                         imageData.tags.sort( SortByTagCount );
                         
-                        total = imageData.tag_count;
-                        some_reactions = imageData.tags;
+                        //total = imageData.tag_count;
+                        total = summary.counts.tags;
+                        var top_tags = summary.top_interactions.tags;
 
                         $indicator = $('<div class="rdr rdr_indicator rdr_image"></div>').hide();
                         $indicator.append(
@@ -1171,11 +1177,10 @@ function readrBoard($R){
 
                         $this_img.after( $indicator );
                         
-                        for ( var j in imageData.tags ){
-                            var this_tag = imageData.tags[j],
+                        $.each( summary.top_interactions.tags, function(hash, tag){
                             prefix = (j==0) ? "" :  ", ",
-                            $tag = $('<strong/>').append(this_tag.tag),
-                            $count = $('<em/>').append( '('+this_tag.count+')' );
+                            $tag = $('<strong/>').append(tag.body),
+                            $count = $('<em/>').append( '('+tag.count+')' );
                             
                             $tagList.append( $('<span />').append( prefix, $tag, $count) );
                             
@@ -1184,7 +1189,7 @@ function readrBoard($R){
                                 $tagList.children().last().html('...').addClass('rdr_see_more');
                                 break;
                             }
-                        }
+                        });
                        
                         $indicator.data({ 'which':hash, 'imageData':imageData })//chain
                         .click( function() {
