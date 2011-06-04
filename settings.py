@@ -143,7 +143,7 @@ INSTALLED_APPS = (
     'piston',
     'south',
     'treebeard',
-    #'debug_toolbar',
+    'debug_toolbar',
     'autofixture',
     'django_extensions',
     'devserver'

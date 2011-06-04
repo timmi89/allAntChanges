@@ -44,7 +44,7 @@ def getSummary(interactions, container=None, content=None, data=None):
         tag_counts = dict((
             (tag.interaction_node.id, getTagSummary(tag.interaction_node, tags)) for tag in tags
         ))
-        sorted_counts = sorted(tag_counts.items(), key=lambda x: x.count, reverse=True)
+        sorted_counts = sorted(tag_counts.items(), key=lambda x: x[1].count, reverse=True)
         top_tags = dict((
             tag for tag in sorted_counts[:5]
         ))
