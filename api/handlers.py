@@ -166,7 +166,10 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         grouped_interactions = interactions.values('container','kind').order_by()
         interaction_counts = grouped_interactions.annotate(count=Count('kind'))
 
-        top_tags = interactions.values('interaction_node').order_by().annotate(count=Count('interaction_node'))
+        tags = interactions.filter(kind='tag').values('container','interaction_node').order_by()
+        tag_counts = tags.annotate(count=Count('interaction_node'))
+        top_tags = tag_counts.order_by('-count')
+
         top_tag_ids = top_tags.values_list('interaction_node')
         interaction_nodes = InteractionNode.objects.filter(id__in=top_tag_ids)
 
