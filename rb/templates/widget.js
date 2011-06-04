@@ -29,6 +29,7 @@ function readrBoard($R){
         },
         current: {},
         content_nodes: {},
+        containers:{},
         groupPermData: {
             group_id : "{{ group_id }}",  //make group_id a string partly to make my IDE happy - getting sent as ajax anyway
             short_name : "{{ short_name }}"
@@ -994,38 +995,51 @@ function readrBoard($R){
                 
                 // snag all the nodes that we can set icons next to and send'em next
                 // TODO: restrict this to the viewport + a few, rather than all
-                var content_nodes = $( RDR.group.anno_whitelist ).not('.rdr-hashed');
 
-                content_nodes.each( function() {
-
+                //setup text nodes
+                //todo: think about .not('img') here
+                var $textNodes = $( RDR.group.anno_whitelist ).not('.rdr-hashed').not('img');
+                $textNodes.each( function() {
                     // get the node's text and smash case
                     // TODO: <br> tags and block-level tags can screw up words.  ex:
                     // hello<br>how are you?   here becomes
                     // hellohow are you?    <-- no space where the <br> was.  bad.
                     var node_text = $(this).html().replace(/< *br *\/?>/gi, '\n');
-                    node_text = $.trim( $( "<div>" + node_text + "</div>" ).text().toLowerCase() );
-
-                    // if there's any content...
-                    if ( node_text && node_text!="undefined" && node_text.length > 5 ) {
-                        // clean whitespace
-                        node_text = RDR.util.cleanPara ( node_text );
-
-                        // hash the text
-                        var node_hash = RDR.util.md5.hex_md5( node_text );
-
-                        // add an object with the text and hash to the nodes dictionary
-                        if ( !RDR.content_nodes[node_hash] ) {
-                            RDR.content_nodes[node_hash] = {};
-                            RDR.content_nodes[node_hash].body = node_text;
-                        }
-
-                        // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
-                        // this makes it easy to find on the page later
-                        $(this).addClass( 'rdr-' + node_hash ).addClass('rdr-hashed');
-						$(this).data('hash', node_hash);
-                    }
+                    var body = $.trim( $( "<div>" + node_text + "</div>" ).text().toLowerCase() );
+                    body = RDR.util.cleanPara( body );
+                    $(this).data('body',body);
                 });
 
+
+                //todo: implement black list
+                var $imgNodes = $( RDR.group.img_selector ).not('.rdr-hashed');
+                $imgNodes.each( function() {
+                    var body = $(this).attr('src');
+                    $(this).data('body',body);
+                });
+
+                $nodes = $textNodes.add($imgNodes);
+                log($nodes)
+                $nodes.each(function(){
+                    var body = $(this).data('body'),
+                    type = $(this)[0].tagName.toLowerCase(),
+                    hashText = "rdr-"+type+"-"+body, //rdr-img-dailycandy.com/image/cake.jpg || rdr-p-ohshitthisissomecrazytextupinthisparagraph
+                    hash = RDR.util.md5.hex_md5( hashText );
+                    // add an object with the text and hash to the nodes dictionary
+                    if ( !RDR.content_nodes[hash] ) {
+                        RDR.content_nodes[hash] = {
+                            body:body,
+                            type:type
+                        };
+                    }
+
+                    // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
+                    // this makes it easy to find on the page later
+                    $(this).addClass( 'rdr-' + hash ).addClass('rdr-hashed');
+                    $(this).data('hash', hash);                   
+                    
+                });
+                
                 RDR.actions.sendHashes();
             },
             sendHashes: function() {
@@ -1056,24 +1070,18 @@ function readrBoard($R){
                     success: function(response) {
                         log(' sendhashes response')
                         log(response)
-                        var summaries = response.data,
-                        unknownContainerHashes = [];
-                        //todo: probably do this sorting on the server side and send us a (cached + latest diff) version to us.
-                        $.each(summaries, function(hash,summary){
-                            if ( $.isEmptyObject(summary) ){
-                                unknownContainers.push(summary);
-                                return;
-                            }//else
-                            RDR.summaries[hash] = summary;
-                            RDR.actions.indicators.make( hash );
-                        })
+                        var summaries = response.data.known,
+                        unknownList = response.data.unknown;
                         
-                        if ( unknownContainerHashes.length > 0 ) {
-                            $.each( unknownContainerHashes, function(idx, hash) {
+                        RDR.actions.summaries.save(summaries);
+
+                        if ( unknownList.length > 0 ) {
+                            var sendData = {};
+                            $.each( unknownList, function(idx, hash) {
                                 sendData[hash] = RDR.content_nodes[hash];
                             });
-                            //console.dir(sendData);
-
+                            log('sendDatasendDatasendDatasendData')
+                            log(sendData)
                             $.ajax({
                                 url: "/api/containers/create/",
                                 type: "get",
@@ -1083,10 +1091,10 @@ function readrBoard($R){
                                     json: JSON.stringify(sendData)
                                 },
                                 success: function(response) {
-                                    var summaries = response.data;
-                                    $.each(summaries, function(key,summary){
-                                        RDR.summaries[hash] = summary;
-                                    });
+                                    log('responseresponseresponse')
+                                    log(response)
+                                    //var newfoundSummaries = response.data;                                    
+                                    //RDR.actions.summaries.save(newfoundSummaries);
                                 },
                                 error: function(response) {
                                     //for now, ignore error and carry on with mockup
@@ -1096,18 +1104,8 @@ function readrBoard($R){
                             });
                         }
 
-
-                        //fade in indicators
-                        $('.rdr_indicator').css({
-                            'opacity':'0',
-                            'display':'inline'
-                        }).fadeTo('300', '0.4');
-
-                        
-    					// TODO: Eric, should this go in a jquery queue?
-    					var sendData = {};
-    					sendData.hashes = {};
-
+                        //todo: account for newbie pins
+                        RDR.actions.indicators.show();
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
@@ -1117,8 +1115,12 @@ function readrBoard($R){
                 });
             },
             indicators: {
-                stack: {
-                        
+                show: function(){
+                    //fade in indicators
+                    $('.rdr_indicator').css({
+                        'opacity':'0',
+                        'display':'inline'
+                    }).fadeTo('300', '0.4');
                 },
                 make: function(hash, type){
                     //type is optional - defaults to text
@@ -1136,12 +1138,11 @@ function readrBoard($R){
 
                     //todo: prop down var change
                     type = summary.type;
- 
+
                     //hide indicators and indicatorDetails and show on load.
                     if( type !== 'img' ){
                         $container = $(RDR.group.anno_whitelist+'.rdr-'+hash); // prepend with the anno_whitelist selector
-                        //todo: FIX
-                        total = 0;
+                        total = summary.counts.tags;
 
                         //todo: clean this out.
                         //info = RDR.actions.indicators.sortReactions( hash );
@@ -1168,7 +1169,7 @@ function readrBoard($R){
                         imageData.tags.sort( SortByTagCount );
                         
                         //total = imageData.tag_count;
-                        total = 0;
+                        total = summary.counts.tags;
                         var top_tags = summary.top_interactions.tags;
 
                         $indicator = $('<div class="rdr rdr_indicator rdr_image"></div>').hide();
@@ -1340,9 +1341,14 @@ function readrBoard($R){
                     //todo: consider showing just tags here and simplifying
 
                     return info;
-                },
-                summaryToggle:{
-                    
+                }
+            },
+            summaries:{
+                save: function(summaries){
+                    $.each(summaries, function(hash,summary){
+                        RDR.summaries[hash] = summary;
+                        RDR.actions.indicators.make( hash );
+                    });
                 }
             },
             insertContainerIcon: function( hash ) {},
