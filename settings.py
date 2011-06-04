@@ -17,16 +17,30 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': {
-        'ENGINE':   'django.db.backends.sqlite3',
-        'NAME':     'readrdb.db',
-        'USER':     '',
-        'PASSWORD': '',
-        'HOST':     '', 
-        'PORT':     '', 
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE':   'django.db.backends.sqlite3',
+            'NAME':     'readrdb.db',
+            'USER':     '',
+            'PASSWORD': '',
+            'HOST':     '', 
+            'PORT':     '', 
+            }
     }
-}
+
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     '',
+            'PASSWORD': '',
+            'HOST':     'localhost',
+            'PORT':     '3306',
+            }
+    }
+
 
 #CACHES = {
 #    'default': {
@@ -129,9 +143,23 @@ INSTALLED_APPS = (
     'treebeard',
     'debug_toolbar',
     'autofixture',
-    #'django_extensions',
-    'devserver',
+    'django_extensions',
+    'devserver'
 )
+
+DEVSERVER_MODULES = (
+    'devserver.modules.sql.SQLRealTimeModule',
+    'devserver.modules.sql.SQLSummaryModule',
+    'devserver.modules.profile.ProfileSummaryModule',
+
+    # Modules not enabled by default
+    #'devserver.modules.ajax.AjaxDumpModule',
+    #'devserver.modules.profile.MemoryUseModule',
+    #'devserver.modules.cache.CacheSummaryModule',
+    #'devserver.modules.profile.LineProfilerModule',
+)
+
+DEVSERVER_IGNORED_PREFIXES = ['/media', '/uploads']
 
 # for get_profile()
 AUTH_PROFILE_MODULE = 'rb.Profile'

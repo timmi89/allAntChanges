@@ -24,21 +24,6 @@ class FeatureHandler(AnonymousBaseHandler):
     model = Feature
     fields = ('feature_type', 'text', 'images', 'flash')
 
-class InteractionCountHandler(AnonymousBaseHandler):
-    model = InteractionCount
-    fields = (
-        'tag_count',
-        'comment_count',
-        'interaction_count'
-    )
-
-class TagCountHandler(AnonymousBaseHandler):
-    model = TagCount
-    fields = (
-        'count',
-        'tag'
-    )
-
 class InteractionHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, **kwargs):
@@ -151,9 +136,13 @@ class ContainerHandler(AnonymousBaseHandler):
         data = json.loads(request.GET['json'])
         hashes = data['hashes']
         page = data['pageID']
-        containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash'))
 
-        known = containerData(containers, page)
+        # Force evaluation by making lists
+        containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash'))
+        ids = [container[0] for container in containers]
+        interactions = list(Interaction.objects.filter(container__in=ids, page=page).select_related('interaction_node','content'))
+
+        known = getContainers(interactions, containers)
         unknown = list(set(hashes) - set(known.keys()))
 
         return dict(known=known, unknown=unknown)

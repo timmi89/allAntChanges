@@ -131,7 +131,7 @@ class Content(DateAwareModel):
     
     class Meta:
         verbose_name_plural = "content"
-        unique_together = ('kind','body')
+        #unique_together = ('kind','body')
 
 class Container(models.Model):
     hash = models.CharField(max_length=32, unique=True, db_index=True)
@@ -139,27 +139,6 @@ class Container(models.Model):
 
     def __unicode__(self):
         return unicode(self.id) + " : " + self.hash
-
-""" Accelerators """
-class TagCount(models.Model):
-    container = models.ForeignKey(Container, blank=True, null=True)
-    page = models.ForeignKey(Page)
-    tag = models.ForeignKey(InteractionNode)
-    count = models.PositiveIntegerField(default=0)
-
-    class Meta:
-        unique_together = ('container', 'page', 'tag')
-        ordering = ['page','container','count']
-
-class InteractionCount(models.Model):
-    container = models.ForeignKey(Container, blank=True, null=True)
-    page = models.ForeignKey(Page)
-    tag_count = models.PositiveIntegerField(default=0)
-    comment_count = models.PositiveIntegerField(default=0)
-    interaction_count = models.PositiveIntegerField(default=0)
-
-    class Meta:
-        unique_together = ('container', 'page')
 
 class Interaction(DateAwareModel, UserAwareModel):
     INTERACTION_TYPES = (
@@ -206,7 +185,7 @@ class Link(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User)
-    admin = models.ForeignKey(Group)
+    group_admin = models.ForeignKey(Group, blank=True, null=True)
     educated = models.BooleanField()
     
 class SocialUser(models.Model):
