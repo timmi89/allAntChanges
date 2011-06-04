@@ -24,6 +24,10 @@ class FeatureHandler(AnonymousBaseHandler):
     model = Feature
     fields = ('feature_type', 'text', 'images', 'flash')
 
+class ContainerHandler(AnonymousBaseHandler):
+    model = Container
+    fields = ('id', 'hash')
+
 class InteractionHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, **kwargs):
@@ -127,7 +131,7 @@ class CreateContainerHandler(AnonymousBaseHandler):
                 body=hashes[container]['body']
             )[1]
         return result
-
+"""
 class ContainerSummaryHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request):
@@ -146,6 +150,27 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         unknown = list(set(hashes) - set(known.keys()))
 
         return dict(known=known, unknown=unknown)
+
+"""
+class ContainerSummaryHandler(AnonymousBaseHandler):
+    @status_response
+    def read(self, request):
+        known = {}
+
+        data = json.loads(request.GET['json'])
+        hashes = data['hashes']
+        page = data['pageID']
+
+        containers = Container.objects.filter(hash__in=hashes)
+        interactions = Interaction.objects.filter(container__in=containers)
+        grouped_interactions = interactions.values('container','kind').order_by()
+        interaction_counts = grouped_interactions.annotate(count=Count('kind'))
+
+        top_tags = interactions.values('interaction_node').order_by().annotate(count=Count('interaction_node'))
+        top_tag_ids = top_tags.values_list('interaction_node')
+        interaction_nodes = InteractionNode.objects.filter(id__in=top_tag_ids)
+
+        return dict(containers=containers, interaction_nodes=interaction_nodes, counts=interaction_counts, top_tags=top_tags)
 
 class PageDataHandler(AnonymousBaseHandler):
     @status_response
