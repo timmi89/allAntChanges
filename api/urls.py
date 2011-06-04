@@ -6,7 +6,7 @@ from api.auth_handlers import *
 
 Settings = Resource(handler=SettingsHandler)
 PageData = Resource(handler=PageDataHandler)
-Containers = Resource(handler=ContainerHandler)
+Containers = Resource(handler=ContainerSummaryHandler)
 CreateContainers = Resource(handler=CreateContainerHandler)
 Tag = Resource(handler=TagHandler)
 Comment = Resource(handler=CommentHandler)
@@ -39,9 +39,9 @@ urlpatterns = patterns('',
     # Widget
     url(r'^page/', PageData),
     url(r'^containers/create/', CreateContainers),
-    url(r'^containers/', Containers),
-    url(r'^tag/create', Tag, kwargs={'action':'create'}),
-    url(r'^tag/delete', Tag, kwargs={'action':'delete'}),
+    url(r'^summary/containers/', Containers),
+    url(r'^tag/create/', Tag, kwargs={'action':'create'}),
+    url(r'^tag/delete/', Tag, kwargs={'action':'delete'}),
     #url(r'^tags/(\d*)', Tags),
     url(r'^comment/create/', Comment, kwargs={'action':'create'}),
     #url(r'^comments/', Comments),
