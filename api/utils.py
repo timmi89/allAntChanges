@@ -24,10 +24,13 @@ def getTagSummary(tag, tags):
 def getSummary(interactions, container=None, content=None, data=None):
     if not data: data = {}
     counts = {}
-    
+    data['kind'] = content[2] if content else container[2]
+
     if container:
+        container = container[0]
         interactions = filter(lambda x: x.container_id==container, interactions)
     elif content:
+        content = content[0]
         interactions = filter(lambda x: x.content_id==content, interactions)
     
     # Filter tag and comment interactions
@@ -55,13 +58,13 @@ def getSummary(interactions, container=None, content=None, data=None):
 
 def getContainerSummaries(interactions, containers):
     data = dict((
-        (container[1], getSummary(interactions, container=container[0])) for container in containers    
+        (container[1], getSummary(interactions, container=container)) for container in containers    
     ))
     return data
 
 def getContentSummaries(interactions, content):
     data = dict((
-        (content_item[1], getSummary(interactions, content=content_item[0])) for content_item in content    
+        (content_item[1], getSummary(interactions, content=content_item)) for content_item in content    
     ))
     return data
 

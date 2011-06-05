@@ -147,7 +147,7 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         page = data['pageID']
 
         # Force evaluation by making lists
-        containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash'))
+        containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash','kind'))
         ids = [container[0] for container in containers]
         interactions = list(Interaction.objects.filter(container__in=ids, page=page).select_related('interaction_node','content'))
 
