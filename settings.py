@@ -116,7 +116,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
     #'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
@@ -143,9 +143,9 @@ INSTALLED_APPS = (
     'piston',
     'south',
     'treebeard',
-    'debug_toolbar',
+    #'debug_toolbar',
     'autofixture',
-    'django_extensions',
+    #'django_extensions',
     #'devserver'
 )
 
