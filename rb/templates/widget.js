@@ -1431,7 +1431,7 @@ function readrBoard($R){
                 rindow.find('div.rdr_contentSpace').empty();  // empty this out in case it's just repositioning the rindow.
 
                 rindow.css({width:'200px'});
-                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new rdr_'+kind+'_reactions" />'),
+                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new rdr_reactions" />'),
                     $reactionPanel = $('<div class="rdr_reactionPanel rdr_read rdr_sntPnl" />'),
                     $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
@@ -1718,8 +1718,8 @@ function readrBoard($R){
 
                 // build the ratePanel
 
-                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new rdr_'+kind+'_reactions" />'),
-                    $reactionPanel = $('<div class="rdr_reactionPanel rdr_read rdr_sntPnl" />'),
+                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new rdr_reactions" />'),
+                    $reactionPanel = $('<div class="rdr_reactionPanel  rdr_sntPnl" />'),
                     $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
                     $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),

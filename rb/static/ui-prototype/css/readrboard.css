@@ -219,19 +219,21 @@ div.rdr ul.rdr_tags li	            { border-color: transparent; border-style: so
 div.rdr ul.rdr_tags li:hover,
 div.rdr ul.rdr_tags li.rdr_selected               {color:#008be4; background:#e4f0f7; display:block; border-color: #bbb transparent #ddd; cursor: pointer;}
 
-div.rdr ul.rdr_tags li .rdr_leftBox     {width:38px; letter-spacing:1px; overflow:hidden; float:left; text-align:center; font-size:21px; padding-top:2px;}
+div.rdr ul.rdr_tags li .rdr_leftBox     {width:38px; letter-spacing:1px; overflow:hidden; float:left; text-align:center; font-size:21px; padding-top:2px; height:28px;}
 div.rdr ul.rdr_tags li .rdr_rightBox     {width:30px; padding:0 3px; height:30px; overflow:hidden; float:right; text-align:left; background:url(/static/images/widget_icons.png) -5000px 0px no-repeat;}
+
 div.rdr ul.rdr_tags li.rdr_has_comment .rdr_rightBox     {background:url(/static/images/widget_icons.png) -107px -4px no-repeat;}
 div.rdr div.rdr_read ul.rdr_tags li .rdr_leftBox     {color:#008be4;}
 
 div.rdr ul.rdr_tags li:hover .rdr_leftBox,
 div.rdr ul.rdr_tags li.rdr_tagged div.rdr_leftBox   {background:url(/static/images/widget_icons.png) 0px 0px no-repeat; }
+
+/*clear for readmode*/
 div.rdr div.rdr_read ul.rdr_tags li:hover div.rdr_leftBox,
 div.rdr div.rdr_read ul.rdr_tags li.rdr_tagged div.rdr_leftBox   {background-image:none; color:#008be4; }
-div.rdr ul.rdr_tags li.rdr_selected                 {}
 
-div.rdr div.rdr_text_reactions  ul.rdr_tags li:hover .rdr_rightBox,
-div.rdr div.rdr_image_reactions  ul.rdr_tags li.rdr_has_comment:hover .rdr_rightBox          {background:url(/static/images/widget_icons.png) -142px -4px no-repeat;}
+div.rdr div.rdr_reactions  ul.rdr_tags li:hover .rdr_rightBox {background:url(/static/images/widget_icons.png) -142px -4px no-repeat;}
+
 div.rdr ul.rdr_tags li.rdr_selected .rdr_rightBox   {background:url(/static/images/widget_icons.png) -36px -4px no-repeat !important;}
 div.rdr ul.rdr_tags li.rdr_selected .rdr_leftBox:hover,
 div.rdr ul.rdr_tags li.rdr_tagged .rdr_leftBox:hover    {background-position:-72px 0px;}
