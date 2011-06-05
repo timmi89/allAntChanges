@@ -74,19 +74,19 @@ class Feature(models.Model):
 class Group(models.Model):
     name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=25, unique=True)
-    language = models.CharField(max_length=25,default="en")
+    language = models.CharField(max_length=25, default="en")
     blessed_tags = models.ManyToManyField(InteractionNode)
 
     # black/whitelist fields
-    anno_whitelist = models.CharField(max_length=255,blank=True,default=u"p")
-    img_whitelist = models.CharField(max_length=255,blank=True)
-    img_blacklist = models.CharField(max_length=255,blank=True)
-    no_readr = models.CharField(max_length=255,blank=True)
+    anno_whitelist = models.CharField(max_length=255, blank=True, default=u"p,img")
+    img_whitelist = models.CharField(max_length=255, blank=True)
+    img_blacklist = models.CharField(max_length=255, blank=True)
+    no_readr = models.CharField(max_length=255, blank=True)
     
     # logo fields
-    logo_url_sm = models.URLField(blank=True,verify_exists=False)
-    logo_url_med = models.URLField(blank=True,verify_exists=False)
-    logo_url_lg = models.URLField(blank=True,verify_exists=False)
+    logo_url_sm = models.URLField(blank=True, verify_exists=False)
+    logo_url_med = models.URLField(blank=True, verify_exists=False)
+    logo_url_lg = models.URLField(blank=True, verify_exists=False)
 
     # features
     share = models.ForeignKey(Feature, related_name = 'Share Feature')
