@@ -1022,8 +1022,8 @@ function readrBoard($R){
                 $nodes = $textNodes.add($imgNodes);
                 $nodes.each(function(){
                     var body = $(this).data('body'),
-                    type = $(this)[0].tagName.toLowerCase(),
-                    hashText = "rdr-"+type+"-"+body, //rdr-img-dailycandy.com/image/cake.jpg || rdr-p-ohshitthisissomecrazytextupinthisparagraph
+                    kind = $(this)[0].tagName.toLowerCase(),
+                    hashText = "rdr-"+kind+"-"+body, //rdr-img-dailycandy.com/image/cake.jpg || rdr-p-ohshitthisissomecrazytextupinthisparagraph
                     hash = RDR.util.md5.hex_md5( hashText );
 
                     if ( RDR.content_nodes[hash] ) return
@@ -1032,7 +1032,7 @@ function readrBoard($R){
                     // add an object with the text and hash to the nodes dictionary
                     RDR.content_nodes[hash] = {
                         body:body,
-                        type:"type"
+                        kind:kind
                     };
                 
                     // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
@@ -1115,8 +1115,8 @@ function readrBoard($R){
                         'display':'inline'
                     }).fadeTo('300', '0.4');
                 },
-                make: function(hash, type){
-                    //type is optional - defaults to text
+                make: function(hash, kind){
+                    //kind is optional - defaults to text
                     
                     // if ( RDR.content_nodes[i].info.com_count + RDR.content_nodes[i].info.tag_count > 0 ) {
                     //console.log('-- what we know about container with hash '+hash+' --');
@@ -1124,13 +1124,13 @@ function readrBoard($R){
 
                     var summary = RDR.summaries[hash];
 
-                    var $container, $indicator, $indicator_details, some_reactions, total, info, top_tags, type;
+                    var $container, $indicator, $indicator_details, some_reactions, total, info, top_tags, kind;
 
                     //todo: prop down var change
-                    type = summary.type;
+                    kind = summary.kind;
                     top_tags = summary.top_interactions.tags;
                     //hide indicators and indicatorDetails and show on load.
-                    if( type !== 'img' ){
+                    if( kind !== 'img' ){
                         $container = $(RDR.group.anno_whitelist+'.rdr-'+hash); // prepend with the anno_whitelist selector
                         total = summary.counts.tags;
 
@@ -1189,7 +1189,7 @@ function readrBoard($R){
                        
                         $indicator.data({ 'which':hash, 'imageData':imageData })//chain
                         .click( function() {
-                            RDR.actions.viewContainerReactions( {icon:$indicator, type:"image"} );
+                            RDR.actions.viewContainerReactions( {icon:$indicator, kind:"image"} );
                             return false;
                         })//chain
                         .hover(
@@ -1254,7 +1254,6 @@ function readrBoard($R){
 
                     //build tags in $tagList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
                     $indicator_details.css({ 'visiblity':'hidden' }).show();
-                    log('start')
                     for ( var j in top_tags ){
                         log( top_tags[j] )
                         var this_tag = top_tags[j],
@@ -1269,11 +1268,10 @@ function readrBoard($R){
                             break;
                         }                      
                     }
-                    log('end')
                     $indicator_details.css({ 'visiblity':'visible' }).hide();
 
                     $indicator_details.click( function() {
-                        RDR.actions.viewContainerReactions( {icon:$indicator, type:"text"} );
+                        RDR.actions.viewContainerReactions( {icon:$indicator, kind:"text"} );
                     })//chain
                     .hover(
                         function() {
@@ -1347,17 +1345,20 @@ function readrBoard($R){
 
                 var icon = args.icon,
                     which = args.icon.data('which'),
-                    type = args.type,
+                    kind = args.kind,
                     tempLock = args.tempLock;
-                
+                log()
+                var summary = RDR.summaries[which];
+                log('summary in viewcontentreactions');
+                log(summary);
                 function SortByTagCount(a,b) { return b.count - a.count; }
 
 
-                if (args.type == "text") {
+                if (args.kind == "text") {
                     var info = icon.data('info'),
                     selector = RDR.group.anno_whitelist+".rdr-" + which;
 
-                } else if (args.type == "image") {
+                } else if (args.kind == "image") {
                     //todo: this is a temp fix - consolodate.
                     var info = icon.data('imageData');
                     var selector = "";
@@ -1377,14 +1378,14 @@ function readrBoard($R){
                 rindow.find('div.rdr_contentSpace').empty();  // empty this out in case it's just repositioning the rindow.
 
                 rindow.css({width:'200px'});
-                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new rdr_'+type+'_reactions" />'),
+                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new rdr_'+kind+'_reactions" />'),
                     $reactionPanel = $('<div class="rdr_reactionPanel rdr_read rdr_sntPnl" />'),
                     $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
                     $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
                     $borderLine = $('<div class="rdr_borderLine" />');
                 
-                var headers = ["Reactions <span>("+(info.count)+")</span>", "", ""];  // removing comment count for now +info.com_count
+                var headers = ["Reactions <span>("+(summary.counts.tags)+")</span>", "", ""];  // removing comment count for now +info.com_count
                 $sentimentBox.append($reactionPanel, $contentPanel, $whyPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
                     var $header = $('<div class="rdr_header" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
@@ -1398,38 +1399,20 @@ function readrBoard($R){
                 //populate reactionPanel
                 $reactionPanel.find('div.rdr_body').append($borderLine, $tagBox);
 
-                var topTags = (type == "text") ? info.top_tags : info.tags,
-                totalTags = (type == "text") ? info.interaction_counts[0]['interaction_count'] : info.tag_count,
-                totalComs = (type == "text") ? info.interaction_counts[0]['comment_count'] : info.com_count;
+
+                var topTags = summary.top_interactions.tags,
+                totalTags = summary.counts.tags,
+                totalComs = summary.counts.coms;
 
                 ////populate blesed_tags
-                $.each( topTags, function( idx, tag ){
-                    var name, percentage, tag_count, com_count;
-
-                    if ( type == "text") {
-                        //todo: make this naming less confusing
-                        name = tag.tag.body;
-                        id = tag.tag.id;
-                        tag_count = tag.count;
-                        com_count = 0; //todo: add com counts
-
-                    } else if ( type == "image" ) {
-                        name = tag.tag;
-                        id = tag.id;
-                        tag_count = tag.count;
-                        com_count = 0; //todo: add com counts 
-                    }
-                    
-                    percentage = Math.round( ( tag_count/totalTags ) * 100);                    
-                    
+                $.each( topTags, function( tagID, tag ){
+                    var percentage = Math.round( ( tag.count/totalTags ) * 100);                    
                     if ( name ) {
-
-                        var $li = $('<li class="rdr_tag_'+id+'" />').data({
+                        var $li = $('<li class="rdr_tag_'+tagID+'" />').data({
                             'tag':{
                                 id:parseInt( id ),
-                                name:name,
-                                count:tag_count,
-                                com_count:com_count
+                                name:tag.body,
+                                count:tag.count
                             },
                             'which':which
                         }),
@@ -1438,7 +1421,7 @@ function readrBoard($R){
                         $rightBox = '<div class="rdr_rightBox" />';
 
                         $li.append($leftBox,$tagText,$rightBox);
-                        if ( com_count > 0 ) $li.addClass('rdr_has_comment');
+                        if ( summary.counts > 0 ) $li.addClass('rdr_has_comment');
                         $tagBox.children('ul.rdr_tags').append($li);
                     }
                 });
@@ -1455,7 +1438,7 @@ function readrBoard($R){
                     RDR.rindow.checkHeight( rindow, 0, "reactionPanel" );
 
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
-                    if ( type == "text") {
+                    if ( kind == "text") {
                         rindow.find('ul.rdr_preselected li').bind('click', function() {
                             var $this = $(this);
                             if ( !$this.hasClass('rdr_customTagBox') ) {
@@ -1651,9 +1634,9 @@ function readrBoard($R){
                         }
                     }
 
-                    var type = "text";
+                    var kind = "text";
                 } else {
-                    var type = "image";
+                    var kind = "image";
                 }
             
                 var rindow = RDR.rindow.draw({
@@ -1672,7 +1655,7 @@ function readrBoard($R){
 
                 // build the ratePanel
 
-                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new rdr_'+type+'_reactions" />'),
+                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new rdr_'+kind+'_reactions" />'),
                     $reactionPanel = $('<div class="rdr_reactionPanel rdr_read rdr_sntPnl" />'),
                     $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
@@ -2075,7 +2058,7 @@ function readrBoard($R){
                                     }
                                 } else {
                                     if ( element.length == 1 ) {
-                                        RDR.actions.updateData( { type:"tag", element:element, hash:container, rindow:rindow, content:content, tag:tag });
+                                        RDR.actions.updateData( { kind:"tag", element:element, hash:container, rindow:rindow, content:content, tag:tag });
 
                                         if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
                                         else RDR.session.showLoginPanel( args );
@@ -2094,7 +2077,7 @@ function readrBoard($R){
                 });
             },
             updateData: function(args) {
-                if ( args.type == "tag" ) {
+                if ( args.kind == "tag" ) {
                     var rindow = args.rindow,
                         hash = args.hash,
                         content = args.content
