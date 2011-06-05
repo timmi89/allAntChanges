@@ -25,6 +25,8 @@ def getSummary(interactions, container=None, content=None, data=None):
     if not data: data = {}
     counts = {}
     data['kind'] = content[2] if content else container[2]
+    if content:
+        data['body'] = content[1]
 
     if container:
         container = container[0]
@@ -64,7 +66,7 @@ def getContainerSummaries(interactions, containers):
 
 def getContentSummaries(interactions, content):
     data = dict((
-        (content_item[1], getSummary(interactions, content=content_item)) for content_item in content    
+        (content_item[0], getSummary(interactions, content=content_item)) for content_item in content    
     ))
     return data
 
