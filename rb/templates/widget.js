@@ -1412,10 +1412,10 @@ function readrBoard($R){
 
 
 
-                selector = ".rdr-" + which;
+                var selector = ".rdr-" + which;
 
                 if (args.kind == "text") {
-                    var info = icon.data('info'),
+                    var info = icon.data('info');
 
                 } else if (args.kind == "image") {
                     //todo: this is a temp fix - consolodate.
