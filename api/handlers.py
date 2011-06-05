@@ -126,12 +126,15 @@ class CreateContainerHandler(AnonymousBaseHandler):
         containers = json.loads(request.GET['json'])
         
         for container in containers:
-            result[container] = Container.objects.get_or_create(
-                hash=container,
-                body=containers[container]['body']
-            )[1]
+            try:
+                result[container] = Container.objects.get_or_create(
+                    hash=container,
+                    body=containers[container]['body']
+                )[1]
+            except KeyError:
+                raise JSONException("Bad key for container")
         return result
-
+"""
 class ContainerSummaryHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request):
@@ -167,14 +170,14 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         interaction_counts = grouped_interactions.annotate(count=Count('kind'))
 
         tags = interactions.filter(kind='tag').values('container','interaction_node').order_by()
-        tag_counts = tags.annotate(count=Count('interaction_node'))
+        tag_counts = tags.annotate(count=Count('interaction_node')).values('count','container','interaction_node')
         top_tags = tag_counts.order_by('-count')
 
         top_tag_ids = top_tags.values_list('interaction_node')
         interaction_nodes = InteractionNode.objects.filter(id__in=top_tag_ids)
 
         return dict(containers=containers, interaction_nodes=interaction_nodes, counts=interaction_counts, top_tags=top_tags)
-"""
+
 class PageDataHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, pageid=None):
