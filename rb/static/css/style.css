@@ -1,44 +1,573 @@
-body    		{ color: #666666; font-family: Arial; font-size: 12px; padding: 5px 0 0 0; margin:0 8px; border-top:1px solid #ccc; }
-img     		{ border:0; }
-ul      		{ padding:0;margin:0; list-style-type:none; }
+/* _________________________________________________
 
-h1				{ color: #000; margin:5px; font-size:18px;}
-h2				{ font-size:14px; margin:8px;}
-h3				{ margin:5px;}
-a   			{ text-decoration: none; color:#666666; font-weight:bold;}
+320 and Up boilerplate extension
 
-#wrap			{ margin:0 auto; padding:10px; width:960px;}
+Author:Andy Clarke
+Version:0.9b
+URL:http://stuffandnonsense.co.uk/projects/320andup/
+_____________________________________________________
 
-#header			{ overflow: auto; width: 100%; padding:0px; border-bottom:2px solid;}
+ROOT
+HEADINGS
+TYPOGRAPHY
+LINKS
+FIGURES & IMAGES
+TABLES
+FORMS (See css/mylibs/forms.css)
+BANNER header[role="banner"]
+NAVIGATION nav[role="navigation"]
+CONTENT
+MAIN div[role="main"]
+COMPLEMENTARY div[role="complementary"]
+CONTENTINFO footer[role="contentinfo"]
+GLOBAL OBJECTS
+VENDOR-SPECIFIC 
+TEMPLATE SPECIFICS
+MODERNIZR
 
-#readrboard		{ float:left; padding-right:10px; }
-#page			{ float:left; }
+COLOURS 
 
-#nav ul 		{ list-style:none;}
-#nav li 		{ display:inline; padding-left: 5px; }
-#nav li#user 	{ display:inline; padding-left: 0px; padding-right:10px;}
-#nav 			{ float:right; text-align:right; width:340px; padding:10px 15px 0 0;}
+*/
 
-#main 			{ clear:both; }
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+margin:0;
+padding:0;
+border:0;
+font-size:100%;
+font:inherit;
+vertical-align:baseline; }
 
-#search			{ float:left; width:300px; padding-top:0px;}
-input[type=text]{ width:200px;}
-fieldset		{ border:none;}
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+display:block; }
 
-#banner			{ float:left; width:225px; padding-left:5px;}
+abbr[title] { 
+border-bottom:1px dotted; 
+cursor:help; }
 
-#sidebarLeft	{ float:left; padding:15px 10px 0 10px; width:110px;}
-#sidebarLeft li { padding: 10px; }
+/* ROOT */
 
-#content		{ float:left; width:650px; padding:15px 30px 0 0;}
-#content li 	{ padding:15px 10px 15px 20px; margin:0; background:url(/static/images/checkmark.png) center left no-repeat; }
-#content img 	{ float:left; padding: 0 10px 0 0; }
+html {
+	overflow-y:scroll;
+	background:url(/static/images/site/page_bg.jpg) top left repeat-x #254559;
+}
 
-#adspace		{ float:right; width:130px; padding-top: 20px;}
+body { 
+	margin:0 auto;
+	padding:0;
+	font:100%/1.4 Arial;
+	color:#666;
+}
 
-#footer 		{ text-align:center; padding-top: 35px; clear:both; }
+@font-face {
+  font-family:ReadrLeague;
+  src:url('/static/css/LeagueGothic.eot');
+  src:local('☺'),
+         url('/static/css/LeagueGothic.otf') format('truetype');
+}
 
-#fb-login-button{ margin: 10px 0; }
+/* HEADINGS */
 
-.pagination 	{ text-align:center; padding-top: 20px; }
-.context 		{ padding-top: 5px; }
+h1, 
+h2, 
+h3, 
+h4, 
+h5, 
+h6 { font-family:ReadrLeague, Arial; font-weight:bold; }
+
+h1 { 
+margin-bottom:.75em;
+font-size:3em; /* 48 / 16 = 3 */
+line-height:1.2; }
+
+h2 { 
+margin-bottom:.75em;
+font-size:2em; /* 36 / 16 = 2 */
+line-height:1.2; }
+
+h3 { 
+margin-bottom:1em;
+font-size:1.5em; /* 24 / 16 = 1.5 */
+line-height:1.3; }
+
+h4 { 
+margin-bottom:1.25em;
+font-size:1.25em; /* 20 / 16 = 1.25 */
+line-height:1.25; }
+
+h5 { 
+margin-bottom:1.5em;
+font-size:1em; /* 16 / 16 = 1 */ }
+
+h6 { 
+font-size:1em; /* 16 / 16 = 1 */ }
+
+/* TYPOGRAPHY */
+
+p, 
+ol, 
+ul, 
+dl, 
+address { 
+margin-bottom:1.5em; 
+font-size:1em; /* 16 / 16 = 1 */ }
+
+ul, 
+ol { 
+margin:0 0 1.5em -24px; 
+padding-left:24px; }
+
+ul { 
+list-style-type:disc; }
+
+ol { 
+list-style-type:decimal; }
+
+li ul, 
+li ol { 
+margin:0;
+font-size:1em; /* 16 / 16 = 1 */ }
+
+dl, 
+dd { 
+margin-bottom:1.5em; }
+
+dt { 
+font-weight:normal; }
+
+blockquote  { 
+margin:0 0 1.5em -24px; 
+padding-left:24px; 
+border-left:1px solid rgb(200,200,200);
+font-style:italic; }
+
+blockquote:before, 
+blockquote:after, 
+q:before, 
+q:after {
+content:'';
+content:none; }
+
+b, 
+strong	{ 
+font-weight:bold; }
+
+i, 
+em { 
+font-style:italic; }
+
+sup, 
+sub { 
+position:relative;
+font-size:75%; 
+line-height:0; }
+
+sup { 
+top:-.5em; }
+
+sub { 
+bottom:-.25em; }
+
+address { 
+font-style:normal; }
+
+pre { 
+margin-bottom:1.5em; 
+white-space:pre; 
+white-space:pre-wrap; 
+word-wrap:break-word; }
+
+pre, 
+code { 
+font:.875em 'andale mono', 'lucida console', monospace; 
+line-height:1.5; }
+
+small {
+font-size:1em; /* 16 / 16 = 1 */ }
+
+/* LINKS */
+
+a, 
+a:visited {outline:none;color:rgb(23,119,175);text-decoration:none; }
+ 
+a:hover { 
+outline:none;
+color:rgb(40,40,40); 
+text-decoration:underline; }
+ 
+a:active, 
+a:focus { 
+outline:none;
+color:rgb(0,0,0); }
+
+/* FIGURES & IMAGES */
+
+figure {
+margin-bottom:1.5em; }
+
+figure img,
+figure object,
+figure embed {
+margin-bottom:.75em;
+max-width:100%; }
+
+figcaption {
+display:block;
+font-weight:normal; }
+
+/* TABLES */
+
+table { 
+border-collapse:collapse;
+border-spacing:0;
+margin-bottom:1.4em; 
+width:100%;
+font-size:.875em; /* 14 / 16 = .875 */ }
+
+th { 
+font-weight:bold; }
+
+th, td, caption { 
+padding:.25em 10px .25em 5px; }
+
+tfoot { 
+font-style:italic; }
+
+caption { 
+background-color:transparent; }
+
+/* FORMS (See css/mylibs/forms.css) */
+
+/* GLOBAL OBJECTS */
+
+.clearfix { zoom:1; }
+
+.clearfix:before, 
+.clearfix:after 	{ content:"\0020"; display:block; height:0; overflow:hidden; }
+
+.clearfix:after { clear:both; }
+
+/* VENDOR-SPECIFIC */
+
+body {
+-webkit-text-size-adjust:100%; 
+-ms-text-size-adjust:100%; }
+
+a:link { 
+-webkit-tap-highlight-color:rgb(52,158,219); }
+
+::-webkit-selection { 
+background:rgb(23,119,175); 
+color:rgb(250,250,250); 
+text-shadow:none; }
+
+::-moz-selection { 
+background:rgb(23,119,175); 
+color:rgb(250,250,250); 
+text-shadow:none; }
+
+::selection { 
+background:rgb(23,119,175); 
+color:rgb(250,250,250); 
+text-shadow:none; }
+
+/* input[type=search] {
+-webkit-appearance:none; }
+
+input[type="search"]::-webkit-search-decoration, 
+input[type="search"]::-webkit-search-cancel-button {
+display:none; } */
+
+::-webkit-input-placeholder {
+padding:10px;
+font-size:.875em; 
+line-height:1.4; }
+
+input:-moz-placeholder { 
+padding:10px;
+font-size:.875em; 
+line-height:1.4; }
+
+.ie7 img,
+.iem7 img { 
+-ms-interpolation-mode:bicubic; }
+
+div,
+input,
+textarea  { 
+-webkit-box-sizing:border-box;
+-moz-box-sizing:border-box;
+-o-box-sizing:border-box;
+box-sizing:border-box; }
+
+/* Non-semantic helper classes */
+
+/* Image replacement */
+.ir { 
+display:block; 
+text-indent:-999em; 
+overflow:hidden; 
+background-repeat:no-repeat; 
+text-align:left; 
+direction:ltr; }
+
+/* Hide for screenreaders and visual browsers */
+.hidden { 
+display:none; 
+visibility:hidden; }
+
+/* Hide visually */
+.visuallyhidden { 
+position:absolute;
+clip:rect(0 0 0 0); 
+overflow:hidden;
+margin:-1px;
+padding:0;
+height:1px;      
+width:1px;
+border:0; }
+
+/* Allow an element to be focusable via keyboard  */
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus { 
+position:static;
+clip:auto; 
+overflow:visible;
+height:auto; 
+margin:0;   
+width:auto; }
+
+/* Hide but maintain layout */
+.invisible { 
+visibility:hidden; }
+
+/* TEMPLATE SPECIFICS */
+
+#goog-fixurl ul  {
+list-style-type:none; }
+
+#goog-fixurl input  {
+margin-bottom:1.5em; }
+
+/* MODERNIZR */
+
+/* MEDIA QUERIES */
+
+/*Print __________________________________________________________________________________________________________ */
+@media print {
+* { 
+background:transparent !important; 
+color:black !important; 
+text-shadow:none !important; 
+filter:none !important;
+-ms-filter:none !important; } 
+
+a, a:visited { 
+color:#444 !important; 
+text-decoration:underline; }
+
+a[href]:after { 
+content:" (" attr(href) ")"; }
+
+abbr[title]:after { 
+content:" (" attr(title) ")"; }
+
+a[href^="javascript:"]:after, 
+a[href^="#"]:after { 
+content:""; }
+  
+pre, blockquote { 
+border:1px solid #999; 
+page-break-inside:avoid; }
+
+thead { 
+display:table-header-group; }
+
+tr, img { 
+page-break-inside:avoid; }
+
+@page { 
+margin:.5cm; }
+
+p, h2, h3 { 
+orphans:3; 
+widows:3; }
+
+h2, h3 { 
+page-break-after:avoid; }
+}/*/mediaquery*/
+
+/*480px __________________________________________________________________________________________________________ */
+@media only screen and (min-width:480px) {
+
+/* ROOT */
+/* HEADINGS */
+/* TYPOGRAPHY */
+/* LINKS */
+/* FIGURES & IMAGES */
+/* TABLES */
+/* FORMS */
+/* HEADER */
+/* NAVIGATION */
+/* CONTENT */
+/* MAIN */
+/* COMPLEMENTARY */
+/* CONTENTINFO */
+/* GLOBAL OBJECTS */
+/* VENDOR-SPECIFIC */
+/* TEMPLATE SPECIFICS */
+/* MODERNIZR */
+
+}/*/mediaquery*/
+
+/*768px __________________________________________________________________________________________________________ */
+@media only screen and (min-width:768px) {
+
+/* CONTAINER */
+#wrap	{
+	width:746px;
+	margin:0 auto;
+	padding:0;
+}
+
+/* HEADER */
+header[role="banner"]	{height:40px; background:url(/static/images/site/header_bg.gif) top left repeat-x; box-shadow:0px 2px 3px 0px #666;position:fixed;width:100%;}
+header[role="banner"] h1				{text-indent:-9999px; background:url(/static/images/site/logo.png) top center no-repeat;height:40px;width:128px;margin-left:68px;float:left;}
+/*header[role="banner"] #settings			{position:absolute; right:0; top:-1px;}
+header[role="banner"] #search			{position:absolute; right:55px; top:8px; }*/
+header[role="banner"] #settings			{float:right;}
+header[role="banner"] #search			{float:right; padding-top:8px;}
+header[role="banner"] #user				{float:right; padding:8px 8px 0 20px; }
+header[role="banner"] #search input		{border:1px solid #a4a4a4; border-radius:4px;padding:4px;}
+header[role="banner"] #search button	{width:24px; height:24px; background:url(/static/images/site/pin_button.png) top left no-repeat;border:none;text-indent:-9999px;cursor:pointer;}
+
+/* NAVIGATION */
+nav ul 		{ list-style:none; }
+nav li 		{ padding-left:5px; }
+nav li#user 	{ display:inline; padding-left:0px; padding-right:10px;}
+nav 			{  background: none repeat scroll 0 0 #ddd; border:1px solid #aaa; border-top:0; font-size: 12px; padding: 10px 15px 0 0; position: absolute; right: 5px; text-align: right; top: 41px; width: 100px; display:none; }
+header[role="banner"] #settings:hover nav {display:block;}
+
+
+/* CONTENT */
+/* MAIN */
+section[role="main"] 			{ clear:both; }
+
+
+/* HEADINGS */
+/* TYPOGRAPHY */
+/* LINKS */
+/* FIGURES & IMAGES */
+/* TABLES */
+/* FORMS */
+/* HEADER */
+/* NAVIGATION */
+/* CONTENT */
+/* MAIN */
+/* COMPLEMENTARY */
+/* CONTENTINFO */
+/* GLOBAL OBJECTS */
+/* VENDOR-SPECIFIC */
+/* TEMPLATE SPECIFICS */
+/* MODERNIZR */
+
+}/*/mediaquery*/
+
+/*992px __________________________________________________________________________________________________________ */
+@media only screen and (min-width:992px) {
+
+/* ROOT */
+/* HEADINGS */
+/* TYPOGRAPHY */
+/* LINKS */
+/* FIGURES & IMAGES */
+/* TABLES */
+/* FORMS */
+/* HEADER */
+/* NAVIGATION */
+/* CONTENT */
+/* MAIN */
+/* COMPLEMENTARY */
+/* CONTENTINFO */
+/* GLOBAL OBJECTS */
+/* VENDOR-SPECIFIC */
+/* TEMPLATE SPECIFICS */
+/* MODERNIZR */
+
+}/*/mediaquery*/
+
+/*1382px __________________________________________________________________________________________________________ */
+@media only screen and (min-width:1382px) {
+
+/* ROOT */
+/* HEADINGS */
+/* TYPOGRAPHY */
+/* LINKS */
+/* FIGURES & IMAGES */
+/* TABLES */
+/* FORMS */
+/* HEADER */
+/* NAVIGATION */
+/* CONTENT */
+/* MAIN */
+/* COMPLEMENTARY */
+/* CONTENTINFO */
+/* GLOBAL OBJECTS */
+/* VENDOR-SPECIFIC */
+/* TEMPLATE SPECIFICS */
+/* MODERNIZR */
+
+}/*/mediaquery*/
+
+/*2x __________________________________________________________________________________________________________ */
+@media only screen and (-webkit-min-device-pixel-ratio:2), only screen and (min-device-pixel-ratio:2) {
+
+/* ROOT */
+/* HEADINGS */
+/* TYPOGRAPHY */
+/* LINKS */
+/* FIGURES & IMAGES */
+/* TABLES */
+/* FORMS */
+/* HEADER */
+/* NAVIGATION */
+/* CONTENT */
+/* MAIN */
+/* COMPLEMENTARY */
+/* CONTENTINFO */
+/* GLOBAL OBJECTS */
+/* VENDOR-SPECIFIC */
+/* TEMPLATE SPECIFICS */
+/* MODERNIZR */
+
+}/*/mediaquery*/
+
+/* 
+Sources:
+http://meyerweb.com/eric/tools/css/reset
+http://people.opera.com/patrickl/experiments/keyboard/test
+http://gist.github.com/413930
+http://pathf.com/blogs/2008/05/formatting-quoted-code-in-blog-posts-css21-white-space-pre-wrap
+http://sitepoint.com/blogs/2010/08/20/ie-remove-textarea-scrollbars
+http://tjkdesign.com/ez-css/css/base.css
+http://viget.com/inspire/styling-the-button-element-in-internet-explorer
+http://code.flickr.com/blog/2008/11/12/on-ui-quality-the-little-things-client-side-image-resizing
+http://html5doctor.com/html-5-reset-stylesheet/
+http://praegnanz.de/weblog/htmlcssjs-kickstart/
+http://camendesign.com/design/
+http://yui.yahooapis.com/2.8.1/build/base/base.css
+http://webaim.org/techniques/css/invisiblecontent/
+http://drupal.org/node/897638
+*/
