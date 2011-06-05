@@ -1808,16 +1808,26 @@ function readrBoard($R){
 					}
                     */
 
-                    //todo: move to viewContainerReactions        
                     rindow.find('ul.rdr_preselected li').bind('click', function() {
                         var $this = $(this);
-                        log('test in sentiment')
                         if ( !$this.hasClass('rdr_customTagBox') ) {
-                            log('tagsend')
+                            // if ( $this.hasClass('rdr_selected') ){
+                                // $this.removeClass('rdr_selected');
+                            // } else {
+                            $this.addClass('rdr_selected');
+                            $this.siblings().removeClass('rdr_selected');
+                            $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+                            
+                            // todo don't do this?
+                            // $whyPanel.find('.rdr_body').html('');
+
+                            // show a loader...
+                            log('try try')
                             RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });//end rateSend
+                            // }
                         }
-                        return false; //so click on <a>img</a> gets overridden
                     });
+
                 
                 });
             },
