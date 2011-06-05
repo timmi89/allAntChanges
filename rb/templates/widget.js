@@ -899,7 +899,7 @@ function readrBoard($R){
                         var hash = RDR.util.md5.hex_md5(i);
                         RDR.page.imagedata[i].hash = hash; //todo: list these by hash in the first place.
 
-                        RDR.actions.indicators.make( hash, 'img' );
+                        //RDR.actions.indicators.make( hash );
                     }
                 }
            
@@ -1013,7 +1013,8 @@ function readrBoard($R){
 
 
                 //todo: implement black list
-                var $imgNodes = $( RDR.group.img_selector ).not('.rdr-hashed');
+                var $imgNodes = $( RDR.group.img_selector ).not('.rdr-hashed');//.not('.no-rdr'); //todo put back
+
                 $imgNodes.each( function() {
                     var body = $(this).attr('src');
                     $(this).data('body',body);
@@ -1070,7 +1071,11 @@ function readrBoard($R){
                         var summaries = response.data.known,
                         unknownList = response.data.unknown;
                         
-                        RDR.actions.summaries.save(summaries);
+                        if( !$.isEmptyObject(summaries) ){
+                            log('summaries')
+                            log(summaries)
+                            RDR.actions.summaries.save(summaries);
+                        }
 
                         if ( unknownList.length > 0 ) {
                             var sendData = {};
@@ -1086,8 +1091,8 @@ function readrBoard($R){
                                     json: JSON.stringify(sendData)
                                 },
                                 success: function(response) {
-                                    var newfoundSummaries = response.data;                                    
-                                    RDR.actions.summaries.save(newfoundSummaries);
+                                    //do nothing for now.
+                                    //var newfoundSummaries = response.data;
                                 },
                                 error: function(response) {
                                     //for now, ignore error and carry on with mockup
@@ -1115,19 +1120,20 @@ function readrBoard($R){
                         'display':'inline'
                     }).fadeTo('300', '0.4');
                 },
-                make: function(hash, kind){
+                make: function(hash){
                     //kind is optional - defaults to text
                     
                     // if ( RDR.content_nodes[i].info.com_count + RDR.content_nodes[i].info.tag_count > 0 ) {
                     //console.log('-- what we know about container with hash '+hash+' --');
                     //console.log(RDR.content_nodes[hash]);
-
-                    var summary = RDR.summaries[hash];
-
                     var $container, $indicator, $indicator_details, some_reactions, total, info, top_tags, kind;
 
+                    var summary = RDR.summaries[hash];
+                    node = RDR.content_nodes[hash];
+
                     //todo: prop down var change
-                    kind = summary.kind;
+                    kind = node.kind;
+                    log(kind);
                     top_tags = summary.top_interactions.tags;
                     //hide indicators and indicatorDetails and show on load.
                     if( kind !== 'img' ){
@@ -1140,7 +1146,7 @@ function readrBoard($R){
                     }   
                     else{
                         //is an image
-
+                        log('img')
                         //todo: this is all a temp hack.  Consolodate this code!
                         var $this_img, $tagList, imageData;
 
@@ -1154,6 +1160,7 @@ function readrBoard($R){
                         //todo: prop down this change var change
                         
                         $this_img = $('img[src$="' + summary.body + '"]')
+                        log($this_img)
 
                         function SortByTagCount(a,b) { return b.count - a.count; }
                         imageData.tags.sort( SortByTagCount );
@@ -1171,19 +1178,23 @@ function readrBoard($R){
                         $indicator.append($tagList);
 
                         $this_img.after( $indicator );
+
                         var kill = false;
                         $.each( summary.top_interactions.tags, function(hash, tag){
                             if(kill) return;
-                            prefix = (j==0) ? "" :  ", ",
+                            seperator = (j==0) ? "" :  ", ",
                             $tag = $('<strong/>').append(tag.body),
-                            $count = $('<em/>').append( '('+tag.count+')' );
+                            $count = $('<em/>').append( '('+tag.count+')' ),
+                            $span = $('<span />').append($tag, $count);
                             
-                            $tagList.append( $('<span />').append( prefix, $tag, $count) );
+                            $tagList.append( $span );
                             
                             // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
                             if ( $tagList.width() > $this_img.width() - 58 ) {
                                 $tagList.children().last().html('...').addClass('rdr_see_more');
                                 kill = true;
+                            }else{
+                                $span.append(seperator);
                             }
                         });
                        
@@ -1250,24 +1261,30 @@ function readrBoard($R){
                     ).appendTo('#rdr_indicator_details_wrapper');                                        
                     $tagList = $('<div class="rdr_img_tags_list"></div>').appendTo( $indicator_details );
                     
-                    var tagListMaxWidth = 300;
+                    var tagListMaxWidth = 200;
 
                     //build tags in $tagList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
                     $indicator_details.css({ 'visiblity':'hidden' }).show();
-                    for ( var j in top_tags ){
-                        log( top_tags[j] )
-                        var this_tag = top_tags[j],
-                        prefix = (j==0) ? "" :  ", ",
-                        $tag = $('<strong/>').append(this_tag.body),
-                        $count = $('<em/>').append( '('+this_tag.count+')' );
-                        
-                        $tagList.append( $('<span />').append( prefix, $tag, $count) );
 
-                        if ( $tagList.width() > tagListMaxWidth - 100 ) {
+                    var count = 0;
+                    $.each( summary.top_interactions.tags, function(hash, tag){
+                        if(count == null) return; //used as a break statement
+                        var prefix = count ? ", " : "", //don't include the first time
+                        $tag = $('<strong/>').append(tag.body),
+                        $count = $('<em/>').append( '('+tag.count+')' ),
+                        $span = $('<span />').append( prefix, $tag, $count);
+                        
+                        $tagList.append( $span );
+                        
+                        // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
+                        if ( $tagList.width() > tagListMaxWidth ) {
                             $tagList.children().last().html('...').addClass('rdr_see_more');
-                            break;
-                        }                      
-                    }
+                            count = null;
+                        }
+                        count ++;
+                    })
+
+
                     $indicator_details.css({ 'visiblity':'visible' }).hide();
 
                     $indicator_details.click( function() {
@@ -1336,7 +1353,9 @@ function readrBoard($R){
                 save: function(summaries){
                     $.each(summaries, function(hash,summary){
                         RDR.summaries[hash] = summary;
-                        RDR.actions.indicators.make( hash );
+                        if(summary.counts.tags) {
+                            RDR.actions.indicators.make( hash );
+                        }
                     });
                 }
             },
@@ -1410,7 +1429,7 @@ function readrBoard($R){
                     if ( name ) {
                         var $li = $('<li class="rdr_tag_'+tagID+'" />').data({
                             'tag':{
-                                id:parseInt( id ),
+                                id:parseInt( tagID ),
                                 name:tag.body,
                                 count:tag.count
                             },
@@ -1758,7 +1777,7 @@ function readrBoard($R){
                             // $whyPanel.find('.rdr_body').html('');
 
                             // show a loader...
-
+                            log('try try')
                             RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });//end rateSend
                             // }
                         }
@@ -1911,6 +1930,8 @@ function readrBoard($R){
                 // optional loader.  it's a pacman pic.
                 args.tag.find('div.rdr_leftBox').html('<img src="/static/images/loader.gif" style="margin:6px 0 0 5px" />');
 
+                log('args')
+                log(args)
                 //example:
                 //tag:{name, id}, rindow:rindow, settings:settings, callback: 
 			 	
@@ -1921,6 +1942,8 @@ function readrBoard($R){
                 // TODO the args & params thing here is confusing
                 RDR.session.getUser( args, function( params ) {
                     // get the text that was highlighted
+                    log(params)
+
                     var content = $.trim( params.settings.content ),
                         container = $.trim( params.settings.container ),
                         src_with_path = $.trim( params.settings.src_with_path );
@@ -1929,6 +1952,7 @@ function readrBoard($R){
                         tag_li = params.tag,
                         tag = params.tag.data('tag');
 
+                        log(tag)
                     var sendData = {
                         "tag" : tag,
                         "hash": container,
