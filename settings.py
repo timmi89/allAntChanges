@@ -146,7 +146,7 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'autofixture',
     'django_extensions',
-    'devserver'
+    #'devserver'
 )
 
 DEVSERVER_MODULES = (

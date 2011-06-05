@@ -22,6 +22,8 @@ urlpatterns = patterns('',
     url(r'^profile/(?P<user_id>\d)/comments/$', 'rb.views.profile', kwargs={"view":"comments"}),
     url(r'^profile/(?P<user_id>\d)/shares/$', 'rb.views.profile', kwargs={"view":"shares"}),
 
+    url(r'^cards/$', 'rb.views.cards'),
+
     url(r'^api/', include('readrboard.api.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )

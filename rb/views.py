@@ -75,6 +75,9 @@ def home(request, **kwargs):
         context['user'] = user
     return render_to_response("index.html", context)
 
+def cards(request):
+    return render_to_response("cards.html")
+
 def expander(request, short):
     link_id = base62.to_decimal(short);
     link = Link.objects.get(id=link_id);
