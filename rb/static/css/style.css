@@ -61,7 +61,7 @@ cursor:help; }
 
 html {
 	overflow-y:scroll;
-	background:url(/static/images/site/page_bg.jpg) top left repeat-x #254559;
+	background:url(/static/images/site/page_bg.jpg) top left fixed repeat-x #254559;
 }
 
 body { 
@@ -239,24 +239,20 @@ font-size:.875em; /* 14 / 16 = .875 */ }
 th { 
 font-weight:bold; }
 
-th, td, caption { 
-padding:.25em 10px .25em 5px; }
+th, td, caption {}
 
 tfoot { 
 font-style:italic; }
 
-caption { 
-background-color:transparent; }
+caption { background-color:transparent; }
 
 /* FORMS (See css/mylibs/forms.css) */
 
 /* GLOBAL OBJECTS */
 
 .clearfix { zoom:1; }
-
 .clearfix:before, 
 .clearfix:after 	{ content:"\0020"; display:block; height:0; overflow:hidden; }
-
 .clearfix:after { clear:both; }
 
 /* VENDOR-SPECIFIC */
@@ -435,15 +431,8 @@ page-break-after:avoid; }
 /*768px __________________________________________________________________________________________________________ */
 @media only screen and (min-width:768px) {
 
-/* CONTAINER */
-#wrap	{
-	width:746px;
-	margin:0 auto;
-	padding:0;
-}
-
 /* HEADER */
-header[role="banner"]	{height:40px; background:url(/static/images/site/header_bg.gif) top left repeat-x; box-shadow:0px 2px 3px 0px #666;position:fixed;width:100%;}
+header[role="banner"]	{height:40px; background:url(/static/images/site/header_bg.gif) top left repeat-x; box-shadow:0px 2px 3px 0px #666;position:fixed;width:100%;z-index:10;top:0;}
 header[role="banner"] h1				{text-indent:-9999px; background:url(/static/images/site/logo.png) top center no-repeat;height:40px;width:128px;margin-left:68px;float:left;}
 /*header[role="banner"] #settings			{position:absolute; right:0; top:-1px;}
 header[role="banner"] #search			{position:absolute; right:55px; top:8px; }*/
@@ -460,10 +449,68 @@ nav li#user 	{ display:inline; padding-left:0px; padding-right:10px;}
 nav 			{  background: none repeat scroll 0 0 #ddd; border:1px solid #aaa; border-top:0; font-size: 12px; padding: 10px 15px 0 0; position: absolute; right: 5px; text-align: right; top: 41px; width: 100px; display:none; }
 header[role="banner"] #settings:hover nav {display:block;}
 
+/* CONTENT CONTAINER */
+section[role="content"]	{
+	width:748px;
+	margin:40px 0 0 25px;
+	padding:0;
+	background:#ccc;
+	overflow:auto;
+	position:relative;
+	box-shadow:0px 0 4px 2px #004b5b;
+}
 
-/* CONTENT */
 /* MAIN */
-section[role="main"] 			{ clear:both; }
+section[role="main"] 	{ 
+	clear:both;
+	margin:0 0 0 210px;
+	padding:0;
+	float:left;
+	background:#d2dee4;
+	width:538px;
+}
+
+section[role="main"] h1 	{font-family:Arial; font-size:28px; color:#6b6b6b; text-shadow:2px 2px 1px #dee7ed; font-weight:normal; padding:10px; margin:0;}
+section[role="main"] .card {background:#d2dee4; width:100%; margin-bottom:10px; border:1px solid #becdd7; border-right:0; border-left:0;}
+section[role="main"] .card .interaction  {margin-top:1px; border-top:1px solid #d2dee4;}
+section[role="main"] .card .column1  {text-align:center; vertical-align:middle;}
+section[role="main"] .card .column2  {text-align:left; vertical-align:middle;}
+section[role="main"] .card thead .column1      {width:113px; margin:0; padding:5px 0; background:#fff; text-align:center; }
+section[role="main"] .card thead .column2      {margin:0; padding:5px 5px 5px 15px; background:url(/static/images/site/shaded_arrow.png) center left no-repeat #fff; font:italic bold 14px Arial; color:#6b6b6b;}
+ 
+section[role="main"] .card tbody .column1      {background:#eaf0f3; vertical-align:top; border-right:1px solid #d2dee4;}
+section[role="main"] .card tbody .column1 .reaction    {font-family:ReadrLeague, Arial; font-size:18px; color:#6b6b6b; font-size:24px; margin-top:10px;}
+section[role="main"] .card tbody .column1 .count       {font-size:12px; margin-bottom:15px;}
+
+section[role="main"] .card tbody .column2      {background:#ffffff; padding:10px;}
+section[role="main"] .card tbody .column2 .who_action      {font:italic bold 12px Arial;}
+section[role="main"] .card tbody .column2 .content       {font:normal normal 12px Arial;}
+section[role="main"] .card tbody .column2 .content img   {max-width:100px; max-height:100px; box-shadow:0px 0px 4px #666; margin:5px 0;}
+section[role="main"] .card tbody .column2 h5.label.small   {font:normal normal 9px Arial; text-transform:uppercase; margin-top:10px;}
+section[role="main"] .card tbody .column2 .comment_container    {background:#f0f0f0; border:1px solid #d3d4d4; box-shadow:0px 0px 2px #aaa; padding:5px;  }
+section[role="main"] .card tbody .column2 .comment_container .header   {overflow:hidden; color:#666; clear:both; }
+section[role="main"] .card tbody .column2 .comment_container .header .when       {float:right; font:normal 11px Arial;}
+section[role="main"] .card tbody .column2 .comment_container .header .when span  {font-size:8px; text-transform:uppercase; }
+section[role="main"] .card tbody .column2 .comment_container .header .avatar     {float:left; height:20px; width:20px;}
+section[role="main"] .card tbody .column2 .comment_container .header .avatar img {height:20px; width:20px;}
+section[role="main"] .card tbody .column2 .comment_container .header .who        {float:left; margin-left:5px; padding-top:4px; height:16px; font:italic bold 12px Arial; vertical-align:middle; }
+
+section[role="main"] .card tbody .column2 .comment_container .comment   {overflow:hidden; color:#666; clear:both; position:relative; padding:5px 25px; font:normal 24px ReadrLeague;}
+section[role="main"] .card tbody .column2 .comment_container .comment .count  {font:normal 12px Arial; }
+section[role="main"] .card tbody .column2 .comment_container .comment .quote.open  { background:url(/static/images/site/quote_open.png) top left no-repeat; top:8px;left:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
+section[role="main"] .card tbody .column2 .comment_container .comment .quote.close { background:url(/static/images/site/quote_close.png) top left no-repeat; bottom:20px;right:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
+
+
+/* COMPLEMENTARY */
+section[role="complementary"] 			{ 
+	height:100%;
+	position:fixed;
+	left:25px;
+	width:190px;
+	padding:0 10px;
+	background:#f0f0f0;
+	box-shadow:2px 0px 3px 1px #aaa;
+}
 
 
 /* HEADINGS */
@@ -475,8 +522,6 @@ section[role="main"] 			{ clear:both; }
 /* HEADER */
 /* NAVIGATION */
 /* CONTENT */
-/* MAIN */
-/* COMPLEMENTARY */
 /* CONTENTINFO */
 /* GLOBAL OBJECTS */
 /* VENDOR-SPECIFIC */
