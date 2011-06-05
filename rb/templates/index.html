@@ -1,15 +1,24 @@
 {% extends "base.html" %}
 
-{% block sidebarFilters %}
-<ul>
-<li><a href="{% url home %}">All</a></li>
-<li><a href="{% url home %}tags/">Tags</a></li>
-<li><a href="{% url home %}comments/">Comments</a></li>
-<li><a href="{% url home %}shares/">Shares</a></li>
-</ul>
+{% block mainContent %}
+<h1>Hi this is the homepage stream</h1>
+<div id="cards"></div>
+{% endblock mainContent %}
+
+{% block pageJS %}
+<script type="text/javascript">
+$.ajax({
+    url: "/cards",
+    type: "get",
+    success: function(response) {
+        console.dir(response);
+        $('#cards').html( response );
+    }
+});
+</script>
 {% endblock %}
 
-{% block content %}
+<!--
 <h3>Interactions</h3>
 <ul>
 {% for interaction in interactions %}
@@ -34,4 +43,4 @@
 </li>
 {% endfor %}
 </ul>
-{% endblock content %}
+-->
