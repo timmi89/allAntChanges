@@ -1369,11 +1369,37 @@ function readrBoard($R){
                     which = args.icon.data('which'),
                     kind = args.kind,
                     tempLock = args.tempLock;
-                log()
+                
                 var summary = RDR.summaries[which];
                 log('summary in viewcontentreactions');
                 log(summary);
                 function SortByTagCount(a,b) { return b.count - a.count; }
+
+
+                var sendData = {
+                    "page_id" : RDR.page.id,
+                    "container":summary.id,
+                    "top_tags":summary.top_interactions.tags
+                }
+
+                $.ajax({
+                    url: "/api/summary/container/content/",
+                    type: "get",
+                    contentType: "application/json",
+                    dataType: "jsonp",
+                    data: { json: JSON.stringify(sendData) },
+                    success: function(response) {
+                        log('/api/summary/container/content/');
+                        log(response);
+                    },
+                    error: function(response) {
+                        //for now, ignore error and carry on with mockup
+                        console.warn('ajax error');
+                        console.log(response);
+                    }
+                });
+
+
 
 
                 if (args.kind == "text") {
