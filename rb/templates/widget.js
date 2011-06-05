@@ -1083,12 +1083,6 @@ function readrBoard($R){
                         unknownList = response.data.unknown;
                         
                         if( !$.isEmptyObject(summaries) ){
-                            log('summaries')
-                            log(summaries)
-                            $.each(summaries, function(k,v){
-                                log(v.type)
-                            })
-
                             RDR.actions.summaries.save(summaries);
                         }
 
@@ -1151,17 +1145,16 @@ function readrBoard($R){
                     log(kind);
                     top_tags = summary.top_interactions.tags;
                     //hide indicators and indicatorDetails and show on load.
-                    if( kind !== 'img' ){
-                        $container = $(RDR.group.anno_whitelist+'.rdr-'+hash); // prepend with the anno_whitelist selector
-                        total = summary.counts.tags;
 
-                        //todo: clean this out.
-                        //info = RDR.actions.indicators.sortReactions( hash );
-                        
-                    }   
-                    else{
+                    //todo: consider making more effecient.
+                    $container = $('.rdr-'+hash); // prepend with the anno_whitelist selector
+                    
+                    total = summary.counts.tags;
+                    log($container)
+                    if( kind == 'img' ){
                         //is an image
                         log('img')
+                        log(summary)
                         //todo: this is all a temp hack.  Consolodate this code!
                         var $this_img, $tagList, imageData;
 
@@ -1174,11 +1167,12 @@ function readrBoard($R){
                         */
                         //todo: prop down this change var change
                         
-                        $this_img = $('img[src$="' + summary.body + '"]')
+                        $this_img = $container
                         log($this_img)
 
                         function SortByTagCount(a,b) { return b.count - a.count; }
-                        imageData.tags.sort( SortByTagCount );
+                        //todo: bring sorting back
+                        //imageData.tags.sort( SortByTagCount );
                         
                         //total = imageData.tag_count;
                         total = summary.counts.tags;
@@ -1194,25 +1188,25 @@ function readrBoard($R){
 
                         $this_img.after( $indicator );
 
-                        var kill = false;
+                        var tagListMaxWidth = $this_img.width()-100; //subtract a bit of a margin
+                        var count = 0;
                         $.each( summary.top_interactions.tags, function(hash, tag){
-                            if(kill) return;
-                            seperator = (j==0) ? "" :  ", ",
+                            if(count == null) return; //used as a break statement
+                            var prefix = count ? ", " : "", //don't include the first time
                             $tag = $('<strong/>').append(tag.body),
                             $count = $('<em/>').append( '('+tag.count+')' ),
-                            $span = $('<span />').append($tag, $count);
+                            $span = $('<span />').append( prefix, $tag, $count);
                             
                             $tagList.append( $span );
                             
                             // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                            if ( $tagList.width() > $this_img.width() - 58 ) {
+                            if ( $tagList.width() > tagListMaxWidth ) {
                                 $tagList.children().last().html('...').addClass('rdr_see_more');
-                                kill = true;
-                            }else{
-                                $span.append(seperator);
+                                count = null;
                             }
-                        });
-                       
+                            count ++;
+                        })
+
                         $indicator.data({ 'which':hash, 'imageData':imageData })//chain
                         .click( function() {
                             RDR.actions.viewContainerReactions( {icon:$indicator, kind:"image"} );
@@ -1413,15 +1407,14 @@ function readrBoard($R){
 
 
 
+                var selector = ".rdr-" + which;
 
                 if (args.kind == "text") {
-                    var info = icon.data('info'),
-                    selector = RDR.group.anno_whitelist+".rdr-" + which;
+                    var info = icon.data('info');
 
                 } else if (args.kind == "image") {
                     //todo: this is a temp fix - consolodate.
                     var info = icon.data('imageData');
-                    var selector = "";
                 }
 
                 var iconOffsets = args.icon.offset();
@@ -1466,24 +1459,24 @@ function readrBoard($R){
 
                 ////populate blesed_tags
                 $.each( topTags, function( tagID, tag ){
-                    var percentage = Math.round( ( tag.count/totalTags ) * 100);                    
-                    if ( name ) {
-                        var $li = $('<li class="rdr_tag_'+tagID+'" />').data({
-                            'tag':{
-                                id:parseInt( tagID ),
-                                name:tag.body,
-                                count:tag.count
-                            },
-                            'which':which
-                        }),
-                        $leftBox = '<div class="rdr_leftBox">'+percentage+'%</div>',
-                        $tagText = '<div class="rdr_tagText">'+name+'</div>',
-                        $rightBox = '<div class="rdr_rightBox" />';
+                    
+                    var percentage = Math.round( ( tag.count/totalTags ) * 100);                
+                    var $li = $('<li class="rdr_tag_'+tagID+'" />').data({
+                        'tag':{
+                            id:parseInt( tagID ),
+                            name:tag.body,
+                            count:tag.count
+                        },
+                        'which':which
+                    }),
+                    $leftBox = '<div class="rdr_leftBox">'+percentage+'%</div>',
+                    $tagText = '<div class="rdr_tagText">'+tag.body+'</div>',
+                    $rightBox = '<div class="rdr_rightBox" />';
 
-                        $li.append($leftBox,$tagText,$rightBox);
-                        if ( summary.counts > 0 ) $li.addClass('rdr_has_comment');
-                        $tagBox.children('ul.rdr_tags').append($li);
-                    }
+                    $li.append($leftBox,$tagText,$rightBox);
+                    if ( summary.counts > 0 ) $li.addClass('rdr_has_comment');
+                    $tagBox.children('ul.rdr_tags').append($li);
+                
                 });
 
                 rindow.animate({
@@ -1498,22 +1491,32 @@ function readrBoard($R){
                     RDR.rindow.checkHeight( rindow, 0, "reactionPanel" );
 
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
-                    if ( kind == "text") {
-                        rindow.find('ul.rdr_preselected li').bind('click', function() {
-                            var $this = $(this);
-                            if ( !$this.hasClass('rdr_customTagBox') ) {
-                                // if ( $this.hasClass('rdr_selected') ){
-                                    // $this.removeClass('rdr_selected');
-                                // } else {
-                                $this.addClass('rdr_selected');
-                                $this.siblings().removeClass('rdr_selected');
-                                $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-                                RDR.actions.viewReactionContent( $this.data('tag'), $this.data('which'), rindow );
-                            }
-                        });
-                    } else {
+                    
+                    rindow.find('ul.rdr_preselected li').bind('click', function() {
+                        var $this = $(this);
+
+                        if ( !$this.hasClass('rdr_customTagBox') ) {
+                            // if ( $this.hasClass('rdr_selected') ){
+                                // $this.removeClass('rdr_selected');
+                            // } else {
+                            $this.addClass('rdr_selected');
+                            $this.siblings().removeClass('rdr_selected');
+                            $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+                            RDR.actions.viewReactionContent( $this.data('tag'), $this.data('which'), rindow );
+                            //RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });//end rateSend
+                        }
+                        log('click!')
+                        
+                        //todo: branch text and img
+                        /*
+                        if(false){ //text
+                        } else {
                         // skip the CONTENT PANEL and jump to the WHYPANEL
-                    }
+                        }
+                        */
+                        return false; //so click on <a>img</a> gets overridden
+                    });
+                
                 });
             },
             viewReactionContent: function(tag, which, rindow){
@@ -1752,12 +1755,14 @@ function readrBoard($R){
                                 });
                 */
 
+                log('fhksdhgkdjfhgkdfshglskdjfhgslfjkh')
                 //populate reactionPanel
                 $reactionPanel.find('div.rdr_body').append($borderLine, $tagBox);
                 
                 ////populate blesed_tags
                 $.each(RDR.group.blessed_tags, function(idx, val){
-
+                    log('val')
+                    log(val)
                     var $li = $('<li class="rdr_tag_'+val.id+'" />').data({
                         'tag':{
                             content:parseInt( val.id ),
@@ -1803,7 +1808,6 @@ function readrBoard($R){
 					}
                     */
 
-                    // enable the "click on a blessed tag to choose it" functionality.  just css class based.
                     rindow.find('ul.rdr_preselected li').bind('click', function() {
                         var $this = $(this);
                         if ( !$this.hasClass('rdr_customTagBox') ) {
@@ -1823,6 +1827,8 @@ function readrBoard($R){
                             // }
                         }
                     });
+
+                
                 });
             },
 			panel: {
@@ -1973,6 +1979,9 @@ function readrBoard($R){
 
                 log('args')
                 log(args)
+
+                    
+                
                 //example:
                 //tag:{name, id}, rindow:rindow, settings:settings, callback: 
 			 	
@@ -1993,7 +2002,7 @@ function readrBoard($R){
                         tag_li = params.tag,
                         tag = params.tag.data('tag');
 
-                        log(tag)
+
                     var sendData = {
                         "tag" : tag,
                         "hash": container,
