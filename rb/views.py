@@ -7,6 +7,7 @@ from django.core import serializers
 from settings import FACEBOOK_APP_ID
 from baseconv import base62
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.db.models import Count
 
 def widget(request,sn):
     # Widget code is retreived from the server using RBGroup shortname
@@ -76,7 +77,9 @@ def home(request, **kwargs):
     return render_to_response("index.html", context)
 
 def cards(request):
-    return render_to_response("cards.html")
+    pages = Page.objects.annotate(interaction_count=Count('interaction')).order_by('-interaction_count')[:5]
+    context = {'pages': pages}
+    return render_to_response("cards.html", context)
 
 def expander(request, short):
     link_id = base62.to_decimal(short);
