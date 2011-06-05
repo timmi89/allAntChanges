@@ -129,13 +129,14 @@ class CreateContainerHandler(AnonymousBaseHandler):
             try:
                 result[container] = Container.objects.get_or_create(
                     hash=container,
-                    body=containers[container]['body']
+                    body=containers[container]['body'],
+                    kind=containers[container]['kind']
                 )[1]
             except KeyError:
-                raise JSONException("Bad key for container")
+                raise JSONException(u"Bad key for container")
 
         return result
-"""
+
 class ContainerSummaryHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request):
@@ -178,7 +179,7 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         interaction_nodes = InteractionNode.objects.filter(id__in=top_tag_ids)
 
         return dict(containers=containers, interaction_nodes=interaction_nodes, counts=interaction_counts, top_tags=top_tags)
-
+"""
 class PageDataHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, pageid=None):

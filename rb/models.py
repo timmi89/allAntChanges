@@ -6,6 +6,14 @@ from django.contrib.auth.models import User
 from baseconv import base62
 import datetime
 
+CONTENT_TYPES = (
+    ('txt', 'text'),
+    ('img', 'image'),
+    ('vid', 'video'),
+    ('snd', 'sound'),
+    ('fla', 'flash')
+)
+
 """
 Custom Managers
 """
@@ -142,14 +150,6 @@ class Page(models.Model):
         return unicode(self.id)
 
 class Content(DateAwareModel):
-    CONTENT_TYPES = (
-        ('txt', 'text'),
-        ('img', 'image'),
-        ('vid', 'video'),
-        ('snd', 'sound'),
-        ('fla', 'flash')
-    )
-
     kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
     location = models.CharField(max_length=255)
     body = models.TextField()
@@ -164,6 +164,7 @@ class Content(DateAwareModel):
 class Container(models.Model):
     hash = models.CharField(max_length=32, unique=True, db_index=True)
     body = models.TextField()
+    kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
 
     def __unicode__(self):
         return unicode(self.id) + " : " + self.hash
