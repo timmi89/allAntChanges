@@ -1965,6 +1965,9 @@ function readrBoard($R){
 
                 log('args')
                 log(args)
+
+                    
+                
                 //example:
                 //tag:{name, id}, rindow:rindow, settings:settings, callback: 
 			 	
@@ -1985,7 +1988,7 @@ function readrBoard($R){
                         tag_li = params.tag,
                         tag = params.tag.data('tag');
 
-                        log(tag)
+
                     var sendData = {
                         "tag" : tag,
                         "hash": container,
