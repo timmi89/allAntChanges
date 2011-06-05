@@ -1077,6 +1077,10 @@ function readrBoard($R){
                         if( !$.isEmptyObject(summaries) ){
                             log('summaries')
                             log(summaries)
+                            $.each(summaries, function(k,v){
+                                log(v.type)
+                            })
+
                             RDR.actions.summaries.save(summaries);
                         }
 
