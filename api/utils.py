@@ -91,6 +91,7 @@ def interactionNodeCounts(interactions, kinds=[], content=None):
 def getPage(request, pageid=None):
     canonical = request.GET.get('canonical_url', None)
     fullurl = request.GET.get('url', None)
+    title = request.GET.get('title', None)
     host = request.get_host()
     host = host[0:host.find(":")]
     site = Site.objects.get(domain=host)
@@ -99,7 +100,7 @@ def getPage(request, pageid=None):
     elif canonical:
         page = Page.objects.get_or_create(
             canonical_url=canonical,
-            defaults={'url': fullurl, 'site': site}
+            defaults={'url':fullurl, 'site':site, 'title':title}
         )
     else:
         page = Page.objects.get_or_create(url=fullurl, defaults={'site': site})
