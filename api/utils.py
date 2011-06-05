@@ -14,21 +14,16 @@ def getTagCommentData(comment):
 
     return comment_data
 
-def getTagData(tag, tags, comments):
+def getTagSummary(tag, tags):
     tags = filter(lambda x: x.interaction_node==tag, tags)
-    comments = filter(lambda x: x.parent in tags, comments)
+    data = {}
+    data['count'] = len(tags)
+    data['body'] = tag.body
+    return data
 
-    tag_data = {}
-    tag_data['tag'] = tag.body
-    tag_data['id'] = tag.id
-    tag_data['count'] = len(tags)
-    
-    tag_data['comments'] = [getTagCommentData(comment) for comment in comments]
-
-    return tag_data
-
-def getData(interactions, container=None, content=None, data=None):
+def getSummary(interactions, container=None, content=None, data=None):
     if not data: data = {}
+    counts = {}
     
     if container:
         interactions = filter(lambda x: x.container_id==container, interactions)
@@ -40,22 +35,47 @@ def getData(interactions, container=None, content=None, data=None):
     tags = filter(lambda x: x.kind=='tag', interactions)
     comments = filter(lambda x: x.kind=='com', interactions)
 
-    data['tag_count'] = len(tags)
-    data['com_count'] = len(comments)
-
+    counts['tags'] = len(tags)
+    counts['coms'] = len(comments)
+    counts['interactions'] = len(interactions)
+    data['counts'] = counts
+    
     if container:
-        unique = set((interaction.content for interaction in interactions))
-        data['content'] = [getData(interactions, content=content_item) for content_item in unique]
+        tag_counts = dict(( 
+            (tag.interaction_node.id, getTagSummary(tag.interaction_node, tags)) for tag in tags
+        ))
+        sorted_counts = sorted(tag_counts.items(), key=lambda x: x[1]['count'], reverse=True)
+        top_tags = dict((
+            tag for tag in sorted_counts[:5]
+        ))
+        top_interactions = {}
+        top_interactions['tags'] = top_tags
+        data['top_interactions'] = top_interactions
+    """
     if content:
         unique = set((tag.interaction_node for tag in tags))
         data['tags'] = [getTagData(tag, tags, comments) for tag in unique]
-    
+    """
     return data
 
 def getContainers(interactions, containers):
     data = dict((
-        (container[1], getData(interactions, container=container[0])) for container in containers    
+        (container[1], getSummary(interactions, container=container[0])) for container in containers    
     ))
+    return data
+
+def getTagCounts(interactions, containers=None, content=None, data=None):
+    pass
+
+def getCounts(interactions, containers=None, content=None, data=None):
+    if not data: data = {}
+
+    if containers: interactions = interactions.filter(container__in=containers)
+    if content: interactions = interactions.filter(content__in=content)
+
+    data['tag_count'] = len(interactions.filter(kind='tag'))
+    data['comment_count'] = len(interactions.filter(kind='tag'))
+
     return data
 
 def interactionNodeCounts(interactions, kinds=[], content=None):

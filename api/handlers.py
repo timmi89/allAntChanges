@@ -24,6 +24,10 @@ class FeatureHandler(AnonymousBaseHandler):
     model = Feature
     fields = ('feature_type', 'text', 'images', 'flash')
 
+class ContainerHandler(AnonymousBaseHandler):
+    model = Container
+    fields = ('id', 'hash')
+
 class InteractionHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, **kwargs):
@@ -119,16 +123,21 @@ class CreateContainerHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request):
         result = {}
-        data = json.loads(request.GET['json'])
-        hashes = data['hashes']
-        for hash in hashes:
-            result[hash] = Container.objects.get_or_create(
-                hash=hash,
-                body=hashes[hash]['content']
-            )[1]
+        containers = json.loads(request.GET['json'])
+        
+        for container in containers:
+            try:
+                result[container] = Container.objects.get_or_create(
+                    hash=container,
+                    body=containers[container]['body'],
+                    kind=containers[container]['kind']
+                )[1]
+            except KeyError:
+                raise JSONException(u"Bad key for container")
+
         return result
 
-class ContainerHandler(AnonymousBaseHandler):
+class ContainerSummaryHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request):
         known = {}
@@ -147,6 +156,30 @@ class ContainerHandler(AnonymousBaseHandler):
 
         return dict(known=known, unknown=unknown)
 
+"""
+class ContainerSummaryHandler(AnonymousBaseHandler):
+    @status_response
+    def read(self, request):
+        known = {}
+
+        data = json.loads(request.GET['json'])
+        hashes = data['hashes']
+        page = data['pageID']
+
+        containers = Container.objects.filter(hash__in=hashes)
+        interactions = Interaction.objects.filter(container__in=containers)
+        grouped_interactions = interactions.values('container','kind').order_by()
+        interaction_counts = grouped_interactions.annotate(count=Count('kind'))
+
+        tags = interactions.filter(kind='tag').values('container','interaction_node').order_by()
+        tag_counts = tags.annotate(count=Count('interaction_node')).values('count','container','interaction_node')
+        top_tags = tag_counts.order_by('-count')
+
+        top_tag_ids = top_tags.values_list('interaction_node')
+        interaction_nodes = InteractionNode.objects.filter(id__in=top_tag_ids)
+
+        return dict(containers=containers, interaction_nodes=interaction_nodes, counts=interaction_counts, top_tags=top_tags)
+"""
 class PageDataHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, pageid=None):
@@ -179,9 +212,9 @@ class PageDataHandler(AnonymousBaseHandler):
         userinteract = socialusers.annotate(interactions=Count('user__interaction'))
         topusers = userinteract.order_by('-interactions').values('full_name','img_url','interactions')[:10]
 
-        imagedata = dict(((content.body, getData(iop, content=content)) for content in content.filter(kind='image').order_by('id').distinct()))
-        videodata = dict(((content.body, getData(iop, content=content)) for content in content.filter(kind='video').order_by('id').distinct()))
-        flashdata = dict(((content.body, getData(iop, content=content)) for content in content.filter(kind='flash').order_by('id').distinct()))
+        #imagedata = dict(((content.body, getData(iop, content=content)) for content in content.filter(kind='image').order_by('id').distinct()))
+        #videodata = dict(((content.body, getData(iop, content=content)) for content in content.filter(kind='video').order_by('id').distinct()))
+        #flashdata = dict(((content.body, getData(iop, content=content)) for content in content.filter(kind='flash').order_by('id').distinct()))
         
         return dict(
             id=page.id,
@@ -189,9 +222,9 @@ class PageDataHandler(AnonymousBaseHandler):
             toptags=toptags,
             topusers=topusers,
             topshares=topshares,
-            imagedata=imagedata,
-            videodata=videodata,
-            flashdata=flashdata
+            #imagedata=imagedata,
+            #videodata=videodata,
+            #flashdata=flashdata
         )
 
 class SettingsHandler(AnonymousBaseHandler):

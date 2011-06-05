@@ -214,27 +214,32 @@ $('div.rdr_tempUserMsg').animate({bottom:'-48px'});
 
 div.rdr .rdr_tags			{padding:0 0 10px;}
 div.rdr ul.rdr_tags			{list-style-type:none; padding:0; margin:0; }
-div.rdr ul.rdr_tags li	            {padding:0; margin:0; position:relative; overflow:auto; background:none !important;text-align:left !important;}
-div.rdr ul.rdr_tags li .rdr_leftBox     {width:30px; letter-spacing:1px; padding:4px 2px 0 6px; height:35px; border-right:1px solid #bababa; overflow:hidden; float:left; margin-right:5px; text-align:center; font-size:21px;}
-div.rdr ul.rdr_tags li .rdr_rightBox     {width:30px; padding:0 3px; height:35px; overflow:hidden; float:right; margin-left:5px; text-align:left; background:url(/static/images/widget_icons.png) -5000px 0px no-repeat;}
-div.rdr ul.rdr_tags li.rdr_has_comment .rdr_rightBox     {background:url(/static/images/widget_icons.png) -107px 0px no-repeat;}
+div.rdr ul.rdr_tags li	            { border-color: transparent; border-style: solid; border-width: 1px 0; padding:5px 0; margin:0; position:relative; overflow:auto; background:none; text-align:left !important;}
+
+div.rdr ul.rdr_tags li:hover,
+div.rdr ul.rdr_tags li.rdr_selected               {color:#008be4; background:#e4f0f7; display:block; border-color: #bbb transparent #ddd; cursor: pointer;}
+
+div.rdr ul.rdr_tags li .rdr_leftBox     {width:38px; letter-spacing:1px; overflow:hidden; float:left; text-align:center; font-size:21px; padding-top:2px;}
+div.rdr ul.rdr_tags li .rdr_rightBox     {width:30px; padding:0 3px; height:30px; overflow:hidden; float:right; text-align:left; background:url(/static/images/widget_icons.png) -5000px 0px no-repeat;}
+div.rdr ul.rdr_tags li.rdr_has_comment .rdr_rightBox     {background:url(/static/images/widget_icons.png) -107px -4px no-repeat;}
 div.rdr div.rdr_read ul.rdr_tags li .rdr_leftBox     {color:#008be4;}
-div.rdr ul.rdr_tags li:hover            {background:#e4f0f7;cursor:pointer;}
+
 div.rdr ul.rdr_tags li:hover .rdr_leftBox,
 div.rdr ul.rdr_tags li.rdr_tagged div.rdr_leftBox   {background:url(/static/images/widget_icons.png) 0px 0px no-repeat; }
 div.rdr div.rdr_read ul.rdr_tags li:hover div.rdr_leftBox,
 div.rdr div.rdr_read ul.rdr_tags li.rdr_tagged div.rdr_leftBox   {background-image:none; color:#008be4; }
-div.rdr ul.rdr_tags li.rdr_selected                 {color:#008be4; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; border:1px solid #bababa; border-right:0; border-left:0; height:33px; overflow:hidden; }
-div.rdr ul.rdr_tags li:hover a,
-div.rdr ul.rdr_tags li.rdr_selected a               {color:#008be4; background:#e4f0f7; display:block; margin-top:-1px; border:1px solid #e4f0f7; border-right:0; border-left:0;}
+div.rdr ul.rdr_tags li.rdr_selected                 {}
+
 div.rdr div.rdr_text_reactions  ul.rdr_tags li:hover .rdr_rightBox,
-div.rdr div.rdr_image_reactions  ul.rdr_tags li.rdr_has_comment:hover .rdr_rightBox          {background:url(/static/images/widget_icons.png) -142px 0px no-repeat;}
-div.rdr ul.rdr_tags li.rdr_selected .rdr_rightBox   {background:url(/static/images/widget_icons.png) -36px 0px no-repeat;}
+div.rdr div.rdr_image_reactions  ul.rdr_tags li.rdr_has_comment:hover .rdr_rightBox          {background:url(/static/images/widget_icons.png) -142px -4px no-repeat;}
+div.rdr ul.rdr_tags li.rdr_selected .rdr_rightBox   {background:url(/static/images/widget_icons.png) -36px -4px no-repeat !important;}
 div.rdr ul.rdr_tags li.rdr_selected .rdr_leftBox:hover,
 div.rdr ul.rdr_tags li.rdr_tagged .rdr_leftBox:hover    {background-position:-72px 0px;}
 div.rdr div.rdr_new ul.rdr_tags li.rdr_selected 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
-div.rdr ul.rdr_preselected			{font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:-1px 0 0; min-height:120px;}
-div.rdr ul.rdr_preselected a		{color:#666;text-decoration:none; display:block; padding:3px 0;}
+div.rdr div.rdr_sntPnl .rdr_borderLine  				{    background:#DDDDDD; clear:both; height:100%; left:38px; position:absolute; width:1px; z-index:2;}
+
+div.rdr ul.rdr_preselected								{font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:-1px 0 0; min-height:120px;}
+div.rdr ul.rdr_preselected .rdr_tagText					{color:#666;text-decoration:none; display:block; float:left; width: 120px; padding-left:5px; overflow-x: hidden;}
 div.rdr li.rdr_customTagBox input.freeformTagInput      {font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0; text-align:left; width:75%; border:none; background:none; -moz-box-shadow:none; -webkit-box-shadow:none; box-shadow:none; padding:2px 0;}
 div.rdr li.rdr_customTagBox div.rdr_help                {left:43px; width:auto;}
 div.rdr li.rdr_customTagBox div.rdr_help:hover          {text-decoration:underline;}

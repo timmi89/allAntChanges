@@ -7,6 +7,35 @@ from baseconv import base62
 import datetime
 
 """
+Custom Managers
+"""
+
+class TagManager(models.Manager):
+    def get_query_set(self):
+        return super(TagManager, self).get_query_set().filter(kind='tag')
+
+class CommentManager(models.Manager):
+    def get_query_set(self):
+        return super(TagManager, self).get_query_set().filter(kind='com')
+
+class InteractionManager(models.Manager):
+    def with_counts(self):
+        from django.db import connection
+        cursor = connection.cursor()
+        cursor.execute("""
+            SELECT p.id, p.question, p.poll_date, COUNT(*)
+            FROM polls_opinionpoll p, polls_response r
+            WHERE p.id = r.poll_id
+            GROUP BY 1, 2, 3
+            ORDER BY 3 DESC""")
+        result_list = []
+        for row in cursor.fetchall():
+            p = self.model(id=row[0], question=row[1], poll_date=row[2])
+            p.num_responses = row[3]
+            result_list.append(p)
+        return result_list
+
+"""
 Abstract Models
 """
 class DateAwareModel(models.Model):
@@ -108,7 +137,6 @@ class Page(models.Model):
     url = models.URLField(verify_exists=False)
     title = models.TextField(blank=True)
     canonical_url = models.URLField(verify_exists=False, blank=True)
-    interaction_count = models.PositiveIntegerField(default=0)
 
     def __unicode__(self):
         return unicode(self.id)
@@ -136,6 +164,7 @@ class Content(DateAwareModel):
 class Container(models.Model):
     hash = models.CharField(max_length=32, unique=True, db_index=True)
     body = models.TextField()
+    kind = models.CharField(max_length=25)
 
     def __unicode__(self):
         return unicode(self.id) + " : " + self.hash
@@ -156,9 +185,6 @@ class Interaction(DateAwareModel, UserAwareModel):
     anonymous = models.BooleanField(default=False)
     parent= models.ForeignKey('self', blank=True, null=True)
     kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)
-    
-    # Don't f-ing change this number - super important
-    # steplen = 10
     
     class Meta:
         ordering = ['page','container','kind','interaction_node']
