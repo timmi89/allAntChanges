@@ -164,7 +164,8 @@ function readrBoard($R){
                     $new_rindow.append( '<div class="rdr_close">x</div><h1></h1><div class="rdr rdr_contentSpace"></div>' );
                     $new_rindow.find('div.rdr_close').click( function() {
                         $(this).parents('div.rdr.rdr_window').remove();
-                    } );
+                        return false; //make sure rindow for <a><img /></a> doesn't activate link
+                    });
 					
 					if ( settings.noHeader ) $new_rindow.find('h1').remove();
 					
@@ -1431,7 +1432,8 @@ function readrBoard($R){
                 rindow.find('div.rdr_contentSpace').empty();  // empty this out in case it's just repositioning the rindow.
 
                 rindow.css({width:'200px'});
-                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new rdr_reactions" />'),
+                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new rdr_reactions rdr_'+kind+'_reactions" />'),
+
                     $reactionPanel = $('<div class="rdr_reactionPanel rdr_read rdr_sntPnl" />'),
                     $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
@@ -1490,9 +1492,13 @@ function readrBoard($R){
                     // RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:rindow.settings});
                     RDR.rindow.checkHeight( rindow, 0, "reactionPanel" );
 
+
+                    //this is the read_mode only
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
-                    
+                    //for now disallow img read_mode                    
                     rindow.find('ul.rdr_preselected li').bind('click', function() {
+                        //for now disable li clicks for image readmode
+                        if(kind == 'image') return false;
                         var $this = $(this);
 
                         if ( !$this.hasClass('rdr_customTagBox') ) {
@@ -1718,8 +1724,8 @@ function readrBoard($R){
 
                 // build the ratePanel
 
-                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new rdr_reactions" />'),
-                    $reactionPanel = $('<div class="rdr_reactionPanel  rdr_sntPnl" />'),
+                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new rdr_reactions rdr_'+kind+'_reactions" />'),
+                    $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl" />'),
                     $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
                     $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),

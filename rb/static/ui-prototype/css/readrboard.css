@@ -220,7 +220,11 @@ div.rdr ul.rdr_tags li:hover,
 div.rdr ul.rdr_tags li.rdr_selected               {color:#008be4; background:#e4f0f7; display:block; border-color: #bbb transparent #ddd; cursor: pointer;}
 
 div.rdr ul.rdr_tags li .rdr_leftBox     {width:38px; letter-spacing:1px; overflow:hidden; float:left; text-align:center; font-size:21px; padding-top:2px; height:28px;}
-div.rdr ul.rdr_tags li .rdr_rightBox     {width:30px; padding:0 3px; height:30px; overflow:hidden; float:right; text-align:left; background:url(/static/images/widget_icons.png) -5000px 0px no-repeat;}
+
+div.rdr ul.rdr_tags li .rdr_rightBox     {width:30px; padding:0 3px; height:30px; overflow:hidden; float:right; text-align:left;}
+
+/*overwrite for image readmode version*/
+div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox     {background: none !important;}
 
 div.rdr ul.rdr_tags li.rdr_has_comment .rdr_rightBox     {background:url(/static/images/widget_icons.png) -107px -4px no-repeat;}
 div.rdr div.rdr_read ul.rdr_tags li .rdr_leftBox     {color:#008be4;}
