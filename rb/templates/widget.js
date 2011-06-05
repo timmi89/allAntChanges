@@ -254,6 +254,13 @@ function readrBoard($R){
 				// used for determining later on if an actionbar is being called by the same interaction as a
 				// currently-visible actionbar
 
+                // if this is an image, make sure we have the image hashed, tagged, and have its hash as a container:
+                if (settings.content_type == "image" && !settings.container ) {
+                    var hashText = "rdr-img-"+settings.content,
+                    hash = RDR.util.md5.hex_md5( hashText );
+                    settings.container = hash;
+                }
+
                 var items = [
                         {
                             "item":"reaction",
@@ -1026,8 +1033,9 @@ function readrBoard($R){
                 $nodes = $textNodes.add($imgNodes);
                 $nodes.each(function(){
                     var body = $(this).data('body'),
-                    kind = $(this)[0].tagName.toLowerCase(),
-                    hashText = "rdr-"+kind+"-"+body, //rdr-img-dailycandy.com/image/cake.jpg || rdr-p-ohshitthisissomecrazytextupinthisparagraph
+                    kind = $(this)[0].tagName.toLowerCase();
+
+                    var hashText = ( kind=="img") ? "rdr-"+kind+"-"+body : "rdr-text-"+body, //rdr-img-dailycandy.com/image/cake.jpg || rdr-p-ohshit this is some crazy text up in this paragraph
                     hash = RDR.util.md5.hex_md5( hashText );
 
                     if ( RDR.content_nodes[hash] ) return
