@@ -13,6 +13,7 @@ Comment = Resource(handler=CommentHandler)
 FBLogin = Resource(handler=FBHandler)
 Deauthorize = Resource(handler=Deauthorize)
 TempUser = Resource(handler=TempUserHandler)
+Content = Resource(handler=ContentSummaryHandler)
 
 urlpatterns = patterns('',
     url(r'^settings/(\d+)/$', Settings),
@@ -40,6 +41,7 @@ urlpatterns = patterns('',
     url(r'^page/', PageData),
     url(r'^containers/create/', CreateContainers),
     url(r'^summary/containers/', Containers),
+    url(r'^summary/container/content', Content),
     url(r'^tag/create/', Tag, kwargs={'action':'create'}),
     url(r'^tag/delete/', Tag, kwargs={'action':'delete'}),
     #url(r'^tags/(\d*)', Tags),

@@ -151,10 +151,33 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         ids = [container[0] for container in containers]
         interactions = list(Interaction.objects.filter(container__in=ids, page=page).select_related('interaction_node','content'))
 
-        known = getContainers(interactions, containers)
+        known = getContainerSummaries(interactions, containers)
         unknown = list(set(hashes) - set(known.keys()))
 
         return dict(known=known, unknown=unknown)
+
+class ContentSummaryHandler(AnonymousBaseHandler):
+    @status_response
+    def read(self, request):
+        known = {}
+
+        data = json.loads(request.GET['json'])
+        container_id = data['container_id']
+        page_id = data['page_id']
+        tag_ids = data['top_tags']
+
+        # Force evaluation by making lists
+        interactions = list(Interaction.objects.filter(
+            container=container_id,
+            page=page_id,
+            interaction_node__in=tag_ids
+        ))
+        content_ids = (interaction.content_id for interaction in interactions)
+        content = list(Content.objects.filter(id__in=content_ids).values_list('id','body','kind'))
+
+        content_summaries = getContentSummaries(interactions, content)
+
+        return content_summaries
 
 """
 class ContainerSummaryHandler(AnonymousBaseHandler):

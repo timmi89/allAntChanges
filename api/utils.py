@@ -28,8 +28,7 @@ def getSummary(interactions, container=None, content=None, data=None):
     if container:
         interactions = filter(lambda x: x.container_id==container, interactions)
     elif content:
-        interactions = filter(lambda x: x.content==content, interactions)
-        data['body'] = content.body
+        interactions = filter(lambda x: x.content_id==content, interactions)
     
     # Filter tag and comment interactions
     tags = filter(lambda x: x.kind=='tag', interactions)
@@ -39,29 +38,30 @@ def getSummary(interactions, container=None, content=None, data=None):
     counts['coms'] = len(comments)
     counts['interactions'] = len(interactions)
     data['counts'] = counts
-    data['id'] = container
+    data['id'] = container if container else content
     
-    if container:
-        tag_counts = dict(( 
-            (tag.interaction_node.id, getTagSummary(tag.interaction_node, tags)) for tag in tags
-        ))
-        sorted_counts = sorted(tag_counts.items(), key=lambda x: x[1]['count'], reverse=True)
-        top_tags = dict((
-            tag for tag in sorted_counts[:5]
-        ))
-        top_interactions = {}
-        top_interactions['tags'] = top_tags
-        data['top_interactions'] = top_interactions
-    """
-    if content:
-        unique = set((tag.interaction_node for tag in tags))
-        data['tags'] = [getTagData(tag, tags, comments) for tag in unique]
-    """
+    tag_counts = dict(( 
+        (tag.interaction_node.id, getTagSummary(tag.interaction_node, tags)) for tag in tags
+    ))
+    sorted_counts = sorted(tag_counts.items(), key=lambda x: x[1]['count'], reverse=True)
+    top_tags = dict((
+        tag for tag in sorted_counts[:5]
+    ))
+    top_interactions = {}
+    top_interactions['tags'] = top_tags
+    data['top_interactions'] = top_interactions
+
     return data
 
-def getContainers(interactions, containers):
+def getContainerSummaries(interactions, containers):
     data = dict((
         (container[1], getSummary(interactions, container=container[0])) for container in containers    
+    ))
+    return data
+
+def getContentSummaries(interactions, content):
+    data = dict((
+        (content_item[1], getSummary(interactions, content=content_item[0])) for content_item in content    
     ))
     return data
 
