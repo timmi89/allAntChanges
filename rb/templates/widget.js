@@ -1151,17 +1151,16 @@ function readrBoard($R){
                     log(kind);
                     top_tags = summary.top_interactions.tags;
                     //hide indicators and indicatorDetails and show on load.
-                    if( kind !== 'img' ){
-                        $container = $(RDR.group.anno_whitelist+'.rdr-'+hash); // prepend with the anno_whitelist selector
-                        total = summary.counts.tags;
 
-                        //todo: clean this out.
-                        //info = RDR.actions.indicators.sortReactions( hash );
-                        
-                    }   
-                    else{
+                    //todo: consider making more effecient.
+                    $container = $('.rdr-'+hash); // prepend with the anno_whitelist selector
+                    
+                    total = summary.counts.tags;
+                    log($container)
+                    if( kind == 'img' ){
                         //is an image
                         log('img')
+                        log(summary)
                         //todo: this is all a temp hack.  Consolodate this code!
                         var $this_img, $tagList, imageData;
 
@@ -1174,7 +1173,7 @@ function readrBoard($R){
                         */
                         //todo: prop down this change var change
                         
-                        $this_img = $('img[src$="' + summary.body + '"]')
+                        $this_img = $container
                         log($this_img)
 
                         function SortByTagCount(a,b) { return b.count - a.count; }
@@ -1413,15 +1412,14 @@ function readrBoard($R){
 
 
 
+                selector = ".rdr-" + which;
 
                 if (args.kind == "text") {
                     var info = icon.data('info'),
-                    selector = RDR.group.anno_whitelist+".rdr-" + which;
 
                 } else if (args.kind == "image") {
                     //todo: this is a temp fix - consolodate.
                     var info = icon.data('imageData');
-                    var selector = "";
                 }
 
                 var iconOffsets = args.icon.offset();
