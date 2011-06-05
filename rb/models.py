@@ -78,10 +78,10 @@ class Group(models.Model):
     blessed_tags = models.ManyToManyField(InteractionNode)
 
     # black/whitelist fields
-    anno_whitelist = models.CharField(max_length=250,blank=True,default=u"p")
-    img_whitelist = models.CharField(max_length=250,blank=True)
-    img_blacklist = models.CharField(max_length=250,blank=True)
-    no_readr = models.CharField(max_length=250,blank=True)
+    anno_whitelist = models.CharField(max_length=255,blank=True,default=u"p")
+    img_whitelist = models.CharField(max_length=255,blank=True)
+    img_blacklist = models.CharField(max_length=255,blank=True)
+    no_readr = models.CharField(max_length=255,blank=True)
     
     # logo fields
     logo_url_sm = models.URLField(blank=True,verify_exists=False)
@@ -125,8 +125,8 @@ class Site(models.Model):
     name = models.CharField(max_length=100, unique=True)
     domain = models.CharField(max_length=50, unique=True)
     group = models.ForeignKey(Group)
-    include_selectors = models.CharField(max_length=250, blank=True)
-    no_rdr_selectors = models.CharField(max_length=250, blank=True)
+    include_selectors = models.CharField(max_length=255, blank=True)
+    no_rdr_selectors = models.CharField(max_length=255, blank=True)
     css = models.URLField(blank=True)
 
     def __unicode__(self):
@@ -135,7 +135,7 @@ class Site(models.Model):
 class Page(models.Model):
     site = models.ForeignKey(Site)
     url = models.URLField(verify_exists=False)
-    title = models.TextField(blank=True)
+    title = models.CharField(max_length=255, blank=True)
     canonical_url = models.URLField(verify_exists=False, blank=True)
 
     def __unicode__(self):
