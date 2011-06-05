@@ -39,6 +39,7 @@ def getSummary(interactions, container=None, content=None, data=None):
     counts['coms'] = len(comments)
     counts['interactions'] = len(interactions)
     data['counts'] = counts
+    data['id'] = container
     
     if container:
         tag_counts = dict(( 
