@@ -133,6 +133,7 @@ class CreateContainerHandler(AnonymousBaseHandler):
                 )[1]
             except KeyError:
                 raise JSONException("Bad key for container")
+
         return result
 """
 class ContainerSummaryHandler(AnonymousBaseHandler):
