@@ -808,6 +808,8 @@ function readrBoard($R){
 
                 var url = window.location.href + window.location.hash;
 				var canonical = ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href'):"";
+                var title = ( $('meta[property="og:title"]').attr('content') ) ? $('meta[property="og:title"]').attr('content'):$('title').text();
+                if ( !title ) title = "";
 
 				//TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
 				//might not want to send canonical, or, send it separately if/only if it's different than URL
@@ -819,7 +821,8 @@ function readrBoard($R){
                     data: {
 						group_id: RDR.groupPermData.group_id,
 						url: url,
-						canonical_url: canonical
+						canonical_url: canonical,
+                        title: title
 					},
 					success: function(response) {
                        log('response')
