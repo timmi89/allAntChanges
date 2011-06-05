@@ -1382,7 +1382,7 @@ function readrBoard($R){
 
                 var sendData = {
                     "page_id" : RDR.page.id,
-                    "container":summary.id,
+                    "container_id":summary.id,
                     "top_tags":summary.top_interactions.tags
                 }
 
