@@ -1020,8 +1020,6 @@ function readrBoard($R){
                 });
 
                 $nodes = $textNodes.add($imgNodes);
-                log($nodes)
-                log('start')
                 $nodes.each(function(){
                     var body = $(this).data('body'),
                     type = $(this)[0].tagName.toLowerCase(),
@@ -1031,9 +1029,6 @@ function readrBoard($R){
                     if ( RDR.content_nodes[hash] ) return
                     if ( typeof body === "undefined" ) return
 
-                    log('body')
-                    log(body)
-                    log(this)
                     // add an object with the text and hash to the nodes dictionary
                     RDR.content_nodes[hash] = {
                         body:body,
@@ -1046,7 +1041,6 @@ function readrBoard($R){
                     $(this).data('hash', hash);                   
                     
                 });
-                log('end')
                 RDR.actions.sendHashes();
             },
             sendHashes: function() {
@@ -1063,8 +1057,6 @@ function readrBoard($R){
 					//todo: talk to Porter about how to Model the Page Data
 					hashes : md5_list
 				}
-                log('sendData')
-                log(sendData)
                 // send the data!
                 $.ajax({
                     url: "/api/summary/containers/",
@@ -1075,8 +1067,6 @@ function readrBoard($R){
                     	json: JSON.stringify(sendData)
                     },
                     success: function(response) {
-                        log(' sendhashes response')
-                        log(response)
                         var summaries = response.data.known,
                         unknownList = response.data.unknown;
                         
@@ -1087,8 +1077,6 @@ function readrBoard($R){
                             $.each( unknownList, function(idx, hash) {
                                 sendData[hash] = RDR.content_nodes[hash];
                             });
-                            log('sendDatasendDatasendDatasendData')
-                            log(sendData)
                             $.ajax({
                                 url: "/api/containers/create/",
                                 type: "get",
@@ -1098,10 +1086,8 @@ function readrBoard($R){
                                     json: JSON.stringify(sendData)
                                 },
                                 success: function(response) {
-                                    log('responseresponseresponse')
-                                    log(response)
-                                    //var newfoundSummaries = response.data;                                    
-                                    //RDR.actions.summaries.save(newfoundSummaries);
+                                    var newfoundSummaries = response.data;                                    
+                                    RDR.actions.summaries.save(newfoundSummaries);
                                 },
                                 error: function(response) {
                                     //for now, ignore error and carry on with mockup
@@ -1133,19 +1119,16 @@ function readrBoard($R){
                     //type is optional - defaults to text
                     
                     // if ( RDR.content_nodes[i].info.com_count + RDR.content_nodes[i].info.tag_count > 0 ) {
-                    console.log('-- what we know about container with hash '+hash+' --');
-                    console.dir(RDR.content_nodes[hash]);
+                    //console.log('-- what we know about container with hash '+hash+' --');
+                    //console.log(RDR.content_nodes[hash]);
 
                     var summary = RDR.summaries[hash];
-                    log('summary');
-                    log(summary);
-                    console.dir(summary);
 
-                    var $container, $indicator, $indicator_details, some_reactions, total, info;
+                    var $container, $indicator, $indicator_details, some_reactions, total, info, top_tags, type;
 
                     //todo: prop down var change
                     type = summary.type;
-
+                    top_tags = summary.top_interactions.tags;
                     //hide indicators and indicatorDetails and show on load.
                     if( type !== 'img' ){
                         $container = $(RDR.group.anno_whitelist+'.rdr-'+hash); // prepend with the anno_whitelist selector
@@ -1177,7 +1160,6 @@ function readrBoard($R){
                         
                         //total = imageData.tag_count;
                         total = summary.counts.tags;
-                        var top_tags = summary.top_interactions.tags;
 
                         $indicator = $('<div class="rdr rdr_indicator rdr_image"></div>').hide();
                         $indicator.append(
@@ -1228,7 +1210,7 @@ function readrBoard($R){
                         '<img src="/static/images/blank.png" class="no-rdr" />',
                         '<span class="rdr_count">'+ total +'</span>'
                     )//chain
-                    .data( {'which':hash, 'info':info } )//chain
+                    .data( {'which':hash} )//chain
                     .hover( 
                         function() {
                             //todo: what does this do?
@@ -1272,11 +1254,12 @@ function readrBoard($R){
 
                     //build tags in $tagList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
                     $indicator_details.css({ 'visiblity':'hidden' }).show();
-                    var top_tags = info.top_tags;
+                    log('start')
                     for ( var j in top_tags ){
+                        log( top_tags[j] )
                         var this_tag = top_tags[j],
                         prefix = (j==0) ? "" :  ", ",
-                        $tag = $('<strong/>').append(this_tag.tag.body),
+                        $tag = $('<strong/>').append(this_tag.body),
                         $count = $('<em/>').append( '('+this_tag.count+')' );
                         
                         $tagList.append( $('<span />').append( prefix, $tag, $count) );
@@ -1286,6 +1269,7 @@ function readrBoard($R){
                             break;
                         }                      
                     }
+                    log('end')
                     $indicator_details.css({ 'visiblity':'visible' }).hide();
 
                     $indicator_details.click( function() {
