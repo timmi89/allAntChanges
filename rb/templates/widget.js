@@ -741,7 +741,7 @@ function readrBoard($R){
 
                         //todo:just for testing for now: - add defaults:
                         RDR.group.img_selector = RDR.group.img_selector || "div.container img";
-                        RDR.group.selector_whitelist = RDR.group.selector_whitelist || "";
+                        RDR.group.selector_whitelist = RDR.group.selector_whitelist || "div.container p";
 
                         // //todo: REMOVE THIS
                         // RDR.group.blessed_tags = [
@@ -998,7 +998,8 @@ function readrBoard($R){
 
                 //setup text nodes
                 //todo: think about .not('img') here
-                var $textNodes = $( RDR.group.anno_whitelist ).not('.rdr-hashed').not('img');
+                //todo: look into selector_whitelist vs anno_whitelist
+                var $textNodes = $( RDR.group.selector_whitelist ).not('.rdr-hashed').not('img');
                 $textNodes.each( function() {
                     // get the node's text and smash case
                     // TODO: <br> tags and block-level tags can screw up words.  ex:
@@ -1020,26 +1021,32 @@ function readrBoard($R){
 
                 $nodes = $textNodes.add($imgNodes);
                 log($nodes)
+                log('start')
                 $nodes.each(function(){
                     var body = $(this).data('body'),
                     type = $(this)[0].tagName.toLowerCase(),
                     hashText = "rdr-"+type+"-"+body, //rdr-img-dailycandy.com/image/cake.jpg || rdr-p-ohshitthisissomecrazytextupinthisparagraph
                     hash = RDR.util.md5.hex_md5( hashText );
-                    // add an object with the text and hash to the nodes dictionary
-                    if ( !RDR.content_nodes[hash] ) {
-                        RDR.content_nodes[hash] = {
-                            body:body,
-                            type:type
-                        };
-                    }
 
+                    if ( RDR.content_nodes[hash] ) return
+                    if ( typeof body === "undefined" ) return
+
+                    log('body')
+                    log(body)
+                    log(this)
+                    // add an object with the text and hash to the nodes dictionary
+                    RDR.content_nodes[hash] = {
+                        body:body,
+                        type:"type"
+                    };
+                
                     // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
                     // this makes it easy to find on the page later
                     $(this).addClass( 'rdr-' + hash ).addClass('rdr-hashed');
                     $(this).data('hash', hash);                   
                     
                 });
-                
+                log('end')
                 RDR.actions.sendHashes();
             },
             sendHashes: function() {
