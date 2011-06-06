@@ -1,36 +1,21 @@
-{% for card in cards %}
+{% for interaction in interactions %}
 <table class="card" border="0" cellspacing="0" cellpadding="0">
   <thead>
-    <th class="column1">{{ card.page.logo }}</th>
-    <th class="column2">{{ card.page.title }}</th>
+    <th class="column1">{{ interaction.page.logo }}</th>
+    <th class="column2">{{ interaction.page.title }}</th>
   </thead>
   <tbody>
-  {% for id, tag in card.summary.top_interactions.tags.items %}
     <tr class="interaction">
     <td class="column1">
-      <div class="reaction">{{tag.body}}</div>
-      <div class="count">+{{tag.count}}</div>
+      <div class="reaction">{{interaction.interaction_node.body}}</div>
+      <div class="count">+1</div>
     </td>
     <td class="column2">
-      <div class="who_action"> reacted to:</div>
+      <div class="who_action">{{interaction.user.social_user.full_name}} reacted to:</div>
       <div class="content text">{{interaction.content.body}}</div>
-      <h5 class="label small">comments</h5>
-      <div class="comment_container">
-        <div class="header">
-          <div class="when">12:37<span>pm</span>  5/28/2011</div>
-          <div class="avatar"><img src="/static/images/anonymousplode.png"/></div>
-          <div class="who">eric chaves</div>
-        </div>
-        <div class="comment">
-          <div class="quote open">"</div>
-          A bit surprising to hear they aren’t commenting, but I guess you gotta be careful on these (stupid) issues.
-          <div class="quote close">"</div>
-          <div class="count">+423</div>
-        </div>
       </div>
     </div>
     </td>
-  {% endfor %}
   </tbody>
 </table>
 {% endfor %}
