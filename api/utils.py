@@ -58,7 +58,7 @@ def getSummary(interactions, container=None, content=None, page=None, data=None)
     ))
     top_interactions = {}
     top_interactions['tags'] = top_tags
-    top_interactions['coms'] = [dict(id=comment.id, parent_id=comment.parent.id, user=comment.user, body=comment.interaction_node.body) for comment in comments]
+    top_interactions['coms'] = [dict(id=comment.id, parent_id=comment.parent.interaction_node.id, user=comment.user, body=comment.interaction_node.body) for comment in comments]
     data['top_interactions'] = top_interactions
 
     return data
