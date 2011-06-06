@@ -25,7 +25,7 @@ def getSummary(interactions, container=None, content=None, page=None, data=None)
     if not data: data = {}
     counts = {}
     if container:
-          data['kind'] = container[2]
+        data['kind'] = container[2]
     if content:
         data['kind'] = content[2]
         data['body'] = content[1]
@@ -59,6 +59,7 @@ def getSummary(interactions, container=None, content=None, page=None, data=None)
     top_interactions = {}
     top_interactions['tags'] = top_tags
     top_interactions['coms'] = [dict(id=comment.id, tag_id=comment.parent.interaction_node.id, content_id=comment.content.id, user=comment.user, body=comment.interaction_node.body) for comment in comments]
+
     data['top_interactions'] = top_interactions
 
     return data

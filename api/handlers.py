@@ -174,7 +174,6 @@ class ContentSummaryHandler(AnonymousBaseHandler):
         interactions = list(Interaction.objects.filter(
             container=container_id,
             page=page_id,
-            interaction_node__in=tag_ids
         ))
         content_ids = (interaction.content_id for interaction in interactions)
         content = list(Content.objects.filter(id__in=content_ids).values_list('id','body','kind'))
