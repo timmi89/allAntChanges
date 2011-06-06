@@ -81,6 +81,9 @@ def cards(request):
     context = {'pages': pages}
     return render_to_response("cards.html", context)
 
+def sidebar(request):
+    return render_to_response("sidebar.html")
+
 def expander(request, short):
     link_id = base62.to_decimal(short);
     link = Link.objects.get(id=link_id);

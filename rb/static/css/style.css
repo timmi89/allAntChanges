@@ -506,8 +506,8 @@ section[role="complementary"] 			{
 	height:100%;
 	position:fixed;
 	left:25px;
-	width:190px;
-	padding:0 10px;
+	width:210px;
+	padding:0;
 	background:#f0f0f0;
 	box-shadow:2px 0px 3px 1px #aaa;
 }

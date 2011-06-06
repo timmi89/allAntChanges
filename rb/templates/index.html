@@ -1,20 +1,33 @@
 {% extends "base.html" %}
 
+{% block sidebarContent %}
+<div id="sidebar"></div>
+{% endblock sidebarContent %}
+
 {% block mainContent %}
-<h1>Hi this is the homepage stream</h1>
+<h1>Latest on ReadrBoard</h1>
 <div id="cards"></div>
 {% endblock mainContent %}
 
 {% block pageJS %}
 <script type="text/javascript">
 $.ajax({
-    url: "/cards",
+    url: "/cards/",
     type: "get",
     success: function(response) {
-        console.dir(response);
         $('#cards').html( response );
     }
 });
+
+$.ajax({
+    url: "/sidebar/",
+    type: "get",
+    success: function(response) {
+        console.log(response);
+        $('#sidebar').html( response );
+    }
+});
+
 </script>
 {% endblock %}
 
