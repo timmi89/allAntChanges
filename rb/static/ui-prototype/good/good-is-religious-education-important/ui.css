@@ -1,0 +1,252 @@
+/* Layout helpers
+----------------------------------*/
+.ui-helper-hidden {
+	display: none;
+	}
+.ui-helper-hidden-accessible {
+	position: absolute;
+	left: -99999999px;
+	}
+.ui-helper-reset {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	line-height: 1.3;
+	text-decoration: none;
+	font-size: 100%;
+	list-style: none;
+	}
+.ui-helper-clearfix:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+	}
+.ui-helper-clearfix {
+	display: inline-block;
+	}
+/* required comment for clearfix to work in Opera \*/
+* html .ui-helper-clearfix {
+	height:1%;
+	}
+.ui-helper-clearfix {
+	display:block;
+	}
+/* end clearfix */
+.ui-helper-zfix {
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	position: absolute;
+	opacity: 0;
+	filter:Alpha(Opacity=0);
+	}
+/* Interaction Cues
+----------------------------------*/
+.ui-state-disabled {
+	cursor: default !important;
+	}
+.ui-widget-overlay {
+	background: #404040 url(../../../../../images/backgrounds/macFFBgHack.png) repeat;
+	opacity: 0.6;
+	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=60);
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+/* Component containers
+----------------------------------*/
+.ui-widget {
+	font-family: Arial,sans-serif/*{ffDefault}*/;
+	font-size: 1.1em/*{fsDefault}*/;
+	}
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+	font-family: Arial,sans-serif/*{ffDefault}*/;
+	font-size: 1em; }
+.ui-widget-content {
+	background-color: #fff;
+	color: #000/*{fcContent}*/;
+	}
+.ui-widget-content a {
+	color: #000/*{fcContent}*/;
+	}
+.ui-widget-header {
+	background-color: #000;
+	color: #FFF;
+	font-weight: normal;
+	}
+.ui-widget-header a {
+	color: #222222/*{fcHeader}*/;
+	}
+
+/* Interaction Cues
+----------------------------------*/
+.ui-state-highlight, .ui-widget-content .ui-state-highlight {
+	border: 1px solid #fcefa1/*{borderColorHighlight}*/;
+	background: #fbf9ee/*{bgColorHighlight}*/ url(images/ui-bg_glass_55_fbf9ee_1x400.png)/*{bgImgUrlHighlight}*/ 0/*{bgHighlightXPos}*/ 50%/*{bgHighlightYPos}*/ repeat-x/*{bgHighlightRepeat}*/;
+	color: #363636/*{fcHighlight}*/;
+	}
+.ui-state-highlight a, .ui-widget-content .ui-state-highlight a {
+	color: #363636/*{fcHighlight}*/;
+	}
+.ui-state-error, .ui-widget-content .ui-state-error {
+	border: 1px solid #cd0a0a/*{borderColorError}*/;
+	background: #fef1ec/*{bgColorError}*/ url(images/ui-bg_inset-soft_95_fef1ec_1x100.png)/*{bgImgUrlError}*/ 0/*{bgErrorXPos}*/ 50%/*{bgErrorYPos}*/ repeat-x/*{bgErrorRepeat}*/;
+	color: #cd0a0a/*{fcError}*/;
+	}
+.ui-state-error a, .ui-widget-content .ui-state-error a {
+	color: #363636/*{fcError}*/;
+	}
+.ui-state-error-text, .ui-widget-content .ui-state-error-text {
+	color: #cd0a0a/*{fcError}*/;
+	}
+.ui-state-disabled, .ui-widget-content .ui-state-disabled {
+	opacity: .35;
+	filter:Alpha(Opacity=35);
+	background-image: none;
+	}
+.ui-priority-primary, .ui-widget-content .ui-priority-primary {
+	font-weight: bold;
+	}
+.ui-priority-secondary, .ui-widget-content .ui-priority-secondary {
+	opacity: 0.5;
+	filter:Alpha(Opacity=50);
+	font-weight: normal;
+	}
+
+/* Icons
+----------------------------------*/
+
+/* states and images */
+.ui-icon {
+	width: 16px;
+	height: 16px;
+	}
+.ui-widget-header .ui-icon {
+	background-image: url(images/ui-icons_ffffff_256x240.png)/*{iconsHeader}*/;
+	}
+.ui-state-default .ui-icon {
+	background-image: url(images/ui-icons_888888_256x240.png)/*{iconsDefault}*/;
+	}
+.ui-state-highlight .ui-icon {
+	background-image: url(images/ui-icons_2e83ff_256x240.png)/*{iconsHighlight}*/;
+	}
+.ui-state-error .ui-icon, .ui-state-error-text .ui-icon {
+	background-image: url(images/ui-icons_cd0a0a_256x240.png)/*{iconsError}*/;
+	}
+/* Dialog
+----------------------------------*/
+
+.ui-dialog {
+	background:transparent;
+	position: relative;
+	padding: 0;
+	width: 300px;
+	/* IE */
+	filter:progid:DXImageTransform.Microsoft.dropshadow(
+		OffX=7,
+		OffY=7,
+		Color='#60000000',
+		Positive='true',
+		Enabled='true'
+	);
+	/* FF 3.5+ */
+	-moz-box-shadow:rgba(0, 0, 0, 0.3) 7px 7px;
+	/* Safari 3+ */
+	-webkit-box-shadow:rgba(0, 0, 0, 0.3) 7px 7px;
+	/* Safari 2 */
+	/*
+	multiple background images
+	*/
+	}
+.ui-dialog .ui-dialog-titlebar {
+	line-height:40px;
+	position: relative;
+	overflow:hidden;
+	background:transparent url('images/dialog.png') no-repeat 0 0;
+	}
+.ui-dialog .ui-dialog-title {
+	height:40px;
+
+	margin-left:20px;
+	background:#000;
+	display:block;
+	position:relative;
+	left:25px;
+	font-size: 16px;
+	margin: 0;
+	}
+.ui-dialog .ui-dialog-titlebar-close {
+	float:right;
+	margin:-40px 0 0;
+	position:relative;
+	overflow: hidden;
+	background: transparent url(images/dialog.png) 0 -40px no-repeat;
+	display: block;
+	width:40px;
+	height:40px;
+	overflow: hidden;
+	}
+.ui-dialog .ui-dialog-titlebar-close:hover {
+	background-position: 0 -80px;
+	}
+.ui-dialog .ui-dialog-titlebar-close span {
+	/* 	close indicator */
+	color: #000;
+	}
+.ui-dialog .ui-dialog-content {
+        padding:10px 25px;
+	background-color:#fff;
+	border: 0;
+	overflow: auto;
+	zoom: 1;
+	}
+.ui-dialog .ui-dialog-buttonpane {
+	text-align: left;
+	border-width: 1px 0 0 0;
+	background-image: none;
+	margin: .5em 0 0 0;
+	padding: .3em 1em .5em .4em;
+	}
+.ui-dialog .ui-dialog-buttonpane button {
+	float: right;
+	margin: .5em .4em .5em 0;
+	cursor: pointer;
+	padding: .2em .6em .3em .6em;
+	line-height: 1.4em;
+	width:auto;
+	overflow:visible;
+	}
+.ui-dialog .ui-resizable-se {
+	width: 14px;
+	height: 14px;
+	right: 3px;
+	bottom: 3px;
+	}
+.ui-draggable .ui-dialog-titlebar {
+	cursor: move;
+	}
+
+/* Progressbar
+----------------------------------*/
+.ui-progressbar {
+	height:2em;
+	text-align: left;
+	}
+.ui-progressbar .ui-progressbar-value {
+	margin: -1px;
+	height:100%;
+	}
+
+/* Loading state
+----------------------------------*/
+.ui-dialog-content .loading {
+	padding:20% 0;
+	background: transparent url(../../../../../images/backgrounds/loading-ffffff-large.gif) 50% no-repeat;
+	text-align: center;
+	}
