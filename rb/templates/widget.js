@@ -1608,28 +1608,53 @@ function readrBoard($R){
                 log(node)
                 log('tag')
                 log(tag)
+                log(c_idx)
+
+                //thoguht we might need this but we dont
+                /*
+                $.ajax({
+                    url: "/api/???",
+                    type: "get",
+                    contentType: "application/json",
+                    dataType: "jsonp",
+                    data: { json: JSON.stringify(sendData) },
+                    success: function(response) {
+
+                    },
+                    error: function(response) {
+                        //for now, ignore error and carry on with mockup
+                        console.warn('ajax error');
+                        console.log(response);
+                    }
+                });
+                */
+
 
                 var comments = node.top_interactions.coms;
                 var hasComments = !$.isEmptyObject(comments);
 
                 if (hasComments) {
+
+
                     rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments <span>('+node.counts.coms+')</span>');
 
                     // ok, get the content associated with this tag!
                     for ( var i in comments ) {
                         var this_comment = comments[i];
+                        if( this_comment.parent == tag.name ){
+                            
+                            var $commentSet = $('<div class="rdr_commentSet" />'),
+                                $commentBy = $('<div class="rdr_commentBy" />'),
+                                $comment = $('<div class="rdr_comment" />');
 
-                        var $commentSet = $('<div class="rdr_commentSet" />'),
-                            $commentBy = $('<div class="rdr_commentBy" />'),
-                            $comment = $('<div class="rdr_comment" />');
+                            var user_image_url = ( this_comment.user.image_url ) ? this_comment.user.image_url:'/static/images/anonymousplode.png';
+                            var user_name = ( this_comment.user.first_name == "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
+                            $commentBy.html( '<img src="'+user_image_url+'" /> ' + user_name );
+                            $comment.html( '<div class="rdr_comment_body">"'+this_comment.comment+'"</div>' );
+                            $comment.append( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">+1</span></a>' );
 
-                        var user_image_url = ( this_comment.user.image_url ) ? this_comment.user.image_url:'/static/images/anonymousplode.png';
-                        var user_name = ( this_comment.user.first_name == "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
-                        $commentBy.html( '<img src="'+user_image_url+'" /> ' + user_name );
-                        $comment.html( '<div class="rdr_comment_body">"'+this_comment.comment+'"</div>' );
-                        $comment.append( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">+1</span></a>' );
-
-                        $commentSet.append( $commentBy, $comment );
+                            $commentSet.append( $commentBy, $comment );
+                        }
 
                     }
                     $commentSet.append( '<hr />' );
