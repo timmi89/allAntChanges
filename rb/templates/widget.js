@@ -1467,7 +1467,7 @@ function readrBoard($R){
                     $rightBox = '<div class="rdr_rightBox" />';
 
                     $li.append($leftBox,$tagText,$rightBox);
-                    if ( summary.counts > 0 ) $li.addClass('rdr_has_comment');
+                    if ( summary.counts.coms > 0 ) $li.addClass('rdr_has_comment');
                     $tagBox.children('ul.rdr_tags').append($li);
                 
                 });
@@ -1603,6 +1603,7 @@ function readrBoard($R){
                 $whyBody.empty();
                 // $whyBody.empty();
                 
+                //todo: this function needs work pulling vars back together
                 log('node')
                 log(node)
                 log('tag')
@@ -1944,7 +1945,8 @@ function readrBoard($R){
                         settings = args.settings,
                         $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
                         $customTagBox = $('<li class="rdr_customTagBox"><div class="rdr_rightBox"></div><div class="rdr_leftBox"></div></li>'),
-                        $freeformTagInput = $('<input type="text" class="freeformTagInput" name="unknown-tags" />')//chain
+                        $freeformTagDiv = $('<div class="rdr_tagText"><input type="text" class="freeformTagInput" name="unknown-tags" /></div>'),
+                        $freeformTagInput = $freeformTagDiv.find('input')//chain
                     .blur(function(){
                         if($('input.freeformTagInput').val() == "" ){
                             $('div.rdr_help').show();   
@@ -1971,12 +1973,14 @@ function readrBoard($R){
                         }
                     });
 
-                    var $tagTooltip = $('<div class="rdr_help">Add your own (ex. hip, woot)</div>').click(function(){            
+                    var $tagTooltip = $('<div class="rdr_help">Add your own (ex. hip, woot)</div>');
+                    $freeformTagDiv.append($tagTooltip);
+                    $customTagBox.append($freeformTagDiv);
+
+                    $customTagBox.click(function(){
                         $tagTooltip.hide();
                         $freeformTagInput.focus();
                     });
-
-                    $customTagBox.append($freeformTagInput, $tagTooltip).add($tagTooltip);
 
                     rindow.find('ul.rdr_tags').append( $customTagBox );
                 }
@@ -2064,7 +2068,7 @@ function readrBoard($R){
                                             tag_li.addClass('rdr_selected');
                                             tag_li.find('input').remove();
                                             tag_li.find('div.rdr_help').remove();
-                                            tag_li.append( '<a href="javascript:void(0);">'+tag.name+'</a>' );
+                                            tag_li.append( '<div class="rdr_tagText">'+tag.name+'</div>' );
                                             RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:params.settings});
                                         }
                                     } 
