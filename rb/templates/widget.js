@@ -1559,63 +1559,84 @@ function readrBoard($R){
 
                 // ok, get the content associated with this tag!
                 $.each(content, function(idx, node){
+                    // log('node');
+                    // console.dir(node);
+
                     var tag = tagClone;
-                    var $contentSet = $('<div class="rdr_contentSet" />'),
-                        $header = $('<div class="rdr_contentHeader rdr_leftShadow" />'),
-                        $content = $('<div class="rdr_content rdr_leftShadow"><div class="rdr_otherTags"></div></div>');
-                    $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+node.counts.tags+')</span> '+tag.name+'</a>' );
-                    $header.find('span.rdr_tag_count').click( function() {
-                        RDR.actions.rateSendLite({ element:$(this), tag:tag, rindow:rindow, content:node.body, which:which });
-                    });
 
-                    if ( node.counts.coms > 0 ) {
-                        $comment = $('<div class="rdr_has_comment">' +node.counts.coms+ '</div>');
-                    } else {
-                        $comment = $('<div class="rdr_can_comment">Comment</div>');
-                    }
+                    // log('tag');
+                    // console.dir(tag);
 
-                    $comment.data('c_idx',node.idx);
-                    $comment.click( function() {
-                        var $this = $(this);
-                        $this.closest('.rdr_contentSet').addClass('rdr_selected').siblings().removeClass('rdr_selected');
-                        RDR.actions.viewCommentContent( tag, which, $(this).data('c_idx'), rindow, node);
-                    });
+                    if ( node.top_interactions.tags[ tag.id ] ) {
 
-                    $header.append( $comment );
+                        var $contentSet = $('<div class="rdr_contentSet" />'),
+                            $header = $('<div class="rdr_contentHeader rdr_leftShadow" />'),
+                            $content = $('<div class="rdr_content rdr_leftShadow"><div class="rdr_otherTags"></div></div>');
+                        $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+node.counts.tags+')</span> '+tag.name+'</a>' );
+                        $header.find('span.rdr_tag_count').click( function() {
+                            RDR.actions.rateSendLite({ element:$(this), tag:tag, rindow:rindow, content:node.body, which:which });
+                        });
 
-                    $content.find('div.rdr_otherTags').before( '"' + node.body + '"' );
-                    var otherTags = node.top_interactions.tags;
-                    if( !$.isEmptyObject(otherTags) ){
-                        $content.find('div.rdr_otherTags').append( '<em>Other Reactions</em>' );
-                        for ( var j in otherTags ) {
-                            var thisTag = otherTags[j];
-                            var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+thisTag.count+')</span> '+thisTag.body+'</a>');
-                            $this_tag.find('span.rdr_tag_count').click( function() {
-                                RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
-                            });
-                            $content.find('div.rdr_otherTags').append( $this_tag );
+                        // todo: [porter] i'm looping to see if there is a comment for this TAG.  can we just send this down from server?
+                        for ( var i in summary.top_interactions.coms ) {
+                            var node_comments = 0;
+                            if ( summary.top_interactions.coms[i].content_id == node.id ) {
+                                node_comments++;
+                                node.top_interactions.coms.push( summary.top_interactions.coms[i] );
+                            }
                         }
+                        if ( node_comments > 0 ) {
+                            $comment = $('<div class="rdr_has_comment">' +node_comments+ '</div>');
+                        } else {
+                            $comment = $('<div class="rdr_can_comment">Comment</div>');
+                        }
+
+                        // $comment.data('c_idx',node.idx);
+                        $comment.click( function() {
+                            var $this = $(this);
+                            $this.closest('.rdr_contentSet').addClass('rdr_selected').siblings().removeClass('rdr_selected');
+                            RDR.actions.viewCommentContent( tag, which, rindow, node);
+                        });
+
+                        $header.append( $comment );
+
+                        $content.find('div.rdr_otherTags').before( '"' + node.body + '"' );
+                        var otherTags = node.top_interactions.tags;
+                        if( !$.isEmptyObject(otherTags) ){
+                            for ( var j in otherTags ) {
+                                var thisTag = otherTags[j];
+                                if ( thisTag.body != tag.name ) {
+                                    if ( $content.find('div.rdr_otherTags em').length == 0 ) $content.find('div.rdr_otherTags').append( '<em>Other Reactions</em>' );
+
+                                    var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+thisTag.count+')</span> '+thisTag.body+'</a>');
+                                    $this_tag.find('span.rdr_tag_count').click( function() {
+                                        RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
+                                    });
+                                    $content.find('div.rdr_otherTags').append( $this_tag );
+                                }
+                            }
+                        }
+
+                        $contentSet.append( $header, $content );
+
+                        rindow.find('div.rdr_contentPanel div.rdr_body').append( $contentSet );
                     }
-
-                    $contentSet.append( $header, $content );
-
-                    rindow.find('div.rdr_contentPanel div.rdr_body').append( $contentSet );
                 });
 
                 RDR.actions.panel.expand("contentPanel", rindow);
             },
-            viewCommentContent: function(tag, which, c_idx, rindow, node){
+            viewCommentContent: function(tag, which, rindow, node){
                 var $whyBody = rindow.find('div.rdr_whyPanel div.rdr_body');
                 // if ( $whyBody.data('jsp') ) $whyBody.data('jsp').destroy();
                 $whyBody.empty();
                 // $whyBody.empty();
                 
                 //todo: this function needs work pulling vars back together
-                log('node')
-                log(node)
-                log('tag')
-                log(tag)
-                log(c_idx)
+                // log('node')
+                // console.dir(node)
+                // log('tag')
+                // console.dir(tag)
+                // log(c_idx)
 
                 //thoguht we might need this but we dont
                 /*
@@ -1643,12 +1664,12 @@ function readrBoard($R){
                 if (hasComments) {
 
 
-                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments <span>('+node.counts.coms+')</span>');
+                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments <span>('+comments.length+')</span>');
 
                     // ok, get the content associated with this tag!
                     for ( var i in comments ) {
                         var this_comment = comments[i];
-                        if( this_comment.parent == tag.name ){
+                        if( this_comment.tag_id == tag.id ){
                             
                             var $commentSet = $('<div class="rdr_commentSet" />'),
                                 $commentBy = $('<div class="rdr_commentBy" />'),
@@ -1657,14 +1678,14 @@ function readrBoard($R){
                             var user_image_url = ( this_comment.user.image_url ) ? this_comment.user.image_url:'/static/images/anonymousplode.png';
                             var user_name = ( this_comment.user.first_name == "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
                             $commentBy.html( '<img src="'+user_image_url+'" /> ' + user_name );
-                            $comment.html( '<div class="rdr_comment_body">"'+this_comment.comment+'"</div>' );
+                            $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
                             $comment.append( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">+1</span></a>' );
 
                             $commentSet.append( $commentBy, $comment );
                         }
 
                     }
-                    $commentSet.append( '<hr />' );
+                    if ( $commentSet ) $commentSet.append( '<hr />' );
                 } else {
                     rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Add a Comment');
                 }
@@ -1697,7 +1718,7 @@ function readrBoard($R){
                     RDR.actions.comment({ comment:comment, which:which, content:node.body, tag_id:tag.id, rindow:rindow });
                 });
 
-                $whyBody.html( $commentSet );
+                if ( $commentSet ) $whyBody.html( $commentSet );
                 $whyBody.append( $leaveComment  );
 
                 RDR.actions.panel.expand("whyPanel", rindow);
