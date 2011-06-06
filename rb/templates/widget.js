@@ -746,7 +746,7 @@ function readrBoard($R){
 
                         //todo:just for testing for now: - add defaults:
                         RDR.group.img_selector = RDR.group.img_selector || "div.container img";
-                        RDR.group.selector_whitelist = RDR.group.selector_whitelist || "div.container p";
+                        RDR.group.selector_whitelist = RDR.group.selector_whitelist || "body p";
 
                         // //todo: REMOVE THIS
                         // RDR.group.blessed_tags = [
@@ -1059,10 +1059,12 @@ function readrBoard($R){
 
 				var sendData = {
 					short_name : RDR.group.short_name,
-					pageID : 1,
+					pageID : RDR.page.id,
 					//todo: talk to Porter about how to Model the Page Data
 					hashes : md5_list
 				}
+    console.log('sendData:');
+    console.dir(sendData);
                 // send the data!
                 $.ajax({
                     url: "/api/summary/containers/",

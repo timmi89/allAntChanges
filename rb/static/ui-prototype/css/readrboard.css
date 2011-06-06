@@ -219,7 +219,7 @@ div.rdr ul.rdr_tags li	            { border-color: transparent; border-style: so
 div.rdr ul.rdr_tags li:hover,
 div.rdr ul.rdr_tags li.rdr_selected               {color:#008be4; background:#e4f0f7; display:block; border-color: #bbb transparent #ddd; cursor: pointer;}
 
-div.rdr ul.rdr_tags li .rdr_leftBox     {width:38px; letter-spacing:1px; overflow:hidden; float:left; text-align:center; font-size:21px; padding-top:2px; height:28px;}
+div.rdr ul.rdr_tags li .rdr_leftBox     {width:38px; letter-spacing:1px; overflow:hidden; float:left; text-align:center; font-size:21px !important;  font-family:ReadrLeague, Arial, sans-serif !important; font-weight:normal !important; padding-top:2px; height:28px;}
 
 div.rdr ul.rdr_tags li .rdr_rightBox     {width:30px; padding:0 3px; height:30px; overflow:hidden; float:right; text-align:left;}
 
@@ -244,8 +244,8 @@ div.rdr ul.rdr_tags li.rdr_tagged .rdr_leftBox:hover    {background-position:-72
 div.rdr div.rdr_new ul.rdr_tags li.rdr_selected 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
 div.rdr div.rdr_sntPnl .rdr_borderLine  				{    background:#DDDDDD; clear:both; height:100%; left:38px; position:absolute; width:1px; z-index:2;}
 
-div.rdr ul.rdr_preselected								{font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:-1px 0 0; min-height:120px;}
-div.rdr ul.rdr_preselected .rdr_tagText					{color:#666;text-decoration:none; display:block; float:left; width: 120px; padding-left:5px; overflow-x: hidden;}
+div.rdr ul.rdr_preselected								{margin:-1px 0 0 !important; min-height:120px !important;}
+div.rdr ul.rdr_preselected .rdr_tagText					{color:#666 !important;text-decoration:none !important; display:block !important; float:left !important; width: 120px !important; padding-left:5px !important; overflow-x: hidden !important; font-weight:normal !important; font-size:24px !important; font-family:ReadrLeague, Arial, sans-serif !important;}
 div.rdr li.rdr_customTagBox input.freeformTagInput      {font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0; text-align:left; width:75%; border:none; background:none; -moz-box-shadow:none; -webkit-box-shadow:none; box-shadow:none; padding:2px 0;}
 div.rdr li.rdr_customTagBox div.rdr_help                {left:43px; width:auto;}
 div.rdr li.rdr_customTagBox div.rdr_help:hover          {text-decoration:underline;}
@@ -310,7 +310,7 @@ div.rdr input[type="text"]	{font-size:14px; color:#666; -moz-box-shadow:inset 0p
 div.rdr button				{font-size:14px; }
 
 /* summary widget */
-#rdr-summary 					{box-shadow:0 0 6px 0 #aaa; background:#f7f7f7; padding-bottom:2px; margin-bottom:10px; overflow:auto;}
+#rdr-summary 					{box-shadow:0 0 6px 0 #aaa; background:#f7f7f7; padding-bottom:2px; margin-bottom:10px; overflow:auto;clear:both;}
 #rdr-summary div.rdr-sum-headline   {background:url(/static/images/readr_icons.png) -162px 5px no-repeat; padding:7px 5px 5px 38px; float:left; color:#787878;}
 #rdr-summary div.rdr-top-tags   {padding:8px 5px 0px 8px;float:left;}
 #rdr-summary div.rdr-top-tags span  {white-space:nowrap; font-weight:bold; color:#666;}
@@ -362,3 +362,9 @@ div#rdr_ed_user_2 span {
 	width:16px;
 	text-indent:-9999px;
 }
+
+
+
+
+/* TODO for demoing */
+#rdr-loginPanel	{display:none;}
