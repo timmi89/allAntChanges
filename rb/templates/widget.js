@@ -2791,6 +2791,13 @@ function $RFunctions($R){
  //    // init James Padolsey's autoResize plugin
  //    rdr_autogrow($R);
 
+    //load CSS
+    var css = [
+        "/static/ui-prototype/css/readrboard.css",
+        "/static/css/jquery.jscrollpane.css"
+    ];
+    loadCSS(css);
+
     //init rangy before our jquery
     rangy = pluginRangy();
     rangy.init()
@@ -2846,6 +2853,15 @@ function $RFunctions($R){
 	// }
 	// ];
 
+    function loadCSS(cssFileList){
+
+        $.each(cssFileList, function(i, val){
+            $('<link>').attr({
+                href: val,
+                rel: 'stylesheet'
+            }).appendTo('head');
+        });
+    }
 
     function jQueryPlugins($R){
     //All jquery plugins to be loaded using our $R version of jquery and before our widget code;
@@ -3626,7 +3642,7 @@ function $RFunctions($R){
                 */
                 //make $tempButtons output
                 //hide for now
-                var $tempButtons = $('<div id="rdr_selectionographer_tester" class="rdr_blacklist"/>'),
+                var $tempButtons = $('<div id="rdr_selectionographer_tester" class="rdr_blacklist"/>').hide(),
                 buttonInfo= [
                     //note, remember to use $R instead of $ if calling in firebug
                     {

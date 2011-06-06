@@ -353,9 +353,6 @@ div.rdr button				{font-size:14px; }
 .rdr_hilite_start{}
 .rdr_hilite_end{}
 
-#rdr_selectionographer_tester{
-	display:none;
-}
 
 /* user education bar */
 #rdr_ed_user 		{ position:fixed; top:-40px; left:0; width:100%; background:#f0f0f0; height:35px; -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa; padding:0px; z-index:12000; overflow:hidden;}
