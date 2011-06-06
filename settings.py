@@ -142,7 +142,7 @@ INSTALLED_APPS = (
     'readrboard.rb',
     'piston',
     'south',
-    'treebeard',
+    #'treebeard',
     #'debug_toolbar',
     'autofixture',
     #'django_extensions',

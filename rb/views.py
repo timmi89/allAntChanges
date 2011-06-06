@@ -8,6 +8,7 @@ from settings import FACEBOOK_APP_ID
 from baseconv import base62
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models import Count
+from api.utils import *
 
 def widget(request,sn):
     # Widget code is retreived from the server using RBGroup shortname
@@ -76,9 +77,17 @@ def home(request, **kwargs):
         context['user'] = user
     return render_to_response("index.html", context)
 
+def makeCard(page, interactions):
+    data = {}
+    data['page'] = page
+    data['summary'] = getSummary(interactions, page=page)
+    return data
+
 def cards(request):
-    pages = Page.objects.annotate(interaction_count=Count('interaction')).order_by('-interaction_count')[:5]
-    context = {'pages': pages}
+    pages = Page.objects.all().annotate(interaction_count=Count('interaction'))[:5]
+    interactions = Interaction.objects.filter(page__in=pages)
+    cards = [makeCard(page, interactions) for page in pages]
+    context = {'cards': cards}
     return render_to_response("cards.html", context)
 
 def sidebar(request):

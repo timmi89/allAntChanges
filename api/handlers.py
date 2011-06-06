@@ -28,6 +28,10 @@ class ContainerHandler(AnonymousBaseHandler):
     model = Container
     fields = ('id', 'hash')
 
+class Awesome(AnonymousBaseHandler):
+    model = Interaction
+    fields = ('id')
+
 class InteractionHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, **kwargs):

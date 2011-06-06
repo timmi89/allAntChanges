@@ -1,14 +1,22 @@
-{% for page in pages %}
+{% for card in cards %}
 <table class="card" border="0" cellspacing="0" cellpadding="0">
   <thead>
-    <th class="column1">{{ page.group.logo }}</th>
-    <th class="column2">{{ page.title }}</th>
+    <th class="column1">{{ card.page.logo }}</th>
+    <th class="column2">{{ card.page.title }}</th>
   </thead>
   <tbody>
-
+  {% for id, tag in card.summary.top_interactions.tags.items %}
+    <tr class="interaction">
+    <td class="column1">
+      <div class="reaction">{{tag.body}}</div>
+      <div class="count">+{{tag.count}}</div>
+    </td>
+    
+  {% endfor %}
   </tbody>
 </table>
 {% endfor %}
+
 
 <table class="card" border="0" cellspacing="0" cellpadding="0">
   <thead>
