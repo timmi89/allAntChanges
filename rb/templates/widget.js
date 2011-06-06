@@ -1449,6 +1449,7 @@ function readrBoard($R){
 
 
                 var topTags = summary.top_interactions.tags,
+                topComs = summary.top_interactions.coms,
                 totalTags = summary.counts.tags,
                 totalComs = summary.counts.coms;
 
@@ -1469,7 +1470,11 @@ function readrBoard($R){
                     $rightBox = '<div class="rdr_rightBox" />';
 
                     $li.append($leftBox,$tagText,$rightBox);
-                    if ( summary.counts.coms > 0 ) $li.addClass('rdr_has_comment');
+                    
+                    // todo: [porter] i'm looping to see if there is a comment for this TAG.  can we just send this down from server?
+                    for ( var i in topComs ) {
+                        if ( topComs[i].parent_id == tagID ) $li.addClass('rdr_has_comment');
+                    }
                     $tagBox.children('ul.rdr_tags').append($li);
                 
                 });
