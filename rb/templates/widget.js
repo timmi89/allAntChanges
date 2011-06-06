@@ -1571,7 +1571,7 @@ function readrBoard($R){
                     $comment.click( function() {
                         var $this = $(this);
                         $this.closest('.rdr_contentSet').addClass('rdr_selected').siblings().removeClass('rdr_selected');
-                        RDR.actions.viewCommentContent( tag, which, $(this).data('c_idx'), rindow );
+                        RDR.actions.viewCommentContent( tag, which, $(this).data('c_idx'), rindow, node);
                     });
 
                     $header.append( $comment );
@@ -1597,16 +1597,22 @@ function readrBoard($R){
 
                 RDR.actions.panel.expand("contentPanel", rindow);
             },
-            viewCommentContent: function(tag, which, c_idx, rindow){
+            viewCommentContent: function(tag, which, c_idx, rindow, node){
                 var $whyBody = rindow.find('div.rdr_whyPanel div.rdr_body');
                 // if ( $whyBody.data('jsp') ) $whyBody.data('jsp').destroy();
                 $whyBody.empty();
                 // $whyBody.empty();
-                var comments = RDR.content_nodes[which].info.content[c_idx].tags[ tag.content[c_idx].tag_idx ].comments;
+                
+                log('node')
+                log(node)
+                log('tag')
+                log(tag)
 
-                if (comments && comments.length > 0 ) {
-                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments <span>('+comments.length+')</span>');
+                var comments = node.top_interactions.coms;
+                var hasComments = !$.isEmptyObject(comments);
 
+                if (hasComments) {
+                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments <span>('+node.counts.coms+')</span>');
 
                     // ok, get the content associated with this tag!
                     for ( var i in comments ) {
@@ -1655,7 +1661,7 @@ function readrBoard($R){
 
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
-                    RDR.actions.comment({ comment:comment, which:which, content:RDR.content_nodes[which].info.content[c_idx].body, tag_id:RDR.content_nodes[which].info.content[c_idx].tags[ tag.content[c_idx].tag_idx ].id, rindow:rindow });
+                    RDR.actions.comment({ comment:comment, which:which, content:node.body, tag_id:tag.id, rindow:rindow });
                 });
 
                 $whyBody.html( $commentSet );
@@ -2254,6 +2260,7 @@ function readrBoard($R){
                 var rindow = args.rindow, 
                     tag = args.tag,
                     int_id = args.int_id;
+
 
                 //todo: for now, I'm just passing in known_tags as a param, but check with Porter about this model.
                 //Where is the 'source'/'point of origin' that is the authority of known_tags - I'd think we'd want to just reference that..
