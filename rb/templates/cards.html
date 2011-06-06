@@ -11,7 +11,25 @@
       <div class="reaction">{{tag.body}}</div>
       <div class="count">+{{tag.count}}</div>
     </td>
-    
+    <td class="column2">
+      <div class="who_action"> reacted to:</div>
+      <div class="content text">{{interaction.content.body}}</div>
+      <h5 class="label small">comments</h5>
+      <div class="comment_container">
+        <div class="header">
+          <div class="when">12:37<span>pm</span>  5/28/2011</div>
+          <div class="avatar"><img src="/static/images/anonymousplode.png"/></div>
+          <div class="who">eric chaves</div>
+        </div>
+        <div class="comment">
+          <div class="quote open">"</div>
+          A bit surprising to hear they aren’t commenting, but I guess you gotta be careful on these (stupid) issues.
+          <div class="quote close">"</div>
+          <div class="count">+423</div>
+        </div>
+      </div>
+    </div>
+    </td>
   {% endfor %}
   </tbody>
 </table>
@@ -47,6 +65,7 @@
         </div>
       </div>
     </div>
+    </td>
   </tr>
   <tr class="interaction">
     <td class="column1">
