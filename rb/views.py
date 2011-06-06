@@ -85,9 +85,9 @@ def makeCard(page, interactions):
 
 def cards(request):
     pages = Page.objects.all().annotate(interaction_count=Count('interaction'))[:5]
-    interactions = Interaction.objects.filter(page__in=pages)
+    interactions = Interaction.objects.filter(page__in=pages,kind='tag').order_by('created')
     cards = [makeCard(page, interactions) for page in pages]
-    context = {'cards': cards}
+    context = {'interactions': interactions, 'cards': cards}
     return render_to_response("cards.html", context)
 
 def sidebar(request):

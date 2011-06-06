@@ -13,19 +13,36 @@
 #sidebar ul[role="filters"] li.active		{xfont-weight:bold; color:#008be4; background:url("/static/images/site/active_arrow.png") right center no-repeat #e4f0f7; border:1px solid #bababa; border-left:0; border-right:0;}
 #sidebar #following,
 #sidebar #followed_by	{margin:0 10px 10px;}
+
+#sidebar h2,
+#sidebar #avatar,
+#sidebar #follow,
+#sidebar #following,
+#sidebar #followed_by,
+#sidebar h3[role="profile_section_header"],
+#sidebar h3[role="profile_section_header"]	{display:none;}
+
+html.dailycandy #sidebar h2,
+html.dailycandy #sidebar #avatar,
+html.dailycandy #sidebar #follow,
+html.dailycandy #sidebar #following,
+html.dailycandy #sidebar #followed_by,
+html.dailycandy #sidebar h3[role="profile_section_header"],
+html.dailycandy #sidebar h3[role="profile_section_header"]	{display:block;}
+
 </style>
 <div id="avatar">
-	<img src="/static/ui-prototype/images/baby_pushups.jpg" />
+	<img src="/static/ui-prototype/images/purse.png" />
 </div>
-<h2>Eric Chaves</h2>
-<div id="social-icons">
+<h2>DailyCandy</h2>
+<div id="social-icons" style="display:none;">
 	<img src="/static/ui-prototype/images/social-icons-loose/social-icon-facebook.png" />
 	<img src="/static/ui-prototype/images/social-icons-loose/social-icon-twitter.png" />
 	<img src="/static/ui-prototype/images/social-icons-loose/social-icon-tumblr.png" />
 	<img src="/static/ui-prototype/images/social-icons-loose/social-icon-linkedin.png" />
 </div>
 <div id="follow">
-	<button>+ Follow Eric</button>
+	<button>+ Follow DailyCandy</button>
 </div>
 <h3>Activity</h3>
 <ul role="filters" class="activity">
@@ -36,11 +53,11 @@
 	<li role="bookmarks">Bookmarks</li>
 	-->
 </ul>
-<h3>Following (412)</h3>
+<h3 role="profile_section_header">Following (412)</h3>
 <div id="following">
 	<img src="/static/ui-prototype/images/following.jpg" />
 </div>
-<h3>Followed By (186)</h3>
-<div id="following">
+<h3 role="profile_section_header">Followed By (186)</h3>
+<div id="followed_by">
 	<img src="/static/ui-prototype/images/followed_by.jpg" />
 </div>
