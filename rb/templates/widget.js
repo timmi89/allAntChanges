@@ -1185,7 +1185,7 @@ function readrBoard($R){
                             if(count == null) return; //used as a break statement
                             var prefix = count ? ", " : "", //don't include the first time
                             $tag = $('<strong/>').append(tag.body),
-                            $count = $('<em/>').append( '('+tag.count+')' ),
+                            $count = $('<em/>').append( ' ('+tag.count+')' ),
                             $span = $('<span />').append( prefix, $tag, $count);
                             
                             $tagList.append( $span );
@@ -1271,7 +1271,7 @@ function readrBoard($R){
                         if(count == null) return; //used as a break statement
                         var prefix = count ? ", " : "", //don't include the first time
                         $tag = $('<strong/>').append(tag.body),
-                        $count = $('<em/>').append( '('+tag.count+')' ),
+                        $count = $('<em/>').append( ' ('+tag.count+')' ),
                         $span = $('<span />').append( prefix, $tag, $count);
                         
                         $tagList.append( $span );
@@ -1551,7 +1551,7 @@ function readrBoard($R){
                 var tagName = tag.name.length > maxHeaderLen ? tag.name.slice(0, maxHeaderLen)+"..." : tag.name;
                 log (tagName);
 
-                rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tagName+' <span>('+tag.count+')</span>');
+                rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tagName+' <span> ('+tag.count+')</span>');
                 if ( rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp').destroy();
                 rindow.find('div.rdr_contentPanel div.rdr_body').empty();
 

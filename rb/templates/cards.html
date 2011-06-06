@@ -1,7 +1,7 @@
 {% for interaction in interactions %}
 <table class="card" border="0" cellspacing="0" cellpadding="0">
   <thead>
-    <th class="column1">{{ interaction.page.logo }}</th>
+    <th class="column1"><img src="/static/ui-prototype/images/dc_logo_sm.png" alt="DailyCandy" /><!--{{ interaction.page.logo }}--></th>
     <th class="column2">{{ interaction.page.title }}</th>
   </thead>
   <tbody>
@@ -12,7 +12,9 @@
     </td>
     <td class="column2">
       <div class="who_action">{{interaction.user.social_user.full_name}} reacted to:</div>
-      <div class="content text">{{interaction.content.body}}</div>
+      <div class="content text">
+        <img src="/static/ui-prototype/{{interaction.content.body}}" alt='"{{interaction.content.body}}"' />
+      </div>
       </div>
     </div>
     </td>
@@ -20,10 +22,10 @@
 </table>
 {% endfor %}
 
-
+<!--
 <table class="card" border="0" cellspacing="0" cellpadding="0">
   <thead>
-    <th class="column1">[ logo <!-- 16px tall max --> ]</th>
+    <th class="column1">[ logo ]</th>
     <th class="column2">[ a ] Anthony Weiner: Hackers posted lewd photos on Twitter</th>
   </thead>
   <tbody>
@@ -76,3 +78,4 @@
   </tr>
   </tbody>
 </table>
+-->
