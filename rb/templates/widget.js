@@ -23,10 +23,7 @@ function readrBoard($R){
 
     // none of this obj's properties are definite.  just jotting down a few ideas.
     RDR = {
-        summaries:{
-            containers:{},
-            tags:{}
-        },
+        summaries:{},
         current: {},
         content_nodes: {},
         containers:{},
@@ -833,8 +830,6 @@ function readrBoard($R){
                         title: title
 					},
 					success: function(response) {
-                       log('response')
-                       log(response)
                         
                         makeSummaryWidget(response);
                         insertImgIcons(response);
@@ -903,8 +898,6 @@ function readrBoard($R){
 
                 function insertImgIcons(response){
                     var tempd = $.extend( {}, response );
-                    log('tempd')
-                    log(tempd)
                     for ( var i in RDR.page.imagedata ){
                         //todo: combine this with the other indicator code and make the imagedata give us a hash from the db
                         var hash = RDR.util.md5.hex_md5(i);
@@ -1039,11 +1032,11 @@ function readrBoard($R){
                     var hashText = ( kind=="img") ? "rdr-"+kind+"-"+body : "rdr-text-"+body, //rdr-img-dailycandy.com/image/cake.jpg || rdr-p-ohshit this is some crazy text up in this paragraph
                     hash = RDR.util.md5.hex_md5( hashText );
 
-                    if ( RDR.content_nodes[hash] ) return
+                    if ( RDR.containers[hash] ) return
                     if ( typeof body === "undefined" ) return
 
                     // add an object with the text and hash to the nodes dictionary
-                    RDR.content_nodes[hash] = {
+                    RDR.containers[hash] = {
                         body:body,
                         kind:kind
                     };
@@ -1060,7 +1053,7 @@ function readrBoard($R){
                 // TODO: dont' send all hashes
 
                 var md5_list = [];
-                for (var i in RDR.content_nodes ) {
+                for (var i in RDR.containers ) {
                     md5_list.push( i );
                 }
 
@@ -1090,7 +1083,7 @@ function readrBoard($R){
                         if ( unknownList.length > 0 ) {
                             var sendData = {};
                             $.each( unknownList, function(idx, hash) {
-                                sendData[hash] = RDR.content_nodes[hash];
+                                sendData[hash] = RDR.containers[hash];
                             });
                             $.ajax({
                                 url: "/api/containers/create/",
@@ -1139,11 +1132,10 @@ function readrBoard($R){
                     var $container, $indicator, $indicator_details, some_reactions, total, info, top_tags, kind;
 
                     var summary = RDR.summaries[hash];
-                    node = RDR.content_nodes[hash];
+                    node = RDR.containers[hash];
 
                     //todo: prop down var change
                     kind = node.kind;
-                    log(kind);
                     top_tags = summary.top_interactions.tags;
                     //hide indicators and indicatorDetails and show on load.
 
@@ -1151,11 +1143,8 @@ function readrBoard($R){
                     $container = $('.rdr-'+hash); // prepend with the anno_whitelist selector
                     
                     total = summary.counts.tags;
-                    log($container)
                     if( kind == 'img' ){
                         //is an image
-                        log('img')
-                        log(summary)
                         //todo: this is all a temp hack.  Consolodate this code!
                         var $this_img, $tagList, imageData;
 
@@ -1169,7 +1158,6 @@ function readrBoard($R){
                         //todo: prop down this change var change
                         
                         $this_img = $container
-                        log($this_img)
 
                         function SortByTagCount(a,b) { return b.count - a.count; }
                         //todo: bring sorting back
@@ -1378,8 +1366,6 @@ function readrBoard($R){
                     tempLock = args.tempLock;
                 
                 var summary = RDR.summaries[which];
-                log('summary in viewcontentreactions');
-                log(summary);
                 function SortByTagCount(a,b) { return b.count - a.count; }
 
 
@@ -1396,8 +1382,13 @@ function readrBoard($R){
                     dataType: "jsonp",
                     data: { json: JSON.stringify(sendData) },
                     success: function(response) {
-                        log('/api/summary/container/content/');
-                        log(response);
+
+                        var content_nodes = response.data;
+                        //todo: make this generic interactions instead of just tags
+                        //summary.interactions.tags = 
+                        
+                        //throw this tag summary into the container summary
+                        summary.content_nodes = content_nodes;
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
@@ -1500,7 +1491,6 @@ function readrBoard($R){
                         //for now disable li clicks for image readmode
                         if(kind == 'image') return false;
                         var $this = $(this);
-
                         if ( !$this.hasClass('rdr_customTagBox') ) {
                             // if ( $this.hasClass('rdr_selected') ){
                                 // $this.removeClass('rdr_selected');
@@ -1511,7 +1501,6 @@ function readrBoard($R){
                             RDR.actions.viewReactionContent( $this.data('tag'), $this.data('which'), rindow );
                             //RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });//end rateSend
                         }
-                        log('click!')
                         
                         //todo: branch text and img
                         /*
@@ -1526,16 +1515,28 @@ function readrBoard($R){
                 });
             },
             viewReactionContent: function(tag, which, rindow){
+                
+                //temp reconnecting:
+                var container = RDR.containers[which];
+                var summary = RDR.summaries[which];
+                
                 // zero out the content in the whyPanel, since they just selected a new tag and the comments would not reflect the now-selected tag.
                 rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
                 rindow.find('div.rdr_whyPanel div.rdr_body').html('<div class="rdr_commentSet">Select something in the column to the left to leave a comment on it.</div>');
 
+                /*
                 var content = [];
-                for ( var i in tag.content ) {
-                    content.push( {idx:parseInt(i), tag_idx:tag.content[i].tag_idx, count:tag.content[i].count } );
+                for ( var i in tag.body ) {
+                    content.push( {idx:parseInt(i), tag_idx:tag.body[i].tag_idx, count:tag.content[i].count } );
                 }
+                */
+                //todo: temp stuff
+                var content = [];
+                $.each(summary.content_nodes, function(key, val){
+                    content.push(val);
+                });
 
-                function SortByTagCount(a,b) { return b.count - a.count; }
+                function SortByTagCount(a,b) { return b.counts.tags - a.counts.tags; }
                 content.sort(SortByTagCount);
 
                 //todo: consolodate truncate functions
@@ -1547,26 +1548,26 @@ function readrBoard($R){
                 if ( rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp').destroy();
                 rindow.find('div.rdr_contentPanel div.rdr_body').empty();
 
-                // ok, get the content associated with this tag!
-                for ( var i in content ) {
-                    var this_content = RDR.content_nodes[which].info.content[ content[i].idx ];
+                var tagClone = $.extend({}, tag);
 
+                // ok, get the content associated with this tag!
+                $.each(content, function(idx, node){
+                    var tag = tagClone;
                     var $contentSet = $('<div class="rdr_contentSet" />'),
                         $header = $('<div class="rdr_contentHeader rdr_leftShadow" />'),
                         $content = $('<div class="rdr_content rdr_leftShadow"><div class="rdr_otherTags"></div></div>');
-
-                    $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+content[i].count+')</span> '+tag.name+'</a>');
+                    $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+node.counts.tags+')</span> '+tag.name+'</a>' );
                     $header.find('span.rdr_tag_count').click( function() {
-                        RDR.actions.rateSendLite({ element:$(this), tag:{content:tag.id,name:tag.name}, rindow:rindow, content:this_content.body, which:which });
+                        RDR.actions.rateSendLite({ element:$(this), tag:tag, rindow:rindow, content:node.body, which:which });
                     });
 
-                    if ( this_content.tags[ content[i].tag_idx ].comments.length > 0 ) {
-                        $comment = $('<div class="rdr_has_comment">'+this_content.com_count+'</div>');
+                    if ( node.counts.coms > 0 ) {
+                        $comment = $('<div class="rdr_has_comment">' +node.counts.coms+ '</div>');
                     } else {
                         $comment = $('<div class="rdr_can_comment">Comment</div>');
                     }
 
-                    $comment.data('c_idx',content[i].idx);
+                    $comment.data('c_idx',node.idx);
                     $comment.click( function() {
                         var $this = $(this);
                         $this.closest('.rdr_contentSet').addClass('rdr_selected').siblings().removeClass('rdr_selected');
@@ -1575,26 +1576,24 @@ function readrBoard($R){
 
                     $header.append( $comment );
 
-                    $content.find('div.rdr_otherTags').before( '"' + this_content.body + '"' );
-
-                    if ( this_content.tags.length > 1 ) {
+                    $content.find('div.rdr_otherTags').before( '"' + node.body + '"' );
+                    var otherTags = node.top_interactions.tags;
+                    if( !$.isEmptyObject(otherTags) ){
                         $content.find('div.rdr_otherTags').append( '<em>Other Reactions</em>' );
-                        for ( var j in this_content.tags ) {
-                            if ( this_content.tags[j] && this_content.tags[j].id != tag.id ) {
-                                var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+this_content.tags[j].count+')</span> '+this_content.tags[j].tag+'</a>');
-                                var tag_obj = this_content.tags[j];
-                                $this_tag.find('span.rdr_tag_count').click( function() {
-                                    RDR.actions.rateSendLite({ element:$(this), tag:{content:tag_obj.id,name:tag_obj.name}, rindow:rindow, content:this_content.body, which:which });
-                                });
-                                $content.find('div.rdr_otherTags').append( $this_tag );
-                            }
+                        for ( var j in otherTags ) {
+                            var thisTag = otherTags[j];
+                            var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+thisTag.count+')</span> '+thisTag.body+'</a>');
+                            $this_tag.find('span.rdr_tag_count').click( function() {
+                                RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
+                            });
+                            $content.find('div.rdr_otherTags').append( $this_tag );
                         }
                     }
 
                     $contentSet.append( $header, $content );
 
                     rindow.find('div.rdr_contentPanel div.rdr_body').append( $contentSet );
-                }
+                });
 
                 RDR.actions.panel.expand("contentPanel", rindow);
             },
@@ -1761,14 +1760,12 @@ function readrBoard($R){
                                 });
                 */
 
-                log('fhksdhgkdjfhgkdfshglskdjfhgslfjkh')
                 //populate reactionPanel
                 $reactionPanel.find('div.rdr_body').append($borderLine, $tagBox);
                 
                 ////populate blesed_tags
                 $.each(RDR.group.blessed_tags, function(idx, val){
-                    log('val')
-                    log(val)
+                    
                     var $li = $('<li class="rdr_tag_'+val.id+'" />').data({
                         'tag':{
                             content:parseInt( val.id ),
@@ -1828,7 +1825,6 @@ function readrBoard($R){
                             // $whyPanel.find('.rdr_body').html('');
 
                             // show a loader...
-                            log('try try')
                             RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });//end rateSend
                             // }
                         }
@@ -1982,11 +1978,7 @@ function readrBoard($R){
             rateSend: function(args) {
                 // optional loader.  it's a pacman pic.
                 args.tag.find('div.rdr_leftBox').html('<img src="/static/images/loader.gif" style="margin:6px 0 0 5px" />');
-
-                log('args')
-                log(args)
-
-                    
+    
                 
                 //example:
                 //tag:{name, id}, rindow:rindow, settings:settings, callback: 
@@ -1998,7 +1990,6 @@ function readrBoard($R){
                 // TODO the args & params thing here is confusing
                 RDR.session.getUser( args, function( params ) {
                     // get the text that was highlighted
-                    log(params)
 
                     var content = $.trim( params.settings.content ),
                         container = $.trim( params.settings.container ),
