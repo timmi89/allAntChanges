@@ -3070,14 +3070,22 @@ function $RFunctions($R){
             };
         })($R);
 
-        (function($){
+        (function($, rangy){
             /*
              * jquery.selectionographer.js
              * $.fn.selog aliases to $.fn.selectionographer
              * author: eric@readrboard.com
              * see docs for more info /docs/selectionographer-docs.js
              *
-             * to test in the live page, don't forget to use $R(), not $().
+             * depends on all of the rangy pacakge:
+             * rangy-core.js
+             * rangy-cssclassapplier.js
+             * rangy-selectionsaverestore.js
+             * rangy-serializer.js
+             *
+             * expects params of ( $, rangy ) where $ is the jQuery alias
+             * 
+             * //temp readr note: to test in the live page, don't forget to use $R(), not $().
             */        
             $.fn.selectionographer = function( params ) {
                 //jQuery plugin pattern :http://docs.jquery.com/Plugins/Authoring
@@ -3693,7 +3701,8 @@ function $RFunctions($R){
             //init selog on window.
             $(document).selog();
 
-        })($R);
+        })($R, rangy);
+        //end selectionographer
 
         (function($){
             /*
