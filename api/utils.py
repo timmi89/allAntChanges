@@ -21,11 +21,13 @@ def getTagSummary(tag, tags):
     data['body'] = tag.body
     return data
 
-def getSummary(interactions, container=None, content=None, data=None):
+def getSummary(interactions, container=None, content=None, page=None, data=None):
     if not data: data = {}
     counts = {}
-    data['kind'] = content[2] if content else container[2]
+    if container:
+          data['kind'] = container[2]
     if content:
+        data['kind'] = content[2]
         data['body'] = content[1]
 
     if container:
@@ -34,7 +36,9 @@ def getSummary(interactions, container=None, content=None, data=None):
     elif content:
         content = content[0]
         interactions = filter(lambda x: x.content_id==content, interactions)
-    
+    elif page:
+        interactions = filter(lambda x: x.page==page, interactions)
+
     # Filter tag and comment interactions
     tags = filter(lambda x: x.kind=='tag', interactions)
     comments = filter(lambda x: x.kind=='com', interactions)
@@ -54,6 +58,7 @@ def getSummary(interactions, container=None, content=None, data=None):
     ))
     top_interactions = {}
     top_interactions['tags'] = top_tags
+    top_interactions['coms'] = [dict(id=comment.id, parent_id=comment.parent.id, user=comment.user, body=comment.interaction_node.body) for comment in comments]
     data['top_interactions'] = top_interactions
 
     return data
