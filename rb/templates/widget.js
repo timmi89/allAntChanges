@@ -2768,7 +2768,8 @@ loadScript( RDR_rootPath+"/static/js/jquery-1.6.js", function(){
 
         //test that $.ui versioning is working correctly
 
-        //call scripts that depend on our jQuery version to be loaded
+        //A function to load all plugins including those (most) that depend on jQuery.
+        //The rest of our code is then set off with RDR.actions.init();
         $RFunctions($R);
 
     });
