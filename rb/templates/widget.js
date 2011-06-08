@@ -4,7 +4,8 @@ RDRtimer,
 RDR, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
 $R = {}, //init var: our clone of jQuery
-client$ = {}; //init var: clients copy of jQuery
+client$ = {}, //init var: clients copy of jQuery
+RDR_rootPath = "http://localhost:8080"; //todo: when we get our hosting up change to readrboard.com or our CDN.
 
 var demoRindow;
 
@@ -66,15 +67,15 @@ function readrBoard($R){
                 demoRindow = rindow;
                 
                 var $demo = $('<div class="rdr_sentimentBox rdr_new" style="height:310px;width:358px;overflow:hidden;position:relative;" />'),
-                $img = $('<img src="/static/images/demo/two_columns.png" style="display:block;position:relative;z-index:2;float:left;cursor:pointer;" />');
+                $img = $('<img src="'+RDR_rootPath+'/static/images/demo/two_columns.png" style="display:block;position:relative;z-index:2;float:left;cursor:pointer;" />');
                 $img.click( function() {
-                    $(this).attr('src', '/static/images/demo/two_columns_clicked.png');
+                    $(this).attr('src', RDR_rootPath+'/static/images/demo/two_columns_clicked.png');
                     $(this).unbind('click');
                     $(this).click( function() {
-                        var $img_three = $('<img src="/static/images/demo/three_columns.png" style="display:block;position:relative;z-index:1;float:right;margin-top:-310px;cursor:text;" />');
-                        $(this).attr('src', '/static/images/demo/two_columns_clicked_twice.png');
+                        var $img_three = $('<img src="'+RDR_rootPath+'/static/images/demo/three_columns.png" style="display:block;position:relative;z-index:1;float:right;margin-top:-310px;cursor:text;" />');
+                        $(this).attr('src', RDR_rootPath+'/static/images/demo/two_columns_clicked_twice.png');
                         $(this).after( $img_three );
-                        //$(this).attr('src', '/static/images/demo/two_columns_clicked_twice.png');
+                        //$(this).attr('src', RDR_rootPath+'/static/images/demo/two_columns_clicked_twice.png');
                         demoRindow.find('div.rdr_sentimentBox').animate({width:538},300);
                     });
                 });
@@ -1168,7 +1169,7 @@ function readrBoard($R){
 
                         $indicator = $('<div class="rdr rdr_indicator rdr_image"></div>').hide();
                         $indicator.append(
-                            '<img src="/static/images/blank.png" class="no-rdr" />',
+                            '<img src="'+RDR_rootPath+'/static/images/blank.png" class="no-rdr" />',
                             '<span class="rdr_count">'+ total +' reactions: </span>'
                         );
 
@@ -1216,7 +1217,7 @@ function readrBoard($R){
                     $indicator = $('<div id="rdr_indicator_' +hash+ '" class="rdr_indicator" />').hide().appendTo($container);
 
                     $indicator.append(
-                        '<img src="/static/images/blank.png" class="no-rdr" />',
+                        '<img src="'+RDR_rootPath+'/static/images/blank.png" class="no-rdr" />',
                         '<span class="rdr_count">'+ total +'</span>'
                     )//chain
                     .data( {'which':hash} )//chain
@@ -1675,7 +1676,7 @@ function readrBoard($R){
                                 $commentBy = $('<div class="rdr_commentBy" />'),
                                 $comment = $('<div class="rdr_comment" />');
 
-                            var user_image_url = ( this_comment.user.image_url ) ? this_comment.user.image_url:'/static/images/anonymousplode.png';
+                            var user_image_url = ( this_comment.user.image_url ) ? this_comment.user.image_url: RDR_rootPath+'/static/images/anonymousplode.png';
                             var user_name = ( this_comment.user.first_name == "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
                             $commentBy.html( '<img src="'+user_image_url+'" /> ' + user_name );
                             $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
@@ -2040,7 +2041,7 @@ function readrBoard($R){
             },
             rateSend: function(args) {
                 // optional loader.  it's a pacman pic.
-                args.tag.find('div.rdr_leftBox').html('<img src="/static/images/loader.gif" style="margin:6px 0 0 5px" />');
+                args.tag.find('div.rdr_leftBox').html('<img src="'+RDR_rootPath+'/static/images/loader.gif" style="margin:6px 0 0 5px" />');
     
                 
                 //example:
@@ -2406,7 +2407,7 @@ function readrBoard($R){
 
                 //quick mockup version of this code
                 $.each(socialNetworks, function(idx, val){
-                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img src="/static/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
+                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img src="'+RDR_rootPath+'/static/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
                 });
                 $socialBox.append($shareLinks);
                 // $socialBox.append('<div>herro worrd</div><div>herro worrd</div><div>herro worrd</div><div>herro worrd</div><div>herro worrd</div>');
@@ -2752,11 +2753,11 @@ function loadScript(sScriptSrc,callbackfunction) {
 }
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
-loadScript("/static/js/jquery-1.6.js", function(){
+loadScript( RDR_rootPath+"/static/js/jquery-1.6.js", function(){
     //callback
 
     //load jQuery UI while the $ and jQuery still refers to our new version
-    loadScript("/static/js/jquery-ui-1.8.6.custom.min.js", function(){
+    loadScript( RDR_rootPath+"/static/js/jquery-ui-1.8.6.custom.min.js", function(){
         //callback
 
         //test that $.ui versioning is working correctly
@@ -2793,8 +2794,8 @@ function $RFunctions($R){
 
     //load CSS
     var css = [
-        "/static/ui-prototype/css/readrboard.css",
-        "/static/css/jquery.jscrollpane.css"
+        RDR_rootPath+"/static/ui-prototype/css/readrboard.css",
+        RDR_rootPath+"/static/css/jquery.jscrollpane.css"
     ];
     loadCSS(css);
 
@@ -2855,8 +2856,8 @@ function $RFunctions($R){
 
     function loadCSS(cssFileList){
 
-        $.each(cssFileList, function(i, val){
-            $('<link>').attr({
+        $R.each(cssFileList, function(i, val){
+            $R('<link>').attr({
                 href: val,
                 rel: 'stylesheet'
             }).appendTo('head');
@@ -2911,8 +2912,10 @@ function $RFunctions($R){
             }
 
             //add in alias temporaily to client $ so we can use regular $ instead of $R if we want
-            jQuery.log = $.log;
-            jQuery.fn.log = $.fn.log;
+            if(typeof jQuery != 'undefined'){
+                jQuery.log = $.log;
+                jQuery.fn.log = $.fn.log;
+            }
 
         })($R);
 
