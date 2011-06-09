@@ -2776,22 +2776,6 @@ loadScript("/static/js/jquery-1.6.js", function(){
 function $RFunctions($R){
     //called after our version of jQuery is loaded
 
-
- //    //init the jquery-json plugin
- //    rdr_jqueryJSON($R);
-
-	// //init Ben Alman's postMessage jquery plugin
-	// rdr_postMessage($R);
-        
- //    // scrollPane items
- //    rdr_mousewheel($R);
- //    rdr_mousewheelIntent($R);
- //    rdr_scrollPane($R);
-    
- //    // init James Padolsey's autoResize plugin
- //    rdr_autogrow($R);
-
-
     //init our plugins (mostly jquery plugins, the $R passed is our jQuery alias)
     initPlugins($R);
 	    
@@ -2806,52 +2790,34 @@ function $RFunctions($R){
     //run init functions
     RDR.actions.init();
 
-    //testing:
-    /*
-    var a = $R.evalJSON('[{"test":2}]');
-
-
-    //show that objects really are unique
-
-    $.client = "client";
-    $R.rb = "rb";
-    //console.log($.client)   //"client"
-    //console.log($R.client)  //undefined
-    //console.log($R.rb)      //"rb"
-    //console.log($.rb)       //undefined
-    */  //end comment out testing:
-
-	//////////////////// TODO: TEST DATA //////////////////
-
-    //[eric]: blessed_tags is ready to be taken from the DB, but we need to decide what the model looks like - right now it's just a charfield
-	// RDR.group.blessed_tags = [
-	// {
-	//     name: "Great!",
-	//     tid: 1
-	// },
-	// {
-	//     name: "Hate",
-	//     tid: 2
-	// },
-	// {
-	//     name: "Interesting",
-	//     tid: 3
-	// },
-	// {
-	//     name: "Booooring",
-	//     tid: 4
-	// }
-	// ];
-
 
     function initPlugins($R){
-    //All jquery plugins to be loaded using our $R version of jquery and before our widget code;
+        //All jquery plugins to be loaded using our $R version of jquery and before our widget code;
+
+        //Rangy - init before our jquery
+        var rangy = rangy_package();
+        rangy.init();
+
+        //jQuery Plugins
+        jquery_log($R);
+        jquery_json($R);
+        jquery_postMessage($R);
+        jquery_enhancedOffset($R);
+        // jquery_textnodes($R);                     //not needed now
+        // jquery_superRange($R);                    //not needed now
+        // jquery_improvedCSS($R);                   //not needed now
+        jquery_autogrow($R);
+        jquery_mousewheel($R);
+        jquery_mousewheelIntent($R);
+        jquery_jScrollPane($R);
+        jquery_selectionographer($R, rangy);
 
         var Plugins = {};
         Plugins.jquery = {};
         
-        //plugin functions run at the end
+        
 
+        /* are we using this */
         //todo: maybe need to fix this...
         // parents filter:  http://stackoverflow.com/questions/965816/what-jquery-selector-excludes-items-with-a-parent-that-matches-a-given-selector
         // doesn't seem to be working tho.
@@ -2859,10 +2825,10 @@ function $RFunctions($R){
             return $R(a).parents(m[3]).length < 1;
         };
 
-
-        /** plugin functions **/
-
-        Plugins.jquery.log = function($){
+        
+        /** start plugin functions **/
+            
+        function jquery_log($){
             /**
              * jQuery Log
              * Fast & safe logging in Firebug console
@@ -2870,7 +2836,7 @@ function $RFunctions($R){
              * @param mixed - as many parameters as needed
              * @return void
              * 
-             * @url http://plugins.jquery.com/project/jQueryLog
+             * @url http://function jquery_com/project/jQueryLog
              * @author Amal Samally [amal.samally(at)gmail.com]
              * @version 1.0
              * @example:
@@ -2904,9 +2870,9 @@ function $RFunctions($R){
             jQuery.fn.log = $.fn.log;
 
         };
-        //end Plugins.jquery.log()
+        //end function jquery_log
 
-        Plugins.jquery.json = function($){
+        function jquery_json($){
             /* jquery json v2.2 */
             /* http://code.google.com/p/jquery-json/ */
             $.toJSON=function(o)
@@ -3024,9 +2990,9 @@ function $RFunctions($R){
                 '\\':'\\\\'
             };
         };
-        //end Plugins.jquery.json()
+        //end function jquery_json
         
-        Plugins.jquery.postMessage = function($){
+        function jquery_postMessage($){
             /*
              * jQuery postMessage - v0.5 - 9/11/2009
              * http://benalman.com/projects/jquery-postmessage-plugin/
@@ -3037,9 +3003,9 @@ function $RFunctions($R){
              */
             var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h]&&!$.browser.opera;$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
         };
-        //end Plugins.jquery.postMessage()
+        //end function jquery_postMessage
 
-        Plugins.jquery.enhancedOffset = function($){
+        function jquery_enhancedOffset($){
             /**
              * Enhanced .offset()
              * Abstracts offset().right and offset().bottom into a built-in getter, and adds .offset(top, left) as a setter.
@@ -3074,10 +3040,10 @@ function $RFunctions($R){
                                                      });
             };
         };
-        //end Plugins.jquery.enhancedOffset(){
+        //end function jquery_enhancedOffset
 
         
-        Plugins.jquery.selectionographer = function($, rangy){
+        function jquery_selectionographer($, rangy){
             /*
              * jquery.selectionographer.js
              * $.fn.selog aliases to $.fn.selectionographer
@@ -3709,9 +3675,9 @@ function $RFunctions($R){
             $(document).selog();
 
         };
-        //end Plugins.jquery.selectionographer
+        //end function jquery_selectionographer
 
-        Plugins.jquery.textnodes = function($){
+        function jquery_textnodes($){
             /*
              * jQuery Plugin by eric@readrboard.com
              * gets or sets delicious raw textnode leafs within a $() set.
@@ -3758,10 +3724,10 @@ function $RFunctions($R){
                 });
             }
         };
-        //end Plugins.jquery.textnodes
+        //end function jquery_textnodes
         
 
-        Plugins.jquery.superRange = function($){
+        function jquery_superRange($){
             /*
              *
              *
@@ -3856,10 +3822,10 @@ function $RFunctions($R){
             }
             
         };
-        //end Plugins.jquery.superRange
+        //end function jquery_superRange
 
-        Plugins.jquery.improvedCSS = function($){
-            //improvedCSS.js  http://plugins.jquery.com/node/8726/release
+        function jquery_improvedCSS($){
+            //improvedCSS.js  http://function jquery_com/node/8726/release
             /**
             * @Keith Bentrup
             */
@@ -3897,9 +3863,9 @@ function $RFunctions($R){
                 return obj;
             }
         };
-        //end Plugins.jquery.improvedCSS
+        //end function jquery_improvedCSS
 
-        Plugins.jquery.autogrow = function($){
+        function jquery_autogrow($){
             /*
              * modified by PB from...
              * jQuery autoResize (textarea auto-resizer)
@@ -3955,9 +3921,9 @@ function $RFunctions($R){
                 return this;
             }
         };
-        //end Plugins.jquery.autogrow()
+        //end function jquery_autogrow
         
-        Plugins.jquery.mousewheel = function($){
+        function jquery_mousewheel($){
             /*
             * jQuery mousewheel
             * ! Copyright (c) 2010 Brandon Aaron (http://brandonaaron.net)
@@ -3978,9 +3944,9 @@ function $RFunctions($R){
             if(orgEvent.wheelDeltaX!==undefined){deltaX=-1*orgEvent.wheelDeltaX/120;}
             args.unshift(event,delta,deltaX,deltaY);return $.event.handle.apply(this,args);}
         };
-        //end Plugins.jquery.mousewheel()
+        //end function jquery_mousewheel
 
-        Plugins.jquery.mousewheelIntent = function($){
+        function jquery_mousewheelIntent($){
             /**
             * jQuery mousewheelIntent
             * @author trixta
@@ -3990,9 +3956,9 @@ function $RFunctions($R){
             $.event.special.mwheelIntent={setup:function(){var jElm=$(this).bind('mousewheel',$.event.special.mwheelIntent.handler);if(this!==doc&&this!==root&&this!==body){jElm.bind('mouseleave',unsetPos);}
             jElm=null;return true;},teardown:function(){$(this).unbind('mousewheel',$.event.special.mwheelIntent.handler).unbind('mouseleave',unsetPos);return true;},handler:function(e,d){var pos=[e.clientX,e.clientY];if(this===mwheelI.elem||Math.abs(mwheelI.pos[0]-pos[0])>minDif||Math.abs(mwheelI.pos[1]-pos[1])>minDif){mwheelI.elem=this;mwheelI.pos=pos;minDif=250;clearTimeout(shortDelay);shortDelay=setTimeout(function(){minDif=10;},200);clearTimeout(longDelay);longDelay=setTimeout(function(){minDif=3;},1500);e=$.extend({},e,{type:'mwheelIntent'});return $.event.handle.apply(this,arguments);}}};$.fn.extend({mwheelIntent:function(fn){return fn?this.bind("mwheelIntent",fn):this.trigger("mwheelIntent");},unmwheelIntent:function(fn){return this.unbind("mwheelIntent",fn);}});$(function(){body=doc.body;$(doc).bind('mwheelIntent.mwheelIntentDefault',$.noop);});
         };
-        //end Plugins.jquery.mousewheelIntent();
+        //end function jquery_mousewheelIntent
 
-        Plugins.jquery.jScrollPane = function($){
+        function jquery_jScrollPane($){
             /*
              * jScrollPane - v2.0.0beta11 - 2011-05-02
              * http://jscrollpane.kelvinluck.com/
@@ -4011,10 +3977,10 @@ function $RFunctions($R){
             }else{h.css("left",aJ);ae(aJ)}}function ae(aJ){if(aJ===c){aJ=h.position().left}am.scrollTop(0);aa=aJ;var aM=aa===0,aL=aa==j,aK=aJ/j,s=-aK*(T-ak);if(P!=aM||k!=aL){P=aM;k=aL;D.trigger("jsp-arrow-change",[aj,aH,P,k])}r(aM,aL);Y.css("left",s);D.trigger("jsp-scroll-x",[-s,aM,aL]).trigger("scroll")}function u(aJ,s){if(az.showArrows){ar[aJ?"addClass":"removeClass"]("jspDisabled");af[s?"addClass":"removeClass"]("jspDisabled")}}function r(aJ,s){if(az.showArrows){ay[aJ?"addClass":"removeClass"]("jspDisabled");x[s?"addClass":"removeClass"]("jspDisabled")}}function M(s,aJ){var aK=s/(Z-v);V(aK*i,aJ)}function N(aJ,s){var aK=aJ/(T-ak);W(aK*j,s)}function ab(aW,aR,aK){var aO,aL,aM,s=0,aV=0,aJ,aQ,aP,aT,aS,aU;try{aO=b(aW)}catch(aN){return}aL=aO.outerHeight();aM=aO.outerWidth();am.scrollTop(0);am.scrollLeft(0);while(!aO.is(".jspPane")){s+=aO.position().top;aV+=aO.position().left;aO=aO.offsetParent();if(/^body|html$/i.test(aO[0].nodeName)){return}}aJ=aB();aP=aJ+v;if(s<aJ||aR){aS=s-az.verticalGutter}else{if(s+aL>aP){aS=s-v+aL+az.verticalGutter}}if(aS){M(aS,aK)}aQ=aD();aT=aQ+ak;if(aV<aQ||aR){aU=aV-az.horizontalGutter}else{if(aV+aM>aT){aU=aV-ak+aM+az.horizontalGutter}}if(aU){N(aU,aK)}}function aD(){return -Y.position().left}function aB(){return -Y.position().top}function K(){var s=Z-v;return(s>20)&&(s-aB()<10)}function B(){var s=T-ak;return(s>20)&&(s-aD()<10)}function ag(){am.unbind(ac).bind(ac,function(aM,aN,aL,aJ){var aK=aa,s=I;Q.scrollBy(aL*az.mouseWheelSpeed,-aJ*az.mouseWheelSpeed,false);return aK==aa&&s==I})}function n(){am.unbind(ac)}function aC(){return false}function J(){Y.find(":input,a").unbind("focus.jsp").bind("focus.jsp",function(s){ab(s.target,false)})}function E(){Y.find(":input,a").unbind("focus.jsp")}function S(){var s,aJ,aL=[];aF&&aL.push(an[0]);aA&&aL.push(U[0]);Y.focus(function(){D.focus()});D.attr("tabindex",0).unbind("keydown.jsp keypress.jsp").bind("keydown.jsp",function(aO){if(aO.target!==this&&!(aL.length&&b(aO.target).closest(aL).length)){return}var aN=aa,aM=I;switch(aO.keyCode){case 40:case 38:case 34:case 32:case 33:case 39:case 37:s=aO.keyCode;aK();break;case 35:M(Z-v);s=null;break;case 36:M(0);s=null;break}aJ=aO.keyCode==s&&aN!=aa||aM!=I;return !aJ}).bind("keypress.jsp",function(aM){if(aM.keyCode==s){aK()}return !aJ});if(az.hideFocus){D.css("outline","none");if("hideFocus" in am[0]){D.attr("hideFocus",true)}}else{D.css("outline","");if("hideFocus" in am[0]){D.attr("hideFocus",false)}}function aK(){var aN=aa,aM=I;switch(s){case 40:Q.scrollByY(az.keyboardSpeed,false);break;case 38:Q.scrollByY(-az.keyboardSpeed,false);break;case 34:case 32:Q.scrollByY(v*az.scrollPagePercent,false);break;case 33:Q.scrollByY(-v*az.scrollPagePercent,false);break;case 39:Q.scrollByX(az.keyboardSpeed,false);break;case 37:Q.scrollByX(-az.keyboardSpeed,false);break}aJ=aN!=aa||aM!=I;return aJ}}function R(){D.attr("tabindex","-1").removeAttr("tabindex").unbind("keydown.jsp keypress.jsp")}function C(){if(location.hash&&location.hash.length>1){var aK,aJ;try{aK=b(location.hash)}catch(s){return}if(aK.length&&Y.find(location.hash)){if(am.scrollTop()===0){aJ=setInterval(function(){if(am.scrollTop()>0){ab(location.hash,true);b(document).scrollTop(am.position().top);clearInterval(aJ)}},50)}else{ab(location.hash,true);b(document).scrollTop(am.position().top)}}}}function ai(){b("a.jspHijack").unbind("click.jsp-hijack").removeClass("jspHijack")}function m(){ai();b("a[href^=#]").addClass("jspHijack").bind("click.jsp-hijack",function(){var s=this.href.split("#"),aJ;if(s.length>1){aJ=s[1];if(aJ.length>0&&Y.find("#"+aJ).length>0){ab("#"+aJ,true);return false}}})}function ao(){var aK,aJ,aM,aL,aN,s=false;am.unbind("touchstart.jsp touchmove.jsp touchend.jsp click.jsp-touchclick").bind("touchstart.jsp",function(aO){var aP=aO.originalEvent.touches[0];aK=aD();aJ=aB();aM=aP.pageX;aL=aP.pageY;aN=false;s=true}).bind("touchmove.jsp",function(aR){if(!s){return}var aQ=aR.originalEvent.touches[0],aP=aa,aO=I;Q.scrollTo(aK+aM-aQ.pageX,aJ+aL-aQ.pageY);aN=aN||Math.abs(aM-aQ.pageX)>5||Math.abs(aL-aQ.pageY)>5;
             return aP==aa&&aO==I}).bind("touchend.jsp",function(aO){s=false}).bind("click.jsp-touchclick",function(aO){if(aN){aN=false;return false}})}function g(){var s=aB(),aJ=aD();D.removeClass("jspScrollable").unbind(".jsp");D.replaceWith(ap.append(Y.children()));ap.scrollTop(s);ap.scrollLeft(aJ)}b.extend(Q,{reinitialise:function(aJ){aJ=b.extend({},az,aJ);at(aJ)},scrollToElement:function(aK,aJ,s){ab(aK,aJ,s)},scrollTo:function(aK,s,aJ){N(aK,aJ);M(s,aJ)},scrollToX:function(aJ,s){N(aJ,s)},scrollToY:function(s,aJ){M(s,aJ)},scrollToPercentX:function(aJ,s){N(aJ*(T-ak),s)},scrollToPercentY:function(aJ,s){M(aJ*(Z-v),s)},scrollBy:function(aJ,s,aK){Q.scrollByX(aJ,aK);Q.scrollByY(s,aK)},scrollByX:function(s,aK){s=(s>=0)?Math.max(s,1):Math.min(s,-1);var aJ=aD()+s,aL=aJ/(T-ak);W(aL*j,aK)},scrollByY:function(s,aK){s=(s>=0)?Math.max(s,1):Math.min(s,-1);var aJ=aB()+s,aL=aJ/(Z-v);V(aL*i,aK)},positionDragX:function(s,aJ){W(s,aJ)},positionDragY:function(aJ,s){V(aJ,s)},animate:function(aJ,aM,s,aL){var aK={};aK[aM]=s;aJ.animate(aK,{duration:az.animateDuration,ease:az.animateEase,queue:false,step:aL})},getContentPositionX:function(){return aD()},getContentPositionY:function(){return aB()},getContentWidth:function(){return T},getContentHeight:function(){return Z},getPercentScrolledX:function(){return aD()/(T-ak)},getPercentScrolledY:function(){return aB()/(Z-v)},getIsScrollableH:function(){return aF},getIsScrollableV:function(){return aA},getContentPane:function(){return Y},scrollToBottom:function(s){V(i,s)},hijackInternalLinks:function(){m()},destroy:function(){g()}});at(O)}e=b.extend({},b.fn.jScrollPane.defaults,e);b.each(["mouseWheelSpeed","arrowButtonSpeed","trackClickSpeed","keyboardSpeed"],function(){e[this]=e[this]||e.speed});return this.each(function(){var f=b(this),g=f.data("jsp");if(g){g.reinitialise(e)}else{g=new d(f,e);f.data("jsp",g)}})};b.fn.jScrollPane.defaults={showArrows:false,maintainPosition:true,stickToBottom:false,stickToRight:false,clickOnTrack:true,autoReinitialise:false,autoReinitialiseDelay:500,verticalDragMinHeight:0,verticalDragMaxHeight:99999,horizontalDragMinWidth:0,horizontalDragMaxWidth:99999,contentWidth:c,animateScroll:false,animateDuration:300,animateEase:"linear",hijackInternalLinks:false,verticalGutter:4,horizontalGutter:4,mouseWheelSpeed:0,arrowButtonSpeed:0,arrowRepeatFreq:50,arrowScrollOnHover:false,trackClickSpeed:0,trackClickRepeatFreq:70,verticalArrowPositions:"split",horizontalArrowPositions:"split",enableKeyboardNavigation:true,hideFocus:false,keyboardSpeed:0,initialDelay:300,speed:30,scrollPagePercent:0.8}
         };
-        //end Plugins.jquery.jScrollPane()
+        //end function jquery_jScrollPane
 
                 
-        Plugins.rangy = function(){
+        function rangy_package(){
 
             /***************/
             /*rangy scripts*/
@@ -4193,31 +4159,9 @@ function $RFunctions($R){
             //Rangy assumes it to be global, but it's better to keep the pub's namespace clean.   
             return rangy;
         };
-        //end Plugins.rangy()
+        //end function rangy_package()
 
-
-        /** end plugin functions **/
-
-
-        //Rangy - init before our jquery
-        var rangy = Plugins.rangy();
-        rangy.init();
-
-        //jQuery Plugins
-        Plugins.jquery.log($R);
-        Plugins.jquery.json($R);
-        Plugins.jquery.postMessage($R);
-        Plugins.jquery.enhancedOffset($R);
-        //Plugins.jquery.textnodes($R);                     //not needed now
-        //Plugins.jquery.superRange($R);                    //not needed now
-        //Plugins.jquery.improvedCSS($R);                   //not needed now
-        Plugins.jquery.autogrow($R);
-        Plugins.jquery.mousewheel($R);
-        Plugins.jquery.mousewheelIntent($R);
-        Plugins.jquery.jScrollPane($R);
-        Plugins.jquery.selectionographer($R, rangy);
-
-        
+        /** end plugin functions **/        
     }
     //end initPlugins()
 
