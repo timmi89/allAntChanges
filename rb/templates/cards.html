@@ -1,7 +1,7 @@
 {% for card in cards %}
 <table class="card" border="0" cellspacing="0" cellpadding="0">
   <thead>
-    <th class="column1">{{ card.page.logo }}</th>
+    <th class="column1"><img src="{{ card.page.site.group.logo_url_sm }}"></th>
     <th class="column2">{{ card.page.title }}</th>
   </thead>
   {% for tag in card.tags %}

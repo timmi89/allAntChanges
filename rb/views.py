@@ -96,6 +96,7 @@ class Card:
         self.page = page
         self.interactions = interactions
         self.tags = self.makeTags()
+
     def makeTags(self):
         tag_interactions = self.interactions.filter(kind='tag')
         interaction_node_ids = tag_interactions.values_list('interaction_node').distinct()
@@ -118,9 +119,10 @@ def cards(request):
     # Get interaction set based on filter criteria
     interactions = Interaction.objects.all()
 
-    # Get appropriate pages
+    # Get set of pages -- interactions ordered by -created
     page_ids = interactions.values_list('page')[:10]
     pages = Page.objects.filter(id__in=page_ids)
+    pages = pages.select_related('group')
 
     cards = [Card(page, interactions.filter(page=page)) for page in pages]
     context = {'cards': cards}
