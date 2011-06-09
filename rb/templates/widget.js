@@ -2776,39 +2776,30 @@ loadScript( RDR_rootPath+"/static/js/jquery-1.6.js", function(){
 });
 
 function $RFunctions($R){
-    //called after our version of jQuery is loaded
+    //called after our version of jQuery ($R) is loaded
 
-    //init our plugins (mostly jquery plugins, the $R passed is our jQuery alias)
-    initPlugins($R);
-
- //    //init the jquery-json plugin
- //    rdr_jqueryJSON($R);
-
-	// //init Ben Alman's postMessage jquery plugin
-	// rdr_postMessage($R);
-        
- //    // scrollPane items
- //    rdr_mousewheel($R);
- //    rdr_mousewheelIntent($R);
- //    rdr_scrollPane($R);
-    
- //    // init James Padolsey's autoResize plugin
- //    rdr_autogrow($R);
 
     //load CSS
     var css = [
         RDR_rootPath+"/static/ui-prototype/css/readrboard.css",
         RDR_rootPath+"/static/css/jquery.jscrollpane.css"
     ];
+    
     loadCSS(css);
 
-    //init rangy before our jquery
-    rangy = pluginRangy();
-    rangy.init()
+    function loadCSS(cssFileList){
 
-    //init our jquery plugins
-    jQueryPlugins($R);
-	    
+        $R.each(cssFileList, function(i, val){
+            $R('<link>').attr({
+                href: val,
+                rel: 'stylesheet'
+            }).appendTo('head');
+        });
+    }
+
+    //init our plugins (includes rangy, but otherwise, mostly jquery plugins. The $R passed is our jQuery alias)
+    initPlugins($R);
+        
     //initiate our RDR object
     RDR = readrBoard($R);
     
@@ -2842,42 +2833,6 @@ function $RFunctions($R){
         jquery_jScrollPane($R);
         jquery_selectionographer($R, rangy);
 
-	//////////////////// TODO: TEST DATA //////////////////
-
-    //[eric]: blessed_tags is ready to be taken from the DB, but we need to decide what the model looks like - right now it's just a charfield
-	// RDR.group.blessed_tags = [
-	// {
-	//     name: "Great!",
-	//     tid: 1
-	// },
-	// {
-	//     name: "Hate",
-	//     tid: 2
-	// },
-	// {
-	//     name: "Interesting",
-	//     tid: 3
-	// },
-	// {
-	//     name: "Booooring",
-	//     tid: 4
-	// }
-	// ];
-
-    function loadCSS(cssFileList){
-
-        $R.each(cssFileList, function(i, val){
-            $R('<link>').attr({
-                href: val,
-                rel: 'stylesheet'
-            }).appendTo('head');
-        });
-    }
-
-    function jQueryPlugins($R){
-    //All jquery plugins to be loaded using our $R version of jquery and before our widget code;
-        
-        
 
         /* are we using this */
         //todo: maybe need to fix this...
@@ -4231,4 +4186,3 @@ function $RFunctions($R){
 
 }
 //end $RFunctions()
-
