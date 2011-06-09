@@ -12,20 +12,34 @@
       <div class="count">+{{ tag.interactions|length }}</div>
     </td>
     <td class="column2">
-      <div class="who_action">{{ tag.interaction.user.first_name }}'s' reaction to:</div>
+      <div class="who_action">{{ tag.interaction.user.social_user.full_name }}'s reaction to:</div>
       <div class="content text">{{ tag.interaction.content.body }}</div>
+      {% for comment in tag.comments %}
+      <h5 class="label small">comments</h5>
+      <div class="comment_container">
+        <div class="header">
+          <div class="when">{{ comment.created }}</div>
+          <div class="avatar"><img src="{{ comment.user.social_user.img_url }}"></div>
+          <div class="who">{{ comment.user.social_user.full_name }}</div>
+        </div>
+        <div class="comment">
+          <div class="quote open">"</div>
+          {{ comment.interaction_node.body }}
+          <div class="quote close">"</div>
+        </div>
       </div>
     </div>
+    {% endfor %}
     </td>
   </tbody>
   {% endfor %}
 </table>
 {% endfor %}
 
-
+<!--
 <table class="card" border="0" cellspacing="0" cellpadding="0">
   <thead>
-    <th class="column1">[ logo <!-- 16px tall max --> ]</th>
+    <th class="column1">[ logo ]</th>
     <th class="column2">[ a ] Anthony Weiner: Hackers posted lewd photos on Twitter</th>
   </thead>
   <tbody>
@@ -78,3 +92,4 @@
   </tr>
   </tbody>
 </table>
+-->

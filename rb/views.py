@@ -81,8 +81,11 @@ def home(request, **kwargs):
 class Tag:
     def __init__(self, tag, interactions):
         self.tag = tag
-        self.interactions = interactions
+        self.interactions = interactions.filter(kind='tag')
         self.interaction = random.choice(interactions)
+        self.comments = []
+    def getComments(self, interactions):
+        self.comments.extend(interactions.filter(parent__in=self.interactions))
 
 class Card:
     def __init__(self, page, interactions):
@@ -93,11 +96,11 @@ class Card:
         tag_interactions = self.interactions.filter(kind='tag')
         interaction_node_ids = tag_interactions.values_list('interaction_node').distinct()
         interaction_nodes = InteractionNode.objects.filter(id__in=interaction_node_ids)
-        print tag_interactions
         tags = [
             Tag(tag, tag_interactions.filter(interaction_node=tag))
             for tag in interaction_nodes
         ]
+        [tag.getComments(self.interactions) for tag in tags]
         #tags = sorted(tags, key=lambda x: len(x.interactions), reverse=True)
         return tags
 
