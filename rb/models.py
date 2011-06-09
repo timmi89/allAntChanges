@@ -187,7 +187,7 @@ class Interaction(DateAwareModel, UserAwareModel):
     kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)
     
     class Meta:
-        ordering = ['page','container','kind','interaction_node']
+        ordering = ['-created']
         unique_together = ('page', 'content', 'kind', 'interaction_node', 'user')
    
     def __unicode__(self):
