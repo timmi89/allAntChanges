@@ -1,26 +1,44 @@
+<<<<<<< HEAD
 <!-- temporarily hiding dynamic ones -->
 <div style="display:none;">
 {% for interaction in interactions %}
+=======
+{% for card in cards %}
+>>>>>>> 7629bc059f2209431c5f7a1817f63c522171ea7a
 <table class="card" border="0" cellspacing="0" cellpadding="0">
   <thead>
-    <th class="column1"><img src="/static/ui-prototype/images/dc_logo_sm.png" alt="DailyCandy" /><!--{{ interaction.page.logo }}--></th>
-    <th class="column2">{{ interaction.page.title }}</th>
+    <th class="column1"><img src="{{ card.page.site.group.logo_url_sm }}"></th>
+    <th class="column2">{{ card.page.title }}</th>
   </thead>
+  {% for tag in card.tags %}
   <tbody>
     <tr class="interaction">
     <td class="column1">
-      <div class="reaction">{{interaction.interaction_node.body}}</div>
-      <div class="count">+1</div>
+      <div class="reaction">{{ tag.tag.body }}</div>
+      <div class="count">+{{ tag.interactions|length }}</div>
     </td>
     <td class="column2">
-      <div class="who_action">{{interaction.user.social_user.full_name}} reacted to:</div>
-      <div class="content text">
-        <img src="/static/ui-prototype/{{interaction.content.body}}" alt='"{{interaction.content.body}}"' />
-      </div>
+      <div class="who_action">{{ tag.interaction.user.social_user.full_name }}'s reaction to:</div>
+      <div class="content text">{{ tag.interaction.content.body }}</div>
+      {% for comment in tag.comments %}
+      <h5 class="label small">comments</h5>
+      <div class="comment_container">
+        <div class="header">
+          <div class="when">{{ comment.created }}</div>
+          <div class="avatar"><img src="{{ comment.user.social_user.img_url }}"></div>
+          <div class="who">{{ comment.user.social_user.full_name }}</div>
+        </div>
+        <div class="comment">
+          <div class="quote open">"</div>
+          {{ comment.interaction_node.body }}
+          <div class="quote close">"</div>
+        </div>
       </div>
     </div>
+    {% endfor %}
     </td>
   </tbody>
+  {% endfor %}
 </table>
 {% endfor %}
 </div>
@@ -105,4 +123,8 @@
   </tr>
   </tbody>
 </table>
+<<<<<<< HEAD
 
+=======
+-->
+>>>>>>> 7629bc059f2209431c5f7a1817f63c522171ea7a

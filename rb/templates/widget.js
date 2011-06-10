@@ -4,14 +4,13 @@ RDRtimer,
 RDR, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
 $R = {}, //init var: our clone of jQuery
-client$ = {}; //init var: clients copy of jQuery
+client$ = {}, //init var: clients copy of jQuery
+RDR_rootPath = "http://localhost:8080"; //todo: when we get our hosting up change to readrboard.com or our CDN.
 
-//init rangy if it hasn't been already, we probably dont need this...
-rangy.init();
 var demoRindow;
 
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
-//This function gets called above in
+//This function gets called by the function $RFunctions() via the function loadScript().
 function readrBoard($R){
 
     var $ = $R;
@@ -68,15 +67,15 @@ function readrBoard($R){
                 demoRindow = rindow;
                 
                 var $demo = $('<div class="rdr_sentimentBox rdr_new" style="height:310px;width:358px;overflow:hidden;position:relative;" />'),
-                $img = $('<img src="/static/images/demo/two_columns.png" style="display:block;position:relative;z-index:2;float:left;cursor:pointer;" />');
+                $img = $('<img src="'+RDR_rootPath+'/static/images/demo/two_columns.png" style="display:block;position:relative;z-index:2;float:left;cursor:pointer;" />');
                 $img.click( function() {
-                    $(this).attr('src', '/static/images/demo/two_columns_clicked.png');
+                    $(this).attr('src', RDR_rootPath+'/static/images/demo/two_columns_clicked.png');
                     $(this).unbind('click');
                     $(this).click( function() {
-                        var $img_three = $('<img src="/static/images/demo/three_columns.png" style="display:block;position:relative;z-index:1;float:right;margin-top:-310px;cursor:text;" />');
-                        $(this).attr('src', '/static/images/demo/two_columns_clicked_twice.png');
+                        var $img_three = $('<img src="'+RDR_rootPath+'/static/images/demo/three_columns.png" style="display:block;position:relative;z-index:1;float:right;margin-top:-310px;cursor:text;" />');
+                        $(this).attr('src', RDR_rootPath+'/static/images/demo/two_columns_clicked_twice.png');
                         $(this).after( $img_three );
-                        //$(this).attr('src', '/static/images/demo/two_columns_clicked_twice.png');
+                        //$(this).attr('src', RDR_rootPath+'/static/images/demo/two_columns_clicked_twice.png');
                         demoRindow.find('div.rdr_sentimentBox').animate({width:538},300);
                     });
                 });
@@ -1170,7 +1169,7 @@ function readrBoard($R){
 
                         $indicator = $('<div class="rdr rdr_indicator rdr_image"></div>').hide();
                         $indicator.append(
-                            '<img src="/static/images/blank.png" class="no-rdr" />',
+                            '<img src="'+RDR_rootPath+'/static/images/blank.png" class="no-rdr" />',
                             '<span class="rdr_count">'+ total +' reactions: </span>'
                         );
 
@@ -1218,7 +1217,7 @@ function readrBoard($R){
                     $indicator = $('<div id="rdr_indicator_' +hash+ '" class="rdr_indicator" />').hide().appendTo($container);
 
                     $indicator.append(
-                        '<img src="/static/images/blank.png" class="no-rdr" />',
+                        '<img src="'+RDR_rootPath+'/static/images/blank.png" class="no-rdr" />',
                         '<span class="rdr_count">'+ total +'</span>'
                     )//chain
                     .data( {'which':hash} )//chain
@@ -1677,7 +1676,7 @@ function readrBoard($R){
                                 $commentBy = $('<div class="rdr_commentBy" />'),
                                 $comment = $('<div class="rdr_comment" />');
 
-                            var user_image_url = ( this_comment.user.image_url ) ? this_comment.user.image_url:'/static/images/anonymousplode.png';
+                            var user_image_url = ( this_comment.user.image_url ) ? this_comment.user.image_url: RDR_rootPath+'/static/images/anonymousplode.png';
                             var user_name = ( this_comment.user.first_name == "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
                             $commentBy.html( '<img src="'+user_image_url+'" /> ' + user_name );
                             $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
@@ -2042,7 +2041,7 @@ function readrBoard($R){
             },
             rateSend: function(args) {
                 // optional loader.  it's a pacman pic.
-                args.tag.find('div.rdr_leftBox').html('<img src="/static/images/loader.gif" style="margin:6px 0 0 5px" />');
+                args.tag.find('div.rdr_leftBox').html('<img src="'+RDR_rootPath+'/static/images/loader.gif" style="margin:6px 0 0 5px" />');
     
                 
                 //example:
@@ -2408,7 +2407,7 @@ function readrBoard($R){
 
                 //quick mockup version of this code
                 $.each(socialNetworks, function(idx, val){
-                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img src="/static/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
+                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img src="'+RDR_rootPath+'/static/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
                 });
                 $socialBox.append($shareLinks);
                 // $socialBox.append('<div>herro worrd</div><div>herro worrd</div><div>herro worrd</div><div>herro worrd</div><div>herro worrd</div>');
@@ -2733,9 +2732,6 @@ function readrBoard($R){
 }
 
 
-//clone object function taken from http://my.opera.com/GreyWyvern/blog/show.dml/1725165
-
-
 //loadScript copied from http://www.logiclabz.com/javascript/dynamically-loading-javascript-file-with-callback-event-handlers.aspx
 function loadScript(sScriptSrc,callbackfunction) {
     var oHead = document.getElementsByTagName('head')[0];
@@ -2757,11 +2753,11 @@ function loadScript(sScriptSrc,callbackfunction) {
 }
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
-loadScript("/static/js/jquery-1.6.js", function(){
+loadScript( RDR_rootPath+"/static/js/jquery-1.6.js", function(){
     //callback
 
     //load jQuery UI while the $ and jQuery still refers to our new version
-    loadScript("/static/js/jquery-ui-1.8.6.custom.min.js", function(){
+    loadScript( RDR_rootPath+"/static/js/jquery-ui-1.8.6.custom.min.js", function(){
         //callback
 
         //test that $.ui versioning is working correctly
@@ -2772,34 +2768,38 @@ loadScript("/static/js/jquery-1.6.js", function(){
 
         //test that $.ui versioning is working correctly
 
-        //call scripts that depend on our jQuery version to be loaded
+        //A function to load all plugins including those (most) that depend on jQuery.
+        //The rest of our code is then set off with RDR.actions.init();
         $RFunctions($R);
 
     });
 });
 
-
 function $RFunctions($R){
-    //called after our version of jQuery is loaded
+    //called after our version of jQuery ($R) is loaded
 
 
- //    //init the jquery-json plugin
- //    rdr_jqueryJSON($R);
-
-	// //init Ben Alman's postMessage jquery plugin
-	// rdr_postMessage($R);
-        
- //    // scrollPane items
- //    rdr_mousewheel($R);
- //    rdr_mousewheelIntent($R);
- //    rdr_scrollPane($R);
+    //load CSS
+    var css = [
+        RDR_rootPath+"/static/ui-prototype/css/readrboard.css",
+        RDR_rootPath+"/static/css/jquery.jscrollpane.css"
+    ];
     
- //    // init James Padolsey's autoResize plugin
- //    rdr_autogrow($R);
+    loadCSS(css);
 
-    //init our jquery plugins
-    jQueryPlugins($R);
-	
+    function loadCSS(cssFileList){
+
+        $R.each(cssFileList, function(i, val){
+            $R('<link>').attr({
+                href: val,
+                rel: 'stylesheet'
+            }).appendTo('head');
+        });
+    }
+
+    //init our plugins (includes rangy, but otherwise, mostly jquery plugins. The $R passed is our jQuery alias)
+    initPlugins($R);
+        
     //initiate our RDR object
     RDR = readrBoard($R);
     
@@ -2811,1196 +2811,1378 @@ function $RFunctions($R){
     //run init functions
     RDR.actions.init();
 
-    //testing:
-    /*
-    var a = $R.evalJSON('[{"test":2}]');
+
+    function initPlugins($R){
+        //All jquery plugins to be loaded using our $R version of jquery and before our widget code;
+
+        //Rangy - init before our jquery
+        var rangy = plugin_rangy();
+        rangy.init();
+
+        //jQuery Plugins
+        plugin_jquery_log($R);
+        plugin_jquery_json($R);
+        plugin_jquery_postMessage($R);
+        plugin_jquery_enhancedOffset($R);
+        // plugin_jquery_textnodes($R);                     //not needed now
+        // plugin_jquery_superRange($R);                    //not needed now
+        // plugin_jquery_improvedCSS($R);                   //not needed now
+        plugin_jquery_autogrow($R);
+        plugin_jquery_mousewheel($R);
+        plugin_jquery_mousewheelIntent($R);
+        plugin_jquery_jScrollPane($R);
+        plugin_jquery_selectionographer($R, rangy);
 
 
-    //show that objects really are unique
-
-    $.client = "client";
-    $R.rb = "rb";
-    //console.log($.client)   //"client"
-    //console.log($R.client)  //undefined
-    //console.log($R.rb)      //"rb"
-    //console.log($.rb)       //undefined
-    */  //end comment out testing:
-
-	//////////////////// TODO: TEST DATA //////////////////
-
-    //[eric]: blessed_tags is ready to be taken from the DB, but we need to decide what the model looks like - right now it's just a charfield
-	// RDR.group.blessed_tags = [
-	// {
-	//     name: "Great!",
-	//     tid: 1
-	// },
-	// {
-	//     name: "Hate",
-	//     tid: 2
-	// },
-	// {
-	//     name: "Interesting",
-	//     tid: 3
-	// },
-	// {
-	//     name: "Booooring",
-	//     tid: 4
-	// }
-	// ];
-}
-
-function jQueryPlugins($R){
-//All jquery plugins to be loaded using our $R version of jquery and before our widget code;
-    
-    // parents filter:  http://stackoverflow.com/questions/965816/what-jquery-selector-excludes-items-with-a-parent-that-matches-a-given-selector
-    // doesn't seem to be working tho.
-    $R.expr[':'].parents = function(a,i,m){
-        return $R(a).parents(m[3]).length < 1;
-    };
-
-
-    (function($){
-        /**
-         * jQuery Log
-         * Fast & safe logging in Firebug console
-         * 
-         * @param mixed - as many parameters as needed
-         * @return void
-         * 
-         * @url http://plugins.jquery.com/project/jQueryLog
-         * @author Amal Samally [amal.samally(at)gmail.com]
-         * @version 1.0
-         * @example:
-         *      $.log(someObj, someVar);
-         *      $.log("%s is %d years old.", "Bob", 42);
-         *      $('div.someClass').log().hide();
-         */
-        $.log = function () {
-            if (window.console && window.console.log) {
-                console.log.apply(window.console, arguments)
-            }
+        /* are we using this */
+        //todo: maybe need to fix this...
+        // parents filter:  http://stackoverflow.com/questions/965816/what-jquery-selector-excludes-items-with-a-parent-that-matches-a-given-selector
+        // doesn't seem to be working tho.
+        $R.expr[':'].parents = function(a,i,m){
+            return $R(a).parents(m[3]).length < 1;
         };
-        $.fn.log = function () {
-            var logArgs = arguments || this;
-            $.log(logArgs);
-            return this
-        }
 
-        //alias console.log to global log
-        //in case client already has log defined (remove for production anyway)
-        if (typeof log === "undefined"){
-            log = function(){
-                $.each(arguments, function(idx, val){    
-                    $.log(val);
-                });
-            }   
-        }
+        
+        /** start plugin functions **/
+            
+        function plugin_jquery_log($){
+            /**
+             * jQuery Log
+             * Fast & safe logging in Firebug console
+             * 
+             * @param mixed - as many parameters as needed
+             * @return void
+             * 
+             * @url http://plugins.jquery.com/project/jQueryLog
+             * @author Amal Samally [amal.samally(at)gmail.com]
+             * @version 1.0
+             * @example:
+             *      $.log(someObj, someVar);
+             *      $.log("%s is %d years old.", "Bob", 42);
+             *      $('div.someClass').log().hide();
+             */
+            $.log = function () {
+                if (window.console && window.console.log) {
+                    console.log.apply(window.console, arguments)
+                }
+            };
+            $.fn.log = function () {
+                var logArgs = arguments || this;
+                $.log(logArgs);
+                return this
+            }
 
-        //add in alias temporaily to client $ so we can use regular $ instead of $R if we want
-        jQuery.log = $.log;
-        jQuery.fn.log = $.fn.log;
+            //alias console.log to global log
+            //in case client already has log defined (remove for production anyway)
+            if (typeof log === "undefined"){
+                log = function(){
+                    $.each(arguments, function(idx, val){    
+                        $.log(val);
+                    });
+                }   
+            }
 
-    })($R);
+            //add in alias temporaily to client $ so we can use regular $ instead of $R if we want
+            if(typeof jQuery != 'undefined'){
+                jQuery.log = $.log;
+                jQuery.fn.log = $.fn.log;
+            }
 
-    (function($){
-        /* jquery json v2.2 */
-        /* http://code.google.com/p/jquery-json/ */
-        $.toJSON=function(o)
+        };
+        //end function plugin_jquery_log
 
-        {
-            if(typeof(JSON)=='object'&&JSON.stringify)
-                return JSON.stringify(o);
-            var type=typeof(o);
-            if(o===null)
-                return"null";
-            if(type=="undefined")
-                return undefined;
-            if(type=="number"||type=="boolean")
-                return o+"";
-            if(type=="string")
-                return $.quoteString(o);
-            if(type=='object')
+        function plugin_jquery_json($){
+            /* jquery json v2.2 */
+            /* http://code.google.com/p/jquery-json/ */
+            $.toJSON=function(o)
 
             {
-                if(typeof o.toJSON=="function")
-                    return $.toJSON(o.toJSON());
-                if(o.constructor===Date)
+                if(typeof(JSON)=='object'&&JSON.stringify)
+                    return JSON.stringify(o);
+                var type=typeof(o);
+                if(o===null)
+                    return"null";
+                if(type=="undefined")
+                    return undefined;
+                if(type=="number"||type=="boolean")
+                    return o+"";
+                if(type=="string")
+                    return $.quoteString(o);
+                if(type=='object')
 
                 {
-                    var month=o.getUTCMonth()+1;
-                    if(month<10)month='0'+month;
-                    var day=o.getUTCDate();
-                    if(day<10)day='0'+day;
-                    var year=o.getUTCFullYear();
-                    var hours=o.getUTCHours();
-                    if(hours<10)hours='0'+hours;
-                    var minutes=o.getUTCMinutes();
-                    if(minutes<10)minutes='0'+minutes;
-                    var seconds=o.getUTCSeconds();
-                    if(seconds<10)seconds='0'+seconds;
-                    var milli=o.getUTCMilliseconds();
-                    if(milli<100)milli='0'+milli;
-                    if(milli<10)milli='0'+milli;
-                    return'"'+year+'-'+month+'-'+day+'T'+
-                    hours+':'+minutes+':'+seconds+'.'+milli+'Z"';
+                    if(typeof o.toJSON=="function")
+                        return $.toJSON(o.toJSON());
+                    if(o.constructor===Date)
+
+                    {
+                        var month=o.getUTCMonth()+1;
+                        if(month<10)month='0'+month;
+                        var day=o.getUTCDate();
+                        if(day<10)day='0'+day;
+                        var year=o.getUTCFullYear();
+                        var hours=o.getUTCHours();
+                        if(hours<10)hours='0'+hours;
+                        var minutes=o.getUTCMinutes();
+                        if(minutes<10)minutes='0'+minutes;
+                        var seconds=o.getUTCSeconds();
+                        if(seconds<10)seconds='0'+seconds;
+                        var milli=o.getUTCMilliseconds();
+                        if(milli<100)milli='0'+milli;
+                        if(milli<10)milli='0'+milli;
+                        return'"'+year+'-'+month+'-'+day+'T'+
+                        hours+':'+minutes+':'+seconds+'.'+milli+'Z"';
+                    }
+                    if(o.constructor===Array)
+                    {
+                        var ret=[];
+                        for(var i=0;i<o.length;i++)
+                            ret.push($.toJSON(o[i])||"null");
+                        return"["+ret.join(",")+"]";
+                    }
+                    var pairs=[];
+                    for(var k in o){
+                        var name;
+                        var type=typeof k;
+                        if(type=="number")
+                            name='"'+k+'"';
+                        else if(type=="string")
+                            name=$.quoteString(k);else
+                            continue;
+                        if(typeof o[k]=="function")
+                            continue;
+                        var val=$.toJSON(o[k]);
+                        pairs.push(name+":"+val);
+                    }
+                    return"{"+pairs.join(", ")+"}";
                 }
-                if(o.constructor===Array)
-                {
-                    var ret=[];
-                    for(var i=0;i<o.length;i++)
-                        ret.push($.toJSON(o[i])||"null");
-                    return"["+ret.join(",")+"]";
-                }
-                var pairs=[];
-                for(var k in o){
-                    var name;
-                    var type=typeof k;
-                    if(type=="number")
-                        name='"'+k+'"';
-                    else if(type=="string")
-                        name=$.quoteString(k);else
-                        continue;
-                    if(typeof o[k]=="function")
-                        continue;
-                    var val=$.toJSON(o[k]);
-                    pairs.push(name+":"+val);
-                }
-                return"{"+pairs.join(", ")+"}";
-            }
-        };
+            };
 
-        $.evalJSON=function(src)
-
-        {
-            if(typeof(JSON)=='object'&&JSON.parse)
-                return JSON.parse(src);
-            return eval("("+src+")");
-        };
-
-        $.secureEvalJSON=function(src)
-
-        {
-            if(typeof(JSON)=='object'&&JSON.parse)
-                return JSON.parse(src);
-            var filtered=src;
-            filtered=filtered.replace(/\\["\\\/bfnrtu]/g,'@');
-            filtered=filtered.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']');
-            filtered=filtered.replace(/(?:^|:|,)(?:\s*\[)+/g,'');
-            if(/^[\],:{}\s]*$/.test(filtered))
-                return eval("("+src+")");else
-                throw new SyntaxError("Error parsing JSON, source is not valid.");
-        };
-
-        $.quoteString=function(string)
-
-        {
-            if(string.match(_escapeable))
+            $.evalJSON=function(src)
 
             {
-                return'"'+string.replace(_escapeable,function(a)
+                if(typeof(JSON)=='object'&&JSON.parse)
+                    return JSON.parse(src);
+                return eval("("+src+")");
+            };
+
+            $.secureEvalJSON=function(src)
+
+            {
+                if(typeof(JSON)=='object'&&JSON.parse)
+                    return JSON.parse(src);
+                var filtered=src;
+                filtered=filtered.replace(/\\["\\\/bfnrtu]/g,'@');
+                filtered=filtered.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']');
+                filtered=filtered.replace(/(?:^|:|,)(?:\s*\[)+/g,'');
+                if(/^[\],:{}\s]*$/.test(filtered))
+                    return eval("("+src+")");else
+                    throw new SyntaxError("Error parsing JSON, source is not valid.");
+            };
+
+            $.quoteString=function(string)
+
+            {
+                if(string.match(_escapeable))
 
                 {
-                        var c=_meta[a];
-                        if(typeof c==='string')return c;
-                        c=a.charCodeAt();
-                        return'\\u00'+Math.floor(c/16).toString(16)+(c%16).toString(16);
-                    })+'"';
-            }
-            return'"'+string+'"';
+                    return'"'+string.replace(_escapeable,function(a)
+
+                    {
+                            var c=_meta[a];
+                            if(typeof c==='string')return c;
+                            c=a.charCodeAt();
+                            return'\\u00'+Math.floor(c/16).toString(16)+(c%16).toString(16);
+                        })+'"';
+                }
+                return'"'+string+'"';
+            };
+
+            var _escapeable=/["\\\x00-\x1f\x7f-\x9f]/g;
+            var _meta={
+                '\b':'\\b',
+                '\t':'\\t',
+                '\n':'\\n',
+                '\f':'\\f',
+                '\r':'\\r',
+                '"':'\\"',
+                '\\':'\\\\'
+            };
         };
-
-        var _escapeable=/["\\\x00-\x1f\x7f-\x9f]/g;
-        var _meta={
-            '\b':'\\b',
-            '\t':'\\t',
-            '\n':'\\n',
-            '\f':'\\f',
-            '\r':'\\r',
-            '"':'\\"',
-            '\\':'\\\\'
+        //end function plugin_jquery_json
+        
+        function plugin_jquery_postMessage($){
+            /*
+             * jQuery postMessage - v0.5 - 9/11/2009
+             * http://benalman.com/projects/jquery-postmessage-plugin/
+             * 
+             * Copyright (c) 2009 "Cowboy" Ben Alman
+             * Dual licensed under the MIT and GPL licenses.
+             * http://benalman.com/about/license/
+             */
+            var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h]&&!$.browser.opera;$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
         };
-    })($R);
-    
-    (function($){   
-        /*
-         * jQuery postMessage - v0.5 - 9/11/2009
-         * http://benalman.com/projects/jquery-postmessage-plugin/
-         * 
-         * Copyright (c) 2009 "Cowboy" Ben Alman
-         * Dual licensed under the MIT and GPL licenses.
-         * http://benalman.com/about/license/
-         */
-        var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h]&&!$.browser.opera;$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
-    })($R);
+        //end function plugin_jquery_postMessage
 
-
-
-    (function($){   
-
-        /**
-         * Enhanced .offset()
-         * Abstracts offset().right and offset().bottom into a built-in getter, and adds .offset(top, left) as a setter.
-         *
-         * @version 1.0
-         * @example $('#tester').offset().bottom
-         * @example $('#tester').offset().right
-         * @example $('#tester').offset(10, 20);
-         * @example $('#tester').offset(10, 20, 'fast');
-         * @example $('#tester').offset('+=10', '+=20');
-         * @example $('#tester').offset('+=5', '-=30');
-         * @author Brian Schweitzer (BrianFreud)
-         * @author Charles Phillips, first half of the return conditional ( http://groups.google.com/group/jquery-dev/browse_thread/thread/10fa400d3f9d9521/ )
-         *
-         * Dual licensed under the MIT and GPL licenses:
-         *   http://www.opensource.org/licenses/mit-license.php
-         *   http://www.gnu.org/licenses/gpl.html
-         */
-        var offsetMethod = $.fn.offset;
-        $.fn.offset = function () {
-            var offset = offsetMethod.call(this),
-                bottom = offset.top + this.outerHeight(),
-                right = offset.left + this.outerWidth(),
-                a = arguments;
-            return (a.length) ? this.animate({
-                                             top  : a[0].top  || a[0],
-                                             left : a[0].left || a[1]
-                                             }, (a[0].top ? a[1] : a[2]) || 1)
-                              : $.extend(offset, {
-                                                 bottom: bottom,
-                                                 right: right
-                                                 });
+        function plugin_jquery_enhancedOffset($){
+            /**
+             * Enhanced .offset()
+             * Abstracts offset().right and offset().bottom into a built-in getter, and adds .offset(top, left) as a setter.
+             *
+             * @version 1.0
+             * @example $('#tester').offset().bottom
+             * @example $('#tester').offset().right
+             * @example $('#tester').offset(10, 20);
+             * @example $('#tester').offset(10, 20, 'fast');
+             * @example $('#tester').offset('+=10', '+=20');
+             * @example $('#tester').offset('+=5', '-=30');
+             * @author Brian Schweitzer (BrianFreud)
+             * @author Charles Phillips, first half of the return conditional ( http://groups.google.com/group/jquery-dev/browse_thread/thread/10fa400d3f9d9521/ )
+             *
+             * Dual licensed under the MIT and GPL licenses:
+             *   http://www.opensource.org/licenses/mit-license.php
+             *   http://www.gnu.org/licenses/gpl.html
+             */
+            var offsetMethod = $.fn.offset;
+            $.fn.offset = function () {
+                var offset = offsetMethod.call(this),
+                    bottom = offset.top + this.outerHeight(),
+                    right = offset.left + this.outerWidth(),
+                    a = arguments;
+                return (a.length) ? this.animate({
+                                                 top  : a[0].top  || a[0],
+                                                 left : a[0].left || a[1]
+                                                 }, (a[0].top ? a[1] : a[2]) || 1)
+                                  : $.extend(offset, {
+                                                     bottom: bottom,
+                                                     right: right
+                                                     });
+            };
         };
-    })($R);
+        //end function plugin_jquery_enhancedOffset
 
-    (function($){
-        /*
-         * jquery.selectionographer.js
-         * $.fn.selog aliases to $.fn.selectionographer
-         * author: eric@readrboard.com
-         * see docs for more info /docs/selectionographer-docs.js
-         *
-         * to test in the live page, don't forget to use $R(), not $().
-        */        
-        $.fn.selectionographer = function( params ) {
-            //jQuery plugin pattern :http://docs.jquery.com/Plugins/Authoring
-            if ( methods[params] ) {
-                return methods[params].apply( this, Array.prototype.slice.call( arguments, 1 ));
-            } else if ( typeof params === 'object' || ! params ) {
-                return methods.init.apply( this, arguments );
-            } else {
-                $.error( 'Method ' +  params + ' does not exist.' );
-            }
-        };
-        $.fn.selog = $.fn.selectionographer;
+        
+        function plugin_jquery_selectionographer($, rangy){
+            /*
+             * jquery.selectionographer.js
+             * $.fn.selog aliases to $.fn.selectionographer
+             * author: eric@readrboard.com
+             * see docs for more info /docs/selectionographer-docs.js
+             *
+             * depends on all of the rangy pacakge:
+             * rangy-core.js
+             * rangy-cssclassapplier.js
+             * rangy-selectionsaverestore.js
+             * rangy-serializer.js
+             *
+             * expects params of ( $, rangy ) where $ is the jQuery alias
+             * 
+             * //temp readr note: to test in the live page, don't forget to use $R(), not $().
+            */        
+            $.fn.selectionographer = function( params ) {
+                //jQuery plugin pattern :http://docs.jquery.com/Plugins/Authoring
+                if ( methods[params] ) {
+                    return methods[params].apply( this, Array.prototype.slice.call( arguments, 1 ));
+                } else if ( typeof params === 'object' || ! params ) {
+                    return methods.init.apply( this, arguments );
+                } else {
+                    $.error( 'Method ' +  params + ' does not exist.' );
+                }
+            };
+            $.fn.selog = $.fn.selectionographer;
 
-        var defaults = {};
+            var defaults = {};
 
-        var methods = {
-            //note: In these methods, 'this' is the jQuery object that the plugin was invoked on. See plugin pattern above.
-            init : function( options ) {
-                var $this = this;
-                options = options || {};
-                _tempTesting();
+            var methods = {
+                //note: In these methods, 'this' is the jQuery object that the plugin was invoked on. See plugin pattern above.
+                init : function( options ) {
+                    var $this = this;
+                    options = options || {};
+                    _tempTesting();
 
-                //todo: make _settings an object unique to each 'this';
-                return $this.each(function(){
-                    // merge default and user parameters
-                    _settings = $.extend(defaults, options);
-                });
-            },
-            save: function(selStateOrPartial){
-                // selStateOrPartial is an optional object.
-                // If selStateOrPartial is a full selState, or has a range, or a serialRange, it will clone it and save a new one.
-                // If it is omited or if both selStateOrPartial.range and selStateOrPartial.serialRange are ommited,
-                // it will use the current selection to build the selState.  If nothing is selected it returns false;
-                var $this = this,
-                selStateStack = _selStateStack,
-                selStateOrPartial = selStateOrPartial || {},
-                selState;
+                    //todo: make _settings an object unique to each 'this';
+                    return $this.each(function(){
+                        // merge default and user parameters
+                        _settings = $.extend(defaults, options);
+                    });
+                },
+                save: function(selStateOrPartial){
+                    // selStateOrPartial is an optional object.
+                    // If selStateOrPartial is a full selState, or has a range, or a serialRange, it will clone it and save a new one.
+                    // If it is omited or if both selStateOrPartial.range and selStateOrPartial.serialRange are ommited,
+                    // it will use the current selection to build the selState.  If nothing is selected it returns false;
+                    var $this = this,
+                    selStateStack = _selStateStack,
+                    selStateOrPartial = selStateOrPartial || {},
+                    selState;
 
-                //only take the first container for now
-                //todo: solution for multiple $objects?
-                selStateOrPartial.container = selStateOrPartial.container || $this[0] || document;
-                selState = _makeSelState( selStateOrPartial );
-                //make sure selState didn't fail (i.e. if it was an empty range)
-                if(!selState) return false;
+                    //only take the first container for now
+                    //todo: solution for multiple $objects?
+                    selStateOrPartial.container = selStateOrPartial.container || $this[0] || document;
+                    selState = _makeSelState( selStateOrPartial );
+                    //make sure selState didn't fail (i.e. if it was an empty range)
+                    if(!selState) return false;
 
-                //push selState into stack
-                selStateStack[selState.idx] = selState;
-                //temp log to tempOutput    
-                    var str,
-                    txtLen = selState.text.length; 
-                    if(txtLen <= 30){
-                        str = selState.text;
+                    //push selState into stack
+                    selStateStack[selState.idx] = selState;
+                    //temp log to tempOutput    
+                        var str,
+                        txtLen = selState.text.length; 
+                        if(txtLen <= 30){
+                            str = selState.text;
+                        }
+                        else{
+                            str = selState.text.substring(0,15)+'...'+selState.text.substring(txtLen-15,txtLen);
+                        }
+                        $('#rdr_tempOutput').append('<div><b>'+selState.idx+'</b>: '+str+'</div>');
+                    //end temp log to tempOutput
+                    log('saved selState ' + selState.idx + ': ' + selState.text); //selog temp logging
+                    return selState;
+                },
+                activate: function(idxOrSelState){
+                    var selState = _fetchselState(idxOrSelState);
+                    if(!selState) return false;
+                    methods.clear();
+                    _WSO().setSingleRange( selState.range );
+                    log('activated range selection: ')
+                    log(selState.range)
+                    return selState;
+                },
+                clear: function(){
+                    _WSO().removeAllRanges();  
+                },
+                modify: function(idxOrSelState, filterList) {
+                    //let filterList be optionally called without idxOrSelState - letting the selState default to the latest.
+                    if( idxOrSelState instanceof Array ){
+                        filterList = idxOrSelState;
+                        idxOrSelState = undefined; //will trigger default latest idx
+                    }
+                    var iniSelState = _fetchselState(idxOrSelState),
+                    newSettings, newRange,
+                    newSelState;
+
+                    if(!iniSelState) return false;
+
+                    //todo: it looks like the rangy method cloneRange breaks the ability to re-activate it later?
+                    //we shouldn't need that though, anyway, but maybe it will get fixed down the line.
+                    newRange = iniSelState.range.cloneRange();
+                    //filter the ranges
+                    newRange = _filter(newRange, filterList);
+                    newSettings = {
+                        range:newRange,
+                        container:iniSelState.container
+                    }
+                    newSelState = methods.save( newSettings );
+                    return newSelState
+                },
+                hilite: function(idxOrSelState, switchOnOffToggle){
+                    
+                    // switchOnOffToggle is optional.  Expects a string 'on', 'off', or 'toggle', or defaults to 'on'
+                    // check if idxOrSelState is omited
+                    if( typeof idxOrSelState === 'string' && isNaN( parseInt(idxOrSelState) ) ){
+                        switchOnOffToggle = idxOrSelState;
+                        idxOrSelState = undefined;
+                    }
+                    var switchOnOffToggle = switchOnOffToggle || 'on';
+
+                    //todo:checkout why first range is picking up new selState range (not a big deal)
+                    var selState = _fetchselState(idxOrSelState);
+                    if(!selState) return false;
+                    
+                    //todo: not using this yet..
+                    /*
+                    var range = selState.range;
+                    var host = range.commonAncestorContainer;
+                    //get the closest parent that isn't a textNode or CDATA node
+                    while( host.nodeType == 3 || host.nodeType == 4 ){ //Node.TEXT_NODE equals 3, CDATA_SECTION_NODE = 4
+                        host = host.parentNode;
+                    }
+                    */
+
+                    //switch the hilite state
+                    _hiliteSwitch(selState, switchOnOffToggle);
+                    return selState
+                },
+                helpers: function(helperPack){
+                    var func = _helperPacks[helperPack];
+                    return func ? func.apply( this, Array.prototype.slice.call( arguments, 1 ) ) : false;
+                },
+                find: function(string){
+                    var re = [],
+                    $this = this,
+                    regex;
+                    
+                    if( !string ) return false;
+
+                    /*
+                    function escapeRegEx( str ) {
+                        // http://kevin.vanzonneveld.net
+                        return (str+'').replace(/(\\)/g, "\\$1");
+                    }
+                    */
+
+                    //todo: verify that this is best practice
+                    //http://simonwillison.net/2006/Jan/20/escape/
+                    RegExp.escape = function(text) {
+                        return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+                    }
+
+                    /*
+                    //if a single string, make it an array.
+                    if (typeof strings === "string"){
+                        strings = [strings];
+                    }
+                    */
+
+                    /*
+                    var re = [], regex, scope=this;
+                    $.each(strings,function(i,str){
+                        if ( str == "") return;
+                        str = scope.escapeRegEx(n);
+                        re.push(str); 
+                    });
+                    regex = re.join("|"); //or
+                    regex = '(?:'+regex+')';
+                    */              
+                    
+                    string = RegExp.escape(string);
+                    console.log(string);
+                    regex = new RegExp(string, "gim");
+                    
+                    return $this.each(function(){
+                        var text = $(this).text(),
+                        match = 0,
+                        check = 0, //while testing, avoid infiniteloops
+                        ret = [];
+                        while( (match = regex.exec(text)) && check < 5 ) {
+                            log(match)
+                            log(match.index)
+                            log(check)
+                            ret.push(match.index);
+                            check++;
+                        }
+                        // log(this);
+                        // log(text);
+                        return ret;
+                    });
+                },
+                data: function(name){
+                   return _data[name];
+                }
+            };
+
+            //private objects
+            var _settings = {}, //set on init
+            //for all helperPacks, 'this' is passed in with apply.
+            _helperPacks = {
+                smartHilite: function(){
+                    return methods.hilite( methods.modify( methods.save.apply(this) ) ); //oooh lispy.
+                },
+                activateRange: function(rangeOrSerialRange){
+                    //todo: not using this anyway, but not sure if this still works completely..
+                    var settings = {};
+                    if( typeof rangeOrSerialRange === "string" ){
+                        //assume it's a serialRange
+                        settings.serialRange = rangeOrSerialRange;
                     }
                     else{
-                        str = selState.text.substring(0,15)+'...'+selState.text.substring(txtLen-15,txtLen);
+                        //assume it's a range
+                        settings.range = rangeOrSerialRange;
                     }
-                    $('#rdr_tempOutput').append('<div><b>'+selState.idx+'</b>: '+str+'</div>');
-                //end temp log to tempOutput
-                log('saved selState ' + selState.idx + ': ' + selState.text); //selog temp logging
-                return selState;
+                    return methods.activate( methods.save(settings) );
+                }
             },
-            activate: function(idxOrSelState){
-                var selState = _fetchselState(idxOrSelState);
-                if(!selState) return false;
-                methods.clear();
-                _WSO().setSingleRange( selState.range );
-                log('activated range selection: ')
-                log(selState.range)
-                return selState;
-            },
-            clear: function(){
-                _WSO().removeAllRanges();  
-            },
-            modify: function(idxOrSelState, filterList) {
-                //let filterList be optionally called without idxOrSelState - letting the selState default to the latest.
-                if( idxOrSelState instanceof Array ){
-                    filterList = idxOrSelState;
-                    idxOrSelState = undefined; //will trigger default latest idx
+            _selStateStack = [
+            /*
+                //keep commented out:
+                //Example template: Set by save and added to the stack.
+                 {
+                    todo: update this is old...
+
+                    selection: selectionObj || rangy.getSelection(),
+                    idx: selStateStack.length,
+                    timestamp: $.now(),
+                    revisionParent: null, //set below
+                    ranges: null,       //set below
+                    text: ""            //set below
                 }
-                var iniSelState = _fetchselState(idxOrSelState),
-                newSettings, newRange,
-                newSelState;
-
-                if(!iniSelState) return false;
-
-                //todo: it looks like the rangy method cloneRange breaks the ability to re-activate it later?
-                //we shouldn't need that though, anyway, but maybe it will get fixed down the line.
-                newRange = iniSelState.range.cloneRange();
-                //filter the ranges
-                newRange = _filter(newRange, filterList);
-                newSettings = {
-                    range:newRange,
-                    container:iniSelState.container
-                }
-                newSelState = methods.save( newSettings );
-                return newSelState
-            },
-            hilite: function(idxOrSelState, switchOnOffToggle){
-                
-                // switchOnOffToggle is optional.  Expects a string 'on', 'off', or 'toggle', or defaults to 'on'
-                // check if idxOrSelState is omited
-                if( typeof idxOrSelState === 'string' && isNaN( parseInt(idxOrSelState) ) ){
-                    switchOnOffToggle = idxOrSelState;
-                    idxOrSelState = undefined;
-                }
-                var switchOnOffToggle = switchOnOffToggle || 'on';
-
-                //todo:checkout why first range is picking up new selState range (not a big deal)
-                var selState = _fetchselState(idxOrSelState);
-                if(!selState) return false;
-                
-                //todo: not using this yet..
-                /*
-                var range = selState.range;
-                var host = range.commonAncestorContainer;
-                //get the closest parent that isn't a textNode or CDATA node
-                while( host.nodeType == 3 || host.nodeType == 4 ){ //Node.TEXT_NODE equals 3, CDATA_SECTION_NODE = 4
-                    host = host.parentNode;
-                }
-                */
-
-                //switch the hilite state
-                _hiliteSwitch(selState, switchOnOffToggle);
-                return selState
-            },
-            helpers: function(helperPack){
-                var func = _helperPacks[helperPack];
-                return func ? func.apply( this, Array.prototype.slice.call( arguments, 1 ) ) : false;
-            },
-            find: function(string){
-                var re = [],
-                $this = this,
-                regex;
-                
-                if( !string ) return false;
-
-                /*
-                function escapeRegEx( str ) {
-                    // http://kevin.vanzonneveld.net
-                    return (str+'').replace(/(\\)/g, "\\$1");
-                }
-                */
-
-                //todo: verify that this is best practice
-                //http://simonwillison.net/2006/Jan/20/escape/
-                RegExp.escape = function(text) {
-                    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-                }
-
-                /*
-                //if a single string, make it an array.
-                if (typeof strings === "string"){
-                    strings = [strings];
-                }
-                */
-
-                /*
-                var re = [], regex, scope=this;
-                $.each(strings,function(i,str){
-                    if ( str == "") return;
-                    str = scope.escapeRegEx(n);
-                    re.push(str); 
-                });
-                regex = re.join("|"); //or
-                regex = '(?:'+regex+')';
-                */              
-                
-                string = RegExp.escape(string);
-                console.log(string);
-                regex = new RegExp(string, "gim");
-                
-                return $this.each(function(){
-                    var text = $(this).text(),
-                    match = 0,
-                    check = 0, //while testing, avoid infiniteloops
-                    ret = [];
-                    while( (match = regex.exec(text)) && check < 5 ) {
-                        log(match)
-                        log(match.index)
-                        log(check)
-                        ret.push(match.index);
-                        check++;
-                    }
-                    // log(this);
-                    // log(text);
-                    return ret;
-                });
-            },
-            data: function(name){
-               return _data[name];
-            }
-        };
-
-        //private objects
-        var _settings = {}, //set on init
-        //for all helperPacks, 'this' is passed in with apply.
-        _helperPacks = {
-            smartHilite: function(){
-                return methods.hilite( methods.modify( methods.save.apply(this) ) ); //oooh lispy.
-            },
-            activateRange: function(rangeOrSerialRange){
-                //todo: not using this anyway, but not sure if this still works completely..
-                var settings = {};
-                if( typeof rangeOrSerialRange === "string" ){
-                    //assume it's a serialRange
-                    settings.serialRange = rangeOrSerialRange;
-                }
-                else{
-                    //assume it's a range
-                    settings.range = rangeOrSerialRange;
-                }
-                return methods.activate( methods.save(settings) );
-            }
-        },
-        _selStateStack = [
-        /*
-            //keep commented out:
-            //Example template: Set by save and added to the stack.
-             {
-                todo: update this is old...
-
-                selection: selectionObj || rangy.getSelection(),
-                idx: selStateStack.length,
-                timestamp: $.now(),
-                revisionParent: null, //set below
-                ranges: null,       //set below
-                text: ""            //set below
-            }
-        */
-        ],
-        _modifierFilters = {
-            stripWhiteSpace: function(range){
-                var rangeStr = range.toString(),
-                s = {}, //start
-                e = {}; //end
-                //see rangy core for range attributes used here
-                s.textnode = range.startContainer;
-                s.offset = range.startOffset;
-                s.regx = /^\s+/; //start, then one or more whitespace chars
-                s.result = s.regx.exec(rangeStr);
-
-                e.textnode = range.endContainer;
-                e.offset = range.endOffset;
-                e.regx = /\s+$/; //one or more whitespace chars, then end
-                e.result = e.regx.exec(rangeStr);
-                
-                //change the range offsets by the length of the whitespace found
-                if(s.result){
-                    s.resultStrLen = s.result[0].length;
-                    _rangeOffSet( range, {relOffset: (s.resultStrLen)} );
-                }
-                if(e.result){
-                    e.resultStrLen = e.result[0].length;
-                    _rangeOffSet( range, {relOffset: (-e.resultStrLen), start:false} );
-                }
-                return range;
-            },
-            firstWordSnap: function(range){
-                //find the extra word characters the range cut off at the beginning of the selState, and add em'.
-                //and change the offset of the range
-                var textnode = range.startContainer, //rangy attribute startContainer
-                startOffset = range.startOffset,
-                testRange;
-                if (startOffset == 0) return range;
-                //else 
-
-                //NOTE: this assumes that the function and the range share the same document - change if we ever need to call between iframes.
-                //create a helper object to find the word boundary
-                var hlpr = {
-                    range: rangy.createRange() //rangy function createRange
-                }
-                hlpr.range.setStart(textnode, 0);
-                hlpr.range.setEnd(textnode, startOffset);
-                hlpr.str0 = (hlpr.range.toString());
-                //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
-                hlpr.regx1 = /\s*\S+$/;
-                hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
-                if (hlpr.result1 === null) return range;
-                //else
-
-                hlpr.str1 = hlpr.result1[0]; //result[0] is string representation of regex object - see exec() for info
-                //strip any white space off beginning of string
-                hlpr.str2 = hlpr.str1.replace(/\s*/,"");
-                hlpr.extraWordChars = hlpr.str2.length;
-                _rangeOffSet(range, {relOffset: (-hlpr.extraWordChars) });
-                return range;
-            },
-            lastWordSnap: function(range){
-                //find the extra word characters the range cut off at the end of the selState, and add em'.
-                var textnode = range.endContainer, //rangy attribute endContainer
-                endOffset = range.endOffset,
-                testRange;
-                if (endOffset == 0) return range;
-                //else
-                
-                //NOTE: this assumes that the function and the range share the same document - change if we ever need to call between iframes.
-                //create a tester object to find the word boundary
-                var hlpr = {
-                    range: rangy.createRange() //rangy function createRange
-                }
-                hlpr.range.setStart(textnode, endOffset);
-                hlpr.range.setEnd(textnode, textnode.length);
-                hlpr.str0 = (hlpr.range.toString());
-                //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
-                hlpr.regx1 = /^\S+(?=(\s|$))/;
-                hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
-                if (hlpr.result1 === null) return range;
-                //else
-
-                hlpr.str1 = hlpr.result1[0]; //result[0] is string representation of regex object - see exec() for info
-                hlpr.extraWordChars = hlpr.str1.length;
-                _rangeOffSet(range, {relOffset: (hlpr.extraWordChars), start:false});
-                return range;
-            }
-        },
-        _data = {
-            stack: _selStateStack
-        }
-        
-        //private functions:
-        function _WSO(){
-            return rangy.getSelection();  
-        }
-        function _makeSelState(settings){
-            var scope = this,
-            selStateStack = _selStateStack,
-            range, serialRange,
-            settings = settings || {},
-            defaults = {
-                styleName: 'rdr_hilite',
-                container: document,        // likely passed in by save()
-                serialRange: null,          // set below - overwritten by explicit range object
-                range: null                 // set below - overwrites serial range
-            },
-            overrides = {
-                idx: selStateStack.length,  // can't overide
-                timestamp: $.now(),         // don't really need this..
-                interactionID: null,        // for later use
-                hiliter: null,              // set below
-                revisionParent: null,       // set below
-                text: ""                    // set below
-            },
-            selState = $.extend({}, defaults, settings, overrides);
-
-            //set properties that depend on the others already being initiated
-
-            // if missing param or missing needed range data
-            if( !selState.range && !selState.serialRange ){
-                //try getting data from browser selection
-                var WSO = _WSO();
-                if(WSO.isCollapsed) return false;
-                //else
-                range = WSO.getRangeAt(0);
-                //serializing relative to the parent container. The false is omitChecksum=false.
-                serialRange = rangy.serializeRange(range, false, selState.container ); //see rangy function serializeRange
-            }
-            else if(selState.range){
-                range = selState.range;
-                serialRange = rangy.serializeRange(range, false, selState.container ); //see rangy function serializeRange
-            }
-            else if(selState.serialRange){
-                serialRange = selState.serialRange;
-                range = rangy.deserializeRange(serialRange, selState.container ); //see rangy function deserializeRange
-            }
-            selState.serialRange = serialRange;
-            //todo: low: could think more about when to cloneRange to make it a tiny bit more efficient.
-            selState.range = range.cloneRange();
-            selState.text = selState.range.toString(); //rangy range toString function
-            //check for empty selection..
-            if(selState.text.length == 0) return false;
-            //set hiliter - depends on idx, range, etc. being set already.
-            selState.hiliter = _hiliteInit(selState);
-            log('created new selState: ');
-            log(selState);
-            return selState;
-        }
-        function _fetchselState(idxOrSelState){
-            //check if idxOrSelState is selState false (error signal from up the chain - return false),
-            //else, if object, it's a selState,
-            //else, get the selState from idx,
-            //else if param is undefined, return the latest on the stack
-            
-            if( idxOrSelState === false ) return false;
-
-            if(typeof idxOrSelState === 'object') return idxOrSelState;
-                            
-            var selStateStack = _selStateStack,
-            //set idx to declared idx, else last idx on the stack
-            idx = (typeof idxOrSelState == "string" || typeof idxOrSelState == "number" ) ? idxOrSelState : selStateStack.length-1,
-            selState = selStateStack[idx];
-            if(selState)
-                return selState;
-            
-            //else
-            console.warn('selState.idx not in stack');
-            return false;
-        }
-        function _hiliteInit(selState){
-            //only init once
-            if(selState.hiliter){
-                return selState.hiliter;
-            }
-            // todo: make hiliter a proper js class object
-            var range = selState.range,
-            styleClass = selState.styleName,
-            hiliter;
-
-        
-            //use a unique indexed version of style to uniquely identify spans
-            var uniqueClass = styleClass + "_" + selState.idx;
-            methods.clear();
-            hiliter = rangy.createCssClassApplier( uniqueClass, true ); //see rangy docs for details
-            hiliter['class'] = uniqueClass;
-            hiliter['get$start'] = function(){
-                return $(range.startContainer).closest('.'+hiliter['class']);
-            };
-            hiliter['get$end'] = function(){
-                return $(range.endContainer).closest('.'+hiliter['class']); 
-            };
-            hiliter['isActive'] = function(){
-                return hiliter['isAppliedToRange'](range);
-            };
-            
-            return hiliter;
-        }
-        function _hiliteSwitch(selState, switchOnOffToggle) {
-            
-            // it looks like the rangy cssClassApplier is still buggy.  Keep this commented out for a while and see how things go.
-
-            //args required
-            //switchOnOffToggle must be a string 'on','off',or 'toggle'
-            var range = selState.range,
-            styleClass = selState.styleName,
-            hiliter = selState.hiliter,
-            isActive = hiliter['isActive']();
-            methods.clear();
-
-            if( !isActive && (switchOnOffToggle === "on" || switchOnOffToggle === "toggle" )){
-                //turn on
-                hiliter.applyToRange(range);
-                //apply the visual styles with the generic classes
-                $('.'+hiliter['class']).addClass(styleClass);
-                //apply css classes to start and end so we can style those specially
-                hiliter['get$start']().addClass(styleClass+'_start');
-                hiliter['get$end']().addClass(styleClass+'_end');
-                
-                //bind an escape keypress to clear it.
-                //todo: for a real public API, this should be an option, or passed in function or something
-                $(document).bind('keyup.rdr', function(event) {
-                    //todo: merge all esc key events (use an array of functions that we can just dequeue?)
-                    if (event.keyCode == '27') { //esc
-                        _hiliteSwitch(selState, 'off');
-                        //remove the binding after it's been called.
-                        $(document).unbind('keyup.rdr', arguments.callee);
-                    }
-                });
-
-                $(document).bind('dblclick.rdr', function(event) {
-                    var mouse_target = $(event.target);                                
-
-                    if ( !$(mouse_target).parents().hasClass('rdr')) {
-                        _hiliteSwitch(selState, 'off');
-                        $(document).unbind('dblclick.rdr', arguments.callee);
-                    }
-                });
-
-            }else if( isActive && (switchOnOffToggle === "off" || switchOnOffToggle === "toggle" )){
-                //turn off
-                log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
-                //remove the classes again so that the hiliter can normalize the selection (paste it back together)
-                hiliter['get$start']().removeClass(styleClass+'_start');
-                hiliter['get$end']().removeClass(styleClass+'_end');
-                $('.'+hiliter['class']).removeClass(styleClass);
-                
-                //do one more check even though we shouldn't have to.
-                if(hiliter.isAppliedToRange(range)){
-                    hiliter.undoToRange(range);
-                }
-                else{
-                    log('error ' + range)
-                }
-            }
-            
-            return selState;
-        }
-        function _rangeOffSet(range, opts){ 
-            // returns a range or false, which should trigger the caller to fail gracefully.
-            var defaults = {
-                start: true, //start or end offset?
-                offset: undefined, // absolute offset should be a positive or negative number to add to the offset
-                relOffset: undefined // (relative offset) is ignored if offset is set
-            },
-            opts = $.extend({}, defaults, opts),
-            iniOffset = (opts.start) ? range.startOffset : range.endOffset; //rangy range properties startOffset, endOffset
-            if(typeof opts.offset === "undefined" ){
-                if(typeof opts.relOffset === "undefined" ){
-                    return iniOffset;
-                }//else
-                opts.offset = iniOffset + opts.relOffset;
-            }
-            try{
-                if(opts.start){
-                    range.setStart(range.startContainer, opts.offset); //rangy function setStart, attribute startContainer
-                }else{
-                    range.setEnd(range.endContainer, opts.offset); //rangy function setEnd, attribute endContainer   
-                }
-                return range;
-            }catch(e){
-                log(e); //range out of bounds
-                return false;
-            }
-        }
-        function _filter(range, filterList){
-            // I think only firefox allows for multiple ranges to be selected, and no one really does it.
-            // Besides, for our tool, we'd prob have to just use the first one anyway..
-            // For now, just use only the first range on the rare case where someone tries to pass more than 1. (ranges[0])
-            var scope = this,
-            filters = {},
-            defaultFilters = _modifierFilters; //make default all filters
-            //if filters not specifed, call all filters
-            if ( typeof filterList === "undefined" || filterList == null ){
-                filters = defaultFilters;
-            }
-            else{
-                $.each(filterList, function(idx, val){
-                    filters[val] = defaultFilters[val] || function(){console.error('bad filter name passed in param');return false};
-                });
-            }                    
-            $.each(filters, function(){
-                range = this(range);
-            });
-            return range;
-        }
-
-        function _tempTesting(){ 
-                /*
-            * testing temp function
             */
-            //make $tempButtons output
-            //hide for now
-            var $tempButtons = $('<div id="rdr_selectionographer_tester" class="rdr_blacklist"/>'),
-            buttonInfo= [
-                //note, remember to use $R instead of $ if calling in firebug
-                {
-                    name:'save',
-                    func:'save',
-                    attr:undefined
+            ],
+            _modifierFilters = {
+                stripWhiteSpace: function(range){
+                    var rangeStr = range.toString(),
+                    s = {}, //start
+                    e = {}; //end
+                    //see rangy core for range attributes used here
+                    s.textnode = range.startContainer;
+                    s.offset = range.startOffset;
+                    s.regx = /^\s+/; //start, then one or more whitespace chars
+                    s.result = s.regx.exec(rangeStr);
+
+                    e.textnode = range.endContainer;
+                    e.offset = range.endOffset;
+                    e.regx = /\s+$/; //one or more whitespace chars, then end
+                    e.result = e.regx.exec(rangeStr);
+                    
+                    //change the range offsets by the length of the whitespace found
+                    if(s.result){
+                        s.resultStrLen = s.result[0].length;
+                        _rangeOffSet( range, {relOffset: (s.resultStrLen)} );
+                    }
+                    if(e.result){
+                        e.resultStrLen = e.result[0].length;
+                        _rangeOffSet( range, {relOffset: (-e.resultStrLen), start:false} );
+                    }
+                    return range;
                 },
-                {
-                    name:'clear',
-                    func:'clear',
-                    attr:undefined
+                firstWordSnap: function(range){
+                    //find the extra word characters the range cut off at the beginning of the selState, and add em'.
+                    //and change the offset of the range
+                    var textnode = range.startContainer, //rangy attribute startContainer
+                    startOffset = range.startOffset,
+                    testRange;
+                    if (startOffset == 0) return range;
+                    //else 
+
+                    //NOTE: this assumes that the function and the range share the same document - change if we ever need to call between iframes.
+                    //create a helper object to find the word boundary
+                    var hlpr = {
+                        range: rangy.createRange() //rangy function createRange
+                    }
+                    hlpr.range.setStart(textnode, 0);
+                    hlpr.range.setEnd(textnode, startOffset);
+                    hlpr.str0 = (hlpr.range.toString());
+                    //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
+                    hlpr.regx1 = /\s*\S+$/;
+                    hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
+                    if (hlpr.result1 === null) return range;
+                    //else
+
+                    hlpr.str1 = hlpr.result1[0]; //result[0] is string representation of regex object - see exec() for info
+                    //strip any white space off beginning of string
+                    hlpr.str2 = hlpr.str1.replace(/\s*/,"");
+                    hlpr.extraWordChars = hlpr.str2.length;
+                    _rangeOffSet(range, {relOffset: (-hlpr.extraWordChars) });
+                    return range;
                 },
-                {
-                    name:'activate',
-                    func:'activate',
-                    attr:undefined
-                },
-                {
-                    name:'modify',
-                    func:'modify',
-                    attr:undefined
-                },
-                {
-                    name:'hilite',
-                    func:'hilite',
-                    attr:undefined
-                },
-                {
-                    name:'find',
-                    func:'find',
-                    attr:undefined
+                lastWordSnap: function(range){
+                    //find the extra word characters the range cut off at the end of the selState, and add em'.
+                    var textnode = range.endContainer, //rangy attribute endContainer
+                    endOffset = range.endOffset,
+                    testRange;
+                    if (endOffset == 0) return range;
+                    //else
+                    
+                    //NOTE: this assumes that the function and the range share the same document - change if we ever need to call between iframes.
+                    //create a tester object to find the word boundary
+                    var hlpr = {
+                        range: rangy.createRange() //rangy function createRange
+                    }
+                    hlpr.range.setStart(textnode, endOffset);
+                    hlpr.range.setEnd(textnode, textnode.length);
+                    hlpr.str0 = (hlpr.range.toString());
+                    //zero or more whitespace chars, then one ore more non-whitespace chars, then the end.
+                    hlpr.regx1 = /^\S+(?=(\s|$))/;
+                    hlpr.result1 = hlpr.regx1.exec(hlpr.str0);
+                    if (hlpr.result1 === null) return range;
+                    //else
+
+                    hlpr.str1 = hlpr.result1[0]; //result[0] is string representation of regex object - see exec() for info
+                    hlpr.extraWordChars = hlpr.str1.length;
+                    _rangeOffSet(range, {relOffset: (hlpr.extraWordChars), start:false});
+                    return range;
                 }
-            ]
-            $.each(buttonInfo,function(idx, val){
-                var $button = $('<div class="rdr_tempButton rdr_tempButton_'+this.name+'"><a href=\"javascript:void(0);\">'+this.name+'</a><input class="input1" /></div>');
-                
-                $button.find('a').click(function(){
-                    var result,
-                    input = $(this).parent().find('input').eq(0).val();
-                    contextStr = $context.find('input').val();
-                    val.attr= (input == "" ) ? undefined : input;
-                    if(val.name == "find"){
-                        result = $(contextStr).selog(val.func, val.attr);
-                    }
-                    if(val.name == "hilite"){
-                        input2 = $(this).parent().find('input').eq(1).val();
-                        var selState = $(contextStr).selog(val.func, val.attr, input2);
-                    }
-                    else{
-                        var selState = $(contextStr).selog(val.func, val.attr);
-                    }
-                });
-                $tempButtons.append($button);
-            });
+            },
+            _data = {
+                stack: _selStateStack
+            };
             
-            var $output = $('<div id="rdr_tempOutput" />').css({'font-size':'12px'}); //filled out for now with save function
-            var $context = $('<div><span style="margin-left:13px;"> in: </span><input class="input2"  /></div>');
-            $tempButtons.append($context, $output);
-
-            $tempButtons.css({'position':'fixed', 'margin-left':'5px', 'top': '75px'});
-            $tempButtons.children('.rdr_tempButton').css({'margin':'4px 0'});
-            $tempButtons.find('input').css({'left':'55px', 'width':'60px','position':'absolute'});
-
-            $tempButtons.find('input:lt(2)').remove();
-            $tempButtons.find('.rdr_tempButton_hilite')//cont
-            .append('<input class="" style="left: 100px; position: relative; width:50px;" value="toggle"/>'); /*default toggle*/
-
-            $('body').append($tempButtons);
-        }
-        //end private functions
-
-        //init selog on window.
-        $(document).selog();
-
-    })($R);
-
-    (function($){
-        /*
-         * jQuery Plugin by eric@readrboard.com
-         * gets or sets delicious raw textnode leafs within a $() set.
-         * todo: confirm if we need anymore 'ignore' checks for other nodetypes
-         */
-
-         //this isn't being used right now - ec 
-
-        $.fn.textnodes = function(injectText){
-            // If injectText is passed as a string or array of strings, replace 'this' content with corresponding textnodes.
-            // Else, return all offspring textnodes in a flattened array.
-            var $ret = $('<span/>'),
-            $this = this,
-            doc = ($this[0] && $this[0].ownerDocument || document);
-
-            if ( typeof injectText != 'undefined' ){
-                $.each(injectText, function(idx, val){
-                    var textnode = doc.createTextNode( val );
-                    $ret.append(textnode);
-                });
-                $this.each(function(){
-                    $(this).empty();
-                    $(this).append($ret.contents());
-                });
+            //private functions:
+            function _WSO(){
+                return rangy.getSelection();  
             }
-            //else no param: find textnodes
+            function _makeSelState(settings){
+                var scope = this,
+                selStateStack = _selStateStack,
+                range, serialRange,
+                settings = settings || {},
+                defaults = {
+                    styleName: 'rdr_hilite',
+                    container: document,        // likely passed in by save()
+                    serialRange: null,          // set below - overwritten by explicit range object
+                    range: null                 // set below - overwrites serial range
+                },
+                overrides = {
+                    idx: selStateStack.length,  // can't overide
+                    timestamp: $.now(),         // don't really need this..
+                    interactionID: null,        // for later use
+                    hiliter: null,              // set below
+                    revisionParent: null,       // set below
+                    text: ""                    // set below
+                },
+                selState = $.extend({}, defaults, settings, overrides);
 
-            //recursive function to look depth first for textnodes
-            //param: a parent node, returns: an array of textnodes
-            function _mineParentForText(parent){
-                return $.map( parent.childNodes, function(child){
-                    if ( child.nodeType === 8) return    // comment node leaf, ignore.
+                //set properties that depend on the others already being initiated
+
+                // if missing param or missing needed range data
+                if( !selState.range && !selState.serialRange ){
+                    //try getting data from browser selection
+                    var WSO = _WSO();
+                    if(WSO.isCollapsed) return false;
                     //else
-                    if ( child.nodeType !== 3 )          // if not textnode, look deeper
-                        return _mineParentForText(child);
-                    //else
-                    if ( child.nodeType === 3 )          // eureka. A textnode leaf.
-                        return child
-                });                
-            }
-
-            return $this.map(function(){
-                return _mineParentForText(this);
-            });
-        }
-    })($R);
-    
-    (function($){
-        /*
-         *
-         *
-         */
-        
-        //nothing to see here: starting to work on superRange plugin
-        //superRange or SR.
-        //this isn't being used right now - ec 
-
-        $.fn.superRange = function(options){
-            var $this = this,
-            options = options || {};
-
-            return $this.each(function(idx, val){
-                var contextNode = this,
-                superRange = $.extend({
-                    contextNode: contextNode,
-                    textnodes: $(contextNode).textnodes(),  //requires jquery.textnodes.js plugin
-                    start: null,
-                    end: null,
-                    startRange: null,   //set below
-                    endRange: null,     //set below
-                    text: "",           //set below
-                    hash: null,         //set below
-                }, options);
-
-                //complete superRange
-                superRange = superRange._parse();
-                
-                //set text and hash
-                //todo: fix this
-                $.each(superRange.textnodes, function(idx, val){
-                    superRange.text += val.data; //data is textnode's string value
-                });
-                superRange.hash = "make hash here.."; //todo: make hash                
-            });
-        }
-
-        //private functions
-        function _parse(superRange){
-            // if given an explicit startRange and endRange, use those and calculate the start and end.
-            // else do the inverse,
-
-            var stepIdx = 0,
-            superRange = (typeof superRange !== "undefined") ? superRange : this;
-            missingSuperOffsets = ( superRange.start === null || superRange.end === null ),
-            missingRanges =  ( superRange.startRange === null || superRange.endRange === null );
-
-            if ( missingSuperOffsets && missingRanges )
-                return false;
-            if ( !missingSuperOffsets && !missingRanges )
-                return superRange;
-            if ( missingSuperOffsets && !missingRanges )
-                //get start and end
-                $.each(superRange.textnodes, function(idx, textnode){
-                    if( textnode == superRange.startRange.node ){
-                        superRange.start = stepIdx + superRange.startRange.offset
-                    }
-                    if( textnode == superRange.endRange.node ){
-                        superRange.end = stepIdx + superRange.endRange.offset;
-                    }
-                    stepIdx += textnode.length;
-                });
-                return superRange
-
-            if ( !missingSuperOffsets && missingRanges )
-                //get startRange and endRange
-                $.each(superRange.textnodes, function(idx, textnode){
-                    var a = stepIdx,
-                    start = superRange.start,
-                    end = superRange.end,
-                    b = stepIdx + textnode.length;
-
-                    if( a > start && start < b ){
-                        superRange.startRange = {
-                            node: textnode,
-                            //nodeIndex: idx,
-                            offset: stepIdx - start   //lookbehind to get rel start index for this textnode
-                        }
-                    }
-                    if( a > end && end < b ){
-                        superRange.endRange = {
-                            node: textnode,
-                            //nodeIndex: idx,
-                            offset: stepIdx - end     //lookbehind to get rel end index for this textnode
-                        }
-                    }
-                    stepIdx = b;
-                });
-                return superRange
-            //else impossible
-        }
-        
-    })($R);
-
-    (function($){
-        //improvedCSS.js  http://plugins.jquery.com/node/8726/release
-        /**
-        * @Keith Bentrup
-        */
-        $.fn.css2 = $.fn.css; 
-        $.fn.css = function () {
-            if (arguments.length) return $.fn.css2.apply(this,arguments);
-            var attr = ['font-family','font-size','font-weight','font-style','color',
-              'text-transform','text-decoration','letter-spacing','word-spacing',
-              'lineHeight','text-align','vertical-align','direction','background-color',
-              'background-image','background-repeat','background-position',
-              'background-attachment','opacity','width','height','top','right','bottom',
-              'left','margin-top','margin-right','margin-bottom','margin-left',
-              'padding-top','padding-right','padding-bottom','padding-left',
-              'border-top-width','border-right-width','border-bottom-width',
-              'border-left-width','border-top-color','border-right-color',
-              'border-bottom-color','border-left-color','border-top-style',
-              'border-right-style','border-bottom-style','border-left-style','position',
-              'display','visibility','z-index','overflow-x','overflow-y','white-space',
-              'clip','float','clear','cursor','list-style-image','list-style-position',
-              'list-style-type','marker-offset'
-            ];
-            var len = attr.length, obj = {}, val;
-            for (var i = 0; i < len; i++) {
-                //correct for ie
-                val = attr[i];
-
-
-                obj[val] = $.fn.css2.call(this, val);
-
-                if(val == "lineHeight"){
-                    obj[val] = $.fn.css2.call(this, "auto");
+                    range = WSO.getRangeAt(0);
+                    //serializing relative to the parent container. The false is omitChecksum=false.
+                    serialRange = rangy.serializeRange(range, false, selState.container ); //see rangy function serializeRange
                 }
-                val = (typeof val === "undefined") ? 'auto' :  val;
+                else if(selState.range){
+                    range = selState.range;
+                    serialRange = rangy.serializeRange(range, false, selState.container ); //see rangy function serializeRange
+                }
+                else if(selState.serialRange){
+                    serialRange = selState.serialRange;
+                    range = rangy.deserializeRange(serialRange, selState.container ); //see rangy function deserializeRange
+                }
+                selState.serialRange = serialRange;
+                //todo: low: could think more about when to cloneRange to make it a tiny bit more efficient.
+                selState.range = range.cloneRange();
+                selState.text = selState.range.toString(); //rangy range toString function
+                //check for empty selection..
+                if(selState.text.length == 0) return false;
+                //set hiliter - depends on idx, range, etc. being set already.
+                selState.hiliter = _hiliteInit(selState);
+                log('created new selState: ');
+                log(selState);
+                return selState;
             }
-            return obj;
-        }
-    })($R);
+            function _fetchselState(idxOrSelState){
+                //check if idxOrSelState is selState false (error signal from up the chain - return false),
+                //else, if object, it's a selState,
+                //else, get the selState from idx,
+                //else if param is undefined, return the latest on the stack
+                
+                if( idxOrSelState === false ) return false;
 
+                if(typeof idxOrSelState === 'object') return idxOrSelState;
+                                
+                var selStateStack = _selStateStack,
+                //set idx to declared idx, else last idx on the stack
+                idx = (typeof idxOrSelState == "string" || typeof idxOrSelState == "number" ) ? idxOrSelState : selStateStack.length-1,
+                selState = selStateStack[idx];
+                if(selState)
+                    return selState;
+                
+                //else
+                console.warn('selState.idx not in stack');
+                return false;
+            }
+            function _hiliteInit(selState){
+                //only init once
+                if(selState.hiliter){
+                    return selState.hiliter;
+                }
+                // todo: make hiliter a proper js class object
+                var range = selState.range,
+                styleClass = selState.styleName,
+                hiliter;
 
-    (function($){
-        /*
-         * jQuery postMessage - v0.5 - 9/11/2009
-         * http://benalman.com/projects/jquery-postmessage-plugin/
-         * 
-         * Copyright (c) 2009 "Cowboy" Ben Alman
-         * Dual licensed under the MIT and GPL licenses.
-         * http://benalman.com/about/license/
-         */
-        var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h]&&!$.browser.opera;$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
-    })($R);
-
-    (function($){
-        /*
-         * modified by PB from...
-         * jQuery autoResize (textarea auto-resizer)
-         * @copyright James Padolsey http://james.padolsey.com
-         * @version 1.04
-         */
-
-        // a.fn.autogrow=function(j){var b=a.extend({onResize:function(){},animate:true,animateDuration:150,animateCallback:function(){},extraSpace:20,limit:1000},j);this.filter('textarea').each(function(){var c=a(this).css({resize:'none','overflow-y':'hidden'}),k=c.height(),f=(function(){var l=['height','width','lineHeight','textDecoration','letterSpacing'],h={};a.each(l,function(d,e){h[e]=c.css(e)});return c.clone().removeAttr('id').removeAttr('name').css({position:'absolute',top:0,left:-9999}).css(h).attr('tabIndex','-1').insertBefore(c)})(),i=null,g=function(){f.height(0).val(a(this).val()).scrollTop(10000);var d=Math.max(f.scrollTop(),k)+b.extraSpace,e=a(this).add(f);if(i===d){return}i=d;if(d>=b.limit){a(this).css('overflow-y','');return}b.onResize.call(this);b.animate&&c.css('display')==='block'?e.stop().animate({height:d},b.animateDuration,b.animateCallback):e.height(d)};c.unbind('.dynSiz').bind('keyup.dynSiz',g).bind('keydown.dynSiz',g).bind('change.dynSiz',g)});return this};
-        $.fn.autogrow = function() {
-            // this.filter('textarea').each(function() {
-            $('#rdr_shadow').remove();
-
-            var $this       = $(this),
-                minHeight   = 67,
-                lineHeight  = $this.css('fontSize'); // used to be 'lineHeight' but that made the textarea too tall
-
-            var shadow = $('<div id="rdr_shadow"></div>').css({
-                position:   'absolute',
-                top:        -10000,
-                left:       -10000,
-                width:      $(this).width() - parseInt($this.css('paddingLeft')) - parseInt($this.css('paddingRight')),
-                fontSize:   $this.css('fontSize'),
-                fontFamily: $this.css('fontFamily'),
-                lineHeight: $this.css('fontSize'), // used to be 'lineHeight' but that made the textarea too tall
-                resize:     'none'
-            }).appendTo(document.body);
-
-            var update = function() {
-
-                var times = function(string, number) {
-                    for (var i = 0, r = ''; i < number; i ++) r += string;
-                    return r;
+            
+                //use a unique indexed version of style to uniquely identify spans
+                var uniqueClass = styleClass + "_" + selState.idx;
+                methods.clear();
+                hiliter = rangy.createCssClassApplier( uniqueClass, true ); //see rangy docs for details
+                hiliter['class'] = uniqueClass;
+                hiliter['get$start'] = function(){
+                    return $(range.startContainer).closest('.'+hiliter['class']);
+                };
+                hiliter['get$end'] = function(){
+                    return $(range.endContainer).closest('.'+hiliter['class']); 
+                };
+                hiliter['isActive'] = function(){
+                    return hiliter['isAppliedToRange'](range);
                 };
                 
-                var val = this.value.replace(/</g, '&lt;')
-                                    .replace(/>/g, '&gt;')
-                                    .replace(/&/g, '&amp;')
-                                    .replace(/\n$/, '<br/>&nbsp;')
-                                    .replace(/\n/g, '<br/>')
-                                    .replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ' });
+                return hiliter;
+            }
+            function _hiliteSwitch(selState, switchOnOffToggle) {
                 
-                shadow.html(val);
-                $(this).css('height', Math.max(shadow.height()-10, minHeight));
-                RDR.rindow.checkHeight( $this.closest('div.rdr.rdr_window'), 80 );
+                // it looks like the rangy cssClassApplier is still buggy.  Keep this commented out for a while and see how things go.
+
+                //args required
+                //switchOnOffToggle must be a string 'on','off',or 'toggle'
+                var range = selState.range,
+                styleClass = selState.styleName,
+                hiliter = selState.hiliter,
+                isActive = hiliter['isActive']();
+                methods.clear();
+
+                if( !isActive && (switchOnOffToggle === "on" || switchOnOffToggle === "toggle" )){
+                    //turn on
+                    hiliter.applyToRange(range);
+                    //apply the visual styles with the generic classes
+                    $('.'+hiliter['class']).addClass(styleClass);
+                    //apply css classes to start and end so we can style those specially
+                    hiliter['get$start']().addClass(styleClass+'_start');
+                    hiliter['get$end']().addClass(styleClass+'_end');
+                    
+                    //bind an escape keypress to clear it.
+                    //todo: for a real public API, this should be an option, or passed in function or something
+                    $(document).bind('keyup.rdr', function(event) {
+                        //todo: merge all esc key events (use an array of functions that we can just dequeue?)
+                        if (event.keyCode == '27') { //esc
+                            _hiliteSwitch(selState, 'off');
+                            //remove the binding after it's been called.
+                            $(document).unbind('keyup.rdr', arguments.callee);
+                        }
+                    });
+
+                    $(document).bind('dblclick.rdr', function(event) {
+                        var mouse_target = $(event.target);                                
+
+                        if ( !$(mouse_target).parents().hasClass('rdr')) {
+                            _hiliteSwitch(selState, 'off');
+                            $(document).unbind('dblclick.rdr', arguments.callee);
+                        }
+                    });
+
+                }else if( isActive && (switchOnOffToggle === "off" || switchOnOffToggle === "toggle" )){
+                    //turn off
+                    log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
+                    //remove the classes again so that the hiliter can normalize the selection (paste it back together)
+                    hiliter['get$start']().removeClass(styleClass+'_start');
+                    hiliter['get$end']().removeClass(styleClass+'_end');
+                    $('.'+hiliter['class']).removeClass(styleClass);
+                    
+                    //do one more check even though we shouldn't have to.
+                    if(hiliter.isAppliedToRange(range)){
+                        hiliter.undoToRange(range);
+                    }
+                    else{
+                        log('error ' + range)
+                    }
+                }
+                
+                return selState;
+            }
+            function _rangeOffSet(range, opts){ 
+                // returns a range or false, which should trigger the caller to fail gracefully.
+                var defaults = {
+                    start: true, //start or end offset?
+                    offset: undefined, // absolute offset should be a positive or negative number to add to the offset
+                    relOffset: undefined // (relative offset) is ignored if offset is set
+                },
+                opts = $.extend({}, defaults, opts),
+                iniOffset = (opts.start) ? range.startOffset : range.endOffset; //rangy range properties startOffset, endOffset
+                if(typeof opts.offset === "undefined" ){
+                    if(typeof opts.relOffset === "undefined" ){
+                        return iniOffset;
+                    }//else
+                    opts.offset = iniOffset + opts.relOffset;
+                }
+                try{
+                    if(opts.start){
+                        range.setStart(range.startContainer, opts.offset); //rangy function setStart, attribute startContainer
+                    }else{
+                        range.setEnd(range.endContainer, opts.offset); //rangy function setEnd, attribute endContainer   
+                    }
+                    return range;
+                }catch(e){
+                    log(e); //range out of bounds
+                    return false;
+                }
+            }
+            function _filter(range, filterList){
+                // I think only firefox allows for multiple ranges to be selected, and no one really does it.
+                // Besides, for our tool, we'd prob have to just use the first one anyway..
+                // For now, just use only the first range on the rare case where someone tries to pass more than 1. (ranges[0])
+                var scope = this,
+                filters = {},
+                defaultFilters = _modifierFilters; //make default all filters
+                //if filters not specifed, call all filters
+                if ( typeof filterList === "undefined" || filterList == null ){
+                    filters = defaultFilters;
+                }
+                else{
+                    $.each(filterList, function(idx, val){
+                        filters[val] = defaultFilters[val] || function(){console.error('bad filter name passed in param');return false};
+                    });
+                }                    
+                $.each(filters, function(){
+                    range = this(range);
+                });
+                return range;
             }
 
-            $(this).change(update).keyup(update).keydown(update);
-            // $(this).keydown(update);
+            function _tempTesting(){ 
+                    /*
+                * testing temp function
+                */
+                //make $tempButtons output
+                //hide for now
+                var $tempButtons = $('<div id="rdr_selectionographer_tester" class="rdr_blacklist"/>').hide(),
+                buttonInfo= [
+                    //note, remember to use $R instead of $ if calling in firebug
+                    {
+                        name:'save',
+                        func:'save',
+                        attr:undefined
+                    },
+                    {
+                        name:'clear',
+                        func:'clear',
+                        attr:undefined
+                    },
+                    {
+                        name:'activate',
+                        func:'activate',
+                        attr:undefined
+                    },
+                    {
+                        name:'modify',
+                        func:'modify',
+                        attr:undefined
+                    },
+                    {
+                        name:'hilite',
+                        func:'hilite',
+                        attr:undefined
+                    },
+                    {
+                        name:'find',
+                        func:'find',
+                        attr:undefined
+                    }
+                ]
+                $.each(buttonInfo,function(idx, val){
+                    var $button = $('<div class="rdr_tempButton rdr_tempButton_'+this.name+'"><a href=\"javascript:void(0);\">'+this.name+'</a><input class="input1" /></div>');
+                    
+                    $button.find('a').click(function(){
+                        var result,
+                        input = $(this).parent().find('input').eq(0).val();
+                        contextStr = $context.find('input').val();
+                        val.attr= (input == "" ) ? undefined : input;
+                        if(val.name == "find"){
+                            result = $(contextStr).selog(val.func, val.attr);
+                        }
+                        if(val.name == "hilite"){
+                            input2 = $(this).parent().find('input').eq(1).val();
+                            var selState = $(contextStr).selog(val.func, val.attr, input2);
+                        }
+                        else{
+                            var selState = $(contextStr).selog(val.func, val.attr);
+                        }
+                    });
+                    $tempButtons.append($button);
+                });
+                
+                var $output = $('<div id="rdr_tempOutput" />').css({'font-size':'12px'}); //filled out for now with save function
+                var $context = $('<div><span style="margin-left:13px;"> in: </span><input class="input2"  /></div>');
+                $tempButtons.append($context, $output);
 
-                // update.apply(this);
+                $tempButtons.css({'position':'fixed', 'margin-left':'5px', 'top': '75px'});
+                $tempButtons.children('.rdr_tempButton').css({'margin':'4px 0'});
+                $tempButtons.find('input').css({'left':'55px', 'width':'60px','position':'absolute'});
 
-            // });
-            return this;
-        }
-    })($R);
+                $tempButtons.find('input:lt(2)').remove();
+                $tempButtons.find('.rdr_tempButton_hilite')//cont
+                .append('<input class="" style="left: 100px; position: relative; width:50px;" value="toggle"/>'); /*default toggle*/
 
-    (function($){
-        /*
-        * jQuery mousewheel
-        * ! Copyright (c) 2010 Brandon Aaron (http://brandonaaron.net)
-        * Licensed under the MIT License (LICENSE.txt).
-        *
-        * Thanks to: http://adomas.org/javascript-mouse-wheel/ for some pointers.
-        * Thanks to: Mathias Bank(http://www.mathias-bank.de) for a scope bug fix.
-        * Thanks to: Seamus Leahy for adding deltaX and deltaY
-        *
-        * Version: 3.0.4
-        * 
-        * Requires: 1.2.2+
-        */
-        var types=['DOMMouseScroll','mousewheel'];$.event.special.mousewheel={setup:function(){if(this.addEventListener){for(var i=types.length;i;){this.addEventListener(types[--i],handler,false);}}else{this.onmousewheel=handler;}},teardown:function(){if(this.removeEventListener){for(var i=types.length;i;){this.removeEventListener(types[--i],handler,false);}}else{this.onmousewheel=null;}}};$.fn.extend({mousewheel:function(fn){return fn?this.bind("mousewheel",fn):this.trigger("mousewheel");},unmousewheel:function(fn){return this.unbind("mousewheel",fn);}});function handler(event){var orgEvent=event||window.event,args=[].slice.call(arguments,1),delta=0,returnValue=true,deltaX=0,deltaY=0;event=$.event.fix(orgEvent);event.type="mousewheel";if(event.wheelDelta){delta=event.wheelDelta/120;}
-        if(event.detail){delta=-event.detail/3;}
-        deltaY=delta;if(orgEvent.axis!==undefined&&orgEvent.axis===orgEvent.HORIZONTAL_AXIS){deltaY=0;deltaX=-1*delta;}
-        if(orgEvent.wheelDeltaY!==undefined){deltaY=orgEvent.wheelDeltaY/120;}
-        if(orgEvent.wheelDeltaX!==undefined){deltaX=-1*orgEvent.wheelDeltaX/120;}
-        args.unshift(event,delta,deltaX,deltaY);return $.event.handle.apply(this,args);}
-    })($R);
+                $('body').append($tempButtons);
+            }
+            //end private functions
 
-    (function($){
-        /**
-        * jQuery mousewheelIntent
-        * @author trixta
-        * @version 1.2
-        */
-        var mwheelI={pos:[-260,-260]},minDif=3,doc=document,root=doc.documentElement,body=doc.body,longDelay,shortDelay;function unsetPos(){if(this===mwheelI.elem){mwheelI.pos=[-260,-260];mwheelI.elem=false;minDif=3;}}
-        $.event.special.mwheelIntent={setup:function(){var jElm=$(this).bind('mousewheel',$.event.special.mwheelIntent.handler);if(this!==doc&&this!==root&&this!==body){jElm.bind('mouseleave',unsetPos);}
-        jElm=null;return true;},teardown:function(){$(this).unbind('mousewheel',$.event.special.mwheelIntent.handler).unbind('mouseleave',unsetPos);return true;},handler:function(e,d){var pos=[e.clientX,e.clientY];if(this===mwheelI.elem||Math.abs(mwheelI.pos[0]-pos[0])>minDif||Math.abs(mwheelI.pos[1]-pos[1])>minDif){mwheelI.elem=this;mwheelI.pos=pos;minDif=250;clearTimeout(shortDelay);shortDelay=setTimeout(function(){minDif=10;},200);clearTimeout(longDelay);longDelay=setTimeout(function(){minDif=3;},1500);e=$.extend({},e,{type:'mwheelIntent'});return $.event.handle.apply(this,arguments);}}};$.fn.extend({mwheelIntent:function(fn){return fn?this.bind("mwheelIntent",fn):this.trigger("mwheelIntent");},unmwheelIntent:function(fn){return this.unbind("mwheelIntent",fn);}});$(function(){body=doc.body;$(doc).bind('mwheelIntent.mwheelIntentDefault',$.noop);});
-    })($R);
+            //init selog on window.
+            $(document).selog();
 
-    (function($){
-        /*
-         * jScrollPane - v2.0.0beta11 - 2011-05-02
-         * http://jscrollpane.kelvinluck.com/
-         *
-         * Copyright (c) 2010 Kelvin Luck
-         * Dual licensed under the MIT and GPL licenses.
-         */
+        };
+        //end function plugin_jquery_selectionographer
 
-        //fix minifier quirks
-        var b = $,
-        a = window,
-        c = undefined;
+        function plugin_jquery_textnodes($){
+            /*
+             * jQuery Plugin by eric@readrboard.com
+             * gets or sets delicious raw textnode leafs within a $() set.
+             * todo: confirm if we need anymore 'ignore' checks for other nodetypes
+             */
 
-        b.fn.jScrollPane=function(e){function d(D,O){var az,Q=this,Y,ak,v,am,T,Z,y,q,aA,aF,av,i,I,h,j,aa,U,aq,X,t,A,ar,af,an,G,l,au,ay,x,aw,aI,f,L,aj=true,P=true,aH=false,k=false,ap=D.clone(false,false).empty(),ac=b.fn.mwheelIntent?"mwheelIntent.jsp":"mousewheel.jsp";aI=D.css("paddingTop")+" "+D.css("paddingRight")+" "+D.css("paddingBottom")+" "+D.css("paddingLeft");f=(parseInt(D.css("paddingLeft"),10)||0)+(parseInt(D.css("paddingRight"),10)||0);function at(aR){var aM,aO,aN,aK,aJ,aQ,aP=false,aL=false;az=aR;if(Y===c){aJ=D.scrollTop();aQ=D.scrollLeft();D.css({overflow:"hidden",padding:0});ak=D.innerWidth()+f;v=D.innerHeight();D.width(ak);Y=b('<div class="jspPane" />').css("padding",aI).append(D.children());am=b('<div class="jspContainer" />').css({width:ak+"px",height:v+"px"}).append(Y).appendTo(D)}else{D.css("width","");aP=az.stickToBottom&&K();aL=az.stickToRight&&B();aK=D.innerWidth()+f!=ak||D.outerHeight()!=v;if(aK){ak=D.innerWidth()+f;v=D.innerHeight();am.css({width:ak+"px",height:v+"px"})}if(!aK&&L==T&&Y.outerHeight()==Z){D.width(ak);return}L=T;Y.css("width","");D.width(ak);am.find(">.jspVerticalBar,>.jspHorizontalBar").remove().end()}Y.css("overflow","auto");if(aR.contentWidth){T=aR.contentWidth}else{T=Y[0].scrollWidth}Z=Y[0].scrollHeight;Y.css("overflow","");y=T/ak;q=Z/v;aA=q>1;aF=y>1;if(!(aF||aA)){D.removeClass("jspScrollable");Y.css({top:0,width:am.width()-f});n();E();R();w();ai()}else{D.addClass("jspScrollable");aM=az.maintainPosition&&(I||aa);if(aM){aO=aD();aN=aB()}aG();z();F();if(aM){N(aL?(T-ak):aO,false);M(aP?(Z-v):aN,false)}J();ag();ao();if(az.enableKeyboardNavigation){S()}if(az.clickOnTrack){p()}C();if(az.hijackInternalLinks){m()}}if(az.autoReinitialise&&!aw){aw=setInterval(function(){at(az)},az.autoReinitialiseDelay)}else{if(!az.autoReinitialise&&aw){clearInterval(aw)}}aJ&&D.scrollTop(0)&&M(aJ,false);aQ&&D.scrollLeft(0)&&N(aQ,false);D.trigger("jsp-initialised",[aF||aA])}function aG(){if(aA){am.append(b('<div class="jspVerticalBar" />').append(b('<div class="jspCap jspCapTop" />'),b('<div class="jspTrack" />').append(b('<div class="jspDrag" />').append(b('<div class="jspDragTop" />'),b('<div class="jspDragBottom" />'))),b('<div class="jspCap jspCapBottom" />')));U=am.find(">.jspVerticalBar");aq=U.find(">.jspTrack");av=aq.find(">.jspDrag");if(az.showArrows){ar=b('<a class="jspArrow jspArrowUp" />').bind("mousedown.jsp",aE(0,-1)).bind("click.jsp",aC);af=b('<a class="jspArrow jspArrowDown" />').bind("mousedown.jsp",aE(0,1)).bind("click.jsp",aC);if(az.arrowScrollOnHover){ar.bind("mouseover.jsp",aE(0,-1,ar));af.bind("mouseover.jsp",aE(0,1,af))}al(aq,az.verticalArrowPositions,ar,af)}t=v;am.find(">.jspVerticalBar>.jspCap:visible,>.jspVerticalBar>.jspArrow").each(function(){t-=b(this).outerHeight()});av.hover(function(){av.addClass("jspHover")},function(){av.removeClass("jspHover")}).bind("mousedown.jsp",function(aJ){b("html").bind("dragstart.jsp selectstart.jsp",aC);av.addClass("jspActive");var s=aJ.pageY-av.position().top;b("html").bind("mousemove.jsp",function(aK){V(aK.pageY-s,false)}).bind("mouseup.jsp mouseleave.jsp",ax);return false});o()}}function o(){aq.height(t+"px");I=0;X=az.verticalGutter+aq.outerWidth();Y.width(ak-X-f);try{if(U.position().left===0){Y.css("margin-left",X+"px")}}catch(s){}}function z(){if(aF){am.append(b('<div class="jspHorizontalBar" />').append(b('<div class="jspCap jspCapLeft" />'),b('<div class="jspTrack" />').append(b('<div class="jspDrag" />').append(b('<div class="jspDragLeft" />'),b('<div class="jspDragRight" />'))),b('<div class="jspCap jspCapRight" />')));an=am.find(">.jspHorizontalBar");G=an.find(">.jspTrack");h=G.find(">.jspDrag");if(az.showArrows){ay=b('<a class="jspArrow jspArrowLeft" />').bind("mousedown.jsp",aE(-1,0)).bind("click.jsp",aC);x=b('<a class="jspArrow jspArrowRight" />').bind("mousedown.jsp",aE(1,0)).bind("click.jsp",aC);
-        if(az.arrowScrollOnHover){ay.bind("mouseover.jsp",aE(-1,0,ay));x.bind("mouseover.jsp",aE(1,0,x))}al(G,az.horizontalArrowPositions,ay,x)}h.hover(function(){h.addClass("jspHover")},function(){h.removeClass("jspHover")}).bind("mousedown.jsp",function(aJ){b("html").bind("dragstart.jsp selectstart.jsp",aC);h.addClass("jspActive");var s=aJ.pageX-h.position().left;b("html").bind("mousemove.jsp",function(aK){W(aK.pageX-s,false)}).bind("mouseup.jsp mouseleave.jsp",ax);return false});l=am.innerWidth();ah()}}function ah(){am.find(">.jspHorizontalBar>.jspCap:visible,>.jspHorizontalBar>.jspArrow").each(function(){l-=b(this).outerWidth()});G.width(l+"px");aa=0}function F(){if(aF&&aA){var aJ=G.outerHeight(),s=aq.outerWidth();t-=aJ;b(an).find(">.jspCap:visible,>.jspArrow").each(function(){l+=b(this).outerWidth()});l-=s;v-=s;ak-=aJ;G.parent().append(b('<div class="jspCorner" />').css("width",aJ+"px"));o();ah()}if(aF){Y.width((am.outerWidth()-f)+"px")}Z=Y.outerHeight();q=Z/v;if(aF){au=Math.ceil(1/y*l);if(au>az.horizontalDragMaxWidth){au=az.horizontalDragMaxWidth}else{if(au<az.horizontalDragMinWidth){au=az.horizontalDragMinWidth}}h.width(au+"px");j=l-au;ae(aa)}if(aA){A=Math.ceil(1/q*t);if(A>az.verticalDragMaxHeight){A=az.verticalDragMaxHeight}else{if(A<az.verticalDragMinHeight){A=az.verticalDragMinHeight}}av.height(A+"px");i=t-A;ad(I)}}function al(aK,aM,aJ,s){var aO="before",aL="after",aN;if(aM=="os"){aM=/Mac/.test(navigator.platform)?"after":"split"}if(aM==aO){aL=aM}else{if(aM==aL){aO=aM;aN=aJ;aJ=s;s=aN}}aK[aO](aJ)[aL](s)}function aE(aJ,s,aK){return function(){H(aJ,s,this,aK);this.blur();return false}}function H(aM,aL,aP,aO){aP=b(aP).addClass("jspActive");var aN,aK,aJ=true,s=function(){if(aM!==0){Q.scrollByX(aM*az.arrowButtonSpeed)}if(aL!==0){Q.scrollByY(aL*az.arrowButtonSpeed)}aK=setTimeout(s,aJ?az.initialDelay:az.arrowRepeatFreq);aJ=false};s();aN=aO?"mouseout.jsp":"mouseup.jsp";aO=aO||b("html");aO.bind(aN,function(){aP.removeClass("jspActive");aK&&clearTimeout(aK);aK=null;aO.unbind(aN)})}function p(){w();if(aA){aq.bind("mousedown.jsp",function(aO){if(aO.originalTarget===c||aO.originalTarget==aO.currentTarget){var aM=b(this),aP=aM.offset(),aN=aO.pageY-aP.top-I,aK,aJ=true,s=function(){var aS=aM.offset(),aT=aO.pageY-aS.top-A/2,aQ=v*az.scrollPagePercent,aR=i*aQ/(Z-v);if(aN<0){if(I-aR>aT){Q.scrollByY(-aQ)}else{V(aT)}}else{if(aN>0){if(I+aR<aT){Q.scrollByY(aQ)}else{V(aT)}}else{aL();return}}aK=setTimeout(s,aJ?az.initialDelay:az.trackClickRepeatFreq);aJ=false},aL=function(){aK&&clearTimeout(aK);aK=null;b(document).unbind("mouseup.jsp",aL)};s();b(document).bind("mouseup.jsp",aL);return false}})}if(aF){G.bind("mousedown.jsp",function(aO){if(aO.originalTarget===c||aO.originalTarget==aO.currentTarget){var aM=b(this),aP=aM.offset(),aN=aO.pageX-aP.left-aa,aK,aJ=true,s=function(){var aS=aM.offset(),aT=aO.pageX-aS.left-au/2,aQ=ak*az.scrollPagePercent,aR=j*aQ/(T-ak);if(aN<0){if(aa-aR>aT){Q.scrollByX(-aQ)}else{W(aT)}}else{if(aN>0){if(aa+aR<aT){Q.scrollByX(aQ)}else{W(aT)}}else{aL();return}}aK=setTimeout(s,aJ?az.initialDelay:az.trackClickRepeatFreq);aJ=false},aL=function(){aK&&clearTimeout(aK);aK=null;b(document).unbind("mouseup.jsp",aL)};s();b(document).bind("mouseup.jsp",aL);return false}})}}function w(){if(G){G.unbind("mousedown.jsp")}if(aq){aq.unbind("mousedown.jsp")}}function ax(){b("html").unbind("dragstart.jsp selectstart.jsp mousemove.jsp mouseup.jsp mouseleave.jsp");if(av){av.removeClass("jspActive")}if(h){h.removeClass("jspActive")}}function V(s,aJ){if(!aA){return}if(s<0){s=0}else{if(s>i){s=i}}if(aJ===c){aJ=az.animateScroll}if(aJ){Q.animate(av,"top",s,ad)}else{av.css("top",s);ad(s)}}function ad(aJ){if(aJ===c){aJ=av.position().top}am.scrollTop(0);I=aJ;var aM=I===0,aK=I==i,aL=aJ/i,s=-aL*(Z-v);if(aj!=aM||aH!=aK){aj=aM;aH=aK;D.trigger("jsp-arrow-change",[aj,aH,P,k])}u(aM,aK);Y.css("top",s);D.trigger("jsp-scroll-y",[-s,aM,aK]).trigger("scroll")}function W(aJ,s){if(!aF){return}if(aJ<0){aJ=0}else{if(aJ>j){aJ=j}}if(s===c){s=az.animateScroll}if(s){Q.animate(h,"left",aJ,ae)
-        }else{h.css("left",aJ);ae(aJ)}}function ae(aJ){if(aJ===c){aJ=h.position().left}am.scrollTop(0);aa=aJ;var aM=aa===0,aL=aa==j,aK=aJ/j,s=-aK*(T-ak);if(P!=aM||k!=aL){P=aM;k=aL;D.trigger("jsp-arrow-change",[aj,aH,P,k])}r(aM,aL);Y.css("left",s);D.trigger("jsp-scroll-x",[-s,aM,aL]).trigger("scroll")}function u(aJ,s){if(az.showArrows){ar[aJ?"addClass":"removeClass"]("jspDisabled");af[s?"addClass":"removeClass"]("jspDisabled")}}function r(aJ,s){if(az.showArrows){ay[aJ?"addClass":"removeClass"]("jspDisabled");x[s?"addClass":"removeClass"]("jspDisabled")}}function M(s,aJ){var aK=s/(Z-v);V(aK*i,aJ)}function N(aJ,s){var aK=aJ/(T-ak);W(aK*j,s)}function ab(aW,aR,aK){var aO,aL,aM,s=0,aV=0,aJ,aQ,aP,aT,aS,aU;try{aO=b(aW)}catch(aN){return}aL=aO.outerHeight();aM=aO.outerWidth();am.scrollTop(0);am.scrollLeft(0);while(!aO.is(".jspPane")){s+=aO.position().top;aV+=aO.position().left;aO=aO.offsetParent();if(/^body|html$/i.test(aO[0].nodeName)){return}}aJ=aB();aP=aJ+v;if(s<aJ||aR){aS=s-az.verticalGutter}else{if(s+aL>aP){aS=s-v+aL+az.verticalGutter}}if(aS){M(aS,aK)}aQ=aD();aT=aQ+ak;if(aV<aQ||aR){aU=aV-az.horizontalGutter}else{if(aV+aM>aT){aU=aV-ak+aM+az.horizontalGutter}}if(aU){N(aU,aK)}}function aD(){return -Y.position().left}function aB(){return -Y.position().top}function K(){var s=Z-v;return(s>20)&&(s-aB()<10)}function B(){var s=T-ak;return(s>20)&&(s-aD()<10)}function ag(){am.unbind(ac).bind(ac,function(aM,aN,aL,aJ){var aK=aa,s=I;Q.scrollBy(aL*az.mouseWheelSpeed,-aJ*az.mouseWheelSpeed,false);return aK==aa&&s==I})}function n(){am.unbind(ac)}function aC(){return false}function J(){Y.find(":input,a").unbind("focus.jsp").bind("focus.jsp",function(s){ab(s.target,false)})}function E(){Y.find(":input,a").unbind("focus.jsp")}function S(){var s,aJ,aL=[];aF&&aL.push(an[0]);aA&&aL.push(U[0]);Y.focus(function(){D.focus()});D.attr("tabindex",0).unbind("keydown.jsp keypress.jsp").bind("keydown.jsp",function(aO){if(aO.target!==this&&!(aL.length&&b(aO.target).closest(aL).length)){return}var aN=aa,aM=I;switch(aO.keyCode){case 40:case 38:case 34:case 32:case 33:case 39:case 37:s=aO.keyCode;aK();break;case 35:M(Z-v);s=null;break;case 36:M(0);s=null;break}aJ=aO.keyCode==s&&aN!=aa||aM!=I;return !aJ}).bind("keypress.jsp",function(aM){if(aM.keyCode==s){aK()}return !aJ});if(az.hideFocus){D.css("outline","none");if("hideFocus" in am[0]){D.attr("hideFocus",true)}}else{D.css("outline","");if("hideFocus" in am[0]){D.attr("hideFocus",false)}}function aK(){var aN=aa,aM=I;switch(s){case 40:Q.scrollByY(az.keyboardSpeed,false);break;case 38:Q.scrollByY(-az.keyboardSpeed,false);break;case 34:case 32:Q.scrollByY(v*az.scrollPagePercent,false);break;case 33:Q.scrollByY(-v*az.scrollPagePercent,false);break;case 39:Q.scrollByX(az.keyboardSpeed,false);break;case 37:Q.scrollByX(-az.keyboardSpeed,false);break}aJ=aN!=aa||aM!=I;return aJ}}function R(){D.attr("tabindex","-1").removeAttr("tabindex").unbind("keydown.jsp keypress.jsp")}function C(){if(location.hash&&location.hash.length>1){var aK,aJ;try{aK=b(location.hash)}catch(s){return}if(aK.length&&Y.find(location.hash)){if(am.scrollTop()===0){aJ=setInterval(function(){if(am.scrollTop()>0){ab(location.hash,true);b(document).scrollTop(am.position().top);clearInterval(aJ)}},50)}else{ab(location.hash,true);b(document).scrollTop(am.position().top)}}}}function ai(){b("a.jspHijack").unbind("click.jsp-hijack").removeClass("jspHijack")}function m(){ai();b("a[href^=#]").addClass("jspHijack").bind("click.jsp-hijack",function(){var s=this.href.split("#"),aJ;if(s.length>1){aJ=s[1];if(aJ.length>0&&Y.find("#"+aJ).length>0){ab("#"+aJ,true);return false}}})}function ao(){var aK,aJ,aM,aL,aN,s=false;am.unbind("touchstart.jsp touchmove.jsp touchend.jsp click.jsp-touchclick").bind("touchstart.jsp",function(aO){var aP=aO.originalEvent.touches[0];aK=aD();aJ=aB();aM=aP.pageX;aL=aP.pageY;aN=false;s=true}).bind("touchmove.jsp",function(aR){if(!s){return}var aQ=aR.originalEvent.touches[0],aP=aa,aO=I;Q.scrollTo(aK+aM-aQ.pageX,aJ+aL-aQ.pageY);aN=aN||Math.abs(aM-aQ.pageX)>5||Math.abs(aL-aQ.pageY)>5;
-        return aP==aa&&aO==I}).bind("touchend.jsp",function(aO){s=false}).bind("click.jsp-touchclick",function(aO){if(aN){aN=false;return false}})}function g(){var s=aB(),aJ=aD();D.removeClass("jspScrollable").unbind(".jsp");D.replaceWith(ap.append(Y.children()));ap.scrollTop(s);ap.scrollLeft(aJ)}b.extend(Q,{reinitialise:function(aJ){aJ=b.extend({},az,aJ);at(aJ)},scrollToElement:function(aK,aJ,s){ab(aK,aJ,s)},scrollTo:function(aK,s,aJ){N(aK,aJ);M(s,aJ)},scrollToX:function(aJ,s){N(aJ,s)},scrollToY:function(s,aJ){M(s,aJ)},scrollToPercentX:function(aJ,s){N(aJ*(T-ak),s)},scrollToPercentY:function(aJ,s){M(aJ*(Z-v),s)},scrollBy:function(aJ,s,aK){Q.scrollByX(aJ,aK);Q.scrollByY(s,aK)},scrollByX:function(s,aK){s=(s>=0)?Math.max(s,1):Math.min(s,-1);var aJ=aD()+s,aL=aJ/(T-ak);W(aL*j,aK)},scrollByY:function(s,aK){s=(s>=0)?Math.max(s,1):Math.min(s,-1);var aJ=aB()+s,aL=aJ/(Z-v);V(aL*i,aK)},positionDragX:function(s,aJ){W(s,aJ)},positionDragY:function(aJ,s){V(aJ,s)},animate:function(aJ,aM,s,aL){var aK={};aK[aM]=s;aJ.animate(aK,{duration:az.animateDuration,ease:az.animateEase,queue:false,step:aL})},getContentPositionX:function(){return aD()},getContentPositionY:function(){return aB()},getContentWidth:function(){return T},getContentHeight:function(){return Z},getPercentScrolledX:function(){return aD()/(T-ak)},getPercentScrolledY:function(){return aB()/(Z-v)},getIsScrollableH:function(){return aF},getIsScrollableV:function(){return aA},getContentPane:function(){return Y},scrollToBottom:function(s){V(i,s)},hijackInternalLinks:function(){m()},destroy:function(){g()}});at(O)}e=b.extend({},b.fn.jScrollPane.defaults,e);b.each(["mouseWheelSpeed","arrowButtonSpeed","trackClickSpeed","keyboardSpeed"],function(){e[this]=e[this]||e.speed});return this.each(function(){var f=b(this),g=f.data("jsp");if(g){g.reinitialise(e)}else{g=new d(f,e);f.data("jsp",g)}})};b.fn.jScrollPane.defaults={showArrows:false,maintainPosition:true,stickToBottom:false,stickToRight:false,clickOnTrack:true,autoReinitialise:false,autoReinitialiseDelay:500,verticalDragMinHeight:0,verticalDragMaxHeight:99999,horizontalDragMinWidth:0,horizontalDragMaxWidth:99999,contentWidth:c,animateScroll:false,animateDuration:300,animateEase:"linear",hijackInternalLinks:false,verticalGutter:4,horizontalGutter:4,mouseWheelSpeed:0,arrowButtonSpeed:0,arrowRepeatFreq:50,arrowScrollOnHover:false,trackClickSpeed:0,trackClickRepeatFreq:70,verticalArrowPositions:"split",horizontalArrowPositions:"split",enableKeyboardNavigation:true,hideFocus:false,keyboardSpeed:0,initialDelay:300,speed:30,scrollPagePercent:0.8}})($R);
+             //this isn't being used right now - ec 
+
+            $.fn.textnodes = function(injectText){
+                // If injectText is passed as a string or array of strings, replace 'this' content with corresponding textnodes.
+                // Else, return all offspring textnodes in a flattened array.
+                var $ret = $('<span/>'),
+                $this = this,
+                doc = ($this[0] && $this[0].ownerDocument || document);
+
+                if ( typeof injectText != 'undefined' ){
+                    $.each(injectText, function(idx, val){
+                        var textnode = doc.createTextNode( val );
+                        $ret.append(textnode);
+                    });
+                    $this.each(function(){
+                        $(this).empty();
+                        $(this).append($ret.contents());
+                    });
+                }
+                //else no param: find textnodes
+
+                //recursive function to look depth first for textnodes
+                //param: a parent node, returns: an array of textnodes
+                function _mineParentForText(parent){
+                    return $.map( parent.childNodes, function(child){
+                        if ( child.nodeType === 8) return    // comment node leaf, ignore.
+                        //else
+                        if ( child.nodeType !== 3 )          // if not textnode, look deeper
+                            return _mineParentForText(child);
+                        //else
+                        if ( child.nodeType === 3 )          // eureka. A textnode leaf.
+                            return child
+                    });                
+                }
+
+                return $this.map(function(){
+                    return _mineParentForText(this);
+                });
+            }
+        };
+        //end function plugin_jquery_textnodes
+        
+
+        function plugin_jquery_superRange($){
+            /*
+             *
+             *
+             */
+            
+            //nothing to see here: starting to work on superRange plugin
+            //superRange or SR.
+            //this isn't being used right now - ec 
+
+            $.fn.superRange = function(options){
+                var $this = this,
+                options = options || {};
+
+                return $this.each(function(idx, val){
+                    var contextNode = this,
+                    superRange = $.extend({
+                        contextNode: contextNode,
+                        textnodes: $(contextNode).textnodes(),  //requires jquery.textnodes.js plugin
+                        start: null,
+                        end: null,
+                        startRange: null,   //set below
+                        endRange: null,     //set below
+                        text: "",           //set below
+                        hash: null,         //set below
+                    }, options);
+
+                    //complete superRange
+                    superRange = superRange._parse();
+                    
+                    //set text and hash
+                    //todo: fix this
+                    $.each(superRange.textnodes, function(idx, val){
+                        superRange.text += val.data; //data is textnode's string value
+                    });
+                    superRange.hash = "make hash here.."; //todo: make hash                
+                });
+            }
+
+            //private functions
+            function _parse(superRange){
+                // if given an explicit startRange and endRange, use those and calculate the start and end.
+                // else do the inverse,
+
+                var stepIdx = 0,
+                superRange = (typeof superRange !== "undefined") ? superRange : this;
+                missingSuperOffsets = ( superRange.start === null || superRange.end === null ),
+                missingRanges =  ( superRange.startRange === null || superRange.endRange === null );
+
+                if ( missingSuperOffsets && missingRanges )
+                    return false;
+                if ( !missingSuperOffsets && !missingRanges )
+                    return superRange;
+                if ( missingSuperOffsets && !missingRanges )
+                    //get start and end
+                    $.each(superRange.textnodes, function(idx, textnode){
+                        if( textnode == superRange.startRange.node ){
+                            superRange.start = stepIdx + superRange.startRange.offset
+                        }
+                        if( textnode == superRange.endRange.node ){
+                            superRange.end = stepIdx + superRange.endRange.offset;
+                        }
+                        stepIdx += textnode.length;
+                    });
+                    return superRange
+
+                if ( !missingSuperOffsets && missingRanges )
+                    //get startRange and endRange
+                    $.each(superRange.textnodes, function(idx, textnode){
+                        var a = stepIdx,
+                        start = superRange.start,
+                        end = superRange.end,
+                        b = stepIdx + textnode.length;
+
+                        if( a > start && start < b ){
+                            superRange.startRange = {
+                                node: textnode,
+                                //nodeIndex: idx,
+                                offset: stepIdx - start   //lookbehind to get rel start index for this textnode
+                            }
+                        }
+                        if( a > end && end < b ){
+                            superRange.endRange = {
+                                node: textnode,
+                                //nodeIndex: idx,
+                                offset: stepIdx - end     //lookbehind to get rel end index for this textnode
+                            }
+                        }
+                        stepIdx = b;
+                    });
+                    return superRange
+                //else impossible
+            }
+            
+        };
+        //end function plugin_jquery_superRange
+
+        function plugin_jquery_improvedCSS($){
+            //improvedCSS.js  http://plugins.jquery.com/node/8726/release
+            /**
+            * @Keith Bentrup
+            */
+            $.fn.css2 = $.fn.css; 
+            $.fn.css = function () {
+                if (arguments.length) return $.fn.css2.apply(this,arguments);
+                var attr = ['font-family','font-size','font-weight','font-style','color',
+                  'text-transform','text-decoration','letter-spacing','word-spacing',
+                  'lineHeight','text-align','vertical-align','direction','background-color',
+                  'background-image','background-repeat','background-position',
+                  'background-attachment','opacity','width','height','top','right','bottom',
+                  'left','margin-top','margin-right','margin-bottom','margin-left',
+                  'padding-top','padding-right','padding-bottom','padding-left',
+                  'border-top-width','border-right-width','border-bottom-width',
+                  'border-left-width','border-top-color','border-right-color',
+                  'border-bottom-color','border-left-color','border-top-style',
+                  'border-right-style','border-bottom-style','border-left-style','position',
+                  'display','visibility','z-index','overflow-x','overflow-y','white-space',
+                  'clip','float','clear','cursor','list-style-image','list-style-position',
+                  'list-style-type','marker-offset'
+                ];
+                var len = attr.length, obj = {}, val;
+                for (var i = 0; i < len; i++) {
+                    //correct for ie
+                    val = attr[i];
+
+
+                    obj[val] = $.fn.css2.call(this, val);
+
+                    if(val == "lineHeight"){
+                        obj[val] = $.fn.css2.call(this, "auto");
+                    }
+                    val = (typeof val === "undefined") ? 'auto' :  val;
+                }
+                return obj;
+            }
+        };
+        //end function plugin_jquery_improvedCSS
+
+        function plugin_jquery_autogrow($){
+            /*
+             * modified by PB from...
+             * jQuery autoResize (textarea auto-resizer)
+             * @copyright James Padolsey http://james.padolsey.com
+             * @version 1.04
+             */
+
+            // a.fn.autogrow=function(j){var b=a.extend({onResize:function(){},animate:true,animateDuration:150,animateCallback:function(){},extraSpace:20,limit:1000},j);this.filter('textarea').each(function(){var c=a(this).css({resize:'none','overflow-y':'hidden'}),k=c.height(),f=(function(){var l=['height','width','lineHeight','textDecoration','letterSpacing'],h={};a.each(l,function(d,e){h[e]=c.css(e)});return c.clone().removeAttr('id').removeAttr('name').css({position:'absolute',top:0,left:-9999}).css(h).attr('tabIndex','-1').insertBefore(c)})(),i=null,g=function(){f.height(0).val(a(this).val()).scrollTop(10000);var d=Math.max(f.scrollTop(),k)+b.extraSpace,e=a(this).add(f);if(i===d){return}i=d;if(d>=b.limit){a(this).css('overflow-y','');return}b.onResize.call(this);b.animate&&c.css('display')==='block'?e.stop().animate({height:d},b.animateDuration,b.animateCallback):e.height(d)};c.unbind('.dynSiz').bind('keyup.dynSiz',g).bind('keydown.dynSiz',g).bind('change.dynSiz',g)});return this};
+            $.fn.autogrow = function() {
+                // this.filter('textarea').each(function() {
+                $('#rdr_shadow').remove();
+
+                var $this       = $(this),
+                    minHeight   = 67,
+                    lineHeight  = $this.css('fontSize'); // used to be 'lineHeight' but that made the textarea too tall
+
+                var shadow = $('<div id="rdr_shadow"></div>').css({
+                    position:   'absolute',
+                    top:        -10000,
+                    left:       -10000,
+                    width:      $(this).width() - parseInt($this.css('paddingLeft')) - parseInt($this.css('paddingRight')),
+                    fontSize:   $this.css('fontSize'),
+                    fontFamily: $this.css('fontFamily'),
+                    lineHeight: $this.css('fontSize'), // used to be 'lineHeight' but that made the textarea too tall
+                    resize:     'none'
+                }).appendTo(document.body);
+
+                var update = function() {
+
+                    var times = function(string, number) {
+                        for (var i = 0, r = ''; i < number; i ++) r += string;
+                        return r;
+                    };
+                    
+                    var val = this.value.replace(/</g, '&lt;')
+                                        .replace(/>/g, '&gt;')
+                                        .replace(/&/g, '&amp;')
+                                        .replace(/\n$/, '<br/>&nbsp;')
+                                        .replace(/\n/g, '<br/>')
+                                        .replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ' });
+                    
+                    shadow.html(val);
+                    $(this).css('height', Math.max(shadow.height()-10, minHeight));
+                    RDR.rindow.checkHeight( $this.closest('div.rdr.rdr_window'), 80 );
+                }
+
+                $(this).change(update).keyup(update).keydown(update);
+                // $(this).keydown(update);
+
+                    // update.apply(this);
+
+                // });
+                return this;
+            }
+        };
+        //end function plugin_jquery_autogrow
+        
+        function plugin_jquery_mousewheel($){
+            /*
+            * jQuery mousewheel
+            * ! Copyright (c) 2010 Brandon Aaron (http://brandonaaron.net)
+            * Licensed under the MIT License (LICENSE.txt).
+            *
+            * Thanks to: http://adomas.org/javascript-mouse-wheel/ for some pointers.
+            * Thanks to: Mathias Bank(http://www.mathias-bank.de) for a scope bug fix.
+            * Thanks to: Seamus Leahy for adding deltaX and deltaY
+            *
+            * Version: 3.0.4
+            * 
+            * Requires: 1.2.2+
+            */
+            var types=['DOMMouseScroll','mousewheel'];$.event.special.mousewheel={setup:function(){if(this.addEventListener){for(var i=types.length;i;){this.addEventListener(types[--i],handler,false);}}else{this.onmousewheel=handler;}},teardown:function(){if(this.removeEventListener){for(var i=types.length;i;){this.removeEventListener(types[--i],handler,false);}}else{this.onmousewheel=null;}}};$.fn.extend({mousewheel:function(fn){return fn?this.bind("mousewheel",fn):this.trigger("mousewheel");},unmousewheel:function(fn){return this.unbind("mousewheel",fn);}});function handler(event){var orgEvent=event||window.event,args=[].slice.call(arguments,1),delta=0,returnValue=true,deltaX=0,deltaY=0;event=$.event.fix(orgEvent);event.type="mousewheel";if(event.wheelDelta){delta=event.wheelDelta/120;}
+            if(event.detail){delta=-event.detail/3;}
+            deltaY=delta;if(orgEvent.axis!==undefined&&orgEvent.axis===orgEvent.HORIZONTAL_AXIS){deltaY=0;deltaX=-1*delta;}
+            if(orgEvent.wheelDeltaY!==undefined){deltaY=orgEvent.wheelDeltaY/120;}
+            if(orgEvent.wheelDeltaX!==undefined){deltaX=-1*orgEvent.wheelDeltaX/120;}
+            args.unshift(event,delta,deltaX,deltaY);return $.event.handle.apply(this,args);}
+        };
+        //end function plugin_jquery_mousewheel
+
+        function plugin_jquery_mousewheelIntent($){
+            /**
+            * jQuery mousewheelIntent
+            * @author trixta
+            * @version 1.2
+            */
+            var mwheelI={pos:[-260,-260]},minDif=3,doc=document,root=doc.documentElement,body=doc.body,longDelay,shortDelay;function unsetPos(){if(this===mwheelI.elem){mwheelI.pos=[-260,-260];mwheelI.elem=false;minDif=3;}}
+            $.event.special.mwheelIntent={setup:function(){var jElm=$(this).bind('mousewheel',$.event.special.mwheelIntent.handler);if(this!==doc&&this!==root&&this!==body){jElm.bind('mouseleave',unsetPos);}
+            jElm=null;return true;},teardown:function(){$(this).unbind('mousewheel',$.event.special.mwheelIntent.handler).unbind('mouseleave',unsetPos);return true;},handler:function(e,d){var pos=[e.clientX,e.clientY];if(this===mwheelI.elem||Math.abs(mwheelI.pos[0]-pos[0])>minDif||Math.abs(mwheelI.pos[1]-pos[1])>minDif){mwheelI.elem=this;mwheelI.pos=pos;minDif=250;clearTimeout(shortDelay);shortDelay=setTimeout(function(){minDif=10;},200);clearTimeout(longDelay);longDelay=setTimeout(function(){minDif=3;},1500);e=$.extend({},e,{type:'mwheelIntent'});return $.event.handle.apply(this,arguments);}}};$.fn.extend({mwheelIntent:function(fn){return fn?this.bind("mwheelIntent",fn):this.trigger("mwheelIntent");},unmwheelIntent:function(fn){return this.unbind("mwheelIntent",fn);}});$(function(){body=doc.body;$(doc).bind('mwheelIntent.mwheelIntentDefault',$.noop);});
+        };
+        //end function plugin_jquery_mousewheelIntent
+
+        function plugin_jquery_jScrollPane($){
+            /*
+             * jScrollPane - v2.0.0beta11 - 2011-05-02
+             * http://jscrollpane.kelvinluck.com/
+             *
+             * Copyright (c) 2010 Kelvin Luck
+             * Dual licensed under the MIT and GPL licenses.
+             */
+
+            //fix minifier quirks
+            var b = $,
+            a = window,
+            c = undefined;
+
+            b.fn.jScrollPane=function(e){function d(D,O){var az,Q=this,Y,ak,v,am,T,Z,y,q,aA,aF,av,i,I,h,j,aa,U,aq,X,t,A,ar,af,an,G,l,au,ay,x,aw,aI,f,L,aj=true,P=true,aH=false,k=false,ap=D.clone(false,false).empty(),ac=b.fn.mwheelIntent?"mwheelIntent.jsp":"mousewheel.jsp";aI=D.css("paddingTop")+" "+D.css("paddingRight")+" "+D.css("paddingBottom")+" "+D.css("paddingLeft");f=(parseInt(D.css("paddingLeft"),10)||0)+(parseInt(D.css("paddingRight"),10)||0);function at(aR){var aM,aO,aN,aK,aJ,aQ,aP=false,aL=false;az=aR;if(Y===c){aJ=D.scrollTop();aQ=D.scrollLeft();D.css({overflow:"hidden",padding:0});ak=D.innerWidth()+f;v=D.innerHeight();D.width(ak);Y=b('<div class="jspPane" />').css("padding",aI).append(D.children());am=b('<div class="jspContainer" />').css({width:ak+"px",height:v+"px"}).append(Y).appendTo(D)}else{D.css("width","");aP=az.stickToBottom&&K();aL=az.stickToRight&&B();aK=D.innerWidth()+f!=ak||D.outerHeight()!=v;if(aK){ak=D.innerWidth()+f;v=D.innerHeight();am.css({width:ak+"px",height:v+"px"})}if(!aK&&L==T&&Y.outerHeight()==Z){D.width(ak);return}L=T;Y.css("width","");D.width(ak);am.find(">.jspVerticalBar,>.jspHorizontalBar").remove().end()}Y.css("overflow","auto");if(aR.contentWidth){T=aR.contentWidth}else{T=Y[0].scrollWidth}Z=Y[0].scrollHeight;Y.css("overflow","");y=T/ak;q=Z/v;aA=q>1;aF=y>1;if(!(aF||aA)){D.removeClass("jspScrollable");Y.css({top:0,width:am.width()-f});n();E();R();w();ai()}else{D.addClass("jspScrollable");aM=az.maintainPosition&&(I||aa);if(aM){aO=aD();aN=aB()}aG();z();F();if(aM){N(aL?(T-ak):aO,false);M(aP?(Z-v):aN,false)}J();ag();ao();if(az.enableKeyboardNavigation){S()}if(az.clickOnTrack){p()}C();if(az.hijackInternalLinks){m()}}if(az.autoReinitialise&&!aw){aw=setInterval(function(){at(az)},az.autoReinitialiseDelay)}else{if(!az.autoReinitialise&&aw){clearInterval(aw)}}aJ&&D.scrollTop(0)&&M(aJ,false);aQ&&D.scrollLeft(0)&&N(aQ,false);D.trigger("jsp-initialised",[aF||aA])}function aG(){if(aA){am.append(b('<div class="jspVerticalBar" />').append(b('<div class="jspCap jspCapTop" />'),b('<div class="jspTrack" />').append(b('<div class="jspDrag" />').append(b('<div class="jspDragTop" />'),b('<div class="jspDragBottom" />'))),b('<div class="jspCap jspCapBottom" />')));U=am.find(">.jspVerticalBar");aq=U.find(">.jspTrack");av=aq.find(">.jspDrag");if(az.showArrows){ar=b('<a class="jspArrow jspArrowUp" />').bind("mousedown.jsp",aE(0,-1)).bind("click.jsp",aC);af=b('<a class="jspArrow jspArrowDown" />').bind("mousedown.jsp",aE(0,1)).bind("click.jsp",aC);if(az.arrowScrollOnHover){ar.bind("mouseover.jsp",aE(0,-1,ar));af.bind("mouseover.jsp",aE(0,1,af))}al(aq,az.verticalArrowPositions,ar,af)}t=v;am.find(">.jspVerticalBar>.jspCap:visible,>.jspVerticalBar>.jspArrow").each(function(){t-=b(this).outerHeight()});av.hover(function(){av.addClass("jspHover")},function(){av.removeClass("jspHover")}).bind("mousedown.jsp",function(aJ){b("html").bind("dragstart.jsp selectstart.jsp",aC);av.addClass("jspActive");var s=aJ.pageY-av.position().top;b("html").bind("mousemove.jsp",function(aK){V(aK.pageY-s,false)}).bind("mouseup.jsp mouseleave.jsp",ax);return false});o()}}function o(){aq.height(t+"px");I=0;X=az.verticalGutter+aq.outerWidth();Y.width(ak-X-f);try{if(U.position().left===0){Y.css("margin-left",X+"px")}}catch(s){}}function z(){if(aF){am.append(b('<div class="jspHorizontalBar" />').append(b('<div class="jspCap jspCapLeft" />'),b('<div class="jspTrack" />').append(b('<div class="jspDrag" />').append(b('<div class="jspDragLeft" />'),b('<div class="jspDragRight" />'))),b('<div class="jspCap jspCapRight" />')));an=am.find(">.jspHorizontalBar");G=an.find(">.jspTrack");h=G.find(">.jspDrag");if(az.showArrows){ay=b('<a class="jspArrow jspArrowLeft" />').bind("mousedown.jsp",aE(-1,0)).bind("click.jsp",aC);x=b('<a class="jspArrow jspArrowRight" />').bind("mousedown.jsp",aE(1,0)).bind("click.jsp",aC);
+            if(az.arrowScrollOnHover){ay.bind("mouseover.jsp",aE(-1,0,ay));x.bind("mouseover.jsp",aE(1,0,x))}al(G,az.horizontalArrowPositions,ay,x)}h.hover(function(){h.addClass("jspHover")},function(){h.removeClass("jspHover")}).bind("mousedown.jsp",function(aJ){b("html").bind("dragstart.jsp selectstart.jsp",aC);h.addClass("jspActive");var s=aJ.pageX-h.position().left;b("html").bind("mousemove.jsp",function(aK){W(aK.pageX-s,false)}).bind("mouseup.jsp mouseleave.jsp",ax);return false});l=am.innerWidth();ah()}}function ah(){am.find(">.jspHorizontalBar>.jspCap:visible,>.jspHorizontalBar>.jspArrow").each(function(){l-=b(this).outerWidth()});G.width(l+"px");aa=0}function F(){if(aF&&aA){var aJ=G.outerHeight(),s=aq.outerWidth();t-=aJ;b(an).find(">.jspCap:visible,>.jspArrow").each(function(){l+=b(this).outerWidth()});l-=s;v-=s;ak-=aJ;G.parent().append(b('<div class="jspCorner" />').css("width",aJ+"px"));o();ah()}if(aF){Y.width((am.outerWidth()-f)+"px")}Z=Y.outerHeight();q=Z/v;if(aF){au=Math.ceil(1/y*l);if(au>az.horizontalDragMaxWidth){au=az.horizontalDragMaxWidth}else{if(au<az.horizontalDragMinWidth){au=az.horizontalDragMinWidth}}h.width(au+"px");j=l-au;ae(aa)}if(aA){A=Math.ceil(1/q*t);if(A>az.verticalDragMaxHeight){A=az.verticalDragMaxHeight}else{if(A<az.verticalDragMinHeight){A=az.verticalDragMinHeight}}av.height(A+"px");i=t-A;ad(I)}}function al(aK,aM,aJ,s){var aO="before",aL="after",aN;if(aM=="os"){aM=/Mac/.test(navigator.platform)?"after":"split"}if(aM==aO){aL=aM}else{if(aM==aL){aO=aM;aN=aJ;aJ=s;s=aN}}aK[aO](aJ)[aL](s)}function aE(aJ,s,aK){return function(){H(aJ,s,this,aK);this.blur();return false}}function H(aM,aL,aP,aO){aP=b(aP).addClass("jspActive");var aN,aK,aJ=true,s=function(){if(aM!==0){Q.scrollByX(aM*az.arrowButtonSpeed)}if(aL!==0){Q.scrollByY(aL*az.arrowButtonSpeed)}aK=setTimeout(s,aJ?az.initialDelay:az.arrowRepeatFreq);aJ=false};s();aN=aO?"mouseout.jsp":"mouseup.jsp";aO=aO||b("html");aO.bind(aN,function(){aP.removeClass("jspActive");aK&&clearTimeout(aK);aK=null;aO.unbind(aN)})}function p(){w();if(aA){aq.bind("mousedown.jsp",function(aO){if(aO.originalTarget===c||aO.originalTarget==aO.currentTarget){var aM=b(this),aP=aM.offset(),aN=aO.pageY-aP.top-I,aK,aJ=true,s=function(){var aS=aM.offset(),aT=aO.pageY-aS.top-A/2,aQ=v*az.scrollPagePercent,aR=i*aQ/(Z-v);if(aN<0){if(I-aR>aT){Q.scrollByY(-aQ)}else{V(aT)}}else{if(aN>0){if(I+aR<aT){Q.scrollByY(aQ)}else{V(aT)}}else{aL();return}}aK=setTimeout(s,aJ?az.initialDelay:az.trackClickRepeatFreq);aJ=false},aL=function(){aK&&clearTimeout(aK);aK=null;b(document).unbind("mouseup.jsp",aL)};s();b(document).bind("mouseup.jsp",aL);return false}})}if(aF){G.bind("mousedown.jsp",function(aO){if(aO.originalTarget===c||aO.originalTarget==aO.currentTarget){var aM=b(this),aP=aM.offset(),aN=aO.pageX-aP.left-aa,aK,aJ=true,s=function(){var aS=aM.offset(),aT=aO.pageX-aS.left-au/2,aQ=ak*az.scrollPagePercent,aR=j*aQ/(T-ak);if(aN<0){if(aa-aR>aT){Q.scrollByX(-aQ)}else{W(aT)}}else{if(aN>0){if(aa+aR<aT){Q.scrollByX(aQ)}else{W(aT)}}else{aL();return}}aK=setTimeout(s,aJ?az.initialDelay:az.trackClickRepeatFreq);aJ=false},aL=function(){aK&&clearTimeout(aK);aK=null;b(document).unbind("mouseup.jsp",aL)};s();b(document).bind("mouseup.jsp",aL);return false}})}}function w(){if(G){G.unbind("mousedown.jsp")}if(aq){aq.unbind("mousedown.jsp")}}function ax(){b("html").unbind("dragstart.jsp selectstart.jsp mousemove.jsp mouseup.jsp mouseleave.jsp");if(av){av.removeClass("jspActive")}if(h){h.removeClass("jspActive")}}function V(s,aJ){if(!aA){return}if(s<0){s=0}else{if(s>i){s=i}}if(aJ===c){aJ=az.animateScroll}if(aJ){Q.animate(av,"top",s,ad)}else{av.css("top",s);ad(s)}}function ad(aJ){if(aJ===c){aJ=av.position().top}am.scrollTop(0);I=aJ;var aM=I===0,aK=I==i,aL=aJ/i,s=-aL*(Z-v);if(aj!=aM||aH!=aK){aj=aM;aH=aK;D.trigger("jsp-arrow-change",[aj,aH,P,k])}u(aM,aK);Y.css("top",s);D.trigger("jsp-scroll-y",[-s,aM,aK]).trigger("scroll")}function W(aJ,s){if(!aF){return}if(aJ<0){aJ=0}else{if(aJ>j){aJ=j}}if(s===c){s=az.animateScroll}if(s){Q.animate(h,"left",aJ,ae)
+            }else{h.css("left",aJ);ae(aJ)}}function ae(aJ){if(aJ===c){aJ=h.position().left}am.scrollTop(0);aa=aJ;var aM=aa===0,aL=aa==j,aK=aJ/j,s=-aK*(T-ak);if(P!=aM||k!=aL){P=aM;k=aL;D.trigger("jsp-arrow-change",[aj,aH,P,k])}r(aM,aL);Y.css("left",s);D.trigger("jsp-scroll-x",[-s,aM,aL]).trigger("scroll")}function u(aJ,s){if(az.showArrows){ar[aJ?"addClass":"removeClass"]("jspDisabled");af[s?"addClass":"removeClass"]("jspDisabled")}}function r(aJ,s){if(az.showArrows){ay[aJ?"addClass":"removeClass"]("jspDisabled");x[s?"addClass":"removeClass"]("jspDisabled")}}function M(s,aJ){var aK=s/(Z-v);V(aK*i,aJ)}function N(aJ,s){var aK=aJ/(T-ak);W(aK*j,s)}function ab(aW,aR,aK){var aO,aL,aM,s=0,aV=0,aJ,aQ,aP,aT,aS,aU;try{aO=b(aW)}catch(aN){return}aL=aO.outerHeight();aM=aO.outerWidth();am.scrollTop(0);am.scrollLeft(0);while(!aO.is(".jspPane")){s+=aO.position().top;aV+=aO.position().left;aO=aO.offsetParent();if(/^body|html$/i.test(aO[0].nodeName)){return}}aJ=aB();aP=aJ+v;if(s<aJ||aR){aS=s-az.verticalGutter}else{if(s+aL>aP){aS=s-v+aL+az.verticalGutter}}if(aS){M(aS,aK)}aQ=aD();aT=aQ+ak;if(aV<aQ||aR){aU=aV-az.horizontalGutter}else{if(aV+aM>aT){aU=aV-ak+aM+az.horizontalGutter}}if(aU){N(aU,aK)}}function aD(){return -Y.position().left}function aB(){return -Y.position().top}function K(){var s=Z-v;return(s>20)&&(s-aB()<10)}function B(){var s=T-ak;return(s>20)&&(s-aD()<10)}function ag(){am.unbind(ac).bind(ac,function(aM,aN,aL,aJ){var aK=aa,s=I;Q.scrollBy(aL*az.mouseWheelSpeed,-aJ*az.mouseWheelSpeed,false);return aK==aa&&s==I})}function n(){am.unbind(ac)}function aC(){return false}function J(){Y.find(":input,a").unbind("focus.jsp").bind("focus.jsp",function(s){ab(s.target,false)})}function E(){Y.find(":input,a").unbind("focus.jsp")}function S(){var s,aJ,aL=[];aF&&aL.push(an[0]);aA&&aL.push(U[0]);Y.focus(function(){D.focus()});D.attr("tabindex",0).unbind("keydown.jsp keypress.jsp").bind("keydown.jsp",function(aO){if(aO.target!==this&&!(aL.length&&b(aO.target).closest(aL).length)){return}var aN=aa,aM=I;switch(aO.keyCode){case 40:case 38:case 34:case 32:case 33:case 39:case 37:s=aO.keyCode;aK();break;case 35:M(Z-v);s=null;break;case 36:M(0);s=null;break}aJ=aO.keyCode==s&&aN!=aa||aM!=I;return !aJ}).bind("keypress.jsp",function(aM){if(aM.keyCode==s){aK()}return !aJ});if(az.hideFocus){D.css("outline","none");if("hideFocus" in am[0]){D.attr("hideFocus",true)}}else{D.css("outline","");if("hideFocus" in am[0]){D.attr("hideFocus",false)}}function aK(){var aN=aa,aM=I;switch(s){case 40:Q.scrollByY(az.keyboardSpeed,false);break;case 38:Q.scrollByY(-az.keyboardSpeed,false);break;case 34:case 32:Q.scrollByY(v*az.scrollPagePercent,false);break;case 33:Q.scrollByY(-v*az.scrollPagePercent,false);break;case 39:Q.scrollByX(az.keyboardSpeed,false);break;case 37:Q.scrollByX(-az.keyboardSpeed,false);break}aJ=aN!=aa||aM!=I;return aJ}}function R(){D.attr("tabindex","-1").removeAttr("tabindex").unbind("keydown.jsp keypress.jsp")}function C(){if(location.hash&&location.hash.length>1){var aK,aJ;try{aK=b(location.hash)}catch(s){return}if(aK.length&&Y.find(location.hash)){if(am.scrollTop()===0){aJ=setInterval(function(){if(am.scrollTop()>0){ab(location.hash,true);b(document).scrollTop(am.position().top);clearInterval(aJ)}},50)}else{ab(location.hash,true);b(document).scrollTop(am.position().top)}}}}function ai(){b("a.jspHijack").unbind("click.jsp-hijack").removeClass("jspHijack")}function m(){ai();b("a[href^=#]").addClass("jspHijack").bind("click.jsp-hijack",function(){var s=this.href.split("#"),aJ;if(s.length>1){aJ=s[1];if(aJ.length>0&&Y.find("#"+aJ).length>0){ab("#"+aJ,true);return false}}})}function ao(){var aK,aJ,aM,aL,aN,s=false;am.unbind("touchstart.jsp touchmove.jsp touchend.jsp click.jsp-touchclick").bind("touchstart.jsp",function(aO){var aP=aO.originalEvent.touches[0];aK=aD();aJ=aB();aM=aP.pageX;aL=aP.pageY;aN=false;s=true}).bind("touchmove.jsp",function(aR){if(!s){return}var aQ=aR.originalEvent.touches[0],aP=aa,aO=I;Q.scrollTo(aK+aM-aQ.pageX,aJ+aL-aQ.pageY);aN=aN||Math.abs(aM-aQ.pageX)>5||Math.abs(aL-aQ.pageY)>5;
+            return aP==aa&&aO==I}).bind("touchend.jsp",function(aO){s=false}).bind("click.jsp-touchclick",function(aO){if(aN){aN=false;return false}})}function g(){var s=aB(),aJ=aD();D.removeClass("jspScrollable").unbind(".jsp");D.replaceWith(ap.append(Y.children()));ap.scrollTop(s);ap.scrollLeft(aJ)}b.extend(Q,{reinitialise:function(aJ){aJ=b.extend({},az,aJ);at(aJ)},scrollToElement:function(aK,aJ,s){ab(aK,aJ,s)},scrollTo:function(aK,s,aJ){N(aK,aJ);M(s,aJ)},scrollToX:function(aJ,s){N(aJ,s)},scrollToY:function(s,aJ){M(s,aJ)},scrollToPercentX:function(aJ,s){N(aJ*(T-ak),s)},scrollToPercentY:function(aJ,s){M(aJ*(Z-v),s)},scrollBy:function(aJ,s,aK){Q.scrollByX(aJ,aK);Q.scrollByY(s,aK)},scrollByX:function(s,aK){s=(s>=0)?Math.max(s,1):Math.min(s,-1);var aJ=aD()+s,aL=aJ/(T-ak);W(aL*j,aK)},scrollByY:function(s,aK){s=(s>=0)?Math.max(s,1):Math.min(s,-1);var aJ=aB()+s,aL=aJ/(Z-v);V(aL*i,aK)},positionDragX:function(s,aJ){W(s,aJ)},positionDragY:function(aJ,s){V(aJ,s)},animate:function(aJ,aM,s,aL){var aK={};aK[aM]=s;aJ.animate(aK,{duration:az.animateDuration,ease:az.animateEase,queue:false,step:aL})},getContentPositionX:function(){return aD()},getContentPositionY:function(){return aB()},getContentWidth:function(){return T},getContentHeight:function(){return Z},getPercentScrolledX:function(){return aD()/(T-ak)},getPercentScrolledY:function(){return aB()/(Z-v)},getIsScrollableH:function(){return aF},getIsScrollableV:function(){return aA},getContentPane:function(){return Y},scrollToBottom:function(s){V(i,s)},hijackInternalLinks:function(){m()},destroy:function(){g()}});at(O)}e=b.extend({},b.fn.jScrollPane.defaults,e);b.each(["mouseWheelSpeed","arrowButtonSpeed","trackClickSpeed","keyboardSpeed"],function(){e[this]=e[this]||e.speed});return this.each(function(){var f=b(this),g=f.data("jsp");if(g){g.reinitialise(e)}else{g=new d(f,e);f.data("jsp",g)}})};b.fn.jScrollPane.defaults={showArrows:false,maintainPosition:true,stickToBottom:false,stickToRight:false,clickOnTrack:true,autoReinitialise:false,autoReinitialiseDelay:500,verticalDragMinHeight:0,verticalDragMaxHeight:99999,horizontalDragMinWidth:0,horizontalDragMaxWidth:99999,contentWidth:c,animateScroll:false,animateDuration:300,animateEase:"linear",hijackInternalLinks:false,verticalGutter:4,horizontalGutter:4,mouseWheelSpeed:0,arrowButtonSpeed:0,arrowRepeatFreq:50,arrowScrollOnHover:false,trackClickSpeed:0,trackClickRepeatFreq:70,verticalArrowPositions:"split",horizontalArrowPositions:"split",enableKeyboardNavigation:true,hideFocus:false,keyboardSpeed:0,initialDelay:300,speed:30,scrollPagePercent:0.8}
+        };
+        //end function plugin_jquery_jScrollPane
+
+                
+        function plugin_rangy(){
+
+            /***************/
+            /*rangy scripts*/
+            /***************/
+
+            //rangy-core.js
+            /*
+             Rangy, a cross-browser JavaScript range and selection library
+             http://code.google.com/p/rangy/
+
+             Copyright 2011, Tim Down
+             Licensed under the MIT license.
+             Version: 1.1.2
+             Build date: 30 May 2011
+            */
+            var rangy=function(){function m(o,r){var A=typeof o[r];return A=="function"||!!(A=="object"&&o[r])||A=="unknown"}function N(o,r){return!!(typeof o[r]=="object"&&o[r])}function G(o,r){return typeof o[r]!="undefined"}function F(o){return function(r,A){for(var O=A.length;O--;)if(!o(r,A[O]))return false;return true}}function y(o){window.alert("Rangy not supported in your browser. Reason: "+o);q.initialized=true;q.supported=false}function E(){if(!q.initialized){var o,r=false,A=false;if(m(document,"createRange")){o=
+            document.createRange();if(x(o,l)&&s(o,Q))r=true;o.detach()}if((o=N(document,"body")?document.body:document.getElementsByTagName("body")[0])&&m(o,"createTextRange")){o=o.createTextRange();if(x(o,t)&&s(o,p))A=true}!r&&!A&&y("Neither Range nor TextRange are implemented");q.initialized=true;q.features={implementsDomRange:r,implementsTextRange:A};r=f.concat(e);A=0;for(o=r.length;A<o;++A)try{r[A](q)}catch(O){N(window,"console")&&m(window.console,"log")&&window.console.log("Init listener threw an exception. Continuing.",
+            O)}}}function H(o){this.name=o;this.supported=this.initialized=false}var Q=["startContainer","startOffset","endContainer","endOffset","collapsed","commonAncestorContainer","START_TO_START","START_TO_END","END_TO_START","END_TO_END"],l=["setStart","setStartBefore","setStartAfter","setEnd","setEndBefore","setEndAfter","collapse","selectNode","selectNodeContents","compareBoundaryPoints","deleteContents","extractContents","cloneContents","insertNode","surroundContents","cloneRange","toString","detach"],
+            p=["boundingHeight","boundingLeft","boundingTop","boundingWidth","htmlText","text"],t=["collapse","compareEndPoints","duplicate","getBookmark","moveToBookmark","moveToElementText","parentElement","pasteHTML","select","setEndPoint"],x=F(m),B=F(N),s=F(G),q={initialized:false,supported:true,util:{isHostMethod:m,isHostObject:N,isHostProperty:G,areHostMethods:x,areHostObjects:B,areHostProperties:s},features:{},modules:{},config:{alertOnWarn:false}};q.fail=y;q.warn=function(o){o="Rangy warning: "+o;if(q.config.alertOnWarn)window.alert(o);
+            else typeof window.console!="undefined"&&typeof window.console.log!="undefined"&&window.console.log(o)};var e=[],f=[];q.init=E;q.addInitListener=function(o){q.initialized?o(q):e.push(o)};var k=[];q.addCreateMissingNativeApiListener=function(o){k.push(o)};q.createMissingNativeApi=function(o){o=o||window;E();for(var r=0,A=k.length;r<A;++r)k[r](o)};H.prototype.fail=function(o){this.initialized=true;this.supported=false;throw Error("Module '"+this.name+"' failed to load: "+o);};H.prototype.warn=function(o){q.warn("Module "+
+            this.name+": "+o)};H.prototype.createError=function(o){return Error("Error in Rangy "+this.name+" module: "+o)};q.createModule=function(o,r){var A=new H(o);q.modules[o]=A;f.push(function(O){r(O,A);A.initialized=true;A.supported=true})};q.requireModules=function(o){for(var r=0,A=o.length,O,I;r<A;++r){I=o[r];O=q.modules[I];if(!O||!(O instanceof H))throw Error("Module '"+I+"' not found");if(!O.supported)throw Error("Module '"+I+"' not supported");}};var u=false;B=function(){if(!u){u=true;q.initialized||
+            E()}};if(typeof window=="undefined")y("No window found");else if(typeof document=="undefined")y("No document found");else{m(document,"addEventListener")&&document.addEventListener("DOMContentLoaded",B,false);if(m(window,"addEventListener"))window.addEventListener("load",B,false);else m(window,"attachEvent")?window.attachEvent("onload",B):y("Window does not have required addEventListener or attachEvent method");return q}}();
+            rangy.createModule("DomUtil",function(m,N){function G(e){for(var f=0;e=e.previousSibling;)f++;return f}function F(e,f){var k=[],u;for(u=e;u;u=u.parentNode)k.push(u);for(u=f;u;u=u.parentNode)if(q(k,u))return u;return null}function y(e,f,k){for(k=k?e:e.parentNode;k;){e=k.parentNode;if(e===f)return k;k=e}return null}function E(e){e=e.nodeType;return e==3||e==4||e==8}function H(e,f){var k=f.nextSibling,u=f.parentNode;k?u.insertBefore(e,k):u.appendChild(e);return e}function Q(e){if(e.nodeType==9)return e;
+            else if(typeof e.ownerDocument!="undefined")return e.ownerDocument;else if(typeof e.document!="undefined")return e.document;else if(e.parentNode)return Q(e.parentNode);else throw Error("getDocument: no document found for node");}function l(e){if(!e)return"[No node]";return E(e)?'"'+e.data+'"':e.nodeType==1?"<"+e.nodeName+(e.id?' id="'+e.id+'"':"")+">["+e.childNodes.length+"]":e.nodeName}function p(e){this._next=this.root=e}function t(e,f){this.node=e;this.offset=f}function x(e){this.code=this[e];
+            this.codeName=e;this.message="DOMException: "+this.codeName}var B=m.util;B.areHostMethods(document,["createDocumentFragment","createElement","createTextNode"])||N.fail("document missing a Node creation method");B.isHostMethod(document,"getElementsByTagName")||N.fail("document missing getElementsByTagName method");var s=document.createElement("div");B.areHostMethods(s,["insertBefore","appendChild","cloneNode"])||N.fail("Incomplete Element implementation");s=document.createTextNode("test");B.areHostMethods(s,
+            ["splitText","deleteData","insertData","appendData","cloneNode"])||N.fail("Incomplete Text Node implementation");var q=function(e,f){for(var k=e.length;k--;)if(e[k]===f)return true;return false};p.prototype={_current:null,hasNext:function(){return!!this._next},next:function(){var e=this._current=this._next,f;if(this._current)if(f=e.firstChild)this._next=f;else{for(f=null;e!==this.root&&!(f=e.nextSibling);)e=e.parentNode;this._next=f}return this._current},detach:function(){this._current=this._next=
+            this.root=null}};t.prototype={equals:function(e){return this.node===e.node&this.offset==e.offset},inspect:function(){return"[DomPosition("+l(this.node)+":"+this.offset+")]"}};x.prototype={INDEX_SIZE_ERR:1,HIERARCHY_REQUEST_ERR:3,WRONG_DOCUMENT_ERR:4,NO_MODIFICATION_ALLOWED_ERR:7,NOT_FOUND_ERR:8,NOT_SUPPORTED_ERR:9,INVALID_STATE_ERR:11};x.prototype.toString=function(){return this.message};m.dom={arrayContains:q,getNodeIndex:G,getCommonAncestor:F,isAncestorOf:function(e,f,k){for(f=k?f:f.parentNode;f;)if(f===
+            e)return true;else f=f.parentNode;return false},getClosestAncestorIn:y,isCharacterDataNode:E,insertAfter:H,splitDataNode:function(e,f){var k;if(e.nodeType==3)k=e.splitText(f);else{k=e.cloneNode();k.deleteData(0,f);e.deleteData(0,e.length-f);H(k,e)}return k},getDocument:Q,getWindow:function(e){e=Q(e);if(typeof e.defaultView!="undefined")return e.defaultView;else if(typeof e.parentWindow!="undefined")return e.parentWindow;else throw Error("Cannot get a window object for node");},getIframeWindow:function(e){if(typeof e.contentWindow!=
+            "undefined")return e.contentWindow;else if(typeof e.contentDocument!="undefined")return e.contentDocument.defaultView;else throw Error("getIframeWindow: No Window object found for iframe element");},getIframeDocument:function(e){if(typeof e.contentDocument!="undefined")return e.contentDocument;else if(typeof e.contentWindow!="undefined")return e.contentWindow.document;else throw Error("getIframeWindow: No Document object found for iframe element");},getBody:function(e){return B.isHostObject(e,"body")?
+            e.body:e.getElementsByTagName("body")[0]},comparePoints:function(e,f,k,u){var o;if(e==k)return f===u?0:f<u?-1:1;else if(o=y(k,e,true))return f<=G(o)?-1:1;else if(o=y(e,k,true))return G(o)<u?-1:1;else{f=F(e,k);e=e===f?f:y(e,f,true);k=k===f?f:y(k,f,true);if(e===k)throw Error("comparePoints got to case 4 and childA and childB are the same!");else{for(f=f.firstChild;f;){if(f===e)return-1;else if(f===k)return 1;f=f.nextSibling}throw Error("Should not be here!");}}},inspectNode:l,createIterator:function(e){return new p(e)},
+            DomPosition:t};m.DOMException=x});
+            rangy.createModule("DomRange",function(m){function N(b,h){return b.nodeType!=3&&(j.isAncestorOf(b,h.startContainer,true)||j.isAncestorOf(b,h.endContainer,true))}function G(b){return j.getDocument(b.startContainer)}function F(b,h,v){if(h=b._listeners[h])for(var z=0,M=h.length;z<M;++z)h[z].call(b,{target:b,args:v})}function y(b){return new Y(b.parentNode,j.getNodeIndex(b))}function E(b){return new Y(b.parentNode,j.getNodeIndex(b)+1)}function H(b){return j.isCharacterDataNode(b)?b.length:b.childNodes?
+            b.childNodes.length:0}function Q(b,h,v){var z=b.nodeType==11?b.firstChild:b;if(j.isCharacterDataNode(h))v==h.length?j.insertAfter(b,h):h.parentNode.insertBefore(b,v==0?h:j.splitDataNode(h,v));else v>=h.childNodes.length?h.appendChild(b):h.insertBefore(b,h.childNodes[v]);return z}function l(b){for(var h,v,z=G(b.range).createDocumentFragment();v=b.next();){h=b.isPartiallySelectedSubtree();v=v.cloneNode(!h);if(h){h=b.getSubtreeIterator();v.appendChild(l(h));h.detach(true)}if(v.nodeType==10)throw new T("HIERARCHY_REQUEST_ERR");
+            z.appendChild(v)}return z}function p(b,h,v){var z,M;for(v=v||{stop:false};z=b.next();)if(b.isPartiallySelectedSubtree())if(h(z)===false){v.stop=true;return}else{z=b.getSubtreeIterator();p(z,h,v);z.detach(true);if(v.stop)return}else for(z=j.createIterator(z);M=z.next();)if(h(M)===false){v.stop=true;return}}function t(b){for(var h;b.next();)if(b.isPartiallySelectedSubtree()){h=b.getSubtreeIterator();t(h);h.detach(true)}else b.remove()}function x(b){for(var h,v=G(b.range).createDocumentFragment(),z;h=
+            b.next();){if(b.isPartiallySelectedSubtree()){h=h.cloneNode(false);z=b.getSubtreeIterator();h.appendChild(x(z));z.detach(true)}else b.remove();if(h.nodeType==10)throw new T("HIERARCHY_REQUEST_ERR");v.appendChild(h)}return v}function B(b,h,v){var z=!!(h&&h.length),M,V=!!v;if(z)M=RegExp("^("+h.join("|")+")$");var ba=[];p(new q(b,false),function(ca){if((!z||M.test(ca.nodeType))&&(!V||v(ca)))ba.push(ca)});return ba}function s(b){return"["+(typeof b.getName=="undefined"?"Range":b.getName())+"("+j.inspectNode(b.startContainer)+
+            ":"+b.startOffset+", "+j.inspectNode(b.endContainer)+":"+b.endOffset+")]"}function q(b,h){this.range=b;this.clonePartiallySelectedTextNodes=h;if(!b.collapsed){this.sc=b.startContainer;this.so=b.startOffset;this.ec=b.endContainer;this.eo=b.endOffset;var v=b.commonAncestorContainer;if(this.sc===this.ec&&j.isCharacterDataNode(this.sc)){this.isSingleCharacterDataNode=true;this._first=this._last=this._next=this.sc}else{this._first=this._next=this.sc===v&&!j.isCharacterDataNode(this.sc)?this.sc.childNodes[this.so]:
+            j.getClosestAncestorIn(this.sc,v,true);this._last=this.ec===v&&!j.isCharacterDataNode(this.ec)?this.ec.childNodes[this.eo-1]:j.getClosestAncestorIn(this.ec,v,true)}}}function e(b){this.code=this[b];this.codeName=b;this.message="RangeException: "+this.codeName}function f(b,h,v){this.nodes=B(b,h,v);this._next=this.nodes[0];this._position=0}function k(b){return function(h,v){for(var z,M=v?h:h.parentNode;M;){z=M.nodeType;if(j.arrayContains(b,z))return M;M=M.parentNode}return null}}function u(b){for(var h;h=
+            b.parentNode;)b=h;return b}function o(b,h){if(C(b,h))throw new e("INVALID_NODE_TYPE_ERR");}function r(b){if(!b.startContainer)throw new T("INVALID_STATE_ERR");}function A(b,h){if(!j.arrayContains(h,b.nodeType))throw new e("INVALID_NODE_TYPE_ERR");}function O(b,h){if(h<0||h>(j.isCharacterDataNode(b)?b.length:b.childNodes.length))throw new T("INDEX_SIZE_ERR");}function I(b,h){if(d(b,true)!==d(h,true))throw new T("WRONG_DOCUMENT_ERR");}function U(b){if(i(b,true))throw new T("NO_MODIFICATION_ALLOWED_ERR");
+            }function Z(b,h){if(!b)throw new T(h);}function J(b){if(!d(b.startContainer,true)||!d(b.endContainer,true)||!(b.startOffset<=(j.isCharacterDataNode(b.startContainer)?b.startContainer.length:b.startContainer.childNodes.length))||!(b.endOffset<=(j.isCharacterDataNode(b.endContainer)?b.endContainer.length:b.endContainer.childNodes.length)))throw Error("Range error: Range is no longer valid after DOM mutation ("+b.inspect()+")");}function W(b){b.START_TO_START=P;b.START_TO_END=X;b.END_TO_END=ka;b.END_TO_START=
+            la;b.NODE_BEFORE=ma;b.NODE_AFTER=na;b.NODE_BEFORE_AND_AFTER=oa;b.NODE_INSIDE=ja}function da(b){W(b);W(b.prototype)}function ga(b,h,v){function z(c,g){return function(n){r(this);A(n,$);A(u(n),ia);n=(c?y:E)(n);(g?M:V)(this,n.node,n.offset)}}function M(c,g,n){var w=c.endContainer,L=c.endOffset;if(g!==c.startContainer||n!==this.startOffset){if(u(g)!=u(w)||j.comparePoints(g,n,w,L)==1){w=g;L=n}h(c,g,n,w,L)}}function V(c,g,n){var w=c.startContainer,L=c.startOffset;if(g!==c.endContainer||n!==this.endOffset){if(u(g)!=
+            u(w)||j.comparePoints(g,n,w,L)==-1){w=g;L=n}h(c,w,L,g,n)}}function ba(c,g,n){if(g!==c.startContainer||n!==this.startOffset||g!==c.endContainer||n!==this.endOffset)h(c,g,n,g,n)}function ca(c){return function(){r(this);J(this);var g=this.startContainer,n=this.startOffset,w=this.commonAncestorContainer,L=new q(this,true);if(g!==w){g=j.getClosestAncestorIn(g,w,true);n=E(g);g=n.node;n=n.offset}p(L,U);L.reset();w=c(L);L.detach();h(this,g,n,g,n);return w}}b.prototype={attachListener:function(c,g){this._listeners[c].push(g)},
+            setStart:function(c,g){r(this);o(c,true);O(c,g);M(this,c,g)},setEnd:function(c,g){r(this);o(c,true);O(c,g);V(this,c,g)},setStartBefore:z(true,true),setStartAfter:z(false,true),setEndBefore:z(true,false),setEndAfter:z(false,false),collapse:function(c){r(this);J(this);c?h(this,this.startContainer,this.startOffset,this.startContainer,this.startOffset):h(this,this.endContainer,this.endOffset,this.endContainer,this.endOffset)},selectNodeContents:function(c){r(this);o(c,true);h(this,c,0,c,H(c))},selectNode:function(c){r(this);
+            o(c,false);A(c,$);var g=y(c);c=E(c);h(this,g.node,g.offset,c.node,c.offset)},compareBoundaryPoints:function(c,g){r(this);J(this);I(this.startContainer,g.startContainer);var n=c==la||c==P?"start":"end",w=c==X||c==P?"start":"end";return j.comparePoints(this[n+"Container"],this[n+"Offset"],g[w+"Container"],g[w+"Offset"])},insertNode:function(c){r(this);J(this);A(c,aa);U(this.startContainer);if(j.isAncestorOf(c,this.startContainer,true))throw new T("HIERARCHY_REQUEST_ERR");this.setStartBefore(Q(c,this.startContainer,
+            this.startOffset))},cloneContents:function(){r(this);J(this);var c,g;if(this.collapsed)return G(this).createDocumentFragment();else{if(this.startContainer===this.endContainer&&j.isCharacterDataNode(this.startContainer)){c=this.startContainer.cloneNode(true);c.data=c.data.slice(this.startOffset,this.endOffset);g=G(this).createDocumentFragment();g.appendChild(c);return g}else{g=new q(this,true);c=l(g);g.detach()}return c}},extractContents:ca(x),deleteContents:ca(t),canSurroundContents:function(){r(this);
+            J(this);U(this.startContainer);U(this.endContainer);var c=new q(this,true),g=c._first&&N(c._first,this)||c._last&&N(c._last,this);c.detach();return!g},surroundContents:function(c){A(c,a);if(!this.canSurroundContents())throw new e("BAD_BOUNDARYPOINTS_ERR");var g=this.extractContents();if(c.hasChildNodes())for(;c.lastChild;)c.removeChild(c.lastChild);Q(c,this.startContainer,this.startOffset);c.appendChild(g);this.selectNode(c)},cloneRange:function(){r(this);J(this);for(var c=new K(G(this)),g=D.length,
+            n;g--;){n=D[g];c[n]=this[n]}return c},detach:function(){v(this)},toString:function(){r(this);J(this);var c=this.startContainer;if(c===this.endContainer&&j.isCharacterDataNode(c))return c.nodeType==3||c.nodeType==4?c.data.slice(this.startOffset,this.endOffset):"";else{var g=[];c=new q(this,true);p(c,function(n){if(n.nodeType==3||n.nodeType==4)g.push(n.data)});c.detach();return g.join("")}},compareNode:function(c){r(this);J(this);var g=c.parentNode,n=j.getNodeIndex(c);if(!g)throw new T("NOT_FOUND_ERR");
+            c=this.comparePoint(g,n);g=this.comparePoint(g,n+1);return c<0?g>0?oa:ma:g>0?na:ja},comparePoint:function(c,g){r(this);J(this);Z(c,"HIERARCHY_REQUEST_ERR");I(c,this.startContainer);if(j.comparePoints(c,g,this.startContainer,this.startOffset)<0)return-1;else if(j.comparePoints(c,g,this.endContainer,this.endOffset)>0)return 1;return 0},createContextualFragment:function(c){r(this);var g=G(this),n=g.createElement("div");n.innerHTML=c;for(c=g.createDocumentFragment();g=n.firstChild;)c.appendChild(g);return c},
+            intersectsNode:function(c,g){r(this);J(this);Z(c,"NOT_FOUND_ERR");if(j.getDocument(c)!==G(this))return false;var n=c.parentNode,w=j.getNodeIndex(c);Z(n,"NOT_FOUND_ERR");var L=j.comparePoints(n,w,this.endContainer,this.endOffset);n=j.comparePoints(n,w+1,this.startContainer,this.startOffset);return g?L<=0&&n>=0:L<0&&n>0},isPointInRange:function(c,g){r(this);J(this);Z(c,"HIERARCHY_REQUEST_ERR");I(c,this.startContainer);return j.comparePoints(c,g,this.startContainer,this.startOffset)>=0&&j.comparePoints(c,
+            g,this.endContainer,this.endOffset)<=0},intersectsRange:function(c){r(this);J(this);if(G(c)!=G(this))throw new T("WRONG_DOCUMENT_ERR");return j.comparePoints(this.startContainer,this.startOffset,c.endContainer,c.endOffset)<0&&j.comparePoints(this.endContainer,this.endOffset,c.startContainer,c.startOffset)>0},intersection:function(c){if(this.intersectsRange(c)){var g=j.comparePoints(this.startContainer,this.startOffset,c.startContainer,c.startOffset),n=j.comparePoints(this.endContainer,this.endOffset,
+            c.endContainer,c.endOffset),w=this.cloneRange();g==-1&&w.setStart(c.startContainer,c.startOffset);n==1&&w.setEnd(c.endContainer,c.endOffset);return w}return null},containsNode:function(c,g){return g?this.intersectsNode(c,false):this.compareNode(c)==ja},containsNodeContents:function(c){return this.comparePoint(c,0)>=0&&this.comparePoint(c,H(c))<=0},splitBoundaries:function(){J(this);var c=this.startContainer,g=this.startOffset,n=this.endContainer,w=this.endOffset,L=c===n;j.isCharacterDataNode(n)&&
+            w>0&&w<n.length&&j.splitDataNode(n,w);if(j.isCharacterDataNode(c)&&g>0&&g<c.length){c=j.splitDataNode(c,g);if(L){w-=g;n=c}else n==c.parentNode&&w>=j.getNodeIndex(c)&&w++;g=0}h(this,c,g,n,w)},normalizeBoundaries:function(){J(this);var c=this.startContainer,g=this.startOffset,n=this.endContainer,w=this.endOffset,L=function(S){var R=S.nextSibling;if(R&&R.nodeType==S.nodeType){n=S;w=S.length;S.appendData(R.data);R.parentNode.removeChild(R)}},pa=function(S){var R=S.previousSibling;if(R&&R.nodeType==S.nodeType){c=
+            S;var qa=S.length;g=R.length;S.insertData(0,R.data);R.parentNode.removeChild(R);if(c==n){w+=g;n=c}else if(n==S.parentNode){R=j.getNodeIndex(S);if(w==R){n=S;w=qa}else w>R&&w--}}},ha=true;if(j.isCharacterDataNode(n))n.length==w&&L(n);else{if(w>0)(ha=n.childNodes[w-1])&&j.isCharacterDataNode(ha)&&L(ha);ha=!this.collapsed}if(ha)if(j.isCharacterDataNode(c))g==0&&pa(c);else{if(g<c.childNodes.length)(L=c.childNodes[g])&&j.isCharacterDataNode(L)&&pa(L)}else{c=n;g=w}h(this,c,g,n,w)},createNodeIterator:function(c,
+            g){r(this);J(this);return new f(this,c,g)},getNodes:function(c,g){r(this);J(this);return B(this,c,g)},collapseToPoint:function(c,g){r(this);J(this);o(c,true);O(c,g);ba(this,c,g)},collapseBefore:function(c){r(this);this.setEndBefore(c);this.collapse(false)},collapseAfter:function(c){r(this);this.setStartAfter(c);this.collapse(true)},getName:function(){return"DomRange"},equals:function(c){return K.rangesEqual(this,c)},inspect:function(){return s(this)}};da(b)}function ea(b){b.collapsed=b.startContainer===
+            b.endContainer&&b.startOffset===b.endOffset;b.commonAncestorContainer=b.collapsed?b.startContainer:j.getCommonAncestor(b.startContainer,b.endContainer)}function fa(b,h,v,z,M){var V=b.startContainer!==h||b.startOffset!==v,ba=b.endContainer!==z||b.endOffset!==M;b.startContainer=h;b.startOffset=v;b.endContainer=z;b.endOffset=M;ea(b);F(b,"boundarychange",{startMoved:V,endMoved:ba})}function K(b){this.startContainer=b;this.startOffset=0;this.endContainer=b;this.endOffset=0;this._listeners={boundarychange:[],
+            detach:[]};ea(this)}m.requireModules(["DomUtil"]);var j=m.dom,Y=j.DomPosition,T=m.DOMException;q.prototype={_current:null,_next:null,_first:null,_last:null,isSingleCharacterDataNode:false,reset:function(){this._current=null;this._next=this._first},hasNext:function(){return!!this._next},next:function(){var b=this._current=this._next;if(b){this._next=b!==this._last?b.nextSibling:null;if(j.isCharacterDataNode(b)&&this.clonePartiallySelectedTextNodes){if(b===this.ec)(b=b.cloneNode(true)).deleteData(this.eo,
+            b.length-this.eo);if(this._current===this.sc)(b=b.cloneNode(true)).deleteData(0,this.so)}}return b},remove:function(){var b=this._current,h,v;if(j.isCharacterDataNode(b)&&(b===this.sc||b===this.ec)){h=b===this.sc?this.so:0;v=b===this.ec?this.eo:b.length;h!=v&&b.deleteData(h,v-h)}else b.parentNode&&b.parentNode.removeChild(b)},isPartiallySelectedSubtree:function(){return N(this._current,this.range)},getSubtreeIterator:function(){var b;if(this.isSingleCharacterDataNode){b=this.range.cloneRange();b.collapse()}else{b=
+            new K(G(this.range));var h=this._current,v=h,z=0,M=h,V=H(h);if(j.isAncestorOf(h,this.sc,true)){v=this.sc;z=this.so}if(j.isAncestorOf(h,this.ec,true)){M=this.ec;V=this.eo}fa(b,v,z,M,V)}return new q(b,this.clonePartiallySelectedTextNodes)},detach:function(b){b&&this.range.detach();this.range=this._current=this._next=this._first=this._last=this.sc=this.so=this.ec=this.eo=null}};e.prototype={BAD_BOUNDARYPOINTS_ERR:1,INVALID_NODE_TYPE_ERR:2};e.prototype.toString=function(){return this.message};f.prototype=
+            {_current:null,hasNext:function(){return!!this._next},next:function(){this._current=this._next;this._next=this.nodes[++this._position];return this._current},detach:function(){this._current=this._next=this.nodes=null}};var $=[1,3,4,5,7,8,10],ia=[2,9,11],aa=[1,3,4,5,7,8,10,11],a=[1,3,4,5,7,8],d=k([9,11]),i=k([5,6,10,12]),C=k([6,10,12]),D=["startContainer","startOffset","endContainer","endOffset","collapsed","commonAncestorContainer"],P=0,X=1,ka=2,la=3,ma=0,na=1,oa=2,ja=3;ga(K,fa,function(b){r(b);b.startContainer=
+            b.startOffset=b.endContainer=b.endOffset=null;b.collapsed=b.commonAncestorContainer=null;F(b,"detach",null);b._listeners=null});K.fromRange=function(b){var h=new K(G(b));fa(h,b.startContainer,b.startOffset,b.endContainer,b.endOffset);return h};K.rangeProperties=D;K.RangeIterator=q;K.copyComparisonConstants=da;K.createPrototypeRange=ga;K.inspect=s;K.getRangeDocument=G;K.rangesEqual=function(b,h){return b.startContainer===h.startContainer&&b.startOffset===h.startOffset&&b.endContainer===h.endContainer&&
+            b.endOffset===h.endOffset};K.getEndOffset=H;m.DomRange=K;m.RangeException=e});
+            rangy.createModule("WrappedRange",function(m){function N(l,p,t,x){var B=l.duplicate();B.collapse(t);var s=B.parentElement();y.isAncestorOf(p,s,true)||(s=p);if(!s.canHaveHTML)return new E(s.parentNode,y.getNodeIndex(s));p=y.getDocument(s).createElement("span");var q,e=t?"StartToStart":"StartToEnd";do{s.insertBefore(p,p.previousSibling);B.moveToElementText(p)}while((q=B.compareEndPoints(e,l))>0&&p.previousSibling);e=p.nextSibling;if(q==-1&&e&&y.isCharacterDataNode(e)){B.setEndPoint(t?"EndToStart":"EndToEnd",
+            l);if(/[\r\n]/.test(e.data)){s=B.duplicate();t=s.text.replace(/\r\n/g,"\r").length;for(t=s.moveStart("character",t);s.compareEndPoints("StartToEnd",s)==-1;){t++;s.moveStart("character",1)}}else t=B.text.length;s=new E(e,t)}else{e=(x||!t)&&p.previousSibling;s=(t=(x||t)&&p.nextSibling)&&y.isCharacterDataNode(t)?new E(t,0):e&&y.isCharacterDataNode(e)?new E(e,e.length):new E(s,y.getNodeIndex(p))}p.parentNode.removeChild(p);return s}function G(l,p){var t,x,B=l.offset,s=y.getDocument(l.node),q=s.body.createTextRange(),
+            e=y.isCharacterDataNode(l.node);if(e){t=l.node;x=t.parentNode}else{t=l.node.childNodes;t=B<t.length?t[B]:null;x=l.node}s=s.createElement("span");s.innerHTML="&#feff;";t?x.insertBefore(s,t):x.appendChild(s);q.moveToElementText(s);q.collapse(!p);x.removeChild(s);if(e)q[p?"moveStart":"moveEnd"]("character",B);return q}m.requireModules(["DomUtil","DomRange"]);var F,y=m.dom,E=y.DomPosition,H=m.DomRange;if(m.features.implementsDomRange)(function(){function l(f){for(var k=t.length,u;k--;){u=t[k];f[u]=f.nativeRange[u]}}
+            var p,t=H.rangeProperties,x,B;F=function(f){if(!f)throw Error("Range must be specified");this.nativeRange=f;l(this)};H.createPrototypeRange(F,function(f,k,u,o,r){var A=f.endContainer!==o||f.endOffset!=r;if(f.startContainer!==k||f.startOffset!=u||A){f.setEnd(o,r);f.setStart(k,u)}},function(f){f.nativeRange.detach();f.detached=true;for(var k=t.length,u;k--;){u=t[k];f[u]=null}});p=F.prototype;p.selectNode=function(f){this.nativeRange.selectNode(f);l(this)};p.deleteContents=function(){this.nativeRange.deleteContents();
+            l(this)};p.extractContents=function(){var f=this.nativeRange.extractContents();l(this);return f};p.cloneContents=function(){return this.nativeRange.cloneContents()};p.surroundContents=function(f){this.nativeRange.surroundContents(f);l(this)};p.collapse=function(f){this.nativeRange.collapse(f);l(this)};p.cloneRange=function(){return new F(this.nativeRange.cloneRange())};p.refresh=function(){l(this)};p.toString=function(){return this.nativeRange.toString()};var s=document.createTextNode("test");y.getBody(document).appendChild(s);
+            var q=document.createRange();q.setStart(s,0);q.setEnd(s,0);try{q.setStart(s,1);x=true;p.setStart=function(f,k){this.nativeRange.setStart(f,k);l(this)};p.setEnd=function(f,k){this.nativeRange.setEnd(f,k);l(this)};B=function(f){return function(k){this.nativeRange[f](k);l(this)}}}catch(e){x=false;p.setStart=function(f,k){try{this.nativeRange.setStart(f,k)}catch(u){this.nativeRange.setEnd(f,k);this.nativeRange.setStart(f,k)}l(this)};p.setEnd=function(f,k){try{this.nativeRange.setEnd(f,k)}catch(u){this.nativeRange.setStart(f,
+            k);this.nativeRange.setEnd(f,k)}l(this)};B=function(f,k){return function(u){try{this.nativeRange[f](u)}catch(o){this.nativeRange[k](u);this.nativeRange[f](u)}l(this)}}}p.setStartBefore=B("setStartBefore","setEndBefore");p.setStartAfter=B("setStartAfter","setEndAfter");p.setEndBefore=B("setEndBefore","setStartBefore");p.setEndAfter=B("setEndAfter","setStartAfter");q.selectNodeContents(s);p.selectNodeContents=q.startContainer==s&&q.endContainer==s&&q.startOffset==0&&q.endOffset==s.length?function(f){this.nativeRange.selectNodeContents(f);
+            l(this)}:function(f){this.setStart(f,0);this.setEnd(f,H.getEndOffset(f))};q.selectNodeContents(s);q.setEnd(s,3);x=document.createRange();x.selectNodeContents(s);x.setEnd(s,4);x.setStart(s,2);p.compareBoundaryPoints=q.compareBoundaryPoints(q.START_TO_END,x)==-1&q.compareBoundaryPoints(q.END_TO_START,x)==1?function(f,k){k=k.nativeRange||k;if(f==k.START_TO_END)f=k.END_TO_START;else if(f==k.END_TO_START)f=k.START_TO_END;return this.nativeRange.compareBoundaryPoints(f,k)}:function(f,k){return this.nativeRange.compareBoundaryPoints(f,
+            k.nativeRange||k)};y.getBody(document).removeChild(s);q.detach();x.detach()})();else if(m.features.implementsTextRange){F=function(l){this.textRange=l;this.refresh()};F.prototype=new H(document);F.prototype.refresh=function(){var l,p,t=this.textRange;l=t.parentElement();var x=t.duplicate();x.collapse(true);p=x.parentElement();x=t.duplicate();x.collapse(false);t=x.parentElement();p=p==t?p:y.getCommonAncestor(p,t);p=p==l?p:y.getCommonAncestor(l,p);if(this.textRange.compareEndPoints("StartToEnd",this.textRange)==
+            0)p=l=N(this.textRange,p,true,true);else{l=N(this.textRange,p,true,false);p=N(this.textRange,p,false,false)}this.setStart(l.node,l.offset);this.setEnd(p.node,p.offset)};F.rangeToTextRange=function(l){if(l.collapsed)return G(new E(l.startContainer,l.startOffset),true);else{var p=G(new E(l.startContainer,l.startOffset),true),t=G(new E(l.endContainer,l.endOffset),false);l=y.getDocument(l.startContainer).body.createTextRange();l.setEndPoint("StartToStart",p);l.setEndPoint("EndToEnd",t);return l}};H.copyComparisonConstants(F);
+            var Q=function(){return this}();if(typeof Q.Range=="undefined")Q.Range=F}F.prototype.getName=function(){return"WrappedRange"};m.WrappedRange=F;m.createNativeRange=function(l){l=l||document;if(m.features.implementsDomRange)return l.createRange();else if(m.features.implementsTextRange)return l.body.createTextRange()};m.createRange=function(l){l=l||document;return new F(m.createNativeRange(l))};m.createRangyRange=function(l){l=l||document;return new H(l)};m.createIframeRange=function(l){return m.createRange(y.getIframeDocument(l))};
+            m.createIframeRangyRange=function(l){return m.createRangyRange(y.getIframeDocument(l))};m.addCreateMissingNativeApiListener(function(l){l=l.document;if(typeof l.createRange=="undefined")l.createRange=function(){return m.createRange(this)};l=l=null})});
+            rangy.createModule("WrappedSelection",function(m,N){function G(a){return(a||window).getSelection()}function F(a){return(a||window).document.selection}function y(a,d,i){var C=i?"end":"start";i=i?"start":"end";a.anchorNode=d[C+"Container"];a.anchorOffset=d[C+"Offset"];a.focusNode=d[i+"Container"];a.focusOffset=d[i+"Offset"]}function E(a){a.anchorNode=a.focusNode=null;a.anchorOffset=a.focusOffset=0;a.rangeCount=0;a.isCollapsed=true;a._ranges.length=0}function H(a){var d;if(a instanceof k){d=a._selectionNativeRange;
+            if(!d){d=m.createNativeRange(e.getDocument(a.startContainer));d.setEnd(a.endContainer,a.endOffset);d.setStart(a.startContainer,a.startOffset);a._selectionNativeRange=d;a.attachListener("detach",function(){this._selectionNativeRange=null})}}else if(a instanceof u)d=a.nativeRange;else if(window.Range&&a instanceof Range)d=a;return d}function Q(a){var d=a.getNodes(),i;a:if(!d.length||d[0].nodeType!=1)i=false;else{i=1;for(var C=d.length;i<C;++i)if(!e.isAncestorOf(d[0],d[i])){i=false;break a}i=true}if(!i)throw Error("getSingleElementFromRange: range "+
+            a.inspect()+" did not consist of a single element");return d[0]}function l(a,d){var i=new u(d);a._ranges=[i];y(a,i,false);a.rangeCount=1;a.isCollapsed=i.collapsed}function p(a){a._ranges.length=0;if(a.docSelection.type=="None")E(a);else{var d=a.docSelection.createRange();if(d&&typeof d.text!="undefined")l(a,d);else{a.rangeCount=d.length;for(var i,C=e.getDocument(d.item(0)),D=0;D<a.rangeCount;++D){i=m.createRange(C);i.selectNode(d.item(D));a._ranges.push(i)}a.isCollapsed=a.rangeCount==1&&a._ranges[0].collapsed;
+            y(a,a._ranges[a.rangeCount-1],false)}}}function t(a,d){var i=a.docSelection.createRange(),C=Q(d),D=e.getDocument(i.item(0));D=e.getBody(D).createControlRange();for(var P=0,X=i.length;P<X;++P)D.add(i.item(P));try{D.add(C)}catch(ka){throw Error("addRange(): Element within the specified Range could not be added to control selection (does it have layout?)");}D.select();p(a)}function x(a,d,i){this.nativeSelection=a;this.docSelection=d;this._ranges=[];this.win=i;this.refresh()}function B(a,d){var i=e.getDocument(d[0].startContainer);
+            i=e.getBody(i).createControlRange();for(var C=0,D;C<rangeCount;++C){D=Q(d[C]);try{i.add(D)}catch(P){throw Error("setRanges(): Element within the one of the specified Ranges could not be added to control selection (does it have layout?)");}}i.select();p(a)}function s(a,d){if(a.anchorNode&&e.getDocument(a.anchorNode)!==e.getDocument(d))throw new o("WRONG_DOCUMENT_ERR");}function q(a){var d=[],i=new r(a.anchorNode,a.anchorOffset),C=new r(a.focusNode,a.focusOffset),D=typeof a.getName=="function"?a.getName():
+            "Selection";if(typeof a.rangeCount!="undefined")for(var P=0,X=a.rangeCount;P<X;++P)d[P]=k.inspect(a.getRangeAt(P));return"["+D+"(Ranges: "+d.join(", ")+")(anchor: "+i.inspect()+", focus: "+C.inspect()+"]"}m.requireModules(["DomUtil","DomRange","WrappedRange"]);m.config.checkSelectionRanges=true;var e=m.dom,f=m.util,k=m.DomRange,u=m.WrappedRange,o=m.DOMException,r=e.DomPosition,A,O,I=m.util.isHostMethod(window,"getSelection"),U=m.util.isHostObject(document,"selection");if(I){A=G;m.isSelectionValid=
+            function(){return true}}else if(U){A=F;m.isSelectionValid=function(a){a=(a||window).document;var d=a.selection;return d.type!="None"||e.getDocument(d.createRange().parentElement())==a}}else N.fail("No means of obtaining a selection object");m.getNativeSelection=A;I=A();var Z=m.createNativeRange(document),J=e.getBody(document),W=f.areHostObjects(I,f.areHostProperties(I,["anchorOffset","focusOffset"]));m.features.selectionHasAnchorAndFocus=W;var da=f.isHostMethod(I,"extend");m.features.selectionHasExtend=
+            da;var ga=typeof I.rangeCount=="number";m.features.selectionHasRangeCount=ga;var ea=false,fa=true;f.areHostMethods(I,["addRange","getRangeAt","removeAllRanges"])&&typeof I.rangeCount=="number"&&m.features.implementsDomRange&&function(){var a=document.createElement("iframe");J.appendChild(a);var d=e.getIframeDocument(a);d.open();d.write("<html><head></head><body>12</body></html>");d.close();var i=e.getIframeWindow(a).getSelection(),C=d.documentElement.lastChild.firstChild;d=d.createRange();d.setStart(C,
+            1);d.collapse(true);i.addRange(d);fa=i.rangeCount==1;i.removeAllRanges();var D=d.cloneRange();d.setStart(C,0);D.setEnd(C,2);i.addRange(d);i.addRange(D);ea=i.rangeCount==2;d.detach();D.detach();J.removeChild(a)}();m.features.selectionSupportsMultipleRanges=ea;m.features.collapsedNonEditableSelectionsSupported=fa;var K=false,j;if(J&&f.isHostMethod(J,"createControlRange")){j=J.createControlRange();if(f.areHostProperties(j,["item","add"]))K=true}m.features.implementsControlRange=K;O=W?function(a){return a.anchorNode===
+            a.focusNode&&a.anchorOffset===a.focusOffset}:function(a){return a.rangeCount?a.getRangeAt(a.rangeCount-1).collapsed:false};var Y;if(f.isHostMethod(I,"getRangeAt"))Y=function(a,d){try{return a.getRangeAt(d)}catch(i){return null}};else if(W)Y=function(a){var d=e.getDocument(a.anchorNode);d=m.createRange(d);d.setStart(a.anchorNode,a.anchorOffset);d.setEnd(a.focusNode,a.focusOffset);if(d.collapsed!==this.isCollapsed){d.setStart(a.focusNode,a.focusOffset);d.setEnd(a.anchorNode,a.anchorOffset)}return d};
+            m.getSelection=function(a){a=a||window;var d=a._rangySelection,i=A(a),C=U?F(a):null;if(d){d.nativeSelection=i;d.docSelection=C;d.refresh(a)}else{d=new x(i,C,a);a._rangySelection=d}return d};m.getIframeSelection=function(a){return m.getSelection(e.getIframeWindow(a))};j=x.prototype;if(W&&f.areHostMethods(I,["removeAllRanges","addRange"])){j.removeAllRanges=function(){this.nativeSelection.removeAllRanges();E(this)};var T=function(a,d){var i=k.getRangeDocument(d);i=m.createRange(i);i.collapseToPoint(d.endContainer,
+            d.endOffset);a.nativeSelection.addRange(H(i));a.nativeSelection.extend(d.startContainer,d.startOffset);a.refresh()};j.addRange=ga?function(a,d){if(K&&U&&this.docSelection.type=="Control")t(this,a);else if(d&&da)T(this,a);else{var i;if(ea)i=this.rangeCount;else{this.removeAllRanges();i=0}this.nativeSelection.addRange(H(a));this.rangeCount=this.nativeSelection.rangeCount;if(this.rangeCount==i+1){if(m.config.checkSelectionRanges)if((i=Y(this.nativeSelection,this.rangeCount-1))&&!k.rangesEqual(i,a))a=
+            new u(i);this._ranges[this.rangeCount-1]=a;y(this,a,aa(this.nativeSelection));this.isCollapsed=O(this)}else this.refresh()}}:function(a,d){if(d&&da)T(this,a);else{this.nativeSelection.addRange(H(a));this.refresh()}};j.setRanges=function(a){if(K&&a.length>1)B(this,a);else{this.removeAllRanges();for(var d=0,i=a.length;d<i;++d)this.addRange(a[d])}}}else if(f.isHostMethod(I,"empty")&&f.isHostMethod(Z,"select")&&K&&U){j.removeAllRanges=function(){try{this.docSelection.empty();if(this.docSelection.type!=
+            "None"){var a;if(this.anchorNode)a=e.getDocument(this.anchorNode);else if(this.docSelection.type=="Control"){var d=this.docSelection.createRange();if(d.length)a=e.getDocument(d.item(0)).body.createTextRange()}if(a){a.body.createTextRange().select();this.docSelection.empty()}}}catch(i){}E(this)};j.addRange=function(a){if(this.docSelection.type=="Control")t(this,a);else{u.rangeToTextRange(a).select();this._ranges[0]=a;this.rangeCount=1;this.isCollapsed=this._ranges[0].collapsed;y(this,a,false)}};j.setRanges=
+            function(a){this.removeAllRanges();var d=a.length;if(d>1)B(this,a);else d&&this.addRange(a[0])}}else{N.fail("No means of selecting a Range or TextRange was found");return false}j.getRangeAt=function(a){if(a<0||a>=this.rangeCount)throw new o("INDEX_SIZE_ERR");else return this._ranges[a]};var $;if(f.isHostMethod(I,"getRangeAt")&&typeof I.rangeCount=="number")$=function(a){if(K&&U&&a.docSelection.type=="Control")p(a);else{a._ranges.length=a.rangeCount=a.nativeSelection.rangeCount;if(a.rangeCount){for(var d=
+            0,i=a.rangeCount;d<i;++d)a._ranges[d]=new m.WrappedRange(a.nativeSelection.getRangeAt(d));y(a,a._ranges[a.rangeCount-1],aa(a.nativeSelection));a.isCollapsed=O(a)}else E(a)}};else if(W&&typeof I.isCollapsed=="boolean"&&typeof Z.collapsed=="boolean"&&m.features.implementsDomRange)$=function(a){var d;d=a.nativeSelection;if(d.anchorNode){d=Y(d,0);a._ranges=[d];a.rangeCount=1;d=a.nativeSelection;a.anchorNode=d.anchorNode;a.anchorOffset=d.anchorOffset;a.focusNode=d.focusNode;a.focusOffset=d.focusOffset;
+            a.isCollapsed=O(a)}else E(a)};else if(f.isHostMethod(I,"createRange")&&U)$=function(a){var d;if(m.isSelectionValid(a.win))d=a.docSelection.createRange();else{d=e.getBody(a.win.document).createTextRange();d.collapse(true)}if(a.docSelection.type=="Control")p(a);else d&&typeof d.text!="undefined"?l(a,d):E(a)};else{N.fail("No means of obtaining a Range or TextRange from the user's selection was found");return false}j.refresh=function(a){var d=a?this._ranges.slice(0):null;$(this);if(a){a=d.length;if(a!=
+            this._ranges.length)return false;for(;a--;)if(!k.rangesEqual(d[a],this._ranges[a]))return false;return true}};var ia=function(a,d){var i=a.getAllRanges(),C=false;a.removeAllRanges();for(var D=0,P=i.length;D<P;++D)if(C||d!==i[D])a.addRange(i[D]);else C=true;a.rangeCount||E(a)};j.removeRange=K?function(a){if(this.docSelection.type=="Control"){var d=this.docSelection.createRange();a=Q(a);var i=e.getDocument(d.item(0));i=e.getBody(i).createControlRange();for(var C,D=false,P=0,X=d.length;P<X;++P){C=d.item(P);
+            if(C!==a||D)i.add(d.item(P));else D=true}i.select();p(this)}else ia(this,a)}:function(a){ia(this,a)};var aa;if(W&&m.features.implementsDomRange){aa=function(a){var d=false;if(a.anchorNode)d=e.comparePoints(a.anchorNode,a.anchorOffset,a.focusNode,a.focusOffset)==1;return d};j.isBackwards=function(){return aa(this)}}else aa=j.isBackwards=function(){return false};j.toString=function(){for(var a=[],d=0,i=this.rangeCount;d<i;++d)a[d]=""+this._ranges[d];return a.join("")};j.collapse=function(a,d){s(this,
+            a);var i=m.createRange(e.getDocument(a));i.collapseToPoint(a,d);this.removeAllRanges();this.addRange(i);this.isCollapsed=true};j.collapseToStart=function(){if(this.rangeCount){var a=this._ranges[0];this.collapse(a.startContainer,a.startOffset)}else throw new o("INVALID_STATE_ERR");};j.collapseToEnd=function(){if(this.rangeCount){var a=this._ranges[this.rangeCount-1];this.collapse(a.endContainer,a.endOffset)}else throw new o("INVALID_STATE_ERR");};j.selectAllChildren=function(a){s(this,a);var d=m.createRange(e.getDocument(a));
+            d.selectNodeContents(a);this.removeAllRanges();this.addRange(d)};j.deleteFromDocument=function(){if(K&&U&&this.docSelection.type=="Control"){for(var a=this.docSelection.createRange(),d;a.length;){d=a.item(0);a.remove(d);d.parentNode.removeChild(d)}this.refresh()}else if(this.rangeCount){a=this.getAllRanges();this.removeAllRanges();d=0;for(var i=a.length;d<i;++d)a[d].deleteContents();this.addRange(a[i-1])}};j.getAllRanges=function(){return this._ranges.slice(0)};j.setSingleRange=function(a){this.setRanges([a])};
+            j.containsNode=function(a,d){for(var i=0,C=this._ranges.length;i<C;++i)if(this._ranges[i].containsNode(a,d))return true;return false};j.getName=function(){return"WrappedSelection"};j.inspect=function(){return q(this)};j.detach=function(){this.win=this.anchorNode=this.focusNode=this.win._rangySelection=null};x.inspect=q;m.Selection=x;m.addCreateMissingNativeApiListener(function(a){if(typeof a.getSelection=="undefined")a.getSelection=function(){return m.getSelection(this)};a=null})});
+
+
+            //rangy-cssclassapplier.js
+            /*
+             CSS Class Applier module for Rangy.
+             Adds, removes and toggles CSS classes on Ranges and Selections
+
+             Part of Rangy, a cross-browser JavaScript range and selection library
+             http://code.google.com/p/rangy/
+
+             Depends on Rangy core.
+
+             Copyright 2011, Tim Down
+             Licensed under the MIT license.
+             Version: 1.1.2
+             Build date: 30 May 2011
+            */
+            rangy.createModule("CssClassApplier",function(h){function s(a){return a.replace(/^\s\s*/,"").replace(/\s\s*$/,"")}function n(a,b){return a.className&&RegExp("(?:^|\\s)"+b+"(?:\\s|$)").test(a.className)}function t(a,b){if(a.className)n(a,b)||(a.className+=" "+b);else a.className=b}function o(a){return a.className.split(/\s+/).sort().join(" ")}function u(a,b){return o(a)==o(b)}function v(a){for(var b=a.parentNode;a.hasChildNodes();)b.insertBefore(a.firstChild,a);b.removeChild(a)}function w(a,b){var c=
+            a.cloneRange();c.selectNodeContents(b);var d=c.intersection(a);d=d?d.toString():"";c.detach();return d!=""}function x(a,b){if(a.attributes.length!=b.attributes.length)return false;for(var c=0,d=a.attributes.length,e,f;c<d;++c){e=a.attributes[c];f=e.name;if(f!="class"){f=b.attributes.getNamedItem(f);if(e.specified!=f.specified)return false;if(e.specified&&e.nodeValue!==f.nodeValue)return false}}return true}function y(a){for(var b=0,c=a.attributes.length;b<c;++b)if(a.attributes[b].specified&&a.attributes[b].name!=
+            "class")return true;return false}function z(a,b){if(g.isCharacterDataNode(a))return b==0?!!a.previousSibling:b==a.length?!!a.nextSibling:true;return b>0&&b<a.childNodes.length}function l(a,b,c){var d;if(g.isCharacterDataNode(b))if(c==0){c=g.getNodeIndex(b);b=b.parentNode}else if(c==b.length){c=g.getNodeIndex(b)+1;b=b.parentNode}else d=g.splitDataNode(b,c);if(!d){d=b.cloneNode(false);d.id&&d.removeAttribute("id");for(var e;e=b.childNodes[c];)d.appendChild(e);g.insertAfter(d,b)}return b==a?d:l(a,d.parentNode,
+            g.getNodeIndex(d))}function A(a,b){var c=a.nodeType==3,d=c?a.parentNode:a,e=b?"nextSibling":"previousSibling";if(c){if((c=a[e])&&c.nodeType==3)return c}else if((c=d[e])&&a.tagName==c.tagName&&u(a,c)&&x(a,c))return c[b?"firstChild":"lastChild"];return null}function p(a){this.firstTextNode=(this.isElementMerge=a.nodeType==1)?a.lastChild:a;if(this.isElementMerge)this.sortedCssClasses=o(a);this.textNodes=[this.firstTextNode]}function m(a,b,c){this.cssClass=a;this.normalize=b;this.applyToAnyTagName=false;
+            a=typeof c;if(a=="string")if(c=="*")this.applyToAnyTagName=true;else this.tagNames=s(c.toLowerCase()).split(/\s*,\s*/);else if(a=="object"&&typeof c.length=="number"){this.tagNames=[];a=0;for(b=c.length;a<b;++a)if(c[a]=="*")this.applyToAnyTagName=true;else this.tagNames.push(c[a].toLowerCase())}else this.tagNames=[q]}h.requireModules(["WrappedSelection","WrappedRange"]);var g=h.dom,q="span",B=function(){function a(b,c,d){return c&&d?" ":""}return function(b,c){if(b.className)b.className=b.className.replace(RegExp("(?:^|\\s)"+
+            c+"(?:\\s|$)"),a)}}();p.prototype={doMerge:function(){for(var a=[],b,c,d=0,e=this.textNodes.length;d<e;++d){b=this.textNodes[d];c=b.parentNode;a[d]=b.data;if(d){c.removeChild(b);c.hasChildNodes()||c.parentNode.removeChild(c)}}return this.firstTextNode.data=a=a.join("")},getLength:function(){for(var a=this.textNodes.length,b=0;a--;)b+=this.textNodes[a].length;return b},toString:function(){for(var a=[],b=0,c=this.textNodes.length;b<c;++b)a[b]="'"+this.textNodes[b].data+"'";return"[Merge("+a.join(",")+
+            ")]"}};m.prototype={appliesToElement:function(a){return this.applyToAnyTagName||g.arrayContains(this.tagNames,a.tagName.toLowerCase())},getAncestorWithClass:function(a){for(a=a.parentNode;a;){if(a.nodeType==1&&this.appliesToElement(a)&&n(a,this.cssClass))return a;a=a.parentNode}return false},postApply:function(a,b){for(var c=a[0],d=a[a.length-1],e=[],f,j=c,C=d,D=0,E=d.length,k,F,i=0,r=a.length;i<r;++i){k=a[i];if(F=A(k,false)){if(!f){f=new p(F);e.push(f)}f.textNodes.push(k);if(k===c){j=f.firstTextNode;
+            D=j.length}if(k===d){C=f.firstTextNode;E=f.getLength()}}else f=null}if(c=A(d,true)){if(!f){f=new p(d);e.push(f)}f.textNodes.push(c)}if(e.length){i=0;for(r=e.length;i<r;++i)e[i].doMerge();b.setStart(j,D);b.setEnd(C,E)}},createContainer:function(a){a=a.createElement(q);a.className=this.cssClass;return a},applyToTextNode:function(a){var b=a.parentNode;if(b.childNodes.length==1&&this.appliesToElement(b))t(b,this.cssClass);else{b=this.createContainer(g.getDocument(a));a.parentNode.insertBefore(b,a);b.appendChild(a)}},
+            isRemovable:function(a){return a.tagName.toLowerCase()==q&&s(a.className)==this.cssClass&&!y(a)},undoToTextNode:function(a,b,c){if(!b.containsNode(c)){a=b.cloneRange();a.selectNode(c);if(a.isPointInRange(b.endContainer,b.endOffset)&&z(b.endContainer,b.endOffset)){l(c,b.endContainer,b.endOffset);b.setEndAfter(c)}if(a.isPointInRange(b.startContainer,b.startOffset)&&z(b.startContainer,b.startOffset))c=l(c,b.startContainer,b.startOffset)}this.isRemovable(c)?v(c):B(c,this.cssClass)},applyToRange:function(a){a.splitBoundaries();
+            var b=a.getNodes([3],function(f){return w(a,f)});if(b.length){for(var c,d=0,e=b.length;d<e;++d){c=b[d];this.getAncestorWithClass(c)||this.applyToTextNode(c)}a.setStart(b[0],0);c=b[b.length-1];a.setEnd(c,c.length);this.normalize&&this.postApply(b,a)}},applyToSelection:function(a){a=a||window;a=h.getSelection(a);var b,c=a.getAllRanges();a.removeAllRanges();for(var d=c.length;d--;){b=c[d];this.applyToRange(b);a.addRange(b)}},undoToRange:function(a){a.splitBoundaries();var b=a.getNodes([3]),c,d,e=b[b.length-
+            1];if(b.length){for(var f=0,j=b.length;f<j;++f){c=b[f];(d=this.getAncestorWithClass(c))&&this.undoToTextNode(c,a,d);a.setStart(b[0],0);a.setEnd(e,e.length)}this.normalize&&this.postApply(b,a)}},undoToSelection:function(a){a=a||window;a=h.getSelection(a);var b=a.getAllRanges(),c;a.removeAllRanges();for(var d=0,e=b.length;d<e;++d){c=b[d];this.undoToRange(c);a.addRange(c)}},isAppliedToRange:function(a){for(var b=a.getNodes([3]),c=0,d=b.length;c<d;++c)if(w(a,b[c])&&!this.getAncestorWithClass(b[c]))return false;
+            return true},isAppliedToSelection:function(a){a=a||window;a=h.getSelection(a).getAllRanges();for(var b=a.length;b--;)if(!this.isAppliedToRange(a[b]))return false;return true},toggleRange:function(a){this.isAppliedToRange(a)?this.undoToRange(a):this.applyToRange(a)},toggleSelection:function(a){this.isAppliedToSelection(a)?this.undoToSelection(a):this.applyToSelection(a)},detach:function(){}};m.util={hasClass:n,addClass:t,removeClass:B,hasSameClasses:u,replaceWithOwnChildren:v,elementsHaveSameNonClassAttributes:x,
+            elementHasNonClassAttributes:y,splitNodeAt:l};h.CssClassApplier=m;h.createCssClassApplier=function(a,b,c){return new m(a,b,c)}});
+            
+
+            //rangy-selectionsaverestore.js
+            /*
+             Selection save and restore module for Rangy.
+             Saves and restores user selections using marker invisible elements in the DOM.
+
+             Part of Rangy, a cross-browser JavaScript range and selection library
+             http://code.google.com/p/rangy/
+
+             Depends on Rangy core.
+
+             Copyright 2011, Tim Down
+             Licensed under the MIT license.
+             Version: 1.1.2
+             Build date: 30 May 2011
+            */
+            rangy.createModule("SaveRestore",function(h,m){function n(a,g){var e="selectionBoundary_"+ +new Date+"_"+(""+Math.random()).slice(2),c,f=p.getDocument(a.startContainer),d=a.cloneRange();d.collapse(g);c=f.createElement("span");c.id=e;c.style.lineHeight="0";c.style.display="none";c.appendChild(f.createTextNode(q));d.insertNode(c);d.detach();return c}function o(a,g,e,c){if(a=(a||document).getElementById(e)){g[c?"setStartBefore":"setEndBefore"](a);a.parentNode.removeChild(a)}else m.warn("Marker element has been removed. Cannot restore selection.")}
+            function r(a,g){return g.compareBoundaryPoints(a.START_TO_START,a)}function k(a,g){var e=(a||document).getElementById(g);e&&e.parentNode.removeChild(e)}h.requireModules(["DomUtil","DomRange","WrappedRange"]);var p=h.dom,q="\ufeff";h.saveSelection=function(a){a=a||window;var g=a.document;if(h.isSelectionValid(a)){var e=h.getSelection(a),c=e.getAllRanges(),f=[],d,j;c.sort(r);for(var b=0,i=c.length;b<i;++b){d=c[b];if(d.collapsed){j=n(d,false);f.push({markerId:j.id,collapsed:true})}else{j=n(d,false);
+            d=n(d,true);f[b]={startMarkerId:d.id,endMarkerId:j.id,collapsed:false,backwards:c.length==1&&e.isBackwards()}}}for(b=i-1;b>=0;--b){d=c[b];if(d.collapsed)d.collapseBefore((g||document).getElementById(f[b].markerId));else{d.setEndBefore((g||document).getElementById(f[b].endMarkerId));d.setStartAfter((g||document).getElementById(f[b].startMarkerId))}}e.setRanges(c);return{win:a,doc:g,rangeInfos:f,restored:false}}else m.warn("Cannot save selection. This usually happens when the selection is collapsed and the selection document has lost focus.")};
+            h.restoreSelection=function(a,g){if(!a.restored){for(var e=a.rangeInfos,c=h.getSelection(a.win),f=[],d=e.length,j=d-1,b,i;j>=0;--j){b=e[j];i=h.createRange(a.doc);if(b.collapsed)if(b=(a.doc||document).getElementById(b.markerId)){b.style.display="inline";var l=b.previousSibling;if(l&&l.nodeType==3){b.parentNode.removeChild(b);i.collapseToPoint(l,l.length)}else{i.collapseBefore(b);b.parentNode.removeChild(b)}}else m.warn("Marker element has been removed. Cannot restore selection.");else{o(a.doc,i,b.startMarkerId,
+            true);o(a.doc,i,b.endMarkerId,false)}d==1&&i.normalizeBoundaries();f[j]=i}if(d==1&&g&&h.features.selectionHasExtend&&e[0].backwards){c.removeAllRanges();c.addRange(f[0],true)}else c.setRanges(f);a.restored=true}};h.removeMarkerElement=k;h.removeMarkers=function(a){for(var g=a.rangeInfos,e=0,c=g.length,f;e<c;++e){f=g[e];if(f.collapsed)k(a.doc,f.markerId);else{k(a.doc,f.startMarkerId);k(a.doc,f.endMarkerId)}}}});
+
+
+            //rangy-serializer.js
+            /*
+             Serializer module for Rangy.
+             Serializes Ranges and Selections. An example use would be to store a user's selection on a particular page in a
+             cookie or local storage and restore it on the user's next visit to the same page.
+
+             Part of Rangy, a cross-browser JavaScript range and selection library
+             http://code.google.com/p/rangy/
+
+             Depends on Rangy core.
+
+             Copyright 2011, Tim Down
+             Licensed under the MIT license.
+             Version: 1.1.2
+             Build date: 30 May 2011
+            */
+            rangy.createModule("Serializer",function(h,n){function o(c,a){a=a||[];var b=c.nodeType,e=c.childNodes,d=e.length,f=[b,c.nodeName,d].join(":"),g="",k="";switch(b){case 3:g=c.nodeValue.replace(/</g,"&lt;").replace(/>/g,"&gt;");break;case 8:g="<!--"+c.nodeValue.replace(/</g,"&lt;").replace(/>/g,"&gt;")+"--\>";break;default:g="<"+f+">";k="</>";break}g&&a.push(g);for(b=0;b<d;++b)o(e[b],a);k&&a.push(k);return a}function j(c){c=o(c).join("");return u(c).toString(16)}function l(c,a,b){var e=[],d=c;for(b=
+            b||i.getDocument(c).documentElement;d&&d!=b;){e.push(i.getNodeIndex(d,true));d=d.parentNode}return e.join("/")+":"+a}function m(c,a,b){if(a)b||i.getDocument(a);else{b=b||document;a=b.documentElement}c=c.split(":");a=a;b=c[0]?c[0].split("/"):[];for(var e=b.length,d;e--;){d=parseInt(b[e],10);if(d<a.childNodes.length)a=a.childNodes[parseInt(b[e],10)];else throw n.createError("deserializePosition failed: node "+i.inspectNode(a)+" has no child with index "+d+", "+e);}return new i.DomPosition(a,parseInt(c[1],
+            10))}function p(c,a,b){b=b||h.DomRange.getRangeDocument(c).documentElement;if(!i.isAncestorOf(b,c.commonAncestorContainer,true))throw Error("serializeRange: range is not wholly contained within specified root node");c=l(c.startContainer,c.startOffset,b)+","+l(c.endContainer,c.endOffset,b);a||(c+="{"+j(b)+"}");return c}function q(c,a,b){if(a)b=b||i.getDocument(a);else{b=b||document;a=b.documentElement}c=/^([^,]+),([^,\{]+)({([^}]+)})?$/.exec(c);var e=c[4],d=j(a);if(e&&e!==j(a))throw Error("deserializeRange: checksums of serialized range root node ("+
+            e+") and target root node ("+d+") do not match");e=m(c[1],a,b);a=m(c[2],a,b);b=h.createRange(b);b.setStart(e.node,e.offset);b.setEnd(a.node,a.offset);return b}function r(c,a,b){if(a)b||i.getDocument(a);else{b=b||document;a=b.documentElement}c=/^([^,]+),([^,]+)({([^}]+)})?$/.exec(c)[3];return!c||c===j(a)}function s(c,a,b){c=c||rangy.getSelection();c=c.getAllRanges();for(var e=[],d=0,f=c.length;d<f;++d)e[d]=p(c[d],a,b);return e.join("|")}function t(c,a,b){if(a)b=b||i.getWindow(a);else{b=b||window;a=
+            b.document.documentElement}c=c.split("|");for(var e=h.getSelection(b),d=[],f=0,g=c.length;f<g;++f)d[f]=q(c[f],a,b.document);e.setRanges(d);return e}h.requireModules(["WrappedSelection","WrappedRange"]);if(typeof encodeURIComponent=="undefined"||typeof decodeURIComponent=="undefined")n.fail("Global object is missing encodeURIComponent and/or decodeURIComponent method");var u=function(){var c=null;return function(a){for(var b=[],e=0,d=a.length,f;e<d;++e){f=a.charCodeAt(e);if(f<128)b.push(f);else f<
+            2048?b.push(f>>6|192,f&63|128):b.push(f>>12|224,f>>6&63|128,f&63|128)}a=-1;if(!c){e=[];d=0;for(var g;d<256;++d){g=d;for(f=8;f--;)if((g&1)==1)g=g>>>1^3988292384;else g>>>=1;e[d]=g>>>0}c=e}e=c;d=0;for(f=b.length;d<f;++d){g=(a^b[d])&255;a=a>>>8^e[g]}return(a^-1)>>>0}}(),i=h.dom;h.serializePosition=l;h.deserializePosition=m;h.serializeRange=p;h.deserializeRange=q;h.canDeserializeRange=r;h.serializeSelection=s;h.deserializeSelection=t;h.canDeserializeSelection=function(c,a,b){var e;if(a)e=b?b.document:
+            i.getDocument(a);else{b=b||window;a=b.document.documentElement}c=c.split("|");b=0;for(var d=c.length;b<d;++b)if(!r(c[b],a,e))return false;return true};h.restoreSelectionFromCookie=function(c){c=c||window;var a;a:{a=c.document.cookie.split(/[;,]/);for(var b=0,e=a.length,d;b<e;++b){d=a[b].split("=");if(d[0].replace(/^\s+/,"")=="rangySerializedSelection")if(d=d[1]){a=decodeURIComponent(d.replace(/\s+$/,""));break a}}a=null}a&&t(a,c.doc)};h.saveSelectionCookie=function(c,a){c=c||window;a=typeof a=="object"?
+            a:{};var b=a.expires?";expires="+a.expires.toUTCString():"",e=a.path?";path="+a.path:"",d=a.domain?";domain="+a.domain:"",f=a.secure?";secure":"",g=s(rangy.getSelection(c));c.document.cookie=encodeURIComponent("rangySerializedSelection")+"="+encodeURIComponent(g)+b+e+d+f};h.getElementChecksum=j});
+
+
+            //keep this return here - this is how we pass the rangy object to the rest of the code.
+            //Rangy assumes it to be global, but it's better to keep the pub's namespace clean.   
+            return rangy;
+        };
+        //end function plugin_rangy()
+
+        /** end plugin functions **/        
+    }
+    //end initPlugins()
 
 }
+//end $RFunctions()

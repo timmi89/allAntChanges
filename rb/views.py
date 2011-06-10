@@ -9,6 +9,7 @@ from baseconv import base62
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models import Count
 from api.utils import *
+import random
 
 def widget(request,sn):
     # Widget code is retreived from the server using RBGroup shortname
@@ -77,17 +78,54 @@ def home(request, **kwargs):
         context['user'] = user
     return render_to_response("index.html", context)
 
-def makeCard(page, interactions):
-    data = {}
-    data['page'] = page
-    data['summary'] = getSummary(interactions, page=page)
-    return data
+class Tag:
+    def __init__(self, tag, interactions):
+        self.tag = tag
+        self.interactions = interactions.filter(kind='tag')
+
+        # Randomly pick an interaction to show
+        self.interaction = random.choice(interactions)
+        self.comments = []
+    
+    def getComments(self, interactions):
+        # Get the comments for the randomly selected interaction on this tag
+        self.comments.extend(interactions.filter(parent=self.interaction))
+
+class Card:
+    def __init__(self, page, interactions):
+        self.page = page
+        self.interactions = interactions
+        self.tags = self.makeTags()
+
+    def makeTags(self):
+        tag_interactions = self.interactions.filter(kind='tag')
+        interaction_node_ids = tag_interactions.values_list('interaction_node').distinct()
+        interaction_nodes = InteractionNode.objects.filter(id__in=interaction_node_ids)
+
+        # Make tag objects for each tag on the page
+        tags = [
+            Tag(tag, tag_interactions.filter(interaction_node=tag))
+            for tag in interaction_nodes
+        ]
+
+        # Get comments for each tag - based upon sample interaction
+        [tag.getComments(self.interactions) for tag in tags]
+
+        # Sort tags by number of interactions on page
+        tags = sorted(tags, key=lambda x: len(x.interactions), reverse=True)
+        return tags
 
 def cards(request):
-    pages = Page.objects.all().annotate(interaction_count=Count('interaction'))[:5]
-    interactions = Interaction.objects.filter(page__in=pages,kind='tag').order_by('created')
-    cards = [makeCard(page, interactions) for page in pages]
-    context = {'interactions': interactions, 'cards': cards}
+    # Get interaction set based on filter criteria
+    interactions = Interaction.objects.all()
+
+    # Get set of pages -- interactions ordered by -created
+    page_ids = interactions.values_list('page')[:10]
+    pages = Page.objects.filter(id__in=page_ids)
+    pages = pages.select_related('group')
+
+    cards = [Card(page, interactions.filter(page=page)) for page in pages]
+    context = {'cards': cards}
     return render_to_response("cards.html", context)
 
 def sidebar(request):
