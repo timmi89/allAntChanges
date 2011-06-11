@@ -147,6 +147,7 @@ def deleteInteraction(interaction, user):
             interactions = Interaction.objects.filter(user=user)
             num_interactions = len(interactions)
             tempuser =True
+
         # This will delete an interaction and all of it's children
         try:
             interaction.delete();

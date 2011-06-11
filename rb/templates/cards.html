@@ -12,9 +12,9 @@
       <div class="count">+{{ tag.interactions|length }}</div>
     </td>
     <td class="column2">
-      <div class="who_action">{{ tag.interaction.user.social_user.full_name }}'s reaction to:</div>
-      <div class="content text">{{ tag.interaction.content.body }}</div>
-      {% for comment in tag.comments %}
+      <div class="who_action">{{ tag.content.interaction.user.social_user.full_name }}'s reaction to:</div>
+      <div class="content text">{{ tag.content.interaction.content.body }}</div>
+      {% for comment in tag.content.comments %}
       <h5 class="label small">comments</h5>
       <div class="comment_container">
         <div class="header">
@@ -29,6 +29,9 @@
         </div>
       </div>
     </div>
+    {% endfor %}
+    {% for other_tag in tag.content.other_tags %}
+        {{ other_tag.interactions|length }}{{ other_tag.tag.body }}
     {% endfor %}
     </td>
   </tbody>
