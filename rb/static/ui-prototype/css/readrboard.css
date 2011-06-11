@@ -63,7 +63,7 @@ div.rdr.rdr_actionbar li a {
 
 /*div.rdr.rdr_actionbar li.rdr_icon_about a		 	{ background-position: 0 0; }*/ /*overwritten below to compress width*/
 div.rdr.rdr_actionbar li.rdr_icon_reaction a		{ background-position:-4px -5px; }
-/*div.rdr.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-60px 0; }*/
+div.rdr.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-61px -4px; }
 
 div.rdr.rdr_actionbar a:hover                       { background-color:#e4f0f7;}
 div.rdr.rdr_actionbar li.rdr_icon_about a:hover 	{ background-color:transparent; }
