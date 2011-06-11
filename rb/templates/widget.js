@@ -1928,6 +1928,7 @@ function readrBoard($R){
 
                     //temp hack
                     if( $thisPanel.data('expanded') ){
+                        RDR.rindow.checkHeight( rindow, 0, which );
                     }
                     else{
                         rindow.css('background-position',rindow_bg+'px');
