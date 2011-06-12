@@ -119,7 +119,7 @@ div.rdr_indicator.rdr_image { position:relative; border-bottom:1px solid #ddd; d
     -moz-opacity:0.0;
     -khtml-opacity:0.0;
 }
-div.rdr_img_tags_list { width:auto; display:inline; white-space:nowrap;}
+div.rdr_tags_list { width:auto; display:inline; white-space:nowrap;}
 div.rdr_indicator.rdr_image span.rdr_see_more { font-size:11px; font-weight:normal;}
 /* not needed*/
 /*
@@ -136,7 +136,7 @@ div.rdr.rdr_tooltip {
     padding:5px 0;
     position:absolute;
     text-align:center;
-    left:-50px; /*0.5 tooltip width*/
+    left:-55px; /*0.5 tooltip width*/
     top:-36px;
     width:100px;
     z-index:10000;

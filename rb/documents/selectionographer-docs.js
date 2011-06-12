@@ -81,6 +81,14 @@
 		// works because the 'save' method returns a selState object.
 		$R(window).selog( 'hilite', $R(window).selog( 'save') )
 
+
+// stack
+// hilites the selState range with styled span wraps around the selected text.
+	$(window).selog( 'stack' );
+	
+		//read only access to the selection stack
+		
+
 // ------------------------------------------------------------------------------------------------------------
 
 /* some API Helper Methods*/
