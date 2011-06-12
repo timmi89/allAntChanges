@@ -1705,7 +1705,8 @@ function readrBoard($R){
                 $.each(summary.content_nodes, function(key, val){
                     content.push(val);
                 });
-
+                log('summary')
+                log(summary)
                 function SortByTagCount(a,b) { return b.counts.tags - a.counts.tags; }
                 content.sort(SortByTagCount);
 
@@ -1722,8 +1723,8 @@ function readrBoard($R){
 
                 // ok, get the content associated with this tag!
                 $.each(content, function(idx, node){
-                    // log('node');
-                    // console.dir(node);
+                    log('node');
+                    console.dir(node);
 
                     var tag = tagClone;
 
@@ -1732,7 +1733,10 @@ function readrBoard($R){
 
                     if ( node.top_interactions.tags[ tag.id ] ) {
 
-                        var $contentSet = $('<div class="rdr_contentSet" />'),
+                        node.location = "temp getting more from tyler in a sec";
+                        var content_node_key = ""+ container+ node.location;
+
+                        var $contentSet = $('<div />').addClass('rdr_contentSet').addClass('rdr_'+content_node_key),
                             $header = $('<div class="rdr_contentHeader rdr_leftShadow" />'),
                             $content = $('<div class="rdr_content rdr_leftShadow"><div class="rdr_otherTags"></div></div>');
                         $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+node.counts.tags+')</span> '+tag.name+'</a>' );
@@ -1774,11 +1778,6 @@ function readrBoard($R){
                                     if ( $content.find('div.rdr_otherTags em').length == 0 ) $content.find('div.rdr_otherTags').append( '<em>Other Reactions</em>' );
 
                                     var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+thisTag.count+')</span> '+thisTag.body+'</a>');
-                                    
-                                    log(' $this ')
-                                    log( $this )
-                                    log( rindow )
-                                    log( settings )
 
                                     $this_tag.find('span.rdr_tag_count').click( function() {
                                         RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });
@@ -2288,15 +2287,12 @@ function readrBoard($R){
                         'container': rindow.data('container'),
                         'body': selState.text,
                         'location': selState.serialRange
-                    }    
-                    log('content_node_data');
-                    log(content_node_data);
-                    var content_node = RDR.actions.content_node.make(content_node_data);
+                    };
 
                     var sendData = {
                         "tag" : tag,
                         "hash": container,
-                        "content" : content_node,
+                        "content" : content_node_data,
                         "src_with_path" : src_with_path,
                         "content_type" : params.settings.content_type,
                         "user_id" : RDR.user.user_id,
@@ -2334,7 +2330,10 @@ function readrBoard($R){
                                         });
                                     }
                                 } else {
-
+                                    
+                                    log('content_node_data');
+                                    log(content_node_data);
+                                    var content_node = RDR.actions.content_node.make(content_node_data);
 
                                     if ( tag_li.length == 1 ) {
                                         tag_li.find('div.rdr_leftBox').unbind();
