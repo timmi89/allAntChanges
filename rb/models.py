@@ -95,6 +95,9 @@ class Group(models.Model):
     bookmark = models.ForeignKey(Feature, related_name = 'Bookmark Feature')
     search = models.ForeignKey(Feature, related_name = 'Search Feature')
 
+    # social shiz
+    twitter = models.CharField(max_length=64)
+
     # temporary user settings
     temp_interact = models.IntegerField(default=5)
 

@@ -1243,7 +1243,7 @@ function readrBoard($R){
                     //makes a new one or returns existing one
                     //expects settings with container, body, and range.
 
-                    var content_node_key = settings.hash+"-"+settings.location;
+                    var content_node_key = settings.container+"-"+settings.location;
                     log(content_node_key);
                     var existingNode = RDR.content_nodes[content_node_key];
                     if( typeof existingNode !== 'undefined' ) return existingNode
@@ -1519,6 +1519,26 @@ function readrBoard($R){
                             RDR.actions.indicators.make( hash );
                         }
                     });
+                },
+                make: {
+                    tag_summary: function(){
+                        //later move this code here:
+                        /*
+                        var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);">'+thisTag.body+'</a>');
+                        
+                        var $tagShareButton = $('<span class="rdr_tag_share"></span>').click(function() {
+                            alert(4);
+                        });
+                        
+                        var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
+                            RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });
+                            RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
+                        });
+
+                        $this_tag.append($tagShareButton, $tagCountButton);
+                        $content.find('div.rdr_otherTags').append( $this_tag );
+                        */
+                    }
                 }
             },
             insertContainerIcon: function( hash ) {},
@@ -1705,7 +1725,8 @@ function readrBoard($R){
                 $.each(summary.content_nodes, function(key, val){
                     content.push(val);
                 });
-
+                log('summary')
+                log(summary)
                 function SortByTagCount(a,b) { return b.counts.tags - a.counts.tags; }
                 content.sort(SortByTagCount);
 
@@ -1722,8 +1743,8 @@ function readrBoard($R){
 
                 // ok, get the content associated with this tag!
                 $.each(content, function(idx, node){
-                    // log('node');
-                    // console.dir(node);
+                    log('node');
+                    console.dir(node);
 
                     var tag = tagClone;
 
@@ -1732,10 +1753,23 @@ function readrBoard($R){
 
                     if ( node.top_interactions.tags[ tag.id ] ) {
 
-                        var $contentSet = $('<div class="rdr_contentSet" />'),
+                        node.location = "temp getting more from tyler in a sec";
+                        var content_node_key = ""+ container+ node.location;
+
+                        var $contentSet = $('<div />').addClass('rdr_contentSet').addClass('rdr_'+content_node_key),
                             $header = $('<div class="rdr_contentHeader rdr_leftShadow" />'),
                             $content = $('<div class="rdr_content rdr_leftShadow"><div class="rdr_otherTags"></div></div>');
                         $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+node.counts.tags+')</span> '+tag.name+'</a>' );
+
+                        $header.find('div.rdr_tag_share').click(function() {
+                            // get short uRL call
+                            var content_node_key = $(this).closest('div.rdr_contentSet').data('content_node_key');
+                            RDR.content_node[content_node_key];
+                            log(content_node_key);
+                            log(RDR.content_node[content_node_key]);
+                            // ({  })
+                        });
+
                         $header.find('span.rdr_tag_count').click( function() {
                             RDR.actions.rateSendLite({ element:$(this), tag:tag, rindow:rindow, content:node.body, which:which });
                         });
@@ -1772,13 +1806,26 @@ function readrBoard($R){
                                 var thisTag = otherTags[j];
                                 if ( thisTag.body != tag.name ) {
                                     if ( $content.find('div.rdr_otherTags em').length == 0 ) $content.find('div.rdr_otherTags').append( '<em>Other Reactions</em>' );
-
-                                    var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+thisTag.count+')</span> '+thisTag.body+'</a>');
                                     
-                                    $this_tag.find('span.rdr_tag_count').click( function() {
-                                        RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });
+
+                                    // todo should be able to remove the netx 2 lines
+                                    // var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+thisTag.count+')</span> '+thisTag.body+'</a>');
+                                    // $this_tag.find('span.rdr_tag_count').click( function() {
+
+                                    var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"></a>');
+                                    var $tagShareButton = $('<div class="rdr_tag_share"></div>').click(function() {
+                                        // get short uRL call
+                                        var content_node_key = $(this).closest('div.rdr_contentSet').data('content_node_key');
+                                        RDR.content_node[content_node_key];
+                                        log(content_node_key);
+                                        log(RDR.content_node[content_node_key]);
+                                        // ({  })
+                                    });
+                                    var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
                                         RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
                                     });
+
+                                    $this_tag.append($tagShareButton, $tagCountButton, thisTag.body);
                                     $content.find('div.rdr_otherTags').append( $this_tag );
                                 }
                             }
@@ -1791,6 +1838,17 @@ function readrBoard($R){
                         // create the Share tooltips
                         $contentSet.find( 'div.rdr_tag_share' ).mouseenter( 
                             function() {
+                                log('let us find the content_node_key-----------------------');
+                                var content_node_key = $(this).closest('div.rdr_contentSet').data('content_node_key');
+                                log(1);
+                                log('length: '+$(this).closest('div.rdr_contentSet').length);
+                                // RDR.content_node[content_node_key];
+                                log(2);
+                                log(content_node_key);
+                                log(3);
+                                log(RDR.content_node[content_node_key]);
+                                log(4);
+
                                 var $this = $(this),
                                     $shareTip = $( '<div class="rdr rdr_share_container"><div class="rdr rdr_tooltip rdr_top"><div class="rdr rdr_tooltip-content">Share this reaction<br/>'+
                                                     '<img src="/static/images/social-icons-loose/social-icon-facebook.png" class="rdr_sns no-rdr"/>'+
@@ -1870,9 +1928,22 @@ function readrBoard($R){
                             var user_name = ( this_comment.user.first_name == "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
                             $commentBy.html( '<img src="'+user_image_url+'" /> ' + user_name );
                             $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
-                            $comment.append( '<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">+1</span></a>' );
 
+                            var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);">'+thisTag.body+'</a>');
+                            
+                            var $tagShareButton = $('<span class="rdr_tag_share"></span>').click(function() {
+                                alert(4);
+                            });
+                            
+                            var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
+                                RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });
+                                RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
+                            });
+
+                            $this_tag.append($tagShareButton, $tagCountButton);
+                            $content.find('div.rdr_otherTags').append( $this_tag );
                             $commentSet.append( $commentBy, $comment );
+
                         }
 
                     }
@@ -2283,15 +2354,12 @@ function readrBoard($R){
                         'container': rindow.data('container'),
                         'body': selState.text,
                         'location': selState.serialRange
-                    }    
-                    log('content_node_data');
-                    log(content_node_data);
-                    var content_node = RDR.actions.content_node.make(content_node_data);
+                    };
 
                     var sendData = {
                         "tag" : tag,
                         "hash": container,
-                        "content" : content_node,
+                        "content" : content_node_data,
                         "src_with_path" : src_with_path,
                         "content_type" : params.settings.content_type,
                         "user_id" : RDR.user.user_id,
@@ -2329,7 +2397,10 @@ function readrBoard($R){
                                         });
                                     }
                                 } else {
-
+                                    
+                                    log('content_node_data');
+                                    log(content_node_data);
+                                    var content_node = RDR.actions.content_node.make(content_node_data);
 
                                     if ( tag_li.length == 1 ) {
                                         tag_li.find('div.rdr_leftBox').unbind();
@@ -2440,9 +2511,6 @@ function readrBoard($R){
                 });
             },
             shareGetLink: function(args) {
-                // optional loader.  it's a pacman pic.
-                args.tag.find('div.rdr_leftBox').html('<img src="'+RDR_rootPath+'/static/images/loader.gif" style="margin:6px 0 0 5px" />');
-    
                 
                 //example:
                 //tag:{name, id}, rindow:rindow, settings:settings, callback: 
