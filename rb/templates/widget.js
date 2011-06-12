@@ -6,7 +6,7 @@ $RDR, //our global $RDR object (jquerified RDR object for attaching data and que
 $R = {}, //init var: our clone of jQuery
 client$ = {}, //init var: clients copy of jQuery
 RDR_rootPath = "http://localhost:8080"; //todo: when we get our hosting up change to readrboard.com or our CDN.
-
+var xx;
 var demoRindow;
 
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
@@ -24,7 +24,13 @@ function readrBoard($R){
     RDR = {
         summaries:{},
         current: {},
-        content_nodes: {},
+        content_nodes: {
+            //template: keep commented out
+            /*
+            body:"",
+            location: <range>
+            */
+        },
         containers:{},
         groupPermData: {
             group_id : "{{ group_id }}",  //make group_id a string partly to make my IDE happy - getting sent as ajax anyway
@@ -135,7 +141,7 @@ function readrBoard($R){
 				// for now, any window closes all tooltips
                 //merge options and defaults
                 var settings = $.extend({}, this.defaults, options);
-				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
+				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable');
 				if ( $new_rindow.length == 0 ) { // there's no rewritable window available, so make one
 					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable" ></div>');
                     if ( settings.id ) {
@@ -152,6 +158,8 @@ function readrBoard($R){
                         $('body').append( $new_rindow );
                     }
 				}
+
+                $new_rindow.data(settings);// jquery obj of the rewritable window
 
                 if ( options.columns == true ) $new_rindow.addClass('rdr_columns');
 
@@ -1116,6 +1124,24 @@ function readrBoard($R){
                     }
                 });
             },
+            content_node: {
+                make: function(settings){
+                    //makes a new one or returns existing one
+                    //expects settings with container, body, and range.
+
+                    var content_node_key = settings.hash+"-"+settings.range;
+                    var existingNode = RDR.content_nodes[content_node_key];
+                    if( typeof existingNode !== 'undefined' ) return existingNode
+                    //else
+                    var content_node = {
+                        'container': settings.hash,
+                        'body': settings.content,
+                        'location': settings.location
+                    }
+                    RDR.content_nodes[content_node_key] = content_node;
+                    return content_node;
+                }
+            },
             indicators: {
                 show: function(){
                     //fade in indicators
@@ -1123,6 +1149,20 @@ function readrBoard($R){
                         'opacity':'0',
                         'display':'inline'
                     }).fadeTo('300', '0.4');
+                },
+                update: function(hash, diff){
+                    var indicator = $('#rdr_indicator_'+hash),
+                    indicator_details = $('#rdr_indicator_details_'+hash);
+
+                    var altSumm = RDR.summaries[hash];
+                    var summary = indicator.data('summary');
+
+                    
+                    $.each( diff, function(key, val){
+                    });
+                    
+                    log(indicator)
+                    log(indicator_details)
                 },
                 make: function(hash){
                     //kind is optional - defaults to text
@@ -1173,31 +1213,8 @@ function readrBoard($R){
                             '<span class="rdr_count">'+ total +' reactions: </span>'
                         );
 
-                        $tagList = $('<div class="rdr_img_tags_list"></div>');  // absolute so that we can calculate content width on the fly
-                        $indicator.append($tagList);
-
-                        $this_img.after( $indicator );
-
-                        var tagListMaxWidth = $this_img.width()-100; //subtract a bit of a margin
-                        var count = 0;
-                        $.each( summary.top_interactions.tags, function(hash, tag){
-                            if(count == null) return; //used as a break statement
-                            var prefix = count ? ", " : "", //don't include the first time
-                            $tag = $('<strong/>').append(tag.body),
-                            $count = $('<em/>').append( ' ('+tag.count+')' ),
-                            $span = $('<span />').append( prefix, $tag, $count);
-                            
-                            $tagList.append( $span );
-                            
-                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                            if ( $tagList.width() > tagListMaxWidth ) {
-                                $tagList.children().last().html('...').addClass('rdr_see_more');
-                                count = null;
-                            }
-                            count ++;
-                        })
-
-                        $indicator.data({ 'which':hash, 'imageData':imageData })//chain
+                        summary.indicator = $indicator;
+                        $indicator.data({ 'which':hash, 'imageData':imageData, 'summary':summary })//chain
                         .click( function() {
                             RDR.actions.viewContainerReactions( {icon:$indicator, kind:"image"} );
                             return false;
@@ -1211,11 +1228,38 @@ function readrBoard($R){
                             }
                         );
                         $indicator.hide();
+
+                        $tagList = $('<div class="rdr_tags_list"></div>');  // absolute so that we can calculate content width on the fly
+                        $indicator.append($tagList);
+
+                        $this_img.after( $indicator );
+
+                        var tagListMaxWidth = $this_img.width()-100; //subtract a bit of a margin
+                        var count = 0;
+                        $.each( summary.top_interactions.tags, function(hash, tag){
+                            if(count == null) return; //used as a break statement
+                            var prefix = count ? ", " : "", //don't include the first time
+                            $tag = $('<strong />').addClass("rdr_stats_body").append(tag.body),
+                            $count = $('<em/>').addClass("rdr_stats_count").append( ' ('+tag.count+')' ),
+                            $span = $('<span />').addClass("rdr_stats").append( prefix, $tag, $count);
+                            
+                            $tagList.append( $span );
+                            
+                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
+                            if ( $tagList.width() > tagListMaxWidth ) {
+                                $tagList.children().last().html('...').addClass('rdr_see_more');
+                                count = null;
+                            }
+                            count ++;
+                        });
+
                         return;
                     }   
 
+                    //todo: is this a problem to use IDS here even when this is an el that we make?
                     $indicator = $('<div id="rdr_indicator_' +hash+ '" class="rdr_indicator" />').hide().appendTo($container);
-
+                    log(summary);
+                    summary.indicator = $('rdr_in');
                     $indicator.append(
                         '<img src="'+RDR_rootPath+'/static/images/blank.png" class="no-rdr" />',
                         '<span class="rdr_count">'+ total +'</span>'
@@ -1258,7 +1302,7 @@ function readrBoard($R){
                         '<div class="rdr_statsClone" />',
                         '<span class="rdr_details"> reactions: </span>'
                     ).appendTo('#rdr_indicator_details_wrapper');                                        
-                    $tagList = $('<div class="rdr_img_tags_list"></div>').appendTo( $indicator_details );
+                    $tagList = $('<div class="rdr_tags_list"></div>').appendTo( $indicator_details );
                     
                     var tagListMaxWidth = 200;
 
@@ -1341,6 +1385,8 @@ function readrBoard($R){
                         };
                     };
 
+                    log('info.tags')
+                    log(info.tags)
                     info.tags.sort(SortByTagCount);
                     RDR.content_nodes[ hash ].info = info;
                     //todo: consider showing just tags here and simplifying
@@ -1360,7 +1406,6 @@ function readrBoard($R){
             },
             insertContainerIcon: function( hash ) {},
             viewContainerReactions: function( args ) {
-
                 var icon = args.icon,
                     which = args.icon.data('which'),
                     kind = args.kind,
@@ -1385,6 +1430,8 @@ function readrBoard($R){
                     success: function(response) {
 
                         var content_nodes = response.data;
+                        log('/api/summary/container/content/')
+                        log(content_nodes)
                         //todo: make this generic interactions instead of just tags
                         //summary.interactions.tags = 
                         
@@ -1610,7 +1657,14 @@ function readrBoard($R){
                                     if ( $content.find('div.rdr_otherTags em').length == 0 ) $content.find('div.rdr_otherTags').append( '<em>Other Reactions</em>' );
 
                                     var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+thisTag.count+')</span> '+thisTag.body+'</a>');
+                                    
+                                    log(' $this ')
+                                    log( $this )
+                                    log( rindow )
+                                    log( settings )
+
                                     $this_tag.find('span.rdr_tag_count').click( function() {
+                                        RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });
                                         RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
                                     });
                                     $content.find('div.rdr_otherTags').append( $this_tag );
@@ -1725,7 +1779,16 @@ function readrBoard($R){
                 RDR.actions.panel.expand("whyPanel", rindow);
             },
 			sentimentBox: function(settings) {
-                
+                //settings:
+                /*
+                {
+                    container,   
+                    content,
+                    content_type,
+                    coords
+                }
+                */
+
                 var $hostNode = $('.rdr-'+settings.container);
                 
                 // draw the window over the actionbar
@@ -1763,7 +1826,6 @@ function readrBoard($R){
                         }
                     }
 
-                    var kind = "text";
                 } else {
                     var kind = "image";
                 }
@@ -1774,7 +1836,11 @@ function readrBoard($R){
 					pnlWidth:200,
                     columns:true,
 					ignoreWindowEdges:"bl",
-					noHeader:true
+					noHeader:true,
+                    container: settings.container,
+                    content: settings.content,
+                    content_type: settings.content_type,
+                    selog_state: newSel
                 });
 
                 // TODO this is used to constrain the initial width of this rindow
@@ -1886,6 +1952,13 @@ function readrBoard($R){
                             // $whyPanel.find('.rdr_body').html('');
 
                             // show a loader...
+/*
+                            log('tag');
+                            log($this);
+                            log(rindow);
+                            log(settings);
+                            log(rindow);
+*/
                             RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });//end rateSend
                             // }
                         }
@@ -2064,10 +2137,24 @@ function readrBoard($R){
                         tag = params.tag.data('tag');
 
 
+                    //save content node
+                    log('rindow');
+                    log(rindow);
+                    log(rindow.data('selog_state'));
+                    var selState = rindow.data('selog_state');
+ 
+                    var content_node_data = {
+                        'container': rindow.container,
+                        'body': selState.text,
+                        'location': selState.serialRange
+                    }    
+                    
+                    var content_node = RDR.actions.content_node.make(content_node_data);
+
                     var sendData = {
                         "tag" : tag,
                         "hash": container,
-                        "content" : content,
+                        "content" : content_node,
                         "src_with_path" : src_with_path,
                         "content_type" : params.settings.content_type,
                         "user_id" : RDR.user.user_id,
@@ -2075,6 +2162,7 @@ function readrBoard($R){
                         "group_id" : RDR.groupPermData.group_id,
                         "page_id" : RDR.page.id
                     };
+
 
                     if ( !tag_li.hasClass('rdr_tagged') ) {
                         // send the data!
@@ -2104,6 +2192,8 @@ function readrBoard($R){
                                         });
                                     }
                                 } else {
+
+
                                     if ( tag_li.length == 1 ) {
                                         tag_li.find('div.rdr_leftBox').unbind();
                                         tag_li.find('div.rdr_leftBox').click( function(e) {
@@ -2149,6 +2239,7 @@ function readrBoard($R){
                 RDR.session.getUser( args, function( params ) {
                     // get the text that was highlighted
                     var content = $.trim( params.content );
+
                     var container = $.trim( params.which );
 
                     var rindow = params.rindow,
@@ -2215,8 +2306,9 @@ function readrBoard($R){
                 if ( args.kind == "tag" ) {
                     var rindow = args.rindow,
                         hash = args.hash,
-                        content = args.content
-                        tag = args.tag;
+                        content = args.content,
+                        tag = args.tag,
+                        range = args.range;
 
                     if ( args.element ) {
                         var element_text = args.element.parent().text(); 
@@ -3266,6 +3358,10 @@ function $RFunctions($R){
                         return ret;
                     });
                 },
+                stack: function(){
+                   return _selStateStack;
+                },
+                //prob wont use this
                 data: function(name){
                    return _data[name];
                 }
@@ -3393,6 +3489,7 @@ function $RFunctions($R){
                     return range;
                 }
             },
+            //prob won't use this.
             _data = {
                 stack: _selStateStack
             };
