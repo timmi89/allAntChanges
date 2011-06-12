@@ -108,23 +108,24 @@ class ShareHandler(InteractionHandler):
 
         # Create an interaction
         if interaction_id:
+            print "here"
             try:
                 parent = Interaction.objects.get(id=interaction_id)
             except Interaction.DoesNotExist:
                 raise JSONException("Parent interaction did not exist!")
+
         try:
-            print page, container, content, user, 'shr', inode, group, parent
-            interaction = createInteraction(page, container, content, user, 'shr', inode, group, parent)
+            interaction = createInteraction(page, container, content, user, 'shr', inode, group, parent)['interaction']
         except:
             raise JSONException(u"Error creating interaction")
 
         # Create a Link
         try:
-            link = Link.create(interaction)
+            link = Link.objects.get_or_create(interaction=interaction)[0]
         except:
             raise JSONException(u"Error creating link")
 
-        return HttpResponse(link.to_base62())
+        return HttpResponse('http://readr.local:8080/s/' + link.to_base62())
 
 
 class CommentHandler(InteractionHandler):
@@ -170,7 +171,7 @@ class TagHandler(InteractionHandler):
             elif isinstance(tag, int):
                 node = InteractionNode.objects.get(id=tag)
                 new = createInteraction(page, container, content, user, 'tag', node, group)
-            return new
+            return new.id
         else:
             raise JSONException(u"No tag provided to tag handler")
 
