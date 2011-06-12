@@ -2544,18 +2544,18 @@ function readrBoard($R){
                     // log(rindow.data('selog_state'));
                     // var selState = rindow.data('selog_state');
  
-                    // var content_node_data = {
-                    //     'container': rindow.container,
-                    //     'body': content_node_info.content,
-                    //     'location': content_node_info.location
-                    // }    
+                    var content_node_data = {
+                        'container': rindow.container,
+                        'body': content_node_info.content,
+                        'location': content_node_info.location
+                    }    
                     // console.dir(content_node_data);
-                    // var content_node = RDR.actions.content_node.make(content_node_data);
+                    var content_node = RDR.actions.content_node.make(content_node_data);
 
                     var sendData = {
                         "tag" : tag,
                         "hash": content_node_info.hash,
-                        "content" : content_node_info.content,
+                        "content" : content_node,
                         "content_type" : content_node_info.content_type,
                         "user_id" : parseInt( RDR.user.user_id ),
                         "readr_token" : RDR.user.readr_token,
@@ -2623,7 +2623,7 @@ log('attempting to get short url');
                     break;
 
                     case "twitter":
-                        window.open('http://twitter.com/intent/tweet?url='+args.short_url+'&via='+RDR.group.twitter+'&text=encode('+args.reaction+'": +"'+escape(args.content)+')',"readr_share_tw","menubar=1,resizable=1,width=626,height=436");
+                        window.open('http://twitter.com/intent/tweet?url='+args.short_url+'&via='+RDR.group.twitter+'&text='+escape(args.reaction)+': +"'+escape(args.content)+'"',"readr_share_tw","menubar=1,resizable=1,width=626,height=436");
                     break;
 
                     case "tumblr":
