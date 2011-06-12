@@ -6,7 +6,6 @@ $RDR, //our global $RDR object (jquerified RDR object for attaching data and que
 $R = {}, //init var: our clone of jQuery
 client$ = {}, //init var: clients copy of jQuery
 RDR_rootPath = "http://localhost:8080"; //todo: when we get our hosting up change to readrboard.com or our CDN.
-var xx;
 var demoRindow;
 
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
@@ -167,7 +166,8 @@ function readrBoard($R){
                     $new_rindow.html('');
                     $new_rindow.append( '<div class="rdr_close">x</div><h1></h1><div class="rdr rdr_contentSpace"></div>' );
                     $new_rindow.find('div.rdr_close').click( function() {
-                        $(this).parents('div.rdr.rdr_window').remove();
+                        //needed to change this to add triggers
+                        RDR.rindow.close( $(this).parents('div.rdr.rdr_window') );
                         return false; //make sure rindow for <a><img /></a> doesn't activate link
                     });
 					
@@ -227,8 +227,22 @@ function readrBoard($R){
 
                 return $new_rindow;
 			},
+            remove: function(){
+                this.remove
+            },
+            close: function( $rindows ) {
+                $rindows.each(function(idx,rindow){
+                    var selog_state = $(rindow).data('selog_state');
+                    //image rindows have no selog_state
+                    if ( typeof selog_state !== 'undefined' ){
+                        $().selog('hilite', selog_state, 'off');
+                    }
+                    $(rindow).remove();
+                });
+            },
 			closeAll: function() {
-				$('div.rdr.rdr_window').remove();
+                var $allRindows = $('div.rdr.rdr_window');
+				RDR.rindow.close( $allRindows );
 			}
 		},
 		actionbar: {
@@ -1094,16 +1108,6 @@ function readrBoard($R){
 
                 $(document).bind('mouseup.rdr', this.startSelect );
 
-                //add escape keypress event to document to close all rindows
-                $(document).bind('keyup.rdr', function(event) {
-                    if (event.keyCode == '27') { //esc
-                        RDR.rindow.closeAll();
-                        RDR.actionbar.closeAll();
-                        //todo: temp - control this better;
-                        $('.rdr_clone').remove()
-                    }
-                    //todo - consider unifying style of close vs closeAll.  Should any of these components 'own' the others?  IE. should tooltips belong to the actionbar?
-                });
                 $(document).bind('dblclick.rdr',function(event) {
                     var $mouse_target = $(event.target);                                
 
@@ -1111,6 +1115,13 @@ function readrBoard($R){
                         RDR.rindow.closeAll();
                     }
 
+                });
+
+                //bind an escape keypress to clear it.
+                $(document).bind('keyup.rdr', function(event) {
+                    if (event.keyCode == '27') { //esc
+                        RDR.rindow.closeAll();
+                    }
                 });
 
                 this.hashNodes();
@@ -1140,9 +1151,13 @@ function readrBoard($R){
                 //todo: implement black list
                 var $imgNodes = $( RDR.group.img_selector ).not('.rdr-hashed');//.not('.no-rdr'); //todo put back
 
+                //todo: make this body get picked up later.
                 $imgNodes.each( function() {
-                    var body = $(this).attr('src');
-                    $(this).data('body',body);
+                    //var body = $(this).attr('src');
+                    var body = this.src;
+                    $(this).data({
+                        'body':body
+                    });
                 });
 
                 $nodes = $textNodes.add($imgNodes);
@@ -1161,7 +1176,6 @@ function readrBoard($R){
                         body:body,
                         kind:kind
                     };
-                
                     // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
                     // this makes it easy to find on the page later
                     $(this).addClass( 'rdr-' + hash ).addClass('rdr-hashed');
@@ -2296,8 +2310,7 @@ function readrBoard($R){
             rateSend: function(args) {
                 // optional loader.  it's a pacman pic.
                 args.tag.find('div.rdr_leftBox').html('<img src="'+RDR_rootPath+'/static/images/loader.gif" style="margin:6px 0 0 5px" />');
-    
-                
+        
                 //example:
                 //tag:{name, id}, rindow:rindow, settings:settings, callback: 
                 
@@ -2309,8 +2322,7 @@ function readrBoard($R){
                 RDR.session.getUser( args, function( params ) {
                     // get the text that was highlighted
                     var content_type = params.settings.content_type;
-                    log('content_type')
-                    log(content_type)
+                    
                     
                     var rindow = params.rindow,
                         tag_li = params.tag,
@@ -2334,8 +2346,7 @@ function readrBoard($R){
 
                         //save content node
                         var selState = rindow.data('selog_state') || null;
-                        log('rindow');
-     
+                        
                         content_node_data = {
                             'container': rindow.data('container'),
                             'body': selState.text,
@@ -2824,7 +2835,8 @@ function readrBoard($R){
                 if ( !$mouse_target.hasClass('rdr') && $mouse_target.parents('div.rdr').length == 0 ) {
 
                     // closes undragged windows
-                    $('div.rdr.rdr_window.rdr.rdr_rewritable').remove();
+                    //i need to remove this way (for now at least) so that I can bind an event to the remove event (thanks ie.)
+                    RDR.rindow.close( $('div.rdr.rdr_window.rdr.rdr_rewritable') );
 
                     //destroy all other actionbars
                     RDR.actionbar.closeAll();
@@ -3782,7 +3794,7 @@ function $RFunctions($R){
             
                 //use a unique indexed version of style to uniquely identify spans
                 var uniqueClass = styleClass + "_" + selState.idx;
-                methods.clear();
+                //methods.clear();
                 hiliter = rangy.createCssClassApplier( uniqueClass, true ); //see rangy docs for details
                 hiliter['class'] = uniqueClass;
                 hiliter['get$start'] = function(){
@@ -3807,7 +3819,7 @@ function $RFunctions($R){
                 styleClass = selState.styleName,
                 hiliter = selState.hiliter,
                 isActive = hiliter['isActive']();
-                methods.clear();
+                //methods.clear();
 
                 if( !isActive && (switchOnOffToggle === "on" || switchOnOffToggle === "toggle" )){
                     //turn on
@@ -3817,27 +3829,10 @@ function $RFunctions($R){
                     //apply css classes to start and end so we can style those specially
                     hiliter['get$start']().addClass(styleClass+'_start');
                     hiliter['get$end']().addClass(styleClass+'_end');
+
+                    //clear the selection
+                    methods.clear();
                     
-                    //bind an escape keypress to clear it.
-                    //todo: for a real public API, this should be an option, or passed in function or something
-                    $(document).bind('keyup.rdr', function(event) {
-                        //todo: merge all esc key events (use an array of functions that we can just dequeue?)
-                        if (event.keyCode == '27') { //esc
-                            _hiliteSwitch(selState, 'off');
-                            //remove the binding after it's been called.
-                            $(document).unbind('keyup.rdr', arguments.callee);
-                        }
-                    });
-
-                    $(document).bind('dblclick.rdr', function(event) {
-                        var $mouse_target = $(event.target);                                
-
-                        if ( !$mouse_target.parents().hasClass('rdr')) {
-                            _hiliteSwitch(selState, 'off');
-                            $(document).unbind('dblclick.rdr', arguments.callee);
-                        }
-                    });
-
                 }else if( isActive && (switchOnOffToggle === "off" || switchOnOffToggle === "toggle" )){
                     //turn off
                     log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
