@@ -1097,9 +1097,9 @@ function readrBoard($R){
                     //todo - consider unifying style of close vs closeAll.  Should any of these components 'own' the others?  IE. should tooltips belong to the actionbar?
                 });
                 $(document).bind('dblclick.rdr',function(event) {
-                    var mouse_target = $(event.target);                                
+                    var $mouse_target = $(event.target);                                
 
-                    if ( !$(mouse_target).parents().hasClass('rdr')) {
+                    if ( !$mouse_target.parents().hasClass('rdr')) {
                         RDR.rindow.closeAll();
                     }
 
@@ -1685,7 +1685,7 @@ function readrBoard($R){
                         var $contentSet = $('<div class="rdr_contentSet" />'),
                             $header = $('<div class="rdr_contentHeader rdr_leftShadow" />'),
                             $content = $('<div class="rdr_content rdr_leftShadow"><div class="rdr_otherTags"></div></div>');
-                        $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+node.counts.tags+')</span> '+tag.name+'</a>' );
+                        $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+node.counts.tags+')</span> '+tag.name+'</a>' );
                         $header.find('span.rdr_tag_count').click( function() {
                             RDR.actions.rateSendLite({ element:$(this), tag:tag, rindow:rindow, content:node.body, which:which });
                         });
@@ -1723,7 +1723,7 @@ function readrBoard($R){
                                 if ( thisTag.body != tag.name ) {
                                     if ( $content.find('div.rdr_otherTags em').length == 0 ) $content.find('div.rdr_otherTags').append( '<em>Other Reactions</em>' );
 
-                                    var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+thisTag.count+')</span> '+thisTag.body+'</a>');
+                                    var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+thisTag.count+')</span> '+thisTag.body+'</a>');
                                     $this_tag.find('span.rdr_tag_count').click( function() {
                                         RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
                                     });
@@ -1735,6 +1735,25 @@ function readrBoard($R){
                         $contentSet.append( $header, $content );
 
                         rindow.find('div.rdr_contentPanel div.rdr_body').append( $contentSet );
+
+                        // create the Share tooltips
+                        $contentSet.find( 'div.rdr_tag_share' ).hover( 
+                            function() {
+                                var $this = $(this),
+                                    $shareTip = $( '<div class="rdr rdr_share_container"><div class="rdr rdr_tooltip rdr_top"><div class="rdr rdr_tooltip-content">Share me and stuff</div><div class="rdr rdr_tooltip-arrow-border" /><div class="rdr rdr_tooltip-arrow" /><div class="rdr_tag_share" /></div></div>' );
+                                var share_offsets = $this.offset(),
+                                    rindow_offsets = rindow.offset();
+                                
+                                $shareTip.css('top', (share_offsets.top-rindow_offsets.top) + "px").css('left', (share_offsets.left-rindow_offsets.left-5) + "px" );
+
+                                rindow.append( $shareTip );
+                                $shareTip.bind('mouseleave.rdr', function(e) {
+                                    $(this).remove();
+                                });
+                            },
+                            function() {}
+                        );
+
                     }
                 });
 
@@ -1794,7 +1813,7 @@ function readrBoard($R){
                             var user_name = ( this_comment.user.first_name == "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
                             $commentBy.html( '<img src="'+user_image_url+'" /> ' + user_name );
                             $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
-                            $comment.append( '<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">+1</span></a>' );
+                            $comment.append( '<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">+1</span></a>' );
 
                             $commentSet.append( $commentBy, $comment );
                         }
@@ -2648,14 +2667,14 @@ function readrBoard($R){
             },
             startSelect: function(e) {
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
-                var mouse_target = $(e.target),
+                var $mouse_target = $(e.target),
 				selection = {};
 								
                 //ec: temp blacklist filter
-                if( $(mouse_target).parents().hasClass('rdr_blacklist')) return false;				
+                if( $mouse_target.parents().hasClass('rdr_blacklist')) return false;				
 
                 // make sure it's not selecting inside the RDR windows.
-                if ( !mouse_target.hasClass('rdr') && mouse_target.parents('div.rdr').length == 0 ) {
+                if ( !$mouse_target.hasClass('rdr') && $mouse_target.parents('div.rdr').length == 0 ) {
 
                     // closes undragged windows
                     $('div.rdr.rdr_window.rdr.rdr_rewritable').remove();
@@ -2700,10 +2719,10 @@ function readrBoard($R){
 
 							// is this inside a commentable-container?
 							selection.container = "";
-							if ( mouse_target.hasClass('rdr-hashed') ) {
-								selection.container = mouse_target.data('hash');
-                            } else if ( mouse_target.parents('.rdr-hashed:first').length == 1 ) {
-                                selection.container = mouse_target.parents('.rdr-hashed:first').data('hash');
+							if ( $mouse_target.hasClass('rdr-hashed') ) {
+								selection.container = $mouse_target.data('hash');
+                            } else if ( $mouse_target.parents('.rdr-hashed:first').length == 1 ) {
+                                selection.container = $mouse_target.parents('.rdr-hashed:first').data('hash');
 							}
 
                             // strip newlines and tabs -- and then the doublespaces that result
@@ -3659,9 +3678,9 @@ function $RFunctions($R){
                     });
 
                     $(document).bind('dblclick.rdr', function(event) {
-                        var mouse_target = $(event.target);                                
+                        var $mouse_target = $(event.target);                                
 
-                        if ( !$(mouse_target).parents().hasClass('rdr')) {
+                        if ( !$mouse_target.parents().hasClass('rdr')) {
                             _hiliteSwitch(selState, 'off');
                             $(document).unbind('dblclick.rdr', arguments.callee);
                         }
