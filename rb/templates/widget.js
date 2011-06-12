@@ -1519,6 +1519,26 @@ function readrBoard($R){
                             RDR.actions.indicators.make( hash );
                         }
                     });
+                },
+                make: {
+                    tag_summary: function(){
+                        //later move this code here:
+                        /*
+                        var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);">'+thisTag.body+'</a>');
+                        
+                        var $tagShareButton = $('<span class="rdr_tag_share"></span>').click(function() {
+                            alert(4);
+                        });
+                        
+                        var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
+                            RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });
+                            RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
+                        });
+
+                        $this_tag.append($tagShareButton, $tagCountButton);
+                        $content.find('div.rdr_otherTags').append( $this_tag );
+                        */
+                    }
                 }
             },
             insertContainerIcon: function( hash ) {},
@@ -1777,12 +1797,16 @@ function readrBoard($R){
                                 if ( thisTag.body != tag.name ) {
                                     if ( $content.find('div.rdr_otherTags em').length == 0 ) $content.find('div.rdr_otherTags').append( '<em>Other Reactions</em>' );
 
-                                    var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"><span class="rdr_tag_share"></span><span class="rdr_tag_count">('+thisTag.count+')</span> '+thisTag.body+'</a>');
-
-                                    $this_tag.find('span.rdr_tag_count').click( function() {
+                                    var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"></a>');
+                                    var $tagShareButton = $('<span class="rdr_tag_share"></span>').click(function() {
+                                        alert(4);
+                                    });
+                                    var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
                                         RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });
                                         RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
                                     });
+
+                                    $this_tag.append($tagShareButton, $tagCountButton, thisTag.body);
                                     $content.find('div.rdr_otherTags').append( $this_tag );
                                 }
                             }
@@ -1874,9 +1898,22 @@ function readrBoard($R){
                             var user_name = ( this_comment.user.first_name == "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
                             $commentBy.html( '<img src="'+user_image_url+'" /> ' + user_name );
                             $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
-                            $comment.append( '<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">+1</span></a>' );
 
+                            var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);">'+thisTag.body+'</a>');
+                            
+                            var $tagShareButton = $('<span class="rdr_tag_share"></span>').click(function() {
+                                alert(4);
+                            });
+                            
+                            var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
+                                RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });
+                                RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
+                            });
+
+                            $this_tag.append($tagShareButton, $tagCountButton);
+                            $content.find('div.rdr_otherTags').append( $this_tag );
                             $commentSet.append( $commentBy, $comment );
+
                         }
 
                     }
