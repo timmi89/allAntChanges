@@ -2544,13 +2544,13 @@ function readrBoard($R){
                     // log(rindow.data('selog_state'));
                     // var selState = rindow.data('selog_state');
  
-                    var content_node_data = {
-                        'container': rindow.container,
-                        'body': content_node_info.content,
-                        'location': content_node_info.location
-                    }    
+                    // var content_node_data = {
+                    //     'container': rindow.container,
+                    //     'body': content_node_info.content,
+                    //     'location': content_node_info.location
+                    // }    
                     // console.dir(content_node_data);
-                    var content_node = RDR.actions.content_node.make(content_node_data);
+                    // var content_node = RDR.actions.content_node.make(content_node_data);
 
                     var sendData = {
                         "tag" : tag,
@@ -2576,8 +2576,9 @@ log('attempting to get short url');
                                 log('---- share URL response -----');
                                 console.dir(response);
 
-                                //[eric] - if we want these params still we need to get them from args:
-                                //do we really want to chain pass these through?  Or keep them in a shared scope?
+                                // todo cache the short url
+                                // RDR.summaries[content_node_info.hash].content_nodes[IDX].top_interactions.tags[tag.content].short_url = ;
+
 
                                 if ( response.status == "fail" ) {
                                     console.log('failllllllllll');
@@ -2596,6 +2597,7 @@ log('attempting to get short url');
                                 } else {
 
                                     //successfully got a short URL
+                                    RDR.actions.shareContent({ sns:params.sns, content:content_node_info.content, short_url:response.short_url, reaction:tag.name });
 
                                     if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
                                     else RDR.session.showLoginPanel( args );
@@ -2614,14 +2616,14 @@ log('attempting to get short url');
                 });
             },
             shareContent: function(args) {
-                switch (args.type) {
+                switch (args.sns) {
                     case "facebook":
-                        window.open('http://www.facebook.com/sharer.php?s=100&p[title]="'+escape(CONTENT)+'"&p[summary]=hilarious&p[url]='+SHORTURL,"readr_share_fb","menubar=1,resizable=1,width=626,height=436");
+                        window.open('http://www.facebook.com/sharer.php?s=100&p[title]="'+args.content+'"&p[summary]=hilarious&p[url]='+args.short_url,"readr_share_fb","menubar=1,resizable=1,width=626,height=436");
                     //&p[images][0]=<?php echo $image;?>', 'sharer',
                     break;
 
                     case "twitter":
-                        window.open('http://twitter.com/intent/tweet?url=SHORTURL&via=TWITTERACCOUNTNAME&text=encode(REACTION+": +"content)',"readr_share_tw","menubar=1,resizable=1,width=626,height=436");
+                        window.open('http://twitter.com/intent/tweet?url='+args.short_url+'&via='+RDR.group.twitter+'&text=encode('+args.reaction+'": +"'+escape(args.content)+')',"readr_share_tw","menubar=1,resizable=1,width=626,height=436");
                     break;
 
                     case "tumblr":
