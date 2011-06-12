@@ -2555,11 +2555,11 @@ function readrBoard($R){
                     var sendData = {
                         "tag" : tag,
                         "hash": content_node_info.hash,
-                        "content" : content_node,
+                        "content" : content_node_info.content,
                         "content_type" : content_node_info.content_type,
-                        "user_id" : RDR.user.user_id,
+                        "user_id" : parseInt( RDR.user.user_id ),
                         "readr_token" : RDR.user.readr_token,
-                        "group_id" : RDR.groupPermData.group_id,
+                        "group_id" : parseInt( RDR.groupPermData.group_id ),
                         "page_id" : RDR.page.id
                     };
 
