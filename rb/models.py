@@ -153,7 +153,7 @@ class Content(DateAwareModel):
         ('fla', 'flash')
     )
     kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
-    location = models.CharField(max_length=255)
+    location = models.CharField(max_length=255, blank=True, null=True)
     body = models.TextField()
     
     def __unicode__(self):
