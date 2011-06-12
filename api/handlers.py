@@ -174,7 +174,7 @@ class TagHandler(InteractionHandler):
             elif isinstance(tag, int):
                 node = InteractionNode.objects.get(id=tag)
                 new = createInteraction(page, container, content, user, 'tag', node, group)
-            return new.id
+            return new
         else:
             raise JSONException(u"No tag provided to tag handler")
 
