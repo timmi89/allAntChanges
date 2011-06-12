@@ -1705,7 +1705,7 @@ function readrBoard($R){
                 });
             },
             viewReactionContent: function(tag, which, rindow){
-                
+                log('viewReactionContent')
                 //temp reconnecting:
                 var container = RDR.containers[which];
                 var summary = RDR.summaries[which];
@@ -1753,7 +1753,6 @@ function readrBoard($R){
 
                     if ( node.top_interactions.tags[ tag.id ] ) {
 
-                        node.location = "temp getting more from tyler in a sec";
                         var content_node_key = ""+ container+ node.location;
 
                         var $contentSet = $('<div />').addClass('rdr_contentSet').addClass('rdr_'+content_node_key),
@@ -2328,40 +2327,62 @@ function readrBoard($R){
                 
                 //example:
                 //tag:{name, id}, rindow:rindow, settings:settings, callback: 
-			 	
+                
                 // tag can be an ID or a string.  if a string, we need to sanitize.
-				
-				// tag, rindow, settings, callback
+                
+                // tag, rindow, settings, callback
 
                 // TODO the args & params thing here is confusing
                 RDR.session.getUser( args, function( params ) {
                     // get the text that was highlighted
-
-                    var content = $.trim( params.settings.content ),
-                        container = $.trim( params.settings.container ),
-                        src_with_path = $.trim( params.settings.src_with_path );
-
+                    var content_type = params.settings.content_type;
+                    log('content_type')
+                    log(content_type)
+                    
                     var rindow = params.rindow,
                         tag_li = params.tag,
                         tag = params.tag.data('tag');
 
+                    var content_node_data = {};
 
-                    //save content node
-                    var selState = rindow.data('selog_state');
-                    log('rindow');
- 
-                    var content_node_data = {
-                        'container': rindow.data('container'),
-                        'body': selState.text,
-                        'location': selState.serialRange
-                    };
+                    if(content_type == 'image'){
+                        var container = $.trim( params.settings.container ),
+                            content = $.trim( params.settings.content ),
+                            src_with_path = $.trim( params.settings.src_with_path );
+                        
+                        content_node_data = {
+                            'container': container,
+                            'body': content
+                        };
+
+                    }else{
+                        //is text
+
+
+                        //save content node
+                        var selState = rindow.data('selog_state') || null;
+                        log('rindow');
+     
+                        content_node_data = {
+                            'container': rindow.data('container'),
+                            'body': selState.text,
+                            'location': selState.serialRange
+                        };
+                        
+                    }
+                    
+                    log('stuffs')
+                    log(content)
+                    log(container)
+                    log(src_with_path)
+
 
                     var sendData = {
                         "tag" : tag,
                         "hash": container,
                         "content" : content_node_data,
-                        "src_with_path" : src_with_path,
-                        "content_type" : params.settings.content_type,
+                        "src_with_path" : src_with_path, //not used yet.. do we need it?
+                        "content_type" : content_type,
                         "user_id" : RDR.user.user_id,
                         "readr_token" : RDR.user.readr_token,
                         "group_id" : RDR.groupPermData.group_id,
