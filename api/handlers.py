@@ -81,10 +81,10 @@ class InteractionHandler(AnonymousBaseHandler):
 class ShareHandler(InteractionHandler):
     def create(self, data, user, page, group):
         interaction_id = data.get('int_id', None)
-        location = data.get('location', None)
+        location = data['content'].get('location', None)
         hash = data['hash']
-        content_data = data['content']
-        content_type = dict(zip(Content.content_types))[data['content_type']]
+        content_data = data['content']['body']
+        content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[data['content_type']]
         parent = None
 
         # Get or create content
@@ -140,10 +140,11 @@ class TagHandler(InteractionHandler):
     def create(self, data, user, page, group):
         tag = data['tag']['content']
         hash = data['hash']
-        content_data = data['content']
-        content_type = dict(zip(Content.content_types))[data['content_type']]
+        location = data['content'].get('location', None)
+        content_data = data['content']['body']
+        content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[data['content_type']]
         
-        content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
+        content = Content.objects.get_or_create(kind=content_type, body=content_data, location=location)[0]
         
         try:
             container = Container.objects.get(hash=hash)
