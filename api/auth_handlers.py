@@ -9,7 +9,6 @@ from userutils import *
 import json
 
 class TempUserHandler(BaseHandler):
-
     @status_response
     def read(self, request):
         data = json.loads(request.GET['json'])
@@ -25,7 +24,6 @@ class TempUserHandler(BaseHandler):
         )
 
 class Deauthorize(BaseHandler):
-
     @status_response
     def read(self, request):
         data = json.loads(request.GET['json'])
@@ -38,7 +36,6 @@ class Deauthorize(BaseHandler):
             raise JSONException(u'Error deauthorizing user')
 
 class FBHandler(BaseHandler):
-
     @status_response
     def read(self, request):
         data = json.loads(request.GET['json'])
