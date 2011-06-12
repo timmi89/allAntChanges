@@ -312,7 +312,8 @@ class SettingsHandler(AnonymousBaseHandler):
               'logo_url_med',
               'logo_url_lg',
               'css_url',
-              'temp_interact'
+              'temp_interact',
+              'twitter'
              )
              
     @status_response
