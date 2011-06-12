@@ -2462,7 +2462,7 @@ function readrBoard($R){
                     var rindow = params.rindow,
                         tag_li = params.tag,
                         tag = params.tag.data('tag');
-
+                    
 
                     //save content node
                     log('rindow');
@@ -2537,6 +2537,24 @@ function readrBoard($R){
                         RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:tag_li.data('interaction_id') });
                     }
                 });
+            },
+            shareContent: function(args) {
+                switch (args.type) {
+                    case "facebook":
+                        window.open('http://www.facebook.com/sharer.php?s=100&p[title]="'+escape(CONTENT)+'"&p[summary]=hilarious&p[url]='+SHORTURL,"readr_share_fb","menubar=1,resizable=1,width=626,height=436");
+                    //&p[images][0]=<?php echo $image;?>', 'sharer',
+                    break;
+
+                    case "twitter":
+                        window.open('http://twitter.com/intent/tweet?url=SHORTURL&via=TWITTERACCOUNTNAME&text=encode(REACTION+": +"content)',"readr_share_tw","menubar=1,resizable=1,width=626,height=436");
+                    break;
+
+                    case "tumblr":
+                    break;
+
+                    case "linkedin":
+                    break;
+                }
             },
             updateData: function(args) {
                 if ( args.kind == "tag" ) {
