@@ -216,7 +216,7 @@ class ContentSummaryHandler(AnonymousBaseHandler):
             page=page_id,
         ))
         content_ids = (interaction.content_id for interaction in interactions)
-        content = list(Content.objects.filter(id__in=content_ids).values_list('id','body','kind'))
+        content = list(Content.objects.filter(id__in=content_ids).values_list('id','body','kind','location'))
 
         content_summaries = getContentSummaries(interactions, content)
 
@@ -312,7 +312,8 @@ class SettingsHandler(AnonymousBaseHandler):
               'logo_url_med',
               'logo_url_lg',
               'css_url',
-              'temp_interact'
+              'temp_interact',
+              'twitter'
              )
              
     @status_response
