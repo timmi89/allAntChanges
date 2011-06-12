@@ -84,7 +84,7 @@ class ShareHandler(InteractionHandler):
         location = data.get('location', None)
         hash = data['hash']
         content_data = data['content']
-        content_type = dict(zip(Content.content_types))[data['content_type']]
+        content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[data['content_type']]
         parent = None
 
         # Get or create content
@@ -141,7 +141,7 @@ class TagHandler(InteractionHandler):
         tag = data['tag']['content']
         hash = data['hash']
         content_data = data['content']
-        content_type = dict(zip(Content.content_types))[data['content_type']]
+        content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[data['content_type']]
         
         content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
         
