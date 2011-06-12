@@ -79,6 +79,7 @@ class InteractionHandler(AnonymousBaseHandler):
             return deleteInteraction(interaction, user)
 
 class ShareHandler(InteractionHandler):
+    @status_response
     def create(self, data, user, page, group):
         tag_id = data['tag']['content']
         hash = data['hash']
@@ -124,8 +125,10 @@ class ShareHandler(InteractionHandler):
             link = Link.objects.get_or_create(interaction=interaction)[0]
         except:
             raise JSONException(u"Error creating link")
-
-        return HttpResponse('http://readr.local:8080/s/' + link.to_base62())
+        
+        short_url = 'http://readr.local:8080/s/' + link.to_base62()
+        
+        return dict(short_url=short_url)
 
 
 class CommentHandler(InteractionHandler):
