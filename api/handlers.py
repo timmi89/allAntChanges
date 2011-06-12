@@ -216,7 +216,7 @@ class ContentSummaryHandler(AnonymousBaseHandler):
             page=page_id,
         ))
         content_ids = (interaction.content_id for interaction in interactions)
-        content = list(Content.objects.filter(id__in=content_ids).values_list('id','body','kind'))
+        content = list(Content.objects.filter(id__in=content_ids).values_list('id','body','kind','location'))
 
         content_summaries = getContentSummaries(interactions, content)
 
