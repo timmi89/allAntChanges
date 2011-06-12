@@ -1,5 +1,5 @@
 #from django.template import Context, loader
-from rb.models import *
+from models import *
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
@@ -9,13 +9,14 @@ from baseconv import base62
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models import Count
 from api.utils import *
-import random
+from api.exceptions import JSONException
+from cards import Card
 
 def widget(request,sn):
     # Widget code is retreived from the server using RBGroup shortname
     try:
         rbg = Group.objects.get(short_name = sn)
-    except:
+    except Group.DoesNotExist:
         raise Exception('RB group with this short_name does not exist')
     return render_to_response("widget.js",{'group_id': rbg.id, 'short_name' : sn}, mimetype = 'application/javascript')
 
@@ -78,49 +79,14 @@ def home(request, **kwargs):
         context['user'] = user
     return render_to_response("index.html", context)
 
-class Tag:
-    def __init__(self, tag, interactions):
-        self.tag = tag
-        self.interactions = interactions.filter(kind='tag')
-
-        # Randomly pick an interaction to show
-        self.interaction = random.choice(interactions)
-        self.comments = []
-    
-    def getComments(self, interactions):
-        # Get the comments for the randomly selected interaction on this tag
-        self.comments.extend(interactions.filter(parent=self.interaction))
-
-class Card:
-    def __init__(self, page, interactions):
-        self.page = page
-        self.interactions = interactions
-        self.tags = self.makeTags()
-    def makeTags(self):
-        tag_interactions = self.interactions.filter(kind='tag')
-        interaction_node_ids = tag_interactions.values_list('interaction_node').distinct()
-        interaction_nodes = InteractionNode.objects.filter(id__in=interaction_node_ids)
-
-        # Make tag objects for each tag on the page
-        tags = [
-            Tag(tag, tag_interactions.filter(interaction_node=tag))
-            for tag in interaction_nodes
-        ]
-
-        # Get comments for each tag - based upon sample interaction
-        [tag.getComments(self.interactions) for tag in tags]
-
-        # Sort tags by number of interactions on page
-        tags = sorted(tags, key=lambda x: len(x.interactions), reverse=True)
-        return tags
-
 def cards(request):
     # Get interaction set based on filter criteria
     interactions = Interaction.objects.all()
 
-    # Get appropriate pages
+    # Get set of pages -- interactions ordered by -created
     page_ids = interactions.values_list('page')[:10]
     pages = Page.objects.filter(id__in=page_ids)
+    pages = pages.select_related('group')
 
     cards = [Card(page, interactions.filter(page=page)) for page in pages]
     context = {'cards': cards}
@@ -131,10 +97,24 @@ def sidebar(request):
 
 def expander(request, short):
     link_id = base62.to_decimal(short);
-    link = Link.objects.get(id=link_id);
+
+    # Retrieve Link object
+    try:
+        link = Link.objects.get(id=link_id);
+    except Link.DoesNotExist:
+        raise JSONException("Link didn't exist (it's in ur base killin ur dudez)")
+
+    # Update usage count
     link.usage_count += 1
     link.save()
+
+    # Retrieve related objects
     interaction = Interaction.objects.get(id=link.interaction.id)
     page = Page.objects.get(id=interaction.page.id)
+
+    # Create redirect response
     url = page.url;
-    return HttpResponseRedirect(unicode(url)+ u"#" + unicode(interaction.id))
+    redirect_response = HttpResponseRedirect(unicode(url))
+    redirect_response.set_cookie(key='container_hash', value=interaction.container.hash)
+
+    return redirect_response

@@ -9,7 +9,6 @@ import datetime
 """
 Custom Managers
 """
-
 class TagManager(models.Manager):
     def get_query_set(self):
         return super(TagManager, self).get_query_set().filter(kind='tag')
@@ -18,6 +17,7 @@ class CommentManager(models.Manager):
     def get_query_set(self):
         return super(TagManager, self).get_query_set().filter(kind='com')
 
+# Sample manager w/ custom sql
 class InteractionManager(models.Manager):
     def with_counts(self):
         from django.db import connection
@@ -149,7 +149,6 @@ class Content(DateAwareModel):
         ('snd', 'sound'),
         ('fla', 'flash')
     )
-
     kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
     location = models.CharField(max_length=255)
     body = models.TextField()
@@ -159,7 +158,7 @@ class Content(DateAwareModel):
     
     class Meta:
         verbose_name_plural = "content"
-        #unique_together = ('kind','body')
+        #unique_together = ('kind','body') - breaks mySQL
 
 class Container(models.Model):
     hash = models.CharField(max_length=32, unique=True, db_index=True)
@@ -193,10 +192,7 @@ class Interaction(DateAwareModel, UserAwareModel):
     def __unicode__(self):
         return u'id: {0}'.format(self.id)
 
-
 class Link(models.Model):
-    # I think we have this already from the interaction table
-    #url = models.URLField(verify_exists=True, unique=True)
     interaction = models.ForeignKey(Interaction, unique=True)
     usage_count = models.IntegerField(default=0, editable=False)
     

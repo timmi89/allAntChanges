@@ -1,7 +1,8 @@
+<div>
 {% for card in cards %}
 <table class="card" border="0" cellspacing="0" cellpadding="0">
   <thead>
-    <th class="column1">{{ card.page.logo }}</th>
+    <th class="column1"><img src="{{ card.page.site.group.logo_url_sm }}"></th>
     <th class="column2">{{ card.page.title }}</th>
   </thead>
   {% for tag in card.tags %}
@@ -12,9 +13,9 @@
       <div class="count">+{{ tag.interactions|length }}</div>
     </td>
     <td class="column2">
-      <div class="who_action">{{ tag.interaction.user.social_user.full_name }}'s reaction to:</div>
-      <div class="content text">{{ tag.interaction.content.body }}</div>
-      {% for comment in tag.comments %}
+      <div class="who_action">{{ tag.content.interaction.user.social_user.full_name }}'s reaction to:</div>
+      <div class="content text">{{ tag.content.interaction.content.body }}</div>
+      {% for comment in tag.content.comments %}
       <h5 class="label small">comments</h5>
       <div class="comment_container">
         <div class="header">
@@ -30,18 +31,46 @@
       </div>
     </div>
     {% endfor %}
+    {% for other_tag in tag.content.other_tags %}
+        {{ other_tag.interactions|length }}{{ other_tag.tag.body }}
+    {% endfor %}
     </td>
   </tbody>
   {% endfor %}
 </table>
 {% endfor %}
+</div>
 
-<!--
-<table class="card" border="0" cellspacing="0" cellpadding="0">
+
+<table cellspacing="0" cellpadding="0" border="0" class="card">
   <thead>
-    <th class="column1">[ logo ]</th>
-    <th class="column2">[ a ] Anthony Weiner: Hackers posted lewd photos on Twitter</th>
-  </thead>
+    <tr><th class="column1"><img alt="DailyCandy" src="/static/ui-prototype/images/dc_logo_sm.png"><!----></th>
+    <th class="column2">Apple Has Finally Stuck A Dagger Into SMS. I Love It.</th>
+  </tr></thead>
+  <tbody>
+    <tr class="interaction">
+    <td class="column1">
+      <div class="reaction">Finally!</div>
+      <div class="count">+34</div>
+    </td>
+    <td class="column2">
+      <div class="who_action">34 people reacted to:</div>
+      <div class="content text">
+        "Now that the WWDC keynote is over"
+      </div>
+      
+    
+    </td>
+  </tr></tbody>
+</table>
+
+
+
+<table cellspacing="0" cellpadding="0" border="0" id="static" class="card">
+  <thead>
+    <tr><th class="column1"><img src="/static/ui-prototype/images/dc_logo_sm.png" style="margin-top:3px;"></th>
+    <th class="column2">Apple Moves The Digital Hub From The Mac To iCloud</th>
+  </tr></thead>
   <tbody>
   <tr class="interaction">
     <td class="column1">
@@ -49,47 +78,46 @@
       <div class="count">+148</div>
     </td>
     <td class="column2">
-      <div class="who_action">[ user name ] reacted to:</div>
-      <div class="content text">"Weiner's office — generally one of the most press friendly around — did not respond to a request for comment on whether he has contacted federal authorities to report the alleged cyber-attack."</div>
+      <div class="who_action">148 people reacted to:</div>
+      <div class="content text">"At launch, it will include nine apps with cloud components, including iTunes, Photo Stream, Storage, iBooks, Backup, App Store, and all the MobileMe apps (Contacts, Calendar, Mail)."</div>
       <h5 class="label small">comments</h5>
       <div class="comment_container">
         <div class="header">
           <div class="when">12:37<span>pm</span>  5/28/2011</div>
-          <div class="avatar"><img src="/static/images/anonymousplode.png"/></div>
-          <div class="who">eric chaves</div>
+          <div class="avatar"><img src="/static/images/anonymousplode.png"></div>
+          <div class="who">Eric Chaves</div>
         </div>
         <div class="comment">
           <div class="quote open">"</div>
-          A bit surprising to hear they aren’t commenting, but I guess you gotta be careful on these (stupid) issues.
+          One wonders if my data is still 'my' data, and is accessible from non-Apple devices...
           <div class="quote close">"</div>
           <div class="count">+423</div>
         </div>
       </div>
-    </div>
+    
     </td>
   </tr>
   <tr class="interaction">
     <td class="column1">
-      <div class="reaction">so what??</div>
+      <div class="reaction">nicely done</div>
       <div class="count">+212</div>
     </td>
     <td class="column2">
-      <div class="who_action">[ user name ] reacted to:</div>
-      <div class="content text">"Biggovernment.com writes that the woman in question is a college student who lives in Seattle and notes that another Weiner tweet from Friday."</div>
+      <div class="who_action">212 people reacted to:</div>
+      <div class="content text">"Much of our earlier speculation panned out."</div>
     </td>
   </tr>
   <tr class="interaction">
     <td class="column1">
-      <div class="reaction">cute!!</div>
+      <div class="reaction">Sweet.</div>
       <div class="count">+37</div>
     </td>
     <td class="column2">
-      <div class="who_action">[ user name ] reacted to:</div>
+      <div class="who_action">37 people reacted to:</div>
       <div class="content image">
-        <img src="/static/ui-prototype/dailycandy/i/shopping-1.jpg"/>
+        <img src="http://tctechcrunch.files.wordpress.com/2011/06/icloud.jpg">
       </div>
     </td>
   </tr>
   </tbody>
 </table>
--->

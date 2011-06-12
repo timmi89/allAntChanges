@@ -63,7 +63,7 @@ div.rdr.rdr_actionbar li a {
 
 /*div.rdr.rdr_actionbar li.rdr_icon_about a		 	{ background-position: 0 0; }*/ /*overwritten below to compress width*/
 div.rdr.rdr_actionbar li.rdr_icon_reaction a		{ background-position:-4px -5px; }
-/*div.rdr.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-60px 0; }*/
+div.rdr.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-61px -4px; }
 
 div.rdr.rdr_actionbar a:hover                       { background-color:#e4f0f7;}
 div.rdr.rdr_actionbar li.rdr_icon_about a:hover 	{ background-color:transparent; }
@@ -143,6 +143,19 @@ div.rdr.rdr_tooltip {
 }
 div.rdr.rdr_tooltip-arrow-border { border-color:#80aec9 transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-16px; left:43%;}
 div.rdr.rdr_tooltip-arrow { border-color:#fff transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-14px; left:43%;}
+
+div.rdr_top div.rdr.rdr_tooltip-arrow-border { border-color:transparent transparent #80aec9; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:-16px; bottom:auto; left:43%;}
+div.rdr_top div.rdr.rdr_tooltip-arrow { border-color:transparent transparent #fff; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:-14px; bottom:auto; left:43%;}
+
+div.rdr.rdr_tooltip div.rdr_tag_share    { display:block; width:12px; height:13px; background:url(/static/images/tag_icons.png) -50px -13px no-repeat; left:45px; position:absolute;top:-20px; border-radius:3px;}
+
+div.rdr.rdr_share_container 					{position:absolute;height:50px;width:20px;z-index:1000;}
+div.rdr.rdr_share_container div.rdr.rdr_tooltip {left:-55px;top:18px; }
+div.rdr.rdr_share_container div.rdr.rdr_tooltip .rdr_tooltip-content {font-size:11px; color:#787878; }
+div.rdr.rdr_share_container div.rdr.rdr_tooltip img.rdr_sns {width:16px;margin:2px 5px 0 0; cursor:pointer;}
+
+/*span.rdr_tag_share div.rdr_tooltip 			{ display:none; }*/
+div.rdr_tag_share:hover div.rdr_tooltip 	{ display:block; }
 
 /*compress ths about icon width*/
 div.rdr.rdr_actionbar li.rdr_icon_about             { width:24px; } /*normal width is 30px */
@@ -245,17 +258,10 @@ div.rdr ul.rdr_tags li.rdr_tagged .rdr_leftBox:hover    {background-position:-72
 div.rdr div.rdr_new ul.rdr_tags li.rdr_selected 	{-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
 div.rdr div.rdr_sntPnl .rdr_borderLine  				{    background:#DDDDDD; clear:both; height:100%; left:38px; position:absolute; width:1px; z-index:2;}
 
-<<<<<<< HEAD
-div.rdr ul.rdr_preselected								{margin:-1px 0 0 !important; min-height:120px !important;}
+div.rdr ul.rdr_preselected								{font-size:24px !important; font-family:ReadrLeague, Arial, sans-serif !important; margin:-1px 0 0 !important; min-height:120px !important;}
 div.rdr ul.rdr_preselected .rdr_tagText					{color:#666 !important;text-decoration:none !important; display:block !important; float:left !important; width: 120px !important; padding-left:5px !important; overflow-x: hidden !important; font-weight:normal !important; font-size:24px !important; font-family:ReadrLeague, Arial, sans-serif !important;}
 div.rdr li.rdr_customTagBox input.freeformTagInput      {font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0; text-align:left; border:none; background:none; -moz-box-shadow:none; -webkit-box-shadow:none; box-shadow:none; padding:2px 0;}
-=======
-div.rdr ul.rdr_preselected								{font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:-1px 0 0; min-height:120px;}
-div.rdr ul.rdr_preselected .rdr_tagText					{color:#666;text-decoration:none; display:block; float:left; width: 120px; padding-left:5px; overflow-x: hidden;}
 
-div.rdr li.rdr_customTagBox input.freeformTagInput      {font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0; text-align:left; border:none; background:none; -moz-box-shadow:none; -webkit-box-shadow:none; box-shadow:none; padding:0;}
-
->>>>>>> 46c04c5ad28c7aadf238ed2837cfd6eb71713f6c
 div.rdr li.rdr_customTagBox div.rdr_help                {left:43px; width:auto;}
 div.rdr li.rdr_customTagBox div.rdr_help:hover          {text-decoration:underline;}
 div.rdr li.rdr_customTagBox div.rdr_rightBox                {display:none;}
@@ -284,22 +290,22 @@ div.rdr div.rdr_commentSet div.rdr_commentBy          {font: bold 11px Arial; co
 div.rdr div.rdr_commentSet div.rdr_commentBy img      {width:24px; height:24px; float:left; margin:-8px 5px 0 0; border:1px solid #d0dee6;}
 div.rdr div.rdr_commentSet div.rdr_comment            {font: italic 14px Georgia; color:#999;padding:3px; }
 div.rdr div.rdr_commentSet a.rdr_tag                            {margin-top:3px;}
-div.rdr div.rdr_commentSet a.rdr_tag span.rdr_tag_share         {margin-left:-12px;}
-div.rdr div.rdr_commentSet a.rdr_tag:hover span.rdr_tag_share   {margin-left:3px;}
+div.rdr div.rdr_commentSet a.rdr_tag div.rdr_tag_share         	{margin-left:-12px;}
+div.rdr div.rdr_commentSet a.rdr_tag:hover div.rdr_tag_share   	{margin-left:3px;}
 
 div.rdr div.rdr_leave_comment   { clear:both; display:block; padding:0 10px 10px; margin:0; }
 
 /* tags */
 
-div.rdr a.rdr_tag     { display:block; background:#d0dee6; float:left; margin:0 10px 3px 0; font:normal 11px Arial; color:#678ca2; text-decoration:none; padding:1px; border-radius:3px;}
+div.rdr a.rdr_tag     { display:block; background:#d0dee6; float:left; margin:0 10px 3px 0; font:normal 11px Arial; color:#678ca2; text-decoration:none; padding:1px; border-radius:3px; z-index:100001}
 div.rdr a.rdr_tag span.rdr_tag_count    { display:block; min-width:13px; width:auto; height:13px; float:left; background:none; margin:0; padding: 0 3px; border-radius:3px; }
-div.rdr a.rdr_tag span.rdr_tag_share    { display:block; min-width:13px; width:auto; height:13px; float:right; background:none; margin-left:3px; border-radius:3px; }
+div.rdr a.rdr_tag div.rdr_tag_share    	{ display:block; min-width:13px; width:auto; height:13px; float:right; background:none; margin-left:3px; border-radius:3px; }
 
 div.rdr a.rdr_tag:hover     { background:#fff; color:#008be4;}
 div.rdr a.rdr_tag:hover span.rdr_tag_count    { background:url(/static/images/tag_icons.png) -8px 0px no-repeat; text-indent:-9999px; }
-div.rdr a.rdr_tag:hover span.rdr_tag_share    { background:url(/static/images/tag_icons.png) -50px 0px no-repeat; }
+div.rdr a.rdr_tag:hover div.rdr_tag_share    { background:url(/static/images/tag_icons.png) -50px 0px no-repeat; }
 div.rdr a.rdr_tag:hover span.rdr_tag_count:hover    { display:block; width:12px; height:13px; float:left; background:url(/static/images/tag_icons.png) -8px -13px no-repeat; text-indent:-9999px;}
-div.rdr a.rdr_tag:hover span.rdr_tag_share:hover    { display:block; width:12px; height:13px; float:right; background:url(/static/images/tag_icons.png) -50px -13px no-repeat;}
+div.rdr a.rdr_tag:hover div.rdr_tag_share:hover    { display:block; width:12px; height:13px; float:right; background:url(/static/images/tag_icons.png) -50px -13px no-repeat;}
 
 div.rdr div.rdr_close		{position:absolute;top:8px;right:7px;color:#999;cursor:pointer;font-size:14px;z-index:150;}
 
