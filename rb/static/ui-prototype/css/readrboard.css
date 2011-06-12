@@ -272,7 +272,7 @@ div.rdr li.rdr_customTagBox.rdr_selected div.rdr_rightBox   {display:block;}
 div.rdr div.rdr_contentSet {margin-bottom:10px;}
 div.rdr div.rdr_contentSet div.rdr_contentHeader                        {background:#e1e1e1; font-size:11px; font-weight:bold; padding:3px 5px; overflow:auto;}
 div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag              {margin:0; background:#ccc; font:inherit; color:#666; padding:0; }
-div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag:hover        {background:#ccc; }
+div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag:hover        {background:#fff; }
 div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_has_comment    {background: url("/static/images/widget_icons.png") no-repeat scroll -121px -12px transparent; float:right; padding-left:16px; font-weight:normal; margin-right:5px; cursor:pointer;}
 div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_can_comment    {background:none; float:right; font-weight:normal; margin-right:5px; text-transform:uppercase; font-size:9px; display:none; cursor:pointer; color:#666;}
 div.rdr div.rdr_contentSet:hover div.rdr_contentHeader div.rdr_can_comment    {display:block;}
