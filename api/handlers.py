@@ -79,7 +79,6 @@ class InteractionHandler(AnonymousBaseHandler):
             return deleteInteraction(interaction, user)
 
 class ShareHandler(InteractionHandler):
-    @status_response
     def create(self, data, user, page, group):
         tag_id = data['tag']['content']
         hash = data['hash']
