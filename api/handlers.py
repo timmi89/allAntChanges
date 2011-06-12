@@ -74,22 +74,32 @@ class InteractionHandler(AnonymousBaseHandler):
             try:
                 interaction = Interaction.objects.get(id=interaction_id)
             except Interaction.DoesNotExist:
-                raise JSONException("Interaction did not exist!")
+                raise JSONException(u"Interaction did not exist!")
 
             return deleteInteraction(interaction, user)
 
 class ShareHandler(InteractionHandler):
     def create(self, data, user, page, group):
-        interaction_id = data.get('int_id', None)
-        location = data['content'].get('location', None)
+        tag_id = data['tag']['content']
         hash = data['hash']
         content_data = data['content']['body']
         content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[data['content_type']]
+
+        # optional
+        location = data['content'].get('location', None)
+        interaction_id = data.get('int_id', None)
+
         parent = None
 
         # Get or create content
         content = Content.objects.get_or_create(kind=content_type, body=content_data, location=location)[0]
         
+        # Get the interaction_node
+        try:
+            inode = InteractionNode.objects.get(id=tag_id)
+        except InteractionNode.DoesNotExist:
+            return JSONException("InteractionNode specified does not exist")
+
         # Get the container
         try:
             container = Container.objects.get(hash=hash)
@@ -103,15 +113,16 @@ class ShareHandler(InteractionHandler):
             except Interaction.DoesNotExist:
                 raise JSONException("Parent interaction did not exist!")
         try:
-            interaction = createInteraction(page, container, content, user, 'shr', None, group, parent)
+            print page, container, content, user, 'shr', inode, group, parent
+            interaction = createInteraction(page, container, content, user, 'shr', inode, group, parent)
         except:
-            raise JSONException("Error creating interaction")
+            raise JSONException(u"Error creating interaction")
 
         # Create a Link
         try:
             link = Link.create(interaction)
         except:
-            raise JSONException("Error creating link")
+            raise JSONException(u"Error creating link")
 
         return HttpResponse(link.to_base62())
 

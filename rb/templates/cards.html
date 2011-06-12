@@ -14,7 +14,11 @@
     </td>
     <td class="column2">
       <div class="who_action">{{ tag.content.interaction.user.social_user.full_name }}'s reaction to:</div>
+      {% if tag.content.interaction.content.kind == "img" %}
+      <div class="content image"><img src="{{ tag.content.interaction.content.body }}"></div>
+      {% else %}
       <div class="content text">{{ tag.content.interaction.content.body }}</div>
+      {% endif %}
       {% for comment in tag.content.comments %}
       <h5 class="label small">comments</h5>
       <div class="comment_container">
