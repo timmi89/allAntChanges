@@ -116,5 +116,6 @@ def expander(request, short):
     url = page.url;
     redirect_response = HttpResponseRedirect(unicode(url))
     redirect_response.set_cookie(key='container_hash', value=interaction.container.hash)
+    redirect_response.set_cookie(key='location', value=interaction.content.location)
 
     return redirect_response

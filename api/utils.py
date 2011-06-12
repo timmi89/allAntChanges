@@ -177,7 +177,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             kind=kind
         )
         print "Found existing Interaction with id %s" % existing.id
-        return dict(id=existing.id)
+        return dict(id=existing.id, interaction=existing)
     except Interaction.DoesNotExist:
         pass
 
@@ -203,5 +203,6 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
     if new == None: raise JSONException(u"Error creating interaction")
     else:
         new.save()
-    if tempuser: return dict(id=new.id, num_interactions=num_interactions+1)
-    return dict(id=new.id)
+    
+    if tempuser: return dict(id=new.id, num_interactions=num_interactions+1, interaction=new)
+    return dict(id=new.id, interaction=new)
