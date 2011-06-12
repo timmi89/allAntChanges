@@ -1243,16 +1243,19 @@ function readrBoard($R){
                     //makes a new one or returns existing one
                     //expects settings with container, body, and range.
 
-                    var content_node_key = settings.hash+"-"+settings.range;
+                    var content_node_key = settings.hash+"-"+settings.location;
+                    log(content_node_key);
                     var existingNode = RDR.content_nodes[content_node_key];
                     if( typeof existingNode !== 'undefined' ) return existingNode
                     //else
                     var content_node = {
-                        'container': settings.hash,
-                        'body': settings.content,
+                        'container': settings.container,
+                        'body': settings.body,
                         'location': settings.location
                     }
                     RDR.content_nodes[content_node_key] = content_node;
+                    log('content_node final');
+                    log(content_node);
                     return content_node;
                 }
             },
@@ -2278,17 +2281,16 @@ function readrBoard($R){
 
 
                     //save content node
-                    log('rindow');
-                    log(rindow);
-                    log(rindow.data('selog_state'));
                     var selState = rindow.data('selog_state');
+                    log('rindow');
  
                     var content_node_data = {
-                        'container': rindow.container,
+                        'container': rindow.data('container'),
                         'body': selState.text,
                         'location': selState.serialRange
                     }    
-                    
+                    log('content_node_data');
+                    log(content_node_data);
                     var content_node = RDR.actions.content_node.make(content_node_data);
 
                     var sendData = {
