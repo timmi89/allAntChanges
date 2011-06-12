@@ -1243,7 +1243,7 @@ function readrBoard($R){
                     //makes a new one or returns existing one
                     //expects settings with container, body, and range.
 
-                    var content_node_key = settings.hash+"-"+settings.location;
+                    var content_node_key = settings.container+"-"+settings.location;
                     log(content_node_key);
                     var existingNode = RDR.content_nodes[content_node_key];
                     if( typeof existingNode !== 'undefined' ) return existingNode
