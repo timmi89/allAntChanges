@@ -1753,9 +1753,10 @@ function readrBoard($R){
 
                     if ( node.top_interactions.tags[ tag.id ] ) {
 
-                        var content_node_key = ""+ container+ node.location;
+                        var content_node_key = which+"-"+node.location;
+                        log('content_node_key')
 
-                        var $contentSet = $('<div />').addClass('rdr_contentSet').addClass('rdr_'+content_node_key),
+                        var $contentSet = $('<div />').addClass('rdr_contentSet').data('content_node_key',content_node_key),
                             $header = $('<div class="rdr_contentHeader rdr_leftShadow" />'),
                             $content = $('<div class="rdr_content rdr_leftShadow"><div class="rdr_otherTags"></div></div>');
                         $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+node.counts.tags+')</span> '+tag.name+'</a>' );
@@ -1772,6 +1773,8 @@ function readrBoard($R){
                         $header.find('span.rdr_tag_count').click( function() {
                             RDR.actions.rateSendLite({ element:$(this), tag:tag, rindow:rindow, content:node.body, which:which });
                         });
+
+                        log( $contentSet.data('content_node_key'));
 
                         // todo: [porter] i'm looping to see if there is a comment for this TAG.  can we just send this down from server?
                         for ( var i in summary.top_interactions.coms ) {
@@ -2371,15 +2374,10 @@ function readrBoard($R){
                         
                     }
                     
-                    log('stuffs')
-                    log(content)
-                    log(container)
-                    log(src_with_path)
-
-
+ 
                     var sendData = {
                         "tag" : tag,
-                        "hash": container,
+                        "hash": content_node_data.container,
                         "content" : content_node_data,
                         "src_with_path" : src_with_path, //not used yet.. do we need it?
                         "content_type" : content_type,
