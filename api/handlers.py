@@ -78,6 +78,44 @@ class InteractionHandler(AnonymousBaseHandler):
 
             return deleteInteraction(interaction, user)
 
+class ShareHandler(InteractionHandler):
+    def create(self, data, user, page, group):
+        interaction_id = data.get('int_id', None)
+        location = data.get('location', None)
+        hash = data['hash']
+        content_data = data['content']
+        content_type = dict(zip(Content.content_types))[data['content_type']]
+        parent = None
+
+        # Get or create content
+        content = Content.objects.get_or_create(kind=content_type, body=content_data, location=location)[0]
+        
+        # Get the container
+        try:
+            container = Container.objects.get(hash=hash)
+        except Container.DoesNotExist:
+            return JSONException("Container specified does not exist")
+
+        # Create an interaction
+        if interaction_id:
+            try:
+                parent = Interaction.objects.get(id=interaction_id)
+            except Interaction.DoesNotExist:
+                raise JSONException("Parent interaction did not exist!")
+        try:
+            interaction = createInteraction(page, container, content, user, 'shr', None, group, parent)
+        except:
+            raise JSONException("Error creating interaction")
+
+        # Create a Link
+        try:
+            link = Link.create(interaction)
+        except:
+            raise JSONException("Error creating link")
+
+        return HttpResponse(link.to_base62())
+
+
 class CommentHandler(InteractionHandler):
     def create(self, data, user, page, group):
         comment = data['comment']
@@ -103,13 +141,14 @@ class TagHandler(InteractionHandler):
         tag = data['tag']['content']
         hash = data['hash']
         content_data = data['content']
-        content_type = data['content_type']
+        content_type = dict(zip(Content.content_types))[data['content_type']]
         
         content = Content.objects.get_or_create(kind=content_type, body=content_data)[0]
         
-        container = None
-        if hash:
+        try:
             container = Container.objects.get(hash=hash)
+        except Container.DoesNotExist:
+            return JSONException("Container specified does not exist")
 
         new = None
         if tag:
@@ -181,7 +220,6 @@ class ContentSummaryHandler(AnonymousBaseHandler):
         content_summaries = getContentSummaries(interactions, content)
 
         return content_summaries
-
 """
 class ContainerSummaryHandler(AnonymousBaseHandler):
     @status_response
