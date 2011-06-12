@@ -1753,7 +1753,6 @@ function readrBoard($R){
 
                     if ( node.top_interactions.tags[ tag.id ] ) {
 
-                        node.location = "temp getting more from tyler in a sec";
                         var content_node_key = ""+ container+ node.location;
 
                         var $contentSet = $('<div />').addClass('rdr_contentSet').addClass('rdr_'+content_node_key),
@@ -2313,7 +2312,7 @@ function readrBoard($R){
                     var rindow = params.rindow,
                         tag_li = params.tag,
                         tag = params.tag.data('tag');
-                        
+
                     var content_node_data = {};
 
                     if(content_type == 'image'){
