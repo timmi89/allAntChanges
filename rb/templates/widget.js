@@ -519,6 +519,152 @@ function readrBoard($R){
             }
         },
 		session: {
+            alertBar: {
+                make: function( whichAlert, data) {
+                    //whichAlert to tell us if it's the educate user bar, or the sharedLink bar
+                    //data if we want it, not using it now... - expects: 
+                    /*
+                    data = {
+                        location: "2:16\0542:90{ed6a0863}",
+                        container_hash: 'c9676b4da28e1e005a1b27676e8b2847'
+                    }
+                    */
+
+                    //todo: finish making these changes here:, but i didnt' want to do it before the DC demo.
+                    var msg1, msg2;
+                    if( whichAlert == "educateUser"){
+                        msg1 = '<h1>Rate or discuss <span>anything</span> on this page!</h1>';
+                        msg2 = 'Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.';
+                    }
+                    if( whichAlert == "fromShareLink"){
+                        //put a better message here
+                        msg1 = '<h1>Shared content with <span>ReadrBoard</span></h1>';
+                        msg2 = 'Check it out below: <a class="rdr_showSelection" href="javascript:void(0);">Show me</a>';
+                    }
+
+                    var $educateUser = $('<div id="rdr_ed_user" class="rdr" />');
+
+                    $educateUser.append(
+                        $('<div id="rdr_ed_user_1" />').append(msg1),
+                        $('<div id="rdr_ed_user_2" />').append(msg2),
+                        '<div id="rdr_ed_user_x">x</div>'
+                    );
+                                            
+                    $('body').append( $educateUser );
+                    $('#rdr_ed_user_x').click( function() {
+                        RDR.session.educateUserClose();
+                    });
+
+                    $educateUser.find('.rdr_showSelection').click( function() {
+                        //show the alertBar sliding closed for just a second before scrolling down..
+                        RDR.session.alertBar.close();
+                        setTimeout(function(){
+                            RDR.session.revealSharedContent(data);
+                        }, 200)
+                    });
+
+                    RDR.group.educateUserLocation = "top";
+                    if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
+                        $educateUser.css('top','auto');
+                        $educateUser.css('bottom','-40px');
+                        $('#rdr_ed_user').animate({bottom:0});
+                    } else {
+                        var bodyPaddingTop = parseInt( $('body').css('padding-top') );
+                        $('body').animate({ paddingTop: (bodyPaddingTop+35)+"px" });
+                        $('#rdr_ed_user').animate({top:0});
+                    }
+                },
+                close: function() {
+                    if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
+                        $('#rdr_ed_user').animate({bottom:-40});
+                    } else {
+                        var bodyPaddingTop = parseInt( $('body').css('padding-top') );
+                        $('body').animate({ paddingTop: (bodyPaddingTop-35)+"px" });
+                        $('#rdr_ed_user').animate({top:-40});
+                    }
+                    // set a cookie in the iframe saying not to show this anymore
+                    $.postMessage(
+                        "educatedUser",
+                        RDR.session.iframeHost + "/xdm_status/",
+                        window.frames['rdr-xdm-hidden']
+                    );
+                }
+            },
+            revealSharedContent: function(data){
+
+                var $container = $('.rdr-'+data.container_hash),
+                serialRange = data.location;
+
+                log($container)
+                log(serialRange);
+
+                var selogStack = $().selog('stack'); //just fyi, not using it... Will be an empty stack on page load.
+
+                /*
+                //no need to check for existing hilites right now
+                var oldSelState = selState || null;
+                if (oldSelState){
+                    $().selog('hilite',oldSelState.idx, 'off')
+                }
+                */
+
+                var selState = $container.selog('save', {'serialRange':serialRange} );
+                console.log(selState)
+
+                $().selog('hilite', selState, 'on')
+
+                /**********/
+                //todo: quick fix!  ... later attach it to a rindow to do it right.
+                //for now at least, make it so we can clear this easily.
+                $(document).bind('dblclick.rdr', function(event) {
+                    var $mouse_target = $(event.target);                                
+
+                    if ( !$mouse_target.parents().hasClass('rdr')) {
+                        $().selog('hilite', selState, 'off');
+                        $(document).unbind('dblclick.rdr', arguments.callee);
+                    }
+                });
+               //bind an escape keypress to clear it.
+                //todo: for a real public API, this should be an option, or passed in function or something
+                $(document).bind('keyup.rdr', function(event) {
+                    //todo: merge all esc key events (use an array of functions that we can just dequeue?)
+                    if (event.keyCode == '27') { //esc
+                        $().selog('hilite', selState, 'off');
+                        //remove the binding after it's been called.
+                        $(document).unbind('keyup.rdr', arguments.callee);
+                    }
+                });
+                /**********/ //end quick fix
+
+                var targetOffset = $container.offset().top,
+                windowPadding = 50,
+                scrollTarget = targetOffset-windowPadding || 0;
+
+                $('html,body').animate({scrollTop: scrollTarget}, 1000);
+            },
+            getSharedLinkInfo: function(){
+                //some condition
+                var pageWasLoaedFromSharedLink = true; //how do you work with cookies here?
+                if(pageWasLoaedFromSharedLink){
+                    
+                    //TODO: sample data here, fill with info from cookie
+                    var data = {
+                        location: "2:10\0542:32",
+                        container_hash: "c9676b4da28e1e005a1b27676e8b2847"
+                    }
+
+                    //note: I turned off the checksum in rangy, so the locations will be mising the {####} part.
+                    // we don't need the checksum, cause we're already doing that.
+
+                    //note: the "\054" is actually the octal for a comma.  The back end is passing it back that way. It's working fine though.
+                        //, so it seems that "2:10\0542:32" == "2:10,2:32"
+
+                    RDR.session.alertBar.make('fromShareLink', data);
+                    return true; //could return something more useful if we need it.
+                }
+                //else
+                return false; 
+            },
 			iframeHost : "http://readr.local:8080", // TODO put this in a template var
             getUser: function(args, callback) {
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
@@ -613,7 +759,8 @@ function readrBoard($R){
                                 break;
 
                                 case "educate user":
-                                    RDR.session.educateUser();
+                                    //RDR.session.educateUser();
+                                    RDR.session.alertBar.make('educateUser');
                                 break;
                             }
                         }
@@ -940,7 +1087,7 @@ function readrBoard($R){
                 });
             },
             initPageData: function(){
-                // RDR.session.educateUser();
+                // RDR.session.educateUser(); //this function has changed now
                //? do we want to model this here to be symetrical with user and group data?
 
                 // TODO flesh out Porter's code below and incorporate it into the queue
@@ -1044,6 +1191,10 @@ function readrBoard($R){
             },
             initEnvironment: function(){
                 
+                //dont know if it makes sense to return anything here like im doing now...
+                var wasSharedLink = RDR.session.getSharedLinkInfo();
+                log(wasSharedLink);
+
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
                 var $indicatorDetailsWrapper = $('<div id="rdr_indicator_details_wrapper" />').appendTo('body');
 
@@ -3870,11 +4021,11 @@ function $RFunctions($R){
                     //else
                     range = WSO.getRangeAt(0);
                     //serializing relative to the parent container. The false is omitChecksum=false.
-                    serialRange = rangy.serializeRange(range, false, selState.container ); //see rangy function serializeRange
+                    serialRange = rangy.serializeRange(range, true, selState.container ); //see rangy function serializeRange
                 }
                 else if(selState.range){
                     range = selState.range;
-                    serialRange = rangy.serializeRange(range, false, selState.container ); //see rangy function serializeRange
+                    serialRange = rangy.serializeRange(range, true, selState.container ); //see rangy function serializeRange
                 }
                 else if(selState.serialRange){
                     serialRange = selState.serialRange;
