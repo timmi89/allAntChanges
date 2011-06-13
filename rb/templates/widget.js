@@ -2446,7 +2446,8 @@ console.dir(settings);
                         
                         content_node_data = {
                             'container': container,
-                            'body': content
+                            'body': src_with_path
+                            // 'body': content
                         };
 
                     }else{
