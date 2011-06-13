@@ -617,13 +617,9 @@ function readrBoard($R){
                 /**********/
                 //todo: quick fix!  ... later attach it to a rindow to do it right.
                 //for now at least, make it so we can clear this easily.
-                $(document).bind('dblclick.rdr', function(event) {
-                    var $mouse_target = $(event.target);                                
-
-                    if ( !$mouse_target.parents().hasClass('rdr')) {
-                        $().selog('hilite', selState, 'off');
-                        $(document).unbind('dblclick.rdr', arguments.callee);
-                    }
+                $(document).bind('click.rdr', function(event) {
+                    $().selog('hilite', selState, 'off');
+                    $(document).unbind('dblclick.rdr', arguments.callee);
                 });
                //bind an escape keypress to clear it.
                 //todo: for a real public API, this should be an option, or passed in function or something
@@ -1433,26 +1429,35 @@ function readrBoard($R){
 
                     var indicator = $('.rdr_indicator_'+hash),
                     indicator_details = $('#rdr_indicator_details_'+hash);
-/*
+                   
+                    /*
                     var altSumm = RDR.summaries[hash];
                     var summary = indicator.data('summary');
                     log(altSumm)
                     log(summary)
-                    
+                    */ 
 
- */ 
                    xx =RDR.summaries[hash];
                     var summary = RDR.summaries[hash];
 
                     //interaction categories and for each,
                     //a list of {id:incAmount} - incAmount will be 1 or -1 for decrement;
                     var diff = {   
-                        coms: [],
-                        tags: [{4:1}]
+                        coms: {
+                            
+                        },
+                        tags: {
+                            //'id':<change - +1 or -1, typically>
+                            '4':1
+                        }
                     }
- log(xx)
+
                     $.each( diff, function(key, val){
-                        $.each(val, function(i,v){
+                        //coms or tags
+                        log(val);
+                        $.each(val, function(id,delt){
+                            //coms or tags
+                            log(delt);
                             if(v.hash == hash){
                                 imageData = v;
                             }
