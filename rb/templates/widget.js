@@ -539,8 +539,8 @@ function readrBoard($R){
                     }
                     if( whichAlert == "fromShareLink"){
                         //put a better message here
-                        msg1 = '<h1>Shared content with <span>ReadrBoard</span></h1>';
-                        msg2 = 'Check it out below: <a class="rdr_showSelection" href="javascript:void(0);">Show me</a>';
+                        msg1 = '<h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shared with <span>ReadrBoard</span></h1>';
+                        msg2 = '&nbsp;&nbsp;<strong>' + data.reaction + ':</strong> ' + data.content.substr(0,40) + '... <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>';
                     }
 
                     var $educateUser = $('<div id="rdr_ed_user" class="rdr" />');
@@ -759,7 +759,7 @@ function readrBoard($R){
                                 log('-------message.status-----------');
                                 console.log(message.status);
                                 var sharedLink = message.status.split('|');
-                                RDR.session.getSharedLinkInfo( {location:sharedLink[2], container_hash:sharedLink[1]} );
+                                RDR.session.getSharedLinkInfo( { container_hash:sharedLink[1], location:sharedLink[2], reaction:sharedLink[3], content:sharedLink[4] } );
                             }
                         }
                     },
