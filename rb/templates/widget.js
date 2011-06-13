@@ -1872,6 +1872,8 @@ console.dir(settings);
                     });
 console.clear();
 console.dir(summary.content_nodes);
+
+/*
                     rindow.find('ul.rdr_preselected li').hover( 
                         function() {
                             var h = 0;
@@ -1893,6 +1895,37 @@ console.dir(summary.content_nodes);
                         function() {
                             // $(container).selog('hilite', newSel, 'off');
                         });
+*/
+//porter's above
+//big todo:
+//eric's below
+/*
+
+                    rindow.find('ul.rdr_preselected li').each(function(){
+                        var $this = $(this);
+                        $this.data('selStates',[]);
+
+                        var tag_id = $(this).data('tag').id;
+                        for ( var i in summary.content_nodes ) {
+                            if ( summary.content_nodes[i].top_interactions.tags[ tag_id ] ) {
+                                var newSel = $('.rdr-'+which).selog('save', { 'serialRange': summary.content_nodes[i].location });
+                                $this.data('selStates').push(newSel);
+                            }
+                        }
+                    }).hover( 
+                        function() {
+                            log('fsdfs')
+                            $(this).data('selStates').each(function(i,selState){
+                                $().selog('hilite', selState, 'on');
+                            });
+                        },
+                        function() {
+                            $(this).data('selStates').each(function(i,selState){
+                                $().selog('hilite', selState, 'off');
+                            });
+                        }
+                    );
+*/
                 
                 });
             },
