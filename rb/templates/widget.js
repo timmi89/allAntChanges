@@ -2748,6 +2748,13 @@ log('attempting to get short url');
                     break;
 
                     case "tumblr":
+                    /*
+                    http://www.tumblr.com/share/quote?quote=53%20percent%20of%20Americans%20now%20support%20gay%20marriage.%20Which%20means%20that%2047%25%20of%20the%20country%20are%20still%20assholes.&source=Bill%20Maher
+
+                    http://www.tumblr.com/share/photo?source=http%3A%2F%2Ffarm6.static.flickr.com%2F5030%2F5601726196_08725e1979_z.jpg&caption=%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20This%20example%20uses%20the%20basic%20Tumblr%20Button%20in%20the%20article%27s%20footer%20to%20let%20Tumblr%20users%20easily%20promote%20this%20article%20on%20their%20blogs.%0A%20%20%20%20%20%20%20%20%20%20%20%20&click_thru=http%3A%2F%2Fwww.flickr.com%2Fphotos%2Fjfisher%2F5601726196
+
+                    http://www.tumblr.com/share/video?embed=%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ciframe%20src%3D%22http%3A%2F%2Fwww.youtube.com%2Fembed%2FtxqiwrbYGrs%22%20title%3D%22YouTube%20video%20player%22%20allowfullscreen%3D%22%22%20frameborder%3D%220%22%20height%3D%22480%22%20width%3D%22600%22%3E%3C%2Fiframe%3E%0A%20%20%20%20%20%20%20%20&caption=%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20This%20example%20uses%20the%20basic%20Tumblr%20Button%20in%20the%20article%27s%20footer%20to%20let%20Tumblr%20users%20easily%20promote%20this%20article%20on%20their%20blogs.%0A
+                    */
                     break;
 
                     case "linkedin":
