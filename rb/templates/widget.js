@@ -1958,8 +1958,8 @@ console.dir(settings);
                                     $shareTip = $( '<div class="rdr rdr_share_container"><div class="rdr rdr_tooltip rdr_top"><div class="rdr rdr_tooltip-content">Share this reaction<br/>'+
                                                     '<img rel="facebook" src="/static/images/social-icons-loose/social-icon-facebook.png" class="rdr_sns no-rdr"/>'+
                                                     '<img rel="twitter" src="/static/images/social-icons-loose/social-icon-twitter.png" class="rdr_sns no-rdr"/>'+
-                                                    '<img rel="tumblr" src="/static/images/social-icons-loose/social-icon-tumblr.png" class="rdr_sns no-rdr"/>'+
-                                                    '<img rel="linkedin" src="/static/images/social-icons-loose/social-icon-linkedin.png" class="rdr_sns no-rdr"/>'+
+                                                    // '<img rel="tumblr" src="/static/images/social-icons-loose/social-icon-tumblr.png" class="rdr_sns no-rdr"/>'+
+                                                    // '<img rel="linkedin" src="/static/images/social-icons-loose/social-icon-linkedin.png" class="rdr_sns no-rdr"/>'+
                                                     '</div><div class="rdr rdr_tooltip-arrow-border" /><div class="rdr rdr_tooltip-arrow" /><div class="rdr_tag_share" /></div></div>' );
                                 var share_offsets = $this.offset(),
                                     rindow_offsets = rindow.offset();
@@ -2550,7 +2550,10 @@ console.dir(settings);
                                             tag_li.append( '<div class="rdr_tagText">'+tag.name+'</div>' );
                                             RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:params.settings});
                                         }
-                                    } 
+                                    }
+                                    log('-----tag------');
+                                    console.dir(tag);
+                                    if ( isNaN(parseInt(tag.content)) ) tag.content = response.data.tag_id;
                                     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:response.data, content_node_info:content_node_data, content_type:content_type });
                                     if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
                                     else RDR.session.showLoginPanel( args );
@@ -2944,7 +2947,7 @@ log('attempting to get short url');
 
                 var $socialBox = $('<div class="rdr_share_social"><strong>Share your reaction about this on:</strong></div>'),
                 $shareLinks = $('<ul class="shareLinks"></ul>'),
-                socialNetworks = ["facebook","twitter","tumblr","linkedin"];
+                socialNetworks = ["facebook","twitter"]; //,"tumblr","linkedin"];
 
                 var content_node_info = {};
                 // we have some weird translation needs here:
