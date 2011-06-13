@@ -146,28 +146,28 @@
     "model": "rb.InteractionNode",
     "pk": 1,
     "fields": {
-      "body": "Great!"
+      "body": "Great Idea"
     }
   },
   {
     "model": "rb.InteractionNode",
     "pk": 2,
     "fields": {
-      "body": "Hate"
+      "body": "Meh"
     }
   },
   {
     "model": "rb.InteractionNode",
     "pk": 3,
     "fields": {
-      "body": "Agree"
+      "body": "For Real?"
     }
   },
   {
     "model": "rb.InteractionNode",
     "pk": 4,
     "fields": {
-      "body": "Tell me more"
+      "body": "Cupcakes!"
     }
   }
 ]
