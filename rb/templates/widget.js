@@ -1631,7 +1631,7 @@ console.dir(settings);
                     tag_summary: function(){
                         //later move this code here:
                         /*
-                        var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);">'+thisTag.body+'</a>');
+
                         
                         var $tagShareButton = $('<span class="rdr_tag_share"></span>').click(function() {
                             alert(4);
@@ -1925,7 +1925,6 @@ console.dir(settings);
                                     
 
                                     // todo should be able to remove the netx 2 lines
-                                    // var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+thisTag.count+')</span> '+thisTag.body+'</a>');
                                     // $this_tag.find('span.rdr_tag_count').click( function() {
 
                                     var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"></a>');
@@ -2042,18 +2041,18 @@ console.dir(settings);
                             $commentBy.html( '<img src="'+user_image_url+'" /> ' + user_name );
                             $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
 
-                            var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);">'+thisTag.body+'</a>');
+                            // var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);">'+thisTag.body+'</a>');
                             
-                            var $tagShareButton = $('<span class="rdr_tag_share"></span>').click(function() {
-                                alert(4);
-                            });
+                            // var $tagShareButton = $('<span class="rdr_tag_share"></span>').click(function() {
+                            //     alert(4);
+                            // });
                             
-                            var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
-                                RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
-                            });
+                            // var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
+                            //     RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
+                            // });
 
-                            $this_tag.append($tagShareButton, $tagCountButton);
-                            $content.find('div.rdr_otherTags').append( $this_tag );
+                            // $this_tag.append($tagShareButton, $tagCountButton);
+                            // $content.find('div.rdr_otherTags').append( $this_tag );
                             $commentSet.append( $commentBy, $comment );
 
                         }
