@@ -55,7 +55,7 @@ def getSummary(interactions, container=None, content=None, page=None, data=None)
     ))
     sorted_counts = sorted(tag_counts.items(), key=lambda x: x[1]['count'], reverse=True)
     top_tags = dict((
-        tag for tag in sorted_counts[:5]
+        tag for tag in sorted_counts[:10]
     ))
     top_interactions = {}
     top_interactions['tags'] = top_tags
