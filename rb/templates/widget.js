@@ -276,11 +276,14 @@ function readrBoard($R){
 
                 // if this is an image, make sure we have the image hashed, tagged, and have its hash as a container:
                 if (settings.content_type == "image" && !settings.container ) {
+                    log('image but no container');
                     var hashText = "rdr-img-"+settings.content,
                     hash = RDR.util.md5.hex_md5( hashText );
                     settings.container = hash;
                 }
 
+log('XCXCXCXCXCXXC-- settings --');
+console.dir(settings);
                 var items = [
                         {
                             "item":"reaction",
@@ -1111,11 +1114,13 @@ function readrBoard($R){
                     // for jQuery selecting ( $(img[src$='foobar.png']) ), we want the relative path
                     src = this_img.attr('src'),
 				    src_with_path = this.src;
+                    
+                    var container = ( this_img.data('hash') ) ? this_img.data('hash'):"";
 
                     this_img.addClass('rdr_engage_img');
 
                     // builds a new actionbar or just returns the existing $actionbar if it exists.
-				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src, src_with_path:src_with_path, ignoreWindowEdges:"rb" });
+				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src, container:container, src_with_path:src_with_path, ignoreWindowEdges:"rb" });
                     $actionbar.data('keepAlive.img',true)
 
                     //kill all rivals!!
@@ -1772,7 +1777,6 @@ function readrBoard($R){
                             $this.siblings().removeClass('rdr_selected');
                             $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
                             RDR.actions.viewReactionContent( $this.data('tag'), $this.data('which'), rindow );
-                            //RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });//end rateSend
                         }
                         
                         //todo: branch text and img
@@ -1955,7 +1959,6 @@ function readrBoard($R){
                                 console.dir(content_node_info);
                                 $shareTip.find('img.rdr_sns').click( function() {
                                     RDR.actions.share_getLink({ sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node_info:content_node_info });
-                                    // RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });//end rateSend
                                 });
                             }
                         );
