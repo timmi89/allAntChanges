@@ -10,7 +10,7 @@ from token import *
 
 class UserHandler(AnonymousBaseHandler):
     model = User
-    fields = ('id', 'first_name', 'last_name', 'social_user')
+    fields = ('id', 'first_name', 'last_name')
 
 class InteractionNodeHandler(AnonymousBaseHandler):
     model = InteractionNode
