@@ -1631,7 +1631,7 @@ console.dir(settings);
                     tag_summary: function(){
                         //later move this code here:
                         /*
-                        var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);">'+thisTag.body+'</a>');
+
                         
                         var $tagShareButton = $('<span class="rdr_tag_share"></span>').click(function() {
                             alert(4);
@@ -1925,7 +1925,6 @@ console.dir(settings);
                                     
 
                                     // todo should be able to remove the netx 2 lines
-                                    // var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+thisTag.count+')</span> '+thisTag.body+'</a>');
                                     // $this_tag.find('span.rdr_tag_count').click( function() {
 
                                     var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"></a>');
