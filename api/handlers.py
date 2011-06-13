@@ -78,6 +78,11 @@ class InteractionHandler(AnonymousBaseHandler):
 
             return deleteInteraction(interaction, user)
 
+class BookmarkHandler(InteractionHandler):
+    def create(self, data, user, page, group):
+        pass
+
+
 class ShareHandler(InteractionHandler):
     def create(self, data, user, page, group):
         tag_id = data['tag']['content']
@@ -163,14 +168,16 @@ class TagHandler(InteractionHandler):
         try:
             container = Container.objects.get(hash=hash)
         except Container.DoesNotExist:
-            return JSONException("Container specified does not exist")
+            raise JSONException("Container specified does not exist")
 
         new = None
         if tag:
             if isinstance(tag, unicode):
+                print "making tag from reaction"
                 node = createInteractionNode(body=tag)
                 new = createInteraction(page, container, content, user, 'tag', node, group)
             elif isinstance(tag, int):
+                print "making tag from existing interaction node id"
                 node = InteractionNode.objects.get(id=tag)
                 new = createInteraction(page, container, content, user, 'tag', node, group)
             return new
