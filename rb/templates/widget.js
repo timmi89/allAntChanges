@@ -644,6 +644,8 @@ function readrBoard($R){
                 $('html,body').animate({scrollTop: scrollTarget}, 1000);
             },
             getSharedLinkInfo: function( data ){
+                log('--------data-------------');
+                console.dir(data);
                 //some condition
                 var pageWasLoaedFromSharedLink = true; //how do you work with cookies here?
                 if(pageWasLoaedFromSharedLink){
@@ -754,6 +756,8 @@ function readrBoard($R){
                             } else if ( message.status == "educate user" ) {
                                 RDR.session.alertBar.make('educateUser');
                             } else if ( message.status.indexOf('sharedLink') != -1 ) {
+                                log('-------message.status-----------');
+                                console.log(message.status);
                                 var sharedLink = message.status.split('|');
                                 RDR.session.getSharedLinkInfo( {location:sharedLink[2], container_hash:sharedLink[1]} );
                             }
