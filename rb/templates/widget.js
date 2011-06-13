@@ -1807,6 +1807,29 @@ console.dir(settings);
                         */
                         return false; //so click on <a>img</a> gets overridden
                     });
+console.clear();
+console.dir(summary.content_nodes);
+                    rindow.find('ul.rdr_preselected li').hover( 
+                        function() {
+                            var h = 0;
+                            for ( var i in summary.content_nodes ) {
+                                var tag_id = $(this).data('tag').id;
+                                if ( summary.content_nodes[i].top_interactions.tags[ tag_id ] ) {
+                                    // console.log(' hilite this: '+ summary.content_nodes[i].location );
+                                    // RDR.summaries[ which ].top_interactions.tags
+                                    var newSel = $('.rdr-'+which).selog('save', { 'serialRange': summary.content_nodes[i].location });
+                                    console.log('-------- LI newSel ---------');
+                                    console.dir(newSel);
+                                    if ( h==0) {
+                                        $(container).selog('hilite', newSel, 'on');
+                                        h=1;
+                                    }
+                                }
+                            }
+                        },
+                        function() {
+                            // $(container).selog('hilite', newSel, 'off');
+                        });
                 
                 });
             },
@@ -1880,6 +1903,8 @@ console.dir(settings);
 
                         $contentSet.hover(
                             function() {
+                                log('------- newSel -----------');
+                                console.dir(newSel);
                                 $(container).selog('hilite', newSel, 'on');
                                 
                             },
