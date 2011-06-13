@@ -2060,9 +2060,8 @@ console.dir(summary.content_nodes);
                             var $commentSet = $('<div class="rdr_commentSet" />'),
                                 $commentBy = $('<div class="rdr_commentBy" />'),
                                 $comment = $('<div class="rdr_comment" />');
-log('------ this_comment ------');
-console.dir(this_comment);
-                            var user_image_url = ( this_comment.user.image_url ) ? this_comment.user.image_url: RDR_rootPath+'/static/images/anonymousplode.png';
+
+                            var user_image_url = ( this_comment.user.social_user.img_url ) ? this_comment.user.social_user.img_url: RDR_rootPath+'/static/images/anonymousplode.png';
                             var user_name = ( this_comment.user.first_name == "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
                             $commentBy.html( '<img src="'+user_image_url+'" /> ' + user_name );
                             $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );

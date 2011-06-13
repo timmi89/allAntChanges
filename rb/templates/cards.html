@@ -16,8 +16,8 @@
       <!-- <div class="who_action">{{ tag.content.interaction.user.social_user.full_name }}'s reaction to:</div> -->
       <div class="who_action">
         {% with count=tag.content.interactions|length %}
-          <!-- ({{ count }}) {{ tag.tag.body }} -->
-          {{ count }} person{{ count|pluralize }}
+          ({{ count }}) {{ tag.tag.body }}
+          <!-- {{ count }} person{{ count|pluralize }} -->
         {% endwith %}
       </div>
       {% if tag.content.interaction.content.kind == "img" %}
