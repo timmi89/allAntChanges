@@ -28,7 +28,7 @@ class TagContent:
 class Tag:
     def __init__(self, tag, interactions, setContent=True):
         self.tag = tag
-        self.interactions = interactions.filter(kind='tag')
+        self.interactions = interactions.filter(interaction_node=tag)
         if setContent:
             self.setContent()
 
@@ -40,11 +40,13 @@ class Tag:
             TagContent(content_item, self.interactions.filter(content=content_item))
             for content_item in content_items
         ]
-
-        self.content = sorted(content, key=lambda x: len(x.interactions))[0]
+        print "hahah"
+        print [(x.content_item, len(x.interactions)) for x in content]
+        self.content = sorted(content, key=lambda x: len(x.interactions), reverse=True)[0]
 
 class Card:
     def __init__(self, page, interactions):
+        print "Processing card for page", page
         self.page = page
         self.interactions = interactions.filter(user__social_user__isnull=False)
         self.tags = self.makeTags()
@@ -56,8 +58,7 @@ class Card:
 
         # Make tag objects for each tag on the page
         tags = [
-            Tag(tag, tag_interactions.filter(interaction_node=tag))
-            for tag in interaction_nodes
+            Tag(tag, self.interactions) for tag in interaction_nodes
         ]
 
         # Sort tags by number of interactions on page

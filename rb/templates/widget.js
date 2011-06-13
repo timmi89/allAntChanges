@@ -562,7 +562,7 @@ console.dir(settings);
 
                     $educateUser.find('.rdr_showSelection').click( function() {
                         //show the alertBar sliding closed for just a second before scrolling down..
-                        RDR.session.alertBar.close();
+                        // RDR.session.alertBar.close();
                         setTimeout(function(){
                             RDR.session.revealSharedContent(data);
                         }, 200)
@@ -1687,7 +1687,7 @@ console.dir(settings);
                     tag_summary: function(){
                         //later move this code here:
                         /*
-                        var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);">'+thisTag.body+'</a>');
+
                         
                         var $tagShareButton = $('<span class="rdr_tag_share"></span>').click(function() {
                             alert(4);
@@ -1866,6 +1866,29 @@ console.dir(settings);
                         */
                         return false; //so click on <a>img</a> gets overridden
                     });
+console.clear();
+console.dir(summary.content_nodes);
+                    rindow.find('ul.rdr_preselected li').hover( 
+                        function() {
+                            var h = 0;
+                            for ( var i in summary.content_nodes ) {
+                                var tag_id = $(this).data('tag').id;
+                                if ( summary.content_nodes[i].top_interactions.tags[ tag_id ] ) {
+                                    // console.log(' hilite this: '+ summary.content_nodes[i].location );
+                                    // RDR.summaries[ which ].top_interactions.tags
+                                    var newSel = $('.rdr-'+which).selog('save', { 'serialRange': summary.content_nodes[i].location });
+                                    console.log('-------- LI newSel ---------');
+                                    console.dir(newSel);
+                                    if ( h==0) {
+                                        $(container).selog('hilite', newSel, 'on');
+                                        h=1;
+                                    }
+                                }
+                            }
+                        },
+                        function() {
+                            // $(container).selog('hilite', newSel, 'off');
+                        });
                 
                 });
             },
@@ -1939,6 +1962,8 @@ console.dir(settings);
 
                         $contentSet.hover(
                             function() {
+                                log('------- newSel -----------');
+                                console.dir(newSel);
                                 $(container).selog('hilite', newSel, 'on');
                                 
                             },
@@ -1984,7 +2009,6 @@ console.dir(settings);
                                     
 
                                     // todo should be able to remove the netx 2 lines
-                                    // var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+thisTag.count+')</span> '+thisTag.body+'</a>');
                                     // $this_tag.find('span.rdr_tag_count').click( function() {
 
                                     var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"></a>');
@@ -2018,8 +2042,8 @@ console.dir(settings);
                                     $shareTip = $( '<div class="rdr rdr_share_container"><div class="rdr rdr_tooltip rdr_top"><div class="rdr rdr_tooltip-content">Share this reaction<br/>'+
                                                     '<img rel="facebook" src="/static/images/social-icons-loose/social-icon-facebook.png" class="rdr_sns no-rdr"/>'+
                                                     '<img rel="twitter" src="/static/images/social-icons-loose/social-icon-twitter.png" class="rdr_sns no-rdr"/>'+
-                                                    '<img rel="tumblr" src="/static/images/social-icons-loose/social-icon-tumblr.png" class="rdr_sns no-rdr"/>'+
-                                                    '<img rel="linkedin" src="/static/images/social-icons-loose/social-icon-linkedin.png" class="rdr_sns no-rdr"/>'+
+                                                    // '<img rel="tumblr" src="/static/images/social-icons-loose/social-icon-tumblr.png" class="rdr_sns no-rdr"/>'+
+                                                    // '<img rel="linkedin" src="/static/images/social-icons-loose/social-icon-linkedin.png" class="rdr_sns no-rdr"/>'+
                                                     '</div><div class="rdr rdr_tooltip-arrow-border" /><div class="rdr rdr_tooltip-arrow" /><div class="rdr_tag_share" /></div></div>' );
                                 var share_offsets = $this.offset(),
                                     rindow_offsets = rindow.offset();
@@ -2101,18 +2125,18 @@ console.dir(settings);
                             $commentBy.html( '<img src="'+user_image_url+'" /> ' + user_name );
                             $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
 
-                            var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);">'+thisTag.body+'</a>');
+                            // var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);">'+thisTag.body+'</a>');
                             
-                            var $tagShareButton = $('<span class="rdr_tag_share"></span>').click(function() {
-                                alert(4);
-                            });
+                            // var $tagShareButton = $('<span class="rdr_tag_share"></span>').click(function() {
+                            //     alert(4);
+                            // });
                             
-                            var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
-                                RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
-                            });
+                            // var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
+                            //     RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
+                            // });
 
-                            $this_tag.append($tagShareButton, $tagCountButton);
-                            $content.find('div.rdr_otherTags').append( $this_tag );
+                            // $this_tag.append($tagShareButton, $tagCountButton);
+                            // $content.find('div.rdr_otherTags').append( $this_tag );
                             $commentSet.append( $commentBy, $comment );
 
                         }
@@ -2626,7 +2650,10 @@ console.dir(settings);
                                             tag_li.append( '<div class="rdr_tagText">'+tag.name+'</div>' );
                                             RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:params.settings});
                                         }
-                                    } 
+                                    }
+                                    log('-----tag------');
+                                    console.dir(tag);
+                                    if ( isNaN(parseInt(tag.content)) ) tag.content = response.data.tag_id;
                                     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:response.data, content_node_info:content_node_data, content_type:content_type });
                                     if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
                                     else RDR.session.showLoginPanel( args );
@@ -2821,6 +2848,13 @@ log('attempting to get short url');
                     break;
 
                     case "tumblr":
+                    /*
+                    http://www.tumblr.com/share/quote?quote=53%20percent%20of%20Americans%20now%20support%20gay%20marriage.%20Which%20means%20that%2047%25%20of%20the%20country%20are%20still%20assholes.&source=Bill%20Maher
+
+                    http://www.tumblr.com/share/photo?source=http%3A%2F%2Ffarm6.static.flickr.com%2F5030%2F5601726196_08725e1979_z.jpg&caption=%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20This%20example%20uses%20the%20basic%20Tumblr%20Button%20in%20the%20article%27s%20footer%20to%20let%20Tumblr%20users%20easily%20promote%20this%20article%20on%20their%20blogs.%0A%20%20%20%20%20%20%20%20%20%20%20%20&click_thru=http%3A%2F%2Fwww.flickr.com%2Fphotos%2Fjfisher%2F5601726196
+
+                    http://www.tumblr.com/share/video?embed=%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ciframe%20src%3D%22http%3A%2F%2Fwww.youtube.com%2Fembed%2FtxqiwrbYGrs%22%20title%3D%22YouTube%20video%20player%22%20allowfullscreen%3D%22%22%20frameborder%3D%220%22%20height%3D%22480%22%20width%3D%22600%22%3E%3C%2Fiframe%3E%0A%20%20%20%20%20%20%20%20&caption=%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20This%20example%20uses%20the%20basic%20Tumblr%20Button%20in%20the%20article%27s%20footer%20to%20let%20Tumblr%20users%20easily%20promote%20this%20article%20on%20their%20blogs.%0A
+                    */
                     break;
 
                     case "linkedin":
@@ -3020,7 +3054,7 @@ log('attempting to get short url');
 
                 var $socialBox = $('<div class="rdr_share_social"><strong>Share your reaction about this on:</strong></div>'),
                 $shareLinks = $('<ul class="shareLinks"></ul>'),
-                socialNetworks = ["facebook","twitter","tumblr","linkedin"];
+                socialNetworks = ["facebook","twitter"]; //,"tumblr","linkedin"];
 
                 var content_node_info = {};
                 // we have some weird translation needs here:

@@ -55,7 +55,7 @@ def getSummary(interactions, container=None, content=None, page=None, data=None)
     ))
     sorted_counts = sorted(tag_counts.items(), key=lambda x: x[1]['count'], reverse=True)
     top_tags = dict((
-        tag for tag in sorted_counts[:5]
+        tag for tag in sorted_counts[:10]
     ))
     top_interactions = {}
     top_interactions['tags'] = top_tags
@@ -176,7 +176,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             kind=kind
         )
         print "Found existing Interaction with id %s" % existing.id
-        return dict(id=existing.id, interaction=existing)
+        return dict(id=existing.id, interaction=existing, tag_id=existing.interaction_node.id)
     except Interaction.DoesNotExist:
         pass
 
@@ -203,5 +203,5 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
     else:
         new.save()
 
-    if tempuser: return dict(id=new.id, num_interactions=num_interactions+1, interaction=new)
-    return dict(id=new.id, interaction=new)
+    if tempuser: return dict(id=new.id, num_interactions=num_interactions+1, interaction=new, tag_id=new.interaction_node.id)
+    return dict(id=new.id, interaction=new, tag_id=new.interaction_node.id)

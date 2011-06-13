@@ -16,6 +16,7 @@
       <!-- <div class="who_action">{{ tag.content.interaction.user.social_user.full_name }}'s reaction to:</div> -->
       <div class="who_action">
         {% with count=tag.content.interactions|length %}
+          <!-- ({{ count }}) {{ tag.tag.body }} -->
           {{ count }} person{{ count|pluralize }}
         {% endwith %}
       </div>
@@ -41,11 +42,15 @@
     </div>
     {% endfor %}
     
-    <h5>Other Reactions</h5>
-      {% for other_tag in tag.content.other_tags %}
-          {{ other_tag.interactions|length }} {{ other_tag.tag.body }}
-      {% endfor %}
-    
+    {% if tag.content.other_tags %}
+      <h5>Other Reactions</h5>
+      <ul class="other_reactions">
+        {% for other_tag in tag.content.other_tags %}
+            <li>({{ other_tag.interactions|length }}) {{ other_tag.tag.body }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
     </td>
   </tbody>
   {% endfor %}
