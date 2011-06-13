@@ -495,7 +495,7 @@ html.dailycandy section[role="main"] .card tbody .column1      {background:#f8eb
 html.techcrunch section[role="main"] .card tbody .column1      {background:#ecf9ec;}
 
 html.dailycandy section[role="main"] h1      {text-shadow:2px 2px 1px #F8EBF5;}
-html.dailycandy section[role="main"] h1      {text-shadow:2px 2px 1px #59c959;}
+html.techcrunch section[role="main"] h1      {text-shadow:2px 2px 1px #59c959;}
 
 section[role="main"] h1 	{font-family:Arial; font-size:28px; color:#6b6b6b; text-shadow:2px 2px 1px #dee7ed; font-weight:normal; padding:10px; margin:0;}
 section[role="main"] .card {background:#d2dee4; width:100%; margin-bottom:10px; border:1px solid #becdd7; border-right:0; border-left:0;}
