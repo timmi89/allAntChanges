@@ -208,10 +208,16 @@ class Link(models.Model):
     def __unicode__(self):
         return self.to_base62() + ' : ' + self.interaction.page.url
 
+class ScrubList(models.Model):
+    group = models.ForeignKey(Group)
+    bad_word = models.CharField(max_length=50)
+    scrubbed_word = models.CharField(max_length=50)
+
 class Profile(models.Model):
     user = models.OneToOneField(User)
     group_admin = models.ForeignKey(Group, blank=True, null=True)
     educated = models.BooleanField()
+    #following = models.ForeignKey(User)
     
 class SocialUser(models.Model):
     GENDER_CHOICES = (
