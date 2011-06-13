@@ -1329,9 +1329,6 @@ console.dir(settings);
                     }).fadeTo('300', '0.4');
                 },
                 update: function(hash, diff){
-
-                    var indicator = $('.rdr_indicator_'+hash),
-                    indicator_details = $('#rdr_indicator_details_'+hash);
                    
                     /*
                     var altSumm = RDR.summaries[hash];
@@ -1340,9 +1337,8 @@ console.dir(settings);
                     log(summary)
                     */ 
 
-                   xx =RDR.summaries[hash];
                     var summary = RDR.summaries[hash];
-
+                    log(summary);
                     //interaction categories and for each,
                     //a list of {id:incAmount} - incAmount will be 1 or -1 for decrement;
                     var diff = {   
@@ -1350,25 +1346,47 @@ console.dir(settings);
                             
                         },
                         tags: {
-                            //'id':<change - +1 or -1, typically>
-                            '4':1
+                            //'id':<change - +1 or -1, typically .... -1 for removing>
+                            '2':1
                         }
                     }
 
-                    $.each( diff, function(key, val){
-                        //coms or tags
-                        log(val);
+                    var interaction_count = summary.counts.interactions;
+                    
+                    $.each( diff, function(intActType, val){
+                        // scoped to category of coms or tags
+                        
+                        var top_intActs_of_this_type = summary.top_interactions[intActType];
+                        var counts_of_this_type = summary.counts[intActType];   //this is an integer, so can't assign by refrence.
+
                         $.each(val, function(id,delt){
                             //coms or tags
-                            log(delt);
-                            if(v.hash == hash){
-                                imageData = v;
-                            }
+                            if( typeof top_intActs_of_this_type[id] === 'undefined' ) return false;
+                            //else
+                            log('dfsdfsd')
+
+                            top_intActs_of_this_type[id].count += delt;
+                            summary.counts[intActType] += delt;
+                            summary.counts.interactions += delt;
                         });
                     });
+                    log( summary.top_interactions['tags'] )
+                    log( summary.counts['tags'] )
+                    log(summary.counts.interactions)
 
-                    log(indicator.data())
-                    log(indicator_details)
+
+                    /**********************/
+                    //update html in page  
+                    var $indicator = $('#rdr_indicator_'+hash),
+                    $indicator_details = $('#rdr_indicator_details_'+hash);
+
+                    $indicator.add($indicator_details)//chain
+                        .find('.rdr_count').text( summary.counts['tags'] );
+                    
+                    //$indicator_details.find('.rdr_count').text( summary.counts['tags'] );
+
+             
+
                 },
                 make: function(hash){
                     //kind is optional - defaults to text
