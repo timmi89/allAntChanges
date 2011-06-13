@@ -276,35 +276,39 @@ function readrBoard($R){
 
                 // if this is an image, make sure we have the image hashed, tagged, and have its hash as a container:
                 if (settings.content_type == "image" && !settings.container ) {
+                    log('image but no container');
                     var hashText = "rdr-img-"+settings.content,
                     hash = RDR.util.md5.hex_md5( hashText );
                     settings.container = hash;
                 }
 
+log('XCXCXCXCXCXXC-- settings --');
+console.dir(settings);
                 var items = [
                         {
                             "item":"reaction",
                             "tipText":"React to this",
                             "onclick":function(){
-                                RDR.actions.sentimentBox({
-                                    "container": settings.container,
-                                    "content_type": settings.content_type,
-                                    "content": settings.content,
-									"coords": coords
-                                });
+                                RDR.actions.sentimentBox(
+         //                            "container": settings.container,
+         //                            "content_type": settings.content_type,
+         //                            "content": settings.content,
+									// "coords": coords,
+                                    $.extend( settings, {"coords": coords})
+                                );
                             }
                         },
                         {
                             "item":"bookmark",
                             "tipText":"Bookmark this",
                             "onclick":function(){
-                                RDR.actions.sentimentBox({
-                                    "container": settings.container,
-                                    "content_type": settings.content_type,
-                                    "content": settings.content,
-                                    "coords": coords,
-                                    "actionType": "bookmark"
-                                });
+                                RDR.actions.sentimentBox(
+                                    // "container": settings.container,
+                                    // "content_type": settings.content_type,
+                                    // "content": settings.content,
+                                    // "coords": coords,
+                                    $.extend( settings, { "coords": coords, "actionType":"bookmark"})
+                                );
                             }
                         }
                 ];
@@ -539,8 +543,8 @@ function readrBoard($R){
                     }
                     if( whichAlert == "fromShareLink"){
                         //put a better message here
-                        msg1 = '<h1>Shared content with <span>ReadrBoard</span></h1>';
-                        msg2 = 'Check it out below: <a class="rdr_showSelection" href="javascript:void(0);">Show me</a>';
+                        msg1 = '<h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shared with <span>ReadrBoard</span></h1>';
+                        msg2 = '&nbsp;&nbsp;<strong>' + data.reaction + ':</strong> ' + data.content.substr(0,40) + '... <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>';
                     }
 
                     var $educateUser = $('<div id="rdr_ed_user" class="rdr" />');
@@ -755,7 +759,7 @@ function readrBoard($R){
                                 log('-------message.status-----------');
                                 console.log(message.status);
                                 var sharedLink = message.status.split('|');
-                                RDR.session.getSharedLinkInfo( {location:sharedLink[2], container_hash:sharedLink[1]} );
+                                RDR.session.getSharedLinkInfo( { container_hash:sharedLink[1], location:sharedLink[2], reaction:sharedLink[3], content:sharedLink[4] } );
                             }
                         }
                     },
@@ -877,109 +881,6 @@ function readrBoard($R){
         actions: {
             aboutReadrBoard: function() {
                 alert('Testing... Readrboard gives you more revenue and deeper engagement!');
-            },
-            bookmarkStart: function(args) {
-                RDR.actions.bookmarkStart({ tag:$this, rindow:rindow, settings:settings });
-                args.tag.find('div.rdr_leftBox').html('<img src="'+RDR_rootPath+'/static/images/loader.gif" style="margin:6px 0 0 5px" />');
-    
-                
-                //example:
-                //tag:{name, id}, rindow:rindow, settings:settings, callback: 
-                
-                // tag can be an ID or a string.  if a string, we need to sanitize.
-                
-                // tag, rindow, settings, callback
-
-                // TODO the args & params thing here is confusing
-                RDR.session.getUser( args, function( params ) {
-                    // get the text that was highlighted
-
-                    var content = $.trim( params.settings.content ),
-                        container = $.trim( params.settings.container ),
-                        src_with_path = $.trim( params.settings.src_with_path );
-
-                    var rindow = params.rindow,
-                        tag_li = params.tag,
-                        tag = params.tag.data('tag');
-
-                    var sendData = {
-                        "tag" : tag,
-                        "hash": container,
-                        "content" : content,
-                        "src_with_path" : src_with_path,
-                        "content_type" : params.settings.content_type,
-                        "user_id" : RDR.user.user_id,
-                        "readr_token" : RDR.user.readr_token,
-                        "group_id" : RDR.groupPermData.group_id,
-                        "page_id" : RDR.page.id
-                    };
-
-                    if ( !tag_li.hasClass('rdr_tagged') ) {
-                        // send the data!
-                        $.ajax({
-                            url: "/api/tag/create/",
-                            type: "get",
-                            contentType: "application/json",
-                            dataType: "jsonp",
-                            data: { json: JSON.stringify(sendData) },
-                            success: function(response) {
-                                tag_li.find('div.rdr_leftBox').html('');
-                                //[eric] - if we want these params still we need to get them from args:
-                                //do we really want to chain pass these through?  Or keep them in a shared scope?
-
-                                if ( response.status == "fail" ) {
-                                    console.log('failllllllllll');
-                                    if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                        console.log('uh oh better login, tempy');
-                                        RDR.session.showLoginPanel( args );
-                                    } else {
-                                        // if it failed, see if we can fix it, and if so, try this function one more time
-                                        RDR.session.handleGetUserFail( response, function() {
-                                            if ( !args.secondAttempt ) {
-                                                args.secondAttempt = true;
-                                                RDR.actions.rateSend( args );
-                                            }
-                                        });
-                                    }
-                                } else {
-                                    if ( tag_li.length == 1 ) {
-                                        tag_li.find('div.rdr_leftBox').unbind();
-                                        tag_li.find('div.rdr_leftBox').click( function(e) {
-                                            e.preventDefault();
-                                            args.int_id = response.data; // add the interaction_id info in, we need it for unrateSend
-                                            RDR.actions.unrateSend(args);
-                                            return false; // prevent the tag call applied to the parent <li> from firing
-                                        });
-                                        tag_li.addClass('rdr_tagged').addClass('rdr_custom_'+response.data.id);
-                                        tag_li.data('interaction_id', response.data.id);
-
-                                        // if it was a custom tag, do a few things
-                                        if ( tag_li.hasClass('rdr_customTagBox') ) {
-                                            tag_li.removeClass('rdr_customTagBox');
-                                            tag_li.siblings().removeClass('rdr_selected');
-                                            tag_li.addClass('rdr_selected');
-                                            tag_li.find('input').remove();
-                                            tag_li.find('div.rdr_help').remove();
-                                            tag_li.append( '<div class="rdr_tagText">'+tag.name+'</div>' );
-                                            RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:params.settings});
-                                        }
-                                    } 
-                                    RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:response.data });
-                                    if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
-                                    else RDR.session.showLoginPanel( args );
-                                }
-                            },
-                            error: function(response) {
-                                //for now, ignore error and carry on with mockup
-                                console.warn('ajax error');
-                                console.log(response);
-                            }
-                        });
-                    } else {
-                        tag_li.find('div.rdr_leftBox').html('');
-                        RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:tag_li.data('interaction_id') });
-                    }
-                });
             },
             init: function(){
                 var that = this;
@@ -1214,11 +1115,13 @@ function readrBoard($R){
                     // for jQuery selecting ( $(img[src$='foobar.png']) ), we want the relative path
                     src = this_img.attr('src'),
 				    src_with_path = this.src;
+                    
+                    var container = ( this_img.data('hash') ) ? this_img.data('hash'):"";
 
                     this_img.addClass('rdr_engage_img');
 
                     // builds a new actionbar or just returns the existing $actionbar if it exists.
-				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src, src_with_path:src_with_path, ignoreWindowEdges:"rb" });
+				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src, container:container, src_with_path:src_with_path, ignoreWindowEdges:"rb" });
                     $actionbar.data('keepAlive.img',true)
 
                     //kill all rivals!!
@@ -1893,7 +1796,6 @@ function readrBoard($R){
                             $this.siblings().removeClass('rdr_selected');
                             $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
                             RDR.actions.viewReactionContent( $this.data('tag'), $this.data('which'), rindow );
-                            //RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });//end rateSend
                         }
                         
                         //todo: branch text and img
@@ -2072,9 +1974,10 @@ function readrBoard($R){
                                 });
 
                                 var content_node_info = $(this).closest('div.rdr_contentSet').data();
+                                log('--------------------content_node_info-----------------------');
+                                console.dir(content_node_info);
                                 $shareTip.find('img.rdr_sns').click( function() {
-                                    RDR.actions.shareGetLink({ sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node_info:content_node_info });
-                                    // RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });//end rateSend
+                                    RDR.actions.share_getLink({ sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node_info:content_node_info });
                                 });
                             }
                         );
@@ -2546,7 +2449,8 @@ function readrBoard($R){
                     // get the text that was highlighted
                     var content_type = params.settings.content_type;
                     
-                    
+                    console.clear();
+                    console.dir(params);
                     var rindow = params.rindow,
                         tag_li = params.tag,
                         tag = params.tag.data('tag');
@@ -2560,7 +2464,8 @@ function readrBoard($R){
                         
                         content_node_data = {
                             'container': container,
-                            'body': content
+                            'body': src_with_path
+                            // 'body': content
                         };
 
                     }else{
@@ -2647,7 +2552,7 @@ function readrBoard($R){
                                             RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:params.settings});
                                         }
                                     } 
-                                    RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:response.data });
+                                    RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:response.data, content_node_info:content_node_data, content_type:content_type });
                                     if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
                                     else RDR.session.showLoginPanel( args );
                                 }
@@ -2660,7 +2565,7 @@ function readrBoard($R){
                         });
                     } else {
                         tag_li.find('div.rdr_leftBox').html('');
-                        RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:tag_li.data('interaction_id') });
+                        RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:tag_li.data('interaction_id'), content_node_info:content_node_data, content_type:content_type });
                     }
                 });
             },
@@ -2733,8 +2638,8 @@ function readrBoard($R){
                     }
                 });
             },
-            shareGetLink: function(args) {
-                log('----shareGetLink----');
+            share_getLink: function(args) {
+                log('----share_getLink----');
                 console.dir(args);
                 //example:
                 //tag:{name, id}, rindow:rindow, settings:settings, callback: 
@@ -2808,7 +2713,7 @@ log('attempting to get short url');
                                         RDR.session.handleGetUserFail( response, function() {
                                             if ( !args.secondAttempt ) {
                                                 args.secondAttempt = true;
-                                                RDR.actions.shareGetLink( args );
+                                                RDR.actions.share_getLink( args );
                                             }
                                         });
                                     }
@@ -2827,10 +2732,6 @@ log('attempting to get short url');
                                 console.log(response);
                             }
                         });
-                    // } else {
-                    //     tag_li.find('div.rdr_leftBox').html('');
-                    //     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:tag_li.data('interaction_id') });
-                    // }
                 });
             },
             shareContent: function(args) {
@@ -3046,9 +2947,46 @@ log('attempting to get short url');
                 $shareLinks = $('<ul class="shareLinks"></ul>'),
                 socialNetworks = ["facebook","twitter","tumblr","linkedin"];
 
+                var content_node_info = {};
+                // we have some weird translation needs here:
+                content_node_info.content = args.content_node_info.body;
+                content_node_info.hash = args.content_node_info.container;
+                content_node_info.location = args.content_node_info.location;
+                content_node_info.content_node_key = args.content_node_info.container + "-" + args.content_node_info.location;
+                content_node_info.content_type = args.content_type;
+
                 //quick mockup version of this code
                 $.each(socialNetworks, function(idx, val){
                     $shareLinks.append('<li><a href="http://' +val+ '.com" ><img src="'+RDR_rootPath+'/static/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
+                    $shareLinks.find('li:last').click( function() {
+                        
+                        /*
+                        "content":
+                        {
+                            "container":"a470d537885a6de414a8269d3e64c905",
+                            "body":"Singing in the shower is for amateurs.",
+                            "location":"3:0,3:38"
+                        }
+
+
+                        content
+                        "Mail a pump-up dessert ...zarre desk accessories."
+                        
+                        content_node_key
+                        "f15c82d27b6479793ddee2a6fb14ee6e-3:96,3:170"
+                        
+                        content_type
+                        "text"
+                        
+                        hash
+                        "f15c82d27b6479793ddee2a6fb14ee6e"
+                        */
+                        // var content_node_info = $(this).closest('div.rdr_contentSet').data();
+
+
+                        RDR.actions.share_getLink({ sns:val, rindow:rindow, tag:tag, content_node_info:content_node_info });
+                        return false;
+                    });
                 });
                 $socialBox.append($shareLinks);
                 // $socialBox.append('<div>herro worrd</div><div>herro worrd</div><div>herro worrd</div><div>herro worrd</div><div>herro worrd</div>');

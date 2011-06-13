@@ -166,7 +166,6 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         tempuser =True
 
     interactions = Interaction.objects.filter(user=user)
-
     # Check unique content_id, user_id, page_id, interaction_node_id
     try:
         existing = interactions.get(
@@ -203,6 +202,6 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
     if new == None: raise JSONException(u"Error creating interaction")
     else:
         new.save()
-    
+
     if tempuser: return dict(id=new.id, num_interactions=num_interactions+1, interaction=new)
     return dict(id=new.id, interaction=new)

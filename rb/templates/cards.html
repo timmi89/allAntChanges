@@ -13,7 +13,12 @@
       <!-- <div class="count"></div> -->
     </td>
     <td class="column2">
-      <div class="who_action">{{ tag.content.interaction.user.social_user.full_name }}'s reaction to:</div>
+      <!-- <div class="who_action">{{ tag.content.interaction.user.social_user.full_name }}'s reaction to:</div> -->
+      <div class="who_action">
+        {% with count=tag.content.interactions|length %}
+          {{ count }} person{{ count|pluralize }}
+        {% endwith %}
+      </div>
       {% if tag.content.interaction.content.kind == "img" %}
       <div class="content image"><img src="{{ tag.content.interaction.content.body }}"></div>
       {% else %}
@@ -35,9 +40,12 @@
       </div>
     </div>
     {% endfor %}
-    {% for other_tag in tag.content.other_tags %}
-        {{ other_tag.interactions|length }}{{ other_tag.tag.body }}
-    {% endfor %}
+    
+    <h5>Other Reactions</h5>
+      {% for other_tag in tag.content.other_tags %}
+          {{ other_tag.interactions|length }} {{ other_tag.tag.body }}
+      {% endfor %}
+    
     </td>
   </tbody>
   {% endfor %}
