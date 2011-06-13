@@ -2597,7 +2597,7 @@ log('attempting to get short url');
                                 } else {
 
                                     //successfully got a short URL
-                                    RDR.actions.shareContent({ sns:params.sns, content:content_node_info.content, short_url:response.short_url, reaction:tag.name });
+                                    RDR.actions.shareContent({ sns:params.sns, content:content_node_info.content, short_url:response.data.short_url, reaction:tag.name });
 
                                     if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
                                     else RDR.session.showLoginPanel( args );
