@@ -643,16 +643,16 @@ function readrBoard($R){
 
                 $('html,body').animate({scrollTop: scrollTarget}, 1000);
             },
-            getSharedLinkInfo: function(){
+            getSharedLinkInfo: function( data ){
                 //some condition
                 var pageWasLoaedFromSharedLink = true; //how do you work with cookies here?
                 if(pageWasLoaedFromSharedLink){
                     
                     //TODO: sample data here, fill with info from cookie
-                    var data = {
-                        location: "2:10\0542:32",
-                        container_hash: "c9676b4da28e1e005a1b27676e8b2847"
-                    }
+                    // var data = {
+                    //     location: "2:10\0542:32",
+                    //     container_hash: "c9676b4da28e1e005a1b27676e8b2847"
+                    // }
 
                     //note: I turned off the checksum in rangy, so the locations will be mising the {####} part.
                     // we don't need the checksum, cause we're already doing that.
@@ -733,36 +733,29 @@ function readrBoard($R){
                     function(e){
                         var message = JSON.parse( e.data );
 
-                        if ( message.status ) {;
-                            switch ( message.status ) {
+                        if ( message.status ) {
+                            if ( message.status == "fb_logged_in" || message.status == "known_user" || message.status == "got_temp_user" ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
-                                case "fb_logged_in":
-                                case "known_user":
-                                case "got_temp_user":
-                                    //console.dir(message.data);
-                                    for ( var i in message.data ) {
-                                        RDR.user[ i ] = message.data[i];
-                                    }
 
-                                    if ( callback && args ) {
-                                        args.user = RDR.user;
-                                        callback(args);
-                                    }
-                                    else if ( callback ) callback();
-                                break;
+                                //console.dir(message.data);
+                                for ( var i in message.data ) {
+                                    RDR.user[ i ] = message.data[i];
+                                }
 
-                                case "checkSocialUser fail":
-                                break;
-
-                                case "already had user":
-                                    $('#rdr-loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
-                                break;
-
-                                case "educate user":
-                                    //RDR.session.educateUser();
-                                    RDR.session.alertBar.make('educateUser');
-                                break;
+                                if ( callback && args ) {
+                                    args.user = RDR.user;
+                                    callback(args);
+                                }
+                                else if ( callback ) callback();
+                            } else if ( message.status == "checkSocialUser fail" ) {
+                            } else if ( message.status == "already had user" ) {
+                                $('#rdr-loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
+                            } else if ( message.status == "educate user" ) {
+                                RDR.session.alertBar.make('educateUser');
+                            } else if ( message.status.indexOf('sharedLink') != -1 ) {
+                                var sharedLink = message.status.split('|');
+                                RDR.session.getSharedLinkInfo( {location:sharedLink[2], container_hash:sharedLink[1]} );
                             }
                         }
                     },
@@ -1193,8 +1186,8 @@ function readrBoard($R){
             initEnvironment: function(){
                 
                 //dont know if it makes sense to return anything here like im doing now...
-                var wasSharedLink = RDR.session.getSharedLinkInfo();
-                log(wasSharedLink);
+                // var wasSharedLink = RDR.session.getSharedLinkInfo();
+                // log(wasSharedLink);
 
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
                 var $indicatorDetailsWrapper = $('<div id="rdr_indicator_details_wrapper" />').appendTo('body');
