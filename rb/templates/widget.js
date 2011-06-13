@@ -289,25 +289,26 @@ console.dir(settings);
                             "item":"reaction",
                             "tipText":"React to this",
                             "onclick":function(){
-                                RDR.actions.sentimentBox({
-                                    "container": settings.container,
-                                    "content_type": settings.content_type,
-                                    "content": settings.content,
-									"coords": coords
-                                });
+                                RDR.actions.sentimentBox(
+         //                            "container": settings.container,
+         //                            "content_type": settings.content_type,
+         //                            "content": settings.content,
+									// "coords": coords,
+                                    $.extend( settings, {"coords": coords})
+                                );
                             }
                         },
                         {
                             "item":"bookmark",
                             "tipText":"Bookmark this",
                             "onclick":function(){
-                                RDR.actions.sentimentBox({
-                                    "container": settings.container,
-                                    "content_type": settings.content_type,
-                                    "content": settings.content,
-                                    "coords": coords,
-                                    "actionType": "bookmark"
-                                });
+                                RDR.actions.sentimentBox(
+                                    // "container": settings.container,
+                                    // "content_type": settings.content_type,
+                                    // "content": settings.content,
+                                    // "coords": coords,
+                                    $.extend( settings, { "coords": coords, "actionType":"bookmark"})
+                                );
                             }
                         }
                 ];
@@ -2430,7 +2431,8 @@ console.dir(settings);
                     // get the text that was highlighted
                     var content_type = params.settings.content_type;
                     
-                    
+                    console.clear();
+                    console.dir(params);
                     var rindow = params.rindow,
                         tag_li = params.tag,
                         tag = params.tag.data('tag');
