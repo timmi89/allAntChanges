@@ -1436,26 +1436,35 @@ function readrBoard($R){
 
                     var indicator = $('.rdr_indicator_'+hash),
                     indicator_details = $('#rdr_indicator_details_'+hash);
-/*
+                   
+                    /*
                     var altSumm = RDR.summaries[hash];
                     var summary = indicator.data('summary');
                     log(altSumm)
                     log(summary)
-                    
+                    */ 
 
- */ 
                    xx =RDR.summaries[hash];
                     var summary = RDR.summaries[hash];
 
                     //interaction categories and for each,
                     //a list of {id:incAmount} - incAmount will be 1 or -1 for decrement;
                     var diff = {   
-                        coms: [],
-                        tags: [{4:1}]
+                        coms: {
+                            
+                        },
+                        tags: {
+                            //'id':<change - +1 or -1, typically>
+                            '4':1
+                        }
                     }
- log(xx)
+
                     $.each( diff, function(key, val){
-                        $.each(val, function(i,v){
+                        //coms or tags
+                        log(val);
+                        $.each(val, function(id,delt){
+                            //coms or tags
+                            log(delt);
                             if(v.hash == hash){
                                 imageData = v;
                             }
