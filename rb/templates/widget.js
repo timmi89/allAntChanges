@@ -1360,6 +1360,9 @@ console.dir(settings);
                     */ 
                     //interaction categories and for each,
                     //a list of {id:incAmount} - incAmount will be 1 or -1 for decrement;
+
+                    /*
+                    //example for testing - keep commented out
                     var diff = {   
                         coms: {
                             
@@ -1372,6 +1375,7 @@ console.dir(settings);
                             }
                         }
                     }
+                    */
 
                     var interaction_count = summary.counts.interactions;
                     
