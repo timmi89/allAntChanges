@@ -41,7 +41,7 @@ class Tag:
             for content_item in content_items
         ]
 
-        self.content = sorted(content, key=lambda x: len(x.interactions), reverse=True)[0]
+        self.content = sorted(content, key=lambda x: len(x.interactions))[0]
 
 class Card:
     def __init__(self, page, interactions):
