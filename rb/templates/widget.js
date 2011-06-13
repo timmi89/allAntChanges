@@ -562,7 +562,7 @@ console.dir(settings);
 
                     $educateUser.find('.rdr_showSelection').click( function() {
                         //show the alertBar sliding closed for just a second before scrolling down..
-                        RDR.session.alertBar.close();
+                        // RDR.session.alertBar.close();
                         setTimeout(function(){
                             RDR.session.revealSharedContent(data);
                         }, 200)
