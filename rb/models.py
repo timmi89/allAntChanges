@@ -15,7 +15,7 @@ class TagManager(models.Manager):
 
 class CommentManager(models.Manager):
     def get_query_set(self):
-        return super(TagManager, self).get_query_set().filter(kind='com')
+        return super(CommentManager, self).get_query_set().filter(kind='com')
 
 # Sample manager w/ custom sql
 class InteractionManager(models.Manager):
