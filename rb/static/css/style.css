@@ -81,11 +81,7 @@ body {
 /* HEADINGS */
 
 h1, 
-h2, 
-h3, 
-h4, 
-h5, 
-h6 { font-family:ReadrLeague, Arial; font-weight:bold; }
+h2 { font-family:ReadrLeague, Arial; font-weight:bold; }
 
 h1 { 
 margin-bottom:.75em;
@@ -108,8 +104,11 @@ font-size:1.25em; /* 20 / 16 = 1.25 */
 line-height:1.25; }
 
 h5 { 
-margin-bottom:1.5em;
-font-size:1em; /* 16 / 16 = 1 */ }
+font-size: 12px;
+font-style: italic;
+font-weight: bold;
+margin: 10px 0 0;
+}
 
 h6 { 
 font-size:1em; /* 16 / 16 = 1 */ }
@@ -516,6 +515,8 @@ section[role="main"] .card tbody .column2 .who_action      {font:italic bold 12p
 section[role="main"] .card tbody .column2 .content       {font:normal normal 12px Arial;}
 section[role="main"] .card tbody .column2 .content img   {max-width:100px; max-height:100px; xbox-shadow:0px 0px 4px #666; margin:5px 0;}
 section[role="main"] .card tbody .column2 h5.label.small   {font:normal normal 9px Arial; text-transform:uppercase; margin-top:10px;}
+section[role="main"] .card tbody .column2 .other_reactions 		{list-style-type:none; overflow:auto;}
+section[role="main"] .card tbody .column2 .other_reactions li	{display:block; float:left; font-size:11px; font-style:italic; margin-right:20px; padding:1px 5px; background:#ddd; border-radius:3px;}
 section[role="main"] .card tbody .column2 .comment_container    {background:#f0f0f0; border:1px solid #d3d4d4; box-shadow:0px 0px 2px #aaa; padding:5px;  }
 section[role="main"] .card tbody .column2 .comment_container .header   {overflow:hidden; color:#666; clear:both; }
 section[role="main"] .card tbody .column2 .comment_container .header .when       {float:right; font:normal 11px Arial;}

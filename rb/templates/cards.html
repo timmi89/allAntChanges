@@ -41,11 +41,14 @@
     </div>
     {% endfor %}
     
-    <h5>Other Reactions</h5>
-      {% for other_tag in tag.content.other_tags %}
-          {{ other_tag.interactions|length }} {{ other_tag.tag.body }}
-      {% endfor %}
-    
+
+      <h5>Other Reactions</h5>
+      <ul class="other_reactions">
+        {% for other_tag in tag.content.other_tags %}
+            <li>({{ other_tag.interactions|length }}) {{ other_tag.tag.body }}</li>
+        {% endfor %}
+      </ul>
+
     </td>
   </tbody>
   {% endfor %}
