@@ -617,13 +617,9 @@ function readrBoard($R){
                 /**********/
                 //todo: quick fix!  ... later attach it to a rindow to do it right.
                 //for now at least, make it so we can clear this easily.
-                $(document).bind('dblclick.rdr', function(event) {
-                    var $mouse_target = $(event.target);                                
-
-                    if ( !$mouse_target.parents().hasClass('rdr')) {
-                        $().selog('hilite', selState, 'off');
-                        $(document).unbind('dblclick.rdr', arguments.callee);
-                    }
+                $(document).bind('click.rdr', function(event) {
+                    $().selog('hilite', selState, 'off');
+                    $(document).unbind('dblclick.rdr', arguments.callee);
                 });
                //bind an escape keypress to clear it.
                 //todo: for a real public API, this should be an option, or passed in function or something
