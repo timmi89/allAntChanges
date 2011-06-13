@@ -17,7 +17,7 @@
    </head>
    <body style="padding:0;margin:0;color:#fff;background:transparent;">
 	<div id="fb-root"></div>
-     <script src="http://connect.facebook.net/en_US/all.js" type="text/javascript"s></script>
+     <script src="http://connect.facebook.net/en_US/all.js" type="text/javascript"></script>
      <script type="text/javascript">
 		RDRAuth.FBLoginResponse = function(response) {
 			if (response.session) {
@@ -37,7 +37,9 @@
 		});
 		
 		// RDRAuth.checkSocialUser();
-		if ( !$.cookie('educatedUser') ) {
+		if ( $.cookie('location') && $.cookie('container_hash') ) {
+			RDRAuth.notifyParent({message:false}, "sharedLink|" + $.cookie('container_hash') + "|" + $.cookie('location'));
+		} else if ( !$.cookie('educatedUser') ) {
 			RDRAuth.notifyParent({message:false}, "educate user");
 		}
 	</script>

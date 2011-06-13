@@ -643,16 +643,16 @@ function readrBoard($R){
 
                 $('html,body').animate({scrollTop: scrollTarget}, 1000);
             },
-            getSharedLinkInfo: function(){
+            getSharedLinkInfo: function( data ){
                 //some condition
                 var pageWasLoaedFromSharedLink = true; //how do you work with cookies here?
                 if(pageWasLoaedFromSharedLink){
                     
                     //TODO: sample data here, fill with info from cookie
-                    var data = {
-                        location: "2:10\0542:32",
-                        container_hash: "c9676b4da28e1e005a1b27676e8b2847"
-                    }
+                    // var data = {
+                    //     location: "2:10\0542:32",
+                    //     container_hash: "c9676b4da28e1e005a1b27676e8b2847"
+                    // }
 
                     //note: I turned off the checksum in rangy, so the locations will be mising the {####} part.
                     // we don't need the checksum, cause we're already doing that.
@@ -733,36 +733,29 @@ function readrBoard($R){
                     function(e){
                         var message = JSON.parse( e.data );
 
-                        if ( message.status ) {;
-                            switch ( message.status ) {
+                        if ( message.status ) {
+                            if ( message.status == "fb_logged_in" || message.status == "known_user" || message.status == "got_temp_user" ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
-                                case "fb_logged_in":
-                                case "known_user":
-                                case "got_temp_user":
-                                    //console.dir(message.data);
-                                    for ( var i in message.data ) {
-                                        RDR.user[ i ] = message.data[i];
-                                    }
 
-                                    if ( callback && args ) {
-                                        args.user = RDR.user;
-                                        callback(args);
-                                    }
-                                    else if ( callback ) callback();
-                                break;
+                                //console.dir(message.data);
+                                for ( var i in message.data ) {
+                                    RDR.user[ i ] = message.data[i];
+                                }
 
-                                case "checkSocialUser fail":
-                                break;
-
-                                case "already had user":
-                                    $('#rdr-loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
-                                break;
-
-                                case "educate user":
-                                    //RDR.session.educateUser();
-                                    RDR.session.alertBar.make('educateUser');
-                                break;
+                                if ( callback && args ) {
+                                    args.user = RDR.user;
+                                    callback(args);
+                                }
+                                else if ( callback ) callback();
+                            } else if ( message.status == "checkSocialUser fail" ) {
+                            } else if ( message.status == "already had user" ) {
+                                $('#rdr-loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
+                            } else if ( message.status == "educate user" ) {
+                                RDR.session.alertBar.make('educateUser');
+                            } else if ( message.status.indexOf('sharedLink') != -1 ) {
+                                var sharedLink = message.status.split('|');
+                                RDR.session.getSharedLinkInfo( {location:sharedLink[2], container_hash:sharedLink[1]} );
                             }
                         }
                     },
@@ -1193,8 +1186,8 @@ function readrBoard($R){
             initEnvironment: function(){
                 
                 //dont know if it makes sense to return anything here like im doing now...
-                var wasSharedLink = RDR.session.getSharedLinkInfo();
-                log(wasSharedLink);
+                // var wasSharedLink = RDR.session.getSharedLinkInfo();
+                // log(wasSharedLink);
 
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
                 var $indicatorDetailsWrapper = $('<div id="rdr_indicator_details_wrapper" />').appendTo('body');
@@ -2764,9 +2757,9 @@ function readrBoard($R){
                         "hash": content_node_info.hash,
                         "content" : content_node,
                         "content_type" : content_node_info.content_type,
-                        "user_id" : RDR.user.user_id,
+                        "user_id" : parseInt( RDR.user.user_id ),
                         "readr_token" : RDR.user.readr_token,
-                        "group_id" : RDR.groupPermData.group_id,
+                        "group_id" : parseInt( RDR.groupPermData.group_id ),
                         "page_id" : RDR.page.id
                     };
 
@@ -2783,8 +2776,9 @@ log('attempting to get short url');
                                 log('---- share URL response -----');
                                 console.dir(response);
 
-                                //[eric] - if we want these params still we need to get them from args:
-                                //do we really want to chain pass these through?  Or keep them in a shared scope?
+                                // todo cache the short url
+                                // RDR.summaries[content_node_info.hash].content_nodes[IDX].top_interactions.tags[tag.content].short_url = ;
+
 
                                 if ( response.status == "fail" ) {
                                     console.log('failllllllllll');
@@ -2803,6 +2797,7 @@ log('attempting to get short url');
                                 } else {
 
                                     //successfully got a short URL
+                                    RDR.actions.shareContent({ sns:params.sns, content:content_node_info.content, short_url:response.data.short_url, reaction:tag.name });
 
                                     if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
                                     else RDR.session.showLoginPanel( args );
@@ -2821,14 +2816,14 @@ log('attempting to get short url');
                 });
             },
             shareContent: function(args) {
-                switch (args.type) {
+                switch (args.sns) {
                     case "facebook":
-                        window.open('http://www.facebook.com/sharer.php?s=100&p[title]="'+escape(CONTENT)+'"&p[summary]=hilarious&p[url]='+SHORTURL,"readr_share_fb","menubar=1,resizable=1,width=626,height=436");
+                        window.open('http://www.facebook.com/sharer.php?s=100&p[title]="'+args.content+'"&p[summary]=hilarious&p[url]='+args.short_url,"readr_share_fb","menubar=1,resizable=1,width=626,height=436");
                     //&p[images][0]=<?php echo $image;?>', 'sharer',
                     break;
 
                     case "twitter":
-                        window.open('http://twitter.com/intent/tweet?url=SHORTURL&via=TWITTERACCOUNTNAME&text=encode(REACTION+": +"content)',"readr_share_tw","menubar=1,resizable=1,width=626,height=436");
+                        window.open('http://twitter.com/intent/tweet?url='+args.short_url+'&via='+RDR.group.twitter+'&text='+escape(args.reaction)+': +"'+escape(args.content)+'"',"readr_share_tw","menubar=1,resizable=1,width=626,height=436");
                     break;
 
                     case "tumblr":
