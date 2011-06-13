@@ -7,6 +7,7 @@ $R = {}, //init var: our clone of jQuery
 client$ = {}, //init var: clients copy of jQuery
 RDR_rootPath = "http://localhost:8080"; //todo: when we get our hosting up change to readrboard.com or our CDN.
 var demoRindow;
+var xx;
 
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
 //This function gets called by the function $RFunctions() via the function loadScript().
@@ -1432,17 +1433,36 @@ function readrBoard($R){
                     }).fadeTo('300', '0.4');
                 },
                 update: function(hash, diff){
-                    var indicator = $('#rdr_indicator_'+hash),
-                    indicator_details = $('#rdr_indicator_details_'+hash);
 
+                    var indicator = $('.rdr_indicator_'+hash),
+                    indicator_details = $('#rdr_indicator_details_'+hash);
+/*
                     var altSumm = RDR.summaries[hash];
                     var summary = indicator.data('summary');
+                    log(altSumm)
+                    log(summary)
+                    
 
-                    
+ */ 
+                   xx =RDR.summaries[hash];
+                    var summary = RDR.summaries[hash];
+
+                    //interaction categories and for each,
+                    //a list of {id:incAmount} - incAmount will be 1 or -1 for decrement;
+                    var diff = {   
+                        coms: [],
+                        tags: [{4:1}]
+                    }
+ log(xx)
                     $.each( diff, function(key, val){
+                        $.each(val, function(i,v){
+                            if(v.hash == hash){
+                                imageData = v;
+                            }
+                        });
                     });
-                    
-                    log(indicator)
+
+                    log(indicator.data())
                     log(indicator_details)
                 },
                 make: function(hash){
@@ -1929,6 +1949,22 @@ function readrBoard($R){
                         $header.find('span.rdr_tag_count').click( function() {
                             RDR.actions.rateSendLite({ element:$(this), tag:tag, rindow:rindow, content:node.body, which:which });
                         });
+                        
+                        var hash = $contentSet.data('hash');
+                        var container = $('.rdr-'+hash);
+                        var location = $contentSet.data('location');
+
+                        var newSel = $(container).selog('save', {'serialRange': location});
+
+                        $contentSet.hover(
+                            function() {
+                                $(container).selog('hilite', newSel, 'on');
+                                
+                            },
+                            function() {
+                                $(container).selog('hilite', newSel, 'off');
+                            }
+                        );
 
                         log( $contentSet.data('content_node_key'));
 
