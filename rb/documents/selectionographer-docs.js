@@ -21,6 +21,24 @@
 *
 */        
 
+/*
+The selState object looks like this (with examples)
+
+	{
+	    styleName: 'rdr_hilite',
+	    container: <document or dom node>,      
+	    serialRange: "2:4,2:25",          
+	    range: <range>,                 		
+	    idx: 4,  
+	    timestamp: $.now(),				       
+	    interactionID: <interactionID>,     
+	    hiliter: <hiliter>,
+	    revisionParent: null,
+	    text: ""
+	}
+
+*/
+
 // ------------------------------------------------------------------------------------------------------------
 
 /*API Methods*/
@@ -87,7 +105,7 @@
 	$(window).selog( 'stack' );
 	
 		//read only access to the selection stack
-		
+
 
 // ------------------------------------------------------------------------------------------------------------
 

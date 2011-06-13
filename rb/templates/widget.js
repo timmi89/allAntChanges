@@ -6,8 +6,8 @@ $RDR, //our global $RDR object (jquerified RDR object for attaching data and que
 $R = {}, //init var: our clone of jQuery
 client$ = {}, //init var: clients copy of jQuery
 RDR_rootPath = "http://localhost:8080"; //todo: when we get our hosting up change to readrboard.com or our CDN.
-var xx;
 var demoRindow;
+var xx;
 
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
 //This function gets called by the function $RFunctions() via the function loadScript().
@@ -167,7 +167,8 @@ function readrBoard($R){
                     $new_rindow.html('');
                     $new_rindow.append( '<div class="rdr_close">x</div><h1></h1><div class="rdr rdr_contentSpace"></div>' );
                     $new_rindow.find('div.rdr_close').click( function() {
-                        $(this).parents('div.rdr.rdr_window').remove();
+                        //needed to change this to add triggers
+                        RDR.rindow.close( $(this).parents('div.rdr.rdr_window') );
                         return false; //make sure rindow for <a><img /></a> doesn't activate link
                     });
 					
@@ -227,8 +228,22 @@ function readrBoard($R){
 
                 return $new_rindow;
 			},
+            remove: function(){
+                this.remove
+            },
+            close: function( $rindows ) {
+                $rindows.each(function(idx,rindow){
+                    var selog_state = $(rindow).data('selog_state');
+                    //image rindows have no selog_state
+                    if ( typeof selog_state !== 'undefined' ){
+                        $().selog('hilite', selog_state, 'off');
+                    }
+                    $(rindow).remove();
+                });
+            },
 			closeAll: function() {
-				$('div.rdr.rdr_window').remove();
+                var $allRindows = $('div.rdr.rdr_window');
+				RDR.rindow.close( $allRindows );
 			}
 		},
 		actionbar: {
@@ -505,6 +520,152 @@ function readrBoard($R){
             }
         },
 		session: {
+            alertBar: {
+                make: function( whichAlert, data) {
+                    //whichAlert to tell us if it's the educate user bar, or the sharedLink bar
+                    //data if we want it, not using it now... - expects: 
+                    /*
+                    data = {
+                        location: "2:16\0542:90{ed6a0863}",
+                        container_hash: 'c9676b4da28e1e005a1b27676e8b2847'
+                    }
+                    */
+
+                    //todo: finish making these changes here:, but i didnt' want to do it before the DC demo.
+                    var msg1, msg2;
+                    if( whichAlert == "educateUser"){
+                        msg1 = '<h1>Rate or discuss <span>anything</span> on this page!</h1>';
+                        msg2 = 'Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.';
+                    }
+                    if( whichAlert == "fromShareLink"){
+                        //put a better message here
+                        msg1 = '<h1>Shared content with <span>ReadrBoard</span></h1>';
+                        msg2 = 'Check it out below: <a class="rdr_showSelection" href="javascript:void(0);">Show me</a>';
+                    }
+
+                    var $educateUser = $('<div id="rdr_ed_user" class="rdr" />');
+
+                    $educateUser.append(
+                        $('<div id="rdr_ed_user_1" />').append(msg1),
+                        $('<div id="rdr_ed_user_2" />').append(msg2),
+                        '<div id="rdr_ed_user_x">x</div>'
+                    );
+                                            
+                    $('body').append( $educateUser );
+                    $('#rdr_ed_user_x').click( function() {
+                        RDR.session.educateUserClose();
+                    });
+
+                    $educateUser.find('.rdr_showSelection').click( function() {
+                        //show the alertBar sliding closed for just a second before scrolling down..
+                        RDR.session.alertBar.close();
+                        setTimeout(function(){
+                            RDR.session.revealSharedContent(data);
+                        }, 200)
+                    });
+
+                    RDR.group.educateUserLocation = "top";
+                    if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
+                        $educateUser.css('top','auto');
+                        $educateUser.css('bottom','-40px');
+                        $('#rdr_ed_user').animate({bottom:0});
+                    } else {
+                        var bodyPaddingTop = parseInt( $('body').css('padding-top') );
+                        $('body').animate({ paddingTop: (bodyPaddingTop+35)+"px" });
+                        $('#rdr_ed_user').animate({top:0});
+                    }
+                },
+                close: function() {
+                    if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
+                        $('#rdr_ed_user').animate({bottom:-40});
+                    } else {
+                        var bodyPaddingTop = parseInt( $('body').css('padding-top') );
+                        $('body').animate({ paddingTop: (bodyPaddingTop-35)+"px" });
+                        $('#rdr_ed_user').animate({top:-40});
+                    }
+                    // set a cookie in the iframe saying not to show this anymore
+                    $.postMessage(
+                        "educatedUser",
+                        RDR.session.iframeHost + "/xdm_status/",
+                        window.frames['rdr-xdm-hidden']
+                    );
+                }
+            },
+            revealSharedContent: function(data){
+
+                var $container = $('.rdr-'+data.container_hash),
+                serialRange = data.location;
+
+                log($container)
+                log(serialRange);
+
+                var selogStack = $().selog('stack'); //just fyi, not using it... Will be an empty stack on page load.
+
+                /*
+                //no need to check for existing hilites right now
+                var oldSelState = selState || null;
+                if (oldSelState){
+                    $().selog('hilite',oldSelState.idx, 'off')
+                }
+                */
+
+                var selState = $container.selog('save', {'serialRange':serialRange} );
+                console.log(selState)
+
+                $().selog('hilite', selState, 'on')
+
+                /**********/
+                //todo: quick fix!  ... later attach it to a rindow to do it right.
+                //for now at least, make it so we can clear this easily.
+                $(document).bind('dblclick.rdr', function(event) {
+                    var $mouse_target = $(event.target);                                
+
+                    if ( !$mouse_target.parents().hasClass('rdr')) {
+                        $().selog('hilite', selState, 'off');
+                        $(document).unbind('dblclick.rdr', arguments.callee);
+                    }
+                });
+               //bind an escape keypress to clear it.
+                //todo: for a real public API, this should be an option, or passed in function or something
+                $(document).bind('keyup.rdr', function(event) {
+                    //todo: merge all esc key events (use an array of functions that we can just dequeue?)
+                    if (event.keyCode == '27') { //esc
+                        $().selog('hilite', selState, 'off');
+                        //remove the binding after it's been called.
+                        $(document).unbind('keyup.rdr', arguments.callee);
+                    }
+                });
+                /**********/ //end quick fix
+
+                var targetOffset = $container.offset().top,
+                windowPadding = 50,
+                scrollTarget = targetOffset-windowPadding || 0;
+
+                $('html,body').animate({scrollTop: scrollTarget}, 1000);
+            },
+            getSharedLinkInfo: function(){
+                //some condition
+                var pageWasLoaedFromSharedLink = true; //how do you work with cookies here?
+                if(pageWasLoaedFromSharedLink){
+                    
+                    //TODO: sample data here, fill with info from cookie
+                    var data = {
+                        location: "2:10\0542:32",
+                        container_hash: "c9676b4da28e1e005a1b27676e8b2847"
+                    }
+
+                    //note: I turned off the checksum in rangy, so the locations will be mising the {####} part.
+                    // we don't need the checksum, cause we're already doing that.
+
+                    //note: the "\054" is actually the octal for a comma.  The back end is passing it back that way. It's working fine though.
+                        //, so it seems that "2:10\0542:32" == "2:10,2:32"
+
+                    RDR.session.alertBar.make('fromShareLink', data);
+                    return true; //could return something more useful if we need it.
+                }
+                //else
+                return false; 
+            },
 			iframeHost : "http://readr.local:8080", // TODO put this in a template var
             getUser: function(args, callback) {
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
@@ -599,7 +760,8 @@ function readrBoard($R){
                                 break;
 
                                 case "educate user":
-                                    RDR.session.educateUser();
+                                    //RDR.session.educateUser();
+                                    RDR.session.alertBar.make('educateUser');
                                 break;
                             }
                         }
@@ -926,7 +1088,7 @@ function readrBoard($R){
                 });
             },
             initPageData: function(){
-                // RDR.session.educateUser();
+                // RDR.session.educateUser(); //this function has changed now
                //? do we want to model this here to be symetrical with user and group data?
 
                 // TODO flesh out Porter's code below and incorporate it into the queue
@@ -1030,6 +1192,10 @@ function readrBoard($R){
             },
             initEnvironment: function(){
                 
+                //dont know if it makes sense to return anything here like im doing now...
+                var wasSharedLink = RDR.session.getSharedLinkInfo();
+                log(wasSharedLink);
+
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
                 var $indicatorDetailsWrapper = $('<div id="rdr_indicator_details_wrapper" />').appendTo('body');
 
@@ -1093,16 +1259,6 @@ function readrBoard($R){
 
                 $(document).bind('mouseup.rdr', this.startSelect );
 
-                //add escape keypress event to document to close all rindows
-                $(document).bind('keyup.rdr', function(event) {
-                    if (event.keyCode == '27') { //esc
-                        RDR.rindow.closeAll();
-                        RDR.actionbar.closeAll();
-                        //todo: temp - control this better;
-                        $('.rdr_clone').remove()
-                    }
-                    //todo - consider unifying style of close vs closeAll.  Should any of these components 'own' the others?  IE. should tooltips belong to the actionbar?
-                });
                 $(document).bind('dblclick.rdr',function(event) {
                     var $mouse_target = $(event.target);                                
 
@@ -1110,6 +1266,13 @@ function readrBoard($R){
                         RDR.rindow.closeAll();
                     }
 
+                });
+
+                //bind an escape keypress to clear it.
+                $(document).bind('keyup.rdr', function(event) {
+                    if (event.keyCode == '27') { //esc
+                        RDR.rindow.closeAll();
+                    }
                 });
 
                 this.hashNodes();
@@ -1139,9 +1302,13 @@ function readrBoard($R){
                 //todo: implement black list
                 var $imgNodes = $( RDR.group.img_selector ).not('.rdr-hashed');//.not('.no-rdr'); //todo put back
 
+                //todo: make this body get picked up later.
                 $imgNodes.each( function() {
-                    var body = $(this).attr('src');
-                    $(this).data('body',body);
+                    //var body = $(this).attr('src');
+                    var body = this.src;
+                    $(this).data({
+                        'body':body
+                    });
                 });
 
                 $nodes = $textNodes.add($imgNodes);
@@ -1160,7 +1327,6 @@ function readrBoard($R){
                         body:body,
                         kind:kind
                     };
-                
                     // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
                     // this makes it easy to find on the page later
                     $(this).addClass( 'rdr-' + hash ).addClass('rdr-hashed');
@@ -1267,17 +1433,36 @@ function readrBoard($R){
                     }).fadeTo('300', '0.4');
                 },
                 update: function(hash, diff){
-                    var indicator = $('#rdr_indicator_'+hash),
-                    indicator_details = $('#rdr_indicator_details_'+hash);
 
+                    var indicator = $('.rdr_indicator_'+hash),
+                    indicator_details = $('#rdr_indicator_details_'+hash);
+/*
                     var altSumm = RDR.summaries[hash];
                     var summary = indicator.data('summary');
+                    log(altSumm)
+                    log(summary)
+                    
 
-                    
+ */ 
+                   xx =RDR.summaries[hash];
+                    var summary = RDR.summaries[hash];
+
+                    //interaction categories and for each,
+                    //a list of {id:incAmount} - incAmount will be 1 or -1 for decrement;
+                    var diff = {   
+                        coms: [],
+                        tags: [{4:1}]
+                    }
+ log(xx)
                     $.each( diff, function(key, val){
+                        $.each(val, function(i,v){
+                            if(v.hash == hash){
+                                imageData = v;
+                            }
+                        });
                     });
-                    
-                    log(indicator)
+
+                    log(indicator.data())
                     log(indicator_details)
                 },
                 make: function(hash){
@@ -1764,6 +1949,22 @@ function readrBoard($R){
                         $header.find('span.rdr_tag_count').click( function() {
                             RDR.actions.rateSendLite({ element:$(this), tag:tag, rindow:rindow, content:node.body, which:which });
                         });
+                        
+                        var hash = $contentSet.data('hash');
+                        var container = $('.rdr-'+hash);
+                        var location = $contentSet.data('location');
+
+                        var newSel = $(container).selog('save', {'serialRange': location});
+
+                        $contentSet.hover(
+                            function() {
+                                $(container).selog('hilite', newSel, 'on');
+                                
+                            },
+                            function() {
+                                $(container).selog('hilite', newSel, 'off');
+                            }
+                        );
 
                         log( $contentSet.data('content_node_key'));
 
@@ -2312,8 +2513,7 @@ function readrBoard($R){
             rateSend: function(args) {
                 // optional loader.  it's a pacman pic.
                 args.tag.find('div.rdr_leftBox').html('<img src="'+RDR_rootPath+'/static/images/loader.gif" style="margin:6px 0 0 5px" />');
-    
-                
+        
                 //example:
                 //tag:{name, id}, rindow:rindow, settings:settings, callback: 
                 
@@ -2325,8 +2525,7 @@ function readrBoard($R){
                 RDR.session.getUser( args, function( params ) {
                     // get the text that was highlighted
                     var content_type = params.settings.content_type;
-                    log('content_type')
-                    log(content_type)
+                    
                     
                     var rindow = params.rindow,
                         tag_li = params.tag,
@@ -2350,8 +2549,7 @@ function readrBoard($R){
 
                         //save content node
                         var selState = rindow.data('selog_state') || null;
-                        log('rindow');
-     
+                        
                         content_node_data = {
                             'container': rindow.data('container'),
                             'body': selState.text,
@@ -2958,7 +3156,8 @@ log('attempting to get short url');
                 if ( !$mouse_target.hasClass('rdr') && $mouse_target.parents('div.rdr').length == 0 ) {
 
                     // closes undragged windows
-                    $('div.rdr.rdr_window.rdr.rdr_rewritable').remove();
+                    //i need to remove this way (for now at least) so that I can bind an event to the remove event (thanks ie.)
+                    RDR.rindow.close( $('div.rdr.rdr_window.rdr.rdr_rewritable') );
 
                     //destroy all other actionbars
                     RDR.actionbar.closeAll();
@@ -3860,11 +4059,11 @@ function $RFunctions($R){
                     //else
                     range = WSO.getRangeAt(0);
                     //serializing relative to the parent container. The false is omitChecksum=false.
-                    serialRange = rangy.serializeRange(range, false, selState.container ); //see rangy function serializeRange
+                    serialRange = rangy.serializeRange(range, true, selState.container ); //see rangy function serializeRange
                 }
                 else if(selState.range){
                     range = selState.range;
-                    serialRange = rangy.serializeRange(range, false, selState.container ); //see rangy function serializeRange
+                    serialRange = rangy.serializeRange(range, true, selState.container ); //see rangy function serializeRange
                 }
                 else if(selState.serialRange){
                     serialRange = selState.serialRange;
@@ -3916,7 +4115,7 @@ function $RFunctions($R){
             
                 //use a unique indexed version of style to uniquely identify spans
                 var uniqueClass = styleClass + "_" + selState.idx;
-                methods.clear();
+                //methods.clear();
                 hiliter = rangy.createCssClassApplier( uniqueClass, true ); //see rangy docs for details
                 hiliter['class'] = uniqueClass;
                 hiliter['get$start'] = function(){
@@ -3941,7 +4140,7 @@ function $RFunctions($R){
                 styleClass = selState.styleName,
                 hiliter = selState.hiliter,
                 isActive = hiliter['isActive']();
-                methods.clear();
+                //methods.clear();
 
                 if( !isActive && (switchOnOffToggle === "on" || switchOnOffToggle === "toggle" )){
                     //turn on
@@ -3951,27 +4150,10 @@ function $RFunctions($R){
                     //apply css classes to start and end so we can style those specially
                     hiliter['get$start']().addClass(styleClass+'_start');
                     hiliter['get$end']().addClass(styleClass+'_end');
+
+                    //clear the selection
+                    methods.clear();
                     
-                    //bind an escape keypress to clear it.
-                    //todo: for a real public API, this should be an option, or passed in function or something
-                    $(document).bind('keyup.rdr', function(event) {
-                        //todo: merge all esc key events (use an array of functions that we can just dequeue?)
-                        if (event.keyCode == '27') { //esc
-                            _hiliteSwitch(selState, 'off');
-                            //remove the binding after it's been called.
-                            $(document).unbind('keyup.rdr', arguments.callee);
-                        }
-                    });
-
-                    $(document).bind('dblclick.rdr', function(event) {
-                        var $mouse_target = $(event.target);                                
-
-                        if ( !$mouse_target.parents().hasClass('rdr')) {
-                            _hiliteSwitch(selState, 'off');
-                            $(document).unbind('dblclick.rdr', arguments.callee);
-                        }
-                    });
-
                 }else if( isActive && (switchOnOffToggle === "off" || switchOnOffToggle === "toggle" )){
                     //turn off
                     log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
