@@ -10,7 +10,7 @@ from token import *
 
 class UserHandler(AnonymousBaseHandler):
     model = User
-    fields = ('id', 'first_name', 'last_name')
+    fields = ('id', 'first_name', 'last_name', 'social_user')
 
 class InteractionNodeHandler(AnonymousBaseHandler):
     model = InteractionNode
@@ -164,7 +164,7 @@ class TagHandler(InteractionHandler):
         content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[data['content_type']]
         
         content = Content.objects.get_or_create(kind=content_type, body=content_data, location=location)[0]
-        
+
         try:
             container = Container.objects.get(hash=hash)
         except Container.DoesNotExist:
