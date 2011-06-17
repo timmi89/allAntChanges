@@ -1023,7 +1023,9 @@ console.dir(settings);
                 //helper functions for ajax above
                 function makeSummaryWidget(response){
                     // don't forget a design for when there are no tags.
+                    log('building page')
                     RDR.page = response.data;
+                    log(RDR.page);
                     var $summary_widget = $('#rdr-summary');
                     
                     var total_interactions = 0;
@@ -1068,6 +1070,7 @@ console.dir(settings);
                             }
                         }
 
+                        //hacked in html('') to clear it so that i can re-use this later to update the thingy.  todo: make it pretty.
                         $summary_widget.append( $topusers );
                     }
                 }
@@ -1321,8 +1324,18 @@ console.dir(settings);
                 }
             },
             indicators: {
-                show: function(){
+                show: function(boolDontFade){
                     //fade in indicators
+                    //temp hacl!
+                    if(boolDontFade){
+                        $('.rdr_indicator').css({
+                            'opacity':'0.4',
+                            'display':'inline'
+                        });
+
+                        return;
+                    }
+                    //else
                     $('.rdr_indicator').css({
                         'opacity':'0',
                         'display':'inline'
@@ -1330,26 +1343,39 @@ console.dir(settings);
                 },
                 update: function(hash, diff){
                    
+                    if( hash == "pageSummary" ){
+                        //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
+                        var summary = RDR.page.summary;
+                        log('page summary')
+                    }else{
+                        var summary = RDR.summaries[hash];
+                    }
+                    log(summary);
+
                     /*
                     var altSumm = RDR.summaries[hash];
                     var summary = indicator.data('summary');
                     log(altSumm)
                     log(summary)
                     */ 
-
-                    var summary = RDR.summaries[hash];
-                    log(summary);
                     //interaction categories and for each,
                     //a list of {id:incAmount} - incAmount will be 1 or -1 for decrement;
+
+                    /*
+                    //example for testing - keep commented out
                     var diff = {   
                         coms: {
                             
                         },
                         tags: {
-                            //'id':<change - +1 or -1, typically .... -1 for removing>
-                            '2':1
+                            //'id':{body, count} where count should be 1 for add a new one, or -1 for remove it.
+                            '2':{
+                                'body':"Tag!!",
+                                'count':1
+                            }
                         }
                     }
+                    */
 
                     var interaction_count = summary.counts.interactions;
                     
@@ -1359,34 +1385,62 @@ console.dir(settings);
                         var top_intActs_of_this_type = summary.top_interactions[intActType];
                         var counts_of_this_type = summary.counts[intActType];   //this is an integer, so can't assign by refrence.
 
-                        $.each(val, function(id,delt){
+                        $.each(val, function(id,tag){
                             //coms or tags
-                            if( typeof top_intActs_of_this_type[id] === 'undefined' ) return false;
-                            //else
-                            log('dfsdfsd')
+                            var delt = tag['count'];
 
-                            top_intActs_of_this_type[id].count += delt;
+                            if( typeof top_intActs_of_this_type[id] !== 'undefined' ){
+                                top_intActs_of_this_type[id].count += delt;
+                            }else{
+                                //tag doens't exist yet:
+                                //graooaooaoanan uggggggglyyyy!!! todo: fix this shit.
+                                var body = tag['body'];
+                                top_intActs_of_this_type[id] = {
+                                    'body':body,
+                                    'count': delt //this should always be 1.  Yes, this is ugly.  Should have a make tag function somewhere.
+                                }
+
+                            }
+
                             summary.counts[intActType] += delt;
                             summary.counts.interactions += delt;
+
                         });
                     });
+                    /*
                     log( summary.top_interactions['tags'] )
                     log( summary.counts['tags'] )
                     log(summary.counts.interactions)
+                    */
+
+                    if( hash == "pageSummary" ){
+                        //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
+                        makeSummaryWidget(RDR.page)
+                    }else{
+                        RDR.actions.indicators.make( hash );
+                        RDR.actions.indicators.show(true); //temp hack, 'true' is for 'dont fade in';
+
+                        //now update the page.
+                            //not working yet.  Page reads from a different kind of summary. 
+                        //RDR.actions.indicators.update( 'pageSummary' );
+                    }
 
 
                     /**********************/
                     //update html in page  
+
+                    //this was stupid, just remake it with the same function as before RDR.actions.indicators.make( hash );
+
+                    /*
                     var $indicator = $('#rdr_indicator_'+hash),
                     $indicator_details = $('#rdr_indicator_details_'+hash);
 
                     $indicator.add($indicator_details)//chain
                         .find('.rdr_count').text( summary.counts['tags'] );
                     
-                    //$indicator_details.find('.rdr_count').text( summary.counts['tags'] );
-
-             
-
+                    var t = $indicator_details.find('.rdr_tags_list_tag');
+                    log(t)
+                    */
                 },
                 make: function(hash){
                     //kind is optional - defaults to text
@@ -1407,6 +1461,11 @@ console.dir(settings);
                     //todo: consider making more effecient.
                     $container = $('.rdr-'+hash); // prepend with the anno_whitelist selector
                     
+                    var indicatorId = "rdr_indicator_" +hash;
+                    //check for ID and remove it if it's exists - for now we're just going to recreate it.
+                    //todo: optimze later:
+                    $('#'+indicatorId).remove();
+
                     total = summary.counts.tags;
                     if( kind == 'img' ){
                         //is an image
@@ -1430,8 +1489,9 @@ console.dir(settings);
                         
                         //total = imageData.tag_count;
                         total = summary.counts.tags;
+                                                
+                        $indicator = $('<div class="rdr rdr_indicator rdr_image"></div>').attr( 'id', indicatorId ).hide();
 
-                        $indicator = $('<div class="rdr rdr_indicator rdr_image"></div>').hide();
                         $indicator.append(
                             '<img src="'+RDR_rootPath+'/static/images/blank.png" class="no-rdr" />',
                             '<span class="rdr_count">'+ total +' reactions: </span>'
@@ -1481,7 +1541,7 @@ console.dir(settings);
                     }   
 
                     //todo: is this a problem to use IDS here even when this is an el that we make?
-                    $indicator = $('<div id="rdr_indicator_' +hash+ '" class="rdr_indicator" />').hide().appendTo($container);
+                    $indicator = $('<div class="rdr_indicator" />').hide().attr('id',indicatorId).appendTo($container);
                     log(summary);
                     summary.indicator = $('rdr_in');
                     $indicator.append(
@@ -1534,12 +1594,12 @@ console.dir(settings);
                     $indicator_details.css({ 'visiblity':'hidden' }).show();
 
                     var count = 0;
-                    $.each( summary.top_interactions.tags, function(hash, tag){
+                    $.each( summary.top_interactions.tags, function(id, tag){
                         if(count == null) return; //used as a break statement
                         var prefix = count ? ", " : "", //don't include the first time
                         $tag = $('<strong/>').append(tag.body),
                         $count = $('<em/>').append( ' ('+tag.count+')' ),
-                        $span = $('<span />').append( prefix, $tag, $count);
+                        $span = $('<span />').addClass('rdr_tags_list_tag').append( prefix, $tag, $count).data('id',id);
                         
                         $tagList.append( $span );
                         
@@ -1646,6 +1706,9 @@ console.dir(settings);
                         $content.find('div.rdr_otherTags').append( $this_tag );
                         */
                     }
+                },
+                init: function(){
+                    
                 }
             },
             insertContainerIcon: function( hash ) {},
@@ -1809,6 +1872,8 @@ console.dir(settings);
                     });
 console.clear();
 console.dir(summary.content_nodes);
+
+/*
                     rindow.find('ul.rdr_preselected li').hover( 
                         function() {
                             var h = 0;
@@ -1830,6 +1895,37 @@ console.dir(summary.content_nodes);
                         function() {
                             // $(container).selog('hilite', newSel, 'off');
                         });
+*/
+//porter's above
+//big todo:
+//eric's below
+/*
+
+                    rindow.find('ul.rdr_preselected li').each(function(){
+                        var $this = $(this);
+                        $this.data('selStates',[]);
+
+                        var tag_id = $(this).data('tag').id;
+                        for ( var i in summary.content_nodes ) {
+                            if ( summary.content_nodes[i].top_interactions.tags[ tag_id ] ) {
+                                var newSel = $('.rdr-'+which).selog('save', { 'serialRange': summary.content_nodes[i].location });
+                                $this.data('selStates').push(newSel);
+                            }
+                        }
+                    }).hover( 
+                        function() {
+                            log('fsdfs')
+                            $(this).data('selStates').each(function(i,selState){
+                                $().selog('hilite', selState, 'on');
+                            });
+                        },
+                        function() {
+                            $(this).data('selStates').each(function(i,selState){
+                                $().selog('hilite', selState, 'off');
+                            });
+                        }
+                    );
+*/
                 
                 });
             },
@@ -2553,6 +2649,22 @@ console.dir(summary.content_nodes);
                                     log('content_node_data');
                                     log(content_node_data);
                                     var content_node = RDR.actions.content_node.make(content_node_data);
+
+                                    //update indicators
+                                    var hash = sendData.hash;
+                                    var tagHelper = {
+                                        id: tag.content,
+                                        body: tag.name,
+                                        count: 1
+                                    };
+
+                                    var diff = {   
+                                        tags: {}
+                                    };
+                                    diff.tags[ tagHelper['id'] ] = tagHelper; //yeah?, didja get that one?  //todo: make pretty.
+
+                                    RDR.actions.indicators.update(hash, diff);
+                                    //end update indicators
 
                                     if ( tag_li.length == 1 ) {
                                         tag_li.find('div.rdr_leftBox').unbind();
