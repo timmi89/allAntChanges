@@ -15,6 +15,8 @@ ADMINS = (
     ('Eric Chaves', 'eric@readrboard.com'),
 )
 
+BASE_URL = 'http://readr.local:8080'
+
 MANAGERS = ADMINS
 
 if DEBUG:
