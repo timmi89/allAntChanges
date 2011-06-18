@@ -43,6 +43,7 @@
 			$.cookie('location', null, { path: '/' });
 			$.cookie('content', null, { path: '/' });
 			$.cookie('reaction', null, { path: '/' });
+			$.cookie('referring_int_id', null, { path: '/' });
 		} else if ( !$.cookie('educatedUser') ) {
 			RDRAuth.notifyParent({message:false}, "educate user");
 		}
