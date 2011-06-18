@@ -282,6 +282,8 @@ function readrBoard($R){
                     settings.container = hash;
                 }
 
+                if ( settings.container == "") settings.container = RDR.page.hash;
+
 log('XCXCXCXCXCXXC-- settings --');
 console.dir(settings);
                 var items = [
@@ -984,8 +986,17 @@ console.dir(settings);
                         title: title
 					},
 					success: function(response) {
-                        
+                        hash = RDR.util.md5.hex_md5( response.data.id );
+                        console.log('----- page ID hashed: ' + hash );
+                        if ( !RDR.containers[hash] ) {
+                            RDR.containers[hash] = {};
+                            RDR.containers[hash].body = response.data.id;
+                            RDR.containers[hash].kind = "page";
+                        }
+
                         makeSummaryWidget(response);
+                        RDR.page.hash = hash;
+
                         insertImgIcons(response);
                                                    
                         //to be normally called on success of ajax call
@@ -2201,7 +2212,7 @@ console.dir(settings);
                     coords
                 }
                 */
-
+                log('----- CONTAINER: ' + settings.container);
                 var $hostNode = $('.rdr-'+settings.container);
 
                 var actionType = (settings.actionType) ? actionType:"react";
@@ -2770,8 +2781,6 @@ console.dir(settings);
                     var rindow = params.rindow,
                         content_node_info = params.content_node_info,
                         tag = params.tag;
-                    
-                    if ( !tag.id ) tag.id = tag.body;
 
                     // //save content node
                     // log('rindow');
