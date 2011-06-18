@@ -161,7 +161,7 @@ class ShareHandler(InteractionHandler):
             return JSONException("Container specified does not exist")
 
         # Create an interaction
-        if interaction_id:
+        if referring_int_id:
             try:
                 parent = Interaction.objects.get(id=referring_int_id)
             except Interaction.DoesNotExist:
