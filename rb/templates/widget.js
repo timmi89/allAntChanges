@@ -3000,6 +3000,8 @@ log('attempting to get short url');
                 
             },
             shareStart: function(args) {
+                log('--- shareStarting ---');
+                console.dir(args);
                 var rindow = args.rindow, 
                     tag = args.tag,
                     int_id = args.int_id;
@@ -3081,7 +3083,7 @@ log('attempting to get short url');
 
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
-                    RDR.actions.comment({ comment:comment, int_id:int_id.id, rindow:rindow });
+                    RDR.actions.comment({ comment:comment, int_id:int_id, rindow:rindow });
                 });
 
                 $commentBox.append( $leaveComment );
@@ -3183,6 +3185,8 @@ log('attempting to get short url');
                 */
             },
             comment: function(args) {
+                log('---commenting---');
+                console.dir(args);
                 RDR.session.getUser( args, function( params ) {
     
                     // get the text that was highlighted
