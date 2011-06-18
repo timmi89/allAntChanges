@@ -141,7 +141,7 @@ class ShareHandler(InteractionHandler):
 
         # optional
         location = data['content'].get('location', None)
-        interaction_id = data.get('int_id', None)
+        referring_int_id = data.get('referring_int_id', None)
 
         parent = None
 
@@ -163,7 +163,7 @@ class ShareHandler(InteractionHandler):
         # Create an interaction
         if interaction_id:
             try:
-                parent = Interaction.objects.get(id=interaction_id)
+                parent = Interaction.objects.get(id=referring_int_id)
             except Interaction.DoesNotExist:
                 parent = None
 
