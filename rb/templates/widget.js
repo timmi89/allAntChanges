@@ -33,7 +33,7 @@ function readrBoard($R){
         },
         containers:{},
         groupPermData: {
-            group_id : "{{ group_id }}",  //make group_id a string partly to make my IDE happy - getting sent as ajax anyway
+            group_id : {{ group_id }},  //make group_id a string partly to make my IDE happy - getting sent as ajax anyway
             short_name : "{{ short_name }}"
         },
         group: {}, //to be set by RDR.actions.initGroupData
@@ -741,7 +741,7 @@ console.dir(settings);
 
                                 //console.dir(message.data);
                                 for ( var i in message.data ) {
-                                    RDR.user[ i ] = message.data[i];
+                                    RDR.user[ i ] = ( !isNaN( parseInt(message.data[i]) ) ) ? parseInt(message.data[i]):message.data[i];
                                 }
 
                                 if ( callback && args ) {
@@ -2019,7 +2019,7 @@ console.dir(settings);
                         $comment.click( function() {
                             var $this = $(this);
                             $this.closest('.rdr_contentSet').addClass('rdr_selected').siblings().removeClass('rdr_selected');
-                            RDR.actions.viewCommentContent( tag, which, rindow, node);
+                            RDR.actions.viewCommentContent( {tag:tag, which:which, rindow:rindow, node:node, sel:newSel, content_type:"text" });
                         });
 
                         $header.append( $comment );
@@ -2029,6 +2029,7 @@ console.dir(settings);
                         if( !$.isEmptyObject(otherTags) ){
                             for ( var j in otherTags ) {
                                 var thisTag = otherTags[j];
+                                thisTag.id = parseInt(j);
                                 if ( thisTag.body != tag.body ) {
                                     if ( $content.find('div.rdr_otherTags em').length == 0 ) $content.find('div.rdr_otherTags').append( '<em>Other Reactions</em>' );
                                     
@@ -2050,7 +2051,11 @@ console.dir(settings);
                                     });
 
                                     $this_tag.append($tagShareButton, $tagCountButton, thisTag.body);
+                                    $this_tag.data('tag', thisTag);
                                     $content.find('div.rdr_otherTags').append( $this_tag );
+
+                                    log("$this_tag.data('tag', thisTag);");
+                                    console.dir($this_tag.data('tag') );
                                 }
                             }
                         }
@@ -2084,6 +2089,9 @@ console.dir(settings);
                                 var content_node_info = $(this).closest('div.rdr_contentSet').data();
                                 log('--------------------content_node_info-----------------------');
                                 console.dir(content_node_info);
+                                var tag = $this.closest('a.rdr_tag').data('tag');
+                                log('share this tag-----------------------------------');
+                                dir(tag);
                                 $shareTip.find('img.rdr_sns').click( function() {
                                     RDR.actions.share_getLink({ sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node_info:content_node_info });
                                 });
@@ -2095,7 +2103,15 @@ console.dir(settings);
 
                 RDR.actions.panel.expand("contentPanel", rindow);
             },
-            viewCommentContent: function(tag, which, rindow, node){
+            viewCommentContent: function(args){
+                var tag = args.tag, 
+                    which = args.which, 
+                    rindow = args.rindow,
+                    node = args.node,
+                    content_type = args.content_type;
+                    
+                if ( args.sel ) var sel = args.sel;
+
                 var $whyBody = rindow.find('div.rdr_whyPanel div.rdr_body');
                 // if ( $whyBody.data('jsp') ) $whyBody.data('jsp').destroy();
                 $whyBody.empty();
@@ -2197,7 +2213,7 @@ console.dir(settings);
 
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
-                    RDR.actions.comment({ comment:comment, which:which, content:node.body, tag:tag, rindow:rindow });
+                    RDR.actions.comment({ comment:comment, which:which, content:node.body, tag:tag, rindow:rindow, sel:sel, content_type:content_type });
                 });
 
                 if ( $commentSet ) $whyBody.html( $commentSet );
@@ -2804,9 +2820,9 @@ console.dir(settings);
                         "hash": content_node_info.hash,
                         "content" : content_node,
                         "content_type" : content_node_info.content_type,
-                        "user_id" : parseInt( RDR.user.user_id ),
+                        "user_id" : RDR.user.user_id,
                         "readr_token" : RDR.user.readr_token,
-                        "group_id" : parseInt( RDR.groupPermData.group_id ),
+                        "group_id" : RDR.groupPermData.group_id,
                         "page_id" : RDR.page.id,
                         "referring_int_id" : RDR.session.referring_int_id
                     };
@@ -3184,20 +3200,30 @@ log('attempting to get short url');
                     int_id = params.int_id,
                     rindow = params.rindow,
                     tag = params.tag,
-                    hash = params.which;
+                    hash = params.which,
+                    content_type = params.content_type;
+
+                    // var selState = rindow.data('selog_state') || null;
+                    // var newSel = $('.rdr-'+hash).selog('save', {'serialRange': location});
 
                     var content = ( params.content ) ? params.content:"";
+                    content_node_data = {
+                        'container': hash,
+                        'body': content,
+                        'location': args.sel.serialRange
+                    };
 
                     var sendData = {
-                        "int_id" : int_id,
-                        "comment" : comment,
-                        "content" : content,
                         "tag" : tag,
-                        "hash" : hash,
+                        "hash": hash,
+                        "content" : content_node_data,
+                        "content_type" : content_type,
                         "user_id" : RDR.user.user_id,
                         "readr_token" : RDR.user.readr_token,
                         "group_id" : RDR.groupPermData.group_id,
-                        "page_id" : RDR.page.id
+                        "page_id" : RDR.page.id,
+                        "comment" : comment,
+                        "int_id" : int_id
                     };
 
                     // send the data!
