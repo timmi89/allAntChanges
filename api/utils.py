@@ -154,7 +154,6 @@ def deleteInteraction(interaction, user):
             interaction.delete();
         except:
             raise JSONException("Error deleting the interaction")
-        message="Deleting the interaction seems to have worked"
         if tempuser: return dict(message=message,num_interactions=num_interactions-1)
         return dict(message=message)
 
@@ -168,15 +167,15 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
     interactions = Interaction.objects.filter(user=user)
     # Check unique content_id, user_id, page_id, interaction_node_id
     try:
-        existing = interactions.get(
+        existing_interaction = interactions.get(
             user=user,
             page=page,
             content=content,
             interaction_node=interaction_node,
             kind=kind
         )
-        print "Found existing Interaction with id %s" % existing.id
-        return dict(id=existing.id, interaction=existing, tag_id=existing.interaction_node.id)
+        print "Found existing Interaction with id %s" % existing_interaction.id
+        return dict(interaction=existing_interaction)
     except Interaction.DoesNotExist:
         pass
 
@@ -187,7 +186,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         parent = None
     
     try:
-        new = Interaction(
+        new_interaction = Interaction(
             page=page,
             container=container,
             content=content,
@@ -199,9 +198,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
     except:
         raise JSONException(u"Error creating interaction object")
 
-    if new == None: raise JSONException(u"Error creating interaction")
-    else:
-        new.save()
-
-    if tempuser: return dict(id=new.id, num_interactions=num_interactions+1, interaction=new, tag_id=new.interaction_node.id)
-    return dict(id=new.id, interaction=new, tag_id=new.interaction_node.id)
+    new_interaction.save()
+    
+    if tempuser: return dict(interaction=new_interaction, num_interactions=num_interactions+1)
+    return dict(interaction=new_interaction)

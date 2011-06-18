@@ -1,12 +1,12 @@
 from piston.handler import AnonymousBaseHandler
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.db.models import Count
-from django.shortcuts import get_object_or_404
 from decorators import status_response, json_data
 from exceptions import JSONException
 from utils import *
 from userutils import *
 from token import *
+from settings import BASE_URL
 
 class UserHandler(AnonymousBaseHandler):
     model = User
@@ -28,16 +28,14 @@ class ContainerHandler(AnonymousBaseHandler):
     model = Container
     fields = ('id', 'hash')
 
-class Awesome(AnonymousBaseHandler):
+class InteractionInstanceHandler(AnonymousBaseHandler):
     model = Interaction
-    fields = ('id')
+    fields = ('id', 'interaction_node')
 
 class InteractionHandler(AnonymousBaseHandler):
+    @json_data
     @status_response
-    def read(self, request, **kwargs):
-        # load the json data
-        data = json.loads(request.GET['json'])
-
+    def read(self, request, data, **kwargs):
         # check to see if user's token is valid
         if not checkToken(data): raise JSONException(u"Token was invalid")
 
@@ -78,63 +76,6 @@ class InteractionHandler(AnonymousBaseHandler):
 
             return deleteInteraction(interaction, user)
 
-class BookmarkHandler(InteractionHandler):
-    def create(self, data, user, page, group):
-        pass
-
-
-class ShareHandler(InteractionHandler):
-    def create(self, data, user, page, group):
-        tag_id = data['tag']['content']
-        hash = data['hash']
-        content_data = data['content']['body']
-        content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[data['content_type']]
-
-        # optional
-        location = data['content'].get('location', None)
-        interaction_id = data.get('int_id', None)
-
-        parent = None
-
-        # Get or create content
-        content = Content.objects.get_or_create(kind=content_type, body=content_data, location=location)[0]
-        
-        # Get the interaction_node
-        try:
-            inode = InteractionNode.objects.get(id=tag_id)
-        except InteractionNode.DoesNotExist:
-            return JSONException("InteractionNode specified does not exist")
-
-        # Get the container
-        try:
-            container = Container.objects.get(hash=hash)
-        except Container.DoesNotExist:
-            return JSONException("Container specified does not exist")
-
-        # Create an interaction
-        if interaction_id:
-            print "here"
-            try:
-                parent = Interaction.objects.get(id=interaction_id)
-            except Interaction.DoesNotExist:
-                raise JSONException("Parent interaction did not exist!")
-
-        try:
-            interaction = createInteraction(page, container, content, user, 'shr', inode, group, parent)['interaction']
-        except:
-            raise JSONException(u"Error creating interaction")
-
-        # Create a Link
-        try:
-            link = Link.objects.get_or_create(interaction=interaction)[0]
-        except:
-            raise JSONException(u"Error creating link")
-        
-        short_url = 'http://readr.local:8080/s/' + link.to_base62()
-        
-        return dict(short_url=short_url)
-
-
 class CommentHandler(InteractionHandler):
     def create(self, data, user, page, group):
         comment = data['comment']
@@ -158,7 +99,7 @@ class CommentHandler(InteractionHandler):
 class TagHandler(InteractionHandler):
     def create(self, data, user, page, group):
         tag = data['tag']['content']
-        hash = data['hash']
+        container_hash = data['hash']
         location = data['content'].get('location', None)
         content_data = data['content']['body']
         content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[data['content_type']]
@@ -166,23 +107,82 @@ class TagHandler(InteractionHandler):
         content = Content.objects.get_or_create(kind=content_type, body=content_data, location=location)[0]
 
         try:
-            container = Container.objects.get(hash=hash)
+            container = Container.objects.get(hash=container_hash)
         except Container.DoesNotExist:
             raise JSONException("Container specified does not exist")
 
-        new = None
+        new_interaction = None
         if tag:
-            if isinstance(tag, unicode):
-                print "making tag from reaction"
-                node = createInteractionNode(body=tag)
-                new = createInteraction(page, container, content, user, 'tag', node, group)
-            elif isinstance(tag, int):
-                print "making tag from existing interaction node id"
-                node = InteractionNode.objects.get(id=tag)
-                new = createInteraction(page, container, content, user, 'tag', node, group)
-            return new
+            # Create InteractionNode for tag
+            try:
+                # No ID, create new
+                if isinstance(tag, unicode):
+                    print "making tag from reaction"
+                    node = createInteractionNode(body=tag)
+                # ID known retrieve existing
+                elif isinstance(tag, int):
+                    print "making tag from existing interaction node id"
+                    node = InteractionNode.objects.get(id=tag)
+            except:
+                raise JSONException(u'Error creating interaction node')
+            new_interaction = createInteraction(page, container, content, user, 'tag', node, group)
+            return new_interaction
         else:
             raise JSONException(u"No tag provided to tag handler")
+
+class ShareHandler(InteractionHandler):
+    def create(self, data, user, page, group):
+        tag_id = data['tag']['content']
+        container_hash = data['hash']
+        content_data = data['content']['body']
+        content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[data['content_type']]
+
+        # optional
+        location = data['content'].get('location', None)
+        interaction_id = data.get('int_id', None)
+
+        parent = None
+
+        # Get or create content
+        content = Content.objects.get_or_create(kind=content_type, body=content_data, location=location)[0]
+        
+        # Get the interaction_node
+        try:
+            inode = InteractionNode.objects.get(id=tag_id)
+        except InteractionNode.DoesNotExist:
+            return JSONException("InteractionNode specified does not exist")
+
+        # Get the container
+        try:
+            container = Container.objects.get(hash=container_hash)
+        except Container.DoesNotExist:
+            return JSONException("Container specified does not exist")
+
+        # Create an interaction
+        if interaction_id:
+            try:
+                parent = Interaction.objects.get(id=interaction_id)
+            except Interaction.DoesNotExist:
+                raise JSONException("Parent interaction did not exist!")
+
+        try:
+            interaction = createInteraction(page, container, content, user, 'shr', inode, group, parent)['interaction']
+        except:
+            raise JSONException(u"Error creating interaction")
+
+        # Create a Link
+        try:
+            link = Link.objects.get_or_create(interaction=interaction)[0]
+        except:
+            raise JSONException(u"Error creating link")
+        
+        short_url = BASE_URL + link.to_base62()
+        
+        return dict(short_url=short_url)
+
+class BookmarkHandler(InteractionHandler):
+    def create(self, data, user, page, group):
+        pass
 
 class CreateContainerHandler(AnonymousBaseHandler):
     @status_response
@@ -203,11 +203,10 @@ class CreateContainerHandler(AnonymousBaseHandler):
         return result
 
 class ContainerSummaryHandler(AnonymousBaseHandler):
+    @json_data
     @status_response
-    def read(self, request):
+    def read(self, request, data):
         known = {}
-
-        data = json.loads(request.GET['json'])
         hashes = data['hashes']
         page = data['pageID']
 
@@ -222,16 +221,16 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         return dict(known=known, unknown=unknown)
 
 class ContentSummaryHandler(AnonymousBaseHandler):
+    @json_data
     @status_response
-    def read(self, request):
+    def read(self, request, data):
         known = {}
 
-        data = json.loads(request.GET['json'])
         container_id = data['container_id']
         page_id = data['page_id']
         tag_ids = data['top_tags']
 
-        # Force evaluation by making lists
+        # Force queryset evaluation by making lists - reduces interaction queries to 1
         interactions = list(Interaction.objects.filter(
             container=container_id,
             page=page_id,
@@ -242,30 +241,7 @@ class ContentSummaryHandler(AnonymousBaseHandler):
         content_summaries = getContentSummaries(interactions, content)
 
         return content_summaries
-"""
-class ContainerSummaryHandler(AnonymousBaseHandler):
-    @status_response
-    def read(self, request):
-        known = {}
 
-        data = json.loads(request.GET['json'])
-        hashes = data['hashes']
-        page = data['pageID']
-
-        containers = Container.objects.filter(hash__in=hashes)
-        interactions = Interaction.objects.filter(container__in=containers)
-        grouped_interactions = interactions.values('container','kind').order_by()
-        interaction_counts = grouped_interactions.annotate(count=Count('kind'))
-
-        tags = interactions.filter(kind='tag').values('container','interaction_node').order_by()
-        tag_counts = tags.annotate(count=Count('interaction_node')).values('count','container','interaction_node')
-        top_tags = tag_counts.order_by('-count')
-
-        top_tag_ids = top_tags.values_list('interaction_node')
-        interaction_nodes = InteractionNode.objects.filter(id__in=top_tag_ids)
-
-        return dict(containers=containers, interaction_nodes=interaction_nodes, counts=interaction_counts, top_tags=top_tags)
-"""
 class PageDataHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, pageid=None):
@@ -297,10 +273,6 @@ class PageDataHandler(AnonymousBaseHandler):
 
         userinteract = socialusers.annotate(interactions=Count('user__interaction'))
         topusers = userinteract.order_by('-interactions').values('full_name','img_url','interactions')[:10]
-
-        #imagedata = dict(((content.body, getData(iop, content=content)) for content in content.filter(kind='image').order_by('id').distinct()))
-        #videodata = dict(((content.body, getData(iop, content=content)) for content in content.filter(kind='video').order_by('id').distinct()))
-        #flashdata = dict(((content.body, getData(iop, content=content)) for content in content.filter(kind='flash').order_by('id').distinct()))
         
         return dict(
             id=page.id,

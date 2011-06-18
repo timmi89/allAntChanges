@@ -15,8 +15,7 @@ def status_response(func):
     return wrapper
 
 def json_data(func):
-    def wrapper(self, request):
-        data = {}
+    def wrapper(self, request, *args, **kwargs):
         data = json.loads(request.GET['json'])
-        return func(self, request, **data)
+        return func(self, request, data, *args, **kwargs)
     return wrapper
