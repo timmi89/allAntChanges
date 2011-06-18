@@ -285,6 +285,8 @@ function readrBoard($R){
                     settings.container = hash;
                 }
 
+                if ( settings.container == "") settings.container = RDR.page.hash;
+
 log('XCXCXCXCXCXXC-- settings --');
 console.dir(settings);
                 var items = [
@@ -650,26 +652,20 @@ console.dir(settings);
                 log('--------data-------------');
                 console.dir(data);
                 //some condition
-                var pageWasLoaedFromSharedLink = true; //how do you work with cookies here?
-                if(pageWasLoaedFromSharedLink){
                     
-                    //TODO: sample data here, fill with info from cookie
-                    // var data = {
-                    //     location: "2:10\0542:32",
-                    //     container_hash: "c9676b4da28e1e005a1b27676e8b2847"
-                    // }
+                //TODO: sample data here, fill with info from cookie
+                // var data = {
+                //     location: "2:10\0542:32",
+                //     container_hash: "c9676b4da28e1e005a1b27676e8b2847"
+                // }
 
-                    //note: I turned off the checksum in rangy, so the locations will be mising the {####} part.
-                    // we don't need the checksum, cause we're already doing that.
+                //note: I turned off the checksum in rangy, so the locations will be mising the {####} part.
+                // we don't need the checksum, cause we're already doing that.
 
-                    //note: the "\054" is actually the octal for a comma.  The back end is passing it back that way. It's working fine though.
-                        //, so it seems that "2:10\0542:32" == "2:10,2:32"
-
-                    RDR.session.alertBar.make('fromShareLink', data);
-                    return true; //could return something more useful if we need it.
-                }
-                //else
-                return false; 
+                //note: the "\054" is actually the octal for a comma.  The back end is passing it back that way. It's working fine though.
+                //, so it seems that "2:10\0542:32" == "2:10,2:32"
+                RDR.session.alertBar.make('fromShareLink', data);
+                return true; //could return something more useful if we need it.
             },
 			iframeHost : "http://readr.local:8080", // TODO put this in a template var
             getUser: function(args, callback) {
@@ -762,6 +758,9 @@ console.dir(settings);
                                 log('-------message.status-----------');
                                 console.log(message.status);
                                 var sharedLink = message.status.split('|');
+                                if ( sharedLink[5] ) {
+                                    RDR.session.referring_int_id = parseInt( sharedLink[5] );
+                                }
                                 RDR.session.getSharedLinkInfo( { container_hash:sharedLink[1], location:sharedLink[2], reaction:sharedLink[3], content:sharedLink[4] } );
                             }
                         }
@@ -927,25 +926,6 @@ console.dir(settings);
                         RDR.group.img_selector = RDR.group.img_selector || "div.container img";
                         RDR.group.selector_whitelist = RDR.group.selector_whitelist || "body p";
 
-                        // //todo: REMOVE THIS
-                        // RDR.group.blessed_tags = [
-                        // {
-                        //     name: "Cute",
-                        //     tid: 1
-                        // },
-                        // {
-                        //     name: "Great Tip",
-                        //     tid: 2
-                        // },
-                        // {
-                        //     name: "Funny",
-                        //     tid: 3
-                        // },
-                        // {
-                        //     name: "Wait, what?",
-                        //     tid: 4
-                        // }
-                        // ];
                         $RDR.dequeue('initAjax');
                     },
                     error: function(response) {
@@ -1009,8 +989,17 @@ console.dir(settings);
                         title: title
 					},
 					success: function(response) {
-                        
+                        hash = RDR.util.md5.hex_md5( response.data.id );
+                        console.log('----- page ID hashed: ' + hash );
+                        if ( !RDR.containers[hash] ) {
+                            RDR.containers[hash] = {};
+                            RDR.containers[hash].body = response.data.id;
+                            RDR.containers[hash].kind = "page";
+                        }
+
                         makeSummaryWidget(response);
+                        RDR.page.hash = hash;
+
                         insertImgIcons(response);
                                                    
                         //to be normally called on success of ajax call
@@ -1093,8 +1082,6 @@ console.dir(settings);
             initEnvironment: function(){
                 
                 //dont know if it makes sense to return anything here like im doing now...
-                // var wasSharedLink = RDR.session.getSharedLinkInfo();
-                // log(wasSharedLink);
 
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
                 var $indicatorDetailsWrapper = $('<div id="rdr_indicator_details_wrapper" />').appendTo('body');
@@ -1661,7 +1648,7 @@ console.dir(settings);
                                 }
                             }
                             if ( tag_idx == -1 ) {
-                                info.tags.push({ id:tag.id, name:tag.tag, count:0, com_count:0, content:{} });
+                                info.tags.push({ id:tag.id, body:tag.tag, count:0, com_count:0, content:{} });
                                 tag_idx = ( info.tags.length - 1 );
                             }
 
@@ -1816,7 +1803,7 @@ console.dir(settings);
                     var $li = $('<li class="rdr_tag_'+tagID+'" />').data({
                         'tag':{
                             id:parseInt( tagID ),
-                            name:tag.body,
+                            body:tag.body,
                             count:tag.count
                         },
                         'which':which
@@ -1943,7 +1930,7 @@ console.dir(settings);
                 /*
                 var content = [];
                 for ( var i in tag.body ) {
-                    content.push( {idx:parseInt(i), tag_idx:tag.body[i].tag_idx, count:tag.content[i].count } );
+                    content.push( {idx:parseInt(i), tag_idx:tag.body[i].tag_idx, count:tag.id[i].count } );
                 }
                 */
                 //todo: temp stuff
@@ -1958,14 +1945,14 @@ console.dir(settings);
 
                 //todo: consolodate truncate functions
                 var maxHeaderLen = 20;
-                var tagName = tag.name.length > maxHeaderLen ? tag.name.slice(0, maxHeaderLen)+"..." : tag.name;
-                log (tagName);
+                var tagBody = tag.body.length > maxHeaderLen ? tag.body.slice(0, maxHeaderLen)+"..." : tag.body;
+                log (tagBody);
 
-                rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tagName+' <span> ('+tag.count+')</span>');
+                rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tagBody+' <span> ('+tag.count+')</span>');
                 if ( rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp').destroy();
                 rindow.find('div.rdr_contentPanel div.rdr_body').empty();
 
-                tag.content = tag.id; // kludge
+                // tag.id = tag.id; // kludge
                 var tagClone = $.extend({}, tag);
 
                 // ok, get the content associated with this tag!
@@ -1986,7 +1973,7 @@ console.dir(settings);
                         var $contentSet = $('<div />').addClass('rdr_contentSet').data({content_node_key:content_node_key, hash:which, location:node.location, tag:tag, content:node.body, content_type:"text"}),
                             $header = $('<div class="rdr_contentHeader rdr_leftShadow" />'),
                             $content = $('<div class="rdr_content rdr_leftShadow"><div class="rdr_otherTags"></div></div>');
-                        $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+node.counts.tags+')</span> '+tag.name+'</a>' );
+                        $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+node.counts.tags+')</span> '+tag.body+'</a>' );
 
                         $header.find('span.rdr_tag_count').click( function() {
                             RDR.actions.rateSendLite({ element:$(this), tag:tag, rindow:rindow, content:node.body, which:which });
@@ -2042,7 +2029,7 @@ console.dir(settings);
                         if( !$.isEmptyObject(otherTags) ){
                             for ( var j in otherTags ) {
                                 var thisTag = otherTags[j];
-                                if ( thisTag.body != tag.name ) {
+                                if ( thisTag.body != tag.body ) {
                                     if ( $content.find('div.rdr_otherTags em').length == 0 ) $content.find('div.rdr_otherTags').append( '<em>Other Reactions</em>' );
                                     
 
@@ -2210,7 +2197,7 @@ console.dir(settings);
 
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
-                    RDR.actions.comment({ comment:comment, which:which, content:node.body, tag_id:tag.id, rindow:rindow });
+                    RDR.actions.comment({ comment:comment, which:which, content:node.body, tag:tag, rindow:rindow });
                 });
 
                 if ( $commentSet ) $whyBody.html( $commentSet );
@@ -2228,7 +2215,7 @@ console.dir(settings);
                     coords
                 }
                 */
-
+                log('----- CONTAINER: ' + settings.container);
                 var $hostNode = $('.rdr-'+settings.container);
 
                 var actionType = (settings.actionType) ? actionType:"react";
@@ -2339,8 +2326,8 @@ console.dir(settings);
                         
                         var $li = $('<li class="rdr_tag_'+val.id+'" />').data({
                             'tag':{
-                                content:parseInt( val.id ),
-                                name:val.body
+                                id:parseInt( val.id ),
+                                body:val.body
                             }
                         }),
                         $leftBox = '<div class="rdr_leftBox" />',
@@ -2528,8 +2515,7 @@ console.dir(settings);
                             var tag = $(this).closest('li.rdr_customTagBox');
                             tag.data({
                             'tag':{
-                                content:tag.find('input.freeformTagInput').val(),
-                                name:tag.find('input.freeformTagInput').val()
+                                body:tag.find('input.freeformTagInput').val()
                             }});
                             RDR.actions.rateSend({ tag:tag, rindow:rindow, settings:settings, callback: function() {
                                     // todo: at this point, cast the tag, THEN call this in the tag success function:
@@ -2559,7 +2545,7 @@ console.dir(settings);
                 args.tag.find('div.rdr_leftBox').html('<img src="'+RDR_rootPath+'/static/images/loader.gif" style="margin:6px 0 0 5px" />');
         
                 //example:
-                //tag:{name, id}, rindow:rindow, settings:settings, callback: 
+                //tag:{body, id}, rindow:rindow, settings:settings, callback: 
                 
                 // tag can be an ID or a string.  if a string, we need to sanitize.
                 
@@ -2684,13 +2670,13 @@ console.dir(settings);
                                             tag_li.addClass('rdr_selected');
                                             tag_li.find('input').remove();
                                             tag_li.find('div.rdr_help').remove();
-                                            tag_li.append( '<div class="rdr_tagText">'+tag.name+'</div>' );
+                                            tag_li.append( '<div class="rdr_tagText">'+tag.body+'</div>' );
                                             RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:params.settings});
                                         }
                                     }
                                     log('-----tag------');
                                     console.dir(tag);
-                                    if ( isNaN(parseInt(tag.content)) ) tag.content = response.data.tag_id;
+                                    if ( isNaN(parseInt(tag.id)) ) tag.id = response.data.tag_id;
                                     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_info:content_node_data, content_type:content_type });
                                     if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
                                     else RDR.session.showLoginPanel( args );
@@ -2781,7 +2767,7 @@ console.dir(settings);
                 log('----share_getLink----');
                 console.dir(args);
                 //example:
-                //tag:{name, id}, rindow:rindow, settings:settings, callback: 
+                //tag:{body, id}, rindow:rindow, settings:settings, callback: 
                 
                 // tag can be an ID or a string.  if a string, we need to sanitize.
                 
@@ -2798,7 +2784,6 @@ console.dir(settings);
                     var rindow = params.rindow,
                         content_node_info = params.content_node_info,
                         tag = params.tag;
-                    
 
                     // //save content node
                     // log('rindow');
@@ -2822,7 +2807,8 @@ console.dir(settings);
                         "user_id" : parseInt( RDR.user.user_id ),
                         "readr_token" : RDR.user.readr_token,
                         "group_id" : parseInt( RDR.groupPermData.group_id ),
-                        "page_id" : RDR.page.id
+                        "page_id" : RDR.page.id,
+                        "referring_int_id" : RDR.session.referring_int_id
                     };
 
 log('attempting to get short url');
@@ -2839,7 +2825,7 @@ log('attempting to get short url');
                                 console.dir(response);
 
                                 // todo cache the short url
-                                // RDR.summaries[content_node_info.hash].content_nodes[IDX].top_interactions.tags[tag.content].short_url = ;
+                                // RDR.summaries[content_node_info.hash].content_nodes[IDX].top_interactions.tags[tag.id].short_url = ;
 
 
                                 if ( response.status == "fail" ) {
@@ -2859,7 +2845,7 @@ log('attempting to get short url');
                                 } else {
 
                                     //successfully got a short URL
-                                    RDR.actions.shareContent({ sns:params.sns, content:content_node_info.content, short_url:response.data.short_url, reaction:tag.name });
+                                    RDR.actions.shareContent({ sns:params.sns, content:content_node_info.content, short_url:response.data.short_url, reaction:tag.body });
 
                                     if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
                                     else RDR.session.showLoginPanel( args );
@@ -2881,7 +2867,8 @@ log('attempting to get short url');
                     break;
 
                     case "twitter":
-                        window.open('http://twitter.com/intent/tweet?url='+args.short_url+'&via='+RDR.group.twitter+'&text='+escape(args.reaction)+': +"'+escape(args.content)+'"',"readr_share_tw","menubar=1,resizable=1,width=626,height=436");
+                        var content_length = ( 90 - args.reaction.length );
+                        window.open('http://twitter.com/intent/tweet?url='+args.short_url+'&via='+RDR.group.twitter+'&text='+escape(args.reaction)+':+"'+escape(args.content.substr(0, content_length) )+'"',"readr_share_tw","menubar=1,resizable=1,width=626,height=436");
                     break;
 
                     case "tumblr":
@@ -2933,7 +2920,7 @@ log('attempting to get short url');
 
                     rindow.find('div.rdr_reactionPanel ul.rdr_tags li').each( function() {
                         var $this = $(this);
-                        var this_count = ( $this.data('tag').id == tag.content ) ? count : $this.data('tag').count;
+                        var this_count = ( $this.data('tag').id == tag.id ) ? count : $this.data('tag').count;
                         var percentage = Math.round( ( this_count / total_reactions) * 100);
                         // this should update all of the counts
                         $this.find(' div.rdr_leftBox').text( percentage+'%' );
@@ -2949,12 +2936,12 @@ log('attempting to get short url');
                     for ( var i in RDR.content_nodes[hash].info.content ) {
                         if ( RDR.content_nodes[hash].info.content[i].body == content ) {
                             for ( var j in RDR.content_nodes[hash].info.content[i].tags ) {
-                                if ( RDR.content_nodes[hash].info.content[i].tags[j].id == tag.content ) {
+                                if ( RDR.content_nodes[hash].info.content[i].tags[j].id == tag.id ) {
                                     RDR.content_nodes[hash].info.content[i].tags[j].count++;
                                 
                                     // need to increment the .tags count, too
                                     for ( var k in RDR.content_nodes[hash].info.tags ) {
-                                        if ( RDR.content_nodes[hash].info.tags[k].id == tag.content ) {
+                                        if ( RDR.content_nodes[hash].info.tags[k].id == tag.id ) {
                                             if ( RDR.content_nodes[hash].info.tags[k].content[i] ) {
                                                 RDR.content_nodes[hash].info.tags[k].count++;
                                                 RDR.content_nodes[hash].info.tags[k].content[i].count++;
@@ -2992,7 +2979,7 @@ log('attempting to get short url');
                     data: { json: JSON.stringify(sendData) },
                     success: function(response) {
                         RDR.actions.panel.collapse("whyPanel", rindow);
-                        rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_tag_'+tag.content).removeClass('rdr_selected').removeClass('rdr_tagged');
+                        rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_tag_'+tag.id).removeClass('rdr_selected').removeClass('rdr_tagged');
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
@@ -3003,6 +2990,8 @@ log('attempting to get short url');
                 
             },
             shareStart: function(args) {
+                log('--- shareStarting ---');
+                console.dir(args);
                 var rindow = args.rindow, 
                     tag = args.tag,
                     int_id = args.int_id;
@@ -3016,7 +3005,7 @@ log('attempting to get short url');
 
                 for ( var i in known_tags ) {
                     if ( known_tags[i] && RDR.group.blessed_tags[ parseInt(known_tags[i])-1 ] ) {
-                        tags += RDR.group.blessed_tags[ parseInt(known_tags[i])-1 ].name + ", ";
+                        tags += RDR.group.blessed_tags[ parseInt(known_tags[i])-1 ].body + ", ";
                     }
                 }
 
@@ -3037,7 +3026,7 @@ log('attempting to get short url');
                 $whyPanel_body.empty();
 
                 if ( rindow.find('div.rdr_shareBox.rdr_sntPnl_padder').length == 0 || rindow.find('div.rdr_commentBox.rdr_sntPnl_padder').length == 0 ) {
-                    var $yourReaction = $('<div class="rdr_tagFeedback">Your reaction to this: <strong>'+tag.name+'</strong>. </div><div class="rdr_shareBox rdr_sntPnl_padder"></div><div class="rdr_commentBox rdr_sntPnl_padder"></div>');
+                    var $yourReaction = $('<div class="rdr_tagFeedback">Your reaction to this: <strong>'+tag.body+'</strong>. </div><div class="rdr_shareBox rdr_sntPnl_padder"></div><div class="rdr_commentBox rdr_sntPnl_padder"></div>');
                     var $undoLink = $('<a style="text-decoration:underline;" href="javascript:void(0);">Undo?</a>');
                     $undoLink.bind('click.rdr', function() { RDR.actions.unrateSend(args); });
                     $yourReaction.append( $undoLink );
@@ -3084,7 +3073,7 @@ log('attempting to get short url');
 
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
-                    RDR.actions.comment({ comment:comment, int_id:int_id.id, rindow:rindow });
+                    RDR.actions.comment({ comment:comment, int_id:int_id, rindow:rindow });
                 });
 
                 $commentBox.append( $leaveComment );
@@ -3186,6 +3175,8 @@ log('attempting to get short url');
                 */
             },
             comment: function(args) {
+                log('---commenting---');
+                console.dir(args);
                 RDR.session.getUser( args, function( params ) {
     
                     // get the text that was highlighted
@@ -3434,7 +3425,7 @@ log('attempting to get short url');
                 if(obj.nodeName==='#text')
                     obj = obj.parentNode;
 
-                // if the selected object has no tagName then return false.
+                // if the selected object has no tagBody then return false.
                 if(typeof obj.tagName === 'undefined')
                     return false;
 
@@ -4820,10 +4811,10 @@ function $RFunctions($R){
             rangy.createModule("CssClassApplier",function(h){function s(a){return a.replace(/^\s\s*/,"").replace(/\s\s*$/,"")}function n(a,b){return a.className&&RegExp("(?:^|\\s)"+b+"(?:\\s|$)").test(a.className)}function t(a,b){if(a.className)n(a,b)||(a.className+=" "+b);else a.className=b}function o(a){return a.className.split(/\s+/).sort().join(" ")}function u(a,b){return o(a)==o(b)}function v(a){for(var b=a.parentNode;a.hasChildNodes();)b.insertBefore(a.firstChild,a);b.removeChild(a)}function w(a,b){var c=
             a.cloneRange();c.selectNodeContents(b);var d=c.intersection(a);d=d?d.toString():"";c.detach();return d!=""}function x(a,b){if(a.attributes.length!=b.attributes.length)return false;for(var c=0,d=a.attributes.length,e,f;c<d;++c){e=a.attributes[c];f=e.name;if(f!="class"){f=b.attributes.getNamedItem(f);if(e.specified!=f.specified)return false;if(e.specified&&e.nodeValue!==f.nodeValue)return false}}return true}function y(a){for(var b=0,c=a.attributes.length;b<c;++b)if(a.attributes[b].specified&&a.attributes[b].name!=
             "class")return true;return false}function z(a,b){if(g.isCharacterDataNode(a))return b==0?!!a.previousSibling:b==a.length?!!a.nextSibling:true;return b>0&&b<a.childNodes.length}function l(a,b,c){var d;if(g.isCharacterDataNode(b))if(c==0){c=g.getNodeIndex(b);b=b.parentNode}else if(c==b.length){c=g.getNodeIndex(b)+1;b=b.parentNode}else d=g.splitDataNode(b,c);if(!d){d=b.cloneNode(false);d.id&&d.removeAttribute("id");for(var e;e=b.childNodes[c];)d.appendChild(e);g.insertAfter(d,b)}return b==a?d:l(a,d.parentNode,
-            g.getNodeIndex(d))}function A(a,b){var c=a.nodeType==3,d=c?a.parentNode:a,e=b?"nextSibling":"previousSibling";if(c){if((c=a[e])&&c.nodeType==3)return c}else if((c=d[e])&&a.tagName==c.tagName&&u(a,c)&&x(a,c))return c[b?"firstChild":"lastChild"];return null}function p(a){this.firstTextNode=(this.isElementMerge=a.nodeType==1)?a.lastChild:a;if(this.isElementMerge)this.sortedCssClasses=o(a);this.textNodes=[this.firstTextNode]}function m(a,b,c){this.cssClass=a;this.normalize=b;this.applyToAnyTagName=false;
-            a=typeof c;if(a=="string")if(c=="*")this.applyToAnyTagName=true;else this.tagNames=s(c.toLowerCase()).split(/\s*,\s*/);else if(a=="object"&&typeof c.length=="number"){this.tagNames=[];a=0;for(b=c.length;a<b;++a)if(c[a]=="*")this.applyToAnyTagName=true;else this.tagNames.push(c[a].toLowerCase())}else this.tagNames=[q]}h.requireModules(["WrappedSelection","WrappedRange"]);var g=h.dom,q="span",B=function(){function a(b,c,d){return c&&d?" ":""}return function(b,c){if(b.className)b.className=b.className.replace(RegExp("(?:^|\\s)"+
+            g.getNodeIndex(d))}function A(a,b){var c=a.nodeType==3,d=c?a.parentNode:a,e=b?"nextSibling":"previousSibling";if(c){if((c=a[e])&&c.nodeType==3)return c}else if((c=d[e])&&a.tagName==c.tagName&&u(a,c)&&x(a,c))return c[b?"firstChild":"lastChild"];return null}function p(a){this.firstTextNode=(this.isElementMerge=a.nodeType==1)?a.lastChild:a;if(this.isElementMerge)this.sortedCssClasses=o(a);this.textNodes=[this.firstTextNode]}function m(a,b,c){this.cssClass=a;this.normalize=b;this.applyToAnytagBody=false;
+            a=typeof c;if(a=="string")if(c=="*")this.applyToAnytagBody=true;else this.tagNames=s(c.toLowerCase()).split(/\s*,\s*/);else if(a=="object"&&typeof c.length=="number"){this.tagNames=[];a=0;for(b=c.length;a<b;++a)if(c[a]=="*")this.applyToAnytagBody=true;else this.tagNames.push(c[a].toLowerCase())}else this.tagNames=[q]}h.requireModules(["WrappedSelection","WrappedRange"]);var g=h.dom,q="span",B=function(){function a(b,c,d){return c&&d?" ":""}return function(b,c){if(b.className)b.className=b.className.replace(RegExp("(?:^|\\s)"+
             c+"(?:\\s|$)"),a)}}();p.prototype={doMerge:function(){for(var a=[],b,c,d=0,e=this.textNodes.length;d<e;++d){b=this.textNodes[d];c=b.parentNode;a[d]=b.data;if(d){c.removeChild(b);c.hasChildNodes()||c.parentNode.removeChild(c)}}return this.firstTextNode.data=a=a.join("")},getLength:function(){for(var a=this.textNodes.length,b=0;a--;)b+=this.textNodes[a].length;return b},toString:function(){for(var a=[],b=0,c=this.textNodes.length;b<c;++b)a[b]="'"+this.textNodes[b].data+"'";return"[Merge("+a.join(",")+
-            ")]"}};m.prototype={appliesToElement:function(a){return this.applyToAnyTagName||g.arrayContains(this.tagNames,a.tagName.toLowerCase())},getAncestorWithClass:function(a){for(a=a.parentNode;a;){if(a.nodeType==1&&this.appliesToElement(a)&&n(a,this.cssClass))return a;a=a.parentNode}return false},postApply:function(a,b){for(var c=a[0],d=a[a.length-1],e=[],f,j=c,C=d,D=0,E=d.length,k,F,i=0,r=a.length;i<r;++i){k=a[i];if(F=A(k,false)){if(!f){f=new p(F);e.push(f)}f.textNodes.push(k);if(k===c){j=f.firstTextNode;
+            ")]"}};m.prototype={appliesToElement:function(a){return this.applyToAnytagBody||g.arrayContains(this.tagNames,a.tagName.toLowerCase())},getAncestorWithClass:function(a){for(a=a.parentNode;a;){if(a.nodeType==1&&this.appliesToElement(a)&&n(a,this.cssClass))return a;a=a.parentNode}return false},postApply:function(a,b){for(var c=a[0],d=a[a.length-1],e=[],f,j=c,C=d,D=0,E=d.length,k,F,i=0,r=a.length;i<r;++i){k=a[i];if(F=A(k,false)){if(!f){f=new p(F);e.push(f)}f.textNodes.push(k);if(k===c){j=f.firstTextNode;
             D=j.length}if(k===d){C=f.firstTextNode;E=f.getLength()}}else f=null}if(c=A(d,true)){if(!f){f=new p(d);e.push(f)}f.textNodes.push(c)}if(e.length){i=0;for(r=e.length;i<r;++i)e[i].doMerge();b.setStart(j,D);b.setEnd(C,E)}},createContainer:function(a){a=a.createElement(q);a.className=this.cssClass;return a},applyToTextNode:function(a){var b=a.parentNode;if(b.childNodes.length==1&&this.appliesToElement(b))t(b,this.cssClass);else{b=this.createContainer(g.getDocument(a));a.parentNode.insertBefore(b,a);b.appendChild(a)}},
             isRemovable:function(a){return a.tagName.toLowerCase()==q&&s(a.className)==this.cssClass&&!y(a)},undoToTextNode:function(a,b,c){if(!b.containsNode(c)){a=b.cloneRange();a.selectNode(c);if(a.isPointInRange(b.endContainer,b.endOffset)&&z(b.endContainer,b.endOffset)){l(c,b.endContainer,b.endOffset);b.setEndAfter(c)}if(a.isPointInRange(b.startContainer,b.startOffset)&&z(b.startContainer,b.startOffset))c=l(c,b.startContainer,b.startOffset)}this.isRemovable(c)?v(c):B(c,this.cssClass)},applyToRange:function(a){a.splitBoundaries();
             var b=a.getNodes([3],function(f){return w(a,f)});if(b.length){for(var c,d=0,e=b.length;d<e;++d){c=b[d];this.getAncestorWithClass(c)||this.applyToTextNode(c)}a.setStart(b[0],0);c=b[b.length-1];a.setEnd(c,c.length);this.normalize&&this.postApply(b,a)}},applyToSelection:function(a){a=a||window;a=h.getSelection(a);var b,c=a.getAllRanges();a.removeAllRanges();for(var d=c.length;d--;){b=c[d];this.applyToRange(b);a.addRange(b)}},undoToRange:function(a){a.splitBoundaries();var b=a.getNodes([3]),c,d,e=b[b.length-
