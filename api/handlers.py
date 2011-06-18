@@ -104,6 +104,7 @@ class TagHandler(InteractionHandler):
         content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[data['content_type']]
         
         #optional
+        tag_id = data['tag'].get('id', None)
         location = data['content'].get('location', None)
 
         content = Content.objects.get_or_create(kind=content_type, body=content_data, location=location)[0]
@@ -116,15 +117,13 @@ class TagHandler(InteractionHandler):
         new_interaction = None
 
         # Get or create InteractionNode for tag
-        try:
-            if tag_id:
-                # ID known retrieve existing
-                inode = InteractionNode.objects.get(id=tag)
-            elif tag_body:
-                # No id provided, using body to get_or_create
-                inode = InteractionNode.objects.get_or_create(body=tag_body)
-        except:
-            raise JSONException(u'Error creating or retrieving interaction node')
+        if tag_id:
+            # ID known retrieve existing
+            inode = InteractionNode.objects.get(id=tag_id)
+        elif tag_body:
+            # No id provided, using body to get_or_create
+            inode = InteractionNode.objects.get_or_create(body=tag_body)
+
         
         new_interaction = createInteraction(page, container, content, user, 'tag', inode, group)
         return new_interaction
@@ -150,7 +149,7 @@ class ShareHandler(InteractionHandler):
         try:
             if tag_id:
                 # ID known retrieve existing
-                inode = InteractionNode.objects.get(id=tag)
+                inode = InteractionNode.objects.get(id=tag_id)
             elif tag_body:
                 # No id provided, using body to get_or_create
                 inode = InteractionNode.objects.get_or_create(body=tag_body)
