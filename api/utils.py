@@ -154,6 +154,8 @@ def deleteInteraction(interaction, user):
             raise JSONException("Error deleting the interaction")
         if tempuser: return dict(deleted_interaction=interaction, num_interactions=num_interactions-1)
         return dict(deleted_interaction=interaction)
+    else:
+        raise JSONException("Missing interaction or user")
 
 def createInteraction(page, container, content, user, kind, interaction_node, group=None, parent=None):
     # Check to see if user has reached their interaction limit

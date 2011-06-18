@@ -68,7 +68,7 @@ class InteractionHandler(AnonymousBaseHandler):
 
         # do delete action - same for all interactions
         if action == 'delete':
-            interaction_id = data['int_id']['id']
+            interaction_id = data['int_id']
             try:
                 interaction = Interaction.objects.get(id=interaction_id)
             except Interaction.DoesNotExist:
@@ -167,6 +167,7 @@ class ShareHandler(InteractionHandler):
 
         # Create an interaction
         if referring_int_id:
+            print "received referring id"
             try:
                 parent = Interaction.objects.get(id=referring_int_id)
             except Interaction.DoesNotExist:
