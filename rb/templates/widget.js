@@ -138,6 +138,9 @@ function readrBoard($R){
                 });
             },
 			draw: function(options) {
+                if ( options.selector && !options.container ) {
+                    options.container = options.selector.substr(5);
+                }
 				// for now, any window closes all tooltips
                 //merge options and defaults
                 var settings = $.extend({}, this.defaults, options);
@@ -3179,25 +3182,17 @@ log('attempting to get short url');
                     // get the text that was highlighted
                     var comment = $.trim( params.comment ),
                     int_id = params.int_id,
-                    rindow = params.rindow;
+                    rindow = params.rindow,
+                    tag = params.tag,
+                    hash = params.which;
 
-                    if (!int_id) {
-                        var content = params.content,
-                            tag_id = params.tag_id,
-                            int_id = "none";
-                    } else {
-                        var content = "",
-                            tag_id = ""
-                    }
-
-                    var hash = (params.hash) ? params.hash:"";
-
+                    var content = ( params.content ) ? params.content:"";
 
                     var sendData = {
                         "int_id" : int_id,
                         "comment" : comment,
                         "content" : content,
-                        "tag_id" : tag_id,
+                        "tag" : tag,
                         "hash" : hash,
                         "user_id" : RDR.user.user_id,
                         "readr_token" : RDR.user.readr_token,
