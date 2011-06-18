@@ -147,15 +147,15 @@ def deleteInteraction(interaction, user):
         if isTemporaryUser(user):
             interactions = Interaction.objects.filter(user=user)
             num_interactions = len(interactions)
-            tempuser =True
+            tempuser = True
 
         # This will delete an interaction and all of it's children
         try:
             interaction.delete();
         except:
             raise JSONException("Error deleting the interaction")
-        if tempuser: return dict(message=message,num_interactions=num_interactions-1)
-        return dict(message=message)
+        if tempuser: return dict(deleted_interaction=interaction, num_interactions=num_interactions-1)
+        return dict(deleted_interaction=interaction)
 
 def createInteraction(page, container, content, user, kind, interaction_node, group=None, parent=None):
     # Check to see if user has reached their interaction limit
