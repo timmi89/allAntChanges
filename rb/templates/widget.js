@@ -544,7 +544,7 @@ console.dir(settings);
                     if( whichAlert == "fromShareLink"){
                         //put a better message here
                         msg1 = '<h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shared with <span>ReadrBoard</span></h1>';
-                        msg2 = '&nbsp;&nbsp;<strong>' + data.reaction + ':</strong> ' + data.content.substr(0,40) + '... <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>';
+                        msg2 = '&nbsp;&nbsp;<strong>' + data.reaction + ':</strong> <em>' + data.content.substr(0,40) + '...</em> <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>';
                     }
 
                     var $educateUser = $('<div id="rdr_ed_user" class="rdr" />');
@@ -1328,7 +1328,7 @@ console.dir(settings);
                     //fade in indicators
                     //temp hacl!
                     if(boolDontFade){
-                        $('.rdr_indicator').css({
+                        $('.rdr_indicator_icator').css({
                             'opacity':'0.4',
                             'display':'inline'
                         });
@@ -1870,8 +1870,6 @@ console.dir(settings);
                         */
                         return false; //so click on <a>img</a> gets overridden
                     });
-console.clear();
-console.dir(summary.content_nodes);
 
 /*
                     rindow.find('ul.rdr_preselected li').hover( 
@@ -2569,8 +2567,6 @@ console.dir(summary.content_nodes);
                     // get the text that was highlighted
                     var content_type = params.settings.content_type;
                     
-                    console.clear();
-                    console.dir(params);
                     var rindow = params.rindow,
                         tag_li = params.tag,
                         tag = params.tag.data('tag');
@@ -2653,10 +2649,11 @@ console.dir(summary.content_nodes);
                                     //update indicators
                                     var hash = sendData.hash;
                                     var tagHelper = {
-                                        id: tag.content,
-                                        body: tag.name,
+                                        id: response.data.interaction.interaction_node.id,
+                                        body: response.data.interaction.interaction_node.body,
                                         count: 1
                                     };
+                                    var int_id = response.data.interaction.id;
 
                                     var diff = {   
                                         tags: {}
@@ -2670,7 +2667,7 @@ console.dir(summary.content_nodes);
                                         tag_li.find('div.rdr_leftBox').unbind();
                                         tag_li.find('div.rdr_leftBox').click( function(e) {
                                             e.preventDefault();
-                                            args.int_id = response.data; // add the interaction_id info in, we need it for unrateSend
+                                            args.int_id = int_id; // add the interaction_id info in, we need it for unrateSend
                                             RDR.actions.unrateSend(args);
                                             return false; // prevent the tag call applied to the parent <li> from firing
                                         });
@@ -2691,7 +2688,7 @@ console.dir(summary.content_nodes);
                                     log('-----tag------');
                                     console.dir(tag);
                                     if ( isNaN(parseInt(tag.content)) ) tag.content = response.data.tag_id;
-                                    RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:response.data, content_node_info:content_node_data, content_type:content_type });
+                                    RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_info:content_node_data, content_type:content_type });
                                     if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
                                     else RDR.session.showLoginPanel( args );
                                 }

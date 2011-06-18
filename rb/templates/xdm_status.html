@@ -38,7 +38,7 @@
 		
 		// RDRAuth.checkSocialUser();
 		if ( $.cookie('location') && $.cookie('container_hash') ) {
-			RDRAuth.notifyParent({message:false}, "sharedLink|" + $.cookie('container_hash') + "|" + $.cookie('location').replace(/"/g,'').replace('\\054',',') + "|" + $.cookie('reaction') + "|" + $.cookie('content'));
+			RDRAuth.notifyParent({message:false}, "sharedLink|" + $.cookie('container_hash') + "|" + $.cookie('location').replace(/"/g,'').replace('\\054',',') + "|" + $.cookie('reaction').replace(/"/g,'') + "|" + $.cookie('content').replace(/"/g,'') );
 			$.cookie('container_hash', null, { path: '/' });
 			$.cookie('location', null, { path: '/' });
 			$.cookie('content', null, { path: '/' });
