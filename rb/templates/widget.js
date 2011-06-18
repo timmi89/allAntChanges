@@ -647,26 +647,20 @@ console.dir(settings);
                 log('--------data-------------');
                 console.dir(data);
                 //some condition
-                var pageWasLoaedFromSharedLink = true; //how do you work with cookies here?
-                if(pageWasLoaedFromSharedLink){
                     
-                    //TODO: sample data here, fill with info from cookie
-                    // var data = {
-                    //     location: "2:10\0542:32",
-                    //     container_hash: "c9676b4da28e1e005a1b27676e8b2847"
-                    // }
+                //TODO: sample data here, fill with info from cookie
+                // var data = {
+                //     location: "2:10\0542:32",
+                //     container_hash: "c9676b4da28e1e005a1b27676e8b2847"
+                // }
 
-                    //note: I turned off the checksum in rangy, so the locations will be mising the {####} part.
-                    // we don't need the checksum, cause we're already doing that.
+                //note: I turned off the checksum in rangy, so the locations will be mising the {####} part.
+                // we don't need the checksum, cause we're already doing that.
 
-                    //note: the "\054" is actually the octal for a comma.  The back end is passing it back that way. It's working fine though.
-                        //, so it seems that "2:10\0542:32" == "2:10,2:32"
-
-                    RDR.session.alertBar.make('fromShareLink', data);
-                    return true; //could return something more useful if we need it.
-                }
-                //else
-                return false; 
+                //note: the "\054" is actually the octal for a comma.  The back end is passing it back that way. It's working fine though.
+                //, so it seems that "2:10\0542:32" == "2:10,2:32"
+                RDR.session.alertBar.make('fromShareLink', data);
+                return true; //could return something more useful if we need it.
             },
 			iframeHost : "http://readr.local:8080", // TODO put this in a template var
             getUser: function(args, callback) {
@@ -759,6 +753,9 @@ console.dir(settings);
                                 log('-------message.status-----------');
                                 console.log(message.status);
                                 var sharedLink = message.status.split('|');
+                                if ( sharedLink[5] ) {
+                                    RDR.session.referring_int_id = sharedLink[5];
+                                }
                                 RDR.session.getSharedLinkInfo( { container_hash:sharedLink[1], location:sharedLink[2], reaction:sharedLink[3], content:sharedLink[4] } );
                             }
                         }
@@ -1090,8 +1087,6 @@ console.dir(settings);
             initEnvironment: function(){
                 
                 //dont know if it makes sense to return anything here like im doing now...
-                // var wasSharedLink = RDR.session.getSharedLinkInfo();
-                // log(wasSharedLink);
 
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
                 var $indicatorDetailsWrapper = $('<div id="rdr_indicator_details_wrapper" />').appendTo('body');
@@ -2819,7 +2814,8 @@ console.dir(settings);
                         "user_id" : parseInt( RDR.user.user_id ),
                         "readr_token" : RDR.user.readr_token,
                         "group_id" : parseInt( RDR.groupPermData.group_id ),
-                        "page_id" : RDR.page.id
+                        "page_id" : RDR.page.id,
+                        "referring_int_id" : RDR.session.referring_int_id
                     };
 
 log('attempting to get short url');
