@@ -176,7 +176,7 @@ class ShareHandler(InteractionHandler):
         except:
             raise JSONException(u"Error creating link")
         
-        short_url = BASE_URL + link.to_base62()
+        short_url = BASE_URL + "/s/" + link.to_base62()
         
         return dict(short_url=short_url)
 
