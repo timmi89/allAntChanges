@@ -162,7 +162,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
     tempuser = False
     if isTemporaryUser(user):
         num_interactions = checkLimit(user, group)
-        tempuser =True
+        tempuser = True
 
     interactions = Interaction.objects.filter(user=user)
     # Check unique content_id, user_id, page_id, interaction_node_id

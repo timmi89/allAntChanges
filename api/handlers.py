@@ -100,10 +100,12 @@ class TagHandler(InteractionHandler):
     def create(self, data, user, page, group):
         tag = data['tag']['content']
         container_hash = data['hash']
-        location = data['content'].get('location', None)
         content_data = data['content']['body']
         content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[data['content_type']]
         
+        #optional
+        location = data['content'].get('location', None)
+
         content = Content.objects.get_or_create(kind=content_type, body=content_data, location=location)[0]
 
         try:
@@ -163,7 +165,7 @@ class ShareHandler(InteractionHandler):
             try:
                 parent = Interaction.objects.get(id=interaction_id)
             except Interaction.DoesNotExist:
-                raise JSONException("Parent interaction did not exist!")
+                parent = None
 
         try:
             interaction = createInteraction(page, container, content, user, 'shr', inode, group, parent)['interaction']
