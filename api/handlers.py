@@ -256,6 +256,7 @@ class PageDataHandler(AnonymousBaseHandler):
         
         # Find all the interactions on page
         iop = Interaction.objects.filter(page=page)
+        iop = iop.exclude(content__kind='page')
         
         # ---Get page interaction counts, grouped by kind---
         # Focus on values for 'kind'
@@ -287,9 +288,6 @@ class PageDataHandler(AnonymousBaseHandler):
             toptags=toptags,
             topusers=topusers,
             topshares=topshares,
-            #imagedata=imagedata,
-            #videodata=videodata,
-            #flashdata=flashdata
         )
 
 class SettingsHandler(AnonymousBaseHandler):

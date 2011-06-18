@@ -1,9 +1,7 @@
 from readrboard.rb.models import *
 from datetime import datetime, timedelta
-import json
-import hashlib
-import hmac
 import random
+import json
 from exceptions import FBException, JSONException
 
 def getTagCommentData(comment):
