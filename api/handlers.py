@@ -79,11 +79,21 @@ class InteractionHandler(AnonymousBaseHandler):
 class CommentHandler(InteractionHandler):
     def create(self, data, user, page, group):
         comment = data['comment']
-        interaction_id = data['int_id']
-        try:
-            parent = Interaction.objects.get(id=interaction_id)
-        except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
-            raise JSONException(u'Could not find parent interaction specified')
+        
+        # optional
+        interaction_id = data.get('int_id', None)
+
+        # Get or create parent interaction
+        if interaction_id:        
+            try:
+                parent = Interaction.objects.get(id=interaction_id)
+            except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
+                raise JSONException(u'Could not find parent interaction specified')
+        else:
+            try:
+                parent = TagHandler.create(data, user, page, group)
+            except:
+                raise JSONException(u'Error creating parent interaction for comment')
 
         try:
             comment = createInteractionNode(body=comment)
@@ -116,7 +126,7 @@ class TagHandler(InteractionHandler):
 
         new_interaction = None
 
-        # Get or create InteractionNode for share
+        # Get or create InteractionNode
         try:
             if tag_id:
                 # ID known retrieve existing
