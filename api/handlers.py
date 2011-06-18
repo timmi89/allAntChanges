@@ -98,7 +98,7 @@ class CommentHandler(InteractionHandler):
 
 class TagHandler(InteractionHandler):
     def create(self, data, user, page, group):
-        tag = data['tag']['content']
+        tag_body = data['tag']['body']
         container_hash = data['hash']
         content_data = data['content']['body']
         content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[data['content_type']]
@@ -114,32 +114,30 @@ class TagHandler(InteractionHandler):
             raise JSONException("Container specified does not exist")
 
         new_interaction = None
-        if tag:
-            # Create InteractionNode for tag
-            try:
-                # No ID, create new
-                if isinstance(tag, unicode):
-                    print "making tag from reaction"
-                    node = createInteractionNode(body=tag)
+
+        # Get or create InteractionNode for tag
+        try:
+            if tag_id:
                 # ID known retrieve existing
-                elif isinstance(tag, int):
-                    print "making tag from existing interaction node id"
-                    node = InteractionNode.objects.get(id=tag)
-            except:
-                raise JSONException(u'Error creating interaction node')
-            new_interaction = createInteraction(page, container, content, user, 'tag', node, group)
-            return new_interaction
-        else:
-            raise JSONException(u"No tag provided to tag handler")
+                inode = InteractionNode.objects.get(id=tag)
+            else if tag_body:
+                # No id provided, using body to get_or_create
+                inode = InteractionNode.objects.get_or_create(body=tag_body)
+        except:
+            raise JSONException(u'Error creating or retrieving interaction node')
+        
+        new_interaction = createInteraction(page, container, content, user, 'tag', inode, group)
+        return new_interaction
 
 class ShareHandler(InteractionHandler):
     def create(self, data, user, page, group):
-        tag_id = data['tag']['content']
+        tag_body = data['tag']['body']
         container_hash = data['hash']
         content_data = data['content']['body']
         content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[data['content_type']]
 
         # optional
+        tag_id = data['tag'].get('id', None)
         location = data['content'].get('location', None)
         referring_int_id = data.get('referring_int_id', None)
 
@@ -148,11 +146,16 @@ class ShareHandler(InteractionHandler):
         # Get or create content
         content = Content.objects.get_or_create(kind=content_type, body=content_data, location=location)[0]
         
-        # Get the interaction_node
+        # Get or create InteractionNode for share
         try:
-            inode = InteractionNode.objects.get(id=tag_id)
-        except InteractionNode.DoesNotExist:
-            return JSONException("InteractionNode specified does not exist")
+            if tag_id:
+                # ID known retrieve existing
+                inode = InteractionNode.objects.get(id=tag)
+            else if tag_body:
+                # No id provided, using body to get_or_create
+                inode = InteractionNode.objects.get_or_create(body=tag_body)
+        except:
+            raise JSONException(u'Error creating or retrieving interaction node')
 
         # Get the container
         try:
