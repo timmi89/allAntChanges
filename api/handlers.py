@@ -79,7 +79,7 @@ class InteractionHandler(AnonymousBaseHandler):
 class CommentHandler(InteractionHandler):
     def create(self, data, user, page, group):
         comment = data['comment']
-        
+
         # optional
         interaction_id = data.get('int_id', None)
 
@@ -119,13 +119,6 @@ class TagHandler(InteractionHandler):
 
         content = Content.objects.get_or_create(kind=content_type, body=content_data, location=location)[0]
 
-        try:
-            container = Container.objects.get(hash=container_hash)
-        except Container.DoesNotExist:
-            raise JSONException("Container specified does not exist")
-
-        new_interaction = None
-
         # Get or create InteractionNode
         try:
             if tag_id:
@@ -137,9 +130,18 @@ class TagHandler(InteractionHandler):
         except:
             raise JSONException(u'Error creating or retrieving interaction node')
 
+        # Get the container
+        try:
+            container = Container.objects.get(hash=container_hash)
+        except Container.DoesNotExist:
+            raise JSONException("Container specified does not exist")
         
-        new_interaction = createInteraction(page, container, content, user, 'tag', inode, group)
-        return new_interaction
+        # Create an interaction
+        try:
+            interaction = createInteraction(page, container, content, user, 'shr', inode, group)['interaction']
+        except:
+            raise JSONException(u"Error creating interaction")
+        return interaction
 
 class ShareHandler(InteractionHandler):
     def create(self, data, user, page, group):
@@ -175,14 +177,15 @@ class ShareHandler(InteractionHandler):
         except Container.DoesNotExist:
             return JSONException("Container specified does not exist")
 
-        # Create an interaction
+        # Create appropriate parent
         if referring_int_id:
             print "received referring id"
             try:
                 parent = Interaction.objects.get(id=referring_int_id)
             except Interaction.DoesNotExist:
                 parent = None
-
+        
+        # Create an interaction
         try:
             interaction = createInteraction(page, container, content, user, 'shr', inode, group, parent)['interaction']
         except:
