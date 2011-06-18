@@ -756,7 +756,7 @@ console.dir(settings);
                                 console.log(message.status);
                                 var sharedLink = message.status.split('|');
                                 if ( sharedLink[5] ) {
-                                    RDR.session.referring_int_id = sharedLink[5];
+                                    RDR.session.referring_int_id = parseInt( sharedLink[5] );
                                 }
                                 RDR.session.getSharedLinkInfo( { container_hash:sharedLink[1], location:sharedLink[2], reaction:sharedLink[3], content:sharedLink[4] } );
                             }
