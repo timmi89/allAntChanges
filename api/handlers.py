@@ -120,7 +120,7 @@ class TagHandler(InteractionHandler):
             if tag_id:
                 # ID known retrieve existing
                 inode = InteractionNode.objects.get(id=tag)
-            else if tag_body:
+            elif tag_body:
                 # No id provided, using body to get_or_create
                 inode = InteractionNode.objects.get_or_create(body=tag_body)
         except:
@@ -151,7 +151,7 @@ class ShareHandler(InteractionHandler):
             if tag_id:
                 # ID known retrieve existing
                 inode = InteractionNode.objects.get(id=tag)
-            else if tag_body:
+            elif tag_body:
                 # No id provided, using body to get_or_create
                 inode = InteractionNode.objects.get_or_create(body=tag_body)
         except:
