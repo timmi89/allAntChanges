@@ -111,6 +111,7 @@ function readrBoard($R){
 			// content comes later.  this is just to identify or draw the container.
             checkHeight: function( rindow, percentScroll, which ) {
 
+                var tallest_column_height = 0;
                 rindow.find('div.rdr_body').each( function() {
                     var $column = $(this);
                         
@@ -120,8 +121,9 @@ function readrBoard($R){
 
                     var paneHeight = (rindow.height()-35);
                     var contentHeight = $column.height();
+                    if ( contentHeight > tallest_column_height ) tallest_column_height = contentHeight;
 
-                    if ( contentHeight >= 300 ) {
+                    if ( tallest_column_height >= 300 ) {
                         rindow.find('div.rdr_reactionPanel div.rdr_body').animate({
                             minHeight:"300px"
                         }, rindow.settings.animTime );
@@ -132,7 +134,7 @@ function readrBoard($R){
                         }
                     } else if (which && which == this_column_name) {
                         rindow.find('div.rdr_reactionPanel div.rdr_body').animate({
-                            minHeight:contentHeight+"px"
+                            minHeight:tallest_column_height+"px"
                         }, rindow.settings.animTime );
                     }
                 });
