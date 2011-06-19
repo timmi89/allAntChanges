@@ -1980,6 +1980,8 @@ console.dir(settings);
                         $header.find('span.rdr_tag_count').click( function() {
                             RDR.actions.rateSendLite({ element:$(this), tag:tag, rindow:rindow, content:node.body, which:which });
                         });
+
+                        $header.find('a.rdr_tag').data( 'tag', tag );
                         
                         var hash = $contentSet.data('hash');
                         var container = $('.rdr-'+hash);
@@ -1989,8 +1991,6 @@ console.dir(settings);
 
                         $contentSet.hover(
                             function() {
-                                log('------- newSel -----------');
-                                console.dir(newSel);
                                 $(container).selog('hilite', newSel, 'on');
                                 
                             },
@@ -2056,8 +2056,6 @@ console.dir(settings);
                                     $this_tag.data('tag', thisTag);
                                     $content.find('div.rdr_otherTags').append( $this_tag );
 
-                                    log("$this_tag.data('tag', thisTag);");
-                                    console.dir($this_tag.data('tag') );
                                 }
                             }
                         }
@@ -2089,10 +2087,8 @@ console.dir(settings);
                                 });
 
                                 var content_node_info = $(this).closest('div.rdr_contentSet').data();
-                                log('--------------------content_node_info-----------------------');
-                                console.dir(content_node_info);
                                 var tag = $this.closest('a.rdr_tag').data('tag');
-                                log('share this tag-----------------------------------');
+                                log('------- attempting to share -------');
                                 dir(tag);
                                 $shareTip.find('img.rdr_sns').click( function() {
                                     RDR.actions.share_getLink({ sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node_info:content_node_info });
@@ -3609,6 +3605,7 @@ function $RFunctions($R){
                 return this
             }
 
+
             //alias console.log to global log
             //in case client already has log defined (remove for production anyway)
             if (typeof log === "undefined"){
@@ -3617,6 +3614,10 @@ function $RFunctions($R){
                         $.log(val);
                     });
                 }   
+            }
+
+            if (typeof dir === "undefined" && typeof console.dir != "undefined"){
+                dir = console.dir;  
             }
 
             //add in alias temporaily to client $ so we can use regular $ instead of $R if we want
