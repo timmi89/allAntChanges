@@ -2652,11 +2652,11 @@ console.dir(settings);
                                     //update indicators
                                     var hash = sendData.hash;
                                     var tagHelper = {
-                                        id: response.data.interaction.interaction_node.id,
-                                        body: response.data.interaction.interaction_node.body,
+                                        id: response.data.interaction_node.id,
+                                        body: response.data.interaction_node.body,
                                         count: 1
                                     };
-                                    var int_id = response.data.interaction.id;
+                                    var int_id = response.data.id;
 
                                     var diff = {   
                                         tags: {}
@@ -2674,7 +2674,7 @@ console.dir(settings);
                                             RDR.actions.unrateSend(args);
                                             return false; // prevent the tag call applied to the parent <li> from firing
                                         });
-                                        tag_li.addClass('rdr_tagged').addClass('rdr_custom_'+response.data.id);
+                                        tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+response.data.id);
                                         tag_li.data('interaction_id', response.data.id);
 
                                         // if it was a custom tag, do a few things
@@ -2993,7 +2993,7 @@ log('attempting to get short url');
                     data: { json: JSON.stringify(sendData) },
                     success: function(response) {
                         RDR.actions.panel.collapse("whyPanel", rindow);
-                        rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_tag_'+tag.id).removeClass('rdr_selected').removeClass('rdr_tagged');
+                        rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id).removeClass('rdr_selected').removeClass('rdr_tagged').removeClass('rdr_int_node_'+int_id);
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
