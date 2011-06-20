@@ -1,4 +1,4 @@
-// //console.log($)
+// //log($)
 var jQueryVersion = "1.4.4",
 RDRtimer,
 RDR, //our global RDR object
@@ -249,6 +249,7 @@ function readrBoard($R){
 			closeAll: function() {
                 var $allRindows = $('div.rdr.rdr_window');
 				RDR.rindow.close( $allRindows );
+                $('.rdr_shared').removeClass('rdr_shared');
 			}
 		},
 		actionbar: {
@@ -290,7 +291,7 @@ function readrBoard($R){
                 if ( settings.container == "") settings.container = RDR.page.hash;
 
 log('XCXCXCXCXCXXC-- settings --');
-console.dir(settings);
+dir(settings);
                 var items = [
                         {
                             "item":"reaction",
@@ -603,46 +604,53 @@ console.dir(settings);
                 }
             },
             revealSharedContent: function(data){
+log('revealSharedContent');
+dir(data);
+                var $container = $('.rdr-'+data.container_hash);
+                $container.addClass('rdr_shared')
+                
+                if ( data.location && data.location != "None" ) {
+                    
+                
+                    var serialRange = data.location;
 
-                var $container = $('.rdr-'+data.container_hash),
-                serialRange = data.location;
+                    log($container)
+                    if (serialRange) log(serialRange);
 
-                log($container)
-                log(serialRange);
+                    var selogStack = $().selog('stack'); //just fyi, not using it... Will be an empty stack on page load.
 
-                var selogStack = $().selog('stack'); //just fyi, not using it... Will be an empty stack on page load.
-
-                /*
-                //no need to check for existing hilites right now
-                var oldSelState = selState || null;
-                if (oldSelState){
-                    $().selog('hilite',oldSelState.idx, 'off')
-                }
-                */
-
-                var selState = $container.selog('save', {'serialRange':serialRange} );
-                console.log(selState)
-
-                $().selog('hilite', selState, 'on')
-
-                /**********/
-                //todo: quick fix!  ... later attach it to a rindow to do it right.
-                //for now at least, make it so we can clear this easily.
-                $(document).bind('click.rdr', function(event) {
-                    $().selog('hilite', selState, 'off');
-                    $(document).unbind('dblclick.rdr', arguments.callee);
-                });
-               //bind an escape keypress to clear it.
-                //todo: for a real public API, this should be an option, or passed in function or something
-                $(document).bind('keyup.rdr', function(event) {
-                    //todo: merge all esc key events (use an array of functions that we can just dequeue?)
-                    if (event.keyCode == '27') { //esc
-                        $().selog('hilite', selState, 'off');
-                        //remove the binding after it's been called.
-                        $(document).unbind('keyup.rdr', arguments.callee);
+                    /*
+                    //no need to check for existing hilites right now
+                    var oldSelState = selState || null;
+                    if (oldSelState){
+                        $().selog('hilite',oldSelState.idx, 'off')
                     }
-                });
-                /**********/ //end quick fix
+                    */
+
+                    var selState = $container.selog('save', {'serialRange':serialRange} );
+                    log(selState)
+
+                    $().selog('hilite', selState, 'on')
+
+                    /**********/
+                    //todo: quick fix!  ... later attach it to a rindow to do it right.
+                    //for now at least, make it so we can clear this easily.
+                    $(document).bind('click.rdr', function(event) {
+                        $().selog('hilite', selState, 'off');
+                        $(document).unbind('dblclick.rdr', arguments.callee);
+                    });
+                   //bind an escape keypress to clear it.
+                    //todo: for a real public API, this should be an option, or passed in function or something
+                    $(document).bind('keyup.rdr', function(event) {
+                        //todo: merge all esc key events (use an array of functions that we can just dequeue?)
+                        if (event.keyCode == '27') { //esc
+                            $().selog('hilite', selState, 'off');
+                            //remove the binding after it's been called.
+                            $(document).unbind('keyup.rdr', arguments.callee);
+                        }
+                    });
+                    /**********/ //end quick fix
+                }
 
                 var targetOffset = $container.offset().top,
                 windowPadding = 50,
@@ -652,7 +660,7 @@ console.dir(settings);
             },
             getSharedLinkInfo: function( data ){
                 log('--------data-------------');
-                console.dir(data);
+                dir(data);
                 //some condition
                     
                 //TODO: sample data here, fill with info from cookie
@@ -741,7 +749,7 @@ console.dir(settings);
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
 
-                                //console.dir(message.data);
+                                //dir(message.data);
                                 for ( var i in message.data ) {
                                     RDR.user[ i ] = ( !isNaN( parseInt(message.data[i]) ) ) ? parseInt(message.data[i]):message.data[i];
                                 }
@@ -758,7 +766,7 @@ console.dir(settings);
                                 RDR.session.alertBar.make('educateUser');
                             } else if ( message.status.indexOf('sharedLink') != -1 ) {
                                 log('-------message.status-----------');
-                                console.log(message.status);
+                                log(message.status);
                                 var sharedLink = message.status.split('|');
                                 if ( sharedLink[5] ) {
                                     RDR.session.referring_int_id = parseInt( sharedLink[5] );
@@ -828,7 +836,7 @@ console.dir(settings);
             },
             showTempUserMsg: function(args) {
                 if ( args.rindow ) {
-                    //console.dir(args);
+                    //dir(args);
                     var rindow = args.rindow,
                         num_interactions_left = RDR.group.temp_interact - parseInt( args.int_id.num_interactions ),
                         $tempMsgDiv = $('<div class="rdr_tempUserMsg"><span /><strong /></div>'),
@@ -933,7 +941,7 @@ console.dir(settings);
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
                         console.warn('ajax error');
-                        console.log(response);
+                        log(response);
                     }
                 });
             },
@@ -962,7 +970,7 @@ console.dir(settings);
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
                         console.warn('ajax error');
-                        console.log(response);
+                        log(response);
                     }
                 });
             },
@@ -992,7 +1000,7 @@ console.dir(settings);
 					},
 					success: function(response) {
                         hash = RDR.util.md5.hex_md5( response.data.id );
-                        console.log('----- page ID hashed: ' + hash );
+                        log('----- page ID hashed: ' + hash );
                         if ( !RDR.containers[hash] ) {
                             RDR.containers[hash] = {};
                             RDR.containers[hash].body = response.data.id;
@@ -1010,7 +1018,7 @@ console.dir(settings);
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
                         console.warn('ajax error');
-                        console.log(response);
+                        log(response);
                     }
 				});
 
@@ -1240,8 +1248,8 @@ console.dir(settings);
 					//todo: talk to Porter about how to Model the Page Data
 					hashes : md5_list
 				}
-    console.log('sendData:');
-    console.dir(sendData);
+    log('sendData:');
+    dir(sendData);
                 // send the data!
                 $.ajax({
                     url: "/api/summary/containers/",
@@ -1279,7 +1287,7 @@ console.dir(settings);
                                 error: function(response) {
                                     //for now, ignore error and carry on with mockup
                                     console.warn('ajax error');
-                                    console.log(response);
+                                    log(response);
                                 }
                             });
                         }
@@ -1290,7 +1298,7 @@ console.dir(settings);
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
                         console.warn('ajax error');
-                        console.log(response);
+                        log(response);
                     }
                 });
             },
@@ -1438,8 +1446,8 @@ console.dir(settings);
                     //kind is optional - defaults to text
                     
                     // if ( RDR.content_nodes[i].info.com_count + RDR.content_nodes[i].info.tag_count > 0 ) {
-                    //console.log('-- what we know about container with hash '+hash+' --');
-                    //console.log(RDR.content_nodes[hash]);
+                    //log('-- what we know about container with hash '+hash+' --');
+                    //log(RDR.content_nodes[hash]);
                     var $container, $indicator, $indicator_details, some_reactions, total, info, top_tags, kind;
 
                     var summary = RDR.summaries[hash];
@@ -1636,7 +1644,7 @@ console.dir(settings);
                     // loop through the content object to create a similar object that has tags at the top of the hierarchy, 
                     // to prevent looping through .content over and over
                     for ( var j in info.content ) {
-                        // console.dir(content);
+                        // dir(content);
                         var content = info.content[j];
 
                         for ( var i in content.tags ) {
@@ -1740,7 +1748,7 @@ console.dir(settings);
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
                         console.warn('ajax error');
-                        console.log(response);
+                        log(response);
                     }
                 });
 
@@ -1870,11 +1878,11 @@ console.dir(settings);
                             for ( var i in summary.content_nodes ) {
                                 var tag_id = $(this).data('tag').id;
                                 if ( summary.content_nodes[i].top_interactions.tags[ tag_id ] ) {
-                                    // console.log(' hilite this: '+ summary.content_nodes[i].location );
+                                    // log(' hilite this: '+ summary.content_nodes[i].location );
                                     // RDR.summaries[ which ].top_interactions.tags
                                     var newSel = $('.rdr-'+which).selog('save', { 'serialRange': summary.content_nodes[i].location });
-                                    console.log('-------- LI newSel ---------');
-                                    console.dir(newSel);
+                                    log('-------- LI newSel ---------');
+                                    dir(newSel);
                                     if ( h==0) {
                                         $(container).selog('hilite', newSel, 'on');
                                         h=1;
@@ -1960,12 +1968,12 @@ console.dir(settings);
                 // ok, get the content associated with this tag!
                 $.each(content, function(idx, node){
                     log('node');
-                    console.dir(node);
+                    dir(node);
 
                     var tag = tagClone;
 
                     // log('tag');
-                    // console.dir(tag);
+                    // dir(tag);
 
                     if ( node.top_interactions.tags[ tag.id ] ) {
 
@@ -2117,9 +2125,9 @@ console.dir(settings);
                 
                 //todo: this function needs work pulling vars back together
                 // log('node')
-                // console.dir(node)
+                // dir(node)
                 // log('tag')
-                // console.dir(tag)
+                // dir(tag)
                 // log(c_idx)
 
                 //thoguht we might need this but we dont
@@ -2136,7 +2144,7 @@ console.dir(settings);
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
                         console.warn('ajax error');
-                        console.log(response);
+                        log(response);
                     }
                 });
                 */
@@ -2630,9 +2638,9 @@ console.dir(settings);
                                 //do we really want to chain pass these through?  Or keep them in a shared scope?
 
                                 if ( response.status == "fail" ) {
-                                    console.log('failllllllllll');
+                                    log('failllllllllll');
                                     if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                        console.log('uh oh better login, tempy');
+                                        log('uh oh better login, tempy');
                                         RDR.session.showLoginPanel( args );
                                     } else {
                                         // if it failed, see if we can fix it, and if so, try this function one more time
@@ -2689,7 +2697,7 @@ console.dir(settings);
                                         }
                                     }
                                     log('-----tag------');
-                                    console.dir(tag);
+                                    dir(tag);
                                     if ( isNaN(parseInt(tag.id)) ) tag.id = response.data.tag_id;
                                     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_info:content_node_data, content_type:content_type });
                                     if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
@@ -2699,7 +2707,7 @@ console.dir(settings);
                             error: function(response) {
                                 //for now, ignore error and carry on with mockup
                                 console.warn('ajax error');
-                                console.log(response);
+                                log(response);
                             }
                         });
                     } else {
@@ -2744,9 +2752,9 @@ console.dir(settings);
                                 //[eric] - if we want these params still we need to get them from args:
                                 //do we really want to chain pass these through?  Or keep them in a shared scope?
                                 if ( response.status == "fail" ) {
-                                    console.log('failllllllllll');
+                                    log('failllllllllll');
                                     if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                        console.log('uh oh better login, tempy');
+                                        log('uh oh better login, tempy');
                                         RDR.session.showLoginPanel( args );
                                     } else {
                                         // if it failed, see if we can fix it, and if so, try this function one more time
@@ -2769,7 +2777,7 @@ console.dir(settings);
                             error: function(response) {
                                 //for now, ignore error and carry on with mockup
                                 console.warn('ajax error');
-                                console.log(response);
+                                log(response);
                             }
                         });
                     } else {
@@ -2778,8 +2786,8 @@ console.dir(settings);
                 });
             },
             share_getLink: function(args) {
-                log('----share_getLink----');
-                console.dir(args);
+                log('----share_getLink args----');
+                dir(args);
                 //example:
                 //tag:{body, id}, rindow:rindow, settings:settings, callback: 
                 
@@ -2806,13 +2814,14 @@ console.dir(settings);
                     // var selState = rindow.data('selog_state');
  
                     var content_node_data = {
-                        'container': rindow.container,
+                        'container': rindow.settings.container,
                         'body': content_node_info.content,
                         'location': content_node_info.location
                     }    
-                    // console.dir(content_node_data);
+                    // dir(content_node_data);
                     var content_node = RDR.actions.content_node.make(content_node_data);
-
+log('content_node:');
+dir(content_node);
                     var sendData = {
                         "tag" : tag,
                         "hash": content_node_info.hash,
@@ -2825,7 +2834,6 @@ console.dir(settings);
                         "referring_int_id" : RDR.session.referring_int_id
                     };
 
-log('attempting to get short url');
                     // if ( !tag_li.hasClass('rdr_tagged') ) {
                         // send the data!
                         $.ajax({
@@ -2836,16 +2844,16 @@ log('attempting to get short url');
                             data: { json: JSON.stringify(sendData) },
                             success: function(response) {
                                 log('---- share URL response -----');
-                                console.dir(response);
+                                dir(response);
 
                                 // todo cache the short url
                                 // RDR.summaries[content_node_info.hash].content_nodes[IDX].top_interactions.tags[tag.id].short_url = ;
 
 
                                 if ( response.status == "fail" ) {
-                                    console.log('failllllllllll');
+                                    log('failllllllllll');
                                     if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                        console.log('uh oh better login, tempy');
+                                        log('uh oh better login, tempy');
                                         RDR.session.showLoginPanel( args );
                                     } else {
                                         // if it failed, see if we can fix it, and if so, try this function one more time
@@ -2868,7 +2876,7 @@ log('attempting to get short url');
                             error: function(response) {
                                 //for now, ignore error and carry on with mockup
                                 console.warn('ajax error');
-                                console.log(response);
+                                log(response);
                             }
                         });
                 });
@@ -2998,14 +3006,15 @@ log('attempting to get short url');
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
                         console.warn('ajax error');
-                        console.log(response);
+                        log(response);
                     }
                 });
                 
             },
             shareStart: function(args) {
+                console.clear();
                 log('--- shareStarting ---');
-                console.dir(args);
+                dir(args);
                 var rindow = args.rindow, 
                     tag = args.tag,
                     int_id = args.int_id;
@@ -3190,7 +3199,7 @@ log('attempting to get short url');
             },
             comment: function(args) {
                 log('---commenting---');
-                console.dir(args);
+                dir(args);
                 RDR.session.getUser( args, function( params ) {
     
                     // get the text that was highlighted
@@ -3250,7 +3259,7 @@ log('attempting to get short url');
                         error: function(response) {
                             //for now, ignore error and carry on with mockup
                             console.warn('ajax error');
-                            console.log(response);
+                            log(response);
                         }
                     });
                 });
@@ -3984,7 +3993,7 @@ function $RFunctions($R){
                     */              
                     
                     string = RegExp.escape(string);
-                    console.log(string);
+                    log(string);
                     regex = new RegExp(string, "gim");
                     
                     return $this.each(function(){
@@ -4742,10 +4751,10 @@ function $RFunctions($R){
              Build date: 30 May 2011
             */
             var rangy=function(){function m(o,r){var A=typeof o[r];return A=="function"||!!(A=="object"&&o[r])||A=="unknown"}function N(o,r){return!!(typeof o[r]=="object"&&o[r])}function G(o,r){return typeof o[r]!="undefined"}function F(o){return function(r,A){for(var O=A.length;O--;)if(!o(r,A[O]))return false;return true}}function y(o){window.alert("Rangy not supported in your browser. Reason: "+o);q.initialized=true;q.supported=false}function E(){if(!q.initialized){var o,r=false,A=false;if(m(document,"createRange")){o=
-            document.createRange();if(x(o,l)&&s(o,Q))r=true;o.detach()}if((o=N(document,"body")?document.body:document.getElementsByTagName("body")[0])&&m(o,"createTextRange")){o=o.createTextRange();if(x(o,t)&&s(o,p))A=true}!r&&!A&&y("Neither Range nor TextRange are implemented");q.initialized=true;q.features={implementsDomRange:r,implementsTextRange:A};r=f.concat(e);A=0;for(o=r.length;A<o;++A)try{r[A](q)}catch(O){N(window,"console")&&m(window.console,"log")&&window.console.log("Init listener threw an exception. Continuing.",
+            document.createRange();if(x(o,l)&&s(o,Q))r=true;o.detach()}if((o=N(document,"body")?document.body:document.getElementsByTagName("body")[0])&&m(o,"createTextRange")){o=o.createTextRange();if(x(o,t)&&s(o,p))A=true}!r&&!A&&y("Neither Range nor TextRange are implemented");q.initialized=true;q.features={implementsDomRange:r,implementsTextRange:A};r=f.concat(e);A=0;for(o=r.length;A<o;++A)try{r[A](q)}catch(O){N(window,"console")&&m(window.console,"log")&&window.log("Init listener threw an exception. Continuing.",
             O)}}}function H(o){this.name=o;this.supported=this.initialized=false}var Q=["startContainer","startOffset","endContainer","endOffset","collapsed","commonAncestorContainer","START_TO_START","START_TO_END","END_TO_START","END_TO_END"],l=["setStart","setStartBefore","setStartAfter","setEnd","setEndBefore","setEndAfter","collapse","selectNode","selectNodeContents","compareBoundaryPoints","deleteContents","extractContents","cloneContents","insertNode","surroundContents","cloneRange","toString","detach"],
             p=["boundingHeight","boundingLeft","boundingTop","boundingWidth","htmlText","text"],t=["collapse","compareEndPoints","duplicate","getBookmark","moveToBookmark","moveToElementText","parentElement","pasteHTML","select","setEndPoint"],x=F(m),B=F(N),s=F(G),q={initialized:false,supported:true,util:{isHostMethod:m,isHostObject:N,isHostProperty:G,areHostMethods:x,areHostObjects:B,areHostProperties:s},features:{},modules:{},config:{alertOnWarn:false}};q.fail=y;q.warn=function(o){o="Rangy warning: "+o;if(q.config.alertOnWarn)window.alert(o);
-            else typeof window.console!="undefined"&&typeof window.console.log!="undefined"&&window.console.log(o)};var e=[],f=[];q.init=E;q.addInitListener=function(o){q.initialized?o(q):e.push(o)};var k=[];q.addCreateMissingNativeApiListener=function(o){k.push(o)};q.createMissingNativeApi=function(o){o=o||window;E();for(var r=0,A=k.length;r<A;++r)k[r](o)};H.prototype.fail=function(o){this.initialized=true;this.supported=false;throw Error("Module '"+this.name+"' failed to load: "+o);};H.prototype.warn=function(o){q.warn("Module "+
+            else typeof window.console!="undefined"&&typeof window.console.log!="undefined"&&window.log(o)};var e=[],f=[];q.init=E;q.addInitListener=function(o){q.initialized?o(q):e.push(o)};var k=[];q.addCreateMissingNativeApiListener=function(o){k.push(o)};q.createMissingNativeApi=function(o){o=o||window;E();for(var r=0,A=k.length;r<A;++r)k[r](o)};H.prototype.fail=function(o){this.initialized=true;this.supported=false;throw Error("Module '"+this.name+"' failed to load: "+o);};H.prototype.warn=function(o){q.warn("Module "+
             this.name+": "+o)};H.prototype.createError=function(o){return Error("Error in Rangy "+this.name+" module: "+o)};q.createModule=function(o,r){var A=new H(o);q.modules[o]=A;f.push(function(O){r(O,A);A.initialized=true;A.supported=true})};q.requireModules=function(o){for(var r=0,A=o.length,O,I;r<A;++r){I=o[r];O=q.modules[I];if(!O||!(O instanceof H))throw Error("Module '"+I+"' not found");if(!O.supported)throw Error("Module '"+I+"' not supported");}};var u=false;B=function(){if(!u){u=true;q.initialized||
             E()}};if(typeof window=="undefined")y("No window found");else if(typeof document=="undefined")y("No document found");else{m(document,"addEventListener")&&document.addEventListener("DOMContentLoaded",B,false);if(m(window,"addEventListener"))window.addEventListener("load",B,false);else m(window,"attachEvent")?window.attachEvent("onload",B):y("Window does not have required addEventListener or attachEvent method");return q}}();
             rangy.createModule("DomUtil",function(m,N){function G(e){for(var f=0;e=e.previousSibling;)f++;return f}function F(e,f){var k=[],u;for(u=e;u;u=u.parentNode)k.push(u);for(u=f;u;u=u.parentNode)if(q(k,u))return u;return null}function y(e,f,k){for(k=k?e:e.parentNode;k;){e=k.parentNode;if(e===f)return k;k=e}return null}function E(e){e=e.nodeType;return e==3||e==4||e==8}function H(e,f){var k=f.nextSibling,u=f.parentNode;k?u.insertBefore(e,k):u.appendChild(e);return e}function Q(e){if(e.nodeType==9)return e;
