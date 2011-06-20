@@ -80,6 +80,7 @@ class PageAdmin(admin.ModelAdmin):
 class ContainerAdmin(admin.ModelAdmin):
     list_display = ('id',
                     'hash',
+                    'kind',
                     'body')
     #list_filter = ('id',)
     #date_hierarchy = 'modified'

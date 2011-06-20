@@ -1,12 +1,12 @@
 from piston.handler import AnonymousBaseHandler
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.db.models import Count
-from django.shortcuts import get_object_or_404
 from decorators import status_response, json_data
 from exceptions import JSONException
 from utils import *
 from userutils import *
 from token import *
+from settings import BASE_URL
 
 class UserHandler(AnonymousBaseHandler):
     model = User
@@ -28,19 +28,16 @@ class ContainerHandler(AnonymousBaseHandler):
     model = Container
     fields = ('id', 'hash')
 
-class Awesome(AnonymousBaseHandler):
+class InteractionInstanceHandler(AnonymousBaseHandler):
     model = Interaction
-    fields = ('id')
+    fields = ('id', 'interaction_node')
 
 class InteractionHandler(AnonymousBaseHandler):
+    @json_data
     @status_response
-    def read(self, request, **kwargs):
-        # load the json data
-        data = json.loads(request.GET['json'])
-
+    def read(self, request, data, **kwargs):
         # check to see if user's token is valid
         if not checkToken(data): raise JSONException(u"Token was invalid")
-
         # get user data
         user_id = data.get('user_id')
         try:
@@ -66,11 +63,11 @@ class InteractionHandler(AnonymousBaseHandler):
                 raise JSONException(u"Interaction Handler: Error getting group!")
             
             # do create action for specific type
-            return self.create(data, user, page, group)
+            return self.create(request, data, user, page, group)
 
         # do delete action - same for all interactions
         if action == 'delete':
-            interaction_id = data['int_id']['id']
+            interaction_id = data['int_id']
             try:
                 interaction = Interaction.objects.get(id=interaction_id)
             except Interaction.DoesNotExist:
@@ -78,47 +75,119 @@ class InteractionHandler(AnonymousBaseHandler):
 
             return deleteInteraction(interaction, user)
 
-class BookmarkHandler(InteractionHandler):
-    def create(self, data, user, page, group):
-        pass
+class CommentHandler(InteractionHandler):
+    def create(self, request, data, user, page, group):
+        comment = data['comment']
 
+        # optional
+        interaction_id = data.get('int_id', None)
+
+        # Get or create parent interaction
+        if interaction_id:        
+            try:
+                parent = Interaction.objects.get(id=interaction_id)
+            except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
+                raise JSONException(u'Could not find parent interaction specified')
+        else:
+            try:
+                print request.GET
+                #parent = TagHandler().read(request, data, kwargs={'action':'create'})
+            except:
+                raise JSONException(u'Error creating parent interaction for comment')
+        """
+        try:
+            comment = createInteractionNode(body=comment)
+        except:
+            raise JSONException(u'Error creating comment interaction node')
+        
+        try:
+            interaction = createInteraction(parent.page, parent.container, parent.content, user, 'com', comment, group, parent)
+        except:
+            raise JSONException(u'Error creating comment interaction')
+        return dict(interaction=interaction)
+        """
+
+class TagHandler(InteractionHandler):
+    def create(self, request, data, user, page, group):
+        tag_body = data['tag']['body']
+        container_hash = data['hash']
+        content_data = data['content']['body']
+        content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[data['content_type']]
+        
+        #optional
+        tag_id = data['tag'].get('id', None)
+        location = data['content'].get('location', None)
+
+        content = Content.objects.get_or_create(kind=content_type, body=content_data, location=location)[0]
+
+        # Get or create InteractionNode
+        try:
+            if tag_id:
+                # ID known retrieve existing
+                inode = InteractionNode.objects.get(id=tag_id)
+            elif tag_body:
+                # No id provided, using body to get_or_create
+                inode = InteractionNode.objects.get_or_create(body=tag_body)[0]
+        except:
+            raise JSONException(u'Error creating or retrieving interaction node')
+
+        # Get the container
+        try:
+            container = Container.objects.get(hash=container_hash)
+        except Container.DoesNotExist:
+            raise JSONException("Container specified does not exist")
+        
+        # Create an interaction
+        try:
+            interaction = createInteraction(page, container, content, user, 'tag', inode, group)['interaction']
+            print 'new interaction', interaction
+        except:
+            raise JSONException(u"Error creating interaction")
+        return dict(interaction=interaction)
 
 class ShareHandler(InteractionHandler):
     def create(self, data, user, page, group):
-        tag_id = data['tag']['content']
-        hash = data['hash']
+        tag_body = data['tag']['body']
+        container_hash = data['hash']
         content_data = data['content']['body']
         content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[data['content_type']]
 
         # optional
+        tag_id = data['tag'].get('id', None)
         location = data['content'].get('location', None)
-        interaction_id = data.get('int_id', None)
+        referring_int_id = data.get('referring_int_id', None)
 
         parent = None
 
         # Get or create content
         content = Content.objects.get_or_create(kind=content_type, body=content_data, location=location)[0]
         
-        # Get the interaction_node
+        # Get or create InteractionNode for share
         try:
-            inode = InteractionNode.objects.get(id=tag_id)
-        except InteractionNode.DoesNotExist:
-            return JSONException("InteractionNode specified does not exist")
+            if tag_id:
+                # ID known retrieve existing
+                inode = InteractionNode.objects.get(id=tag_id)
+            elif tag_body:
+                # No id provided, using body to get_or_create
+                inode = InteractionNode.objects.get_or_create(body=tag_body)[0]
+        except:
+            raise JSONException(u'Error creating or retrieving interaction node')
 
         # Get the container
         try:
-            container = Container.objects.get(hash=hash)
+            container = Container.objects.get(hash=container_hash)
         except Container.DoesNotExist:
             return JSONException("Container specified does not exist")
 
-        # Create an interaction
-        if interaction_id:
-            print "here"
+        # Create appropriate parent
+        if referring_int_id:
+            print "received referring id"
             try:
-                parent = Interaction.objects.get(id=interaction_id)
+                parent = Interaction.objects.get(id=referring_int_id)
             except Interaction.DoesNotExist:
-                raise JSONException("Parent interaction did not exist!")
-
+                parent = None
+        
+        # Create an interaction
         try:
             interaction = createInteraction(page, container, content, user, 'shr', inode, group, parent)['interaction']
         except:
@@ -130,59 +199,13 @@ class ShareHandler(InteractionHandler):
         except:
             raise JSONException(u"Error creating link")
         
-        short_url = 'http://readr.local:8080/s/' + link.to_base62()
+        short_url = BASE_URL + "/s/" + link.to_base62()
         
         return dict(short_url=short_url)
 
-
-class CommentHandler(InteractionHandler):
+class BookmarkHandler(InteractionHandler):
     def create(self, data, user, page, group):
-        comment = data['comment']
-        interaction_id = data['int_id']
-        try:
-            parent = Interaction.objects.get(id=interaction_id)
-        except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
-            raise JSONException(u'Could not find parent interaction specified')
-
-        try:
-            comment = createInteractionNode(body=comment)
-        except:
-            raise JSONException(u'Error creating comment interaction node')
-        
-        try:
-            interaction = createInteraction(parent.page, parent.container, parent.content, user, 'com', comment, group, parent)
-        except:
-            raise JSONException(u'Error creating comment interaction')
-        return interaction
-
-class TagHandler(InteractionHandler):
-    def create(self, data, user, page, group):
-        tag = data['tag']['content']
-        hash = data['hash']
-        location = data['content'].get('location', None)
-        content_data = data['content']['body']
-        content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[data['content_type']]
-        
-        content = Content.objects.get_or_create(kind=content_type, body=content_data, location=location)[0]
-
-        try:
-            container = Container.objects.get(hash=hash)
-        except Container.DoesNotExist:
-            raise JSONException("Container specified does not exist")
-
-        new = None
-        if tag:
-            if isinstance(tag, unicode):
-                print "making tag from reaction"
-                node = createInteractionNode(body=tag)
-                new = createInteraction(page, container, content, user, 'tag', node, group)
-            elif isinstance(tag, int):
-                print "making tag from existing interaction node id"
-                node = InteractionNode.objects.get(id=tag)
-                new = createInteraction(page, container, content, user, 'tag', node, group)
-            return new
-        else:
-            raise JSONException(u"No tag provided to tag handler")
+        pass
 
 class CreateContainerHandler(AnonymousBaseHandler):
     @status_response
@@ -203,11 +226,10 @@ class CreateContainerHandler(AnonymousBaseHandler):
         return result
 
 class ContainerSummaryHandler(AnonymousBaseHandler):
+    @json_data
     @status_response
-    def read(self, request):
+    def read(self, request, data):
         known = {}
-
-        data = json.loads(request.GET['json'])
         hashes = data['hashes']
         page = data['pageID']
 
@@ -222,16 +244,16 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         return dict(known=known, unknown=unknown)
 
 class ContentSummaryHandler(AnonymousBaseHandler):
+    @json_data
     @status_response
-    def read(self, request):
+    def read(self, request, data):
         known = {}
 
-        data = json.loads(request.GET['json'])
         container_id = data['container_id']
         page_id = data['page_id']
         tag_ids = data['top_tags']
 
-        # Force evaluation by making lists
+        # Force queryset evaluation by making lists - reduces interaction queries to 1
         interactions = list(Interaction.objects.filter(
             container=container_id,
             page=page_id,
@@ -242,30 +264,7 @@ class ContentSummaryHandler(AnonymousBaseHandler):
         content_summaries = getContentSummaries(interactions, content)
 
         return content_summaries
-"""
-class ContainerSummaryHandler(AnonymousBaseHandler):
-    @status_response
-    def read(self, request):
-        known = {}
 
-        data = json.loads(request.GET['json'])
-        hashes = data['hashes']
-        page = data['pageID']
-
-        containers = Container.objects.filter(hash__in=hashes)
-        interactions = Interaction.objects.filter(container__in=containers)
-        grouped_interactions = interactions.values('container','kind').order_by()
-        interaction_counts = grouped_interactions.annotate(count=Count('kind'))
-
-        tags = interactions.filter(kind='tag').values('container','interaction_node').order_by()
-        tag_counts = tags.annotate(count=Count('interaction_node')).values('count','container','interaction_node')
-        top_tags = tag_counts.order_by('-count')
-
-        top_tag_ids = top_tags.values_list('interaction_node')
-        interaction_nodes = InteractionNode.objects.filter(id__in=top_tag_ids)
-
-        return dict(containers=containers, interaction_nodes=interaction_nodes, counts=interaction_counts, top_tags=top_tags)
-"""
 class PageDataHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, pageid=None):
@@ -273,6 +272,7 @@ class PageDataHandler(AnonymousBaseHandler):
         
         # Find all the interactions on page
         iop = Interaction.objects.filter(page=page)
+        iop = iop.exclude(content__kind='page')
         
         # ---Get page interaction counts, grouped by kind---
         # Focus on values for 'kind'
@@ -297,10 +297,6 @@ class PageDataHandler(AnonymousBaseHandler):
 
         userinteract = socialusers.annotate(interactions=Count('user__interaction'))
         topusers = userinteract.order_by('-interactions').values('full_name','img_url','interactions')[:10]
-
-        #imagedata = dict(((content.body, getData(iop, content=content)) for content in content.filter(kind='image').order_by('id').distinct()))
-        #videodata = dict(((content.body, getData(iop, content=content)) for content in content.filter(kind='video').order_by('id').distinct()))
-        #flashdata = dict(((content.body, getData(iop, content=content)) for content in content.filter(kind='flash').order_by('id').distinct()))
         
         return dict(
             id=page.id,
@@ -308,9 +304,6 @@ class PageDataHandler(AnonymousBaseHandler):
             toptags=toptags,
             topusers=topusers,
             topshares=topshares,
-            #imagedata=imagedata,
-            #videodata=videodata,
-            #flashdata=flashdata
         )
 
 class SettingsHandler(AnonymousBaseHandler):
@@ -345,15 +338,15 @@ class SettingsHandler(AnonymousBaseHandler):
         path = request.path
         fp = request.get_full_path()
         if group:
-            group = int(group)
+            group_id = int(group)
             try:
-                g = Group.objects.get(id=group)
+                group_object = Group.objects.get(id=group_id)
             except Group.DoesNotExist:
                 return HttpResponse("RB Group does not exist!")
-            sites = Site.objects.filter(group=g)
+            sites = Site.objects.filter(group=group_object)
             domains = sites.values_list('domain', flat=True)
             if host in domains:
-                return g
+                return group_object
             else:
                 raise JSONException("Group (" + str(group) + ") settings request invalid for this domain (" + host + ")")
         else:

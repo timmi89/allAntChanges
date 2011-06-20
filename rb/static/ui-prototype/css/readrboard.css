@@ -69,7 +69,8 @@ div.rdr.rdr_actionbar a:hover                       { background-color:#e4f0f7;}
 div.rdr.rdr_actionbar li.rdr_icon_about a:hover 	{ background-color:transparent; }
 div.rdr.rdr_actionbar span.rdr_icon_divider      	{ width:1px; background:#BBB; height:70%; position:absolute; top:15%; right:0; display:none;/*show dynamically*/}
 
-img.rdr_engage_img { -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa; }
+img.rdr_engage_img,
+img.rdr_shared 		{ -moz-box-shadow:0 0 10px 1px #008be4; -webkit-box-shadow:0 0 10px 1px #008be4; box-shadow:0 0 10px 1px #008be4; }
 
 
 /* container indicator icons */
@@ -362,6 +363,7 @@ div.rdr button				{font-size:14px; }
 
 /* user education bar */
 #rdr_ed_user 		{ position:fixed; top:-40px; left:0; width:100%; background:#f0f0f0; height:35px; -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa; padding:0px; z-index:12000; overflow:hidden;}
+#rdr_ed_user a 		{ color:#008be4; }
 #rdr_ed_user_1 		{ float:left; background: #fff; width:240px; height:35px;}
 #rdr_ed_user_1 h1 	{ padding-top:6px;}
 #rdr_ed_user_1 span	{ font-size:21px;}
