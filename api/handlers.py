@@ -38,7 +38,6 @@ class InteractionHandler(AnonymousBaseHandler):
     def read(self, request, data, **kwargs):
         # check to see if user's token is valid
         if not checkToken(data): raise JSONException(u"Token was invalid")
-
         # get user data
         user_id = data.get('user_id')
         try:
@@ -64,7 +63,7 @@ class InteractionHandler(AnonymousBaseHandler):
                 raise JSONException(u"Interaction Handler: Error getting group!")
             
             # do create action for specific type
-            return self.create(data, user, page, group)
+            return self.create(request, data, user, page, group)
 
         # do delete action - same for all interactions
         if action == 'delete':
@@ -77,7 +76,7 @@ class InteractionHandler(AnonymousBaseHandler):
             return deleteInteraction(interaction, user)
 
 class CommentHandler(InteractionHandler):
-    def create(self, data, user, page, group):
+    def create(self, request, data, user, page, group):
         comment = data['comment']
 
         # optional
@@ -91,10 +90,11 @@ class CommentHandler(InteractionHandler):
                 raise JSONException(u'Could not find parent interaction specified')
         else:
             try:
-                parent = TagHandler.create(data, user, page, group)
+                print request.GET
+                #parent = TagHandler().read(request, data, kwargs={'action':'create'})
             except:
                 raise JSONException(u'Error creating parent interaction for comment')
-
+        """
         try:
             comment = createInteractionNode(body=comment)
         except:
@@ -104,10 +104,11 @@ class CommentHandler(InteractionHandler):
             interaction = createInteraction(parent.page, parent.container, parent.content, user, 'com', comment, group, parent)
         except:
             raise JSONException(u'Error creating comment interaction')
-        return interaction
+        return dict(interaction=interaction)
+        """
 
 class TagHandler(InteractionHandler):
-    def create(self, data, user, page, group):
+    def create(self, request, data, user, page, group):
         tag_body = data['tag']['body']
         container_hash = data['hash']
         content_data = data['content']['body']
@@ -138,10 +139,11 @@ class TagHandler(InteractionHandler):
         
         # Create an interaction
         try:
-            interaction = createInteraction(page, container, content, user, 'shr', inode, group)['interaction']
+            interaction = createInteraction(page, container, content, user, 'tag', inode, group)['interaction']
+            print 'new interaction', interaction
         except:
             raise JSONException(u"Error creating interaction")
-        return interaction
+        return dict(interaction=interaction)
 
 class ShareHandler(InteractionHandler):
     def create(self, data, user, page, group):
@@ -336,15 +338,15 @@ class SettingsHandler(AnonymousBaseHandler):
         path = request.path
         fp = request.get_full_path()
         if group:
-            group = int(group)
+            group_id = int(group)
             try:
-                g = Group.objects.get(id=group)
+                group_object = Group.objects.get(id=group_id)
             except Group.DoesNotExist:
                 return HttpResponse("RB Group does not exist!")
-            sites = Site.objects.filter(group=g)
+            sites = Site.objects.filter(group=group_object)
             domains = sites.values_list('domain', flat=True)
             if host in domains:
-                return g
+                return group_object
             else:
                 raise JSONException("Group (" + str(group) + ") settings request invalid for this domain (" + host + ")")
         else:
