@@ -121,5 +121,6 @@ def expander(request, short):
     redirect_response.set_cookie(key='content', value=smart_str(interaction.content.body))
     redirect_response.set_cookie(key='reaction', value=smart_str(interaction.interaction_node.body))
     redirect_response.set_cookie(key='referring_int_id', value=smart_str(interaction.id))
+    redirect_response.set_cookie(key='content_type', value=smart_str(interaction.content.kind))
 
     return redirect_response
