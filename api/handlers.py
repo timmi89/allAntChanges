@@ -10,7 +10,7 @@ from settings import BASE_URL
 
 class UserHandler(AnonymousBaseHandler):
     model = User
-    fields = ('id', 'first_name', 'last_name')
+    fields = ('id', 'first_name', 'last_name', 'social_user')
 
 class InteractionNodeHandler(AnonymousBaseHandler):
     model = InteractionNode
