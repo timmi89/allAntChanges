@@ -94,7 +94,7 @@ class CommentHandler(InteractionHandler):
                 #parent = TagHandler().read(request, data, kwargs={'action':'create'})
             except:
                 raise JSONException(u'Error creating parent interaction for comment')
-        """
+        
         try:
             comment = createInteractionNode(body=comment)
         except:
@@ -105,7 +105,7 @@ class CommentHandler(InteractionHandler):
         except:
             raise JSONException(u'Error creating comment interaction')
         return dict(interaction=interaction)
-        """
+        
 
 class TagHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
