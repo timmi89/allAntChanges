@@ -1022,7 +1022,7 @@ dir(data);
                     }
 				});
 
-                //helper functions for ajax above
+                //helper function for ajax above
                 function makeSummaryWidget(response){
                     // don't forget a design for when there are no tags.
                     log('building page')
@@ -1077,17 +1077,6 @@ dir(data);
                     }
                 }
 
-                function insertImgIcons(response){
-                    var tempd = $.extend( {}, response );
-                    for ( var i in RDR.page.imagedata ){
-                        //todo: combine this with the other indicator code and make the imagedata give us a hash from the db
-                        var hash = RDR.util.md5.hex_md5(i);
-                        RDR.page.imagedata[i].hash = hash; //todo: list these by hash in the first place.
-
-                        //RDR.actions.indicators.make( hash );
-                    }
-                }
-           
             },
             initEnvironment: function(){
                 
