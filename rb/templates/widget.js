@@ -751,9 +751,10 @@ dir(data);
 
                                 //dir(message.data);
                                 for ( var i in message.data ) {
-                                    RDR.user[ i ] = ( !isNaN( parseInt(message.data[i]) ) ) ? parseInt(message.data[i]):message.data[i];
+                                    log(i, message.data[i]);
+                                    log( parseInt( parseInt(message.data[i]) ) );
+                                    RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i]):message.data[i];
                                 }
-
                                 if ( callback && args ) {
                                     args.user = RDR.user;
                                     callback(args);
@@ -2720,11 +2721,11 @@ dir(data);
                                     //update indicators
                                     var hash = sendData.hash;
                                     var tagHelper = {
-                                        id: response.data.interaction_node.id,
-                                        body: response.data.interaction_node.body,
+                                        id: response.data.interaction.interaction_node.id,
+                                        body: response.data.interaction.interaction_node.body,
                                         count: 1
                                     };
-                                    var int_id = response.data.id;
+                                    var int_id = response.data.interaction.id;
 
                                     var diff = {   
                                         tags: {}
@@ -2758,7 +2759,7 @@ dir(data);
                                     }
                                     log('-----tag------');
                                     dir(tag);
-                                    if ( isNaN(parseInt(tag.id)) ) tag.id = response.data.tag_id;
+                                    if ( isNaN( tag.id ) ) tag.id = response.data.tag_id;
                                     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_info:content_node_data, content_type:content_type });
                                     if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
                                     else RDR.session.showLoginPanel( args );
@@ -3986,7 +3987,7 @@ function $RFunctions($R){
                     
                     // switchOnOffToggle is optional.  Expects a string 'on', 'off', or 'toggle', or defaults to 'on'
                     // check if idxOrSelState is omited
-                    if( typeof idxOrSelState === 'string' && isNaN( parseInt(idxOrSelState) ) ){
+                    if( typeof idxOrSelState === 'string' && isNaN( idxOrSelState ) ){
                         switchOnOffToggle = idxOrSelState;
                         idxOrSelState = undefined;
                     }
