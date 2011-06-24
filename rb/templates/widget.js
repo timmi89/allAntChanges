@@ -1603,42 +1603,8 @@ dir(data);
                         $count = $('<em/>').append( ' ('+tag.count+')' ),
                         $span = $('<span />').addClass('rdr_tags_list_tag').append( prefix, $tag, $count).data('id',id);
                         
-
-                        //ec - working on this... I need this stuff to calculate after we add the content_nodes to the summary.
-
-                        //todo: combine with other li hover function
-                        //figure out which nodes belong to each tag.
-                        var nodes = summary.content_nodes;
-                        log(nodes);
-                        /*$.each(nodes, function(id, node){
-                            var nodeTags = node.top_interactions.tags;
-                            thisTag = nodeTags[ tag_id ];
-                            if(typeof thisTag === "undefined") return;
-                            //else       
-                            $span.data('selStates', []);
-                            log('node.selState')
-                            log(node.selState)
-                            //$span.data('selStates').push(node.selState);  
-                        });*/
-
-                        $span.hover( 
-                            function() {
-                                /*var selStates = []//$(this).data('selStates');
-                                $.each( selStates, function(idx, selState){
-                                    log(selState);
-                                    $().selog('hilite', selState, 'on');
-                                });*/
-                            },
-                            function() {
-                                /*var selStates = $(this).data('selStates');
-                                $.each( selStates, function(idx, selState){
-                                    $().selog('hilite', selState, 'off');
-                                });*/
-                            }
-                        );
-
                         $tagList.append( $span );
-                        
+
                         // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
                         if ( $tagList.width() > tagListMaxWidth ) {
                             $tagList.children().last().html('...').addClass('rdr_see_more');
@@ -1749,6 +1715,7 @@ dir(data);
             },
             insertContainerIcon: function( hash ) {},
             viewContainerReactions: function( args ) {
+                log('viewContainerReactions')
                 var icon = args.icon,
                     which = args.icon.data('which'),
                     kind = args.kind,
@@ -1783,10 +1750,52 @@ dir(data);
                         $.each(content_nodes, function(key, node){
                             var $container = $('.rdr-'+which);
                             node.selState = $container.selog('save', { 'serialRange': node.location });
+
                         });
 
                         //throw this tag summary into the container summary
                         summary.content_nodes = content_nodes;
+
+                        //todo: put this someplace better:
+                        //this doesn't need to be re-calculated every time
+
+                        //todo: combine with other li hover function
+                        //figure out which nodes belong to each tag.
+                        //this is uuuuuuuuuuuuuuuuuuuuugly
+                        
+                        var $indicatorDetails = $('#rdr_indicator_details_'+which);
+                        var nodes = content_nodes;
+
+                        $indicatorDetails.find('span.rdr_tags_list_tag').each(function(){
+                            var tag_id = $(this).data('id'),
+                            $span = $(this);
+                            $span.data('selStates',[]);  
+
+                            $.each(nodes, function(id, node){
+                                var nodeTags = node.top_interactions.tags;
+                                thisTag = nodeTags[ tag_id ];
+                                if(typeof thisTag === "undefined") return;
+                                //else                            
+                                $span.data('selStates').push(node.selState);  
+                            });
+                            
+                            $span.hover( 
+                                function() {
+                                    var selStates = $(this).data('selStates');
+                                    $.each( selStates, function(idx, selState){
+                                        $().selog('hilite', selState, 'on');
+                                    });
+                                },
+                                function() {
+                                    var selStates = $(this).data('selStates');
+                                    $.each( selStates, function(idx, selState){
+                                        $().selog('hilite', selState, 'off');
+                                    });
+                                }
+                            );
+
+                        });
+
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
@@ -1950,14 +1959,11 @@ dir(data);
 
 
                     rindow.find('ul.rdr_preselected li').each(function(){
-                        log('test test')
                         var $this = $(this);
                         $this.data('selStates',[]);
 
                         var tag_id = $(this).data('tag').id;
-                        log(tag_id);
-                        log('summary');
-                        log(summary);
+                        
                         
                         //log($this.data('tag'))
                         
@@ -1973,7 +1979,6 @@ dir(data);
                         function() {
                             var selStates = $(this).data('selStates');
                             $.each( selStates, function(idx, selState){
-                                log(selState);
                                 $().selog('hilite', selState, 'on');
                             });
                         },
@@ -1989,7 +1994,6 @@ dir(data);
 
             },
             viewReactionContent: function(tag, which, rindow){
-                log('viewReactionContent')
                 //temp reconnecting:
                 var container = RDR.containers[which];
                 var summary = RDR.summaries[which];
@@ -2026,7 +2030,6 @@ dir(data);
 
                 // ok, get the content associated with this tag!
                 $.each(content, function(idx, node){
-                    log('node');
                     dir(node);
 
                     var tag = tagClone;
@@ -2063,7 +2066,6 @@ dir(data);
                             }
                         );
 
-                        log( $contentSet.data('content_node_key'));
 
                         // todo: [porter] i'm looping to see if there is a comment for this TAG.  can we just send this down from server?
                         for ( var i in summary.top_interactions.coms ) {
@@ -2073,8 +2075,7 @@ dir(data);
                                 node.top_interactions.coms.push( summary.top_interactions.coms[i] );
                             }
                         }
-                        log('node_comments');
-                        log(node_comments);
+                        
                         if ( node_comments > 0 ) {
                             $comment = $('<div class="rdr_has_comment">' +node_comments+ '</div>');
                         } else {
@@ -3942,7 +3943,7 @@ function $RFunctions($R){
                         }
                         $('#rdr_tempOutput').append('<div><b>'+selState.idx+'</b>: '+str+'</div>');
                     //end temp log to tempOutput
-                    log('saved selState ' + selState.idx + ': ' + selState.text); //selog temp logging
+                    //log('saved selState ' + selState.idx + ': ' + selState.text); //selog temp logging
                     return selState;
                 },
                 activate: function(idxOrSelState){
@@ -3950,8 +3951,8 @@ function $RFunctions($R){
                     if(!selState) return false;
                     methods.clear();
                     _WSO().setSingleRange( selState.range );
-                    log('activated range selection: ')
-                    log(selState.range)
+                    //log('activated range selection: ')
+                    //log(selState.range)
                     return selState;
                 },
                 clear: function(){
@@ -4052,7 +4053,6 @@ function $RFunctions($R){
                     */              
                     
                     string = RegExp.escape(string);
-                    log(string);
                     regex = new RegExp(string, "gim");
                     
                     return $this.each(function(){
@@ -4061,9 +4061,6 @@ function $RFunctions($R){
                         check = 0, //while testing, avoid infiniteloops
                         ret = [];
                         while( (match = regex.exec(text)) && check < 5 ) {
-                            log(match)
-                            log(match.index)
-                            log(check)
                             ret.push(match.index);
                             check++;
                         }
@@ -4261,8 +4258,8 @@ function $RFunctions($R){
                 if(selState.text.length == 0) return false;
                 //set hiliter - depends on idx, range, etc. being set already.
                 selState.hiliter = _hiliteInit(selState);
-                log('created new selState: ');
-                log(selState);
+                //log('created new selState: ');
+                //log(selState);
                 return selState;
             }
             function _fetchselState(idxOrSelState){
@@ -4340,7 +4337,7 @@ function $RFunctions($R){
                     
                 }else if( isActive && (switchOnOffToggle === "off" || switchOnOffToggle === "toggle" )){
                     //turn off
-                    log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
+                    //log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
                     //remove the classes again so that the hiliter can normalize the selection (paste it back together)
                     hiliter['get$start']().removeClass(styleClass+'_start');
                     hiliter['get$end']().removeClass(styleClass+'_end');
