@@ -146,7 +146,7 @@ class TagHandler(InteractionHandler):
         return dict(interaction=interaction)
 
 class ShareHandler(InteractionHandler):
-    def create(self, data, user, page, group):
+    def create(self, request, data, user, page, group):
         tag_body = data['tag']['body']
         container_hash = data['hash']
         content_data = data['content']['body']
