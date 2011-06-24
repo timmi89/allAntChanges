@@ -128,6 +128,13 @@ div.rdr_indicator.rdr_image span { display:inline; font-weight:bold; background:
 div.rdr_img_tags_list       {position:relative; white-space:nowrap; display:inline;}
 */
  
+span.rdr_tags_list_tag {
+    padding:3px 1px;
+}
+span.rdr_tags_list_tag:hover {
+    background:#fe7;
+}
+
 /* the tooltip */
 div.rdr.rdr_tooltip {
     -moz-border-radius:5px; -webkit-border-radius:5px; -moz-box-shadow:0 0 5px #888888; -webkit-box-shadow:0 0 5px #888888;

@@ -1057,7 +1057,7 @@ dir(data);
                             
                             // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
                             if ( $toptags.width() > $summary_widget.width() - 48 ) {
-                                $toptags.children().last().html('See More').addClass('rdr_see_more');
+                                $toptags.children().last().html('See More').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
                                 break;
                             }
                         }
@@ -1528,13 +1528,13 @@ dir(data);
                             var prefix = count ? ", " : "", //don't include the first time
                             $tag = $('<strong />').addClass("rdr_stats_body").append(tag.body),
                             $count = $('<em/>').addClass("rdr_stats_count").append( ' ('+tag.count+')' ),
-                            $span = $('<span />').addClass("rdr_stats").append( prefix, $tag, $count);
+                            $span = $('<span />').addClass("rdr_stats").append($tag, $count);
                             
-                            $tagList.append( $span );
+                            $tagList.append( prefix, $span );
                             
                             // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
                             if ( $tagList.width() > tagListMaxWidth ) {
-                                $tagList.children().last().html('...').addClass('rdr_see_more');
+                                $tagList.children().last().html('...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
                                 count = null;
                             }
                             count ++;
@@ -1602,13 +1602,13 @@ dir(data);
                         var prefix = count ? ", " : "", //don't include the first time
                         $tag = $('<strong/>').append(tag.body),
                         $count = $('<em/>').append( ' ('+tag.count+')' ),
-                        $span = $('<span />').addClass('rdr_tags_list_tag').append( prefix, $tag, $count).data('id',id);
+                        $span = $('<span />').addClass('rdr_tags_list_tag').append( $tag, $count).data('id',id);
                         
-                        $tagList.append( $span );
+                        $tagList.append( prefix, $span );
 
                         // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
                         if ( $tagList.width() > tagListMaxWidth ) {
-                            $tagList.children().last().html('...').addClass('rdr_see_more');
+                            $tagList.children().last().html('...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
                             count = null;
                         }
                         count ++;
