@@ -2087,7 +2087,9 @@ dir(data);
                         $comment.click( function() {
                             var $this = $(this);
                             $this.closest('.rdr_contentSet').addClass('rdr_selected').siblings().removeClass('rdr_selected');
-                            RDR.actions.viewCommentContent( {tag:tag, which:which, rindow:rindow, node:node, sel:newSel, content_type:"text" });
+log('---- rindow.data --------');
+                            dir( rindow.data() );
+                            RDR.actions.viewCommentContent( {tag:tag, which:which, rindow:rindow, node:node, selState:node.selState, content_type:"text" });
                         });
 
                         $header.append( $comment );
@@ -2174,7 +2176,7 @@ dir(data);
                     node = args.node,
                     content_type = args.content_type;
                     
-                if ( args.sel ) var sel = args.sel;
+                if ( args.selState ) var selState = args.selState;
 
                 var $whyBody = rindow.find('div.rdr_whyPanel div.rdr_body');
                 // if ( $whyBody.data('jsp') ) $whyBody.data('jsp').destroy();
@@ -2277,7 +2279,8 @@ dir(data);
 
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
-                    RDR.actions.comment({ comment:comment, which:which, content:node.body, tag:tag, rindow:rindow, sel:sel, content_type:content_type });
+                    log('--------- selState 1: '+selState);
+                    RDR.actions.comment({ comment:comment, which:which, content:node.body, tag:tag, rindow:rindow, selState:selState, content_type:content_type });
                 });
 
                 if ( $commentSet ) $whyBody.html( $commentSet );
@@ -2337,6 +2340,7 @@ dir(data);
 
                 } else {
                     var kind = "image";
+                    var newSel = "";
                 }
             
                 var rindow = RDR.rindow.draw({
@@ -2760,7 +2764,7 @@ dir(data);
                                     log('-----tag------');
                                     dir(tag);
                                     if ( isNaN( tag.id ) ) tag.id = response.data.tag_id;
-                                    RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_info:content_node_data, content_type:content_type });
+                                    RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_info:content_node_data, content_type:content_type, selState:selState });
                                     if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
                                     else RDR.session.showLoginPanel( args );
                                 }
@@ -2773,7 +2777,7 @@ dir(data);
                         });
                     } else {
                         tag_li.find('div.rdr_leftBox').html('');
-                        RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:tag_li.data('interaction_id'), content_node_info:content_node_data, content_type:content_type });
+                        RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:tag_li.data('interaction_id'), content_node_info:content_node_data, content_type:content_type, selState:selState });
                     }
                 });
             },
@@ -3078,7 +3082,8 @@ dir(content_node);
                 dir(args);
                 var rindow = args.rindow, 
                     tag = args.tag,
-                    int_id = args.int_id;
+                    int_id = args.int_id,
+                    selState = args.selState;
 
 
                 //todo: for now, I'm just passing in known_tags as a param, but check with Porter about this model.
@@ -3157,7 +3162,8 @@ dir(content_node);
 
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
-                    RDR.actions.comment({ comment:comment, int_id:int_id, rindow:rindow });
+                    log('--------- selState 2: '+selState);
+                    RDR.actions.comment({ comment:comment, int_id:int_id, rindow:rindow, selState:selState });
                 });
 
                 $commentBox.append( $leaveComment );
@@ -3278,7 +3284,7 @@ dir(content_node);
                     content_node_data = {
                         'container': hash,
                         'body': content,
-                        'location': args.sel.serialRange
+                        'location': args.selState.serialRange
                     };
 
                     var sendData = {
