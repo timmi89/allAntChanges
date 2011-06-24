@@ -748,15 +748,13 @@ dir(data);
                             if ( message.status == "fb_logged_in" || message.status == "known_user" || message.status == "got_temp_user" ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
-log('receiving a message');
+
                                 //dir(message.data);
                                 for ( var i in message.data ) {
                                     log(i, message.data[i]);
                                     log( parseInt( parseInt(message.data[i]) ) );
                                     RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i]):message.data[i];
                                 }
-log('rdr user');
-dir(RDR.user);
                                 if ( callback && args ) {
                                     args.user = RDR.user;
                                     callback(args);
