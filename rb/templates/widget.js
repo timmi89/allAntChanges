@@ -1601,6 +1601,40 @@ dir(data);
                         $count = $('<em/>').append( ' ('+tag.count+')' ),
                         $span = $('<span />').addClass('rdr_tags_list_tag').append( prefix, $tag, $count).data('id',id);
                         
+
+                        //ec - working on this... I need this stuff to calculate after we add the content_nodes to the summary.
+
+                        //todo: combine with other li hover function
+                        //figure out which nodes belong to each tag.
+                        var nodes = summary.content_nodes;
+                        log(nodes);
+                        /*$.each(nodes, function(id, node){
+                            var nodeTags = node.top_interactions.tags;
+                            thisTag = nodeTags[ tag_id ];
+                            if(typeof thisTag === "undefined") return;
+                            //else       
+                            $span.data('selStates', []);
+                            log('node.selState')
+                            log(node.selState)
+                            //$span.data('selStates').push(node.selState);  
+                        });*/
+
+                        $span.hover( 
+                            function() {
+                                /*var selStates = []//$(this).data('selStates');
+                                $.each( selStates, function(idx, selState){
+                                    log(selState);
+                                    $().selog('hilite', selState, 'on');
+                                });*/
+                            },
+                            function() {
+                                /*var selStates = $(this).data('selStates');
+                                $.each( selStates, function(idx, selState){
+                                    $().selog('hilite', selState, 'off');
+                                });*/
+                            }
+                        );
+
                         $tagList.append( $span );
                         
                         // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
@@ -1742,6 +1776,13 @@ dir(data);
                         //todo: make this generic interactions instead of just tags
                         //summary.interactions.tags = 
                         
+                        //todo: think about this more later:
+                        //make selStates for these nodes and give the nodes a reference to them
+                        $.each(content_nodes, function(key, node){
+                            var $container = $('.rdr-'+which);
+                            node.selState = $container.selog('save', { 'serialRange': node.location });
+                        });
+
                         //throw this tag summary into the container summary
                         summary.content_nodes = content_nodes;
                     },
@@ -1897,35 +1938,53 @@ dir(data);
 //porter's above
 //big todo:
 //eric's below
-/*
+                    
+  /*
+                    //todo: helper function - move somewhere else:
+                    function(){
+                        
+                    }
+*/  
+
 
                     rindow.find('ul.rdr_preselected li').each(function(){
+                        log('test test')
                         var $this = $(this);
                         $this.data('selStates',[]);
 
                         var tag_id = $(this).data('tag').id;
-                        for ( var i in summary.content_nodes ) {
-                            if ( summary.content_nodes[i].top_interactions.tags[ tag_id ] ) {
-                                var newSel = $('.rdr-'+which).selog('save', { 'serialRange': summary.content_nodes[i].location });
-                                $this.data('selStates').push(newSel);
-                            }
-                        }
+                        log(tag_id);
+                        log('summary');
+                        log(summary);
+                        
+                        //log($this.data('tag'))
+                        
+                        var nodes = summary.content_nodes;
+                        $.each(nodes, function(id, node){
+                            var nodeTags = node.top_interactions.tags;
+                            thisTag = nodeTags[ tag_id ];
+                            if(typeof thisTag === "undefined") return;
+                            //else                            
+                            $this.data('selStates').push(node.selState);  
+                        });
                     }).hover( 
                         function() {
-                            log('fsdfs')
-                            $(this).data('selStates').each(function(i,selState){
+                            var selStates = $(this).data('selStates');
+                            $.each( selStates, function(idx, selState){
+                                log(selState);
                                 $().selog('hilite', selState, 'on');
                             });
                         },
                         function() {
-                            $(this).data('selStates').each(function(i,selState){
+                            var selStates = $(this).data('selStates');
+                            $.each( selStates, function(idx, selState){
                                 $().selog('hilite', selState, 'off');
                             });
                         }
                     );
-*/
                 
                 });
+
             },
             viewReactionContent: function(tag, which, rindow){
                 log('viewReactionContent')
@@ -1948,8 +2007,6 @@ dir(data);
                 $.each(summary.content_nodes, function(key, val){
                     content.push(val);
                 });
-                log('summary')
-                log(summary)
                 function SortByTagCount(a,b) { return b.counts.tags - a.counts.tags; }
                 content.sort(SortByTagCount);
 
@@ -1995,15 +2052,12 @@ dir(data);
                         var container = $('.rdr-'+hash);
                         var location = $contentSet.data('location');
 
-                        var newSel = $(container).selog('save', {'serialRange': location});
-
                         $contentSet.hover(
                             function() {
-                                $(container).selog('hilite', newSel, 'on');
-                                
+                                $().selog('hilite', node.selState, 'on');
                             },
                             function() {
-                                $(container).selog('hilite', newSel, 'off');
+                                $().selog('hilite', node.selState, 'off');
                             }
                         );
 
@@ -2576,6 +2630,9 @@ dir(data);
                 // TODO the args & params thing here is confusing
                 RDR.session.getUser( args, function( params ) {
                     // get the text that was highlighted
+                    log('params')
+                    log(params)
+
                     var content_type = params.settings.content_type;
                     
                     var rindow = params.rindow,
