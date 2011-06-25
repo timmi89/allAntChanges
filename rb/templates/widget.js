@@ -1376,7 +1376,7 @@ dir(data);
                     }else{
                         var summary = RDR.summaries[hash];
                     }
-                    log(summary);
+                    //log(summary);
 
                     /*
                     var altSumm = RDR.summaries[hash];
@@ -1568,7 +1568,7 @@ dir(data);
 
                     //todo: is this a problem to use IDS here even when this is an el that we make?
                     $indicator = $('<div class="rdr_indicator" />').hide().attr('id',indicatorId).appendTo($container);
-                    log(summary);
+                    //log(summary);
                     summary.indicator = $('rdr_in');
                     $indicator.append(
                         '<img src="'+RDR_rootPath+'/static/images/blank.png" class="no-rdr" />',
@@ -1695,8 +1695,8 @@ dir(data);
                         };
                     };
 
-                    log('info.tags')
-                    log(info.tags)
+                    //log('info.tags')
+                    //log(info.tags)
                     info.tags.sort(SortByTagCount);
                     RDR.content_nodes[ hash ].info = info;
                     //todo: consider showing just tags here and simplifying
@@ -2137,8 +2137,8 @@ log('---- rindow.data --------');
                                         // get short uRL call
                                         var content_node_key = $(this).closest('div.rdr_contentSet').data('content_node_key');
                                         RDR.content_node[content_node_key];
-                                        log(content_node_key);
-                                        log(RDR.content_node[content_node_key]);
+                                        //log(content_node_key);
+                                        //log(RDR.content_node[content_node_key]);
                                         // ({  })
                                     });
                                     var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
@@ -2910,8 +2910,7 @@ log('---- rindow.data --------');
                     }    
                     // dir(content_node_data);
                     var content_node = RDR.actions.content_node.make(content_node_data);
-log('content_node:');
-dir(content_node);
+
                     var sendData = {
                         "tag" : tag,
                         "hash": content_node_info.hash,
