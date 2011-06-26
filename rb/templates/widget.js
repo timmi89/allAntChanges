@@ -868,6 +868,7 @@ log('--showLoginPanel---');
                         $loginLink = $('<a href="javascript:void(0);">Connect with Facebook</a>.');
 
                     if ( rindow.find('div.rdr_tempUserMsg').length == 0 ){
+                        log('add temp suer msg');
                         $loginLink.click( function() {
                             RDR.session.showLoginPanel( args );
                         });
@@ -876,7 +877,9 @@ log('--showLoginPanel---');
                         rindow.append( $tempMsgDiv );
                         rindow.animate({height:(rindow.height()+103)+"px"});
                     } else {
-                        $tempMsgDiv.find('span').html( tempMsg );
+                        log('just modify the temp user msg:' );
+                        log(tempMsg);
+                        rindow.find('div.rdr_tempUserMsg span').html( tempMsg );
                     }
                     
                 }
