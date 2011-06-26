@@ -89,11 +89,8 @@ class CommentHandler(InteractionHandler):
             except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
                 raise JSONException(u'Could not find parent interaction specified')
         else:
-            try:
-                print request.GET
-                #parent = TagHandler().read(request, data, kwargs={'action':'create'})
-            except:
-                raise JSONException(u'Error creating parent interaction for comment')
+            print request.GET
+            parent = TagHandler().create(request, data, user, page, group)['interaction']
         
         try:
             comment = createInteractionNode(body=comment)
