@@ -3077,7 +3077,6 @@ dir(content_node);
                 
             },
             shareStart: function(args) {
-                console.clear();
                 log('--- shareStarting ---');
                 dir(args);
                 var rindow = args.rindow, 
