@@ -100,12 +100,9 @@ class CommentHandler(InteractionHandler):
         except:
             raise JSONException(u'Error creating comment interaction node')
         
-        try:
-            interaction = createInteraction(parent.page, parent.container, parent.content, user, 'com', comment, group, parent)
-        except:
-            raise JSONException(u'Error creating comment interaction')
-        return dict(interaction=interaction)
+        interaction = createInteraction(parent.page, parent.container, parent.content, user, 'com', comment, group, parent)
         
+        return dict(interaction=interaction)
 
 class TagHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
@@ -138,11 +135,8 @@ class TagHandler(InteractionHandler):
             raise JSONException("Container specified does not exist")
         
         # Create an interaction
-        try:
-            interaction = createInteraction(page, container, content, user, 'tag', inode, group)['interaction']
-            print 'new interaction', interaction
-        except:
-            raise JSONException(u"Error creating interaction")
+        interaction = createInteraction(page, container, content, user, 'tag', inode, group)['interaction']
+
         return dict(interaction=interaction)
 
 class ShareHandler(InteractionHandler):
@@ -188,10 +182,7 @@ class ShareHandler(InteractionHandler):
                 parent = None
         
         # Create an interaction
-        try:
-            interaction = createInteraction(page, container, content, user, 'shr', inode, group, parent)['interaction']
-        except:
-            raise JSONException(u"Error creating interaction")
+        interaction = createInteraction(page, container, content, user, 'shr', inode, group, parent)['interaction']
 
         # Create a Link
         try:
