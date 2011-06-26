@@ -2813,8 +2813,10 @@ log('---- rindow.data --------');
                                     // dir(tag);
                                     if ( isNaN( tag.id ) ) tag.id = response.data.tag_id;
                                     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_info:content_node_data, content_type:content_type, selState:selState });
-                                    if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
-                                    else RDR.session.showLoginPanel( args );
+                                    if ( response.data.num_interactions ) {
+                                        if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
+                                        else RDR.session.showLoginPanel( args );
+                                    }
                                 }
                             },
                             error: function(response) {
