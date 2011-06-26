@@ -25,7 +25,7 @@ def fb(request):
     return render_to_response("facebook.html",{'fb_client_id': FACEBOOK_APP_ID})
 
 def fblogin(request):
-    return render_to_response("fblogin.html",{'fb_client_id': FACEBOOK_APP_ID})
+    return render_to_response("fblogin.html",{'fb_client_id': FACEBOOK_APP_ID, 'group_name': request.GET['group_name'] })
 
 def xdm_status(request):
     return render_to_response("xdm_status.html",{'fb_client_id': FACEBOOK_APP_ID})

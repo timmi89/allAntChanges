@@ -321,8 +321,6 @@ function readrBoard($R){
 
                 if ( settings.container == "") settings.container = RDR.page.hash;
 
-log('XCXCXCXCXCXXC-- settings --');
-dir(settings);
                 var items = [
                         {
                             "item":"reaction",
@@ -782,8 +780,6 @@ dir(data);
 
                                 //dir(message.data);
                                 for ( var i in message.data ) {
-                                    log(i, message.data[i]);
-                                    log( parseInt( parseInt(message.data[i]) ) );
                                     RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i]):message.data[i];
                                 }
                                 if ( callback && args ) {
@@ -812,19 +808,16 @@ dir(data);
             },
 			login: function() {},
 			showLoginPanel: function(args, callback) {
-
+log('--showLoginPanel---');
                 $('.rdr_rewritable').removeClass('rdr_rewritable');
                 $('#rdr-loginPanel').remove();
-
                 //todo: weird, why did commenting this line out not do anything?...look into it
 				//porter says: the action bar used to just animate larger and get populated as a window
                 //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
-
                 var caller = args.rindow;
                 var offsets = caller.offset();
                 var left = offsets.left ? (offsets.left-34) : 100;
                 var top = offsets.top ? (offsets.top+50) : 100;
-
                 // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
                 // var coords = RDR.util.stayInWindow({left:left, top:top, width:360, height:185 });
 
@@ -834,7 +827,7 @@ dir(data);
                     id: "rdr-loginPanel",
                     pnlWidth:360,
                     pnls:1,
-                    height:185
+                    height:225
                 });
 
                 // store the arguments and callback function that were in progress when this Login panel was called
@@ -846,9 +839,8 @@ dir(data);
 				iframeUrl = RDR.session.iframeHost + "/fblogin/",
 				parentUrl = window.location.href,
                 parentHost = window.location.protocol + "//" + window.location.host;
-				$loginHtml.append( '<h1>Log In</h1><div class="rdr_body rdr_leftShadow" />');
-				$loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="360" height="150" style="overflow:hidden;" />' );
-
+				$loginHtml.append( '<h1>Log In</h1><div class="rdr_body" />');
+				$loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&group_name='+RDR.group.name+'&cachebust='+RDR.cachebuster+'" width="360" height="190" style="overflow:hidden;" />' );
 				
 				// rindow.animate({
     //                 width:'500px',
@@ -1352,8 +1344,8 @@ dir(data);
                         'location': settings.location
                     }
                     RDR.content_nodes[content_node_key] = content_node;
-                    log('content_node final');
-                    log(content_node);
+                    // log('content_node final');
+                    // log(content_node);
                     return content_node;
                 }
             },
@@ -2346,7 +2338,7 @@ log('---- rindow.data --------');
                     coords
                 }
                 */
-                log('----- CONTAINER: ' + settings.container);
+                // log('----- CONTAINER: ' + settings.container);
                 var $hostNode = $('.rdr-'+settings.container);
 
                 var actionType = (settings.actionType) ? actionType:"react";
@@ -2508,10 +2500,6 @@ log('---- rindow.data --------');
                             // if ( $this.hasClass('rdr_selected') ){
                                 // $this.removeClass('rdr_selected');
                             // } else {
-                            $this.addClass('rdr_selected');
-                            $this.siblings().removeClass('rdr_selected');
-                            $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-                            
                             // todo don't do this?
                             // $whyPanel.find('.rdr_body').html('');
 
@@ -2673,7 +2661,7 @@ log('---- rindow.data --------');
                 }
             },
             rateSend: function(args) {
-                // optional loader.  it's a pacman pic.
+                // optional loader.
                 args.tag.find('div.rdr_leftBox').html('<img src="'+RDR_rootPath+'/static/images/loader.gif" style="margin:6px 0 0 5px" />');
         
                 //example:
@@ -2686,8 +2674,8 @@ log('---- rindow.data --------');
                 // TODO the args & params thing here is confusing
                 RDR.session.getUser( args, function( params ) {
                     // get the text that was highlighted
-                    log('params')
-                    log(params)
+                    // log('params')
+                    // log(params)
 
                     var content_type = params.settings.content_type;
                     
@@ -2753,7 +2741,7 @@ log('---- rindow.data --------');
                                 if ( response.status == "fail" ) {
                                     log('failllllllllll');
                                     if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                        log('uh oh better login, tempy');
+                                        log('uh oh better login, tempy 1');
                                         RDR.session.showLoginPanel( args );
                                     } else {
                                         // if it failed, see if we can fix it, and if so, try this function one more time
@@ -2765,9 +2753,13 @@ log('---- rindow.data --------');
                                         });
                                     }
                                 } else {
-                                    
-                                    log('content_node_data');
-                                    log(content_node_data);
+                                    log('successssssssssssss');
+                                    var $this = params.tag;
+                                    $this.addClass('rdr_selected');
+                                    $this.siblings().removeClass('rdr_selected');
+                                    $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+                                    // log('content_node_data');
+                                    // log(content_node_data);
                                     var content_node = RDR.actions.content_node.make(content_node_data);
 
                                     //update indicators
@@ -2784,13 +2776,13 @@ log('---- rindow.data --------');
                                     };
                                     diff.tags[ tagHelper['id'] ] = tagHelper; //yeah?, didja get that one?  //todo: make pretty.
 
-                                    log('hash')
-                                    log(hash)
-                                    log('diff')
-                                    log(diff)
+                                    // log('hash')
+                                    // log(hash)
+                                    // log('diff')
+                                    // log(diff)
                                     RDR.actions.indicators.update(hash, diff);
                                     //end update indicators
-                                    log('here here')
+                                    // log('here here')
 
                                     if ( tag_li.length == 1 ) {
                                         tag_li.find('div.rdr_leftBox').unbind();
@@ -2814,8 +2806,8 @@ log('---- rindow.data --------');
                                             RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:params.settings});
                                         }
                                     }
-                                    log('-----tag------');
-                                    dir(tag);
+                                    // log('-----tag------');
+                                    // dir(tag);
                                     if ( isNaN( tag.id ) ) tag.id = response.data.tag_id;
                                     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_info:content_node_data, content_type:content_type, selState:selState });
                                     if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
@@ -2872,7 +2864,7 @@ log('---- rindow.data --------');
                                 if ( response.status == "fail" ) {
                                     log('failllllllllll');
                                     if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                        log('uh oh better login, tempy');
+                                        log('uh oh better login, tempy 2');
                                         RDR.session.showLoginPanel( args );
                                     } else {
                                         // if it failed, see if we can fix it, and if so, try this function one more time
@@ -2970,7 +2962,7 @@ log('---- rindow.data --------');
                                 if ( response.status == "fail" ) {
                                     log('failllllllllll');
                                     if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                        log('uh oh better login, tempy');
+                                        log('uh oh better login, tempy 3');
                                         RDR.session.showLoginPanel( args );
                                     } else {
                                         // if it failed, see if we can fix it, and if so, try this function one more time

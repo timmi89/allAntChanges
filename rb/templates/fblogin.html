@@ -19,22 +19,25 @@
 	body	{color: #666666; font-family: Arial; font-size: 12px; padding: 5px 0 0 0; margin:0 8px; border-top:1px solid #ccc; }
 	img		{ border:0; }
 	ul		{ padding:0;margin:0; list-style-type:none;}
-	li		{ padding:0 0 0 16px;margin:0;background:url(/static/images/checkmark.png) center left no-repeat; }
+	li		{ padding:0 0 0 16px;margin:0;background:url(/static/images/checkmark.png) left top no-repeat; }
 	#fb-login-button	{margin:10px 0;}
 	</style>
    </head>
    <body>
    	<div id="fb-root"></div>
    	<div id="fb-logged-out">
-	   	Connect to ReadrBoard with Facebook
+	   	<!-- Thank you for using ReadrBoard to rate, share, and discuss content <strong>{{ group_name }}</strong>!  To keep participating, just log in with Facebook. -->
+	   	<strong>{{ group_name }}</strong> uses <strong style="color:#008be4;">ReadrBoard</strong> so you can react to content easily and safely.
+	   	<br><br>
+	   	To keep participating, just log in with Facebook.
 		<div id="fb-login-button">
 			<a href="javascript:void(0);" onclick="RDRAuth.doFBLogin();"><img src="/static/images/fb-login_to_readrboard.png" /></a>
 		</div>
-		<strong>ReadrBoard values your privacy.</strong>
+		<strong><span style="color:#008be4;">ReadrBoard</span> values your privacy.</strong>
 		<ul>
-			<li>We will never post on your wall.</li>
+			<li>We do not post on your wall unless you purposefully share something .</li>
 			<li>We only email you if someone comments on your reactions.</li>
-			<li>We do not give out your email address to anyone.</li>
+			<li>We do not give out your email address.</li>
 		</ul>
 	</div>
 	<div id="fb-logged-in" style="display:none;">
