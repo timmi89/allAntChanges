@@ -89,7 +89,6 @@ class CommentHandler(InteractionHandler):
             except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
                 raise JSONException(u'Could not find parent interaction specified')
         else:
-            print request.GET
             parent = TagHandler().create(request, data, user, page, group)['interaction']
         
         try:
@@ -99,7 +98,7 @@ class CommentHandler(InteractionHandler):
         
         interaction = createInteraction(parent.page, parent.container, parent.content, user, 'com', comment, group, parent)
         
-        return dict(interaction=interaction)
+        return interaction
 
 class TagHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
@@ -132,9 +131,9 @@ class TagHandler(InteractionHandler):
             raise JSONException("Container specified does not exist")
         
         # Create an interaction
-        interaction = createInteraction(page, container, content, user, 'tag', inode, group)['interaction']
+        interaction = createInteraction(page, container, content, user, 'tag', inode, group)
 
-        return dict(interaction=interaction)
+        return interaction
 
 class ShareHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
