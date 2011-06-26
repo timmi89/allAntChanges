@@ -250,6 +250,14 @@ function readrBoard($R){
             clearHilites: function( $rindows ){
                 var selStates = [];
                 $rindows.each(function(idx,rindow){
+                    var hash = $(rindow).data('container');
+
+                    //if not a rindow for a container, there won't be any hilites.
+                    if ( typeof hash === 'undefined' ) return;
+                    //else
+                    
+                    var summary = RDR.summaries[hash];
+
                     //todo: think about better name and pattern for how write-mode hilite gets stored.
                     //first find writeMode selState
                     var selState = $(rindow).data('selState');
@@ -257,12 +265,12 @@ function readrBoard($R){
                         //note that image rindows have no hilite, but this takes care of that.
                         selStates.push(selState)
                     }
+                    
+                    var content_nodes = summary.content_nodes || []; //lets each loop do nothing gracefully
 
                     //now add any content hilites from hover states that might be hanging around.
-                    var hash = $(rindow).data('container'),
-                    summary = RDR.summaries[hash];
 
-                    $.each( summary.content_nodes, function(key, node){
+                    $.each( content_nodes, function(key, node){
                         var selState = node.selState;
                         if ( typeof selState !== 'undefined' ){
                             selStates.push(selState);
@@ -1773,7 +1781,14 @@ dir(data);
                         //make selStates for these nodes and give the nodes a reference to them
                         $.each(content_nodes, function(key, node){
                             var $container = $('.rdr-'+which);
-                            node.selState = $container.selog('save', { 'serialRange': node.location });
+                            try{
+                                node.selState = $container.selog('save', { 'serialRange': node.location });
+                            }
+                            catch(err){
+                                log('rangy error');
+                                log(err);
+                                node.selState = undefined;
+                            }
 
                         });
 
@@ -1988,34 +2003,38 @@ dir(data);
                         var $this = $(this);
                         $this.data('selStates',[]);
 
-                        var tag_id = $(this).data('tag').id;
-                        
                         
                         //log($this.data('tag'))
                         
                         var nodes = summary.content_nodes;
+/*
                         $.each(nodes, function(id, node){
                             var nodeTags = node.top_interactions.tags;
-                            thisTag = nodeTags[ tag_id ];
+                            //thisTag = nodeTags[ tag_id ];
                             if(typeof thisTag === "undefined") return;
                             //else                            
-                            $this.data('selStates').push(node.selState);  
+                            //$this.data('selStates').push(node.selState);  
                         });
-                    }).hover( 
+                        */
+                    })
+/*
+                    .hover( 
                         function() {
                             var selStates = $(this).data('selStates');
+                            log(selStates);
                             $.each( selStates, function(idx, selState){
                                 $().selog('hilite', selState, 'on');
                             });
                         },
                         function() {
                             var selStates = $(this).data('selStates');
+                            log(selStates);
                             $.each( selStates, function(idx, selState){
                                 $().selog('hilite', selState, 'off');
                             });
                         }
                     );
-                
+                */
                 });
 
             },
@@ -2085,10 +2104,14 @@ dir(data);
 
                         $contentSet.hover(
                             function() {
-                                $().selog('hilite', node.selState, 'on');
+                                if(node.selState){
+                                    $().selog('hilite', node.selState, 'on');
+                                }
                             },
                             function() {
-                                $().selog('hilite', node.selState, 'off');
+                                if(node.selState){
+                                    $().selog('hilite', node.selState, 'off');
+                                }
                             }
                         );
 
@@ -2761,8 +2784,13 @@ log('---- rindow.data --------');
                                     };
                                     diff.tags[ tagHelper['id'] ] = tagHelper; //yeah?, didja get that one?  //todo: make pretty.
 
+                                    log('hash')
+                                    log(hash)
+                                    log('diff')
+                                    log(diff)
                                     RDR.actions.indicators.update(hash, diff);
                                     //end update indicators
+                                    log('here here')
 
                                     if ( tag_li.length == 1 ) {
                                         tag_li.find('div.rdr_leftBox').unbind();
