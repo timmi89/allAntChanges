@@ -135,6 +135,10 @@ class TagHandler(InteractionHandler):
 
         return interaction
 
+class BookmarkHandler(InteractionHandler):
+    def create(self, request, data, user, page, group):
+        return TagHandler().create(request, data, user, page, group)['interaction']
+
 class ShareHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
         tag_body = data['tag']['body']
@@ -189,10 +193,6 @@ class ShareHandler(InteractionHandler):
         short_url = BASE_URL + "/s/" + link.to_base62()
         
         return dict(short_url=short_url)
-
-class BookmarkHandler(InteractionHandler):
-    def create(self, data, user, page, group):
-        pass
 
 class CreateContainerHandler(AnonymousBaseHandler):
     @status_response

@@ -15,6 +15,7 @@ Deauthorize = Resource(handler=Deauthorize)
 TempUser = Resource(handler=TempUserHandler)
 Content = Resource(handler=ContentSummaryHandler)
 Share = Resource(handler=ShareHandler)
+Bookmark = Resource(handler=BookmarkHandler)
 
 urlpatterns = patterns('',
     url(r'^settings/(\d+)/$', Settings),
@@ -45,6 +46,7 @@ urlpatterns = patterns('',
     url(r'^summary/container/content', Content),
     url(r'^tag/create/', Tag, kwargs={'action':'create'}),
     url(r'^tag/delete/', Tag, kwargs={'action':'delete'}),
+    url(r'^bookmark/create/', Bookmark, kwargs={'action':'create'}),
     url(r'^share/', Share, kwargs={'action':'create'}),
     #url(r'^tags/(\d*)', Tags),
     url(r'^comment/create/', Comment, kwargs={'action':'create'}),
