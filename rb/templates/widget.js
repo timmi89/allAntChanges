@@ -237,12 +237,8 @@ function readrBoard($R){
                 this.remove
             },
             close: function( $rindows ) {
+                RDR.rindow.clearHilites( $rindows );
                 $rindows.each(function(idx,rindow){
-                    var selog_state = $(rindow).data('selog_state');
-                    //image rindows have no selog_state
-                    if ( typeof selog_state !== 'undefined' ){
-                        $().selog('hilite', selog_state, 'off');
-                    }
                     $(rindow).remove();
                 });
             },
@@ -250,7 +246,34 @@ function readrBoard($R){
                 var $allRindows = $('div.rdr.rdr_window');
 				RDR.rindow.close( $allRindows );
                 $('.rdr_shared').removeClass('rdr_shared');
-			}
+			},
+            clearHilites: function( $rindows ){
+                var selStates = [];
+                $rindows.each(function(idx,rindow){
+                    //todo: think about better name and pattern for how write-mode hilite gets stored.
+                    //first find writeMode selState
+                    var selState = $(rindow).data('selState');
+                    if ( typeof selState !== 'undefined' ){
+                        //note that image rindows have no hilite, but this takes care of that.
+                        selStates.push(selState)
+                    }
+
+                    //now add any content hilites from hover states that might be hanging around.
+                    var hash = $(rindow).data('container'),
+                    summary = RDR.summaries[hash];
+
+                    $.each( summary.content_nodes, function(key, node){
+                        var selState = node.selState;
+                        if ( typeof selState !== 'undefined' ){
+                            selStates.push(selState);
+                        }
+                    });
+                });
+
+                $.each( selStates, function(idx, selState){
+                    $().selog('hilite', selState, 'off');
+                });
+            }
 		},
 		actionbar: {
 			draw: function(settings) {
@@ -1353,7 +1376,7 @@ dir(data);
                     }else{
                         var summary = RDR.summaries[hash];
                     }
-                    log(summary);
+                    //log(summary);
 
                     /*
                     var altSumm = RDR.summaries[hash];
@@ -1545,7 +1568,7 @@ dir(data);
 
                     //todo: is this a problem to use IDS here even when this is an el that we make?
                     $indicator = $('<div class="rdr_indicator" />').hide().attr('id',indicatorId).appendTo($container);
-                    log(summary);
+                    //log(summary);
                     summary.indicator = $('rdr_in');
                     $indicator.append(
                         '<img src="'+RDR_rootPath+'/static/images/blank.png" class="no-rdr" />',
@@ -1672,8 +1695,8 @@ dir(data);
                         };
                     };
 
-                    log('info.tags')
-                    log(info.tags)
+                    //log('info.tags')
+                    //log(info.tags)
                     info.tags.sort(SortByTagCount);
                     RDR.content_nodes[ hash ].info = info;
                     //todo: consider showing just tags here and simplifying
@@ -1742,7 +1765,7 @@ dir(data);
 
                         var content_nodes = response.data;
                         log('/api/summary/container/content/')
-                        log(content_nodes)
+                        //log(content_nodes)
                         //todo: make this generic interactions instead of just tags
                         //summary.interactions.tags = 
                         
@@ -1763,6 +1786,8 @@ dir(data);
                         //todo: combine with other li hover function
                         //figure out which nodes belong to each tag.
                         //this is uuuuuuuuuuuuuuuuuuuuugly
+                        //(ugly because I'm redundantly recalulating the same thing twice every time the read mode is activated,
+                        //when really it just needs to be calulated once on load and then updated when a new interaction is made)
                         
                         var $indicatorDetails = $('#rdr_indicator_details_'+which);
                         var nodes = content_nodes;
@@ -2112,8 +2137,8 @@ log('---- rindow.data --------');
                                         // get short uRL call
                                         var content_node_key = $(this).closest('div.rdr_contentSet').data('content_node_key');
                                         RDR.content_node[content_node_key];
-                                        log(content_node_key);
-                                        log(RDR.content_node[content_node_key]);
+                                        //log(content_node_key);
+                                        //log(RDR.content_node[content_node_key]);
                                         // ({  })
                                     });
                                     var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
@@ -2142,14 +2167,14 @@ log('---- rindow.data --------');
                                                     '<img rel="twitter" src="/static/images/social-icons-loose/social-icon-twitter.png" class="rdr_sns no-rdr"/>'+
                                                     // '<img rel="tumblr" src="/static/images/social-icons-loose/social-icon-tumblr.png" class="rdr_sns no-rdr"/>'+
                                                     // '<img rel="linkedin" src="/static/images/social-icons-loose/social-icon-linkedin.png" class="rdr_sns no-rdr"/>'+
-                                                    '</div><div class="rdr rdr_tooltip-arrow-border" /><div class="rdr rdr_tooltip-arrow" /><div class="rdr_tag_share" /></div></div>' );
+                                                    '</div><div class="rdr rdr_tooltip-arrow-border" /><div class="rdr rdr_tooltip-arrow" /></div></div>' );
                                 var share_offsets = $this.offset(),
                                     rindow_offsets = rindow.offset();
                                 
-                                $shareTip.css('top', (share_offsets.top-rindow_offsets.top) + "px").css('left', (share_offsets.left-rindow_offsets.left-5) + "px" );
+                                //$shareTip.css('top', (share_offsets.top-rindow_offsets.top) + "px").css('left', (share_offsets.left-rindow_offsets.left-5) + "px" );
 
 
-                                rindow.append( $shareTip );
+                                $this.append( $shareTip );
                                 $shareTip.bind('mouseleave.rdr', function(e) {
                                     $(this).remove();
                                 });
@@ -2353,7 +2378,7 @@ log('---- rindow.data --------');
                     container: settings.container,
                     content: settings.content,
                     content_type: settings.content_type,
-                    selog_state: newSel
+                    selState: newSel
                 });
 
                 // TODO this is used to constrain the initial width of this rindow
@@ -2665,7 +2690,7 @@ log('---- rindow.data --------');
 
 
                         //save content node
-                        var selState = rindow.data('selog_state') || null;
+                        var selState = rindow.data('selState') || null;
                         
                         content_node_data = {
                             'container': rindow.data('container'),
@@ -2875,8 +2900,8 @@ log('---- rindow.data --------');
                     // //save content node
                     // log('rindow');
                     // log(rindow);
-                    // log(rindow.data('selog_state'));
-                    // var selState = rindow.data('selog_state');
+                    // log(rindow.data('selState'));
+                    // var selState = rindow.data('selState');
  
                     var content_node_data = {
                         'container': rindow.settings.container,
@@ -2885,8 +2910,7 @@ log('---- rindow.data --------');
                     }    
                     // dir(content_node_data);
                     var content_node = RDR.actions.content_node.make(content_node_data);
-log('content_node:');
-dir(content_node);
+
                     var sendData = {
                         "tag" : tag,
                         "hash": content_node_info.hash,
@@ -3277,7 +3301,7 @@ dir(content_node);
                     hash = params.which,
                     content_type = params.content_type;
 
-                    // var selState = rindow.data('selog_state') || null;
+                    // var selState = rindow.data('selState') || null;
                     // var newSel = $('.rdr-'+hash).selog('save', {'serialRange': location});
 
                     var content = ( params.content ) ? params.content:"";
