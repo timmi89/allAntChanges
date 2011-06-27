@@ -2000,20 +2000,20 @@ log('--showLoginPanel---');
                         $this.data('selStates',[]);
 
                         
-                        //log($this.data('tag'))
+                        var tag_id = $this.data('tag').id;
                         
                         var nodes = summary.content_nodes;
-/*
+
                         $.each(nodes, function(id, node){
                             var nodeTags = node.top_interactions.tags;
-                            //thisTag = nodeTags[ tag_id ];
+                            thisTag = nodeTags[ tag_id ];
                             if(typeof thisTag === "undefined") return;
                             //else                            
-                            //$this.data('selStates').push(node.selState);  
+                            $this.data('selStates').push(node.selState);  
                         });
-                        */
+                        
                     })
-/*
+
                     .hover( 
                         function() {
                             var selStates = $(this).data('selStates');
@@ -2030,7 +2030,6 @@ log('--showLoginPanel---');
                             });
                         }
                     );
-                */
                 });
 
             },
