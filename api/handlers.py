@@ -101,7 +101,7 @@ class CommentHandler(InteractionHandler):
         return interaction
 
 class TagHandler(InteractionHandler):
-    def create(self, request, data, user, page, group):
+    def create(self, request, data, user, page, group, kind='tag'):
         tag_body = data['tag']['body']
         container_hash = data['hash']
         content_data = data['content']['body']
@@ -131,13 +131,13 @@ class TagHandler(InteractionHandler):
             raise JSONException("Container specified does not exist")
         
         # Create an interaction
-        interaction = createInteraction(page, container, content, user, 'tag', inode, group)
+        interaction = createInteraction(page, container, content, user, kind, inode, group)
 
         return interaction
 
 class BookmarkHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
-        return TagHandler().create(request, data, user, page, group)['interaction']
+        return dict(interaction=TagHandler().create(request, data, user, page, group, 'bkm')['interaction'])
 
 class ShareHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
