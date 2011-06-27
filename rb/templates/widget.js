@@ -104,7 +104,7 @@ function readrBoard($R){
                 x:100,
                 y:100,
                 pnlWidth:200,
-                animTime:225,
+                animTime:100,
                 height:150,
                 columns: false
             },

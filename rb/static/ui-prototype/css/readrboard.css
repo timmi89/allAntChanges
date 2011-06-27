@@ -21,6 +21,7 @@ div.rdr.rdr_window {
 	left:100px;
 	background:#fff;
 	overflow:hidden;
+	border-radius:8px;
 }
 
 div.rdr.rdr_window.rdr_columns {
@@ -32,6 +33,8 @@ div.rdr.rdr_actionbar {
 	-moz-box-shadow:0 0 10px 1px #aaa;
 	-webkit-box-shadow:0 0 10px 1px #aaa;
 	box-shadow:0 0 10px 1px #aaa;
+	/*border:1px solid #AAAAAA;*/
+	border-radius:5px;
 	background:url("/static/images/actionbar_bg.png") no-repeat 0 0;
 	padding:0;
 	font:normal 12px Arial, sans-serif;
@@ -90,6 +93,7 @@ img.rdr_shared 		{ -moz-box-shadow:0 0 10px 1px #008be4; -webkit-box-shadow:0 0 
     font: 12px Arial,sans-serif;
 	border:1px solid #ddd; max-width:300px;
 	margin:-1px;
+	border-radius:5px;
 	/*extra pixel margin to make up for border in details (and some mystery space) */
 }
 
@@ -219,7 +223,7 @@ div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top:5px
 div.rdr div.rdr_sntPnl_padder 					{margin:0 15px; position:relative; overflow:hidden;}
 div.rdr div.rdr_sntPnl textarea,
 div.rdr div.rdr_sntPnl input[type="text"]	{padding:2px 6px; width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
-div.rdr div.rdr_sntPnl button				{border:1px solid #aaa; border-radius:3px 3px 3px 3px; box-shadow:0 -6px 11px -6px #ccc inset; color:#454545; font-family:Arial; font-size:12px; padding:2px 5px; width:auto; cursor:pointer;}
+div.rdr div.rdr_sntPnl button				{border:1px solid #aaa; border-radius:3px 3px 3px 3px; box-shadow:0 -6px 11px -6px #ccc inset; color:#454545; font-family:Arial; font-size:12px; padding:2px 5px; width:auto; cursor:pointer; float:right;margin-right:6px;}
 div.rdr div.rdr_sntPnl_padder > div					{margin:4px 0;}
 div.rdr div.rdr_share_social						{border-bottom:1px solid #aaa;}
 div.rdr div.rdr_sntPnl .rdr_submitTag  			{width:100%; text-align:right;}
@@ -354,10 +358,18 @@ div.rdr button				{font-size:14px; }
 }
 .rdr_hilite {
     background-color: #fe7 !important;
-    -moz-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* FF3.5+ */
-    -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Saf3.0+, Chrome */
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Opera 10.5+, IE 9.0 */
+    /*-moz-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); FF3.5+ */
+    /*-webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); Saf3.0+, Chrome */
+    /*box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);  Opera 10.5+, IE 9.0 */
     /*disable user selection*/
+    background-image: -webkit-gradient(
+    	linear,
+    	left bottom,
+    	left top,
+    	color-stop(0, rgb(217,211,95)),
+    	color-stop(0.39, rgb(252,245,154))
+    	);
+    background-image: -moz-linear-gradient(center bottom , #D9D35F 0%, #FCF59A 39%);
     -webkit-user-select:none; 
     -k-user-select:none; 
     -moz-user-select:none; 
