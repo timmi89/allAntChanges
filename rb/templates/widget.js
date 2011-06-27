@@ -1185,7 +1185,15 @@ log('--showLoginPanel---');
 				// END
 
 
-                $(document).bind('mouseup.rdr', this.startSelect );
+                $(document).bind('mouseup.rdr', function(e){
+                    //temp fix for bug where a click that clears a selection still picks up the selected text:
+                    //Todo: This should work in the future as well, but I want to look into it further.
+                    setTimeout(function(){
+                        RDR.actions.startSelect(e);
+                    }, 1 ); 
+                    //even 0 works, so I'm not worried about 1 being too low.
+                    //besides, the fail scenerio here is very minor - just that the actionbar hangs out till you click again.
+                });
 
                 $(document).bind('dblclick.rdr',function(event) {
                     var $mouse_target = $(event.target);                                
@@ -3560,6 +3568,7 @@ log('---- rindow.data --------');
             },
             startSelect: function(e) {
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
+                
                 var $mouse_target = $(e.target),
 				selection = {};
 								
@@ -3579,8 +3588,15 @@ log('---- rindow.data --------');
                     // see what the user selected
                     // TODO: need separate image function, which should then prevent event bubbling into this
 						// ^ really?  why??
-                    selection.sel = RDR.actions.selectedText();
 
+                    selection.sel = RDR.actions.selectedText();
+                
+                    //todo: consider using rangy's cross browser stuff here instead:
+                    /*
+                    var currentSelState = $().selog('save'),
+                    text = currentSelState.text;
+                    */
+                    
                     //ensure something is selected and it's not just white space
                     if ( selection.sel.text && !(/^\s*$/g.test(selection.sel.text)) ) {
 
