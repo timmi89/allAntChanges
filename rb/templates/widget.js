@@ -1289,13 +1289,12 @@ log('--showLoginPanel---');
                     	json: JSON.stringify(sendData)
                     },
                     success: function(response) {
+
                         var summaries = response.data.known,
                         unknownList = response.data.unknown;
                         
-                        if( !$.isEmptyObject(summaries) ){
-                            RDR.actions.summaries.save(summaries);
-                        }
-
+                        RDR.actions.summaries.save(summaries);
+                        
                         if ( unknownList.length > 0 ) {
                             var sendData = {};
                             $.each( unknownList, function(idx, hash) {
