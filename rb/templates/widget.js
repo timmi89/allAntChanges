@@ -285,16 +285,20 @@ function readrBoard($R){
 		},
 		actionbar: {
 			draw: function(settings) {
+                
+                log('settings')                
+                log(settings)                
+                var container = RDR.containers[settings.container];
+                
+                var actionbar_id = "rdr_actionbar_"+container.hash;
 
-				var actionbar_id = "rdr_actionbar_"+RDR.util.md5.hex_md5( settings.content );
-
-				var $actionbars = $('div.rdr.rdr_actionbar');
+    			var $actionbars = $('div.rdr.rdr_actionbar');
                 
 				if ( $('#'+actionbar_id).length > 0 ) return $('#'+actionbar_id);
 				// else 
 
                 var left = (settings.left) ? (settings.content_type == "image") ? settings.left-34 : settings.left+2 : 100;
-                var top_modifier = (settings.content_type == "image") ? -43:-35;  // if IE, position higher so we're not behind IE's "Accelerator" arrow
+                var top_modifier = (settings.content_type == "image") ? -43:-35;  // todo: if IE, position higher so we're not behind IE's "Accelerator" arrow
                 var top = (settings.top) ? (settings.content_type == "image") ? (settings.top + top_modifier):(settings.top + top_modifier) : 100;
 
 				// TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
@@ -313,13 +317,19 @@ function readrBoard($R){
 
                 // if this is an image, make sure we have the image hashed, tagged, and have its hash as a container:
                 if (settings.content_type == "image" && !settings.container ) {
-                    log('image but no container');
+                    //changing this to warn, because image should always be hashed already.
+                    //if it isn't, we shoulc do this through the hashNodes function.
+                    //todo: put in call to hashNodes function here later, if this ever happens, though it shouldn't
+                    console.warn('image but no container'); 
+                    /*
                     var hashText = "rdr-img-"+settings.content,
                     hash = RDR.util.md5.hex_md5( hashText );
                     settings.container = hash;
+                    */
                 }
 
-                if ( settings.container == "") settings.container = RDR.page.hash;
+                // ec: I'm removing this - I think it's old and RDR.page.hash doens't exist
+                //if ( settings.container == "") settings.container = RDR.page.hash;
 
                 var items = [
                         {
@@ -412,7 +422,6 @@ function readrBoard($R){
                     timeoutCloseEvt = setTimeout(function(){
                         if( !$(that).data('keepAlive.img') && !$(that).data('keepAlive.self') ){
                             scope.close( $(that), "fade");
-                            RDR.util.removeImageShadow();
                         }              
                     },300);
                     $(this).data('timeoutCloseEvt', timeoutCloseEvt);
@@ -422,35 +431,20 @@ function readrBoard($R){
                 var $actionbars = $('div.rdr_actionbar');
                 this.close($actionbars);
             },
-            collapse: function(callback){
+            show: function(callback){
                 //use call or apply to set 'this'
                 //not needed because $($(this)) doesn't hurt anything, but still.
-                var $this = (this.jquery) ? this : $(this),
-                $aboutIcon = $this.find('li.rdr_icon_about'),
-                $otherIcons = $aboutIcon.siblings();
-                 
+                var $this = (this.jquery) ? this : $(this);
                 var timeoutCollapseEvt = $(this).data('timeoutCollapseEvt');
                 //each actionbar only has one timeoutCollapseEvt - if one exists, it gets reset here.
                 clearTimeout(timeoutCollapseEvt);
                 timeoutCollapseEvt = setTimeout(function(){
                     if( !$this.data('keepAlive.self') ){
-                        $otherIcons.animate({width:'hide'},150, function(){
-                            $aboutIcon.find('.rdr_icon_divider').hide();
-                        });
+                        
                     }
                 },250)
                 //in order to protect against the dreaded oscillating event loop,
                 //this timeoutCollapseEvt time should be at least as long as the collspase animate time
-            },
-            expand: function(callback){
-                //use call or apply to set 'this'
-                //not needed because $($(this)) doesn't hurt anything, but still.
-                var $this = (this.jquery) ? this : $(this),
-                $aboutIcon = $this.find('li.rdr_icon_about'),
-                $otherIcons = $aboutIcon.siblings();
-
-                $aboutIcon.find('.rdr_icon_divider').show();
-                $otherIcons.animate({width:'show'},150);
             }
 		},
 		tooltip: {
@@ -1139,18 +1133,18 @@ log('--showLoginPanel---');
 						// like, inline or float, but with RDR stuff
 
                     
-				    var this_img = $(this),
-				    left = this_img.offset().left + 34,
-				    top = this_img.offset().top + this_img.height() + 20,
+				    var $this_img = $(this),
+				    left = $this_img.offset().left + 34,
+				    top = $this_img.offset().top + $this_img.height() + 20,
                     // $(this).attr('src') will yield relative path
                     // this.src will yield absolute path
                     // for jQuery selecting ( $(img[src$='foobar.png']) ), we want the relative path
-                    src = this_img.attr('src'),
+                    src = $this_img.attr('src'),
 				    src_with_path = this.src;
                     
-                    var container = ( this_img.data('hash') ) ? this_img.data('hash'):"";
+                    var container = ( $this_img.data('hash') ) ? $this_img.data('hash'):"";
 
-                    this_img.addClass('rdr_engage_img');
+                    $this_img.addClass('rdr_engage_img');
 
                     // builds a new actionbar or just returns the existing $actionbar if it exists.
 				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src, container:container, src_with_path:src_with_path, ignoreWindowEdges:"rb" });
@@ -1160,24 +1154,20 @@ log('--showLoginPanel---');
                     var $rivals = $('div.rdr_actionbar').not($actionbar);
                     RDR.actionbar.close( $rivals );
 
-                    // todo: break out these animation effects into functions saved under actionbar.<collspase>
 				    $actionbar.hover(
                         function() {
                             $actionbar.data('keepAlive.self',true);
-                            RDR.actionbar.expand.call(this);
                         },
                         function() {
                             $actionbar.data('keepAlive.self',false);
-                            RDR.actionbar.collapse.call(this);
                             RDR.actionbar.closeSuggest($actionbar);
                         }
 				    );
 
 				}).live('mouseleave', function() {
                     
-                    //use this instead of $().attr('src') to fix descrepencies between relative and absolute urls
-                    var src = this.src;
-					var actionbar_id = "rdr_actionbar_"+RDR.util.md5.hex_md5( src );
+                    var hash = $(this).data('hash');
+					var actionbar_id = "rdr_actionbar_"+hash;
                     var $actionbar = $('#'+actionbar_id);
                     $actionbar.data('keepAlive.img',false)
                     RDR.actionbar.closeSuggest($actionbar);
@@ -1259,14 +1249,16 @@ log('--showLoginPanel---');
                     if ( typeof body === "undefined" ) return
 
                     // add an object with the text and hash to the nodes dictionary
+                    //todo: consider putting this info directly onto the DOM node data object
                     RDR.containers[hash] = {
                         body:body,
-                        kind:kind
+                        kind:kind,
+                        hash:hash
                     };
                     // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
                     // this makes it easy to find on the page later
                     $(this).addClass( 'rdr-' + hash ).addClass('rdr-hashed');
-                    $(this).data('hash', hash);                   
+                    $(this).data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
                     
                 });
                 RDR.actions.sendHashes();
@@ -1618,7 +1610,7 @@ log('--showLoginPanel---');
 
                     //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the body.
                     //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
-                    $indicator_details = $('<div id="rdr_indicator_details_' +hash+ '" class="rdr_indicator_details rdr_text" />');
+                    $indicator_details = $('<div id="rdr_indicator_details_' +hash+ '" class="rdr rdr_indicator_details rdr_text" />');
                     $indicator_details.append(
                         '<div class="rdr_statsClone" />',
                         '<span class="rdr_details"> reactions: </span>'
