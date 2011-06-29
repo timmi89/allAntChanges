@@ -12,6 +12,7 @@ class ContentAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'kind',
+        'location',
         'body',
     )
 
