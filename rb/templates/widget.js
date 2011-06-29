@@ -2517,6 +2517,9 @@ console.dir(node.top_interactions);
                     });
                 },
                 expand: function(which, rindow, interaction_id){
+                    // hack.  chrome and safari don't like rounded corners if the whyPanel is showing since it is wider than column1
+                    rindow.find('div.rdr_whyPanel').css('visibility','visible');
+
                     var which = (which) ? which:"whyPanel";
                     $thisPanel = $(rindow).find('.rdr_'+which);
                     var num_columns = rindow.find('div.rdr_sntPnl').length;

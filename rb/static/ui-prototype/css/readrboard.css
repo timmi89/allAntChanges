@@ -21,6 +21,8 @@ div.rdr.rdr_window {
 	left:100px;
 	background:#fff;
 	overflow:hidden;
+	-moz-border-radius:8px;
+	-webkit-border-radius:8px;
 	border-radius:8px;
 }
 
@@ -34,6 +36,8 @@ div.rdr.rdr_actionbar {
 	-webkit-box-shadow:0 0 10px 1px #aaa;
 	box-shadow:0 0 10px 1px #aaa;
 	/*border:1px solid #AAAAAA;*/
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
 	border-radius:5px;
 	background:url("/static/images/actionbar_bg.png") no-repeat 0 0;
 	padding:0;
@@ -93,6 +97,8 @@ img.rdr_shared 		{ -moz-box-shadow:0 0 10px 1px #008be4; -webkit-box-shadow:0 0 
     font: 12px Arial,sans-serif;
 	border:1px solid #ddd; max-width:300px;
 	margin:-1px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
 	border-radius:5px;
 	/*extra pixel margin to make up for border in details (and some mystery space) */
 }
@@ -141,7 +147,12 @@ span.rdr_tags_list_tag:hover {
 
 /* the tooltip */
 div.rdr.rdr_tooltip {
-    -moz-border-radius:5px; -webkit-border-radius:5px; -moz-box-shadow:0 0 5px #888888; -webkit-box-shadow:0 0 5px #888888;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+    -moz-box-shadow:0 0 5px #888888;
+    -webkit-box-shadow:0 0 5px #888888;
+    box-shadow:0 0 5px #888888;
     background-color:#fff;
     border:2px solid #80aec9;
     margin:0 0 0 13px;/* 0.5 icon width with compensation for border*/
@@ -159,7 +170,11 @@ div.rdr.rdr_tooltip-arrow { border-color:#fff transparent transparent transparen
 div.rdr_top div.rdr.rdr_tooltip-arrow-border { border-color:transparent transparent #80aec9; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:-16px; bottom:auto; left:43%;}
 div.rdr_top div.rdr.rdr_tooltip-arrow { border-color:transparent transparent #fff; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:-14px; bottom:auto; left:43%;}
 
-div.rdr.rdr_tooltip div.rdr_tag_share    { display:block; width:12px; height:13px; background:url(/static/images/tag_icons.png) -50px -13px no-repeat; left:45px; position:absolute;top:-20px; border-radius:3px;}
+div.rdr.rdr_tooltip div.rdr_tag_share    { display:block; width:12px; height:13px; background:url(/static/images/tag_icons.png) -50px -13px no-repeat; left:45px; position:absolute;top:-20px; 
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+}
 
 div.rdr.rdr_share_container 					{position:absolute;height:50px;width:20px;z-index:1000;}
 div.rdr.rdr_share_container div.rdr.rdr_tooltip {left:-58px;top:20px; }
@@ -183,11 +198,15 @@ div.rdr h1 span	{font-size:18px; color:#008be4;}
 div.rdr li {background:none; padding:0;}
 
 /* the widget */
-div.rdr div.rdr_sentimentBox							{}
-div.rdr div.rdr_sntPnl 									{float:left; position:relative; display:block; height:100%; overflow:hidden; /*width is reset with js - rindow.settings.pnlWidth */ }
+div.rdr div.rdr_sentimentBox							{-moz-border-radius:8px 8px; -webkit-border-radius:8px 8px; border-radius:8px 8px;}
+div.rdr div.rdr_sntPnl 									{-moz-border-radius:8px 8px; -webkit-border-radius:8px 8px; border-radius:8px 8px; float:left; position:relative; display:block; height:100%; overflow:hidden; /*width is reset with js - rindow.settings.pnlWidth */ }
 
-div.rdr div.rdr_sntPnl div.rdr_body						{width:100%; xheight:100%; z-index:3; overflow-x:hidden; overflow-y:hidden; padding:0; position:relative; min-height:125px;}
-div.rdr div.rdr_sntPnl div.rdr_header                   {background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:3;}
+div.rdr div.rdr_sntPnl div.rdr_body						{width:100%; xheight:100%; z-index:3; overflow-x:hidden; overflow-y:hidden; padding:0; position:relative; min-height:125px;-moz-border-radius:8px 8px; -webkit-border-radius:8px 8px; border-radius:8px 8px;}
+div.rdr div.rdr_sntPnl div.rdr_header                   {background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:3; 
+	-moz-border-radius:8px 8px;
+	-webkit-border-radius:8px 8px;
+	border-radius:8px 8px;
+}
 div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("/static/images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
 div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header,
 div.rdr div.rdr_sntPnl.rdr_whyPanel div.rdr_header 		{background:url(/static/images/header_arrow.png) 0px -1px no-repeat #fff;}
@@ -214,7 +233,7 @@ div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body 	{-moz-box-shadow:none;-w
 div.rdr div.rdr_contentPanel                            {position:absolute; z-index:15; left:200px; width:200px; background:url(/static/images/rindow_bg_column.png) repeat -650px 0;}
 div.rdr div.rdr_contentPanel div.rdr_body               {width:200px; max-height:300px; }
 
-div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:250px; background:url(/static/images/rindow_bg_column.png) -200px 0; }
+div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:250px; background:url(/static/images/rindow_bg_column.png) -200px 0; visibility:hidden;}
 div.rdr.rdr_columns3 div.rdr_whyPanel 				    {background-position:-850px 0;}
 div.rdr div.rdr_whyPanel div.rdr_body                   {width:250px; max-height:300px; }
 div.rdr div.rdr_whyPanel hr 			                {background: #ddd; border: none; clear: both; color: #ddd; float: none; height: 1px; margin: 10px 0; }
@@ -223,7 +242,12 @@ div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top:5px
 div.rdr div.rdr_sntPnl_padder 					{margin:0 15px; position:relative; overflow:hidden;}
 div.rdr div.rdr_sntPnl textarea,
 div.rdr div.rdr_sntPnl input[type="text"]	{padding:2px 6px; width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
-div.rdr div.rdr_sntPnl button				{border:1px solid #aaa; border-radius:3px 3px 3px 3px; -moz-box-shadow:0 -6px 11px -6px #ccc inset; -webkit-box-shadow:0 -6px 11px -6px #ccc inset; box-shadow:0 -6px 11px -6px #ccc inset; color:#454545; font-family:Arial; font-size:12px; padding:2px 5px; width:auto; cursor:pointer; float:right;margin-right:6px;margin-bottom:10px;}
+div.rdr div.rdr_sntPnl button				{
+	border:1px solid #aaa; 
+	-moz-border-radius:3px 3px 3px 3px; 
+	-webkit-border-radius:3px 3px 3px 3px; 
+	border-radius:3px 3px 3px 3px; 
+	-moz-box-shadow:0 -6px 11px -6px #ccc inset; -webkit-box-shadow:0 -6px 11px -6px #ccc inset; box-shadow:0 -6px 11px -6px #ccc inset; color:#454545; font-family:Arial; font-size:12px; padding:2px 5px; width:auto; cursor:pointer; float:right;margin-right:6px;margin-bottom:10px;}
 div.rdr div.rdr_sntPnl_padder > div					{margin:4px 0;}
 div.rdr div.rdr_share_social						{border-bottom:1px solid #aaa;}
 div.rdr div.rdr_sntPnl .rdr_submitTag  			{width:100%; text-align:right;}
@@ -309,9 +333,22 @@ div.rdr div.rdr_leave_comment   { clear:both; display:block; padding:0 10px 10px
 
 /* tags */
 
-div.rdr a.rdr_tag     { display:block; background:#d0dee6; float:left; margin:0 10px 3px 0; font:normal 11px Arial; color:#678ca2; text-decoration:none; padding:1px; border-radius:3px; z-index:100001}
-div.rdr a.rdr_tag span.rdr_tag_count    { display:block; min-width:13px; width:auto; height:13px; float:left; background:none; margin:0; padding: 0 3px; border-radius:3px; }
-div.rdr a.rdr_tag div.rdr_tag_share    	{ display:block; min-width:13px; width:auto; height:13px; float:right; background:none; margin-left:3px; border-radius:3px; }
+div.rdr a.rdr_tag     { display:block; background:#d0dee6; float:left; margin:0 10px 3px 0; font:normal 11px Arial; color:#678ca2; text-decoration:none; padding:1px; 
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+	z-index:100001;
+}
+div.rdr a.rdr_tag span.rdr_tag_count    { display:block; min-width:13px; width:auto; height:13px; float:left; background:none; margin:0; padding: 0 3px; 
+	-moz-border-radius:3px; 
+	-webkit-border-radius:3px; 
+	border-radius:3px; 
+}
+div.rdr a.rdr_tag div.rdr_tag_share    	{ display:block; min-width:13px; width:auto; height:13px; float:right; background:none; margin-left:3px; 
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+}
 
 div.rdr a.rdr_tag:hover     { background:#fff; color:#008be4;}
 div.rdr a.rdr_tag:hover span.rdr_tag_count    { background:url(/static/images/tag_icons.png) -8px 0px no-repeat; text-indent:-9999px; }
