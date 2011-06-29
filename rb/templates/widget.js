@@ -628,7 +628,7 @@ function readrBoard($R){
             },
             revealSharedContent: function(data){
 log('revealSharedContent');
-dir(data);
+console.dir(data);
                 var $container = $('.rdr-'+data.container_hash);
                 $container.addClass('rdr_shared')
                 
@@ -683,7 +683,7 @@ dir(data);
             },
             getSharedLinkInfo: function( data ){
                 log('--------data-------------');
-                dir(data);
+                console.dir(data);
                 //some condition
                     
                 //TODO: sample data here, fill with info from cookie
@@ -772,7 +772,7 @@ dir(data);
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
 
-                                //dir(message.data);
+                                //console.dir(message.data);
                                 for ( var i in message.data ) {
                                     RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i]):message.data[i];
                                 }
@@ -854,7 +854,7 @@ log('--showLoginPanel---');
             },
             showTempUserMsg: function(args) {
                 if ( args.rindow ) {
-                    //dir(args);
+                    //console.dir(args);
                     var rindow = args.rindow,
                         num_interactions_left = RDR.group.temp_interact - parseInt( args.int_id.num_interactions ),
                         $tempMsgDiv = $('<div class="rdr_tempUserMsg"><span /><strong /></div>'),
@@ -1278,7 +1278,7 @@ log('--showLoginPanel---');
 					hashes : md5_list
 				}
     log('sendData:');
-    dir(sendData);
+    console.dir(sendData);
                 // send the data!
                 $.ajax({
                     url: "/api/summary/containers/",
@@ -1675,7 +1675,7 @@ log('--showLoginPanel---');
                     // loop through the content object to create a similar object that has tags at the top of the hierarchy, 
                     // to prevent looping through .content over and over
                     for ( var j in info.content ) {
-                        // dir(content);
+                        // console.dir(content);
                         var content = info.content[j];
 
                         for ( var i in content.tags ) {
@@ -2051,12 +2051,12 @@ log('--showLoginPanel---');
 
                 // ok, get the content associated with this tag!
                 $.each(content, function(idx, node){
-                    dir(node);
+                    console.dir(node);
 
                     var tag = tagClone;
 
                     // log('tag');
-                    // dir(tag);
+                    // console.dir(tag);
 
                     if ( node.top_interactions.tags[ tag.id ] ) {
 
@@ -2112,7 +2112,7 @@ log('--showLoginPanel---');
                             var $this = $(this);
                             $this.closest('.rdr_contentSet').addClass('rdr_selected').siblings().removeClass('rdr_selected');
 log('---- rindow.data --------');
-                            dir( rindow.data() );
+                            console.dir( rindow.data() );
                             RDR.actions.viewCommentContent( {tag:tag, which:which, rindow:rindow, node:node, selState:node.selState, content_type:"text" });
                         });
 
@@ -2181,7 +2181,7 @@ log('---- rindow.data --------');
                                 var content_node_info = $(this).closest('div.rdr_contentSet').data();
                                 var tag = $this.closest('a.rdr_tag').data('tag');
                                 log('------- attempting to share -------');
-                                dir(tag);
+                                console.dir(tag);
                                 $shareTip.find('img.rdr_sns').click( function() {
                                     RDR.actions.share_getLink({ sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node_info:content_node_info });
                                 });
@@ -2209,9 +2209,9 @@ log('---- rindow.data --------');
                 
                 //todo: this function needs work pulling vars back together
                 // log('node')
-                // dir(node)
+                // console.dir(node)
                 // log('tag')
-                // dir(tag)
+                // console.dir(tag)
                 // log(c_idx)
 
                 //thoguht we might need this but we dont
@@ -2234,7 +2234,7 @@ log('---- rindow.data --------');
                 */
 
 log('node.top_interactions');
-dir(node.top_interactions);
+console.dir(node.top_interactions);
                 var comments = node.top_interactions.coms;
                 var hasComments = !$.isEmptyObject(comments);
 
@@ -2315,7 +2315,7 @@ dir(node.top_interactions);
             },
 			sentimentBox: function(settings) {
              log('sentimentBox settings: ');
-             dir(settings);
+             console.dir(settings);
                 //settings:
                 /*
                 {
@@ -2605,7 +2605,7 @@ dir(node.top_interactions);
             sentimentPanel: {
                 addCustomTagBox: function(args) {
                     log('addCustomTagBox args: ');
-                    dir(args);
+                    console.dir(args);
                     var rindow = args.rindow,
                         settings = args.settings,
                         $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
@@ -2804,7 +2804,7 @@ dir(node.top_interactions);
                                         }
                                     }
                                     // log('-----tag------');
-                                    // dir(tag);
+                                    // console.dir(tag);
                                     if ( isNaN( tag.id ) ) tag.id = response.data.tag_id;
                                     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_info:content_node_data, content_type:content_type, selState:selState });
                                     if ( response.data.num_interactions ) {
@@ -3041,7 +3041,7 @@ dir(node.top_interactions);
                                         }
                                     }
                                     // log('-----tag------');
-                                    // dir(tag);
+                                    // console.dir(tag);
                                     if ( isNaN( tag.id ) ) tag.id = response.data.tag_id;
                                     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_info:content_node_data, content_type:content_type, selState:selState });
                                     if ( response.data.num_interactions ) {
@@ -3064,7 +3064,7 @@ dir(node.top_interactions);
             },
             share_getLink: function(args) {
                 log('----share_getLink args----');
-                dir(args);
+                console.dir(args);
                 //example:
                 //tag:{body, id}, rindow:rindow, settings:settings, callback: 
                 
@@ -3095,7 +3095,7 @@ dir(node.top_interactions);
                         'body': content_node_info.content,
                         'location': content_node_info.location
                     }    
-                    // dir(content_node_data);
+                    // console.dir(content_node_data);
                     var content_node = RDR.actions.content_node.make(content_node_data);
 
                     var sendData = {
@@ -3120,7 +3120,7 @@ dir(node.top_interactions);
                             data: { json: JSON.stringify(sendData) },
                             success: function(response) {
                                 log('---- share URL response -----');
-                                dir(response);
+                                console.dir(response);
 
                                 // todo cache the short url
                                 // RDR.summaries[content_node_info.hash].content_nodes[IDX].top_interactions.tags[tag.id].short_url = ;
@@ -3289,7 +3289,7 @@ dir(node.top_interactions);
             },
             shareStart: function(args) {
                 log('--- shareStarting ---');
-                dir(args);
+                console.dir(args);
                 var rindow = args.rindow, 
                     tag = args.tag,
                     int_id = args.int_id,
@@ -3476,7 +3476,7 @@ dir(node.top_interactions);
             },
             comment: function(args) {
                 log('---commenting---');
-                dir(args);
+                console.dir(args);
                 RDR.session.getUser( args, function( params ) {
     
                     // get the text that was highlighted

@@ -223,7 +223,7 @@ div.rdr div.rdr_sntPnl div.rdr_subHeader    	{text-align:center; padding-top:5px
 div.rdr div.rdr_sntPnl_padder 					{margin:0 15px; position:relative; overflow:hidden;}
 div.rdr div.rdr_sntPnl textarea,
 div.rdr div.rdr_sntPnl input[type="text"]	{padding:2px 6px; width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
-div.rdr div.rdr_sntPnl button				{border:1px solid #aaa; border-radius:3px 3px 3px 3px; box-shadow:0 -6px 11px -6px #ccc inset; color:#454545; font-family:Arial; font-size:12px; padding:2px 5px; width:auto; cursor:pointer; float:right;margin-right:6px;margin-bottom:10px;}
+div.rdr div.rdr_sntPnl button				{border:1px solid #aaa; border-radius:3px 3px 3px 3px; -moz-box-shadow:0 -6px 11px -6px #ccc inset; -webkit-box-shadow:0 -6px 11px -6px #ccc inset; box-shadow:0 -6px 11px -6px #ccc inset; color:#454545; font-family:Arial; font-size:12px; padding:2px 5px; width:auto; cursor:pointer; float:right;margin-right:6px;margin-bottom:10px;}
 div.rdr div.rdr_sntPnl_padder > div					{margin:4px 0;}
 div.rdr div.rdr_share_social						{border-bottom:1px solid #aaa;}
 div.rdr div.rdr_sntPnl .rdr_submitTag  			{width:100%; text-align:right;}
@@ -337,7 +337,7 @@ div.rdr input[type="text"]	{font-size:14px; color:#666; -moz-box-shadow:inset 0p
 div.rdr button				{font-size:14px; }
 
 /* summary widget */
-#rdr-summary 					{box-shadow:0 0 6px 0 #aaa; background:#f7f7f7; padding-bottom:2px; margin-bottom:10px; overflow:auto;clear:both;}
+#rdr-summary 					{-moz-box-shadow:0 0 6px 0 #aaa; -webkit-box-shadow:0 0 6px 0 #aaa; box-shadow:0 0 6px 0 #aaa; background:#f7f7f7; padding-bottom:2px; margin-bottom:10px; overflow:auto;clear:both;}
 #rdr-summary div.rdr-sum-headline   {background:url(/static/images/readr_icons.png) -162px 5px no-repeat; padding:7px 5px 5px 38px; float:left; color:#787878;}
 #rdr-summary div.rdr-top-tags   {padding:8px 5px 0px 8px;float:left;}
 #rdr-summary div.rdr-top-tags span  {white-space:nowrap; font-weight:bold; color:#666;}
