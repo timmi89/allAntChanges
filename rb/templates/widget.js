@@ -1430,6 +1430,9 @@ log('--showLoginPanel---');
                     },
                     send: function(args){
 
+                        log('args')
+                        log(args)
+                        
                         var sendData = args.sendData;
                         var tag_li = args.tag;
 
@@ -2300,7 +2303,7 @@ log('--showLoginPanel---');
                         $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+node.counts.tags+')</span> '+tag.body+'</a>' );
 
                         $header.find('span.rdr_tag_count').click( function() {
-                            RDR.actions.rateSendLite({ element:$(this), tag:tag, rindow:rindow, content:node.body, which:which });
+                            RDR.actions.interactions.rate.send({ element:$(this), tag:tag, rindow:rindow, content:node.body, which:which });
                         });
 
                         $header.find('a.rdr_tag').data( 'tag', tag );
@@ -2372,7 +2375,7 @@ log('---- rindow.data --------');
                                         // ({  })
                                     });
                                     var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
-                                        RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
+                                        RDR.actions.interactions.rate.send({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
                                     });
 
                                     $this_tag.append($tagShareButton, $tagCountButton, thisTag.body);
@@ -2888,75 +2891,6 @@ log('---- rindow.data --------');
             },
             rateSend: function(args) {
                 //nothing to see here - this has been moved to RDR.actions.interactions.rate.send
-            },
-            // I KNOW!  THIS IS TERRIBLE CODE DUPLICATION.  I DIDN'T WANT TO ABSTRACT THIS FUNCTION AND THE LAST ONE INTO ONE HANDLER. TOO IN-A-HURRY.
-            rateSendLite: function(args) {
-
-                RDR.session.getUser( args, function( params ) {
-                    // get the text that was highlighted
-                    var content = $.trim( params.content );
-
-                    var container = $.trim( params.which );
-
-                    var rindow = params.rindow,
-                        element = params.element,
-                        tag = params.tag;
-
-                    var sendData = {
-                        "tag" : tag,
-                        "hash": container,
-                        "content" : content,
-                        "content_type" : "text",
-                        "user_id" : RDR.user.user_id,
-                        "readr_token" : RDR.user.readr_token,
-                        "group_id" : RDR.groupPermData.group_id,
-                        "page_id" : RDR.page.id
-                    };
-
-                    if ( !element.hasClass('rdr_tagged') ) {
-                        // send the data!
-                        $.ajax({
-                            url: "/api/tag/create/",
-                            type: "get",
-                            contentType: "application/json",
-                            dataType: "jsonp",
-                            data: { json: JSON.stringify(sendData) },
-                            success: function(response) {
-                                //[eric] - if we want these params still we need to get them from args:
-                                //do we really want to chain pass these through?  Or keep them in a shared scope?
-                                if ( response.status == "fail" ) {
-                                    log('failllllllllll');
-                                    if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                        log('uh oh better login, tempy 2');
-                                        RDR.session.showLoginPanel( args );
-                                    } else {
-                                        // if it failed, see if we can fix it, and if so, try this function one more time
-                                        RDR.session.handleGetUserFail( response, function() {
-                                            if ( !args.secondAttempt ) {
-                                                args.secondAttempt = true;
-                                                RDR.actions.interactions.rate.start( args );
-                                            }
-                                        });
-                                    }
-                                } else {
-                                    if ( element.length == 1 ) {
-                                        RDR.actions.updateData( { kind:"tag", element:element, hash:container, rindow:rindow, content:content, tag:tag });
-
-                                        if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
-                                        else RDR.session.showLoginPanel( args );
-                                    }
-                                }
-                            },
-                            error: function(response) {
-                                //for now, ignore error and carry on with mockup
-                                console.warn('ajax error');
-                                log(response);
-                            }
-                        });
-                    } else {
-                        // show user something to indicate they can't revote?  or to allow them to unvote?
-                    }
-                });
             },
             bookmarkSend: function(args) {
                 // optional loader.
