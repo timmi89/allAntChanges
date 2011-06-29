@@ -575,7 +575,7 @@ function readrBoard($R){
                     //todo: finish making these changes here:, but i didnt' want to do it before the DC demo.
                     var msg1, msg2;
                     if( whichAlert == "educateUser"){
-                        msg1 = '<h1>Rate or discuss <span>anything</span> on this page!</h1>';
+                        msg1 = '<h1>&nbsp;Rate &amp; discuss <span>anything</span> on this page!</h1>';
                         msg2 = 'Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.';
                     }
                     if( whichAlert == "fromShareLink"){
@@ -2252,14 +2252,15 @@ log('---- rindow.data --------');
                 });
                 */
 
-
+log('node.top_interactions');
+dir(node.top_interactions);
                 var comments = node.top_interactions.coms;
                 var hasComments = !$.isEmptyObject(comments);
 
                 if (hasComments) {
 
 
-                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments <span>('+comments.length+')</span>');
+                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments <span>('+1+')</span>');
 
                     // ok, get the content associated with this tag!
                     for ( var i in comments ) {
