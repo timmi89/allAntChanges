@@ -1356,7 +1356,7 @@ log('--showLoginPanel---');
                     //fade in indicators
                     //temp hacl!
                     if(boolDontFade){
-                        $('.rdr_indicator_icator').css({
+                        $('.rdr_indicator').css({
                             'opacity':'0.4',
                             'display':'inline'
                         });
@@ -1529,7 +1529,7 @@ log('--showLoginPanel---');
                         summary.indicator = $indicator;
                         $indicator.data({ 'which':hash, 'imageData':imageData, 'summary':summary })//chain
                         .click( function() {
-                            RDR.actions.viewContainerReactions( {icon:$indicator, kind:"image"} );
+                            RDR.actions.viewContainerReactions( {icon:$indicator, kind:"image", summary:summary, hash:hash} );
                             return false;
                         })//chain
                         .hover(
@@ -1583,6 +1583,8 @@ log('--showLoginPanel---');
                             //todo: what does this do?
                             //$( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).addClass( 'rdr_highlightContainer' );
                             
+                            RDR.actions.summaries.init( hash )
+
                             //todo: maybe make more efficient
                             $indicator_details.find('.rdr_statsClone').html( $indicator.html() );
                             $indicator_details.css({
@@ -1644,7 +1646,7 @@ log('--showLoginPanel---');
                     $indicator_details.css({ 'visiblity':'visible' }).hide();
 
                     $indicator_details.click( function() {
-                        RDR.actions.viewContainerReactions( {icon:$indicator, kind:"text"} );
+                        RDR.actions.viewContainerReactions( {icon:$indicator, kind:"text", summary:summary, hash:hash} );
                     })//chain
                     .hover(
                         function() {
@@ -1736,114 +1738,119 @@ log('--showLoginPanel---');
                         */
                     }
                 },
-                init: function(){
-                    
+                init: function(hash){
+                    //expects a summary object from RDR.summaries
+                    var summary = RDR.summaries[hash];  
+                    log(summary);
+
+                    //don't init twice.
+                    if( summary.initiated ) return;
+
+                    //todo: I think this sorting needs be put back in
+                    function SortByTagCount(a,b) { return b.count - a.count; }
+
+
+                    var sendData = {
+                        "page_id" : RDR.page.id,
+                        "container_id":summary.id,
+                        "top_tags":summary.top_interactions.tags
+                    }
+
+                    $.ajax({
+                        url: "/api/summary/container/content/",
+                        type: "get",
+                        contentType: "application/json",
+                        dataType: "jsonp",
+                        data: { json: JSON.stringify(sendData) },
+                        success: function(response) {
+
+                            var content_nodes = response.data;
+                            log('/api/summary/container/content/')
+                            //log(content_nodes)
+                            //todo: make this generic interactions instead of just tags
+                            //summary.interactions.tags = 
+                            
+                            //todo: think about this more later:
+                            //make selStates for these nodes and give the nodes a reference to them
+                            $.each(content_nodes, function(key, node){
+                                var $container = $('.rdr-'+hash);
+                                try{
+                                    node.selState = $container.selog('save', { 'serialRange': node.location });
+                                }
+                                catch(err){
+                                    console.warn('rangy error');
+                                    log(err);
+                                    node.selState = undefined;
+                                }
+
+                            });
+
+                            //throw this tag summary into the container summary
+                            summary.content_nodes = content_nodes;
+
+                            //todo: put this someplace better:
+                            //this doesn't need to be re-calculated every time
+
+                            //todo: combine with other li hover function
+                            //figure out which nodes belong to each tag.
+                            //this is uuuuuuuuuuuuuuuuuuuuugly
+                            //(ugly because I'm redundantly recalulating the same thing twice every time the read mode is activated,
+                            //when really it just needs to be calulated once on load and then updated when a new interaction is made)
+                            
+                            var $indicatorDetails = $('#rdr_indicator_details_'+hash);
+                            var nodes = content_nodes;
+
+                            $indicatorDetails.find('span.rdr_tags_list_tag').each(function(){
+                                var tag_id = $(this).data('id'),
+                                $span = $(this);
+                                $span.data('selStates',[]);  
+
+                                $.each(nodes, function(id, node){
+                                    var nodeTags = node.top_interactions.tags;
+                                    var thisTag = nodeTags[ tag_id ];
+                                    if(typeof thisTag === "undefined") return;
+                                    //else                            
+                                    $span.data('selStates').push(node.selState);  
+                                });
+                                
+                                $span.hover( 
+                                    function() {
+                                        var selStates = $(this).data('selStates');
+                                        $.each( selStates, function(idx, selState){
+                                            $().selog('hilite', selState, 'on');
+                                        });
+                                    },
+                                    function() {
+                                        var selStates = $(this).data('selStates');
+                                        $.each( selStates, function(idx, selState){
+                                            $().selog('hilite', selState, 'off');
+                                        });
+                                    }
+                                );
+
+                            });
+
+                        }
+                    });
+
+                    summary.initated = true;
                 }
             },
             insertContainerIcon: function( hash ) {},
             viewContainerReactions: function( args ) {
+
+                //todo: instead of passing args, let's try to use the same summary convention here to unify functions
                 log('viewContainerReactions')
-                var icon = args.icon,
-                    which = args.icon.data('which'),
-                    kind = args.kind,
-                    tempLock = args.tempLock;
-                
-                var summary = RDR.summaries[which];
-                function SortByTagCount(a,b) { return b.count - a.count; }
+                log('args')
+                log(args)
+                var summary = args.summary,
+                hash = args.hash,
+                kind = args.kind;
 
+                var selector = ".rdr-" + hash;
 
-                var sendData = {
-                    "page_id" : RDR.page.id,
-                    "container_id":summary.id,
-                    "top_tags":summary.top_interactions.tags
-                }
-
-                $.ajax({
-                    url: "/api/summary/container/content/",
-                    type: "get",
-                    contentType: "application/json",
-                    dataType: "jsonp",
-                    data: { json: JSON.stringify(sendData) },
-                    success: function(response) {
-
-                        var content_nodes = response.data;
-                        log('/api/summary/container/content/')
-                        //log(content_nodes)
-                        //todo: make this generic interactions instead of just tags
-                        //summary.interactions.tags = 
-                        
-                        //todo: think about this more later:
-                        //make selStates for these nodes and give the nodes a reference to them
-                        $.each(content_nodes, function(key, node){
-                            var $container = $('.rdr-'+which);
-                            try{
-                                node.selState = $container.selog('save', { 'serialRange': node.location });
-                            }
-                            catch(err){
-                                log('rangy error');
-                                log(err);
-                                node.selState = undefined;
-                            }
-
-                        });
-
-                        //throw this tag summary into the container summary
-                        summary.content_nodes = content_nodes;
-
-                        //todo: put this someplace better:
-                        //this doesn't need to be re-calculated every time
-
-                        //todo: combine with other li hover function
-                        //figure out which nodes belong to each tag.
-                        //this is uuuuuuuuuuuuuuuuuuuuugly
-                        //(ugly because I'm redundantly recalulating the same thing twice every time the read mode is activated,
-                        //when really it just needs to be calulated once on load and then updated when a new interaction is made)
-                        
-                        var $indicatorDetails = $('#rdr_indicator_details_'+which);
-                        var nodes = content_nodes;
-
-                        $indicatorDetails.find('span.rdr_tags_list_tag').each(function(){
-                            var tag_id = $(this).data('id'),
-                            $span = $(this);
-                            $span.data('selStates',[]);  
-
-                            $.each(nodes, function(id, node){
-                                var nodeTags = node.top_interactions.tags;
-                                thisTag = nodeTags[ tag_id ];
-                                if(typeof thisTag === "undefined") return;
-                                //else                            
-                                $span.data('selStates').push(node.selState);  
-                            });
-                            
-                            $span.hover( 
-                                function() {
-                                    var selStates = $(this).data('selStates');
-                                    $.each( selStates, function(idx, selState){
-                                        $().selog('hilite', selState, 'on');
-                                    });
-                                },
-                                function() {
-                                    var selStates = $(this).data('selStates');
-                                    $.each( selStates, function(idx, selState){
-                                        $().selog('hilite', selState, 'off');
-                                    });
-                                }
-                            );
-
-                        });
-
-                    },
-                    error: function(response) {
-                        //for now, ignore error and carry on with mockup
-                        console.warn('ajax error');
-                        log(response);
-                    }
-                });
-
-
-
-                var selector = ".rdr-" + which;
-
+                //ec: pretty sure we don't need this anymore
+                /*
                 if (args.kind == "text") {
                     var info = icon.data('info');
 
@@ -1851,6 +1858,8 @@ log('--showLoginPanel---');
                     //todo: this is a temp fix - consolodate.
                     var info = icon.data('imageData');
                 }
+                */
+
 
                 var iconOffsets = args.icon.offset();
 
@@ -1904,7 +1913,7 @@ log('--showLoginPanel---');
                             body:tag.body,
                             count:tag.count
                         },
-                        'which':which
+                        'which':hash
                     }),
                     $leftBox = '<div class="rdr_leftBox">'+percentage+'%</div>',
                     $tagText = '<div class="rdr_tagText">'+tag.body+'</div>',
@@ -1960,52 +1969,27 @@ log('--showLoginPanel---');
                     });
 
 /*
-                    rindow.find('ul.rdr_preselected li').hover( 
-                        function() {
-                            var h = 0;
-                            for ( var i in summary.content_nodes ) {
-                                var tag_id = $(this).data('tag').id;
-                                if ( summary.content_nodes[i].top_interactions.tags[ tag_id ] ) {
-                                    // log(' hilite this: '+ summary.content_nodes[i].location );
-                                    // RDR.summaries[ which ].top_interactions.tags
-                                    var newSel = $('.rdr-'+which).selog('save', { 'serialRange': summary.content_nodes[i].location });
-                                    log('-------- LI newSel ---------');
-                                    dir(newSel);
-                                    if ( h==0) {
-                                        $(container).selog('hilite', newSel, 'on');
-                                        h=1;
-                                    }
-                                }
-                            }
-                        },
-                        function() {
-                            // $(container).selog('hilite', newSel, 'off');
-                        });
-*/
-//porter's above
-//big todo:
-//eric's below
-                    
-  /*
                     //todo: helper function - move somewhere else:
                     function(){
-                        
+                                            
                     }
 */  
-
 
                     rindow.find('ul.rdr_preselected li').each(function(){
                         var $this = $(this);
                         $this.data('selStates',[]);
 
-                        
+                        log($this)                        
+                        log($this.data() )
                         var tag_id = $this.data('tag').id;
+                        log(tag_id)
+                        log('tag_id')
                         
-                        var nodes = summary.content_nodes;
+                        var nodes = summary.content_nodes || [];
 
                         $.each(nodes, function(id, node){
                             var nodeTags = node.top_interactions.tags;
-                            thisTag = nodeTags[ tag_id ];
+                            var thisTag = nodeTags[ tag_id ];
                             if(typeof thisTag === "undefined") return;
                             //else                            
                             $this.data('selStates').push(node.selState);  
@@ -2016,14 +2000,12 @@ log('--showLoginPanel---');
                     .hover( 
                         function() {
                             var selStates = $(this).data('selStates');
-                            log(selStates);
                             $.each( selStates, function(idx, selState){
                                 $().selog('hilite', selState, 'on');
                             });
                         },
                         function() {
                             var selStates = $(this).data('selStates');
-                            log(selStates);
                             $.each( selStates, function(idx, selState){
                                 $().selog('hilite', selState, 'off');
                             });
