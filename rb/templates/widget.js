@@ -702,8 +702,32 @@ dir(data);
             },
 			iframeHost : "http://readr.local:8080", // TODO put this in a template var
             getUser: function(args, callback) {
+
+                //expand args to make it clear what's going on.
+                var $rindow = args.rindow,
+                $tagLi = args.tag,
+                settings = args.settings;
+
+                //settings: (ex.)
+                /*                
+                    container
+                        "8930c16c3df989a79fd0c163fc14aeb2"       
+                    content
+                        "Start Small, Go Big Contest, your chance to launch your bazillion dollar idea"
+                    content_type
+                        "text"
+                    coords
+                        Object { left=540.0833129882812, top=815.6000061035156}
+                    left
+                        444
+                    top
+                */
+
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
                     // we have a user id and token, be it temp or logged in user, so just run the callback
+                    //todo: ec: make sure it doesn't matter for this that RDR.user.whatever can be spoofed.
+                    //Does the callback give access that a fake user shouldn't have?  Call should always pass a token to be validated serverside, yeah? 
+
                     if ( callback && args ) callback(args);
                     else if ( callback ) callback();
                 } else {
@@ -2657,6 +2681,28 @@ log('---- rindow.data --------');
                 }
             },
             rateSend: function(args) {
+
+                //expand args to make it clear what's going on.
+                var $rindow = args.rindow,
+                $tagLi = args.tag,
+                settings = args.settings;
+
+                //settings: (ex.)
+                /*                
+                    container
+                        "8930c16c3df989a79fd0c163fc14aeb2"       
+                    content
+                        "Start Small, Go Big Contest, your chance to launch your bazillion dollar idea"
+                    content_type
+                        "text"
+                    coords
+                        Object { left=540.0833129882812, top=815.6000061035156}
+                    left
+                        444
+                    top
+                */
+
+
                 // optional loader.
                 args.tag.find('div.rdr_leftBox').html('<img src="'+RDR_rootPath+'/static/images/loader.gif" style="margin:6px 0 0 5px" />');
         
