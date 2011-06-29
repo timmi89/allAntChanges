@@ -455,48 +455,6 @@ function readrBoard($R){
                         '<div class="rdr rdr_tooltip-arrow" />'+
                         '</div>'
                 );
-
-                //not used. offsets are now relative to actionbar.
-                //Is there any other code here we want to integrate to make a more general tooltip function?
-                /* 
-				// expects a settings object with:
-				// settings.message (HTML)
-				// settings.obj (to position tooltip next to.  should be a jQ obj).  if absent, position with the mouse.
-				// settings.offset_x, settings.offset_y (optional): how many pixels to shit the tooltip from the passed-in object
-
-                var $this = $('div.rdr.rdr_tooltip');
-                if ( $this.length !== 0 ) {
-                    //alreday exists return it/
-                    return $this;
-                }
-                //(else)
-
-				var $new_tooltip = $('<div class="rdr rdr_tooltip" class="rdr_tooltip_' + settings.name + '">' +
-					'<div class="rdr rdr_tooltip-content"> ' + settings.message + '</div>'+
-					'<div class="rdr rdr_tooltip-arrow-border"></div>'+
-					'<div class="rdr rdr_tooltip-arrow"></div>'+
-				'</div>');
-
-				if (settings.obj) {
-					var coords = settings.obj.offset();
-					var offset_x = (settings.offset_x) ? settings.offset_x:0;
-					var offset_y = (settings.offset_y) ? settings.offset_y:0;
-					var x = coords.left + parseInt( offset_x );
-					var y = coords.top + parseInt( offset_y );
-				} else {
-					// mouse, if we want it.
-				}
-
-				if ( x && y ) {
-					// show the tooltip
-					$('body').append( $new_tooltip );
-
-					// now that it's in the page, position it (in part based on its calculated height);
-					$new_tooltip.css('left', x + 'px');
-					$new_tooltip.css('top', (y - $new_tooltip.height()) + 'px');
-				}
-				return $new_tooltip;
-                */
             }
 		},
 		util: {
@@ -703,26 +661,6 @@ dir(data);
 			iframeHost : "http://readr.local:8080", // TODO put this in a template var
             getUser: function(args, callback) {
 
-                //expand args to make it clear what's going on.
-                var $rindow = args.rindow,
-                $tagLi = args.tag,
-                settings = args.settings;
-
-                //settings: (ex.)
-                /*                
-                    container
-                        "8930c16c3df989a79fd0c163fc14aeb2"       
-                    content
-                        "Start Small, Go Big Contest, your chance to launch your bazillion dollar idea"
-                    content_type
-                        "text"
-                    coords
-                        Object { left=540.0833129882812, top=815.6000061035156}
-                    left
-                        444
-                    top
-                */
-
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
                     // we have a user id and token, be it temp or logged in user, so just run the callback
                     //todo: ec: make sure it doesn't matter for this that RDR.user.whatever can be spoofed.
@@ -731,6 +669,7 @@ dir(data);
                     if ( callback && args ) callback(args);
                     else if ( callback ) callback();
                 } else {
+
                     // define a new message receiver with this set of args and callback function
                     if ( callback && args ) RDR.session.receiveMessage( args, callback );
                     else if ( callback ) RDR.session.receiveMessage( false, callback );
@@ -1357,7 +1296,7 @@ log('--showLoginPanel---');
             content_node: {
                 make: function(settings){
                     //makes a new one or returns existing one
-                    //expects settings with container, body, and range.
+                    //expects settings with container, body, and location.
 
                     var content_node_key = settings.container+"-"+settings.location;
                     log(content_node_key);
@@ -1374,6 +1313,274 @@ log('--showLoginPanel---');
                     // log(content_node);
                     return content_node;
                 }
+            },
+            interactions: {
+                rate: {
+                    start: function(args){
+                        var scope = this;
+                        //This function requires the following args
+                        /*
+                        "tag" : tag,
+                        "hash": content_node_data.container,
+                        "content" : content_node_data,
+                        "src_with_path" : src_with_path, //not used yet.. do we need it?
+                        "content_type" : content_type,
+                        "user_id" : RDR.user.user_id,
+                        "readr_token" : RDR.user.readr_token,
+                        "group_id" : RDR.groupPermData.group_id,
+                        "page_id" : RDR.page.id
+                        */
+
+                        //expand args to make it clear what's going on.
+                        var $rindow = args.rindow,
+                        $tagLi = args.tag,
+                        settings = args.settings;
+
+                        //settings: (ex.)
+                        /*                
+                            container
+                                "8930c16c3df989a79fd0c163fc14aeb2"       
+                            content
+                                "Start Small, Go Big Contest, your chance to launch your bazillion dollar idea"
+                            content_type
+                                "text"
+                            coords
+                                Object { left=540.0833129882812, top=815.6000061035156}
+                            left
+                                444
+                            top
+                        */
+
+
+                        // optional loader.
+                        args.tag.find('div.rdr_leftBox').html('<img src="'+RDR_rootPath+'/static/images/loader.gif" style="margin:6px 0 0 5px" />');
+                
+                        //example:
+                        //tag:{body, id}, rindow:rindow, settings:settings, callback: 
+                        
+                        // tag can be an ID or a string.  if a string, we need to sanitize.
+                        
+                        // tag, rindow, settings, callback
+
+                        
+                        RDR.session.getUser( args, function(params){
+
+                            var sendData = RDR.actions.interactions.rate.prepareSendData(params);
+                            params.sendData = sendData;
+                            RDR.actions.interactions.rate.send(params);
+                            //getUser adds the user to the args object through receiveMessage,
+                            //and then calls this callback function using the args object aliased here as args 
+                            
+                        })
+
+
+                    },
+                    prepareSendData: function(args){
+                        
+                        log('args');
+                        log(args)
+
+                        var content_type = args.settings.content_type;
+                        
+                        var rindow = args.rindow,
+                            tag_li = args.tag,
+                            tag = args.tag.data('tag');
+
+                        var content_node_data = {};
+
+                        if(content_type == 'image'){
+                            var container = $.trim( args.settings.container ),
+                                content = $.trim( args.settings.content ),
+                                src_with_path = $.trim( args.settings.src_with_path );
+                            
+                            content_node_data = {
+                                'container': container,
+                                'body': src_with_path
+                                // 'body': content
+                            };
+
+                        }else{
+                            //is text
+
+
+                            //save content node
+                            var selState = rindow.data('selState') || null;
+                            
+                            content_node_data = {
+                                'container': rindow.data('container'),
+                                'body': selState.text,
+                                'location': selState.serialRange
+                            };
+                            
+                        }
+                        
+     
+                        var sendData = {
+                            "tag" : tag,
+                            "hash": content_node_data.container,
+                            "content" : content_node_data,
+                            "src_with_path" : src_with_path, //not used yet.. do we need it?
+                            "content_type" : content_type,
+                            "user_id" : RDR.user.user_id,
+                            "readr_token" : RDR.user.readr_token,
+                            "group_id" : RDR.groupPermData.group_id,
+                            "page_id" : RDR.page.id
+                        };
+                        return sendData;
+                    },
+                    send: function(args){
+
+                        var sendData = args.sendData;
+                        var tag_li = args.tag;
+
+                        if ( !tag_li.hasClass('rdr_tagged') ) {
+                            // send the data!
+                            $.ajax({
+                                url: "/api/tag/create/",
+                                type: "get",
+                                contentType: "application/json",
+                                dataType: "jsonp",
+                                data: { json: JSON.stringify(sendData) },
+                                success: function(response) {
+                                    args.response = response;
+                                    tag_li.find('div.rdr_leftBox').html('');
+                                    //[eric] - if we want these args still we need to get them from args:
+                                    //do we really want to chain pass these through?  Or keep them in a shared scope?
+
+                                    if ( response.status == "success" ) {
+                                        RDR.actions.interactions.rate.successCallback(args);
+                                    }else{
+                                        RDR.actions.interactions.rate.failCallback(args);
+                                    }
+                                }
+                            });
+                        } else {
+                            tag_li.find('div.rdr_leftBox').html('');
+                            RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:tag_li.data('interaction_id'), content_node_info:content_node_data, content_type:content_type, selState:selState });
+                        }  
+
+                    },
+                    successCallback: function(args){
+
+                        var response = args.response;
+                        var content_type = args.settings.content_type;
+                        var sendData = args.sendData;
+                        var rindow = args.rindow,
+                            tag_li = args.tag,
+                            tag = args.tag.data('tag');
+
+                        var content_node_data = {};
+
+                        if(content_type == 'image'){
+                            var container = $.trim( args.settings.container ),
+                                content = $.trim( args.settings.content ),
+                                src_with_path = $.trim( args.settings.src_with_path );
+                            
+                            content_node_data = {
+                                'container': container,
+                                'body': src_with_path
+                                // 'body': content
+                            };
+
+                        }else{
+                            //is text
+
+
+                            //save content node
+                            var selState = rindow.data('selState') || null;
+                            
+                            content_node_data = {
+                                'container': rindow.data('container'),
+                                'body': selState.text,
+                                'location': selState.serialRange
+                            };
+                            
+                        }
+                        
+
+
+                        log('successssssssssssss');
+                        var $this = args.tag;
+                        $this.addClass('rdr_selected');
+                        $this.siblings().removeClass('rdr_selected');
+                        $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+                        // log('content_node_data');
+                        // log(content_node_data);
+                        var content_node = RDR.actions.content_node.make(content_node_data);
+
+
+
+                        //update indicators
+                        var hash = sendData.hash;
+                        var tagHelper = {
+                            id: response.data.interaction.interaction_node.id,
+                            body: response.data.interaction.interaction_node.body,
+                            count: 1
+                        };
+                        var int_id = response.data.interaction.id;
+
+                        var diff = {   
+                            tags: {}
+                        };
+                        diff.tags[ tagHelper['id'] ] = tagHelper; //yeah?, didja get that one?  //todo: make pretty.
+
+                        RDR.actions.indicators.update(hash, diff);
+                        //end update indicators
+
+
+
+                        if ( tag_li.length == 1 ) {
+                            tag_li.find('div.rdr_leftBox').unbind();
+                            tag_li.find('div.rdr_leftBox').click( function(e) {
+                                e.preventDefault();
+                                args.int_id = int_id; // add the interaction_id info in, we need it for unrateSend
+                                RDR.actions.unrateSend(args);
+                                return false; // prevent the tag call applied to the parent <li> from firing
+                            });
+
+                            tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+response.data.id);
+                            tag_li.data('interaction_id', response.data.id);
+
+                            // if it was a custom tag, do a few things
+                            if ( tag_li.hasClass('rdr_customTagBox') ) {
+                                tag_li.removeClass('rdr_customTagBox');
+                                tag_li.siblings().removeClass('rdr_selected');
+                                tag_li.addClass('rdr_selected');
+                                tag_li.find('input').remove();
+                                tag_li.find('div.rdr_help').remove();
+                                tag_li.append( '<div class="rdr_tagText">'+tag.body+'</div>' );
+                                RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:args.settings, actionType:'react'});
+                            }
+                        }
+
+                        // log('-----tag------');
+                        // dir(tag);
+                        if ( isNaN( tag.id ) ) tag.id = response.data.tag_id;
+
+                        RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_info:content_node_data, content_type:content_type, selState:selState });
+                        if ( response.data.num_interactions ) {
+                            if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
+                            else RDR.session.showLoginPanel( args );
+                        }
+                    },
+                    failCallback: function(args){
+                        var response = args.response;
+                        log('failllllllllll');
+                        if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
+                            log('uh oh better login, tempy 1');
+                            RDR.session.showLoginPanel( args );
+                        } else {
+                            // if it failed, see if we can fix it, and if so, try this function one more time
+                            RDR.session.handleGetUserFail( response, function() {
+                                if ( !args.secondAttempt ) {
+                                    args.secondAttempt = true;
+                                    RDR.actions.interactions.rate.start( args );
+                                }
+                            });
+                        }
+                    }
+                }
+                //end RDR.actions.interactions.rate
             },
             indicators: {
                 show: function(boolDontFade){
@@ -1753,7 +1960,7 @@ log('--showLoginPanel---');
                         });
                         
                         var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
-                            RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });
+                            RDR.actions.interactions.rate.start({ tag:$this, rindow:rindow, settings:settings });
                             RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
                         });
 
@@ -2514,7 +2721,7 @@ log('---- rindow.data --------');
                             // $whyPanel.find('.rdr_body').html('');
 
                             if (actionType == "react") {
-                                RDR.actions.rateSend({ tag:$this, rindow:rindow, settings:settings });//end rateSend
+                                RDR.actions.interactions.rate.start({ tag:$this, rindow:rindow, settings:settings });
                             } else {
                                 RDR.actions.bookmarkStart({ tag:$this, rindow:rindow, settings:settings, actionType:"bookmark" });
                             }
@@ -2628,7 +2835,6 @@ log('---- rindow.data --------');
             sentimentPanel: {
                 addCustomTagBox: function(args) {
                     log('addCustomTagBox args: ');
-                    dir(args);
                     var rindow = args.rindow,
                         settings = args.settings,
                         $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
@@ -2650,7 +2856,7 @@ log('---- rindow.data --------');
                                 body:tag.find('input.freeformTagInput').val()
                             }});
                             if ( args.actionType == "react") {
-                                RDR.actions.rateSend({ tag:tag, rindow:rindow, settings:settings, callback: function() {
+                                RDR.actions.interactions.rate.start({ tag:tag, rindow:rindow, settings:settings, callback: function() {
                                         // todo: at this point, cast the tag, THEN call this in the tag success function:
                                         RDR.actions.panel.expand("whyPanel", rindow);
                                     }//end function
@@ -2681,194 +2887,7 @@ log('---- rindow.data --------');
                 }
             },
             rateSend: function(args) {
-
-                //expand args to make it clear what's going on.
-                var $rindow = args.rindow,
-                $tagLi = args.tag,
-                settings = args.settings;
-
-                //settings: (ex.)
-                /*                
-                    container
-                        "8930c16c3df989a79fd0c163fc14aeb2"       
-                    content
-                        "Start Small, Go Big Contest, your chance to launch your bazillion dollar idea"
-                    content_type
-                        "text"
-                    coords
-                        Object { left=540.0833129882812, top=815.6000061035156}
-                    left
-                        444
-                    top
-                */
-
-
-                // optional loader.
-                args.tag.find('div.rdr_leftBox').html('<img src="'+RDR_rootPath+'/static/images/loader.gif" style="margin:6px 0 0 5px" />');
-        
-                //example:
-                //tag:{body, id}, rindow:rindow, settings:settings, callback: 
-                
-                // tag can be an ID or a string.  if a string, we need to sanitize.
-                
-                // tag, rindow, settings, callback
-
-                // TODO the args & params thing here is confusing
-                RDR.session.getUser( args, function( params ) {
-                    // get the text that was highlighted
-                    // log('params')
-                    // log(params)
-
-                    var content_type = params.settings.content_type;
-                    
-                    var rindow = params.rindow,
-                        tag_li = params.tag,
-                        tag = params.tag.data('tag');
-
-                    var content_node_data = {};
-
-                    if(content_type == 'image'){
-                        var container = $.trim( params.settings.container ),
-                            content = $.trim( params.settings.content ),
-                            src_with_path = $.trim( params.settings.src_with_path );
-                        
-                        content_node_data = {
-                            'container': container,
-                            'body': src_with_path
-                            // 'body': content
-                        };
-
-                    }else{
-                        //is text
-
-
-                        //save content node
-                        var selState = rindow.data('selState') || null;
-                        
-                        content_node_data = {
-                            'container': rindow.data('container'),
-                            'body': selState.text,
-                            'location': selState.serialRange
-                        };
-                        
-                    }
-                    
- 
-                    var sendData = {
-                        "tag" : tag,
-                        "hash": content_node_data.container,
-                        "content" : content_node_data,
-                        "src_with_path" : src_with_path, //not used yet.. do we need it?
-                        "content_type" : content_type,
-                        "user_id" : RDR.user.user_id,
-                        "readr_token" : RDR.user.readr_token,
-                        "group_id" : RDR.groupPermData.group_id,
-                        "page_id" : RDR.page.id
-                    };
-
-
-                    if ( !tag_li.hasClass('rdr_tagged') ) {
-                        // send the data!
-                        $.ajax({
-                            url: "/api/tag/create/",
-                            type: "get",
-                            contentType: "application/json",
-                            dataType: "jsonp",
-                            data: { json: JSON.stringify(sendData) },
-                            success: function(response) {
-                                tag_li.find('div.rdr_leftBox').html('');
-                                //[eric] - if we want these params still we need to get them from args:
-                                //do we really want to chain pass these through?  Or keep them in a shared scope?
-
-                                if ( response.status == "fail" ) {
-                                    log('failllllllllll');
-                                    if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                        log('uh oh better login, tempy 1');
-                                        RDR.session.showLoginPanel( args );
-                                    } else {
-                                        // if it failed, see if we can fix it, and if so, try this function one more time
-                                        RDR.session.handleGetUserFail( response, function() {
-                                            if ( !args.secondAttempt ) {
-                                                args.secondAttempt = true;
-                                                RDR.actions.rateSend( args );
-                                            }
-                                        });
-                                    }
-                                } else {
-                                    log('successssssssssssss');
-                                    var $this = params.tag;
-                                    $this.addClass('rdr_selected');
-                                    $this.siblings().removeClass('rdr_selected');
-                                    $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-                                    // log('content_node_data');
-                                    // log(content_node_data);
-                                    var content_node = RDR.actions.content_node.make(content_node_data);
-
-                                    //update indicators
-                                    var hash = sendData.hash;
-                                    var tagHelper = {
-                                        id: response.data.interaction.interaction_node.id,
-                                        body: response.data.interaction.interaction_node.body,
-                                        count: 1
-                                    };
-                                    var int_id = response.data.interaction.id;
-
-                                    var diff = {   
-                                        tags: {}
-                                    };
-                                    diff.tags[ tagHelper['id'] ] = tagHelper; //yeah?, didja get that one?  //todo: make pretty.
-
-                                    // log('hash')
-                                    // log(hash)
-                                    // log('diff')
-                                    // log(diff)
-                                    RDR.actions.indicators.update(hash, diff);
-                                    //end update indicators
-                                    // log('here here')
-
-                                    if ( tag_li.length == 1 ) {
-                                        tag_li.find('div.rdr_leftBox').unbind();
-                                        tag_li.find('div.rdr_leftBox').click( function(e) {
-                                            e.preventDefault();
-                                            args.int_id = int_id; // add the interaction_id info in, we need it for unrateSend
-                                            RDR.actions.unrateSend(args);
-                                            return false; // prevent the tag call applied to the parent <li> from firing
-                                        });
-                                        tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+response.data.id);
-                                        tag_li.data('interaction_id', response.data.id);
-
-                                        // if it was a custom tag, do a few things
-                                        if ( tag_li.hasClass('rdr_customTagBox') ) {
-                                            tag_li.removeClass('rdr_customTagBox');
-                                            tag_li.siblings().removeClass('rdr_selected');
-                                            tag_li.addClass('rdr_selected');
-                                            tag_li.find('input').remove();
-                                            tag_li.find('div.rdr_help').remove();
-                                            tag_li.append( '<div class="rdr_tagText">'+tag.body+'</div>' );
-                                            RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:params.settings, actionType:'react'});
-                                        }
-                                    }
-                                    // log('-----tag------');
-                                    // dir(tag);
-                                    if ( isNaN( tag.id ) ) tag.id = response.data.tag_id;
-                                    RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_info:content_node_data, content_type:content_type, selState:selState });
-                                    if ( response.data.num_interactions ) {
-                                        if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
-                                        else RDR.session.showLoginPanel( args );
-                                    }
-                                }
-                            },
-                            error: function(response) {
-                                //for now, ignore error and carry on with mockup
-                                console.warn('ajax error');
-                                log(response);
-                            }
-                        });
-                    } else {
-                        tag_li.find('div.rdr_leftBox').html('');
-                        RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:tag_li.data('interaction_id'), content_node_info:content_node_data, content_type:content_type, selState:selState });
-                    }
-                });
+                //nothing to see here - this has been moved to RDR.actions.interactions.rate.send
             },
             // I KNOW!  THIS IS TERRIBLE CODE DUPLICATION.  I DIDN'T WANT TO ABSTRACT THIS FUNCTION AND THE LAST ONE INTO ONE HANDLER. TOO IN-A-HURRY.
             rateSendLite: function(args) {
@@ -2915,7 +2934,7 @@ log('---- rindow.data --------');
                                         RDR.session.handleGetUserFail( response, function() {
                                             if ( !args.secondAttempt ) {
                                                 args.secondAttempt = true;
-                                                RDR.actions.rateSend( args );
+                                                RDR.actions.interactions.rate.start( args );
                                             }
                                         });
                                     }
@@ -3027,7 +3046,7 @@ log('---- rindow.data --------');
                                         RDR.session.handleGetUserFail( response, function() {
                                             if ( !args.secondAttempt ) {
                                                 args.secondAttempt = true;
-                                                RDR.actions.rateSend( args );
+                                                RDR.actions.interactions.rate.start( args );
                                             }
                                         });
                                     }
