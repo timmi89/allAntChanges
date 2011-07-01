@@ -64,8 +64,7 @@ function readrBoard($R){
                 var offsets = img.offset();
                 
 		        var rindow = RDR.rindow.draw({
-                    left:offsets.left,
-                    top:offsets.top,
+                    coords:offsets,
 					pnlWidth:200,
 					panels:2,
 					noHeader:true
@@ -101,8 +100,10 @@ function readrBoard($R){
               
             },
             defaults:{
-                x:100,
-                y:100,
+                coords:{
+                    left:100,
+                    top:100
+                },
                 pnlWidth:200,
                 animTime:100,
                 height:150,
@@ -192,7 +193,7 @@ function readrBoard($R){
 
 
 				// TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-				var coords = RDR.util.stayInWindow({left:settings.left, top:settings.top,height:300, ignoreWindowEdges:settings.ignoreWindowEdges});
+				var coords = RDR.util.stayInWindow({coords:settings.coords, height:300, ignoreWindowEdges:settings.ignoreWindowEdges});
 
                 $new_rindow.css('left', coords.left + 'px');
                 $new_rindow.css('top', coords.top + 'px');    
@@ -287,22 +288,28 @@ function readrBoard($R){
 			draw: function(settings) {
                 
                 log('settings')                
-                log(settings)                
-                var container = RDR.containers[settings.container];
+                log(settings)     
+                //expand to make settings explicit
+                var container = settings.container,
+                    content_type = settings.content_type,
+                    coords = settings.coords;
                 
-                var actionbar_id = "rdr_actionbar_"+container.hash;
+                //todo: change var above to something like containerHash instead of container.
+                container = RDR.containers[settings.container];
 
+                var actionbar_id = "rdr_actionbar_"+container.hash;
     			var $actionbars = $('div.rdr.rdr_actionbar');
                 
 				if ( $('#'+actionbar_id).length > 0 ) return $('#'+actionbar_id);
 				// else 
 
-                var left = (settings.left) ? (settings.content_type == "image") ? settings.left-34 : settings.left+2 : 100;
-                var top_modifier = (settings.content_type == "image") ? -43:-35;  // todo: if IE, position higher so we're not behind IE's "Accelerator" arrow
-                var top = (settings.top) ? (settings.content_type == "image") ? (settings.top + top_modifier):(settings.top + top_modifier) : 100;
-
+                var top_modifier = (content_type == "image") ? -43:-35;  // todo: if IE, position higher so we're not behind IE's "Accelerator" arrow
+                coords.top = (coords.top) ? (content_type == "image") ? (coords.top + top_modifier):(coords.top + top_modifier) : 100;
+                coords.left = (coords.left) ? (content_type == "image") ? coords.left-34 : coords.left+2 : 100;
+                
+                //rewrite coords if needed
 				// TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-				var coords = RDR.util.stayInWindow({left:left, top:top, width:200, height:30, ignoreWindowEdges:settings.ignoreWindowEdges});
+				coords = RDR.util.stayInWindow({coords:coords, width:200, height:30, ignoreWindowEdges:settings.ignoreWindowEdges});
 
 
                 // TODO use settings check for certain features and content types to determine which of these to disable
@@ -316,7 +323,7 @@ function readrBoard($R){
 				// currently-visible actionbar
 
                 // if this is an image, make sure we have the image hashed, tagged, and have its hash as a container:
-                if (settings.content_type == "image" && !settings.container ) {
+                if (content_type == "image" && !container ) {
                     //changing this to warn, because image should always be hashed already.
                     //if it isn't, we shoulc do this through the hashNodes function.
                     //todo: put in call to hashNodes function here later, if this ever happens, though it shouldn't
@@ -336,26 +343,25 @@ function readrBoard($R){
                             "item":"reaction",
                             "tipText":"React to this",
                             "onclick":function(){
-                                RDR.actions.sentimentBox(
-         //                            "container": settings.container,
-         //                            "content_type": settings.content_type,
-         //                            "content": settings.content,
-									// "coords": coords,
-                                    $.extend( settings, {"coords": coords})
-                                );
+                                RDR.actions.sentimentBox({
+                                    "container": settings.container,
+                                    "content_type": settings.content_type,
+                                    "content": settings.content,
+                                    "coords": coords
+                                });
                             }
                         },
                         {
                             "item":"bookmark",
                             "tipText":"Bookmark this",
                             "onclick":function(){
-                                RDR.actions.sentimentBox(
-                                    // "container": settings.container,
-                                    // "content_type": settings.content_type,
-                                    // "content": settings.content,
-                                    // "coords": coords,
-                                    $.extend( settings, { "coords": coords, "actionType":"bookmark"})
-                                );
+                                RDR.actions.sentimentBox({
+                                    "container": settings.container,
+                                    "content_type": settings.content_type,
+                                    "content": settings.content,
+                                    "coords": coords,
+                                    "actionType":"bookmark"
+                                });
                             }
                         }
                 ];
@@ -459,31 +465,29 @@ function readrBoard($R){
 		},
 		util: {
             stayInWindow: function(settings) {
-                var coords = {},
-	                rWin = $(window),
+                
+	           var rWin = $(window),
 	                winWidth = rWin.width(),
 	                winHeight = rWin.height(),
 	                winScroll = rWin.scrollTop(),
 					w = settings.width,
 					h = settings.height,
-					left = settings.left,
-					top = settings.top,
+					coords = settings.coords,
 					ignoreWindowEdges = (settings.ignoreWindowEdges) ? settings.ignoreWindowEdges:""; // ignoreWindowEdges - check for index of t, r, b, l
 
-                if ( ( ignoreWindowEdges.indexOf('r') == -1 ) && (left+w+16) >= winWidth ) {
-                    left = winWidth - w - 10;
+                if ( ( ignoreWindowEdges.indexOf('r') == -1 ) && (coords.left+w+16) >= winWidth ) {
+                    coords.left = winWidth - w - 10;
                 }
-                if ( ( ignoreWindowEdges.indexOf('b') == -1 ) &&  (top+h) > winHeight + winScroll ) {
-                    top = winHeight + winScroll - h + 75;
+                if ( ( ignoreWindowEdges.indexOf('b') == -1 ) &&  (coords.top+h) > winHeight + winScroll ) {
+                    coords.top = winHeight + winScroll - h + 75;
                 }
-                if ( ( ignoreWindowEdges.indexOf('l') == -1 ) && left < 10 ) {
-					left = 10;
+                if ( ( ignoreWindowEdges.indexOf('l') == -1 ) && coords.left < 10 ) {
+					coords.left = 10;
 				}
-                if ( ( ignoreWindowEdges.indexOf('t') == -1 ) && top - winScroll < 10 ) {
-					top = winScroll + 10;
+                if ( ( ignoreWindowEdges.indexOf('t') == -1 ) && coords.top - winScroll < 10 ) {
+					coords.top = winScroll + 10;
 				}
-                coords.left = left;
-                coords.top = top;
+                
                 return coords;
             },
             md5: {
@@ -772,15 +776,15 @@ log('--showLoginPanel---');
 				//porter says: the action bar used to just animate larger and get populated as a window
                 //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
                 var caller = args.rindow;
-                var offsets = caller.offset();
-                var left = offsets.left ? (offsets.left-34) : 100;
-                var top = offsets.top ? (offsets.top+50) : 100;
+                var coords = caller.offset();
+                coords.left = coords.left ? (coords.left-34) : 100;
+                coords.top = coords.top ? (coords.top+50) : 100;
+
                 // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-                // var coords = RDR.util.stayInWindow({left:left, top:top, width:360, height:185 });
+                // var coords = RDR.util.stayInWindow({coords:coords, width:360, height:185 });
 
                 var rindow = RDR.rindow.draw({
-                    left:left,
-                    top:top,
+                    coords:coords,
                     id: "rdr-loginPanel",
                     pnlWidth:360,
                     pnls:1,
@@ -1097,20 +1101,24 @@ log('--showLoginPanel---');
 
                     
 				    var $this_img = $(this),
-				    left = $this_img.offset().left + 34,
-				    top = $this_img.offset().top + $this_img.height() + 20,
-                    // $(this).attr('src') will yield relative path
-                    // this.src will yield absolute path
-                    // for jQuery selecting ( $(img[src$='foobar.png']) ), we want the relative path
-                    src = $this_img.attr('src'),
-				    src_with_path = this.src;
+                        coords = $this_img.offset(),
+                        // $(this).attr('src') will yield relative path
+                        // this.src will yield absolute path
+                        // for jQuery selecting ( $(img[src$='foobar.png']) ), we want the relative path
+                        src = $this_img.attr('src'),
+    				    src_with_path = this.src;
+
+                    //coords clones the offset, so this ofcourse isn't moving the $this_img.
+                    coords.left += 34;
+                    coords.top += ( $this_img.height() + 20 );
+
                     
                     var container = ( $this_img.data('hash') ) ? $this_img.data('hash'):"";
 
                     $this_img.addClass('rdr_engage_img');
 
                     // builds a new actionbar or just returns the existing $actionbar if it exists.
-				    var $actionbar = RDR.actionbar.draw({ left:left, top:top, content_type:"image", content:src, container:container, src_with_path:src_with_path, ignoreWindowEdges:"rb" });
+				    var $actionbar = RDR.actionbar.draw({ coords:coords, content_type:"image", content:src, container:container, src_with_path:src_with_path, ignoreWindowEdges:"rb" });
                     $actionbar.data('keepAlive.img',true)
 
                     //kill all rivals!!
@@ -1318,13 +1326,18 @@ log('--showLoginPanel---');
                 rate: {
                     start: function(args){
                         var scope = this;
+                        var uiMode = args.uiMode; //read or write
+
                         //This function requires the following args
                         /*
+
+                        interactionButton //get styles from it.
+
                         "tag" : tag,
                         "hash": content_node_data.container,
                         "content" : content_node_data,
-                        "src_with_path" : src_with_path, //not used yet.. do we need it?
                         "content_type" : content_type,
+
                         "user_id" : RDR.user.user_id,
                         "readr_token" : RDR.user.readr_token,
                         "group_id" : RDR.groupPermData.group_id,
@@ -1336,6 +1349,7 @@ log('--showLoginPanel---');
                         $tagLi = args.tag,
                         settings = args.settings;
 
+                        
                         //settings: (ex.)
                         /*                
                             container
@@ -1346,33 +1360,55 @@ log('--showLoginPanel---');
                                 "text"
                             coords
                                 Object { left=540.0833129882812, top=815.6000061035156}
-                            left
-                                444
-                            top
+
                         */
 
-
-                        // optional loader.
-                        args.tag.find('div.rdr_leftBox').html('<img src="'+RDR_rootPath+'/static/images/loader.gif" style="margin:6px 0 0 5px" />');
-                
                         //example:
                         //tag:{body, id}, rindow:rindow, settings:settings, callback: 
-                        
-                        // tag can be an ID or a string.  if a string, we need to sanitize.
-                        
-                        // tag, rindow, settings, callback
+                        args.uiMode = 'write';
+                        //Split by readMode or writeMode
+                        if (args.uiMode == "write"){
 
-                        
-                        RDR.session.getUser( args, function(params){
+                            //if tag has already been tried to be submitted, don't try again.
+                            //todo: later verify on the backend and don't let user 'stuff the ballot'
+                            if ( $tagLi.hasClass('rdr_tagged') ) {      
+                                
+                                //I think this clears the loader                          
+                                $tagLi.find('div.rdr_leftBox').html('');
+                                
+                                //open the share/comment panel.
+                                //todo:EC fix these args, and check for if the window is already open
+                                RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:$tagLi.data('interaction_id'), content_node_info:content_node_data, content_type:content_type, selState:selState });
+                                return;
+                                //return before we get to RDR.session.getUser
+                            }else{
+                                // optional loader.
+                                args.tag.find('div.rdr_leftBox').html('<img src="'+RDR_rootPath+'/static/images/loader.gif" style="margin:6px 0 0 5px" />');
+                                validateUserAndProcceed();
+                            }
 
-                            var sendData = RDR.actions.interactions.rate.prepareSendData(params);
-                            params.sendData = sendData;
-                            RDR.actions.interactions.rate.send(params);
-                            //getUser adds the user to the args object through receiveMessage,
-                            //and then calls this callback function using the args object aliased here as args 
+                    
+                        }else{
+                        //Do UI stuff particular to readMode
+                            //validateUserAndProcceed
                             
-                        })
+                        }
 
+                        //helper functions
+                        function validateUserAndProcceed(){
+                            
+                            log('about to call getuser')
+                            //getUser and execute callback on success
+                            RDR.session.getUser( args, function(params){
+
+                                var sendData = RDR.actions.interactions.rate.prepareSendData(params);
+                                params.sendData = sendData;
+                                RDR.actions.interactions.rate.send(params);
+                                //getUser adds the user to the args object through receiveMessage,
+                                //and then calls this callback function using the args object aliased here as args 
+                                
+                            })
+                        }
 
                     },
                     prepareSendData: function(args){
@@ -1436,31 +1472,22 @@ log('--showLoginPanel---');
                         var sendData = args.sendData;
                         var tag_li = args.tag;
 
-                        if ( !tag_li.hasClass('rdr_tagged') ) {
-                            // send the data!
-                            $.ajax({
-                                url: "/api/tag/create/",
-                                type: "get",
-                                contentType: "application/json",
-                                dataType: "jsonp",
-                                data: { json: JSON.stringify(sendData) },
-                                success: function(response) {
-                                    args.response = response;
-                                    tag_li.find('div.rdr_leftBox').html('');
-                                    //[eric] - if we want these args still we need to get them from args:
-                                    //do we really want to chain pass these through?  Or keep them in a shared scope?
-
-                                    if ( response.status == "success" ) {
-                                        RDR.actions.interactions.rate.successCallback(args);
-                                    }else{
-                                        RDR.actions.interactions.rate.failCallback(args);
-                                    }
+                        // send the data!
+                        $.ajax({
+                            url: "/api/tag/create/",
+                            type: "get",
+                            contentType: "application/json",
+                            dataType: "jsonp",
+                            data: { json: JSON.stringify(sendData) },
+                            success: function(response) {
+                                args.response = response;
+                                if ( response.status == "success" ) {
+                                    RDR.actions.interactions.rate.successCallback(args);
+                                }else{
+                                    RDR.actions.interactions.rate.failCallback(args);
                                 }
-                            });
-                        } else {
-                            tag_li.find('div.rdr_leftBox').html('');
-                            RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:tag_li.data('interaction_id'), content_node_info:content_node_data, content_type:content_type, selState:selState });
-                        }  
+                            }
+                        });                        
 
                     },
                     successCallback: function(args){
@@ -1473,6 +1500,9 @@ log('--showLoginPanel---');
                             tag = args.tag.data('tag');
 
                         var content_node_data = {};
+
+                        //I think this clears the loader                          
+                        tag_li.find('div.rdr_leftBox').html('');
 
                         if(content_type == 'image'){
                             var container = $.trim( args.settings.container ),
@@ -2098,8 +2128,7 @@ log('--showLoginPanel---');
                 var iconOffsets = args.icon.offset();
 
                 var rindow = RDR.rindow.draw({
-                    left:iconOffsets.left,
-                    top:iconOffsets.top,
+                    coords:iconOffsets,
                     pnlWidth:200,
                     ignoreWindowEdges:"bl",
                     noHeader:true,
@@ -2303,7 +2332,7 @@ log('--showLoginPanel---');
                         $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+node.counts.tags+')</span> '+tag.body+'</a>' );
 
                         $header.find('span.rdr_tag_count').click( function() {
-                            RDR.actions.interactions.rate.send({ element:$(this), tag:tag, rindow:rindow, content:node.body, which:which });
+                            RDR.actions.interactions.rate.send({ tag:tag, rindow:rindow, content:node.body, which:which });
                         });
 
                         $header.find('a.rdr_tag').data( 'tag', tag );
@@ -2375,7 +2404,7 @@ log('---- rindow.data --------');
                                         // ({  })
                                     });
                                     var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
-                                        RDR.actions.interactions.rate.send({ element:$(this), tag:thisTag, rindow:rindow, content:node.body, which:which });
+                                        RDR.actions.interactions.rate.send({ tag:thisTag, rindow:rindow, content:node.body, which:which });
                                     });
 
                                     $this_tag.append($tagShareButton, $tagCountButton, thisTag.body);
@@ -2404,9 +2433,6 @@ log('---- rindow.data --------');
                                 var share_offsets = $this.offset(),
                                     rindow_offsets = rindow.offset();
                                 
-                                //$shareTip.css('top', (share_offsets.top-rindow_offsets.top) + "px").css('left', (share_offsets.left-rindow_offsets.left-5) + "px" );
-
-
                                 $this.append( $shareTip );
                                 $shareTip.bind('mouseleave.rdr', function(e) {
                                     $(this).remove();
@@ -2565,6 +2591,7 @@ log('---- rindow.data --------');
 
                 // draw the window over the actionbar
                 var actionbarOffsets = settings.coords;
+                var rindowCoords =  $.extend({}, actionbarOffsets);
 
 				$('.rdr_rewritable').removeClass('rdr_rewritable');
 
@@ -2577,8 +2604,8 @@ log('---- rindow.data --------');
                     //todo: make selog more integrated with the rest of the code
                     settings.content = newSel.text;
 
-					actionbarOffsets.left = actionbarOffsets.left + 40;
-					actionbarOffsets.top = actionbarOffsets.top + 35;
+					rindowCoords.left = actionbarOffsets.left + 40;
+					rindowCoords.top = actionbarOffsets.top + 35;
                 
                     //if sel exists, reset the offset coords
                     if(newSel){
@@ -2593,8 +2620,8 @@ log('---- rindow.data --------');
                             var strRight = $helper.offset().right;
                             var strBottom = $helper.offset().bottom;
                             $helper.remove();
-                            actionbarOffsets.left = strRight + 5; //with a little padding
-                            actionbarOffsets.top = strBottom;
+                            rindowCoords.left = strRight + 5; //with a little padding
+                            rindowCoords.top = strBottom;
                         }
                     }
 
@@ -2604,8 +2631,7 @@ log('---- rindow.data --------');
                 }
             
                 var rindow = RDR.rindow.draw({
-                    left:actionbarOffsets.left,
-                    top:actionbarOffsets.top,
+                    coords: rindowCoords,
 					pnlWidth:200,
                     columns:true,
 					ignoreWindowEdges:"bl",
@@ -3615,13 +3641,15 @@ log('---- rindow.data --------');
 							// see if it contains the whole selection text
                             if ( selection.blockParentTextClean.indexOf( selection.selectionTextClean ) != -1 ) {
                                 RDR.actionbar.draw({
-                                    left:parseInt(e.pageX),
-                                    top:parseInt(e.pageY)+7,
+                                    coords:{
+                                        left:parseInt(e.pageX),
+                                        top:parseInt(e.pageY)+7
+                                    },
 									content_type:"text",
 									content:selection.content,
 									container:selection.container
                                 });
-                            } 
+                            }
                             //if not text, just ignore it.
                         }
                     }
