@@ -263,15 +263,15 @@ function readrBoard($R){
                     //todo: think about better name and pattern for how write-mode hilite gets stored.
                     //first find writeMode selState
                     var selState = $(rindow).data('selState');
-                    if ( typeof selState !== 'undefined' ){
+                    if ( typeof selState !== 'undefined' && selState !== ""){
                         //note that image rindows have no hilite, but this takes care of that.
                         selStates.push(selState)
                     }
-                    
-                    var content_nodes = summary.content_nodes || []; //lets each loop do nothing gracefully
+
+                    //use "|| []"  to let $.each fail gracefully if summary.content_nodes is empty 
+                    var content_nodes = summary.content_nodes || [];
 
                     //now add any content hilites from hover states that might be hanging around.
-
                     $.each( content_nodes, function(key, node){
                         var selState = node.selState;
                         if ( typeof selState !== 'undefined' ){
@@ -281,6 +281,8 @@ function readrBoard($R){
                 });
 
                 $.each( selStates, function(idx, selState){
+                    log('selState')
+                    log(selState)
                     $().selog('hilite', selState, 'off');
                 });
             }
@@ -1420,8 +1422,6 @@ dir(data);
                     },
                     prepareSendData: function(args){
                         //RDR.actions.interactions.rate.prepareSendData:
-                        log('args');
-                        log(args)
 
                         var content_type = ( args.settings) ? args.settings.content_type : 'text'; //todo: phase this out. - make it an attr of the content node 
                         
@@ -1438,8 +1438,8 @@ dir(data);
                             
                             content_node_data = {
                                 'container': container,
-                                'body': src_with_path
-                                // 'body': content
+                                'body': src_with_path,
+                                'content_type': content_type
                             };
 
                         }else{
@@ -1460,8 +1460,7 @@ dir(data);
                                 };
                             }else{
                                 selState = rindow.data('selState');
-                                log('selState')
-                                log(selState)
+                                
                                 content_node_data = {
                                     'container': rindow.data('container'),
                                     'body': selState.text,
@@ -1482,18 +1481,12 @@ dir(data);
                             "group_id" : RDR.groupPermData.group_id,
                             "page_id" : RDR.page.id
                         };
-                        log('sendData')
-                        log(sendData)
                         return sendData;
                     },
                     send: function(args){
                         //RDR.actions.interactions.rate.send:
-                        log('args')
-                        log(args)
-                        
+
                         var sendData = args.sendData;
-                        log('sendData')
-                        log(sendData)
                         
                         // send the data!
                         $.ajax({
@@ -1538,12 +1531,7 @@ dir(data);
                         // log('content_node_data');
                         // log(content_node_data);
 
-                        log('args')
-                        log(args)
-
                         var content_node = args.content_node || RDR.actions.content_node.make(content_node_data);
-                        log('content_node')
-                        log(content_node)
 
                         //update indicators
                         var hash = sendData.hash;
@@ -2248,8 +2236,6 @@ dir(data);
                         log($this)                        
                         log($this.data() )
                         var tag_id = $this.data('tag').id;
-                        log(tag_id)
-                        log('tag_id')
                         
                         var nodes = summary.content_nodes || [];
 
@@ -2960,8 +2946,8 @@ log('---- rindow.data --------');
                         
                         content_node_data = {
                             'container': container,
-                            'body': src_with_path
-                            // 'body': content
+                            'body': src_with_path,
+                            'content_type': content_type
                         };
 
                     }else{
