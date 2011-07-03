@@ -320,8 +320,6 @@ class SettingsHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, group=None):
         host = request.get_host()
-        # Slice off port from hostname
-        host = host[0:host.find(":")]
         path = request.path
         fp = request.get_full_path()
         if group:
@@ -332,9 +330,9 @@ class SettingsHandler(AnonymousBaseHandler):
                 return HttpResponse("RB Group does not exist!")
             sites = Site.objects.filter(group=group_object)
             domains = sites.values_list('domain', flat=True)
-            #if host in domains:
-            return group_object
-            #else:
-            #    raise JSONException("Group (" + str(group) + ") settings request invalid for this domain (" + host + ")" + str(domains))
+            if host in domains:
+                return group_object
+            else:
+                raise JSONException("Group (" + str(group) + ") settings request invalid for this domain (" + host + ")" + str(domains))
         else:
             return ("Group not specified")
