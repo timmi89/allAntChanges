@@ -15,33 +15,23 @@ ADMINS = (
     ('Eric Chaves', 'eric@readrboard.com'),
 )
 
-BASE_URL = 'http://readr.local:8080'
+if DEBUG:
+    BASE_URL = 'http://readr.local:8080'
+else:
+    BASE_URL = 'http://www.readrboard.com'
 
 MANAGERS = ADMINS
 
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE':   'django.db.backends.sqlite3',
-            'NAME':     'readrdb.db',
-            'USER':     '',
-            'PASSWORD': '',
-            'HOST':     '', 
-            'PORT':     '', 
-            }
+DATABASES = {
+  'default': {
+      'ENGINE':   'django.db.backends.sqlite3',
+      'NAME':     'readrdb.db',
+      'USER':     '',
+      'PASSWORD': '',
+      'HOST':     '', 
+      'PORT':     '', 
     }
-
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE':   'django.db.backends.mysql',
-            'NAME':     'readrboard',
-            'USER':     '',
-            'PASSWORD': '',
-            'HOST':     'localhost',
-            'PORT':     '3306',
-            }
-    }
+}
 
 """
 CACHES = {
@@ -78,7 +68,7 @@ MEDIA_ROOT = 'rb/media'
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = '/media/'
 
-STATIC_ROOT = ''
+STATIC_ROOT = 'rb/static'
 
 # For static media
 STATIC_URL = '/static/'
