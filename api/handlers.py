@@ -104,14 +104,14 @@ class TagHandler(InteractionHandler):
     def create(self, request, data, user, page, group, kind='tag'):
         tag_body = data['tag']['body']
         container_hash = data['hash']
-        content_data = data['content']['body']
-        content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[data['content_type']]
+        content_node_data = data['content_node_data']
+        content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[ content_node_data['content_type'] ]
         
         #optional
         tag_id = data['tag'].get('id', None)
-        location = data['content'].get('location', None)
+        location = content_node_data.get('location', None)
 
-        content = Content.objects.get_or_create(kind=content_type, body=content_data, location=location)[0]
+        content = Content.objects.get_or_create(kind=content_type, body=content_node_data['body'], location=location)[0]
 
         # Get or create InteractionNode
         try:
@@ -143,18 +143,18 @@ class ShareHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
         tag_body = data['tag']['body']
         container_hash = data['hash']
-        content_data = data['content']['body']
-        content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[data['content_type']]
+        content_node_data = data['content_node_data']
+        content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[ content_node_data['content_type'] ]
 
         # optional
         tag_id = data['tag'].get('id', None)
-        location = data['content'].get('location', None)
+        location = content_node_data.get('location', None)
         referring_int_id = data.get('referring_int_id', None)
 
         parent = None
 
         # Get or create content
-        content = Content.objects.get_or_create(kind=content_type, body=content_data, location=location)[0]
+        content = Content.objects.get_or_create(kind=content_type, body=content_node_data['body'], location=location)[0]
         
         # Get or create InteractionNode for share
         try:
