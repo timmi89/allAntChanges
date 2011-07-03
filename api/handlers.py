@@ -335,6 +335,6 @@ class SettingsHandler(AnonymousBaseHandler):
             if host in domains:
                 return group_object
             else:
-                raise JSONException("Group (" + str(group) + ") settings request invalid for this domain (" + host + ")")
+                raise JSONException("Group (" + str(group) + ") settings request invalid for this domain (" + host + ")" + domains)
         else:
             return ("Group not specified")
