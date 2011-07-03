@@ -1306,6 +1306,8 @@ dir(data);
             },
             content_node: {
                 make: function(settings){
+                    //RDR.actions.content_node.make:
+
                     //makes a new one or returns existing one
                     //expects settings with container, body, and location.
 
@@ -1317,8 +1319,12 @@ dir(data);
                     var content_node = {
                         'container': settings.container,
                         'body': settings.body,
-                        'location': settings.location
+                        'location': settings.location,
+                        'content_type':settings.content_type
                     }
+                    log(settings)
+                    log(settings)
+
                     RDR.content_nodes[content_node_key] = content_node;
                     // log('content_node final');
                     // log(content_node);
@@ -2454,7 +2460,7 @@ log('---- rindow.data --------');
                     which = args.which, 
                     rindow = args.rindow,
                     node = args.node,
-                    content_type = args.content_type;
+                    content_type = args.content_type || args.kind;
                     
                 if ( args.selState ) var selState = args.selState;
 
@@ -2560,7 +2566,7 @@ log('---- rindow.data --------');
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
                     log('--------- selState 1: '+selState);
-                    RDR.actions.comment({ comment:comment, which:which, content:node.body, tag:tag, rindow:rindow, selState:selState, content_type:content_type });
+                    RDR.actions.comment({ content_node:node, comment:comment, which:which, content:node.body, tag:tag, rindow:rindow, selState:selState});
                 });
 
                 if ( $commentSet ) $whyBody.html( $commentSet );
@@ -2960,7 +2966,8 @@ log('---- rindow.data --------');
                         content_node_data = {
                             'container': rindow.data('container'),
                             'body': selState.text,
-                            'location': selState.serialRange
+                            'location': selState.serialRange,
+                            'content_type': content_type
                         };
                         
                     }
@@ -2969,9 +2976,7 @@ log('---- rindow.data --------');
                     var sendData = {
                         "tag" : tag,
                         "hash": content_node_data.container,
-                        "content" : content_node_data,
-                        "src_with_path" : src_with_path, //not used yet.. do we need it?
-                        "content_type" : content_type,
+                        "content_node_data" : content_node_data,
                         "user_id" : RDR.user.user_id,
                         "readr_token" : RDR.user.readr_token,
                         "group_id" : RDR.groupPermData.group_id,
@@ -3393,7 +3398,7 @@ log('---- rindow.data --------');
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
                     log('--------- selState 2: '+content_node.selState);
-                    RDR.actions.comment({ comment:comment, int_id:int_id, rindow:rindow, selState:content_node.selState });
+                    RDR.actions.comment({ content_node:content_node, comment:comment, int_id:int_id, rindow:rindow, selState:content_node.selState });
                 });
 
                 $commentBox.append( $leaveComment );
@@ -3497,23 +3502,23 @@ log('---- rindow.data --------');
                     rindow = params.rindow,
                     tag = params.tag,
                     hash = params.which,
-                    content_type = params.content_type;
+                    content_node = params.content_node;
 
-                    // var selState = rindow.data('selState') || null;
-                    // var newSel = $('.rdr-'+hash).selog('save', {'serialRange': location});
+                    //todo: temp fix
+                    //almost works
+                    content_node.content_type = (content_node.content_type == "img") ? "image" : "text";
 
-                    var content = ( params.content ) ? params.content:"";
-                    content_node_data = {
-                        'container': hash,
-                        'body': content,
-                        'location': args.selState.serialRange
-                    };
+
+                    log('params')
+                    log(params)
+                    
+                    log('content_node_data content_type')
+                    log(content_node.content_type)
 
                     var sendData = {
                         "tag" : tag,
                         "hash": hash,
-                        "content" : content_node_data,
-                        "content_type" : content_type,
+                        "content_node_data" : content_node,
                         "user_id" : RDR.user.user_id,
                         "readr_token" : RDR.user.readr_token,
                         "group_id" : RDR.groupPermData.group_id,
@@ -3536,7 +3541,8 @@ log('---- rindow.data --------');
                                 RDR.session.handleGetUserFail( response, function() {
                                     if ( !args.secondAttempt ) {
                                         args.secondAttempt = true;
-                                        RDR.actions.comment( args );
+                                        //RDR.actions.comment( args );
+                                        //commenting this out for now because this prob wont work with the new args
                                     }
                                 } );
                             } else {
