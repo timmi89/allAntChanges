@@ -104,7 +104,6 @@ def getPage(request, pageid=None):
     fullurl = request.GET.get('url', None)
     title = request.GET.get('title', None)
     host = request.get_host()
-    host = host[0:host.find(":")]
     site = Site.objects.get(domain=host)
     if pageid:
         return Page.objects.get(id=pageid)
