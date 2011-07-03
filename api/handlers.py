@@ -332,9 +332,9 @@ class SettingsHandler(AnonymousBaseHandler):
                 return HttpResponse("RB Group does not exist!")
             sites = Site.objects.filter(group=group_object)
             domains = sites.values_list('domain', flat=True)
-            if host in domains:
-                return group_object
-            else:
-                raise JSONException("Group (" + str(group) + ") settings request invalid for this domain (" + host + ")" + str(domains))
+            #if host in domains:
+            return group_object
+            #else:
+            #    raise JSONException("Group (" + str(group) + ") settings request invalid for this domain (" + host + ")" + str(domains))
         else:
             return ("Group not specified")
