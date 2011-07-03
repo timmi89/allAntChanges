@@ -15,7 +15,10 @@ ADMINS = (
     ('Eric Chaves', 'eric@readrboard.com'),
 )
 
-BASE_URL = 'http://readr.local:8080'
+if DEBUG:
+    BASE_URL = 'http://readr.local:8080'
+else:
+    BASE_URL = 'http://www.readrboard.com'
 
 MANAGERS = ADMINS
 
