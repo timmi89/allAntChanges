@@ -86,7 +86,7 @@ def cards(request):
 
     # Get set of pages -- interactions ordered by -created
     page_ids = interactions.values_list('page')
-    pages = Page.objects.filter(id__in=page_ids)
+    pages = Page.objects.filter(id__in=page_ids)[:10]
     pages = pages.select_related('group')
 
     cards = [Card(page, interactions.filter(page=page)) for page in pages]
