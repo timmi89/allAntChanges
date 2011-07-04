@@ -1345,7 +1345,7 @@ console.dir(data);
                     //get user and only procceed on success of that.
                     RDR.session.getUser( args, function(newArgs){
                         var args = newArgs;
-                        
+                        log('user');
                         var sendDataDefaults = RDR.actions.interactions.sendDataDefaults(args),
                             customSendData = RDR.actions.interactions[int_type].customSendData(args),
                             sendData = $.extend( {}, sendDataDefaults, customSendData );
@@ -1365,7 +1365,7 @@ console.dir(data);
                     
                     // send the data!
                     $.ajax({
-                        url: "/api/tag/create/",
+                        url: url,
                         type: "get",
                         contentType: "application/json",
                         dataType: "jsonp",
