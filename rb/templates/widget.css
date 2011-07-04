@@ -1,0 +1,437 @@
+{% load static %}
+
+@font-face {
+  font-family:ReadrLeague;
+  src:url( '{{ STATIC_URL }}LeagueGothic.eot' );
+  src:url( '{% static "LeagueGothic.eot" %}' );
+  src:local('☺'),
+         url('LeagueGothic.otf') format('truetype');
+}
+
+div.rdr {
+    font:normal 12px Arial, sans-serif;
+    /* need to add a css reset here */
+}
+
+div.rdr.rdr_window {
+    -moz-box-shadow:0 0 10px 1px #aaa;
+    -webkit-box-shadow:0 0 10px 1px #aaa;
+    box-shadow:0 0 10px 1px #aaa;
+    padding:0px;
+    position:absolute;
+    z-index:12000;
+    top:100px;
+    left:100px;
+    background:#fff;
+    overflow:hidden;
+    -moz-border-radius:8px;
+    -webkit-border-radius:8px;
+    border-radius:8px;
+}
+
+div.rdr.rdr_window.rdr_columns {
+    background:url(/static/images/rindow_bg_column.png);
+}
+
+/* the action bar */
+div.rdr.rdr_actionbar {
+    -moz-box-shadow:0 0 10px 1px #aaa;
+    -webkit-box-shadow:0 0 10px 1px #aaa;
+    box-shadow:0 0 10px 1px #aaa;
+    /*border:1px solid #AAAAAA;*/
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+    background:url("/static/images/actionbar_bg.png") no-repeat 0 0;
+    padding:0;
+    font:normal 12px Arial, sans-serif;
+    position:absolute;
+    z-index:11000;
+    background:#fff;
+    height:22px;
+}
+
+div.rdr.rdr_actionbar ul {
+    margin:0;
+}
+div.rdr.rdr_actionbar li {
+    display:inline-block;
+    position:relative;
+    list-style: none !important;
+    background: none !important;
+    padding: 0 !important;
+}
+
+div.rdr.rdr_actionbar li a {
+    background:url("/static/images/actionbar_icons.png") no-repeat 0 0 transparent;
+    display:block;
+    height:22px;
+    width:22px;
+    text-indent:-9999px;
+    float:left;
+}
+
+/*div.rdr.rdr_actionbar li.rdr_icon_about a         { background-position: 0 0; }*/ /*overwritten below to compress width*/
+div.rdr.rdr_actionbar li.rdr_icon_reaction a        { background-position:-4px -5px; }
+div.rdr.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-61px -4px; }
+
+div.rdr.rdr_actionbar a:hover                       { background-color:#e4f0f7;}
+div.rdr.rdr_actionbar li.rdr_icon_about a:hover     { background-color:transparent; }
+div.rdr.rdr_actionbar span.rdr_icon_divider         { width:1px; background:#BBB; height:70%; position:absolute; top:15%; right:0; display:none;/*show dynamically*/}
+
+img.rdr_engage_img,
+img.rdr_shared      { -moz-box-shadow:0 0 10px 1px #008be4; -webkit-box-shadow:0 0 10px 1px #008be4; box-shadow:0 0 10px 1px #008be4; }
+
+
+/* container indicator icons */
+
+#rdr_indicator_details_wrapper{
+    z-index:11000;
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    background:transparent;
+}
+#rdr_indicator_details_wrapper div.rdr_indicator_details { 
+    -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa;
+    background:#fff;
+    color: #666666;
+    font: 12px Arial,sans-serif;
+    border:1px solid #ddd; max-width:300px;
+    margin:-1px;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+    /*extra pixel margin to make up for border in details (and some mystery space) */
+}
+
+#rdr_indicator_details_wrapper div.rdr_statsClone{ display:inline !important; }
+
+#rdr_indicator_details_wrapper div.rdr_indicator_details, div.rdr_indicator {
+    /*keep the same for both indicator and details so that they overlap nicely*/
+    padding:3px;
+    color: #666666;
+    font: 12px Arial,sans-serif;
+    position:absolute;
+    cursor: pointer;
+}
+/* opacity for .rdr_indicator set in js instead of here. Fade it in on load so we can still use display:inline; */
+div.rdr_indicator { z-index:11000; display:inline; }
+
+div.rdr_indicator img, div.rdr_indicator_details img{ 
+    background:url("/static/images/readr_icons.png") no-repeat 0 0; width:16px; 
+    float:left;
+    margin: -1px 0 0 -1px !important;
+}
+
+div.rdr_indicator.rdr_image { position:relative; border-bottom:1px solid #ddd; display:block !important; margin-bottom:5px; clear:both;
+/*start with 0 opacity so it can fade in properly*/
+    opacity:0.0;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
+    filter:alpha(opacity=00);
+    -moz-opacity:0.0;
+    -khtml-opacity:0.0;
+}
+div.rdr_tags_list { width:auto; display:inline; white-space:nowrap;}
+div.rdr_indicator.rdr_image span.rdr_see_more { font-size:11px; font-weight:normal;}
+/* not needed*/
+/*
+div.rdr_indicator.rdr_image span { display:inline; font-weight:bold; background:#fff; }
+div.rdr_img_tags_list       {position:relative; white-space:nowrap; display:inline;}
+*/
+ 
+span.rdr_tags_list_tag {
+    padding:3px 1px;
+}
+span.rdr_tags_list_tag:hover {
+    background:#fe7;
+}
+
+/* the tooltip */
+div.rdr.rdr_tooltip {
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+    -moz-box-shadow:0 0 5px #888888;
+    -webkit-box-shadow:0 0 5px #888888;
+    box-shadow:0 0 5px #888888;
+    background-color:#fff;
+    border:2px solid #80aec9;
+    margin:0 0 0 13px;/* 0.5 icon width with compensation for border*/
+    padding:5px 0;
+    position:absolute;
+    text-align:center;
+    left:-55px; /*0.5 tooltip width*/
+    top:-36px;
+    width:100px;
+    z-index:10000;
+}
+div.rdr.rdr_tooltip-arrow-border { border-color:#80aec9 transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-16px; left:43%;}
+div.rdr.rdr_tooltip-arrow { border-color:#fff transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-14px; left:43%;}
+
+div.rdr_top div.rdr.rdr_tooltip-arrow-border { border-color:transparent transparent #80aec9; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:-16px; bottom:auto; left:43%;}
+div.rdr_top div.rdr.rdr_tooltip-arrow { border-color:transparent transparent #fff; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:-14px; bottom:auto; left:43%;}
+
+div.rdr.rdr_tooltip div.rdr_tag_share    { display:block; width:12px; height:13px; background:url(/static/images/tag_icons.png) -50px -13px no-repeat; left:45px; position:absolute;top:-20px; 
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    border-radius:3px;
+}
+
+div.rdr.rdr_share_container                     {position:absolute;height:50px;width:20px;z-index:1000;}
+div.rdr.rdr_share_container div.rdr.rdr_tooltip {left:-58px;top:20px; }
+div.rdr.rdr_share_container div.rdr.rdr_tooltip .rdr_tooltip-content {font-size:11px; color:#787878; }
+div.rdr.rdr_share_container div.rdr.rdr_tooltip img.rdr_sns {width:16px;margin:2px 5px 0 0; cursor:pointer;}
+
+/*span.rdr_tag_share div.rdr_tooltip            { display:none; }*/
+div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
+
+/*compress ths about icon width*/
+div.rdr.rdr_actionbar li.rdr_icon_about             { width:24px; } /*normal width is 30px */
+div.rdr.rdr_actionbar li.rdr_icon_about a           { background-position: -3px 0; width:24px;} /*from line above:(30-24)/2 = 3px left*/
+.rdr_tooltip_about                                  { margin:0 0 0 11px;/* 0.5 icon width*/ }
+
+/* global tag defs */
+div.rdr h1, 
+div.rdr h2  {font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif; color:#666; margin:0; line-height:1.1em !important;}
+div.rdr h1  {font-size:21px; cursor:move; padding:3px 9px; font-weight:100;}
+div.rdr h1 span {font-size:18px; color:#008be4;}
+
+div.rdr li {background:none; padding:0;}
+
+/* the widget */
+div.rdr div.rdr_sentimentBox                            {-moz-border-radius:8px 8px; -webkit-border-radius:8px 8px; border-radius:8px 8px;}
+div.rdr div.rdr_sntPnl                                  {-moz-border-radius:8px 8px; -webkit-border-radius:8px 8px; border-radius:8px 8px; float:left; position:relative; display:block; height:100%; overflow:hidden; /*width is reset with js - rindow.settings.pnlWidth */ }
+
+div.rdr div.rdr_sntPnl div.rdr_body                     {width:100%; xheight:100%; z-index:3; overflow-x:hidden; overflow-y:hidden; padding:0; position:relative; min-height:125px;-moz-border-radius:8px 8px; -webkit-border-radius:8px 8px; border-radius:8px 8px;}
+div.rdr div.rdr_sntPnl div.rdr_header                   {background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:3; 
+    -moz-border-radius:8px 8px;
+    -webkit-border-radius:8px 8px;
+    border-radius:8px 8px;
+}
+div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("/static/images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
+div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header,
+div.rdr div.rdr_sntPnl.rdr_whyPanel div.rdr_header      {background:url(/static/images/header_arrow.png) 0px -1px no-repeat #fff;}
+div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap {background:none; border-bottom:1px solid #bababa; bottom:0; padding-bottom:3px; text-align:center; width:100%; position:absolute; }
+div.rdr div.rdr_sntPnl h1                               {padding:0 !important; }
+div.rdr div.rdr_sntPnl .rdr_pnlShadow                   {height:100%; width:16px; position:absolute; z-index:5; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; display:none;}
+div.rdr .rdr_leftShadow .rdr_selected .rdr_content.rdr_leftShadow,
+div.rdr .rdr_leftShadow {-moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; }
+div.rdr .rdr_leftShadow .rdr_content.rdr_leftShadow {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; }
+
+/*
+div.rdr div.rdr_selectedTextPanel div.rdr_body div.rdr_selected     {font-family:Georgia; font-size:14px; padding:7px; background:#f2cfcf; display:block; position:relative; }
+div.rdr div.rdr_selectedTextPanel               {position:relative; z-index:30;}
+div.rdr div.rdr_selectedTextPanel div.rdr_body  {background:#f0f0f0; -moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
+*/
+
+div.rdr div.rdr_reactionPanel                           {position:relative; z-index:20; width:200px; }
+div.rdr div.rdr_reactionPanel div.rdr_body              {max-height:300px;}
+div.rdr div.rdr_reactionPanel div.rdr_body .jspPane,
+div.rdr div.rdr_contentPanel div.rdr_body .jspPane      {width:200px !important; margin: 0 !important;}
+div.rdr div.rdr_whyPanel div.rdr_body .jspPane      {width:250px !important; margin: 0 !important;}
+div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body  {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; background:url(/static/images/rindow_bg_column.png);}
+
+div.rdr div.rdr_contentPanel                            {position:absolute; z-index:15; left:200px; width:200px; background:url(/static/images/rindow_bg_column.png) repeat -650px 0;}
+div.rdr div.rdr_contentPanel div.rdr_body               {width:200px; max-height:300px; }
+
+div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:250px; background:url(/static/images/rindow_bg_column.png) -200px 0; visibility:hidden;}
+div.rdr.rdr_columns3 div.rdr_whyPanel                   {background-position:-850px 0;}
+div.rdr div.rdr_whyPanel div.rdr_body                   {width:250px; max-height:300px; }
+div.rdr div.rdr_whyPanel hr                             {background: #ddd; border: none; clear: both; color: #ddd; float: none; height: 1px; margin: 10px 0; }
+
+div.rdr div.rdr_sntPnl div.rdr_subHeader        {text-align:center; padding-top:5px;}
+div.rdr div.rdr_sntPnl_padder                   {margin:0 15px; position:relative; overflow:hidden;}
+div.rdr div.rdr_sntPnl textarea,
+div.rdr div.rdr_sntPnl input[type="text"]   {padding:2px 6px; width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
+div.rdr div.rdr_sntPnl button               {
+    border:1px solid #aaa; 
+    -moz-border-radius:3px 3px 3px 3px; 
+    -webkit-border-radius:3px 3px 3px 3px; 
+    border-radius:3px 3px 3px 3px; 
+    -moz-box-shadow:0 -6px 11px -6px #ccc inset; -webkit-box-shadow:0 -6px 11px -6px #ccc inset; box-shadow:0 -6px 11px -6px #ccc inset; color:#454545; font-family:Arial; font-size:12px; padding:2px 5px; width:auto; cursor:pointer; float:right;margin-right:6px;margin-bottom:10px;}
+div.rdr div.rdr_sntPnl_padder > div                 {margin:4px 0;}
+div.rdr div.rdr_share_social                        {border-bottom:1px solid #aaa;}
+div.rdr div.rdr_sntPnl .rdr_submitTag           {width:100%; text-align:right;}
+div.rdr div.rdr_sntPnl .rdr_submitTag button    {}
+div.rdr div.rdr_sntPnl .rdr_commentButton       {width:100%;}
+div.rdr div.rdr_sntPnl .leaveComment            {height:67px; margin-top:5px; max-width:92%;font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;}
+div.rdr div.rdr_sntPnl .rdr_tagFeedback         {background: none repeat scroll 0 0 #ddd; border: 1px solid #bbb; margin: 5px 10px 0; padding: 5px;}
+div.rdr div.rdr_sntPnl .rdr_tagFeedback strong  {font-weight:bold; color:#008be4;}
+
+div.rdr div.rdr_tempUserMsg                     {position:absolute; z-index:50; bottom:0px; height:27px; border-top:1px solid #aaa;background:#fff; padding:9px; -moz-box-shadow:0px -45px 48px -50px #53aed9 inset; -webkit-box-shadow:0px -45px 48px -50px #53aed9 inset; box-shadow:0px -45px 48px -50px #53aed9 inset;}
+/*
+$('div.rdr_tempUserMsg').animate({bottom:'-48px'});
+*/
+
+div.rdr .rdr_tags           {padding:0 0 10px !important;}
+div.rdr ul.rdr_tags         {list-style-type:none !important; padding:0 !important; margin:0 !important; }
+div.rdr ul.rdr_tags li              { border-color: transparent !important; border-style: solid !important; border-width: 1px 0 !important; padding:5px 0 !important; margin:0 !important; position:relative !important; overflow:auto !important; background:none !important; text-align:left !important;}
+
+div.rdr ul.rdr_tags li:hover,
+div.rdr ul.rdr_tags li.rdr_selected               {color:#008be4 !important; background:#e4f0f7 !important; display:block !important; border-color: #bbb transparent #ddd !important; cursor: pointer !important;}
+
+div.rdr ul.rdr_tags li .rdr_leftBox     {width:38px; letter-spacing:1px; overflow:hidden; float:left; text-align:center; font-size:21px !important;  font-family:ReadrLeague, Arial, sans-serif !important; font-weight:normal !important; padding-top:2px; height:28px;}
+
+div.rdr ul.rdr_tags li .rdr_rightBox     {width:30px; padding:0 3px; height:30px; overflow:hidden; float:right; text-align:left;}
+
+/*overwrite for image readmode version*/
+div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox     {background: none !important;}
+
+div.rdr ul.rdr_tags li.rdr_has_comment .rdr_rightBox     {background:url(/static/images/widget_icons.png) -107px -4px no-repeat;}
+div.rdr div.rdr_read ul.rdr_tags li .rdr_leftBox     {color:#008be4;}
+
+div.rdr ul.rdr_tags li:hover .rdr_leftBox,
+div.rdr ul.rdr_tags li.rdr_tagged div.rdr_leftBox   {background:url(/static/images/widget_icons.png) 0px 0px no-repeat; }
+
+/*clear for readmode*/
+div.rdr div.rdr_read ul.rdr_tags li:hover div.rdr_leftBox,
+div.rdr div.rdr_read ul.rdr_tags li.rdr_tagged div.rdr_leftBox   {background-image:none; color:#008be4; }
+
+div.rdr div.rdr_reactions  ul.rdr_tags li:hover .rdr_rightBox {background:url(/static/images/widget_icons.png) -142px -4px no-repeat;}
+
+div.rdr ul.rdr_tags li.rdr_selected .rdr_rightBox   {background:url(/static/images/widget_icons.png) -36px -4px no-repeat !important;}
+div.rdr ul.rdr_tags li.rdr_selected .rdr_leftBox:hover,
+div.rdr ul.rdr_tags li.rdr_tagged .rdr_leftBox:hover    {background-position:-72px 0px;}
+div.rdr div.rdr_new ul.rdr_tags li.rdr_selected     {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
+div.rdr div.rdr_sntPnl .rdr_borderLine                  {    background:#DDDDDD; clear:both; height:100%; left:38px; position:absolute; width:1px; z-index:2;}
+
+div.rdr ul.rdr_preselected                              {font-size:24px !important; font-family:ReadrLeague, Arial, sans-serif !important; margin:-1px 0 0 !important; min-height:120px !important;}
+div.rdr ul.rdr_preselected .rdr_tagText                 {color:#666 !important;text-decoration:none !important; display:block !important; float:left !important; width: 120px !important; padding-left:5px !important; overflow-x: hidden !important; font-weight:normal !important; font-size:24px !important; font-family:ReadrLeague, Arial, sans-serif !important;}
+div.rdr li.rdr_customTagBox input.freeformTagInput      {font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0; text-align:left; border:none; background:none; -moz-box-shadow:none; -webkit-box-shadow:none; box-shadow:none; padding:2px 0;}
+
+div.rdr li.rdr_customTagBox div.rdr_help                {left:43px; width:auto;}
+div.rdr li.rdr_customTagBox div.rdr_help:hover          {text-decoration:underline;}
+div.rdr li.rdr_customTagBox div.rdr_rightBox                {display:none;}
+div.rdr li.rdr_customTagBox.rdr_selected div.rdr_rightBox   {display:block;}
+
+
+/* contentSet */
+div.rdr div.rdr_contentSet {margin-bottom:10px;}
+div.rdr div.rdr_contentSet div.rdr_contentHeader                        {background:#e1e1e1; font-size:11px; font-weight:bold; padding:3px 5px; overflow:auto;}
+div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag              {margin:0; background:#ccc; font:inherit; color:#666; padding:0; }
+div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag:hover        {background:#fff; }
+div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_has_comment    {background: url("/static/images/widget_icons.png") no-repeat scroll -121px -12px transparent; float:right; padding-left:16px; font-weight:normal; margin-right:5px; cursor:pointer;}
+div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_can_comment    {background:none; float:right; font-weight:normal; margin-right:5px; text-transform:uppercase; font-size:9px; display:none; cursor:pointer; color:#666;}
+div.rdr div.rdr_contentSet:hover div.rdr_contentHeader div.rdr_can_comment    {display:block;}
+div.rdr div.rdr_contentSet div.rdr_content                              {color:#787878; font:italic 13px Georgia; padding:5px 9px;}
+div.rdr div.rdr_contentSet div.rdr_content div.rdr_otherTags            {overflow:auto; clear:both; }
+div.rdr div.rdr_contentSet div.rdr_content div.rdr_otherTags em         {color:#76a1ba; display: block; font-family:Arial; font-size:11px; margin-top:10px;}
+
+div.rdr div.rdr_contentSet.rdr_selected div.rdr_contentHeader           {background:#d0dee6;}
+div.rdr div.rdr_contentSet.rdr_selected div.rdr_content                 {background:#e4f0f7;}
+div.rdr div.rdr_contentSet.rdr_selected div.rdr_contentHeader div.rdr_has_comment             {background-position: -46px -12px; text-indent: -9999px;}
+
+/* commentSet */
+div.rdr div.rdr_commentSet          {padding:5px 10px; overflow:auto;}
+div.rdr div.rdr_commentSet div.rdr_commentBy          {font: bold 11px Arial; color:#666; overflow:auto; padding-top:8px;}
+div.rdr div.rdr_commentSet div.rdr_commentBy img      {width:24px; height:24px; float:left; margin:-8px 5px 0 0; border:1px solid #d0dee6;}
+div.rdr div.rdr_commentSet div.rdr_comment            {font: italic 14px Georgia; color:#999;padding:3px; }
+div.rdr div.rdr_commentSet a.rdr_tag                            {margin-top:3px;}
+div.rdr div.rdr_commentSet a.rdr_tag div.rdr_tag_share          {margin-left:-12px;}
+div.rdr div.rdr_commentSet a.rdr_tag:hover div.rdr_tag_share    {margin-left:3px;}
+
+div.rdr div.rdr_leave_comment   { clear:both; display:block; padding:0 10px 10px; margin:0; }
+
+/* tags */
+
+div.rdr a.rdr_tag     { display:block; background:#d0dee6; float:left; margin:0 10px 3px 0; font:normal 11px Arial; color:#678ca2; text-decoration:none; padding:1px; 
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    border-radius:3px;
+    z-index:100001;
+}
+div.rdr a.rdr_tag span.rdr_tag_count    { display:block; min-width:13px; width:auto; height:13px; float:left; background:none; margin:0; padding: 0 3px; 
+    -moz-border-radius:3px; 
+    -webkit-border-radius:3px; 
+    border-radius:3px; 
+}
+div.rdr a.rdr_tag div.rdr_tag_share     { display:block; min-width:13px; width:auto; height:13px; float:right; background:none; margin-left:3px; 
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    border-radius:3px;
+}
+
+div.rdr a.rdr_tag:hover     { background:#fff; color:#008be4;}
+div.rdr a.rdr_tag:hover span.rdr_tag_count    { background:url(/static/images/tag_icons.png) -8px 0px no-repeat; text-indent:-9999px; }
+div.rdr a.rdr_tag:hover div.rdr_tag_share    { background:url(/static/images/tag_icons.png) -50px 0px no-repeat; }
+div.rdr a.rdr_tag:hover span.rdr_tag_count:hover    { display:block; width:12px; height:13px; float:left; background:url(/static/images/tag_icons.png) -8px -13px no-repeat; text-indent:-9999px;}
+div.rdr a.rdr_tag:hover div.rdr_tag_share:hover    { display:block; width:12px; height:13px; float:right; background:url(/static/images/tag_icons.png) -50px -13px no-repeat;}
+
+div.rdr div.rdr_close       {position:absolute;top:8px;right:7px;color:#999;cursor:pointer;font-size:14px;z-index:150;}
+
+div.rdr div.rdr_instruct    {color:#666; margin:5px 0;}
+div.rdr div.rdr_help        {font:italic 11px Arial;color:#767676; xwidth:100%; position:absolute; top:12px; xtext-align:center; margin:0 !important;}
+
+div.rdr div.rdr_comment textarea    { width:100%; height:92px; font-size:14px; margin:5px 0; resize:none; padding-bottom:10px;}
+div.rdr div.rdr_share_count     { color:#999999; font-style:italic; margin:-3px 0 5px; }
+
+div.rdr ul.shareLinks           {padding:2px; margin:0;}
+div.rdr ul.shareLinks li        {padding:5px; display:inline-block; list-style:none;}
+div.rdr ul.shareLinks img       {width:30px;}
+
+/* forms */
+div.rdr textarea,
+div.rdr input[type="text"]  {font-size:14px; color:#666; -moz-box-shadow:inset 0px 0px 5px #ddd;-webkit-box-shadow:inset 0px 0px 5px #ddd; box-shadow:inset 0px 0px 5px #ddd; border:1px solid #ddd; height:auto; width:auto;}
+div.rdr button              {font-size:14px; }
+
+/* summary widget */
+#rdr-summary                    {-moz-box-shadow:0 0 6px 0 #aaa; -webkit-box-shadow:0 0 6px 0 #aaa; box-shadow:0 0 6px 0 #aaa; background:#f7f7f7; padding-bottom:2px; margin-bottom:10px; overflow:auto;clear:both;}
+#rdr-summary div.rdr-sum-headline   {background:url(/static/images/readr_icons.png) -162px 5px no-repeat; padding:7px 5px 5px 38px; float:left; color:#787878;}
+#rdr-summary div.rdr-top-tags   {padding:8px 5px 0px 8px;float:left;}
+#rdr-summary div.rdr-top-tags span  {white-space:nowrap; font-weight:bold; color:#666;}
+#rdr-summary div.rdr-top-tags span em   {font-style:normal; color:#aaa;}
+#rdr-summary div.rdr-top-users      {padding:7px; overflow:hidden; height:16px;float:left;}
+#rdr-summary div.rdr-top-users img  {width:20px;height:20px; margin-right:3px;}
+
+/* in-page styles */
+.rdr_highlightContainer {background:#E4F0F7;}
+
+/* custom in-page highlight */
+.rdr_clone *{
+    opacity:0.0 !important;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)" !important;
+    filter:alpha(opacity=00) !important;
+    -moz-opacity:0.0 !important;
+    -khtml-opacity:0.0 !important;
+}
+.rdr_hilite {
+    background-color: #fe7 !important;
+    /*-moz-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); FF3.5+ */
+    /*-webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); Saf3.0+, Chrome */
+    /*box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);  Opera 10.5+, IE 9.0 */
+    /*disable user selection*/
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0, rgb(217,211,95)),
+        color-stop(0.39, rgb(252,245,154))
+        );
+    background-image: -moz-linear-gradient(center bottom , #D9D35F 0%, #FCF59A 39%);
+    -webkit-user-select:none; 
+    -k-user-select:none; 
+    -moz-user-select:none; 
+    user-select:none;
+}
+
+.rdr_hilite_start{}
+.rdr_hilite_end{}
+
+
+/* user education bar */
+#rdr_ed_user        { position:fixed; top:-40px; left:0; width:100%; background:#f0f0f0; height:35px; -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa; padding:0px; z-index:12000; overflow:hidden;}
+#rdr_ed_user a      { color:#008be4; }
+#rdr_ed_user_1      { float:left; background: #fff; width:240px; height:35px;}
+#rdr_ed_user_1 h1   { padding-top:6px;}
+#rdr_ed_user_1 span { font-size:21px;}
+#rdr_ed_user_2      { position:absolute; left:240px; background: url("/static/images/header_arrow.png") no-repeat scroll 0 -37px #f0f0f0; height:25px; padding:10px 0 0 18px; font-size:14px; color:#666; width:570px; white-space:nowrap; }
+#rdr_ed_user_x      { position:absolute; right:10px; top:5px; font-size:18px; cursor:pointer; }
+div#rdr_ed_user_2 span {
+    background:url("/static/images/actionbar_icons.png") no-repeat -8px -8px transparent;
+    display:inline-block;
+    height:22px;
+    width:16px;
+    text-indent:-9999px;
+}

@@ -1,6 +1,6 @@
+// static {{ STATIC_URL }}
 // //log($)
-var jQueryVersion = "1.4.4",
-RDRtimer,
+var RDRtimer,
 RDR, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
 $R = {}, //init var: our clone of jQuery
@@ -3972,7 +3972,7 @@ function $RFunctions($R){
 
     //load CSS
     var css = [
-        RDR_rootPath+"/static/ui-prototype/css/readrboard.css",
+        RDR_rootPath+"/widgetCss/",
         RDR_rootPath+"/static/css/jquery.jscrollpane.css"
     ];
     

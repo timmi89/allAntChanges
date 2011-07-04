@@ -7,6 +7,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^widget/(.{,25})/$', 'rb.views.widget'),
+    url(r'^widgetCss/', 'rb.views.widgetCss'),
     url(r'^fb/$', 'rb.views.fb'),
     url(r'^fblogin/$', 'rb.views.fblogin'),
 	url(r'^xdm_status/$', 'rb.views.xdm_status'),
