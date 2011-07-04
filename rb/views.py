@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core import serializers
-from settings import FACEBOOK_APP_ID
+from settings import FACEBOOK_APP_ID, BASE_URL
 from baseconv import base62
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models import Count
@@ -20,11 +20,12 @@ def widget(request,sn):
         rbg = Group.objects.get(short_name = sn)
     except Group.DoesNotExist:
         raise Exception('RB group with this short_name does not exist')
-    return render_to_response("widget.js",{'group_id': rbg.id, 'short_name' : sn}, context_instance=RequestContext(request), mimetype = 'application/javascript')
+    print BASE_URL
+    return render_to_response("widget.js",{'group_id': rbg.id, 'short_name': sn, 'BASE_URL': BASE_URL}, context_instance=RequestContext(request), mimetype = 'application/javascript')
 
 def widgetCss(request):
     # Widget code is retreived from the server using RBGroup shortname
-    return render_to_response("widget.css", context_instance=RequestContext(request), mimetype = 'text/css')
+    return render_to_response("widget.css", context_instance=RequestContext(request, mimetype = 'text/css'))
 
 def fb(request):
     return render_to_response("facebook.html",{'fb_client_id': FACEBOOK_APP_ID}, context_instance=RequestContext(request))
