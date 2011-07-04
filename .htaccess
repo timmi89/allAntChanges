@@ -1,0 +1,4 @@
+AuthUserFile /home/tbrock/readrboard/.htpasswd
+AuthType Basic
+AuthName "Readrboard Preview"
+Require valid-user

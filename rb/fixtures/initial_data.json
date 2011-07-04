@@ -143,6 +143,16 @@
   },
 
   {
+    "model": "rb.Site",
+    "pk": 2,
+    "fields": {
+      "name": "aws webserver",
+      "domain": "50.19.211.244",
+      "group": 1
+    }
+  },
+
+  {
     "model": "rb.InteractionNode",
     "pk": 1,
     "fields": {
