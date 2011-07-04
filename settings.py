@@ -1,12 +1,7 @@
 # Django settings for readrboard project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
-
-# Facebook shit
-LOGIN_REDIRECT_URL = '/'
-FACEBOOK_APP_ID = '186217208100982'
-FACEBOOK_APP_SECRET = 'f285b17e71770615189e7676c1d7d0f9'
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),    
@@ -16,28 +11,50 @@ ADMINS = (
 )
 
 if DEBUG:
+    FACEBOOK_APP_ID = '186217208100982'
+    FACEBOOK_APP_SECRET = 'f285b17e71770615189e7676c1d7d0f9'
+
     BASE_URL = 'http://readr.local:8080'
 
+    DATABASES = {
+      'default': {
+          'ENGINE':   'django.db.backends.sqlite3',
+          'NAME':     'readrdb.db',
+          'USER':     '',
+          'PASSWORD': '',
+          'HOST':     '', 
+          'PORT':     '', 
+        }
+    }
+
+else:
+    FACEBOOK_APP_ID = '163759626987948'
+    FACEBOOK_APP_SECRET = 'f14061a2ed9d7ae8ed1c3b231a8148c9'
+
+    BASE_URL = 'http://dev.readrboard.com'
+
+    DATABASES = {
+      'default': {
+        'ENGINE':   'django.db.backends.mysql',
+        'NAME':     'readrboard',
+        'USER':     'root',
+        'PASSWORD': '',
+        'HOST':     'localhost',
+        'PORT':     '3306',
+        }
+    }
+
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'readr.cache'
+        }
+    }
+
+# Facebook shit
+LOGIN_REDIRECT_URL = '/'
+
 MANAGERS = ADMINS
-
-DATABASES = {
-  'default': {
-      'ENGINE':   'django.db.backends.sqlite3',
-      'NAME':     'readrdb.db',
-      'USER':     '',
-      'PASSWORD': '',
-      'HOST':     '', 
-      'PORT':     '', 
-    }
-}
-
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'readr.cache'
-    }
-}
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -72,8 +89,6 @@ MEDIA_URL = '/static/'
 # Examples: "http://foo.com/static/admin/", "/static/admin/".                         
 ADMIN_MEDIA_PREFIX = '/static/site/admin/'
 
-# static files URL.
-STATIC_URL = BASE_URL + '/static/'
 
 # Additional locations of static files                                                
 STATICFILES_DIRS = (
@@ -229,3 +244,5 @@ DEVSERVER_IGNORED_PREFIXES = ['/media', '/uploads']
 #FACEBOOK_EXTENDED_PERMISSIONS = ('email')
 
 #SESSION_COOKIE_DOMAIN = '.readr.local'
+
+STATIC_URL = BASE_URL + '/static/'
