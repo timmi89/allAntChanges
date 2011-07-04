@@ -700,7 +700,7 @@ console.dir(data);
                 RDR.session.alertBar.make('fromShareLink', data);
                 return true; //could return something more useful if we need it.
             },
-			iframeHost : "http://readr.local:8080", // TODO put this in a template var
+			iframeHost : "http://local.readrboard.com:8080", // TODO put this in a template var
             getUser: function(args, callback) {
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
                     // we have a user id and token, be it temp or logged in user, so just run the callback
@@ -2094,6 +2094,8 @@ log('--showLoginPanel---');
 
                         // todo: [porter] i'm looping to see if there is a comment for this TAG.  can we just send this down from server?
                         for ( var i in summary.top_interactions.coms ) {
+                            log('summary.top_interactions.coms');
+                            console.dir(summary.top_interactions.coms);
                             var node_comments = 0;
                             if ( summary.top_interactions.coms[i].content_id == node.id ) {
                                 node_comments++;
@@ -3148,8 +3150,10 @@ console.dir(node.top_interactions);
                                     //successfully got a short URL
                                     RDR.actions.shareContent({ sns:params.sns, content:content_node_info.content, short_url:response.data.short_url, reaction:tag.body });
 
-                                    if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
-                                    else RDR.session.showLoginPanel( args );
+                                    if ( response.data.num_interactions ) {
+                                        if ( response.data.num_interactions < RDR.group.temp_interact ) RDR.session.showTempUserMsg({ rindow: rindow, int_id:response.data });
+                                        else RDR.session.showLoginPanel( args );
+                                    }
                                 }
                             },
                             error: function(response) {

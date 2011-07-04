@@ -137,7 +137,7 @@
     "pk": 1,
     "fields": {
       "name": "localhost",
-      "domain": "localhost",
+      "domain": "localhost:8080",
       "group": 1
     }
   },
