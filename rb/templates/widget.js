@@ -626,7 +626,7 @@ console.dir(data);
                 RDR.session.alertBar.make('fromShareLink', data);
                 return true; //could return something more useful if we need it.
             },
-			iframeHost : "http://local.readrboard.com:8080", // TODO put this in a template var
+			iframeHost : "http://readr.local:8080", // TODO put this in a template var
             getUser: function(args, callback) {
 
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {

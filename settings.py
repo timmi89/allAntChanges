@@ -5,8 +5,8 @@ TEMPLATE_DEBUG = DEBUG
 
 # Facebook shit
 LOGIN_REDIRECT_URL = '/'
-FACEBOOK_APP_ID = '163759626987948'
-FACEBOOK_APP_SECRET = 'f14061a2ed9d7ae8ed1c3b231a8148c9'
+FACEBOOK_APP_ID = '186217208100982'
+FACEBOOK_APP_SECRET = 'f285b17e71770615189e7676c1d7d0f9'
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),    
@@ -16,7 +16,7 @@ ADMINS = (
 )
 
 if DEBUG:
-    BASE_URL = 'http://local.readrboard.com:8080'
+    BASE_URL = 'http://readr.local:8080'
 else:
     BASE_URL = 'http://www.readrboard.com'
 
