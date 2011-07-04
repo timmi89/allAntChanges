@@ -1332,48 +1332,20 @@ dir(data);
                 }
             },
             interactions: {
+                create: function(args, int_type, customCallback){
+                    
+                },
                 rate: {
                     start: function(args){
                         var scope = this;
                         var uiMode = args.uiMode; //read or write
-
-                        //This function requires the following args
-                        /*
-
-                        interactionButton //get styles from it.
-
-                        "tag" : tag,
-                        "hash": content_node_data.container,
-                        "content" : content_node_data,
-                        "content_type" : content_type,
-
-                        "user_id" : RDR.user.user_id,
-                        "readr_token" : RDR.user.readr_token,
-                        "group_id" : RDR.groupPermData.group_id,
-                        "page_id" : RDR.page.id
-                        */
 
                         //expand args to make it clear what's going on.
                         var $rindow = args.rindow,
                         $tagLi = args.tag,
                         settings = args.settings;
 
-                        
-                        //settings: (ex.)
-                        /*                
-                            container
-                                "8930c16c3df989a79fd0c163fc14aeb2"       
-                            content
-                                "Start Small, Go Big Contest, your chance to launch your bazillion dollar idea"
-                            content_type
-                                "text"
-                            coords
-                                Object { left=540.0833129882812, top=815.6000061035156}
-
-                        */
-
                         //example:
-                        //tag:{body, id}, rindow:rindow, settings:settings, callback: 
                         var uiMode = args.uiMode || 'write';
                         //Split by readMode or writeMode
 
