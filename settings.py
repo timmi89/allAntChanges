@@ -16,7 +16,7 @@ ADMINS = (
 )
 
 if DEBUG:
-    BASE_URL = 'http://readr.local:8080'
+    BASE_URL = 'http://local.readrboard.com:8080'
 else:
     BASE_URL = 'http://www.readrboard.com'
 
@@ -61,22 +61,21 @@ USE_L10N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = 'rb/media'
+# [porter] wtf.
+MEDIA_ROOT = 'rb/static'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/media/'
-
-STATIC_ROOT = 'rb/static'
-
-# For static media
-STATIC_URL = '/static/'
+MEDIA_URL = '/static/'
 
 # URL prefix for admin static files -- CSS, JavaScript and images.                    
 # Make sure to use a trailing slash.                                                  
 # Examples: "http://foo.com/static/admin/", "/static/admin/".                         
-ADMIN_MEDIA_PREFIX = '/static/admin/'
+ADMIN_MEDIA_PREFIX = '/static/site/admin/'
+
+# static files URL.
+STATIC_URL = BASE_URL + '/static/'
 
 # Additional locations of static files                                                
 STATICFILES_DIRS = (
