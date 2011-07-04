@@ -1,6 +1,4 @@
-// //log($)
-var jQueryVersion = "1.4.4",
-RDRtimer,
+var RDRtimer,
 RDR, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
 $R = {}, //init var: our clone of jQuery
@@ -57,43 +55,6 @@ function readrBoard($R){
 				"body p		{}" +
 				"</style>"
 		*/
-		},
-        // TODO kill this.
-		demo: {
-		    inPage_one: function(img) {
-                var offsets = img.offset();
-                
-		        var rindow = RDR.rindow.draw({
-                    coords:offsets,
-					pnlWidth:200,
-					panels:2,
-					noHeader:true
-                });
-                demoRindow = rindow;
-                
-                var $demo = $('<div class="rdr_sentimentBox rdr_new" style="height:310px;width:358px;overflow:hidden;position:relative;" />'),
-                $img = $('<img src="'+RDR_rootPath+'/static/images/demo/two_columns.png" style="display:block;position:relative;z-index:2;float:left;cursor:pointer;" />');
-                $img.click( function() {
-                    $(this).attr('src', RDR_rootPath+'/static/images/demo/two_columns_clicked.png');
-                    $(this).unbind('click');
-                    $(this).click( function() {
-                        var $img_three = $('<img src="'+RDR_rootPath+'/static/images/demo/three_columns.png" style="display:block;position:relative;z-index:1;float:right;margin-top:-310px;cursor:text;" />');
-                        $(this).attr('src', RDR_rootPath+'/static/images/demo/two_columns_clicked_twice.png');
-                        $(this).after( $img_three );
-                        //$(this).attr('src', RDR_rootPath+'/static/images/demo/two_columns_clicked_twice.png');
-                        demoRindow.find('div.rdr_sentimentBox').animate({width:538},300);
-                    });
-                });
-                $demo.append( $img );
-
-                rindow.animate({
-                    width: rindow.settings.pnlWidth +'px',
-                    minHeight: rindow.settings.height +'px'
-                }, rindow.settings.animTime, function() {
-					$(this).css('width','auto');
-					rindow.find('.rdr_contentSpace').append( $demo );
-				});
-		    }
 		},
 		rindow: {
             stack:{
@@ -665,7 +626,7 @@ console.dir(data);
                 RDR.session.alertBar.make('fromShareLink', data);
                 return true; //could return something more useful if we need it.
             },
-			iframeHost : "http://local.readrboard.com:8080", // TODO put this in a template var
+			iframeHost : "http://readr.local:8080", // TODO put this in a template var
             getUser: function(args, callback) {
 
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
@@ -1497,7 +1458,7 @@ console.dir(data);
                             //todo: later verify on the backend and don't let user 'stuff the ballot'
 
                             // optional loader.
-                            args.tag.find('div.rdr_leftBox').html('<img src="'+RDR_rootPath+'/static/images/loader.gif" style="margin:6px 0 0 5px" />');
+                            args.tag.find('div.rdr_leftBox').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" style="margin:6px 0 0 5px" />');
 
                         //Do UI stuff particular to read mode
                         }else if(uiMode == "read"){
@@ -1643,7 +1604,7 @@ console.dir(data);
 
 
                             // optional loader.
-                            args.tag.find('div.rdr_leftBox').html('<img src="'+RDR_rootPath+'/static/images/loader.gif" style="margin:6px 0 0 5px" />');
+                            args.tag.find('div.rdr_leftBox').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" style="margin:6px 0 0 5px" />');
                             //todo: later make sure we are verifying on the backend and not letting the user 'stuff the ballot'                            
                             validateUserAndProcceed();
                     
@@ -1911,7 +1872,7 @@ console.dir(data);
                         $indicator = $('<div class="rdr rdr_indicator rdr_image"></div>').attr( 'id', indicatorId ).hide();
 
                         $indicator.append(
-                            '<img src="'+RDR_rootPath+'/static/images/blank.png" class="no-rdr" />',
+                            '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr" />',
                             '<span class="rdr_count">'+ total +' reactions: </span>'
                         );
 
@@ -1963,7 +1924,7 @@ console.dir(data);
                     //log(summary);
                     summary.indicator = $('rdr_in');
                     $indicator.append(
-                        '<img src="'+RDR_rootPath+'/static/images/blank.png" class="no-rdr" />',
+                        '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr" />',
                         '<span class="rdr_count">'+ total +'</span>'
                     )//chain
                     .data( {'which':hash} )//chain
@@ -2543,10 +2504,10 @@ log('---- rindow.data --------');
 
                                 var $this = $(this),
                                     $shareTip = $( '<div class="rdr rdr_share_container"><div class="rdr rdr_tooltip rdr_top"><div class="rdr rdr_tooltip-content">Share this reaction<br/>'+
-                                                    '<img rel="facebook" src="/static/images/social-icons-loose/social-icon-facebook.png" class="rdr_sns no-rdr"/>'+
-                                                    '<img rel="twitter" src="/static/images/social-icons-loose/social-icon-twitter.png" class="rdr_sns no-rdr"/>'+
-                                                    // '<img rel="tumblr" src="/static/images/social-icons-loose/social-icon-tumblr.png" class="rdr_sns no-rdr"/>'+
-                                                    // '<img rel="linkedin" src="/static/images/social-icons-loose/social-icon-linkedin.png" class="rdr_sns no-rdr"/>'+
+                                                    '<img rel="facebook" src="/static/widget/images/social-icons-loose/social-icon-facebook.png" class="rdr_sns no-rdr"/>'+
+                                                    '<img rel="twitter" src="/static/widget/images/social-icons-loose/social-icon-twitter.png" class="rdr_sns no-rdr"/>'+
+                                                    // '<img rel="tumblr" src="/static/widget/images/social-icons-loose/social-icon-tumblr.png" class="rdr_sns no-rdr"/>'+
+                                                    // '<img rel="linkedin" src="/static/widget/images/social-icons-loose/social-icon-linkedin.png" class="rdr_sns no-rdr"/>'+
                                                     '</div><div class="rdr rdr_tooltip-arrow-border" /><div class="rdr rdr_tooltip-arrow" /></div></div>' );
                                 var share_offsets = $this.offset(),
                                     rindow_offsets = rindow.offset();
@@ -2630,7 +2591,7 @@ console.dir(node.top_interactions);
                                 $commentBy = $('<div class="rdr_commentBy" />'),
                                 $comment = $('<div class="rdr_comment" />');
 
-                            var user_image_url = ( this_comment.user.social_user.img_url ) ? this_comment.user.social_user.img_url: RDR_rootPath+'/static/images/anonymousplode.png';
+                            var user_image_url = ( this_comment.user.social_user.img_url ) ? this_comment.user.social_user.img_url: '{{ STATIC_URL }}widget/images/anonymousplode.png';
                             var user_name = ( this_comment.user.first_name == "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
                             $commentBy.html( '<img src="'+user_image_url+'" /> ' + user_name );
                             $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
@@ -2885,7 +2846,7 @@ console.dir(node.top_interactions);
                             // $whyPanel.find('.rdr_body').html('');
                             
                             //add a loader
-                            //$this.find('div.rdr_leftBox').html('<img src="'+RDR_rootPath+'/static/images/loader.gif" style="margin:6px 0 0 5px" />');
+                            //$this.find('div.rdr_leftBox').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" style="margin:6px 0 0 5px" />');
 
                             if (actionType == "react") {
                                 var args = { tag:$this, rindow:rindow, settings:settings };
@@ -3064,7 +3025,7 @@ console.dir(node.top_interactions);
             },
             bookmarkSend: function(args) {
                 // optional loader.
-                args.tag.find('div.rdr_leftBox').html('<img src="'+RDR_rootPath+'/static/images/loader.gif" style="margin:6px 0 0 5px" />');
+                args.tag.find('div.rdr_leftBox').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" style="margin:6px 0 0 5px" />');
         
                 //example:
                 //tag:{body, id}, rindow:rindow, settings:settings, callback: 
@@ -3553,7 +3514,7 @@ console.dir(node.top_interactions);
 
                 //quick mockup version of this code
                 $.each(socialNetworks, function(idx, val){
-                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img src="'+RDR_rootPath+'/static/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
+                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
                     $shareLinks.find('li:last').click( function() {
                         
                         /*
@@ -3944,11 +3905,11 @@ function loadScript(sScriptSrc,callbackfunction) {
 }
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
-loadScript( RDR_rootPath+"/static/js/jquery-1.6.js", function(){
+loadScript( "{{ STATIC_URL }}global/js/jquery-1.6.js", function(){
     //callback
 
     //load jQuery UI while the $ and jQuery still refers to our new version
-    loadScript( RDR_rootPath+"/static/js/jquery-ui-1.8.6.custom.min.js", function(){
+    loadScript( "{{ STATIC_URL }}global/js/jquery-ui-1.8.6.custom.min.js", function(){
         //callback
 
         //test that $.ui versioning is working correctly
@@ -3972,8 +3933,9 @@ function $RFunctions($R){
 
     //load CSS
     var css = [
-        RDR_rootPath+"/static/ui-prototype/css/readrboard.css",
-        RDR_rootPath+"/static/css/jquery.jscrollpane.css"
+        RDR_rootPath+"/widgetCss/",
+        "{{ STATIC_URL }}global/css/readrleague.css",
+        "{{ STATIC_URL }}widget/css/jquery.jscrollpane.css"
     ];
     
     loadCSS(css);

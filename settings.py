@@ -5,8 +5,8 @@ TEMPLATE_DEBUG = DEBUG
 
 # Facebook shit
 LOGIN_REDIRECT_URL = '/'
-FACEBOOK_APP_ID = '163759626987948'
-FACEBOOK_APP_SECRET = 'f14061a2ed9d7ae8ed1c3b231a8148c9'
+FACEBOOK_APP_ID = '186217208100982'
+FACEBOOK_APP_SECRET = 'f285b17e71770615189e7676c1d7d0f9'
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),    
@@ -61,22 +61,21 @@ USE_L10N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = 'rb/media'
+# [porter] wtf.
+MEDIA_ROOT = 'rb/static'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/media/'
-
-STATIC_ROOT = 'rb/static'
-
-# For static media
-STATIC_URL = '/static/'
+MEDIA_URL = '/static/'
 
 # URL prefix for admin static files -- CSS, JavaScript and images.                    
 # Make sure to use a trailing slash.                                                  
 # Examples: "http://foo.com/static/admin/", "/static/admin/".                         
-ADMIN_MEDIA_PREFIX = '/static/admin/'
+ADMIN_MEDIA_PREFIX = '/static/site/admin/'
+
+# static files URL.
+STATIC_URL = BASE_URL + '/static/'
 
 # Additional locations of static files                                                
 STATICFILES_DIRS = (
@@ -99,6 +98,15 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
     #'django.template.loaders.eggs.load_template_source',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.contrib.auth.context_processors.auth',
+    'django.contrib.messages.context_processors.messages',
 )
 
 MIDDLEWARE_CLASSES = (
