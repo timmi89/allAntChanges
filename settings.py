@@ -17,8 +17,6 @@ ADMINS = (
 
 if DEBUG:
     BASE_URL = 'http://readr.local:8080'
-else:
-    BASE_URL = 'http://www.readrboard.com'
 
 MANAGERS = ADMINS
 

@@ -15,3 +15,6 @@ DATABASES = {
     'PORT':     '3306',
     }
 }
+
+BASE_URL = 'http://www.readrboard.com'
+STATIC_URL = BASE_URL + '/static/'
