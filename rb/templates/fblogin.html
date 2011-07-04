@@ -2,17 +2,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US" xmlns:x2="http://www.w3.org/2002/06/xhtml2" xmlns:fb="http://www.facebook.com/2008/fbml">
    <head>
      <title>Log In to ReadrBoard</title>
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
-	<script src="/static/js/jquery.ba-postmessage.min.js" type="text/javascript"></script>
-	<script src="/static/js/jquery.json-2.2.min.js" type="text/javascript"></script>
-	<script src="/static/js/jquery.cookie.js" type="text/javascript"></script>
+	<script src="/static/global/js/jquery-1.6.js" type="text/javascript"></script>
+	<script src="/static/widget/js/jquery.ba-postmessage.min.js" type="text/javascript"></script>
+	<script src="/static/widget/js/jquery.json-2.2.min.js" type="text/javascript"></script>
+	<script src="/static/widget/js/jquery.cookie.js" type="text/javascript"></script>
 	<script type="text/javascript">
 	var date = new Date();
 	// TODO use the following line.  it creates a cachebuster that represents the current day/week/month
 	// var cachebuster = String( parseInt( date.getDate() / 7 )+1 )+String(date.getMonth()) + String(date.getYear());
 	var cachebuster = date.getTime();
 	document.write(
-		unescape( '%3Cscript src="/static/js/readr_user_auth.js?' + cachebuster + '" type="text/javascript"%3E%3C/script%3E' )
+		unescape( '%3Cscript src="/static/widget/js/readr_user_auth.js?' + cachebuster + '" type="text/javascript"%3E%3C/script%3E' )
 	);
 	</script>
 	<style type="text/css">
@@ -31,7 +31,7 @@
 	   	<br><br>
 	   	To keep participating, just log in with Facebook.
 		<div id="fb-login-button">
-			<a href="javascript:void(0);" onclick="RDRAuth.doFBLogin();"><img src="/static/images/fb-login_to_readrboard.png" /></a>
+			<a href="javascript:void(0);" onclick="RDRAuth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" /></a>
 		</div>
 		<strong><span style="color:#008be4;">ReadrBoard</span> values your privacy.</strong>
 		<ul>

@@ -29,11 +29,12 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 <link rel="stylesheet" media="handheld" href="css/handheld.css?v=1">  -->
 
 <!-- For all browsers -->
-<link rel="stylesheet" href="/static/css/style.css?v=1">
+<link rel="stylesheet" href="{{ STATIC_URL }}global/css/readrleague.css">
+<link rel="stylesheet" href="{{ STATIC_URL }}site/css/style.css?v=1">
 
 <!-- JavaScript at bottom except for Modernizr -->
 <!-- [porter] using modernizr 2, new as of 6/1, even though 320andup ships with 1.7 -->
-<script src="/static/320/single/js/libs/modernizr-2.uncompressed.js"></script>
+<script src="{{ STATIC_URL }}site/320/js/libs/modernizr-2.uncompressed.js"></script>
 
 <!-- For iPhone 4 -->
 <link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/h/apple-touch-icon.png">
@@ -64,7 +65,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
   <header role="banner" class="clearfix">
     <a href="/"><h1>ReadrBoard</h1></a>
     <div id="settings">
-      <a href="#"><img src="/static/images/site/gear.png"/></a>
+      <a href="#"><img src="{{ STATIC_URL }}site/images/gear.png"/></a>
       <nav>
       <ul>
           <li><a href="/">Home</a></li>
@@ -125,16 +126,16 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
   </script>
   <!-- [porter] 320andup stuff -->
 <!-- mathiasbynens.be/notes/async-analytics-snippet Change UA-XXXXX-X to be your site's ID -->
-<script src="/static/js/jquery-1.6.min.js"></script>
+<script src="{{ STATIC_URL }}global/js/jquery-1.6.min.js"></script>
 
 <!-- Scripts -->
-<script src="/static/320/single/js/plugins.js"></script>
-<script src="/static/320/single/js/script.js"></script>
+<script src="{{ STATIC_URL }}site/320/js/plugins.js"></script>
+<script src="{{ STATIC_URL }}site/320/js/script.js"></script>
 
 <!--[if (lt IE 9) & (!IEMobile)]>
-<script src="/static/320/single/js/libs/DOMAssistantCompressed-2.8.js"></script>
-<script src="/static/320/single/js/libs/selectivizr-1.0.1.js"></script>
-<script src="/static/320/single/js/libs/respond.min.js"></script>
+<script src="{{ STATIC_URL }}site/320/js/libs/DOMAssistantCompressed-2.8.js"></script>
+<script src="{{ STATIC_URL }}site/320/js/libs/selectivizr-1.0.1.js"></script>
+<script src="{{ STATIC_URL }}site/320/js/libs/respond.min.js"></script>
 <![endif]-->
 
 <!-- http://t.co/HZe9oJ4 -->

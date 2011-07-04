@@ -10,8 +10,8 @@
 	<meta name="description" content="Kooky gifts for the inquisitive fruit cakes in your life." />
 
 	<!-- calling jquery externally for the moment.  would prefer we ref external jquery on google CDN. -->
-	<script src="js/jquery-1.4.4.min.js" type="text/javascript"></script>
-	<script src="js/jquery-ui-1.8.6.custom.min.js" type="text/javascript"></script>
+	<!-- <script src="js/jquery-1.4.4.min.js" type="text/javascript"></script> -->
+	<!-- <script src="js/jquery-ui-1.8.6.custom.min.js" type="text/javascript"></script> -->
 	
 	<!-- dailycandy JS, sans jQuery -->
 	<!-- <script src="dailycandy/dailycandy.js" type="text/javascript"></script>	 -->
@@ -230,21 +230,7 @@
 	<div>
 		<ul class="toolbar">
 				<li><a href="/tools/send-to-friend.jsp?id=92010&iframe=1" id="send-to-friend" class="email">E-MAIL</a></li>
-		
-				<script type="text/javascript">
-					$(document).ready(function(){
-						$('ul.toolbar li a#send-to-friend').click(function(){
-							//Omniture tracking
-							var s=s_gi('fancandydev');
-							s.linkTrackVars='prop1,prop2,events,pageName';
-							s.linkTrackEvents='event16';
-							s.pageName = 'tools:send to friend:pop up:';
-							s.prop1='all-cities';
-							s.events='event16';
-							s.tl(this,'o','send-to-friend');	
-						});
-					});						
-				</script>
+
 
 				<li><a href="#" class="print">PRINT</a></li>
 
@@ -264,20 +250,7 @@
 				<li><a href="http://www.stumbleupon.com/submit?url=http://www.dailycandy.com/all-cities/article/92010/5-Surprises-for-Childish-Souls" target="_blank" class="stumbleupon">STUMBLEUPON</a></li>
 					<li class="last"><a href="#" title="Annie's Blue Ribbon General Store's Prankish Delights" name="http://www.dailycandy.com/all-cities/article/92010/5-Surprises-for-Childish-Souls" target="_blank" class="see-all">SEE ALL</a></li>
 			</ul>
-			<script type="text/javascript">
-				$(document).ready(function(){
-					$('ul.toolbar li #send-to-friend').click(function(){
-						//Omniture tracking
-						var s=s_gi('fancandydev');
-						s.linkTrackVars='prop1,prop2,events,pageName';
-						s.linkTrackEvents='event16';
-						s.pageName = 'tools:send to friend:pop up:';
-						s.prop1='all-cities';
-						s.events='event16';
-						s.tl(this,'o','send-to-friend');	
-					});
-				});						
-			</script>
+
 	</div>
 
 	<div class="clear"></div>
@@ -326,11 +299,7 @@
 </div>
 <!-- /module-comments -->
 
-<script type="text/javascript">
-$('a.comments').each( function() {
-	$(this).click(function() { $.scrollTo( '#comments', 800, { easing:'easeInOutQuint' });});
-});
-</script>	</div>
+</div>
 	<!-- /grid-8 -->
 
 	<div id="module-sidebar" class="grid-4">

@@ -1,10 +1,3 @@
-@font-face {
-  font-family:ReadrLeague;
-  src:url( '{{ STATIC_URL }}global/css/LeagueGothic.eot' );
-  src:local('☺'),
-         url('{{ STATIC_URL }}global/css/LeagueGothic.otf') format('truetype');
-}
-
 div.rdr {
     font:normal 12px Arial, sans-serif;
     /* need to add a css reset here */
