@@ -12,6 +12,7 @@ from api.utils import *
 from api.exceptions import JSONException
 from cards import Card
 from django.utils.encoding import smart_str, smart_unicode
+from django.template import RequestContext
 
 def widget(request,sn):
     # Widget code is retreived from the server using RBGroup shortname
@@ -19,20 +20,20 @@ def widget(request,sn):
         rbg = Group.objects.get(short_name = sn)
     except Group.DoesNotExist:
         raise Exception('RB group with this short_name does not exist')
-    return render_to_response("widget.js",{'group_id': rbg.id, 'short_name' : sn}, mimetype = 'application/javascript')
+    return render_to_response("widget.js",{'group_id': rbg.id, 'short_name' : sn}, context_instance=RequestContext(request), mimetype = 'application/javascript')
 
 def widgetCss(request):
     # Widget code is retreived from the server using RBGroup shortname
-    return render_to_response("widget.css", mimetype = 'text/css')
+    return render_to_response("widget.css", context_instance=RequestContext(request), mimetype = 'text/css')
 
 def fb(request):
-    return render_to_response("facebook.html",{'fb_client_id': FACEBOOK_APP_ID})
+    return render_to_response("facebook.html",{'fb_client_id': FACEBOOK_APP_ID}, context_instance=RequestContext(request))
 
 def fblogin(request):
-    return render_to_response("fblogin.html",{'fb_client_id': FACEBOOK_APP_ID, 'group_name': request.GET['group_name'] })
+    return render_to_response("fblogin.html",{'fb_client_id': FACEBOOK_APP_ID, 'group_name': request.GET['group_name'] }, context_instance=RequestContext(request))
 
 def xdm_status(request):
-    return render_to_response("xdm_status.html",{'fb_client_id': FACEBOOK_APP_ID})
+    return render_to_response("xdm_status.html",{'fb_client_id': FACEBOOK_APP_ID}, context_instance=RequestContext(request))
 
 def profile(request, user_id, **kwargs):
     cookies = request.COOKIES
@@ -64,7 +65,7 @@ def profile(request, user_id, **kwargs):
         user_id = cookies.get('user_id')
         user = User.objects.get(id=user_id)
         context['user'] = user
-    return render_to_response("profile.html", context)
+    return render_to_response("profile.html", context, context_instance=RequestContext(request))
 
 def home(request, **kwargs):
     cookies = request.COOKIES
@@ -82,7 +83,7 @@ def home(request, **kwargs):
     if user_id:
         user = User.objects.get(id=user_id)
         context['user'] = user
-    return render_to_response("index.html", context)
+    return render_to_response("index.html", context, context_instance=RequestContext(request))
 
 def cards(request):
     # Get interaction set based on filter criteria
@@ -95,10 +96,10 @@ def cards(request):
 
     cards = [Card(page, interactions.filter(page=page)) for page in pages]
     context = {'cards': cards}
-    return render_to_response("cards.html", context)
+    return render_to_response("cards.html", context, context_instance=RequestContext(request))
 
 def sidebar(request):
-    return render_to_response("sidebar.html")
+    return render_to_response("sidebar.html", context_instance=RequestContext(request))
 
 def expander(request, short):
     link_id = base62.to_decimal(short);
