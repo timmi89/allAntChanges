@@ -3,7 +3,7 @@ RDR, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
 $R = {}, //init var: our clone of jQuery
 client$ = {}, //init var: clients copy of jQuery
-RDR_rootPath = "http://localhost:8080"; //todo: when we get our hosting up change to readrboard.com or our CDN.
+RDR_rootPath = "{{ BASE_URL }}"; //todo: when we get our hosting up change to readrboard.com or our CDN.
 var demoRindow;
 var xx;
 
@@ -626,7 +626,7 @@ console.dir(data);
                 RDR.session.alertBar.make('fromShareLink', data);
                 return true; //could return something more useful if we need it.
             },
-			iframeHost : "http://readr.local:8080", // TODO put this in a template var
+			iframeHost : "{{ BASE_URL }}", // TODO put this in a template var
             getUser: function(args, callback) {
 
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
