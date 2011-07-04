@@ -1334,6 +1334,93 @@ dir(data);
             interactions: {
                 create: function(args, int_type, customCallback){
                     
+                    // take care of pre-ajax stuff, mostly UI stuff
+                    RDR.actions.interactions[int_type].preAjax(params);
+
+                    //get user and only procceed on success of that.
+                    RDR.session.getUser( args, function(newArgs){
+                        var args = newArgs;
+                        
+                        var sendDataDefaults = RDR.actions.interactions.sendDataDefaults(args),
+                            customSendData = RDR.actions.interactions[int_type].customSendData(args),
+                            sendData = $.extend( {}, sendDataDefaults, customSendData );
+
+                        args.sendData = sendData;
+                        RDR.actions.interactions[int_type].send(args);
+                    });
+                },
+                sendDataDefaults: function(args){
+                    //RDR.actions.interactions.sendDataDefaults:
+                    return {
+                        //interaction level
+                        "tag" : args.tag,
+                        "node": args.content_node,                        //null if writemode
+                        "content_node_data": args.content_node_data,
+                        "hash": args.content_node_data.container,
+                        //page level
+                        "user_id" : RDR.user.user_id,
+                        "readr_token" : RDR.user.readr_token,
+                        "group_id" : RDR.groupPermData.group_id,
+                        "page_id" : RDR.page.id
+                    };
+                },
+                comment: {
+                    preAjax: function(){
+                        
+                    },
+                    customSendData: function(){
+                        
+                    },
+                    onSuccess: function(){
+                        
+                    },
+                    onFail: function(){
+                        
+                    }
+                },
+                share: {
+                    preAjax: function(){
+                        
+                    },
+                    customSendData: function(){
+                        
+                    },
+                    onSuccess: function(){
+                        
+                    },
+                    onFail: function(){
+                        
+                    }
+
+                },
+                tag: {
+                    preAjax: function(){
+                        
+                    },
+                    customSendData: function(){
+                        
+                    },
+                    onSuccess: function(){
+                        
+                    },
+                    onFail: function(){
+                        
+                    }
+
+                },
+                bookmark: {
+                    preAjax: function(){
+                        
+                    },
+                    customSendData: function(){
+                        
+                    },
+                    onSuccess: function(){
+                        
+                    },
+                    onFail: function(){
+                        
+                    }
                 },
                 rate: {
                     start: function(args){
