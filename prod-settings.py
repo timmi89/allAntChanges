@@ -16,5 +16,5 @@ DATABASES = {
     }
 }
 
-BASE_URL = 'http://www.readrboard.com'
+BASE_URL = 'http://dev.readrboard.com'
 STATIC_URL = BASE_URL + '/static/'
