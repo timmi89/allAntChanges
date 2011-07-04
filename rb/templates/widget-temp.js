@@ -433,7 +433,7 @@ function readrBoard($R){
             }
         },
 		session: {
-			iframeHost : "http://readr.local:8080", // TODO put this in a template var
+			iframeHost : "http://local.readrboard.com:8080", // TODO put this in a template var
             getUser: function(args, callback) {
                 //console.log('checking user');
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {

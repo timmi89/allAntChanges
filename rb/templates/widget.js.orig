@@ -479,7 +479,7 @@ function readrBoard($R){
             }
         },
 		session: {
-			iframeHost : "http://readr.local:8080", // TODO put this in a template var
+			iframeHost : "http://local.readrboard.com:8080", // TODO put this in a template var
             getUser: function(args, callback) {
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
                     // we have a user id and token, be it temp or logged in user, so just run the callback
