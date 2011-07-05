@@ -1228,8 +1228,8 @@ function readrBoard($R){
 					//todo: talk to Porter about how to Model the Page Data
 					hashes : md5_list
 				}
-    log('sendData:');
-    console.dir(sendData);
+                log('sendData:');
+                console.dir(sendData);
                 // send the data!
                 $.ajax({
                     url: "/api/summary/containers/",
@@ -3322,7 +3322,8 @@ console.dir(node.top_interactions);
                     data: { json: JSON.stringify(sendData) },
                     success: function(response) {
                         RDR.actions.panel.collapse("whyPanel", rindow);
-                        rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id).removeClass('rdr_selected').removeClass('rdr_tagged').removeClass('rdr_int_node_'+int_id);
+                        var $thisTagButton = rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id);
+                        $thisTagButton.removeClass('rdr_selected').removeClass('rdr_tagged').removeClass('rdr_int_node_'+int_id);
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
