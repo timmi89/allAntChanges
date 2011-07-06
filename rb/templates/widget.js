@@ -655,6 +655,7 @@ function readrBoard($R){
                 }
             },
             handleGetUserFail: function(response, callback) {
+                log("handleGetUserFail: " + response.message)
                 switch ( response.message ) {
                     case "Error getting user!":
                         // kill the user object and cookie
@@ -672,12 +673,14 @@ function readrBoard($R){
                     case "Facebook token expired":  // call fb login
                     case "Social Auth does not exist for user": // call fb login
                         // the token is out of sync.  could be a mistake or a hack.
+                        log('starting postmessage')
                         $.postMessage(
                             "checkSocialUser",
                             RDR.session.iframeHost + "/xdm_status/",
                             window.frames['rdr-xdm-hidden']
                         );
                         // init a new receiveMessage handler to fire this callback if it's successful
+                        log('starting receivemessage')
                         RDR.session.receiveMessage( false, callback );
                     break;
                 }
@@ -697,8 +700,12 @@ function readrBoard($R){
                 // TODO: put this elsewhere so it's more logically placed and easier to find??
 			},
             receiveMessage: function(args, callback) {
+                //args is passed through this function into the callback as a parameter.
+                //The only side effect is that it adds a user property to args ( args[user] ).
+
                 $.receiveMessage(
                     function(e){
+                        console.dir(e);
                         var message = JSON.parse( e.data );
 
                         if ( message.status ) {
@@ -706,7 +713,7 @@ function readrBoard($R){
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
 
-                                //console.dir(message.data);
+                                console.dir(message);
                                 for ( var i in message.data ) {
                                     RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i]):message.data[i];
                                 }
@@ -1498,12 +1505,9 @@ function readrBoard($R){
                             tag = args.tag.data('tag');
 
                         var content_node_data = sendData.content_node_data;
-                        //I think this clears the loader                          
+                        
+                        //clear the loader                  
                         tag_li.find('div.rdr_leftBox').html('');
-
-
-                    
-
 
                         log('successssssssssssss');
                         var $this = args.tag;
@@ -1571,17 +1575,29 @@ function readrBoard($R){
                     },
                     onFail: function(args){
                         //RDR.actions.interactions.tag.onFail:
+
+                        var rindow = args.rindow,
+                            tag_li = args.tag;
+
                         var response = args.response;
                         log('failllllllllll');
+
+                        //clear the loader                  
+                        tag_li.find('div.rdr_leftBox').html('');
+
+
                         if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
                             log('uh oh better login, tempy 1');
                             RDR.session.showLoginPanel( args );
                         } else {
                             // if it failed, see if we can fix it, and if so, try this function one more time
                             RDR.session.handleGetUserFail( response, function() {
+                                log('inside callback');
                                 if ( !args.secondAttempt ) {
                                     args.secondAttempt = true;
                                     RDR.actions.interactions.create( args, 'tag' );
+                                }else{
+                                    console.warn('unhandled create interaction fail')
                                 }
                             });
                         }
@@ -2739,7 +2755,7 @@ console.dir(node.top_interactions);
                             //return false to prevent the rest of the interaction
                             return false;
                         }
-                        //else
+                        //elseRDR.actions.panel.expand("contentPanel", rindow);
 
                         if ( !$this.hasClass('rdr_customTagBox') ) {
                             // if ( $this.hasClass('rdr_selected') ){
