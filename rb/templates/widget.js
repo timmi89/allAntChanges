@@ -2255,7 +2255,7 @@ function readrBoard($R){
                 rindow.find('div.rdr_contentSpace').empty();  // empty this out in case it's just repositioning the rindow.
 
                 rindow.css({width:'200px'});
-                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new rdr_reactions" />'),
+                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new" />'),
 
                     $reactionPanel = $('<div class="rdr_reactionPanel rdr_read rdr_sntPnl" />'),
                     $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
@@ -2556,10 +2556,15 @@ log('---- rindow.data --------');
                                                     '</div><div class="rdr rdr_tooltip-arrow-border" /><div class="rdr rdr_tooltip-arrow" /></div></div>' );
                                 var share_offsets = $this.offset(),
                                     rindow_offsets = rindow.offset();
-                                
-                                $this.append( $shareTip );
-                                $shareTip.bind('mouseleave.rdr', function(e) {
+
+                                $this.addClass('rdr_hover').parent().addClass('rdr_hover');
+                                $shareTip.css('left', share_offsets.left+'px').css('top', share_offsets.top+'px');
+
+                                // $this.append( $shareTip );
+                                $('body').append( $shareTip );
+                                $shareTip.bind('mouseleave.rdr', { $tag_share:$this }, function(e) {
                                     $(this).remove();
+                                    e.data.$tag_share.removeClass('rdr_hover').parent().removeClass('rdr_hover');
                                 });
 
                                 var content_node_info = $(this).closest('div.rdr_contentSet').data();
@@ -2569,6 +2574,10 @@ log('---- rindow.data --------');
                                 $shareTip.find('img.rdr_sns').click( function() {
                                     RDR.actions.share_getLink({ sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node_info:content_node_info });
                                 });
+                            }
+                        ).mouseleave(
+                            function() {
+                                // $this.removeClass('rdr_hover');
                             }
                         );
 
@@ -2774,7 +2783,7 @@ console.dir(this_comment);
 
                 // build the ratePanel
 
-                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new rdr_reactions" />'),
+                var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new" />'),
                     $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl" />'),
                     $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
