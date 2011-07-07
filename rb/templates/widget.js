@@ -4,8 +4,6 @@ $RDR, //our global $RDR object (jquerified RDR object for attaching data and que
 $R = {}, //init var: our clone of jQuery
 client$ = {}, //init var: clients copy of jQuery
 RDR_rootPath = "{{ BASE_URL }}"; //todo: when we get our hosting up change to readrboard.com or our CDN.
-var demoRindow;
-var xx;
 
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
 //This function gets called by the function $RFunctions() via the function loadScript().
@@ -253,18 +251,19 @@ function readrBoard($R){
 		},
 		actionbar: {
 			draw: function(settings) {
-                
+                //RDR.actionbar.draw:
                 log('settings')                
                 log(settings)     
                 //expand to make settings explicit
-                var container = settings.container,
+                var containerHash = settings.container,
                     content_type = settings.content_type,
                     coords = settings.coords;
                 
                 //todo: change var above to something like containerHash instead of container.
-                container = RDR.containers[settings.container];
+                //todo: fix this bug later by hashing the content.
+                var container = (RDR.containers.hasOwnProperty(containerHash)) ? RDR.containers[containerHash] : undefined ;
 
-                var actionbar_id = "rdr_actionbar_"+container.hash;
+                var actionbar_id = "rdr_actionbar_"+containerHash;
     			var $actionbars = $('div.rdr.rdr_actionbar');
                 
 				if ( $('#'+actionbar_id).length > 0 ) return $('#'+actionbar_id);
@@ -311,7 +310,7 @@ function readrBoard($R){
                             "tipText":"React to this",
                             "onclick":function(){
                                 RDR.actions.sentimentBox({
-                                    "container": settings.container,
+                                    "container": containerHash,
                                     "content_type": settings.content_type,
                                     "content": settings.content,
                                     "coords": coords
@@ -323,7 +322,7 @@ function readrBoard($R){
                             "tipText":"Bookmark this",
                             "onclick":function(){
                                 RDR.actions.sentimentBox({
-                                    "container": settings.container,
+                                    "container": containerHash,
                                     "content_type": settings.content_type,
                                     "content": settings.content,
                                     "coords": coords,
@@ -667,6 +666,10 @@ function readrBoard($R){
 
                     case "Temporary user interaction limit reached":
                         // TODO: something.  anything at all.
+                    break;
+                    case "Container specified does not exist":
+                        log('caught error: Container specified does not exist and implementing temp fix')
+                        
                     break;
 
                     case "Token was invalid":
@@ -1200,11 +1203,17 @@ function readrBoard($R){
                     var body = $(this).data('body'),
                     kind = $(this)[0].tagName.toLowerCase();
 
-                    var hashText = ( kind=="img") ? "rdr-"+kind+"-"+body : "rdr-text-"+body, //rdr-img-dailycandy.com/image/cake.jpg || rdr-p-ohshit this is some crazy text up in this paragraph
+                    var hashText = ( kind=="img") ? "rdr-"+kind+"-"+body : "rdr-text-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
                     hash = RDR.util.md5.hex_md5( hashText );
 
-                    if ( RDR.containers[hash] ) return
-                    if ( typeof body === "undefined" ) return
+                    //return without doing anything if:
+                    //we've already hashed it, or the body was invalid (this shouldn't happen I don't think)
+                    var dontSend = ( RDR.containers[hash] || !body );
+                    if( dontSend ){
+                        $nodes = $nodes.not(this)
+                        return; //won't add to RDR.containers either
+                    }
+                    //else
 
                     // add an object with the text and hash to the nodes dictionary
                     //todo: consider putting this info directly onto the DOM node data object
@@ -1217,25 +1226,38 @@ function readrBoard($R){
                     // this makes it easy to find on the page later
                     $(this).addClass( 'rdr-' + hash ).addClass('rdr-hashed');
                     $(this).data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
-                    
                 });
-                RDR.actions.sendHashes();
-            },
-            sendHashes: function() {
-                // TODO: dont' send all hashes
 
-                var md5_list = [];
-                for (var i in RDR.containers ) {
-                    md5_list.push( i );
+                RDR.actions.sendHashes( $nodes );
+            },
+            sendHashes: function( $nodes ) {
+                
+                //get hashes from $nodes if it was passed, or otherwise, the full RDR.containers dict
+                var hashes = [];
+                if( $nodes ){
+                    $nodes.each(function(){
+                        var hash = $(this).data('hash');
+                        hashes.push( hash );
+                    });
+                }else{
+                    hashes = getAllHashes();
+                }
+
+                function getAllHashes(){
+                    var md5_list = [];
+                    for (var i in RDR.containers ) {
+                        md5_list.push( i );
+                    }
+                    return md5_list;
                 }
 
 				var sendData = {
 					short_name : RDR.group.short_name,
-					pageID : RDR.page.id,
-					//todo: talk to Porter about how to Model the Page Data
-					hashes : md5_list
+					pageID: RDR.page.id,
+					hashes: hashes
 				}
-                log('sendData:');
+
+                log('sendData: for /api/summary/containers/');
                 console.dir(sendData);
                 // send the data!
                 $.ajax({
@@ -1834,7 +1856,9 @@ function readrBoard($R){
                         });
 
                         return;
-                    }   
+                    }
+                    //else assume text
+                    //todo: refactor the above if for images - do this smarter
 
                     //todo: is this a problem to use IDS here even when this is an el that we make?
                     $indicator = $('<div class="rdr_indicator" />').hide().attr('id',indicatorId).appendTo($container);
