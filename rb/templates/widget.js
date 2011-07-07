@@ -4,8 +4,6 @@ $RDR, //our global $RDR object (jquerified RDR object for attaching data and que
 $R = {}, //init var: our clone of jQuery
 client$ = {}, //init var: clients copy of jQuery
 RDR_rootPath = "{{ BASE_URL }}"; //todo: when we get our hosting up change to readrboard.com or our CDN.
-var demoRindow;
-var xx;
 
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
 //This function gets called by the function $RFunctions() via the function loadScript().
@@ -253,18 +251,17 @@ function readrBoard($R){
 		},
 		actionbar: {
 			draw: function(settings) {
-                
-                log('settings')                
-                log(settings)     
+                //RDR.actionbar.draw:
                 //expand to make settings explicit
-                var container = settings.container,
+                var containerHash = settings.container,
                     content_type = settings.content_type,
                     coords = settings.coords;
                 
                 //todo: change var above to something like containerHash instead of container.
-                container = RDR.containers[settings.container];
+                //todo: fix this bug later by hashing the content.
+                var container = (RDR.containers.hasOwnProperty(containerHash)) ? RDR.containers[containerHash] : undefined ;
 
-                var actionbar_id = "rdr_actionbar_"+container.hash;
+                var actionbar_id = "rdr_actionbar_"+containerHash;
     			var $actionbars = $('div.rdr.rdr_actionbar');
                 
 				if ( $('#'+actionbar_id).length > 0 ) return $('#'+actionbar_id);
@@ -311,7 +308,7 @@ function readrBoard($R){
                             "tipText":"React to this",
                             "onclick":function(){
                                 RDR.actions.sentimentBox({
-                                    "container": settings.container,
+                                    "container": containerHash,
                                     "content_type": settings.content_type,
                                     "content": settings.content,
                                     "coords": coords
@@ -323,7 +320,7 @@ function readrBoard($R){
                             "tipText":"Bookmark this",
                             "onclick":function(){
                                 RDR.actions.sentimentBox({
-                                    "container": settings.container,
+                                    "container": containerHash,
                                     "content_type": settings.content_type,
                                     "content": settings.content,
                                     "coords": coords,
@@ -655,6 +652,7 @@ function readrBoard($R){
                 }
             },
             handleGetUserFail: function(response, callback) {
+                log("handleGetUserFail: " + response.message)
                 switch ( response.message ) {
                     case "Error getting user!":
                         // kill the user object and cookie
@@ -667,17 +665,23 @@ function readrBoard($R){
                     case "Temporary user interaction limit reached":
                         // TODO: something.  anything at all.
                     break;
+                    case "Container specified does not exist":
+                        log('caught error: Container specified does not exist and implementing temp fix')
+                        log(response)
+                    break;
 
                     case "Token was invalid":
                     case "Facebook token expired":  // call fb login
                     case "Social Auth does not exist for user": // call fb login
                         // the token is out of sync.  could be a mistake or a hack.
+                        log('starting postmessage')
                         $.postMessage(
                             "checkSocialUser",
                             RDR.session.iframeHost + "/xdm_status/",
                             window.frames['rdr-xdm-hidden']
                         );
                         // init a new receiveMessage handler to fire this callback if it's successful
+                        log('starting receivemessage')
                         RDR.session.receiveMessage( false, callback );
                     break;
                 }
@@ -697,8 +701,12 @@ function readrBoard($R){
                 // TODO: put this elsewhere so it's more logically placed and easier to find??
 			},
             receiveMessage: function(args, callback) {
+                //args is passed through this function into the callback as a parameter.
+                //The only side effect is that it adds a user property to args ( args[user] ).
+
                 $.receiveMessage(
                     function(e){
+                        console.dir(e);
                         var message = JSON.parse( e.data );
 
                         if ( message.status ) {
@@ -706,7 +714,7 @@ function readrBoard($R){
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
 
-                                //console.dir(message.data);
+                                console.dir(message);
                                 for ( var i in message.data ) {
                                     RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i]):message.data[i];
                                 }
@@ -1177,7 +1185,7 @@ function readrBoard($R){
 
 
                 //todo: implement black list
-                var $imgNodes = $( RDR.group.img_selector ).not('.rdr-hashed');//.not('.no-rdr'); //todo put back
+                var $imgNodes = $( RDR.group.img_selector ).not('.rdr-hashed').not('.no-rdr');
 
                 //todo: make this body get picked up later.
                 $imgNodes.each( function() {
@@ -1193,11 +1201,17 @@ function readrBoard($R){
                     var body = $(this).data('body'),
                     kind = $(this)[0].tagName.toLowerCase();
 
-                    var hashText = ( kind=="img") ? "rdr-"+kind+"-"+body : "rdr-text-"+body, //rdr-img-dailycandy.com/image/cake.jpg || rdr-p-ohshit this is some crazy text up in this paragraph
+                    var hashText = ( kind=="img") ? "rdr-"+kind+"-"+body : "rdr-text-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
                     hash = RDR.util.md5.hex_md5( hashText );
 
-                    if ( RDR.containers[hash] ) return
-                    if ( typeof body === "undefined" ) return
+                    //return without doing anything if:
+                    //we've already hashed it, or the body was invalid (this shouldn't happen I don't think)
+                    var dontSend = ( RDR.containers[hash] || !body );
+                    if( dontSend ){
+                        $nodes = $nodes.not(this)
+                        return; //won't add to RDR.containers either
+                    }
+                    //else
 
                     // add an object with the text and hash to the nodes dictionary
                     //todo: consider putting this info directly onto the DOM node data object
@@ -1210,26 +1224,40 @@ function readrBoard($R){
                     // this makes it easy to find on the page later
                     $(this).addClass( 'rdr-' + hash ).addClass('rdr-hashed');
                     $(this).data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
-                    
                 });
-                RDR.actions.sendHashes();
-            },
-            sendHashes: function() {
-                // TODO: dont' send all hashes
 
-                var md5_list = [];
-                for (var i in RDR.containers ) {
-                    md5_list.push( i );
+                RDR.actions.sendHashes( $nodes );
+            },
+            sendHashes: function( $nodes ) {
+                
+                //get hashes from $nodes if it was passed, or otherwise, the full RDR.containers dict
+                var hashes = [];
+                if( $nodes ){
+                    $nodes.each(function(){
+                        var hash = $(this).data('hash');
+                        hashes.push( hash );
+                    });
+                }else{
+                    hashes = getAllHashes();
                 }
 
+                function getAllHashes(){
+                    var md5_list = [];
+                    for (var i in RDR.containers ) {
+                        md5_list.push( i );
+                    }
+                    return md5_list;
+                }
+
+                //build the sendData with the hashes from above
 				var sendData = {
 					short_name : RDR.group.short_name,
-					pageID : RDR.page.id,
-					//todo: talk to Porter about how to Model the Page Data
-					hashes : md5_list
+					pageID: RDR.page.id,
+					hashes: hashes
 				}
-    log('sendData:');
-    console.dir(sendData);
+
+                log('sendData: for /api/summary/containers/');
+                console.dir(sendData);
                 // send the data!
                 $.ajax({
                     url: "/api/summary/containers/",
@@ -1498,7 +1526,8 @@ function readrBoard($R){
                             tag = args.tag.data('tag');
 
                         var content_node_data = sendData.content_node_data;
-                        //I think this clears the loader                          
+                        
+                        //clear the loader                  
                         tag_li.find('div.rdr_leftBox').html('');
 
 
@@ -1571,17 +1600,29 @@ function readrBoard($R){
                     },
                     onFail: function(args){
                         //RDR.actions.interactions.tag.onFail:
+
+                        var rindow = args.rindow,
+                            tag_li = args.tag;
+
                         var response = args.response;
                         log('failllllllllll');
+
+                        //clear the loader                  
+                        tag_li.find('div.rdr_leftBox').html('');
+
+
                         if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
                             log('uh oh better login, tempy 1');
                             RDR.session.showLoginPanel( args );
                         } else {
                             // if it failed, see if we can fix it, and if so, try this function one more time
                             RDR.session.handleGetUserFail( response, function() {
+                                log('inside callback');
                                 if ( !args.secondAttempt ) {
                                     args.secondAttempt = true;
                                     RDR.actions.interactions.create( args, 'tag' );
+                                }else{
+                                    console.warn('unhandled create interaction fail')
                                 }
                             });
                         }
@@ -1917,7 +1958,9 @@ function readrBoard($R){
                         });
 
                         return;
-                    }   
+                    }
+                    //else assume text
+                    //todo: refactor the above if for images - do this smarter
 
                     //todo: is this a problem to use IDS here even when this is an el that we make?
                     $indicator = $('<div class="rdr_indicator" />').hide().attr('id',indicatorId).appendTo($container);
@@ -2652,8 +2695,8 @@ console.dir(this_comment);
                 RDR.actions.panel.expand("whyPanel", rindow);
             },
 			sentimentBox: function(settings) {
-             log('sentimentBox settings: ');
-             console.dir(settings);
+             //log('sentimentBox settings: ');
+             //console.dir(settings);
                 //settings:
                 /*
                 {
@@ -2837,7 +2880,7 @@ console.dir(this_comment);
                             //return false to prevent the rest of the interaction
                             return false;
                         }
-                        //else
+                        //elseRDR.actions.panel.expand("contentPanel", rindow);
 
                         if ( !$this.hasClass('rdr_customTagBox') ) {
                             // if ( $this.hasClass('rdr_selected') ){
@@ -2970,8 +3013,8 @@ console.dir(this_comment);
             // sentimentBox can be merged with / nested under this as sentimentPanel.draw at a later time mayhaps
             sentimentPanel: {
                 addCustomTagBox: function(args) {
-                    log('addCustomTagBox args: ');
-                    console.dir(args);
+                    //log('addCustomTagBox args: ');
+                    //console.dir(args);
                     var rindow = args.rindow,
                         settings = args.settings,
                         $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
@@ -3251,7 +3294,8 @@ console.dir(this_comment);
                     data: { json: JSON.stringify(sendData) },
                     success: function(response) {
                         RDR.actions.panel.collapse("whyPanel", rindow);
-                        rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id).removeClass('rdr_selected').removeClass('rdr_tagged').removeClass('rdr_int_node_'+int_id);
+                        var $thisTagButton = rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id);
+                        $thisTagButton.removeClass('rdr_selected').removeClass('rdr_tagged').removeClass('rdr_int_node_'+int_id);
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
@@ -3509,7 +3553,11 @@ console.dir(this_comment);
 								selection.container = $mouse_target.data('hash');
                             } else if ( $mouse_target.parents('.rdr-hashed:first').length == 1 ) {
                                 selection.container = $mouse_target.parents('.rdr-hashed:first').data('hash');
-							}
+							}else{
+                                //for now do nothing.
+                                //todo: consider later hashing this and sending it up.
+                                return;                     
+                            }
 
                             // strip newlines and tabs -- and then the doublespaces that result
                             selection.blockParentTextClean = RDR.util.cleanPara ( selection.blockParent.text );
