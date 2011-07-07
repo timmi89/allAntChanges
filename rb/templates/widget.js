@@ -252,8 +252,6 @@ function readrBoard($R){
 		actionbar: {
 			draw: function(settings) {
                 //RDR.actionbar.draw:
-                log('settings')                
-                log(settings)     
                 //expand to make settings explicit
                 var containerHash = settings.container,
                     content_type = settings.content_type,
@@ -669,7 +667,7 @@ function readrBoard($R){
                     break;
                     case "Container specified does not exist":
                         log('caught error: Container specified does not exist and implementing temp fix')
-                        
+                        log(response)
                     break;
 
                     case "Token was invalid":
@@ -1187,7 +1185,7 @@ function readrBoard($R){
 
 
                 //todo: implement black list
-                var $imgNodes = $( RDR.group.img_selector ).not('.rdr-hashed');//.not('.no-rdr'); //todo put back
+                var $imgNodes = $( RDR.group.img_selector ).not('.rdr-hashed').not('.no-rdr');
 
                 //todo: make this body get picked up later.
                 $imgNodes.each( function() {
@@ -1251,6 +1249,7 @@ function readrBoard($R){
                     return md5_list;
                 }
 
+                //build the sendData with the hashes from above
 				var sendData = {
 					short_name : RDR.group.short_name,
 					pageID: RDR.page.id,
@@ -2594,8 +2593,8 @@ console.dir(node.top_interactions);
                 RDR.actions.panel.expand("whyPanel", rindow);
             },
 			sentimentBox: function(settings) {
-             log('sentimentBox settings: ');
-             console.dir(settings);
+             //log('sentimentBox settings: ');
+             //console.dir(settings);
                 //settings:
                 /*
                 {
@@ -2911,8 +2910,8 @@ console.dir(node.top_interactions);
             // sentimentBox can be merged with / nested under this as sentimentPanel.draw at a later time mayhaps
             sentimentPanel: {
                 addCustomTagBox: function(args) {
-                    log('addCustomTagBox args: ');
-                    console.dir(args);
+                    //log('addCustomTagBox args: ');
+                    //console.dir(args);
                     var rindow = args.rindow,
                         settings = args.settings,
                         $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
@@ -3621,7 +3620,11 @@ console.dir(node.top_interactions);
 								selection.container = $mouse_target.data('hash');
                             } else if ( $mouse_target.parents('.rdr-hashed:first').length == 1 ) {
                                 selection.container = $mouse_target.parents('.rdr-hashed:first').data('hash');
-							}
+							}else{
+                                //for now do nothing.
+                                //todo: consider later hashing this and sending it up.
+                                return;                     
+                            }
 
                             // strip newlines and tabs -- and then the doublespaces that result
                             selection.blockParentTextClean = RDR.util.cleanPara ( selection.blockParent.text );
