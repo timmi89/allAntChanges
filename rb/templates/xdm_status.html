@@ -22,12 +22,11 @@
 		RDRAuth.FBLoginResponse = function(response) {
 			if (response.session) {
 				//user is logged in
-				$('#fb-logged-in').show();
-				$('#fb-login-button').hide();
 				RDRAuth.getReadrToken(response);
 			} else {
 				// user is not logged in
 				// TODO do something.  post to parent that there was a bug logging in to FB
+				console.warn('some bug occurred logging into FB');
 			}	
 		}
 		

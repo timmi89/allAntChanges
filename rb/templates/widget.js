@@ -1468,7 +1468,7 @@ function readrBoard($R){
 
                         //Do UI stuff particular to write mode
                         if (uiMode == "write"){
-                            log('write mode')
+                            log('tag preAjax: write mode')
                             //if tag has already been tried to be submitted, don't try again.
                             //todo: later verify on the backend and don't let user 'stuff the ballot'
 
@@ -1477,7 +1477,7 @@ function readrBoard($R){
 
                         //Do UI stuff particular to read mode
                         }else if(uiMode == "read"){
-                            log('read mode')                            
+                            log('tag preAjax: read mode')                            
                         }else{
                             console.warn('uiMode is not specified for interactions.tag...')
                         }
@@ -1505,7 +1505,7 @@ function readrBoard($R){
                     
 
 
-                        log('successssssssssssss');
+                        log('tag successssssssssssss');
                         var $this = args.tag;
                         $this.addClass('rdr_selected');
                         $this.siblings().removeClass('rdr_selected');
@@ -1566,7 +1566,7 @@ function readrBoard($R){
                         
                         var args = response.data;
                         args.rindow = rindow;
-                        RDR.session.checkForMaxInteractions(args)
+                        RDR.session.checkForMaxInteractions(args);
 
                     },
                     onFail: function(args){
@@ -1588,16 +1588,115 @@ function readrBoard($R){
                     }
                 },
                 bookmark: {
-                    preAjax: function(){
+                    preAjax: function(args){
+                        var uiMode = "write"; //always write mode for tagging
+                        //expand args to make it clear what's going on.
+                        var $rindow = args.rindow,
+                        $tagLi = args.tag,
+                        settings = args.settings;
+
+                        //Do UI stuff particular to write mode
+                        if (uiMode == "write"){
+                            log('bookmark: write mode')
+                            //if tag has already been tried to be submitted, don't try again.
+                            //todo: later verify on the backend and don't let user 'stuff the ballot'
+
+                            // optional loader.
+                            args.tag.find('div.rdr_leftBox').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" style="margin:6px 0 0 5px" />');
+
+                        }else{
+                            console.warn('uiMode is not specified for interactions.tag...')
+                        }
                         
                     },
                     customSendData: function(){
                         return {};
                     },
-                    onSuccess: function(){
+                    onSuccess: function(args){
+                        var response = args.response;
+                        var content_type = (args.settings) ? args.settings.content_type :  "text" ; //todo: phase this out. - make it an attr of the content node
+                        var sendData = args.sendData;
+                        var rindow = args.rindow,
+                            tag_li = args.tag,
+                            tag = args.tag.data('tag');
+
+                        var content_node_data = sendData.content_node_data;
+                        var int_id = response.data.interaction.id;
+
+                        //I think this clears the loader                          
+                        tag_li.find('div.rdr_leftBox').html('');
+
+                        log('bookmark successssssssssssss');
+                        var $this = args.tag;
+                        $this.addClass('rdr_selected');
+                        $this.siblings().removeClass('rdr_selected');
+                        $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+                        // log('content_node_data');
+                        // log(content_node_data);
+
+                        var content_node = args.content_node || RDR.actions.content_node.make(content_node_data);
+
+                        if ( tag_li.length == 1 ) {
+                            tag_li.find('div.rdr_leftBox').unbind();
+                            tag_li.find('div.rdr_leftBox').click( function(e) {
+                                e.preventDefault();
+                                args.int_id = int_id; // add the interaction_id info in, we need it for unrateSend
+                                RDR.actions.unrateSend(args);
+                                return false; // prevent the tag call applied to the parent <li> from firing
+                            });
+
+                            log('response.data')
+                            log(response.data)
+                            log(tag)
+
+                            tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+int_id);
+                            tag_li.data('interaction_id', int_id);
+
+                            // if it was a custom tag, do a few things
+                            if ( tag_li.hasClass('rdr_customTagBox') ) {
+                                tag_li.removeClass('rdr_customTagBox');
+                                tag_li.siblings().removeClass('rdr_selected');
+                                tag_li.addClass('rdr_selected');
+                                tag_li.find('input').remove();
+                                tag_li.find('div.rdr_help').remove();
+                                tag_li.append( '<div class="rdr_tagText">'+tag.body+'</div>' );
+                                RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:args.settings, actionType:'bookmark'});
+                            }
+                        }
+
+                        // RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node:content_node, content_type:content_type});
+
+                        var $whyPanel = rindow.find('div.rdr_whyPanel');
+                        var $whyPanel_body = $whyPanel.find('div.rdr_body');
+                        var $whyPanel_tagCard = $('<div />').addClass('rdr_whyPanel_tagCard rdr_whyPanel_tagCard'+tag.id);
+
+                        $whyPanel.find('h1').text('Bookmark Saved');
                         
+                        //build $whyPanel_tagCard
+                        var $tagFeedback = $('<div class="rdr_tagFeedback">You bookmarked this and tagged it: <strong>'+tag.body+'</strong>. </div>');
+                        var $undoLink = $('<a style="text-decoration:underline;" href="javascript:void(0);">Undo?</a>')//chain
+                        .bind('click.rdr', function(){
+                            RDR.actions.unrateSend(args); 
+                        });
+
+                        // TODO make this link to the user profile work
+                        var $seeTags = $('<div class="rdr_sntPnl_padder"><div>Your bookmarks are private - only you can see them.</div><strong>To view your tags, visit your <a href="#" target="_blank">ReadrBoard profile</a>.</strong></div>');
+                        
+                        $whyPanel_tagCard.append(
+                            $tagFeedback.append($undoLink),
+                            $seeTags
+                        );
+                        
+                        //add to the $whyPanel_body and hide any sibling panels that have been made;
+                        $whyPanel_tagCard.appendTo($whyPanel_body).siblings('.rdr_whyPanel_tagCard').hide();
+
+                        RDR.actions.panel.expand("whyPanel", rindow);
+                        
+                        var args = response.data;
+                        args.rindow = rindow;
+                        RDR.session.checkForMaxInteractions(args)
                     },
-                    onFail: function(){
+                    onFail: function(args){
                         
                     }
                 }
@@ -2173,7 +2272,6 @@ function readrBoard($R){
                     // rindow.append($sentimentBox);
 
                     rindow.find('div.rdr_contentSpace').html( $sentimentBox );
-                    // RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:rindow.settings});
                     RDR.rindow.checkHeight( rindow, 0, "reactionPanel" );
 
 
@@ -2491,7 +2589,7 @@ console.dir(node.top_interactions);
                             var $commentSet = $('<div class="rdr_commentSet" />'),
                                 $commentBy = $('<div class="rdr_commentBy" />'),
                                 $comment = $('<div class="rdr_comment" />');
-
+console.dir(this_comment);
                             var user_image_url = ( this_comment.user.social_user.img_url ) ? this_comment.user.social_user.img_url: '{{ STATIC_URL }}widget/images/anonymousplode.png';
                             var user_name = ( this_comment.user.first_name == "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
                             $commentBy.html( '<img src="'+user_image_url+'" /> ' + user_name );
@@ -2757,8 +2855,9 @@ console.dir(node.top_interactions);
                                 RDR.actions.interactions.create( args, 'tag' );
 
                             } else {
-
-                                RDR.actions.bookmarkStart({ tag:$this, rindow:rindow, settings:settings, actionType:"bookmark" });
+                                var args = { tag:$this, rindow:rindow, settings:settings };
+                                RDR.actions.interactions.create( args, 'bookmark' );
+                                // RDR.actions.bookmarkStart({ tag:$this, rindow:rindow, settings:settings, actionType:"bookmark" });
 
                             }
                         }
@@ -2902,11 +3001,13 @@ console.dir(node.top_interactions);
                                 RDR.actions.interactions.create( args, 'tag' );
 
                             } else if ( args.actionType == "bookmark" ) {
-                                RDR.actions.bookmarkSend({ tag:tag, rindow:rindow, settings:settings, callback: function() {
-                                        // todo: at this point, cast the tag, THEN call this in the tag success function:
-                                        //RDR.actions.panel.expand("whyPanel", rindow);
-                                    }//end function
-                                });
+                                var args = { tag:tag, rindow:rindow, settings:settings};
+                                RDR.actions.interactions.create( args, 'bookmark' );
+                                // RDR.actions.bookmarkSend({ tag:tag, rindow:rindow, settings:settings, callback: function() {
+                                //         // todo: at this point, cast the tag, THEN call this in the tag success function:
+                                //         //RDR.actions.panel.expand("whyPanel", rindow);
+                                //     }//end function
+                                // });
                             }
                         }
                         else if (event.keyCode == '27') { //esc
@@ -2930,179 +3031,7 @@ console.dir(node.top_interactions);
                 //nothing to see here - this has been moved to RDR.actions.interactions.create( ... 'tag')
             },
             bookmarkSend: function(args) {
-                // optional loader.
-                args.tag.find('div.rdr_leftBox').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" style="margin:6px 0 0 5px" />');
-        
-                //example:
-                //tag:{body, id}, rindow:rindow, settings:settings, callback: 
-                
-                // tag can be an ID or a string.  if a string, we need to sanitize.
-                
-                // tag, rindow, settings, callback
-
-                // TODO the args & params thing here is confusing
-                RDR.session.getUser( args, function( params ) {
-                    // get the text that was highlighted
-                    // log('params')
-                    // log(params)
-
-                    var content_type = params.settings.content_type;
-                    
-                    var rindow = params.rindow,
-                        tag_li = params.tag,
-                        tag = params.tag.data('tag');
-
-                    var content_node_data = {};
-
-                    if(content_type == 'image'){
-                        var container = $.trim( params.settings.container ),
-                            content = $.trim( params.settings.content ),
-                            src_with_path = $.trim( params.settings.src_with_path );
-                        
-                        content_node_data = {
-                            'container': container,
-                            'body': src_with_path,
-                            'content_type': content_type
-                        };
-
-                    }else{
-                        //is text
-
-
-                        //save content node
-                        var selState = rindow.data('selState') || null;
-                        
-                        content_node_data = {
-                            'container': rindow.data('container'),
-                            'body': selState.text,
-                            'location': selState.serialRange,
-                            'content_type': content_type
-                        };
-                        
-                    }
-                    
- 
-                    var sendData = {
-                        "tag" : tag,
-                        "hash": content_node_data.container,
-                        "content_node_data" : content_node_data,
-                        "user_id" : RDR.user.user_id,
-                        "readr_token" : RDR.user.readr_token,
-                        "group_id" : RDR.groupPermData.group_id,
-                        "page_id" : RDR.page.id
-                    };
-
-
-                    if ( !tag_li.hasClass('rdr_tagged') ) {
-                        // send the data!
-                        $.ajax({
-                            url: "/api/bookmark/create/",
-                            type: "get",
-                            contentType: "application/json",
-                            dataType: "jsonp",
-                            data: { json: JSON.stringify(sendData) },
-                            success: function(response) {
-                                tag_li.find('div.rdr_leftBox').html('');
-                                //[eric] - if we want these params still we need to get them from args:
-                                //do we really want to chain pass these through?  Or keep them in a shared scope?
-
-                                if ( response.status == "fail" ) {
-                                    log('failllllllllll');
-                                    if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                        log('uh oh better login, tempy 1');
-                                        RDR.session.showLoginPanel( args );
-                                    } else {
-                                        // if it failed, see if we can fix it, and if so, try this function one more time
-                                        RDR.session.handleGetUserFail( response, function() {
-                                            if ( !args.secondAttempt ) {
-                                                args.secondAttempt = true;
-                                                RDR.actions.interactions.create( args, 'tag' );
-                                            }
-                                        });
-                                    }
-                                } else {
-                                    log('successssssssssssss');
-                                    
-                                    log('response.data')
-                                    log(response.data)
-
-                                    var $this = params.tag;
-                                    $this.addClass('rdr_selected');
-                                    $this.siblings().removeClass('rdr_selected');
-                                    $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-                                    // log('content_node_data');
-                                    // log(content_node_data);
-                                    var content_node = RDR.actions.content_node.make(content_node_data);
-
-                                    //update indicators
-                                    var hash = sendData.hash;
-                                    var tagHelper = {
-                                        id: response.data.interaction.interaction_node.id,
-                                        body: response.data.interaction.interaction_node.body,
-                                        count: 1
-                                    };
-                                    var int_id = response.data.interaction.id;
-
-                                    var diff = {   
-                                        tags: {}
-                                    };
-                                    diff.tags[ tagHelper['id'] ] = tagHelper; //yeah?, didja get that one?  //todo: make pretty.
-
-                                    // log('hash')
-                                    // log(hash)
-                                    // log('diff')
-                                    // log(diff)
-                                    RDR.actions.indicators.update(hash, diff);
-                                    //end update indicators
-                                    // log('here here')
-
-                                    if ( tag_li.length == 1 ) {
-                                        tag_li.find('div.rdr_leftBox').unbind();
-                                        tag_li.find('div.rdr_leftBox').click( function(e) {
-                                            e.preventDefault();
-                                            args.int_id = int_id; // add the interaction_id info in, we need it for unrateSend
-                                            args.tag = sendData.tag;
-                                            RDR.actions.unrateSend(args);
-
-                                            return false; // prevent the tag call applied to the parent <li> from firing
-                                        });
-                                        tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+response.data.id);
-                                        tag_li.data('interaction_id', response.data.id);
-
-                                        // if it was a custom tag, do a few things
-                                        if ( tag_li.hasClass('rdr_customTagBox') ) {
-                                            tag_li.removeClass('rdr_customTagBox');
-                                            tag_li.siblings().removeClass('rdr_selected');
-                                            tag_li.addClass('rdr_selected');
-                                            tag_li.find('input').remove();
-                                            tag_li.find('div.rdr_help').remove();
-                                            tag_li.append( '<div class="rdr_tagText">'+tag.body+'</div>' );
-                                            RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:params.settings, actionType:'bookmark'});
-                                        }
-                                    }
-
-                                    log(response.data)
-                                    // log('-----tag------');
-                                    // console.dir(tag);
-                                    if ( isNaN( tag.id ) ) tag.id = response.data.tag_id;
-                                    RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_info:content_node_data, content_type:content_type, selState:selState });
-                                    
-                                    var args = response.data;
-                                    args.rindow = rindow;
-                                    RDR.session.checkForMaxInteractions(args)
-                                }
-                            },
-                            error: function(response) {
-                                //for now, ignore error and carry on with mockup
-                                console.warn('ajax error');
-                                log(response);
-                            }
-                        });
-                    } else {
-                        tag_li.find('div.rdr_leftBox').html('');
-                        RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:tag_li.data('interaction_id'), content_node_info:content_node_data, content_type:content_type, selState:selState });
-                    }
-                });
+                //nothing to see here - this has been moved to RDR.actions.interactions.create( ... 'tag')
             },
             share_getLink: function(args) {
                 log('----share_getLink args----');
