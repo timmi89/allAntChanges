@@ -80,7 +80,10 @@ function readrBoard($R){
                     if ( $column.parents().hasClass('rdr_reactionPanel') ) { var this_column_name="reactionPanel"; }
 
                     var paneHeight = (rindow.height()-35);
-                    var contentHeight = $column.height();
+
+                    // corner logic: the next line's conditional is so that a collapsing column that is set to hidden, but is tall,
+                    // doesn't force the visible column's content to be too tall.  this way the corners are rightly rounded.
+                    var contentHeight = ( $column.css('visibility') != "hidden" ) ? $column.height() : 10;
                     if ( contentHeight > tallest_column_height ) tallest_column_height = contentHeight;
 
                     if ( tallest_column_height >= 300 ) {
@@ -109,7 +112,7 @@ function readrBoard($R){
                 var settings = $.extend({}, this.defaults, options);
 				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
 				if ( $new_rindow.length == 0 ) { // there's no rewritable window available, so make one
-					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable" ></div>');
+					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_brtl rdr_brtr rdr_brbr rdr_brbl"></div>');
                     if ( settings.id ) {
                         $('#'+settings.id).remove(); // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
                                                      // reason I'm adding this: want a login panel with an ID and data attached to it, so after a user
@@ -2263,8 +2266,8 @@ function readrBoard($R){
                 var headers = ["Reactions <span>("+(summary.counts.tags)+")</span>", "", ""];  // removing comment count for now +info.com_count
                 $sentimentBox.append($reactionPanel, $contentPanel, $whyPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
-                    var $header = $('<div class="rdr_header" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
-                    $body = $('<div class="rdr_body"/>');
+                    var $header = $('<div class="rdr_header rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
+                    $body = $('<div class="rdr_body rdr_brbl rdr_brbr"/>'); // corner logic in those last two classes there.
                     $(this).append($header, $body).css({
                         // 'width':rindow.settings.pnlWidth
                     });
@@ -2784,8 +2787,8 @@ console.dir(this_comment);
                 var headers = [firstPanelHeader, "Say More"];
                 $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
-                    var $header = $('<div class="rdr_header" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
-                    $body = $('<div class="rdr_body rdr_leftShadow"/>');
+                    var $header = $('<div class="rdr_header rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
+                    $body = $('<div class="rdr_body rdr_leftShadow rdr_brbl rdr_brbr"/>');
                     $(this).append($header, $body).css({
                         // 'width':rindow.settings.pnlWidth
                     });
@@ -2911,7 +2914,7 @@ console.dir(this_comment);
 			panel: {
                 draw: function(which, rindow, interaction_id) {
                     var which = (which) ? which:"whyPanel";
-                    var $thisPanel = $('<div class="rdr_'+which+' rdr_sntPnl rdr_leftShadow" id="'+which+'" />');  // don't seem to need this anymore:  .prepend($('<div class="rdr_pnlShadow"/>'));
+                    var $thisPanel = $('<div class="rdr_'+which+' rdr_sntPnl rdr_leftShadow rdr_brtl rdr_brtr rdr_brbr rdr_brbl" id="'+which+'" />');  // don't seem to need this anymore:  .prepend($('<div class="rdr_pnlShadow"/>'));
                     return $thisPanel;
                 },
                 setup: function(which, rindow){
@@ -2934,11 +2937,22 @@ console.dir(this_comment);
                         case "contentPanel":
                             var width = 400; // any time we're expanding the contentPanel, the rindow is gonna be 400px wide
                             var minHeight = "auto";
+
+                            // corner logic
+                            $thisPanel.removeClass('rdr_brtl').removeClass('rdr_brbl');
+                            $thisPanel.find('div.rdr_header').removeClass('rdr_brtl').removeClass('rdr_brbl');
+
                             break;
 
                         case "whyPanel":
                             var width = ((num_columns-1)*200)+250;
                             var minHeight = "280px";
+
+                            // corner logic
+                            $thisPanel.removeClass('rdr_brtl').removeClass('rdr_brbl');
+                            $thisPanel.find('div.rdr_header').removeClass('rdr_brtl').removeClass('rdr_brbl');
+                            $(rindow).find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').removeClass('rdr_brbr').removeClass('rdr_brtr');
+
                             break;
                     }
                     var rindow_bg = (num_columns==3)?-450:0;
@@ -2968,6 +2982,9 @@ console.dir(this_comment);
                     $thisPanel.data('expanded', true);
                 },
                 collapse: function(which, rindow){
+                    // hack.  chrome and safari don't like rounded corners if the whyPanel is showing since it is wider than column1
+                    rindow.find('div.rdr_whyPanel').css('visibility','hidden');
+
                     var which = (which) ? which:"whyPanel";
                     $thisPanel = $(rindow).find('.rdr_'+which);
                     
@@ -2977,11 +2994,24 @@ console.dir(this_comment);
                         case "contentPanel":
                             var width = 200;
                             var minHeight = "125px";
+
+                            // corner logic
+                            $thisPanel.addClass('rdr_brtl').addClass('rdr_brbl');
+                            $thisPanel.find('div.rdr_header').addClass('rdr_brtl').addClass('rdr_brbl');
+
                             break;
 
                         case "whyPanel":
                             var width = ((num_columns-1)*200);
                             var minHeight = "125px";
+
+                            // corner logic
+                            $thisPanel.addClass('rdr_brtl').addClass('rdr_brbl');
+                            $thisPanel.find('div.rdr_header').addClass('rdr_brtl').addClass('rdr_brbl');
+                            rindow.find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').addClass('rdr_brbr').addClass('rdr_brtr');
+                            rindow.find('div.rdr_reactionPanel div.rdr_body').attr('style','');
+
+
                             break;
                     }
                     var rindow_bg = (num_columns==3)?-450:0;
@@ -3003,6 +3033,7 @@ console.dir(this_comment);
                             RDR.rindow.checkHeight( rindow, 0, which );
                         });
                     }
+                    
                     $thisPanel.data('expanded', false);
                 },
                 //todo, fix naming

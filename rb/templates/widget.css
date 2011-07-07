@@ -14,9 +14,6 @@ div.rdr.rdr_window {
     left:100px;
     background:#fff;
     overflow:hidden;
-    -moz-border-radius:8px;
-    -webkit-border-radius:8px;
-    border-radius:8px;
 }
 
 div.rdr.rdr_window.rdr_columns {
@@ -191,15 +188,11 @@ div.rdr h1 span {font-size:18px; color:#008be4;}
 div.rdr li {background:none; padding:0;}
 
 /* the widget */
-div.rdr div.rdr_sentimentBox                            {-moz-border-radius:8px 8px; -webkit-border-radius:8px 8px; border-radius:8px 8px;}
-div.rdr div.rdr_sntPnl                                  {-moz-border-radius:8px 8px; -webkit-border-radius:8px 8px; border-radius:8px 8px; float:left; position:relative; display:block; height:100%; overflow:hidden; /*width is reset with js - rindow.settings.pnlWidth */ }
+div.rdr div.rdr_sentimentBox                            {}
+div.rdr div.rdr_sntPnl                                  {float:left; position:relative; display:block; height:100%; overflow:hidden; /*width is reset with js - rindow.settings.pnlWidth */ }
 
-div.rdr div.rdr_sntPnl div.rdr_body                     {width:100%; xheight:100%; z-index:3; overflow-x:hidden; overflow-y:hidden; padding:0; position:relative; min-height:125px;-moz-border-radius:8px 8px; -webkit-border-radius:8px 8px; border-radius:8px 8px;}
-div.rdr div.rdr_sntPnl div.rdr_header                   {background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:3; 
-    -moz-border-radius:8px 8px;
-    -webkit-border-radius:8px 8px;
-    border-radius:8px 8px;
-}
+div.rdr div.rdr_sntPnl div.rdr_body                     {width:100%; xheight:100%; z-index:3; overflow-x:hidden; overflow-y:hidden; padding:0; position:relative; min-height:125px;}
+div.rdr div.rdr_sntPnl div.rdr_header                   {background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:3; }
 div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("{{ STATIC_URL }}widget/images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
 div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header,
 div.rdr div.rdr_sntPnl.rdr_whyPanel div.rdr_header      {background:url({{ STATIC_URL }}widget/images/header_arrow.png) 0px -1px no-repeat #fff;}
@@ -408,6 +401,16 @@ div.rdr button              {font-size:14px; }
 
 .rdr_hilite_start{}
 .rdr_hilite_end{}
+
+/* round those corners */
+.rdr.rdr_brtl,
+.rdr .rdr_brtl   { -moz-border-radius-topleft:8px; -webkit-border-top-left-radius:8px; border-top-left-radius:8px; }
+.rdr.rdr_brtr,
+.rdr .rdr_brtr   { -moz-border-radius-topright:8px; -webkit-border-top-right-radius:8px; border-top-right-radius:8px; }
+.rdr.rdr_brbr,
+.rdr .rdr_brbr   { -moz-border-radius-bottomright:8px; -webkit-border-bottom-right-radius:8px; border-bottom-right-radius:8px; }
+.rdr.rdr_brbl,
+.rdr .rdr_brbl   { -moz-border-radius-bottomleft:8px; -webkit-border-bottom-left-radius:8px; border-bottom-left-radius:8px; }
 
 
 /* user education bar */
