@@ -243,8 +243,8 @@ function readrBoard($R){
                 });
 
                 $.each( selStates, function(idx, selState){
-                    log('selState')
-                    log(selState)
+                    //log('selState')
+                    //log(selState)
                     $().selog('hilite', selState, 'off');
                 });
             }
@@ -706,7 +706,8 @@ function readrBoard($R){
 
                 $.receiveMessage(
                     function(e){
-                        console.dir(e);
+                        log('receiveMessage...')
+                        //console.dir(e);
                         var message = JSON.parse( e.data );
 
                         if ( message.status ) {
@@ -1126,9 +1127,6 @@ function readrBoard($R){
                 $textNodes = $textNodesInitialSet.not('.rdr-hashed, .no-rdr');
                 $imgNodes = $imgNodesInitialSet.not('.rdr-hashed, .no-rdr');
 
-                log($textNodes)
-                log($imgNodes)
-
                 $textNodes.each( function() {
                     // get the node's text and smash case
                     // TODO: <br> tags and block-level tags can screw up words.  ex:
@@ -1217,7 +1215,7 @@ function readrBoard($R){
 				}
 
                 log('sendData: for /api/summary/containers/');
-                console.dir(sendData);
+                //console.dir(sendData);
                 // send the data!
                 $.ajax({
                     url: "/api/summary/containers/",
@@ -1704,6 +1702,7 @@ function readrBoard($R){
             },
             indicators: {
                 show: function(boolDontFade){
+                    //RDR.actions.indicators.show:
                     //fade in indicators
                     //temp hacl!
                     if(boolDontFade){
@@ -1721,6 +1720,7 @@ function readrBoard($R){
                     }).fadeTo('300', '0.4');
                 },
                 update: function(hash, diff){
+                    //RDR.actions.indicators.update();
                    log('update indicator');
                     if( hash == "pageSummary" ){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
@@ -1822,6 +1822,7 @@ function readrBoard($R){
                     */
                 },
                 make: function(hash){
+                    //RDR.actions.indicators.make:
                     //kind is optional - defaults to text
                     
                     // if ( RDR.content_nodes[i].info.com_count + RDR.content_nodes[i].info.tag_count > 0 ) {
@@ -2063,6 +2064,7 @@ function readrBoard($R){
             },
             summaries:{
                 save: function(summaries){
+                    //RDR.actions.summaries.save:
                     $.each(summaries, function(hash,summary){
                         RDR.summaries[hash] = summary;
                         if(summary.counts.tags) {
@@ -2385,7 +2387,7 @@ function readrBoard($R){
 
                 // ok, get the content associated with this tag!
                 $.each(content, function(idx, node){
-                    console.dir(node);
+                    //console.dir(node);
 
                     var tag = tagClone;
 
@@ -2573,8 +2575,8 @@ log('---- rindow.data --------');
                 });
                 */
 
-log('node.top_interactions');
-console.dir(node.top_interactions);
+                //log('node.top_interactions');
+                //console.dir(node.top_interactions);
                 var comments = node.top_interactions.coms;
                 var hasComments = !$.isEmptyObject(comments);
 
@@ -2591,7 +2593,7 @@ console.dir(node.top_interactions);
                             var $commentSet = $('<div class="rdr_commentSet" />'),
                                 $commentBy = $('<div class="rdr_commentBy" />'),
                                 $comment = $('<div class="rdr_comment" />');
-console.dir(this_comment);
+                                //console.dir(this_comment);
                             var user_image_url = ( this_comment.user.social_user.img_url ) ? this_comment.user.social_user.img_url: '{{ STATIC_URL }}widget/images/anonymousplode.png';
                             var user_name = ( this_comment.user.first_name == "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
                             $commentBy.html( '<img src="'+user_image_url+'" /> ' + user_name );
@@ -3037,7 +3039,7 @@ console.dir(this_comment);
             },
             share_getLink: function(args) {
                 log('----share_getLink args----');
-                console.dir(args);
+                //console.dir(args);
                 //example:
                 //tag:{body, id}, rindow:rindow, settings:settings, callback: 
                 
