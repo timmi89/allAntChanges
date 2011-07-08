@@ -104,7 +104,9 @@ img.rdr_shared      { -moz-box-shadow:0 0 10px 1px #008be4; -webkit-box-shadow:0
     cursor: pointer;
 }
 /* opacity for .rdr_indicator set in js instead of here. Fade it in on load so we can still use display:inline; */
-div.rdr_indicator { z-index:11000; display:inline; }
+div.rdr_indicator,
+div.rdr_indicator:hover { z-index:11000; display:inline; text-decoration:none !important;}
+a div.rdr_indicator { text-decoration:none !important; }
 
 div.rdr_indicator img, div.rdr_indicator_details img{ 
     background:url("{{ STATIC_URL }}widget/images/readr_icons.png") no-repeat 0 0; width:16px; 
@@ -120,7 +122,7 @@ div.rdr_indicator.rdr_image { position:relative; border-bottom:1px solid #ddd; d
     -moz-opacity:0.0;
     -khtml-opacity:0.0;
 }
-div.rdr_tags_list { width:auto; display:inline; white-space:nowrap;}
+div.rdr_tags_list { width:auto; display:inline; white-space:nowrap; text-decoration:none !important;}
 div.rdr_indicator.rdr_image span.rdr_see_more { font-size:11px; font-weight:normal;}
 /* not needed*/
 /*
