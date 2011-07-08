@@ -3135,8 +3135,12 @@ console.dir(this_comment);
                     //     src_with_path = $.trim( params.settings.src_with_path );
 
                     var rindow = params.rindow,
-                        content_node_info = params.content_node_info,
                         tag = params.tag;
+
+                    var content_node_info = (params.content_node_info) ? params.content_node_info:params.content_node;
+                    // translations.  TODO clean and remove
+                    if ( !content_node_info.hash ) content_node_info.hash = content_node_info.container;
+                    if ( !content_node_info.content ) content_node_info.content = content_node_info.body;
 
                     // //save content node
                     // log('rindow');
@@ -3150,7 +3154,7 @@ console.dir(this_comment);
                         'location': content_node_info.location,
                         'content_type':content_node_info.content_type
                     }    
-                    // console.dir(content_node_data);
+
                     var content_node = RDR.actions.content_node.make(content_node_data);
 
 
@@ -3421,7 +3425,6 @@ console.dir(this_comment);
                 $.each(socialNetworks, function(idx, val){
                     $shareLinks.append('<li><a href="http://' +val+ '.com" ><img src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
                     $shareLinks.find('li:last').click( function() {
-                        
                         RDR.actions.share_getLink({ sns:val, rindow:rindow, tag:tag, content_node:content_node });
                         return false;
                     });
