@@ -3070,21 +3070,23 @@ console.dir(this_comment);
                        $tagTooltip.hide();
                     }).keyup( {args: args}, function(event) {
                         var args = event.data.args;
+                        var $tag = $(this).closest('li.rdr_customTagBox'),
+                            $tagInput = $tag.find('input.freeformTagInput');
                         if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
                             log('argsargsargs')
                             log(args)
                             $whyPanel.find('div.rdr_body').empty();
-                            var tag = $(this).closest('li.rdr_customTagBox');
-                            tag.data({
+                            
+                            $tag.data({
                             'tag':{
-                                body:tag.find('input.freeformTagInput').val()
+                                body:$tagInput.val()
                             }});
                             if ( args.actionType == "react") {
-                                var args = { tag:tag, rindow:rindow, settings:settings};
+                                var args = { tag:$tag, rindow:rindow, settings:settings};
                                 RDR.actions.interactions.create( args, 'tag' );
 
                             } else if ( args.actionType == "bookmark" ) {
-                                var args = { tag:tag, rindow:rindow, settings:settings};
+                                var args = { tag:$tag, rindow:rindow, settings:settings};
                                 RDR.actions.interactions.create( args, 'bookmark' );
                                 // RDR.actions.bookmarkSend({ tag:tag, rindow:rindow, settings:settings, callback: function() {
                                 //         // todo: at this point, cast the tag, THEN call this in the tag success function:
@@ -3095,6 +3097,9 @@ console.dir(this_comment);
                         }
                         else if (event.keyCode == '27') { //esc
                             //return false;
+                        } else if ( $tagInput.val().length > 20 ) {
+                            var customTag = $tagInput.val();
+                            $tagInput.val( customTag.substr(0, 20) );
                         }
                     });
 
