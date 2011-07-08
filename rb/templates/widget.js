@@ -1102,14 +1102,29 @@ function readrBoard($R){
             },
             hashNodes: function( $nodes ) {
                 
+                //todo: consider how to do this whitelist, initialset stuff right
                 var $allNodes,
-                    $imgNodes,
                     $textNodes,
-                    nodeFilter = $nodes || '*';
+                    $imgNodes,
+                    $textNodesInitialSet,
+                    $imgNodesInitialSet;
+                    
+                    $textNodesInitialSet = $nodes ?
+                        $nodes.filter(function(idx, node){
+                            //todo: reconsider using this. - Prob fine though since we're only testing hashes we pass in manually.
+                            //proves it has text (so ellminates images for example.) //!! is just a convention indicating it's used as a bool.
+                            return !!$(node).text()
+                        }) :
+                        $( RDR.group.selector_whitelist );
+                        
+                    $imgNodesInitialSet = $nodes ?
+                        $nodes.filter('img') :
+                    $( RDR.group.img_selector );
+
                 
                 //each set is the (whiteList) minus (previously hashed nodes & blacklist nodes) boolean intersected with (passed in nodes)
-                $textNodes = $( RDR.group.selector_whitelist ).not('.rdr-hashed, .no-rdr').filter(nodeFilter);
-                $imgNodes = $( RDR.group.img_selector ).not('.rdr-hashed, .no-rdr').filter(nodeFilter);
+                $textNodes = $textNodesInitialSet.not('.rdr-hashed, .no-rdr');
+                $imgNodes = $imgNodesInitialSet.not('.rdr-hashed, .no-rdr');
 
                 log($textNodes)
                 log($imgNodes)
