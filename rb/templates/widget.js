@@ -909,7 +909,7 @@ function readrBoard($R){
 						RDR.group.group_id
 
                         //todo:just for testing for now: - add defaults:
-                        RDR.group.img_selector = RDR.group.img_selector || "div.container img";
+                        RDR.group.img_selector = RDR.group.img_selector || "body img";
                         RDR.group.selector_whitelist = RDR.group.selector_whitelist || "body p";
 
                         $RDR.dequeue('initAjax');
@@ -983,12 +983,15 @@ function readrBoard($R){
                             RDR.containers[hash].kind = "page";
                         }
 
-                        makeSummaryWidget(response);
-                        insertImgIcons(response);
+                        //init the widgetSummary
+                        log('response page inti');
+                        console.dir(response);
+                        var widgetSummarySettings = response;
 
+                        $('#rdr-summary').rdrWidgetSummary(widgetSummarySettings);
                         RDR.page.hash = hash;
 
-                        insertImgIcons(response);
+                        //insertImgIcons(response);
                                                    
                         //to be normally called on success of ajax call
                         $RDR.dequeue('initAjax');
@@ -999,72 +1002,6 @@ function readrBoard($R){
                         log(response);
                     }
 				});
-
-                //helper function for ajax above
-                function makeSummaryWidget(response){
-                    // don't forget a design for when there are no tags.
-                    log('building page')
-                    RDR.page = response.data;
-                    log(RDR.page);
-                    var $summary_widget = $('#rdr-summary');
-                    
-                    var total_interactions = 0;
-                    for ( var i in RDR.page.summary ) {
-                        if ( RDR.page.summary[i].count ) total_interactions += RDR.page.summary[i].count;
-                    }
-
-                    if ( total_interactions > 0 ) {
-                        var people = ( RDR.page.topusers.length > 1 ) ? RDR.page.topusers.length + " people" : "1 person";
-                        $summary_widget.append('<div class="rdr-sum-headline">'+total_interactions+' reactions from '+people+'</div>');
-                    } else {
-                        $summary_widget.append('<div class="rdr-sum-headline">No reactions yet.  Select something and react!</div>');
-                    }
-
-                    // summary widget: specific tag totals
-                    if ( RDR.page.toptags.length > 0 ){
-                        var $toptags = $('<div class="rdr-top-tags" />');
-
-                        for ( var i = 0, j=4; i < j; i++ ) {
-                            var this_tag = RDR.page.toptags[i];
-                            if ( this_tag ) {
-                                $toptags.append(' <span>'+ this_tag.body +' <em>('+this_tag.tag_count+')</em></span>&nbsp;&nbsp;&nbsp;');
-                            }
-                            
-                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                            if ( $toptags.width() > $summary_widget.width() - 48 ) {
-                                $toptags.children().last().html('See More').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
-                                break;
-                            }
-                        }
-
-                        $summary_widget.append( $toptags );
-                    }
-
-                    if ( RDR.page.topusers.length > 0 ){
-                        var $topusers = $('<div class="rdr-top-users" />');
-
-                        for ( var i = 0, j=10; i < j; i++ ) {
-                            var this_user = RDR.page.topusers[i];
-                            if ( this_user ) {
-                                $topusers.append('<img src="'+this_user.img_url+'" class="no-rdr" />');
-                            }
-                        }
-
-                        //hacked in html('') to clear it so that i can re-use this later to update the thingy.  todo: make it pretty.
-                        $summary_widget.append( $topusers );
-
-                    }
-                }
-                function insertImgIcons(response){
-                    var tempd = $.extend( {}, response );
-                    for ( var i in RDR.page.imagedata ){
-                        //todo: combine this with the other indicator code and make the imagedata give us a hash from the db
-                        var hash = RDR.util.md5.hex_md5(i);
-                        RDR.page.imagedata[i].hash = hash; //todo: list these by hash in the first place.
-
-                        //RDR.actions.indicators.make( hash );
-                    }
-                }
 
             },
             initEnvironment: function(){
@@ -1163,15 +1100,20 @@ function readrBoard($R){
                 this.hashNodes();
 				$RDR.dequeue('initAjax');
             },
-            hashNodes: function() {
+            hashNodes: function( $nodes ) {
                 
-                // snag all the nodes that we can set icons next to and send'em next
-                // TODO: restrict this to the viewport + a few, rather than all
+                var $allNodes,
+                    $imgNodes,
+                    $textNodes,
+                    nodeFilter = $nodes || '*';
+                
+                //each set is the (whiteList) minus (previously hashed nodes & blacklist nodes) boolean intersected with (passed in nodes)
+                $textNodes = $( RDR.group.selector_whitelist ).not('.rdr-hashed, .no-rdr').filter(nodeFilter);
+                $imgNodes = $( RDR.group.img_selector ).not('.rdr-hashed, .no-rdr').filter(nodeFilter);
 
-                //setup text nodes
-                //todo: think about .not('img') here
-                //todo: look into selector_whitelist vs anno_whitelist
-                var $textNodes = $( RDR.group.selector_whitelist ).not('.rdr-hashed').not('img');
+                log($textNodes)
+                log($imgNodes)
+
                 $textNodes.each( function() {
                     // get the node's text and smash case
                     // TODO: <br> tags and block-level tags can screw up words.  ex:
@@ -1183,11 +1125,6 @@ function readrBoard($R){
                     $(this).data('body',body);
                 });
 
-
-                //todo: implement black list
-                var $imgNodes = $( RDR.group.img_selector ).not('.rdr-hashed').not('.no-rdr');
-
-                //todo: make this body get picked up later.
                 $imgNodes.each( function() {
                     //var body = $(this).attr('src');
                     var body = this.src;
@@ -1196,22 +1133,30 @@ function readrBoard($R){
                     });
                 });
 
-                $nodes = $textNodes.add($imgNodes);
-                $nodes.each(function(){
+                var $allNodes = $textNodes.add($imgNodes);
+                $allNodes.each(function(){
                     var body = $(this).data('body'),
                     kind = $(this)[0].tagName.toLowerCase();
 
                     var hashText = ( kind=="img") ? "rdr-"+kind+"-"+body : "rdr-text-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
                     hash = RDR.util.md5.hex_md5( hashText );
 
+               
+               
+                    //dont do this - taken care of above now
+                    /*
                     //return without doing anything if:
                     //we've already hashed it, or the body was invalid (this shouldn't happen I don't think)
                     var dontSend = ( RDR.containers[hash] || !body );
+                    log('dontSend')
+                    log(dontSend)
                     if( dontSend ){
-                        $nodes = $nodes.not(this)
+                        $allNodes = $allNodes.not(this)
                         return; //won't add to RDR.containers either
                     }
                     //else
+                    */
+
 
                     // add an object with the text and hash to the nodes dictionary
                     //todo: consider putting this info directly onto the DOM node data object
@@ -1226,7 +1171,7 @@ function readrBoard($R){
                     $(this).data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
                 });
 
-                RDR.actions.sendHashes( $nodes );
+                RDR.actions.sendHashes( $allNodes );
             },
             sendHashes: function( $nodes ) {
                 
@@ -1762,7 +1707,6 @@ function readrBoard($R){
                 },
                 update: function(hash, diff){
                    log('update indicator');
-                   return;
                     if( hash == "pageSummary" ){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
                         var summary = RDR.page.summary;
@@ -3810,6 +3754,7 @@ function $RFunctions($R){
         plugin_jquery_mousewheel($R);
         plugin_jquery_mousewheelIntent($R);
         plugin_jquery_jScrollPane($R);
+        plugin_jquery_rdrWidgetSummary($R);
         plugin_jquery_selectionographer($R, rangy);
 
 
@@ -4045,7 +3990,132 @@ function $RFunctions($R){
         };
         //end function plugin_jquery_enhancedOffset
 
-        
+        function plugin_jquery_rdrWidgetSummary($){
+            /*
+             * jQuery Plugin by readrboard.com
+             * builds the readrboard widget's summary widget.
+             * accepts settings to customize the format
+             */
+
+            $.fn.rdrWidgetSummary = function( params ) {
+                //jQuery plugin pattern :http://docs.jquery.com/Plugins/Authoring
+                if ( methods[params] ) {
+                    return methods[params].apply( this, Array.prototype.slice.call( arguments, 1 ));
+                } else if ( typeof params === 'object' || ! params ) {
+                    return methods.init.apply( this, arguments );
+                } else {
+                    $.error( 'Method ' +  params + ' does not exist.' );
+                }
+            };
+
+            var defaults = {
+                initTest:'init',
+                passedIn: 'nothing to see here...'
+            };
+
+            var methods = {
+                init: function( options ) {
+                    var $this = this.length ? this : $(document),
+                    settings;
+                    
+                    return $this.each(function(){
+
+                        // merge default and user parameters
+                        settings = options ? $.extend(defaults, options) : defaults;
+                        
+                        settings.parentContainer = this;
+                        _makeSummaryWidget(settings);
+                        _insertImgIcons(settings);
+
+                        //do init stuff
+
+                    });
+                },
+                otherMethod: function(param){
+                    var $this = this;
+
+                    return $this.each(function(index){
+                        //do stuff
+                    });
+                }
+
+
+            };
+            //end methods
+
+            //private functions:
+            function _secret(){
+            }
+
+            //helper function for ajax above
+            function _makeSummaryWidget(response){
+                // don't forget a design for when there are no tags.
+                log('building page')
+                RDR.page = response.data;
+                log(RDR.page);
+                var $summary_widget = $(response.parentContainer);
+                
+                var total_interactions = 0;
+                for ( var i in RDR.page.summary ) {
+                    if ( RDR.page.summary[i].count ) total_interactions += RDR.page.summary[i].count;
+                }
+
+                if ( total_interactions > 0 ) {
+                    var people = ( RDR.page.topusers.length > 1 ) ? RDR.page.topusers.length + " people" : "1 person";
+                    $summary_widget.append('<div class="rdr-sum-headline">'+total_interactions+' reactions from '+people+'</div>');
+                } else {
+                    $summary_widget.append('<div class="rdr-sum-headline">No reactions yet.  Select something and react!</div>');
+                }
+
+                // summary widget: specific tag totals
+                if ( RDR.page.toptags.length > 0 ){
+                    var $toptags = $('<div class="rdr-top-tags" />');
+
+                    for ( var i = 0, j=4; i < j; i++ ) {
+                        var this_tag = RDR.page.toptags[i];
+                        if ( this_tag ) {
+                            $toptags.append(' <span>'+ this_tag.body +' <em>('+this_tag.tag_count+')</em></span>&nbsp;&nbsp;&nbsp;');
+                        }
+                        
+                        // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
+                        if ( $toptags.width() > $summary_widget.width() - 48 ) {
+                            $toptags.children().last().html('See More').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
+                            break;
+                        }
+                    }
+
+                    $summary_widget.append( $toptags );
+                }
+
+                if ( RDR.page.topusers.length > 0 ){
+                    var $topusers = $('<div class="rdr-top-users" />');
+
+                    for ( var i = 0, j=10; i < j; i++ ) {
+                        var this_user = RDR.page.topusers[i];
+                        if ( this_user ) {
+                            $topusers.append('<img src="'+this_user.img_url+'" class="no-rdr" />');
+                        }
+                    }
+
+                    //hacked in html('') to clear it so that i can re-use this later to update the thingy.  todo: make it pretty.
+                    $summary_widget.append( $topusers );
+
+                }
+            }
+            function _insertImgIcons(response){
+                var tempd = $.extend( {}, response );
+                for ( var i in RDR.page.imagedata ){
+                    //todo: combine this with the other indicator code and make the imagedata give us a hash from the db
+                    var hash = RDR.util.md5.hex_md5(i);
+                    RDR.page.imagedata[i].hash = hash; //todo: list these by hash in the first place.
+
+                    //RDR.actions.indicators.make( hash );
+                }
+            }
+
+        };
+        //end function plugin_jquery_rdrWidgetSummary
+
         function plugin_jquery_selectionographer($, rangy){
             /*
              * jquery.selectionographer.js
