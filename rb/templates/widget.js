@@ -1307,11 +1307,14 @@ function readrBoard($R){
             interactions: {
                 create: function(args, int_type, action_type){
                     //RDR.actions.interactions.create:
+                    if ( !action_type ) action_type = "create";
+
                     if( !RDR.actions.interactions.hasOwnProperty(int_type) ){
                         console.warn('invalid interaction type ' +int_type+ "for RDR.actions.interactions.create()");
                         return false; //don't continue
                     }
-                    
+                    log('**CALL PREAJAX**');
+                    console.dir(args);
                     // take care of pre-ajax stuff, mostly UI stuff
                     RDR.actions.interactions[int_type].preAjax(args);
 
@@ -1333,6 +1336,9 @@ function readrBoard($R){
                         RDR.actions.interactions.send(args, int_type, action_type);
                     });
                 },
+                remove: function(args, int_type){
+                    RDR.actions.interactions.create( args, int_type, 'remove' );
+                },
                 send: function(args, int_type, action_type){
                     log('sendddddddddddddddddd');
                     console.dir(args);
@@ -1351,7 +1357,8 @@ function readrBoard($R){
                         success: function(response) {
                             args.response = response;
                             if ( response.status == "success" ) {
-                                RDR.actions.interactions[int_type].onSuccess(args);
+                                log(action_type);
+                                RDR.actions.interactions[int_type].onSuccess[action_type](args);
                             }else{
                                 RDR.actions.interactions[int_type].onFail(args);
                             }
@@ -1366,8 +1373,8 @@ function readrBoard($R){
                         var content_type = ( args.settings) ? args.settings.content_type : 'text'; //todo: phase this out. - make it an attr of the content node 
                     
                     var rindow = args.rindow,
-                        tag_li = args.tag,
-                        tag = args.tag.data('tag');
+                        tag_li = args.tag;
+                    var tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag;
 
                     var content_node_data = {};
                     log(content_node_data)
@@ -1474,7 +1481,7 @@ function readrBoard($R){
                             //todo: later verify on the backend and don't let user 'stuff the ballot'
 
                             // optional loader.
-                            args.tag.find('div.rdr_leftBox').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" style="margin:6px 0 0 5px" />');
+                            if ( typeof args.tag.find == "function" ) args.tag.find('div.rdr_leftBox').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" style="margin:6px 0 0 5px" />');
 
                         //Do UI stuff particular to read mode
                         }else if(uiMode == "read"){
@@ -1484,86 +1491,101 @@ function readrBoard($R){
                         }
 
                     },
-                    customSendData: function(){
+                    customSendData: function(args){
                         //todo: break out the defaults from the custom - right now we're just testing this and using this interactions: for tag,
                         //so everything is in the default - the whole default is particular to 'tag'
-                        return {};
+
+                        if ( args.int_id ) return { int_id:args.int_id };
+                        else return {};
                     },
-                    onSuccess: function(args){
-                        //RDR.actions.interactions.tag.onSuccess:
-                        var response = args.response;
-                        var content_type = (args.settings) ? args.settings.content_type :  "text" ; //todo: phase this out. - make it an attr of the content node
-                        var sendData = args.sendData;
-                        var rindow = args.rindow,
-                            tag_li = args.tag,
-                            tag = args.tag.data('tag');
+                    onSuccess: {
+                        create: function(args){
+                            //RDR.actions.interactions.tag.onSuccess:
+                            var response = args.response;
+                            var content_type = (args.settings) ? args.settings.content_type :  "text" ; //todo: phase this out. - make it an attr of the content node
+                            var sendData = args.sendData;
+                            var rindow = args.rindow,
+                                tag_li = args.tag,
+                                tag = args.tag.data('tag');
 
-                        //todo: untangle these argument translations.
-                        var content_node_data = sendData.content_node_data;
-                        
-                        //clear the loader                  
-                        tag_li.find('div.rdr_leftBox').html('');
+                            //todo: untangle these argument translations.
+                            var content_node_data = sendData.content_node_data;
+                            
+                            //clear the loader                  
+                            tag_li.find('div.rdr_leftBox').html('');
 
-                        log('tag successssssssssssss');
-                        var $this = args.tag;
-                        $this.addClass('rdr_selected');
-                        $this.siblings().removeClass('rdr_selected');
-                        $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-                        // log('content_node_data');
-                        // log(content_node_data);
+                            log('tag successssssssssssss');
+                            var $this = args.tag;
+                            $this.addClass('rdr_selected');
+                            $this.siblings().removeClass('rdr_selected');
+                            $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+                            // log('content_node_data');
+                            // log(content_node_data);
 
-                        var content_node = args.content_node || RDR.actions.content_node.make(content_node_data);
+                            var content_node = args.content_node || RDR.actions.content_node.make(content_node_data);
 
-                        //update indicators
-                        var hash = sendData.hash;
-                        var tagHelper = {
-                            id: response.data.interaction.interaction_node.id,
-                            body: response.data.interaction.interaction_node.body,
-                            count: 1
-                        };
-                        var int_id = response.data.interaction.id;
+                            //update indicators
+                            var hash = sendData.hash;
+                            var tagHelper = {
+                                id: response.data.interaction.interaction_node.id,
+                                body: response.data.interaction.interaction_node.body,
+                                count: 1
+                            };
+                            var int_id = response.data.interaction.id;
 
-                        var diff = {   
-                            tags: {}
-                        };
-                        diff.tags[ tagHelper['id'] ] = tagHelper; //yeah?, didja get that one? ... (diff.tags.tagID = tagHelper) //todo: clean this up.
+                            var diff = {   
+                                tags: {}
+                            };
+                            diff.tags[ tagHelper['id'] ] = tagHelper; //yeah?, didja get that one? ... (diff.tags.tagID = tagHelper) //todo: clean this up.
 
-                        RDR.actions.indicators.update(hash, diff);
-                        //end update indicators
+                            RDR.actions.indicators.update(hash, diff);
+                            //end update indicators
 
 
 
-                        if ( tag_li.length == 1 ) {
-                            tag_li.find('div.rdr_leftBox').unbind();
-                            tag_li.find('div.rdr_leftBox').click( function(e) {
-                                e.preventDefault();
-                                args.int_id = int_id; // add the interaction_id info in, we need it for unrateSend
-                                // RDR.actions.unrateSend(args);
-                                RDR.actions.interactions.create( args, 'tag', 'delete' );
-                                return false; // prevent the tag call applied to the parent <li> from firing
-                            });
+                            if ( tag_li.length == 1 ) {
+                                tag_li.find('div.rdr_leftBox').unbind();
+                                tag_li.find('div.rdr_leftBox').click( function(e) {
+                                    e.preventDefault();
+                                    args.int_id = int_id; // add the interaction_id info in, we need it for unrateSend
+                                    // RDR.actions.unrateSend(args);
+                                    RDR.actions.interactions.remove( args, 'tag' );
+                                    return false; // prevent the tag call applied to the parent <li> from firing
+                                });
 
-                            tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+int_id);
-                            tag_li.data('interaction_id', int_id);
+                                tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+int_id);
+                                tag_li.data('interaction_id', int_id);
 
-                            // if it was a custom tag, do a few things
-                            if ( tag_li.hasClass('rdr_customTagBox') ) {
-                                tag_li.removeClass('rdr_customTagBox');
-                                tag_li.siblings().removeClass('rdr_selected');
-                                tag_li.addClass('rdr_selected');
-                                tag_li.find('input').remove();
-                                tag_li.find('div.rdr_help').remove();
-                                tag_li.append( '<div class="rdr_tagText">'+tag.body+'</div>' );
-                                RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:args.settings, actionType:'react'});
+                                // if it was a custom tag, do a few things
+                                if ( tag_li.hasClass('rdr_customTagBox') ) {
+                                    tag_li.removeClass('rdr_customTagBox');
+                                    tag_li.siblings().removeClass('rdr_selected');
+                                    tag_li.addClass('rdr_selected');
+                                    tag_li.find('input').remove();
+                                    tag_li.find('div.rdr_help').remove();
+                                    tag_li.append( '<div class="rdr_tagText">'+tag.body+'</div>' );
+                                    RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:args.settings, actionType:'react'});
+                                }
                             }
+
+                            RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node:content_node, content_type:content_type});
+                            
+                            var args = response.data;
+                            args.rindow = rindow;
+                            RDR.session.checkForMaxInteractions(args);
+
+                        },
+                        remove: function(args){
+                            log('tag delete!!');
+                            console.dir(args);
+                            var rindow = args.rindow,
+                                tag = args.tag,
+                                int_id = args.int_id;
+
+                            RDR.actions.panel.collapse("whyPanel", rindow);
+                            var $thisTagButton = rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id);
+                            $thisTagButton.removeClass('rdr_selected').removeClass('rdr_tagged').removeClass('rdr_int_node_'+int_id);
                         }
-
-                        RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node:content_node, content_type:content_type});
-                        
-                        var args = response.data;
-                        args.rindow = rindow;
-                        RDR.session.checkForMaxInteractions(args);
-
                     },
                     onFail: function(args){
                         //RDR.actions.interactions.tag.onFail:
@@ -1587,7 +1609,7 @@ function readrBoard($R){
                                 log('inside callback');
                                 // if ( !args.secondAttempt ) {
                                     args.secondAttempt = true;
-                                    RDR.actions.interactions.create( args, 'tag', 'create' );
+                                    RDR.actions.interactions.create( args, 'tag' );
                                 // }else{
                                     // console.warn('unhandled create interaction fail')
                                 // }
@@ -1611,100 +1633,121 @@ function readrBoard($R){
                             //todo: later verify on the backend and don't let user 'stuff the ballot'
 
                             // optional loader.
-                            args.tag.find('div.rdr_leftBox').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" style="margin:6px 0 0 5px" />');
+                            if ( typeof args.tag.find == "function" ) args.tag.find('div.rdr_leftBox').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" style="margin:6px 0 0 5px" />');
 
                         }else{
                             console.warn('uiMode is not specified for interactions.tag...')
                         }
                         
                     },
-                    customSendData: function(){
-                        return {};
+                    customSendData: function(args){
+                        if ( args.int_id ) return { int_id:args.int_id };
+                        else return {};
                     },
-                    onSuccess: function(args){
-                        var response = args.response;
-                        var content_type = (args.settings) ? args.settings.content_type :  "text" ; //todo: phase this out. - make it an attr of the content node
-                        var sendData = args.sendData;
-                        var rindow = args.rindow,
-                            tag_li = args.tag,
-                            tag = args.tag.data('tag');
+                    onSuccess: {
+                        create: function(args){
+                            var response = args.response;
+                            var content_type = (args.settings) ? args.settings.content_type :  "text" ; //todo: phase this out. - make it an attr of the content node
+                            var sendData = args.sendData;
+                            var rindow = args.rindow,
+                                tag_li = args.tag,
+                                tag = args.tag.data('tag');
 
-                        var content_node_data = sendData.content_node_data;
-                        var int_id = response.data.interaction.id;
+                            var content_node_data = sendData.content_node_data;
+                            var int_id = response.data.interaction.id;
 
-                        //I think this clears the loader                          
-                        tag_li.find('div.rdr_leftBox').html('');
+                            //I think this clears the loader                          
+                            tag_li.find('div.rdr_leftBox').html('');
 
-                        log('bookmark successssssssssssss');
+                            log('bookmark successssssssssssss');
 
-                        var $this = args.tag;
-                        $this.addClass('rdr_selected');
-                        $this.siblings().removeClass('rdr_selected');
-                        $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-                        // log('content_node_data');
-                        // log(content_node_data);
+                            var $this = args.tag;
+                            $this.addClass('rdr_selected');
+                            $this.siblings().removeClass('rdr_selected');
+                            $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+                            // log('content_node_data');
+                            // log(content_node_data);
 
-                        var content_node = args.content_node || RDR.actions.content_node.make(content_node_data);
+                            var content_node = args.content_node || RDR.actions.content_node.make(content_node_data);
 
-                        if ( tag_li.length == 1 ) {
-                            tag_li.find('div.rdr_leftBox').unbind();
-                            tag_li.find('div.rdr_leftBox').click( function(e) {
-                                e.preventDefault();
-                                args.int_id = int_id; // add the interaction_id info in, we need it for unrateSend
-                                // RDR.actions.unrateSend(args);
-                                RDR.actions.interactions.create( args, 'bookmark', 'delete' );
-                                return false; // prevent the tag call applied to the parent <li> from firing
+                            if ( tag_li.length == 1 ) {
+                                log('DO WE EVER GET HERE WHEN BOOKMARKING');
+                                log( tag_li.find('div.rdr_leftBox').length ) ;
+                                log( tag_li.find('div.rdr_leftBox').html() ) ;
+                                console.dir( tag_li );
+                                tag_li.find('div.rdr_leftBox').unbind();
+                                tag_li.find('div.rdr_leftBox').click( function(e) {
+                                    e.preventDefault();
+                                    args.int_id = int_id; // add the interaction_id info in, we need it for unrateSend
+                                    // RDR.actions.unrateSend(args);
+                                    RDR.actions.interactions.remove( args, 'bookmark' );
+                                    return false; // prevent the tag call applied to the parent <li> from firing
+                                });
+
+
+                                tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+int_id);
+                                tag_li.data('interaction_id', int_id);
+
+                                // if it was a custom tag, do a few things
+                                if ( tag_li.hasClass('rdr_customTagBox') ) {
+                                    tag_li.removeClass('rdr_customTagBox');
+                                    tag_li.siblings().removeClass('rdr_selected');
+                                    tag_li.addClass('rdr_selected');
+                                    tag_li.find('input').remove();
+                                    tag_li.find('div.rdr_help').remove();
+                                    tag_li.append( '<div class="rdr_tagText">'+tag.body+'</div>' );
+                                    RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:args.settings, actionType:'bookmark'});
+                                }
+                            }
+
+                            // RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node:content_node, content_type:content_type});
+
+                            var $whyPanel = rindow.find('div.rdr_whyPanel');
+                            var $whyPanel_body = $whyPanel.find('div.rdr_body');
+                            var $whyPanel_tagCard = $('<div />').addClass('rdr_whyPanel_tagCard rdr_whyPanel_tagCard'+tag.id);
+
+                            $whyPanel.find('h1').text('Bookmark Saved');
+                            
+                            //build $whyPanel_tagCard
+                            var $tagFeedback = $('<div class="rdr_tagFeedback">You bookmarked this and tagged it: <strong>'+tag.body+'</strong>. </div>');
+                            var $undoLink = $('<a style="text-decoration:underline;" href="javascript:void(0);">Undo?</a>')//chain
+                            .bind('click.rdr', {args:args, int_id:int_id}, function(event){
+                                // RDR.actions.unrateSend(args); 
+                                var args = event.data.args;
+                                args.int_id = event.data.int_id;
+                                log('bookmark undo args');
+                                console.dir(args);
+                                RDR.actions.interactions.remove( args, 'bookmark' );
                             });
 
+                            // TODO make this link to the user profile work
+                            var $seeTags = $('<div class="rdr_sntPnl_padder"><div>Your bookmarks are private - only you can see them.</div><strong>To view your tags, visit your <a href="#" target="_blank">ReadrBoard profile</a>.</strong></div>');
+                            
+                            $whyPanel_tagCard.append(
+                                $tagFeedback.append($undoLink),
+                                $seeTags
+                            );
+                            
+                            //add to the $whyPanel_body and hide any sibling panels that have been made;
+                            $whyPanel_tagCard.appendTo($whyPanel_body).siblings('.rdr_whyPanel_tagCard').hide();
 
-                            tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+int_id);
-                            tag_li.data('interaction_id', int_id);
+                            RDR.actions.panel.expand("whyPanel", rindow);
+                            
+                            var args = response.data;
+                            args.rindow = rindow;
+                            RDR.session.checkForMaxInteractions(args)
+                        },
+                        remove: function(args){
+                            log('bookmark delete!!');
+                            console.dir(args);
+                            var rindow = args.rindow,
+                                tag = args.tag,
+                                int_id = args.int_id;
 
-                            // if it was a custom tag, do a few things
-                            if ( tag_li.hasClass('rdr_customTagBox') ) {
-                                tag_li.removeClass('rdr_customTagBox');
-                                tag_li.siblings().removeClass('rdr_selected');
-                                tag_li.addClass('rdr_selected');
-                                tag_li.find('input').remove();
-                                tag_li.find('div.rdr_help').remove();
-                                tag_li.append( '<div class="rdr_tagText">'+tag.body+'</div>' );
-                                RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:args.settings, actionType:'bookmark'});
-                            }
+                            RDR.actions.panel.collapse("whyPanel", rindow);
+                            var $thisTagButton = rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id);
+                            $thisTagButton.removeClass('rdr_selected').removeClass('rdr_tagged').removeClass('rdr_int_node_'+int_id).html('');
                         }
-
-                        // RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node:content_node, content_type:content_type});
-
-                        var $whyPanel = rindow.find('div.rdr_whyPanel');
-                        var $whyPanel_body = $whyPanel.find('div.rdr_body');
-                        var $whyPanel_tagCard = $('<div />').addClass('rdr_whyPanel_tagCard rdr_whyPanel_tagCard'+tag.id);
-
-                        $whyPanel.find('h1').text('Bookmark Saved');
-                        
-                        //build $whyPanel_tagCard
-                        var $tagFeedback = $('<div class="rdr_tagFeedback">You bookmarked this and tagged it: <strong>'+tag.body+'</strong>. </div>');
-                        var $undoLink = $('<a style="text-decoration:underline;" href="javascript:void(0);">Undo?</a>')//chain
-                        .bind('click.rdr', {args:args}, function(event){
-                            // RDR.actions.unrateSend(args); 
-                            var args = event.data.args;
-                            RDR.actions.interactions.create( args, 'bookmark', 'delete' );
-                        });
-
-                        // TODO make this link to the user profile work
-                        var $seeTags = $('<div class="rdr_sntPnl_padder"><div>Your bookmarks are private - only you can see them.</div><strong>To view your tags, visit your <a href="#" target="_blank">ReadrBoard profile</a>.</strong></div>');
-                        
-                        $whyPanel_tagCard.append(
-                            $tagFeedback.append($undoLink),
-                            $seeTags
-                        );
-                        
-                        //add to the $whyPanel_body and hide any sibling panels that have been made;
-                        $whyPanel_tagCard.appendTo($whyPanel_body).siblings('.rdr_whyPanel_tagCard').hide();
-
-                        RDR.actions.panel.expand("whyPanel", rindow);
-                        
-                        var args = response.data;
-                        args.rindow = rindow;
-                        RDR.session.checkForMaxInteractions(args)
                     },
                     onFail: function(args){
                         
@@ -2450,7 +2493,7 @@ function readrBoard($R){
                         $header.find('span.rdr_tag_count').click( function() {
                             var $interactionButton = $(this).closest('.rdr_tag');
                             var args = { tag:$interactionButton, rindow:rindow, content:node.body, which:which, uiMode:'read', content_node:node};
-                            RDR.actions.interactions.create( args, 'tag', 'create');
+                            RDR.actions.interactions.create( args, 'tag' );
                         });
 
                         
@@ -2909,11 +2952,11 @@ function readrBoard($R){
                             if (actionType == "react") {
                                 var args = { tag:$this, rindow:rindow, settings:settings };
 
-                                RDR.actions.interactions.create( args, 'tag', 'create' );
+                                RDR.actions.interactions.create( args, 'tag' );
 
                             } else {
                                 var args = { tag:$this, rindow:rindow, settings:settings };
-                                RDR.actions.interactions.create( args, 'bookmark', 'create' );
+                                RDR.actions.interactions.create( args, 'bookmark' );
                                 // RDR.actions.bookmarkStart({ tag:$this, rindow:rindow, settings:settings, actionType:"bookmark" });
 
                             }
@@ -3083,11 +3126,11 @@ function readrBoard($R){
                             }});
                             if ( args.actionType == "react") {
                                 var args = { tag:$tag, rindow:rindow, settings:settings};
-                                RDR.actions.interactions.create( args, 'tag', 'create' );
+                                RDR.actions.interactions.create( args, 'tag' );
 
                             } else if ( args.actionType == "bookmark" ) {
                                 var args = { tag:$tag, rindow:rindow, settings:settings};
-                                RDR.actions.interactions.create( args, 'bookmark', 'create' );
+                                RDR.actions.interactions.create( args, 'bookmark' );
                                 // RDR.actions.bookmarkSend({ tag:tag, rindow:rindow, settings:settings, callback: function() {
                                 //         // todo: at this point, cast the tag, THEN call this in the tag success function:
                                 //         //RDR.actions.panel.expand("whyPanel", rindow);
@@ -3388,8 +3431,14 @@ function readrBoard($R){
                     '<div><strong>Leave a comment about your reaction:</strong></div> <div class="rdr_commentComplete"></div>'
                 );
                 var $undoLink = $('<a style="text-decoration:underline;" href="javascript:void(0);">Undo?</a>')//chain
-                .bind('click.rdr', function(){
-                    RDR.actions.unrateSend(args); 
+                .bind('click.rdr', { args:args }, function(event){
+                    // RDR.actions.unrateSend(args); 
+                    var args = event.data.args;
+                    // if (!args.int_id = event.data.int_id;
+                    log('------------------------------------- clicked args');
+                    // log(event.data.int_id);
+                    console.dir(args);
+                    RDR.actions.interactions.remove( args, 'tag' );
                 });
 
                 $whyPanel_tagCard.append(
