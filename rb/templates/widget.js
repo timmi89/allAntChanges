@@ -917,6 +917,7 @@ function readrBoard($R){
                         //todo:just for testing for now: - add defaults:
                         RDR.group.img_selector = RDR.group.img_selector || "body img";
                         RDR.group.selector_whitelist = RDR.group.selector_whitelist || "body p";
+                        RDR.group.media_selector = RDR.group.media_selector || "embed, video, object";
 
                         $RDR.dequeue('initAjax');
                     },
@@ -1109,50 +1110,68 @@ function readrBoard($R){
             hashNodes: function( $nodes ) {
                 
                 //todo: consider how to do this whitelist, initialset stuff right
-                var $allNodes,
-                    $textNodes,
-                    $imgNodes,
-                    $textNodesInitialSet,
-                    $imgNodesInitialSet;
-                    
-                    $textNodesInitialSet = $nodes ?
-                        $nodes.filter(function(idx, node){
+                var $allNodes = $(),
+                nodeGroups = {
+                    'text': {
+                        $group: null,
+                        whiteList: RDR.group.selector_whitelist,
+                        filterParam: function(idx, node){
                             //todo: reconsider using this - it's not super efficient to grab the text just to verify it's a node that has text.
                             // - Prob fine though since we're only testing hashes we pass in manually.
                             //proves it has text (so ellminates images for example.) //the !! is just a convention indicating it's used as a bool.
                             return !!$(node).text()
-                        }) :
-                        $( RDR.group.selector_whitelist );
-                        
-                    $imgNodesInitialSet = $nodes ?
-                        $nodes.filter('img') :
-                    $( RDR.group.img_selector );
-
+                        },
+                        setupFunc: function(){
+                            // get the node's text and smash case
+                            // TODO: <br> tags and block-level tags can screw up words.  ex:
+                            // hello<br>how are you?   here becomes
+                            // hellohow are you?    <-- no space where the <br> was.  bad.
+                            var node_text = $(this).html().replace(/< *br *\/?>/gi, '\n');
+                            var body = $.trim( $( "<div>" + node_text + "</div>" ).text().toLowerCase() );
+                            body = RDR.util.cleanPara( body );
+                            $(this).data('body',body);
+                        }
+                    },
+                    'img': {
+                        $group: null,
+                        whiteList: RDR.group.img_selector,
+                        filterParam: 'img',
+                        setupFunc: function(){
+                            //var body = $(this).attr('src');
+                            var body = this.src;
+                            $(this).data({
+                                'body':body
+                            });
+                        }
+                    },
+                    'media': {
+                        $group: null,
+                        whiteList: RDR.group.media_selector,
+                        filterParam: 'embed, video, object',
+                        setupFunc: function(){
+                            var body = 'test';
+                            $(this).data({
+                                'body':body
+                            });
+                        }
+                    }
+                };
                 
-                //each set is the (whiteList) minus (previously hashed nodes & blacklist nodes) boolean intersected with (passed in nodes)
-                $textNodes = $textNodesInitialSet.not('.rdr-hashed, .no-rdr');
-                $imgNodes = $imgNodesInitialSet.not('.rdr-hashed, .no-rdr');
+                $.each( nodeGroups, function( key, group ){
+                    
+                    var $group = $nodes ? $nodes.filter( group.filterParam ) : $( group.whiteList );
 
-                $textNodes.each( function() {
-                    // get the node's text and smash case
-                    // TODO: <br> tags and block-level tags can screw up words.  ex:
-                    // hello<br>how are you?   here becomes
-                    // hellohow are you?    <-- no space where the <br> was.  bad.
-                    var node_text = $(this).html().replace(/< *br *\/?>/gi, '\n');
-                    var body = $.trim( $( "<div>" + node_text + "</div>" ).text().toLowerCase() );
-                    body = RDR.util.cleanPara( body );
-                    $(this).data('body',body);
+                    //filter out blacklisted stuff
+                    $group = $group.not('.rdr-hashed, .no-rdr');
+                    group.$group = $group;
+
+                    //setup the group as needed
+                    $group.each( group.setupFunc );
+
+                    $allNodes = $allNodes.add($group);
                 });
+                
 
-                $imgNodes.each( function() {
-                    //var body = $(this).attr('src');
-                    var body = this.src;
-                    $(this).data({
-                        'body':body
-                    });
-                });
-
-                var $allNodes = $textNodes.add($imgNodes),
                 hashList = [];
                 $allNodes.each(function(){
                     var body = $(this).data('body'),
@@ -1218,49 +1237,12 @@ function readrBoard($R){
                         unknownList = response.data.unknown;
                         
                         RDR.actions.summaries.save(summaries);
-
+                        
                         if ( unknownList.length > 0 ) {
-                            var sendData = {};
-                            $.each( unknownList, function(idx, hash) {
-                                //send data for unknown containers to server
-                                //data is in form {body:,kind:,hash:}
-                                sendData[hash] = RDR.containers[hash];
-                            });
-                            $.ajax({
-                                url: "/api/containers/create/",
-                                type: "get",
-                                contentType: "application/json",
-                                dataType: "jsonp",
-                                data: {
-                                    json: JSON.stringify(sendData)
-                                },
-                                success: function(response) {
-                                    log('response for containers create')
-                                    var savedHashes = response.data,
-                                        summaries = {};
-                                    $.each( savedHashes, function(hash, isValid){
-                                        //todo: we prob don't need to check with the bool - Tyler, do we need this?
-                                        if( !isValid ) return;
-                                        //summary will be built and saved if/when it is interacted with the first time
-                                        summaries[hash] = {};
-                                        RDR.actions.summaries.init(hash);
-                                        
-                                    });
-                                },
-                                error: function(response) {
-                                    //for now, ignore error and carry on with mockup
-                                    console.warn('ajax error');
-                                    log(response);
-                                }
-                            });
+                            RDR.actions.containers.send(unknownList);
                         }
 
 
-                    },
-                    error: function(response) {
-                        //for now, ignore error and carry on with mockup
-                        console.warn('ajax error');
-                        log(response);
                     }
                 });
             },
@@ -1279,7 +1261,84 @@ function readrBoard($R){
                     }
                     RDR.containers[settings.hash] = container;
                     return container;
-                }  
+                },
+                send: function(hashList){
+                    //RDR.actions.containers.send:
+                    // gets the containers from the hashList
+                    // and cuts them up into delicious bite-sized chunks
+                    // to ensure that the body text doesn't push the ajax sendData over 2000 chars.
+
+                    var containers = {} 
+                    chars = 0, //will increment from body length which are the critical ones we care about.
+                    charLimit = 1800; //safely under 2000 to allow for other stuff
+
+                    $.each( hashList, function(idx, hash){
+                        //container is {body:,kind:,hash:}
+                        var container = RDR.containers[hash],
+                        bodyLen = container.body.length;
+
+                        log('container');
+                        log(container);
+
+                        //todo: solve for this.  We don't expect to see this though.
+                        if(bodyLen > charLimit){
+                            throw("errror: While impressive, your <" +container.kind+ "/> container is too long.  We can't accomodate this now, but we'll come up with a fix soon.  \nPleasant Emoticons, Readrboard.");
+                        }
+
+                        chars += container.body.length;
+                        log('chars')
+                        log(chars)
+
+                        if(chars > charLimit){
+                            RDR.actions.containers.ajaxSend(containers);
+                            resetChunks();
+                        }
+                        containers[hash] = container;
+                    });
+                    //do one last send.  Often this will be the only send.
+                    RDR.actions.containers.ajaxSend(containers);
+
+                    //helper functions
+                    function resetChunks(){
+                        containers = {};
+                        chars = 0;
+                    }
+                },
+                ajaxSend: function(containers){
+                    //RDR.actions.containers.ajaxSend:
+                    //this is a helper for this.send:
+                    //don't call this directly! Always use this.send so you don't choke on your ajax.
+
+                    var sendData = containers;
+                    $.ajax({
+                        url: "/api/containers/create/",
+                        type: "get",
+                        contentType: "application/json",
+                        dataType: "jsonp",
+                        data: {
+                            json: JSON.stringify(sendData)
+                        },
+                        success: function(response) {
+                            log('response for containers create')
+                            var savedHashes = response.data;
+                            //savedHashes is in the form {hash:id}
+                            
+                            $.each( savedHashes, function(hash, id){
+                                //todo: we prob don't need to check with the bool - Tyler, do we need this?
+                                if( !id ){
+                                    console.warn('something went wrong with saving the container');
+                                    return;
+                                }
+                                //else
+                                var node = RDR.containers[hash];
+                                node.id = id;
+
+                                RDR.actions.summaries.init(hash);
+                                
+                            });
+                        }
+                    });
+                }
             },
             content_node: {
                 make: function(settings){
@@ -2124,6 +2183,8 @@ function readrBoard($R){
                     //data is in form {body:,kind:,hash:}
                     //todo: combine with above
                     var node = RDR.containers[hash];
+                    log('node from summaries.init')
+                    log(node)
                     //save an empty summary object to the summaries list
                     var summary = {
                         "kind": node.kind, 
@@ -2139,6 +2200,7 @@ function readrBoard($R){
                     };
                     var summaries = {};
                     summaries[hash] = summary; 
+                    //kind of a weird format for sending just one.. because it normally expects a bunch of them
                     RDR.actions.summaries.save(summaries);
                     return summary;
                 },

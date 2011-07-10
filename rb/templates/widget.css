@@ -387,6 +387,7 @@ div.rdr button              {font-size:14px; }
 }
 .rdr_hilite {
     background-color: #fe7 !important;
+    color: black !important;
     /*-moz-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); FF3.5+ */
     /*-webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); Saf3.0+, Chrome */
     /*box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);  Opera 10.5+, IE 9.0 */
