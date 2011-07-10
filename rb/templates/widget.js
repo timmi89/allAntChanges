@@ -1340,7 +1340,7 @@ function readrBoard($R){
                 }
             },
             interactions: {
-                create: function(args, int_type){
+                create: function(args, int_type, action_type){
                     //RDR.actions.interactions.create:
                     if( !RDR.actions.interactions.hasOwnProperty(int_type) ){
                         console.warn('invalid interaction type ' +int_type+ "for RDR.actions.interactions.create()");
@@ -1349,6 +1349,9 @@ function readrBoard($R){
                     
                     // take care of pre-ajax stuff, mostly UI stuff
                     RDR.actions.interactions[int_type].preAjax(args);
+
+                    log('createeeeeeeeeeeeeeeee');
+                    console.dir(args);
 
                     //get user and only procceed on success of that.
                     RDR.session.getUser( args, function(newArgs){
@@ -1362,13 +1365,15 @@ function readrBoard($R){
 
                         //run the send function for the appropriate interaction type
                         //RDR.actions.interactions[int_type].send(args);
-                        RDR.actions.interactions.send(args, int_type);
+                        RDR.actions.interactions.send(args, int_type, action_type);
                     });
                 },
-                send: function(args, int_type){
+                send: function(args, int_type, action_type){
+                    log('sendddddddddddddddddd');
+                    console.dir(args);
                     var sendData = args.sendData;
                     //todo: consider making a generic url router
-                    var url = "/api/" +int_type+ "/create/"
+                    var url = "/api/" +int_type+ "/"+action_type+"/"
                     
                     // send the data!
                     $.ajax({
@@ -1533,10 +1538,6 @@ function readrBoard($R){
                         //clear the loader                  
                         tag_li.find('div.rdr_leftBox').html('');
 
-
-                    
-
-
                         log('tag successssssssssssss');
                         var $this = args.tag;
                         $this.addClass('rdr_selected');
@@ -1571,7 +1572,8 @@ function readrBoard($R){
                             tag_li.find('div.rdr_leftBox').click( function(e) {
                                 e.preventDefault();
                                 args.int_id = int_id; // add the interaction_id info in, we need it for unrateSend
-                                RDR.actions.unrateSend(args);
+                                // RDR.actions.unrateSend(args);
+                                RDR.actions.interactions.create( args, 'tag', 'delete' );
                                 return false; // prevent the tag call applied to the parent <li> from firing
                             });
 
@@ -1623,7 +1625,7 @@ function readrBoard($R){
                                 log('inside callback');
                                 if ( !args.secondAttempt ) {
                                     args.secondAttempt = true;
-                                    RDR.actions.interactions.create( args, 'tag' );
+                                    RDR.actions.interactions.create( args, 'tag', 'create' );
                                 }else{
                                     console.warn('unhandled create interaction fail')
                                 }
@@ -1642,6 +1644,7 @@ function readrBoard($R){
                         //Do UI stuff particular to write mode
                         if (uiMode == "write"){
                             log('bookmark: write mode')
+                            console.dir(args);
                             //if tag has already been tried to be submitted, don't try again.
                             //todo: later verify on the backend and don't let user 'stuff the ballot'
 
@@ -1671,6 +1674,7 @@ function readrBoard($R){
                         tag_li.find('div.rdr_leftBox').html('');
 
                         log('bookmark successssssssssssss');
+
                         var $this = args.tag;
                         $this.addClass('rdr_selected');
                         $this.siblings().removeClass('rdr_selected');
@@ -1685,7 +1689,8 @@ function readrBoard($R){
                             tag_li.find('div.rdr_leftBox').click( function(e) {
                                 e.preventDefault();
                                 args.int_id = int_id; // add the interaction_id info in, we need it for unrateSend
-                                RDR.actions.unrateSend(args);
+                                // RDR.actions.unrateSend(args);
+                                RDR.actions.interactions.create( args, 'bookmark', 'delete' );
                                 return false; // prevent the tag call applied to the parent <li> from firing
                             });
 
@@ -1719,8 +1724,10 @@ function readrBoard($R){
                         //build $whyPanel_tagCard
                         var $tagFeedback = $('<div class="rdr_tagFeedback">You bookmarked this and tagged it: <strong>'+tag.body+'</strong>. </div>');
                         var $undoLink = $('<a style="text-decoration:underline;" href="javascript:void(0);">Undo?</a>')//chain
-                        .bind('click.rdr', function(){
-                            RDR.actions.unrateSend(args); 
+                        .bind('click.rdr', {args:args}, function(event){
+                            // RDR.actions.unrateSend(args); 
+                            var args = event.data.args;
+                            RDR.actions.interactions.create( args, 'bookmark', 'delete' );
                         });
 
                         // TODO make this link to the user profile work
@@ -2458,7 +2465,7 @@ function readrBoard($R){
                         $header.find('span.rdr_tag_count').click( function() {
                             var $interactionButton = $(this).closest('.rdr_tag');
                             var args = { tag:$interactionButton, rindow:rindow, content:node.body, which:which, uiMode:'read', content_node:node};
-                            RDR.actions.interactions.create( args, 'tag');
+                            RDR.actions.interactions.create( args, 'tag', 'create');
                         });
 
                         
@@ -2647,8 +2654,7 @@ console.dir(node.top_interactions);
                             var $commentSet = $('<div class="rdr_commentSet" />'),
                                 $commentBy = $('<div class="rdr_commentBy" />'),
                                 $comment = $('<div class="rdr_comment" />');
-// console.dir(this_comment);
-                            var user_image_url = "http://graph.facebook.com/613765056/picture"; // ( this_comment.user.social_user.img_url ) ? this_comment.user.social_user.img_url: '{{ STATIC_URL }}widget/images/anonymousplode.png';
+                            var user_image_url = ( this_comment.social_user.img_url ) ? this_comment.social_user.img_url: '{{ STATIC_URL }}widget/images/anonymousplode.png';
                             var user_name = ( this_comment.user.first_name == "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
                             $commentBy.html( '<img src="'+user_image_url+'" /> ' + user_name );
                             $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
@@ -2918,11 +2924,11 @@ console.dir(node.top_interactions);
                             if (actionType == "react") {
                                 var args = { tag:$this, rindow:rindow, settings:settings };
 
-                                RDR.actions.interactions.create( args, 'tag' );
+                                RDR.actions.interactions.create( args, 'tag', 'create' );
 
                             } else {
                                 var args = { tag:$this, rindow:rindow, settings:settings };
-                                RDR.actions.interactions.create( args, 'bookmark' );
+                                RDR.actions.interactions.create( args, 'bookmark', 'create' );
                                 // RDR.actions.bookmarkStart({ tag:$this, rindow:rindow, settings:settings, actionType:"bookmark" });
 
                             }
@@ -3094,11 +3100,11 @@ console.dir(node.top_interactions);
                             }});
                             if ( args.actionType == "react") {
                                 var args = { tag:$tag, rindow:rindow, settings:settings};
-                                RDR.actions.interactions.create( args, 'tag' );
+                                RDR.actions.interactions.create( args, 'tag', 'create' );
 
                             } else if ( args.actionType == "bookmark" ) {
                                 var args = { tag:$tag, rindow:rindow, settings:settings};
-                                RDR.actions.interactions.create( args, 'bookmark' );
+                                RDR.actions.interactions.create( args, 'bookmark', 'create' );
                                 // RDR.actions.bookmarkSend({ tag:tag, rindow:rindow, settings:settings, callback: function() {
                                 //         // todo: at this point, cast the tag, THEN call this in the tag success function:
                                 //         //RDR.actions.panel.expand("whyPanel", rindow);
