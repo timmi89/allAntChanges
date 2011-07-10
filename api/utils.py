@@ -4,6 +4,8 @@ import random
 import json
 from exceptions import FBException, JSONException
 
+blacklist = {"fuck": "f**c", "shit": "s**t", "poop": "p**p"}
+
 def getTagCommentData(comment):
     print comment
     comment_data = {}
@@ -109,13 +111,14 @@ def getPage(request, pageid=None):
     canonical = request.GET.get('canonical_url', None)
     fullurl = request.GET.get('url', None)
     title = request.GET.get('title', None)
+    group = request.GET.get('group_id', None)
 
     # Handle sites with hash but no bang
     if '#' in fullurl and '!' not in fullurl:
         fullurl = fullurl[:fullurl.index('#')]
 
     host = request.get_host()
-    site = Site.objects.get(domain=host)
+    site = Site.objects.get(domain=host, group=group)
     if pageid:
         return Page.objects.get(id=pageid)
     elif canonical:
@@ -127,12 +130,32 @@ def getPage(request, pageid=None):
         page = Page.objects.get_or_create(url=fullurl, defaults={'site': site})
         
     return page[0]
-
+"""
 def createInteractionNode(body=None):
     if body:
         node = InteractionNode.objects.get_or_create(body=body)[0]
         print "Success getting/creating InteractionNode with id %s" % node.id
         return node
+"""
+
+def createInteractionNode(node_id=None, body=None):
+    # Get or create InteractionNode for share
+    try:
+        if node_id:
+            # ID known retrieve existing
+            inode = InteractionNode.objects.get(id=node_id)
+        elif body:
+            # Check body for blacklisted word
+            """ for bad, good in blacklist.iteritems(): body = body.replace(bad, good) """
+            for word in body.split():
+                if word.lower() in blacklist:
+                    body = body.replace(word, blacklist[word.lower()])
+            # No id provided, using body to get_or_create
+            inode = InteractionNode.objects.get_or_create(body=body)[0]
+    except:
+        raise JSONException(u'Error creating or retrieving interaction node')
+    
+    return inode
 
 def isTemporaryUser(user):
     return len(SocialUser.objects.filter(user__id=user.id)) == 0

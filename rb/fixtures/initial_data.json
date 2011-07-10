@@ -17,6 +17,23 @@
   },
 
   {
+    "model": "rb.Group",
+    "pk": 2,
+    "fields":{
+      "name": "Studio One",
+      "short_name": "studio-one",
+      "share": 1,
+      "comment": 1,
+      "rate": 1,
+      "bookmark": 1,
+      "search": 1,
+      "secret": "secret123%awesome%test!",
+      "logo_url_sm": "http://localhost:8080/static/ui-prototype/images/dc_logo_sm.png",
+      "twitter": "TheDogDaily"
+    }
+  },
+
+  {
     "model": "rb.Group_Blessed_Tags",
     "pk": 1,
     "fields": {
@@ -48,6 +65,42 @@
     "pk": 4,
     "fields": {
       "group": 1,
+      "interactionnode": 4 
+    }
+  },
+
+  {
+    "model": "rb.Group_Blessed_Tags",
+    "pk": 5,
+    "fields": {
+      "group": 2,
+      "interactionnode": 1 
+    }
+  },
+
+  {
+    "model": "rb.Group_Blessed_Tags",
+    "pk": 6,
+    "fields": {
+      "group": 2,
+      "interactionnode": 2 
+    }
+  },
+
+  {
+    "model": "rb.Group_Blessed_Tags",
+    "pk": 7,
+    "fields": {
+      "group": 2,
+      "interactionnode": 3 
+    }
+  },
+
+  {
+    "model": "rb.Group_Blessed_Tags",
+    "pk": 8,
+    "fields": {
+      "group": 2,
       "interactionnode": 4 
     }
   },
@@ -147,8 +200,28 @@
     "pk": 2,
     "fields": {
       "name": "aws webserver",
-      "domain": "50.19.211.244",
+      "domain": "dev.readrboard.com",
       "group": 1
+    }
+  },
+
+  {
+    "model": "rb.Site",
+    "pk": 3,
+    "fields": {
+      "name": "The Dog Daily",
+      "domain": "dev.readrboard.com",
+      "group": 2
+    }
+  },
+
+  {
+    "model": "rb.Site",
+    "pk": 4,
+    "fields": {
+      "name": "The Dog Daily",
+      "domain": "localhost:8080",
+      "group": 2
     }
   },
 

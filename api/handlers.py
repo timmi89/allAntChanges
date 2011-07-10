@@ -127,16 +127,7 @@ class TagHandler(InteractionHandler):
 
         content = Content.objects.get_or_create(kind=content_type, body=content_node_data['body'], location=location)[0]
 
-        # Get or create InteractionNode
-        try:
-            if tag_id:
-                # ID known retrieve existing
-                inode = InteractionNode.objects.get(id=tag_id)
-            elif tag_body:
-                # No id provided, using body to get_or_create
-                inode = InteractionNode.objects.get_or_create(body=tag_body)[0]
-        except:
-            raise JSONException(u'Error creating or retrieving interaction node')
+        inode = createInteractionNode(tag_id, tag_body)
 
         # Get the container
         try:
@@ -170,16 +161,7 @@ class ShareHandler(InteractionHandler):
         # Get or create content
         content = Content.objects.get_or_create(kind=content_type, body=content_node_data['body'], location=location)[0]
         
-        # Get or create InteractionNode for share
-        try:
-            if tag_id:
-                # ID known retrieve existing
-                inode = InteractionNode.objects.get(id=tag_id)
-            elif tag_body:
-                # No id provided, using body to get_or_create
-                inode = InteractionNode.objects.get_or_create(body=tag_body)[0]
-        except:
-            raise JSONException(u'Error creating or retrieving interaction node')
+        inode = createInteractionNode(tag_id, tag_body)
 
         # Get the container
         try:
