@@ -1954,8 +1954,9 @@ function readrBoard($R){
                             
                             // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
                             if ( $tagList.width() > tagListMaxWidth ) {
-                                $tagList.children().last().html('...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
+                                $tagList.children().last().html('More...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
                                 count = null;
+                                return;
                             }
                             count ++;
                         });
@@ -2032,10 +2033,11 @@ function readrBoard($R){
 
                         // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
                         if ( $tagList.width() > tagListMaxWidth ) {
-                            $tagList.children().last().html('...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
+                            $tagList.children().last().html('More...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
                             count = null;
+                            return;
                         }
-                        count ++;
+                        count++;
                     })
 
 
@@ -2374,15 +2376,16 @@ function readrBoard($R){
                         });
                         
                     })
-
                     .hover( 
                         function() {
+                            $(this).addClass('rdr_hover'); // safari/chrome kludge -- :hover isn't working here
                             var selStates = $(this).data('selStates');
                             $.each( selStates, function(idx, selState){
                                 $().selog('hilite', selState, 'on');
                             });
                         },
                         function() {
+                            $(this).removeClass('rdr_hover');  // safari/chrome kludge -- :hover isn't working here
                             var selStates = $(this).data('selStates');
                             $.each( selStates, function(idx, selState){
                                 $().selog('hilite', selState, 'off');
@@ -2839,6 +2842,14 @@ console.dir(node.top_interactions);
                         $rightBox = '<div class="rdr_rightBox" />';
 
                         $li.append($leftBox,$tagText,$rightBox);
+                        $li.hover(
+                            function() {
+                                $(this).addClass('rdr_hover'); // safari/chrome kludge -- :hover isn't working here
+                            },
+                            function() {
+                                $(this).removeClass('rdr_hover'); // safari/chrome kludge -- :hover isn't working here
+                            }
+                        );
                         $tagBox.children('ul.rdr_tags').append($li);
 
                     });
@@ -3106,6 +3117,15 @@ console.dir(node.top_interactions);
                     var $tagTooltip = (args.actionType == "react") ? $('<div class="rdr_help">Add your own (ex. hip, woot)</div>'):$('<div class="rdr_help">Add a tag</div>');
                     $freeformTagDiv.append($tagTooltip);
                     $customTagBox.append($freeformTagDiv);
+
+                    $customTagBox.hover(
+                        function() {
+                            $(this).addClass('rdr_hover'); // safari/chrome kludge -- :hover isn't working here
+                        },
+                        function() {
+                            $(this).removeClass('rdr_hover'); // safari/chrome kludge -- :hover isn't working here
+                        }
+                    )
 
                     $customTagBox.click(function(){
                         $tagTooltip.hide();
