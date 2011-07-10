@@ -125,12 +125,15 @@ class NodeValue(models.Model):
         unique_together = ('group', 'node', 'value')
 
 class Site(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    domain = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=100)
+    domain = models.CharField(max_length=50)
     group = models.ForeignKey(Group)
     include_selectors = models.CharField(max_length=255, blank=True)
     no_rdr_selectors = models.CharField(max_length=255, blank=True)
     css = models.URLField(blank=True)
+
+    class Meta:
+        unique_together = ('name', 'domain', 'group')
 
     def __unicode__(self):
         return unicode(self.name)
