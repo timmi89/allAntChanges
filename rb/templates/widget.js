@@ -690,6 +690,8 @@ function readrBoard($R){
                 }
             },
 			createXDMframe: function() {
+             log('createXDMframe');
+             console.dir(RDR.groupPermData);
                 RDR.session.receiveMessage();
 
                 var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
@@ -960,7 +962,7 @@ function readrBoard($R){
 
                 // TODO flesh out Porter's code below and incorporate it into the queue
 
-                var url = window.location.href + window.location.hash;
+                var url = window.location.href; // + window.location.hash;
 				var canonical = ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href'):"";
                 var title = ( $('meta[property="og:title"]').attr('content') ) ? $('meta[property="og:title"]').attr('content'):$('title').text();
                 if ( !title ) title = "";

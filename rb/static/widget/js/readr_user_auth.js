@@ -1,11 +1,16 @@
 // querystring stuff
 // used to create an array called qs_args which holds key/value paris from the querystring of the iframe
-var qs = window.location.search.substr(1).split('&');
+var qs = ( window.location.search + window.location.hash ).substr(1).split('&');
 var qs_args = [];
 for ( var i in qs ) {
 	var this_arg = qs[i].split('=');
 	qs_args[this_arg[0]] = this_arg[1];
 }
+// console.log('receiving iframe args');
+// console.log('window.location.search: ' + window.location.search );
+// console.log('window.location.hash: ' + window.location.hash );
+// console.dir(qs);
+// console.dir(qs_args);
 $.receiveMessage(
 	function(e){
 		console.log('---receiving in the iframe---');
@@ -108,6 +113,7 @@ RDRAuth = {
 		var sendData = {
 			group_id : qs_args.group_id
 		};
+		console.dir(sendData);
 		$.ajax({
 			url: "/api/tempuser/",
 			type: "get",
