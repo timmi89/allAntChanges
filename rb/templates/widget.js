@@ -1156,23 +1156,6 @@ function readrBoard($R){
                     var hashText = ( kind=="img") ? "rdr-"+kind+"-"+body : "rdr-text-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
                     hash = RDR.util.md5.hex_md5( hashText );
 
-               
-               
-                    //dont do this - taken care of above now
-                    /*
-                    //return without doing anything if:
-                    //we've already hashed it, or the body was invalid (this shouldn't happen I don't think)
-                    var dontSend = ( RDR.containers[hash] || !body );
-                    log('dontSend')
-                    log(dontSend)
-                    if( dontSend ){
-                        $allNodes = $allNodes.not(this)
-                        return; //won't add to RDR.containers either
-                    }
-                    //else
-                    */
-
-
                     // add an object with the text and hash to the nodes dictionary
                     //todo: consider putting this info directly onto the DOM node data object
                     RDR.actions.containers.make({
@@ -1181,8 +1164,6 @@ function readrBoard($R){
                         hash:hash
                     });
 
-                    log('RDR.containers[hash]');
-                    log(RDR.containers[hash]);
                     // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
                     // this makes it easy to find on the page later
                     $(this).addClass( 'rdr-' + hash ).addClass('rdr-hashed');
@@ -1250,7 +1231,6 @@ function readrBoard($R){
                                 },
                                 success: function(response) {
                                     log('response for containers create')
-                                    log(response)
                                     var savedHashes = response.data,
                                         summaries = {};
                                     $.each( savedHashes, function(hash, isValid){
@@ -1259,9 +1239,7 @@ function readrBoard($R){
                                         //summary will be built and saved if/when it is interacted with the first time
                                         summaries[hash] = {};
                                         RDR.actions.summaries.init(hash);
-                                        log('summaries[hash]')
-                                        log(summaries[hash])
-                                        log('RDR.containers[hash]');
+                                        
                                     });
                                 },
                                 error: function(response) {
@@ -1287,16 +1265,13 @@ function readrBoard($R){
 
                     //makes a new one or returns existing one
                     //expects settings with body, kind, and hash.
-log('111111')
                     if( RDR.containers.hasOwnProperty(settings.hash) ) return RDR.containers[settings.hash];
                     //else
-                    log('2222')
                     var container = {
                         'body': settings.body,
                         'kind': settings.kind,
                         'hash': settings.hash
                     }
-                    log(container)
                     RDR.containers[settings.hash] = container;
                     return container;
                 }  
@@ -1317,9 +1292,7 @@ log('111111')
                         'location': settings.location,
                         'content_type':settings.content_type
                     }
-                    log(settings)
-                    log(settings)
-
+                    
                     RDR.content_nodes[content_node_key] = content_node;
                     // log('content_node final');
                     // log(content_node);
@@ -1426,7 +1399,6 @@ log('111111')
                             };
                         }
                     }
-                    log(content_node_data)
 
                     var sendData = {
                         //interaction level attrs
@@ -1564,10 +1536,6 @@ log('111111')
                                 return false; // prevent the tag call applied to the parent <li> from firing
                             });
 
-                            log('response.data')
-                            log(response.data)
-                            log(tag)
-
                             tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+int_id);
                             tag_li.data('interaction_id', int_id);
 
@@ -1678,9 +1646,6 @@ log('111111')
                                 return false; // prevent the tag call applied to the parent <li> from firing
                             });
 
-                            log('response.data')
-                            log(response.data)
-                            log(tag)
 
                             tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+int_id);
                             tag_li.data('interaction_id', int_id);
@@ -1742,12 +1707,8 @@ log('111111')
 
                     var $indicators = $();
                     $.each(hashes, function(idx, hash){
-                        log(hash)
-                        log( $('.rdr_indicator_'+hash) )
                         $indicators = $indicators.add( $('#rdr_indicator_'+hash) )
                     });
-                    log('$indicators')
-                    log($indicators)
                     if(boolDontFade){
                         $indicators.css({
                             'opacity':'0.4',
@@ -1774,18 +1735,12 @@ log('111111')
                 },
                 update: function(hash, diff){
                     //RDR.actions.indicators.update:
-                   log('update indicator');
-                   log(hash)
-                   log(diff)
                     if( hash == "pageSummary" ){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
                         var summary = RDR.page.summary;
-                        log('page summary')
                     }else{
                         //todo: this check shouldn't be needed anymore - summary should always exist
                         var summary = RDR.summaries.hasOwnProperty(hash) ? RDR.summaries[hash] : RDR.actions.summaries.init(hash);
-                        log('summary from update')
-                        log(summary)
                     }
 
                     //interaction categories and for each,
@@ -1838,18 +1793,10 @@ log('111111')
                         });
                     });
 
-
-                    /*
-                    log( summary.top_interactions['tags'] )
-                    log( summary.counts['tags'] )
-                    log(summary.counts.interactions)
-                    */
-
                     if( hash == "pageSummary" ){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
                         makeSummaryWidget(RDR.page)
                     }else{
-                        log('make from updated summary')
                         RDR.actions.indicators.make( hash );
                        // interaction_count still == summary.counts.interactions, copy by ref
      
@@ -1868,22 +1815,11 @@ log('111111')
                 make: function(hash){
                     //RDR.actions.indicators.make:
                     //kind is optional - defaults to text
-                    
-                    // if ( RDR.content_nodes[i].info.com_count + RDR.content_nodes[i].info.tag_count > 0 ) {
-                    log('-- what we know about container with hash '+hash+' --');
-                    
+                                        
                     var $container, $indicator, $indicator_details, some_reactions, total, info, top_tags, kind;
 
                     var summary = RDR.summaries[hash];
-                    log('summary')
-                    log(summary)
-                    log(hash)
                     node = RDR.containers[hash];
-                    log('node in indicators make')
-                    log(node)
-
-                    log('summary in make function')
-                    log(summary)
                     //todo: prop down var change
                     kind = node.kind;
 
@@ -2128,7 +2064,6 @@ log('111111')
             summaries:{
                 init: function(hash){
                     //RDR.actions.summaries.init:
-                    log('summaries init '+ hash)
                     //add an empty summary to the stack to be registered
                     //todo: it would make sense to just get this from the backend, since it has
                         //a function to do this already.
@@ -2165,7 +2100,6 @@ log('111111')
                     //RDR.actions.summaries.populate:
                     //expects a summary object from RDR.summaries
                     var summary = RDR.summaries[hash];  
-                    log(summary);
 
                     //don't init twice.
                     if( summary.initiated ) return;
@@ -2261,8 +2195,7 @@ log('111111')
                 },
                 save: function(summaries){
                     //RDR.actions.summaries.save:
-                    log('summaries in summaries save')
-                    log(summaries)
+                    
                     $.each(summaries, function(hash,summary){
                         RDR.summaries[hash] = summary;
                         RDR.actions.indicators.make( hash );
@@ -2410,8 +2343,6 @@ log('111111')
                         var $this = $(this);
                         $this.data('selStates',[]);
 
-                        log($this)                        
-                        log($this.data() )
                         var tag_id = $this.data('tag').id;
                         
                         var nodes = summary.content_nodes || [];
@@ -2500,8 +2431,6 @@ log('111111')
 
                         var $tagButton = $header.find('a.rdr_tag');
                         $tagButton.data( 'tag', tag );
-                        log('$tagButton.data')
-                        log( $tagButton.data() )
 
                         $header.find('span.rdr_tag_count').click( function() {
                             var $interactionButton = $(this).closest('.rdr_tag');
@@ -2531,7 +2460,7 @@ log('111111')
                         // todo: [porter] i'm looping to see if there is a comment for this TAG.  can we just send this down from server?
                         for ( var i in summary.top_interactions.coms ) {
                             log('summary.top_interactions.coms');
-                            console.dir(summary.top_interactions.coms);
+
                             var node_comments = 0;
                             if ( summary.top_interactions.coms[i].content_id == node.id ) {
                                 node_comments++;
@@ -2549,7 +2478,7 @@ log('111111')
                         $comment.click( function() {
                             var $this = $(this);
                             $this.closest('.rdr_contentSet').addClass('rdr_selected').siblings().removeClass('rdr_selected');
-log('---- rindow.data --------');
+                            log('---- rindow.data --------');
                             console.dir( rindow.data() );
                             RDR.actions.viewCommentContent( {tag:tag, which:which, rindow:rindow, node:node, selState:node.selState, content_type:"text" });
                         });
@@ -3087,8 +3016,6 @@ log('---- rindow.data --------');
                     }).keyup( {args: args}, function(event) {
                         var args = event.data.args;
                         if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
-                            log('argsargsargs')
-                            log(args)
                             $whyPanel.find('div.rdr_body').empty();
                             var tag = $(this).closest('li.rdr_customTagBox');
                             tag.data({
@@ -3490,13 +3417,6 @@ log('---- rindow.data --------');
                     //todo: temp fix
                     //almost works
                     content_node.content_type = (content_node.content_type == "img") ? "image" : "text";
-
-
-                    log('params')
-                    log(params)
-                    
-                    log('content_node_data content_type')
-                    log(content_node.content_type)
 
                     var sendData = {
                         "tag" : tag,
