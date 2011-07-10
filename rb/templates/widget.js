@@ -2187,7 +2187,8 @@ function readrBoard($R){
                     log(node)
                     //save an empty summary object to the summaries list
                     var summary = {
-                        "kind": node.kind, 
+                        "kind": node.kind,
+                        "id": node.id,
                         "counts": {
                             "coms": 0, 
                             "tags": 0, 
@@ -2214,6 +2215,8 @@ function readrBoard($R){
                 populate: function(hash){
                     //RDR.actions.summaries.populate:
                     //expects a summary object from RDR.summaries
+                    log('RDR.summaries[hash] in populate')
+                    log(RDR.summaries[hash])
                     var summary = RDR.summaries[hash];  
 
                     //don't init twice.
