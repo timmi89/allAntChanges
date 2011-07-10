@@ -8,7 +8,8 @@ for ( var i in qs ) {
 }
 $.receiveMessage(
 	function(e){
-		//console.log('---receiving in the iframe---');
+		console.log('---receiving in the iframe---');
+		console.log(e)
 	    switch( e.data ) {
 	    	case "getUser":
 	    		RDRAuth.returnUser(true);
