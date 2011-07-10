@@ -16,6 +16,10 @@ def status_response(func):
 
 def json_data(func):
     def wrapper(self, request, *args, **kwargs):
-        data = json.loads(request.GET['json'])
-        return func(self, request, data, *args, **kwargs)
+        try:
+            data = json.loads(request.GET['json'])
+        except KeyError:
+            raise JSONException("No data dude! -- data must be passed in a json object")
+        else:
+            return func(self, request, data, *args, **kwargs)
     return wrapper

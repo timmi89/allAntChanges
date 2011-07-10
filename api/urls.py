@@ -51,5 +51,6 @@ urlpatterns = patterns('',
     url(r'^share/', Share, kwargs={'action':'create'}),
     #url(r'^tags/(\d*)', Tags),
     url(r'^comment/create/', Comment, kwargs={'action':'create'}),
+    url(r'^comment/replies/', Comment, kwargs={'action':'view'})
     #url(r'^comments/', Comments),
 )

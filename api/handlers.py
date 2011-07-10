@@ -40,44 +40,54 @@ class InteractionHandler(AnonymousBaseHandler):
     @json_data
     @status_response
     def read(self, request, data, **kwargs):
-        # check to see if user's token is valid
-        if not checkToken(data): raise JSONException(u"Token was invalid")
-        # get user data
-        user_id = data.get('user_id')
-        try:
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist, User.MultipleObjectsReturned:
-            raise JSONException(u"Interaction Handler: Error getting user!")
-
         # retrieve action flag
         action = kwargs.get('action')
 
-        # do create action - varies per interaction
-        if action == 'create':
-            page_id = data.get('page_id')
-            try:
-                page = Page.objects.get(id=page_id)
-            except Page.DoesNotExist, Page.MultipleObjectsReturned:
-                raise JSONException(u"Interaction Handler: Error getting page!")
-            
-            group_id = data.get('group_id')
-            try:
-                group = Group.objects.get(id=group_id)
-            except Group.DoesNotExist, Group.MultipleObjectsReturned:
-                raise JSONException(u"Interaction Handler: Error getting group!")
-            
-            # do create action for specific type
-            return self.create(request, data, user, page, group)
-
-        # do delete action - same for all interactions
-        if action == 'delete':
+        # do view action
+        if action == 'view':
             interaction_id = data['int_id']
             try:
-                interaction = Interaction.objects.get(id=interaction_id)
+                interactions = Interaction.objects.filter(parent=interaction_id)
             except Interaction.DoesNotExist:
                 raise JSONException(u"Interaction did not exist!")
+            return interactions
+        
+        else:
+            # check to see if user's token is valid
+            if not checkToken(data): raise JSONException(u"Token was invalid")
+            # get user data
+            user_id = data.get('user_id')
+            try:
+                user = User.objects.get(id=user_id)
+            except User.DoesNotExist, User.MultipleObjectsReturned:
+                raise JSONException(u"Interaction Handler: Error getting user!")
 
-            return deleteInteraction(interaction, user)
+            # do create action - varies per interaction
+            if action == 'create':
+                page_id = data.get('page_id')
+                try:
+                    page = Page.objects.get(id=page_id)
+                except Page.DoesNotExist, Page.MultipleObjectsReturned:
+                    raise JSONException(u"Interaction Handler: Error getting page!")
+                
+                group_id = data.get('group_id')
+                try:
+                    group = Group.objects.get(id=group_id)
+                except Group.DoesNotExist, Group.MultipleObjectsReturned:
+                    raise JSONException(u"Interaction Handler: Error getting group!")
+                
+                # do create action for specific type
+                return self.create(request, data, user, page, group)
+
+            # do delete action - same for all interactions
+            if action == 'delete':
+                interaction_id = data['int_id']
+                try:
+                    interaction = Interaction.objects.get(id=interaction_id)
+                except Interaction.DoesNotExist:
+                    raise JSONException(u"Interaction did not exist!")
+
+                return deleteInteraction(interaction, user)
 
 class CommentHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
