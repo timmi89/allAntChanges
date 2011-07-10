@@ -3,8 +3,9 @@ from datetime import datetime, timedelta
 import random
 import json
 from exceptions import FBException, JSONException
+from readrboard.rb.profanity_filter import ProfanitiesFilter
 
-blacklist = {"fuck": "f**c", "shit": "s**t", "poop": "p**p"}
+blacklist = ['fuck','shit','poop']
 
 def getTagCommentData(comment):
     print comment
@@ -147,9 +148,8 @@ def createInteractionNode(node_id=None, body=None):
         elif body:
             # Check body for blacklisted word
             """ for bad, good in blacklist.iteritems(): body = body.replace(bad, good) """
-            for word in body.split():
-                if word.lower() in blacklist:
-                    body = body.replace(word, blacklist[word.lower()])
+            pf = ProfanitiesFilter(blacklist, replacements="*", complete=False)
+            body = pf.clean(body)
             # No id provided, using body to get_or_create
             inode = InteractionNode.objects.get_or_create(body=body)[0]
     except:
