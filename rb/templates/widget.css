@@ -115,7 +115,7 @@ div.rdr_indicator img, div.rdr_indicator_details img{
     margin: -1px 0 0 -1px !important;
 }
 
-div.rdr_indicator.rdr_image { position:relative; border-bottom:1px solid #ddd; display:block !important; margin-bottom:5px; clear:both;
+div.rdr_indicator.rdr_image { position:relative; border-bottom:1px solid #ddd; display:block; margin-bottom:5px; clear:both;
 /*start with 0 opacity so it can fade in properly*/
     opacity:0.0;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
@@ -374,9 +374,6 @@ div.rdr button              {font-size:14px; }
 #rdr-summary div.rdr-top-tags span em   {font-style:normal; color:#aaa;}
 #rdr-summary div.rdr-top-users      {padding:7px; overflow:hidden; height:16px;float:left;}
 #rdr-summary div.rdr-top-users img  {width:20px;height:20px; margin-right:3px;}
-
-/* in-page styles */
-.rdr_highlightContainer {background:#E4F0F7;}
 
 /* custom in-page highlight */
 .rdr_clone *{

@@ -1112,8 +1112,9 @@ function readrBoard($R){
                     
                     $textNodesInitialSet = $nodes ?
                         $nodes.filter(function(idx, node){
-                            //todo: reconsider using this. - Prob fine though since we're only testing hashes we pass in manually.
-                            //proves it has text (so ellminates images for example.) //!! is just a convention indicating it's used as a bool.
+                            //todo: reconsider using this - it's not super efficient to grab the text just to verify it's a node that has text.
+                            // - Prob fine though since we're only testing hashes we pass in manually.
+                            //proves it has text (so ellminates images for example.) //the !! is just a convention indicating it's used as a bool.
                             return !!$(node).text()
                         }) :
                         $( RDR.group.selector_whitelist );
@@ -1146,7 +1147,8 @@ function readrBoard($R){
                     });
                 });
 
-                var $allNodes = $textNodes.add($imgNodes);
+                var $allNodes = $textNodes.add($imgNodes),
+                hashList = [];
                 $allNodes.each(function(){
                     var body = $(this).data('body'),
                     kind = $(this)[0].tagName.toLowerCase();
@@ -1173,38 +1175,37 @@ function readrBoard($R){
 
                     // add an object with the text and hash to the nodes dictionary
                     //todo: consider putting this info directly onto the DOM node data object
-                    RDR.containers[hash] = {
+                    RDR.actions.containers.make({
                         body:body,
                         kind:kind,
                         hash:hash
-                    };
+                    });
+
+                    log('RDR.containers[hash]');
+                    log(RDR.containers[hash]);
                     // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
                     // this makes it easy to find on the page later
                     $(this).addClass( 'rdr-' + hash ).addClass('rdr-hashed');
+                    hashList.push(hash)
                     $(this).data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
                 });
 
-                RDR.actions.sendHashes( $allNodes );
+                RDR.actions.sendHashes( hashList );
+                //return is just used for some callers to verify which containers have been hashed.
+                return $allNodes
             },
-            sendHashes: function( $nodes ) {
+            sendHashes: function( hashes ) {
                 
-                //get hashes from $nodes if it was passed, or otherwise, the full RDR.containers dict
-                var hashes = [];
-                if( $nodes ){
-                    $nodes.each(function(){
-                        var hash = $(this).data('hash');
-                        hashes.push( hash );
-                    });
-                }else{
+                if( !hashes || !hashes.length ){ 
                     hashes = getAllHashes();
                 }
 
                 function getAllHashes(){
-                    var md5_list = [];
-                    for (var i in RDR.containers ) {
-                        md5_list.push( i );
+                    var hashes = [];
+                    for (var hashKey in RDR.containers ) {
+                        hashes.push( hashKey );
                     }
-                    return md5_list;
+                    return hashes;
                 }
 
                 //build the sendData with the hashes from above
@@ -1231,10 +1232,12 @@ function readrBoard($R){
                         unknownList = response.data.unknown;
                         
                         RDR.actions.summaries.save(summaries);
-                        
+
                         if ( unknownList.length > 0 ) {
                             var sendData = {};
                             $.each( unknownList, function(idx, hash) {
+                                //send data for unknown containers to server
+                                //data is in form {body:,kind:,hash:}
                                 sendData[hash] = RDR.containers[hash];
                             });
                             $.ajax({
@@ -1246,8 +1249,20 @@ function readrBoard($R){
                                     json: JSON.stringify(sendData)
                                 },
                                 success: function(response) {
-                                    //do nothing for now.
-                                    //var newfoundSummaries = response.data;
+                                    log('response for containers create')
+                                    log(response)
+                                    var savedHashes = response.data,
+                                        summaries = {};
+                                    $.each( savedHashes, function(hash, isValid){
+                                        //todo: we prob don't need to check with the bool - Tyler, do we need this?
+                                        if( !isValid ) return;
+                                        //summary will be built and saved if/when it is interacted with the first time
+                                        summaries[hash] = {};
+                                        RDR.actions.summaries.init(hash);
+                                        log('summaries[hash]')
+                                        log(summaries[hash])
+                                        log('RDR.containers[hash]');
+                                    });
                                 },
                                 error: function(response) {
                                     //for now, ignore error and carry on with mockup
@@ -1257,8 +1272,7 @@ function readrBoard($R){
                             });
                         }
 
-                        //todo: account for newbie pins
-                        RDR.actions.indicators.show();
+
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
@@ -1266,6 +1280,26 @@ function readrBoard($R){
                         log(response);
                     }
                 });
+            },
+            containers: {
+                make: function(settings){
+                    //RDR.actions.containers.make:
+
+                    //makes a new one or returns existing one
+                    //expects settings with body, kind, and hash.
+log('111111')
+                    if( RDR.containers.hasOwnProperty(settings.hash) ) return RDR.containers[settings.hash];
+                    //else
+                    log('2222')
+                    var container = {
+                        'body': settings.body,
+                        'kind': settings.kind,
+                        'hash': settings.hash
+                    }
+                    log(container)
+                    RDR.containers[settings.hash] = container;
+                    return container;
+                }  
             },
             content_node: {
                 make: function(settings){
@@ -1275,9 +1309,7 @@ function readrBoard($R){
                     //expects settings with container, body, and location.
 
                     var content_node_key = settings.container+"-"+settings.location;
-                    log(content_node_key);
-                    var existingNode = RDR.content_nodes[content_node_key];
-                    if( typeof existingNode !== 'undefined' ) return existingNode
+                    if( RDR.content_nodes.hasOwnProperty(content_node_key) ) return RDR.content_nodes[content_node_key]
                     //else
                     var content_node = {
                         'container': settings.container,
@@ -1321,6 +1353,7 @@ function readrBoard($R){
                     });
                 },
                 send: function(args, int_type){
+                    //RDR.actions.interactions.send:
                     var sendData = args.sendData;
                     //todo: consider making a generic url router
                     var url = "/api/" +int_type+ "/create/"
@@ -1483,6 +1516,7 @@ function readrBoard($R){
                             tag_li = args.tag,
                             tag = args.tag.data('tag');
 
+                        //todo: untangle these argument translations.
                         var content_node_data = sendData.content_node_data;
                         
                         //clear the loader                  
@@ -1514,7 +1548,7 @@ function readrBoard($R){
                         var diff = {   
                             tags: {}
                         };
-                        diff.tags[ tagHelper['id'] ] = tagHelper; //yeah?, didja get that one?  //todo: make pretty.
+                        diff.tags[ tagHelper['id'] ] = tagHelper; //yeah?, didja get that one? ... (diff.tags.tagID = tagHelper) //todo: clean this up.
 
                         RDR.actions.indicators.update(hash, diff);
                         //end update indicators
@@ -1701,42 +1735,59 @@ function readrBoard($R){
                 }
             },
             indicators: {
-                show: function(boolDontFade){
+                show: function(hashes, boolDontFade){
                     //RDR.actions.indicators.show:
                     //fade in indicators
                     //temp hacl!
+
+                    var $indicators = $();
+                    $.each(hashes, function(idx, hash){
+                        log(hash)
+                        log( $('.rdr_indicator_'+hash) )
+                        $indicators = $indicators.add( $('#rdr_indicator_'+hash) )
+                    });
+                    log('$indicators')
+                    log($indicators)
                     if(boolDontFade){
-                        $('.rdr_indicator').css({
+                        $indicators.css({
                             'opacity':'0.4',
                             'display':'inline'
                         });
-
                         return;
                     }
                     //else
-                    $('.rdr_indicator').css({
+                    $indicators.css({
                         'opacity':'0',
                         'display':'inline'
                     }).fadeTo('300', '0.4');
                 },
+                hide: function(hashes){
+                    //RDR.actions.indicators.hide:
+                    var $indicators = $();
+                    $.each(hashes, function(idx, hash){
+                        $indicators = $indicators.add( $('.rdr_indicator_'+hash) )
+                    });
+
+                    $indicators.css({
+                        'opacity':'0',
+                    });
+                },
                 update: function(hash, diff){
-                    //RDR.actions.indicators.update();
+                    //RDR.actions.indicators.update:
                    log('update indicator');
+                   log(hash)
+                   log(diff)
                     if( hash == "pageSummary" ){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
                         var summary = RDR.page.summary;
                         log('page summary')
                     }else{
-                        var summary = RDR.summaries[hash];
+                        //todo: this check shouldn't be needed anymore - summary should always exist
+                        var summary = RDR.summaries.hasOwnProperty(hash) ? RDR.summaries[hash] : RDR.actions.summaries.init(hash);
+                        log('summary from update')
+                        log(summary)
                     }
-                    //log(summary);
 
-                    /*
-                    var altSumm = RDR.summaries[hash];
-                    var summary = indicator.data('summary');
-                    log(altSumm)
-                    log(summary)
-                    */ 
                     //interaction categories and for each,
                     //a list of {id:incAmount} - incAmount will be 1 or -1 for decrement;
 
@@ -1786,6 +1837,8 @@ function readrBoard($R){
 
                         });
                     });
+
+
                     /*
                     log( summary.top_interactions['tags'] )
                     log( summary.counts['tags'] )
@@ -1796,45 +1849,44 @@ function readrBoard($R){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
                         makeSummaryWidget(RDR.page)
                     }else{
+                        log('make from updated summary')
                         RDR.actions.indicators.make( hash );
-                        RDR.actions.indicators.show(true); //temp hack, 'true' is for 'dont fade in';
+                       // interaction_count still == summary.counts.interactions, copy by ref
+     
+                        if(summary.counts.interactions > 0){
+                            RDR.actions.indicators.show([hash],true); //temp hack, 'true' is for 'dont fade in';   
+                        }else{
+                            RDR.actions.indicators.hide([hash]); //if deleted back to 0
+                        }
 
                         //now update the page.
                             //not working yet.  Page reads from a different kind of summary. 
                         //RDR.actions.indicators.update( 'pageSummary' );
                     }
 
-
-                    /**********************/
-                    //update html in page  
-
-                    //this was stupid, just remake it with the same function as before RDR.actions.indicators.make( hash );
-
-                    /*
-                    var $indicator = $('#rdr_indicator_'+hash),
-                    $indicator_details = $('#rdr_indicator_details_'+hash);
-
-                    $indicator.add($indicator_details)//chain
-                        .find('.rdr_count').text( summary.counts['tags'] );
-                    
-                    var t = $indicator_details.find('.rdr_tags_list_tag');
-                    log(t)
-                    */
                 },
                 make: function(hash){
                     //RDR.actions.indicators.make:
                     //kind is optional - defaults to text
                     
                     // if ( RDR.content_nodes[i].info.com_count + RDR.content_nodes[i].info.tag_count > 0 ) {
-                    //log('-- what we know about container with hash '+hash+' --');
-                    //log(RDR.content_nodes[hash]);
+                    log('-- what we know about container with hash '+hash+' --');
+                    
                     var $container, $indicator, $indicator_details, some_reactions, total, info, top_tags, kind;
 
                     var summary = RDR.summaries[hash];
+                    log('summary')
+                    log(summary)
+                    log(hash)
                     node = RDR.containers[hash];
+                    log('node in indicators make')
+                    log(node)
 
+                    log('summary in make function')
+                    log(summary)
                     //todo: prop down var change
                     kind = node.kind;
+
                     top_tags = summary.top_interactions.tags;
                     //hide indicators and indicatorDetails and show on load.
 
@@ -1891,7 +1943,6 @@ function readrBoard($R){
                                 $(this).css('opacity','0.4')
                             }
                         );
-                        $indicator.hide();
 
                         $tagList = $('<div class="rdr_tags_list"></div>');  // absolute so that we can calculate content width on the fly
                         $indicator.append($tagList);
@@ -1916,6 +1967,13 @@ function readrBoard($R){
                             }
                             count ++;
                         });
+                        
+                        //show newly minted pins
+                        if(summary.counts.interactions > 0){
+                            RDR.actions.indicators.show([hash],true); //temp hack, 'true' is for 'dont fade in';   
+                        }else{
+                            RDR.actions.indicators.hide([hash]); //if deleted back to 0
+                        }
 
                         return;
                     }
@@ -1933,10 +1991,9 @@ function readrBoard($R){
                     .data( {'which':hash} )//chain
                     .hover( 
                         function() {
-                            //todo: what does this do?
-                            //$( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).addClass( 'rdr_highlightContainer' );
-                            
-                            RDR.actions.summaries.init( hash )
+                                                    
+                            //this                                                     
+                            RDR.actions.summaries.populate( hash )
 
                             //todo: maybe make more efficient
                             $indicator_details.find('.rdr_statsClone').html( $indicator.html() );
@@ -1947,10 +2004,8 @@ function readrBoard($R){
                             });
                         },
                         function() {
-                            //todo: what does this do?
-                            //$( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).removeClass( 'rdr_highlightContainer' );
                             //dont hide it again here, because we need to do that on the hoveroff event of the rdr_indicator_details
-
+                            
                             //ensure smooth hover behavior
                             /*
                             setTimeout(function(){
@@ -2011,6 +2066,14 @@ function readrBoard($R){
                             $(this).hide();
                         }
                     );
+
+                    //show newly minted pins
+                    if(summary.counts.interactions > 0){
+                        RDR.actions.indicators.show([hash],true); //temp hack, 'true' is for 'dont fade in';   
+                    }else{
+                        RDR.actions.indicators.hide([hash]); //if deleted back to 0
+                    }
+                        
                 },
                 sortReactions: function( hash ){
 
@@ -2063,22 +2126,43 @@ function readrBoard($R){
                 }
             },
             summaries:{
-                save: function(summaries){
-                    //RDR.actions.summaries.save:
-                    $.each(summaries, function(hash,summary){
-                        RDR.summaries[hash] = summary;
-                        if(summary.counts.tags) {
-                            RDR.actions.indicators.make( hash );
+                init: function(hash){
+                    //RDR.actions.summaries.init:
+                    log('summaries init '+ hash)
+                    //add an empty summary to the stack to be registered
+                    //todo: it would make sense to just get this from the backend, since it has
+                        //a function to do this already.
+        
+                    //data is in form {body:,kind:,hash:}
+                    //todo: combine with above
+                    var node = RDR.containers[hash];
+                    //save an empty summary object to the summaries list
+                    var summary = {
+                        "kind": node.kind, 
+                        "counts": {
+                            "coms": 0, 
+                            "tags": 0, 
+                            "interactions": 0
+                        }, 
+                        "top_interactions": {
+                            "coms": [], 
+                            "tags": {}
                         }
-                    });
+                    };
+                    var summaries = {};
+                    summaries[hash] = summary; 
+                    RDR.actions.summaries.save(summaries);
+                    return summary;
                 },
                 make: {
+                    //RDR.actions.summaries.make:
                     tag_summary: function(){
                         //later move this code here:
                         //... $this_tag.append($tagShareButton, $tagCountButton) ...
                     }
                 },
-                init: function(hash){
+                populate: function(hash){
+                    //RDR.actions.summaries.populate:
                     //expects a summary object from RDR.summaries
                     var summary = RDR.summaries[hash];  
                     log(summary);
@@ -2174,6 +2258,15 @@ function readrBoard($R){
                     });
 
                     summary.initated = true;
+                },
+                save: function(summaries){
+                    //RDR.actions.summaries.save:
+                    log('summaries in summaries save')
+                    log(summaries)
+                    $.each(summaries, function(hash,summary){
+                        RDR.summaries[hash] = summary;
+                        RDR.actions.indicators.make( hash );
+                    });
                 }
             },
             insertContainerIcon: function( hash ) {},
@@ -2856,6 +2949,8 @@ log('---- rindow.data --------');
                             if (actionType == "react") {
                                 var args = { tag:$this, rindow:rindow, settings:settings };
 
+                                //typical write mode tag send function
+                                log('write mode send');
                                 RDR.actions.interactions.create( args, 'tag' );
 
                             } else {
@@ -3452,9 +3547,6 @@ log('---- rindow.data --------');
                 
                 var $mouse_target = $(e.target),
 				selection = {};
-								
-                //ec: temp blacklist filter
-                if( $mouse_target.parents().hasClass('rdr_blacklist')) return false;				
 
                 // make sure it's not selecting inside the RDR windows.
                 if ( !$mouse_target.hasClass('rdr') && $mouse_target.parents('div.rdr').length == 0 ) {
@@ -3515,9 +3607,12 @@ log('---- rindow.data --------');
                             } else if ( $mouse_target.parents('.rdr-hashed:first').length == 1 ) {
                                 selection.container = $mouse_target.parents('.rdr-hashed:first').data('hash');
 							}else{
-                                //for now do nothing.
-                                //todo: consider later hashing this and sending it up.
-                                return;                     
+                                //hasn't been hashed yet.
+                                //try to submit node to server.
+                                RDR.actions.hashNodes($mouse_target);
+                                selection.container = $mouse_target.data('hash');
+                                //todo: consider errors that can happen if the server doesn't validate the hash,
+                                //..but we proceed with the UI anyway
                             }
 
                             // strip newlines and tabs -- and then the doublespaces that result
@@ -4673,7 +4768,7 @@ function $RFunctions($R){
                 */
                 //make $tempButtons output
                 //hide for now
-                var $tempButtons = $('<div id="rdr_selectionographer_tester" class="rdr_blacklist"/>').hide(),
+                var $tempButtons = $('<div id="rdr_selectionographer_tester" class="no-rdr"/>').hide(),
                 buttonInfo= [
                     //note, remember to use $R instead of $ if calling in firebug
                     {
