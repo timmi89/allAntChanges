@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block banner %}
+<h2>
+{% if user.social_user %}
+    {{ user.social_user.full_name }}
+{% else %}
+    Anonymous
+{% endif %}
+</h2>
+{% endblock banner %}
+
+{% block sidebarFilters %}
+<ul>
+<li><a href="{% url profile user_id=user.id %}">All</a></li>
+<li><a href="{% url profile user_id=user.id %}tags/">Tags</a></li>
+<li><a href="{% url profile user_id=user.id %}comments/">Comments</a></li>
+<li><a href="{% url profile user_id=user.id %}shares/">Shares</a></li>
+</ul>
+{% endblock %}
+
+{% block content %}
+<h3>Interactions</h3>
+<ul>
+{% for interaction in interactions.object_list %}
+<li>
+	{% if interaction.user.social_user %}
+        <img src = "{{ interaction.user.social_user.img_url }}">
+    {% else %}
+        <img src = "/static/images/anonymousplode.png">
+    {% endif %} 
+	<strong>
+    {% if interaction.user.social_user %}
+        <a href = "/profile/{{ interaction.user.id }}/">{{ interaction.user.first_name }} {{ interaction.user.last_name }}</a>
+    {% else %}
+        Some Anonymous Dude
+    {% endif %}
+    </strong>
+		{% if interaction.interaction_node.kind == "tag" %} tagged
+	{% else %} commented
+	{% endif %}
+	<em>"{{ interaction.interaction_node.body }}"</em> <strong>on</strong> "{{ interaction.content.body|slice:":50"}}"
+    <div class="context"><em>Context</em>: {{ interaction.container.body }}</div>
+</li>
+{% endfor %}
+</ul>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if interactions.has_previous %}
+            <a href="?page={{ interactions.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ interactions.number }} of {{ interactions.paginator.num_pages }}
+        </span>
+
+        {% if interactions.has_next %}
+            <a href="?page={{ interactions.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock content %}
