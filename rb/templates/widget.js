@@ -1671,10 +1671,6 @@ function readrBoard($R){
                             var content_node = args.content_node || RDR.actions.content_node.make(content_node_data);
 
                             if ( tag_li.length == 1 ) {
-                                log('DO WE EVER GET HERE WHEN BOOKMARKING');
-                                log( tag_li.find('div.rdr_leftBox').length ) ;
-                                log( tag_li.find('div.rdr_leftBox').html() ) ;
-                                console.dir( tag_li );
                                 tag_li.find('div.rdr_leftBox').unbind();
                                 tag_li.find('div.rdr_leftBox').click( function(e) {
                                     e.preventDefault();
