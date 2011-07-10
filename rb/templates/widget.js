@@ -1585,12 +1585,12 @@ function readrBoard($R){
                             // if it failed, see if we can fix it, and if so, try this function one more time
                             RDR.session.handleGetUserFail( response, function() {
                                 log('inside callback');
-                                if ( !args.secondAttempt ) {
+                                // if ( !args.secondAttempt ) {
                                     args.secondAttempt = true;
                                     RDR.actions.interactions.create( args, 'tag', 'create' );
-                                }else{
-                                    console.warn('unhandled create interaction fail')
-                                }
+                                // }else{
+                                    // console.warn('unhandled create interaction fail')
+                                // }
                             });
                         }
                     }
