@@ -34,7 +34,7 @@ class GroupAdmin(admin.ModelAdmin):
             'fields': ('name', 'short_name')
         }),
         ('Advanced', {
-            'fields': ('blessed_tags', 'anno_whitelist', 'temp_interact', 'img_whitelist', 'img_blacklist', 'no_readr', 'secret')
+            'fields': ('blessed_tags', 'anno_whitelist', 'temp_interact', 'img_whitelist', 'img_blacklist', 'no_readr', 'secret', 'word_blacklist')
         }),
         ('Logos', {
             'fields': ('logo_url_sm', 'logo_url_med' , 'logo_url_lg')

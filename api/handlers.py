@@ -106,7 +106,7 @@ class CommentHandler(InteractionHandler):
             parent = TagHandler().create(request, data, user, page, group)['interaction']
         
         try:
-            comment = createInteractionNode(body=comment)
+            comment = createInteractionNode(body=comment, group=group)
         except:
             raise JSONException(u'Error creating comment interaction node')
         
@@ -127,7 +127,7 @@ class TagHandler(InteractionHandler):
 
         content = Content.objects.get_or_create(kind=content_type, body=content_node_data['body'], location=location)[0]
 
-        inode = createInteractionNode(tag_id, tag_body)
+        inode = createInteractionNode(tag_id, tag_body, group)
 
         # Get the container
         try:
@@ -161,7 +161,7 @@ class ShareHandler(InteractionHandler):
         # Get or create content
         content = Content.objects.get_or_create(kind=content_type, body=content_node_data['body'], location=location)[0]
         
-        inode = createInteractionNode(tag_id, tag_body)
+        inode = createInteractionNode(tag_id, tag_body, group)
 
         # Get the container
         try:
@@ -202,7 +202,7 @@ class CreateContainerHandler(AnonymousBaseHandler):
                     hash=container,
                     body=containers[container]['body'],
                     kind=containers[container]['kind']
-                )[1]
+                )[0].id
             except KeyError:
                 raise JSONException(u"Bad key for container")
 

@@ -2,6 +2,7 @@ from readrboard.rb.models import *
 from datetime import datetime, timedelta
 import random
 import json
+import re
 from exceptions import FBException, JSONException
 from readrboard.rb.profanity_filter import ProfanitiesFilter
 
@@ -139,7 +140,7 @@ def createInteractionNode(body=None):
         return node
 """
 
-def createInteractionNode(node_id=None, body=None):
+def createInteractionNode(node_id=None, body=None, group=None):
     # Get or create InteractionNode for share
     try:
         if node_id:
@@ -148,6 +149,7 @@ def createInteractionNode(node_id=None, body=None):
         elif body:
             # Check body for blacklisted word
             """ for bad, good in blacklist.iteritems(): body = body.replace(bad, good) """
+            blacklist = [word.strip() for word in group.word_blacklist.split(',')]
             pf = ProfanitiesFilter(blacklist, replacements="*", complete=False)
             body = pf.clean(body)
             # No id provided, using body to get_or_create
