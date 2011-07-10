@@ -8,9 +8,13 @@ from userutils import *
 from token import *
 from settings import BASE_URL
 
+class SocialUserHandler(AnonymousBaseHandler):
+    model = SocialUser
+    fields = ('full_name', 'img_url')
+
 class UserHandler(AnonymousBaseHandler):
     model = User
-    fields = ('id', 'first_name', 'last_name')
+    exclude = ('is_active', 'is_superuser', 'is_staff', 'password', 'last_login', 'email', 'date_joined', 'username')
 
 class InteractionNodeHandler(AnonymousBaseHandler):
     model = InteractionNode
@@ -223,7 +227,7 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         # Force evaluation by making lists
         containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash','kind'))
         ids = [container[0] for container in containers]
-        interactions = list(Interaction.objects.filter(container__in=ids, page=page).select_related('interaction_node','content'))
+        interactions = list(Interaction.objects.filter(container__in=ids, page=page).select_related('interaction_node','content','user',('social_user')))
 
         known = getContainerSummaries(interactions, containers)
         unknown = list(set(hashes) - set(known.keys()))

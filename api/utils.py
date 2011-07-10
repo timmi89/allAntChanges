@@ -48,17 +48,23 @@ def getSummary(interactions, container=None, content=None, page=None, data=None)
     data['counts'] = counts
     data['id'] = container if container else content
     
-    tag_counts = dict(( 
+    tag_counts = dict((
         (tag.interaction_node.id, getTagSummary(tag.interaction_node, tags)) for tag in tags
     ))
     sorted_counts = sorted(tag_counts.items(), key=lambda x: x[1]['count'], reverse=True)
     top_tags = dict((
         tag for tag in sorted_counts[:10]
     ))
+
     top_interactions = {}
     top_interactions['tags'] = top_tags
     top_interactions['coms'] = [dict(id=comment.id, tag_id=comment.parent.interaction_node.id, content_id=comment.content.id, user=comment.user, body=comment.interaction_node.body) for comment in comments]
-
+    for comment in top_interactions['coms']:
+        try:
+            comment['social_user'] = comment['user'].social_user
+        except SocialUser.DoesNotExist:
+            comment['social_user'] = {}
+        
     data['top_interactions'] = top_interactions
 
     return data
