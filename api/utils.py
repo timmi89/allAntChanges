@@ -112,7 +112,7 @@ def getPage(request, pageid=None):
 
     # Handle sites with hash but no bang
     if '#' in fullurl and '!' not in fullurl:
-        fullurl = fullurl[:fullurl.index(i='#')]
+        fullurl = fullurl[:fullurl.index('#')]
 
     host = request.get_host()
     site = Site.objects.get(domain=host)
