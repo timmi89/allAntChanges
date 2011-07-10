@@ -246,8 +246,8 @@ function readrBoard($R){
                 });
 
                 $.each( selStates, function(idx, selState){
-                    log('selState')
-                    log(selState)
+                    //log('selState')
+                    //log(selState)
                     $().selog('hilite', selState, 'off');
                 });
             }
@@ -709,7 +709,8 @@ function readrBoard($R){
 
                 $.receiveMessage(
                     function(e){
-                        console.dir(e);
+                        log('receiveMessage...')
+                        //console.dir(e);
                         var message = JSON.parse( e.data );
 
                         if ( message.status ) {
@@ -912,7 +913,7 @@ function readrBoard($R){
 						RDR.group.group_id
 
                         //todo:just for testing for now: - add defaults:
-                        RDR.group.img_selector = RDR.group.img_selector || "div.container img";
+                        RDR.group.img_selector = RDR.group.img_selector || "body img";
                         RDR.group.selector_whitelist = RDR.group.selector_whitelist || "body p";
 
                         $RDR.dequeue('initAjax');
@@ -986,12 +987,15 @@ function readrBoard($R){
                             RDR.containers[hash].kind = "page";
                         }
 
-                        makeSummaryWidget(response);
-                        insertImgIcons(response);
+                        //init the widgetSummary
+                        log('response page inti');
+                        console.dir(response);
+                        var widgetSummarySettings = response;
 
+                        $('#rdr-summary').rdrWidgetSummary(widgetSummarySettings);
                         RDR.page.hash = hash;
 
-                        insertImgIcons(response);
+                        //insertImgIcons(response);
                                                    
                         //to be normally called on success of ajax call
                         $RDR.dequeue('initAjax');
@@ -1002,72 +1006,6 @@ function readrBoard($R){
                         log(response);
                     }
 				});
-
-                //helper function for ajax above
-                function makeSummaryWidget(response){
-                    // don't forget a design for when there are no tags.
-                    log('building page')
-                    RDR.page = response.data;
-                    log(RDR.page);
-                    var $summary_widget = $('#rdr-summary');
-                    
-                    var total_interactions = 0;
-                    for ( var i in RDR.page.summary ) {
-                        if ( RDR.page.summary[i].count ) total_interactions += RDR.page.summary[i].count;
-                    }
-
-                    if ( total_interactions > 0 ) {
-                        var people = ( RDR.page.topusers.length > 1 ) ? RDR.page.topusers.length + " people" : "1 person";
-                        $summary_widget.append('<div class="rdr-sum-headline">'+total_interactions+' reactions from '+people+'</div>');
-                    } else {
-                        $summary_widget.append('<div class="rdr-sum-headline">No reactions yet.  Select something and react!</div>');
-                    }
-
-                    // summary widget: specific tag totals
-                    if ( RDR.page.toptags.length > 0 ){
-                        var $toptags = $('<div class="rdr-top-tags" />');
-
-                        for ( var i = 0, j=4; i < j; i++ ) {
-                            var this_tag = RDR.page.toptags[i];
-                            if ( this_tag ) {
-                                $toptags.append(' <span>'+ this_tag.body +' <em>('+this_tag.tag_count+')</em></span>&nbsp;&nbsp;&nbsp;');
-                            }
-                            
-                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                            if ( $toptags.width() > $summary_widget.width() - 48 ) {
-                                $toptags.children().last().html('See More').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
-                                break;
-                            }
-                        }
-
-                        $summary_widget.append( $toptags );
-                    }
-
-                    if ( RDR.page.topusers.length > 0 ){
-                        var $topusers = $('<div class="rdr-top-users" />');
-
-                        for ( var i = 0, j=10; i < j; i++ ) {
-                            var this_user = RDR.page.topusers[i];
-                            if ( this_user ) {
-                                $topusers.append('<img src="'+this_user.img_url+'" class="no-rdr" />');
-                            }
-                        }
-
-                        //hacked in html('') to clear it so that i can re-use this later to update the thingy.  todo: make it pretty.
-                        $summary_widget.append( $topusers );
-
-                    }
-                }
-                function insertImgIcons(response){
-                    var tempd = $.extend( {}, response );
-                    for ( var i in RDR.page.imagedata ){
-                        //todo: combine this with the other indicator code and make the imagedata give us a hash from the db
-                        var hash = RDR.util.md5.hex_md5(i);
-                        RDR.page.imagedata[i].hash = hash; //todo: list these by hash in the first place.
-
-                        //RDR.actions.indicators.make( hash );
-                    }
-                }
 
             },
             initEnvironment: function(){
@@ -1166,15 +1104,33 @@ function readrBoard($R){
                 this.hashNodes();
 				$RDR.dequeue('initAjax');
             },
-            hashNodes: function() {
+            hashNodes: function( $nodes ) {
                 
-                // snag all the nodes that we can set icons next to and send'em next
-                // TODO: restrict this to the viewport + a few, rather than all
+                //todo: consider how to do this whitelist, initialset stuff right
+                var $allNodes,
+                    $textNodes,
+                    $imgNodes,
+                    $textNodesInitialSet,
+                    $imgNodesInitialSet;
+                    
+                    $textNodesInitialSet = $nodes ?
+                        $nodes.filter(function(idx, node){
+                            //todo: reconsider using this - it's not super efficient to grab the text just to verify it's a node that has text.
+                            // - Prob fine though since we're only testing hashes we pass in manually.
+                            //proves it has text (so ellminates images for example.) //the !! is just a convention indicating it's used as a bool.
+                            return !!$(node).text()
+                        }) :
+                        $( RDR.group.selector_whitelist );
+                        
+                    $imgNodesInitialSet = $nodes ?
+                        $nodes.filter('img') :
+                    $( RDR.group.img_selector );
 
-                //setup text nodes
-                //todo: think about .not('img') here
-                //todo: look into selector_whitelist vs anno_whitelist
-                var $textNodes = $( RDR.group.selector_whitelist ).not('.rdr-hashed').not('img');
+                
+                //each set is the (whiteList) minus (previously hashed nodes & blacklist nodes) boolean intersected with (passed in nodes)
+                $textNodes = $textNodesInitialSet.not('.rdr-hashed, .no-rdr');
+                $imgNodes = $imgNodesInitialSet.not('.rdr-hashed, .no-rdr');
+
                 $textNodes.each( function() {
                     // get the node's text and smash case
                     // TODO: <br> tags and block-level tags can screw up words.  ex:
@@ -1186,11 +1142,6 @@ function readrBoard($R){
                     $(this).data('body',body);
                 });
 
-
-                //todo: implement black list
-                var $imgNodes = $( RDR.group.img_selector ).not('.rdr-hashed').not('.no-rdr');
-
-                //todo: make this body get picked up later.
                 $imgNodes.each( function() {
                     //var body = $(this).attr('src');
                     var body = this.src;
@@ -1199,57 +1150,46 @@ function readrBoard($R){
                     });
                 });
 
-                $nodes = $textNodes.add($imgNodes);
-                $nodes.each(function(){
+                var $allNodes = $textNodes.add($imgNodes),
+                hashList = [];
+                $allNodes.each(function(){
                     var body = $(this).data('body'),
                     kind = $(this)[0].tagName.toLowerCase();
 
                     var hashText = ( kind=="img") ? "rdr-"+kind+"-"+body : "rdr-text-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
                     hash = RDR.util.md5.hex_md5( hashText );
 
-                    //return without doing anything if:
-                    //we've already hashed it, or the body was invalid (this shouldn't happen I don't think)
-                    var dontSend = ( RDR.containers[hash] || !body );
-                    if( dontSend ){
-                        $nodes = $nodes.not(this)
-                        return; //won't add to RDR.containers either
-                    }
-                    //else
-
                     // add an object with the text and hash to the nodes dictionary
                     //todo: consider putting this info directly onto the DOM node data object
-                    RDR.containers[hash] = {
+                    RDR.actions.containers.make({
                         body:body,
                         kind:kind,
                         hash:hash
-                    };
+                    });
+
                     // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
                     // this makes it easy to find on the page later
                     $(this).addClass( 'rdr-' + hash ).addClass('rdr-hashed');
+                    hashList.push(hash)
                     $(this).data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
                 });
 
-                RDR.actions.sendHashes( $nodes );
+                RDR.actions.sendHashes( hashList );
+                //return is just used for some callers to verify which containers have been hashed.
+                return $allNodes
             },
-            sendHashes: function( $nodes ) {
+            sendHashes: function( hashes ) {
                 
-                //get hashes from $nodes if it was passed, or otherwise, the full RDR.containers dict
-                var hashes = [];
-                if( $nodes ){
-                    $nodes.each(function(){
-                        var hash = $(this).data('hash');
-                        hashes.push( hash );
-                    });
-                }else{
+                if( !hashes || !hashes.length ){ 
                     hashes = getAllHashes();
                 }
 
                 function getAllHashes(){
-                    var md5_list = [];
-                    for (var i in RDR.containers ) {
-                        md5_list.push( i );
+                    var hashes = [];
+                    for (var hashKey in RDR.containers ) {
+                        hashes.push( hashKey );
                     }
-                    return md5_list;
+                    return hashes;
                 }
 
                 //build the sendData with the hashes from above
@@ -1260,7 +1200,7 @@ function readrBoard($R){
 				}
 
                 log('sendData: for /api/summary/containers/');
-                console.dir(sendData);
+                //console.dir(sendData);
                 // send the data!
                 $.ajax({
                     url: "/api/summary/containers/",
@@ -1276,10 +1216,12 @@ function readrBoard($R){
                         unknownList = response.data.unknown;
                         
                         RDR.actions.summaries.save(summaries);
-                        
+
                         if ( unknownList.length > 0 ) {
                             var sendData = {};
                             $.each( unknownList, function(idx, hash) {
+                                //send data for unknown containers to server
+                                //data is in form {body:,kind:,hash:}
                                 sendData[hash] = RDR.containers[hash];
                             });
                             $.ajax({
@@ -1291,8 +1233,17 @@ function readrBoard($R){
                                     json: JSON.stringify(sendData)
                                 },
                                 success: function(response) {
-                                    //do nothing for now.
-                                    //var newfoundSummaries = response.data;
+                                    log('response for containers create')
+                                    var savedHashes = response.data,
+                                        summaries = {};
+                                    $.each( savedHashes, function(hash, isValid){
+                                        //todo: we prob don't need to check with the bool - Tyler, do we need this?
+                                        if( !isValid ) return;
+                                        //summary will be built and saved if/when it is interacted with the first time
+                                        summaries[hash] = {};
+                                        RDR.actions.summaries.init(hash);
+                                        
+                                    });
                                 },
                                 error: function(response) {
                                     //for now, ignore error and carry on with mockup
@@ -1302,8 +1253,7 @@ function readrBoard($R){
                             });
                         }
 
-                        //todo: account for newbie pins
-                        RDR.actions.indicators.show();
+
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
@@ -1311,6 +1261,23 @@ function readrBoard($R){
                         log(response);
                     }
                 });
+            },
+            containers: {
+                make: function(settings){
+                    //RDR.actions.containers.make:
+
+                    //makes a new one or returns existing one
+                    //expects settings with body, kind, and hash.
+                    if( RDR.containers.hasOwnProperty(settings.hash) ) return RDR.containers[settings.hash];
+                    //else
+                    var container = {
+                        'body': settings.body,
+                        'kind': settings.kind,
+                        'hash': settings.hash
+                    }
+                    RDR.containers[settings.hash] = container;
+                    return container;
+                }  
             },
             content_node: {
                 make: function(settings){
@@ -1320,9 +1287,7 @@ function readrBoard($R){
                     //expects settings with container, body, and location.
 
                     var content_node_key = settings.container+"-"+settings.location;
-                    log(content_node_key);
-                    var existingNode = RDR.content_nodes[content_node_key];
-                    if( typeof existingNode !== 'undefined' ) return existingNode
+                    if( RDR.content_nodes.hasOwnProperty(content_node_key) ) return RDR.content_nodes[content_node_key]
                     //else
                     var content_node = {
                         'container': settings.container,
@@ -1330,9 +1295,7 @@ function readrBoard($R){
                         'location': settings.location,
                         'content_type':settings.content_type
                     }
-                    log(settings)
-                    log(settings)
-
+                    
                     RDR.content_nodes[content_node_key] = content_node;
                     // log('content_node final');
                     // log(content_node);
@@ -1366,6 +1329,7 @@ function readrBoard($R){
                     });
                 },
                 send: function(args, int_type){
+                    //RDR.actions.interactions.send:
                     var sendData = args.sendData;
                     //todo: consider making a generic url router
                     var url = "/api/" +int_type+ "/create/"
@@ -1438,7 +1402,6 @@ function readrBoard($R){
                             };
                         }
                     }
-                    log(content_node_data)
 
                     var sendData = {
                         //interaction level attrs
@@ -1528,6 +1491,7 @@ function readrBoard($R){
                             tag_li = args.tag,
                             tag = args.tag.data('tag');
 
+                        //todo: untangle these argument translations.
                         var content_node_data = sendData.content_node_data;
                         
                         //clear the loader                  
@@ -1559,7 +1523,7 @@ function readrBoard($R){
                         var diff = {   
                             tags: {}
                         };
-                        diff.tags[ tagHelper['id'] ] = tagHelper; //yeah?, didja get that one?  //todo: make pretty.
+                        diff.tags[ tagHelper['id'] ] = tagHelper; //yeah?, didja get that one? ... (diff.tags.tagID = tagHelper) //todo: clean this up.
 
                         RDR.actions.indicators.update(hash, diff);
                         //end update indicators
@@ -1574,10 +1538,6 @@ function readrBoard($R){
                                 RDR.actions.unrateSend(args);
                                 return false; // prevent the tag call applied to the parent <li> from firing
                             });
-
-                            log('response.data')
-                            log(response.data)
-                            log(tag)
 
                             tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+int_id);
                             tag_li.data('interaction_id', int_id);
@@ -1689,9 +1649,6 @@ function readrBoard($R){
                                 return false; // prevent the tag call applied to the parent <li> from firing
                             });
 
-                            log('response.data')
-                            log(response.data)
-                            log(tag)
 
                             tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+int_id);
                             tag_li.data('interaction_id', int_id);
@@ -1746,41 +1703,49 @@ function readrBoard($R){
                 }
             },
             indicators: {
-                show: function(boolDontFade){
+                show: function(hashes, boolDontFade){
+                    //RDR.actions.indicators.show:
                     //fade in indicators
                     //temp hacl!
+
+                    var $indicators = $();
+                    $.each(hashes, function(idx, hash){
+                        $indicators = $indicators.add( $('#rdr_indicator_'+hash) )
+                    });
                     if(boolDontFade){
-                        $('.rdr_indicator').css({
+                        $indicators.css({
                             'opacity':'0.4',
                             'display':'inline'
                         });
-
                         return;
                     }
                     //else
-                    $('.rdr_indicator').css({
+                    $indicators.css({
                         'opacity':'0',
                         'display':'inline'
                     }).fadeTo('300', '0.4');
                 },
+                hide: function(hashes){
+                    //RDR.actions.indicators.hide:
+                    var $indicators = $();
+                    $.each(hashes, function(idx, hash){
+                        $indicators = $indicators.add( $('.rdr_indicator_'+hash) )
+                    });
+
+                    $indicators.css({
+                        'opacity':'0',
+                    });
+                },
                 update: function(hash, diff){
-                   log('update indicator');
-                   return;
+                    //RDR.actions.indicators.update:
                     if( hash == "pageSummary" ){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
                         var summary = RDR.page.summary;
-                        log('page summary')
                     }else{
-                        var summary = RDR.summaries[hash];
+                        //todo: this check shouldn't be needed anymore - summary should always exist
+                        var summary = RDR.summaries.hasOwnProperty(hash) ? RDR.summaries[hash] : RDR.actions.summaries.init(hash);
                     }
-                    //log(summary);
 
-                    /*
-                    var altSumm = RDR.summaries[hash];
-                    var summary = indicator.data('summary');
-                    log(altSumm)
-                    log(summary)
-                    */ 
                     //interaction categories and for each,
                     //a list of {id:incAmount} - incAmount will be 1 or -1 for decrement;
 
@@ -1830,54 +1795,37 @@ function readrBoard($R){
 
                         });
                     });
-                    /*
-                    log( summary.top_interactions['tags'] )
-                    log( summary.counts['tags'] )
-                    log(summary.counts.interactions)
-                    */
 
                     if( hash == "pageSummary" ){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
                         makeSummaryWidget(RDR.page)
                     }else{
                         RDR.actions.indicators.make( hash );
-                        RDR.actions.indicators.show(true); //temp hack, 'true' is for 'dont fade in';
+                       // interaction_count still == summary.counts.interactions, copy by ref
+     
+                        if(summary.counts.interactions > 0){
+                            RDR.actions.indicators.show([hash],true); //temp hack, 'true' is for 'dont fade in';   
+                        }else{
+                            RDR.actions.indicators.hide([hash]); //if deleted back to 0
+                        }
 
                         //now update the page.
                             //not working yet.  Page reads from a different kind of summary. 
                         //RDR.actions.indicators.update( 'pageSummary' );
                     }
 
-
-                    /**********************/
-                    //update html in page  
-
-                    //this was stupid, just remake it with the same function as before RDR.actions.indicators.make( hash );
-
-                    /*
-                    var $indicator = $('#rdr_indicator_'+hash),
-                    $indicator_details = $('#rdr_indicator_details_'+hash);
-
-                    $indicator.add($indicator_details)//chain
-                        .find('.rdr_count').text( summary.counts['tags'] );
-                    
-                    var t = $indicator_details.find('.rdr_tags_list_tag');
-                    log(t)
-                    */
                 },
                 make: function(hash){
+                    //RDR.actions.indicators.make:
                     //kind is optional - defaults to text
-                    
-                    // if ( RDR.content_nodes[i].info.com_count + RDR.content_nodes[i].info.tag_count > 0 ) {
-                    //log('-- what we know about container with hash '+hash+' --');
-                    //log(RDR.content_nodes[hash]);
+                                        
                     var $container, $indicator, $indicator_details, some_reactions, total, info, top_tags, kind;
 
                     var summary = RDR.summaries[hash];
                     node = RDR.containers[hash];
-
                     //todo: prop down var change
                     kind = node.kind;
+
                     top_tags = summary.top_interactions.tags;
                     //hide indicators and indicatorDetails and show on load.
 
@@ -1934,7 +1882,6 @@ function readrBoard($R){
                                 $(this).css('opacity','0.4')
                             }
                         );
-                        $indicator.hide();
 
                         $tagList = $('<div class="rdr_tags_list"></div>');  // absolute so that we can calculate content width on the fly
                         $indicator.append($tagList);
@@ -1960,6 +1907,13 @@ function readrBoard($R){
                             }
                             count ++;
                         });
+                        
+                        //show newly minted pins
+                        if(summary.counts.interactions > 0){
+                            RDR.actions.indicators.show([hash],true); //temp hack, 'true' is for 'dont fade in';   
+                        }else{
+                            RDR.actions.indicators.hide([hash]); //if deleted back to 0
+                        }
 
                         return;
                     }
@@ -1977,10 +1931,9 @@ function readrBoard($R){
                     .data( {'which':hash} )//chain
                     .hover( 
                         function() {
-                            //todo: what does this do?
-                            //$( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).addClass( 'rdr_highlightContainer' );
-                            
-                            RDR.actions.summaries.init( hash )
+                                                    
+                            //this                                                     
+                            RDR.actions.summaries.populate( hash )
 
                             //todo: maybe make more efficient
                             $indicator_details.find('.rdr_statsClone').html( $indicator.html() );
@@ -1991,10 +1944,8 @@ function readrBoard($R){
                             });
                         },
                         function() {
-                            //todo: what does this do?
-                            //$( RDR.group.anno_whitelist + ".rdr-" + $(this).data('hash') ).removeClass( 'rdr_highlightContainer' );
                             //dont hide it again here, because we need to do that on the hoveroff event of the rdr_indicator_details
-
+                            
                             //ensure smooth hover behavior
                             /*
                             setTimeout(function(){
@@ -2056,6 +2007,14 @@ function readrBoard($R){
                             $(this).hide();
                         }
                     );
+
+                    //show newly minted pins
+                    if(summary.counts.interactions > 0){
+                        RDR.actions.indicators.show([hash],true); //temp hack, 'true' is for 'dont fade in';   
+                    }else{
+                        RDR.actions.indicators.hide([hash]); //if deleted back to 0
+                    }
+                        
                 },
                 sortReactions: function( hash ){
 
@@ -2108,24 +2067,44 @@ function readrBoard($R){
                 }
             },
             summaries:{
-                save: function(summaries){
-                    $.each(summaries, function(hash,summary){
-                        RDR.summaries[hash] = summary;
-                        if(summary.counts.tags) {
-                            RDR.actions.indicators.make( hash );
+                init: function(hash){
+                    //RDR.actions.summaries.init:
+                    //add an empty summary to the stack to be registered
+                    //todo: it would make sense to just get this from the backend, since it has
+                        //a function to do this already.
+        
+                    //data is in form {body:,kind:,hash:}
+                    //todo: combine with above
+                    var node = RDR.containers[hash];
+                    //save an empty summary object to the summaries list
+                    var summary = {
+                        "kind": node.kind, 
+                        "counts": {
+                            "coms": 0, 
+                            "tags": 0, 
+                            "interactions": 0
+                        }, 
+                        "top_interactions": {
+                            "coms": [], 
+                            "tags": {}
                         }
-                    });
+                    };
+                    var summaries = {};
+                    summaries[hash] = summary; 
+                    RDR.actions.summaries.save(summaries);
+                    return summary;
                 },
                 make: {
+                    //RDR.actions.summaries.make:
                     tag_summary: function(){
                         //later move this code here:
                         //... $this_tag.append($tagShareButton, $tagCountButton) ...
                     }
                 },
-                init: function(hash){
+                populate: function(hash){
+                    //RDR.actions.summaries.populate:
                     //expects a summary object from RDR.summaries
                     var summary = RDR.summaries[hash];  
-                    log(summary);
 
                     //don't init twice.
                     if( summary.initiated ) return;
@@ -2218,6 +2197,14 @@ function readrBoard($R){
                     });
 
                     summary.initated = true;
+                },
+                save: function(summaries){
+                    //RDR.actions.summaries.save:
+                    
+                    $.each(summaries, function(hash,summary){
+                        RDR.summaries[hash] = summary;
+                        RDR.actions.indicators.make( hash );
+                    });
                 }
             },
             insertContainerIcon: function( hash ) {},
@@ -2361,8 +2348,6 @@ function readrBoard($R){
                         var $this = $(this);
                         $this.data('selStates',[]);
 
-                        log($this)                        
-                        log($this.data() )
                         var tag_id = $this.data('tag').id;
                         
                         var nodes = summary.content_nodes || [];
@@ -2432,7 +2417,7 @@ function readrBoard($R){
 
                 // ok, get the content associated with this tag!
                 $.each(content, function(idx, node){
-                    console.dir(node);
+                    //console.dir(node);
 
                     var tag = tagClone;
 
@@ -2452,8 +2437,6 @@ function readrBoard($R){
 
                         var $tagButton = $header.find('a.rdr_tag');
                         $tagButton.data( 'tag', tag );
-                        log('$tagButton.data')
-                        log( $tagButton.data() )
 
                         $header.find('span.rdr_tag_count').click( function() {
                             var $interactionButton = $(this).closest('.rdr_tag');
@@ -2483,7 +2466,7 @@ function readrBoard($R){
                         // todo: [porter] i'm looping to see if there is a comment for this TAG.  can we just send this down from server?
                         for ( var i in summary.top_interactions.coms ) {
                             log('summary.top_interactions.coms');
-                            console.dir(summary.top_interactions.coms);
+
                             var node_comments = 0;
                             if ( summary.top_interactions.coms[i].content_id == node.id ) {
                                 node_comments++;
@@ -2501,7 +2484,7 @@ function readrBoard($R){
                         $comment.click( function() {
                             var $this = $(this);
                             $this.closest('.rdr_contentSet').addClass('rdr_selected').siblings().removeClass('rdr_selected');
-log('---- rindow.data --------');
+                            log('---- rindow.data --------');
                             console.dir( rindow.data() );
                             RDR.actions.viewCommentContent( {tag:tag, which:which, rindow:rindow, node:node, selState:node.selState, content_type:"text" });
                         });
@@ -2629,8 +2612,8 @@ log('---- rindow.data --------');
                 });
                 */
 
-log('node.top_interactions');
-console.dir(node.top_interactions);
+                //log('node.top_interactions');
+                //console.dir(node.top_interactions);
                 var comments = node.top_interactions.coms;
                 var hasComments = !$.isEmptyObject(comments);
 
@@ -2918,6 +2901,8 @@ console.dir(node.top_interactions);
                             if (actionType == "react") {
                                 var args = { tag:$this, rindow:rindow, settings:settings };
 
+                                //typical write mode tag send function
+                                log('write mode send');
                                 RDR.actions.interactions.create( args, 'tag' );
 
                             } else {
@@ -3084,8 +3069,6 @@ console.dir(node.top_interactions);
                         var $tag = $(this).closest('li.rdr_customTagBox'),
                             $tagInput = $tag.find('input.freeformTagInput');
                         if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
-                            log('argsargsargs')
-                            log(args)
                             $whyPanel.find('div.rdr_body').empty();
                             
                             $tag.data({
@@ -3143,7 +3126,7 @@ console.dir(node.top_interactions);
             },
             share_getLink: function(args) {
                 log('----share_getLink args----');
-                console.dir(args);
+                //console.dir(args);
                 //example:
                 //tag:{body, id}, rindow:rindow, settings:settings, callback: 
                 
@@ -3503,13 +3486,6 @@ console.dir(node.top_interactions);
                     //almost works
                     content_node.content_type = (content_node.content_type == "img") ? "image" : "text";
 
-
-                    log('params')
-                    log(params)
-                    
-                    log('content_node_data content_type')
-                    log(content_node.content_type)
-
                     var sendData = {
                         "tag" : tag,
                         "hash": hash,
@@ -3559,9 +3535,6 @@ console.dir(node.top_interactions);
                 
                 var $mouse_target = $(e.target),
 				selection = {};
-								
-                //ec: temp blacklist filter
-                if( $mouse_target.parents().hasClass('rdr_blacklist')) return false;				
 
                 // make sure it's not selecting inside the RDR windows.
                 if ( !$mouse_target.hasClass('rdr') && $mouse_target.parents('div.rdr').length == 0 ) {
@@ -3622,9 +3595,12 @@ console.dir(node.top_interactions);
                             } else if ( $mouse_target.parents('.rdr-hashed:first').length == 1 ) {
                                 selection.container = $mouse_target.parents('.rdr-hashed:first').data('hash');
 							}else{
-                                //for now do nothing.
-                                //todo: consider later hashing this and sending it up.
-                                return;                     
+                                //hasn't been hashed yet.
+                                //try to submit node to server.
+                                RDR.actions.hashNodes($mouse_target);
+                                selection.container = $mouse_target.data('hash');
+                                //todo: consider errors that can happen if the server doesn't validate the hash,
+                                //..but we proceed with the UI anyway
                             }
 
                             // strip newlines and tabs -- and then the doublespaces that result
@@ -3878,6 +3854,7 @@ function $RFunctions($R){
         plugin_jquery_mousewheel($R);
         plugin_jquery_mousewheelIntent($R);
         plugin_jquery_jScrollPane($R);
+        plugin_jquery_rdrWidgetSummary($R);
         plugin_jquery_selectionographer($R, rangy);
 
 
@@ -4113,7 +4090,132 @@ function $RFunctions($R){
         };
         //end function plugin_jquery_enhancedOffset
 
-        
+        function plugin_jquery_rdrWidgetSummary($){
+            /*
+             * jQuery Plugin by readrboard.com
+             * builds the readrboard widget's summary widget.
+             * accepts settings to customize the format
+             */
+
+            $.fn.rdrWidgetSummary = function( params ) {
+                //jQuery plugin pattern :http://docs.jquery.com/Plugins/Authoring
+                if ( methods[params] ) {
+                    return methods[params].apply( this, Array.prototype.slice.call( arguments, 1 ));
+                } else if ( typeof params === 'object' || ! params ) {
+                    return methods.init.apply( this, arguments );
+                } else {
+                    $.error( 'Method ' +  params + ' does not exist.' );
+                }
+            };
+
+            var defaults = {
+                initTest:'init',
+                passedIn: 'nothing to see here...'
+            };
+
+            var methods = {
+                init: function( options ) {
+                    var $this = this.length ? this : $(document),
+                    settings;
+                    
+                    return $this.each(function(){
+
+                        // merge default and user parameters
+                        settings = options ? $.extend(defaults, options) : defaults;
+                        
+                        settings.parentContainer = this;
+                        _makeSummaryWidget(settings);
+                        _insertImgIcons(settings);
+
+                        //do init stuff
+
+                    });
+                },
+                otherMethod: function(param){
+                    var $this = this;
+
+                    return $this.each(function(index){
+                        //do stuff
+                    });
+                }
+
+
+            };
+            //end methods
+
+            //private functions:
+            function _secret(){
+            }
+
+            //helper function for ajax above
+            function _makeSummaryWidget(response){
+                // don't forget a design for when there are no tags.
+                log('building page')
+                RDR.page = response.data;
+                log(RDR.page);
+                var $summary_widget = $(response.parentContainer);
+                
+                var total_interactions = 0;
+                for ( var i in RDR.page.summary ) {
+                    if ( RDR.page.summary[i].count ) total_interactions += RDR.page.summary[i].count;
+                }
+
+                if ( total_interactions > 0 ) {
+                    var people = ( RDR.page.topusers.length > 1 ) ? RDR.page.topusers.length + " people" : "1 person";
+                    $summary_widget.append('<div class="rdr-sum-headline">'+total_interactions+' reactions from '+people+'</div>');
+                } else {
+                    $summary_widget.append('<div class="rdr-sum-headline">No reactions yet.  Select something and react!</div>');
+                }
+
+                // summary widget: specific tag totals
+                if ( RDR.page.toptags.length > 0 ){
+                    var $toptags = $('<div class="rdr-top-tags" />');
+
+                    for ( var i = 0, j=4; i < j; i++ ) {
+                        var this_tag = RDR.page.toptags[i];
+                        if ( this_tag ) {
+                            $toptags.append(' <span>'+ this_tag.body +' <em>('+this_tag.tag_count+')</em></span>&nbsp;&nbsp;&nbsp;');
+                        }
+                        
+                        // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
+                        if ( $toptags.width() > $summary_widget.width() - 48 ) {
+                            $toptags.children().last().html('See More').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
+                            break;
+                        }
+                    }
+
+                    $summary_widget.append( $toptags );
+                }
+
+                if ( RDR.page.topusers.length > 0 ){
+                    var $topusers = $('<div class="rdr-top-users" />');
+
+                    for ( var i = 0, j=10; i < j; i++ ) {
+                        var this_user = RDR.page.topusers[i];
+                        if ( this_user ) {
+                            $topusers.append('<img src="'+this_user.img_url+'" class="no-rdr" />');
+                        }
+                    }
+
+                    //hacked in html('') to clear it so that i can re-use this later to update the thingy.  todo: make it pretty.
+                    $summary_widget.append( $topusers );
+
+                }
+            }
+            function _insertImgIcons(response){
+                var tempd = $.extend( {}, response );
+                for ( var i in RDR.page.imagedata ){
+                    //todo: combine this with the other indicator code and make the imagedata give us a hash from the db
+                    var hash = RDR.util.md5.hex_md5(i);
+                    RDR.page.imagedata[i].hash = hash; //todo: list these by hash in the first place.
+
+                    //RDR.actions.indicators.make( hash );
+                }
+            }
+
+        };
+        //end function plugin_jquery_rdrWidgetSummary
+
         function plugin_jquery_selectionographer($, rangy){
             /*
              * jquery.selectionographer.js
@@ -4654,7 +4756,7 @@ function $RFunctions($R){
                 */
                 //make $tempButtons output
                 //hide for now
-                var $tempButtons = $('<div id="rdr_selectionographer_tester" class="rdr_blacklist"/>').hide(),
+                var $tempButtons = $('<div id="rdr_selectionographer_tester" class="no-rdr"/>').hide(),
                 buttonInfo= [
                     //note, remember to use $R instead of $ if calling in firebug
                     {
