@@ -6,11 +6,11 @@ for ( var i in qs ) {
 	var this_arg = qs[i].split('=');
 	qs_args[this_arg[0]] = this_arg[1];
 }
-// console.log('receiving iframe args');
-// console.log('window.location.search: ' + window.location.search );
-// console.log('window.location.hash: ' + window.location.hash );
-// console.dir(qs);
-// console.dir(qs_args);
+console.log('receiving iframe args');
+console.log('window.location.search: ' + window.location.search );
+console.log('window.location.hash: ' + window.location.hash );
+console.dir(qs);
+console.dir(qs_args);
 $.receiveMessage(
 	function(e){
 		console.log('---receiving in the iframe---');
