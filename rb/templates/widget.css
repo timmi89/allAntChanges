@@ -125,7 +125,6 @@ a div.rdr_indicator { text-decoration:none !important; }
 
 div.rdr_indicator img, div.rdr_indicator_details img{ 
     background:url("{{ STATIC_URL }}widget/images/readr_icons.png") no-repeat 0 0 !important; width:16px !important; 
-    float:left !important;
     margin: -1px 0 0 -1px !important;
 }
 
@@ -470,4 +469,7 @@ $('div.rdr_tempUserMsg').animate({bottom:'-48px'});
     height:22px;
     width:16px;
     text-indent:-9999px;
+}
+div.inlineReq {
+    display:inline !important;
 }

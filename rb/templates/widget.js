@@ -1824,16 +1824,14 @@ function readrBoard($R){
                     });
                     if(boolDontFade){
                         $indicators.css({
-                            'opacity':'0.4',
-                            'display':'inline'
-                        });
+                            'opacity':'0.4'
+                        }).addClass('inlineReq');
                         return;
                     }
                     //else
                     $indicators.css({
-                        'opacity':'0',
-                        'display':'inline'
-                    }).fadeTo('300', '0.4');
+                        'opacity':'0'
+                    }).fadeTo('300', '0.4').addClass('inlineReq');
                 },
                 hide: function(hashes){
                     //RDR.actions.indicators.hide:
