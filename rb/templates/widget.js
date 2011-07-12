@@ -124,7 +124,7 @@ function readrBoard($R){
 					if (options.selector) {
                         $(options.selector).after( $new_rindow );
                     } else {
-                        $('body').append( $new_rindow );
+                        $('#rdr_sandbox').append( $new_rindow );
                     }
 				}
 
@@ -348,7 +348,7 @@ function readrBoard($R){
                 //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
                 //but we're not sure yet if it's going to be the same function as this shareStart () above..
 
-                $('body').append( $new_actionbar );
+                $('#rdr_sandbox').append( $new_actionbar );
                 $new_actionbar.find('li').hover(
                     function() {
                         $(this).find('a').siblings('.rdr_tooltip').show();
@@ -515,7 +515,7 @@ function readrBoard($R){
                         '<div id="rdr_ed_user_x">x</div>'
                     );
                                             
-                    $('body').append( $educateUser );
+                    $('#rdr_sandbox').append( $educateUser );
                     $('#rdr_ed_user_x').click( function() {
                         RDR.session.educateUserClose();
                     });
@@ -699,7 +699,7 @@ function readrBoard($R){
                 parentHost = window.location.protocol + "//" + window.location.host;
                 $xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
                 );
-                $('body').append( $xdmIframe );
+                $('#rdr_sandbox').append( $xdmIframe );
 
 
 				// this is the postMessage receiver for ALL messages posted.
@@ -841,7 +841,7 @@ function readrBoard($R){
             },
             educateUser: function() {
                 var $educateUser = $('<div id="rdr_ed_user" class="rdr"><div id="rdr_ed_user_1"><h1>Rate or discuss <span>anything</span> on this page!</h1></div><div id="rdr_ed_user_2">Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.</div><div id="rdr_ed_user_x">x</div>');
-                $('body').append( $educateUser );
+                $('#rdr_sandbox').append( $educateUser );
                 $('#rdr_ed_user_x').click( function() {
                     RDR.session.educateUserClose();
                 });
@@ -1015,8 +1015,11 @@ function readrBoard($R){
                 
                 //dont know if it makes sense to return anything here like im doing now...
 
+                //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
+                var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr"/>').appendTo('body');
+
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
-                var $indicatorDetailsWrapper = $('<div id="rdr_indicator_details_wrapper" />').appendTo('body');
+                var $indicatorDetailsWrapper = $('<div id="rdr_indicator_details_wrapper" />').appendTo($rdrSandbox);
 
                 // init the img interactions img selector image selector  (those are keywords for easier-inpage searching)
 				$( RDR.group.img_selector+":not('.no-rdr')" ).live( 'mouseover', function() {
@@ -2660,7 +2663,7 @@ function readrBoard($R){
                                 $shareTip.css('left', share_offsets.left+'px').css('top', share_offsets.top+'px');
 
                                 // $this.append( $shareTip );
-                                $('body').append( $shareTip );
+                                $('#rdr_sandbox').append( $shareTip );
                                 $shareTip.bind('mouseleave.rdr', { $tag_share:$this }, function(e) {
                                     $(this).remove();
                                     e.data.$tag_share.removeClass('rdr_hover').parent().removeClass('rdr_hover');
@@ -4940,7 +4943,7 @@ function $RFunctions($R){
                 $tempButtons.find('.rdr_tempButton_hilite')//cont
                 .append('<input class="" style="left: 100px; position: relative; width:50px;" value="toggle"/>'); /*default toggle*/
 
-                $('body').append($tempButtons);
+                $('#rdr_sandbox').append($tempButtons);
             }
             //end private functions
 
