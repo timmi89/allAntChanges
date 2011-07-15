@@ -2549,7 +2549,6 @@ function readrBoard($R){
                 //todo: consolodate truncate functions
                 var maxHeaderLen = 20;
                 var tagBody = tag.body.length > maxHeaderLen ? tag.body.slice(0, maxHeaderLen)+"..." : tag.body;
-                log (tagBody);
 
                 rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tagBody+' <span> ('+tag.count+')</span>');
                 if ( rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp').destroy();
@@ -2560,7 +2559,7 @@ function readrBoard($R){
 
                 // ok, get the content associated with this tag!
                 $.each(content, function(idx, node){
-                    ////[cleanlogz]console.dir(node);
+                    // console.dir(node);
 
                     var tag = tagClone;
 
@@ -2605,18 +2604,10 @@ function readrBoard($R){
                             }
                         );
 
-
-                        // todo: [porter] i'm looping to see if there is a comment for this TAG.  can we just send this down from server?
-                        for ( var i in summary.top_interactions.coms ) {
-                            //[cleanlogz]log('summary.top_interactions.coms');
-
-                            var node_comments = 0;
-                            if ( summary.top_interactions.coms[i].content_id == node.id ) {
-                                node_comments++;
-                                node.top_interactions.coms.push( summary.top_interactions.coms[i] );
-                            }
+                        var node_comments = 0;
+                        for (var i in node.top_interactions.coms ) {
+                            if ( node.top_interactions.coms[i].tag_id == tag.id ) node_comments++;
                         }
-                        
                         if ( node_comments > 0 ) {
                             $comment = $('<div class="rdr_has_comment">' +node_comments+ '</div>');
                         } else {
@@ -2758,20 +2749,20 @@ function readrBoard($R){
                 //log('node.top_interactions');
                 ////[cleanlogz]console.dir(node.top_interactions);
                 var comments = node.top_interactions.coms;
+                var node_comments = 0;
+                for (var i in comments ) {
+                    if ( comments[i].tag_id == tag.id ) node_comments++;
+                }
+
                 var hasComments = !$.isEmptyObject(comments);
 
                 if (hasComments) {
-
-
-                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments <span>('+1+')</span>');
-log('------------------commmmmmmmmmmmment');
-dir(comments);
+                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments <span>('+node_comments+')</span>');
                     // ok, get the content associated with this tag!
                     for ( var i in comments ) {
                         var this_comment = comments[i];
-//[cleanlogz]console.dir( this_comment );
+
                         if( this_comment.tag_id == tag.id ){
-                            
                             var $commentSet = $('<div class="rdr_commentSet" />'),
                                 $commentBy = $('<div class="rdr_commentBy" />'),
                                 $comment = $('<div class="rdr_comment" />'),
@@ -2779,7 +2770,7 @@ dir(comments);
                                 $commentReply = $('<div class="rdr_commentReply" />');
                             var user_image_url = ( this_comment.social_user.img_url ) ? this_comment.social_user.img_url: '{{ STATIC_URL }}widget/images/anonymousplode.png';
                             var user_name = ( this_comment.user.first_name == "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
-                            $commentBy.html( '<img src="'+user_image_url+'" /> ' + user_name );
+                            $commentBy.html( '<img src="'+user_image_url+'" class="no-rdr" /> ' + user_name );
                             $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
                             $commentReply.html('<a href="#">Reply</a>');
 
@@ -2797,19 +2788,20 @@ dir(comments);
                             // $this_tag.append($tagShareButton, $tagCountButton);
                             // $content.find('div.rdr_otherTags').append( $this_tag );
                             $commentSet.append( $commentBy, $comment, $commentReplies, $commentReply );
-
+                            $whyBody.append( $commentSet );
                         }
-
                     }
-                    if ( $commentSet ) $commentSet.append( '<hr />' );
                 } else {
                     rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Add a Comment');
                 }
 
                 //todo: combine this with the tooltip for the tags
+                // var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+tag.id+'">Comment</button></div>');
+                var $commentBox = $('<div class="rdr_commentBox rdr_sntPnl_padder"></div>').html(
+                    '<div class="rdr_commentComplete"><div><strong>Leave a comment:</strong></div></div>'
+                );
                 var helpText = "because..."
-                var $leaveComment =  $('<div class="rdr_leave_comment" />');
-                $leaveComment.append( '<strong>Leave a comment here:</strong><div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button>Comment</button></div>' );
+                $leaveComment = $( '<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button>Comment</button></div>' );
                 $leaveComment.find('textarea').focus(function(){
                     if($('.leaveComment').val() == helpText ){
                         $('.leaveComment').val('');
@@ -2835,8 +2827,7 @@ dir(comments);
                     RDR.actions.comment({ content_node:node, comment:comment, which:which, content:node.body, tag:tag, rindow:rindow, selState:selState});
                 });
 
-                if ( $commentSet ) $whyBody.html( $commentSet );
-                $whyBody.append( $leaveComment  );
+                $whyBody.append( $commentBox.append( $leaveComment ) );
 
                 RDR.actions.panel.expand("whyPanel", rindow);
             },
