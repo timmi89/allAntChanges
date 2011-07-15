@@ -1965,8 +1965,6 @@ function readrBoard($R){
                         log('image indicator')
                         $container.after($indicator);
                         $indicator.addClass('rdr_indicator_for_image');
-
-                        //RDR.actions.indicators.details.tempImgHelper( $container, $indicator, hash, summary );
                         
                     }else{
                         //else assume text
@@ -2100,87 +2098,9 @@ function readrBoard($R){
                             count++;
                         });
                         return $tagList;
-                    },
-                    tempImgHelper: function( $container, $indicator, hash, summary ){
-                        //RDR.actions.indicators.details.tempImgHelper:
-                        //is an image
-                        //todo: this is all a temp hack.  Consolodate this code!
-                        var $this_img, $tagList, imageData;
-
-                        $this_img = $container
-                        $this_img.after( $indicator );
-                        
-                        var tagListMaxWidth = $this_img.width()-100; //subtract a bit of a margin
-
-                        /*
-                        $.each(RDR.page.imagedata, function(i,v){
-                            if(v.hash == hash){
-                                imageData = v;
-                            }
-                        });
-                        */
-                        //todo: prop down this change var change
-                        
-                        function SortByTagCount(a,b) { return b.count - a.count; }
-                        //todo: bring sorting back
-                        //imageData.tags.sort( SortByTagCount );
-                        
-                        //total = imageData.tag_count;
-                        total = summary.counts.tags;
-                                                
-                        $indicator.append(
-                            '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr" />',
-                            '<span class="rdr_count">'+ total +' reactions: </span>'
-                        );
-
-                        summary.indicator = $indicator;
-                        $indicator.data({ 'which':hash, 'imageData':imageData, 'summary':summary })//chain
-                        .click( function() {
-                            RDR.actions.viewContainerReactions( {icon:$indicator, kind:"image", summary:summary, hash:hash} );
-                            return false;
-                        })//chain
-                        .hover(
-                            function() {
-                                $(this).css('opacity','0.9');
-                            },
-                            function() {
-                                $(this).css('opacity','0.4')
-                            }
-                        );
-
-                        $tagList = $('<div class="rdr_tags_list"></div>');  // absolute so that we can calculate content width on the fly
-                        $indicator.append($tagList);
-
-                        var count = 0;
-                        $.each( summary.top_interactions.tags, function(hash, tag){
-                            if(count == null) return; //used as a break statement
-                            var prefix = count ? ", " : "", //don't include the first time
-                            $tag = $('<strong />').addClass("rdr_stats_body").append(tag.body),
-                            $count = $('<em/>').addClass("rdr_stats_count").append( ' ('+tag.count+')' ),
-                            $span = $('<span />').addClass("rdr_stats").append($tag, $count);
-                            
-                            $tagList.append( prefix, $span );
-                            
-                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                            if ( $tagList.width() > tagListMaxWidth ) {
-                                $tagList.children().last().html('More...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
-                                count = null;
-                                return;
-                            }
-                            count ++;
-                        });
-                        
-                        //show newly minted pins
-                        if(summary.counts.interactions > 0){
-                            RDR.actions.indicators.show([hash],true); //temp hack, 'true' is for 'dont fade in';   
-                        }else{
-                            RDR.actions.indicators.hide([hash]); //if deleted back to 0
-                        }
-
-                        return;
-                
                     }
                     
+                
                 //end RDR.actions.indicators.details
                 },
                 sortReactions: function( hash ){
