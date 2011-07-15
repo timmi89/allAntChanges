@@ -2109,10 +2109,10 @@ function readrBoard($R){
                     make: function( $indicator, hash, summary ){
                         //RDR.actions.indicators.details.make:
 
-                        var _scope = this,
+                        var scope = this,
                             stats = '<div class="rdr_indicator_statsClone" />',
                             categoryTitle = '<span class="rdr_indicator_categoryTitle"> reactions: </span>',
-                            $tagList = _scope._tagsList( summary );
+                            $tagList = scope._tagList( summary );
 
                         //show newly minted pins
                         if(summary.counts.interactions > 0){
@@ -2124,7 +2124,7 @@ function readrBoard($R){
                         return $('<div/>').append(stats, categoryTitle, $tagList );
                     },
                     //helper function _tagsList - called from this.make 
-                    _tagsList: function( summary ){
+                    _tagList: function( summary ){
                         var $tagList = $('<div class="rdr_tags_list" />'),
                             tagListMaxWidth = 200,
                             count = 0;
