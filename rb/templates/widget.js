@@ -122,11 +122,19 @@ function readrBoard($R){
                     }
 
                     // may not need selector.  was a test to see if we can embed the rindow within a document, optionally.
+                    //todo: do we still want this feature that uses .selector ?
+                    //for now don't do this.  I don't know what it does.
+                    
+                    //this is instead of the if / else below
+                    $('#rdr_sandbox').append( $new_rindow );
+                    
+                    /*
 					if (options.selector) {
                         $(options.selector).after( $new_rindow );
                     } else {
-                        $('body').append( $new_rindow );
+                        $('#rdr_sandbox').append( $new_rindow );
                     }
+                    */
 				}
 
                 $new_rindow.data(settings);// jquery obj of the rewritable window
@@ -349,7 +357,7 @@ function readrBoard($R){
                 //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
                 //but we're not sure yet if it's going to be the same function as this shareStart () above..
 
-                $('body').append( $new_actionbar );
+                $('#rdr_sandbox').append( $new_actionbar );
                 $new_actionbar.find('li').hover(
                     function() {
                         $(this).find('a').siblings('.rdr_tooltip').show();
@@ -516,7 +524,7 @@ function readrBoard($R){
                         '<div id="rdr_ed_user_x">x</div>'
                     );
                                             
-                    $('body').append( $educateUser );
+                    $('#rdr_sandbox').append( $educateUser );
                     $('#rdr_ed_user_x').click( function() {
                         RDR.session.educateUserClose();
                     });
@@ -700,7 +708,7 @@ function readrBoard($R){
                 parentHost = window.location.protocol + "//" + window.location.host;
                 $xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
                 );
-                $('body').append( $xdmIframe );
+                $('#rdr_sandbox').append( $xdmIframe );
 
 
 				// this is the postMessage receiver for ALL messages posted.
@@ -842,7 +850,7 @@ function readrBoard($R){
             },
             educateUser: function() {
                 var $educateUser = $('<div id="rdr_ed_user" class="rdr"><div id="rdr_ed_user_1"><h1>Rate or discuss <span>anything</span> on this page!</h1></div><div id="rdr_ed_user_2">Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.</div><div id="rdr_ed_user_x">x</div>');
-                $('body').append( $educateUser );
+                $('#rdr_sandbox').append( $educateUser );
                 $('#rdr_ed_user_x').click( function() {
                     RDR.session.educateUserClose();
                 });
@@ -1016,8 +1024,11 @@ function readrBoard($R){
                 
                 //dont know if it makes sense to return anything here like im doing now...
 
+                //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
+                var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr"/>').appendTo('body');
+
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
-                var $indicatorDetailsWrapper = $('<div id="rdr_indicator_details_wrapper" />').appendTo('body');
+                var $indicatorDetailsWrapper = $('<div id="rdr_indicator_details_wrapper" />').appendTo($rdrSandbox);
 
                 // init the img interactions img selector image selector  (those are keywords for easier-inpage searching)
 				$( RDR.group.img_selector+":not('.no-rdr')" ).live( 'mouseover', function() {
@@ -1822,16 +1833,14 @@ function readrBoard($R){
                     });
                     if(boolDontFade){
                         $indicators.css({
-                            'opacity':'0.4',
-                            'display':'inline'
-                        });
+                            'opacity':'0.4'
+                        }).addClass('inlineReq');
                         return;
                     }
                     //else
                     $indicators.css({
-                        'opacity':'0',
-                        'display':'inline'
-                    }).fadeTo('300', '0.4');
+                        'opacity':'0'
+                    }).fadeTo('300', '0.4').addClass('inlineReq');
                 },
                 hide: function(hashes){
                     //RDR.actions.indicators.hide:
@@ -1969,10 +1978,10 @@ function readrBoard($R){
                         //total = imageData.tag_count;
                         total = summary.counts.tags;
                                                 
-                        $indicator = $('<div class="rdr rdr_indicator rdr_image"></div>').attr( 'id', indicatorId ).hide();
+                        $indicator = $('<div class="rdr rdr_indicator rdr_indicator_for_image"></div>').attr( 'id', indicatorId ).hide();
 
                         $indicator.append(
-                            '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr" />',
+                            '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
                             '<span class="rdr_count">'+ total +' reactions: </span>'
                         );
 
@@ -2031,9 +2040,14 @@ function readrBoard($R){
                     //todo: is this a problem to use IDS here even when this is an el that we make?
                     $indicator = $('<div class="rdr_indicator" />').hide().attr('id',indicatorId).appendTo($container);
                     //log(summary);
-                    summary.indicator = $('rdr_in');
-                    $indicator.append(
-                        '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr" />',
+
+                    //todo: not using this for now.
+                    //summary.indicator = $('.somefutureselectortomeanincontent');
+                    
+                    var $stats = $('<div class="rdr_indicator_stats" />')//chain
+                    .appendTo($indicator)//chain
+                    .append(
+                        '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
                         '<span class="rdr_count">'+ total +'</span>'
                     )//chain
                     .data( {'which':hash} )//chain
@@ -2044,7 +2058,7 @@ function readrBoard($R){
                             RDR.actions.summaries.populate( hash )
 
                             //todo: maybe make more efficient
-                            $indicator_details.find('.rdr_statsClone').html( $indicator.html() );
+                            $indicator_details.find('.rdr_indicator_statsClone').html( $stats.html() );
                             $indicator_details.css({
                                 'display':'block',
                                 'top': $indicator.offset().top,
@@ -2065,64 +2079,78 @@ function readrBoard($R){
                         }
                     );                   
                                         
-
                     //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the body.
                     //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
-                    $indicator_details = $('<div id="rdr_indicator_details_' +hash+ '" class="rdr rdr_indicator_details rdr_text" />');
-                    $indicator_details.append(
-                        '<div class="rdr_statsClone" />',
-                        '<span class="rdr_details"> reactions: </span>'
-                    ).appendTo('#rdr_indicator_details_wrapper');                                        
-                    $tagList = $('<div class="rdr_tags_list"></div>').appendTo( $indicator_details );
-                    
-                    var tagListMaxWidth = 200;
+                    var $indicator_details = $('<div id="rdr_indicator_details_' +hash+ '" class="rdr rdr_indicator_details rdr_text" />');
 
                     //build tags in $tagList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
                     $indicator_details.css({ 'visiblity':'hidden' }).show();
 
-                    var count = 0;
-                    $.each( summary.top_interactions.tags, function(id, tag){
-                        if(count == null) return; //used as a break statement
-                        var prefix = count ? ", " : "", //don't include the first time
-                        $tag = $('<strong/>').append(tag.body),
-                        $count = $('<em/>').append( ' ('+tag.count+')' ),
-                        $span = $('<span />').addClass('rdr_tags_list_tag').append( $tag, $count).data('id',id);
-                        
-                        $tagList.append( prefix, $span );
+                    var $detailContents = RDR.actions.indicators.details.make($indicator, hash, summary);
+                    $indicator_details//chain
+                        .append( $detailContents.contents() )//chain
+                        .appendTo('#rdr_indicator_details_wrapper')//chain
+                        .click( function() {
+                            RDR.actions.viewContainerReactions( {icon:$indicator, kind:"text", summary:summary, hash:hash} );
+                        })//chain
+                        .hover(
+                            function() {
+                                $indicator.data('hoverLock', true)
+                                //do nothing
+                            },
+                            function() {
+                                $indicator.data('hoverLock', false)
+                                $(this).hide();
+                            }
+                        )//chain
+                        .css({ 'visiblity':'visible' }).hide();
 
-                        // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                        if ( $tagList.width() > tagListMaxWidth ) {
-                            $tagList.children().last().html('More...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
-                            count = null;
-                            return;
-                        }
-                        count++;
-                    })
+                },
+                details: {
+                    make: function( $indicator, hash, summary ){
+                        //RDR.actions.indicators.details.make:
 
+                        var _scope = this,
+                            stats = '<div class="rdr_indicator_statsClone" />',
+                            categoryTitle = '<span class="rdr_indicator_categoryTitle"> reactions: </span>',
+                            $tagList = _scope._tagsList( summary );
 
-                    $indicator_details.css({ 'visiblity':'visible' }).hide();
+                        //show newly minted pins
+                        if(summary.counts.interactions > 0){
+                            RDR.actions.indicators.show([hash],true); //temp hack, 'true' is for 'dont fade in';   
+                        }else{
+                            RDR.actions.indicators.hide([hash]); //if deleted back to 0
+                        }   
 
-                    $indicator_details.click( function() {
-                        RDR.actions.viewContainerReactions( {icon:$indicator, kind:"text", summary:summary, hash:hash} );
-                    })//chain
-                    .hover(
-                        function() {
-                            $indicator.data('hoverLock', true)
-                            //do nothing
-                        },
-                        function() {
-                            $indicator.data('hoverLock', false)
-                            $(this).hide();
-                        }
-                    );
+                        return $('<div/>').append(stats, categoryTitle, $tagList );
+                    },
+                    //helper function _tagsList - called from this.make 
+                    _tagsList: function( summary ){
+                        var $tagList = $('<div class="rdr_tags_list" />'),
+                            tagListMaxWidth = 200,
+                            count = 0;
 
-                    //show newly minted pins
-                    if(summary.counts.interactions > 0){
-                        RDR.actions.indicators.show([hash],true); //temp hack, 'true' is for 'dont fade in';   
-                    }else{
-                        RDR.actions.indicators.hide([hash]); //if deleted back to 0
+                        $.each( summary.top_interactions.tags, function(id, tag){
+                            if(count == null) return; //used as a break statement
+                            var prefix = count ? ", " : "", //don't include the first time
+                            $tag = $('<strong/>').append(tag.body),
+                            $count = $('<em/>').append( ' ('+tag.count+')' ),
+                            $span = $('<span />').addClass('rdr_tags_list_tag').append( $tag, $count).data('id',id);
+                            
+                            $tagList.append( prefix, $span );
+
+                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
+                            if ( $tagList.width() > tagListMaxWidth-20 ) {
+                                $tagList.children().last().html('More...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
+                                count = null;
+                                return;
+                            }
+                            count++;
+                        });
+                        return $tagList;
                     }
-                        
+                    
+                //end RDR.actions.indicators.details
                 },
                 sortReactions: function( hash ){
 
@@ -2661,7 +2689,7 @@ function readrBoard($R){
                                 $shareTip.css('left', share_offsets.left+'px').css('top', share_offsets.top+'px');
 
                                 // $this.append( $shareTip );
-                                $('body').append( $shareTip );
+                                $('#rdr_sandbox').append( $shareTip );
                                 $shareTip.bind('mouseleave.rdr', { $tag_share:$this }, function(e) {
                                     $(this).remove();
                                     e.data.$tag_share.removeClass('rdr_hover').parent().removeClass('rdr_hover');
@@ -4947,7 +4975,7 @@ function $RFunctions($R){
                 $tempButtons.find('.rdr_tempButton_hilite')//cont
                 .append('<input class="" style="left: 100px; position: relative; width:50px;" value="toggle"/>'); /*default toggle*/
 
-                $('body').append($tempButtons);
+                $('#rdr_sandbox').append($tempButtons);
             }
             //end private functions
 
