@@ -927,6 +927,7 @@ function readrBoard($R){
                         RDR.group.img_selector = RDR.group.img_selector || "body img";
                         RDR.group.selector_whitelist = RDR.group.selector_whitelist || "body p";
                         RDR.group.media_selector = RDR.group.media_selector || "embed, video, object";
+                        RDR.group.comment_length = RDR.group.comment_length || 300;
 
                         $RDR.dequeue('initAjax');
                     },
@@ -2801,7 +2802,7 @@ function readrBoard($R){
                     '<div class="rdr_commentComplete"><div><strong>Leave a comment:</strong></div></div>'
                 );
                 var helpText = "because..."
-                $leaveComment = $( '<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button>Comment</button></div>' );
+                $leaveComment = $( '<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><div class="rdr_charCount">'+RDR.group.comment_length+' characters let</div><button>Comment</button></div>' );
                 $leaveComment.find('textarea').focus(function(){
                     if($('.leaveComment').val() == helpText ){
                         $('.leaveComment').val('');
@@ -2811,12 +2812,18 @@ function readrBoard($R){
                         $('.leaveComment').val(helpText);
                     }
                 }).keyup(function(event) {
+                    $textarea = $(this);
+
                     if (event.keyCode == '13') { //enter or comma
                         //RDR.actions.panel.expand(rindow);
                     }
                     else if (event.keyCode == '27') { //esc
                         //return false;
+                    } else if ( $textarea.val().length > RDR.group.comment_length ) {
+                        var commentText = $textarea.val();
+                        $textarea.val( commentText.substr(0, RDR.group.comment_length) );
                     }
+                    $textarea.siblings('div').text( ( RDR.group.comment_length - $textarea.val().length ) + " characters left" );
                 });
 
                 // $leaveComment.find('textarea').autogrow();
@@ -3228,6 +3235,7 @@ function readrBoard($R){
                         }
                         else if (event.keyCode == '27') { //esc
                             //return false;
+                        // TODO make tag length configurable?
                         } else if ( $tagInput.val().length > 20 ) {
                             var customTag = $tagInput.val();
                             $tagInput.val( customTag.substr(0, 20) );
@@ -3540,7 +3548,7 @@ function readrBoard($R){
 
                 //todo: combine this with the tooltip for the tags
                 var helpText = "because..."
-                var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+int_id.id+'">Comment</button></div>');
+                var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><div class="rdr_charCount">'+RDR.group.comment_length+' characters let</div><button id="rdr_comment_on_'+int_id.id+'">Comment</button></div>');
                 $leaveComment.find('textarea').focus(function(){
                     if($('.leaveComment').val() == helpText ){
                         $('.leaveComment').val('');
@@ -3550,12 +3558,18 @@ function readrBoard($R){
                         $('.leaveComment').val(helpText);
                     }
                 }).keyup(function(event) {
+                    $textarea = $(this);
+                    
                     if (event.keyCode == '13') { //enter or comma
                         //RDR.actions.panel.expand(rindow);
                     }
                     else if (event.keyCode == '27') { //esc
                         //return false;
+                    } else if ( $textarea.val().length > RDR.group.comment_length ) {
+                        var commentText = $textarea.val();
+                        $textarea.val( commentText.substr(0, RDR.group.comment_length) );
                     }
+                    $textarea.siblings('div').text( ( RDR.group.comment_length - $textarea.val().length ) + " characters left" );
                 });
 
                 // $leaveComment.find('textarea').autogrow();
