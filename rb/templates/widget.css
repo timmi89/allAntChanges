@@ -322,6 +322,7 @@ div.rdr div.rdr_commentSet          {padding:5px 10px; overflow:auto;}
 div.rdr div.rdr_commentSet div.rdr_commentBy          {font: bold 11px Arial; color:#666; overflow:auto; padding-top:8px;}
 div.rdr div.rdr_commentSet div.rdr_commentBy img      {width:24px; height:24px; float:left; margin:-8px 5px 0 0; border:1px solid #d0dee6;}
 div.rdr div.rdr_commentSet div.rdr_comment            {font: italic 14px Georgia; color:#999;padding:3px; }
+div.rdr div.rdr_commentSet div.rdr_commentReply       {font-weight:normal; margin-right:5px; text-transform:uppercase; font-size:9px; float:right;}
 div.rdr div.rdr_commentSet a.rdr_tag                            {margin-top:3px;}
 div.rdr div.rdr_commentSet a.rdr_tag div.rdr_tag_share          {margin-left:-12px;}
 div.rdr div.rdr_commentSet a.rdr_tag:hover div.rdr_tag_share    {margin-left:3px;}

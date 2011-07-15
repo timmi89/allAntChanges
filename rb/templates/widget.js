@@ -84,6 +84,7 @@ function readrBoard($R){
                     // corner logic: the next line's conditional is so that a collapsing column that is set to hidden, but is tall,
                     // doesn't force the visible column's content to be too tall.  this way the corners are rightly rounded.
                     var contentHeight = ( $column.css('visibility') != "hidden" ) ? $column.height() : 10;
+                    log('checkheight contentHeight: '+contentHeight);
                     if ( contentHeight > tallest_column_height ) tallest_column_height = contentHeight;
 
                     if ( tallest_column_height >= 300 ) {
@@ -2734,19 +2735,25 @@ function readrBoard($R){
 
 
                     rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments <span>('+1+')</span>');
-
+log('------------------commmmmmmmmmmmment');
+dir(comments);
                     // ok, get the content associated with this tag!
                     for ( var i in comments ) {
                         var this_comment = comments[i];
+console.dir( this_comment );
                         if( this_comment.tag_id == tag.id ){
                             
                             var $commentSet = $('<div class="rdr_commentSet" />'),
                                 $commentBy = $('<div class="rdr_commentBy" />'),
-                                $comment = $('<div class="rdr_comment" />');
+                                $comment = $('<div class="rdr_comment" />'),
+                                $commentReplies = $('<div class="rdr_commentReplies" />'),
+                                $commentReply = $('<div class="rdr_commentReply" />');
                             var user_image_url = ( this_comment.social_user.img_url ) ? this_comment.social_user.img_url: '{{ STATIC_URL }}widget/images/anonymousplode.png';
                             var user_name = ( this_comment.user.first_name == "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
                             $commentBy.html( '<img src="'+user_image_url+'" /> ' + user_name );
                             $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
+                            $commentReply.html('<a href="#">Reply</a>');
+
 
                             // var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);">'+thisTag.body+'</a>');
                             
@@ -2760,7 +2767,7 @@ function readrBoard($R){
 
                             // $this_tag.append($tagShareButton, $tagCountButton);
                             // $content.find('div.rdr_otherTags').append( $this_tag );
-                            $commentSet.append( $commentBy, $comment );
+                            $commentSet.append( $commentBy, $comment, $commentReplies, $commentReply );
 
                         }
 
