@@ -321,8 +321,13 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
     margin-bottom:10px !important;
     overflow:auto !important;
     clear:both !important;
-    font:normal 12px Arial, sans-serif;
 }
+
+/*blunt attack for now*/
+#rdr-summary * {
+    font:normal 12px Arial, sans-serif !important;
+}
+
 #rdr-summary div.rdr-sum-headline {
     background:url({{ STATIC_URL }}widget/images/readr_icons.png) -162px 5px no-repeat !important;
     padding:7px 5px 5px 38px !important;
@@ -449,12 +454,16 @@ img.rdr_shared      { -moz-box-shadow:0 0 10px 1px #008be4; -webkit-box-shadow:0
     cursor: pointer !important;
 }
 /* opacity for .rdr_indicator set in js instead of here. Fade it in on load so we can still use display:inline; */
-div.rdr_indicator { z-index:11000; display:inline !important; text-decoration:none !important;}
+div.rdr_indicator {
+    z-index:11000 !important;
+    display:inline !important;
+    text-decoration:none !important;
+}
 a div.rdr_indicator { text-decoration:none !important; }
 
 /*indicator pin both*/
 div.rdr_indicator img.rdr_pin, div.rdr_indicator_details img.rdr_pin{ 
-    background:url("{{ STATIC_URL }}widget/images/readr_icons.png") no-repeat 0 0 !important; 
+    background:url("{{ STATIC_URL }}widget/images/readr_icons.png") no-repeat 0 -1px !important; 
     position:absolute !important;
 }
 /*indicator pin inline indicator only*/
@@ -476,7 +485,7 @@ div.rdr_indicator div.rdr_indicator_stats {
 }
 div.rdr_indicator span.rdr_count, div.rdr_indicator_details span.rdr_count{ 
     position:relative !important;
-    margin-left:16px;
+    margin-left:16px !important;
 }
 #rdr_sandbox #rdr_indicator_details_wrapper span.rdr_indicator_categoryTitle{ 
     position:relative !important;
@@ -507,6 +516,7 @@ div.rdr_indicator {
     position: relative !important;
   
     /*start with 0 opacity so it can fade in properly*/
+    /*don't make these important for now...*/
     opacity:0.0;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
     filter:alpha(opacity=00);
@@ -539,6 +549,9 @@ div.rdr_indicator_for_image {
     text-decoration:none !important;
     display:block !important;
     margin: 3px 0 !important;
+}
+div.rdr_indicator_for_image .rdr_stats {
+    display:inline !important;
 }
 
 div.rdr_indicator_for_image span.rdr_see_more { font-size:11px !important; font-weight:normal !important;}

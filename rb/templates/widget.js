@@ -2078,64 +2078,78 @@ function readrBoard($R){
                         }
                     );                   
                                         
-
                     //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the body.
                     //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
-                    $indicator_details = $('<div id="rdr_indicator_details_' +hash+ '" class="rdr rdr_indicator_details rdr_text" />');
-                    $indicator_details.append(
-                        '<div class="rdr_indicator_statsClone" />',
-                        '<span class="rdr_indicator_categoryTitle"> reactions: </span>'
-                    ).appendTo('#rdr_indicator_details_wrapper');                                        
-                    $tagList = $('<div class="rdr_tags_list"></div>').appendTo( $indicator_details );
-                    
-                    var tagListMaxWidth = 200;
+                    var $indicator_details = $('<div id="rdr_indicator_details_' +hash+ '" class="rdr rdr_indicator_details rdr_text" />');
 
                     //build tags in $tagList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
                     $indicator_details.css({ 'visiblity':'hidden' }).show();
 
-                    var count = 0;
-                    $.each( summary.top_interactions.tags, function(id, tag){
-                        if(count == null) return; //used as a break statement
-                        var prefix = count ? ", " : "", //don't include the first time
-                        $tag = $('<strong/>').append(tag.body),
-                        $count = $('<em/>').append( ' ('+tag.count+')' ),
-                        $span = $('<span />').addClass('rdr_tags_list_tag').append( $tag, $count).data('id',id);
-                        
-                        $tagList.append( prefix, $span );
+                    var $detailContents = RDR.actions.indicators.details.make($indicator, hash, summary);
+                    $indicator_details//chain
+                        .append( $detailContents.contents() )//chain
+                        .appendTo('#rdr_indicator_details_wrapper')//chain
+                        .click( function() {
+                            RDR.actions.viewContainerReactions( {icon:$indicator, kind:"text", summary:summary, hash:hash} );
+                        })//chain
+                        .hover(
+                            function() {
+                                $indicator.data('hoverLock', true)
+                                //do nothing
+                            },
+                            function() {
+                                $indicator.data('hoverLock', false)
+                                $(this).hide();
+                            }
+                        )//chain
+                        .css({ 'visiblity':'visible' }).hide();
 
-                        // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                        if ( $tagList.width() > tagListMaxWidth-20 ) {
-                            $tagList.children().last().html('More...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
-                            count = null;
-                            return;
-                        }
-                        count++;
-                    })
+                },
+                details: {
+                    make: function( $indicator, hash, summary ){
+                        //RDR.actions.indicators.details.make:
 
+                        var _scope = this,
+                            stats = '<div class="rdr_indicator_statsClone" />',
+                            categoryTitle = '<span class="rdr_indicator_categoryTitle"> reactions: </span>',
+                            $tagList = _scope._tagsList( summary );
 
-                    $indicator_details.css({ 'visiblity':'visible' }).hide();
+                        //show newly minted pins
+                        if(summary.counts.interactions > 0){
+                            RDR.actions.indicators.show([hash],true); //temp hack, 'true' is for 'dont fade in';   
+                        }else{
+                            RDR.actions.indicators.hide([hash]); //if deleted back to 0
+                        }   
 
-                    $indicator_details.click( function() {
-                        RDR.actions.viewContainerReactions( {icon:$indicator, kind:"text", summary:summary, hash:hash} );
-                    })//chain
-                    .hover(
-                        function() {
-                            $indicator.data('hoverLock', true)
-                            //do nothing
-                        },
-                        function() {
-                            $indicator.data('hoverLock', false)
-                            $(this).hide();
-                        }
-                    );
+                        return $('<div/>').append(stats, categoryTitle, $tagList );
+                    },
+                    //helper function _tagsList - called from this.make 
+                    _tagsList: function( summary ){
+                        var $tagList = $('<div class="rdr_tags_list" />'),
+                            tagListMaxWidth = 200,
+                            count = 0;
 
-                    //show newly minted pins
-                    if(summary.counts.interactions > 0){
-                        RDR.actions.indicators.show([hash],true); //temp hack, 'true' is for 'dont fade in';   
-                    }else{
-                        RDR.actions.indicators.hide([hash]); //if deleted back to 0
+                        $.each( summary.top_interactions.tags, function(id, tag){
+                            if(count == null) return; //used as a break statement
+                            var prefix = count ? ", " : "", //don't include the first time
+                            $tag = $('<strong/>').append(tag.body),
+                            $count = $('<em/>').append( ' ('+tag.count+')' ),
+                            $span = $('<span />').addClass('rdr_tags_list_tag').append( $tag, $count).data('id',id);
+                            
+                            $tagList.append( prefix, $span );
+
+                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
+                            if ( $tagList.width() > tagListMaxWidth-20 ) {
+                                $tagList.children().last().html('More...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
+                                count = null;
+                                return;
+                            }
+                            count++;
+                        });
+                        return $tagList;
                     }
-                        
+                    
+                //end RDR.actions.indicators.details
                 },
                 sortReactions: function( hash ){
 
