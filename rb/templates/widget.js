@@ -84,7 +84,7 @@ function readrBoard($R){
                     // corner logic: the next line's conditional is so that a collapsing column that is set to hidden, but is tall,
                     // doesn't force the visible column's content to be too tall.  this way the corners are rightly rounded.
                     var contentHeight = ( $column.css('visibility') != "hidden" ) ? $column.height() : 10;
-                    log('checkheight contentHeight: '+contentHeight);
+                    //[cleanlogz]log('checkheight contentHeight: '+contentHeight);
                     if ( contentHeight > tallest_column_height ) tallest_column_height = contentHeight;
 
                     if ( tallest_column_height >= 300 ) {
@@ -303,7 +303,7 @@ function readrBoard($R){
                     //changing this to warn, because image should always be hashed already.
                     //if it isn't, we shoulc do this through the hashNodes function.
                     //todo: put in call to hashNodes function here later, if this ever happens, though it shouldn't
-                    console.warn('image but no container'); 
+                    //[cleanlogz]console.warn('image but no container'); 
                     /*
                     var hashText = "rdr-img-"+settings.content,
                     hash = RDR.util.md5.hex_md5( hashText );
@@ -565,8 +565,8 @@ function readrBoard($R){
                 }
             },
             revealSharedContent: function(data){
-                log('revealSharedContent');
-                console.dir(data);
+                //[cleanlogz]log('revealSharedContent');
+                //[cleanlogz]console.dir(data);
                 var $container = $('.rdr-'+data.container_hash);
                 $container.addClass('rdr_shared')
                 
@@ -575,8 +575,8 @@ function readrBoard($R){
                 
                     var serialRange = data.location;
 
-                    log($container)
-                    if (serialRange) log(serialRange);
+                    //[cleanlogz]log($container)
+                    // if (serialRange) log(serialRange);
 
                     var selogStack = $().selog('stack'); //just fyi, not using it... Will be an empty stack on page load.
 
@@ -589,9 +589,9 @@ function readrBoard($R){
                     */
 
                     var selState = $container.selog('save', {'serialRange':serialRange} );
-                    log(selState)
+                    //[cleanlogz]log(selState)
 
-                    $().selog('hilite', selState, 'on')
+                    $().selog('hilite', selState, 'on');
 
                     /**********/
                     //todo: quick fix!  ... later attach it to a rindow to do it right.
@@ -621,7 +621,7 @@ function readrBoard($R){
             },
             getSharedLinkInfo: function( data ){
                 log('--------data-------------');
-                console.dir(data);
+                //[cleanlogz]console.dir(data);
                 //some condition
                     
                 //TODO: sample data here, fill with info from cookie
@@ -664,7 +664,7 @@ function readrBoard($R){
                 }
             },
             handleGetUserFail: function(response, callback) {
-                log("handleGetUserFail: " + response.message)
+                //[cleanlogz]log("handleGetUserFail: " + response.message);
                 switch ( response.message ) {
                     case "Error getting user!":
                         // kill the user object and cookie
@@ -678,29 +678,29 @@ function readrBoard($R){
                         // TODO: something.  anything at all.
                     break;
                     case "Container specified does not exist":
-                        log('caught error: Container specified does not exist and implementing temp fix')
-                        log(response)
+                        //[cleanlogz]log('caught error: Container specified does not exist and implementing temp fix');
+                        //[cleanlogz]log(response);
                     break;
 
                     case "Token was invalid":
                     case "Facebook token expired":  // call fb login
                     case "Social Auth does not exist for user": // call fb login
                         // the token is out of sync.  could be a mistake or a hack.
-                        log('starting postmessage')
+                        //[cleanlogz]log('starting postmessage')
                         $.postMessage(
                             "checkSocialUser",
                             RDR.session.iframeHost + "/xdm_status/",
                             window.frames['rdr-xdm-hidden']
                         );
                         // init a new receiveMessage handler to fire this callback if it's successful
-                        log('starting receivemessage')
+                        //[cleanlogz]log('starting receivemessage')
                         RDR.session.receiveMessage( false, callback );
                     break;
                 }
             },
 			createXDMframe: function() {
-             log('createXDMframe');
-             console.dir(RDR.groupPermData);
+             //[cleanlogz]log('createXDMframe');
+             //[cleanlogz]console.dir(RDR.groupPermData);
                 RDR.session.receiveMessage();
 
                 var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
@@ -720,8 +720,8 @@ function readrBoard($R){
 
                 $.receiveMessage(
                     function(e){
-                        log('receiveMessage...')
-                        //console.dir(e);
+                        //[cleanlogz]log('receiveMessage...')
+                        ////[cleanlogz]console.dir(e);
                         var message = JSON.parse( e.data );
 
                         if ( message.status ) {
@@ -729,7 +729,7 @@ function readrBoard($R){
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
 
-                                console.dir(message);
+                                //[cleanlogz]console.dir(message);
                                 for ( var i in message.data ) {
                                     RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i]):message.data[i];
                                 }
@@ -744,8 +744,8 @@ function readrBoard($R){
                             } else if ( message.status == "educate user" ) {
                                 RDR.session.alertBar.make('educateUser');
                             } else if ( message.status.indexOf('sharedLink') != -1 ) {
-                                log('-------message.status-----------');
-                                log(message.status);
+                                //[cleanlogz]log('-------message.status-----------');
+                                //[cleanlogz]log(message.status);
                                 var sharedLink = message.status.split('|');
                                 if ( sharedLink[5] ) {
                                     RDR.session.referring_int_id = parseInt( sharedLink[5] );
@@ -770,7 +770,7 @@ function readrBoard($R){
                 }
             },
 			showLoginPanel: function(args, callback) {
-                log('--showLoginPanel---');
+                //[cleanlogz]log('--showLoginPanel---');
                 $('.rdr_rewritable').removeClass('rdr_rewritable');
                 $('#rdr-loginPanel').remove();
                 //todo: weird, why did commenting this line out not do anything?...look into it
@@ -821,10 +821,10 @@ function readrBoard($R){
                 );
             },
             showTempUserMsg: function(args) {
-                log('args')
-                log(args)
+                //[cleanlogz]log('args')
+                //[cleanlogz]log(args)
                 if ( args.rindow ) {
-                    //console.dir(args);
+                    ////[cleanlogz]console.dir(args);
                     var rindow = args.rindow,
                         num_interactions_left = RDR.group.temp_interact - parseInt( args.num_interactions ),
                         $tempMsgDiv = $('<div class="rdr_tempUserMsg"><span /><strong /></div>'),
@@ -832,7 +832,7 @@ function readrBoard($R){
                         $loginLink = $('<a href="javascript:void(0);">Connect with Facebook</a>.');
 
                     if ( rindow.find('div.rdr_tempUserMsg').length == 0 ){
-                        log('add temp suer msg');
+                        //[cleanlogz]log('add temp suer msg');
                         $loginLink.click( function() {
                             RDR.session.showLoginPanel( args );
                         });
@@ -841,8 +841,8 @@ function readrBoard($R){
                         rindow.append( $tempMsgDiv );
                         rindow.animate({height:(rindow.height()+103)+"px"});
                     } else {
-                        log('just modify the temp user msg:' );
-                        log(tempMsg);
+                        //[cleanlogz]log('just modify the temp user msg:' );
+                        //[cleanlogz]log(tempMsg);
                         rindow.find('div.rdr_tempUserMsg span').html( tempMsg );
                     }
                     
@@ -932,8 +932,8 @@ function readrBoard($R){
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
-                        console.warn('ajax error');
-                        log(response);
+                        //[cleanlogz]console.warn('ajax error');
+                        //[cleanlogz]log(response);
                     }
                 });
             },
@@ -961,8 +961,8 @@ function readrBoard($R){
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
-                        console.warn('ajax error');
-                        log(response);
+                        //[cleanlogz]console.warn('ajax error');
+                        //[cleanlogz]log(response);
                     }
                 });
             },
@@ -992,7 +992,7 @@ function readrBoard($R){
 					},
 					success: function(response) {
                         hash = RDR.util.md5.hex_md5( response.data.id );
-                        log('----- page ID hashed: ' + hash );
+                        //[cleanlogz]log('----- page ID hashed: ' + hash );
                         if ( !RDR.containers[hash] ) {
                             RDR.containers[hash] = {};
                             RDR.containers[hash].body = response.data.id;
@@ -1000,8 +1000,8 @@ function readrBoard($R){
                         }
 
                         //init the widgetSummary
-                        log('response page inti');
-                        console.dir(response);
+                        //[cleanlogz]log('response page inti');
+                        //[cleanlogz]console.dir(response);
                         var widgetSummarySettings = response;
 
                         $('#rdr-summary').rdrWidgetSummary(widgetSummarySettings);
@@ -1014,8 +1014,8 @@ function readrBoard($R){
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
-                        console.warn('ajax error');
-                        log(response);
+                        //[cleanlogz]console.warn('ajax error');
+                        //[cleanlogz]log(response);
                     }
 				});
 
@@ -1232,8 +1232,8 @@ function readrBoard($R){
 					hashes: hashes
 				}
 
-                log('sendData: for /api/summary/containers/');
-                //console.dir(sendData);
+                //[cleanlogz]log('sendData: for /api/summary/containers/');
+                ////[cleanlogz]console.dir(sendData);
                 // send the data!
                 $.ajax({
                     url: "/api/summary/containers/",
@@ -1289,8 +1289,8 @@ function readrBoard($R){
                         var container = RDR.containers[hash],
                         bodyLen = container.body.length;
 
-                        log('container');
-                        log(container);
+                        //[cleanlogz]log('container');
+                        //[cleanlogz]log(container);
 
                         //todo: solve for this.  We don't expect to see this though.
                         if(bodyLen > charLimit){
@@ -1298,8 +1298,8 @@ function readrBoard($R){
                         }
 
                         chars += container.body.length;
-                        log('chars')
-                        log(chars)
+                        //[cleanlogz]log('chars');
+                        //[cleanlogz]log(chars);
 
                         if(chars > charLimit){
                             RDR.actions.containers.ajaxSend(containers);
@@ -1331,14 +1331,14 @@ function readrBoard($R){
                             json: JSON.stringify(sendData)
                         },
                         success: function(response) {
-                            log('response for containers create')
+                            //[cleanlogz]log('response for containers create');
                             var savedHashes = response.data;
                             //savedHashes is in the form {hash:id}
                             
                             $.each( savedHashes, function(hash, id){
                                 //todo: we prob don't need to check with the bool - Tyler, do we need this?
                                 if( !id ){
-                                    console.warn('something went wrong with saving the container');
+                                    //[cleanlogz]console.warn('something went wrong with saving the container');
                                     return;
                                 }
                                 //else
@@ -1381,21 +1381,21 @@ function readrBoard($R){
                     if ( !action_type ) action_type = "create";
 
                     if( !RDR.actions.interactions.hasOwnProperty(int_type) ){
-                        console.warn('invalid interaction type ' +int_type+ "for RDR.actions.interactions.create()");
+                        //[cleanlogz]console.warn('invalid interaction type ' +int_type+ "for RDR.actions.interactions.create()");
                         return false; //don't continue
                     }
-                    log('**CALL PREAJAX**');
-                    console.dir(args);
+                    //[cleanlogz]log('**CALL PREAJAX**');
+                    //[cleanlogz]console.dir(args);
                     // take care of pre-ajax stuff, mostly UI stuff
                     RDR.actions.interactions[int_type].preAjax(args);
 
-                    log('createeeeeeeeeeeeeeeee');
-                    console.dir(args);
+                    //[cleanlogz]log('createeeeeeeeeeeeeeeee');
+                    //[cleanlogz]console.dir(args);
 
                     //get user and only procceed on success of that.
                     RDR.session.getUser( args, function(newArgs){
                         var args = newArgs;
-                        log('user');
+                        //[cleanlogz]log('user');
                         var sendDataDefaults = RDR.actions.interactions.sendDataDefaults(args),
                             customSendData = RDR.actions.interactions[int_type].customSendData(args),
                             sendData = $.extend( {}, sendDataDefaults, customSendData );
@@ -1411,8 +1411,8 @@ function readrBoard($R){
                     RDR.actions.interactions.create( args, int_type, 'remove' );
                 },
                 send: function(args, int_type, action_type){
-                    log('sendddddddddddddddddd');
-                    console.dir(args);
+                    //[cleanlogz]log('sendddddddddddddddddd');
+                    //[cleanlogz]console.dir(args);
 
                     var sendData = args.sendData;
                     //todo: consider making a generic url router
@@ -1428,7 +1428,7 @@ function readrBoard($R){
                         success: function(response) {
                             args.response = response;
                             if ( response.status == "success" ) {
-                                log(action_type);
+                                //[cleanlogz]log(action_type);
                                 RDR.actions.interactions[int_type].onSuccess[action_type](args);
                             }else{
                                 RDR.actions.interactions[int_type].onFail(args);
@@ -1448,7 +1448,7 @@ function readrBoard($R){
                     var tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag;
 
                     var content_node_data = {};
-                    log(content_node_data)
+                    //[cleanlogz]log(content_node_data);
                     if(content_type == 'image'){
                         var container = $.trim( args.settings.container ),
                             content = $.trim( args.settings.content ),
@@ -1547,7 +1547,7 @@ function readrBoard($R){
 
                         //Do UI stuff particular to write mode
                         if (uiMode == "write"){
-                            log('tag preAjax: write mode')
+                            //[cleanlogz]log('tag preAjax: write mode');
                             //if tag has already been tried to be submitted, don't try again.
                             //todo: later verify on the backend and don't let user 'stuff the ballot'
 
@@ -1556,9 +1556,9 @@ function readrBoard($R){
 
                         //Do UI stuff particular to read mode
                         }else if(uiMode == "read"){
-                            log('tag preAjax: read mode')                            
+                            //[cleanlogz]log('tag preAjax: read mode');
                         }else{
-                            console.warn('uiMode is not specified for interactions.tag...')
+                            //[cleanlogz]console.warn('uiMode is not specified for interactions.tag...')
                         }
 
                     },
@@ -1585,7 +1585,7 @@ function readrBoard($R){
                             //clear the loader                  
                             tag_li.find('div.rdr_leftBox').html('');
 
-                            log('tag successssssssssssss');
+                            //[cleanlogz]log('tag successssssssssssss');
                             var $this = args.tag;
                             $this.addClass('rdr_selected');
                             $this.siblings().removeClass('rdr_selected');
@@ -1647,8 +1647,8 @@ function readrBoard($R){
 
                         },
                         remove: function(args){
-                            log('tag delete!!');
-                            console.dir(args);
+                            //[cleanlogz]log('tag delete!!');
+                            //[cleanlogz]console.dir(args);
                             var rindow = args.rindow,
                                 tag = args.tag,
                                 int_id = args.int_id;
@@ -1665,24 +1665,24 @@ function readrBoard($R){
                             tag_li = args.tag;
 
                         var response = args.response;
-                        log('failllllllllll');
+                        //[cleanlogz]log('failllllllllll');
 
                         //clear the loader                  
                         tag_li.find('div.rdr_leftBox').html('');
 
 
                         if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                            log('uh oh better login, tempy 1');
+                            //[cleanlogz]log('uh oh better login, tempy 1');
                             RDR.session.showLoginPanel( args );
                         } else {
                             // if it failed, see if we can fix it, and if so, try this function one more time
                             RDR.session.handleGetUserFail( response, function() {
-                                log('inside callback');
+                                //[cleanlogz]log('inside callback');
                                 // if ( !args.secondAttempt ) {
                                     args.secondAttempt = true;
                                     RDR.actions.interactions.create( args, 'tag' );
                                 // }else{
-                                    // console.warn('unhandled create interaction fail')
+                                    // //[cleanlogz]console.warn('unhandled create interaction fail')
                                 // }
                             });
                         }
@@ -1698,8 +1698,8 @@ function readrBoard($R){
 
                         //Do UI stuff particular to write mode
                         if (uiMode == "write"){
-                            log('bookmark: write mode')
-                            console.dir(args);
+                            //[cleanlogz]log('bookmark: write mode')
+                            //[cleanlogz]console.dir(args);
                             //if tag has already been tried to be submitted, don't try again.
                             //todo: later verify on the backend and don't let user 'stuff the ballot'
 
@@ -1707,7 +1707,7 @@ function readrBoard($R){
                             if ( typeof args.tag.find == "function" ) args.tag.find('div.rdr_leftBox').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" style="margin:6px 0 0 5px" />');
 
                         }else{
-                            console.warn('uiMode is not specified for interactions.tag...')
+                            //[cleanlogz]console.warn('uiMode is not specified for interactions.tag...')
                         }
                         
                     },
@@ -1730,7 +1730,7 @@ function readrBoard($R){
                             //I think this clears the loader                          
                             tag_li.find('div.rdr_leftBox').html('');
 
-                            log('bookmark successssssssssssss');
+                            //[cleanlogz]log('bookmark successssssssssssss');
 
                             var $this = args.tag;
                             $this.addClass('rdr_selected');
@@ -1782,8 +1782,8 @@ function readrBoard($R){
                                 // RDR.actions.unrateSend(args); 
                                 var args = event.data.args;
                                 args.int_id = event.data.int_id;
-                                log('bookmark undo args');
-                                console.dir(args);
+                                //[cleanlogz]log('bookmark undo args');
+                                //[cleanlogz]console.dir(args);
                                 RDR.actions.interactions.remove( args, 'bookmark' );
                             });
 
@@ -1805,8 +1805,8 @@ function readrBoard($R){
                             RDR.session.checkForMaxInteractions(args)
                         },
                         remove: function(args){
-                            log('bookmark delete!!');
-                            console.dir(args);
+                            //[cleanlogz]log('bookmark delete!!');
+                            //[cleanlogz]console.dir(args);
                             var rindow = args.rindow,
                                 tag = args.tag,
                                 int_id = args.int_id;
@@ -2168,7 +2168,7 @@ function readrBoard($R){
                     // loop through the content object to create a similar object that has tags at the top of the hierarchy, 
                     // to prevent looping through .content over and over
                     for ( var j in info.content ) {
-                        // console.dir(content);
+                        // //[cleanlogz]console.dir(content);
                         var content = info.content[j];
 
                         for ( var i in content.tags ) {
@@ -2212,8 +2212,8 @@ function readrBoard($R){
                     //data is in form {body:,kind:,hash:}
                     //todo: combine with above
                     var node = RDR.containers[hash];
-                    log('node from summaries.init')
-                    log(node)
+                    //[cleanlogz]log('node from summaries.init')
+                    //[cleanlogz]log(node)
                     //save an empty summary object to the summaries list
                     var summary = {
                         "kind": node.kind,
@@ -2244,8 +2244,8 @@ function readrBoard($R){
                 populate: function(hash){
                     //RDR.actions.summaries.populate:
                     //expects a summary object from RDR.summaries
-                    log('RDR.summaries[hash] in populate')
-                    log(RDR.summaries[hash])
+                    //[cleanlogz]log('RDR.summaries[hash] in populate');
+                    //[cleanlogz]log(RDR.summaries[hash]);
                     var summary = RDR.summaries[hash];  
 
                     //don't init twice.
@@ -2268,9 +2268,10 @@ function readrBoard($R){
                         dataType: "jsonp",
                         data: { json: JSON.stringify(sendData) },
                         success: function(response) {
+                            summary.initiated = true;
 
                             var content_nodes = response.data;
-                            log('/api/summary/container/content/')
+                            //[cleanlogz]log('/api/summary/container/content/');
                             //log(content_nodes)
                             //todo: make this generic interactions instead of just tags
                             //summary.interactions.tags = 
@@ -2283,8 +2284,8 @@ function readrBoard($R){
                                     node.selState = $container.selog('save', { 'serialRange': node.location });
                                 }
                                 catch(err){
-                                    console.warn('rangy error');
-                                    log(err);
+                                    //[cleanlogz]console.warn('rangy error');
+                                    //[cleanlogz]log(err);
                                     node.selState = undefined;
                                 }
 
@@ -2353,7 +2354,7 @@ function readrBoard($R){
             viewContainerReactions: function( args ) {
 
                 //todo: instead of passing args, let's try to use the same summary convention here to unify functions
-                log('viewContainerReactions')
+                //[cleanlogz]log('viewContainerReactions')
             
                 var summary = args.summary,
                 hash = args.hash,
@@ -2416,8 +2417,8 @@ function readrBoard($R){
 
                 ////populate blesed_tags
                 $.each( topTags, function( tagID, tag ){
-                    log('tagID')    
-                    log(tagID)    
+                    //[cleanlogz]log('tagID')    
+                    //[cleanlogz]log(tagID)    
                     var percentage = Math.round( ( tag.count/totalTags ) * 100);                
                     var $li = $('<li class="rdr_tag_'+tagID+'" />').data({
                         'tag':{
@@ -2559,12 +2560,12 @@ function readrBoard($R){
 
                 // ok, get the content associated with this tag!
                 $.each(content, function(idx, node){
-                    //console.dir(node);
+                    ////[cleanlogz]console.dir(node);
 
                     var tag = tagClone;
 
                     // log('tag');
-                    // console.dir(tag);
+                    // //[cleanlogz]console.dir(tag);
 
                     if ( node.top_interactions.tags[ tag.id ] ) {
 
@@ -2607,7 +2608,7 @@ function readrBoard($R){
 
                         // todo: [porter] i'm looping to see if there is a comment for this TAG.  can we just send this down from server?
                         for ( var i in summary.top_interactions.coms ) {
-                            log('summary.top_interactions.coms');
+                            //[cleanlogz]log('summary.top_interactions.coms');
 
                             var node_comments = 0;
                             if ( summary.top_interactions.coms[i].content_id == node.id ) {
@@ -2626,8 +2627,8 @@ function readrBoard($R){
                         $comment.click( function() {
                             var $this = $(this);
                             $this.closest('.rdr_contentSet').addClass('rdr_selected').siblings().removeClass('rdr_selected');
-                            log('---- rindow.data --------');
-                            console.dir( rindow.data() );
+                            //[cleanlogz]log('---- rindow.data --------');
+                            //[cleanlogz]console.dir( rindow.data() );
                             RDR.actions.viewCommentContent( {tag:tag, which:which, rindow:rindow, node:node, selState:node.selState, content_type:"text" });
                         });
 
@@ -2697,8 +2698,8 @@ function readrBoard($R){
 
                                 var content_node_info = $(this).closest('div.rdr_contentSet').data();
                                 var tag = $this.closest('a.rdr_tag').data('tag');
-                                log('------- attempting to share -------');
-                                console.dir(tag);
+                                //[cleanlogz]log('------- attempting to share -------');
+                                //[cleanlogz]console.dir(tag);
                                 $shareTip.find('img.rdr_sns').click( function() {
                                     RDR.actions.share_getLink({ sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node_info:content_node_info });
                                 });
@@ -2730,9 +2731,9 @@ function readrBoard($R){
                 
                 //todo: this function needs work pulling vars back together
                 // log('node')
-                // console.dir(node)
+                // //[cleanlogz]console.dir(node)
                 // log('tag')
-                // console.dir(tag)
+                // //[cleanlogz]console.dir(tag)
                 // log(c_idx)
 
                 //thoguht we might need this but we dont
@@ -2748,14 +2749,14 @@ function readrBoard($R){
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
-                        console.warn('ajax error');
+                        //[cleanlogz]console.warn('ajax error');
                         log(response);
                     }
                 });
                 */
 
                 //log('node.top_interactions');
-                //console.dir(node.top_interactions);
+                ////[cleanlogz]console.dir(node.top_interactions);
                 var comments = node.top_interactions.coms;
                 var hasComments = !$.isEmptyObject(comments);
 
@@ -2768,7 +2769,7 @@ dir(comments);
                     // ok, get the content associated with this tag!
                     for ( var i in comments ) {
                         var this_comment = comments[i];
-console.dir( this_comment );
+//[cleanlogz]console.dir( this_comment );
                         if( this_comment.tag_id == tag.id ){
                             
                             var $commentSet = $('<div class="rdr_commentSet" />'),
@@ -2841,7 +2842,7 @@ console.dir( this_comment );
             },
 			sentimentBox: function(settings) {
              //log('sentimentBox settings: ');
-             //console.dir(settings);
+             ////[cleanlogz]console.dir(settings);
                 //settings:
                 /*
                 {
@@ -3195,7 +3196,7 @@ console.dir( this_comment );
             sentimentPanel: {
                 addCustomTagBox: function(args) {
                     //log('addCustomTagBox args: ');
-                    //console.dir(args);
+                    ////[cleanlogz]console.dir(args);
                     var rindow = args.rindow,
                         settings = args.settings,
                         $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
@@ -3270,8 +3271,8 @@ console.dir( this_comment );
                 //nothing to see here - this has been moved to RDR.actions.interactions.create( ... 'tag')
             },
             share_getLink: function(args) {
-                log('----share_getLink args----');
-                //console.dir(args);
+                //[cleanlogz]log('----share_getLink args----');
+                ////[cleanlogz]console.dir(args);
                 //example:
                 //tag:{body, id}, rindow:rindow, settings:settings, callback: 
                 
@@ -3331,17 +3332,17 @@ console.dir( this_comment );
                             dataType: "jsonp",
                             data: { json: JSON.stringify(sendData) },
                             success: function(response) {
-                                log('---- share URL response -----');
-                                console.dir(response);
+                                //[cleanlogz]log('---- share URL response -----');
+                                //[cleanlogz]console.dir(response);
 
                                 // todo cache the short url
                                 // RDR.summaries[content_node_info.hash].content_nodes[IDX].top_interactions.tags[tag.id].short_url = ;
 
 
                                 if ( response.status == "fail" ) {
-                                    log('failllllllllll');
+                                    //[cleanlogz]log('failllllllllll');
                                     if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                        log('uh oh better login, tempy 3');
+                                        //[cleanlogz]log('uh oh better login, tempy 3');
                                         RDR.session.showLoginPanel( args );
                                     } else {
                                         // if it failed, see if we can fix it, and if so, try this function one more time
@@ -3364,8 +3365,8 @@ console.dir( this_comment );
                             },
                             error: function(response) {
                                 //for now, ignore error and carry on with mockup
-                                console.warn('ajax error');
-                                log(response);
+                                //[cleanlogz]console.warn('ajax error');
+                                //[cleanlogz]log(response);
                             }
                         });
                 });
@@ -3496,15 +3497,15 @@ console.dir( this_comment );
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
-                        console.warn('ajax error');
-                        log(response);
+                        //[cleanlogz]console.warn('ajax error');
+                        //[cleanlogz]log(response);
                     }
                 });
                 
             },
             shareStart: function(args) {
-                log('--- shareStarting ---');
-                console.dir(args);
+                //[cleanlogz]log('--- shareStarting ---');
+                //[cleanlogz]console.dir(args);
                 var rindow = args.rindow, 
                     tag = args.tag,
                     int_id = args.int_id,
@@ -3531,9 +3532,9 @@ console.dir( this_comment );
                     // RDR.actions.unrateSend(args); 
                     var args = event.data.args;
                     // if (!args.int_id = event.data.int_id;
-                    log('------------------------------------- clicked args');
+                    //[cleanlogz]log('------------------------------------- clicked args');
                     // log(event.data.int_id);
-                    console.dir(args);
+                    //[cleanlogz]console.dir(args);
                     RDR.actions.interactions.remove( args, 'tag' );
                 });
 
@@ -3570,7 +3571,7 @@ console.dir( this_comment );
 
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
-                    log('--------- selState 2: '+content_node.selState);
+                    //[cleanlogz]log('--------- selState 2: '+content_node.selState);
                     RDR.actions.comment({ content_node:content_node, comment:comment, int_id:int_id, rindow:rindow, selState:content_node.selState });
                 });
 
@@ -3621,8 +3622,8 @@ console.dir( this_comment );
                 */
             },
             comment: function(args) {
-                log('---commenting---');
-                console.dir(args);
+                //[cleanlogz]log('---commenting---');
+                //[cleanlogz]console.dir(args);
                 RDR.session.getUser( args, function( params ) {
     
                     // get the text that was highlighted
@@ -3675,8 +3676,8 @@ console.dir( this_comment );
                         },
                         error: function(response) {
                             //for now, ignore error and carry on with mockup
-                            console.warn('ajax error');
-                            log(response);
+                            //[cleanlogz]console.warn('ajax error');
+                            //[cleanlogz]log(response);
                         }
                     });
                 });
@@ -4301,9 +4302,9 @@ function $RFunctions($R){
             //helper function for ajax above
             function _makeSummaryWidget(response){
                 // don't forget a design for when there are no tags.
-                log('building page')
+                //[cleanlogz]log('building page')
                 RDR.page = response.data;
-                log(RDR.page);
+                //[cleanlogz]log(RDR.page);
                 var $summary_widget = $(response.parentContainer);
                 
                 var total_interactions = 0;
@@ -4778,7 +4779,7 @@ function $RFunctions($R){
                     return selState;
                 
                 //else
-                console.warn('selState.idx not in stack');
+                //[cleanlogz]console.warn('selState.idx not in stack');
                 return false;
             }
             function _hiliteInit(selState){
@@ -4846,7 +4847,7 @@ function $RFunctions($R){
                         hiliter.undoToRange(range);
                     }
                     else{
-                        log('error ' + range)
+                        //[cleanlogz]log('error ' + range)
                     }
                 }
                 
@@ -4875,7 +4876,7 @@ function $RFunctions($R){
                     }
                     return range;
                 }catch(e){
-                    log(e); //range out of bounds
+                    //[cleanlogz]log(e); //range out of bounds
                     return false;
                 }
             }

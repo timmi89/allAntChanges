@@ -6,15 +6,15 @@ for ( var i in qs ) {
 	var this_arg = qs[i].split('=');
 	qs_args[this_arg[0]] = this_arg[1];
 }
-console.log('receiving iframe args');
-console.log('window.location.search: ' + window.location.search );
-console.log('window.location.hash: ' + window.location.hash );
-console.dir(qs);
-console.dir(qs_args);
+//[cleanlogz]console.log('receiving iframe args');
+//[cleanlogz]console.log('window.location.search: ' + window.location.search );
+//[cleanlogz]console.log('window.location.hash: ' + window.location.hash );
+//[cleanlogz]console.dir(qs);
+//[cleanlogz]console.dir(qs_args);
 $.receiveMessage(
 	function(e){
-		console.log('---receiving in the iframe---');
-		console.log(e)
+		//[cleanlogz]console.log('---receiving in the iframe---');
+		//[cleanlogz]console.log(e)
 	    switch( e.data ) {
 	    	case "getUser":
 	    		RDRAuth.returnUser(true);
