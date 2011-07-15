@@ -121,11 +121,19 @@ function readrBoard($R){
                     }
 
                     // may not need selector.  was a test to see if we can embed the rindow within a document, optionally.
+                    //todo: do we still want this feature that uses .selector ?
+                    //for now don't do this.  I don't know what it does.
+                    
+                    //this is instead of the if / else below
+                    $('#rdr_sandbox').append( $new_rindow );
+                    
+                    /*
 					if (options.selector) {
                         $(options.selector).after( $new_rindow );
                     } else {
                         $('#rdr_sandbox').append( $new_rindow );
                     }
+                    */
 				}
 
                 $new_rindow.data(settings);// jquery obj of the rewritable window
@@ -1969,10 +1977,10 @@ function readrBoard($R){
                         //total = imageData.tag_count;
                         total = summary.counts.tags;
                                                 
-                        $indicator = $('<div class="rdr rdr_indicator rdr_image"></div>').attr( 'id', indicatorId ).hide();
+                        $indicator = $('<div class="rdr rdr_indicator rdr_indicator_for_image"></div>').attr( 'id', indicatorId ).hide();
 
                         $indicator.append(
-                            '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr" />',
+                            '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
                             '<span class="rdr_count">'+ total +' reactions: </span>'
                         );
 
@@ -2031,9 +2039,14 @@ function readrBoard($R){
                     //todo: is this a problem to use IDS here even when this is an el that we make?
                     $indicator = $('<div class="rdr_indicator" />').hide().attr('id',indicatorId).appendTo($container);
                     //log(summary);
-                    summary.indicator = $('rdr_in');
-                    $indicator.append(
-                        '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr" />',
+
+                    //todo: not using this for now.
+                    //summary.indicator = $('.somefutureselectortomeanincontent');
+                    
+                    var $stats = $('<div class="rdr_indicator_stats" />')//chain
+                    .appendTo($indicator)//chain
+                    .append(
+                        '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
                         '<span class="rdr_count">'+ total +'</span>'
                     )//chain
                     .data( {'which':hash} )//chain
@@ -2044,7 +2057,7 @@ function readrBoard($R){
                             RDR.actions.summaries.populate( hash )
 
                             //todo: maybe make more efficient
-                            $indicator_details.find('.rdr_statsClone').html( $indicator.html() );
+                            $indicator_details.find('.rdr_indicator_statsClone').html( $stats.html() );
                             $indicator_details.css({
                                 'display':'block',
                                 'top': $indicator.offset().top,
@@ -2070,8 +2083,8 @@ function readrBoard($R){
                     //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
                     $indicator_details = $('<div id="rdr_indicator_details_' +hash+ '" class="rdr rdr_indicator_details rdr_text" />');
                     $indicator_details.append(
-                        '<div class="rdr_statsClone" />',
-                        '<span class="rdr_details"> reactions: </span>'
+                        '<div class="rdr_indicator_statsClone" />',
+                        '<span class="rdr_indicator_categoryTitle"> reactions: </span>'
                     ).appendTo('#rdr_indicator_details_wrapper');                                        
                     $tagList = $('<div class="rdr_tags_list"></div>').appendTo( $indicator_details );
                     
@@ -2091,7 +2104,7 @@ function readrBoard($R){
                         $tagList.append( prefix, $span );
 
                         // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                        if ( $tagList.width() > tagListMaxWidth ) {
+                        if ( $tagList.width() > tagListMaxWidth-20 ) {
                             $tagList.children().last().html('More...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
                             count = null;
                             return;

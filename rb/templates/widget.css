@@ -81,72 +81,6 @@
 #rdr_sandbox div.rdr.rdr_actionbar li.rdr_icon_about a:hover     { background-color:transparent; }
 #rdr_sandbox div.rdr.rdr_actionbar span.rdr_icon_divider         { width:1px; background:#BBB; height:70%; position:absolute; top:15%; right:0; display:none;/*show dynamically*/}
 
-img.rdr_engage_img,
-img.rdr_shared      { -moz-box-shadow:0 0 10px 1px #008be4; -webkit-box-shadow:0 0 10px 1px #008be4; box-shadow:0 0 10px 1px #008be4; }
-
-
-/* container indicator icons */
-
-#rdr_sandbox #rdr_indicator_details_wrapper{
-    z-index:11000;
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    background:transparent;
-}
-#rdr_sandbox #rdr_indicator_details_wrapper div.rdr_indicator_details { 
-    -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa;
-    background:#fff;
-    color: #666666;
-    font: 12px Arial,sans-serif;
-    border:1px solid #ddd; max-width:300px;
-    margin:-1px;
-    -moz-border-radius:5px;
-    -webkit-border-radius:5px;
-    border-radius:5px;
-    /*extra pixel margin to make up for border in details (and some mystery space) */
-}
-
-#rdr_sandbox #rdr_indicator_details_wrapper div.rdr_statsClone{ display:inline !important; }
-
-#rdr_sandbox #rdr_indicator_details_wrapper div.rdr_indicator_details, div.rdr_indicator {
-    /*keep the same for both indicator and details so that they overlap nicely*/
-    padding:3px !important;
-    color: #666666 !important;
-    font: 12px Arial,sans-serif !important;
-    position:absolute !important;
-    cursor: pointer !important;
-}
-/* opacity for .rdr_indicator set in js instead of here. Fade it in on load so we can still use display:inline; */
-div.rdr_indicator,
-div.rdr_indicator:hover { z-index:11000; display:inline !important; text-decoration:none !important;}
-a div.rdr_indicator { text-decoration:none !important; }
-
-div.rdr_indicator img, div.rdr_indicator_details img{ 
-    background:url("{{ STATIC_URL }}widget/images/readr_icons.png") no-repeat 0 0 !important; width:16px !important; 
-    margin: -1px 0 0 -1px !important;
-}
-
-div.rdr_indicator { position:relative !important; border-bottom:1px solid #ddd; display:block !important; margin-bottom:5px; clear:both !important;
-/*start with 0 opacity so it can fade in properly*/
-    opacity:0.0;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
-    filter:alpha(opacity=00);
-    -moz-opacity:0.0;
-    -khtml-opacity:0.0;
-}
-#rdr_sandbox div.rdr_tags_list { width:auto; display:inline; white-space:nowrap; text-decoration:none !important;}
-
-div.rdr_indicator.rdr_image span.rdr_see_more { font-size:11px !important; font-weight:normal !important;}
-
-#rdr_sandbox span.rdr_tags_list_tag {
-    padding:3px 1px;
-}
-#rdr_sandbox span.rdr_tags_list_tag:hover {
-    background:#fe7;
-}
-
 /* the tooltip */
 #rdr_sandbox div.rdr.rdr_tooltip {
     -moz-border-radius:5px;
@@ -273,7 +207,7 @@ $('div.rdr_tempUserMsg').animate({bottom:'-48px'});
 #rdr_sandbox div.rdr ul.rdr_tags li .rdr_rightBox     {width:30px; padding:0 3px; height:30px; overflow:hidden; float:right; text-align:left;}
 
 /*overwrite for image readmode version*/
-#rdr_sandbox div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox     {background: none !important;}
+div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !important;}
 
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_has_comment .rdr_rightBox     {background:url({{ STATIC_URL }}widget/images/widget_icons.png) -107px -4px no-repeat;}
 #rdr_sandbox div.rdr div.rdr_read ul.rdr_tags li .rdr_leftBox     {color:#008be4;}
@@ -387,6 +321,7 @@ $('div.rdr_tempUserMsg').animate({bottom:'-48px'});
     margin-bottom:10px !important;
     overflow:auto !important;
     clear:both !important;
+    font:normal 12px Arial, sans-serif;
 }
 #rdr-summary div.rdr-sum-headline {
     background:url({{ STATIC_URL }}widget/images/readr_icons.png) -162px 5px no-repeat !important;
@@ -470,6 +405,150 @@ $('div.rdr_tempUserMsg').animate({bottom:'-48px'});
     width:16px;
     text-indent:-9999px;
 }
+
+
+/*everything below here is stuff that is inline to the client's document.  Generally will use !important for everything*/
+
+img.rdr_engage_img,
+img.rdr_shared      { -moz-box-shadow:0 0 10px 1px #008be4; -webkit-box-shadow:0 0 10px 1px #008be4; box-shadow:0 0 10px 1px #008be4; }
+
+
+/* container indicator icons */
+
+#rdr_sandbox #rdr_indicator_details_wrapper{
+    z-index:11000;
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    background:transparent;
+}
+#rdr_sandbox #rdr_indicator_details_wrapper div.rdr_indicator_details { 
+    -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa;
+    background:#fff;
+    color: #666666;
+    font: 12px Arial,sans-serif;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+    padding:3px !important;
+    border:1px solid #ddd; max-width:300px;
+    /*margin:-4px;*/
+    /*offset with margin to line up with indicator: compensating for the padding and the border*/
+    /*add extra left offset - see todo id:12345 : ) */
+    margin:-4px 0 0 0; /* -4 left but then back to 0 because of todo above */
+}
+
+#rdr_sandbox #rdr_indicator_details_wrapper div.rdr_indicator_statsClone{ display:inline !important; }
+
+#rdr_sandbox #rdr_indicator_details_wrapper div.rdr_indicator_details, div.rdr_indicator {
+    /*keep the same for both indicator and details so that they overlap nicely*/
+    color: #666666 !important;
+    font: 12px Arial,sans-serif !important;
+    position:absolute !important;
+    cursor: pointer !important;
+}
+/* opacity for .rdr_indicator set in js instead of here. Fade it in on load so we can still use display:inline; */
+div.rdr_indicator { z-index:11000; display:inline !important; text-decoration:none !important;}
+a div.rdr_indicator { text-decoration:none !important; }
+
+/*indicator pin both*/
+div.rdr_indicator img.rdr_pin, div.rdr_indicator_details img.rdr_pin{ 
+    background:url("{{ STATIC_URL }}widget/images/readr_icons.png") no-repeat 0 0 !important; 
+    position:absolute !important;
+}
+/*indicator pin inline indicator only*/
+div.rdr_indicator img.rdr_pin{ 
+    top: 0 !important;
+    left: 0 !important;
+}
+/*indicator pin indicator details only*/
+div.rdr_indicator_details img.rdr_pin{ 
+}
+
+div.rdr_indicator div.rdr_indicator_stats { 
+    position:absolute !important;
+    top:0 !important;
+    /*left:0 !important;*/
+    /*for now give an indicator offset so the details don't cover the end of content todo: id:12345*/
+    left:4px !important;
+
+}
+div.rdr_indicator span.rdr_count, div.rdr_indicator_details span.rdr_count{ 
+    position:relative !important;
+    margin-left:16px;
+}
+#rdr_sandbox #rdr_indicator_details_wrapper span.rdr_indicator_categoryTitle{ 
+    position:relative !important;
+    white-space:nowrap !important;
+}
+
+/**for images?/
+div.rdr_indicator {
+    position:relative !important;
+    border-bottom:1px solid #ddd;
+    display:block !important;
+    margin-bottom:5px;
+    clear:both !important;
+    
+    opacity:0.0;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
+    filter:alpha(opacity=00);
+    -moz-opacity:0.0;
+    -khtml-opacity:0.0;
+}
+*/
+div.rdr_indicator {
+    display: inline !important;
+    top: 0 !important;
+    left: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative !important;
+  
+    /*start with 0 opacity so it can fade in properly*/
+    opacity:0.0;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
+    filter:alpha(opacity=00);
+    -moz-opacity:0.0;
+    -khtml-opacity:0.0;
+}
+
+/*note that some of these are in .rdr_indicator_details*/
+div.rdr_tags_list { 
+    width:auto !important;
+    display:inline !important;
+    white-space:nowrap !important;
+    text-decoration:none !important;
+}
+
+#rdr_sandbox span.rdr_tags_list_tag {
+    padding:3px 1px !important;
+}
+#rdr_sandbox span.rdr_tags_list_tag:hover {
+    background:#fe7 !important;
+}
+
+/*inline class*/
 div.inlineReq {
     display:inline !important;
+}
+
+/*now override styles for the image containers*/
+div.rdr_indicator_for_image {
+    text-decoration:none !important;
+    display:block !important;
+    margin: 3px 0 !important;
+}
+
+div.rdr_indicator_for_image span.rdr_see_more { font-size:11px !important; font-weight:normal !important;}
+
+/*thinking about this one*/
+.rdr_inline_reset{
+    display: inline !important;
+    top: 0 !important;
+    left: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative !important;
 }
