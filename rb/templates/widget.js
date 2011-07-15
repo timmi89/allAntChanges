@@ -4038,13 +4038,13 @@ function $RFunctions($R){
              */
             $.log = function () {
                 if (window.console && window.console.log) {
-                    console.log.apply(window.console, arguments)
+                    console.log.apply(window.console, arguments);
                 }
             };
             $.fn.log = function () {
                 var logArgs = arguments || this;
                 $.log(logArgs);
-                return this
+                return this;
             }
 
 
