@@ -535,8 +535,7 @@ function readrBoard($R){
 			},
             cleanPara: function(para) {
                 // common function for cleaning the paragraph.  right now, it's removing spaces, tabs, newlines, and then double spaces
-                if(para != "") {
-                    // alert(para);
+                if( para && typeof para == "string" && para != "" ) { 
                     return para.replace(/[\n\r\t]+/gi,' ').replace().replace(/\s{2,}/g,' ');
                 }
             },
@@ -3700,8 +3699,7 @@ function readrBoard($R){
             startSelect: function(e) {
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
                 
-                var $mouse_target = $(e.target),
-				selection = {};
+                var $mouse_target = $(e.target);
 
                 // make sure it's not selecting inside the RDR windows.
                 if ( !$mouse_target.hasClass('rdr') && $mouse_target.parents('div.rdr').length == 0 ) {
@@ -3715,204 +3713,49 @@ function readrBoard($R){
 
                     // see what the user selected
                     // TODO: need separate image function, which should then prevent event bubbling into this
-						// ^ really?  why??
+                        // ^ really?  why??
 
-                    selection.sel = RDR.actions.selectedText();
-                
-                    //todo: consider using rangy's cross browser stuff here instead:
-                    /*
-                    var currentSelState = $().selog('save'),
-                    text = currentSelState.text;
-                    */
-                    
-                    //ensure something is selected and it's not just white space
-                    if ( selection.sel.text && !(/^\s*$/g.test(selection.sel.text)) ) {
+                    var $blockParent = null;
 
-                        // next line's redundant, but this way we just use .content in later functions, based on itemType
-                        selection.content = selection.sel.text;
-                        selection.itemType = "text";
-                        selection.blockParent = null;
-
-                        // first, identify the selection's block parent (selection.blockParent)
-                        if ( selection.sel.obj.css('display') != "block" ) {
-                            selection.sel.obj.parents().each( function() {
-                                // cache the obj... faster!
-                                var aParent = $(this);
-                                if ( aParent.css('display') == "block" ) {
-                                    // we've found the first parent of the selected text that is block-level
-                                    selection.blockParent = aParent;
-                                    return false;  // exits out of a jQuery.each loop
-                                }
-                            });
-                        } else {
-                            // the node initially clicked on is the first block level container
-                            selection.blockParent = selection.sel.obj;
-                        }
-
-                        // cache the blockParent's text for slightly faster processing
-                        selection.blockParent.text = selection.blockParent.text();
-
-						// does blockParent contain text that is long enough to be used here?
-						if ( selection.blockParent.text && selection.blockParent.text.length > 0) {
-
-							// is this inside a commentable-container?
-							selection.container = "";
-							if ( $mouse_target.hasClass('rdr-hashed') ) {
-								selection.container = $mouse_target.data('hash');
-                            } else if ( $mouse_target.parents('.rdr-hashed:first').length == 1 ) {
-                                selection.container = $mouse_target.parents('.rdr-hashed:first').data('hash');
-							}else{
-                                //hasn't been hashed yet.
-                                //try to submit node to server.
-                                RDR.actions.hashNodes($mouse_target);
-                                selection.container = $mouse_target.data('hash');
-                                //todo: consider errors that can happen if the server doesn't validate the hash,
-                                //..but we proceed with the UI anyway
+                    // first, identify the selection's block parent ($blockParent)
+                    if ( $mouse_target.css('display') != "block" ) {
+                        $mouse_target.parents().each( function() {
+                            // cache the container... faster!
+                            var $aParent = $(this);
+                            if ( $aParent.css('display') == "block" ) {
+                                // we've found the first parent of the selected text that is block-level
+                                $blockParent = $aParent;
+                                return false;  // exits out of a jQuery.each loop
                             }
-
-                            // strip newlines and tabs -- and then the doublespaces that result
-                            selection.blockParentTextClean = RDR.util.cleanPara ( selection.blockParent.text );
-                            selection.selectionTextClean = RDR.util.cleanPara ( selection.content );
-
-							// see if it contains the whole selection text
-                            if ( selection.blockParentTextClean.indexOf( selection.selectionTextClean ) != -1 ) {
-                                RDR.actionbar.draw({
-                                    coords:{
-                                        left:parseInt(e.pageX),
-                                        top:parseInt(e.pageY)+7
-                                    },
-									content_type:"text",
-									content:selection.content,
-									container:selection.container
-                                });
-                            }
-                            //if not text, just ignore it.
-                        }
-                    }
-                }
-            },
-            selectedText: function(win) {
-                /**
-			modified from Drew Dodson's code here:
-			http://perplexed.co.uk/1020_text_selector_jquery_plugin.htm
-			we can remove all of his comments at runtime.  this seems to run fine for me in Firefox.
-			TODO: test in IE!
-			*/
-
-                var win = win ? win : window;
-
-                var obj = null;
-                var text = null;
-
-                // Get parent element to determine the formatting applied to the selected text
-                if(win.getSelection){
-                    var obj = win.getSelection().anchorNode;
-
-                    var text = win.getSelection().toString();
-                    // Mozilla seems to be selecting the wrong Node, the one that comes before the selected node.
-                    // I'm not sure if there's a configuration to solve this,
-                    var sel = win.getSelection();
-
-                    if(!sel.isCollapsed && $.browser.mozilla){
-                    /*
-					TODO:  I don't think we need this, but we need to test more and see if we need it back.
-						   His code's a year old and I'm thinking Mozilla fixed the need for all this..?
-
-					// If we've selected an element, (note: only works on Anchors, only checked bold and spans)
-					// we can use the anchorOffset to find the childNode that has been selected
-					if(sel.focusNode.nodeName !== '#text'){
-						// Is selection spanning more than one node, then select the parent
-						if((sel.focusOffset - sel.anchorOffset)>1)
-							//Selected spanning more than one
-							obj = sel.anchorNode;
-						else if ( sel.anchorNode.childNodes[sel.anchorOffset].nodeName !== '#text' )
-							//Selected non-text
-							obj = sel.anchorNode.childNodes[sel.anchorOffset]
-						else
-							//Selected whole element
-							obj = sel.anchorNode;
-					}
-					// if we have selected text which does not touch the boundaries of an element
-					// the anchorNode and the anchorFocus will be identical
-					else if( sel.anchorNode.data === sel.focusNode.data ){
-						//Selected non bounding text
-						obj = sel.anchorNode.parentNode;
-					}
-					// This is the first element, the element defined by anchorNode is non-text.
-					// Therefore it is the anchorNode that we want
-					else if( sel.anchorOffset === 0 && !sel.anchorNode.data ){
-						//Selected whole element at start of paragraph (whereby selected element has not text e.g. &lt;script&gt;
-						obj = sel.anchorNode;
-					}
-					// If the element is the first child of another (no text appears before it)
-					else if( typeof sel.anchorNode.data !== 'undefined'
-								&& sel.anchorOffset === 0
-								&& sel.anchorOffset < sel.anchorNode.data.length ){
-						//Selected whole element at start of paragraph
-						obj = sel.anchorNode.parentNode
-					}
-					// If we select text preceeding an element. Then the focusNode becomes that element
-					// The difference between selecting the preceeding word is that the anchorOffset is less that the anchorNode.length
-					// Thus
-					else if( typeof sel.anchorNode.data !== 'undefined'
-								&& sel.anchorOffset < sel.anchorNode.data.length ){
-						//Selected preceeding element text
-						obj = sel.anchorNode.parentNode;
-					}
-					// Selected text which fills an element, i.e. ,.. <b>some text</b> ...
-					// The focusNode becomes the suceeding node
-					// The previous element length and the anchorOffset will be identical
-					// And the focus Offset is greater than zero
-					// So basically we are at the end of the preceeding element and have selected 0 of the current.
-					else if( typeof sel.anchorNode.data !== 'undefined'
-							&& sel.anchorOffset === sel.anchorNode.data.length
-							&& sel.focusOffset === 0 ){
-						//Selected whole element text
-						obj = (sel.anchorNode.nextSibling || sel.focusNode.previousSibling);
-					}
-					// if the suceeding text, i.e. it bounds an element on the left
-					// the anchorNode will be the preceeding element
-					// the focusNode will belong to the selected text
-					else if( sel.focusOffset > 0 ){
-						//Selected suceeding element text
-						obj = sel.focusNode.parentNode;
-					}
-					*/
-                    }
-                    else if(sel.isCollapsed) {
-                        obj = obj ? (obj.parentNode ? obj.parentNode:obj) : "";
+                        });
+                    } else {
+                        // the node initially clicked on is the first block level container
+                        $blockParent = $mouse_target;
                     }
 
+                    // now make sure that parent is hashed
+                    if ( !$blockParent.hasClass('rdr-hashed') ) {
+                        //hasn't been hashed yet.
+                        //try to submit node to server.
+                        if ( $blockParent.text().length <= 1800 ) RDR.actions.hashNodes($blockParent);
+                        //todo: consider errors that can happen if the server doesn't validate the hash,
+                        //..but we proceed with the UI anyway
+                    }
+
+                    var selected = $blockParent.selog('save');
+
+                    if ( selected.serialRange && selected.text && !(/^\s*$/g.test(selected.text)) ) {
+                        RDR.actionbar.draw({
+                            coords:{
+                                left:parseInt(e.pageX),
+                                top:parseInt(e.pageY)+7
+                            },
+                            content_type:"text",
+                            content:selected.textClean,
+                            container:$blockParent.data('hash')
+                        });
+                    }
                 }
-                else if(win.document.selection){
-                    var sel = win.document.selection.createRange();
-                    var obj = sel;
-
-                    if(sel.parentElement)
-                        obj = sel.parentElement();
-                    else
-                        obj = sel.item(0);
-
-                    text = sel.text || sel;
-
-                    if(text.toString)
-                        text = text.toString();
-                }
-                else
-                    throw 'Error';
-
-                // webkit
-                if(obj.nodeName==='#text')
-                    obj = obj.parentNode;
-
-                // if the selected object has no tagBody then return false.
-                if(typeof obj.tagName === 'undefined')
-                    return false;
-
-                return {
-                    'obj':$(obj),
-                    'text':text
-                };
             }
         }
     };
@@ -4754,11 +4597,19 @@ function $RFunctions($R){
                     //else
                     range = WSO.getRangeAt(0);
                     //serializing relative to the parent container. The false is omitChecksum=false.
-                    serialRange = rangy.serializeRange(range, true, selState.container ); //see rangy function serializeRange
+                    try{
+                        serialRange = rangy.serializeRange(range, true, selState.container ); //see rangy function serializeRange
+                    } catch(e) {
+                        serialRange = false;
+                    }
                 }
                 else if(selState.range){
                     range = selState.range;
-                    serialRange = rangy.serializeRange(range, true, selState.container ); //see rangy function serializeRange
+                    try{
+                        serialRange = rangy.serializeRange(range, true, selState.container ); //see rangy function serializeRange
+                    } catch(e) {
+                        serialRange = false;
+                    }
                 }
                 else if(selState.serialRange){
                     serialRange = selState.serialRange;
