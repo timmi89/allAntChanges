@@ -19,9 +19,6 @@
 }
 
 #rdr_sandbox div.rdr.rdr_window {
-    -moz-box-shadow:0 0 10px 1px #aaa;
-    -webkit-box-shadow:0 0 10px 1px #aaa;
-    box-shadow:0 0 10px 1px #aaa;
     padding:0px;
     position:absolute;
     z-index:12000;
@@ -37,13 +34,6 @@
 
 /* the action bar */
 #rdr_sandbox div.rdr.rdr_actionbar {
-    -moz-box-shadow:0 0 10px 1px #aaa;
-    -webkit-box-shadow:0 0 10px 1px #aaa;
-    box-shadow:0 0 10px 1px #aaa;
-    /*border:1px solid #AAAAAA;*/
-    -moz-border-radius:5px;
-    -webkit-border-radius:5px;
-    border-radius:5px;
     background:url("{{ STATIC_URL }}widget/images/actionbar_bg.png") no-repeat 0 0;
     padding:0;
     font:normal 12px Arial, sans-serif;
@@ -55,6 +45,7 @@
 
 #rdr_sandbox div.rdr.rdr_actionbar ul {
     margin:0;
+    float: left; /*do this for the rdr_indicator_for_image*/
 }
 #rdr_sandbox div.rdr.rdr_actionbar li {
     display:inline-block;
@@ -77,8 +68,21 @@
 #rdr_sandbox div.rdr.rdr_actionbar li.rdr_icon_reaction a        { background-position:-4px -5px; }
 #rdr_sandbox div.rdr.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-61px -4px; }
 
-#rdr_sandbox div.rdr.rdr_actionbar a:hover                       { background-color:#e4f0f7;}
-#rdr_sandbox div.rdr.rdr_actionbar li.rdr_icon_about a:hover     { background-color:transparent; }
+
+#rdr_sandbox div.rdr.rdr_actionbar li:hover                     { 
+    background: #CCE6FF !important;
+}
+#rdr_sandbox div.rdr.rdr_actionbar li.rdr_actionbar_leftEnd     { 
+    -moz-border-radius:5px 0 0 5px;
+    -webkit-border-radius:5px 0 0 5px;
+    border-radius:5px 0 0 5px;
+}
+#rdr_sandbox div.rdr.rdr_actionbar li.rdr_actionbar_rightEnd    { 
+    -moz-border-radius:0 5px 5px 0;
+    -webkit-border-radius:0 5px 5px 0;
+    border-radius:0 5px 5px 0;
+}
+
 #rdr_sandbox div.rdr.rdr_actionbar span.rdr_icon_divider         { width:1px; background:#BBB; height:70%; position:absolute; top:15%; right:0; display:none;/*show dynamically*/}
 
 /* the tooltip */
@@ -387,19 +391,38 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 .rdr_hilite_start{}
 .rdr_hilite_end{}
 
+/*style for our widget components like the actionbar, indicator details etc.  Does rounded cornders, shadow, etc.*/
+.rdr_widget{
+    -moz-box-shadow:0 0 10px 1px #aaa  !important;
+    -webkit-box-shadow:0 0 10px 1px #aaa  !important;
+    box-shadow:0 0 10px 1px #aaa  !important;
+    -moz-border-radius:8px  !important;
+    -webkit-border-radius:8px  !important;
+    border-radius:8px  !important;
+}
+/*rdr_widget_bar overrides rdr_widget*/
+.rdr_widget_bar{
+    -moz-border-radius:5px  !important;
+    -webkit-border-radius:5px  !important;
+    border-radius:5px  !important;
+}
+
 /* round those corners */
 .rdr.rdr_brtl,
-.rdr .rdr_brtl   { -moz-border-radius-topleft:8px; -webkit-border-top-left-radius:8px; border-top-left-radius:8px; }
+.rdr .rdr_brtl   { -moz-border-radius-topleft:8px !important; -webkit-border-top-left-radius:8px !important; border-top-left-radius:8px !important; }
+
 .rdr.rdr_brtr,
-.rdr .rdr_brtr   { -moz-border-radius-topright:8px; -webkit-border-top-right-radius:8px; border-top-right-radius:8px; }
+.rdr .rdr_brtr   { -moz-border-radius-topright:8px !important; -webkit-border-top-right-radius:8px !important; border-top-right-radius:8px !important; }
+
 .rdr.rdr_brbr,
-.rdr .rdr_brbr   { -moz-border-radius-bottomright:8px; -webkit-border-bottom-right-radius:8px; border-bottom-right-radius:8px; }
+.rdr .rdr_brbr   { -moz-border-radius-bottomright:8px !important; -webkit-border-bottom-right-radius:8px !important; border-bottom-right-radius:8px!important; }
+
 .rdr.rdr_brbl,
-.rdr .rdr_brbl   { -moz-border-radius-bottomleft:8px; -webkit-border-bottom-left-radius:8px; border-bottom-left-radius:8px; }
+.rdr .rdr_brbl   { -moz-border-radius-bottomleft:8px !important; -webkit-border-bottom-left-radius:8px !important; border-bottom-left-radius:8px !important; }
 
 
 /* user education bar */
-#rdr_sandbox #rdr_ed_user        { position:fixed; top:-40px; left:0; width:100%; background:#f0f0f0; height:35px; -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa; padding:0px; z-index:12000; overflow:hidden;}
+#rdr_sandbox #rdr_ed_user        { position:fixed; top:-40px; left:0; width:100%; background:#f0f0f0; height:35px; padding:0px; z-index:12000; overflow:hidden; -moz-box-shadow:0 0 10px 1px #aaa  !important; -webkit-box-shadow:0 0 10px 1px #aaa  !important; box-shadow:0 0 10px 1px #aaa !important; }
 #rdr_sandbox #rdr_ed_user a      { color:#008be4; }
 #rdr_sandbox #rdr_ed_user_1      { float:left; background: #fff; width:240px; height:35px;}
 #rdr_sandbox #rdr_ed_user_1 h1   { padding-top:6px;}
@@ -424,45 +447,52 @@ img.rdr_shared      { -moz-box-shadow:0 0 10px 1px #008be4; -webkit-box-shadow:0
 /* container indicator icons */
 
 #rdr_sandbox #rdr_indicator_details_wrapper{
-    z-index:11000;
+    z-index:11001; /*should be larger than the indicator z-index*/
     position:absolute;
     top:0;
     left:0;
     width:100%;
     background:transparent;
 }
-#rdr_sandbox #rdr_indicator_details_wrapper div.rdr_indicator_details { 
-    -moz-box-shadow:0 0 10px 1px #aaa; -webkit-box-shadow:0 0 10px 1px #aaa; box-shadow:0 0 10px 1px #aaa;
+#rdr_sandbox div.rdr_indicator_details { 
     background:#fff;
     color: #666666;
     font: 12px Arial,sans-serif;
-    -moz-border-radius:5px;
-    -webkit-border-radius:5px;
-    border-radius:5px;
     padding:3px !important;
     border:1px solid #ddd; max-width:300px;
     /*margin:-4px;*/
     /*offset with margin to line up with indicator: compensating for the padding and the border*/
-    /*add extra left offset - see todo id:12345 : ) */
-    margin:-4px 0 0 0; /* -4 left but then back to 0 because of todo above */
+    margin:-4px 0 0 -4px;
 }
 
-#rdr_sandbox #rdr_indicator_details_wrapper div.rdr_indicator_statsClone{ display:inline !important; }
-
-#rdr_sandbox #rdr_indicator_details_wrapper div.rdr_indicator_details, div.rdr_indicator {
+#rdr_sandbox div.rdr_indicator_details, div.rdr_indicator {
     /*keep the same for both indicator and details so that they overlap nicely*/
     color: #666666 !important;
     font: 12px Arial,sans-serif !important;
     position:absolute !important;
     cursor: pointer !important;
+    white-space: nowrap;
 }
+
+/*reset for indicator stuff*/
+div.rdr_indicator {
+    text-decoration:none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+}
+
 /* opacity for .rdr_indicator set in js instead of here. Fade it in on load so we can still use display:inline; */
 div.rdr_indicator {
     z-index:11000 !important;
     display:inline !important;
     text-decoration:none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
 }
-a div.rdr_indicator { text-decoration:none !important; }
 
 /*indicator pin both*/
 div.rdr_indicator img.rdr_pin, div.rdr_indicator_details img.rdr_pin{ 
@@ -481,18 +511,39 @@ div.rdr_indicator_details img.rdr_pin{
 div.rdr_indicator div.rdr_indicator_stats { 
     position:absolute !important;
     top:0 !important;
-    /*left:0 !important;*/
-    /*for now give an indicator offset so the details don't cover the end of content todo: id:12345*/
-    left:4px !important;
-
+    left:0;
 }
+
+/*for now give the text indicators a small offset so the details don't cover the end of content todo: id:12345*/
+div.rdr_indicator_for_text div.rdr_indicator_stats{
+    left:4px !important;
+}
+
+#rdr_sandbox div.rdr_indicator_statsClone{ float:left;}
+
+/*now override styles for the image containers*/
+div.rdr_indicator_for_image {
+    display:block !important;
+}
+
+#rdr_sandbox div.rdr_indicator_details_for_image {    
+    margin: 0 !important;
+    display: block;
+    float: left;
+    position: relative !important;
+    border:none;
+    top: 1px; /*compensate for the missing border*/
+}
+
+
+
 div.rdr_indicator span.rdr_count, div.rdr_indicator_details span.rdr_count{ 
     position:relative !important;
     margin-left:16px !important;
 }
-#rdr_sandbox #rdr_indicator_details_wrapper span.rdr_indicator_categoryTitle{ 
-    position:relative !important;
-    white-space:nowrap !important;
+#rdr_sandbox span.rdr_indicator_categoryTitle{ 
+    float: left;
+
 }
 
 /**for images?/
@@ -547,17 +598,6 @@ div.inlineReq {
     display:inline !important;
 }
 
-/*now override styles for the image containers*/
-div.rdr_indicator_for_image {
-    text-decoration:none !important;
-    display:block !important;
-    margin: 3px 0 !important;
-}
-div.rdr_indicator_for_image .rdr_stats {
-    display:inline !important;
-}
-
-div.rdr_indicator_for_image span.rdr_see_more { font-size:11px !important; font-weight:normal !important;}
 
 /*thinking about this one*/
 .rdr_inline_reset{
