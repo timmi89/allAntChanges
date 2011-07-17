@@ -112,7 +112,7 @@ function readrBoard($R){
                 var settings = $.extend({}, this.defaults, options);
 				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
 				if ( $new_rindow.length == 0 ) { // there's no rewritable window available, so make one
-					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_brtl rdr_brtr rdr_brbr rdr_brbl"></div>');
+					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget"></div>');
                     if ( settings.id ) {
                         $('#'+settings.id).remove(); // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
                                                      // reason I'm adding this: want a login panel with an ID and data attached to it, so after a user
@@ -278,29 +278,39 @@ function readrBoard($R){
 				if ( $('#'+actionbar_id).length > 0 ) return $('#'+actionbar_id);
 				// else 
 
-                var top_modifier = (content_type == "image") ? -43:-35;  // todo: if IE, position higher so we're not behind IE's "Accelerator" arrow
-                coords.top = (coords.top) ? (content_type == "image") ? (coords.top + top_modifier):(coords.top + top_modifier) : 100;
-                coords.left = (coords.left) ? (content_type == "image") ? coords.left-34 : coords.left+2 : 100;
+                // todo: if IE, position higher so we're not behind IE's "Accelerator" arrow
+                var actionbarOffsets = {
+                    IE: {
+                        top: 'add this here',
+                        left: 'add this here'
+                    },
+                    image:  {
+                        top: 4,
+                        left: -30
+                    },
+                    text:  {
+                        top: -35,
+                        left: 2
+                    }
+                }
+                log('content_type')
+                log(content_type)
+                var offsets = actionbarOffsets[content_type];
+
+                coords.top += offsets.top;
+                coords.left += offsets.left;
                 
 
                 //rewrite coords if needed
 				// TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
 				coords = RDR.util.stayInWindow({coords:coords, width:200, height:30, ignoreWindowEdges:settings.ignoreWindowEdges});
 
-
-                //todo: quick offset:
-                //todo: porter, do we want this offset from the edge just a bit like this?
-                if(content_type == "image"){
-                    coords.top -= 2;
-                    coords.left +=3;
-                }
-
-
                 // TODO use settings check for certain features and content types to determine which of these to disable
-                var $new_actionbar = $('<div class="rdr rdr_actionbar" id="' + actionbar_id + '" />').css({
+                var $new_actionbar = $('<div class="rdr rdr_actionbar rdr_widget rdr_widget_bar" id="' + actionbar_id + '" />').css({
                    'left':coords.left,
                    'top':coords.top
-                }).append('<ul/>');
+                }).data('hash',containerHash)//chain
+                .append('<ul/>');
 
 				// store the content selected that spawned this actionbar
 				// used for determining later on if an actionbar is being called by the same interaction as a
@@ -379,6 +389,22 @@ function readrBoard($R){
                     }
                 );
 
+                //stick the indicator_details on the end of the actionbar
+                if(content_type == "image"){
+                    var $indicator_details = $('#rdr_indicator_details_'+containerHash).removeClass('rdr_widget rdr_widget_bar');
+                    var indicatorDetailsOffset = {
+                        'top': $new_actionbar.offset().top,
+                        'left': $new_actionbar.offset().left + $new_actionbar.width()
+                    }
+                    log('$new_actionbar.width')
+                    log($new_actionbar.width())
+                    $indicator_details.appendTo($new_actionbar)//chain
+                    .css({
+                        'display':'block',
+                        'position':'relative'
+                    });
+                }
+
 				return $new_actionbar;
 			},
 			close: function($actionbars, effect){
@@ -389,9 +415,16 @@ function readrBoard($R){
                         var timeoutCollapseEvt = $actionbar.data('timeoutCollapseEvt');
                         clearTimeout(timeoutCloseEvt);
                         clearTimeout(timeoutCollapseEvt);
+
+                        //make sure the indicator_details bail out before going down with the actionbar.
+                        //note: this is only relevant for the image, but has no effect for text.
+                        //todo: no need to re-create the actionbar every time - just hide it.
+                        var $indicator_details = $('#rdr_indicator_details_'+ $actionbar.data('hash') );
+                        $indicator_details.appendTo('#rdr_indicator_details_wrapper');
                         $actionbar.remove();
                         RDR.util.removeImageShadow();
                     }
+                    log($actionbar.data())
                     if(typeof effect !== "undefined"){
                         //make more robust if we want more animations
                         $actionbar.fadeOut(200, cleanup);
@@ -1066,7 +1099,7 @@ function readrBoard($R){
 
                     //coords clones the offset, so this ofcourse isn't moving the $this_img.
                     coords.left += 34;
-                    coords.top += ( $this_img.height() + 20 );
+                    coords.top += 0;
 
                     
                     var container = ( $this_img.data('hash') ) ? $this_img.data('hash'):"";
@@ -1981,7 +2014,35 @@ function readrBoard($R){
                         
                     }else{
                         //else assume text
-                        $indicator.addClass('rdr_indicator_for_text').appendTo($container);
+                        $indicator.addClass('rdr_indicator_for_text')//chain
+                        .hover( 
+                            function() {
+                                                        
+                                //this                                                     
+                                RDR.actions.summaries.populate( hash )
+
+                                //use $stats for offset instead of $indicator, because the image indicator offsets it's stats
+                                $indicator_details.find('.rdr_indicator_statsClone').html( $stats.html() );
+                                $indicator_details.css({
+                                    'display':'block',
+                                    'top': $stats.offset().top,
+                                    'left': $stats.offset().left
+                                });
+                            },
+                            function() {
+                                //dont hide it again here, because we need to do that on the hoveroff event of the rdr_indicator_details
+                                
+                                //ensure smooth hover behavior
+                                /*
+                                setTimeout(function(){
+                                    if( $(this).data('hoverLock') ){
+                                        $indicator_details.hide();
+                                    }
+                                },500)
+                                */
+                            }
+                        )//chain
+                        .appendTo($container);         
                     }
 
                     var $stats = $('<div class="rdr_indicator_stats" />')//chain
@@ -1990,38 +2051,12 @@ function readrBoard($R){
                         '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
                         '<span class="rdr_count">'+ total +'</span>'
                     )//chain
-                    .data( {'which':hash} )//chain
-                    .hover( 
-                        function() {
-                                                    
-                            //this                                                     
-                            RDR.actions.summaries.populate( hash )
-
-                            //use $stats for offset instead of $indicator, because the image indicator offsets it's stats
-                            $indicator_details.find('.rdr_indicator_statsClone').html( $stats.html() );
-                            $indicator_details.css({
-                                'display':'block',
-                                'top': $stats.offset().top,
-                                'left': $stats.offset().left
-                            });
-                        },
-                        function() {
-                            //dont hide it again here, because we need to do that on the hoveroff event of the rdr_indicator_details
-                            
-                            //ensure smooth hover behavior
-                            /*
-                            setTimeout(function(){
-                                if( $(this).data('hoverLock') ){
-                                    $indicator_details.hide();
-                                }
-                            },500)
-                            */
-                        }
-                    );                   
+                    .data( {'which':hash} );
+          
                                         
                     //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the body.
                     //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
-                    var $indicator_details = $('<div id="rdr_indicator_details_' +hash+ '" class="rdr rdr_indicator_details rdr_text" />');
+                    var $indicator_details = $('<div id="rdr_indicator_details_' +hash+ '" class="rdr rdr_indicator_details rdr_widget rdr_widget_bar" />');
 
                     //build tags in $tagList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
                     $indicator_details.css({ 'visiblity':'hidden' }).show();
@@ -2056,7 +2091,7 @@ function readrBoard($R){
 
                         var cornerPadding = {
                             top: 7,
-                            left: 7
+                            left: 5
                         }
                         
                         //offset using margin to let 'top' and'left' be used for initial position
@@ -2064,6 +2099,8 @@ function readrBoard($R){
                             'margin-top': relOffset.top + cornerPadding.top,
                             'margin-left': relOffset.left + cornerPadding.left
                         });
+
+                        $indicator_details.addClass('rdr_indicator_details_for_image')
                     }
                 },
                 details: {
@@ -2072,7 +2109,7 @@ function readrBoard($R){
 
                         var scope = this,
                             stats = '<div class="rdr_indicator_statsClone" />',
-                            categoryTitle = '<span class="rdr_indicator_categoryTitle"> reactions: </span>',
+                            categoryTitle = '<span class="rdr_indicator_categoryTitle">&nbsp; reactions: &nbsp;</span>',
                             $tagList = scope._tagList( summary );
 
                         //show newly minted pins
