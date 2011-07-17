@@ -1789,7 +1789,7 @@ function readrBoard($R){
                             });
 
                             // TODO make this link to the user profile work
-                            var $seeTags = $('<div class="rdr_sntPnl_padder"><div>Your bookmarks are private - only you can see them.</div><strong>To view your tags, visit your <a href="#" target="_blank">ReadrBoard profile</a>.</strong></div>');
+                            var $seeTags = $('<div class="rdr_sntPnl_padder"><div>Your bookmarks are private - only you can see them.</div><strong>To view your tags, visit your <a href="javascript:void(0);" target="_blank">ReadrBoard profile</a>.</strong></div>');
                             
                             $whyPanel_tagCard.append(
                                 $tagFeedback.append($undoLink),
@@ -2768,12 +2768,16 @@ function readrBoard($R){
                                 $commentBy = $('<div class="rdr_commentBy" />'),
                                 $comment = $('<div class="rdr_comment" />'),
                                 $commentReplies = $('<div class="rdr_commentReplies" />'),
-                                $commentReply = $('<div class="rdr_commentReply" />');
+                                $commentReply = $('<div class="rdr_commentReply" />'),
+                                $commentReply_link = $('<a href="javascript:void(0);">Reply</a>');
                             var user_image_url = ( this_comment.social_user.img_url ) ? this_comment.social_user.img_url: '{{ STATIC_URL }}widget/images/anonymousplode.png';
                             var user_name = ( this_comment.user.first_name == "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
                             $commentBy.html( '<img src="'+user_image_url+'" class="no-rdr" /> ' + user_name );
                             $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
-                            $commentReply.html('<a href="#">Reply</a>');
+                            $commentReply_link.bind( 'click.rdr', function() {
+                                
+                            });
+                            $commentReply.append( $commentReply_link );
 
 
                             // var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);">'+thisTag.body+'</a>');
@@ -3559,7 +3563,7 @@ function readrBoard($R){
                     }
                 }).keyup(function(event) {
                     $textarea = $(this);
-                    
+
                     if (event.keyCode == '13') { //enter or comma
                         //RDR.actions.panel.expand(rindow);
                     }
