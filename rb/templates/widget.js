@@ -3896,9 +3896,9 @@ function $RFunctions($R){
              *      $('div.someClass').log().hide();
              */
             $.log = function () {
-                if (window.console && window.console.log) {
-                    console.log.apply(window.console, arguments);
-                } else return;
+                if ( window.console && window.console.log && window.console.log.apply ) {
+                    window.console.log.apply(window.console, arguments);
+                }
             };
             $.fn.log = function () {
                 var logArgs = arguments || this;
