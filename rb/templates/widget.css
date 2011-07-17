@@ -77,8 +77,21 @@
 #rdr_sandbox div.rdr.rdr_actionbar li.rdr_icon_reaction a        { background-position:-4px -5px; }
 #rdr_sandbox div.rdr.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-61px -4px; }
 
-#rdr_sandbox div.rdr.rdr_actionbar a:hover                       { background-color:#e4f0f7;}
-#rdr_sandbox div.rdr.rdr_actionbar li.rdr_icon_about a:hover     { background-color:transparent; }
+
+#rdr_sandbox div.rdr.rdr_actionbar li:hover                     { 
+    background: #CCE6FF !important;
+}
+#rdr_sandbox div.rdr.rdr_actionbar li.rdr_actionbar_leftEnd     { 
+    -moz-border-radius:5px 0 0 5px;
+    -webkit-border-radius:5px 0 0 5px;
+    border-radius:5px 0 0 5px;
+}
+#rdr_sandbox div.rdr.rdr_actionbar li.rdr_actionbar_rightEnd    { 
+    -moz-border-radius:0 5px 5px 0;
+    -webkit-border-radius:0 5px 5px 0;
+    border-radius:0 5px 5px 0;
+}
+
 #rdr_sandbox div.rdr.rdr_actionbar span.rdr_icon_divider         { width:1px; background:#BBB; height:70%; position:absolute; top:15%; right:0; display:none;/*show dynamically*/}
 
 /* the tooltip */
@@ -440,8 +453,7 @@ img.rdr_shared      { -moz-box-shadow:0 0 10px 1px #008be4; -webkit-box-shadow:0
     border:1px solid #ddd; max-width:300px;
     /*margin:-4px;*/
     /*offset with margin to line up with indicator: compensating for the padding and the border*/
-    /*add extra left offset - see todo id:12345 : ) */
-    margin:-4px 0 0 0; /* -4 left but then back to 0 because of todo above */
+    margin:-4px 0 0 -4px;
 }
 
 #rdr_sandbox #rdr_indicator_details_wrapper div.rdr_indicator_statsClone{ display:inline !important; }
@@ -491,11 +503,41 @@ div.rdr_indicator_details img.rdr_pin{
 div.rdr_indicator div.rdr_indicator_stats { 
     position:absolute !important;
     top:0 !important;
-    /*left:0 !important;*/
-    /*for now give an indicator offset so the details don't cover the end of content todo: id:12345*/
-    left:4px !important;
-
+    left:0;
+    color:green;
 }
+
+/*for now give the text indicators a small offset so the details don't cover the end of content todo: id:12345*/
+div.rdr_indicator_for_text div.rdr_indicator_stats{
+    left:4px !important;
+}
+
+/*now override styles for the image containers*/
+div.rdr_indicator_for_image {
+    display:block !important;
+}
+
+/*now override styles for the image containers*/
+div.rdr_indicator_for_image {
+    /*copy actionbar styles.  todo: make this a class instead of copy/pasting?*/
+    -moz-box-shadow:0 0 10px 1px #aaa;
+    -webkit-box-shadow:0 0 10px 1px #aaa;
+    box-shadow:0 0 10px 1px #aaa;
+    /*border:1px solid #AAAAAA;*/
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+    background:url("{{ STATIC_URL }}widget/images/actionbar_bg.png") no-repeat 0 0;
+    padding:0;
+    font:normal 12px Arial, sans-serif;
+    position:relative;
+    z-index:11000;
+    background:#fff;
+    height:22px;
+}
+
+
+
 div.rdr_indicator span.rdr_count, div.rdr_indicator_details span.rdr_count{ 
     position:relative !important;
     margin-left:16px !important;
@@ -555,11 +597,6 @@ div.rdr_tags_list {
 /*inline class*/
 div.inlineReq {
     display:inline !important;
-}
-
-/*now override styles for the image containers*/
-div.rdr_indicator_for_image {
-    display:block !important; 
 }
 
 /*thinking about this one*/

@@ -282,9 +282,18 @@ function readrBoard($R){
                 coords.top = (coords.top) ? (content_type == "image") ? (coords.top + top_modifier):(coords.top + top_modifier) : 100;
                 coords.left = (coords.left) ? (content_type == "image") ? coords.left-34 : coords.left+2 : 100;
                 
+
                 //rewrite coords if needed
 				// TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
 				coords = RDR.util.stayInWindow({coords:coords, width:200, height:30, ignoreWindowEdges:settings.ignoreWindowEdges});
+
+
+                //todo: quick offset:
+                //todo: porter, do we want this offset from the edge just a bit like this?
+                if(content_type == "image"){
+                    coords.top -= 2;
+                    coords.left +=3;
+                }
 
 
                 // TODO use settings check for certain features and content types to determine which of these to disable
@@ -350,7 +359,11 @@ function readrBoard($R){
                         return false;
                     });
                     $item.append($indicatorAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
-                    if(idx===0){$item.prepend($('<span class="rdr_icon_divider" />'))}
+                    if(idx===0){
+                        $item.addClass('rdr_actionbar_leftEnd')
+                    }else if(idx === items.length - 1){
+                        $item.addClass('rdr_actionbar_rightEnd')
+                    }
                 });
 
                 //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
@@ -1968,7 +1981,7 @@ function readrBoard($R){
                         
                     }else{
                         //else assume text
-                        $indicator.appendTo($container);
+                        $indicator.addClass('rdr_indicator_for_text').appendTo($container);
                     }
 
                     var $stats = $('<div class="rdr_indicator_stats" />')//chain
@@ -1984,12 +1997,12 @@ function readrBoard($R){
                             //this                                                     
                             RDR.actions.summaries.populate( hash )
 
-                            //todo: maybe make more efficient
+                            //use $stats for offset instead of $indicator, because the image indicator offsets it's stats
                             $indicator_details.find('.rdr_indicator_statsClone').html( $stats.html() );
                             $indicator_details.css({
                                 'display':'block',
-                                'top': $indicator.offset().top,
-                                'left':$indicator.offset().left
+                                'top': $stats.offset().top,
+                                'left': $stats.offset().left
                             });
                         },
                         function() {
@@ -2015,10 +2028,6 @@ function readrBoard($R){
 
                     var $detailContents = RDR.actions.indicators.details.make($indicator, hash, summary);
 
-                    log('text indicator')
-                    log($indicator)
-                    log(summary)
-
                     $indicator_details//chain
                     .append( $detailContents.contents() )//chain
                     .appendTo('#rdr_indicator_details_wrapper')//chain
@@ -2039,19 +2048,21 @@ function readrBoard($R){
 
                     //temp todo:
                     if( kind == 'img' ){
-                        log('img $container')
-                        log($container)
-                        log($container.offset().top)
-                        log($container.offset('top'))
 
                         var relOffset = {
                           top: $container.offset().top - $indicator.offset().top,
                           left: $container.offset().left - $indicator.offset().left
                         };
 
+                        var cornerPadding = {
+                            top: 7,
+                            left: 7
+                        }
+                        
+                        //offset using margin to let 'top' and'left' be used for initial position
                         $indicator.find('.rdr_indicator_stats').css({
-                            'margin-top': relOffset.top,
-                            'margin-left': relOffset.left
+                            'margin-top': relOffset.top + cornerPadding.top,
+                            'margin-left': relOffset.left + cornerPadding.left
                         });
                     }
                 },
