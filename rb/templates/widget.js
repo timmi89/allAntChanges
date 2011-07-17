@@ -620,7 +620,7 @@ function readrBoard($R){
                 $('html,body').animate({scrollTop: scrollTarget}, 1000);
             },
             getSharedLinkInfo: function( data ){
-                log('--------data-------------');
+                //[cleanlogz]log('--------data-------------');
                 //[cleanlogz]console.dir(data);
                 //some condition
                     
@@ -4902,7 +4902,9 @@ function $RFunctions($R){
                 }
                 else{
                     $.each(filterList, function(idx, val){
-                        filters[val] = defaultFilters[val] || function(){console.error('bad filter name passed in param');return false};
+                        filters[val] = defaultFilters[val] || function(){
+                            //console.error('bad filter name passed in param');return false
+                        };
                     });
                 }                    
                 $.each(filters, function(){
