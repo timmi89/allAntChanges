@@ -113,7 +113,7 @@ RDRAuth = {
 		var sendData = {
 			group_id : qs_args.group_id
 		};
-		console.dir(sendData);
+		// console.dir(sendData);
 		$.ajax({
 			url: "/api/tempuser/",
 			type: "get",

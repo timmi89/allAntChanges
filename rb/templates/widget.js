@@ -5,6 +5,11 @@ $R = {}, //init var: our clone of jQuery
 client$ = {}, //init var: clients copy of jQuery
 RDR_rootPath = "{{ BASE_URL }}"; //todo: when we get our hosting up change to readrboard.com or our CDN.
 
+function handleError() {
+    return true;
+}
+// window.onerror = handleError;
+
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
 //This function gets called by the function $RFunctions() via the function loadScript().
 function readrBoard($R){
@@ -485,6 +490,7 @@ function readrBoard($R){
             cleanPara: function(para) {
                 // common function for cleaning the paragraph.  right now, it's removing spaces, tabs, newlines, and then double spaces
                 if(para != "") {
+                    // alert(para);
                     return para.replace(/[\n\r\t]+/gi,' ').replace().replace(/\s{2,}/g,' ');
                 }
             },
@@ -3592,7 +3598,7 @@ function readrBoard($R){
 
                 //quick mockup version of this code
                 $.each(socialNetworks, function(idx, val){
-                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
+                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>')
                     $shareLinks.find('li:last').click( function() {
                         RDR.actions.share_getLink({ sns:val, rindow:rindow, tag:tag, content_node:content_node });
                         return false;
@@ -4049,7 +4055,7 @@ function $RFunctions($R){
             $.log = function () {
                 if (window.console && window.console.log) {
                     console.log.apply(window.console, arguments);
-                }
+                } else return;
             };
             $.fn.log = function () {
                 var logArgs = arguments || this;
@@ -4068,9 +4074,9 @@ function $RFunctions($R){
                 }   
             }
 
-            if (typeof dir === "undefined" && typeof console.dir != "undefined"){
-                dir = console.dir;  
-            }
+            // if (typeof dir === "undefined" && typeof console.dir != "undefined"){
+            //     dir = console.dir;  
+            // }
 
             //add in alias temporaily to client $ so we can use regular $ instead of $R if we want
             if(typeof jQuery != 'undefined'){
