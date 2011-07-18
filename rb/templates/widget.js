@@ -279,7 +279,7 @@ function readrBoard($R){
                 var container = (RDR.containers.hasOwnProperty(containerHash)) ? RDR.containers[containerHash] : undefined ;
 
                 var actionbar_id = "rdr_actionbar_"+containerHash;
-    			var $actionbars = $('div.rdr.rdr_actionbar');
+    			var $actionbars = $('div.rdr_actionbar');
                 
 				if ( $('#'+actionbar_id).length > 0 ) return $('#'+actionbar_id);
 				// else 
@@ -291,8 +291,8 @@ function readrBoard($R){
                         left: 'add this here'
                     },
                     image:  {
-                        top: 4,
-                        left: -30
+                        top: 0,
+                        left: -33
                     },
                     text:  {
                         top: -35,
@@ -324,15 +324,7 @@ function readrBoard($R){
 
                 // if this is an image, make sure we have the image hashed, tagged, and have its hash as a container:
                 if (content_type == "image" && !container ) {
-                    //changing this to warn, because image should always be hashed already.
-                    //if it isn't, we shoulc do this through the hashNodes function.
-                    //todo: put in call to hashNodes function here later, if this ever happens, though it shouldn't
-                    //[cleanlogz]console.warn('image but no container'); 
-                    /*
-                    var hashText = "rdr-img-"+settings.content,
-                    hash = RDR.util.md5.hex_md5( hashText );
-                    settings.container = hash;
-                    */
+                    //todo
                 }
 
                 // ec: I'm removing this - I think it's old and RDR.page.hash doens't exist
@@ -376,9 +368,9 @@ function readrBoard($R){
                     });
                     $item.append($indicatorAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
                     if(idx===0){
-                        $item.addClass('rdr_actionbar_leftEnd')
+                        $item.addClass('rdr_actionbar_first')
                     }else if(idx === items.length - 1){
-                        $item.addClass('rdr_actionbar_rightEnd')
+                        $item.addClass('rdr_actionbar_last')
                     }
                 });
 
@@ -395,9 +387,12 @@ function readrBoard($R){
                     }
                 );
 
-                //stick the indicator_details on the end of the actionbar
                 if(content_type == "image"){
-                    var $indicator_details = $('#rdr_indicator_details_'+containerHash).removeClass('rdr_widget rdr_widget_bar');
+                    $new_actionbar.addClass('rdr_actionbar_for_image');
+                    $new_actionbar.append('<div style="clear:both;" />').removeClass('rdr_widget rdr_widget_bar');
+
+/*                    
+                    $indicator_details = $('#rdr_indicator_details_'+containerHash).removeClass('rdr_widget rdr_widget_bar');
                     var indicatorDetailsOffset = {
                         'top': $new_actionbar.offset().top,
                         'left': $new_actionbar.offset().left + $new_actionbar.width()
@@ -409,11 +404,13 @@ function readrBoard($R){
                         'display':'block',
                         'position':'relative'
                     });
+*/
                 }
 
 				return $new_actionbar;
 			},
 			close: function($actionbars, effect){
+                //RDR.actionbar.close:
                 $actionbars.each(function(){
                     var $actionbar = $(this),
                     cleanup = function(){
@@ -425,8 +422,11 @@ function readrBoard($R){
                         //make sure the indicator_details bail out before going down with the actionbar.
                         //note: this is only relevant for the image, but has no effect for text.
                         //todo: no need to re-create the actionbar every time - just hide it.
+/* 
                         var $indicator_details = $('#rdr_indicator_details_'+ $actionbar.data('hash') );
                         $indicator_details.appendTo('#rdr_indicator_details_wrapper');
+
+*/                        
                         $actionbar.remove();
                         RDR.util.removeImageShadow();
                     }
@@ -1278,12 +1278,13 @@ function readrBoard($R){
                     return container;
                 },
                 setup: function(summaries){
+                    //RDR.actions.containers.setup:
 
                     var _setupFuncs = {
                         img: function(hash, summary){
                             var $container = RDR.containers[hash].$this;
                             log($container);
-                            
+
                             $container.hover(
                                 function(){
                                 
@@ -1292,7 +1293,7 @@ function readrBoard($R){
                                     src_with_path = this.src;
 
                                     //coords clones the offset, so this ofcourse isn't moving the $container.
-                                    coords.left += 34;
+                                    coords.left += (34 + $container.width() );
                                     coords.top += 0;
 
                                     $container.addClass('rdr_engage_img');
@@ -2036,8 +2037,9 @@ function readrBoard($R){
                                                    
                     if( kind !== 'img' ){
                         //else assume text
-                        $indicator.addClass('rdr_indicator_for_text')//chain
-                        .hover( 
+                        $indicator.addClass('rdr_indicator_for_text');
+                        var $actionbar = $('rdr_actionbar_'+hash);
+                        $actionbar.hover( 
                             function() {
                                 RDR.actions.summaries.populate( hash )
                                 //use $stats for offset instead of $indicator, because the image indicator offsets it's stats
