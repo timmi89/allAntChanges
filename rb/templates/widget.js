@@ -369,13 +369,6 @@ function readrBoard($R){
                             $item.addClass('rdr_actionbar_rightEnd')
                         }
                     });
-                    $item.append($indicatorAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
-                    if(idx===0){
-                        $item.addClass('rdr_actionbar_first')
-                    }else if(idx === items.length - 1){
-                        $item.addClass('rdr_actionbar_last')
-                    }
-                
 
                     //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
                     //but we're not sure yet if it's going to be the same function as this shareStart () above..
