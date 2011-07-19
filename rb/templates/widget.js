@@ -2136,7 +2136,9 @@ function readrBoard($R){
                     
                     $indicator_details.css({ 'visiblity':'visible' }).hide();
 
+                    
                     //helper function
+                    //todo: I'm not using this yet
                     function _updateStats(){
                         RDR.actions.summaries.populate( hash )
 
