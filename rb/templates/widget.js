@@ -74,15 +74,15 @@ function readrBoard($R){
                 columns: false
             },
 			// content comes later.  this is just to identify or draw the container.
-            checkHeight: function( rindow, percentScroll, which ) {
+            checkHeight: function( rindow, percentScroll, panel ) {
 
                 var tallest_column_height = 0;
                 rindow.find('div.rdr_body').each( function() {
                     var $column = $(this);
                         
-                    if ( $column.parents().hasClass('rdr_whyPanel') ) { var this_column_name="whyPanel"; }
-                    if ( $column.parents().hasClass('rdr_contentPanel') ) { var this_column_name="contentPanel"; }
-                    if ( $column.parents().hasClass('rdr_reactionPanel') ) { var this_column_name="reactionPanel"; }
+                    if ( $column.parents().hasClass('rdr_whyPanel') ) { var this_panel_name="whyPanel"; }
+                    if ( $column.parents().hasClass('rdr_contentPanel') ) { var this_panel_name="contentPanel"; }
+                    if ( $column.parents().hasClass('rdr_reactionPanel') ) { var this_panel_name="reactionPanel"; }
 
                     var paneHeight = (rindow.height()-35);
 
@@ -101,7 +101,7 @@ function readrBoard($R){
                         } else {
                             $column.jScrollPane({ contentWidth:200, showArrows:true });
                         }
-                    } else if (which && which == this_column_name) {
+                    } else if (panel && panel == this_panel_name) {
                         rindow.find('div.rdr_reactionPanel div.rdr_body').animate({
                             minHeight:tallest_column_height+"px"
                         }, rindow.settings.animTime );
@@ -2058,7 +2058,7 @@ function readrBoard($R){
                         '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
                         '<span class="rdr_count">'+ total +'</span>'
                     )//chain
-                    .data( {'which':hash} );
+                    .data( {'hash':hash} );
           
                                         
                     //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the body.
@@ -2432,7 +2432,7 @@ function readrBoard($R){
                             body:tag.body,
                             count:tag.count
                         },
-                        'which':hash
+                        'hash':hash
                     }),
                     $leftBox = '<div class="rdr_leftBox">'+percentage+'%</div>',
                     $tagText = '<div class="rdr_tagText">'+tag.body+'</div>',
@@ -2473,7 +2473,7 @@ function readrBoard($R){
                             $this.addClass('rdr_selected');
                             $this.siblings().removeClass('rdr_selected');
                             $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-                            RDR.actions.viewReactionContent( $this.data('tag'), $this.data('which'), rindow );
+                            RDR.actions.viewReactionContent( $this.data('tag'), $this.data('hash'), rindow );
                         }
                         
                         //todo: branch text and img
@@ -2529,10 +2529,10 @@ function readrBoard($R){
                 });
 
             },
-            viewReactionContent: function(tag, which, rindow){
+            viewReactionContent: function(tag, hash, rindow){
                 //temp reconnecting:
-                var container = RDR.containers[which];
-                var summary = RDR.summaries[which];
+                var container = RDR.containers[hash];
+                var summary = RDR.summaries[hash];
                 
                 // zero out the content in the whyPanel, since they just selected a new tag and the comments would not reflect the now-selected tag.
                 rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
@@ -2559,7 +2559,8 @@ function readrBoard($R){
                 rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tagBody+' <span> ('+tag.count+')</span>');
                 if ( rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp').destroy();
                 rindow.find('div.rdr_contentPanel div.rdr_body').empty();
-
+log('------ hash check ----');
+                        log(hash);
                 // tag.id = tag.id; // kludge
                 var tagClone = $.extend({}, tag);
 
@@ -2574,11 +2575,11 @@ function readrBoard($R){
 
                     if ( node.top_interactions.tags[ tag.id ] ) {
 
-                        var content_node_key = which+"-"+node.location;
+                        var content_node_key = hash+"-"+node.location;
                         // log('content_node_key')
 
                         //todo: pass everything through the node object- no need to expand all the attrs here in the params.
-                        var $contentSet = $('<div />').addClass('rdr_contentSet').data({node:node, content_node_key:content_node_key, hash:which, location:node.location, tag:tag, content:node.body, content_type:"text"}),
+                        var $contentSet = $('<div />').addClass('rdr_contentSet').data({node:node, content_node_key:content_node_key, hash:hash, location:node.location, tag:tag, content:node.body, content_type:"text"}),
                             $header = $('<div class="rdr_contentHeader rdr_leftShadow" />'),
                             $content = $('<div class="rdr_content rdr_leftShadow"><div class="rdr_otherTags"></div></div>');
                         $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+node.counts.tags+')</span> '+tag.body+'</a>' );
@@ -2588,11 +2589,10 @@ function readrBoard($R){
 
                         $header.find('span.rdr_tag_count').click( function() {
                             var $interactionButton = $(this).closest('.rdr_tag');
-                            var args = { tag:$interactionButton, rindow:rindow, content:node.body, which:which, uiMode:'read', content_node:node};
+                            var args = { tag:$interactionButton, rindow:rindow, content:node.body, hash:hash, uiMode:'read', content_node:node};
                             RDR.actions.interactions.create( args, 'tag' );
                         });
 
-                        
                         var hash = $contentSet.data('hash');
                         var container = $('.rdr-'+hash);
                         var location = $contentSet.data('location');
@@ -2626,7 +2626,7 @@ function readrBoard($R){
                             $this.closest('.rdr_contentSet').addClass('rdr_selected').siblings().removeClass('rdr_selected');
                             //[cleanlogz]log('---- rindow.data --------');
                             //[cleanlogz]console.dir( rindow.data() );
-                            RDR.actions.viewCommentContent( {tag:tag, which:which, rindow:rindow, node:node, selState:node.selState, content_type:"text" });
+                            RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:rindow, node:node, selState:node.selState, content_type:"text" });
                         });
 
                         $header.append( $comment );
@@ -2655,7 +2655,7 @@ function readrBoard($R){
                                     });
                                     var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
                                         var $interactionButton = $(this).closest('.rdr_tag');
-                                        var args = { tag:$interactionButton, rindow:rindow, content:node.body, which:which, uiMode:'read', content_node:node};
+                                        var args = { tag:$interactionButton, rindow:rindow, content:node.body, hash:hash, uiMode:'read', content_node:node};
                                         RDR.actions.interactions.create( args, 'tag' );
                                     });
 
@@ -2716,7 +2716,7 @@ function readrBoard($R){
             },
             viewCommentContent: function(args){
                 var tag = args.tag, 
-                    which = args.which, 
+                    hash = args.hash, 
                     rindow = args.rindow,
                     node = args.node,
                     content_type = args.content_type || args.kind;
@@ -2842,7 +2842,7 @@ function readrBoard($R){
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
                     log('--------- selState 1: '+selState);
-                    RDR.actions.comment({ content_node:node, comment:comment, which:which, content:node.body, tag:tag, rindow:rindow, selState:selState});
+                    RDR.actions.comment({ content_node:node, comment:comment, hash:hash, content:node.body, tag:tag, rindow:rindow, selState:selState});
                 });
 
                 $whyBody.append( $commentBox.append( $leaveComment ) );
@@ -3072,28 +3072,28 @@ function readrBoard($R){
                 });
             },
 			panel: {
-                draw: function(which, rindow, interaction_id) {
-                    var which = (which) ? which:"whyPanel";
-                    var $thisPanel = $('<div class="rdr_'+which+' rdr_sntPnl rdr_leftShadow rdr_brtl rdr_brtr rdr_brbr rdr_brbl" id="rdr_'+which+'" />');  // don't seem to need this anymore:  .prepend($('<div class="rdr_pnlShadow"/>'));
+                draw: function(panel, rindow, interaction_id) {
+                    var panel = (panel) ? panel:"whyPanel";
+                    var $thisPanel = $('<div class="rdr_'+panel+' rdr_sntPnl rdr_leftShadow rdr_brtl rdr_brtr rdr_brbr rdr_brbl" id="rdr_'+panel+'" />');  // don't seem to need this anymore:  .prepend($('<div class="rdr_pnlShadow"/>'));
                     return $thisPanel;
                 },
-                setup: function(which, rindow){
-                    var which = (which) ? which:"whyPanel";
-                    $(rindow).find('.rdr_'+which).children('.rdr_header, .rdr_body').css({
+                setup: function(panel, rindow){
+                    var panel = (panel) ? panel:"whyPanel";
+                    $(rindow).find('.rdr_'+panel).children('.rdr_header, .rdr_body').css({
                         'width': rindow.settings.pnlWidth +'px',
                         'right':'0',
                         'position':'absolute'
                     });
                 },
-                expand: function(which, rindow, interaction_id){
-                    // hack.  chrome and safari don't like rounded corners if the whyPanel is showing since it is wider than column1
+                expand: function(panel, rindow, interaction_id){
+                    // hack.  chrome and safari don't like rounded corners if the whyPanel is showing since it is wider than panel1
                     rindow.find('div.rdr_whyPanel').css('visibility','visible');
 
-                    var which = (which) ? which:"whyPanel";
-                    $thisPanel = $(rindow).find('.rdr_'+which);
+                    var panel = (panel) ? panel:"whyPanel";
+                    $thisPanel = $(rindow).find('.rdr_'+panel);
                     var num_columns = rindow.find('div.rdr_sntPnl').length;
                     rindow.addClass('rdr_columns'+num_columns);
-                    switch (which) {
+                    switch (panel) {
                         case "contentPanel":
                             var width = 400; // any time we're expanding the contentPanel, the rindow is gonna be 400px wide
                             var minHeight = "auto";
@@ -3119,7 +3119,7 @@ function readrBoard($R){
 
                     //temp hack
                     if( $thisPanel.data('expanded') ){
-                        RDR.rindow.checkHeight( rindow, 0, which );
+                        RDR.rindow.checkHeight( rindow, 0, panel );
                     }
                     else{
                         rindow.css('background-position',rindow_bg+'px');
@@ -3129,7 +3129,7 @@ function readrBoard($R){
                             // rindow.find('div.rdr_body').animate({
                             //     minHeight:minHeight
                             // }, rindow.settings.animTime );
-                            RDR.rindow.checkHeight( rindow, 0, which );
+                            RDR.rindow.checkHeight( rindow, 0, panel );
                         });
 
                         // rindow.animate({
@@ -3141,16 +3141,16 @@ function readrBoard($R){
                     }
                     $thisPanel.data('expanded', true);
                 },
-                collapse: function(which, rindow){
+                collapse: function(panel, rindow){
                     // hack.  chrome and safari don't like rounded corners if the whyPanel is showing since it is wider than column1
                     rindow.find('div.rdr_whyPanel').css('visibility','hidden');
 
-                    var which = (which) ? which:"whyPanel";
-                    $thisPanel = $(rindow).find('.rdr_'+which);
+                    var panel = (panel) ? panel:"whyPanel";
+                    $thisPanel = $(rindow).find('.rdr_'+panel);
                     
                     var num_columns = rindow.find('div.rdr_sntPnl').length;
                     rindow.addClass('rdr_columns'+num_columns);
-                    switch (which) {
+                    switch (panel) {
                         case "contentPanel":
                             var width = 200;
                             var minHeight = "125px";
@@ -3190,7 +3190,7 @@ function readrBoard($R){
                         }, rindow.settings.animTime ).animate({
                             minHeight:minHeight
                         }, rindow.settings.animTime, function() {
-                            RDR.rindow.checkHeight( rindow, 0, which );
+                            RDR.rindow.checkHeight( rindow, 0, panel );
                         });
                     }
                     
@@ -3451,7 +3451,7 @@ function readrBoard($R){
 
                     $('div.rdr_indicator').each( function() {
                         $this = $(this);
-                        if ( $this.data('which') == hash ) $this.find('span.rdr_count').text(total_reactions);
+                        if ( $this.data('hash') == hash ) $this.find('span.rdr_count').text(total_reactions);
                     });
 
                     // update the data objects too
@@ -3647,7 +3647,7 @@ function readrBoard($R){
                     int_id = params.int_id,
                     rindow = params.rindow,
                     tag = params.tag,
-                    hash = params.which,
+                    hash = params.hash,
                     content_node = params.content_node;
 
                     //todo: temp fix
