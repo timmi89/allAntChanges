@@ -430,7 +430,6 @@ function readrBoard($R){
                         $actionbar.remove();
                         RDR.util.removeImageShadow();
                     }
-                    log($actionbar.data())
                     if(typeof effect !== "undefined"){
                         //make more robust if we want more animations
                         $actionbar.fadeOut(200, cleanup);
@@ -1283,7 +1282,6 @@ function readrBoard($R){
                     var _setupFuncs = {
                         img: function(hash, summary){
                             var $container = RDR.containers[hash].$this;
-                            log($container);
 
                             $container.hover(
                                 function(){
@@ -2026,29 +2024,72 @@ function readrBoard($R){
                     //build tags in $tagList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
                     $indicator_details.css({ 'visiblity':'hidden' }).show();
 
-                    var $stats = $('<div class="rdr_indicator_stats" />')//chain
-                    .appendTo($indicator)//chain
+                    //$indicatorBody is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
+                    var $indicatorBody = $('<div class="rdr_indicator_body" />').appendTo($indicator)//chain
                     .append(
                         '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
                         '<span class="rdr_count">'+ total +'</span>'
                     )//chain
                     .data( {'which':hash} );
           
-                                                   
-                    if( kind !== 'img' ){
-                        //else assume text
-                        $indicator.addClass('rdr_indicator_for_text');
-                        var $actionbar = $('rdr_actionbar_'+hash);
-                        $actionbar.hover( 
+                    if( kind == 'img' ){
+                        //is an image
+                        $indicator.insertAfter($container)//chain
+                        .addClass('rdr_indicator_for_image')//chain
+                        .hover(
                             function() {
-                                RDR.actions.summaries.populate( hash )
-                                //use $stats for offset instead of $indicator, because the image indicator offsets it's stats
-                                $indicator_details.find('.rdr_indicator_statsClone').html( $stats.html() );
                                                                                
                                 $indicator_details.css({
                                     'display':'block',
-                                    'top': $stats.offset().top,
-                                    'left': $stats.offset().left
+                                    'top': $indicatorBody.offset().top,
+                                    'left': $indicatorBody.offset().left
+                                });
+                            },
+                            function() {
+                            }
+                        );
+
+                        $container.hover(
+                            function() {
+                                _updateIndicatorAndSummary();
+                            },
+                            function() {
+                            }
+                        );
+
+                        //keep the indicator pegged at the end of the img but move the body part of it (the visibile part)
+                        var relOffset = {
+                            top: $container.offset().top - $indicator.offset().top,
+                            left: - $indicator.find('.rdr_indicator_body').width()
+                        };
+                        var cornerPadding = {
+                            top: 7,
+                            left: -5
+                        }
+                        $indicator.find('.rdr_indicator_body').css({
+                            'top': relOffset.top + cornerPadding.top,
+                            'left': relOffset.left + cornerPadding.left
+                        });
+
+
+                        $indicator_details.addClass('rdr_indicator_details_for_image')
+
+                    }
+                                                             
+                    else if( kind !== 'img' ){
+                        //else assume text
+                        $indicator.addClass('rdr_indicator_for_text');
+                        var $actionbar = $('rdr_actionbar_'+hash);
+
+
+
+                        $indicator.hover(
+                            function() {
+                                _updateIndicatorAndSummary();                                
+                                $indicator_details.css({
+                                    'display':'block',
+                                    'top': $indicatorBody.offset().top,
+                                    'left': $indicatorBody.offset().left
                                 });
                             },
                             function() {
@@ -2056,76 +2097,23 @@ function readrBoard($R){
                         )//chain
                         .appendTo($container);
 
-                        $indicator_details.click( function() {
-                            RDR.actions.viewContainerReactions( {icon:$indicator, kind:"text", summary:summary, hash:hash} );
-                        })//chain
-                        .hover(
-                            function() {
-                                $indicator.data('hoverLock', true)
-                                //do nothing
-                            },
-                            function() {
-                                $indicator.data('hoverLock', false)
-                                $(this).hide();
-                            }
-                        );
                     }
+                    //the rest is done for all types
 
-
-                    //temp todo:
-                    if( kind == 'img' ){
-                        //is an image
-                        log('image indicator')
-                        $container.after($indicator);
-                        $indicator.addClass('rdr_indicator_for_image');
-
-                        $container.hover( 
-                            function() {
-                                RDR.actions.summaries.populate( hash )
-                                //use $stats for offset instead of $indicator, because the image indicator offsets it's stats
-                                $indicator_details.find('.rdr_indicator_statsClone').html( $stats.html() );
-                                /*                                                                               
-                                $indicator_details.css({
-                                    'display':'block',
-                                    'top': $stats.offset().top,
-                                    'left': $stats.offset().left
-                                });
-                                */
-                            },
-                            function() {
-                            }
-                        )//chain
-
-
-
-
-
-
-
-
-
-
-
-
-
-                        var relOffset = {
-                            top: $container.offset().top - $indicator.offset().top,
-                            left: - $indicator.find('.rdr_indicator_stats').width()
-                        };
-
-                        var cornerPadding = {
-                            top: 7,
-                            left: -5
+                    $indicator_details.click( function() {
+                        RDR.actions.viewContainerReactions( hash );
+                    })//chain
+                    .hover(
+                        function() {
+                            //$indicator.data('hoverLock', true)
+                            //do nothing
+                        },
+                        function() {
+                            //$indicator.data('hoverLock', false)
+                            $(this).hide();
                         }
-                        
-                        //offset using margin to let 'top' and'left' be used for initial position
-                        $indicator.find('.rdr_indicator_stats').css({
-                            'margin-top': relOffset.top + cornerPadding.top,
-                            'margin-left': relOffset.left + cornerPadding.left
-                        });
+                    );
 
-                        $indicator_details.addClass('rdr_indicator_details_for_image')
-                    }
 
                     var $detailContents = RDR.actions.indicators.details.make($indicator, hash, summary);
 
@@ -2138,13 +2126,10 @@ function readrBoard($R){
 
                     
                     //helper function
-                    //todo: I'm not using this yet
-                    function _updateStats(){
+                    function _updateIndicatorAndSummary(){
                         RDR.actions.summaries.populate( hash )
-
-                        //use $stats for offset instead of $indicator, because the image indicator offsets it's stats
-                        $indicator_details.find('.rdr_indicator_statsClone').html( $stats.html() );
-
+                        //use $indicatorBody for offset instead of $indicator, because the image indicator offsets it's body
+                        $indicator_details.find('.rdr_indicator_bodyClone').html( $indicatorBody.html() );
                     }
                              
                 },
@@ -2153,7 +2138,7 @@ function readrBoard($R){
                         //RDR.actions.indicators.details.make:
 
                         var scope = this,
-                            stats = '<div class="rdr_indicator_statsClone" />',
+                            body = '<div class="rdr_indicator_bodyClone" />',
                             categoryTitle = '<span class="rdr_indicator_categoryTitle">&nbsp; reactions: &nbsp;</span>',
                             $tagList = scope._tagList( summary );
 
@@ -2164,7 +2149,7 @@ function readrBoard($R){
                             RDR.actions.indicators.hide([hash]); //if deleted back to 0
                         }   
 
-                        return $('<div/>').append(stats, categoryTitle, $tagList );
+                        return $('<div/>').append(body, categoryTitle, $tagList );
                     },
                     //helper function _tagList - called from this.make 
                     _tagList: function( summary ){
@@ -2395,30 +2380,26 @@ function readrBoard($R){
                 }
             },
             insertContainerIcon: function( hash ) {},
-            viewContainerReactions: function( args ) {
+            viewContainerReactions: function( hash ) {
 
-                //todo: instead of passing args, let's try to use the same summary convention here to unify functions
-                //[cleanlogz]log('viewContainerReactions')
-            
-                var summary = args.summary,
-                hash = args.hash,
-                kind = args.kind;
+                var summary = RDR.summaries[hash],
+                kind = summary.kind;
 
                 var selector = ".rdr-" + hash;
 
                 //ec: pretty sure we don't need this anymore
                 /*
-                if (args.kind == "text") {
+                if (kind == "text") {
                     var info = icon.data('info');
 
-                } else if (args.kind == "image") {
+                } else if (kind == "image") {
                     //todo: this is a temp fix - consolodate.
                     var info = icon.data('imageData');
                 }
                 */
 
-
-                var indicatorCoords = args.icon.offset();
+                var $indicator = $('#rdr_indicator_'+hash);
+                var indicatorCoords = $indicator.offset();
 
                 var rindow = RDR.rindow.draw({
                     coords:indicatorCoords,
@@ -5532,3 +5513,10 @@ function $RFunctions($R){
 
 }
 //end $RFunctions()
+
+/*********************/
+/*
+temp notes:
+    look for logs:
+    [^(gz\])^e^(/)]log\(
+*/
