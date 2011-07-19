@@ -1632,24 +1632,54 @@ function readrBoard($R){
                             var sendData = args.sendData;
                             var rindow = args.rindow,
                                 tag_li = args.tag,
-                                tag = args.tag.data('tag');
+                                tag = args.tag.data('tag'),
+                                int_id = response.data.interaction.id;
 
                             //todo: untangle these argument translations.
                             var content_node_data = sendData.content_node_data;
                             
-                            //clear the loader                  
-                            tag_li.find('div.rdr_leftBox').html('');
+                            // do stuff you'd only do if this was NOT a "thumbs-up" tag creation
+                            if ( !args.thumbsUp ) {
+                                //clear the loader                  
+                                tag_li.find('div.rdr_leftBox').html('');
 
-                            //[cleanlogz]log('tag successssssssssssss');
-                            var $this = args.tag;
-                            $this.addClass('rdr_selected');
-                            $this.siblings().removeClass('rdr_selected');
-                            $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-                            // log('content_node_data');
-                            // log(content_node_data);
+                                //[cleanlogz]log('tag successssssssssssss');
+                                var $this = args.tag;
+                                $this.addClass('rdr_selected');
+                                $this.siblings().removeClass('rdr_selected');
+                                $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+                                // log('content_node_data');
+                                // log(content_node_data);
 
-                            var content_node = args.content_node || RDR.actions.content_node.make(content_node_data);
+                                var content_node = args.content_node || RDR.actions.content_node.make(content_node_data);
 
+                                if ( tag_li.length == 1 ) {
+                                    tag_li.find('div.rdr_leftBox').unbind();
+                                    tag_li.find('div.rdr_leftBox').click( function(e) {
+                                        e.preventDefault();
+                                        args.int_id = int_id; // add the interaction_id info in, we need it for unrateSend
+                                        // RDR.actions.unrateSend(args);
+                                        RDR.actions.interactions.remove( args, 'tag' );
+                                        return false; // prevent the tag call applied to the parent <li> from firing
+                                    });
+
+                                    tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+int_id);
+                                    tag_li.data('interaction_id', int_id);
+
+                                    // if it was a custom tag, do a few things
+                                    if ( tag_li.hasClass('rdr_customTagBox') ) {
+                                        tag_li.removeClass('rdr_customTagBox');
+                                        tag_li.siblings().removeClass('rdr_selected');
+                                        tag_li.addClass('rdr_selected');
+                                        tag_li.find('input').remove();
+                                        tag_li.find('div.rdr_help').remove();
+                                        tag_li.append( '<div class="rdr_tagText">'+tag.body+'</div>' );
+                                        RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:args.settings, actionType:'react'});
+                                    }
+                                }
+
+                                RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node:content_node, content_type:content_type});
+                            }
                             //update indicators
                             var hash = sendData.hash;
                             var tagHelper = {
@@ -1666,35 +1696,6 @@ function readrBoard($R){
 
                             RDR.actions.indicators.update(hash, diff);
                             //end update indicators
-
-
-
-                            if ( tag_li.length == 1 ) {
-                                tag_li.find('div.rdr_leftBox').unbind();
-                                tag_li.find('div.rdr_leftBox').click( function(e) {
-                                    e.preventDefault();
-                                    args.int_id = int_id; // add the interaction_id info in, we need it for unrateSend
-                                    // RDR.actions.unrateSend(args);
-                                    RDR.actions.interactions.remove( args, 'tag' );
-                                    return false; // prevent the tag call applied to the parent <li> from firing
-                                });
-
-                                tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+int_id);
-                                tag_li.data('interaction_id', int_id);
-
-                                // if it was a custom tag, do a few things
-                                if ( tag_li.hasClass('rdr_customTagBox') ) {
-                                    tag_li.removeClass('rdr_customTagBox');
-                                    tag_li.siblings().removeClass('rdr_selected');
-                                    tag_li.addClass('rdr_selected');
-                                    tag_li.find('input').remove();
-                                    tag_li.find('div.rdr_help').remove();
-                                    tag_li.append( '<div class="rdr_tagText">'+tag.body+'</div>' );
-                                    RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:args.settings, actionType:'react'});
-                                }
-                            }
-
-                            RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node:content_node, content_type:content_type});
                             
                             var args = response.data;
                             args.rindow = rindow;
@@ -1821,8 +1822,6 @@ function readrBoard($R){
                                     RDR.actions.sentimentPanel.addCustomTagBox({rindow:rindow, settings:args.settings, actionType:'bookmark'});
                                 }
                             }
-
-                            // RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node:content_node, content_type:content_type});
 
                             var $whyPanel = rindow.find('div.rdr_whyPanel');
                             var $whyPanel_body = $whyPanel.find('div.rdr_body');
@@ -2562,16 +2561,17 @@ function readrBoard($R){
                 rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tagBody+' <span> ('+tag.count+')</span>');
                 if ( rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp').destroy();
                 rindow.find('div.rdr_contentPanel div.rdr_body').empty();
-log('------ hash check ----');
-                        log(hash);
+
                 // tag.id = tag.id; // kludge
-                var tagClone = $.extend({}, tag);
+                var tagClone = $.extend({}, tag),
+                    hashClone = hash;
 
                 // ok, get the content associated with this tag!
                 $.each(content, function(idx, node){
                     // console.dir(node);
 
-                    var tag = tagClone;
+                    var tag = tagClone,
+                        hash = hashClone;
 
                     // log('tag');
                     // //[cleanlogz]console.dir(tag);
@@ -2592,7 +2592,7 @@ log('------ hash check ----');
 
                         $header.find('span.rdr_tag_count').click( function() {
                             var $interactionButton = $(this).closest('.rdr_tag');
-                            var args = { tag:$interactionButton, rindow:rindow, content:node.body, hash:hash, uiMode:'read', content_node:node};
+                            var args = { tag:$interactionButton, rindow:rindow, content:node.body, hash:hash, uiMode:'read', content_node:node, thumbsUp:true};
                             RDR.actions.interactions.create( args, 'tag' );
                         });
 
@@ -2658,7 +2658,7 @@ log('------ hash check ----');
                                     });
                                     var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
                                         var $interactionButton = $(this).closest('.rdr_tag');
-                                        var args = { tag:$interactionButton, rindow:rindow, content:node.body, hash:hash, uiMode:'read', content_node:node};
+                                        var args = { tag:$interactionButton, rindow:rindow, content:node.body, hash:hash, uiMode:'read', content_node:node, thumbsUp:true};
                                         RDR.actions.interactions.create( args, 'tag' );
                                     });
 
