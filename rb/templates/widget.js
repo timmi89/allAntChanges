@@ -2198,6 +2198,7 @@ function readrBoard($R){
 
                             $tagList.append( prefix, $span );
 
+                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
                             if ( $tagList.width() > ( tagListMaxWidth - buffer ) ) {
                                 //the tag pushed the length over the limit, so kill it, and replace with more...
                                 $span.remove();
@@ -2208,14 +2209,6 @@ function readrBoard($R){
                                 return;
                             }
                             count++;
-
-                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                            log(' $tagList.width() ');
-                            log( count );
-                            log( $tagList.width() );
-                            log( id, tag )
-                            
-
                         });
                     }
                              
