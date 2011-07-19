@@ -2110,12 +2110,12 @@ function readrBoard($R){
 
                         var relOffset = {
                             top: $container.offset().top - $indicator.offset().top,
-                            left: $container.offset().left - $indicator.offset().left
+                            left: - $indicator.find('.rdr_indicator_stats').width()
                         };
 
                         var cornerPadding = {
                             top: 7,
-                            left: 5
+                            left: -5
                         }
                         
                         //offset using margin to let 'top' and'left' be used for initial position
@@ -2136,7 +2136,9 @@ function readrBoard($R){
                     
                     $indicator_details.css({ 'visiblity':'visible' }).hide();
 
+                    
                     //helper function
+                    //todo: I'm not using this yet
                     function _updateStats(){
                         RDR.actions.summaries.populate( hash )
 
