@@ -497,6 +497,7 @@ img.rdr_shared      { -moz-box-shadow:0 0 10px 1px #008be4; -webkit-box-shadow:0
     /*margin:-4px;*/
     /*offset with margin to line up with indicator: compensating for the padding and the border*/
     margin:-4px 0 0 -4px;
+    overflow:hidden;
 }
 
 #rdr_sandbox div.rdr_indicator_details, div.rdr_indicator {
@@ -562,6 +563,7 @@ div.rdr_indicator_for_image {
 }
 
 #rdr_sandbox div.rdr_indicator_details_for_image {
+    overflow:hidden; /*for the animate out to work nicely*/
 }
 
 

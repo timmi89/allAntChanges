@@ -268,19 +268,22 @@ function readrBoard($R){
 		},
 		actionbar: {
 			draw: function(settings) {
+       
                 //RDR.actionbar.draw:
                 //expand to make settings explicit
                 var containerHash = settings.container,
                     content_type = settings.content_type,
                     coords = settings.coords;
                 
-                //todo: change var above to something like containerHash instead of container.
-                //todo: fix this bug later by hashing the content.
-                
-                if ( !containerHash ) return;
+                if ( !containerHash || !RDR.containers.hasOwnProperty(containerHash) ) return;
                 //else
-                
                 var container = (RDR.containers.hasOwnProperty(containerHash)) ? RDR.containers[containerHash] : undefined ;
+
+                var actionbar_id = "rdr_actionbar_"+containerHash;
+                var $actionbars = $('div.rdr_actionbar');
+                
+                if ( $('#'+actionbar_id).length > 0 ) return $('#'+actionbar_id);
+                // else 
 
                 // todo: if IE, position higher so we're not behind IE's "Accelerator" arrow
                 var actionbarOffsets = {
@@ -297,8 +300,6 @@ function readrBoard($R){
                         left: 2
                     }
                 }
-                log('content_type')
-                log(content_type)
                 var offsets = actionbarOffsets[content_type];
 
                 coords.top += offsets.top;
@@ -366,9 +367,9 @@ function readrBoard($R){
                     });
                     $item.append($indicatorAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
                     if(idx===0){
-                        $item.addClass('rdr_actionbar_leftEnd')
+                        $item.addClass('rdr_actionbar_first')
                     }else if(idx === items.length - 1){
-                        $item.addClass('rdr_actionbar_rightEnd')
+                        $item.addClass('rdr_actionbar_last')
                     }
                 });
 
@@ -406,8 +407,8 @@ function readrBoard($R){
                 }
 
                 return $new_actionbar;
-            
-			},
+                     
+            },
 			close: function($actionbars, effect){
                 //RDR.actionbar.close:
                 $actionbars.each(function(){
@@ -1283,7 +1284,7 @@ function readrBoard($R){
 
                             $container.hover(
                                 function(){
-                                
+                                    
                                     var coords = $container.offset(),
                                     src = $container.attr('src'),
                                     src_with_path = this.src;
@@ -2036,25 +2037,34 @@ function readrBoard($R){
                         .hover(
                             function() {
                                 
-                                var indDetailsLeftOffset = $indicatorBody.offset().left + $indicatorBody.width() - $indicator_details.width() - 3; //account for 3px padding 
+                                var indDetailsWidth = $indicator_details.width(),
+                                indDetailsLeftOffset = $indicatorBody.offset().left + $indicatorBody.width() - indDetailsWidth - 3; //account for 3px padding 
 
-                                //to be replaced with something like below
-                                $indicator_details.css({
-                                    'display':'block',
-                                    'top': $indicatorBody.offset().top,
-                                    'left': indDetailsLeftOffset
-                                });
-                                //todo: in progress - we need to put this in a container to hide the right side as it animates.
+                                //old version that didn't animate
                                 /*
                                 $indicator_details.css({
                                     'display':'block',
                                     'top': $indicatorBody.offset().top,
-                                    'left': $indicatorBody.offset().left
+                                    'left': indDetailsLeftOffset
+                                });
+                                */
+
+                                /*
+                                var $indicator_details_contents = $('<div />').addClass("rdr_indicator_details_mask").css({
+                                    'position':'absolute;'
+                                })
+                                */
+                                $indicator_details.css({
+                                    'display':'block',
+                                    'top': $indicatorBody.offset().top,
+                                    //setup initial state for indicator_details animation
+                                    'left': $indicatorBody.offset().left,
+                                    'width': 10
                                 });
                                 $indicator_details.animate({
-                                    'left': indDetailsLeftOffset
+                                    'left': indDetailsLeftOffset,
+                                    'width': indDetailsWidth
                                 },200);
-                                */
 
                             },
                             function() {
