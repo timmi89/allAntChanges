@@ -2020,7 +2020,14 @@ function readrBoard($R){
                     var $indicator_details = $('<div id="rdr_indicator_details_' +hash+ '" class="rdr rdr_indicator_details rdr_widget rdr_widget_bar" />');
 
                     //build tags in $tagList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
-                    $indicator_details.css({ 'visiblity':'hidden' }).show();
+                    $indicator_details.css({ 'visiblity':'hidden' }).show()//chain
+                    .appendTo('#rdr_indicator_details_wrapper');
+                    
+                    //todo: this is a little weird
+                    _makeDetailsContents( $indicator_details );
+
+                    $indicator_details.css({ 'visiblity':'visible' }).hide();
+
 
                     //$indicatorBody is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
                     var $indicatorBody = $('<div class="rdr_indicator_body" />').appendTo($indicator)//chain
@@ -2136,22 +2143,16 @@ function readrBoard($R){
                         }
                     );
 
-
-                    var $detailContents = RDR.actions.indicators.details.make($indicator, hash, summary);
-
-                    $indicator_details//chain
-                    .append( $detailContents.contents() )//chain
-                    .appendTo('#rdr_indicator_details_wrapper');
-
                     
-                    $indicator_details.css({ 'visiblity':'visible' }).hide();
-
-                    
-                    //helper function
+                    //helper functions
                     function _updateIndicatorAndSummary(){
                         RDR.actions.summaries.populate( hash )
                         //use $indicatorBody for offset instead of $indicator, because the image indicator offsets it's body
                         $indicator_details.find('.rdr_indicator_bodyClone').html( $indicatorBody.html() );
+                    }
+
+                    function _makeDetailsContents( $indicator_details ){
+                        
                     }
                              
                 },
@@ -2189,6 +2190,8 @@ function readrBoard($R){
                             
                             $tagList.append( prefix, $span );
 
+                            log('$tagList.width()')
+                            log($tagList.width())
                             // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
                             if ( $tagList.width() > tagListMaxWidth-20 ) {
                                 $tagList.children().last().html('More...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
