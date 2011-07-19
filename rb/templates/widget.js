@@ -2654,7 +2654,9 @@ function readrBoard($R){
                                         // ({  })
                                     });
                                     var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
-                                        RDR.actions.interactions.tag({ tag:thisTag, rindow:rindow, content:node.body, which:which });
+                                        var $interactionButton = $(this).closest('.rdr_tag');
+                                        var args = { tag:$interactionButton, rindow:rindow, content:node.body, which:which, uiMode:'read', content_node:node};
+                                        RDR.actions.interactions.create( args, 'tag' );
                                     });
 
                                     $this_tag.append($tagShareButton, $tagCountButton, thisTag.body);
