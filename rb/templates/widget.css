@@ -1,3 +1,8 @@
+/*
+body{
+    background: #999;
+}
+*/
 .rdr * {
     /*temp reset*/
     margin:0;
@@ -33,7 +38,7 @@
 }
 
 /* the action bar */
-#rdr_sandbox div.rdr.rdr_actionbar {
+#rdr_sandbox div.rdr_actionbar {
     background:url("{{ STATIC_URL }}widget/images/actionbar_bg.png") no-repeat 0 0;
     padding:0;
     font:normal 12px Arial, sans-serif;
@@ -43,19 +48,19 @@
     height:22px;
 }
 
-#rdr_sandbox div.rdr.rdr_actionbar ul {
+#rdr_sandbox div.rdr_actionbar ul {
     margin:0;
     float: left; /*do this for the rdr_indicator_for_image*/
 }
-#rdr_sandbox div.rdr.rdr_actionbar li {
+#rdr_sandbox div.rdr_actionbar li {
     display:inline-block;
     position:relative;
     list-style: none !important;
-    background: none !important;
+    background: none
     padding: 0 !important;
 }
 
-#rdr_sandbox div.rdr.rdr_actionbar li a {
+#rdr_sandbox div.rdr_actionbar li a {
     background:url("{{ STATIC_URL }}widget/images/actionbar_icons.png") no-repeat 0 0 transparent;
     display:block;
     height:22px;
@@ -64,26 +69,55 @@
     float:left;
 }
 
-/*div.rdr.rdr_actionbar li.rdr_icon_about a         { background-position: 0 0; }*/ /*overwritten below to compress width*/
-#rdr_sandbox div.rdr.rdr_actionbar li.rdr_icon_reaction a        { background-position:-4px -5px; }
-#rdr_sandbox div.rdr.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-61px -4px; }
+/*div.rdr_actionbar li.rdr_icon_about a         { background-position: 0 0; }*/ /*overwritten below to compress width*/
+#rdr_sandbox div.rdr_actionbar li.rdr_icon_reaction a        { background-position:-4px -5px; }
+#rdr_sandbox div.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-61px -4px; }
 
 
-#rdr_sandbox div.rdr.rdr_actionbar li:hover                     { 
+#rdr_sandbox div.rdr_actionbar li:hover                     { 
     background: #CCE6FF !important;
 }
-#rdr_sandbox div.rdr.rdr_actionbar li.rdr_actionbar_leftEnd     { 
+#rdr_sandbox div.rdr_actionbar li.rdr_actionbar_first     { 
     -moz-border-radius:5px 0 0 5px;
     -webkit-border-radius:5px 0 0 5px;
     border-radius:5px 0 0 5px;
 }
-#rdr_sandbox div.rdr.rdr_actionbar li.rdr_actionbar_rightEnd    { 
+#rdr_sandbox div.rdr_actionbar li.rdr_actionbar_last    { 
     -moz-border-radius:0 5px 5px 0;
     -webkit-border-radius:0 5px 5px 0;
     border-radius:0 5px 5px 0;
 }
 
-#rdr_sandbox div.rdr.rdr_actionbar span.rdr_icon_divider         { width:1px; background:#BBB; height:70%; position:absolute; top:15%; right:0; display:none;/*show dynamically*/}
+/*override the above if it's an actionbar for images*/
+#rdr_sandbox div.rdr_actionbar_for_image { 
+    /*match rdr_engage_img hilite*/
+    -moz-border-radius:0 5px 5px 0;
+    -webkit-border-radius:0 5px 5px 0;
+    border-radius:0 5px 5px 0;
+    -moz-box-shadow:0 0 10px 1px #008be4 !important;
+    -webkit-box-shadow:0 0 10px 1px #008be4 !important;
+    box-shadow:0 0 10px 1px #008be4 !important;
+    border: 1px solid #bbb;
+    height: auto;
+}
+#rdr_sandbox div.rdr_actionbar_for_image li { 
+    display:block !important;
+    float:left !important;
+    clear:both !important;
+}
+#rdr_sandbox div.rdr_actionbar_for_image li.rdr_actionbar_first     { 
+    -moz-border-radius:0 5px 0 0;
+    -webkit-border-radius:0 5px 0 0;
+    border-radius:0 5px 0 0;
+}
+#rdr_sandbox div.rdr_actionbar_for_image li.rdr_actionbar_last    { 
+    -moz-border-radius:0 0 5px 0;
+    -webkit-border-radius:0 0 5px 0;
+    border-radius:0 0 5px 0;
+}
+
+
+#rdr_sandbox div.rdr_actionbar span.rdr_icon_divider         { width:1px; background:#BBB; height:70%; position:absolute; top:15%; right:0; display:none;/*show dynamically*/}
 
 /* the tooltip */
 #rdr_sandbox div.rdr.rdr_tooltip {
@@ -125,8 +159,8 @@
 #rdr_sandbox div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
 
 /*compress ths about icon width*/
-#rdr_sandbox div.rdr.rdr_actionbar li.rdr_icon_about             { width:24px; } /*normal width is 30px */
-#rdr_sandbox div.rdr.rdr_actionbar li.rdr_icon_about a           { background-position: -3px 0; width:24px;} /*from line above:(30-24)/2 = 3px left*/
+#rdr_sandbox div.rdr_actionbar li.rdr_icon_about             { width:24px; } /*normal width is 30px */
+#rdr_sandbox div.rdr_actionbar li.rdr_icon_about a           { background-position: -3px 0; width:24px;} /*from line above:(30-24)/2 = 3px left*/
 #rdr_sandbox .rdr_tooltip_about                                  { margin:0 0 0 11px;/* 0.5 icon width*/ }
 
 /* global tag defs */
@@ -508,31 +542,26 @@ div.rdr_indicator img.rdr_pin{
 div.rdr_indicator_details img.rdr_pin{ 
 }
 
-div.rdr_indicator div.rdr_indicator_stats { 
+div.rdr_indicator div.rdr_indicator_body { 
     position:absolute !important;
-    top:0 !important;
-    left:0;
+    top:0; /*don't make important so that our js can update*/
+    left:0; /*don't make important so that our js can update*/
+    margin:0 !important;
 }
 
 /*for now give the text indicators a small offset so the details don't cover the end of content todo: id:12345*/
-div.rdr_indicator_for_text div.rdr_indicator_stats{
-    left:4px !important;
+div.rdr_indicator_for_text div.rdr_indicator_body{
+    left: 4px !important;
 }
 
-#rdr_sandbox div.rdr_indicator_statsClone{ float:left;}
+#rdr_sandbox div.rdr_indicator_bodyClone{ float:left;}
 
 /*now override styles for the image containers*/
 div.rdr_indicator_for_image {
     display:block !important;
 }
 
-#rdr_sandbox div.rdr_indicator_details_for_image {    
-    margin: 0 !important;
-    display: block;
-    float: left;
-    position: relative !important;
-    border:none;
-    top: 1px; /*compensate for the missing border*/
+#rdr_sandbox div.rdr_indicator_details_for_image {
 }
 
 
