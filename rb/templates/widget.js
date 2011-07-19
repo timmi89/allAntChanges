@@ -2546,10 +2546,12 @@ function readrBoard($R){
                     content.push( {idx:parseInt(i), tag_idx:tag.body[i].tag_idx, count:tag.id[i].count } );
                 }
                 */
+console.clear();
                 //todo: temp stuff
                 var content = [];
                 $.each(summary.content_nodes, function(key, val){
                     content.push(val);
+                    console.dir(val);
                 });
                 function SortByTagCount(a,b) { return b.counts.tags - a.counts.tags; }
                 content.sort(SortByTagCount);
