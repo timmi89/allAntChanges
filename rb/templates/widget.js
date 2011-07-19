@@ -2038,12 +2038,27 @@ function readrBoard($R){
                         .addClass('rdr_indicator_for_image')//chain
                         .hover(
                             function() {
-                                                                               
+                                
+                                var indDetailsLeftOffset = $indicatorBody.offset().left + $indicatorBody.width() - $indicator_details.width() - 3; //account for 3px padding 
+
+                                //to be replaced with something like below
+                                $indicator_details.css({
+                                    'display':'block',
+                                    'top': $indicatorBody.offset().top,
+                                    'left': indDetailsLeftOffset
+                                });
+                                //todo: in progress - we need to put this in a container to hide the right side as it animates.
+                                /*
                                 $indicator_details.css({
                                     'display':'block',
                                     'top': $indicatorBody.offset().top,
                                     'left': $indicatorBody.offset().left
                                 });
+                                $indicator_details.animate({
+                                    'left': indDetailsLeftOffset
+                                },200);
+                                */
+
                             },
                             function() {
                             }
@@ -2398,11 +2413,22 @@ function readrBoard($R){
                 }
                 */
 
-                var $indicator = $('#rdr_indicator_'+hash);
-                var indicatorCoords = $indicator.offset();
+                var $indicator = $('#rdr_indicator_'+hash),
+                $indicatorDetails = $('#rdr_indicator_details_'+ hash),
+                $container = $('.rdr-'+hash);
+
+                var rindowPosition = (kind == "img") ?
+                {
+                    top: $container.offset().top,
+                    left: $container.offset().left + $container.width()
+                } :
+                {
+                    top: $indicatorDetails.offset().top,
+                    left: $indicatorDetails.offset().left
+                }
 
                 var rindow = RDR.rindow.draw({
-                    coords:indicatorCoords,
+                    coords:rindowPosition,
                     pnlWidth:200,
                     ignoreWindowEdges:"bl",
                     noHeader:true,
