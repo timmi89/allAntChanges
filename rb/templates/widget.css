@@ -392,7 +392,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 .rdr_hilite_end{}
 
 /*style for our widget components like the actionbar, indicator details etc.  Does rounded cornders, shadow, etc.*/
-.rdr_widget{
+#rdr_sandbox .rdr_widget{
     -moz-box-shadow:0 0 10px 1px #aaa  !important;
     -webkit-box-shadow:0 0 10px 1px #aaa  !important;
     box-shadow:0 0 10px 1px #aaa  !important;
@@ -401,7 +401,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
     border-radius:8px  !important;
 }
 /*rdr_widget_bar overrides rdr_widget*/
-.rdr_widget_bar{
+#rdr_sandbox .rdr_widget_bar{
     -moz-border-radius:5px  !important;
     -webkit-border-radius:5px  !important;
     border-radius:5px  !important;
