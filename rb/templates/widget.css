@@ -480,6 +480,27 @@ img.rdr_shared      { -moz-box-shadow:0 0 10px 1px #008be4; -webkit-box-shadow:0
 
 /* container indicator icons */
 
+
+/*reset for indicator stuff*/
+
+div.rdr_indicator {
+    position: relative !important;
+    display:inline !important;
+    z-index:11000 !important;
+    text-decoration:none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    /*start with 0 opacity so it can fade in properly*/
+    /* opacity for .rdr_indicator set in js instead of here. Fade it in on load so we can still use display:inline; */
+    opacity:0.0;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
+    filter:alpha(opacity=00);
+    -moz-opacity:0.0;
+    -khtml-opacity:0.0;
+}
+
 #rdr_sandbox #rdr_indicator_details_wrapper{
     z-index:11001; /*should be larger than the indicator z-index*/
     position:absolute;
@@ -489,11 +510,14 @@ img.rdr_shared      { -moz-box-shadow:0 0 10px 1px #008be4; -webkit-box-shadow:0
     background:transparent;
 }
 #rdr_sandbox div.rdr_indicator_details { 
+    position:absolute !important;
     background:#fff;
     color: #666666;
     font: 12px Arial,sans-serif;
     padding:3px !important;
-    border:1px solid #ddd; max-width:300px;
+    border:1px solid #ddd; 
+    max-width:300px;
+    min-width:100px; /*todo: temp - get rid of this*/
     /*margin:-4px;*/
     /*offset with margin to line up with indicator: compensating for the padding and the border*/
     margin:-4px 0 0 -4px;
@@ -504,30 +528,10 @@ img.rdr_shared      { -moz-box-shadow:0 0 10px 1px #008be4; -webkit-box-shadow:0
     /*keep the same for both indicator and details so that they overlap nicely*/
     color: #666666 !important;
     font: 12px Arial,sans-serif !important;
-    position:absolute !important;
     cursor: pointer !important;
     white-space: nowrap;
 }
 
-/*reset for indicator stuff*/
-div.rdr_indicator {
-    text-decoration:none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    top: 0 !important;
-    left: 0 !important;
-}
-
-/* opacity for .rdr_indicator set in js instead of here. Fade it in on load so we can still use display:inline; */
-div.rdr_indicator {
-    z-index:11000 !important;
-    display:inline !important;
-    text-decoration:none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    top: 0 !important;
-    left: 0 !important;
-}
 
 /*indicator pin both*/
 div.rdr_indicator img.rdr_pin, div.rdr_indicator_details img.rdr_pin{ 
@@ -555,11 +559,15 @@ div.rdr_indicator_for_text div.rdr_indicator_body{
     left: 4px !important;
 }
 
-#rdr_sandbox div.rdr_indicator_bodyClone{ float:left;}
+#rdr_sandbox div.rdr_indicator_bodyClone{
+    width:auto !important;
+    display:inline !important;
+    white-space:nowrap !important;
+}
 
 /*now override styles for the image containers*/
 div.rdr_indicator_for_image {
-    display:block !important;
+    display:inline !important;
 }
 
 #rdr_sandbox div.rdr_indicator_details_for_image {
@@ -573,44 +581,13 @@ div.rdr_indicator span.rdr_count, div.rdr_indicator_details span.rdr_count{
     margin-left:16px !important;
 }
 #rdr_sandbox span.rdr_indicator_categoryTitle{ 
-    float: left;
+    width:auto !important;
+    display:inline !important;
+    white-space:nowrap !important;
 
 }
 
-/**for images?/
-div.rdr_indicator {
-    position:relative !important;
-    border-bottom:1px solid #ddd;
-    display:block !important;
-    margin-bottom:5px;
-    clear:both !important;
-    
-    opacity:0.0;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
-    filter:alpha(opacity=00);
-    -moz-opacity:0.0;
-    -khtml-opacity:0.0;
-}
-*/
-div.rdr_indicator {
-    display: inline !important;
-    top: 0 !important;
-    left: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    position: relative !important;
-  
-    /*start with 0 opacity so it can fade in properly*/
-    /*don't make these important for now...*/
-    opacity:0.0;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
-    filter:alpha(opacity=00);
-    -moz-opacity:0.0;
-    -khtml-opacity:0.0;
-}
-
-/*note that some of these are in .rdr_indicator_details*/
-div.rdr_tags_list { 
+#rdr_sandbox div.rdr_tags_list { 
     width:auto !important;
     display:inline !important;
     white-space:nowrap !important;
@@ -623,12 +600,6 @@ div.rdr_tags_list {
 #rdr_sandbox span.rdr_tags_list_tag:hover {
     background:#fe7 !important;
 }
-
-/*inline class*/
-div.inlineReq {
-    display:inline !important;
-}
-
 
 /*thinking about this one*/
 .rdr_inline_reset{

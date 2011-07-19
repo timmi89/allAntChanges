@@ -1885,34 +1885,46 @@ function readrBoard($R){
             indicators: {
                 show: function(hashes, boolDontFade){
                     //RDR.actions.indicators.show:
-                    //fade in indicators
-                    //temp hacl!
+                    //todo: boolDontFade is a quick fix to not fade in indicators
 
-                    var $indicators = $();
-                    $.each(hashes, function(idx, hash){
-                        $indicators = $indicators.add( $('#rdr_indicator_'+hash) )
-                    });
+                    //hashes should be an array or a single hash string
+                    var $indicators = this.fetch(hashes)
+
                     if(boolDontFade){
                         $indicators.css({
                             'opacity':'0.4'
-                        }).addClass('inlineReq');
+                        });
                         return;
                     }
                     //else
-                    $indicators.css({
-                        'opacity':'0'
-                    }).fadeTo('300', '0.4').addClass('inlineReq');
+                    $indicators.stop().fadeTo(800, 0.4);
+                    //use stop to ensure animations are smooth: http://api.jquery.com/fadeTo/#dsq-header-avatar-56650596
                 },
                 hide: function(hashes){
                     //RDR.actions.indicators.hide:
-                    var $indicators = $();
-                    $.each(hashes, function(idx, hash){
-                        $indicators = $indicators.add( $('.rdr_indicator_'+hash) )
-                    });
-
+                    //hashes should be an array or a single hash string
+                    var $indicators = this.fetch(hashes)
+                    
                     $indicators.css({
                         'opacity':'0'
                     });
+                },
+                fetch: function(hashOrHashes){
+                    //RDR.actions.indicators.fetch:
+                    //a helper to get an $indicators obj from a hash or list of hashes
+                    var $indicators = $();
+                    if( typeof hashOrHashes === "string" ){
+                        var hash = hashOrHashes;
+                        $indicators = $('#rdr_indicator_'+hash);
+                    }
+                    else{
+                        //should be an array of hashes
+                        var hashes = hashOrHashes;
+                        $.each(hashes, function(idx, hash){
+                            $indicators = $indicators.add( $('#rdr_indicator_'+hash) );
+                        });                        
+                    }
+                    return $indicators;
                 },
                 update: function(hash, diff){
                     //RDR.actions.indicators.update:
@@ -1982,9 +1994,9 @@ function readrBoard($R){
                        // interaction_count still == summary.counts.interactions, copy by ref
      
                         if(summary.counts.interactions > 0){
-                            RDR.actions.indicators.show([hash],true); //temp hack, 'true' is for 'dont fade in';   
+                            RDR.actions.indicators.show(hash,true); //temp hack, 'true' is for 'dont fade in';   
                         }else{
-                            RDR.actions.indicators.hide([hash]); //if deleted back to 0
+                            RDR.actions.indicators.hide(hash); //if deleted back to 0
                         }
 
                         //now update the page.
@@ -2024,10 +2036,10 @@ function readrBoard($R){
                     .appendTo('#rdr_indicator_details_wrapper');
                     
                     //todo: this is a little weird
-                    _makeDetailsContents( $indicator_details );
+                    //we pass in the $indicator_details which gets fleshed out by this helper function.
+                    _makeDetailsContent( $indicator_details );
 
                     $indicator_details.css({ 'visiblity':'visible' }).hide();
-
 
                     //$indicatorBody is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
                     var $indicatorBody = $('<div class="rdr_indicator_body" />').appendTo($indicator)//chain
@@ -2143,42 +2155,37 @@ function readrBoard($R){
                         }
                     );
 
+
+                    //show newly minted pins
+                    if(summary.counts.interactions > 0){
+                        RDR.actions.indicators.show(hash);
+                    }else{
+                        RDR.actions.indicators.hide(hash); //if deleted back to 0
+                    }
+
                     
                     //helper functions
                     function _updateIndicatorAndSummary(){
                         RDR.actions.summaries.populate( hash )
-                        //use $indicatorBody for offset instead of $indicator, because the image indicator offsets it's body
                         $indicator_details.find('.rdr_indicator_bodyClone').html( $indicatorBody.html() );
                     }
-
-                    function _makeDetailsContents( $indicator_details ){
-                        
-                    }
-                             
-                },
-                details: {
-                    make: function( $indicator, hash, summary ){
-                        //RDR.actions.indicators.details.make:
-
-                        var scope = this,
-                            body = '<div class="rdr_indicator_bodyClone" />',
+                    function _makeDetailsContent( $indicator_details ){
+                        //this expects the 'live' but hidden $indicator_details node, which it will flesh out in place.
+                        var body = '<div class="rdr_indicator_bodyClone" />',
                             categoryTitle = '<span class="rdr_indicator_categoryTitle">&nbsp; reactions: &nbsp;</span>',
-                            $tagList = scope._tagList( summary );
+                            $tagList = $('<div class="rdr_tags_list" />');
 
-                        //show newly minted pins
-                        if(summary.counts.interactions > 0){
-                            RDR.actions.indicators.show([hash],true); //temp hack, 'true' is for 'dont fade in';   
-                        }else{
-                            RDR.actions.indicators.hide([hash]); //if deleted back to 0
-                        }   
+                        $indicator_details.append( body, categoryTitle, $tagList );
 
-                        return $('<div/>').append(body, categoryTitle, $tagList );
-                    },
-                    //helper function _tagList - called from this.make 
-                    _tagList: function( summary ){
-                        //RDR.actions.indicators.details._tagList:
-                        var $tagList = $('<div class="rdr_tags_list" />'),
-                            tagListMaxWidth = 200,
+                        //builds out the $tagList contents
+                        _makeTagList( $tagList );
+                        //I ususally prefer the format: "$tagList = _makeTagList()" where the function returns the $() object,
+                        //but we need the function to register the nodes in the DOM in order to calc width.
+                    }
+                    function _makeTagList( $tagList ){
+                        //this expects the 'live' but hidden $tagList node, which it will flesh out in place.
+                        var tagListMaxWidth = 300,
+                            buffer = 100, //for prefix and more...
                             count = 0;
 
                         $.each( summary.top_interactions.tags, function(id, tag){
@@ -2186,25 +2193,32 @@ function readrBoard($R){
                             var prefix = count ? ", " : "", //don't include the first time
                             $tag = $('<strong/>').append(tag.body),
                             $count = $('<em/>').append( ' ('+tag.count+')' ),
-                            $span = $('<span />').addClass('rdr_tags_list_tag').append( $tag, $count).data('id',id);
-                            
+                            $span = $('<span />').addClass('rdr_tags_list_tag');
+                            $span.append( $tag, $count).data('id',id);
+
                             $tagList.append( prefix, $span );
 
-                            log('$tagList.width()')
-                            log($tagList.width())
-                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                            if ( $tagList.width() > tagListMaxWidth-20 ) {
-                                $tagList.children().last().html('More...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
+                            if ( $tagList.width() > ( tagListMaxWidth - buffer ) ) {
+                                //the tag pushed the length over the limit, so kill it, and replace with more...
+                                $span.remove();
+                                var $moreText = $('<span>More...</span>').addClass('rdr_see_more');
+                                $tagList.append($moreText)
+                                //signal the rest of the each loop to just return;
                                 count = null;
                                 return;
                             }
                             count++;
+
+                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
+                            log(' $tagList.width() ');
+                            log( count );
+                            log( $tagList.width() );
+                            log( id, tag )
+                            
+
                         });
-                        return $tagList;
                     }
-                    
-                
-                //end RDR.actions.indicators.details
+                             
                 },
                 sortReactions: function( hash ){
 
