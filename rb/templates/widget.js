@@ -277,134 +277,136 @@ function readrBoard($R){
                 //todo: change var above to something like containerHash instead of container.
                 //todo: fix this bug later by hashing the content.
                 
-                if ( containerHash ) {
-                    var container = (RDR.containers.hasOwnProperty(containerHash)) ? RDR.containers[containerHash] : undefined ;
+                if ( !containerHash ) return;
+                //else
+                
+                var container = (RDR.containers.hasOwnProperty(containerHash)) ? RDR.containers[containerHash] : undefined ;
 
-                    // todo: if IE, position higher so we're not behind IE's "Accelerator" arrow
-                    var actionbarOffsets = {
-                        IE: {
-                            top: 'add this here',
-                            left: 'add this here'
-                        },
-                        image:  {
-                            top: 0,
-                            left: -33
-                        },
-                        text:  {
-                            top: -35,
-                            left: 2
-                        }
+                // todo: if IE, position higher so we're not behind IE's "Accelerator" arrow
+                var actionbarOffsets = {
+                    IE: {
+                        top: 'add this here',
+                        left: 'add this here'
+                    },
+                    image:  {
+                        top: 0,
+                        left: -33
+                    },
+                    text:  {
+                        top: -35,
+                        left: 2
                     }
-                    log('content_type')
-                    log(content_type)
-                    var offsets = actionbarOffsets[content_type];
-
-                    coords.top += offsets.top;
-                    coords.left += offsets.left;
-                    
-
-                    //rewrite coords if needed
-    				// TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-    				coords = RDR.util.stayInWindow({coords:coords, width:200, height:30, ignoreWindowEdges:settings.ignoreWindowEdges});
-
-                    // TODO use settings check for certain features and content types to determine which of these to disable
-                    var $new_actionbar = $('<div class="rdr rdr_actionbar rdr_widget rdr_widget_bar" id="' + actionbar_id + '" />').css({
-                       'left':coords.left,
-                       'top':coords.top
-                    }).data('hash',containerHash)//chain
-                    .append('<ul/>');
-
-    				// store the content selected that spawned this actionbar
-    				// used for determining later on if an actionbar is being called by the same interaction as a
-    				// currently-visible actionbar
-
-                    // if this is an image, make sure we have the image hashed, tagged, and have its hash as a container:
-                    if (content_type == "image" && !container ) {
-                        //todo
-                    }
-
-                    // ec: I'm removing this - I think it's old and RDR.page.hash doens't exist
-                    //if ( settings.container == "") settings.container = RDR.page.hash;
-
-                    var items = [
-                            {
-                                "item":"reaction",
-                                "tipText":"React to this",
-                                "onclick":function(){
-                                    RDR.actions.sentimentBox({
-                                        "container": containerHash,
-                                        "content_type": settings.content_type,
-                                        "content": settings.content,
-                                        "coords": coords
-                                    });
-                                }
-                            },
-                            {
-                                "item":"bookmark",
-                                "tipText":"Bookmark this",
-                                "onclick":function(){
-                                    RDR.actions.sentimentBox({
-                                        "container": containerHash,
-                                        "content_type": settings.content_type,
-                                        "content": settings.content,
-                                        "coords": coords,
-                                        "actionType":"bookmark"
-                                    });
-                                }
-                            }
-                    ];
-
-                    $.each( items, function(idx, val){
-                        var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
-                        $indicatorAnchor = $('<a href="javascript:void(0);">' +val.item+ '</a>'),
-                        $tooltip = RDR.tooltip.draw({"item":val.item,"tipText":val.tipText}).hide();
-                        $indicatorAnchor.click(function(){
-                            val.onclick();
-                            return false;
-                        });
-                        $item.append($indicatorAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
-                        if(idx===0){
-                            $item.addClass('rdr_actionbar_leftEnd')
-                        }else if(idx === items.length - 1){
-                            $item.addClass('rdr_actionbar_rightEnd')
-                        }
-                    });
-
-                    //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
-                    //but we're not sure yet if it's going to be the same function as this shareStart () above..
-
-                    $('#rdr_sandbox').append( $new_actionbar );
-                    $new_actionbar.find('li').hover(
-                        function() {
-                            $(this).find('a').siblings('.rdr_tooltip').show();
-                        },
-                        function () {
-                            $(this).find('a').siblings('.rdr_tooltip').hide();
-                        }
-                    );
-
-                    if(content_type == "image"){
-                        $new_actionbar.addClass('rdr_actionbar_for_image');
-                        $new_actionbar.append('<div style="clear:both;" />').removeClass('rdr_widget rdr_widget_bar');
-
-                        /*                    
-                        $indicator_details = $('#rdr_indicator_details_'+containerHash).removeClass('rdr_widget rdr_widget_bar');
-                        var indicatorDetailsOffset = {
-                            'top': $new_actionbar.offset().top,
-                            'left': $new_actionbar.offset().left + $new_actionbar.width()
-                        }
-                        log('$new_actionbar.width')
-                        log($new_actionbar.width())
-                        $indicator_details.appendTo($new_actionbar)//chain
-                        .css({
-                            'display':'block',
-                            'position':'relative'
-                        });
-                        */
-                    }
-
-    				return $new_actionbar;
                 }
+                log('content_type')
+                log(content_type)
+                var offsets = actionbarOffsets[content_type];
+
+                coords.top += offsets.top;
+                coords.left += offsets.left;
+                
+
+                //rewrite coords if needed
+                // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
+                coords = RDR.util.stayInWindow({coords:coords, width:200, height:30, ignoreWindowEdges:settings.ignoreWindowEdges});
+
+                // TODO use settings check for certain features and content types to determine which of these to disable
+                var $new_actionbar = $('<div class="rdr rdr_actionbar rdr_widget rdr_widget_bar" id="' + actionbar_id + '" />').css({
+                   'left':coords.left,
+                   'top':coords.top
+                }).data('hash',containerHash)//chain
+                .append('<ul/>');
+
+                // store the content selected that spawned this actionbar
+                // used for determining later on if an actionbar is being called by the same interaction as a
+                // currently-visible actionbar
+
+                // if this is an image, make sure we have the image hashed, tagged, and have its hash as a container:
+                if (content_type == "image" && !container ) {
+                    //todo
+                }
+
+                // ec: I'm removing this - I think it's old and RDR.page.hash doens't exist
+                //if ( settings.container == "") settings.container = RDR.page.hash;
+
+                var items = [
+                        {
+                            "item":"reaction",
+                            "tipText":"React to this",
+                            "onclick":function(){
+                                RDR.actions.sentimentBox({
+                                    "container": containerHash,
+                                    "content_type": settings.content_type,
+                                    "content": settings.content,
+                                    "coords": coords
+                                });
+                            }
+                        },
+                        {
+                            "item":"bookmark",
+                            "tipText":"Bookmark this",
+                            "onclick":function(){
+                                RDR.actions.sentimentBox({
+                                    "container": containerHash,
+                                    "content_type": settings.content_type,
+                                    "content": settings.content,
+                                    "coords": coords,
+                                    "actionType":"bookmark"
+                                });
+                            }
+                        }
+                ];
+
+                $.each( items, function(idx, val){
+                    var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
+                    $indicatorAnchor = $('<a href="javascript:void(0);">' +val.item+ '</a>'),
+                    $tooltip = RDR.tooltip.draw({"item":val.item,"tipText":val.tipText}).hide();
+                    $indicatorAnchor.click(function(){
+                        val.onclick();
+                        return false;
+                    });
+                    $item.append($indicatorAnchor,$tooltip).appendTo($new_actionbar.children('ul'));
+                    if(idx===0){
+                        $item.addClass('rdr_actionbar_leftEnd')
+                    }else if(idx === items.length - 1){
+                        $item.addClass('rdr_actionbar_rightEnd')
+                    }
+                });
+
+                //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
+                //but we're not sure yet if it's going to be the same function as this shareStart () above..
+
+                $('#rdr_sandbox').append( $new_actionbar );
+                $new_actionbar.find('li').hover(
+                    function() {
+                        $(this).find('a').siblings('.rdr_tooltip').show();
+                    },
+                    function () {
+                        $(this).find('a').siblings('.rdr_tooltip').hide();
+                    }
+                );
+
+                if(content_type == "image"){
+                    $new_actionbar.addClass('rdr_actionbar_for_image');
+                    $new_actionbar.append('<div style="clear:both;" />').removeClass('rdr_widget rdr_widget_bar');
+
+                    /*                    
+                    $indicator_details = $('#rdr_indicator_details_'+containerHash).removeClass('rdr_widget rdr_widget_bar');
+                    var indicatorDetailsOffset = {
+                        'top': $new_actionbar.offset().top,
+                        'left': $new_actionbar.offset().left + $new_actionbar.width()
+                    }
+                    log('$new_actionbar.width')
+                    log($new_actionbar.width())
+                    $indicator_details.appendTo($new_actionbar)//chain
+                    .css({
+                        'display':'block',
+                        'position':'relative'
+                    });
+                    */
+                }
+
+                return $new_actionbar;
+            
 			},
 			close: function($actionbars, effect){
                 //RDR.actionbar.close:
