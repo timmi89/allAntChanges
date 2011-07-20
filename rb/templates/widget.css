@@ -516,14 +516,19 @@ div.rdr_indicator {
     font: 12px Arial,sans-serif;
     padding:3px !important;
     border:1px solid #ddd; 
+    /*don't need these - let the js do it.*/
+    /*
     max-width:300px;
-    min-width:100px; /*todo: temp - get rid of this*/
+    min-width:100px;
+    */
     /*margin:-4px;*/
     /*offset with margin to line up with indicator: compensating for the padding and the border*/
     margin:-4px 0 0 -4px;
     overflow:hidden;
 }
-
+#rdr_sandbox div.rdr_indicator_details .rdr_see_more {
+    padding: 0 3px;
+}
 #rdr_sandbox div.rdr_indicator_details, div.rdr_indicator {
     /*keep the same for both indicator and details so that they overlap nicely*/
     color: #666666 !important;

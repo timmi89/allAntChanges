@@ -1886,10 +1886,8 @@ function readrBoard($R){
                 show: function(hashes, boolDontFade){
                     //RDR.actions.indicators.show:
                     //todo: boolDontFade is a quick fix to not fade in indicators
-
                     //hashes should be an array or a single hash string
-                    var $indicators = this.fetch(hashes)
-
+                    var $indicators = this.fetch(hashes);
                     if(boolDontFade){
                         $indicators.css({
                             'opacity':'0.4'
@@ -1903,8 +1901,8 @@ function readrBoard($R){
                 hide: function(hashes){
                     //RDR.actions.indicators.hide:
                     //hashes should be an array or a single hash string
-                    var $indicators = this.fetch(hashes)
-                    
+                    //it fails gracefully if there are no indicators for the hashed container ( $indcators will just be empty and do nothing )
+                    var $indicators = this.fetch(hashes);
                     $indicators.css({
                         'opacity':'0'
                     });
@@ -1989,12 +1987,10 @@ function readrBoard($R){
                     if( hash == "pageSummary" ){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
                         makeSummaryWidget(RDR.page)
-                    }else{
+                    }else{     
                         RDR.actions.indicators.make( hash );
-                       // interaction_count still == summary.counts.interactions, copy by ref
-     
                         if(summary.counts.interactions > 0){
-                            RDR.actions.indicators.show(hash,true); //temp hack, 'true' is for 'dont fade in';   
+                           RDR.actions.indicators.show(hash,true); //temp hack, 'true' is for 'dont fade in';   
                         }else{
                             RDR.actions.indicators.hide(hash); //if deleted back to 0
                         }
@@ -2025,6 +2021,11 @@ function readrBoard($R){
                     //check for ID and remove it if it's exists - for now we're just going to recreate it.
                     //todo: optimze later:
                     $('#'+indicatorId).remove();
+
+                    //check if the total is 0.  If so, let the old one be return and just return here.
+                    if(summary.counts.interactions <= 0) return;
+                    //else
+
                     $indicator = $('<div class="rdr_indicator" />').hide().attr('id',indicatorId);
                                         
                     //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the body.
@@ -2071,7 +2072,7 @@ function readrBoard($R){
                                 /*
                                 var $indicator_details_contents = $('<div />').addClass("rdr_indicator_details_mask").css({
                                     'position':'absolute;'
-                                })
+                                });
                                 */
                                 $indicator_details.css({
                                     'display':'block',
@@ -2185,7 +2186,7 @@ function readrBoard($R){
                     function _makeTagList( $tagList ){
                         //this expects the 'live' but hidden $tagList node, which it will flesh out in place.
                         var tagListMaxWidth = 300,
-                            buffer = 100, //for prefix and more...
+                            buffer = 120, //for prefix and more...
                             count = 0;
 
                         $.each( summary.top_interactions.tags, function(id, tag){
@@ -2571,7 +2572,7 @@ function readrBoard($R){
                             $this.data('selStates').push(node.selState);  
                         });
                         
-                    })
+                    })//chain
                     .hover( 
                         function() {
                             $(this).addClass('rdr_hover'); // safari/chrome kludge -- :hover isn't working here
@@ -2606,12 +2607,12 @@ function readrBoard($R){
                     content.push( {idx:parseInt(i), tag_idx:tag.body[i].tag_idx, count:tag.id[i].count } );
                 }
                 */
-console.clear();
+
                 //todo: temp stuff
                 var content = [];
                 $.each(summary.content_nodes, function(key, val){
                     content.push(val);
-                    console.dir(val);
+                    log(val);
                 });
                 function SortByTagCount(a,b) { return b.counts.tags - a.counts.tags; }
                 content.sort(SortByTagCount);
