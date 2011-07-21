@@ -2482,6 +2482,10 @@ function readrBoard($R){
                 $indicatorDetails = $('#rdr_indicator_details_'+ hash),
                 $container = $('.rdr-'+hash);
 
+                log($indicator)
+                log($indicatorDetails)
+                log($container)
+
                 var rindowPosition = (kind == "img") ?
                 {
                     top: $container.offset().top,
@@ -2490,7 +2494,10 @@ function readrBoard($R){
                 {
                     top: $indicatorDetails.offset().top,
                     left: $indicatorDetails.offset().left
-                }
+                };
+                
+                log(rindowPosition);
+                
 
                 var rindow = RDR.rindow.draw({
                     coords:rindowPosition,
@@ -4462,7 +4469,7 @@ function $RFunctions($R){
                     return newSelState
                 },
                 hilite: function(idxOrSelState, switchOnOffToggle){
-                    
+                    log('hilite')
                     // switchOnOffToggle is optional.  Expects a string 'on', 'off', or 'toggle', or defaults to 'on'
                     // check if idxOrSelState is omited
                     if( typeof idxOrSelState === 'string' && isNaN( idxOrSelState ) ){
@@ -4473,7 +4480,10 @@ function $RFunctions($R){
 
                     //todo:checkout why first range is picking up new selState range (not a big deal)
                     var selState = _fetchselState(idxOrSelState);
-                    if(!selState) return false;
+                    if(!selState){
+                        console.warn('selState not found')
+                        return false;
+                    }
                     
                     //extra protection against hiliting a ndoe with an invalid serialRange - flagged as false (not just undefined)
                     if( typeof selState.serialRange !== "undefined" && selState.serialRange == false ){
@@ -4823,6 +4833,7 @@ function $RFunctions($R){
 
                 if( !isActive && (switchOnOffToggle === "on" || switchOnOffToggle === "toggle" )){
                     //turn on
+                    //log('adding hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
                     hiliter.applyToRange(range);
                     //apply the visual styles with the generic classes
                     $('.'+hiliter['class']).addClass(styleClass);
@@ -4846,7 +4857,7 @@ function $RFunctions($R){
                         hiliter.undoToRange(range);
                     }
                     else{
-                        //[cleanlogz]log('error ' + range)
+                        console.warn('error ' + range)
                     }
                 }
                 
