@@ -224,6 +224,7 @@ function readrBoard($R){
 			},
             clearHilites: function( $rindows ){
                 var selStates = [];
+                log('clearHilites')
                 $rindows.each(function(idx,rindow){
                     var hash = $(rindow).data('container');
 
@@ -257,8 +258,8 @@ function readrBoard($R){
                 });
 
                 $.each( selStates, function(idx, selState){
-                    //log('selState')
-                    //log(selState)
+                    log('selState')
+                    log(selState)
                     $().selog('hilite', selState, 'off');
                 });
             }
@@ -637,7 +638,6 @@ function readrBoard($R){
 
                     var selState = $container.selog('save', {'serialRange':serialRange} );
                     //[cleanlogz]log(selState)
-
                     $().selog('hilite', selState, 'on');
 
                     /**********/
@@ -2213,7 +2213,8 @@ function readrBoard($R){
                     function _makeDetailsContent( $indicator_details ){
                         //this expects the 'live' but hidden $indicator_details node, which it will flesh out in place.
                         var body = '<div class="rdr_indicator_bodyClone" />',
-                            categoryTitle = '<span class="rdr_indicator_categoryTitle">&nbsp; reactions: &nbsp;</span>',
+                            categoryTitleText = (summary.counts.tags == 1) ? "&nbsp;reaction:&nbsp;" : "&nbsp;reactions:&nbsp;";
+                            categoryTitle = '<span class="rdr_indicator_categoryTitle">' +categoryTitleText+ '</span>',
                             $tagList = $('<div class="rdr_tags_list" />');
 
                         $indicator_details.append( body, categoryTitle, $tagList );
@@ -3808,6 +3809,9 @@ function readrBoard($R){
             },
             startSelect: function(e) {
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
+
+                //destroy all other actionbars
+                RDR.actionbar.closeAll();
                 
                 var $mouse_target = $(e.target);
 
@@ -3817,9 +3821,6 @@ function readrBoard($R){
                     // closes undragged windows
                     //i need to remove this way (for now at least) so that I can bind an event to the remove event (thanks ie.)
                     RDR.rindow.close( $('div.rdr.rdr_window.rdr.rdr_rewritable') );
-
-                    //destroy all other actionbars
-                    RDR.actionbar.closeAll();
 
                     // see what the user selected
                     // TODO: need separate image function, which should then prevent event bubbling into this
@@ -4470,6 +4471,12 @@ function $RFunctions($R){
                     var selState = _fetchselState(idxOrSelState);
                     if(!selState) return false;
                     
+                    //extra protection against hiliting a ndoe with an invalid serialRange - flagged as false (not just undefined)
+                    if( typeof selState.serialRange !== "undefined" && selState.serialRange == false ){
+                        console.warn('invalid serialRange, refusing to run hiliter');
+                        return false;
+                    }
+                    
                     //todo: not using this yet..
                     /*
                     var range = selState.range;
@@ -4562,6 +4569,7 @@ function $RFunctions($R){
                 activateRange: function(rangeOrSerialRange){
                     //todo: not using this anyway, but not sure if this still works completely..
                     var settings = {};
+                    if (!rangeOrSerialRange) return false;
                     if( typeof rangeOrSerialRange === "string" ){
                         //assume it's a serialRange
                         settings.serialRange = rangeOrSerialRange;
@@ -4725,12 +4733,16 @@ function $RFunctions($R){
                     try{
                         serialRange = rangy.serializeRange(range, true, selState.container ); //see rangy function serializeRange
                     } catch(e) {
+                        console.warn(e);
                         serialRange = false;
                     }
                 }
                 else if(selState.serialRange){
                     serialRange = selState.serialRange;
                     range = rangy.deserializeRange(serialRange, selState.container ); //see rangy function deserializeRange
+                }
+                else{
+                    console.warn('should not have fallen all the way through decision tree @ _makeSelState');
                 }
                 selState.serialRange = serialRange;
                 //todo: low: could think more about when to cloneRange to make it a tiny bit more efficient.
