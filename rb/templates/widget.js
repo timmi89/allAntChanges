@@ -1592,33 +1592,29 @@ function readrBoard($R){
                         log('preajax')
                         log(args)
                         log(action_type)
+                        var $rindow = args.rindow;
+                        log($rindow.data())
+
                         var uiMode = args.uiMode; //read or write
                         //expand args to make it clear what's going on.
-                        var $rindow = args.rindow,
-                        $tagLi = args.tag,
+                        var $tagLi = args.tag,
                         settings = args.settings;
 
-
+                        //todo: quick hack - do this right later.
+                        if( ! $tagLi.jquery ){
+                            $tagLi = $rindow.find('.rdr_tag_'+args.tag.id);
+                        }
                         //example:
                         var uiMode = args.uiMode || 'write';
                         //Split by readMode or writeMode
-
+                        log('$tagLi');
+                        log($tagLi);
                         //Do UI stuff particular to write mode
+                        $tagLi.find('div.rdr_leftBox').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" style="margin:6px 0 0 5px" />');
                         if (uiMode == "write"){
-                            //[cleanlogz]log('tag preAjax: write mode');
-                            //if tag has already been tried to be submitted, don't try again.
-                            //todo: later verify on the backend and don't let user 'stuff the ballot'
-
-
-                            //todo: This doent quite work yet: When we undo, then click the same tag again: we get error "args.tag is undefined"
-
-
-                            // optional loader.
-                            if ( typeof args.tag.find == "function" ) args.tag.find('div.rdr_leftBox').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" style="margin:6px 0 0 5px" />');
-
-                        //Do UI stuff particular to read mode
+                            //nothing here now
                         }else if(uiMode == "read"){
-                            //[cleanlogz]log('tag preAjax: read mode');
+                            //nothing here now
                         }else{
                             //[cleanlogz]console.warn('uiMode is not specified for interactions.tag...')
                         }
@@ -1672,6 +1668,7 @@ function readrBoard($R){
                                     tag_li.find('div.rdr_leftBox').click( function(e) {
                                         e.preventDefault();
                                         args.int_id = int_id; // add the interaction_id info in, we need it for unrateSend
+                                        args.tag = tag_li;
                                         // RDR.actions.unrateSend(args);
                                         RDR.actions.interactions.ajax( args, 'tag', 'remove');
                                         return false; // prevent the tag call applied to the parent <li> from firing
@@ -1721,6 +1718,7 @@ function readrBoard($R){
                             var sendData = args.sendData;
                             var interaction_node = args.response.data.deleted_interaction.interaction_node;
                             var rindow = args.rindow,
+                                $tagLi = args.tag,
                                 tag = args.tag,
                                 int_id = args.int_id;
 
@@ -1728,6 +1726,12 @@ function readrBoard($R){
                             var $thisTagButton = rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id);
                             log($thisTagButton)
                             $thisTagButton.removeClass('rdr_selected').removeClass('rdr_tagged').removeClass('rdr_int_node_'+int_id);
+
+                            //todo: quick hack -- fix later
+                            if( ! $tagLi.jquery ){
+                                $tagLi = rindow.find('.rdr_tag_'+args.tag.id);
+                            }
+                            $tagLi.find('div.rdr_leftBox').html('');
 
                             //update indicators
                             var hash = sendData.hash;
