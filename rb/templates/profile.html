@@ -1,7 +1,32 @@
-<div>
-{% for interaction in interactions %}
-<table class="card" border="0" cellspacing="0" cellpadding="0">
-herro
-</table>
-{% endfor %}
-</div>
+{% extends "base.html" %}
+
+{% block sidebarContent %}
+<div id="sidebar"></div>
+{% endblock sidebarContent %}
+
+{% block mainContent %}
+<h1>Latest Reactions</h1>
+<div id="cards"></div>
+{% endblock mainContent %}
+
+{% block pageJS %}
+<script type="text/javascript">
+$.ajax({
+    url: "/cards/",
+    type: "get",
+    success: function(response) {
+        $('#cards').html( response );
+    }
+});
+
+$.ajax({
+    url: "/sidebar/",
+    type: "get",
+    success: function(response) {
+        console.log(response);
+        $('#sidebar').html( response );
+    }
+});
+
+</script>
+{% endblock %}
