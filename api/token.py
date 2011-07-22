@@ -8,9 +8,10 @@ def checkToken(data):
     Check to see if token in request is good
     """
     try:
-        user_id = data.get('user_id', None)
+        user_id = data.get('user_id')
     except KeyError:
         raise JSONException("No user id supplied")
+        
     if len(SocialUser.objects.filter(user__id=user_id)) == 1:
         print "Checking token for registered user"
         try:
@@ -20,8 +21,8 @@ def checkToken(data):
         now = datetime.now()
         if social_auth.expires > now:
             auth_token = social_auth.auth_token
-    else:
-        raise JSONException(u'Facebook token expired')
+        else:
+            raise JSONException(u'Facebook token expired')
     else:
         print "Checking token for temporary user"
         auth_token = 'R3dRB0aRdR0X'
