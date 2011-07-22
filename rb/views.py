@@ -25,16 +25,31 @@ def widget(request,sn):
 
 def widgetCss(request):
     # Widget code is retreived from the server using RBGroup shortname
-    return render_to_response("widget.css", context_instance=RequestContext(request), mimetype = 'text/css')
+    return render_to_response("widget.css",
+      context_instance=RequestContext(request),
+      mimetype = 'text/css')
 
 def fb(request):
-    return render_to_response("facebook.html",{'fb_client_id': FACEBOOK_APP_ID}, context_instance=RequestContext(request))
+    return render_to_response(
+      "facebook.html",
+      {'fb_client_id': FACEBOOK_APP_ID},
+      context_instance=RequestContext(request)
+    )
 
 def fblogin(request):
-    return render_to_response("fblogin.html",{'fb_client_id': FACEBOOK_APP_ID, 'group_name': request.GET['group_name'] }, context_instance=RequestContext(request))
+    return render_to_response(
+      "fblogin.html",
+      {'fb_client_id': FACEBOOK_APP_ID,
+      'group_name': request.GET['group_name'] },
+      context_instance=RequestContext(request)
+    )
 
 def xdm_status(request):
-    return render_to_response("xdm_status.html",{'fb_client_id': FACEBOOK_APP_ID}, context_instance=RequestContext(request))
+    return render_to_response(
+      "xdm_status.html",
+      {'fb_client_id': FACEBOOK_APP_ID},
+      context_instance=RequestContext(request)
+    )
 
 def profile(request, user_id, **kwargs):
     cookies = request.COOKIES
