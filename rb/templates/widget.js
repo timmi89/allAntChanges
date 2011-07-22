@@ -211,9 +211,6 @@ function readrBoard($R){
 
                 return $new_rindow;
 			},
-            remove: function(){
-                this.remove
-            },
             close: function( $rindows ) {
                 RDR.rindow.clearHilites( $rindows );
                 $rindows.each(function(idx,rindow){
@@ -1438,21 +1435,18 @@ function readrBoard($R){
                 }
             },
             interactions: {
-                create: function(args, int_type, action_type){
-                    //RDR.actions.interactions.create:
+                //RDR.actions.interactions:
+                ajax: function(args, int_type, action_type){
+                    //RDR.actions.interactions.ajax:
                     if ( !action_type ) action_type = "create";
 
                     if( !RDR.actions.interactions.hasOwnProperty(int_type) ){
-                        //[cleanlogz]console.warn('invalid interaction type ' +int_type+ "for RDR.actions.interactions.create()");
+                        //[cleanlogz]console.warn('invalid interaction type ' +int_type+ "for RDR.actions.interactions.ajax()");
                         return false; //don't continue
                     }
-                    //[cleanlogz]log('**CALL PREAJAX**');
-                    //[cleanlogz]console.dir(args);
+                    
                     // take care of pre-ajax stuff, mostly UI stuff
-                    RDR.actions.interactions[int_type].preAjax(args);
-
-                    //[cleanlogz]log('createeeeeeeeeeeeeeeee');
-                    //[cleanlogz]console.dir(args);
+                    RDR.actions.interactions[int_type].preAjax(args, action_type);
 
                     //get user and only procceed on success of that.
                     RDR.session.getUser( args, function(newArgs){
@@ -1468,9 +1462,6 @@ function readrBoard($R){
                         //RDR.actions.interactions[int_type].send(args);
                         RDR.actions.interactions.send(args, int_type, action_type);
                     });
-                },
-                remove: function(args, int_type){
-                    RDR.actions.interactions.create( args, int_type, 'remove' );
                 },
                 send: function(args, int_type, action_type){
                     //[cleanlogz]log('sendddddddddddddddddd');
@@ -1595,7 +1586,12 @@ function readrBoard($R){
 
                 },
                 tag: {
-                    preAjax: function(args){
+                    preAjax: function(args, action_type){
+                        //RDR.actions.interactions.tag.preAjax:
+                        //expected to be called from RDR.actions.interactions.ajax
+                        log('preajax')
+                        log(args)
+                        log(action_type)
                         var uiMode = args.uiMode; //read or write
                         //expand args to make it clear what's going on.
                         var $rindow = args.rindow,
@@ -1612,6 +1608,10 @@ function readrBoard($R){
                             //[cleanlogz]log('tag preAjax: write mode');
                             //if tag has already been tried to be submitted, don't try again.
                             //todo: later verify on the backend and don't let user 'stuff the ballot'
+
+
+                            //todo: This doent quite work yet: When we undo, then click the same tag again: we get error "args.tag is undefined"
+
 
                             // optional loader.
                             if ( typeof args.tag.find == "function" ) args.tag.find('div.rdr_leftBox').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" style="margin:6px 0 0 5px" />');
@@ -1632,15 +1632,22 @@ function readrBoard($R){
                         else return {};
                     },
                     onSuccess: {
+                        //RDR.actions.interactions.tag.onSuccess:
                         create: function(args){
-                            //RDR.actions.interactions.tag.onSuccess:
-                            var response = args.response;
+                            //RDR.actions.interactions.tag.onSuccess.create:
+                            //todo: clean up these args.
+                            var response = args.response,
+                            interaction_node = response.data.interaction.interaction_node;
+
                             var content_type = (args.settings) ? args.settings.content_type :  "text" ; //todo: phase this out. - make it an attr of the content node
                             var sendData = args.sendData;
                             var rindow = args.rindow,
                                 tag_li = args.tag,
                                 tag = args.tag.data('tag'),
                                 int_id = response.data.interaction.id;
+
+                            log('on success tag')
+                            
 
                             //todo: untangle these argument translations.
                             var content_node_data = sendData.content_node_data;
@@ -1666,7 +1673,7 @@ function readrBoard($R){
                                         e.preventDefault();
                                         args.int_id = int_id; // add the interaction_id info in, we need it for unrateSend
                                         // RDR.actions.unrateSend(args);
-                                        RDR.actions.interactions.remove( args, 'tag' );
+                                        RDR.actions.interactions.ajax( args, 'tag', 'remove');
                                         return false; // prevent the tag call applied to the parent <li> from firing
                                     });
 
@@ -1687,19 +1694,19 @@ function readrBoard($R){
 
                                 RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node:content_node, content_type:content_type});
                             }
+
                             //update indicators
                             var hash = sendData.hash;
                             var tagHelper = {
-                                id: response.data.interaction.interaction_node.id,
-                                body: response.data.interaction.interaction_node.body,
-                                count: 1
+                                id: interaction_node.id,
+                                body: interaction_node.body,
+                                delta: 1
                             };
-                            var int_id = response.data.interaction.id;
 
                             var diff = {   
                                 tags: {}
                             };
-                            diff.tags[ tagHelper['id'] ] = tagHelper; //yeah?, didja get that one? ... (diff.tags.tagID = tagHelper) //todo: clean this up.
+                            diff.tags[ tagHelper.id ] = tagHelper;
 
                             RDR.actions.indicators.update(hash, diff);
                             //end update indicators
@@ -1710,19 +1717,41 @@ function readrBoard($R){
 
                         },
                         remove: function(args){
-                            //[cleanlogz]log('tag delete!!');
-                            //[cleanlogz]console.dir(args);
+                            //RDR.actions.interactions.tag.onSuccess.remove:
+                            var sendData = args.sendData;
+                            var interaction_node = args.response.data.deleted_interaction.interaction_node;
                             var rindow = args.rindow,
                                 tag = args.tag,
                                 int_id = args.int_id;
 
                             RDR.actions.panel.collapse("whyPanel", rindow);
                             var $thisTagButton = rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id);
+                            log($thisTagButton)
                             $thisTagButton.removeClass('rdr_selected').removeClass('rdr_tagged').removeClass('rdr_int_node_'+int_id);
+
+                            //update indicators
+                            var hash = sendData.hash;
+                            var tagHelper = {
+                                id: interaction_node.id,
+                                body: interaction_node.body,
+                                delta: -1
+                            };
+
+                            var diff = {   
+                                tags: {}
+                            };
+                            diff.tags[ tagHelper.id ] = tagHelper;
+
+                            RDR.actions.indicators.update(hash, diff);
+                            //end update indicators
+
                         }
                     },
                     onFail: function(args){
                         //RDR.actions.interactions.tag.onFail:
+
+                        //todo: we prob want to move most of this to a general onFail for all interactions.
+                        // So this function would look like: doSpecificOnFailStuff....; RDR.actions.interactions.genericOnFail();
 
                         var rindow = args.rindow,
                             tag_li = args.tag;
@@ -1743,7 +1772,7 @@ function readrBoard($R){
                                 //[cleanlogz]log('inside callback');
                                 // if ( !args.secondAttempt ) {
                                     args.secondAttempt = true;
-                                    RDR.actions.interactions.create( args, 'tag' );
+                                    RDR.actions.interactions.ajax( args, 'tag', 'create' );
                                 // }else{
                                     // //[cleanlogz]console.warn('unhandled create interaction fail')
                                 // }
@@ -1810,7 +1839,7 @@ function readrBoard($R){
                                     e.preventDefault();
                                     args.int_id = int_id; // add the interaction_id info in, we need it for unrateSend
                                     // RDR.actions.unrateSend(args);
-                                    RDR.actions.interactions.remove( args, 'bookmark' );
+                                    RDR.actions.interactions.ajax( args, 'bookmark', 'remove' );
                                     return false; // prevent the tag call applied to the parent <li> from firing
                                 });
 
@@ -1845,7 +1874,7 @@ function readrBoard($R){
                                 args.int_id = event.data.int_id;
                                 //[cleanlogz]log('bookmark undo args');
                                 //[cleanlogz]console.dir(args);
-                                RDR.actions.interactions.remove( args, 'bookmark' );
+                                RDR.actions.interactions.ajax( args, 'bookmark', 'remove' );
                             });
 
                             // TODO make this link to the user profile work
@@ -1881,6 +1910,7 @@ function readrBoard($R){
                         
                     }
                 }
+                //end RDR.actions.interactions
             },
             indicators: {
                 show: function(hashes, boolDontFade){
@@ -1934,52 +1964,53 @@ function readrBoard($R){
                         var summary = RDR.summaries.hasOwnProperty(hash) ? RDR.summaries[hash] : RDR.actions.summaries.init(hash);
                     }
 
-                    //interaction categories and for each,
-                    //a list of {id:incAmount} - incAmount will be 1 or -1 for decrement;
-
                     /*
-                    //example for testing - keep commented out
+                    //EXAMPLE: diff object.  keep commented out, but leave it here.
                     var diff = {   
                         coms: {
                             
                         },
                         tags: {
-                            //'id':{body, count} where count should be 1 for add a new one, or -1 for remove it.
+                            //this should be an obj: { 'id':{body:body, count:count, id:id} } where count should be 1 for add a new one, or -1 for remove it.
                             '2':{
                                 'body':"Tag!!",
-                                'count':1
+                                'delta':1,
+                                'id':id
                             }
                         }
                     }
                     */
 
-                    var interaction_count = summary.counts.interactions;
-                    
-                    $.each( diff, function(intActType, val){
-                        // scoped to category of coms or tags
-                        
-                        var top_intActs_of_this_type = summary.top_interactions[intActType];
-                        var counts_of_this_type = summary.counts[intActType];   //this is an integer, so can't assign by refrence.
+                    console.log('diff');
+                    console.dir(diff);
+                    $.each( diff, function(interaction_node_type, nodes){
+                        // This is now scoped to node_type - so nodes, summary_nodes, and counts here only pertain to their category (tag or comment, etc.)
+                        var summary_nodes = summary.top_interactions[interaction_node_type];
 
-                        $.each(val, function(id,tag){
+                        //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
+                        $.each(nodes, function(id,node){
                             //coms or tags
-                            var delt = tag['count'];
+                            if( summary_nodes.hasOwnProperty(id) && typeof summary_nodes.hasOwnProperty[id] !== 'undefined' ){
+                                var summary_node = summary_nodes[id];
+                                summary_node.count += node['delta'];
 
-                            if( typeof top_intActs_of_this_type[id] !== 'undefined' ){
-                                top_intActs_of_this_type[id].count += delt;
+                                //if this cleared out the last of this node, delete it. (i.e. if a first-ever tag was made, and then undone )
+                                if( summary_node.count <= 0 ){
+                                    delete summary_nodes[id]; //don't try to use summary_node here instead of summary_nodes[id].
+                                }
                             }else{
                                 //tag doens't exist yet:
-                                //graooaooaoanan uggggggglyyyy!!! todo: fix this shit.
-                                var body = tag['body'];
-                                top_intActs_of_this_type[id] = {
-                                    'body':body,
-                                    'count': delt //this should always be 1.  Yes, this is ugly.  Should have a make tag function somewhere.
+                                //todo: implement a node.make function instead of this.
+                                summary_nodes[id] = {
+                                    'body':node['body'],
+                                    'count': node['delta'] //this should always be 1.  Yes, this is ugly.  Should have a make tag function somewhere.
                                 }
 
                             }
 
-                            summary.counts[intActType] += delt;
-                            summary.counts.interactions += delt;
+                            //update the summary's counts object
+                            summary.counts[interaction_node_type] += node['delta'];
+                            summary.counts.interactions += node['delta'];
 
                         });
                     });
@@ -2108,11 +2139,20 @@ function readrBoard($R){
                             top: 7,
                             left: -5
                         }
+
+                        /*
                         $indicator.find('.rdr_indicator_body').css({
                             'top': relOffset.top + cornerPadding.top,
                             'left': relOffset.left + cornerPadding.left
                         });
+                        */
+                        //because this lives outside our sandbox, it has been 'css-reset' with !important for zero'd out margins, position...
+                        //so we can't use $.css here which won't allow for !important.  Use the following instead.
+                        //note that this overwrites any existing inline style. 
+                        //todo: use regex instead to ensure we don't overwrite inline styles (though there shouldn't be any)
+                        var inlineStyleStr = 'top:' +(relOffset.top+cornerPadding.top)+ 'px !important; left:' +(relOffset.left + cornerPadding.left) + 'px !important;';
 
+                        $indicator.find('.rdr_indicator_body').attr('style', inlineStyleStr);
 
                         $indicator_details.addClass('rdr_indicator_details_for_image')
 
@@ -2186,11 +2226,13 @@ function readrBoard($R){
                     function _makeTagList( $tagList ){
                         //this expects the 'live' but hidden $tagList node, which it will flesh out in place.
                         var tagListMaxWidth = 300,
-                            buffer = 120, //for prefix and more...
-                            count = 0;
+                            buffer = 120, //for prefix and the "more..." span
+                            count = 0; //used as a break statement below
 
                         $.each( summary.top_interactions.tags, function(id, tag){
-                            if(count == null) return; //used as a break statement
+                            if(count == null) return;
+                            if(tag.count < 0) return; //this shouldn't happen, should be taken care of in indicators.update.  But just in case.
+
                             var prefix = count ? ", " : "", //don't include the first time
                             $tag = $('<strong/>').append(tag.body),
                             $count = $('<em/>').append( ' ('+tag.count+')' ),
@@ -2401,7 +2443,7 @@ function readrBoard($R){
                         }
                     });
 
-                    summary.initated = true;
+                    summary.initiated = true;
                 },
                 save: function(summaries){
                     //RDR.actions.summaries.save:
@@ -2656,7 +2698,7 @@ function readrBoard($R){
                         $header.find('span.rdr_tag_count').click( function() {
                             var $interactionButton = $(this).closest('.rdr_tag');
                             var args = { tag:$interactionButton, rindow:rindow, content:node.body, hash:hash, uiMode:'read', content_node:node, thumbsUp:true};
-                            RDR.actions.interactions.create( args, 'tag' );
+                            RDR.actions.interactions.ajax( args, 'tag', 'create' );
                         });
 
                         var hash = $contentSet.data('hash');
@@ -2722,7 +2764,7 @@ function readrBoard($R){
                                     var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
                                         var $interactionButton = $(this).closest('.rdr_tag');
                                         var args = { tag:$interactionButton, rindow:rindow, content:node.body, hash:hash, uiMode:'read', content_node:node, thumbsUp:true};
-                                        RDR.actions.interactions.create( args, 'tag' );
+                                        RDR.actions.interactions.ajax( args, 'tag', 'create' );
                                     });
 
                                     $this_tag.append($tagShareButton, $tagCountButton, thisTag.body);
@@ -3124,11 +3166,11 @@ function readrBoard($R){
                             if (actionType == "react") {
                                 var args = { tag:$this, rindow:rindow, settings:settings };
 
-                                RDR.actions.interactions.create( args, 'tag' );
+                                RDR.actions.interactions.ajax( args, 'tag', 'create' );
 
                             } else {
                                 var args = { tag:$this, rindow:rindow, settings:settings };
-                                RDR.actions.interactions.create( args, 'bookmark' );
+                                RDR.actions.interactions.ajax( args, 'bookmark', 'create' );
                                 // RDR.actions.bookmarkStart({ tag:$this, rindow:rindow, settings:settings, actionType:"bookmark" });
 
                             }
@@ -3298,11 +3340,11 @@ function readrBoard($R){
                             }});
                             if ( args.actionType == "react") {
                                 var args = { tag:$tag, rindow:rindow, settings:settings};
-                                RDR.actions.interactions.create( args, 'tag' );
+                                RDR.actions.interactions.ajax( args, 'tag', 'create' );
 
                             } else if ( args.actionType == "bookmark" ) {
                                 var args = { tag:$tag, rindow:rindow, settings:settings};
-                                RDR.actions.interactions.create( args, 'bookmark' );
+                                RDR.actions.interactions.ajax( args, 'bookmark', 'create' );
                                 // RDR.actions.bookmarkSend({ tag:tag, rindow:rindow, settings:settings, callback: function() {
                                 //         // todo: at this point, cast the tag, THEN call this in the tag success function:
                                 //         //RDR.actions.panel.expand("whyPanel", rindow);
@@ -3341,10 +3383,10 @@ function readrBoard($R){
                 }
             },
             rateSend: function(args) {
-                //nothing to see here - this has been moved to RDR.actions.interactions.create( ... 'tag')
+                //nothing to see here - this has been moved to RDR.actions.interactions.ajax()
             },
             bookmarkSend: function(args) {
-                //nothing to see here - this has been moved to RDR.actions.interactions.create( ... 'tag')
+                //nothing to see here - this has been moved to RDR.actions.interactions.ajax()
             },
             share_getLink: function(args) {
                 //[cleanlogz]log('----share_getLink args----');
@@ -3611,7 +3653,7 @@ function readrBoard($R){
                     //[cleanlogz]log('------------------------------------- clicked args');
                     // log(event.data.int_id);
                     //[cleanlogz]console.dir(args);
-                    RDR.actions.interactions.remove( args, 'tag' );
+                    RDR.actions.interactions.ajax( args, 'tag', 'remove' );
                 });
 
                 $whyPanel_tagCard.append(

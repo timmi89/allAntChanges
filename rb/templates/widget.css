@@ -480,18 +480,20 @@ img.rdr_shared      { -moz-box-shadow:0 0 10px 1px #008be4; -webkit-box-shadow:0
 
 /* container indicator icons */
 
-
-/*reset for indicator stuff*/
-
-div.rdr_indicator {
+/*reset for all indicator stuff - this is the stuff that's not in the sandbox, so we need !important here everything */
+/*this should stay above the rest of the indicator stuff so it can get overwridden as needed. */
+div.rdr_indicator, div.rdr_indicator * {
     position: relative !important;
     display:inline !important;
-    z-index:11000 !important;
-    text-decoration:none !important;
     margin: 0 !important;
     padding: 0 !important;
     top: 0 !important;
     left: 0 !important;
+    z-index:11000 !important;
+    text-decoration:none !important;
+}
+
+div.rdr_indicator {
     /*start with 0 opacity so it can fade in properly*/
     /* opacity for .rdr_indicator set in js instead of here. Fade it in on load so we can still use display:inline; */
     opacity:0.0;
