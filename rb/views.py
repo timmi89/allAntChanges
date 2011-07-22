@@ -83,11 +83,11 @@ def profile(request, user_id, **kwargs):
         context['user'] = user
     return render_to_response("profile.html", context, context_instance=RequestContext(request))
 
-def main(request, **kwargs):
+def main(request, user_id=None, **kwargs):
     cookies = request.COOKIES
     #cookie_user_id = cookies.get('user_id')
     
-    context = {'fb_client_id': FACEBOOK_APP_ID}
+    context = {'fb_client_id': FACEBOOK_APP_ID, 'user_id': user_id}
     """
     if cookie_user_id:
         user = User.objects.get(id=cookie_user_id)
@@ -98,8 +98,9 @@ def main(request, **kwargs):
 def cards(request, **kwargs):
     # Get interaction set based on filter criteria
     interactions = Interaction.objects.all()
-    #print user_id
-    #interactions = interactions.filter(user=user_id)
+    
+    if 'user_id' in kwargs:
+        interactions = interactions.filter(user=kwargs['user_id'])
     
     if 'view' in kwargs:
         view = kwargs['view']
