@@ -3,7 +3,7 @@
     "model": "rb.Group",
     "pk": 1,
     "fields":{
-      "name": "Test Group",
+      "name": "Daily Candy",
       "short_name": "test",
       "share": 1,
       "comment": 1,
