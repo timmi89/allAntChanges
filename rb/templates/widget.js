@@ -24,7 +24,7 @@ function readrBoard($R){
     // none of this obj's properties are definite.  just jotting down a few ideas.
     RDR = {
         summaries:{},
-        current: {},
+        current: {}, //todo: what is this? delete it?
         content_nodes: {
             //template: keep commented out
             /*
@@ -1039,7 +1039,7 @@ function readrBoard($R){
                         title: title
 					},
 					success: function(response) {
-                        hash = RDR.util.md5.hex_md5( response.data.id );
+                        var hash = RDR.util.md5.hex_md5( response.data.id );
                         //[cleanlogz]log('----- page ID hashed: ' + hash );
                         if ( !RDR.containers[hash] ) {
                             RDR.containers[hash] = {};
@@ -1244,14 +1244,11 @@ function readrBoard($R){
                         var summaries = response.data.known,
                         unknownList = response.data.unknown;
                         
-                        RDR.actions.summaries.save(summaries);
-                        RDR.actions.containers.setup(summaries);
-                        
                         if ( unknownList.length > 0 ) {
                             RDR.actions.containers.send(unknownList);
                         }
-
-
+                        
+                        RDR.actions.containers.setup(summaries);
                     }
                 });
             },
@@ -1275,6 +1272,10 @@ function readrBoard($R){
                 setup: function(summaries){
                     //RDR.actions.containers.setup:
 
+                    //first do generic stuff
+                    RDR.actions.summaries.save(summaries);
+
+                    //then define type-specific setup functions and run them
                     var _setupFuncs = {
                         img: function(hash, summary){
                             var $container = RDR.containers[hash].$this;
@@ -1326,18 +1327,17 @@ function readrBoard($R){
                         }
                     };
 
+                    //run the setup func above
                     $.each(summaries, function(hash, summary){
-                                                
                         var kind = (summary.kind == "img") ? 'img' : "text";
                         _setupFuncs[kind](hash, summary);
-
                     });
                 },
                 send: function(hashList){
                     //RDR.actions.containers.send:
                     // gets the containers from the hashList
                     // and cuts them up into delicious bite-sized chunks
-                    // to ensure that the body text doesn't push the ajax sendData over 2000 chars.
+                    // to ensure that the ajax sendData isn't over 2000 chars.
 
                     var containers = {} 
                     chars = 0, //will increment from body length which are the critical ones we care about.
@@ -1361,13 +1361,13 @@ function readrBoard($R){
                         //[cleanlogz]log(chars);
 
                         if(chars > charLimit){
-                            RDR.actions.containers.ajaxSend(containers);
+                            RDR.actions.containers._ajaxSend(containers);
                             resetChunks();
                         }
                         containers[hash] = container;
                     });
                     //do one last send.  Often this will be the only send.
-                    RDR.actions.containers.ajaxSend(containers);
+                    RDR.actions.containers._ajaxSend(containers);
 
                     //helper functions
                     function resetChunks(){
@@ -1375,8 +1375,8 @@ function readrBoard($R){
                         chars = 0;
                     }
                 },
-                ajaxSend: function(containers){
-                    //RDR.actions.containers.ajaxSend:
+                _ajaxSend: function(containers){
+                    //RDR.actions.containers._ajaxSend:
                     //this is a helper for this.send:
                     //don't call this directly! Always use this.send so you don't choke on your ajax.
 
@@ -1705,8 +1705,8 @@ function readrBoard($R){
                             };
                             diff.tags[ tagHelper.id ] = tagHelper;
 
-                            RDR.actions.indicators.update(hash, diff);
-                            //end update indicators
+                            RDR.actions.summaries.update(hash, diff);
+
                             
                             var args = response.data;
                             args.rindow = rindow;
@@ -1746,8 +1746,7 @@ function readrBoard($R){
                             };
                             diff.tags[ tagHelper.id ] = tagHelper;
 
-                            RDR.actions.indicators.update(hash, diff);
-                            //end update indicators
+                            RDR.actions.summaries.update(hash, diff);
 
                         }
                     },
@@ -1958,114 +1957,30 @@ function readrBoard($R){
                     }
                     return $indicators;
                 },
-                update: function(hash, diff){
-                    //RDR.actions.indicators.update:
-                    if( hash == "pageSummary" ){
-                        //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
-                        var summary = RDR.page.summary;
-                    }else{
-                        //todo: this check shouldn't be needed anymore - summary should always exist
-                        var summary = RDR.summaries.hasOwnProperty(hash) ? RDR.summaries[hash] : RDR.actions.summaries.init(hash);
-                    }
-
-                    /*
-                    //EXAMPLE: diff object.  keep commented out, but leave it here.
-                    var diff = {   
-                        coms: {
-                            
-                        },
-                        tags: {
-                            //this should be an obj: { 'id':{body:body, count:count, id:id} } where count should be 1 for add a new one, or -1 for remove it.
-                            '2':{
-                                'body':"Tag!!",
-                                'delta':1,
-                                'id':id
-                            }
-                        }
-                    }
-                    */
-
-                    console.log('diff');
-                    console.dir(diff);
-                    $.each( diff, function(interaction_node_type, nodes){
-                        // This is now scoped to node_type - so nodes, summary_nodes, and counts here only pertain to their category (tag or comment, etc.)
-                        var summary_nodes = summary.top_interactions[interaction_node_type];
-
-                        //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
-                        $.each(nodes, function(id,node){
-                            //coms or tags
-                            if( summary_nodes.hasOwnProperty(id) && typeof summary_nodes.hasOwnProperty[id] !== 'undefined' ){
-                                var summary_node = summary_nodes[id];
-                                summary_node.count += node['delta'];
-
-                                //if this cleared out the last of this node, delete it. (i.e. if a first-ever tag was made, and then undone )
-                                if( summary_node.count <= 0 ){
-                                    delete summary_nodes[id]; //don't try to use summary_node here instead of summary_nodes[id].
-                                }
-                            }else{
-                                //tag doens't exist yet:
-                                //todo: implement a node.make function instead of this.
-                                summary_nodes[id] = {
-                                    'body':node['body'],
-                                    'count': node['delta'] //this should always be 1.  Yes, this is ugly.  Should have a make tag function somewhere.
-                                }
-
-                            }
-
-                            //update the summary's counts object
-                            summary.counts[interaction_node_type] += node['delta'];
-                            summary.counts.interactions += node['delta'];
-
-                        });
-                    });
-
-                    if( hash == "pageSummary" ){
-                        //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
-                        makeSummaryWidget(RDR.page)
-                    }else{     
-                        RDR.actions.indicators.make( hash );
-                        if(summary.counts.interactions > 0){
-                           RDR.actions.indicators.show(hash,true); //temp hack, 'true' is for 'dont fade in';   
-                        }else{
-                            RDR.actions.indicators.hide(hash); //if deleted back to 0
-                        }
-
-                        //now update the page.
-                            //not working yet.  Page reads from a different kind of summary. 
-                        //RDR.actions.indicators.update( 'pageSummary' );
-                    }
-
-                },
-                make: function(hash){
-                    //RDR.actions.indicators.make:
-                    //kind is optional - defaults to text
-                                        
-                    var $container, $indicator, $indicator_details, some_reactions, total, info, top_tags, kind;
-
-                    var summary = RDR.summaries[hash];
-                    node = RDR.containers[hash];
-                    //todo: prop down var change
-                    kind = node.kind;
-                    top_tags = summary.top_interactions.tags;
-                    total = summary.counts.tags;
-
-                    //todo: consider making more effecient.
-                    $container = $('.rdr-'+hash); // prepend with the anno_whitelist selector
+                init: function(hash){
+                    //RDR.actions.indicators.init:
+                                       
+                    var $container = summary.$container;
                     
-                    var indicatorId = "rdr_indicator_" +hash;
-                    //check for ID and remove it if it's exists - for now we're just going to recreate it.
+                    
+                    var indicatorId = 'rdr_indicator_'+hash,
+                    indicatorDetailsId = 'rdr_indicator_details_'+hash;
+
+                    //check for and remove any existing indicator and indicator_details and remove for now
                     //todo: optimze later:
                     $('#'+indicatorId).remove();
+                    $('#rdr_indicator_details_'+hash).remove();
 
                     //check if the total is 0.  If so, let the old one be return and just return here.
                     if(summary.counts.interactions <= 0) return;
                     //else
 
-                    $indicator = $('<div class="rdr_indicator" />').hide().attr('id',indicatorId);
-                                        
+                    var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId);
+
                     //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the body.
                     //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
-                    var $indicator_details = $('<div id="rdr_indicator_details_' +hash+ '" class="rdr rdr_indicator_details rdr_widget rdr_widget_bar" />');
+                    var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
+                    .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar');
 
                     //build tags in $tagList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
                     $indicator_details.css({ 'visiblity':'hidden' }).show()//chain
@@ -2073,7 +1988,7 @@ function readrBoard($R){
                     
                     //todo: this is a little weird
                     //we pass in the $indicator_details which gets fleshed out by this helper function.
-                    _makeDetailsContent( $indicator_details );
+                    scope.utils.makeDetailsContent( hash );
 
                     $indicator_details.css({ 'visiblity':'visible' }).hide();
 
@@ -2081,112 +1996,38 @@ function readrBoard($R){
                     var $indicatorBody = $('<div class="rdr_indicator_body" />').appendTo($indicator)//chain
                     .append(
                         '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
-                        '<span class="rdr_count">'+ total +'</span>'
+                        '<span class="rdr_count">'+ summary.counts.tags +'</span>'
                     )//chain
                     .data( {'which':hash} );
-          
-                    if( kind == 'img' ){
-                        //is an image
-                        $indicator.insertAfter($container)//chain
-                        .addClass('rdr_indicator_for_image')//chain
-                        .hover(
-                            function() {
-                                
-                                var indDetailsWidth = $indicator_details.width(),
-                                indDetailsLeftOffset = $indicatorBody.offset().left + $indicatorBody.width() - indDetailsWidth - 3; //account for 3px padding 
-
-                                //old version that didn't animate
-                                /*
-                                $indicator_details.css({
-                                    'display':'block',
-                                    'top': $indicatorBody.offset().top,
-                                    'left': indDetailsLeftOffset
-                                });
-                                */
-
-                                /*
-                                var $indicator_details_contents = $('<div />').addClass("rdr_indicator_details_mask").css({
-                                    'position':'absolute;'
-                                });
-                                */
-                                $indicator_details.css({
-                                    'display':'block',
-                                    'top': $indicatorBody.offset().top,
-                                    //setup initial state for indicator_details animation
-                                    'left': $indicatorBody.offset().left,
-                                    'width': 10
-                                });
-                                $indicator_details.animate({
-                                    'left': indDetailsLeftOffset,
-                                    'width': indDetailsWidth
-                                },200);
-
-                            },
-                            function() {
-                            }
-                        );
-
-                        $container.hover(
-                            function() {
-                                _updateIndicatorAndSummary();
-                            },
-                            function() {
-                            }
-                        );
-
-                        //keep the indicator pegged at the end of the img but move the body part of it (the visibile part)
-                        var relOffset = {
-                            top: $container.offset().top - $indicator.offset().top,
-                            left: - $indicator.find('.rdr_indicator_body').width()
-                        };
-                        var cornerPadding = {
-                            top: 7,
-                            left: -5
-                        }
-
-                        /*
-                        $indicator.find('.rdr_indicator_body').css({
-                            'top': relOffset.top + cornerPadding.top,
-                            'left': relOffset.left + cornerPadding.left
-                        });
-                        */
-                        //because this lives outside our sandbox, it has been 'css-reset' with !important for zero'd out margins, position...
-                        //so we can't use $.css here which won't allow for !important.  Use the following instead.
-                        //note that this overwrites any existing inline style. 
-                        //todo: use regex instead to ensure we don't overwrite inline styles (though there shouldn't be any)
-                        var inlineStyleStr = 'top:' +(relOffset.top+cornerPadding.top)+ 'px !important; left:' +(relOffset.left + cornerPadding.left) + 'px !important;';
-
-                        $indicator.find('.rdr_indicator_body').attr('style', inlineStyleStr);
-
-                        $indicator_details.addClass('rdr_indicator_details_for_image')
-
-                    }
-                                                             
-                    else if( kind !== 'img' ){
-                        //else assume text
-                        $indicator.addClass('rdr_indicator_for_text');
-                        var $actionbar = $('rdr_actionbar_'+hash);
 
 
-
-                        $indicator.hover(
-                            function() {
-                                _updateIndicatorAndSummary();                                
-                                $indicator_details.css({
-                                    'display':'block',
-                                    'top': $indicatorBody.offset().top,
-                                    'left': $indicatorBody.offset().left
-                                });
-                            },
-                            function() {
-                            }
-                        )//chain
-                        .appendTo($container);
-
-                    }
+                    var kind = (summary.kind == "img") ? "img" : "text";
+                    //run setup specific to this type
+                    scope.utils.kindSpecificSetup[kind]( hash );
+                              
                     //the rest is done for all types
 
+                    $indicator.hover(
+                        function() {
+                            //do updates
+                            RDR.actions.summaries.populate( hash )
+                            $indicator_details.find('.rdr_indicator_bodyClone').html( $indicatorBody.html() );
+
+                            $indicator_details.css({
+                                'display':'block',
+                                'top': $indicatorBody.offset().top,
+                                'left': $indicatorBody.offset().left
+                            });
+                        },
+                        function() {
+                        }
+                    );
+
+
                     $indicator_details.click( function() {
+                        //store it's offset in data(), because offset doesn't work if the node is hidden.  It was giving me problems before
+                        $indicator_details.data( 'top', $indicator_details.offset().top );
+                        $indicator_details.data( 'left', $indicator_details.offset().left );
                         RDR.actions.viewContainerReactions( hash );
                     })//chain
                     .hover(
@@ -2207,16 +2048,127 @@ function readrBoard($R){
                     }else{
                         RDR.actions.indicators.hide(hash); //if deleted back to 0
                     }
-
+                },
+                update: function(hash){
+                    //RDR.actions.indicators.update:
                     
-                    //helper functions
-                    function _updateIndicatorAndSummary(){
-                        RDR.actions.summaries.populate( hash )
-                        $indicator_details.find('.rdr_indicator_bodyClone').html( $indicatorBody.html() );
+                    var scope = this;
+
+                    var summary = RDR.summaries[hash];
+
+                    //check if $indicator does not exist and run scope.init if needed. 
+                    if( !summary.hasOwnProperty($indicator) ){ 
+                        scope.init(hash);
                     }
-                    function _makeDetailsContent( $indicator_details ){
+
+                    var $container = summary.$container,
+                        $indicator = summary.$indicator,
+                        $indicator_details = summary.$indicator_details,
+                        $indicatorBody = $indicator_details.find('.rdr_indicator_bodyClone');
+                    
+ 
+                             
+                },
+                utils:{
+                    kindSpecificSetup:{
+                        img: function( hash ){
+                            var summary = RDR.summaries[hash],
+                                $container = summary.$container,
+                                $indicator = summary.$indicator,
+                                $indicator_details = summary.$indicator_details,
+                                $indicatorBody = $indicator_details.find('.rdr_indicator_bodyClone');
+                            
+                            $indicator.insertAfter($container);
+                            log(' $indicatorBody.offset() ');
+                            log( $indicatorBody.offset() );
+                            log( $indicator );
+                            log( $indicator.offset() );
+
+
+                            $indicator.addClass('rdr_indicator_for_image')//chain
+                            .hover(
+                                function() {
+                                    
+                                    var indDetailsWidth = $indicator_details.width(),
+                                    indDetailsLeftOffset = $indicatorBody.offset().left + $indicatorBody.width() - indDetailsWidth - 3; //account for 3px padding 
+
+                                    $indicator_details.css({
+                                        'display':'block',
+                                        'top': $indicatorBody.offset().top,
+                                        //setup initial state for indicator_details animation
+                                        'left': $indicatorBody.offset().left,
+                                        'width': 10
+                                    });
+                                    $indicator_details.animate({
+                                        'left': indDetailsLeftOffset,
+                                        'width': indDetailsWidth
+                                    },200);
+
+                                },
+                                function() {
+                                }
+                            );
+
+
+                            //keep the indicator pegged at the end of the img but move the body part of it (the visibile part)
+                            var relOffset = {
+                                top: $container.offset().top - $indicator.offset().top,
+                                left: - $indicator.find('.rdr_indicator_body').width()
+                            };
+                            var cornerPadding = {
+                                top: 7,
+                                left: -5
+                            }
+
+                            /*
+                            $indicator.find('.rdr_indicator_body').css({
+                                'top': relOffset.top + cornerPadding.top,
+                                'left': relOffset.left + cornerPadding.left
+                            });
+                            */
+                            //because this lives outside our sandbox, it has been 'css-reset' with !important for zero'd out margins, position...
+                            //so we can't use $.css here which won't allow for !important.  Use the following instead.
+                            //note that this overwrites any existing inline style. 
+                            //todo: use regex instead to ensure we don't overwrite inline styles (though there shouldn't be any)
+                            var inlineStyleStr = 'top:' +(relOffset.top+cornerPadding.top)+ 'px !important; left:' +(relOffset.left + cornerPadding.left) + 'px !important;';
+
+                            $indicator.find('.rdr_indicator_body').attr('style', inlineStyleStr);
+
+                            $indicator_details.addClass('rdr_indicator_details_for_image')
+                        },
+                        text: function( hash ){
+                            log('in text')
+                            var summary = RDR.summaries[hash],
+                                $container = summary.$container,
+                                $indicator = summary.$indicator,
+                                $indicator_details = summary.$indicator_details,
+                                $indicatorBody = $indicator_details.find('.rdr_indicator_bodyClone'),
+                                $actionbar = $('rdr_actionbar_'+hash);
+
+
+                            $indicator.addClass('rdr_indicator_for_text');
+
+                            $indicator.hover(
+                                function() {
+                                    $indicator_details.css({
+                                        'display':'block',
+                                        'top': $indicatorBody.offset().top,
+                                        'left': $indicatorBody.offset().left
+                                    });
+                                },
+                                function() {
+                                }
+                            )//chain
+                            .appendTo($container);
+                        }
+                    }, 
+                    //helper functions
+                    makeDetailsContent: function( hash ){
                         //this expects the 'live' but hidden $indicator_details node, which it will flesh out in place.
-                        var body = '<div class="rdr_indicator_bodyClone" />',
+                        var scope = this;
+                        var summary = RDR.summaries[hash],
+                            $indicator_details = $('#rdr_indicator_details_'+hash),
+                            body = '<div class="rdr_indicator_bodyClone" />',
                             categoryTitleText = (summary.counts.tags == 1) ? "&nbsp;reaction:&nbsp;" : "&nbsp;reactions:&nbsp;";
                             categoryTitle = '<span class="rdr_indicator_categoryTitle">' +categoryTitleText+ '</span>',
                             $tagList = $('<div class="rdr_tags_list" />');
@@ -2224,25 +2176,76 @@ function readrBoard($R){
                         $indicator_details.append( body, categoryTitle, $tagList );
 
                         //builds out the $tagList contents
-                        _makeTagList( $tagList );
+                        scope.makeTagList( hash );
                         //I ususally prefer the format: "$tagList = _makeTagList()" where the function returns the $() object,
                         //but we need the function to register the nodes in the DOM in order to calc width.
-                    }
-                    function _makeTagList( $tagList ){
+                    },
+                    makeTagList: function( hash ){
                         //this expects the 'live' but hidden $tagList node, which it will flesh out in place.
                         var tagListMaxWidth = 300,
                             buffer = 120, //for prefix and the "more..." span
                             count = 0; //used as a break statement below
+                        
+                        var summary = RDR.summaries[hash],
+                            $indicator_details = $('#rdr_indicator_details_'+hash),
+                            $tagList = $indicator_details.find('.rdr_tags_list');
 
-                        $.each( summary.top_interactions.tags, function(id, tag){
+                        //make a helper dictionary to find content_nodes for each tags.  dict is { tag_id: [content_node_ids] }
+                        if (!summary.hasOwnProperty(content_nodes)) return;
+                        var tag_nodeXcontent_nodes = {};
+                        log('summary')
+                        log(summary)
+                        var content_nodes = [];
+                        if( summary && summary.hasOwnProperty(content_nodes) ){
+                            content_nodes = summary.content_nodes;
+                        }
+                        
+                        if (summary.kind !== 'img'){
+                            //populate tag_nodeXcontent_nodes - for each tag_node, get all its content_nodes in the summary
+                            $.each( content_nodes, function(content_node_id, content_node){
+                                $.each(content_node.top_interactions.tags, function(tag_node_id, tag_node){
+                                    tag_nodeXcontent_nodes[tag_node_id].push(content_node);
+                                });
+                                $span.data('selStates').push(node.selState);  
+                            });
+                            log('tag_nodeXcontent_nodes'); 
+                            log(tag_nodeXcontent_nodes);  
+                        }
+
+                        $.each( summary.top_interactions.tags, function(tag_id, tag){
                             if(count == null) return;
-                            if(tag.count < 0) return; //this shouldn't happen, should be taken care of in indicators.update.  But just in case.
+                            if(tag.count < 0) return; //this shouldn't happen, should be taken care of in summaries.update.  But just in case.
 
                             var prefix = count ? ", " : "", //don't include the first time
                             $tag = $('<strong/>').append(tag.body),
                             $count = $('<em/>').append( ' ('+tag.count+')' ),
                             $span = $('<span />').addClass('rdr_tags_list_tag');
-                            $span.append( $tag, $count).data('id',id);
+                            $span.append( $tag, $count).data('id',tag_id).data('selStates',[]);
+
+                            if (summary.kind !== 'img'){
+
+                                var these_content_nodes = tag_nodeXcontent_nodes[tag_id];
+                                $.each( these_content_nodes, function(arrIdx, content_node){
+                                    if( !content_node.selState ) return;
+                                    //else
+                                    $span.data('selStates').push(node.selState);
+                                });
+                            
+                                $span.hover( 
+                                    function() {
+                                        var selStates = $(this).data('selStates');
+                                        $.each( selStates, function(idx, selState){
+                                            $().selog('hilite', selState, 'on');
+                                        });
+                                    },
+                                    function() {
+                                        var selStates = $(this).data('selStates');
+                                        $.each( selStates, function(idx, selState){
+                                            $().selog('hilite', selState, 'off');
+                                        });
+                                    }
+                                );
+                            }
 
                             $tagList.append( prefix, $span );
 
@@ -2259,7 +2262,7 @@ function readrBoard($R){
                             count++;
                         });
                     }
-                             
+                    
                 },
                 sortReactions: function( hash ){
 
@@ -2314,16 +2317,14 @@ function readrBoard($R){
             summaries:{
                 init: function(hash){
                     //RDR.actions.summaries.init:
-                    //add an empty summary to the stack to be registered
-                    //todo: it would make sense to just get this from the backend, since it has
-                        //a function to do this already.
+
+                    //todo: it might make sense to just get this from the backend, since it has a function to do this already.
         
                     //data is in form {body:,kind:,hash:}
                     //todo: combine with above
-                    var node = RDR.containers[hash];
-                    //[cleanlogz]log('node from summaries.init')
-                    //[cleanlogz]log(node)
-                    //save an empty summary object to the summaries list
+                    var node = RDR.containers[hash];                  
+
+                    //create an 'empty' summary object
                     var summary = {
                         "kind": node.kind,
                         "id": node.id,
@@ -2337,22 +2338,12 @@ function readrBoard($R){
                             "tags": {}
                         }
                     };
-                    var summaries = {};
-                    summaries[hash] = summary; 
-                    //kind of a weird format for sending just one.. because it normally expects a bunch of them
-                    RDR.actions.summaries.save(summaries);
-                    return summary;
-                },
-                make: {
-                    //RDR.actions.summaries.make:
-                    tag_summary: function(){
-                        //later move this code here:
-                        //... $this_tag.append($tagShareButton, $tagCountButton) ...
-                    }
+                    RDR.actions.summaries.save(summary);
                 },
                 populate: function(hash){
                     //RDR.actions.summaries.populate:
-                    //expects a summary object from RDR.summaries
+                    //gets the summary from RDR.summaries and populates it with 
+
                     //[cleanlogz]log('RDR.summaries[hash] in populate');
                     //[cleanlogz]log(RDR.summaries[hash]);
                     var summary = RDR.summaries[hash];  
@@ -2400,50 +2391,8 @@ function readrBoard($R){
 
                             });
 
-                            //throw this tag summary into the container summary
+                            //throw the content_nodes into the container summary
                             summary.content_nodes = content_nodes;
-
-                            //todo: put this someplace better:
-                            //this doesn't need to be re-calculated every time
-
-                            //todo: combine with other li hover function
-                            //figure out which nodes belong to each tag.
-                            //this is uuuuuuuuuuuuuuuuuuuuugly
-                            //(ugly because I'm redundantly recalulating the same thing twice every time the read mode is activated,
-                            //when really it just needs to be calulated once on load and then updated when a new interaction is made)
-                            
-                            var $indicatorDetails = $('#rdr_indicator_details_'+hash);
-                            var nodes = content_nodes;
-
-                            $indicatorDetails.find('span.rdr_tags_list_tag').each(function(){
-                                var tag_id = $(this).data('id'),
-                                $span = $(this);
-                                $span.data('selStates',[]);  
-
-                                $.each(nodes, function(id, node){
-                                    var nodeTags = node.top_interactions.tags;
-                                    var thisTag = nodeTags[ tag_id ];
-                                    if(typeof thisTag === "undefined") return;
-                                    //else                            
-                                    $span.data('selStates').push(node.selState);  
-                                });
-                                
-                                $span.hover( 
-                                    function() {
-                                        var selStates = $(this).data('selStates');
-                                        $.each( selStates, function(idx, selState){
-                                            $().selog('hilite', selState, 'on');
-                                        });
-                                    },
-                                    function() {
-                                        var selStates = $(this).data('selStates');
-                                        $.each( selStates, function(idx, selState){
-                                            $().selog('hilite', selState, 'off');
-                                        });
-                                    }
-                                );
-
-                            });
 
                         }
                     });
@@ -2452,11 +2401,105 @@ function readrBoard($R){
                 },
                 save: function(summaries){
                     //RDR.actions.summaries.save:
-                    
+                    //expects a summary or a dict of summaries {hash:summary, hash:summary, ...}
+
+                    if( summaries.hashOwnProperty('id') ){
+                        //it's a single summary  - hash should have been passed in as a property to make this work.
+                        var summary = summaries;
+                        _saveIt(summary);
+                        return;
+                    }
+                    //else
                     $.each(summaries, function(hash,summary){
-                        RDR.summaries[hash] = summary;
-                        RDR.actions.indicators.make( hash );
+                        summary.hash = hash; //for convenience if we want it later.
+                        _saveIt(summary);
                     });
+
+                    //helper function
+                    function _saveIt(summary){
+                        RDR.summaries[summary.hash] = summary;
+                        summary.$container = $('.rdr-'+hash);
+
+                        RDR.actions.indicators.update( summary.hash );                        
+                    }
+                },
+                update: function(hash, diff){
+                    //RDR.actions.summaries.update:
+                    /*
+                    //EXAMPLE: diff object.  keep commented out, but leave it here.
+                    var diff = {   
+                        coms: {
+                        },
+                        tags: {
+                            //this should be an obj: { 'id':{body:body, count:count, id:id} } where count should be 1 for add a new one, or -1 for remove it.
+                            '2':{
+                                'body':"Tag!!",
+                                'delta':1,
+                                'id':id
+                            }
+                        }
+                    }
+                    */
+                                        
+                    //get summary, or if it doesn't exist, get a zero'ed out template of one.
+                    var summary = RDR.summaries.hasOwnProperty(hash) ? RDR.summaries[hash] : RDR.actions.summaries.init(hash);
+                    RDR.actions.indicators.update(hash, diff);
+
+                    //todo: not sure if this is being used.
+                    if( hash == "pageSummary" ){
+                        //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
+                        var summary = RDR.page.summary;
+                    }
+
+                    $.each( diff, function(interaction_node_type, nodes){
+                        // This is now scoped to node_type - so nodes, summary_nodes, and counts here only pertain to their category (tag or comment, etc.)
+                        var summary_nodes = summary.top_interactions[interaction_node_type];
+
+                        //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
+                        $.each(nodes, function(id,node){
+                            //coms or tags
+                            if( summary_nodes.hasOwnProperty(id) && typeof summary_nodes.hasOwnProperty[id] !== 'undefined' ){
+                                var summary_node = summary_nodes[id];
+                                summary_node.count += node['delta'];
+
+                                //if this cleared out the last of this node, delete it. (i.e. if a first-ever tag was made, and then undone )
+                                if( summary_node.count <= 0 ){
+                                    delete summary_nodes[id]; //don't try to use summary_node here instead of summary_nodes[id].
+                                }
+                            }else{
+                                //tag doens't exist yet:
+                                //todo: implement a node.make function instead of this.
+                                summary_nodes[id] = {
+                                    body: node['body'],
+                                    count: node['delta'], //this should always be 1.  Yes, this is ugly.  Should have a make tag function somewhere.
+                                    id: id 
+                                }
+
+                            }
+
+                            //update the summary's counts object
+                            summary.counts[interaction_node_type] += node['delta'];
+                            summary.counts.interactions += node['delta'];
+
+                        });
+                    });
+
+                    if( hash == "pageSummary" ){
+                        //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
+                        makeSummaryWidget(RDR.page)
+                    }else{     
+                        RDR.actions.indicators.update( hash );
+                        if(summary.counts.interactions > 0){
+                           RDR.actions.indicators.show(hash,true); //temp hack, 'true' is for 'dont fade in';   
+                        }else{
+                            RDR.actions.indicators.hide(hash); //if deleted back to 0
+                        }
+
+                        //now update the page.
+                            //not working yet.  Page reads from a different kind of summary. 
+                        //RDR.actions.summaries.update( 'pageSummary' );
+                    }
+
                 }
             },
             insertContainerIcon: function( hash ) {},
@@ -2492,8 +2535,9 @@ function readrBoard($R){
                     left: $container.offset().left + $container.width()
                 } :
                 {
-                    top: $indicatorDetails.offset().top,
-                    left: $indicatorDetails.offset().left
+                    //used data instead of offset because offset doesn't work if the node is hidden.  It was giving me problems before.
+                    top: $indicatorDetails.data('top'),
+                    left: $indicatorDetails.data('left')
                 };
                 
                 log(rindowPosition);
@@ -4346,7 +4390,7 @@ function $RFunctions($R){
                     var hash = RDR.util.md5.hex_md5(i);
                     RDR.page.imagedata[i].hash = hash; //todo: list these by hash in the first place.
 
-                    //RDR.actions.indicators.make( hash );
+                    //RDR.actions.indicators.update( hash );
                 }
             }
 
