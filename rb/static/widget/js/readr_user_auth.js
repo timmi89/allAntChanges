@@ -52,6 +52,7 @@ console.log('xdm: notifyParent: ' + status );
 	},
 	getReadrToken: function(fb_response) {
 		console.log('xdm: getReadrToken');
+		console.log(fb_response);
 		if ( fb_response ) {
             var fb_session = (fb_response.session) ? fb_response.session:fb_response
 			var sendData = {
@@ -171,9 +172,12 @@ console.log('xdm: notifyParent: ' + status );
 	},
 	killUser : function(callback) {
 		//console.log('killing the user...softly');
-console.log('xdm: killUser');
+
 		// if ( RDRAuth.rdr_user && RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token && RDRAuth.rdr_user.first_name ) {
-		if ( $.cookie('first_name') || ( RDRAuth.rdr_user && RDRAuth.rdr_user.first_name ) ) {
+		if ( RDRAuth.rdr_user && RDRAuth.rdr_user.first_name ) {
+			console.log('xdm: killUser 1');
+			console.log( $.cookie('first_name') );
+			console.dir(RDRAuth.rdr_user);
 			// deauth a full user
 			var sendData = {
 				user_id : RDRAuth.rdr_user.user_id,
@@ -201,42 +205,43 @@ console.log('xdm: killUser');
 				}
 			});
 		} else {
+			console.log('xdm: killUser 2');
 			// just a temp user
 			$.cookie('img_url', null, { path: '/' });
 			$.cookie('user_id', null, { path: '/' });
 			$.cookie('readr_token', null, { path: '/' });
 			RDRAuth.rdr_user = {};
+			if (callback) callback();
 		}
 	},
 	checkSocialUser : function() {
 		// clear the rdr_user and get it again, b/c we're only here if we've been asked if this person is a valid FB user, meaning we think our local info is wrong
-		// RDRAuth.rdr_user = {};
-		console.log('xdm: checkSocialUser');
-		RDRAuth.killUser( function() {
-			// var fb_session = FB.getSession();
-			// if ( fb_session ) {
-				// RDRAuth.getReadrToken( fb_session );
-			// } else {
-			
-			FB.getLoginStatus(function(response) {
-		  		if (response.session) {
-		  			// we have FB info for them -- so they are logged in and approved to user ReadrBoard
-		  			console.log('xdm: fb.getLoginStatus');
-					console.dir(response);
-					// RDRAuth.rdr_user.first_name = null;
-					//user is logged in to Facebook
+
+		// var fb_session = FB.getSession();
+		// if ( fb_session ) {
+			// RDRAuth.getReadrToken( fb_session );
+		// } else {
+			console.log('xdm: checkSocialUser');
+		FB.getLoginStatus(function(response) {
+	  		if (response.session) {
+	  			// we have FB info for them -- so they are logged in and approved to user ReadrBoard
+	  			console.log('xdm: fb.getLoginStatus');
+				console.dir(response);
+				// RDRAuth.rdr_user.first_name = null;
+				//user is logged in to Facebook
+				RDRAuth.killUser( function(response) {
 					RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
-		  		} else {
-		  			// remove the readr_token
-		  			console.log('xdm: checkSocialUser | no fb.response');
-		  			
-		  			console.dir(RDRAuth.rdr_user);
-		  			// tell the parent that it failed for some reason
-		  			RDRAuth.notifyParent({message:false}, "checkSocialUser fail");
-		  		}
-			});
-			// }
+				});
+	  		} else {
+	  			// remove the readr_token
+	  			console.log('xdm: checkSocialUser | no fb.response');
+	  			
+	  			console.dir(RDRAuth.rdr_user);
+	  			// tell the parent that it failed for some reason
+	  			RDRAuth.notifyParent({message:false}, "checkSocialUser fail");
+	  		}
 		});
+		// }
 	},
 	doFBLogin: function() {
 		FB.login( function(response) {

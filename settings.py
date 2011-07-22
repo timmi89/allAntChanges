@@ -157,9 +157,9 @@ INSTALLED_APPS = (
     'south',
     #'treebeard',
     #'debug_toolbar',
-    'autofixture',
+    'autofixture'
     #'django_extensions',
-    'devserver'
+    #'devserver'
 )
 
 DEVSERVER_MODULES = (
