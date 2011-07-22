@@ -28,12 +28,15 @@ class Deauthorize(BaseHandler):
     def read(self, request):
         data = json.loads(request.GET['json'])
         if not checkToken(data): raise JSONException(u"Token was invalid")
-        try:
-            SocialAuth.objects.filter(
-                social_user__user__id=data['user_id']
-            ).delete()
-        except:
-            raise JSONException(u'Error deauthorizing user')
+        if len(SocialUser.objects.filter(user__id=data[user_id])) == 1:
+            try:
+                SocialAuth.objects.filter(
+                    social_user__user__id=data['user_id']
+                ).delete()
+            except:
+                raise JSONException(u'Error deauthorizing user')
+        else:
+            raise JSONException(u'Cannot deauthorize temp user')
 
 class FBHandler(BaseHandler):
     @status_response
