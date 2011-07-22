@@ -83,27 +83,30 @@ def profile(request, user_id, **kwargs):
         context['user'] = user
     return render_to_response("profile.html", context, context_instance=RequestContext(request))
 
-def home(request, **kwargs):
+def main(request, **kwargs):
     cookies = request.COOKIES
-    user_id = cookies.get('user_id')
-    readr_token = cookies.get('readr_token')
-    interactions = Interaction.objects.all().select_related().order_by('-created')
+    #cookie_user_id = cookies.get('user_id')
+    
+    context = {'fb_client_id': FACEBOOK_APP_ID}
+    """
+    if cookie_user_id:
+        user = User.objects.get(id=cookie_user_id)
+        context['user'] = user
+    """
+    return render_to_response("index.html", context, context_instance=RequestContext(request))
+
+def cards(request, **kwargs):
+    # Get interaction set based on filter criteria
+    interactions = Interaction.objects.all()
+    #print user_id
+    #interactions = interactions.filter(user=user_id)
+    
     if 'view' in kwargs:
         view = kwargs['view']
         if view == 'tags': interactions=interactions.filter(kind="tag")
         if view == 'comments': interactions=interactions.filter(kind="com")
         if view == 'shares': interactions=interactions.filter(kind="shr")
-    interactions = interactions[:5]
-
-    context = {'interactions': interactions, 'fb_client_id': FACEBOOK_APP_ID}
-    if user_id:
-        user = User.objects.get(id=user_id)
-        context['user'] = user
-    return render_to_response("index.html", context, context_instance=RequestContext(request))
-
-def cards(request):
-    # Get interaction set based on filter criteria
-    interactions = Interaction.objects.all()
+    #interactions = interactions[:5]
 
     # Get set of pages -- interactions ordered by -created
     page_ids = interactions.values_list('page')

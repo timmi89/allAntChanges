@@ -11,7 +11,7 @@
       "bookmark": 1,
       "search": 1,
       "secret": "secret123%awesome%test!",
-      "logo_url_sm": "http://localhost:8080/static/ui-prototype/images/dc_logo_sm.png",
+      "logo_url_sm": "http://localhost:8080/static/demo/images/dc_logo_sm.png",
       "twitter": "dailycandy",
       "word_blacklist": "fuck, shit, poop"
     }
@@ -29,7 +29,7 @@
       "bookmark": 1,
       "search": 1,
       "secret": "secret123%awesome%test!",
-      "logo_url_sm": "http://localhost:8080/static/ui-prototype/images/dc_logo_sm.png",
+      "logo_url_sm": "http://localhost:8080/static/demo/images/dc_logo_sm.png",
       "twitter": "TheDogDaily",
       "word_blacklist": "fuck, shit, poop"
     }

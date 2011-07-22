@@ -54,6 +54,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'username',
         'gender',
         'hometown'
+        ''
     )
 
 class SocialAuthAdmin(admin.ModelAdmin):

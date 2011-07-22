@@ -12,13 +12,18 @@
 {% block pageJS %}
 <script type="text/javascript">
 $.ajax({
+    {% if user_id %}
+    url: "/profile/{{ user_id }}"
+    {% else %}
     url: "/cards/",
+    {% endif %}
     type: "get",
     success: function(response) {
         $('#cards').html( response );
     }
 });
-
+{% endblock %}
+{% block sidebarJS %}
 $.ajax({
     url: "/sidebar/",
     type: "get",
