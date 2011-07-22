@@ -1921,7 +1921,38 @@ console.log('widget getUser 2');
                         }
                     },
                     onFail: function(args){
-                        
+                        //RDR.actions.interactions.tag.onFail:
+
+                        //todo: we prob want to move most of this to a general onFail for all interactions.
+                        // So this function would look like: doSpecificOnFailStuff....; RDR.actions.interactions.genericOnFail();
+
+                        var rindow = args.rindow,
+                            tag_li = args.tag;
+
+                        var response = args.response;
+
+                        //clear the loader                  
+                        tag_li.find('div.rdr_leftBox').html('');
+
+
+                        if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
+                            //[cleanlogz]log('uh oh better login, tempy 1');
+                            RDR.session.showLoginPanel( args );
+                        } else {
+                            // if it failed, see if we can fix it, and if so, try this function one more time
+                            log('bookmark fail');
+                            console.dir(args);
+                            RDR.session.handleGetUserFail( args, function() {
+                                log('inside callback');
+                                console.dir(args);
+                                // if ( !args.secondAttempt ) {
+                                    args.secondAttempt = true;
+                                    RDR.actions.interactions.ajax( args, 'bookmark', 'create' );
+                                // }else{
+                                    // //[cleanlogz]console.warn('unhandled create interaction fail')
+                                // }
+                            });
+                        }
                     }
                 }
                 //end RDR.actions.interactions
