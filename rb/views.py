@@ -95,18 +95,18 @@ def main(request, user_id=None, **kwargs):
     """
     return render_to_response("index.html", context, context_instance=RequestContext(request))
 
-def cards(request, user_id=None, **kwargs):
-    # Get interaction set based on filter criteria
-    interactions = Interaction.objects.all()
-    print interactions
+def interactions(request, user_id=None, **kwargs):
     if user_id: interactions = interactions.filter(user=user_id)
-    print interactions
+    
     if 'view' in kwargs:
         view = kwargs['view']
         if view == 'tags': interactions=interactions.filter(kind="tag")
         if view == 'comments': interactions=interactions.filter(kind="com")
         if view == 'shares': interactions=interactions.filter(kind="shr")
-    #interactions = interactions[:5]
+
+def cards(request, **kwargs):
+    # Get interaction set based on filter criteria
+    interactions = Interaction.objects.all()
 
     # Get set of pages -- interactions ordered by -created
     page_ids = interactions.values_list('page')
