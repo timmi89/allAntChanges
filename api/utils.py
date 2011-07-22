@@ -6,7 +6,7 @@ import re
 from exceptions import FBException, JSONException
 from readrboard.rb.profanity_filter import ProfanitiesFilter
 
-blacklist = ['fuck','shit','poop']
+blacklist = ['fuck','shit','poop','cock','cunt']
 
 def getTagCommentData(comment):
     print comment

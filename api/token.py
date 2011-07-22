@@ -20,8 +20,8 @@ def checkToken(data):
         now = datetime.now()
         if social_auth.expires > now:
             auth_token = social_auth.auth_token
-        else:
-            raise JSONException(u'Facebook token expired')
+    else:
+        raise JSONException(u'Facebook token expired')
     else:
         print "Checking token for temporary user"
         auth_token = 'R3dRB0aRdR0X'

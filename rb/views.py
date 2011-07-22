@@ -95,13 +95,12 @@ def main(request, user_id=None, **kwargs):
     """
     return render_to_response("index.html", context, context_instance=RequestContext(request))
 
-def cards(request, **kwargs):
+def cards(request, user_id=None, **kwargs):
     # Get interaction set based on filter criteria
     interactions = Interaction.objects.all()
-    
-    if 'user_id' in kwargs:
-        interactions = interactions.filter(user=kwargs['user_id'])
-    
+    print interactions
+    if user_id: interactions = interactions.filter(user=user_id)
+    print interactions
     if 'view' in kwargs:
         view = kwargs['view']
         if view == 'tags': interactions=interactions.filter(kind="tag")
