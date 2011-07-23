@@ -527,6 +527,7 @@ div.rdr_indicator {
     /*offset with margin to line up with indicator: compensating for the padding and the border*/
     margin:-4px 0 0 -4px;
     overflow:hidden;
+    display:none; /*start with them hidden by default - will override with js*/
 }
 #rdr_sandbox div.rdr_indicator_details .rdr_see_more {
     padding: 0 3px;
@@ -566,7 +567,7 @@ div.rdr_indicator_for_text div.rdr_indicator_body{
     left: 4px !important;
 }
 
-#rdr_sandbox div.rdr_indicator_bodyClone{
+#rdr_sandbox div.rdr_indicator_details_body{
     width:auto !important;
     display:inline !important;
     white-space:nowrap !important;
@@ -604,7 +605,7 @@ div.rdr_indicator span.rdr_count, div.rdr_indicator_details span.rdr_count{
 #rdr_sandbox span.rdr_tags_list_tag {
     padding:3px 1px !important;
 }
-#rdr_sandbox span.rdr_tags_list_tag:hover {
+#rdr_sandbox div.rdr_indicator_details_for_text span.rdr_tags_list_tag:hover {
     background:#fe7 !important;
 }
 
