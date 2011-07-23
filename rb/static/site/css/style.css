@@ -460,12 +460,12 @@ html.techcrunch section[role="content"]	{
 
 html.dailycandy {
 	overflow-y:scroll;
-	background:url(/static/ui-prototype/images/dc_bg.png) top left fixed repeat-x #fff;
+	background:url(/static/demo/images/dc_bg.png) top left fixed repeat-x #fff;
 }
 
 html.techcrunch {
 	overflow-y:scroll;
-	background:url(/static/ui-prototype/images/tc_bg.png) top left fixed repeat-x #fff;
+	background:url(/static/demo/images/tc_bg.png) top left fixed repeat-x #fff;
 }
 
 /* MAIN */

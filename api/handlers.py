@@ -88,6 +88,11 @@ class InteractionHandler(AnonymousBaseHandler):
                     raise JSONException(u"Interaction did not exist!")
 
                 return deleteInteraction(interaction, user)
+                
+class VoteHandler(InteractionHandler):
+    def create(self, request, data, user, page, group):
+        pass
+    
 
 class CommentHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
