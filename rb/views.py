@@ -96,13 +96,23 @@ def main(request, user_id=None, **kwargs):
     return render_to_response("index.html", context, context_instance=RequestContext(request))
 
 def interactions(request, user_id=None, **kwargs):
-    if user_id: interactions = interactions.filter(user=user_id)
+    interactions = Interaction.objects.all()
+    
+    if user_id:
+        interactions = interactions.filter(user=user_id)
     
     if 'view' in kwargs:
         view = kwargs['view']
         if view == 'tags': interactions=interactions.filter(kind="tag")
         if view == 'comments': interactions=interactions.filter(kind="com")
         if view == 'shares': interactions=interactions.filter(kind="shr")
+        if view == 'bookmarks': interactions=interactions.filter(kind="bkm")
+    
+    interactions.select_related('page','user')  
+    
+    context = {'interactions': interactions}
+        
+    return render_to_response("interactions.html", context, context_instance=RequestContext(request))
 
 def cards(request, **kwargs):
     # Get interaction set based on filter criteria
@@ -117,8 +127,12 @@ def cards(request, **kwargs):
     context = {'cards': cards}
     return render_to_response("cards.html", context, context_instance=RequestContext(request))
 
-def sidebar(request):
-    return render_to_response("sidebar.html", context_instance=RequestContext(request))
+def sidebar(request, user_id=None):
+    context = {}
+    if user_id:
+        user = User.objects.get(id=user_id)
+        context['user'] = user
+    return render_to_response("sidebar.html", context, context_instance=RequestContext(request))
 
 def expander(request, short):
     link_id = base62.to_decimal(short);

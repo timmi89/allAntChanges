@@ -196,6 +196,12 @@ class Interaction(DateAwareModel, UserAwareModel):
         ordering = ['-created']
         unique_together = ('page', 'content', 'kind', 'interaction_node', 'user')
    
+    def human_kind(self):
+        return dict(((k,v) for k,v in self.INTERACTION_TYPES))[self.kind]
+        
+    def comments(self):
+        return Interaction.objects.filter(parent=self.parent, kind='com')
+   
     def __unicode__(self):
         return u'id: {0}'.format(self.id)
 

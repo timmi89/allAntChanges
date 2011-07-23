@@ -14,6 +14,9 @@
 #sidebar #following,
 #sidebar #followed_by	{margin:0 10px 10px;}
 
+#sidebar #user_data h3 {font-size:30px; font-weight: bold; padding-bottom:10px; padding-left:10px}
+#sidebar #user_data img {padding:15px}
+
 #sidebar h2,
 #sidebar #avatar,
 #sidebar #follow,
@@ -44,10 +47,15 @@ html.dailycandy #sidebar h3[role="profile_section_header"]	{display:block;}
 <div id="follow">
 	<button>+ Follow DailyCandy</button>
 </div>
+<div id="user_data">
+  <img src="{{ user.social_user.img_url }}?type=large">
+  <h3>{{ user.social_user.full_name }}</h3>
+</div>
 <h3>Activity</h3>
 <ul role="filters" class="activity">
-	<li role="all" class="active">All</li>
-	<li role="reactions">Reactions</li>
+	<li role="all" class="active">All Reactions</li>
+	<li role="bookmarks">Bookmarks</li>
+	<li role="reactions">Comments</li>
 	<li role="shares">Shares</li>
 	<!-- only show this line if looking at a user profile and you're that user
 	<li role="bookmarks">Bookmarks</li>

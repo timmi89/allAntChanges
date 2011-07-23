@@ -13,7 +13,7 @@
 <script type="text/javascript">
 $.ajax({
     {% if user_id %}
-    url: "/cards/user/{{ user_id }}/",
+    url: "/interactions/user/{{ user_id }}/",
     {% else %}
     url: "/cards/",
     {% endif %}
@@ -27,7 +27,11 @@ $.ajax({
 {% block sidebarJS %}
 <script type="text/javascript">
 $.ajax({
+    {% if user_id %}
+    url: "/sidebar/user/{{ user_id }}/",
+    {% else %}
     url: "/sidebar/",
+    {% endif %}
     type: "get",
     success: function(response) {
         console.log(response);

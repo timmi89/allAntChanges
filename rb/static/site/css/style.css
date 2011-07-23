@@ -500,10 +500,10 @@ section[role="main"] .card thead .column1      {width:113px; margin:0; padding:5
 section[role="main"] .card thead .column2      {margin:0; padding:5px 5px 5px 15px; background:url(/static/site/images/shaded_arrow.png) center left no-repeat #fff; font:italic bold 14px Arial; color:#6b6b6b;}
  
 section[role="main"] .card tbody .column1      {background:#eaf0f3; vertical-align:top; border-right:1px solid #d2dee4;}
-section[role="main"] .card tbody .column1 .reaction    {font-family:ReadrLeague, Arial; font-size:18px; color:#6b6b6b; font-size:24px; margin-top:10px;}
+section[role="main"] .card tbody .column1 .reaction    {font-family:ReadrLeague, Arial; font-size:18px; color:#6b6b6b; font-size:24px; margin-top:10px; margin-bottom: 5px;}
 section[role="main"] .card tbody .column1 .count       {font-size:12px; margin-bottom:15px;}
 
-section[role="main"] .card tbody .column2      {background:#ffffff; padding:10px;}
+section[role="main"] .card tbody .column2      {background:#ffffff; padding:15px;}
 section[role="main"] .card tbody .column2 .who_action      {font:italic bold 12px Arial;}
 section[role="main"] .card tbody .column2 .content       {font:normal normal 12px Arial;}
 section[role="main"] .card tbody .column2 .content img   {max-width:100px; max-height:100px; xbox-shadow:0px 0px 4px #666; margin:5px 0;}
