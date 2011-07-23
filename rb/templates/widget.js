@@ -712,7 +712,7 @@ console.log('widget getUser 2');
             },
             handleGetUserFail: function(args, callback) {
                 var response = args.response;
-                //[cleanlogz]log("handleGetUserFail: " + response.message);
+                //[cleanlogz]("handleGetUserFail: " + response.message);
                 switch ( response.message ) {
                     case "Error getting user!":
                         // kill the user object and cookie
@@ -734,7 +734,7 @@ console.log('widget getUser 2');
                     case "Facebook token expired":  // call fb login
                     case "Social Auth does not exist for user": // call fb login
                         // the token is out of sync.  could be a mistake or a hack.
-                        //[cleanlogz]log('starting postmessage')
+                        //[cleanlogz]('starting postmessage')
                         console.log('expiry 1');
                         $.postMessage(
                             "checkSocialUser",
@@ -742,7 +742,7 @@ console.log('widget getUser 2');
                             window.frames['rdr-xdm-hidden']
                         );
                         // init a new receiveMessage handler to fire this callback if it's successful
-                        //[cleanlogz]log('starting receivemessage')
+                        //[cleanlogz]('starting receivemessage')
                         RDR.session.receiveMessage( args, callback );
                     break;
                 }
@@ -1384,7 +1384,6 @@ console.log('widget getUser 2');
                     charLimit = 1800; //safely under 2000 to allow for other stuff
 
                     $.each( hashList, function(idx, hash){
-                        log(hash)
                         //container is {body:,kind:,hash:}
                         var container = RDR.containers[hash],
                         bodyLen = container.body.length;
@@ -1452,8 +1451,6 @@ console.log('widget getUser 2');
                             });
                         
                             RDR.actions.containers.setup(dummySummaries)
-                            log('dummySummaries')
-                            log(dummySummaries)
                         }
                     });
                 }
@@ -1739,7 +1736,6 @@ console.log('widget getUser 2');
                     preAjax: function(args, action_type){
                         //RDR.actions.interactions.tag.preAjax:
                         //expected to be called from RDR.actions.interactions.ajax
-                        log('preajax')
                         var $rindow = args.rindow;
                         log($rindow.data())
 
@@ -2066,7 +2062,7 @@ console.log('widget getUser 2');
 
 
                         if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                            //[cleanlogz]log('uh oh better login, tempy 1');
+                            //[cleanlogz]('uh oh better login, tempy 1');
                             RDR.session.showLoginPanel( args );
                         } else {
                             // if it failed, see if we can fix it, and if so, try this function one more time
@@ -2523,8 +2519,7 @@ console.log('widget getUser 2');
                         }
                     }
                     */
-                                        
-                    log('update')
+                    
                     //get summary, or if it doesn't exist, get a zero'ed out template of one.
 
                     //todo: use a try catch instead;
