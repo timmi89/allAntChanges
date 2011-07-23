@@ -129,7 +129,9 @@ def getPage(request, pageid=None):
             defaults={'url':fullurl, 'site':site, 'title':title}
         )
     else:
-        page = Page.objects.get_or_create(url=fullurl, defaults={'site': site})
+        page = Page.objects.get_or_create(url=fullurl,
+            defaults={'site': site, 'title':title}
+        )
         
     return page[0]
 """
