@@ -688,6 +688,7 @@ function readrBoard($R){
             getUser: function(args, callback) {
 
                 if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
+                    console.log('widget getUser 1');
                     // we have a user id and token, be it temp or logged in user, so just run the callback
                     //todo: ec: make sure it doesn't matter for this that RDR.user.whatever can be spoofed.
                     //Does the callback give access that a fake user shouldn't have?  Call should always pass a token to be validated serverside, yeah? 
@@ -695,7 +696,7 @@ function readrBoard($R){
                     if ( callback && args ) callback(args);
                     else if ( callback ) callback();
                 } else {
-
+console.log('widget getUser 2');
                     // define a new message receiver with this set of args and callback function
                     if ( callback && args ) RDR.session.receiveMessage( args, callback );
                     else if ( callback ) RDR.session.receiveMessage( false, callback );
@@ -709,8 +710,9 @@ function readrBoard($R){
                     );
                 }
             },
-            handleGetUserFail: function(response, callback) {
-                //[cleanlogz]("handleGetUserFail: " + response.message);
+            handleGetUserFail: function(args, callback) {
+                var response = args.response;
+                //[cleanlogz]log("handleGetUserFail: " + response.message);
                 switch ( response.message ) {
                     case "Error getting user!":
                         // kill the user object and cookie
@@ -732,15 +734,16 @@ function readrBoard($R){
                     case "Facebook token expired":  // call fb login
                     case "Social Auth does not exist for user": // call fb login
                         // the token is out of sync.  could be a mistake or a hack.
-                        //[cleanlogz]('starting postmessage')
+                        //[cleanlogz]log('starting postmessage')
+                        console.log('expiry 1');
                         $.postMessage(
                             "checkSocialUser",
                             RDR.session.iframeHost + "/xdm_status/",
                             window.frames['rdr-xdm-hidden']
                         );
                         // init a new receiveMessage handler to fire this callback if it's successful
-                        //[cleanlogz]('starting receivemessage')
-                        RDR.session.receiveMessage( false, callback );
+                        //[cleanlogz]log('starting receivemessage')
+                        RDR.session.receiveMessage( args, callback );
                     break;
                 }
             },
@@ -766,9 +769,9 @@ function readrBoard($R){
 
                 $.receiveMessage(
                     function(e){
-                        //[cleanlogz]('receiveMessage...')
                         ////[cleanlogz]console.dir(e);
                         var message = JSON.parse( e.data );
+                        log('receiveMessage: ' + message.status );
 
                         if ( message.status ) {
                             if ( message.status == "fb_logged_in" || message.status == "known_user" || message.status == "got_temp_user" ) {
@@ -780,11 +783,17 @@ function readrBoard($R){
                                     RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i]):message.data[i];
                                 }
                                 if ( callback && args ) {
+                                    console.log('widget receiveMessage callback 1');
                                     args.user = RDR.user;
                                     callback(args);
                                 }
-                                else if ( callback ) callback();
+                                else if ( callback ) {
+                                    console.log('widget receiveMessage callback 2');
+                                    callback();
+                                }
                             } else if ( message.status == "checkSocialUser fail" ) {
+                                console.dir(args);
+                                RDR.session.showLoginPanel( args );
                             } else if ( message.status == "already had user" ) {
                                 $('#rdr-loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
                             } else if ( message.status == "educate user" ) {
@@ -816,47 +825,50 @@ function readrBoard($R){
                 }
             },
 			showLoginPanel: function(args, callback) {
-                //[cleanlogz]('--showLoginPanel---');
+                log('--showLoginPanel---');
                 $('.rdr_rewritable').removeClass('rdr_rewritable');
-                $('#rdr-loginPanel').remove();
-                //todo: weird, why did commenting this line out not do anything?...look into it
-				//porter says: the action bar used to just animate larger and get populated as a window
-                //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
-                var caller = args.rindow;
-                var coords = caller.offset();
-                coords.left = coords.left ? (coords.left-34) : 100;
-                coords.top = coords.top ? (coords.top+50) : 100;
+                
+                if ( $('#rdr-loginPanel').length < 1 ) {
+                    // $('#rdr-loginPanel').remove();
+                    //todo: weird, why did commenting this line out not do anything?...look into it
+    				//porter says: the action bar used to just animate larger and get populated as a window
+                    //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
+                    var caller = args.rindow;
+                    var coords = caller.offset();
+                    coords.left = coords.left ? (coords.left-34) : 100;
+                    coords.top = coords.top ? (coords.top+50) : 100;
 
-                // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-                // var coords = RDR.util.stayInWindow({coords:coords, width:360, height:185 });
+                    // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
+                    // var coords = RDR.util.stayInWindow({coords:coords, width:360, height:185 });
 
-                var rindow = RDR.rindow.draw({
-                    coords:coords,
-                    id: "rdr-loginPanel",
-                    pnlWidth:360,
-                    pnls:1,
-                    height:225
-                });
+                    var rindow = RDR.rindow.draw({
+                        coords:coords,
+                        id: "rdr-loginPanel",
+                        pnlWidth:360,
+                        pnls:1,
+                        height:225
+                    });
 
-                // store the arguments and callback function that were in progress when this Login panel was called
-                rindow.data( 'args', args );
-                rindow.data( 'callback', callback );
+                    // store the arguments and callback function that were in progress when this Login panel was called
+                    rindow.data( 'args', args );
+                    rindow.data( 'callback', callback );
 
-                // create the iframe containing the login panel
-				var $loginHtml = $('<div class="rdr_login" />'),
-				iframeUrl = RDR.session.iframeHost + "/fblogin/",
-				parentUrl = window.location.href,
-                parentHost = window.location.protocol + "//" + window.location.host;
-				$loginHtml.append( '<h1>Log In</h1><div class="rdr_body" />');
-				$loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&group_name='+RDR.group.name+'&cachebust='+RDR.cachebuster+'" width="360" height="190" style="overflow:hidden;" />' );
-				
-				// rindow.animate({
-    //                 width:'500px',
-    //                 minHeight:'125px'
-    //             }, 300, function() {
-    //                 rindow.append( $loginHtml );
-    //             });
-				rindow.find('div.rdr_contentSpace').append( $loginHtml );
+                    // create the iframe containing the login panel
+    				var $loginHtml = $('<div class="rdr_login" />'),
+    				iframeUrl = RDR.session.iframeHost + "/fblogin/",
+    				parentUrl = window.location.href,
+                    parentHost = window.location.protocol + "//" + window.location.host;
+    				$loginHtml.append( '<h1>Log In</h1><div class="rdr_body" />');
+    				$loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&group_name='+RDR.group.name+'&cachebust='+RDR.cachebuster+'" width="360" height="190" style="overflow:hidden;" />' );
+    				
+    				// rindow.animate({
+        //                 width:'500px',
+        //                 minHeight:'125px'
+        //             }, 300, function() {
+        //                 rindow.append( $loginHtml );
+        //             });
+    				rindow.find('div.rdr_contentSpace').append( $loginHtml );
+                }
 			},
 			killUser: function() {
                 RDR.user = {};
@@ -1889,7 +1901,6 @@ function readrBoard($R){
                             tag_li = args.tag;
 
                         var response = args.response;
-                        //[cleanlogz]('failllllllllll');
 
                         //clear the loader                  
                         tag_li.find('div.rdr_leftBox').html('');
@@ -1900,8 +1911,11 @@ function readrBoard($R){
                             RDR.session.showLoginPanel( args );
                         } else {
                             // if it failed, see if we can fix it, and if so, try this function one more time
-                            RDR.session.handleGetUserFail( response, function() {
-                                //[cleanlogz]('inside callback');
+                            log('tag fail');
+                            console.dir(args);
+                            RDR.session.handleGetUserFail( args, function() {
+                                log('inside callback');
+                                console.dir(args);
                                 // if ( !args.secondAttempt ) {
                                     args.secondAttempt = true;
                                     RDR.actions.interactions.ajax( args, 'tag', 'create' );
@@ -2037,7 +2051,38 @@ function readrBoard($R){
                         }
                     },
                     onFail: function(args){
-                        
+                        //RDR.actions.interactions.tag.onFail:
+
+                        //todo: we prob want to move most of this to a general onFail for all interactions.
+                        // So this function would look like: doSpecificOnFailStuff....; RDR.actions.interactions.genericOnFail();
+
+                        var rindow = args.rindow,
+                            tag_li = args.tag;
+
+                        var response = args.response;
+
+                        //clear the loader                  
+                        tag_li.find('div.rdr_leftBox').html('');
+
+
+                        if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
+                            //[cleanlogz]log('uh oh better login, tempy 1');
+                            RDR.session.showLoginPanel( args );
+                        } else {
+                            // if it failed, see if we can fix it, and if so, try this function one more time
+                            log('bookmark fail');
+                            console.dir(args);
+                            RDR.session.handleGetUserFail( args, function() {
+                                log('inside callback');
+                                console.dir(args);
+                                // if ( !args.secondAttempt ) {
+                                    args.secondAttempt = true;
+                                    RDR.actions.interactions.ajax( args, 'bookmark', 'create' );
+                                // }else{
+                                    // //[cleanlogz]console.warn('unhandled create interaction fail')
+                                // }
+                            });
+                        }
                     }
                 }
                 //end RDR.actions.interactions
@@ -3552,7 +3597,7 @@ function readrBoard($R){
                                         RDR.session.showLoginPanel( args );
                                     } else {
                                         // if it failed, see if we can fix it, and if so, try this function one more time
-                                        RDR.session.handleGetUserFail( response, function() {
+                                        RDR.session.handleGetUserFail( args, function() {
                                             if ( !args.secondAttempt ) {
                                                 args.secondAttempt = true;
                                                 RDR.actions.share_getLink( args );
@@ -3873,7 +3918,7 @@ function readrBoard($R){
 
                             if ( response.status == "fail" ) {
                                 // if it failed, see if we can fix it, and if so, try this function one more time
-                                RDR.session.handleGetUserFail( response, function() {
+                                RDR.session.handleGetUserFail( args, function() {
                                     if ( !args.secondAttempt ) {
                                         args.secondAttempt = true;
                                         //RDR.actions.comment( args );

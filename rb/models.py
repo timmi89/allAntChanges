@@ -237,8 +237,8 @@ class SocialUser(models.Model):
 
     # Might not get these -> blank=True
     username = models.CharField(max_length=255, blank=True, unique=True)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
-    hometown = models.CharField(max_length=255, blank=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True)
+    hometown = models.CharField(max_length=255, blank=True, null=True)
     bio = models.TextField(max_length=255, blank=True, null=True)
     img_url = models.URLField(blank=True)
 

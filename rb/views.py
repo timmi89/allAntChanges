@@ -25,16 +25,31 @@ def widget(request,sn):
 
 def widgetCss(request):
     # Widget code is retreived from the server using RBGroup shortname
-    return render_to_response("widget.css", context_instance=RequestContext(request), mimetype = 'text/css')
+    return render_to_response("widget.css",
+      context_instance=RequestContext(request),
+      mimetype = 'text/css')
 
 def fb(request):
-    return render_to_response("facebook.html",{'fb_client_id': FACEBOOK_APP_ID}, context_instance=RequestContext(request))
+    return render_to_response(
+      "facebook.html",
+      {'fb_client_id': FACEBOOK_APP_ID},
+      context_instance=RequestContext(request)
+    )
 
 def fblogin(request):
-    return render_to_response("fblogin.html",{'fb_client_id': FACEBOOK_APP_ID, 'group_name': request.GET['group_name'] }, context_instance=RequestContext(request))
+    return render_to_response(
+      "fblogin.html",
+      {'fb_client_id': FACEBOOK_APP_ID,
+      'group_name': request.GET['group_name'] },
+      context_instance=RequestContext(request)
+    )
 
 def xdm_status(request):
-    return render_to_response("xdm_status.html",{'fb_client_id': FACEBOOK_APP_ID}, context_instance=RequestContext(request))
+    return render_to_response(
+      "xdm_status.html",
+      {'fb_client_id': FACEBOOK_APP_ID},
+      context_instance=RequestContext(request)
+    )
 
 def profile(request, user_id, **kwargs):
     cookies = request.COOKIES
@@ -68,25 +83,28 @@ def profile(request, user_id, **kwargs):
         context['user'] = user
     return render_to_response("profile.html", context, context_instance=RequestContext(request))
 
-def home(request, **kwargs):
+def main(request, user_id=None, **kwargs):
     cookies = request.COOKIES
-    user_id = cookies.get('user_id')
-    readr_token = cookies.get('readr_token')
-    interactions = Interaction.objects.all().select_related().order_by('-created')
+    #cookie_user_id = cookies.get('user_id')
+    
+    context = {'fb_client_id': FACEBOOK_APP_ID, 'user_id': user_id}
+    """
+    if cookie_user_id:
+        user = User.objects.get(id=cookie_user_id)
+        context['user'] = user
+    """
+    return render_to_response("index.html", context, context_instance=RequestContext(request))
+
+def interactions(request, user_id=None, **kwargs):
+    if user_id: interactions = interactions.filter(user=user_id)
+    
     if 'view' in kwargs:
         view = kwargs['view']
         if view == 'tags': interactions=interactions.filter(kind="tag")
         if view == 'comments': interactions=interactions.filter(kind="com")
         if view == 'shares': interactions=interactions.filter(kind="shr")
-    interactions = interactions[:5]
 
-    context = {'interactions': interactions, 'fb_client_id': FACEBOOK_APP_ID}
-    if user_id:
-        user = User.objects.get(id=user_id)
-        context['user'] = user
-    return render_to_response("index.html", context, context_instance=RequestContext(request))
-
-def cards(request):
+def cards(request, **kwargs):
     # Get interaction set based on filter criteria
     interactions = Interaction.objects.all()
 
