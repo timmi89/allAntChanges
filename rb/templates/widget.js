@@ -3949,31 +3949,33 @@ console.log('widget getUser 2');
                     //i need to remove this way (for now at least) so that I can bind an event to the remove event (thanks ie.)
                     RDR.rindow.close( $('div.rdr.rdr_window.rdr.rdr_rewritable') );
 
-                    // see what the user selected
-                    // TODO: need separate image function, which should then prevent event bubbling into this
-                        // ^ really?  why??
-
                     var $blockParent = null;
 
-                    // first, identify the selection's block parent ($blockParent)
-                    if ( $mouse_target.css('display') != "block" ||  $mouse_target.css('float') != "none" ) {
+                    // find the nearest valid parent
+                    function isValid($node){
+                        return ( $node.css('display') == "block" &&  $node.css('float') == "none" );
+                    }
+                    if( !isValid($mouse_target) ) {
                         var ollyollyoxenfree = false;
                         $mouse_target.parents().each( function() {
                             if(ollyollyoxenfree) return;
                             //else
-
-                            if ( $(this).css('display') == "block" ) {
+                            
+                            var $thisNode = $(this);
+                            if(  isValid( $thisNode ) ){
                                 // we've found the first parent of the selected text that is block-level
                                 $blockParent = $(this);
                                 ollyollyoxenfree = true;
                             }
                         });
                     } else {
+
                         // the node initially clicked on is the first block level container
                         $blockParent = $mouse_target;
                     }
+                    if( $blockParent == null ) return;
 
-
+                    //helper function
                     function _verifyAndDrawActionbar($blockParent){
                         var selected = $blockParent.selog('save');
                         if ( selected.serialRange && selected.text && !(/^\s*$/g.test(selected.text)) ) {
