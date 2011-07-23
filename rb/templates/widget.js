@@ -2519,7 +2519,7 @@ console.log('widget getUser 2');
                         }
                     }
                     */
-                    
+
                     //get summary, or if it doesn't exist, get a zero'ed out template of one.
 
                     //todo: use a try catch instead;
@@ -3956,7 +3956,7 @@ console.log('widget getUser 2');
                     var $blockParent = null;
 
                     // first, identify the selection's block parent ($blockParent)
-                    if ( $mouse_target.css('display') != "block" ) {
+                    if ( $mouse_target.css('display') != "block" ||  $mouse_target.css('float') != "none" ) {
                         var ollyollyoxenfree = false;
                         $mouse_target.parents().each( function() {
                             if(ollyollyoxenfree) return;
