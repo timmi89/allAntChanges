@@ -20,7 +20,7 @@ def checkToken(data):
         except SocialAuth.DoesNotExist:
             raise JSONException(u'Social Auth does not exist for user')
         try:
-            graph = GraphAPI(social_auth.access_token)
+            graph = GraphAPI(social_auth.auth_token)
             graph.get_object("me")
         except GraphAPIError:
             raise JSONException(u'FB graph error - token invalid')
