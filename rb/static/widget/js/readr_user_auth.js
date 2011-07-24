@@ -158,14 +158,13 @@ RDRAuth = {
 		console.log('xdm: reAuthUser');
 		if ( args.write_mode ) {
 			console.log('xdm: reAuth write mode A1');
-				// FB.getLoginStatus(function(response) {
-					console.log("FB.getSession(): ");
+				console.log("FB.getSession(): ");
 
 				if ( !FB.getSession() || args.force_fb ) {
 					console.log('xdm: reAuth write mode A2');
 					
 					FB.getLoginStatus(function(response) {
-						console.warn('xdm: fb.getLoginStatus');
+						console.warn('xdm: fb. getLoginStatus');
 						console.log('xdm: reAuth write mode A3');
 				  		if (response && response.session) {
 				  			console.log('xdm: reAuth write mode A4');
@@ -290,10 +289,16 @@ RDRAuth = {
 	doFBlogout: function() {
 		console.log('xdm: doFBLogout');
 		window.location.reload();
+	},
+	init : function() {
+		RDRAuth.readUserCookie();
+		RDRAuth.returnUser(true);
+		FB.getLoginStatus(function(response) {
+			RDRAuth.getReadrToken(response);	
+		});
 	}
 }
-RDRAuth.readUserCookie();
-RDRAuth.returnUser(true);
+RDRAuth.init();
 
 FB.Event.subscribe('auth.sessionChange', function(response) {
   // do something with response.session
