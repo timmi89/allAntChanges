@@ -6,15 +6,6 @@
 	<script src="/static/widget/js/jquery.ba-postmessage.min.js" type="text/javascript"></script>
 	<script src="/static/widget/js/jquery.json-2.2.min.js" type="text/javascript"></script>
 	<script src="/static/widget/js/jquery.cookie.js" type="text/javascript"></script>
-	<script type="text/javascript">
-	var date = new Date();
-	// TODO use the following line.  it creates a cachebuster that represents the current day/week/month
-	// var cachebuster = String( parseInt( date.getDate() / 7 )+1 )+String(date.getMonth()) + String(date.getYear());
-	var cachebuster = date.getTime();
-	document.write(
-		unescape( '%3Cscript src="/static/widget/js/readr_user_auth.js?' + cachebuster + '" type="text/javascript"%3E%3C/script%3E' )
-	);
-	</script>
 	<style type="text/css">
 	body	{color: #666666; font-family: Arial; font-size: 12px; padding: 5px 0 0 0; margin:0 8px; border-top:1px solid #ccc; }
 	img		{ border:0; }
@@ -49,27 +40,37 @@
 	</p> -->
      <script src="http://connect.facebook.net/en_US/all.js" type="text/javascript"s></script>
      <script type="text/javascript">
-		RDRAuth.FBLoginResponse = function(response) {
-			if (response.session) {
-				//user is logged in
-				$('#fb-logged-in').show();
-				$('#fb-logged-out').hide();
-				RDRAuth.getReadrToken(response);
-			} else {
-				// user is not logged in
-				// TODO do something.  post to parent that there was a bug logging in to FB
-
-				$('#fb-logged-in').hide();
-				$('#fb-logged-out').show();
-			}	
-		}
-		
 		FB.init({ 
 			appId:'{{ fb_client_id }}', cookie:true, 
 			status:true, xfbml:true 
+		});		
+
+		var date = new Date();
+		// TODO use the following line.  it creates a cachebuster that represents the current day/week/month
+		// var cachebuster = String( parseInt( date.getDate() / 7 )+1 )+String(date.getMonth()) + String(date.getYear());
+		var cachebuster = date.getTime();
+		document.write(
+			unescape( '%3Cscript src="/static/widget/js/readr_user_auth.js?' + cachebuster + '" type="text/javascript"%3E%3C/script%3E' )
+		);
+
+		$(document).ready( function() {
+			RDRAuth.FBLoginResponse = function(response) {
+				if (response.session) {
+					//user is logged in
+					$('#fb-logged-in').show();
+					$('#fb-logged-out').hide();
+					RDRAuth.getReadrToken(response);
+				} else {
+					// user is not logged in
+					// TODO do something.  post to parent that there was a bug logging in to FB
+
+					$('#fb-logged-in').hide();
+					$('#fb-logged-out').show();
+				}	
+			}
 		});
 
-		RDRAuth.checkSocialUser();
+		RDRAuth.getUser();
 	</script>
    </body>
 </html>

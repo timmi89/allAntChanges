@@ -685,16 +685,14 @@ function readrBoard($R){
 			iframeHost : "{{ BASE_URL }}", // TODO put this in a template var
             getUser: function(args, callback) {
 
-                if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
-                    console.log('widget getUser 1');
+                // if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
                     // we have a user id and token, be it temp or logged in user, so just run the callback
                     //todo: ec: make sure it doesn't matter for this that RDR.user.whatever can be spoofed.
                     //Does the callback give access that a fake user shouldn't have?  Call should always pass a token to be validated serverside, yeah? 
 
-                    if ( callback && args ) callback(args);
-                    else if ( callback ) callback();
-                } else {
-console.log('widget getUser 2');
+                    // if ( callback && args ) callback(args);
+                    // else if ( callback ) callback();
+                // } else {
                     // define a new message receiver with this set of args and callback function
                     if ( callback && args ) RDR.session.receiveMessage( args, callback );
                     else if ( callback ) RDR.session.receiveMessage( false, callback );
@@ -702,11 +700,11 @@ console.log('widget getUser 2');
                     // posting this message then means we'll look in the $.receiveMessage for the response and what to do next
                     // TODO need a timeout and/or try/catch?
                     $.postMessage(
-                        "getUser",
+                        "returnUser",
                         RDR.session.iframeHost + "/xdm_status/",
                         window.frames['rdr-xdm-hidden']
                     );
-                }
+                // }
             },
             handleGetUserFail: function(args, callback) {
                 var response = args.response;
@@ -730,18 +728,19 @@ console.log('widget getUser 2');
 
                     case "Token was invalid":
                     case "Facebook token expired":  // call fb login
+                    case "FB graph error - token invalid":  // call fb login
                     case "Social Auth does not exist for user": // call fb login
                         // the token is out of sync.  could be a mistake or a hack.
                         //[cleanlogz]('starting postmessage')
-                        console.log('expiry 1');
+                        console.log('handleGetUserFail:  FB user error');
+                        RDR.session.receiveMessage( args, callback );
                         $.postMessage(
-                            "checkSocialUser",
+                            "reauthUser",
                             RDR.session.iframeHost + "/xdm_status/",
                             window.frames['rdr-xdm-hidden']
                         );
-                        // init a new receiveMessage handler to fire this callback if it's successful
-                        //[cleanlogz]('starting receivemessage')
-                        RDR.session.receiveMessage( args, callback );
+                        // // init a new receiveMessage handler to fire this callback if it's successful
+                        // //[cleanlogz]('starting receivemessage')
                     break;
                 }
             },
@@ -770,9 +769,9 @@ console.log('widget getUser 2');
                         ////[cleanlogz]console.dir(e);
                         var message = JSON.parse( e.data );
                         log('receiveMessage: ' + message.status );
-
+console.dir(message.data);
                         if ( message.status ) {
-                            if ( message.status == "fb_logged_in" || message.status == "known_user" || message.status == "got_temp_user" ) {
+                            if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
 
@@ -793,6 +792,7 @@ console.log('widget getUser 2');
                                 console.dir(args);
                                 RDR.session.showLoginPanel( args );
                             } else if ( message.status == "already had user" ) {
+                                // todo: when is this used?
                                 $('#rdr-loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
                             } else if ( message.status == "educate user" ) {
                                 RDR.session.alertBar.make('educateUser');

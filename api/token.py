@@ -2,6 +2,7 @@ from readrboard.rb.models import *
 from django.utils.hashcompat import sha_constructor
 from datetime import datetime
 from exceptions import JSONException
+from extras.facebook import GraphAPI, GraphAPIError
 
 def checkToken(data):
     """
@@ -18,6 +19,12 @@ def checkToken(data):
             social_auth = SocialAuth.objects.get(social_user__user=data['user_id'])
         except SocialAuth.DoesNotExist:
             raise JSONException(u'Social Auth does not exist for user')
+        try:
+            graph = GraphAPI(social_auth.auth_token)
+            graph.get_object("me")
+        except GraphAPIError:
+            raise JSONException(u'FB graph error - token invalid')
+            
         now = datetime.now()
         if social_auth.expires > now:
             auth_token = social_auth.auth_token
