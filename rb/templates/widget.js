@@ -434,22 +434,39 @@ function readrBoard($R){
                     }
                 });
 			},
-            closeSuggest: function(actionbars) {
-                
-                var $actionbars = ( typeof actionbars == 'undefined' ) ? $('div.rdr.rdr_actionbar') ://cont
-                    (actionbars.jquery) ? actionbars : $(actionbars);
+            closeSuggest: function(hashes) {
+                //hashes can be a single hash or a list of hashes
+                var $actionbars = $();
+                if( !hashes ){
+                    $actionbars = $('div.rdr_actionbar');
+                }
+                else
+                if(typeof hashes == "string" ){
+                    var hash = hashes;
+                    $actionbars = $('#rdr_actionbar_'+hash);
+                    $actionbars.data('hash',hash);
+                }
+                else{
+                    $.each( hashes, function(idx, hash){
+                        $actionbars = $actionbars.add('#rdr_actionbar_'+hash);
+                        $actionbars.data('hash',hash);
+                    });
+                }
                 
                 var scope = this;
                 $actionbars.each(function(){
-                    var that = this,
+                    var $this = $(this),
+                    hash = $actionbars.data('hash'),
+                    $indicator_details = $('#rdr_indicator_details_'+hash),
+                    $containerImg = $('.rdr-'+hash),
                     timeoutCloseEvt = $(this).data('timeoutCloseEvt');
                     
                     //each actionbar only has one timeout - if one exists, it gets cleared and reset here.
                     clearTimeout(timeoutCloseEvt);
                     timeoutCloseEvt = setTimeout(function(){
-                        if( !$(that).data('keepAlive.img') && !$(that).data('keepAlive.self') ){
-                            scope.close( $(that), "fade");
-                        }              
+                        if( $this.data('hover') || $containerImg.data('hover') || $indicator_details.data('hover') ) return;
+                        //else
+                        scope.close( $this, "fade");
                     },300);
                     $(this).data('timeoutCloseEvt', timeoutCloseEvt);
                 });
@@ -457,21 +474,6 @@ function readrBoard($R){
             closeAll: function(){
                 var $actionbars = $('div.rdr_actionbar');
                 this.close($actionbars);
-            },
-            show: function(callback){
-                //use call or apply to set 'this'
-                //not needed because $($(this)) doesn't hurt anything, but still.
-                var $this = (this.jquery) ? this : $(this);
-                var timeoutCollapseEvt = $(this).data('timeoutCollapseEvt');
-                //each actionbar only has one timeoutCollapseEvt - if one exists, it gets reset here.
-                clearTimeout(timeoutCollapseEvt);
-                timeoutCollapseEvt = setTimeout(function(){
-                    if( !$this.data('keepAlive.self') ){
-                        
-                    }
-                },250)
-                //in order to protect against the dreaded oscillating event loop,
-                //this timeoutCollapseEvt time should be at least as long as the collspase animate time
             }
 		},
 		tooltip: {
@@ -1304,7 +1306,7 @@ console.dir(message.data);
 
                             $container.hover(
                                 function(){
-                                    
+                                    $(this).data('hover',true);
                                     var coords = $container.offset(),
                                     src = $container.attr('src'),
                                     src_with_path = this.src;
@@ -1315,9 +1317,9 @@ console.dir(message.data);
 
                                     $container.addClass('rdr_engage_img');
 
+                                    //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
                                     // builds a new actionbar or just returns the existing $actionbar if it exists.
                                     var $actionbar = RDR.actionbar.draw({ coords:coords, content_type:"image", content:src, container:hash, src_with_path:src_with_path, ignoreWindowEdges:"rb" });
-                                    $actionbar.data('keepAlive.img',true)
 
                                     //kill all rivals!!
                                     var $rivals = $('div.rdr_actionbar').not($actionbar);
@@ -1325,21 +1327,19 @@ console.dir(message.data);
 
                                     $actionbar.hover(
                                         function() {
-                                            $actionbar.data('keepAlive.self',true);
+                                            $(this).data('hover',true);
                                         },
                                         function() {
-                                            $actionbar.data('keepAlive.self',false);
-                                            RDR.actionbar.closeSuggest($actionbar);
+                                            $(this).data('hover',false);
+                                            RDR.actionbar.closeSuggest(hash);
                                         }
                                     );
                                 },
                                 function(){
-                                                                
                                     var actionbar_id = "rdr_actionbar_"+hash;
                                     var $actionbar = $('#'+actionbar_id);
-                                    $actionbar.data('keepAlive.img',false)
-                                    RDR.actionbar.closeSuggest($actionbar);
-                                    
+                                    $(this).data('hover',false);
+                                    RDR.actionbar.closeSuggest(hash);
                                 }
                             );
                             
@@ -2188,12 +2188,15 @@ console.dir(message.data);
                     })//chain
                     .hover(
                         function() {
-                            //$indicator.data('hoverLock', true)
-                            //do nothing
+                            var timeout = $(this).data('timeout');
+                            clearTimeout(timeout);
                         },
                         function() {
-                            //$indicator.data('hoverLock', false)
-                            $(this).hide();
+                            var $this = $(this);
+                            var timeout = setTimeout(function(){
+                                $this.fadeOut(300);
+                            },500);
+                            $(this).data('timeout', timeout);
                         }
                     );
 
@@ -2316,7 +2319,15 @@ console.dir(message.data);
 
                             $indicator.find('.rdr_indicator_body').attr('style', inlineStyleStr);
 
-                            $indicator_details.addClass('rdr_indicator_details_for_image')
+                            $indicator_details.addClass('rdr_indicator_details_for_image').hover(
+                                function() {
+                                    $(this).data('hover', true);
+                                },
+                                function() {
+                                    $(this).data('hover', false);
+                                }
+                            );
+
                         },
                         text: function( hash ){
                             var summary = RDR.summaries[hash],
@@ -2333,7 +2344,7 @@ console.dir(message.data);
                             $indicator.appendTo($container);
 
                         }
-                    }, 
+                    },
                     makeDetailsContent: function( hash ){
                         var scope = this;
                         var summary = RDR.summaries[hash],
@@ -2408,7 +2419,6 @@ console.dir(message.data);
                             RDR.actions.content_nodes.utils.initHiliteStates( $(this), relevant_content_nodes );
                         });
                     }
-
                 },//end RDR.actions.indicators.utils
                 sortReactions: function( hash ){
 

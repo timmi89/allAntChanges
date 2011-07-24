@@ -598,11 +598,22 @@ div.rdr_indicator_for_image {
 }
 
 
-
 div.rdr_indicator span.rdr_count, div.rdr_indicator_details span.rdr_count{ 
     position:relative !important;
     margin-left:16px !important;
 }
+/*dont use this*/
+/*
+div.rdr_indicator span.rdr_count{ 
+    -webkit-text-stroke: 1px white;
+    text-shadow:
+    3px 3px 0 white,
+    -1px -1px 0 white,
+    1px -1px 0 white,
+    -1px 1px 0 white,
+    1px 1px 0 white;
+}
+*/
 #rdr_sandbox span.rdr_indicator_categoryTitle{ 
     width:auto !important;
     display:inline !important;
