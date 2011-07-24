@@ -34,8 +34,28 @@
 			appId:'{{ fb_client_id }}', cookie:true, 
 			status:true, xfbml:true 
 		});
+
+		FB.Event.subscribe('auth.sessionChange', function(response) {
+		  // do something with response.session
+		  console.log('fb session change');
+		  // RDRAuth.killUser();
+		});
+		FB.Event.subscribe('auth.statusChange', function(response) {
+		  // do something with response.session
+		  console.log('fb status change');
+		  // RDRAuth.killUser();
+		});
+		FB.Event.subscribe('auth.login', function(response) {
+		  // do something with response.session
+		  console.log('fb login');
+		  // RDRAuth.killUser();
+		});
+		FB.Event.subscribe('auth.logout', function(response) {
+		  // do something with response.session
+		  console.log('fb logout');
+		  // RDRAuth.killUser();
+		});
 		
-		// RDRAuth.checkSocialUser();
 		if ( $.cookie('location') && $.cookie('container_hash') ) {
 			RDRAuth.notifyParent({message:false}, "sharedLink|" + $.cookie('container_hash') + "|" + $.cookie('location').replace(/"/g,'').replace('\\054',',') + "|" + $.cookie('reaction').replace(/"/g,'') + "|" + $.cookie('content').replace(/"/g,'') + "|" + $.cookie('referring_int_id') );
 			$.cookie('container_hash', null, { path: '/' });
