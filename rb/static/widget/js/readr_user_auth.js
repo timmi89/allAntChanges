@@ -15,8 +15,11 @@ $.receiveMessage(
 	function(e){
 		console.log('xdm: received: '+e.data);
 	    switch( e.data ) {
-	    	case "getUser":
-	    		RDRAuth.getUser(true);
+	    	case "reauthUser":
+	    		RDRAuth.reauthUser({write_mode:true});
+	    		break;
+	    	case "returnUser":
+	    		RDRAuth.returnUser(true);
 	    		break;
 	    	case "killUser":
 	    		RDRAuth.killUser();
@@ -76,13 +79,18 @@ RDRAuth = {
 					json: JSON.stringify( sendData )
 				},
 				success: function(response){
-					RDRAuth.setUser(response);
-					RDRAuth.returnUser(true);
+					if ( response.status == "fail" ) {
+						RDRAuth.createTempUser();
+					} else {
+						RDRAuth.setUser(response);
+						RDRAuth.returnUser(true);
+					}
 					// RDRAuth.notifyParent(response, "fb_logged_in");
 				},
 				error: function(response) {
 					console.log('getReadrToken fail -- create a temp.');
-					RDRAuth.createTempUser();
+					// RDRAuth.createTempUser();
+					RDRAuth.reauthUser({forceFB:true});
 				}
 			});
 			// } else {
@@ -147,20 +155,24 @@ console.dir(response);
 			RDRAuth.notifyParent(sendData, "got_temp_user");
 		}
 	},
-	getUser : function(write_mode) {
+	reauthUser : function(args) {
 		RDRAuth.readUserCookie();
-		console.log('xdm: getUser');
-console.dir(RDRAuth);
-		if ( write_mode ) {
-			console.log('getUser write mode A1');
+		console.log('xdm: reAuth');
+		console.dir(RDRAuth);
+		if ( args.write_mode ) {
+			console.log('reAuth write mode A1');
 				// FB.getLoginStatus(function(response) {
-				if ( !FB.getSession() ) {
-					console.log(FB.getSession());
+					console.log("FB.getSession(): ");
+					console.dir(FB.getSession());
+
+				if ( !FB.getSession() || args.forceFB ) {
+					console.log('reAuth write mode A2');
+					
 					FB.getLoginStatus(function(response) {
-						console.log('getUser write mode A2');
+						console.log('reAuth write mode A3');
 						console.dir(response);
 				  		if (response && response.session) {
-				  			console.log('getUser write mode A3');
+				  			console.log('reAuth write mode A4');
 				  			// we have FB info for them -- so they are logged in and approved to user ReadrBoard
 				  			console.log('xdm: fb.getLoginStatus');
 							console.dir(response);
@@ -175,12 +187,14 @@ console.dir(RDRAuth);
 								RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
 							});
 				  		} else {
-				  			console.log('getUser write mode A4');
+				  			console.log('reAuth write mode A5');
 				  			RDRAuth.createTempUser();
 				  		}
 				  	});
 				} else {
+					console.log('reAuth: get new token');
 					RDRAuth.getReadrToken( FB.getSession() );
+					// RDRAuth.returnUser(true);
 				}
 		} else {
 			RDRAuth.returnUser(false);
@@ -208,6 +222,8 @@ console.dir(RDRAuth);
 		RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
 	},
 	returnUser : function(send_token) {
+console.log('sendData');
+		console.dir(RDRAuth.rdr_user);
 		var sendData = {
 			// arguments are nested under data for consistency with passing values up to the parent
 			data : {
@@ -219,7 +235,7 @@ console.dir(RDRAuth);
 			}
 		};
 		if (!send_token) sendData.data.readr_token = null;
-		RDRAuth.notifyParent(sendData, "known_user");
+		RDRAuth.notifyParent(sendData, "returning_user");
 	},
 	killUser : function(callback) {
 		//console.log('killing the user...softly');
@@ -274,7 +290,8 @@ console.dir(RDRAuth);
 		window.location.reload();
 	}
 }
-RDRAuth.getUser(false);
+RDRAuth.readUserCookie();
+RDRAuth.returnUser(true);
 
 FB.Event.subscribe('auth.sessionChange', function(response) {
   // do something with response.session

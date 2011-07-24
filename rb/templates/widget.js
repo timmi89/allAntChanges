@@ -702,7 +702,7 @@ function readrBoard($R){
                     // posting this message then means we'll look in the $.receiveMessage for the response and what to do next
                     // TODO need a timeout and/or try/catch?
                     $.postMessage(
-                        "getUser",
+                        "returnUser",
                         RDR.session.iframeHost + "/xdm_status/",
                         window.frames['rdr-xdm-hidden']
                     );
@@ -730,18 +730,19 @@ function readrBoard($R){
 
                     case "Token was invalid":
                     case "Facebook token expired":  // call fb login
+                    case "FB graph error - token invalid":  // call fb login
                     case "Social Auth does not exist for user": // call fb login
                         // the token is out of sync.  could be a mistake or a hack.
                         //[cleanlogz]('starting postmessage')
-                        console.log('OLD: checkSocialUser');
-                        // $.postMessage(
-                        //     "checkSocialUser",
-                        //     RDR.session.iframeHost + "/xdm_status/",
-                        //     window.frames['rdr-xdm-hidden']
-                        // );
+                        console.log('handleGetUserFail:  FB user error');
+                        RDR.session.receiveMessage( args, callback );
+                        $.postMessage(
+                            "reauthUser",
+                            RDR.session.iframeHost + "/xdm_status/",
+                            window.frames['rdr-xdm-hidden']
+                        );
                         // // init a new receiveMessage handler to fire this callback if it's successful
                         // //[cleanlogz]('starting receivemessage')
-                        // RDR.session.receiveMessage( args, callback );
                     break;
                 }
             },
@@ -770,9 +771,9 @@ function readrBoard($R){
                         ////[cleanlogz]console.dir(e);
                         var message = JSON.parse( e.data );
                         log('receiveMessage: ' + message.status );
-
+console.dir(message.data);
                         if ( message.status ) {
-                            if ( message.status == "fb_logged_in" || message.status == "known_user" || message.status == "got_temp_user" ) {
+                            if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
 
