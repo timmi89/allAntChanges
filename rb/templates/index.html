@@ -13,9 +13,17 @@
 <script type="text/javascript">
 $.ajax({
     {% if user_id %}
-    url: "/interactions/user/{{ user_id }}/",
+      {% if kwargs %}
+        url: "/interactions/user/{{ user_id }}/{{ kwargs.view }}/",
+      {% else %}
+        url: "/interactions/user/{{ user_id }}/",
+      {% endif %}
     {% else %}
-    url: "/cards/",
+      {% if short_name %}
+      url: "/interactions/group/{{ short_name }}/",
+      {% else %}
+      url: "/cards/",
+      {% endif %}
     {% endif %}
     type: "get",
     success: function(response) {

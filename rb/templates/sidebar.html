@@ -53,10 +53,14 @@ html.dailycandy #sidebar h3[role="profile_section_header"]	{display:block;}
 </div>
 <h3>Activity</h3>
 <ul role="filters" class="activity">
-	<li role="all" class="active">All Reactions</li>
-	<li role="bookmarks">Bookmarks</li>
-	<li role="reactions">Comments</li>
-	<li role="shares">Shares</li>
+	<li role="all">
+	  {% if user %}
+	    <a href="/user/{{ user.id }}">
+	  {% endif %}
+	  All Reactions</a></li>
+	<li role="bookmarks"><a href="/user/{{ user.id }}/bookmarks/">Bookmarks</a></li>
+	<li role="comments"><a href="/user/{{ user.id }}/comments/">Comments</a></li>
+	<li role="shares"><a href="/user/{{ user.id }}/shares/">Shares</a></li>
 	<!-- only show this line if looking at a user profile and you're that user
 	<li role="bookmarks">Bookmarks</li>
 	-->

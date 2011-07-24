@@ -58,6 +58,13 @@ ReadrBoard Models
 class InteractionNode(models.Model):
     body = models.CharField(max_length=2048)
     
+    def tag_count(self, page=None, content=None):
+        tags = self.interaction_set.filter(kind='tag')
+        if page: tags = tags.filter(page=page)
+        if content: tags = tags.filter(content=content)
+        
+        return len(tags)
+    
     def __unicode__(self):
         return u'ID: {0}, Body: {1}'.format(self.id, self.body[:25])
 
@@ -205,6 +212,12 @@ class Interaction(DateAwareModel, UserAwareModel):
     class Meta:
         ordering = ['-created']
         unique_together = ('page', 'content', 'kind', 'interaction_node', 'user')
+        
+    def tag_count(self):
+        return self.interaction_node.tag_count(
+            page=self.page,
+            content=self.content
+        )
  
     def related_tags(self):
         rt = Interaction.objects.filter(
@@ -213,7 +226,11 @@ class Interaction(DateAwareModel, UserAwareModel):
             kind='tag'
         ).exclude(interaction_node=self.interaction_node)
         
-        return rt
+        ids = rt.values('interaction_node')
+        
+        interaction_nodes = InteractionNode.objects.filter(id__in=ids)
+        
+        return interaction_nodes
     
     def human_kind(self):
         return dict(((k,v) for k,v in self.INTERACTION_TYPES))[self.kind]

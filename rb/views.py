@@ -83,11 +83,15 @@ def profile(request, user_id, **kwargs):
         context['user'] = user
     return render_to_response("profile.html", context, context_instance=RequestContext(request))
 
-def main(request, user_id=None, **kwargs):
+def main(request, user_id=None, short_name=None, **kwargs):
     cookies = request.COOKIES
     #cookie_user_id = cookies.get('user_id')
-    
-    context = {'fb_client_id': FACEBOOK_APP_ID, 'user_id': user_id}
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'user_id': user_id,
+        'short_name': short_name,
+        'kwargs': kwargs
+    }
     """
     if cookie_user_id:
         user = User.objects.get(id=cookie_user_id)
@@ -95,20 +99,20 @@ def main(request, user_id=None, **kwargs):
     """
     return render_to_response("index.html", context, context_instance=RequestContext(request))
 
-def interactions(request, user_id=None, **kwargs):
+def interactions(request, user_id=None, short_name=None, **kwargs):
     interactions = Interaction.objects.all()
-    
     if user_id:
         interactions = interactions.filter(user=user_id)
+        
+    if short_name:
+        interactions = interactions.filter(page__site__group__short_name=short_name)
     
-    if 'view' in kwargs:
+    if kwargs and 'view' in kwargs:
         view = kwargs['view']
         if view == 'tags': interactions=interactions.filter(kind="tag")
         if view == 'comments': interactions=interactions.filter(kind="com")
         if view == 'shares': interactions=interactions.filter(kind="shr")
         if view == 'bookmarks': interactions=interactions.filter(kind="bkm")
-    
-    interactions.select_related('page','user')  
     
     context = {'interactions': interactions}
         

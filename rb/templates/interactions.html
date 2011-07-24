@@ -1,10 +1,12 @@
 <div>
-{% for interaction in interactions %}
+{% regroup interactions by page as pi %}
+{% for page in pi %}
 <table class="card" border="0" cellspacing="0" cellpadding="0">
   <thead>
-    <th class="column1"><img alt="{{ interaction.page.site.group.name }}" src="{{ interaction.page.site.group.logo_url_sm }}"></th>
-    <th class="column2">{{ interaction.page.title }}</th>
+    <th class="column1"><img alt="{{ page.grouper.site.group.name }}" src="{{ page.grouper.site.group.logo_url_sm }}"></th>
+    <th class="column2">{{ page.grouper.title }}</th>
   </thead>
+  {% for interaction in page.list %}
   <tbody>
     <tr class="interaction">
     <td class="column1">
@@ -21,31 +23,30 @@
       <!-- <div class="who_action">{{ tag.content.interaction.user.social_user.full_name }}'s reaction to:</div> -->
       <div class="who_action">
       </div>
-      {% if tag.content.interaction.content.kind == "img" %}
+      {% if tag.content.kind == "img" %}
       <div class="content image"><img src="{{ interaction.content.body }}"></div>
       {% else %}
       <div class="content text">{{ interaction.content.body }}</div>
       {% endif %}
-      {% for comment in interaction.comments %}
-      <h5 class="label small">comments</h5>
+      {% if interaction.kind == 'com' %}
+      <h5 class="label small"></h5>
       <div class="comment_container">
         <div class="header">
-          <div class="when">{{ comment.created }}</div>
-          <div class="avatar"><img src="{{ comment.user.social_user.img_url }}"></div>
-          <div class="who">{{ comment.user.social_user.full_name }}</div>
+          <div class="when">{{ interaction.created }}</div>
+          <div class="avatar"><img src="{{ interaction.user.social_user.img_url }}"></div>
+          <div class="who">{{ interaction.user.social_user.full_name }}</div>
         </div>
         <div class="comment">
           <div class="quote open">"</div>
-          {{ comment.interaction_node.body }}
+          {{ interaction.interaction_node.body }}
           <div class="quote close">"</div>
         </div>
       </div>
     </div>
-    {% endfor %}
+    {% endif %}
     </td>
   </tbody>
-
-  </tbody>
+  {% endfor %}
 </table>
 {% endfor %}
 </div>

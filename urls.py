@@ -30,12 +30,24 @@ urlpatterns = patterns('',
   url(r'^interactions/user/(?P<user_id>\d+)/comments/$', 'rb.views.interactions', kwargs={"view":"comments"}),
   url(r'^interactions/user/(?P<user_id>\d+)/shares/$', 'rb.views.interactions', kwargs={"view":"shares"}),
   url(r'^interactions/user/(?P<user_id>\d+)/bookmarks/$', 'rb.views.interactions', kwargs={"view":"bookmarks"}),
-  
+
+  url(r'^interactions/group/(?P<short_name>\w+)/$', 'rb.views.interactions'),
+  url(r'^interactions/group/(?P<short_name>\w+)/tags/$', 'rb.views.interactions', kwargs={"view":"tags"}),
+  url(r'^interactions/group/(?P<short_name>\w+)/comments/$', 'rb.views.interactions', kwargs={"view":"comments"}),
+  url(r'^interactions/group/(?P<short_name>\w+)/shares/$', 'rb.views.interactions', kwargs={"view":"shares"}),
+  url(r'^interactions/group/(?P<short_name>\w+)/bookmarks/$', 'rb.views.interactions', kwargs={"view":"bookmarks"}),
+
   url(r'^user/(?P<user_id>\d+)/$', 'rb.views.main', kwargs={"view":"tags"}),
   url(r'^user/(?P<user_id>\d+)/tags/$', 'rb.views.main', kwargs={"view":"tags"}),
   url(r'^user/(?P<user_id>\d+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
   url(r'^user/(?P<user_id>\d+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
   url(r'^user/(?P<user_id>\d+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}),
+
+  url(r'^group/(?P<short_name>\w+)/$', 'rb.views.main', kwargs={"view":"tags"}),
+  url(r'^group/(?P<short_name>\w+)/tags/$', 'rb.views.main', kwargs={"view":"tags"}),
+  url(r'^group/(?P<short_name>\w+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
+  url(r'^group/(?P<short_name>\w+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
+  url(r'^group/(?P<short_name>\w+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}), 
   
   url(r'^sidebar/$', 'rb.views.sidebar'),
   url(r'^sidebar/user/(?P<user_id>\d+)/$', 'rb.views.sidebar'),
