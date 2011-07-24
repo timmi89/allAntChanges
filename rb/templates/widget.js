@@ -2371,7 +2371,7 @@ console.dir(message.data);
 
                             var prefix = count ? ", " : "", //don't include the first time
                                 $tag = $('<strong/>').append(tag.body),
-                                $count = $('<em/>').append( ' ('+tag.count+')' ),
+                                $count = $('<em/>').append( '('+tag.count+')' ),
                                 $span = $('<span />').addClass('rdr_tags_list_tag');
 
                             $span.append( $tag, $count).data('id',tag_id).data('selStates',[]);
@@ -4977,6 +4977,7 @@ function $RFunctions($R){
                     //turn on
                     //log('adding hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
                     hiliter.applyToRange(range);
+                    log('trying to apply range ' +range )
                     //apply the visual styles with the generic classes
                     $('.'+hiliter['class']).addClass(styleClass);
                     //apply css classes to start and end so we can style those specially
@@ -4990,6 +4991,7 @@ function $RFunctions($R){
                     //turn off
                     //log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
                     //remove the classes again so that the hiliter can normalize the selection (paste it back together)
+                    log('trying to remove range ' +range )
                     hiliter['get$start']().removeClass(styleClass+'_start');
                     hiliter['get$end']().removeClass(styleClass+'_end');
                     $('.'+hiliter['class']).removeClass(styleClass);
