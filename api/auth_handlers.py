@@ -53,7 +53,10 @@ class FBHandler(BaseHandler):
             raise JSONException(u"No access token")
 
         # Get user profile from facebook graph
-        profile = graph.get_object("me")
+        try:
+            profile = graph.get_object("me")
+        except GraphAPIError:
+            raise JSONException(u'Error getting graph object from Facebook')
 
         django_user = createDjangoUser(profile);
         social_user = createSocialUser(django_user, profile)

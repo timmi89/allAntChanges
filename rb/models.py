@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db.models import Count
 #from treebeard.mp_tree import MP_Node
 from django.contrib.auth.models import User
 from baseconv import base62
@@ -145,6 +146,15 @@ class Page(models.Model):
     title = models.CharField(max_length=255, blank=True)
     canonical_url = models.URLField(verify_exists=False, blank=True)
 
+    def interactions(self):
+        return Interaction.objects.filter(page=self)
+
+    def tags(self):
+        return Interaction.objects.filter(page=self, kind='tag')
+        
+    def top_tags(self):
+        pass
+
     def __unicode__(self):
         return unicode(self.id)
 
@@ -195,12 +205,21 @@ class Interaction(DateAwareModel, UserAwareModel):
     class Meta:
         ordering = ['-created']
         unique_together = ('page', 'content', 'kind', 'interaction_node', 'user')
-   
+ 
+    def related_tags(self):
+        rt = Interaction.objects.filter(
+            page=self.page,
+            content=self.content,
+            kind='tag'
+        ).exclude(interaction_node=self.interaction_node)
+        
+        return rt
+    
     def human_kind(self):
         return dict(((k,v) for k,v in self.INTERACTION_TYPES))[self.kind]
         
     def comments(self):
-        return Interaction.objects.filter(parent=self.parent, kind='com')
+        return Interaction.objects.filter(parent=self, kind='com')
    
     def __unicode__(self):
         return u'id: {0}'.format(self.id)
@@ -242,7 +261,7 @@ class SocialUser(models.Model):
     full_name = models.CharField(max_length=255)
 
     # Might not get these -> blank=True
-    username = models.CharField(max_length=255, blank=True, unique=True)
+    username = models.CharField(max_length=255, blank=True, unique=True, null=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True)
     hometown = models.CharField(max_length=255, blank=True, null=True)
     bio = models.TextField(max_length=255, blank=True, null=True)
