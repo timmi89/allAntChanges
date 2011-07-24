@@ -4746,8 +4746,12 @@ function $RFunctions($R){
             */
             ],
             _modifierFilters = {
-                offset: function(range, params){
-                    log(params);
+                filterOutRDRIndicator: function(range, params){
+                    var commonAncestorContainer = range.commonAncestorContainer;
+                    var $indicator = $(commonAncestorContainer).find('.rdr');
+                    if($indicator.length){
+                        range.setEndBefore( $indicator[0] );
+                    }
                     return range;
                 },
                 stripWhiteSpace: function(range){
@@ -4774,7 +4778,6 @@ function $RFunctions($R){
                         e.resultStrLen = e.result[0].length;
                         _rangeOffSet( range, {relOffset: (-e.resultStrLen), start:false} );
                     }
-                    log('whites')
                     return range;
                 },
                 firstWordSnap: function(range){
@@ -5045,7 +5048,7 @@ function $RFunctions($R){
                 //if filters not specifed, call all filters
                 if ( typeof filterList === "undefined" || filterList == null ){
                     $.each(filters, function(name, func){
-                        range = func(range);
+                        doFilters[name] = [];
                     });
                 }
                 else if ( typeof filterList === "string" ){
@@ -5060,18 +5063,18 @@ function $RFunctions($R){
                             //func is an arr
                             var funcName = func[0];
                             var params = (func.length > 1) ? func.slice(1) : [];
-                            doFilters[filter] = params;
+                            doFilters[funcName] = params;
                         }
                     
                     });
-                    $.each(doFilters, function(funcName, params){
-                        var filterFunc = filters[ funcName ] || function(){
-                            console.error('bad filter name passed in param');return false
-                        };
-                        //finally, run em'.
-                        range = filterFunc(range, params);
-                    });
-                }                    
+                }
+                $.each(doFilters, function(funcName, params){
+                    var filterFunc = filters[ funcName ] || function(){
+                        console.error('bad filter name passed in param');return false
+                    };
+                    //finally, run em'.
+                    range = filterFunc(range, params);
+                });              
                 return range;
             }
 
