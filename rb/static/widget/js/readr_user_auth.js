@@ -275,3 +275,24 @@ console.dir(RDRAuth);
 	}
 }
 RDRAuth.getUser(false);
+
+FB.Event.subscribe('auth.sessionChange', function(response) {
+  // do something with response.session
+  console.log('fb session change');
+  // RDRAuth.killUser();
+});
+FB.Event.subscribe('auth.statusChange', function(response) {
+  // do something with response.session
+  console.log('fb status change');
+  // RDRAuth.killUser();
+});
+FB.Event.subscribe('auth.login', function(response) {
+  // do something with response.session
+  console.log('fb login');
+  // RDRAuth.killUser();
+});
+FB.Event.subscribe('auth.logout', function(response) {
+  // do something with response.session
+  console.log('fb logout');
+  // RDRAuth.killUser();
+});
