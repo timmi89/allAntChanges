@@ -1117,6 +1117,7 @@ console.dir(message.data);
                 $(document).bind('keyup.rdr', function(event) {
                     if (event.keyCode == '27') { //esc
                         RDR.rindow.closeAll();
+                        RDR.actionbar.closeAll();
                     }
                 });
 
@@ -2145,12 +2146,12 @@ console.dir(message.data);
                         $(this).remove();
                     });
 
-                    var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId);
+                    var $indicator = summary.$indicator = $('<div class="rdr rdr_indicator" />').attr('id',indicatorId);
                     //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
                     $indicator.css('visibility','hidden');
 
                     //$indicatorBody is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
-                    var $indicatorBody = $('<div class="rdr_indicator_body" />').appendTo($indicator)//chain
+                    var $indicatorBody = $('<div class="rdr rdr_indicator_body" />').appendTo($indicator)//chain
                     .append(
                         '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
                         '<span class="rdr_count">'+ summary.counts.tags +'</span>'
@@ -2342,7 +2343,7 @@ console.dir(message.data);
                             $indicatorBody = $indicator.find('.rdr_indicator_body'),
                             $actionbar = $('rdr_actionbar_'+hash);
 
-                        var $indicator_details_body = $('<div class="rdr_indicator_details_body" />'),
+                        var $indicator_details_body = $('<div class="rdr rdr_indicator_details_body" />'),
                             categoryTitleText = (summary.counts.tags == 1) ? "&nbsp;reaction:&nbsp;" : "&nbsp;reactions:&nbsp;",
                             categoryTitle = '<span class="rdr_indicator_categoryTitle">' +categoryTitleText+ '</span>',
                             $tagsList = $('<div class="rdr_tags_list" />');
@@ -3948,7 +3949,6 @@ console.dir(message.data);
 
                 var $blockParent = null;
 
-
                 if( _isValid($mouse_target) ) {
                     // the node initially clicked on is the first block level container
                     $blockParent = $mouse_target;
@@ -4746,6 +4746,10 @@ function $RFunctions($R){
             */
             ],
             _modifierFilters = {
+                offset: function(range, params){
+                    log(params);
+                    return range;
+                },
                 stripWhiteSpace: function(range){
                     var rangeStr = range.toString(),
                     s = {}, //start
@@ -4770,6 +4774,7 @@ function $RFunctions($R){
                         e.resultStrLen = e.result[0].length;
                         _rangeOffSet( range, {relOffset: (-e.resultStrLen), start:false} );
                     }
+                    log('whites')
                     return range;
                 },
                 firstWordSnap: function(range){
@@ -5028,23 +5033,45 @@ function $RFunctions($R){
                 // I think only firefox allows for multiple ranges to be selected, and no one really does it.
                 // Besides, for our tool, we'd prob have to just use the first one anyway..
                 // For now, just use only the first range on the rare case where someone tries to pass more than 1. (ranges[0])
+
+                //filterList should be a filter-name string or an arr of filters,
+                // which in turn are either a filter-name string or an arr: [filterNameStr, params.,.,. ];
+                //todo: this syntax is a liiiiittle bit crazy.
+
                 var scope = this,
-                filters = {},
-                defaultFilters = _modifierFilters; //make default all filters
+                filters = _modifierFilters, //make default all filters
+                doFilters = {};  //will be {filter:paramList}
+
                 //if filters not specifed, call all filters
                 if ( typeof filterList === "undefined" || filterList == null ){
-                    filters = defaultFilters;
+                    $.each(filters, function(name, func){
+                        range = func(range);
+                    });
+                }
+                else if ( typeof filterList === "string" ){
+                    doFilters[filterList] = [];
                 }
                 else{
-                    $.each(filterList, function(idx, val){
-                        filters[val] = defaultFilters[val] || function(){
-                            //console.error('bad filter name passed in param');return false
+                    //todo: combine with above with a recurse call instead?
+                    $.each(filterList, function(idx, func){
+                        if ( typeof func === "string" ){
+                            doFilters[func] = [];
+                        }else{
+                            //func is an arr
+                            var funcName = func[0];
+                            var params = (func.length > 1) ? func.slice(1) : [];
+                            doFilters[filter] = params;
+                        }
+                    
+                    });
+                    $.each(doFilters, function(funcName, params){
+                        var filterFunc = filters[ funcName ] || function(){
+                            console.error('bad filter name passed in param');return false
                         };
+                        //finally, run em'.
+                        range = filterFunc(range, params);
                     });
                 }                    
-                $.each(filters, function(){
-                    range = this(range);
-                });
                 return range;
             }
 
