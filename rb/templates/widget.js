@@ -257,8 +257,6 @@ function readrBoard($R){
                 });
 
                 $.each( selStates, function(idx, selState){
-                    log('selState')
-                    log(selState)
                     $().selog('hilite', selState, 'off');
                 });
             }
@@ -1104,6 +1102,7 @@ function readrBoard($R){
                 $(document).bind('keyup.rdr', function(event) {
                     if (event.keyCode == '27') { //esc
                         RDR.rindow.closeAll();
+                        RDR.actionbar.closeAll();
                     }
                 });
 
@@ -1116,7 +1115,7 @@ function readrBoard($R){
 				$RDR.dequeue('initAjax');
             },
             hashNodes: function( $nodes ) {
-                
+                //RDR.actions.hashNodes:
                 //todo: consider how to do this whitelist, initialset stuff right
                 var $allNodes = $(),
                 nodeGroups = {
@@ -1249,18 +1248,17 @@ function readrBoard($R){
                             
                             //send the containers to the server.
                             //On sucess, these unknown hashes will get passed to RDR.actions.containers.setup with dummy summaries
-                            RDR.actions.containers.send(unknownList);
-
-                            //expects callback passed in only from startSelect that found a new valid container.
-                            //the callback verifies the new container and draws the actionbar
-                            if(typeof onSuccessCallback !== 'undefined'){
-                                onSuccessCallback();
-                            }   
+                            RDR.actions.containers.send(unknownList); 
                         }
                         
                         //setup the known summaries
                         RDR.actions.containers.setup(summaries);
 
+                        //the callback verifies the new container and draws the actionbar
+                        if(typeof onSuccessCallback !== 'undefined'){
+                            onSuccessCallback();
+                        }  
+                        
                     }
                 });
             },
@@ -2122,10 +2120,12 @@ function readrBoard($R){
                         $(this).remove();
                     });
 
-                    var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId);
+                    var $indicator = summary.$indicator = $('<div class="rdr rdr_indicator" />').attr('id',indicatorId);
+                    //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
+                    $indicator.css('visibility','hidden');
 
                     //$indicatorBody is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
-                    var $indicatorBody = $('<div class="rdr_indicator_body" />').appendTo($indicator)//chain
+                    var $indicatorBody = $('<div class="rdr rdr_indicator_body" />').appendTo($indicator)//chain
                     .append(
                         '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
                         '<span class="rdr_count">'+ summary.counts.tags +'</span>'
@@ -2317,7 +2317,7 @@ function readrBoard($R){
                             $indicatorBody = $indicator.find('.rdr_indicator_body'),
                             $actionbar = $('rdr_actionbar_'+hash);
 
-                        var $indicator_details_body = $('<div class="rdr_indicator_details_body" />'),
+                        var $indicator_details_body = $('<div class="rdr rdr_indicator_details_body" />'),
                             categoryTitleText = (summary.counts.tags == 1) ? "&nbsp;reaction:&nbsp;" : "&nbsp;reactions:&nbsp;",
                             categoryTitle = '<span class="rdr_indicator_categoryTitle">' +categoryTitleText+ '</span>',
                             $tagsList = $('<div class="rdr_tags_list" />');
@@ -3902,6 +3902,7 @@ function readrBoard($R){
                 });
             },
             startSelect: function(e) {
+                //RDR.actions.startSelect:
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
 
                 //destroy all other actionbars
@@ -3910,75 +3911,90 @@ function readrBoard($R){
                 var $mouse_target = $(e.target);
 
                 // make sure it's not selecting inside the RDR windows.
-                if ( !$mouse_target.hasClass('rdr') && $mouse_target.parents('div.rdr').length == 0 ) {
+                if ( $mouse_target.hasClass('rdr') || $mouse_target.parents('div.rdr').length != 0 ) return;
+                //else
 
+                var $blockParent = null;
+
+                if( _isValid($mouse_target) ) {
+                    // the node initially clicked on is the first block level container
+                    $blockParent = $mouse_target;
+                } else {
+                    $blockParent = findNearestValidParent($mouse_target);
+                }
+                //if no valid blockParent was found, we're done here.
+                if( $blockParent == null ) return;
+                //else
+
+                //let selog use serialrange to check if the selected text is contained in the $blockParent (also check for "" of just whitespace)
+                var selected = $blockParent.selog('save');
+                if ( !selected.serialRange || !selected.text || (/^\s*$/g.test(selected.text)) ) return;
+                //else
+
+                // check if the blockparent is already hashed
+                if ( $blockParent.hasClass('rdr-hashed') ) {
+                    _drawActionBar($blockParent);
+                }
+                else{
+                    //hasn't been hashed yet.
+                    //try to submit node to server.  Pass in an onsuccess function
+                    if ( $blockParent.text().length > 1800 ) return false;
+                    //else
+
+                    //note: hashes in this case will just be a single hash. That's cool.
+                    var hashes = RDR.actions.hashNodes( $blockParent );
+                    if(hashes){
+                        RDR.actions.sendHashes( hashes, function(){
+                            _drawActionBar($blockParent);
+                        });
+                    }
+                }
+
+                //helper functions
+                function findNearestValidParent($mouse_target){
+                    // find the nearest valid parent
+                    var $blockParent = null;
+                    var foundClosest = false;
+                    $mouse_target.parents().each( function() {
+                        if(foundClosest) return;
+                        //else
+                        
+                        var $thisNode = $(this);
+                        if(  _isValid( $thisNode ) ){
+                            // we've found the first parent of the selected text that is block-level
+                            $blockParent = $(this);
+                            foundClosest = true;
+                        }
+                    });
+                    return $blockParent;
+                }
+                function _drawActionBar ($blockParent){
+                    /*
+                    log(selected.text)
+                    log(/^\s*$/g.test(selected.text))
+                    */
+                    
                     // closes undragged windows
-                    //i need to remove this way (for now at least) so that I can bind an event to the remove event (thanks ie.)
+                    //close with our own event instead of removing directly so that I can bind an event to the remove event (thanks ie.)
                     RDR.rindow.close( $('div.rdr.rdr_window.rdr.rdr_rewritable') );
 
-                    var $blockParent = null;
-
-                    // find the nearest valid parent
-                    function isValid($node){
-                        return ( $node.css('display') == "block" &&  $node.css('float') == "none" );
-                    }
-                    if( !isValid($mouse_target) ) {
-                        var foundClosest = false;
-                        $mouse_target.parents().each( function() {
-                            if(foundClosest) return;
-                            //else
-                            
-                            var $thisNode = $(this);
-                            if(  isValid( $thisNode ) ){
-                                // we've found the first parent of the selected text that is block-level
-                                $blockParent = $(this);
-                                foundClosest = true;
-                            }
-                        });
-                    } else {
-
-                        // the node initially clicked on is the first block level container
-                        $blockParent = $mouse_target;
-                    }
-                    if( $blockParent == null ) return;
-
-                    //helper function
-                    function _verifyAndDrawActionbar($blockParent){
-                        var selected = $blockParent.selog('save');
-                        if ( selected.serialRange && selected.text && !(/^\s*$/g.test(selected.text)) ) {
-                            RDR.actionbar.draw({
-                                coords:{
-                                    left:parseInt(e.pageX),
-                                    top:parseInt(e.pageY)+7
-                                },
-                                content_type:"text",
-                                content:selected.textClean,
-                                container:$blockParent.data('hash')
-                            });
-                        }                        
-                    }
-
-                    // now make sure that parent is hashed
-                    if ( !$blockParent.hasClass('rdr-hashed') ) {
-                        //hasn't been hashed yet.
-                        //try to submit node to server.  Pass in an onsuccess function
-                        if ( $blockParent.text().length > 1800 ) return false;
-                        //else
-
-                        var hashes = RDR.actions.hashNodes( $blockParent );
-                        if(hashes){
-                            RDR.actions.sendHashes( hashes, function(){
-                                _verifyAndDrawActionbar($blockParent);
-                            });
-                        }
-                    }
-                    else{
-                        _verifyAndDrawActionbar($blockParent);
-                    }
-
+                    RDR.actionbar.draw({
+                        coords:{
+                            left:parseInt(e.pageX),
+                            top:parseInt(e.pageY)+7
+                        },
+                        content_type:"text",
+                        content:selected.textClean,
+                        container:$blockParent.data('hash')
+                    });
                 }
-            }
-        }
+                function _isValid($node){
+                    return ( $node.css('display') == "block" &&  $node.css('float') == "none" );
+                }
+
+
+            }//end RDR.actions.startSelect
+        }//end RDR.actions
     };
 
     return RDR;
@@ -4697,6 +4713,14 @@ function $RFunctions($R){
             */
             ],
             _modifierFilters = {
+                filterOutRDRIndicator: function(range, params){
+                    var commonAncestorContainer = range.commonAncestorContainer;
+                    var $indicator = $(commonAncestorContainer).find('.rdr');
+                    if($indicator.length){
+                        range.setEndBefore( $indicator[0] );
+                    }
+                    return range;
+                },
                 stripWhiteSpace: function(range){
                     var rangeStr = range.toString(),
                     s = {}, //start
@@ -4979,23 +5003,45 @@ function $RFunctions($R){
                 // I think only firefox allows for multiple ranges to be selected, and no one really does it.
                 // Besides, for our tool, we'd prob have to just use the first one anyway..
                 // For now, just use only the first range on the rare case where someone tries to pass more than 1. (ranges[0])
+
+                //filterList should be a filter-name string or an arr of filters,
+                // which in turn are either a filter-name string or an arr: [filterNameStr, params.,.,. ];
+                //todo: this syntax is a liiiiittle bit crazy.
+
                 var scope = this,
-                filters = {},
-                defaultFilters = _modifierFilters; //make default all filters
+                filters = _modifierFilters, //make default all filters
+                doFilters = {};  //will be {filter:paramList}
+
                 //if filters not specifed, call all filters
                 if ( typeof filterList === "undefined" || filterList == null ){
-                    filters = defaultFilters;
+                    $.each(filters, function(name, func){
+                        doFilters[name] = [];
+                    });
+                }
+                else if ( typeof filterList === "string" ){
+                    doFilters[filterList] = [];
                 }
                 else{
-                    $.each(filterList, function(idx, val){
-                        filters[val] = defaultFilters[val] || function(){
-                            //console.error('bad filter name passed in param');return false
-                        };
+                    //todo: combine with above with a recurse call instead?
+                    $.each(filterList, function(idx, func){
+                        if ( typeof func === "string" ){
+                            doFilters[func] = [];
+                        }else{
+                            //func is an arr
+                            var funcName = func[0];
+                            var params = (func.length > 1) ? func.slice(1) : [];
+                            doFilters[funcName] = params;
+                        }
+                    
                     });
-                }                    
-                $.each(filters, function(){
-                    range = this(range);
-                });
+                }
+                $.each(doFilters, function(funcName, params){
+                    var filterFunc = filters[ funcName ] || function(){
+                        console.error('bad filter name passed in param');return false
+                    };
+                    //finally, run em'.
+                    range = filterFunc(range, params);
+                });              
                 return range;
             }
 

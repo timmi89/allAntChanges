@@ -502,6 +502,12 @@ div.rdr_indicator {
     filter:alpha(opacity=00);
     -moz-opacity:0.0;
     -khtml-opacity:0.0;
+
+    -webkit-user-select: none !important;
+    -khtml-user-select: none !important;
+    -moz-user-select: none !important;
+    -o-user-select: none !important;
+    user-select: none !important;
 }
 
 #rdr_sandbox #rdr_indicator_details_wrapper{
