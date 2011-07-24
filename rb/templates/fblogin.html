@@ -33,7 +33,7 @@
 	</div>
 	<div id="fb-logged-in" style="display:none;">
 		<div><strong>Welcome to ReadrBoard!</strong></div>
-		<a href="javascript:void(0);" onclick="FB.logout( RDRAuth.doFBlogout );">Log out</a>
+		<a href="javascript:void(0);" onclick="RDRAuth.doFBlogout();">Log out of ReadrBoard</a>
 	</div>
 	<!-- <p>
 		<a href="javascript:void(0);" onclick="RDRAuth.tempUser();">Create Temp User</a>
@@ -55,11 +55,13 @@
 
 		$(document).ready( function() {
 			RDRAuth.FBLoginResponse = function(response) {
+				console.log('xdm: fbloginresponse');
 				if (response.session) {
 					//user is logged in
 					$('#fb-logged-in').show();
 					$('#fb-logged-out').hide();
-					RDRAuth.getReadrToken(response);
+					RDRAuth.getReadrToken(response, true);
+
 				} else {
 					// user is not logged in
 					// TODO do something.  post to parent that there was a bug logging in to FB
@@ -70,7 +72,7 @@
 			}
 		});
 
-		RDRAuth.getUser();
+		// RDRAuth.getUser();
 	</script>
    </body>
 </html>

@@ -686,31 +686,16 @@ function readrBoard($R){
             },
 			iframeHost : "{{ BASE_URL }}", // TODO put this in a template var
             getUser: function(args, callback) {
-
-                // if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
-                    // we have a user id and token, be it temp or logged in user, so just run the callback
-                    //todo: ec: make sure it doesn't matter for this that RDR.user.whatever can be spoofed.
-                    //Does the callback give access that a fake user shouldn't have?  Call should always pass a token to be validated serverside, yeah? 
-
-                    // if ( callback && args ) callback(args);
-                    // else if ( callback ) callback();
-                // } else {
-                    // define a new message receiver with this set of args and callback function
-                    if ( callback && args ) RDR.session.receiveMessage( args, callback );
-                    else if ( callback ) RDR.session.receiveMessage( false, callback );
-
-                    // posting this message then means we'll look in the $.receiveMessage for the response and what to do next
-                    // TODO need a timeout and/or try/catch?
-                    $.postMessage(
-                        "returnUser",
-                        RDR.session.iframeHost + "/xdm_status/",
-                        window.frames['rdr-xdm-hidden']
-                    );
-                // }
+                $.postMessage(
+                    "reauthUserFB",
+                    RDR.session.iframeHost + "/xdm_status/",
+                    window.frames['rdr-xdm-hidden']
+                );
+                if ( callback && args ) RDR.session.receiveMessage( args, callback );
+                else if ( callback ) RDR.session.receiveMessage( false, callback );
             },
             handleGetUserFail: function(args, callback) {
                 var response = args.response;
-                //[cleanlogz]("handleGetUserFail: " + response.message);
                 switch ( response.message ) {
                     case "Error getting user!":
                         // kill the user object and cookie
@@ -732,9 +717,8 @@ function readrBoard($R){
                     case "Facebook token expired":  // call fb login
                     case "FB graph error - token invalid":  // call fb login
                     case "Social Auth does not exist for user": // call fb login
+                    case "Data to create token is missing": // call fb login
                         // the token is out of sync.  could be a mistake or a hack.
-                        //[cleanlogz]('starting postmessage')
-                        console.log('handleGetUserFail:  FB user error');
                         RDR.session.receiveMessage( args, callback );
                         $.postMessage(
                             "reauthUser",
@@ -747,8 +731,7 @@ function readrBoard($R){
                 }
             },
 			createXDMframe: function() {
-             //[cleanlogz]('createXDMframe');
-             //[cleanlogz]console.dir(RDR.groupPermData);
+
                 RDR.session.receiveMessage();
 
                 var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
@@ -770,10 +753,18 @@ function readrBoard($R){
                     function(e){
                         ////[cleanlogz]console.dir(e);
                         var message = JSON.parse( e.data );
-                        log('receiveMessage: ' + message.status );
-console.dir(message.data);
+
                         if ( message.status ) {
                             if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
+
+
+                                // $.postMessage(
+                                //     "reauthUserFB",
+                                //     RDR.session.iframeHost + "/xdm_status/",
+                                //     window.frames['rdr-xdm-hidden']
+                                // );
+
+
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
 
@@ -782,17 +773,14 @@ console.dir(message.data);
                                     RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i]):message.data[i];
                                 }
                                 if ( callback && args ) {
-                                    console.log('widget receiveMessage callback 1');
                                     args.user = RDR.user;
                                     callback(args);
+                                    callback = null;
                                 }
                                 else if ( callback ) {
-                                    console.log('widget receiveMessage callback 2');
                                     callback();
+                                    callback = null;
                                 }
-                            } else if ( message.status == "checkSocialUser fail" ) {
-                                console.dir(args);
-                                RDR.session.showLoginPanel( args );
                             } else if ( message.status == "already had user" ) {
                                 // todo: when is this used?
                                 $('#rdr-loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
@@ -879,10 +867,7 @@ console.dir(message.data);
                 );
             },
             showTempUserMsg: function(args) {
-                //[cleanlogz]('args')
-                //[cleanlogz](args)
                 if ( args.rindow ) {
-                    ////[cleanlogz]console.dir(args);
                     var rindow = args.rindow,
                         num_interactions_left = RDR.group.temp_interact - parseInt( args.num_interactions ),
                         $tempMsgDiv = $('<div class="rdr_tempUserMsg"><span /><strong /></div>'),
@@ -1771,6 +1756,7 @@ console.dir(message.data);
                     onSuccess: {
                         //RDR.actions.interactions.tag.onSuccess:
                         create: function(args){
+
                             //RDR.actions.interactions.tag.onSuccess.create:
                             //todo: clean up these args.
                             var response = args.response,
@@ -1788,6 +1774,7 @@ console.dir(message.data);
                             
                             // do stuff you'd only do if this was NOT a "thumbs-up" tag creation
                             if ( !args.thumbsUp ) {
+
                                 //clear the loader                  
                                 tag_li.find('div.rdr_leftBox').html('');
 
@@ -1843,7 +1830,6 @@ console.dir(message.data);
 
                             RDR.actions.summaries.update(hash, diff);
 
-                            
                             var args = response.data;
                             args.rindow = rindow;
                             RDR.session.checkForMaxInteractions(args);
@@ -1908,14 +1894,7 @@ console.dir(message.data);
                             log('tag fail');
                             console.dir(args);
                             RDR.session.handleGetUserFail( args, function() {
-                                log('inside callback');
-                                console.dir(args);
-                                // if ( !args.secondAttempt ) {
-                                    args.secondAttempt = true;
-                                    RDR.actions.interactions.ajax( args, 'tag', 'create' );
-                                // }else{
-                                    // //[cleanlogz]console.warn('unhandled create interaction fail')
-                                // }
+                                RDR.actions.interactions.ajax( args, 'tag', 'create' );
                             });
                         }
                     }
@@ -2069,12 +2048,7 @@ console.dir(message.data);
                             RDR.session.handleGetUserFail( args, function() {
                                 log('inside callback');
                                 console.dir(args);
-                                // if ( !args.secondAttempt ) {
-                                    args.secondAttempt = true;
-                                    RDR.actions.interactions.ajax( args, 'bookmark', 'create' );
-                                // }else{
-                                    // //[cleanlogz]console.warn('unhandled create interaction fail')
-                                // }
+                                RDR.actions.interactions.ajax( args, 'bookmark', 'create' );
                             });
                         }
                     }
@@ -3603,10 +3577,7 @@ console.dir(message.data);
                                     } else {
                                         // if it failed, see if we can fix it, and if so, try this function one more time
                                         RDR.session.handleGetUserFail( args, function() {
-                                            if ( !args.secondAttempt ) {
-                                                args.secondAttempt = true;
-                                                RDR.actions.share_getLink( args );
-                                            }
+                                            RDR.actions.share_getLink( args );
                                         });
                                     }
                                 } else {
@@ -3859,7 +3830,6 @@ console.dir(message.data);
 
                 RDR.actions.panel.expand("whyPanel", rindow);
 
-
                 /*
                 TUMBLR SHARING URLs
                 http://www.tumblr.com/share?v=3&u=http%3A%2F%2Fjsbeautifier.org%2F&t=Online%20javascript%20beautifier&s=
@@ -3924,11 +3894,8 @@ console.dir(message.data);
                             if ( response.status == "fail" ) {
                                 // if it failed, see if we can fix it, and if so, try this function one more time
                                 RDR.session.handleGetUserFail( args, function() {
-                                    if ( !args.secondAttempt ) {
-                                        args.secondAttempt = true;
                                         //RDR.actions.comment( args );
                                         //commenting this out for now because this prob wont work with the new args
-                                    }
                                 } );
                             } else {
                                 rindow.find('div.rdr_commentBox').find('div.rdr_commentComplete').html('Thank you for your comment. You and others can now read this by clicking on the (pin) icon next to the content you commented upon.').show();
