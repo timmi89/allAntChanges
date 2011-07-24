@@ -403,7 +403,8 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 /* custom in-page highlight */
 .rdr_hilite {
     background-color: #fe7 !important;
-    color: black !important;
+    color: #333333 !important;
+    text-decoration: none !important;
     /*-moz-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); FF3.5+ */
     /*-webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); Saf3.0+, Chrome */
     /*box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);  Opera 10.5+, IE 9.0 */
@@ -527,6 +528,7 @@ div.rdr_indicator {
     /*offset with margin to line up with indicator: compensating for the padding and the border*/
     margin:-4px 0 0 -4px;
     overflow:hidden;
+    display:none; /*start with them hidden by default - will override with js*/
 }
 #rdr_sandbox div.rdr_indicator_details .rdr_see_more {
     padding: 0 3px;
@@ -566,7 +568,7 @@ div.rdr_indicator_for_text div.rdr_indicator_body{
     left: 4px !important;
 }
 
-#rdr_sandbox div.rdr_indicator_bodyClone{
+#rdr_sandbox div.rdr_indicator_details_body{
     width:auto !important;
     display:inline !important;
     white-space:nowrap !important;
@@ -604,7 +606,7 @@ div.rdr_indicator span.rdr_count, div.rdr_indicator_details span.rdr_count{
 #rdr_sandbox span.rdr_tags_list_tag {
     padding:3px 1px !important;
 }
-#rdr_sandbox span.rdr_tags_list_tag:hover {
+#rdr_sandbox div.rdr_indicator_details_for_text span.rdr_tags_list_tag:hover {
     background:#fe7 !important;
 }
 

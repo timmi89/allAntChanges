@@ -1,0 +1,33 @@
+///////////////////////////////////////////////////////////////
+OUTLINE:
+
+hashnodes
+Sendhashes
+|	if(unknown)
+|	|	containers.send
+|	|		Sendhashes <loop back up>  |end
+|	|
+|    containers.setup(summaries)
+|        RDR.actions.summaries.save(summary);
+|        RDR.actions.indicators.init( hash );
+|            RDR.actions.indicators.update(hash); |end
+|				|            	
+|            	... (for text only) onIndicatorHover:
+|            		--> RDR.actions.content_nodes.init(hash, onSuccessCallback);
+|	                        RDR.actions.indicators.update(hash); //update again to pick up the new content_node info |end
+|
+|	            							
+|
+... RDR.actions.interactions.<type>.onSuccess:
+		--> RDR.actions.summaries.update(hash, diff)
+                RDR.actions.indicators.update( hash );
+
+... RDR.actions.RDR.actions.startSelect(e):
+		
+
+
+
+///////////////////////////////////////////////////////////////
+MORE DETAILED
+todo: fill this in
+
