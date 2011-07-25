@@ -555,6 +555,20 @@ function readrBoard($R){
                 if( para && typeof para == "string" && para != "" ) { 
                     return para.replace(/[\n\r\t]+/gi,' ').replace().replace(/\s{2,}/g,' ');
                 }
+            },
+            prettyNumber: function(int){
+                var int = parseInt(int); //convert if we can.
+                if( isNaN(int) || int<0 ) return false;
+                //else
+
+                var abr = ["",'K','M','B','T'];
+                for(var i=0; i<abr.length; i++){
+                    var thisfactor = Math.pow(10, 3*i);
+                    var nextfactor = Math.pow(10, 3*(i+1));
+                    if( int < nextfactor ){
+                        return ""+ Math.floor( int/thisfactor ) + abr[i];
+                    }
+                }
             }
         },
 		session: {
@@ -2145,7 +2159,7 @@ function readrBoard($R){
                     var $indicatorBody = $('<div class="rdr rdr_indicator_body" />').appendTo($indicator)//chain
                     .append(
                         '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
-                        '<span class="rdr_count">'+ summary.counts.tags +'</span>'
+                        '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
                     )//chain
                     .data( {'which':hash} );
 
@@ -2241,11 +2255,17 @@ function readrBoard($R){
                                         
                     //$indicatorBody is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
                     var $count = $indicator.find('.rdr_count');
-                    $count.html(summary.counts.tags);
+                    $count.html( RDR.util.prettyNumber( summary.counts.tags ) );
 
                     //build tags in $tagsList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
                     $indicator_details.css({ 'visiblity':'hidden' }).show()//chain
                     scope.utils.makeDetailsContent( hash );
+
+                    var kind = (summary.kind == "img") ? "img" : "text";
+                    
+                    if(kind == 'img'){
+                        RDR.actions.indicators.utils.positionImgIndicator(hash);
+                    }
                     $indicator_details.css({ 'visiblity':'visible' }).hide();
                               
                 },
@@ -2285,31 +2305,6 @@ function readrBoard($R){
                                 }
                             );
 
-
-                            //keep the indicator pegged at the end of the img but move the body part of it (the visibile part)
-                            var relOffset = {
-                                top: $container.offset().top - $indicator.offset().top,
-                                left: - $indicator.find('.rdr_indicator_body').width()
-                            };
-                            var cornerPadding = {
-                                top: 7,
-                                left: -15
-                            }
-
-                            /*
-                            $indicator.find('.rdr_indicator_body').css({
-                                'top': relOffset.top + cornerPadding.top,
-                                'left': relOffset.left + cornerPadding.left
-                            });
-                            */
-                            //because this lives outside our sandbox, it has been 'css-reset' with !important for zero'd out margins, position...
-                            //so we can't use $.css here which won't allow for !important.  Use the following instead.
-                            //note that this overwrites any existing inline style. 
-                            //todo: use regex instead to ensure we don't overwrite inline styles (though there shouldn't be any)
-                            var inlineStyleStr = 'top:' +(relOffset.top+cornerPadding.top)+ 'px !important; left:' +(relOffset.left + cornerPadding.left) + 'px !important;';
-
-                            $indicator.find('.rdr_indicator_body').attr('style', inlineStyleStr);
-
                             $indicator_details.addClass('rdr_indicator_details_for_image').hover(
                                 function() {
                                     $(this).data('hover', true);
@@ -2319,6 +2314,7 @@ function readrBoard($R){
                                 }
                             );
 
+                            RDR.actions.indicators.utils.positionImgIndicator(hash);
                         },
                         text: function( hash ){
                             var summary = RDR.summaries[hash],
@@ -2409,6 +2405,31 @@ function readrBoard($R){
                             var relevant_content_nodes = invertedDict[tag_id];
                             RDR.actions.content_nodes.utils.initHiliteStates( $(this), relevant_content_nodes );
                         });
+                    },
+                    positionImgIndicator: function(hash){
+                        //RDR.actions.indicators.utils.positionImgIndicator:
+                        var summary = RDR.summaries[hash],
+                            $container = summary.$container,
+                            $indicator = summary.$indicator,
+                            $indicator_details = summary.$indicator_details;
+
+                        //keep the indicator pegged at the end of the img but move the body part of it (the visibile part)
+                        var relOffset = {
+                            top: $container.offset().top - $indicator.offset().top,
+                            left: - $indicator.find('.rdr_indicator_body').width()
+                        };
+                        var cornerPadding = {
+                            top: 7,
+                            left: -15
+                        }
+
+                        //because this lives outside our sandbox, it has been 'css-reset' with !important for zero'd out margins, position...
+                        //so we can't use $.css here which won't allow for !important.  Use the following instead.
+                        //note that this overwrites any existing inline style. 
+                        //todo: use regex instead to ensure we don't overwrite inline styles (though there shouldn't be any)
+                        var inlineStyleStr = 'top:' +(relOffset.top+cornerPadding.top)+ 'px !important; left:' +(relOffset.left + cornerPadding.left) + 'px !important;';
+
+                        $indicator.find('.rdr_indicator_body').attr('style', inlineStyleStr);
                     }
                 },//end RDR.actions.indicators.utils
                 sortReactions: function( hash ){
@@ -3707,12 +3728,14 @@ function readrBoard($R){
                         $this.find(' div.rdr_leftBox').text( percentage+'%' );
                     });
 
-
+                    //I'm doing this somewhere else
+                    /*
                     $('div.rdr_indicator').each( function() {
                         $this = $(this);
                         if ( $this.data('hash') == hash ) $this.find('span.rdr_count').text(total_reactions);
                     });
-
+                    */
+                    
                     // update the data objects too
                     for ( var i in RDR.content_nodes[hash].info.content ) {
                         if ( RDR.content_nodes[hash].info.content[i].body == content ) {
