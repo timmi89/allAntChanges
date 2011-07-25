@@ -217,7 +217,7 @@ function readrBoard($R){
                     $(rindow).remove();
                 });
             },
-			closeAll: function() {
+            closeAll: function() {
                 var $allRindows = $('div.rdr.rdr_window');
 				RDR.rindow.close( $allRindows );
                 $('.rdr_shared').removeClass('rdr_shared');
@@ -289,6 +289,12 @@ function readrBoard($R){
                 
                 if ( !containerHash || !RDR.containers.hasOwnProperty(containerHash) ) return;
                 //else
+                
+                var summary = RDR.summaries[containerHash];
+                var $rindow_writemode = summary.$rindow_writemode;
+                if( $rindow_writemode && $rindow_writemode.filter(":visible").length ) return false;
+                //else
+
                 var container = (RDR.containers.hasOwnProperty(containerHash)) ? RDR.containers[containerHash] : undefined ;
 
                 var actionbar_id = "rdr_actionbar_"+containerHash;
@@ -2636,6 +2642,7 @@ function readrBoard($R){
                     selector:selector
                 });
 
+                rindow.addClass('rdr_readmode');
                 summary.$rindow_readmode = rindow;
                 $indicatorDetails.hide();
 
@@ -3119,7 +3126,9 @@ function readrBoard($R){
                     coords
                 }
                 */
-                var $hostNode = $('.rdr-'+settings.container);
+                var hash = settings.container;
+                var summary = RDR.summaries[hash];
+                var $hostNode = $('.rdr-'+hash);
 
                 var actionType = (settings.actionType) ? settings.actionType:"react";
 
@@ -3170,7 +3179,7 @@ function readrBoard($R){
                     columns:true,
 					ignoreWindowEdges:"bl",
 					noHeader:true,
-                    container: settings.container,
+                    container: hash,
                     content: settings.content,
                     content_type: settings.content_type,
                     selState: newSel
@@ -3180,6 +3189,10 @@ function readrBoard($R){
                 // and then it animates larger when we slide the whyPanel out.
                 // is there a cleaner way?
                 rindow.css({width:'200px'});
+                
+                rindow.addClass('rdr_writemode');
+                //add a reference for the rindow in the container summary
+                summary.$rindow_writemode = rindow;
 
                 // build the ratePanel
 
