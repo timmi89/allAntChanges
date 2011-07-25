@@ -263,8 +263,12 @@ function readrBoard($R){
             update: function(hash){
                 //RDR.rindow.update:
                 var summary = RDR.summaries[hash],
-                    $indicator = summary.$indicator,
-                    $rindow_readmode = summary.$rindow_readmode,
+                    $rindow_readmode = summary.$rindow_readmode;
+
+                    if(!$rindow_readmode) return;
+                    //else
+
+                    var $indicator = summary.$indicator,
                     $indicator_stats = $rindow_readmode.find('.rdr_indicator_stats'),
                 
                     $indicatorBody = $indicator.find('.rdr_indicator_body');
@@ -272,10 +276,6 @@ function readrBoard($R){
                         $indicator_stats.html( $indicatorBody.html() );
                         $indicator_stats.fadeIn(300);
                     });
-
-                log(hash);
-                log($rindow_readmode);
-                log($indicator_stats);
             }
 		},
 		actionbar: {
@@ -2293,7 +2293,7 @@ function readrBoard($R){
                             };
                             var cornerPadding = {
                                 top: 7,
-                                left: -5
+                                left: -15
                             }
 
                             /*
@@ -2614,8 +2614,8 @@ function readrBoard($R){
                 $container = $('.rdr-'+hash);
 
                 var tempOffsets = {
-                    top: -6,
-                    left: 2
+                    top: -5,
+                    left: 1
                 }
                 var rindowPosition = (kind == "img") ?
                 {

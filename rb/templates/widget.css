@@ -531,7 +531,7 @@ div.rdr_indicator {
     background:#fff;
     color: #666666;
     font: 12px Arial,sans-serif;
-    padding:3px !important;
+    padding:4px 3px 3px 3px !important;
     border:1px solid #c9c9c9; 
     /*don't need these - let the js do it.*/
     /*
@@ -548,7 +548,7 @@ div.rdr_indicator {
     color-stop(0.39, rgb(255,255,255))
     );
     background-image: -moz-linear-gradient(center bottom , #eee 0%, #fff 39%);
-    margin:-4px 0 0 -4px;
+    margin:-5px 0 0 -4px;
     overflow:hidden;
     display:none; /*start with them hidden by default - will override with js*/
 }
@@ -577,8 +577,8 @@ div.rdr_indicator img.rdr_pin,
 }
 /*indicator pin inline indicator only*/
 div.rdr_indicator img.rdr_pin{ 
-    top: 0 !important;
-    left: 0 !important;
+    top: auto !important;
+    left: auto !important;
 }
 /*indicator pin indicator details only*/
 div.rdr_indicator_details img.rdr_pin{ 
@@ -601,7 +601,7 @@ div.rdr_indicator_for_image div.rdr_indicator_body{
     height: auto !important;
     color: #666666 !important;
     font: 12px Arial,sans-serif !important;
-    padding:3px !important;
+    padding:4px 3px 3px 3px !important;
     border:1px solid #c9c9c9; !important;
     
     -moz-border-radius:5px !important;
@@ -627,10 +627,17 @@ div.rdr_indicator_for_image div.rdr_indicator_body{
 /*now override styles for the image containers*/
 div.rdr_indicator_for_image {
     display:inline !important;
+    opacity:0.3 !important;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)"!important;
+    filter:alpha(opacity=30)!important;
+    -moz-opacity:0.3 !important;
+    -khtml-opacity:0.3 !important;
+
 }
 
 #rdr_sandbox div.rdr_indicator_details_for_image {
     overflow:hidden; /*for the animate out to work nicely*/
+    margin:0 0 0 2px; /*don't need the -5px 0 0 -4px margin here.  Kick it left a tiny bit */
 }
 
 
@@ -667,7 +674,7 @@ div.rdr_indicator span.rdr_count{
 }
 
 #rdr_sandbox span.rdr_tags_list_tag {
-    padding:2px 3px 3px 4px !important; /*for some reason it looks better with the right padding a little smaller*/
+    padding:3px 3px 3px 4px !important; /*for some reason it looks better with the right padding a little smaller*/
 }
 #rdr_sandbox div.rdr_indicator_details_for_text span.rdr_tags_list_tag:hover {
     background:#fe7 !important;
