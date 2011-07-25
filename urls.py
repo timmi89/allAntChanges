@@ -23,6 +23,8 @@ urlpatterns = patterns('',
   url(r'^tags/$', 'rb.views.main', kwargs={"view":"tags"}),
   url(r'^comments/$', 'rb.views.main', kwargs={"view":"comments"}),
   url(r'^shares/$', 'rb.views.main', kwargs={"view":"shares"}),
+  
+  url(r'^settings/(?P<short_name>\w+)/$', 'rb.views.settings'),
 
   url(r'^cards/$', 'rb.views.cards'),
   url(r'^interactions/user/(?P<user_id>\d+)/$', 'rb.views.interactions'),

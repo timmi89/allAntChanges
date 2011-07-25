@@ -13,6 +13,8 @@ from api.exceptions import JSONException
 from cards import Card
 from django.utils.encoding import smart_str, smart_unicode
 from django.template import RequestContext
+from django.forms import ModelForm
+from django.forms.models import modelformset_factory
 
 def widget(request,sn):
     # Widget code is retreived from the server using RBGroup shortname
@@ -137,6 +139,23 @@ def sidebar(request, user_id=None):
         user = User.objects.get(id=user_id)
         context['user'] = user
     return render_to_response("sidebar.html", context, context_instance=RequestContext(request))
+
+class GroupForm(ModelForm):
+    class Meta:
+        model = Group
+
+def settings(request, short_name=None):
+    group = Group.objects.get(short_name=short_name)
+    if request.method == 'POST':
+        form = GroupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # do something.
+    else:
+        form = GroupForm(instance=group)
+    return render_to_response("testform.html", {
+        "form": form,
+    })
 
 def expander(request, short):
     link_id = base62.to_decimal(short);
