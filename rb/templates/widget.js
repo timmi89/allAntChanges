@@ -1319,7 +1319,6 @@ function readrBoard($R){
                                     coords.top += 0;
 
                                     $container.addClass('rdr_engage_img');
-                                    log($container);
                                     //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
                                     // builds a new actionbar or just returns the existing $actionbar if it exists.
                                     var $actionbar = RDR.actionbar.draw({ coords:coords, content_type:"image", content:src, container:hash, src_with_path:src_with_path, ignoreWindowEdges:"rb" });
