@@ -145,17 +145,22 @@ class GroupForm(ModelForm):
         model = Group
 
 def settings(request, short_name=None):
-    group = Group.objects.get(short_name=short_name)
+    try:
+        group = Group.objects.get(short_name=short_name)
+    except Group.DoesNotExist:
+        return JSONException(u'Invalid group')
     if request.method == 'POST':
-        form = GroupForm(request.POST)
+        form = GroupForm(request.POST, instance=group)
         if form.is_valid():
             form.save()
             # do something.
     else:
         form = GroupForm(instance=group)
-    return render_to_response("testform.html", {
-        "form": form,
-    })
+    return render_to_response(
+        "testform.html", 
+        {"form": form, "short_name": short_name},
+        context_instance=RequestContext(request)
+    )
 
 def expander(request, short):
     link_id = base62.to_decimal(short);
