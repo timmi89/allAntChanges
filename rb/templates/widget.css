@@ -173,6 +173,14 @@ body{
 
 /* the widget */
 #rdr_sandbox div.rdr div.rdr_sentimentBox                            {}
+#rdr_sandbox div.rdr_header_overlay {
+    position:absolute;
+    z-index:100;
+}
+#rdr_sandbox div.rdr_header_overlay div.rdr_indicator_stats{
+    position:absolute;
+    margin:10px 0 0 3px;
+}
 #rdr_sandbox div.rdr div.rdr_sntPnl                                  {float:left; position:relative; display:block; height:100%; overflow:hidden; /*width is reset with js - rindow.settings.pnlWidth */ }
 
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_body                     {width:100%; xheight:100%; z-index:3; overflow-x:hidden; overflow-y:hidden; padding:0; position:relative; min-height:125px;}
@@ -547,7 +555,11 @@ div.rdr_indicator {
 #rdr_sandbox div.rdr_indicator_details .rdr_see_more {
     padding: 0 3px;
 }
-#rdr_sandbox div.rdr_indicator_details, div.rdr_indicator {
+
+div.rdr_indicator, 
+#rdr_sandbox div.rdr_indicator_details,
+#rdr_sandbox div.rdr_sentimentBox .rdr_indicator_stats
+{
     /*keep the same for both indicator and details so that they overlap nicely*/
     color: #666666 !important;
     font: 12px Arial,sans-serif !important;
@@ -557,7 +569,9 @@ div.rdr_indicator {
 
 
 /*indicator pin both*/
-div.rdr_indicator img.rdr_pin, div.rdr_indicator_details img.rdr_pin{ 
+div.rdr_indicator img.rdr_pin,
+#rdr_sandbox div.rdr_indicator_details img.rdr_pin,
+#rdr_sandbox div.rdr_sentimentBox img.rdr_pin { 
     background:url("{{ STATIC_URL }}widget/images/readr_icons.png") no-repeat 0 -1px !important; 
     position:absolute !important;
 }
@@ -598,7 +612,9 @@ div.rdr_indicator_for_image {
 }
 
 
-div.rdr_indicator span.rdr_count, div.rdr_indicator_details span.rdr_count{ 
+div.rdr_indicator span.rdr_count, 
+#rdr_sandbox div.rdr_indicator_details span.rdr_count,
+#rdr_sandbox div.rdr_sentimentBox span.rdr_count { 
     position:relative !important;
     margin-left:16px !important;
 }

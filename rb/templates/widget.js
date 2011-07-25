@@ -259,6 +259,23 @@ function readrBoard($R){
                 $.each( selStates, function(idx, selState){
                     $().selog('hilite', selState, 'off');
                 });
+            },
+            update: function(hash){
+                //RDR.rindow.update:
+                var summary = RDR.summaries[hash],
+                    $indicator = summary.$indicator,
+                    $rindow_readmode = summary.$rindow_readmode,
+                    $indicator_stats = $rindow_readmode.find('.rdr_indicator_stats'),
+                
+                    $indicatorBody = $indicator.find('.rdr_indicator_body');
+                    $indicator_stats.fadeOut(100, function(){
+                        $indicator_stats.html( $indicatorBody.html() );
+                        $indicator_stats.fadeIn(300);
+                    });
+
+                log(hash);
+                log($rindow_readmode);
+                log($indicator_stats);
             }
 		},
 		actionbar: {
@@ -2556,7 +2573,10 @@ function readrBoard($R){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
                         makeSummaryWidget(RDR.page)
                     }else{     
+                        log('update')
                         RDR.actions.indicators.update( hash );
+                        RDR.rindow.update(hash);
+
                         if(summary.counts.interactions > 0){
                            RDR.actions.indicators.show(hash); //temp hack, 'true' is for 'dont fade in';   
                         }else{
@@ -2593,6 +2613,10 @@ function readrBoard($R){
                 $indicatorDetails = $('#rdr_indicator_details_'+ hash),
                 $container = $('.rdr-'+hash);
 
+                var tempOffsets = {
+                    top: -6,
+                    left: 2
+                }
                 var rindowPosition = (kind == "img") ?
                 {
                     top: $container.offset().top,
@@ -2600,8 +2624,8 @@ function readrBoard($R){
                 } :
                 {
                     //used data instead of offset because offset doesn't work if the node is hidden.  It was giving me problems before.
-                    top: $indicatorDetails.data('top'),
-                    left: $indicatorDetails.data('left')
+                    top: $indicatorDetails.data('top') + tempOffsets.top,
+                    left: $indicatorDetails.data('left') + tempOffsets.left 
                 };
             
                 var rindow = RDR.rindow.draw({
@@ -2612,6 +2636,9 @@ function readrBoard($R){
                     selector:selector
                 });
 
+                summary.$rindow_readmode = rindow;
+                $indicatorDetails.hide();
+
                 rindow.find('div.rdr_contentSpace').empty();  // empty this out in case it's just repositioning the rindow.
 
                 rindow.css({width:'200px'});
@@ -2621,17 +2648,25 @@ function readrBoard($R){
                     $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
                     $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
-                    $borderLine = $('<div class="rdr_borderLine" />');
+                    $borderLine = $('<div class="rdr_borderLine" />'),
+                    $indicator_stats = $('<div class="rdr_indicator_stats" />'),
+                    $headerOverlay = $('<div class="rdr_header_overlay" />').append($indicator_stats);
                 
                 var headers = ["Reactions <span>("+(summary.counts.tags)+")</span>", "", ""];  // removing comment count for now +info.com_count
                 $sentimentBox.append($reactionPanel, $contentPanel, $whyPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
-                    var $header = $('<div class="rdr_header rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
+                    var $header = $('<div class="rdr_header rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />'),
+                    $rdr_headerInnerWrap = $('<div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>').appendTo($header),
                     $body = $('<div class="rdr_body rdr_brbl rdr_brbr"/>'); // corner logic in those last two classes there.
-                    $(this).append($header, $body).css({
-                        // 'width':rindow.settings.pnlWidth
-                    });
+                    $(this).append($header, $body);
+
                 });
+                $sentimentBox.prepend($headerOverlay);
+    
+                //populate the $indicator_stats.  This will also be updated as needed from summaries.update                
+                var $indicatorBody = $indicator.find('.rdr_indicator_body');
+                $indicator_stats.html( $indicatorBody.html() );
+
                 RDR.actions.panel.setup("contentPanel", rindow);
 
                 //populate reactionPanel
