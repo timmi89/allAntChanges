@@ -410,13 +410,13 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
     /*box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);  Opera 10.5+, IE 9.0 */
     /*disable user selection*/
     background-image: -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-        color-stop(0, rgb(217,211,95)),
-        color-stop(0.39, rgb(252,245,154))
-        );
-    background-image: -moz-linear-gradient(center bottom , #D9D35F 0%, #FCF59A 39%);
+    linear,
+    left bottom,
+    left top,
+    color-stop(0, rgb(217,211,95)),
+    color-stop(0.39, rgb(252,245,154))
+    ) !important;
+    background-image: -moz-linear-gradient(center bottom , #D9D35F 0%, #FCF59A 39%) !important;
     -webkit-user-select:none; 
     -k-user-select:none; 
     -moz-user-select:none; 
@@ -502,6 +502,12 @@ div.rdr_indicator {
     filter:alpha(opacity=00);
     -moz-opacity:0.0;
     -khtml-opacity:0.0;
+
+    -webkit-user-select: none !important;
+    -khtml-user-select: none !important;
+    -moz-user-select: none !important;
+    -o-user-select: none !important;
+    user-select: none !important;
 }
 
 #rdr_sandbox #rdr_indicator_details_wrapper{
@@ -518,7 +524,7 @@ div.rdr_indicator {
     color: #666666;
     font: 12px Arial,sans-serif;
     padding:3px !important;
-    border:1px solid #ddd; 
+    border:1px solid #c9c9c9; 
     /*don't need these - let the js do it.*/
     /*
     max-width:300px;
@@ -526,6 +532,14 @@ div.rdr_indicator {
     */
     /*margin:-4px;*/
     /*offset with margin to line up with indicator: compensating for the padding and the border*/
+    background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0, rgb(238,238,238)),
+    color-stop(0.39, rgb(255,255,255))
+    );
+    background-image: -moz-linear-gradient(center bottom , #eee 0%, #fff 39%);
     margin:-4px 0 0 -4px;
     overflow:hidden;
     display:none; /*start with them hidden by default - will override with js*/
@@ -584,11 +598,22 @@ div.rdr_indicator_for_image {
 }
 
 
-
 div.rdr_indicator span.rdr_count, div.rdr_indicator_details span.rdr_count{ 
     position:relative !important;
     margin-left:16px !important;
 }
+/*dont use this*/
+/*
+div.rdr_indicator span.rdr_count{ 
+    -webkit-text-stroke: 1px white;
+    text-shadow:
+    3px 3px 0 white,
+    -1px -1px 0 white,
+    1px -1px 0 white,
+    -1px 1px 0 white,
+    1px 1px 0 white;
+}
+*/
 #rdr_sandbox span.rdr_indicator_categoryTitle{ 
     width:auto !important;
     display:inline !important;
@@ -604,10 +629,18 @@ div.rdr_indicator span.rdr_count, div.rdr_indicator_details span.rdr_count{
 }
 
 #rdr_sandbox span.rdr_tags_list_tag {
-    padding:3px 1px !important;
+    padding:2px 3px 3px 4px !important; /*for some reason it looks better with the right padding a little smaller*/
 }
 #rdr_sandbox div.rdr_indicator_details_for_text span.rdr_tags_list_tag:hover {
     background:#fe7 !important;
+    background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0, rgb(217,211,95)),
+    color-stop(0.39, rgb(252,245,154))
+    )!important;
+    background-image: -moz-linear-gradient(center bottom , #D9D35F 0%, #FCF59A 39%) !important;
 }
 
 /*thinking about this one*/

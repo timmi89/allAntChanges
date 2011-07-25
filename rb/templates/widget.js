@@ -257,8 +257,6 @@ function readrBoard($R){
                 });
 
                 $.each( selStates, function(idx, selState){
-                    log('selState')
-                    log(selState)
                     $().selog('hilite', selState, 'off');
                 });
             }
@@ -436,22 +434,39 @@ function readrBoard($R){
                     }
                 });
 			},
-            closeSuggest: function(actionbars) {
-                
-                var $actionbars = ( typeof actionbars == 'undefined' ) ? $('div.rdr.rdr_actionbar') ://cont
-                    (actionbars.jquery) ? actionbars : $(actionbars);
+            closeSuggest: function(hashes) {
+                //hashes can be a single hash or a list of hashes
+                var $actionbars = $();
+                if( !hashes ){
+                    $actionbars = $('div.rdr_actionbar');
+                }
+                else
+                if(typeof hashes == "string" ){
+                    var hash = hashes;
+                    $actionbars = $('#rdr_actionbar_'+hash);
+                    $actionbars.data('hash',hash);
+                }
+                else{
+                    $.each( hashes, function(idx, hash){
+                        $actionbars = $actionbars.add('#rdr_actionbar_'+hash);
+                        $actionbars.data('hash',hash);
+                    });
+                }
                 
                 var scope = this;
                 $actionbars.each(function(){
-                    var that = this,
+                    var $this = $(this),
+                    hash = $actionbars.data('hash'),
+                    $indicator_details = $('#rdr_indicator_details_'+hash),
+                    $containerImg = $('.rdr-'+hash),
                     timeoutCloseEvt = $(this).data('timeoutCloseEvt');
                     
                     //each actionbar only has one timeout - if one exists, it gets cleared and reset here.
                     clearTimeout(timeoutCloseEvt);
                     timeoutCloseEvt = setTimeout(function(){
-                        if( !$(that).data('keepAlive.img') && !$(that).data('keepAlive.self') ){
-                            scope.close( $(that), "fade");
-                        }              
+                        if( $this.data('hover') || $containerImg.data('hover') || $indicator_details.data('hover') ) return;
+                        //else
+                        scope.close( $this, "fade");
                     },300);
                     $(this).data('timeoutCloseEvt', timeoutCloseEvt);
                 });
@@ -459,21 +474,6 @@ function readrBoard($R){
             closeAll: function(){
                 var $actionbars = $('div.rdr_actionbar');
                 this.close($actionbars);
-            },
-            show: function(callback){
-                //use call or apply to set 'this'
-                //not needed because $($(this)) doesn't hurt anything, but still.
-                var $this = (this.jquery) ? this : $(this);
-                var timeoutCollapseEvt = $(this).data('timeoutCollapseEvt');
-                //each actionbar only has one timeoutCollapseEvt - if one exists, it gets reset here.
-                clearTimeout(timeoutCollapseEvt);
-                timeoutCollapseEvt = setTimeout(function(){
-                    if( !$this.data('keepAlive.self') ){
-                        
-                    }
-                },250)
-                //in order to protect against the dreaded oscillating event loop,
-                //this timeoutCollapseEvt time should be at least as long as the collspase animate time
             }
 		},
 		tooltip: {
@@ -686,33 +686,16 @@ function readrBoard($R){
             },
 			iframeHost : "{{ BASE_URL }}", // TODO put this in a template var
             getUser: function(args, callback) {
-
-                if ( RDR.user && RDR.user.user_id && RDR.user.readr_token ) {
-                    console.log('widget getUser 1');
-                    // we have a user id and token, be it temp or logged in user, so just run the callback
-                    //todo: ec: make sure it doesn't matter for this that RDR.user.whatever can be spoofed.
-                    //Does the callback give access that a fake user shouldn't have?  Call should always pass a token to be validated serverside, yeah? 
-
-                    if ( callback && args ) callback(args);
-                    else if ( callback ) callback();
-                } else {
-console.log('widget getUser 2');
-                    // define a new message receiver with this set of args and callback function
-                    if ( callback && args ) RDR.session.receiveMessage( args, callback );
-                    else if ( callback ) RDR.session.receiveMessage( false, callback );
-
-                    // posting this message then means we'll look in the $.receiveMessage for the response and what to do next
-                    // TODO need a timeout and/or try/catch?
-                    $.postMessage(
-                        "getUser",
-                        RDR.session.iframeHost + "/xdm_status/",
-                        window.frames['rdr-xdm-hidden']
-                    );
-                }
+                $.postMessage(
+                    "reauthUserFB",
+                    RDR.session.iframeHost + "/xdm_status/",
+                    window.frames['rdr-xdm-hidden']
+                );
+                if ( callback && args ) RDR.session.receiveMessage( args, callback );
+                else if ( callback ) RDR.session.receiveMessage( false, callback );
             },
             handleGetUserFail: function(args, callback) {
                 var response = args.response;
-                //[cleanlogz]("handleGetUserFail: " + response.message);
                 switch ( response.message ) {
                     case "Error getting user!":
                         // kill the user object and cookie
@@ -732,24 +715,23 @@ console.log('widget getUser 2');
 
                     case "Token was invalid":
                     case "Facebook token expired":  // call fb login
+                    case "FB graph error - token invalid":  // call fb login
                     case "Social Auth does not exist for user": // call fb login
+                    case "Data to create token is missing": // call fb login
                         // the token is out of sync.  could be a mistake or a hack.
-                        //[cleanlogz]('starting postmessage')
-                        console.log('expiry 1');
+                        RDR.session.receiveMessage( args, callback );
                         $.postMessage(
-                            "checkSocialUser",
+                            "reauthUser",
                             RDR.session.iframeHost + "/xdm_status/",
                             window.frames['rdr-xdm-hidden']
                         );
-                        // init a new receiveMessage handler to fire this callback if it's successful
-                        //[cleanlogz]('starting receivemessage')
-                        RDR.session.receiveMessage( args, callback );
+                        // // init a new receiveMessage handler to fire this callback if it's successful
+                        // //[cleanlogz]('starting receivemessage')
                     break;
                 }
             },
 			createXDMframe: function() {
-             //[cleanlogz]('createXDMframe');
-             //[cleanlogz]console.dir(RDR.groupPermData);
+
                 RDR.session.receiveMessage();
 
                 var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
@@ -771,10 +753,18 @@ console.log('widget getUser 2');
                     function(e){
                         ////[cleanlogz]console.dir(e);
                         var message = JSON.parse( e.data );
-                        log('receiveMessage: ' + message.status );
 
                         if ( message.status ) {
-                            if ( message.status == "fb_logged_in" || message.status == "known_user" || message.status == "got_temp_user" ) {
+                            if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
+
+
+                                // $.postMessage(
+                                //     "reauthUserFB",
+                                //     RDR.session.iframeHost + "/xdm_status/",
+                                //     window.frames['rdr-xdm-hidden']
+                                // );
+
+
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
 
@@ -783,18 +773,16 @@ console.log('widget getUser 2');
                                     RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i]):message.data[i];
                                 }
                                 if ( callback && args ) {
-                                    console.log('widget receiveMessage callback 1');
                                     args.user = RDR.user;
                                     callback(args);
+                                    callback = null;
                                 }
                                 else if ( callback ) {
-                                    console.log('widget receiveMessage callback 2');
                                     callback();
+                                    callback = null;
                                 }
-                            } else if ( message.status == "checkSocialUser fail" ) {
-                                console.dir(args);
-                                RDR.session.showLoginPanel( args );
                             } else if ( message.status == "already had user" ) {
+                                // todo: when is this used?
                                 $('#rdr-loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
                             } else if ( message.status == "educate user" ) {
                                 RDR.session.alertBar.make('educateUser');
@@ -879,10 +867,7 @@ console.log('widget getUser 2');
                 );
             },
             showTempUserMsg: function(args) {
-                //[cleanlogz]('args')
-                //[cleanlogz](args)
                 if ( args.rindow ) {
-                    ////[cleanlogz]console.dir(args);
                     var rindow = args.rindow,
                         num_interactions_left = RDR.group.temp_interact - parseInt( args.num_interactions ),
                         $tempMsgDiv = $('<div class="rdr_tempUserMsg"><span /><strong /></div>'),
@@ -1119,6 +1104,7 @@ console.log('widget getUser 2');
                 $(document).bind('keyup.rdr', function(event) {
                     if (event.keyCode == '27') { //esc
                         RDR.rindow.closeAll();
+                        RDR.actionbar.closeAll();
                     }
                 });
 
@@ -1131,7 +1117,7 @@ console.log('widget getUser 2');
 				$RDR.dequeue('initAjax');
             },
             hashNodes: function( $nodes ) {
-                
+                //RDR.actions.hashNodes:
                 //todo: consider how to do this whitelist, initialset stuff right
                 var $allNodes = $(),
                 nodeGroups = {
@@ -1264,18 +1250,17 @@ console.log('widget getUser 2');
                             
                             //send the containers to the server.
                             //On sucess, these unknown hashes will get passed to RDR.actions.containers.setup with dummy summaries
-                            RDR.actions.containers.send(unknownList);
-
-                            //expects callback passed in only from startSelect that found a new valid container.
-                            //the callback verifies the new container and draws the actionbar
-                            if(typeof onSuccessCallback !== 'undefined'){
-                                onSuccessCallback();
-                            }   
+                            RDR.actions.containers.send(unknownList); 
                         }
                         
                         //setup the known summaries
                         RDR.actions.containers.setup(summaries);
 
+                        //the callback verifies the new container and draws the actionbar
+                        if(typeof onSuccessCallback !== 'undefined'){
+                            onSuccessCallback();
+                        }  
+                        
                     }
                 });
             },
@@ -1306,7 +1291,7 @@ console.log('widget getUser 2');
 
                             $container.hover(
                                 function(){
-                                    
+                                    $(this).data('hover',true);
                                     var coords = $container.offset(),
                                     src = $container.attr('src'),
                                     src_with_path = this.src;
@@ -1317,9 +1302,9 @@ console.log('widget getUser 2');
 
                                     $container.addClass('rdr_engage_img');
 
+                                    //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
                                     // builds a new actionbar or just returns the existing $actionbar if it exists.
                                     var $actionbar = RDR.actionbar.draw({ coords:coords, content_type:"image", content:src, container:hash, src_with_path:src_with_path, ignoreWindowEdges:"rb" });
-                                    $actionbar.data('keepAlive.img',true)
 
                                     //kill all rivals!!
                                     var $rivals = $('div.rdr_actionbar').not($actionbar);
@@ -1327,21 +1312,19 @@ console.log('widget getUser 2');
 
                                     $actionbar.hover(
                                         function() {
-                                            $actionbar.data('keepAlive.self',true);
+                                            $(this).data('hover',true);
                                         },
                                         function() {
-                                            $actionbar.data('keepAlive.self',false);
-                                            RDR.actionbar.closeSuggest($actionbar);
+                                            $(this).data('hover',false);
+                                            RDR.actionbar.closeSuggest(hash);
                                         }
                                     );
                                 },
                                 function(){
-                                                                
                                     var actionbar_id = "rdr_actionbar_"+hash;
                                     var $actionbar = $('#'+actionbar_id);
-                                    $actionbar.data('keepAlive.img',false)
-                                    RDR.actionbar.closeSuggest($actionbar);
-                                    
+                                    $(this).data('hover',false);
+                                    RDR.actionbar.closeSuggest(hash);
                                 }
                             );
                             
@@ -1773,6 +1756,7 @@ console.log('widget getUser 2');
                     onSuccess: {
                         //RDR.actions.interactions.tag.onSuccess:
                         create: function(args){
+
                             //RDR.actions.interactions.tag.onSuccess.create:
                             //todo: clean up these args.
                             var response = args.response,
@@ -1790,6 +1774,7 @@ console.log('widget getUser 2');
                             
                             // do stuff you'd only do if this was NOT a "thumbs-up" tag creation
                             if ( !args.thumbsUp ) {
+
                                 //clear the loader                  
                                 tag_li.find('div.rdr_leftBox').html('');
 
@@ -1845,7 +1830,6 @@ console.log('widget getUser 2');
 
                             RDR.actions.summaries.update(hash, diff);
 
-                            
                             var args = response.data;
                             args.rindow = rindow;
                             RDR.session.checkForMaxInteractions(args);
@@ -1910,14 +1894,7 @@ console.log('widget getUser 2');
                             log('tag fail');
                             console.dir(args);
                             RDR.session.handleGetUserFail( args, function() {
-                                log('inside callback');
-                                console.dir(args);
-                                // if ( !args.secondAttempt ) {
-                                    args.secondAttempt = true;
-                                    RDR.actions.interactions.ajax( args, 'tag', 'create' );
-                                // }else{
-                                    // //[cleanlogz]console.warn('unhandled create interaction fail')
-                                // }
+                                RDR.actions.interactions.ajax( args, 'tag', 'create' );
                             });
                         }
                     }
@@ -2071,12 +2048,7 @@ console.log('widget getUser 2');
                             RDR.session.handleGetUserFail( args, function() {
                                 log('inside callback');
                                 console.dir(args);
-                                // if ( !args.secondAttempt ) {
-                                    args.secondAttempt = true;
-                                    RDR.actions.interactions.ajax( args, 'bookmark', 'create' );
-                                // }else{
-                                    // //[cleanlogz]console.warn('unhandled create interaction fail')
-                                // }
+                                RDR.actions.interactions.ajax( args, 'bookmark', 'create' );
                             });
                         }
                     }
@@ -2148,10 +2120,12 @@ console.log('widget getUser 2');
                         $(this).remove();
                     });
 
-                    var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId);
+                    var $indicator = summary.$indicator = $('<div class="rdr rdr_indicator" />').attr('id',indicatorId);
+                    //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
+                    $indicator.css('visibility','hidden');
 
                     //$indicatorBody is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
-                    var $indicatorBody = $('<div class="rdr_indicator_body" />').appendTo($indicator)//chain
+                    var $indicatorBody = $('<div class="rdr rdr_indicator_body" />').appendTo($indicator)//chain
                     .append(
                         '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
                         '<span class="rdr_count">'+ summary.counts.tags +'</span>'
@@ -2188,12 +2162,15 @@ console.log('widget getUser 2');
                     })//chain
                     .hover(
                         function() {
-                            //$indicator.data('hoverLock', true)
-                            //do nothing
+                            var timeout = $(this).data('timeout');
+                            clearTimeout(timeout);
                         },
                         function() {
-                            //$indicator.data('hoverLock', false)
-                            $(this).hide();
+                            var $this = $(this);
+                            var timeout = setTimeout(function(){
+                                $this.fadeOut(300);
+                            },500);
+                            $(this).data('timeout', timeout);
                         }
                     );
 
@@ -2316,7 +2293,15 @@ console.log('widget getUser 2');
 
                             $indicator.find('.rdr_indicator_body').attr('style', inlineStyleStr);
 
-                            $indicator_details.addClass('rdr_indicator_details_for_image')
+                            $indicator_details.addClass('rdr_indicator_details_for_image').hover(
+                                function() {
+                                    $(this).data('hover', true);
+                                },
+                                function() {
+                                    $(this).data('hover', false);
+                                }
+                            );
+
                         },
                         text: function( hash ){
                             var summary = RDR.summaries[hash],
@@ -2333,7 +2318,7 @@ console.log('widget getUser 2');
                             $indicator.appendTo($container);
 
                         }
-                    }, 
+                    },
                     makeDetailsContent: function( hash ){
                         var scope = this;
                         var summary = RDR.summaries[hash],
@@ -2343,7 +2328,7 @@ console.log('widget getUser 2');
                             $indicatorBody = $indicator.find('.rdr_indicator_body'),
                             $actionbar = $('rdr_actionbar_'+hash);
 
-                        var $indicator_details_body = $('<div class="rdr_indicator_details_body" />'),
+                        var $indicator_details_body = $('<div class="rdr rdr_indicator_details_body" />'),
                             categoryTitleText = (summary.counts.tags == 1) ? "&nbsp;reaction:&nbsp;" : "&nbsp;reactions:&nbsp;",
                             categoryTitle = '<span class="rdr_indicator_categoryTitle">' +categoryTitleText+ '</span>',
                             $tagsList = $('<div class="rdr_tags_list" />');
@@ -2371,7 +2356,7 @@ console.log('widget getUser 2');
 
                             var prefix = count ? ", " : "", //don't include the first time
                                 $tag = $('<strong/>').append(tag.body),
-                                $count = $('<em/>').append( ' ('+tag.count+')' ),
+                                $count = $('<em/>').append( '('+tag.count+')' ),
                                 $span = $('<span />').addClass('rdr_tags_list_tag');
 
                             $span.append( $tag, $count).data('id',tag_id).data('selStates',[]);
@@ -2408,7 +2393,6 @@ console.log('widget getUser 2');
                             RDR.actions.content_nodes.utils.initHiliteStates( $(this), relevant_content_nodes );
                         });
                     }
-
                 },//end RDR.actions.indicators.utils
                 sortReactions: function( hash ){
 
@@ -3593,10 +3577,7 @@ console.log('widget getUser 2');
                                     } else {
                                         // if it failed, see if we can fix it, and if so, try this function one more time
                                         RDR.session.handleGetUserFail( args, function() {
-                                            if ( !args.secondAttempt ) {
-                                                args.secondAttempt = true;
-                                                RDR.actions.share_getLink( args );
-                                            }
+                                            RDR.actions.share_getLink( args );
                                         });
                                     }
                                 } else {
@@ -3849,7 +3830,6 @@ console.log('widget getUser 2');
 
                 RDR.actions.panel.expand("whyPanel", rindow);
 
-
                 /*
                 TUMBLR SHARING URLs
                 http://www.tumblr.com/share?v=3&u=http%3A%2F%2Fjsbeautifier.org%2F&t=Online%20javascript%20beautifier&s=
@@ -3914,11 +3894,8 @@ console.log('widget getUser 2');
                             if ( response.status == "fail" ) {
                                 // if it failed, see if we can fix it, and if so, try this function one more time
                                 RDR.session.handleGetUserFail( args, function() {
-                                    if ( !args.secondAttempt ) {
-                                        args.secondAttempt = true;
                                         //RDR.actions.comment( args );
                                         //commenting this out for now because this prob wont work with the new args
-                                    }
                                 } );
                             } else {
                                 rindow.find('div.rdr_commentBox').find('div.rdr_commentComplete').html('Thank you for your comment. You and others can now read this by clicking on the (pin) icon next to the content you commented upon.').show();
@@ -3935,6 +3912,7 @@ console.log('widget getUser 2');
                 });
             },
             startSelect: function(e) {
+                //RDR.actions.startSelect:
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
 
                 //destroy all other actionbars
@@ -3943,75 +3921,90 @@ console.log('widget getUser 2');
                 var $mouse_target = $(e.target);
 
                 // make sure it's not selecting inside the RDR windows.
-                if ( !$mouse_target.hasClass('rdr') && $mouse_target.parents('div.rdr').length == 0 ) {
+                if ( $mouse_target.hasClass('rdr') || $mouse_target.parents('div.rdr').length != 0 ) return;
+                //else
 
+                var $blockParent = null;
+
+                if( _isValid($mouse_target) ) {
+                    // the node initially clicked on is the first block level container
+                    $blockParent = $mouse_target;
+                } else {
+                    $blockParent = findNearestValidParent($mouse_target);
+                }
+                //if no valid blockParent was found, we're done here.
+                if( $blockParent == null ) return;
+                //else
+
+                //let selog use serialrange to check if the selected text is contained in the $blockParent (also check for "" of just whitespace)
+                var selected = $blockParent.selog('save');
+                if ( !selected.serialRange || !selected.text || (/^\s*$/g.test(selected.text)) ) return;
+                //else
+
+                // check if the blockparent is already hashed
+                if ( $blockParent.hasClass('rdr-hashed') ) {
+                    _drawActionBar($blockParent);
+                }
+                else{
+                    //hasn't been hashed yet.
+                    //try to submit node to server.  Pass in an onsuccess function
+                    if ( $blockParent.text().length > 1800 ) return false;
+                    //else
+
+                    //note: hashes in this case will just be a single hash. That's cool.
+                    var hashes = RDR.actions.hashNodes( $blockParent );
+                    if(hashes){
+                        RDR.actions.sendHashes( hashes, function(){
+                            _drawActionBar($blockParent);
+                        });
+                    }
+                }
+
+                //helper functions
+                function findNearestValidParent($mouse_target){
+                    // find the nearest valid parent
+                    var $blockParent = null;
+                    var foundClosest = false;
+                    $mouse_target.parents().each( function() {
+                        if(foundClosest) return;
+                        //else
+                        
+                        var $thisNode = $(this);
+                        if(  _isValid( $thisNode ) ){
+                            // we've found the first parent of the selected text that is block-level
+                            $blockParent = $(this);
+                            foundClosest = true;
+                        }
+                    });
+                    return $blockParent;
+                }
+                function _drawActionBar ($blockParent){
+                    /*
+                    log(selected.text)
+                    log(/^\s*$/g.test(selected.text))
+                    */
+                    
                     // closes undragged windows
-                    //i need to remove this way (for now at least) so that I can bind an event to the remove event (thanks ie.)
+                    //close with our own event instead of removing directly so that I can bind an event to the remove event (thanks ie.)
                     RDR.rindow.close( $('div.rdr.rdr_window.rdr.rdr_rewritable') );
 
-                    var $blockParent = null;
-
-                    // find the nearest valid parent
-                    function isValid($node){
-                        return ( $node.css('display') == "block" &&  $node.css('float') == "none" );
-                    }
-                    if( !isValid($mouse_target) ) {
-                        var foundClosest = false;
-                        $mouse_target.parents().each( function() {
-                            if(foundClosest) return;
-                            //else
-                            
-                            var $thisNode = $(this);
-                            if(  isValid( $thisNode ) ){
-                                // we've found the first parent of the selected text that is block-level
-                                $blockParent = $(this);
-                                foundClosest = true;
-                            }
-                        });
-                    } else {
-
-                        // the node initially clicked on is the first block level container
-                        $blockParent = $mouse_target;
-                    }
-                    if( $blockParent == null ) return;
-
-                    //helper function
-                    function _verifyAndDrawActionbar($blockParent){
-                        var selected = $blockParent.selog('save');
-                        if ( selected.serialRange && selected.text && !(/^\s*$/g.test(selected.text)) ) {
-                            RDR.actionbar.draw({
-                                coords:{
-                                    left:parseInt(e.pageX),
-                                    top:parseInt(e.pageY)+7
-                                },
-                                content_type:"text",
-                                content:selected.textClean,
-                                container:$blockParent.data('hash')
-                            });
-                        }                        
-                    }
-
-                    // now make sure that parent is hashed
-                    if ( !$blockParent.hasClass('rdr-hashed') ) {
-                        //hasn't been hashed yet.
-                        //try to submit node to server.  Pass in an onsuccess function
-                        if ( $blockParent.text().length > 1800 ) return false;
-                        //else
-
-                        var hashes = RDR.actions.hashNodes( $blockParent );
-                        if(hashes){
-                            RDR.actions.sendHashes( hashes, function(){
-                                _verifyAndDrawActionbar($blockParent);
-                            });
-                        }
-                    }
-                    else{
-                        _verifyAndDrawActionbar($blockParent);
-                    }
-
+                    RDR.actionbar.draw({
+                        coords:{
+                            left:parseInt(e.pageX),
+                            top:parseInt(e.pageY)+7
+                        },
+                        content_type:"text",
+                        content:selected.textClean,
+                        container:$blockParent.data('hash')
+                    });
                 }
-            }
-        }
+                function _isValid($node){
+                    return ( $node.css('display') == "block" &&  $node.css('float') == "none" );
+                }
+
+
+            }//end RDR.actions.startSelect
+        }//end RDR.actions
     };
 
     return RDR;
@@ -4730,6 +4723,14 @@ function $RFunctions($R){
             */
             ],
             _modifierFilters = {
+                filterOutRDRIndicator: function(range, params){
+                    var commonAncestorContainer = range.commonAncestorContainer;
+                    var $indicator = $(commonAncestorContainer).find('.rdr');
+                    if($indicator.length){
+                        range.setEndBefore( $indicator[0] );
+                    }
+                    return range;
+                },
                 stripWhiteSpace: function(range){
                     var rangeStr = range.toString(),
                     s = {}, //start
@@ -4953,6 +4954,7 @@ function $RFunctions($R){
                     //turn on
                     //log('adding hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
                     hiliter.applyToRange(range);
+                    log('trying to apply range ' +range )
                     //apply the visual styles with the generic classes
                     $('.'+hiliter['class']).addClass(styleClass);
                     //apply css classes to start and end so we can style those specially
@@ -4966,6 +4968,7 @@ function $RFunctions($R){
                     //turn off
                     //log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
                     //remove the classes again so that the hiliter can normalize the selection (paste it back together)
+                    log('trying to remove range ' +range )
                     hiliter['get$start']().removeClass(styleClass+'_start');
                     hiliter['get$end']().removeClass(styleClass+'_end');
                     $('.'+hiliter['class']).removeClass(styleClass);
@@ -5012,23 +5015,45 @@ function $RFunctions($R){
                 // I think only firefox allows for multiple ranges to be selected, and no one really does it.
                 // Besides, for our tool, we'd prob have to just use the first one anyway..
                 // For now, just use only the first range on the rare case where someone tries to pass more than 1. (ranges[0])
+
+                //filterList should be a filter-name string or an arr of filters,
+                // which in turn are either a filter-name string or an arr: [filterNameStr, params.,.,. ];
+                //todo: this syntax is a liiiiittle bit crazy.
+
                 var scope = this,
-                filters = {},
-                defaultFilters = _modifierFilters; //make default all filters
+                filters = _modifierFilters, //make default all filters
+                doFilters = {};  //will be {filter:paramList}
+
                 //if filters not specifed, call all filters
                 if ( typeof filterList === "undefined" || filterList == null ){
-                    filters = defaultFilters;
+                    $.each(filters, function(name, func){
+                        doFilters[name] = [];
+                    });
+                }
+                else if ( typeof filterList === "string" ){
+                    doFilters[filterList] = [];
                 }
                 else{
-                    $.each(filterList, function(idx, val){
-                        filters[val] = defaultFilters[val] || function(){
-                            //console.error('bad filter name passed in param');return false
-                        };
+                    //todo: combine with above with a recurse call instead?
+                    $.each(filterList, function(idx, func){
+                        if ( typeof func === "string" ){
+                            doFilters[func] = [];
+                        }else{
+                            //func is an arr
+                            var funcName = func[0];
+                            var params = (func.length > 1) ? func.slice(1) : [];
+                            doFilters[funcName] = params;
+                        }
+                    
                     });
-                }                    
-                $.each(filters, function(){
-                    range = this(range);
-                });
+                }
+                $.each(doFilters, function(funcName, params){
+                    var filterFunc = filters[ funcName ] || function(){
+                        console.error('bad filter name passed in param');return false
+                    };
+                    //finally, run em'.
+                    range = filterFunc(range, params);
+                });              
                 return range;
             }
 
