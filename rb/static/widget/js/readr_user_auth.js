@@ -158,7 +158,6 @@ RDRAuth = {
 		console.log('xdm: reAuthUser');
 		if ( args.write_mode ) {
 			console.log('xdm: reAuth write mode A1');
-				console.log("FB.getSession(): ");
 
 				if ( !FB.getSession() || args.force_fb ) {
 					console.log('xdm: reAuth write mode A2');
@@ -198,7 +197,7 @@ RDRAuth = {
 
 	},
 	setUser : function(response) {
-		console.log('xdm: setUser 1');
+		console.log('xdm: setUser');
 		RDRAuth.rdr_user = {};
 		RDRAuth.rdr_user.first_name = response.data.first_name;
 		RDRAuth.rdr_user.full_name = response.data.full_name;
@@ -210,16 +209,14 @@ RDRAuth = {
 		$.cookie('img_url', RDRAuth.rdr_user.img_url, { expires: 365, path: '/' });
 		$.cookie('user_id', RDRAuth.rdr_user.user_id, { expires: 365, path: '/' });
 		$.cookie('readr_token', RDRAuth.rdr_user.readr_token, { expires: 365, path: '/' });
-		console.log('xdm: setUser 2');
 	},
 	readUserCookie : function() {
-		console.log('xdm: readUserCookie 1');
+		console.log('xdm: readUserCookie');
 		RDRAuth.rdr_user.first_name = $.cookie('first_name');
 		RDRAuth.rdr_user.full_name = $.cookie('full_name');
 		RDRAuth.rdr_user.img_url = $.cookie('img_url');
 		RDRAuth.rdr_user.user_id = $.cookie('user_id');
 		RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
-		console.log('xdm: readUserCookie 2');
 	},
 	returnUser : function(send_token) {
 		console.log('xdm: returnUser: sendData');
