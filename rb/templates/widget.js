@@ -290,11 +290,6 @@ function readrBoard($R){
                 if ( !containerHash || !RDR.containers.hasOwnProperty(containerHash) ) return;
                 //else
                 
-                var summary = RDR.summaries[containerHash];
-                var $rindow_writemode = summary.$rindow_writemode;
-                if( $rindow_writemode && $rindow_writemode.filter(":visible").length ) return false;
-                //else
-
                 var container = (RDR.containers.hasOwnProperty(containerHash)) ? RDR.containers[containerHash] : undefined ;
 
                 var actionbar_id = "rdr_actionbar_"+containerHash;
@@ -445,8 +440,11 @@ function readrBoard($R){
                         $indicator_details.appendTo('#rdr_indicator_details_wrapper');
 
 */                        
+                        var hash = $actionbar.data('hash');
+                        var $container = $('.rdr-'+hash);
+                        $container.removeClass('rdr_engage_img');
+
                         $actionbar.remove();
-                        RDR.util.removeImageShadow();
                     }
                     if(typeof effect !== "undefined"){
                         //make more robust if we want more animations
@@ -557,9 +555,6 @@ function readrBoard($R){
                 if( para && typeof para == "string" && para != "" ) { 
                     return para.replace(/[\n\r\t]+/gi,' ').replace().replace(/\s{2,}/g,' ');
                 }
-            },
-            removeImageShadow: function() {
-                $( RDR.group.img_selector+":not('.no-rdr')" ).removeClass('rdr_engage_img');
             }
         },
 		session: {
@@ -1324,7 +1319,7 @@ function readrBoard($R){
                                     coords.top += 0;
 
                                     $container.addClass('rdr_engage_img');
-
+                                    log($container);
                                     //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
                                     // builds a new actionbar or just returns the existing $actionbar if it exists.
                                     var $actionbar = RDR.actionbar.draw({ coords:coords, content_type:"image", content:src, container:hash, src_with_path:src_with_path, ignoreWindowEdges:"rb" });
@@ -2143,7 +2138,7 @@ function readrBoard($R){
                         $(this).remove();
                     });
 
-                    var $indicator = summary.$indicator = $('<div class="rdr rdr_indicator" />').attr('id',indicatorId);
+                    var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId);
                     //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
                     $indicator.css('visibility','hidden');
 
@@ -3969,11 +3964,12 @@ function readrBoard($R){
                 var $mouse_target = $(e.target);
 
                 // make sure it's not selecting inside the RDR windows.
-                if ( $mouse_target.hasClass('rdr') || $mouse_target.parents('div.rdr').length != 0 ) return;
+                // todo: (the rdr_indicator is an expection.
+                // The way we're dealing with this is a little weird.  It works, but could be cleaner)
+                if ( $mouse_target.closest('.rdr').length && !$mouse_target.closest('.rdr_indicator').length ) return;
                 //else
 
                 var $blockParent = null;
-
                 if( _isValid($mouse_target) ) {
                     // the node initially clicked on is the first block level container
                     $blockParent = $mouse_target;
@@ -3983,7 +3979,6 @@ function readrBoard($R){
                 //if no valid blockParent was found, we're done here.
                 if( $blockParent == null ) return;
                 //else
-
                 //let selog use serialrange to check if the selected text is contained in the $blockParent (also check for "" of just whitespace)
                 var selected = $blockParent.selog('save');
                 if ( !selected.serialRange || !selected.text || (/^\s*$/g.test(selected.text)) ) return;
@@ -4031,7 +4026,14 @@ function readrBoard($R){
                     log(selected.text)
                     log(/^\s*$/g.test(selected.text))
                     */
-                    
+                    var hash = $blockParent.data('hash');
+                    var summary = RDR.summaries[hash];
+
+                    //only allow one writemode per container at a time, check for writemode rindow.
+                    var $rindow_writemode = summary.$rindow_writemode;
+                    if( $rindow_writemode && $rindow_writemode.filter(":visible").length ) return false;
+                    //else
+
                     // closes undragged windows
                     //close with our own event instead of removing directly so that I can bind an event to the remove event (thanks ie.)
                     RDR.rindow.close( $('div.rdr.rdr_window.rdr.rdr_rewritable') );
@@ -4047,7 +4049,7 @@ function readrBoard($R){
                     });
                 }
                 function _isValid($node){
-                    return ( $node.css('display') == "block" &&  $node.css('float') == "none" );
+                    return ( $node.css('display') == "block" &&  $node.css('float') == "none" && !$node.closest('.rdr_indicator').length );
                 }
 
 
@@ -4772,10 +4774,15 @@ function $RFunctions($R){
             ],
             _modifierFilters = {
                 filterOutRDRIndicator: function(range, params){
+                    //check if $indicator is contained in the range, and if so, move the range's end to just before it.
+
                     var commonAncestorContainer = range.commonAncestorContainer;
-                    var $indicator = $(commonAncestorContainer).find('.rdr');
+                    var $indicator = $(commonAncestorContainer).find('.rdr_indicator');
                     if($indicator.length){
-                        range.setEndBefore( $indicator[0] );
+                        var inTheRange = range.containsNode($indicator[0], true) //2nd param is 'partial': (rangy docs for containsNode)
+                        if(inTheRange){
+                            range.setEndBefore( $indicator[0] );
+                        }
                     }
                     return range;
                 },
@@ -5002,7 +5009,7 @@ function $RFunctions($R){
                     //turn on
                     //log('adding hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
                     hiliter.applyToRange(range);
-                    log('trying to apply range ' +range )
+                    log('trying to apply range:  ' +range )
                     //apply the visual styles with the generic classes
                     $('.'+hiliter['class']).addClass(styleClass);
                     //apply css classes to start and end so we can style those specially
@@ -5016,7 +5023,7 @@ function $RFunctions($R){
                     //turn off
                     //log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
                     //remove the classes again so that the hiliter can normalize the selection (paste it back together)
-                    log('trying to remove range ' +range )
+                    log('trying to remove range:  ' +range )
                     hiliter['get$start']().removeClass(styleClass+'_start');
                     hiliter['get$end']().removeClass(styleClass+'_end');
                     $('.'+hiliter['class']).removeClass(styleClass);
@@ -5070,12 +5077,13 @@ function $RFunctions($R){
 
                 var scope = this,
                 filters = _modifierFilters, //make default all filters
+                //defaultFilters = ['stripWhiteSpace', 'firstWordSnap', 'lastWordSnap'],
                 doFilters = {};  //will be {filter:paramList}
 
                 //if filters not specifed, call all filters
                 if ( typeof filterList === "undefined" || filterList == null ){
-                    $.each(filters, function(name, func){
-                        doFilters[name] = [];
+                    $.each(filters, function(funcName, func){
+                        doFilters[funcName] = [];
                     });
                 }
                 else if ( typeof filterList === "string" ){
