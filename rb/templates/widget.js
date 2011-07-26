@@ -1545,7 +1545,7 @@ function readrBoard($R){
                             summary.content_nodes = content_nodes;
 
                             //finally, run the success callback function
-                            onSuccessCallback();
+                            if ( onSuccessCallback ) onSuccessCallback();
                         }
                     });
                 },
@@ -2740,8 +2740,10 @@ function readrBoard($R){
                             $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
                             if ( kind == "img" ) {
                                 var hash = $this.data('hash');
+                                log('img yo');
                                 RDR.actions.viewCommentContent( {tag:$this.data('tag'), hash:hash, rindow:rindow, content_type:kind, node:RDR.summaries[hash] });
                             } else {
+                                log('TETX BITCHES');
                                 RDR.actions.viewReactionContent( $this.data('tag'), $this.data('hash'), rindow, kind );
                             }
                         }
@@ -2991,35 +2993,7 @@ function readrBoard($R){
                 var $whyBody = rindow.find('div.rdr_whyPanel div.rdr_body');
                 // if ( $whyBody.data('jsp') ) $whyBody.data('jsp').destroy();
                 $whyBody.empty();
-                // $whyBody.empty();
-                
-                //todo: this function needs work pulling vars back together
-                // log('node')
-                // //[cleanlogz]console.dir(node)
-                // log('tag')
-                // //[cleanlogz]console.dir(tag)
-                // log(c_idx)
 
-                //thoguht we might need this but we dont
-                /*
-                $.ajax({
-                    url: "/api/???",
-                    type: "get",
-                    contentType: "application/json",
-                    dataType: "jsonp",
-                    data: { json: JSON.stringify(sendData) },
-                    success: function(response) {
-
-                    },
-                    error: function(response) {
-                        //for now, ignore error and carry on with mockup
-                        //[cleanlogz]console.warn('ajax error');
-                        
-                    }
-                });
-                */
-
-                ////[cleanlogz]console.dir(node.top_interactions);
                 var comments = node.top_interactions.coms;
                 var node_comments = 0;
                 for (var i in comments ) {
@@ -3027,8 +3001,6 @@ function readrBoard($R){
                 }
 
                 var hasComments = !$.isEmptyObject(comments);
-
-// node:node, selState:node.selState, 
 
                 if (hasComments) {
                     rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments <span>('+node_comments+')</span>');
@@ -3108,11 +3080,7 @@ function readrBoard($R){
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
                     // log('--------- selState 1: '+selState);
-                    var content_node = {
-                            body:"",
-                            container:hash,
-                            content_type:"img"
-                        };
+                    var content_node = ( content_type == "img" ) ? { body:"", container:hash, content_type:content_type } : node;
                     RDR.actions.comment({ content_node:content_node, comment:comment, hash:hash, content:node.body, tag:tag, rindow:rindow, selState:selState});
                 });
 
@@ -3956,6 +3924,16 @@ function readrBoard($R){
                             } else {
                                 rindow.find('div.rdr_commentBox').find('div.rdr_commentComplete').html('Thank you for your comment. You and others can now read this by clicking on the (pin) icon next to the content you commented upon.').show();
                                 rindow.find('div.rdr_commentBox').find('div.rdr_tagFeedback, div.rdr_comment').hide();
+
+                                // update the comments for this hash
+                                // var newComment = {
+                                //     body: comment,
+                                //     content_id: ,
+                                //     id: response.data.interaction.id, // interaction id
+                                //     social_user: ,
+                                //     tag_id: ,
+                                //     user: 
+                                // }
                             }
 
                         },
@@ -5022,7 +5000,6 @@ function $RFunctions($R){
                     //turn on
                     //log('adding hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
                     hiliter.applyToRange(range);
-                    log('trying to apply range:  ' +range )
                     //apply the visual styles with the generic classes
                     $('.'+hiliter['class']).addClass(styleClass);
                     //apply css classes to start and end so we can style those specially
@@ -5036,7 +5013,6 @@ function $RFunctions($R){
                     //turn off
                     //log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
                     //remove the classes again so that the hiliter can normalize the selection (paste it back together)
-                    log('trying to remove range:  ' +range )
                     hiliter['get$start']().removeClass(styleClass+'_start');
                     hiliter['get$end']().removeClass(styleClass+'_end');
                     $('.'+hiliter['class']).removeClass(styleClass);
