@@ -2613,22 +2613,10 @@ function readrBoard($R){
             },
             insertContainerIcon: function( hash ) {},
             viewContainerReactions: function( hash ) {
-
                 var summary = RDR.summaries[hash],
                 kind = summary.kind;
 
                 var selector = ".rdr-" + hash;
-
-                //ec: pretty sure we don't need this anymore
-                /*
-                if (kind == "text") {
-                    var info = icon.data('info');
-
-                } else if (kind == "image") {
-                    //todo: this is a temp fix - consolodate.
-                    var info = icon.data('imageData');
-                }
-                */
 
                 var $indicator = $('#rdr_indicator_'+hash),
                 $indicatorDetails = $('#rdr_indicator_details_'+ hash),
@@ -2737,13 +2725,11 @@ function readrBoard($R){
                     rindow.find('div.rdr_contentSpace').html( $sentimentBox );
                     RDR.rindow.checkHeight( rindow, 0, "reactionPanel" );
 
-
                     //this is the read_mode only
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
                     //for now disallow img read_mode                    
                     rindow.find('ul.rdr_preselected li').bind('click', function() {
-                        //for now disable li clicks for image readmode
-                        if(kind == 'image') return false;
+
                         var $this = $(this);
                         if ( !$this.hasClass('rdr_customTagBox') ) {
                             // if ( $this.hasClass('rdr_selected') ){
@@ -2752,16 +2738,13 @@ function readrBoard($R){
                             $this.addClass('rdr_selected');
                             $this.siblings().removeClass('rdr_selected');
                             $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-                            RDR.actions.viewReactionContent( $this.data('tag'), $this.data('hash'), rindow );
+                            if ( kind == "img" ) {
+                                var hash = $this.data('hash');
+                                RDR.actions.viewCommentContent( {tag:$this.data('tag'), hash:hash, rindow:rindow, content_type:kind, node:RDR.summaries[hash] });
+                            } else {
+                                RDR.actions.viewReactionContent( $this.data('tag'), $this.data('hash'), rindow, kind );
+                            }
                         }
-                        
-                        //todo: branch text and img
-                        /*
-                        if(false){ //text
-                        } else {
-                        // skip the CONTENT PANEL and jump to the WHYPANEL
-                        }
-                        */
                         return false; //so click on <a>img</a> gets overridden
                     });
 
@@ -3002,7 +2985,7 @@ function readrBoard($R){
                     rindow = args.rindow,
                     node = args.node,
                     content_type = args.content_type || args.kind;
-                    
+
                 if ( args.selState ) var selState = args.selState;
 
                 var $whyBody = rindow.find('div.rdr_whyPanel div.rdr_body');
@@ -3044,6 +3027,8 @@ function readrBoard($R){
                 }
 
                 var hasComments = !$.isEmptyObject(comments);
+
+// node:node, selState:node.selState, 
 
                 if (hasComments) {
                     rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments <span>('+node_comments+')</span>');
@@ -3122,13 +3107,21 @@ function readrBoard($R){
 
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
-                    log('--------- selState 1: '+selState);
-                    RDR.actions.comment({ content_node:node, comment:comment, hash:hash, content:node.body, tag:tag, rindow:rindow, selState:selState});
+                    // log('--------- selState 1: '+selState);
+                    var content_node = {
+                            body:"",
+                            container:hash,
+                            content_type:"img"
+                        };
+                    RDR.actions.comment({ content_node:content_node, comment:comment, hash:hash, content:node.body, tag:tag, rindow:rindow, selState:selState});
                 });
 
                 $whyBody.append( $commentBox.append( $leaveComment ) );
 
-                RDR.actions.panel.expand("whyPanel", rindow);
+                if ( content_type == "img" ) {
+                    rindow.find('div.rdr_contentPanel').remove();
+                }
+                RDR.actions.panel.expand("whyPanel", rindow, content_type);
             },
 			sentimentBox: function(settings) {
              ////[cleanlogz]console.dir(settings);
@@ -3370,7 +3363,7 @@ function readrBoard($R){
                         'position':'absolute'
                     });
                 },
-                expand: function(panel, rindow, interaction_id){
+                expand: function(panel, rindow, content_type){
                     // hack.  chrome and safari don't like rounded corners if the whyPanel is showing since it is wider than panel1
                     rindow.find('div.rdr_whyPanel').css('visibility','visible');
 
@@ -3959,8 +3952,6 @@ function readrBoard($R){
                             if ( response.status == "fail" ) {
                                 // if it failed, see if we can fix it, and if so, try this function one more time
                                 RDR.session.handleGetUserFail( args, function() {
-                                        //RDR.actions.comment( args );
-                                        //commenting this out for now because this prob wont work with the new args
                                 } );
                             } else {
                                 rindow.find('div.rdr_commentBox').find('div.rdr_commentComplete').html('Thank you for your comment. You and others can now read this by clicking on the (pin) icon next to the content you commented upon.').show();
