@@ -217,7 +217,7 @@ function readrBoard($R){
                     $(rindow).remove();
                 });
             },
-			closeAll: function() {
+            closeAll: function() {
                 var $allRindows = $('div.rdr.rdr_window');
 				RDR.rindow.close( $allRindows );
                 $('.rdr_shared').removeClass('rdr_shared');
@@ -289,6 +289,7 @@ function readrBoard($R){
                 
                 if ( !containerHash || !RDR.containers.hasOwnProperty(containerHash) ) return;
                 //else
+                
                 var container = (RDR.containers.hasOwnProperty(containerHash)) ? RDR.containers[containerHash] : undefined ;
 
                 var actionbar_id = "rdr_actionbar_"+containerHash;
@@ -439,8 +440,11 @@ function readrBoard($R){
                         $indicator_details.appendTo('#rdr_indicator_details_wrapper');
 
 */                        
+                        var hash = $actionbar.data('hash');
+                        var $container = $('.rdr-'+hash);
+                        $container.removeClass('rdr_engage_img');
+
                         $actionbar.remove();
-                        RDR.util.removeImageShadow();
                     }
                     if(typeof effect !== "undefined"){
                         //make more robust if we want more animations
@@ -552,8 +556,19 @@ function readrBoard($R){
                     return para.replace(/[\n\r\t]+/gi,' ').replace().replace(/\s{2,}/g,' ');
                 }
             },
-            removeImageShadow: function() {
-                $( RDR.group.img_selector+":not('.no-rdr')" ).removeClass('rdr_engage_img');
+            prettyNumber: function(int){
+                var int = parseInt(int); //convert if we can.
+                if( isNaN(int) || int<0 ) return false;
+                //else
+
+                var abr = ["",'K','M','B','T'];
+                for(var i=0; i<abr.length; i++){
+                    var thisfactor = Math.pow(10, 3*i);
+                    var nextfactor = Math.pow(10, 3*(i+1));
+                    if( int < nextfactor ){
+                        return ""+ Math.floor( int/thisfactor ) + abr[i];
+                    }
+                }
             }
         },
 		session: {
@@ -1318,7 +1333,6 @@ function readrBoard($R){
                                     coords.top += 0;
 
                                     $container.addClass('rdr_engage_img');
-
                                     //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
                                     // builds a new actionbar or just returns the existing $actionbar if it exists.
                                     var $actionbar = RDR.actionbar.draw({ coords:coords, content_type:"image", content:src, container:hash, src_with_path:src_with_path, ignoreWindowEdges:"rb" });
@@ -2137,7 +2151,7 @@ function readrBoard($R){
                         $(this).remove();
                     });
 
-                    var $indicator = summary.$indicator = $('<div class="rdr rdr_indicator" />').attr('id',indicatorId);
+                    var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId);
                     //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
                     $indicator.css('visibility','hidden');
 
@@ -2145,7 +2159,7 @@ function readrBoard($R){
                     var $indicatorBody = $('<div class="rdr rdr_indicator_body" />').appendTo($indicator)//chain
                     .append(
                         '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
-                        '<span class="rdr_count">'+ summary.counts.tags +'</span>'
+                        '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
                     )//chain
                     .data( {'which':hash} );
 
@@ -2241,11 +2255,17 @@ function readrBoard($R){
                                         
                     //$indicatorBody is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
                     var $count = $indicator.find('.rdr_count');
-                    $count.html(summary.counts.tags);
+                    $count.html( RDR.util.prettyNumber( summary.counts.tags ) );
 
                     //build tags in $tagsList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
                     $indicator_details.css({ 'visiblity':'hidden' }).show()//chain
                     scope.utils.makeDetailsContent( hash );
+
+                    var kind = (summary.kind == "img") ? "img" : "text";
+                    
+                    if(kind == 'img'){
+                        RDR.actions.indicators.utils.positionImgIndicator(hash);
+                    }
                     $indicator_details.css({ 'visiblity':'visible' }).hide();
                               
                 },
@@ -2285,31 +2305,6 @@ function readrBoard($R){
                                 }
                             );
 
-
-                            //keep the indicator pegged at the end of the img but move the body part of it (the visibile part)
-                            var relOffset = {
-                                top: $container.offset().top - $indicator.offset().top,
-                                left: - $indicator.find('.rdr_indicator_body').width()
-                            };
-                            var cornerPadding = {
-                                top: 7,
-                                left: -15
-                            }
-
-                            /*
-                            $indicator.find('.rdr_indicator_body').css({
-                                'top': relOffset.top + cornerPadding.top,
-                                'left': relOffset.left + cornerPadding.left
-                            });
-                            */
-                            //because this lives outside our sandbox, it has been 'css-reset' with !important for zero'd out margins, position...
-                            //so we can't use $.css here which won't allow for !important.  Use the following instead.
-                            //note that this overwrites any existing inline style. 
-                            //todo: use regex instead to ensure we don't overwrite inline styles (though there shouldn't be any)
-                            var inlineStyleStr = 'top:' +(relOffset.top+cornerPadding.top)+ 'px !important; left:' +(relOffset.left + cornerPadding.left) + 'px !important;';
-
-                            $indicator.find('.rdr_indicator_body').attr('style', inlineStyleStr);
-
                             $indicator_details.addClass('rdr_indicator_details_for_image').hover(
                                 function() {
                                     $(this).data('hover', true);
@@ -2319,6 +2314,7 @@ function readrBoard($R){
                                 }
                             );
 
+                            RDR.actions.indicators.utils.positionImgIndicator(hash);
                         },
                         text: function( hash ){
                             var summary = RDR.summaries[hash],
@@ -2409,6 +2405,31 @@ function readrBoard($R){
                             var relevant_content_nodes = invertedDict[tag_id];
                             RDR.actions.content_nodes.utils.initHiliteStates( $(this), relevant_content_nodes );
                         });
+                    },
+                    positionImgIndicator: function(hash){
+                        //RDR.actions.indicators.utils.positionImgIndicator:
+                        var summary = RDR.summaries[hash],
+                            $container = summary.$container,
+                            $indicator = summary.$indicator,
+                            $indicator_details = summary.$indicator_details;
+
+                        //keep the indicator pegged at the end of the img but move the body part of it (the visibile part)
+                        var relOffset = {
+                            top: $container.offset().top - $indicator.offset().top,
+                            left: - $indicator.find('.rdr_indicator_body').width()
+                        };
+                        var cornerPadding = {
+                            top: 7,
+                            left: -15
+                        }
+
+                        //because this lives outside our sandbox, it has been 'css-reset' with !important for zero'd out margins, position...
+                        //so we can't use $.css here which won't allow for !important.  Use the following instead.
+                        //note that this overwrites any existing inline style. 
+                        //todo: use regex instead to ensure we don't overwrite inline styles (though there shouldn't be any)
+                        var inlineStyleStr = 'top:' +(relOffset.top+cornerPadding.top)+ 'px !important; left:' +(relOffset.left + cornerPadding.left) + 'px !important;';
+
+                        $indicator.find('.rdr_indicator_body').attr('style', inlineStyleStr);
                     }
                 },//end RDR.actions.indicators.utils
                 sortReactions: function( hash ){
@@ -2636,6 +2657,7 @@ function readrBoard($R){
                     selector:selector
                 });
 
+                rindow.addClass('rdr_readmode');
                 summary.$rindow_readmode = rindow;
                 $indicatorDetails.hide();
 
@@ -3119,7 +3141,9 @@ function readrBoard($R){
                     coords
                 }
                 */
-                var $hostNode = $('.rdr-'+settings.container);
+                var hash = settings.container;
+                var summary = RDR.summaries[hash];
+                var $hostNode = $('.rdr-'+hash);
 
                 var actionType = (settings.actionType) ? settings.actionType:"react";
 
@@ -3170,7 +3194,7 @@ function readrBoard($R){
                     columns:true,
 					ignoreWindowEdges:"bl",
 					noHeader:true,
-                    container: settings.container,
+                    container: hash,
                     content: settings.content,
                     content_type: settings.content_type,
                     selState: newSel
@@ -3180,6 +3204,10 @@ function readrBoard($R){
                 // and then it animates larger when we slide the whyPanel out.
                 // is there a cleaner way?
                 rindow.css({width:'200px'});
+                
+                rindow.addClass('rdr_writemode');
+                //add a reference for the rindow in the container summary
+                summary.$rindow_writemode = rindow;
 
                 // build the ratePanel
 
@@ -3700,12 +3728,14 @@ function readrBoard($R){
                         $this.find(' div.rdr_leftBox').text( percentage+'%' );
                     });
 
-
+                    //I'm doing this somewhere else
+                    /*
                     $('div.rdr_indicator').each( function() {
                         $this = $(this);
                         if ( $this.data('hash') == hash ) $this.find('span.rdr_count').text(total_reactions);
                     });
-
+                    */
+                    
                     // update the data objects too
                     for ( var i in RDR.content_nodes[hash].info.content ) {
                         if ( RDR.content_nodes[hash].info.content[i].body == content ) {
@@ -3956,11 +3986,12 @@ function readrBoard($R){
                 var $mouse_target = $(e.target);
 
                 // make sure it's not selecting inside the RDR windows.
-                if ( $mouse_target.hasClass('rdr') || $mouse_target.parents('div.rdr').length != 0 ) return;
+                // todo: (the rdr_indicator is an expection.
+                // The way we're dealing with this is a little weird.  It works, but could be cleaner)
+                if ( $mouse_target.closest('.rdr').length && !$mouse_target.closest('.rdr_indicator').length ) return;
                 //else
 
                 var $blockParent = null;
-
                 if( _isValid($mouse_target) ) {
                     // the node initially clicked on is the first block level container
                     $blockParent = $mouse_target;
@@ -3970,7 +4001,6 @@ function readrBoard($R){
                 //if no valid blockParent was found, we're done here.
                 if( $blockParent == null ) return;
                 //else
-
                 //let selog use serialrange to check if the selected text is contained in the $blockParent (also check for "" of just whitespace)
                 var selected = $blockParent.selog('save');
                 if ( !selected.serialRange || !selected.text || (/^\s*$/g.test(selected.text)) ) return;
@@ -4018,7 +4048,14 @@ function readrBoard($R){
                     log(selected.text)
                     log(/^\s*$/g.test(selected.text))
                     */
-                    
+                    var hash = $blockParent.data('hash');
+                    var summary = RDR.summaries[hash];
+
+                    //only allow one writemode per container at a time, check for writemode rindow.
+                    var $rindow_writemode = summary.$rindow_writemode;
+                    if( $rindow_writemode && $rindow_writemode.filter(":visible").length ) return false;
+                    //else
+
                     // closes undragged windows
                     //close with our own event instead of removing directly so that I can bind an event to the remove event (thanks ie.)
                     RDR.rindow.close( $('div.rdr.rdr_window.rdr.rdr_rewritable') );
@@ -4034,7 +4071,7 @@ function readrBoard($R){
                     });
                 }
                 function _isValid($node){
-                    return ( $node.css('display') == "block" &&  $node.css('float') == "none" );
+                    return ( $node.css('display') == "block" &&  $node.css('float') == "none" && !$node.closest('.rdr_indicator').length );
                 }
 
 
@@ -4759,10 +4796,15 @@ function $RFunctions($R){
             ],
             _modifierFilters = {
                 filterOutRDRIndicator: function(range, params){
+                    //check if $indicator is contained in the range, and if so, move the range's end to just before it.
+
                     var commonAncestorContainer = range.commonAncestorContainer;
-                    var $indicator = $(commonAncestorContainer).find('.rdr');
+                    var $indicator = $(commonAncestorContainer).find('.rdr_indicator');
                     if($indicator.length){
-                        range.setEndBefore( $indicator[0] );
+                        var inTheRange = range.containsNode($indicator[0], true) //2nd param is 'partial': (rangy docs for containsNode)
+                        if(inTheRange){
+                            range.setEndBefore( $indicator[0] );
+                        }
                     }
                     return range;
                 },
@@ -4989,7 +5031,7 @@ function $RFunctions($R){
                     //turn on
                     //log('adding hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
                     hiliter.applyToRange(range);
-                    log('trying to apply range ' +range )
+                    log('trying to apply range:  ' +range )
                     //apply the visual styles with the generic classes
                     $('.'+hiliter['class']).addClass(styleClass);
                     //apply css classes to start and end so we can style those specially
@@ -5003,7 +5045,7 @@ function $RFunctions($R){
                     //turn off
                     //log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
                     //remove the classes again so that the hiliter can normalize the selection (paste it back together)
-                    log('trying to remove range ' +range )
+                    log('trying to remove range:  ' +range )
                     hiliter['get$start']().removeClass(styleClass+'_start');
                     hiliter['get$end']().removeClass(styleClass+'_end');
                     $('.'+hiliter['class']).removeClass(styleClass);
@@ -5057,12 +5099,13 @@ function $RFunctions($R){
 
                 var scope = this,
                 filters = _modifierFilters, //make default all filters
+                //defaultFilters = ['stripWhiteSpace', 'firstWordSnap', 'lastWordSnap'],
                 doFilters = {};  //will be {filter:paramList}
 
                 //if filters not specifed, call all filters
                 if ( typeof filterList === "undefined" || filterList == null ){
-                    $.each(filters, function(name, func){
-                        doFilters[name] = [];
+                    $.each(filters, function(funcName, func){
+                        doFilters[funcName] = [];
                     });
                 }
                 else if ( typeof filterList === "string" ){

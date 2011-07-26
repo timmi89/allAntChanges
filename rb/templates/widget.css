@@ -484,7 +484,11 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 /*everything below here is stuff that is inline to the client's document.  Generally will use !important for everything*/
 
 img.rdr_engage_img,
-img.rdr_shared      { -moz-box-shadow:0 0 10px 1px #008be4; -webkit-box-shadow:0 0 10px 1px #008be4; box-shadow:0 0 10px 1px #008be4; }
+img.rdr_shared {
+-moz-box-shadow:0 0 10px 1px #008be4 !important;
+-webkit-box-shadow:0 0 10px 1px #008be4 !important;
+box-shadow:0 0 10px 1px #008be4 !important;
+}
 
 
 /* container indicator icons */
