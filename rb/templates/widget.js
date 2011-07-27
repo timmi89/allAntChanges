@@ -283,16 +283,13 @@ function readrBoard($R){
        
                 //RDR.actionbar.draw:
                 //expand to make settings explicit
-                var containerHash = settings.container,
-                    content_type = settings.content_type,
-                    coords = settings.coords;
+                var hash = settings.hash;
+                var summary = RDR.summaries[hash],
+                    $container = summary.$container,
+                    $indicator = summary.$indicator,
+                    kind = summary.kind;
                 
-                if ( !containerHash || !RDR.containers.hasOwnProperty(containerHash) ) return;
-                //else
-                
-                var container = (RDR.containers.hasOwnProperty(containerHash)) ? RDR.containers[containerHash] : undefined ;
-
-                var actionbar_id = "rdr_actionbar_"+containerHash;
+                var actionbar_id = "rdr_actionbar_"+hash;
                 var $actionbars = $('div.rdr_actionbar');
                 
                 if ( $('#'+actionbar_id).length > 0 ) return $('#'+actionbar_id);
@@ -304,7 +301,7 @@ function readrBoard($R){
                         top: 'add this here',
                         left: 'add this here'
                     },
-                    image:  {
+                    img:  {
                         top: 0,
                         left: -33
                     },
@@ -312,35 +309,19 @@ function readrBoard($R){
                         top: -35,
                         left: 2
                     }
-                }
-                var offsets = actionbarOffsets[content_type];
-
-                coords.top += offsets.top;
-                coords.left += offsets.left;
-                
+                };
+                var offsets = (kind == 'text') ? actionbarOffsets.text : actionbarOffsets.img;
 
                 //rewrite coords if needed
                 // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-                coords = RDR.util.stayInWindow({coords:coords, width:200, height:30, ignoreWindowEdges:settings.ignoreWindowEdges});
+                var coords = RDR.util.stayInWindow({coords:coords, width:200, height:30, ignoreWindowEdges:settings.ignoreWindowEdges});
 
                 // TODO use settings check for certain features and content types to determine which of these to disable
                 var $new_actionbar = $('<div class="rdr rdr_actionbar rdr_widget rdr_widget_bar" id="' + actionbar_id + '" />').css({
                    'left':coords.left,
                    'top':coords.top
-                }).data('hash',containerHash)//chain
+                }).data('hash',hash)//chain
                 .append('<ul/>');
-
-                // store the content selected that spawned this actionbar
-                // used for determining later on if an actionbar is being called by the same interaction as a
-                // currently-visible actionbar
-
-                // if this is an image, make sure we have the image hashed, tagged, and have its hash as a container:
-                if (content_type == "image" && !container ) {
-                    //todo
-                }
-
-                // ec: I'm removing this - I think it's old and RDR.page.hash doens't exist
-                //if ( settings.container == "") settings.container = RDR.page.hash;
 
                 var items = [
                         {
@@ -348,7 +329,7 @@ function readrBoard($R){
                             "tipText":"React to this",
                             "onclick":function(){
                                 RDR.actions.sentimentBox({
-                                    "container": containerHash,
+                                    "hash": hash,
                                     "content_type": settings.content_type,
                                     "content": settings.content,
                                     "coords": coords
@@ -360,7 +341,7 @@ function readrBoard($R){
                             "tipText":"Bookmark this",
                             "onclick":function(){
                                 RDR.actions.sentimentBox({
-                                    "container": containerHash,
+                                    "hash": hash,
                                     "content_type": settings.content_type,
                                     "content": settings.content,
                                     "coords": coords,
@@ -1001,7 +982,7 @@ function readrBoard($R){
                         //todo:just for testing for now: - add defaults:
                         RDR.group.img_selector = RDR.group.img_selector || "body img";
                         RDR.group.selector_whitelist = RDR.group.selector_whitelist || "body p";
-                        RDR.group.media_selector = RDR.group.media_selector || "embed, video, object";
+                        RDR.group.media_selector = RDR.group.media_selector || "embed, video, object, iframe.rdr_video"; //for now just play it safe with the iframe.
                         RDR.group.comment_length = RDR.group.comment_length || 300;
 
                         $RDR.dequeue('initAjax');
@@ -1106,13 +1087,6 @@ function readrBoard($R){
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
                 var $indicatorDetailsWrapper = $('<div id="rdr_indicator_details_wrapper" />').appendTo($rdrSandbox);
 
-                // init the img interactions img selector image selector  (those are keywords for easier-inpage searching)
-				$( RDR.group.img_selector+":not('.no-rdr')" ).live( 'mouseover', function() {
-                    //todo: check if this is a new valid, but unhashed image.  If so, deal with it.
-				});
-				// END
-
-
                 $(document).bind('mouseup.rdr', function(e){
                     //temp fix for bug where a click that clears a selection still picks up the selected text:
                     //Todo: This should work in the future as well, but I want to look into it further.
@@ -1152,8 +1126,34 @@ function readrBoard($R){
                 //RDR.actions.hashNodes:
                 //todo: consider how to do this whitelist, initialset stuff right
                 var $allNodes = $(),
-                nodeGroups = {
-                    'text': {
+                nodeGroups = [
+                    {
+                        kind: 'media',
+                        $group: null,
+                        whiteList: RDR.group.media_selector,
+                        filterParam: 'embed, video, object',
+                        setupFunc: function(){
+                            var body = this.src;
+                            $(this).data({
+                                'body':body
+                            });
+                        }
+                    },
+                    {
+                        kind: 'img',
+                        $group: null,
+                        whiteList: RDR.group.img_selector,
+                        filterParam: 'img',
+                        setupFunc: function(){
+                            //var body = $(this).attr('src');
+                            var body = this.src;
+                            $(this).data({
+                                'body':body
+                            });
+                        }
+                    },
+                    { 
+                        kind: 'text',
                         $group: null,
                         whiteList: RDR.group.selector_whitelist,
                         filterParam: function(idx, node){
@@ -1172,43 +1172,31 @@ function readrBoard($R){
                             body = RDR.util.cleanPara( body );
                             $(this).data('body',body);
                         }
-                    },
-                    'img': {
-                        $group: null,
-                        whiteList: RDR.group.img_selector,
-                        filterParam: 'img',
-                        setupFunc: function(){
-                            //var body = $(this).attr('src');
-                            var body = this.src;
-                            $(this).data({
-                                'body':body
-                            });
-                        }
-                    },
-                    'media': {
-                        $group: null,
-                        whiteList: RDR.group.media_selector,
-                        filterParam: 'embed, video, object',
-                        setupFunc: function(){
-                            var body = 'test';
-                            $(this).data({
-                                'body':body
-                            });
-                        }
+                        
                     }
-                };
+                ];
                 
-                $.each( nodeGroups, function( key, group ){
+                //go through the groups in order and pick out valid nodes of that type. Default to text if it's valid for that.
+                $.each( nodeGroups, function( idx, group ){
                     var $group = $nodes ? $nodes.filter( group.filterParam ) : $( group.whiteList );
+                    
+                    //take out prev categorized nodes (text is last, so we default to that)
+                    $group = $group.not($allNodes);
 
                     //filter out blacklisted stuff
                     $group = $group.not('.rdr-hashed, .no-rdr');
-                    group.$group = $group;
+                    log('$group '+ group.kind);
+                    log($group);
+                    group.$nodes = $group;
 
                     //setup the group as needed
-                    $group.each( group.setupFunc );
-
+                    $group.each( function(){
+                        group.setupFunc.apply(this);
+                        $(this).data('kind', group.kind);
+                    });
                     $allNodes = $allNodes.add($group);
+                    log($nodes)
+                    log($allNodes);
 
                 });
                 
@@ -1218,9 +1206,10 @@ function readrBoard($R){
                 hashList = [];
                 $allNodes.each(function(){
                     var body = $(this).data('body'),
-                    kind = $(this)[0].tagName.toLowerCase();
+                    kind = $(this).data('kind'),
+                    HTMLkind = $(this)[0].tagName.toLowerCase();
 
-                    var hashText = ( kind=="img") ? "rdr-"+kind+"-"+body : "rdr-text-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
+                    var hashText = "rdr-"+kind+"-"+body; //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
                     hash = RDR.util.md5.hex_md5( hashText );
 
                     // add an object with the text and hash to the RDR.containers dictionary
@@ -1229,6 +1218,7 @@ function readrBoard($R){
                         body:body,
                         kind:kind,
                         hash:hash,
+                        HTMLkind:HTMLkind,
                         $this: $(this)
                     });
 
@@ -1308,6 +1298,7 @@ function readrBoard($R){
                         'body': settings.body,
                         'kind': settings.kind,
                         'hash': settings.hash,
+                        'HTMLkind': settings.HTMLkind,
                         '$this': settings.$this
                     }
                     RDR.containers[settings.hash] = container;
@@ -1324,10 +1315,10 @@ function readrBoard($R){
                             $container.hover(
                                 function(){
                                     $(this).data('hover',true);
-                                    var coords = $container.offset(),
-                                    src = $container.attr('src'),
+                                    var src = $container.attr('src'),
                                     src_with_path = this.src;
 
+                                    var coords = $container.offset();
                                     //coords clones the offset, so this ofcourse isn't moving the $container.
                                     coords.left += (34 + $container.width() );
                                     coords.top += 0;
@@ -1335,7 +1326,7 @@ function readrBoard($R){
                                     $container.addClass('rdr_engage_img');
                                     //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
                                     // builds a new actionbar or just returns the existing $actionbar if it exists.
-                                    var $actionbar = RDR.actionbar.draw({ coords:coords, content_type:"image", content:src, container:hash, src_with_path:src_with_path, ignoreWindowEdges:"rb" });
+                                    var $actionbar = RDR.actionbar.draw({ coords:coords, content_type:"image", content:src, hash:hash, src_with_path:src_with_path, ignoreWindowEdges:"rb" });
 
                                     //kill all rivals!!
                                     var $rivals = $('div.rdr_actionbar').not($actionbar);
@@ -1360,6 +1351,10 @@ function readrBoard($R){
                             );
                             
                         },
+                        media: function(hash, summary){
+                            //for now, just pass through to img.
+                            this.img(hash, summary);
+                        },
                         text: function(hash, summary){
                             
                         }
@@ -1376,7 +1371,7 @@ function readrBoard($R){
                         RDR.actions.indicators.init( hash );
 
                         //now run the type specific function with the //run the setup func above
-                        var kind = (summary.kind == "img") ? 'img' : "text";
+                        var kind = summary.kind;
                         _setupFuncs[kind](hash, summary);
                         
                         //note:all of them should have interactions, because these are fresh from the server.  But, check anyway.
@@ -1969,7 +1964,7 @@ function readrBoard($R){
                             var content_node_data = sendData.content_node_data;
                             var int_id = response.data.interaction.id;
 
-                            //I think this clears the loader                          
+                            //clears the loader                          
                             tag_li.find('div.rdr_leftBox').html('');
 
                             //[cleanlogz]('bookmark successssssssssssss');
@@ -2206,9 +2201,10 @@ function readrBoard($R){
                     );
 
 
-                    var kind = (summary.kind == "img") ? "img" : "text";
+                    var kind = summary.kind;
 
                     //run setup specific to this type
+                    //log(kind);
                     scope.utils.kindSpecificSetup[kind]( hash );
 
 
@@ -2220,7 +2216,7 @@ function readrBoard($R){
                     if (kind == 'text'){
                         //Setup callback for a successful fetch of the content_nodes for this container
                         var onSuccessCallback = function(){
-                            $indicator.unbind('mouseover.contentNodeInit');
+                            //$indicator.unbind('mouseover.contentNodeInit');
                             RDR.actions.indicators.utils.setupContentNodeHilites(hash);
                         };
                         //bind the hover event that will only be run once.  It gets removed on the success callback above.
@@ -2261,7 +2257,7 @@ function readrBoard($R){
                     $indicator_details.css({ 'visiblity':'hidden' }).show()//chain
                     scope.utils.makeDetailsContent( hash );
 
-                    var kind = (summary.kind == "img") ? "img" : "text";
+                    var kind = summary.kind;
                     
                     if(kind == 'img'){
                         RDR.actions.indicators.utils.positionImgIndicator(hash);
@@ -2315,6 +2311,10 @@ function readrBoard($R){
                             );
 
                             RDR.actions.indicators.utils.positionImgIndicator(hash);
+                        },
+                        media: function( hash ){
+                            //for now just treat it like an img
+                            this.img( hash );
                         },
                         text: function( hash ){
                             var summary = RDR.summaries[hash],
@@ -2490,13 +2490,13 @@ function readrBoard($R){
         
                     //data is in form {body:,kind:,hash:}
                     //todo: combine with above
-                    var node = RDR.containers[hash];                  
+                    var container = RDR.containers[hash];                  
 
                     //create an 'empty' summary object
                     var summary = {
                         "hash": hash,
-                        "kind": node.kind,
-                        "id": node.id,
+                        "kind": container.kind,
+                        "id": container.id,
                         "counts": {
                             "coms": 0, 
                             "tags": 0, 
@@ -2594,7 +2594,7 @@ function readrBoard($R){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
                         makeSummaryWidget(RDR.page)
                     }else{     
-                        log('update')
+                        log('update');
                         RDR.actions.indicators.update( hash );
                         RDR.rindow.update(hash);
 
@@ -2616,19 +2616,8 @@ function readrBoard($R){
 
                 var summary = RDR.summaries[hash],
                 kind = summary.kind;
-
+                
                 var selector = ".rdr-" + hash;
-
-                //ec: pretty sure we don't need this anymore
-                /*
-                if (kind == "text") {
-                    var info = icon.data('info');
-
-                } else if (kind == "image") {
-                    //todo: this is a temp fix - consolodate.
-                    var info = icon.data('imageData');
-                }
-                */
 
                 var $indicator = $('#rdr_indicator_'+hash),
                 $indicatorDetails = $('#rdr_indicator_details_'+ hash),
@@ -2638,7 +2627,7 @@ function readrBoard($R){
                     top: -5,
                     left: 1
                 }
-                var rindowPosition = (kind == "img") ?
+                var rindowPosition = (kind == "img" || kind == "media" ) ?
                 {
                     top: $container.offset().top,
                     left: $container.offset().left + $container.width()
@@ -2740,10 +2729,8 @@ function readrBoard($R){
 
                     //this is the read_mode only
                     // enable the "click on a blessed tag to choose it" functionality.  just css class based.
-                    //for now disallow img read_mode                    
                     rindow.find('ul.rdr_preselected li').bind('click', function() {
-                        //for now disable li clicks for image readmode
-                        if(kind == 'image') return false;
+                        
                         var $this = $(this);
                         if ( !$this.hasClass('rdr_customTagBox') ) {
                             // if ( $this.hasClass('rdr_selected') ){
@@ -2791,6 +2778,7 @@ function readrBoard($R){
                     })//chain
                     .hover( 
                         function() {
+
                             $(this).addClass('rdr_hover'); // safari/chrome kludge -- :hover isn't working here
                             var selStates = $(this).data('selStates');
                             $.each( selStates, function(idx, selState){
@@ -2798,6 +2786,7 @@ function readrBoard($R){
                             });
                         },
                         function() {
+
                             $(this).removeClass('rdr_hover');  // safari/chrome kludge -- :hover isn't working here
                             var selStates = $(this).data('selStates');
                             $.each( selStates, function(idx, selState){
@@ -3141,7 +3130,7 @@ function readrBoard($R){
                     coords
                 }
                 */
-                var hash = settings.container;
+                var hash = settings.hash;
                 var summary = RDR.summaries[hash];
                 var $hostNode = $('.rdr-'+hash);
 
@@ -3184,6 +3173,7 @@ function readrBoard($R){
                     }
 
                 } else {
+                    //todo: what is this?
                     var kind = "image";
                     var newSel = "";
                 }
@@ -3316,7 +3306,7 @@ function readrBoard($R){
                         //take care of case where the tag has already been clicked and submitted
                         if ( $this.hasClass('rdr_tagged') ) {
                             
-                            //I think this clears the loader                          
+                            //clears the loader
                             $this.find('div.rdr_leftBox').html('');
 
                             var tagID = $this.data('tag').id;
@@ -3484,6 +3474,9 @@ function readrBoard($R){
                 //todo, fix naming
                 subBoxes: [],
                 newSubBox: function(){
+                },
+                update:{
+                    
                 }              
 			},
             // sentimentBox can be merged with / nested under this as sentimentPanel.draw at a later time mayhaps
@@ -3688,6 +3681,7 @@ function readrBoard($R){
                 }
             },
             updateData: function(args) {
+                log('updating data - not claled anymotre')
                 if ( args.kind == "tag" ) {
                     var rindow = args.rindow,
                         hash = args.hash,
@@ -4067,7 +4061,7 @@ function readrBoard($R){
                         },
                         content_type:"text",
                         content:selected.textClean,
-                        container:$blockParent.data('hash')
+                        hash:$blockParent.data('hash')
                     });
                 }
                 function _isValid($node){
@@ -5031,7 +5025,7 @@ function $RFunctions($R){
                     //turn on
                     //log('adding hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
                     hiliter.applyToRange(range);
-                    log('trying to apply range:  ' +range )
+                    //log('trying to apply range:  ' +range )
                     //apply the visual styles with the generic classes
                     $('.'+hiliter['class']).addClass(styleClass);
                     //apply css classes to start and end so we can style those specially
@@ -5045,7 +5039,7 @@ function $RFunctions($R){
                     //turn off
                     //log('removing hilite for selState ' + selState.idx + ': ' + selState.text ) //selog temp logging
                     //remove the classes again so that the hiliter can normalize the selection (paste it back together)
-                    log('trying to remove range:  ' +range )
+                    //log('trying to remove range:  ' +range )
                     hiliter['get$start']().removeClass(styleClass+'_start');
                     hiliter['get$end']().removeClass(styleClass+'_end');
                     $('.'+hiliter['class']).removeClass(styleClass);
