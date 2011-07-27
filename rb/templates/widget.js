@@ -314,15 +314,19 @@ function readrBoard($R){
 
                 //rewrite coords if needed
                 // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-                var coords = RDR.util.stayInWindow({coords:coords, width:200, height:30, ignoreWindowEdges:settings.ignoreWindowEdges});
-
+                
+                var coords = $container.offset();
+                //todo: bring this back when we have time to test it
+                //coords = RDR.util.stayInWindow({coords:coords, width:200, height:30, ignoreWindowEdges:settings.ignoreWindowEdges});
+                
                 // TODO use settings check for certain features and content types to determine which of these to disable
                 var $new_actionbar = $('<div class="rdr rdr_actionbar rdr_widget rdr_widget_bar" id="' + actionbar_id + '" />').css({
-                   'left':coords.left,
+                   'left':coords.right,
                    'top':coords.top
                 }).data('hash',hash)//chain
                 .append('<ul/>');
 
+                log($new_actionbar);
                 var items = [
                         {
                             "item":"reaction",
@@ -330,9 +334,8 @@ function readrBoard($R){
                             "onclick":function(){
                                 RDR.actions.sentimentBox({
                                     "hash": hash,
-                                    "content_type": settings.content_type,
+                                    "kind": kind,
                                     "content": settings.content,
-                                    "coords": coords
                                 });
                             }
                         },
@@ -342,9 +345,8 @@ function readrBoard($R){
                             "onclick":function(){
                                 RDR.actions.sentimentBox({
                                     "hash": hash,
-                                    "content_type": settings.content_type,
+                                    "kind": kind,
                                     "content": settings.content,
-                                    "coords": coords,
                                     "actionType":"bookmark"
                                 });
                             }
@@ -380,8 +382,8 @@ function readrBoard($R){
                     }
                 );
 
-                if(content_type == "image"){
-                    $new_actionbar.addClass('rdr_actionbar_for_image');
+                if(kind == "img" || kind == "media"){
+                    $new_actionbar.addClass('rdr_actionbar_for_media');
                     $new_actionbar.append('<div style="clear:both;" />').removeClass('rdr_widget rdr_widget_bar');
 
                     /*                    
@@ -423,7 +425,7 @@ function readrBoard($R){
 */                        
                         var hash = $actionbar.data('hash');
                         var $container = $('.rdr-'+hash);
-                        $container.removeClass('rdr_engage_img');
+                        $container.removeClass('rdr_engage_media');
 
                         $actionbar.remove();
                     }
@@ -1319,11 +1321,10 @@ function readrBoard($R){
                                     src_with_path = this.src;
 
                                     var coords = $container.offset();
-                                    //coords clones the offset, so this ofcourse isn't moving the $container.
-                                    coords.left += (34 + $container.width() );
+                                    //coords.left += (34 + $container.width() );
                                     coords.top += 0;
 
-                                    $container.addClass('rdr_engage_img');
+                                    $container.addClass('rdr_engage_media');
                                     //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
                                     // builds a new actionbar or just returns the existing $actionbar if it exists.
                                     var $actionbar = RDR.actionbar.draw({ coords:coords, content_type:"image", content:src, hash:hash, src_with_path:src_with_path, ignoreWindowEdges:"rb" });
@@ -2277,14 +2278,14 @@ function readrBoard($R){
                             
                             $indicator.insertAfter($container);
 
-                            $indicator.addClass('rdr_indicator_for_image')//chain
+                            $indicator.addClass('rdr_indicator_for_media')//chain
                             .hover(
                                 function() {
 
                                     $indicator_details.css({
                                         'width': 'auto'
                                     });                     
-                                                   
+                                    
                                     var indDetailsWidth = $indicator_details.width(),
                                     indDetailsLeftOffset = $indicatorBody.offset().left + $indicatorBody.width() - indDetailsWidth - 3; //account for 3px padding 
 
@@ -2301,7 +2302,7 @@ function readrBoard($R){
                                 }
                             );
 
-                            $indicator_details.addClass('rdr_indicator_details_for_image').hover(
+                            $indicator_details.addClass('rdr_indicator_details_for_media').hover(
                                 function() {
                                     $(this).data('hover', true);
                                 },
@@ -2413,21 +2414,28 @@ function readrBoard($R){
                             $indicator = summary.$indicator,
                             $indicator_details = summary.$indicator_details;
 
-                        //keep the indicator pegged at the end of the img but move the body part of it (the visibile part)
-                        var relOffset = {
-                            top: $container.offset().top - $indicator.offset().top,
-                            left: - $indicator.find('.rdr_indicator_body').width()
+                        // get the relative distance of the indicator to the top right corner of the media.
+                        // note: we have the indicator inline so that it will float around the page with the media,
+                        // but we're not sure exactly where it will end up relative to the media.  This compensates
+                        // for that and still let's us have it move around with the image if, say a banner ad expands the page.                        
+                        
+                        var relOffsetToTopRightCorner = {
+                            y: $container.offset().top - $indicator.offset().top,
+                            x: $container.offset().right - $indicator.offset().right
                         };
                         var cornerPadding = {
                             top: 7,
                             left: -15
                         }
+                        var indicatorBodyWidth = $indicator.find('.rdr_indicator_body').width(),
+                        topVal = (relOffsetToTopRightCorner.y + cornerPadding.top),
+                        leftVal = (relOffsetToTopRightCorner.x + cornerPadding.left - indicatorBodyWidth);
 
                         //because this lives outside our sandbox, it has been 'css-reset' with !important for zero'd out margins, position...
                         //so we can't use $.css here which won't allow for !important.  Use the following instead.
                         //note that this overwrites any existing inline style. 
                         //todo: use regex instead to ensure we don't overwrite inline styles (though there shouldn't be any)
-                        var inlineStyleStr = 'top:' +(relOffset.top+cornerPadding.top)+ 'px !important; left:' +(relOffset.left + cornerPadding.left) + 'px !important;';
+                        var inlineStyleStr = 'top:' +topVal+ 'px !important; left:' +leftVal+ 'px !important;';
 
                         $indicator.find('.rdr_indicator_body').attr('style', inlineStyleStr);
                     }
@@ -3131,28 +3139,29 @@ function readrBoard($R){
                 }
                 */
                 var hash = settings.hash;
-                var summary = RDR.summaries[hash];
-                var $hostNode = $('.rdr-'+hash);
+                var summary = RDR.summaries[hash],
+                    $container = summary.$container,
+                    // draw the window over the actionbar
+                    coords = {
+                        top: $container.offset().top,
+                        left: $container.offset().right
+                    };
 
                 var actionType = (settings.actionType) ? settings.actionType:"react";
-
-                // draw the window over the actionbar
-                var actionbarOffsets = settings.coords;
-                var rindowCoords =  $.extend({}, actionbarOffsets);
 
 				$('.rdr_rewritable').removeClass('rdr_rewritable');
 
                 if( settings.content_type === "text" ){
                     //Trigger the smart text selection and highlight
-                    var newSel = $hostNode.selog('helpers', 'smartHilite');
+                    var newSel = $container.selog('helpers', 'smartHilite');
                     if(!newSel) return false;
 
                     //temp fix to set the content (the text) of the selection to the new selection
                     //todo: make selog more integrated with the rest of the code
                     settings.content = newSel.text;
 
-					rindowCoords.left = actionbarOffsets.left + 40;
-					rindowCoords.top = actionbarOffsets.top + 35;
+					coords.left = actionbarOffsets.left + 40;
+					coords.top = actionbarOffsets.top + 35;
                 
                     //if sel exists, reset the offset coords
                     if(newSel){
@@ -3167,8 +3176,8 @@ function readrBoard($R){
                             var strRight = $helper.offset().right;
                             var strBottom = $helper.offset().bottom;
                             $helper.remove();
-                            rindowCoords.left = strRight + 5; //with a little padding
-                            rindowCoords.top = strBottom;
+                            coords.left = strRight + 5; //with a little padding
+                            coords.top = strBottom;
                         }
                     }
 
@@ -3179,7 +3188,7 @@ function readrBoard($R){
                 }
             
                 var rindow = RDR.rindow.draw({
-                    coords: rindowCoords,
+                    coords: coords,
 					pnlWidth:200,
                     columns:true,
 					ignoreWindowEdges:"bl",
