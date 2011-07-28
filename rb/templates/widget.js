@@ -284,13 +284,14 @@ function readrBoard($R){
        
                 //RDR.actionbar.draw:
                 //expand to make settings explicit
-                var hash = settings.hash,
-                    coords = settings.coords;
 
-                var summary = RDR.summaries[hash],
-                    $container = summary.$container,
-                    $indicator = summary.$indicator,
-                    kind = summary.kind;
+                //node: summary may not be defined at this point, so get info from settings.
+                
+                var hash = settings.hash,
+                    coords = settings.coords,
+                    kind = settings.kind,
+                    content = settings.content,
+                    src_with_path = settings.src_with_path || undefined; //used for media only
                 
                 var actionbar_id = "rdr_actionbar_"+hash;
                 var $actionbars = $('div.rdr_actionbar');
@@ -305,8 +306,8 @@ function readrBoard($R){
                         left: 'add this here'
                     },
                     img:  {
-                        top: $container.offset().top,
-                        left: $container.offset().right
+                        top: coords.top,
+                        left: coords.left
                     },
                     text:  {
                         //the extra offsets here move the actionbar above the click - not exact numbers.
@@ -336,7 +337,8 @@ function readrBoard($R){
                                 RDR.actions.sentimentBox({
                                     "hash": hash,
                                     "kind": kind,
-                                    "content": settings.content
+                                    "content": content,
+                                    "src_with_path":src_with_path
                                 });
                             }
                         },
@@ -347,7 +349,8 @@ function readrBoard($R){
                                 RDR.actions.sentimentBox({
                                     "hash": hash,
                                     "kind": kind,
-                                    "content": settings.content,
+                                    "content": content,
+                                    "src_with_path":src_with_path,
                                     "actionType":"bookmark"
                                 });
                             }
@@ -1312,7 +1315,9 @@ function readrBoard($R){
                     //then define type-specific setup functions and run them
                     var _setupFuncs = {
                         img: function(hash, summary){
-                            var $container = RDR.containers[hash].$this;
+                            
+                            var containerInfo = RDR.containers[hash];
+                            var $container = containerInfo.$this;
 
                             $container.hover(
                                 function(){
@@ -1320,14 +1325,17 @@ function readrBoard($R){
                                     var src = $container.attr('src'),
                                     src_with_path = this.src;
 
-                                    var coords = $container.offset();
-                                    //coords.left += (34 + $container.width() );
-                                    coords.top += 0;
+                                    var coords = {
+                                        top: $container.offset().top,
+                                        left: $container.offset().right
+                                    };
 
                                     $container.addClass('rdr_engage_media');
                                     //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
                                     // builds a new actionbar or just returns the existing $actionbar if it exists.
-                                    var $actionbar = RDR.actionbar.draw({ hash:hash, coords:coords, content:src, src_with_path:src_with_path, ignoreWindowEdges:"rb" });
+
+                                    //use the image container info as the content, because the img itself is the content_node.
+                                    var $actionbar = RDR.actionbar.draw({ hash:hash, kind:containerInfo.kind, coords:coords, content:containerInfo.body, src_with_path:containerInfo.body, ignoreWindowEdges:"rb" });
 
                                     //kill all rivals!!
                                     var $rivals = $('div.rdr_actionbar').not($actionbar);
@@ -1471,8 +1479,8 @@ function readrBoard($R){
 
                     //makes a new one or returns existing one
                     //expects settings with container, body, and location.
-                    log('settings')
-                    log(settings)
+                    log('settings');
+                    log(settings);
                     var hash = settings.hash;
 
                     var content_node_key = settings.container+"-"+settings.location;
@@ -1618,21 +1626,25 @@ function readrBoard($R){
 
                     //get user and only procceed on success of that.
                     RDR.session.getUser( args, function(newArgs){
-                        var args = newArgs;
+                        
                         //[cleanlogz]('user');
-                        var sendDataDefaults = RDR.actions.interactions.sendDataDefaults(args),
-                            customSendData = RDR.actions.interactions[int_type].customSendData(args),
+                        var sendDataDefaults = RDR.actions.interactions.sendDataDefaults(newArgs),
+                            customSendData = RDR.actions.interactions[int_type].customSendData(newArgs),
                             sendData = $.extend( {}, sendDataDefaults, customSendData );
                         
-                        args.sendData = sendData;
+                        newArgs.sendData = sendData;
 
                         //fix hash
-                        args.hash = hash;
-                        args.sendData.hash = hash;
+                        newArgs.hash = hash;
+                        newArgs.sendData.hash = hash;
 
                         //run the send function for the appropriate interaction type
                         //RDR.actions.interactions[int_type].send(args);
-                        RDR.actions.interactions.send(args, int_type, action_type);
+
+                        log('args aaaaaaa');
+                        log(args);
+                        log(newArgs);
+                        RDR.actions.interactions.send(newArgs, int_type, action_type);
                     });
                 },
                 send: function(args, int_type, action_type){
@@ -1640,8 +1652,8 @@ function readrBoard($R){
                     //[cleanlogz]console.dir(args);
 
                     var sendData = args.sendData;
-                    log('args in send ajax')
-                    log(args)
+                    log('args in send ajax');
+                    log(args);
                     //todo: consider making a generic url router
                     var url = "/api/" +int_type+ "/"+action_type+"/";
                     
@@ -1692,7 +1704,8 @@ function readrBoard($R){
                         content_node_data = {
                             'container': container,
                             'body': src_with_path,
-                            'kind':kind
+                            'kind':kind,
+                            'hash':hash
                         };
 
                     }else{
@@ -1805,8 +1818,8 @@ function readrBoard($R){
 
                             //RDR.actions.interactions.tag.onSuccess.create:
                             //todo: clean up these args.
-                            log('args in create')
-                            log(args)
+                            log('args in create');
+                            log(args);
 
                             var response = args.response,
                             interaction_node = response.data.interaction.interaction_node;
@@ -1995,7 +2008,7 @@ function readrBoard($R){
 
                             //temp tie over
                             content_node_data.hash = content_node_data.container;
-
+                            var hash = content_node_data.hash;
 
                             //clears the loader                          
                             tag_li.find('div.rdr_leftBox').html('');
@@ -2238,7 +2251,8 @@ function readrBoard($R){
                     var kind = summary.kind;
 
                     //run setup specific to this type
-                    //log(kind);
+                    log('kind');
+                    log(kind);
                     scope.utils.kindSpecificSetup[kind]( hash );
 
 
@@ -3015,7 +3029,7 @@ function readrBoard($R){
                                 //[cleanlogz]('------- attempting to share -------');
                                 //[cleanlogz]console.dir(tag);
                                 $shareTip.find('img.rdr_sns').click( function() {
-                                    RDR.actions.share_getLink({ hash:hash, kind:kind, sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node_info:content_node_info });
+                                    RDR.actions.share_getLink({ hash:hash, kind:summary.kind, sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node_info:content_node_info });
                                 });
                             }
                         ).mouseleave(
@@ -3602,6 +3616,11 @@ function readrBoard($R){
                 //nothing to see here - this has been moved to RDR.actions.interactions.ajax()
             },
             share_getLink: function(args) {
+
+                var hash = args.hash,
+                    summary = RDR.summaries[hash],
+                    kind = summary.kind;
+
                 //[cleanlogz]('----share_getLink args----');
                 ////[cleanlogz]console.dir(args);
                 //example:
@@ -3623,9 +3642,12 @@ function readrBoard($R){
                         tag = params.tag;
 
                     var content_node_info = (params.content_node_info) ? params.content_node_info:params.content_node;
+
                     // translations.  TODO clean and remove
                     if ( !content_node_info.hash ) content_node_info.hash = content_node_info.container;
                     if ( !content_node_info.content ) content_node_info.content = content_node_info.body;
+
+                    //patching in reliable info todo: redo this formating
 
                     // //save content node
                     
@@ -4094,16 +4116,10 @@ function readrBoard($R){
                     return $blockParent;
                 }
                 function _drawActionBar ($blockParent){
-                    /*
-                    log(selected.text)
-                    log(/^\s*$/g.test(selected.text))
-                    */
-                    var hash = $blockParent.data('hash');
-                    var summary = RDR.summaries[hash];
 
-                    //only allow one writemode per container at a time, check for writemode rindow.
-                    var $rindow_writemode = summary.$rindow_writemode;
-                    if( $rindow_writemode && $rindow_writemode.filter(":visible").length ) return false;
+                    var hash = $blockParent.data('hash');
+
+                    if ( _writeModeOpenForThisContainer(hash) ) return false;
                     //else
 
                     // closes undragged windows
@@ -4119,6 +4135,23 @@ function readrBoard($R){
                         content:selected.textClean,
                         hash:$blockParent.data('hash')
                     });
+                }
+                function _writeModeOpenForThisContainer(hash){
+
+                    /*todo: quick fix - check for other writemode rindows for this container that are already open.*/
+                    /*
+                    if it has a summary, check for a rindow.
+                    Of course, if it's brand new, it won't have a summary, but then it wont have a rindow either
+                    */
+                    var summary = RDR.summaries[hash] || 'undefined';
+                    if( !summary ) return false;
+                    //only allow one writemode per container at a time, check for writemode rindow.
+                    var $rindow_writemode = summary.$rindow_writemode;
+                    if( $rindow_writemode && $rindow_writemode.filter(":visible").length ){
+                        return $rindow_writemode;
+                    }else{
+                        return false;
+                    }
                 }
                 function _isValid($node){
                     return ( $node.css('display') == "block" &&  $node.css('float') == "none" && !$node.closest('.rdr_indicator').length );
