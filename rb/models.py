@@ -105,7 +105,7 @@ class Group(models.Model):
     search = models.ForeignKey(Feature, related_name = 'Search Feature')
 
     # social shiz
-    twitter = models.CharField(max_length=64)
+    twitter = models.CharField(max_length=64, blank=True)
 
     # temporary user settings
     temp_interact = models.IntegerField(default=5)

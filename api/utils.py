@@ -113,14 +113,15 @@ def getPage(request, pageid=None):
     canonical = request.GET.get('canonical_url', None)
     fullurl = request.GET.get('url', None)
     title = request.GET.get('title', None)
-    group = request.GET.get('group_id', None)
+    group = request.GET.get('group_id', 1)
+
+    host = request.get_host()
+    site = Site.objects.get(domain=host, group=group)
 
     # Handle sites with hash but no bang
     if '#' in fullurl and '!' not in fullurl:
         fullurl = fullurl[:fullurl.index('#')]
 
-    host = request.get_host()
-    site = Site.objects.get(domain=host, group=group)
     if pageid:
         return Page.objects.get(id=pageid)
     elif canonical:
