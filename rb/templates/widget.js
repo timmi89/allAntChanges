@@ -984,8 +984,8 @@ function readrBoard($R){
                     },
                     success: function(response, textStatus, XHR) {
                         RDR.group = response.data;
-                        log(response);
-                        log('todo: fix group id here');
+
+                        //todo: is this line supposed to save the group_id ?
 						//RDR.group.group_id
 
                         //todo:just for testing for now: - add defaults:
@@ -1479,8 +1479,7 @@ function readrBoard($R){
 
                     //makes a new one or returns existing one
                     //expects settings with container, body, and location.
-                    log('settings');
-                    log(settings);
+                    
                     var hash = settings.hash;
 
                     var content_node_key;
@@ -1613,8 +1612,6 @@ function readrBoard($R){
                 //RDR.actions.interactions:
                 ajax: function(args, int_type, action_type){
                     //RDR.actions.interactions.ajax:
-                    log('args2');
-                    log(args);
 
                     //temp tie-over    
                     var hash = args.hash,
@@ -1648,9 +1645,6 @@ function readrBoard($R){
                         //run the send function for the appropriate interaction type
                         //RDR.actions.interactions[int_type].send(args);
 
-                        log('args aaaaaaa');
-                        log(args);
-                        log(newArgs);
                         RDR.actions.interactions.send(newArgs, int_type, action_type);
                     });
                 },
@@ -1659,8 +1653,7 @@ function readrBoard($R){
                     //[cleanlogz]console.dir(args);
 
                     var sendData = args.sendData;
-                    log('args in send ajax');
-                    log(args);
+                    
                     //todo: consider making a generic url router
                     var url = "/api/" +int_type+ "/"+action_type+"/";
                     
@@ -1685,18 +1678,12 @@ function readrBoard($R){
                 sendDataDefaults: function(args){
                     //RDR.actions.interactions.sendDataDefaults:
 
-                    //todo: break out the defaults from the custom
-                    log('args');
-                    log(args);
-    
+                    
                     //temp tie-over    
                     var hash = args.hash,
                         summary = RDR.summaries[hash],
                         kind = summary.kind;
                   
-                   log('summary in defaults');
-                    log(summary)  ;
-
                     var rindow = args.rindow,
                         tag_li = args.tag;
                     var tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag;
@@ -1705,8 +1692,6 @@ function readrBoard($R){
                     //If readmode, we will have a content_node.  If not, use content_node_data, and build a new content_node on success.
                     var content_node = args.content_node || null;
 
-                    log('args.settings');
-                    log(args.settings);
                     //[cleanlogz](content_node_data);
                     if(kind == 'img' || kind == 'media'){
                         var container = $.trim( args.settings.container ),
@@ -1792,7 +1777,6 @@ function readrBoard($R){
                         //RDR.actions.interactions.tag.preAjax:
                         //expected to be called from RDR.actions.interactions.ajax
                         var $rindow = args.rindow;
-                        log($rindow.data());
                         
                         //example:
                         var uiMode = args.uiMode || 'write';
@@ -1830,8 +1814,7 @@ function readrBoard($R){
 
                             //RDR.actions.interactions.tag.onSuccess.create:
                             //todo: clean up these args.
-                            log('args in create');
-                            log(args);
+                            
 
                             var response = args.response,
                             interaction_node = response.data.interaction.interaction_node;
@@ -2267,8 +2250,7 @@ function readrBoard($R){
                     var kind = summary.kind;
 
                     //run setup specific to this type
-                    log('kind');
-                    log(kind);
+                    
                     scope.utils.kindSpecificSetup[kind]( hash );
 
 
@@ -2666,7 +2648,7 @@ function readrBoard($R){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
                         makeSummaryWidget(RDR.page);
                     }else{     
-                        log('update');
+                        
                         RDR.actions.indicators.update( hash );
                         RDR.rindow.update(hash);
 
