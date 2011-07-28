@@ -1678,7 +1678,7 @@ function readrBoard($R){
                 sendDataDefaults: function(args){
                     //RDR.actions.interactions.sendDataDefaults:
 
-                    
+                    console.dir(args);
                     //temp tie-over    
                     var hash = args.hash,
                         summary = RDR.summaries[hash],
@@ -1694,13 +1694,11 @@ function readrBoard($R){
 
                     //[cleanlogz](content_node_data);
                     if(kind == 'img' || kind == 'media'){
-                        var container = $.trim( args.settings.container ),
-                            content = $.trim( args.settings.content ),
-                            src_with_path = $.trim( args.settings.src_with_path );
-                        
+                        var body = ( content_node != null ) ? content_node.body : ( args.settings.content ) ? args.settings.content : args.settings.body;  // hack for inconsistent parameter use..
+
                         content_node_data = {
-                            'container': hash,
-                            'body': src_with_path,
+                            'container': rindow.data('container'),
+                            'body': body,
                             'kind':kind,
                             'hash':hash
                         };
@@ -3864,6 +3862,7 @@ function readrBoard($R){
                     // RDR.actions.unrateSend(args); 
                     var args = event.data.args;
                         args.hash = hash;
+
                     // if (!args.int_id = event.data.int_id;
                     //[cleanlogz]('------------------------------------- clicked args');
                     // log(event.data.int_id);
