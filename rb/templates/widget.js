@@ -1483,7 +1483,14 @@ function readrBoard($R){
                     log(settings);
                     var hash = settings.hash;
 
-                    var content_node_key = settings.container+"-"+settings.location;
+                    var content_node_key;
+                    if (settings.location){
+                        content_node_key = settings.container+"-"+settings.location;
+                    }
+                    else{
+                        content_node_key = settings.container;
+                    }
+
                     if( RDR.content_nodes.hasOwnProperty(content_node_key) ) return RDR.content_nodes[content_node_key];
                     //else
                     var content_node = {
@@ -1686,6 +1693,9 @@ function readrBoard($R){
                     var hash = args.hash,
                         summary = RDR.summaries[hash],
                         kind = summary.kind;
+                  
+                   log('summary in defaults');
+                    log(summary)  ;
 
                     var rindow = args.rindow,
                         tag_li = args.tag;
@@ -1695,6 +1705,8 @@ function readrBoard($R){
                     //If readmode, we will have a content_node.  If not, use content_node_data, and build a new content_node on success.
                     var content_node = args.content_node || null;
 
+                    log('args.settings');
+                    log(args.settings);
                     //[cleanlogz](content_node_data);
                     if(kind == 'img' || kind == 'media'){
                         var container = $.trim( args.settings.container ),
@@ -1702,7 +1714,7 @@ function readrBoard($R){
                             src_with_path = $.trim( args.settings.src_with_path );
                         
                         content_node_data = {
-                            'container': container,
+                            'container': hash,
                             'body': src_with_path,
                             'kind':kind,
                             'hash':hash
@@ -1834,6 +1846,10 @@ function readrBoard($R){
                             var hash = args.hash,
                                 summary = RDR.summaries[hash],
                                 kind = summary.kind;
+
+
+                            //more freaking tie-overs
+                            args.settings = args.sendData.content_node_data;
 
                             //todo: untangle these argument translations.
                             var content_node_data = sendData.content_node_data;
