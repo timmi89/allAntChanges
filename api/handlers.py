@@ -124,7 +124,7 @@ class TagHandler(InteractionHandler):
         tag_body = data['tag']['body']
         container_hash = data['hash']
         content_node_data = data['content_node_data']
-        content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[ content_node_data['content_type'] ]
+        content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[ content_node_data['kind'] ]
         
         #optional
         tag_id = data['tag'].get('id', None)
@@ -154,7 +154,7 @@ class ShareHandler(InteractionHandler):
         tag_body = data['tag']['body']
         container_hash = data['hash']
         content_node_data = data['content_node_data']
-        content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[ content_node_data['content_type'] ]
+        content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[ content_node_data['kind'] ]
 
         # optional
         tag_id = data['tag'].get('id', None)
