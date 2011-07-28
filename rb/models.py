@@ -169,10 +169,7 @@ class Content(DateAwareModel):
     CONTENT_TYPES = (
         ('txt', 'text'),
         ('img', 'img'),
-        ('med', 'media'), #todo: media will later be a generic category for a box with video, or some interactive thing.
-        ('vid', 'video'),
-        ('snd', 'sound'),
-        ('fla', 'flash')
+        ('med', 'media'),
     )
     kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
     location = models.CharField(max_length=255, blank=True, null=True)
