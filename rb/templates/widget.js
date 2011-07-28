@@ -2794,7 +2794,7 @@ function readrBoard($R){
                             if ( kind == "img" ) {
                                 var hash = $this.data('hash');
                                 log('img yo');
-                                RDR.actions.viewCommentContent( {tag:$this.data('tag'), hash:hash, rindow:rindow, content_type:kind, node:RDR.summaries[hash] });
+                                RDR.actions.viewCommentContent( {tag:$this.data('tag'), hash:hash, rindow:rindow, kind:kind, node:RDR.summaries[hash] });
                             } else {
                                 log('TETX BITCHES');
                                 RDR.actions.viewReactionContent( $this.data('tag'), $this.data('hash'), rindow, kind );
@@ -3144,16 +3144,16 @@ function readrBoard($R){
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
                     // log('--------- selState 1: '+selState);
-                    var content_node = ( content_type == "img" ) ? { body:"", container:hash, content_type:content_type } : node;
+                    var content_node = ( kind == "img" || kind == "media" ) ? { body:"", container:hash, kind:kind } : node;
                     RDR.actions.comment({ content_node:content_node, comment:comment, hash:hash, content:node.body, tag:tag, rindow:rindow, selState:selState});
                 });
 
                 $whyBody.append( $commentBox.append( $leaveComment ) );
 
-                if ( content_type == "img" ) {
+                if ( kind == "img" || kind == "media" )  {
                     rindow.find('div.rdr_contentPanel').remove();
                 }
-                RDR.actions.panel.expand("whyPanel", rindow, content_type);
+                RDR.actions.panel.expand("whyPanel", rindow, kind );
             },
 			sentimentBox: function(settings) {
              ////[cleanlogz]console.dir(settings);
