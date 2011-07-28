@@ -168,7 +168,8 @@ class Page(models.Model):
 class Content(DateAwareModel):
     CONTENT_TYPES = (
         ('txt', 'text'),
-        ('img', 'image'),
+        ('img', 'img'),
+        ('med', 'media'), #todo: media will later be a generic category for a box with video, or some interactive thing.
         ('vid', 'video'),
         ('snd', 'sound'),
         ('fla', 'flash')

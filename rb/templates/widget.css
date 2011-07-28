@@ -50,7 +50,7 @@ body{
 
 #rdr_sandbox div.rdr_actionbar ul {
     margin:0;
-    float: left; /*do this for the rdr_indicator_for_image*/
+    float: left; /*do this for the rdr_indicator_for_media*/
 }
 #rdr_sandbox div.rdr_actionbar li {
     display:inline-block;
@@ -89,8 +89,8 @@ body{
 }
 
 /*override the above if it's an actionbar for images*/
-#rdr_sandbox div.rdr_actionbar_for_image { 
-    /*match rdr_engage_img hilite*/
+#rdr_sandbox div.rdr_actionbar_for_media { 
+    /*match rdr_engage_media hilite*/
     -moz-border-radius:0 5px 5px 0;
     -webkit-border-radius:0 5px 5px 0;
     border-radius:0 5px 5px 0;
@@ -100,17 +100,17 @@ body{
     border: 1px solid #bbb;
     height: auto;
 }
-#rdr_sandbox div.rdr_actionbar_for_image li { 
+#rdr_sandbox div.rdr_actionbar_for_media li { 
     display:block !important;
     float:left !important;
     clear:both !important;
 }
-#rdr_sandbox div.rdr_actionbar_for_image li.rdr_actionbar_first     { 
+#rdr_sandbox div.rdr_actionbar_for_media li.rdr_actionbar_first     { 
     -moz-border-radius:0 5px 0 0;
     -webkit-border-radius:0 5px 0 0;
     border-radius:0 5px 0 0;
 }
-#rdr_sandbox div.rdr_actionbar_for_image li.rdr_actionbar_last    { 
+#rdr_sandbox div.rdr_actionbar_for_media li.rdr_actionbar_last    { 
     -moz-border-radius:0 0 5px 0;
     -webkit-border-radius:0 0 5px 0;
     border-radius:0 0 5px 0;
@@ -483,7 +483,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 /*everything below here is stuff that is inline to the client's document.  Generally will use !important for everything*/
 
-img.rdr_engage_img,
+img.rdr_engage_media,
 img.rdr_shared {
 -moz-box-shadow:0 0 10px 1px #008be4 !important;
 -webkit-box-shadow:0 0 10px 1px #008be4 !important;
@@ -599,7 +599,7 @@ div.rdr_indicator div.rdr_indicator_body {
 div.rdr_indicator_for_text div.rdr_indicator_body{
     left: 4px !important;
 }
-div.rdr_indicator_for_image div.rdr_indicator_body{
+div.rdr_indicator_for_media div.rdr_indicator_body{
     background:white !important;
     border: 1px solid #bbb !important;
     height: auto !important;
@@ -629,7 +629,7 @@ div.rdr_indicator_for_image div.rdr_indicator_body{
 }
 
 /*now override styles for the image containers*/
-div.rdr_indicator_for_image {
+div.rdr_indicator_for_media {
     display:inline !important;
     opacity:0.3 !important;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)"!important;
@@ -639,7 +639,7 @@ div.rdr_indicator_for_image {
 
 }
 
-#rdr_sandbox div.rdr_indicator_details_for_image {
+#rdr_sandbox div.rdr_indicator_details_for_media {
     overflow:hidden; /*for the animate out to work nicely*/
     margin:0 0 0 2px; /*don't need the -5px 0 0 -4px margin here.  Kick it left a tiny bit */
 }
