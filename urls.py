@@ -15,7 +15,7 @@ urlpatterns = patterns('',
   url(r'^fblogin/$', 'rb.views.fblogin', kwargs={"admin_req": False}),
   url(r'^xdm_status/$', 'rb.views.xdm_status'),
   url(r'^admin_request/(?P<short_name>\w+)/$', 'rb.views.admin_request'),
-  url(r'^admin_request/(?P<short_name>\w+)/create$', 'rb.views.fblogin', kwargs={"admin_req": True}),
+  url(r'^admin_request/(?P<short_name>\w+)/create/$', 'rb.views.fblogin', kwargs={"admin_req": True}),
   
   # For short URL expander
   url(r'^s/(?P<short>[0-9a-zA-Z])+/$', 'rb.views.expander'),
