@@ -178,8 +178,7 @@ function readrBoard($R){
 
                 $new_rindow.settings = settings;
 
-                $dragHandle = $('<div style="width:100%;height:8px;position:absolute;bottom:0;right:0;z-index:1000;cursor:s-resize;"/>');
-
+                $dragHandle = $('<div class="rdr_rindow_dragHandle" style="width:100%;height:8px;position:absolute;bottom:0;right:0;z-index:1000;cursor:s-resize;"/>');
                 $dragHandle.bind('mousedown.rdr', function() {
 
                     var $this = $(this);
@@ -1699,18 +1698,33 @@ function readrBoard($R){
                         });
                         
                         //setup hover event to hilite and unhlite
-                        $tagSpan.hover( 
+                        $tagSpan.hover(
                             function() {
                                 var selStates = $(this).data('selStates');
+
+                                //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
+                                var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
+                                if (lastSelState){
+                                    $().selog('hilite', lastSelState, 'on');
+                                }
+                                /*
                                 $.each( selStates, function(idx, selState){
                                     $().selog('hilite', selState, 'on');
                                 });
+                                */
                             },
                             function() {
                                 var selStates = $(this).data('selStates');
+                                //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
+                                var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
+                                if (lastSelState){
+                                    $().selog('hilite', lastSelState, 'off');
+                                }
+                                /*
                                 $.each( selStates, function(idx, selState){
                                     $().selog('hilite', selState, 'off');
                                 });
+                                */
                             }
                         );
                     }
@@ -2958,17 +2972,34 @@ console.log('we considered this a tax success');
 
                             $(this).addClass('rdr_hover'); // safari/chrome kludge -- :hover isn't working here
                             var selStates = $(this).data('selStates');
+
+                            //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
+                            var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
+                            if (lastSelState){
+                                $().selog('hilite', lastSelState, 'on');
+                            }
+                        
+                            /*
                             $.each( selStates, function(idx, selState){
                                 $().selog('hilite', selState, 'on');
                             });
+                            */
                         },
                         function() {
 
                             $(this).removeClass('rdr_hover');  // safari/chrome kludge -- :hover isn't working here
                             var selStates = $(this).data('selStates');
+
+                            //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
+                            var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
+                            if (lastSelState){
+                                $().selog('hilite', lastSelState, 'off');
+                            }
+                            /*
                             $.each( selStates, function(idx, selState){
                                 $().selog('hilite', selState, 'off');
                             });
+                            */
                         }
                     );
                 });
@@ -3241,7 +3272,7 @@ console.log('we considered this a tax success');
                     '<div class="rdr_commentComplete"><div><strong>Leave a comment:</strong></div></div>'
                 );
                 var helpText = "because...";
-                $leaveComment = $( '<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><div class="rdr_charCount">'+RDR.group.comment_length+' characters let</div><button>Comment</button></div>' );
+                $leaveComment = $( '<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div><button>Comment</button></div>' );
                 $leaveComment.find('textarea').focus(function(){
                     if($('.leaveComment').val() == helpText ){
                         $('.leaveComment').val('');
