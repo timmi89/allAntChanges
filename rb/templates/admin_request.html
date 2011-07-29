@@ -16,7 +16,7 @@
 
   <div id="fb-logged-out" style="display:none;">
 	<div id="fb-login-button">
-		<a href="javascript:void(0);" onclick="RDRAuth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" /></a>
+		<a href="javascript:void(0);" onclick="doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" /></a>
 	</div>
   </div>
 
@@ -26,21 +26,23 @@
 {% block pageJS %}
 <script type="text/javascript">
 
-FB.getLoginStatus(function(response) {
-	console.dir(response);
+function checkFBStatus() {
+	FB.getLoginStatus(function(response) {
+		console.dir(response);
 
-		if ( response.session && response.status && response.status == "connected" ) {
-			//user is logged in
-			$('#fb-logged-in').show();
-			$('#fb-logged-in button').click( function() {
-				requestAccess( response );
-			});
-			$('#fb-logged-out').hide();
-		} else {
-			$('#fb-logged-in').hide();
-			$('#fb-logged-out').show();
-		}	
-});
+			if ( response.session && response.status && response.status == "connected" ) {
+				//user is logged in
+				$('#fb-logged-in').show();
+				$('#fb-logged-in button').click( function() {
+					requestAccess( response );
+				});
+				$('#fb-logged-out').hide();
+			} else {
+				$('#fb-logged-in').hide();
+				$('#fb-logged-out').show();
+			}	
+	});
+}
 
 function requestAccess(fb_response) {
 	if ( fb_response ) {
@@ -70,6 +72,13 @@ function requestAccess(fb_response) {
 	}
 }
 
+function doFBLogin() {
+	FB.login( function(response) {
+		checkFBStatus();
+	}, {perms:'email'});
+}
+
+checkFBStatus();
 
 </script>
 {% endblock %}
