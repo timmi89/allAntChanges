@@ -106,7 +106,8 @@ class InteractionAdmin(admin.ModelAdmin):
         'interaction_node',
         'created',
         'modified',
-        'anonymous'
+        'anonymous',
+        'approved',
     )
 
 class NodeValueAdmin(admin.ModelAdmin):

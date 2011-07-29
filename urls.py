@@ -12,8 +12,9 @@ urlpatterns = patterns('',
   
   # For Facebook
   url(r'^fb/$', 'rb.views.fb'),
-  url(r'^fblogin/$', 'rb.views.fblogin'),
+  url(r'^fblogin/$', 'rb.views.fblogin', kwargs={"admin_req": False}),
   url(r'^xdm_status/$', 'rb.views.xdm_status'),
+  url(r'^admin_request/(?P<short_name>\w+)/$', 'rb.views.admin_request'),
   
   # For short URL expander
   url(r'^s/(?P<short>[0-9a-zA-Z])+/$', 'rb.views.expander'),
@@ -35,6 +36,7 @@ urlpatterns = patterns('',
   url(r'^interactions/user/(?P<user_id>\d+)/bookmarks/$', 'rb.views.interactions', kwargs={"view":"bookmarks"}),
 
   url(r'^interactions/group/(?P<short_name>\w+)/$', 'rb.views.interactions'),
+  url(r'^interactions/group/(?P<short_name>\w+)/not_approved/$', 'rb.views.interactions', kwargs={"view":"not_approved"}),
   url(r'^interactions/group/(?P<short_name>\w+)/tags/$', 'rb.views.interactions', kwargs={"view":"tags"}),
   url(r'^interactions/group/(?P<short_name>\w+)/comments/$', 'rb.views.interactions', kwargs={"view":"comments"}),
   url(r'^interactions/group/(?P<short_name>\w+)/shares/$', 'rb.views.interactions', kwargs={"view":"shares"}),
@@ -47,6 +49,7 @@ urlpatterns = patterns('',
   url(r'^user/(?P<user_id>\d+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}),
 
   url(r'^group/(?P<short_name>\w+)/$', 'rb.views.main', kwargs={"view":"tags"}),
+  url(r'^group/(?P<short_name>\w+)/not_approved/$', 'rb.views.main', kwargs={"view":"not_approved"}),
   url(r'^group/(?P<short_name>\w+)/tags/$', 'rb.views.main', kwargs={"view":"tags"}),
   url(r'^group/(?P<short_name>\w+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
   url(r'^group/(?P<short_name>\w+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),

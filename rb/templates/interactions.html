@@ -17,6 +17,17 @@
           {{ interaction.human_kind }}
         {% endif %}
       </div>
+
+      <div class="block_content">
+        <a href="javascript:void(0);" onclick="RB.admin.blockContent({{interaction.id}});">
+          {% if interaction.approved %}
+          Block tag
+          {% else %}
+          Unblock tag
+          {% endif %}
+        </a>
+      </div>
+
       <!-- <div class="count"></div> -->
     </td>
     <td class="column2">
@@ -41,6 +52,7 @@
           {{ interaction.interaction_node.body }}
           <div class="quote close">"</div>
         </div>
+        <div class="block_content"><a href="javascript:void(0);" onclick="RB.admin.blockContent({{interaction.id}});">Block comment</a></div>
       </div>
     </div>
     {% endif %}

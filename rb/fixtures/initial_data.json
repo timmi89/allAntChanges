@@ -13,7 +13,8 @@
       "secret": "secret123%awesome%test!",
       "logo_url_sm": "",
       "twitter": "",
-      "word_blacklist": ""
+      "word_blacklist": "fuck",
+      "requires_approval": "False"
     }
   },
 
@@ -31,7 +32,8 @@
       "secret": "secret123%awesome%test!",
       "logo_url_sm": "",
       "twitter": "TheDogDaily",
-      "word_blacklist": ""
+      "word_blacklist": "fuck",
+      "requires_approval": "False"
     }
   },
   
@@ -49,7 +51,8 @@
       "secret": "secret123%awesome%test!",
       "logo_url_sm": "http://localhost:8080/static/demo/images/dc_logo_sm.png",
       "twitter": "dailycandy",
-      "word_blacklist": ""
+      "word_blacklist": "fuck",
+      "requires_approval": "False"
     }
   },
 
@@ -85,7 +88,7 @@
     "pk": 4,
     "fields": {
       "group": 1,
-      "interactionnode": 4 
+      "interactionnode": 6 
     }
   },
 
@@ -121,13 +124,13 @@
     "pk": 8,
     "fields": {
       "group": 2,
-      "interactionnode": 4 
+      "interactionnode": 5 
     }
   },
 
   {
     "model": "rb.Group_Blessed_Tags",
-    "pk": 5,
+    "pk": 9,
     "fields": {
       "group": 3,
       "interactionnode": 1 
@@ -136,7 +139,7 @@
 
   {
     "model": "rb.Group_Blessed_Tags",
-    "pk": 6,
+    "pk": 10,
     "fields": {
       "group": 3,
       "interactionnode": 2 
@@ -145,7 +148,7 @@
 
   {
     "model": "rb.Group_Blessed_Tags",
-    "pk": 7,
+    "pk": 11,
     "fields": {
       "group": 3,
       "interactionnode": 3 
@@ -154,7 +157,7 @@
 
   {
     "model": "rb.Group_Blessed_Tags",
-    "pk": 8,
+    "pk": 12,
     "fields": {
       "group": 3,
       "interactionnode": 4 
@@ -307,6 +310,20 @@
     "pk": 4,
     "fields": {
       "body": "Cupcakes!"
+    }
+  },
+  {
+    "model": "rb.InteractionNode",
+    "pk": 5,
+    "fields": {
+      "body": "Woof!"
+    }
+  },
+  {
+    "model": "rb.InteractionNode",
+    "pk": 6,
+    "fields": {
+      "body": "Lol nah!"
     }
   }
 ]

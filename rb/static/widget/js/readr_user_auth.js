@@ -7,41 +7,45 @@ for ( var i in qs ) {
 	qs_args[this_arg[0]] = this_arg[1];
 }
 
-$.receiveMessage(
-	function(e){
-	    switch( e.data ) {
-	    	case "reauthUser":
-	    		RDRAuth.reauthUser({write_mode:true});
-	    		break;
-	    	case "reauthUserFB":
-	    		RDRAuth.reauthUser({force_fb:true});
-	    		break;
-	    	case "fbdo":
-	    		RDRAuth.fbdo();
-	    		break;
-	    	case "returnUser":
-	    		RDRAuth.returnUser(true);
-	    		break;
-	    	case "killUser":
-	    		RDRAuth.killUser();
-	    		break;
-	    	case "educatedUser":
-	    		$.cookie('educatedUser', true);
-	    		break;
-	    }
-	},
-	qs_args.parentHost
-);
+if ( typeof $.receiveMessage == "function") {
+	$.receiveMessage(
+		function(e){
+		    switch( e.data ) {
+		    	case "reauthUser":
+		    		RDRAuth.reauthUser({write_mode:true});
+		    		break;
+		    	case "reauthUserFB":
+		    		RDRAuth.reauthUser({force_fb:true});
+		    		break;
+		    	case "fbdo":
+		    		RDRAuth.fbdo();
+		    		break;
+		    	case "returnUser":
+		    		RDRAuth.returnUser(true);
+		    		break;
+		    	case "killUser":
+		    		RDRAuth.killUser();
+		    		break;
+		    	case "educatedUser":
+		    		$.cookie('educatedUser', true);
+		    		break;
+		    }
+		},
+		qs_args.parentHost
+	);
+}
 var RDRAuth = RDRAuth ? RDRAuth : {};
 RDRAuth = {
 	rdr_user: {},
 	FBLoginResponse: function() {}, // define in the including HTML page
 	postMessage: function(params) {
-		$.postMessage(
-			params.message,
-			qs_args.parentUrl,
-			parent
-		);
+		if ( typeof $.postMessage == "function" ) {
+			$.postMessage(
+				params.message,
+				qs_args.parentUrl,
+				parent
+			);
+		}
 	},
 	notifyParent: function(response, status) {
 		response.status = status;
@@ -55,7 +59,7 @@ RDRAuth = {
             var fb_session = (fb_response.session) ? fb_response.session:fb_response
 			var sendData = {
 				fb: fb_session,
-				group_id: qs_args.group_id,
+				group_id: (qs_args.group_id) ? qs_args.group_id:1, // TODO aaaaaaaaaaaaaaagh remove GROUP ID and replace with NONCE
 				user_id: RDRAuth.rdr_user.user_id, // might be temp, might be the ID of a valid FB-created user
 				readr_token: RDRAuth.rdr_user.readr_token
 			};
@@ -92,6 +96,8 @@ RDRAuth = {
 	// simply tell the widget what we currently know about the user
 	// optionally create a temp user
 	createTempUser : function() {
+		// if not calling from the iframe, don't create a temp user right now.
+		if (parent.location == window.location) return;
 		if ( (!RDRAuth.rdr_user.user_id && !RDRAuth.rdr_user.readr_token) ||  // no user data
 			 ( RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token && RDRAuth.rdr_user.first_name) ) { // we have user data but it must be wrong
 			var sendData = {
@@ -167,6 +173,30 @@ RDRAuth = {
 		}
 
 	},
+	checkFBStatus : function(args) {
+		FB.getLoginStatus(function(response) {
+			if ( response.session && response.status && response.status == "connected" ) {
+				switch (args.requesting_action) {
+					case "admin_request":
+						// this call is from the website
+						$('#fb-logged-in').show();
+						$('#fb-logged-in button').click( function() {
+							if ( RB ) RB.admin.requestAccess( response, args.group_id );
+						});
+						$('#fb-logged-out').hide();
+						break;
+				}
+			} else {
+				switch (requesting_action) {
+					case "admin_request":
+						// this call is from the website
+						$('#fb-logged-in').hide();
+						$('#fb-logged-out').show();
+						break;
+				}
+			}
+		});
+	},
 	setUser : function(response) {
 		RDRAuth.rdr_user = {};
 		RDRAuth.rdr_user.first_name = response.data.first_name;
@@ -239,20 +269,25 @@ RDRAuth = {
 			if (callback) callback();
 		}
 	},
-	doFBLogin: function() {
+	doFBLogin: function(requesting_action) {
 		FB.login( function(response) {
-			RDRAuth.FBLoginResponse(response);
+			RDRAuth.FBLoginResponse(response, requesting_action);
 		}, {perms:'email'});
 	},		
 	doFBlogout: function() {
 		window.location.reload();
 	},
 	init : function() {
+		console.log('initting user 1');
 		RDRAuth.readUserCookie();
+		console.log('initting user 2');
 		RDRAuth.returnUser(true);
+		console.log('initting user 3');
 		FB.getLoginStatus(function(response) {
+			console.log('initting user AAA');
 			RDRAuth.getReadrToken(response);	
 		});
+		console.log('initting user 4');
 	}
 }
 RDRAuth.init();
