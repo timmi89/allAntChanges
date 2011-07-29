@@ -264,31 +264,32 @@ function readrBoard($R){
                 //RDR.rindow.update:
 
                 var summary = RDR.summaries[hash],
-                    $rindow_readmode = summary.$rindow_readmode;
+                    $rindow_readmode = summary.$rindow_readmode,
                     $rindow_writemode = summary.$rindow_writemode;
                 
-                if( diffNode.int_type ){
-                    //todo!
-                }
-                if($rindow_writemode){
-                    _addComIndicator($rindow_writemode);
-                }
-                if($rindow_readmode){
-                    _addComIndicator($rindow_readmode);
+                if( diffNode.int_type == "coms" ){
+                    log('diffNode');
+                    log(diffNode);
+
+                    if($rindow_writemode){
+                        _addComIndicator($rindow_writemode, diffNode);
+                    }
+                    if($rindow_readmode){
+                        _addComIndicator($rindow_readmode, diffNode);
+                    }
                 }
 
-                function _addComIndicator($rindow){
-                    var topComs = summary.top_interactions.coms;
-                    var tag_id, $tags, $tag;
+                function _addComIndicator($rindow, diffNode){
+                    var $tags, $tag;
                     
                     $tags = $rindow.find('.rdr_tags');
+                    log($tags);
                     $tags.find('li').removeClass('rdr_has_comment');
 
-                    for ( var i in topComs ) {
-                        tag_id = topComs[i].tag_id;
-                        $tag = $tags.find('.rdr_tag_'+tag_id);
-                        $tag.addClass('rdr_has_comment');
-                    }                    
+                    $tag = $tags.find('.rdr_tag_'+diffNode.id);
+                    log($tag)
+                    $tag.addClass('rdr_has_comment');
+                    
                 }
 
                 //now update the rindow's indicator copy
@@ -1290,7 +1291,7 @@ function readrBoard($R){
                 if( !$allNodes.length ) return false;
                 //else
 
-                hashList = [];
+                var hashList = [];
                 $allNodes.each(function(){
                     var body = $(this).data('body'),
                     kind = $(this).data('kind'),
@@ -2860,38 +2861,74 @@ function readrBoard($R){
                         // This is now scoped to node_type - so nodes, summary_nodes, and counts here only pertain to their category (tag or comment, etc.)
                         var summary_nodes = summary.top_interactions[interaction_node_type];
 
-                        //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
-                        $.each(nodes, function(id,diffNode){
-                            //coms or tags
-                            if( summary_nodes.hasOwnProperty(id) && typeof summary_nodes[id] !== 'undefined' ){
-                                var summary_node = summary_nodes[id];
-                                summary_node.count += diffNode.delta;
+                        //todo: i realized that coms are in an array and tags are in an object, so we have to split this way up here.  Change later.
+                        if ( interaction_node_type == "tags" ){
+                            //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
+                            $.each(nodes, function(id,diffNode){
+                                //coms or tags
+                                if( summary_nodes.hasOwnProperty(id) && typeof summary_nodes[id] !== 'undefined' ){
+                                    var summary_node = summary_nodes[id];
+                                    summary_node.count += diffNode.delta;
 
-                                //if this cleared out the last of this node, delete it. (i.e. if a first-ever tag was made, and then undone )
-                                if( summary_node.count <= 0 ){
-                                    delete summary_nodes[id]; //don't try to use summary_node here instead of summary_nodes[id].
+                                    //if this cleared out the last of this node, delete it. (i.e. if a first-ever tag was made, and then undone )
+                                    if( summary_node.count <= 0 ){
+                                        delete summary_nodes[id]; //don't try to use summary_node here instead of summary_nodes[id].
+                                    }
+
+                                }else{
+                                    //tag doens't exist yet:
+                                    //todo: implement a diffNode.make function instead of this.
+                                    summary_nodes[id] = {
+                                        body: diffNode.body,
+                                        count: diffNode.delta, //this should always be 1.
+                                        id: id 
+                                    };
+
                                 }
 
-                            }else{
-                                //tag doens't exist yet:
-                                //todo: implement a diffNode.make function instead of this.
-                                summary_nodes[id] = {
-                                    body: diffNode.body,
-                                    count: diffNode.delta, //this should always be 1.  Yes, this is ugly.  Should have a make tag function somewhere.
-                                    id: id 
-                                };
+                                //update the summary's counts object
+                                summary.counts[interaction_node_type] += diffNode.delta;
+                                summary.counts.interactions += diffNode.delta;
 
-                            }
-
-                            //update the summary's counts object
-                            summary.counts[interaction_node_type] += node.delta;
-                            summary.counts.interactions += node.delta;
-
-                            diffNode.int_type = interaction_node_type;
+                                diffNode.int_type = interaction_node_type;
+                                //now update rindow
+                                RDR.rindow.update(hash, diffNode);
+                            });
+                        }else if ( interaction_node_type == "coms" ){
                             
-                            //now update rindow
-                            //RDR.rindow.update(hash, diffNode);
-                        });
+                            //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
+                            $.each(nodes, function(arrIdx,diffNode){
+                                //coms or tags
+                                if( summary_nodes.hasOwnProperty(id) && typeof summary_nodes[id] !== 'undefined' ){
+                                    var summary_node = summary_nodes[id];
+                                    summary_node.count += diffNode.delta;
+
+                                    //if this cleared out the last of this node, delete it. (i.e. if a first-ever tag was made, and then undone )
+                                    if( summary_node.count <= 0 ){
+                                        delete summary_nodes[id]; //don't try to use summary_node here instead of summary_nodes[id].
+                                    }
+
+                                }else{
+                                    //com doens't exist yet:
+                                    //todo: implement a diffNode.make function instead of this.
+                                    summary_nodes[id] = {
+                                        body: diffNode.body,
+                                        count: diffNode.delta, //this should always be 1.  Yes, this is ugly.  Should have a make tag function somewhere.
+                                        id: id
+                                    };
+
+                                }
+
+                                //update the summary's counts object
+                                summary.counts[interaction_node_type] += diffNode.delta;
+                                summary.counts.interactions += diffNode.delta;
+
+                                diffNode.int_type = interaction_node_type;
+                                //now update rindow
+                                RDR.rindow.update(hash, diffNode);
+                            });
+                        }
+
                     });
 
                     if( hash == "pageSummary" ){
@@ -3431,7 +3468,7 @@ function readrBoard($R){
                     kind = summary.kind;
 
                     // draw the window over the actionbar
-                    coords = {
+                    var coords = {
                         top: $container.offset().top,
                         left: $container.offset().right
                     };
