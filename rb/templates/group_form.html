@@ -1,16 +1,18 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
 
-<html>
-<head>
-  <title>Group Settings</title>
-</head>
+{% block sidebarContent %}
+<div id="sidebar"></div>
+{% endblock sidebarContent %}
 
-<body>
+{% block mainContent %}
   <h1>Group Settings</h1>
   <form action="/settings/{{ short_name }}/" method="post">{% csrf_token %}
   {{ form.as_p }}
   <input type="submit" value="Submit" />
   </form>
-  
-</body>
-</html>
+{% endblock mainContent %}
+
+{% block pageJS %}
+<script type="text/javascript">
+</script>
+{% endblock %}

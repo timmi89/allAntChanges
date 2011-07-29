@@ -111,18 +111,13 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 
   <div id="fb-root"></div>
 
-  <!-- Facebook -->
-  <script type="text/javascript">
-    window.fbAsyncInit = function() {
-      FB.init({appId: '{{ fb_client_id }}', status: true, cookie: true,
-               xfbml: true});
-    };
-    (function() {
-      var e = document.createElement('script'); e.async = true;
-      e.src = document.location.protocol +
-        '//connect.facebook.net/en_US/all.js';
-      document.getElementById('fb-root').appendChild(e);
-    }());
+  <!-- Facebook: load synchronously -->
+  <script src="http://connect.facebook.net/en_US/all.js" type="text/javascript"></script>
+     <script type="text/javascript">
+    FB.init({ 
+      appId:'186217208100982', cookie:true, 
+      status:true, xfbml:true 
+    });
   </script>
   <!-- [porter] 320andup stuff -->
 <!-- mathiasbynens.be/notes/async-analytics-snippet Change UA-XXXXX-X to be your site's ID -->
