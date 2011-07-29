@@ -13,7 +13,7 @@
       "secret": "secret123%awesome%test!",
       "logo_url_sm": "",
       "twitter": "",
-      "word_blacklist": ""
+      "word_blacklist": "fuck"
     }
   },
 
@@ -31,7 +31,7 @@
       "secret": "secret123%awesome%test!",
       "logo_url_sm": "",
       "twitter": "TheDogDaily",
-      "word_blacklist": ""
+      "word_blacklist": "fuck"
     }
   },
   
@@ -49,7 +49,7 @@
       "secret": "secret123%awesome%test!",
       "logo_url_sm": "http://localhost:8080/static/demo/images/dc_logo_sm.png",
       "twitter": "dailycandy",
-      "word_blacklist": ""
+      "word_blacklist": "fuck"
     }
   },
 

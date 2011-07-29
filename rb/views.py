@@ -162,6 +162,13 @@ def settings(request, short_name=None):
         context_instance=RequestContext(request)
     )
 
+def admin_request(request, short_name=None):
+    return render_to_response(
+        "admin_request.html",
+        {"short_name": short_name},
+        context_instance=RequestContext(request)
+    )
+
 def expander(request, short):
     link_id = base62.to_decimal(short);
 

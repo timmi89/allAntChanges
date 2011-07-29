@@ -40,7 +40,7 @@ class Deauthorize(BaseHandler):
 
 class FBHandler(BaseHandler):
     @status_response
-    def read(self, request):
+    def read(self, request, admin_req):
         data = json.loads(request.GET['json'])
         fb_session = data['fb']
         group_id = data['group_id']
