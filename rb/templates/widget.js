@@ -827,7 +827,7 @@ function readrBoard($R){
 
                 if ( num_interactions ) {
                     if ( num_interactions < RDR.group.temp_interact ){
-                        RDR.session.showTempUserMsg( args );
+                        RDR.session.rindowUserMessage.show( args );
                     }
                     else RDR.session.showLoginPanel( args );
                 }
@@ -886,31 +886,46 @@ function readrBoard($R){
                     window.frames['rdr-xdm-hidden']
                 );
             },
-            showTempUserMsg: function(args) {
-                if ( args.rindow ) {
-                    var rindow = args.rindow,
-                        num_interactions_left = RDR.group.temp_interact - parseInt( args.num_interactions ),
-                        $tempMsgDiv = $('<div class="rdr_tempUserMsg"><span /><strong /></div>'),
-                        tempMsg = 'You can react or comment <strong>' + num_interactions_left + ' more times</strong> before you must ',
-                        $loginLink = $('<a href="javascript:void(0);">Connect with Facebook</a>.');
+            rindowUserMessage: {
+                show:  function(args) {
+                    if ( args.rindow ) {
+                        var rindow = args.rindow,
+                            num_interactions_left = RDR.group.temp_interact - parseInt( args.num_interactions ),
+                            $tempMsgDiv = $('<div class="rdr_tempUserMsg"><span /><strong /></div>'),
+                            tempMsg = 'You can react or comment <strong>' + num_interactions_left + ' more times</strong> before you must ',
+                            $loginLink = $('<a href="javascript:void(0);">Connect with Facebook</a>.');
 
-                    if ( rindow.find('div.rdr_tempUserMsg').length === 0 ){
-                        //[cleanlogz]('add temp suer msg');
-                        $loginLink.click( function() {
-                            RDR.session.showLoginPanel( args );
-                        });
-                        $tempMsgDiv.find('span').html( tempMsg );
-                        $tempMsgDiv.append( $loginLink );
-                        rindow.append( $tempMsgDiv );
-                        rindow.animate({height:(rindow.height()+103)+"px"});
+                        if ( rindow.find('div.rdr_tempUserMsg').length === 0 ){
+                            //[cleanlogz]('add temp suer msg');
+                            $loginLink.click( function() {
+                                RDR.session.showLoginPanel( args );
+                            });
+                            $tempMsgDiv.find('span').html( tempMsg );
+                            $tempMsgDiv.append( $loginLink );
+                            rindow.append( $tempMsgDiv );
+                            rindow.animate({height:(rindow.height()+103)+"px"});
+                        } else {
+                            //[cleanlogz]('just modify the temp user msg:' );
+                            //[cleanlogz](tempMsg);
+                            $tempMsgDiv = rindow.find('div.rdr_tempUserMsg');
+                            $tempMsgDiv.find('span').html( tempMsg );
+                            $tempMsgDiv.show(); //make sure it's visible.
+                        }
+                        
+                    }
+                },
+                hide:  function(args) {
+                    if ( args.rindow ) {
+                        var rindow = args.rindow,
+                            $tempMsgDiv = $('div.rdr_tempUserMsg');
+                            $tempMsgDiv.slideUp();
                     } else {
                         //[cleanlogz]('just modify the temp user msg:' );
                         //[cleanlogz](tempMsg);
                         rindow.find('div.rdr_tempUserMsg span').html( tempMsg );
                     }
-                    
                 }
-            },
+            },    
             educateUser: function() {
                 var $educateUser = $('<div id="rdr_ed_user" class="rdr"><div id="rdr_ed_user_1"><h1>Rate or discuss <span>anything</span> on this page!</h1></div><div id="rdr_ed_user_2">Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.</div><div id="rdr_ed_user_x">x</div>');
                 $('#rdr_sandbox').append( $educateUser );
@@ -1384,7 +1399,8 @@ function readrBoard($R){
                         _setupFuncs[kind](hash, summary);
                         
                         //note:all of them should have interactions, because these are fresh from the server.  But, check anyway.
-                        if(summary.counts.interactions > 0){
+                        //if(summary.counts.interactions > 0){ //we're only showing tags for now, so use that instead.
+                        if(summary.counts.tags > 0){
                             hashesToShow.push(hash);
                         }
                     });
@@ -1725,6 +1741,16 @@ function readrBoard($R){
                             args.response = response;
                             if ( response.status == "success" ) {
                                 //[cleanlogz](action_type);
+                                log('response in interaction create');
+                                log(response);
+                                var existing = args.response.data.existing;
+                                if(existing){
+                                    console.log('existing interaction');
+                                    args.response.message = "existing interaction";
+                                    RDR.actions.interactions[int_type].onFail(args);
+                                    return;
+                                }
+                                //else
                                 RDR.actions.interactions[int_type].onSuccess[action_type](args);
                             }else{
                                 RDR.actions.interactions[int_type].onFail(args);
@@ -2009,10 +2035,17 @@ function readrBoard($R){
                         tag_li.find('div.rdr_leftBox').html('');
 
 
-                        if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
+                        if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
                             //[cleanlogz]('uh oh better login, tempy 1');
                             RDR.session.showLoginPanel( args );
-                        } else {
+                        } if ( response.message == "existing interaction" ) {
+                            //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
+                            //showTempUserMsg should be adapted to be rindowUserMessage:{show:..., hide:...}
+                                //with a message param.
+                                //and a close 'x' button.
+                                alert("Thanks, you've already made this same reaction");
+                        }
+                        else {
                             // if it failed, see if we can fix it, and if so, try this function one more time
                             log('tag fail');
                             console.dir(args);
@@ -2707,7 +2740,8 @@ function readrBoard($R){
                         RDR.actions.indicators.update( hash );
                         RDR.rindow.update(hash);
 
-                        if(summary.counts.interactions > 0){
+                        //if(summary.counts.interactions > 0){ //we're only showing tags for now, so use that instead.
+                        if(summary.counts.tags > 0){
                            RDR.actions.indicators.show(hash); //temp hack, 'true' is for 'dont fade in';   
                         }else{
                             RDR.actions.indicators.hide(hash); //if deleted back to 0
