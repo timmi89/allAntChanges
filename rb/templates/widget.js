@@ -179,8 +179,7 @@ function readrBoard($R){
 
                 $new_rindow.settings = settings;
 
-                $dragHandle = $('<div style="width:100%;height:8px;position:absolute;bottom:0;right:0;z-index:1000;cursor:s-resize;"/>');
-
+                $dragHandle = $('<div class="rdr_rindow_dragHandle" style="width:100%;height:8px;position:absolute;bottom:0;right:0;z-index:1000;cursor:s-resize;"/>');
                 $dragHandle.bind('mousedown.rdr', function() {
 
                     var $this = $(this);
@@ -3270,7 +3269,7 @@ function readrBoard($R){
                     '<div class="rdr_commentComplete"><div><strong>Leave a comment:</strong></div></div>'
                 );
                 var helpText = "because...";
-                $leaveComment = $( '<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><div class="rdr_charCount">'+RDR.group.comment_length+' characters let</div><button>Comment</button></div>' );
+                $leaveComment = $( '<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div><button>Comment</button></div>' );
                 $leaveComment.find('textarea').focus(function(){
                     if($('.leaveComment').val() == helpText ){
                         $('.leaveComment').val('');

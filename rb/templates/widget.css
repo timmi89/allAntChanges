@@ -276,7 +276,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected .rdr_leftBox:hover,
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged .rdr_leftBox:hover    {background-position:-72px 0px;}
 #rdr_sandbox div.rdr div.rdr_new ul.rdr_tags li.rdr_selected     {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
-#rdr_sandbox div.rdr div.rdr_sntPnl .rdr_borderLine                  {    background:#DDDDDD; clear:both; height:100%; left:38px; position:absolute; width:1px; z-index:2;}
+#rdr_sandbox div.rdr div.rdr_sntPnl .rdr_borderLine                  {    background:#bbb; clear:both; height:100%; left:38px; position:absolute; width:1px; z-index:2;}
 
 #rdr_sandbox div.rdr ul.rdr_preselected                              {font-size:24px !important; font-family:ReadrLeague, Arial, sans-serif !important; margin:-1px 0 0 !important; min-height:120px !important;}
 #rdr_sandbox div.rdr ul.rdr_preselected .rdr_tagText                 {color:#666 !important;text-decoration:none !important; display:block !important; float:left !important; width: 120px !important; padding-left:5px !important; overflow-x: hidden !important; font-weight:normal !important; font-size:24px !important; font-family:ReadrLeague, Arial, sans-serif !important;}
