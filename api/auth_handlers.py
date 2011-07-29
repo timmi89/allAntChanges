@@ -68,6 +68,8 @@ class FBHandler(BaseHandler):
         )
 
         # If admin was requested, record the group number it was requested for
+        print group_id
+        print social_user
         if admin_req: social_user.group_admin = group_id
 
         # Check to see if user passed in was temporary, if yes, convert
