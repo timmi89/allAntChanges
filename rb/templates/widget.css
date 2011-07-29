@@ -251,7 +251,11 @@ $('div.rdr_tempUserMsg').animate({bottom:'-48px'});
 
 #rdr_sandbox div.rdr ul.rdr_tags li:hover,
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_hover, /* safari/chrome kludge -- :hover isn't working here */
-#rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected     {color:#008be4 !important; background:#e4f0f7 !important; display:block !important; border-color: #bbb transparent #ddd !important; cursor: pointer !important;}
+#rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected     {color:#008be4 !important; display:block !important; border-color: #bbb transparent #ddd !important; cursor: pointer !important;}
+
+#rdr_sandbox div.rdr ul.rdr_tags li.rdr_hover{background:#e4f0f7 !important;}
+#rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected{background:#D6e6F5 !important;}
+
 
 #rdr_sandbox div.rdr ul.rdr_tags li .rdr_leftBox     {width:38px; letter-spacing:1px; overflow:hidden; float:left; text-align:center; font-size:21px !important;  font-family:ReadrLeague, Arial, sans-serif !important; font-weight:normal !important; padding-top:2px; height:28px;}
 
