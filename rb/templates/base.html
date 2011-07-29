@@ -109,6 +109,10 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     {% endblock %}
   </footer>
 
+  <script src="{{ STATIC_URL }}site/js/readr_scripts.js"></script>
+  <script>
+  {% if group.id %} RB.group.id = {{ group.id }};{% endif %}
+  </script>
   <div id="fb-root"></div>
 
   <!-- Facebook: load synchronously -->
