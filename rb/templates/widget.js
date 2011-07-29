@@ -1398,39 +1398,95 @@ function readrBoard($R){
                     // to ensure that the ajax sendData isn't over 2000 chars.
 
                     var containers = {}, 
-                    chars = 0, //will increment from body length which are the critical ones we care about.
-                    charLimit = 1800; //safely under 2000 to allow for other stuff
+                    curLen = 0,
+                    proposedLen = 0,
+                    thisLen,
+                    tempEncode,
+                    bodyCharLimit = 300, //todo: make this nicer - see below
+                    charLimit = 1400; //keep it safely under 2000 to allow for header;
 
                     $.each( hashList, function(idx, hash){
                         //container is {body:,kind:,hash:}
-                        var container = RDR.containers[hash],
-                        bodyLen = container.body.length;
+                        var container = RDR.containers[hash];
 
+                        //quick fix - copy the container object but without the $this obj
+                        var sendContainer = {
+                            HTMLkind: container.HTMLkind,
+                            body: container.body,
+                            hash: container.hash,
+                            id: container.id,
+                            kind: container.kind
+                        };
+
+                        tempEncode = encodeURIComponent ( JSON.stringify(sendContainer) );
+                        //log(tempEncode);
+                        thisLen = tempEncode.length;
+                        
                         //[cleanlogz]('container');
                         //[cleanlogz](container);
 
                         //todo: solve for this.  We don't expect to see this though.
-                        if(bodyLen > charLimit){
-                            throw("errror: While impressive, your <" +container.kind+ "/> container is too long.  We can't accomodate this now, but we'll come up with a fix soon.  \nPleasant Emoticons, Readrboard.");
+                        if(thisLen > charLimit){
+
+
+                            //container chunk solution for later.  For now, just dissalow this container.
+                            /*
+                            var body = container.body,
+                                fragment,
+                                incr = 0,
+                                bodyParts = [],
+                            while( body.length ){
+                                incr += bodyCharLimit;
+                                fragment = body.slice(incr);
+                                if(fragment){
+                                    bodyParts.push[fragment];
+                                }
+                            } 
+                            
+                            $.each(function(idx, partialBody){
+
+                                sendContainer = {
+                                    HTMLkind: container.HTMLkind,
+                                    partialBody: partialBody,
+                                    partialBodyIdx: idx,
+                                    partialBodyIdx: idx,
+                                    hash: container.hash,
+                                    id: container.id,
+                                    kind: container.kind
+                                };
+                                containers[hash] = sendContainer;
+                                RDR.actions.containers._ajaxSend(sendContainer);
+                            });
+                            */
+
+                            //signals the call to not save this container
+                            console.log('This container is too large.  Returning false to fail gracefully.');
+                            sendContainer = false;
+                        }
+                        else{
+                            proposedLen += thisLen;
+
+                            if(proposedLen > charLimit){
+                                //send the existing set that is curLen, not proposedLen
+                                console.log('num chars of this container ' + curLen + ' goign to send..');
+                                RDR.actions.containers._ajaxSend(containers);
+                                resetChunks();
+                            }
+                            containers[hash] = sendContainer;
+                            curLen += thisLen;
+                            console.log('num chars of this container ' + curLen);
                         }
 
-                        chars += container.body.length;
-                        //[cleanlogz]('chars');
-                        //[cleanlogz](chars);
-
-                        if(chars > charLimit){
-                            RDR.actions.containers._ajaxSend(containers);
-                            resetChunks();
-                        }
-                        containers[hash] = container;
                     });
                     //do one last send.  Often this will be the only send.
+                    
                     RDR.actions.containers._ajaxSend(containers);
 
                     //helper functions
                     function resetChunks(){
                         containers = {};
-                        chars = 0;
+                        curLen = 0;
+                        proposedLen = 0;
                     }
                 },
                 _ajaxSend: function(containers){
@@ -1439,6 +1495,7 @@ function readrBoard($R){
                     //don't call this directly! Always use this.send so you don't choke on your ajax.
 
                     var sendData = containers;
+                    console.log('!!!!!sending total chars for this container ' +  encodeURIComponent ( JSON.stringify(sendData) ).length + ' sending...' );
                     $.ajax({
                         url: "/api/containers/create/",
                         type: "get",
