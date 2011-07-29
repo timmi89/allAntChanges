@@ -259,7 +259,6 @@ class ScrubList(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User)
-    group_admin = models.ForeignKey(Group, blank=True, null=True)
     educated = models.BooleanField()
     #following = models.ForeignKey(User)
     
@@ -268,6 +267,10 @@ class SocialUser(models.Model):
         ('M', 'Male'),
         ('F', 'Female'),
     )
+    
+    # For admin
+    admin_approved = models.BooleanField()
+    group_admin = models.ForeignKey(Group, blank=True, null=True)
 
     """Social Auth association model"""
     user = models.OneToOneField(User, related_name='social_user', unique=True)

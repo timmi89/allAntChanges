@@ -163,9 +163,13 @@ def settings(request, short_name=None):
     )
 
 def admin_request(request, short_name=None):
+    try:
+        group = Group.objects.get(short_name=short_name)
+    except Group.DoesNotExist:
+        return JSONException(u'Invalid group')
     return render_to_response(
         "admin_request.html",
-        {"short_name": short_name},
+        {"group": group},
         context_instance=RequestContext(request)
     )
 
