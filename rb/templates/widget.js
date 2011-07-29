@@ -1468,13 +1468,13 @@ function readrBoard($R){
 
                             if(proposedLen > charLimit){
                                 //send the existing set that is curLen, not proposedLen
-                                console.log('num chars of this container ' + curLen + ' goign to send..');
+                                //console.log('num chars of this container ' + curLen + ' goign to send..');
                                 RDR.actions.containers._ajaxSend(containers);
                                 resetChunks();
                             }
                             containers[hash] = sendContainer;
                             curLen += thisLen;
-                            console.log('num chars of this container ' + curLen);
+                            //console.log('num chars of this container ' + curLen);
                         }
 
                     });
@@ -1495,7 +1495,7 @@ function readrBoard($R){
                     //don't call this directly! Always use this.send so you don't choke on your ajax.
 
                     var sendData = containers;
-                    console.log('!!!!!sending total chars for this container ' +  encodeURIComponent ( JSON.stringify(sendData) ).length + ' sending...' );
+                    //console.log('!!!!!sending total chars for this container ' +  encodeURIComponent ( JSON.stringify(sendData) ).length + ' sending...' );
                     $.ajax({
                         url: "/api/containers/create/",
                         type: "get",
