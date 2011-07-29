@@ -1697,18 +1697,33 @@ function readrBoard($R){
                         });
                         
                         //setup hover event to hilite and unhlite
-                        $tagSpan.hover( 
+                        $tagSpan.hover(
                             function() {
                                 var selStates = $(this).data('selStates');
+
+                                //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
+                                var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
+                                if (lastSelState){
+                                    $().selog('hilite', lastSelState, 'on');
+                                }
+                                /*
                                 $.each( selStates, function(idx, selState){
                                     $().selog('hilite', selState, 'on');
                                 });
+                                */
                             },
                             function() {
                                 var selStates = $(this).data('selStates');
+                                //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
+                                var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
+                                if (lastSelState){
+                                    $().selog('hilite', lastSelState, 'off');
+                                }
+                                /*
                                 $.each( selStates, function(idx, selState){
                                     $().selog('hilite', selState, 'off');
                                 });
+                                */
                             }
                         );
                     }
@@ -2955,17 +2970,34 @@ function readrBoard($R){
 
                             $(this).addClass('rdr_hover'); // safari/chrome kludge -- :hover isn't working here
                             var selStates = $(this).data('selStates');
+
+                            //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
+                            var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
+                            if (lastSelState){
+                                $().selog('hilite', lastSelState, 'on');
+                            }
+                        
+                            /*
                             $.each( selStates, function(idx, selState){
                                 $().selog('hilite', selState, 'on');
                             });
+                            */
                         },
                         function() {
 
                             $(this).removeClass('rdr_hover');  // safari/chrome kludge -- :hover isn't working here
                             var selStates = $(this).data('selStates');
+
+                            //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
+                            var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
+                            if (lastSelState){
+                                $().selog('hilite', lastSelState, 'off');
+                            }
+                            /*
                             $.each( selStates, function(idx, selState){
                                 $().selog('hilite', selState, 'off');
                             });
+                            */
                         }
                     );
                 });
