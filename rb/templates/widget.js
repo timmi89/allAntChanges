@@ -890,26 +890,54 @@ function readrBoard($R){
                 show:  function(args) {
                     if ( args.rindow ) {
                         var rindow = args.rindow,
-                            num_interactions_left = RDR.group.temp_interact - parseInt( args.num_interactions ),
-                            $tempMsgDiv = $('<div class="rdr_tempUserMsg"><span /><strong /></div>'),
-                            tempMsg = 'You can react or comment <strong>' + num_interactions_left + ' more times</strong> before you must ',
-                            $loginLink = $('<a href="javascript:void(0);">Connect with Facebook</a>.');
+                            msgType = args.msgType || "tempUser", //defaults to tempUser
+                            userMsg = "",
+                            rindowHeightDefault; //todo: this is a patchy fix, make it better.
+                            
+                        var $tempMsgDiv = $('<div class="rdr_tempUserMsg" />'),
+                            $tempMsgDivWrapper = $('<div class="rdr_tempUserMsg_wrapper"><span /><strong /><div style="clear:both;"/></div>'),
+                            $closeButton = $('<div class="rdr_close">x</div>');
+                        
+                        $tempMsgDiv.append($tempMsgDivWrapper);
+                        switch (msgType) {
+
+                            case "tempUser":
+                                var num_interactions_left = RDR.group.temp_interact - parseInt( args.num_interactions ),
+                                    $loginLink = $('<a href="javascript:void(0);">Connect with Facebook</a>.');
+                                
+                                $tempMsgDivWrapper.append( $loginLink );
+                                $loginLink.click( function() {
+                                    RDR.session.showLoginPanel( args );
+                                });
+                                
+                                userMsg = 'You can react or comment <strong>' + num_interactions_left + ' more times</strong> before you must ';
+                                rindowHeightDefault = 103;
+                                break;
+    
+                            case "existingInteraction":
+                                userMsg = "You have already given that reaction for this.";
+                                rindowHeightDefault = null;
+                                break;
+                        
+                        }   
+                        
+                        $closeButton.click(function(){
+                            RDR.session.rindowUserMessage.hide( args );
+                        });
 
                         if ( rindow.find('div.rdr_tempUserMsg').length === 0 ){
-                            //[cleanlogz]('add temp suer msg');
-                            $loginLink.click( function() {
-                                RDR.session.showLoginPanel( args );
-                            });
-                            $tempMsgDiv.find('span').html( tempMsg );
-                            $tempMsgDiv.append( $loginLink );
+                            $tempMsgDiv.find('span').html( userMsg );
+                            $tempMsgDivWrapper.append( $closeButton );
                             rindow.append( $tempMsgDiv );
-                            rindow.animate({height:(rindow.height()+103)+"px"});
+
+                            //todo: fix this 103 height is guessing where the window is going to end up.  Move this to a proper callback.
+                            rindow.animate({ height: rindow.height()+rindowHeightDefault }, function(){
+                                $tempMsgDivWrapper.hide().fadeIn(200);
+                            });
                         } else {
-                            //[cleanlogz]('just modify the temp user msg:' );
-                            //[cleanlogz](tempMsg);
                             $tempMsgDiv = rindow.find('div.rdr_tempUserMsg');
-                            $tempMsgDiv.find('span').html( tempMsg );
-                            $tempMsgDiv.show(); //make sure it's visible.
+                            $tempMsgDiv.find('span').html( userMsg );
+                            $tempMsgDivWrapper.hide().fadeIn(200);
                         }
                         
                     }
@@ -918,11 +946,16 @@ function readrBoard($R){
                     if ( args.rindow ) {
                         var rindow = args.rindow,
                             $tempMsgDiv = $('div.rdr_tempUserMsg');
-                            $tempMsgDiv.slideUp();
-                    } else {
-                        //[cleanlogz]('just modify the temp user msg:' );
-                        //[cleanlogz](tempMsg);
-                        rindow.find('div.rdr_tempUserMsg span').html( tempMsg );
+
+                            //todo: make this a better solution.  The simultaneous animations might not be ideal.
+                            var msgHeight = $tempMsgDiv.height(),
+                                rindowHeight = rindow.height(),
+                                durr = 300;
+
+                            rindow.animate({ height:rindowHeight-msgHeight }, durr);
+                            $tempMsgDiv.animate({ height:0 },durr, function(){
+                                $tempMsgDiv.remove();
+                            });
                     }
                 }
             },    
@@ -2043,7 +2076,8 @@ function readrBoard($R){
                             //showTempUserMsg should be adapted to be rindowUserMessage:{show:..., hide:...}
                                 //with a message param.
                                 //and a close 'x' button.
-                                alert("Thanks, you've already made this same reaction");
+                                args.msgType = "existingInteraction";
+                                RDR.session.rindowUserMessage.show( args );
                         }
                         else {
                             // if it failed, see if we can fix it, and if so, try this function one more time

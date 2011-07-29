@@ -235,7 +235,12 @@ body{
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_tagFeedback         {background: none repeat scroll 0 0 #ddd; border: 1px solid #bbb; margin: 5px 10px 0; padding: 5px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_tagFeedback strong  {font-weight:bold; color:#008be4;}
 
-#rdr_sandbox div.rdr div.rdr_tempUserMsg                     {position:absolute; z-index:50; bottom:0px; height:27px; border-top:1px solid #aaa;background:#fff; padding:9px; -moz-box-shadow:0px -45px 48px -50px #53aed9 inset; -webkit-box-shadow:0px -45px 48px -50px #53aed9 inset; box-shadow:0px -45px 48px -50px #53aed9 inset;}
+#rdr_sandbox div.rdr div.rdr_tempUserMsg                     {position:absolute; z-index:50; bottom:0px; border-top:1px solid #aaa;background:#fff; -moz-box-shadow:0px -45px 48px -50px #53aed9 inset; -webkit-box-shadow:0px -45px 48px -50px #53aed9 inset; box-shadow:0px -45px 48px -50px #53aed9 inset; width:100%;}
+
+#rdr_sandbox div.rdr div.rdr_tempUserMsg .rdr_tempUserMsg_wrapper {
+    padding:9px; width:auto; position:relative;
+}
+
 /*
 $('div.rdr_tempUserMsg').animate({bottom:'-48px'});
 */
