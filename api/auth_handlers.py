@@ -40,7 +40,7 @@ class Deauthorize(BaseHandler):
 
 class FBHandler(BaseHandler):
     @status_response
-    def read(self, request, admin_req):
+    def read(self, request, admin_req=None):
         data = json.loads(request.GET['json'])
         fb_session = data['fb']
         group_id = data['group_id']
@@ -66,6 +66,9 @@ class FBHandler(BaseHandler):
             group_id,
             fb_session
         )
+
+        # If admin was requested, record the group number it was requested for
+        if admin_req: social_user.group_admin = group_id
 
         # Check to see if user passed in was temporary, if yes, convert
         # temporary user's interactions to social user interactions

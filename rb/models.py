@@ -269,7 +269,7 @@ class SocialUser(models.Model):
     )
     
     # For admin
-    admin_approved = models.BooleanField()
+    admin_approved = models.BooleanField(default=False)
     group_admin = models.ForeignKey(Group, blank=True, null=True)
 
     """Social Auth association model"""
