@@ -38,7 +38,7 @@ def fb(request):
       context_instance=RequestContext(request)
     )
 
-def fblogin(request, admin_req):
+def fblogin(request):
     return render_to_response(
       "fblogin.html",
       {'fb_client_id': FACEBOOK_APP_ID,
