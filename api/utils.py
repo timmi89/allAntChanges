@@ -113,14 +113,15 @@ def getPage(request, pageid=None):
     canonical = request.GET.get('canonical_url', None)
     fullurl = request.GET.get('url', None)
     title = request.GET.get('title', None)
-    group = request.GET.get('group_id', None)
+    group = request.GET.get('group_id', 1)
+
+    host = request.get_host()
+    site = Site.objects.get(domain=host, group=group)
 
     # Handle sites with hash but no bang
     if '#' in fullurl and '!' not in fullurl:
         fullurl = fullurl[:fullurl.index('#')]
 
-    host = request.get_host()
-    site = Site.objects.get(domain=host, group=group)
     if pageid:
         return Page.objects.get(id=pageid)
     elif canonical:
@@ -151,9 +152,9 @@ def createInteractionNode(node_id=None, body=None, group=None):
         elif body:
             # Check body for blacklisted word
             """ for bad, good in blacklist.iteritems(): body = body.replace(bad, good) """
-            blacklist = [word.strip() for word in group.word_blacklist.split(',')]
-            pf = ProfanitiesFilter(blacklist, replacements="*", complete=False)
-            body = pf.clean(body)
+            #blacklist = [word.strip() for word in group.word_blacklist.split(',')]
+            #pf = ProfanitiesFilter(blacklist, replacements="*", complete=False)
+            #body = pf.clean(body)
             # No id provided, using body to get_or_create
             inode = InteractionNode.objects.get_or_create(body=body)[0]
     except:
@@ -212,7 +213,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             kind=kind
         )
         print "Found existing Interaction with id %s" % existing_interaction.id
-        return dict(interaction=existing_interaction)
+        return dict(interaction=existing_interaction, existing=True)
     except Interaction.DoesNotExist:
         pass
 
@@ -237,5 +238,5 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
 
     new_interaction.save()
     
-    if tempuser: return dict(interaction=new_interaction, num_interactions=num_interactions+1)
-    return dict(interaction=new_interaction)
+    if tempuser: return dict(interaction=new_interaction, existing=False, num_interactions=num_interactions+1)
+    return dict(interaction=new_interaction, existing=False)

@@ -323,17 +323,18 @@ class SettingsHandler(AnonymousBaseHandler):
         host = request.get_host()
         path = request.path
         fp = request.get_full_path()
-        if group:
-            group_id = int(group)
-            try:
-                group_object = Group.objects.get(id=group_id)
-            except Group.DoesNotExist:
-                return HttpResponse("RB Group does not exist!")
-            sites = Site.objects.filter(group=group_object)
-            domains = sites.values_list('domain', flat=True)
-            if host in domains:
-                return group_object
-            else:
-                raise JSONException("Group (" + str(group) + ") settings request invalid for this domain (" + host + ")" + str(domains))
+        group_id = int(group) if group else 1
+
+        try:
+            group_object = Group.objects.get(id=group_id)
+        except Group.DoesNotExist:
+            return HttpResponse("RB Group does not exist!")
+        sites = Site.objects.filter(group=group_object)
+        domains = sites.values_list('domain', flat=True)
+        if host in domains:
+            return group_object
+        elif group_id == 1:
+            Site.objects.create(name=host,domain=host,group_id=1)
+            return group_object
         else:
-            return ("Group not specified")
+            raise JSONException("Group (" + str(group) + ") settings request invalid for this domain (" + host + ")" + str(domains))

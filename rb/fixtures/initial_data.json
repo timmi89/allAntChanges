@@ -3,17 +3,17 @@
     "model": "rb.Group",
     "pk": 1,
     "fields":{
-      "name": "Daily Candy",
-      "short_name": "test",
+      "name": "Default Group",
+      "short_name": "default",
       "share": 1,
       "comment": 1,
       "rate": 1,
       "bookmark": 1,
       "search": 1,
       "secret": "secret123%awesome%test!",
-      "logo_url_sm": "http://localhost:8080/static/demo/images/dc_logo_sm.png",
-      "twitter": "dailycandy",
-      "word_blacklist": "fuck, shit, poop"
+      "logo_url_sm": "",
+      "twitter": "",
+      "word_blacklist": ""
     }
   },
 
@@ -29,9 +29,27 @@
       "bookmark": 1,
       "search": 1,
       "secret": "secret123%awesome%test!",
-      "logo_url_sm": "http://localhost:8080/static/demo/images/dc_logo_sm.png",
+      "logo_url_sm": "",
       "twitter": "TheDogDaily",
-      "word_blacklist": "fuck, shit, poop"
+      "word_blacklist": ""
+    }
+  },
+  
+  {
+    "model": "rb.Group",
+    "pk": 3,
+    "fields":{
+      "name": "Daily Candy",
+      "short_name": "dc",
+      "share": 1,
+      "comment": 1,
+      "rate": 1,
+      "bookmark": 1,
+      "search": 1,
+      "secret": "secret123%awesome%test!",
+      "logo_url_sm": "http://localhost:8080/static/demo/images/dc_logo_sm.png",
+      "twitter": "dailycandy",
+      "word_blacklist": ""
     }
   },
 
@@ -103,6 +121,42 @@
     "pk": 8,
     "fields": {
       "group": 2,
+      "interactionnode": 4 
+    }
+  },
+
+  {
+    "model": "rb.Group_Blessed_Tags",
+    "pk": 5,
+    "fields": {
+      "group": 3,
+      "interactionnode": 1 
+    }
+  },
+
+  {
+    "model": "rb.Group_Blessed_Tags",
+    "pk": 6,
+    "fields": {
+      "group": 3,
+      "interactionnode": 2 
+    }
+  },
+
+  {
+    "model": "rb.Group_Blessed_Tags",
+    "pk": 7,
+    "fields": {
+      "group": 3,
+      "interactionnode": 3 
+    }
+  },
+
+  {
+    "model": "rb.Group_Blessed_Tags",
+    "pk": 8,
+    "fields": {
+      "group": 3,
       "interactionnode": 4 
     }
   },
@@ -193,7 +247,7 @@
     "fields": {
       "name": "localhost",
       "domain": "localhost:8080",
-      "group": 1
+      "group": 2
     }
   },
 
@@ -203,7 +257,7 @@
     "fields": {
       "name": "aws webserver",
       "domain": "dev.readrboard.com",
-      "group": 1
+      "group": 2
     }
   },
 
@@ -213,7 +267,7 @@
     "fields": {
       "name": "The Dog Daily",
       "domain": "dev.readrboard.com",
-      "group": 2
+      "group": 3
     }
   },
 
@@ -223,7 +277,7 @@
     "fields": {
       "name": "The Dog Daily",
       "domain": "localhost:8080",
-      "group": 2
+      "group": 3
     }
   },
 

@@ -157,7 +157,7 @@ def settings(request, short_name=None):
     else:
         form = GroupForm(instance=group)
     return render_to_response(
-        "testform.html", 
+        "group_form.html", 
         {"form": form, "short_name": short_name},
         context_instance=RequestContext(request)
     )
