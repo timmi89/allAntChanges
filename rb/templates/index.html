@@ -20,7 +20,11 @@ $.ajax({
       {% endif %}
     {% else %}
       {% if short_name %}
-      url: "/interactions/group/{{ short_name }}/",
+        {% if kwargs.view %}
+          url: "/interactions/group/{{ short_name }}/{{ kwargs.view }}",
+        {% else %}
+          url: "/interactions/group/{{ short_name }}/",
+        {% endif %}
       {% else %}
       url: "/cards/",
       {% endif %}

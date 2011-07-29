@@ -51,7 +51,7 @@ def xdm_status(request):
       "xdm_status.html",
       {'fb_client_id': FACEBOOK_APP_ID},
       context_instance=RequestContext(request)
-    )
+    )   
 
 def profile(request, user_id, **kwargs):
     cookies = request.COOKIES
@@ -103,19 +103,21 @@ def main(request, user_id=None, short_name=None, **kwargs):
 
 def interactions(request, user_id=None, short_name=None, **kwargs):
     interactions = Interaction.objects.all()
+
     if user_id:
         interactions = interactions.filter(user=user_id)
         
     if short_name:
         interactions = interactions.filter(page__site__group__short_name=short_name)
-    
+
     if kwargs and 'view' in kwargs:
         view = kwargs['view']
         if view == 'tags': interactions=interactions.filter(kind="tag")
         if view == 'comments': interactions=interactions.filter(kind="com")
         if view == 'shares': interactions=interactions.filter(kind="shr")
         if view == 'bookmarks': interactions=interactions.filter(kind="bkm")
-    
+        if view == 'not_approved': interactions=interactions.filter(approved=False)
+        else: interactions=interactions.filter(approved=True)
     context = {'interactions': interactions}
         
     return render_to_response("interactions.html", context, context_instance=RequestContext(request))

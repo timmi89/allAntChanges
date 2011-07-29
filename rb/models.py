@@ -83,6 +83,7 @@ class Group(models.Model):
     name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=25, unique=True)
     language = models.CharField(max_length=25, default="en")
+    requires_approval = models.BooleanField(default=False)
     blessed_tags = models.ManyToManyField(InteractionNode)
 
     # black/whitelist fields
@@ -203,6 +204,7 @@ class Interaction(DateAwareModel, UserAwareModel):
     container = models.ForeignKey(Container, blank=True, null=True)
     content = models.ForeignKey(Content)
     interaction_node = models.ForeignKey(InteractionNode)
+    approved = models.BooleanField(default=True)
     anonymous = models.BooleanField(default=False)
     parent= models.ForeignKey('self', blank=True, null=True)
     kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)
@@ -284,6 +286,9 @@ class SocialUser(models.Model):
     hometown = models.CharField(max_length=255, blank=True, null=True)
     bio = models.TextField(max_length=255, blank=True, null=True)
     img_url = models.URLField(blank=True)
+    
+    def is_admin(self):
+        return admin_approved
 
     def __unicode__(self):
         return self.user.username
