@@ -11,7 +11,7 @@ RB = {
 							//user is logged in
 							$('#fb-logged-in').show();
 							$('#fb-logged-in button').click( function() {
-								RB.admin.requestAccess( response, RB.group.id );
+								if ( RB) RB.admin.requestAccess( response, RB.group.id );
 							});
 							$('#fb-logged-out').hide();
 							break;
@@ -59,6 +59,30 @@ RB = {
 					}
 				});
 			}
+		},
+		blockContent : function(int_id) {
+			var sendData = {
+                "int_id" : int_id,
+                "user_id" : RDRAuth.rdr_user.user_id,
+                "readr_token" : RDRAuth.rdr_user.readr_token
+            };
+
+            // send the data!
+            $.ajax({
+                url: "/api/moderate/toggle/",
+                type: "get",
+                contentType: "application/json",
+                dataType: "jsonp",
+                data: { json: JSON.stringify(sendData) },
+                success: function(response) {
+                	console.log('successfully toggled!');
+                    console.dir(response);
+                },
+                error: function(response) {
+                	console.log('TOGGLE FAIL');
+                    console.dir(response);
+                }
+            });
 		}
 	}
 };
