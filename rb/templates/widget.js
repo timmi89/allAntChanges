@@ -169,9 +169,8 @@ function readrBoard($R){
 
                 }
 
-
-				// TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-				var coords = RDR.util.stayInWindow({coords:settings.coords, height:300, ignoreWindowEdges:settings.ignoreWindowEdges});
+                // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
+                var coords = RDR.util.stayInWindow({coords:settings.coords, height:300, ignoreWindowEdges:settings.ignoreWindowEdges});
 
                 $new_rindow.css('left', coords.left + 'px');
                 $new_rindow.css('top', coords.top + 'px');    
@@ -706,8 +705,9 @@ function readrBoard($R){
             },
 			iframeHost : "{{ BASE_URL }}", // TODO put this in a template var
             getUser: function(args, callback) {
+                console.log('getUser:');
                 $.postMessage(
-                    "reauthUserFB",
+                    "returnUser",
                     RDR.session.iframeHost + "/xdm_status/",
                     window.frames['rdr-xdm-hidden']
                 );
@@ -739,12 +739,15 @@ function readrBoard($R){
                     case "Social Auth does not exist for user": // call fb login
                     case "Data to create token is missing": // call fb login
                         // the token is out of sync.  could be a mistake or a hack.
-                        RDR.session.receiveMessage( args, callback );
+                        // RDR.session.receiveMessage( args, callback );
+                        RDR.session.showLoginPanel( args, callback );
                         $.postMessage(
-                            "reauthUser",
+                            // "reauthUser",
+                            "killUser",
                             RDR.session.iframeHost + "/xdm_status/",
                             window.frames['rdr-xdm-hidden']
                         );
+
                         // // init a new receiveMessage handler to fire this callback if it's successful
                         // //[cleanlogz]('starting receivemessage')
                     break;
@@ -777,14 +780,6 @@ function readrBoard($R){
                         if ( message.status ) {
                             if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
 
-
-                                // $.postMessage(
-                                //     "reauthUserFB",
-                                //     RDR.session.iframeHost + "/xdm_status/",
-                                //     window.frames['rdr-xdm-hidden']
-                                // );
-
-
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
 
@@ -801,6 +796,8 @@ function readrBoard($R){
                                     callback();
                                     callback = null;
                                 }
+                            } else if ( message.status == "fb user needs to login" ) {
+                                RDR.session.showLoginPanel( args );
                             } else if ( message.status == "already had user" ) {
                                 // todo: when is this used?
                                 $('#rdr-loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
@@ -841,10 +838,15 @@ function readrBoard($R){
                     //todo: weird, why did commenting this line out not do anything?...look into it
     				//porter says: the action bar used to just animate larger and get populated as a window
                     //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
-                    var caller = args.rindow;
-                    var coords = caller.offset();
-                    coords.left = coords.left ? (coords.left-34) : 100;
-                    coords.top = coords.top ? (coords.top+50) : 100;
+                    
+                    // var caller = args.rindow;
+                    // var coords = caller.offset();
+                    // coords.left = coords.left ? (coords.left-34) : 100;
+                    // coords.top = coords.top ? (coords.top+50) : 100;
+
+                    var coords = [];
+                    coords.left = ( $(window).width() / 2 ) - 200;
+                    coords.top =  ( $(window).height() / 2 + $(window).scrollTop() - 100 );
 
                     // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
                     // var coords = RDR.util.stayInWindow({coords:coords, width:360, height:185 });
@@ -858,8 +860,8 @@ function readrBoard($R){
                     });
 
                     // store the arguments and callback function that were in progress when this Login panel was called
-                    rindow.data( 'args', args );
-                    rindow.data( 'callback', callback );
+                    if ( args ) rindow.data( 'args', args );
+                    if ( callback ) rindow.data( 'callback', callback );
 
                     // create the iframe containing the login panel
     				var $loginHtml = $('<div class="rdr_login" />'),
@@ -1774,8 +1776,8 @@ function readrBoard($R){
                             args.response = response;
                             if ( response.status == "success" ) {
                                 //[cleanlogz](action_type);
-                                log('response in interaction create');
-                                log(response);
+                                console.log('response in interaction create');
+                                console.log(response);
                                 var existing = args.response.data.existing;
                                 if(existing){
                                     console.log('existing interaction');
@@ -1786,6 +1788,7 @@ function readrBoard($R){
                                 //else
                                 RDR.actions.interactions[int_type].onSuccess[action_type](args);
                             }else{
+                                console.log('onfail...');
                                 RDR.actions.interactions[int_type].onFail(args);
                             }
                         }
@@ -1925,7 +1928,7 @@ function readrBoard($R){
                     onSuccess: {
                         //RDR.actions.interactions.tag.onSuccess:
                         create: function(args){
-
+console.log('we considered this a tax success');
                             //RDR.actions.interactions.tag.onSuccess.create:
                             //todo: clean up these args.
                             
@@ -3954,8 +3957,6 @@ function readrBoard($R){
                 
             },
             shareStart: function(args) {
-                //[cleanlogz]('--- shareStarting ---');
-                //[cleanlogz]console.dir(args);
                 var rindow = args.rindow, 
                     tag = args.tag,
                     int_id = args.int_id,

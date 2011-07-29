@@ -3,32 +3,9 @@ var RB = RB ? RB : {};
 RB = {
 	group : {},
 	user_auth : {
-		checkFBStatus : function(requesting_action) {
-			FB.getLoginStatus(function(response) {
-				if ( response.session && response.status && response.status == "connected" ) {
-					switch (requesting_action) {
-						case "admin_request":
-							//user is logged in
-							$('#fb-logged-in').show();
-							$('#fb-logged-in button').click( function() {
-								if ( RB) RB.admin.requestAccess( response, RB.group.id );
-							});
-							$('#fb-logged-out').hide();
-							break;
-					}
-				} else {
-					switch (requesting_action) {
-						case "admin_request":
-							$('#fb-logged-in').hide();
-							$('#fb-logged-out').show();
-							break;
-					}
-				}
-			});
-		},
 		doFBLogin : function(requesting_action) {
 			FB.login( function(response) {
-				RB.user_auth.checkFBStatus(requesting_action);
+				RDRAuth.checkFBStatus(requesting_action);
 			}, {perms:'email'});
 		}
 	},

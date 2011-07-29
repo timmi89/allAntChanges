@@ -10,15 +10,10 @@ for ( var i in qs ) {
 if ( typeof $.receiveMessage == "function") {
 	$.receiveMessage(
 		function(e){
+		    console.log( "e.data: "+e.data );
 		    switch( e.data ) {
 		    	case "reauthUser":
-		    		RDRAuth.reauthUser({write_mode:true});
-		    		break;
-		    	case "reauthUserFB":
-		    		RDRAuth.reauthUser({force_fb:true});
-		    		break;
-		    	case "fbdo":
-		    		RDRAuth.fbdo();
+		    		RDRAuth.reauthUser();
 		    		break;
 		    	case "returnUser":
 		    		RDRAuth.returnUser(true);
@@ -79,16 +74,11 @@ RDRAuth = {
 						RDRAuth.setUser(response);
 						RDRAuth.returnUser(true);
 					}
-					// RDRAuth.notifyParent(response, "fb_logged_in");
 				},
 				error: function(response) {
 					RDRAuth.createTempUser();
-					// RDRAuth.reauthUser({force_fb:true});
 				}
 			});
-			// } else {
-			// 	RDRAuth.notifyParent({message:false}, "already had user");
-			// }
 		} else {
 			RDRAuth.doFBLogin();
 		}
@@ -142,36 +132,34 @@ RDRAuth = {
 	},
 	reauthUser : function(args) {
 		RDRAuth.readUserCookie();
-		if ( args.write_mode ) {
-
-				if ( !FB.getSession() || args.force_fb ) {
-					
-					FB.getLoginStatus(function(response) {
-				  		if (response && response.session) {
-				  			// we have FB info for them -- so they are logged in and approved to user ReadrBoard
-				  			
-							// RDRAuth.rdr_user.first_name = null;
-							//user is logged in to Facebook
-
+		if ( !FB.getSession() || ( args && args.force_fb ) ) {
+			console.log('reauthUser 1');
+			FB.getLoginStatus(function(response) {
+				console.log('reauthUser 2');
+		  		if (response && response.session) {
+		  			// we have FB info for them -- so they are logged in and approved to user ReadrBoard
+		  			console.log('reauthUser 3');
+					// RDRAuth.rdr_user.first_name = null;
+					//user is logged in to Facebook
 
 
 
-							// TODO:  suspect we only need to killUser if there is a FB session change.
-							RDRAuth.killUser( function(response) {
-								RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
-							});
-				  		} else {
-				  			RDRAuth.createTempUser();
-				  		}
-				  	});
-				} else {
-					RDRAuth.getReadrToken( FB.getSession() );
-					// RDRAuth.returnUser(true);
-				}
+
+					// TODO:  suspect we only need to killUser if there is a FB session change.
+					RDRAuth.killUser( function(response) {
+						console.log('reauthUser 4');
+						RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
+					});
+		  		} else {
+		  			console.log('reauthUser 5');
+		  			// RDRAuth.createTempUser();
+		  			RDRAuth.notifyParent("", "fb user needs to login");
+		  		}
+		  	});
 		} else {
-			RDRAuth.returnUser(false);
+			RDRAuth.getReadrToken( FB.getSession() );
+			// RDRAuth.returnUser(true);
 		}
-
 	},
 	checkFBStatus : function(args) {
 		FB.getLoginStatus(function(response) {
@@ -278,16 +266,14 @@ RDRAuth = {
 		window.location.reload();
 	},
 	init : function() {
-		console.log('initting user 1');
 		RDRAuth.readUserCookie();
-		console.log('initting user 2');
 		RDRAuth.returnUser(true);
-		console.log('initting user 3');
-		FB.getLoginStatus(function(response) {
-			console.log('initting user AAA');
-			RDRAuth.getReadrToken(response);	
-		});
-		console.log('initting user 4');
+
+		// now that SERVER is checking, we may not need this code:
+		// FB.getLoginStatus(function(response) {
+		// FB.getSession(function(response) {
+		// 	RDRAuth.getReadrToken(response);	
+		// });
 	}
 }
 RDRAuth.init();
@@ -295,20 +281,20 @@ RDRAuth.init();
 FB.Event.subscribe('auth.sessionChange', function(response) {
   // do something with response.session
   console.log('xdm: fb session change');
-  RDRAuth.reauthUser({force_fb:true});
+  RDRAuth.reauthUser();
 });
 FB.Event.subscribe('auth.statusChange', function(response) {
   // do something with response.session
   console.log('xdm: fb status change');
-  RDRAuth.reauthUser({force_fb:true});
+  RDRAuth.reauthUser();
 });
 FB.Event.subscribe('auth.login', function(response) {
   // do something with response.session
   console.log('xdm: fb login');
-  RDRAuth.reauthUser({force_fb:true});
+  RDRAuth.reauthUser();
 });
 FB.Event.subscribe('auth.logout', function(response) {
   // do something with response.session
   console.log('xdm: fb logout');
-  RDRAuth.reauthUser({force_fb:true});
+  RDRAuth.reauthUser();
 });
