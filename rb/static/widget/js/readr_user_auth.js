@@ -16,7 +16,7 @@ if ( typeof $.receiveMessage == "function") {
 		    		RDRAuth.reauthUser();
 		    		break;
 		    	case "returnUser":
-		    		RDRAuth.returnUser(true);
+		    		RDRAuth.returnUser();
 		    		break;
 		    	case "killUser":
 		    		RDRAuth.killUser();
@@ -72,7 +72,7 @@ RDRAuth = {
 						RDRAuth.createTempUser();
 					} else {
 						RDRAuth.setUser(response);
-						RDRAuth.returnUser(true);
+						RDRAuth.returnUser();
 					}
 				},
 				error: function(response) {
@@ -158,7 +158,6 @@ RDRAuth = {
 		  	});
 		} else {
 			RDRAuth.getReadrToken( FB.getSession() );
-			// RDRAuth.returnUser(true);
 		}
 	},
 	checkFBStatus : function(args) {
@@ -205,7 +204,7 @@ RDRAuth = {
 		RDRAuth.rdr_user.user_id = $.cookie('user_id');
 		RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
 	},
-	returnUser : function(send_token) {
+	returnUser : function() {
 		var sendData = {
 			// arguments are nested under data for consistency with passing values up to the parent
 			data : {
@@ -216,7 +215,6 @@ RDRAuth = {
 				readr_token : RDRAuth.rdr_user.readr_token
 			}
 		};
-		// if (!send_token) sendData.data.readr_token = null;
 		RDRAuth.notifyParent(sendData, "returning_user");
 	},
 	killUser : function(callback) {
@@ -267,7 +265,7 @@ RDRAuth = {
 	},
 	init : function() {
 		RDRAuth.readUserCookie();
-		RDRAuth.returnUser(true);
+		RDRAuth.returnUser();
 
 		// now that SERVER is checking, we may not need this code:
 		// FB.getLoginStatus(function(response) {
