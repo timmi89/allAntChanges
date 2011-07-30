@@ -3058,10 +3058,8 @@ console.log('we considered this a tax success');
                             $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
                             if ( kind == "img" ) {
                                 var hash = $this.data('hash');
-                                log('img yo');
                                 RDR.actions.viewCommentContent( {tag:$this.data('tag'), hash:hash, rindow:rindow, kind:kind, node:RDR.summaries[hash] });
                             } else {
-                                log('TETX BITCHES');
                                 RDR.actions.viewReactionContent( $this.data('tag'), $this.data('hash'), rindow, kind );
                             }
                         }
@@ -3154,7 +3152,8 @@ console.log('we considered this a tax success');
                 });
                 function SortByTagCount(a,b) { return b.counts.tags - a.counts.tags; }
                 content.sort(SortByTagCount);
-
+console.log('content:');
+console.dir(content);
                 //todo: consolodate truncate functions
                 var maxHeaderLen = 20;
                 var tagBody = tag.body.length > maxHeaderLen ? tag.body.slice(0, maxHeaderLen)+"..." : tag.body;
@@ -3186,7 +3185,7 @@ console.log('we considered this a tax success');
                         var $contentSet = $('<div />').addClass('rdr_contentSet').data({node:node, content_node_key:content_node_key, hash:hash, location:node.location, tag:tag, content:node.body}),
                             $header = $('<div class="rdr_contentHeader rdr_leftShadow" />'),
                             $content = $('<div class="rdr_content rdr_leftShadow"><div class="rdr_otherTags"></div></div>');
-                        $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+node.counts.tags+')</span> '+tag.body+'</a>' );
+                        $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+RDR.util.prettyNumber(node.top_interactions.tags[tag.id].count)+')</span> '+tag.body+'</a>' );
 
                         var $tagButton = $header.find('a.rdr_tag');
                         $tagButton.data( 'tag', tag );
@@ -3258,7 +3257,7 @@ console.log('we considered this a tax success');
                                         //log(RDR.content_node[content_node_key]);
                                         // ({  })
                                     });
-                                    var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>');
+                                    var $tagCountButton = $('<span class="rdr_tag_count">('+RDR.util.prettyNumber(thisTag.count)+')</span>');
                                     $tagCountButton.click( function() {
                                         var $interactionButton = $(this).closest('.rdr_tag');
                                         var newArgs = { tag:$interactionButton, rindow:rindow, content:node.body, hash:hash, uiMode:'read', content_node:node, thumbsUp:true};
