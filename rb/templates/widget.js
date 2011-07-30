@@ -259,14 +259,41 @@ function readrBoard($R){
                     $().selog('hilite', selState, 'off');
                 });
             },
-            update: function(hash){
+            update: function(hash, diffNode){
                 //RDR.rindow.update:
+
                 var summary = RDR.summaries[hash],
-                    $rindow_readmode = summary.$rindow_readmode;
+                    $rindow_readmode = summary.$rindow_readmode,
+                    $rindow_writemode = summary.$rindow_writemode;
+                
+                if( diffNode.int_type == "coms" ){
+                    log('diffNode');
+                    log(diffNode);
 
-                    if(!$rindow_readmode) return;
-                    //else
+                    if($rindow_writemode){
+                        _addComIndicator($rindow_writemode, diffNode);
+                    }
+                    if($rindow_readmode){
+                        _addComIndicator($rindow_readmode, diffNode);
+                    }
+                }
 
+                function _addComIndicator($rindow, diffNode){
+                    var $tags, $tag;
+                    
+                    $tags = $rindow.find('.rdr_tags');
+                    log($tags);
+                    $tags.find('li').removeClass('rdr_has_comment');
+
+                    $tag = $tags.find('.rdr_tag_'+diffNode.id);
+                    log($tag)
+                    $tag.addClass('rdr_has_comment');
+                    
+                }
+
+                //now update the rindow's indicator copy
+                if( $rindow_readmode){
+                
                     var $indicator = summary.$indicator,
                     $indicator_stats = $rindow_readmode.find('.rdr_indicator_stats'),
                 
@@ -275,6 +302,15 @@ function readrBoard($R){
                         $indicator_stats.html( $indicatorBody.html() );
                         $indicator_stats.fadeIn(300);
                     });
+                    
+                    /*
+                    //todo: add this
+                    var topComs = summary.top_interactions.coms;
+                    for ( var i in topComs ) {
+                        if ( topComs[i].tag_id == tagID ) $li.addClass('rdr_has_comment');
+                    }
+                    */
+                }
             }
 		},
 		actionbar: {
@@ -1257,7 +1293,7 @@ function readrBoard($R){
                 if( !$allNodes.length ) return false;
                 //else
 
-                hashList = [];
+                var hashList = [];
                 $allNodes.each(function(){
                     var body = $(this).data('body'),
                     kind = $(this).data('kind'),
@@ -1326,7 +1362,7 @@ function readrBoard($R){
                             
                             //send the containers to the server.
                             //On sucess, these unknown hashes will get passed to RDR.actions.containers.setup with dummy summaries
-                            RDR.actions.containers.send(unknownList); 
+                            RDR.actions.containers.send(unknownList);
                         }
                         
                         //setup the known summaries
@@ -1425,6 +1461,15 @@ function readrBoard($R){
                         //save the hash as a summary attr for convenience.
                         summary.hash = hash;
                         
+                        //temp type conversion for top_interactions.coms;
+                        var newComs = {},
+                            coms = summary.top_interactions.coms;
+                        $.each(coms, function(arrIdx, com){
+                            //sortby tag_id
+                            newComs[com.tag_id] = com;
+                        });
+                        summary.top_interactions.coms = newComs;
+
                         RDR.actions.summaries.save(summary);
                         RDR.actions.indicators.init( hash );
 
@@ -1881,8 +1926,81 @@ function readrBoard($R){
                     customSendData: function(){
                         return {};
                     },
-                    onSuccess: function(){
-                        
+                    onSuccess: {
+                        //RDR.actions.interactions.comment.onSuccess:
+                        create: function(args){
+                            //RDR.actions.interactions.comment.onSuccess.create:
+                            log('args');
+                            log(args);
+                            var rindow = args.rindow,
+                                hash = args.hash;
+
+                            rindow.find('div.rdr_commentBox').find('div.rdr_commentComplete').html('Thank you for your comment. You and others can now read this by clicking on the (pin) icon next to the content you commented upon.').show();
+                            rindow.find('div.rdr_commentBox').find('div.rdr_tagFeedback, div.rdr_comment').hide();
+
+                            //todo: consider adding these fields to the summary
+                            // update the comments for this hash
+                            // var newComment = {
+                            //     body: comment,
+                            //     content_id: ,
+                            //     id: response.data.interaction.id, // interaction id
+                            //     social_user: ,
+                            //     tag_id: ,
+                            //     user: 
+                            // }
+                            //update indicators
+
+                            //todo: unify this with the rest of the interactions
+                            var intHelper = {
+                                id: args.int_id,
+                                body: args.comment,
+                                delta: 1
+                            };
+                            var diff = {   
+                                coms: {}
+                            };
+                            diff.coms[ intHelper.id ] = intHelper;
+                            RDR.actions.summaries.update(hash, diff);
+                        },
+                        remove: function(args){
+                            //RDR.actions.interactions.tag.onSuccess.remove:
+
+/*
+                            var sendData = args.sendData;
+                            var interaction_node = args.response.data.deleted_interaction.interaction_node;
+                            var rindow = args.rindow,
+                                $tagLi = args.tag,
+                                tag = args.tag,
+                                int_id = args.int_id;
+
+                            RDR.actions.panel.collapse("whyPanel", rindow);
+                            var $thisTagButton = rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id);
+                            $thisTagButton.removeClass('rdr_selected').removeClass('rdr_tagged').removeClass('rdr_int_node_'+int_id);
+
+                            //todo: quick hack -- fix later
+                            if( ! $tagLi.jquery ){
+                                $tagLi = rindow.find('.rdr_tag_'+args.tag.id);
+                            }
+                            $tagLi.find('div.rdr_leftBox').html('');
+
+                            //update indicators
+                            var hash = sendData.hash;
+                            var tagHelper = {
+                                id: interaction_node.id,
+                                body: interaction_node.body,
+                                delta: -1
+                            };
+
+                            var diff = {   
+                                tags: {}
+                            };
+                            diff.tags[ tagHelper.id ] = tagHelper;
+
+                            RDR.actions.summaries.update(hash, diff);
+                        */
+
+                        }
+                    
                     },
                     onFail: function(){
                         
@@ -2695,7 +2813,7 @@ console.log('we considered this a tax success');
                             "interactions": 0
                         }, 
                         "top_interactions": {
-                            "coms": [], 
+                            "coms": {}, 
                             "tags": {}
                         }
                     };
@@ -2755,32 +2873,40 @@ console.log('we considered this a tax success');
                         // This is now scoped to node_type - so nodes, summary_nodes, and counts here only pertain to their category (tag or comment, etc.)
                         var summary_nodes = summary.top_interactions[interaction_node_type];
 
-                        //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
-                        $.each(nodes, function(id,node){
+                        //todo: i realized that coms are in an array and tags are in an object, so we have to split this way up here.  Change later.
+                    
+                            //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
+                        $.each(nodes, function(id,diffNode){
                             //coms or tags
                             if( summary_nodes.hasOwnProperty(id) && typeof summary_nodes[id] !== 'undefined' ){
                                 var summary_node = summary_nodes[id];
-                                summary_node.count += node.delta;
+                                summary_node.count += diffNode.delta;
 
                                 //if this cleared out the last of this node, delete it. (i.e. if a first-ever tag was made, and then undone )
                                 if( summary_node.count <= 0 ){
                                     delete summary_nodes[id]; //don't try to use summary_node here instead of summary_nodes[id].
                                 }
+
                             }else{
                                 //tag doens't exist yet:
-                                //todo: implement a node.make function instead of this.
+                                //todo: implement a diffNode.make function instead of this.
                                 summary_nodes[id] = {
-                                    body: node.body,
-                                    count: node.delta, //this should always be 1.  Yes, this is ugly.  Should have a make tag function somewhere.
+                                    body: diffNode.body,
+                                    count: diffNode.delta, //this should always be 1.
                                     id: id 
                                 };
 
                             }
 
                             //update the summary's counts object
-                            summary.counts[interaction_node_type] += node.delta;
-                            summary.counts.interactions += node.delta;
+                            summary.counts[interaction_node_type] += diffNode.delta;
+                            summary.counts.interactions += diffNode.delta;
+
+                            diffNode.int_type = interaction_node_type;
+                            //now update rindow
+                            RDR.rindow.update(hash, diffNode);
                         });
+
                     });
 
                     if( hash == "pageSummary" ){
@@ -2789,7 +2915,6 @@ console.log('we considered this a tax success');
                     }else{     
                         
                         RDR.actions.indicators.update( hash );
-                        RDR.rindow.update(hash);
 
                         //if(summary.counts.interactions > 0){ //we're only showing tags for now, so use that instead.
                         if(summary.counts.tags > 0){
@@ -3325,7 +3450,7 @@ console.dir(content);
                     kind = summary.kind;
 
                     // draw the window over the actionbar
-                    coords = {
+                    var coords = {
                         top: $container.offset().top,
                         left: $container.offset().right
                     };
@@ -4164,26 +4289,11 @@ console.dir(content);
                                 // if it failed, see if we can fix it, and if so, try this function one more time
                                 RDR.session.handleGetUserFail( args, function() {
                                 } );
-                            } else {
-                                rindow.find('div.rdr_commentBox').find('div.rdr_commentComplete').html('Thank you for your comment. You and others can now read this by clicking on the (pin) icon next to the content you commented upon.').show();
-                                rindow.find('div.rdr_commentBox').find('div.rdr_tagFeedback, div.rdr_comment').hide();
-
-                                // update the comments for this hash
-                                // var newComment = {
-                                //     body: comment,
-                                //     content_id: ,
-                                //     id: response.data.interaction.id, // interaction id
-                                //     social_user: ,
-                                //     tag_id: ,
-                                //     user: 
-                                // }
+                            } else {                                
+                                //todo: RDR.actions.comment calls should later be moved to RDR.actions.interactions.ajax
+                                RDR.actions.interactions.comment.onSuccess.create(args);
                             }
 
-                        },
-                        error: function(response) {
-                            //for now, ignore error and carry on with mockup
-                            //[cleanlogz]console.warn('ajax error');
-                            //[cleanlogz](response);
                         }
                     });
                 });
