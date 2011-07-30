@@ -2682,7 +2682,7 @@ console.log('we considered this a tax success');
         
                     //data is in form {body:,kind:,hash:}
                     //todo: combine with above
-                    var container = RDR.containers[hash];                  
+                    var container = RDR.containers[hash];
 
                     //create an 'empty' summary object
                     var summary = {
@@ -2803,7 +2803,12 @@ console.log('we considered this a tax success');
                         //RDR.actions.summaries.update( 'pageSummary' );
                     }
 
+                    RDR.actions.summaries.sortInteractions(hash);
+
                 }
+            },
+            sortInteractions: function(hash) {
+                
             },
             insertContainerIcon: function( hash ) {},
             viewContainerReactions: function( hash ) {
