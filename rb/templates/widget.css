@@ -154,6 +154,11 @@ body{
 #rdr_sandbox div.rdr.rdr_tooltip-arrow { border-color:#fff transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-14px; left:43%;}
 #rdr_sandbox div.rdr.rdr_tooltip-arrow-border { border-color:#80aec9 transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-16px; left:43%;}
 
+
+#rdr_sandbox div.rdr_top div.rdr.rdr_tooltip-arrow-border { border-color:transparent transparent #80aec9; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:-16px; bottom:auto; left:43%;}
+#rdr_sandbox div.rdr_top div.rdr.rdr_tooltip-arrow { border-color:transparent transparent #fff; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:-14px; bottom:auto; left:43%;}
+ 
+
 #rdr_sandbox div.rdr_actionbar_for_media div.rdr.rdr_tooltip-arrow { border-color:transparent white transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:5px; left:-14px}
 #rdr_sandbox div.rdr_actionbar_for_media div.rdr.rdr_tooltip-arrow-border {
 border-color:transparent #80aec9 transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:5px; left:-16px}
