@@ -138,11 +138,26 @@ body{
     width:100px;
     z-index:10000;
 }
-#rdr_sandbox div.rdr.rdr_tooltip-arrow-border { border-color:#80aec9 transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-16px; left:43%;}
-#rdr_sandbox div.rdr.rdr_tooltip-arrow { border-color:#fff transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-14px; left:43%;}
+#rdr_sandbox div.rdr_actionbar_for_media div.rdr_tooltip {
+    border:2px solid #80aec9;
+    margin:0 0 0 13px;/* 0.5 icon width with compensation for border*/
+    padding:5px 0;
+    position:absolute;
+    text-align:center;
+    left:16px;
+    top:-4px;
+    width:100px;
+    z-index:10000;
+    display:block;
+}
 
-#rdr_sandbox div.rdr_top div.rdr.rdr_tooltip-arrow-border { border-color:transparent transparent #80aec9; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:-16px; bottom:auto; left:43%;}
-#rdr_sandbox div.rdr_top div.rdr.rdr_tooltip-arrow { border-color:transparent transparent #fff; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:-14px; bottom:auto; left:43%;}
+#rdr_sandbox div.rdr.rdr_tooltip-arrow { border-color:#fff transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-14px; left:43%;}
+#rdr_sandbox div.rdr.rdr_tooltip-arrow-border { border-color:#80aec9 transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-16px; left:43%;}
+
+#rdr_sandbox div.rdr_actionbar_for_media div.rdr.rdr_tooltip-arrow { border-color:transparent white transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:5px; left:-14px}
+#rdr_sandbox div.rdr_actionbar_for_media div.rdr.rdr_tooltip-arrow-border {
+border-color:transparent #80aec9 transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:5px; left:-16px}
+
 
 #rdr_sandbox div.rdr.rdr_tooltip div.rdr_tag_share    { display:block; width:12px; height:13px; background:url({{ STATIC_URL }}widget/images/tag_icons.png) -50px -13px no-repeat; left:45px; position:absolute;top:-20px; 
     -moz-border-radius:3px;
