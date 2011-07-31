@@ -39,8 +39,6 @@ function readrBoard($R){
         },
         group: {}, //to be set by RDR.actions.initGroupData
         user: {
-            first_name:		"",
-            full_name:		"",
             img_url:        "", 
             readr_token: 	"",
             user_id:        ""
@@ -116,7 +114,9 @@ function readrBoard($R){
                 }
 				// for now, any window closes all tooltips
                 //merge options and defaults
+
                 var settings = $.extend({}, this.defaults, options);
+
 				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
 				if ( $new_rindow.length === 0 ) { // there's no rewritable window available, so make one
 					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget"></div>');
@@ -149,7 +149,8 @@ function readrBoard($R){
 
 				if ( $new_rindow.find('h1').length === 0 ) {
                     $new_rindow.html('');
-                    $new_rindow.append( '<div class="rdr_close">x</div><h1></h1><div class="rdr rdr_contentSpace"></div>' );
+                    if ( !options.noCloseButton ) $new_rindow.append( '<div class="rdr_close">x</div>');
+                    $new_rindow.append( '<h1></h1><div class="rdr rdr_contentSpace"></div>' );
                     $new_rindow.find('div.rdr_close').click( function() {
                         //needed to change this to add triggers
                         RDR.rindow.close( $(this).parents('div.rdr.rdr_window') );
@@ -220,6 +221,7 @@ function readrBoard($R){
                 var $allRindows = $('div.rdr.rdr_window');
 				RDR.rindow.close( $allRindows );
                 $('.rdr_shared').removeClass('rdr_shared');
+                $('#rdr_overlay').remove();
 			},
             clearHilites: function( $rindows ){
                 var selStates = [];
@@ -606,31 +608,34 @@ function readrBoard($R){
                     */
 
                     //todo: finish making these changes here:, but i didnt' want to do it before the DC demo.
-                    var msg1, msg2;
+                    var msg1, msg2, closeType, pinIcon;
                     if( whichAlert == "educateUser"){
                         msg1 = '<h1>&nbsp;Rate &amp; discuss <span>anything</span> on this page!</h1>';
                         msg2 = 'Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.';
+                        closeType = "educatedUser";
                     }
                     if( whichAlert == "fromShareLink"){
                         //put a better message here
                         msg1 = '<h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shared with <span>ReadrBoard</span></h1>';
                         msg2 = '&nbsp;&nbsp;<strong>' + data.reaction + ':</strong> <em>' + data.content.substr(0,40) + '...</em> <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>';
+                        closeType = "shareLink";
                     }
+                    pinIcon = '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />';
 
-                    var $educateUser = $('<div id="rdr_ed_user" class="rdr" />');
+                    var $alertContent = $('<div id="rdr_alert_box" class="rdr rdr_brtl rdr_brtr" />');
 
-                    $educateUser.append(
-                        $('<div id="rdr_ed_user_1" />').append(msg1),
-                        $('<div id="rdr_ed_user_2" />').append(msg2),
-                        '<div id="rdr_ed_user_x">x</div>'
+                    $alertContent.append(
+                        $('<div id="rdr_alert_box_1" class="rdr_brtl rdr_brtr" />').append(pinIcon).append(msg1),
+                        $('<div id="rdr_alert_box_2" />').append(msg2),
+                        '<div id="rdr_alert_box_x">x</div>'
                     );
                                             
-                    $('#rdr_sandbox').append( $educateUser );
-                    $('#rdr_ed_user_x').click( function() {
-                        RDR.session.educateUserClose();
+                    $('#rdr_sandbox').append( $alertContent );
+                    $('#rdr_alert_box_x').click( function() {
+                        RDR.session.alertBar.close( closeType );
                     });
 
-                    $educateUser.find('.rdr_showSelection').click( function() {
+                    $alertContent.find('.rdr_showSelection').click( function() {
                         //show the alertBar sliding closed for just a second before scrolling down..
                         // RDR.session.alertBar.close();
                         setTimeout(function(){
@@ -638,28 +643,26 @@ function readrBoard($R){
                         }, 200);
                     });
 
-                    RDR.group.educateUserLocation = "top";
-                    if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
-                        $educateUser.css('top','auto');
-                        $educateUser.css('bottom','-40px');
-                        $('#rdr_ed_user').animate({bottom:0});
-                    } else {
-                        var bodyPaddingTop = parseInt( $('body').css('padding-top') );
-                        $('body').animate({ paddingTop: (bodyPaddingTop+35)+"px" });
-                        $('#rdr_ed_user').animate({top:0});
-                    }
+                    $('#rdr_alert_box').animate({bottom:0},1000);
+
+                    // OLD -- positioning/animation from when this was a bar
+                    // RDR.group.educateUserLocation = "top";
+                    // if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
+                    //     $alertContent.css('top','auto');
+                    //     $alertContent.css('bottom','-40px');
+                    //     $('#rdr_alert_box').animate({bottom:0});
+                    // } else {
+                    //     var bodyPaddingTop = parseInt( $('body').css('padding-top') );
+                    //     $('body').animate({ paddingTop: (bodyPaddingTop+35)+"px" });
+                    //     $('#rdr_alert_box').animate({top:0});
+                    // }
+                    // END OLD
                 },
-                close: function() {
-                    if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
-                        $('#rdr_ed_user').animate({bottom:-40});
-                    } else {
-                        var bodyPaddingTop = parseInt( $('body').css('padding-top') );
-                        $('body').animate({ paddingTop: (bodyPaddingTop-35)+"px" });
-                        $('#rdr_ed_user').animate({top:-40});
-                    }
+                close: function( closeType ) {
+                    $('#rdr_alert_box').animate({bottom:-400},1000).remove();;
                     // set a cookie in the iframe saying not to show this anymore
                     $.postMessage(
-                        "educatedUser",
+                        closeType,
                         RDR.session.iframeHost + "/xdm_status/",
                         window.frames['rdr-xdm-hidden']
                     );
@@ -835,7 +838,7 @@ function readrBoard($R){
                                 RDR.session.showLoginPanel( args );
                             } else if ( message.status == "already had user" ) {
                                 // todo: when is this used?
-                                $('#rdr-loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
+                                $('#rdr_loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
                             } else if ( message.status == "educate user" ) {
                                 RDR.session.alertBar.make('educateUser');
                             } else if ( message.status.indexOf('sharedLink') != -1 ) {
@@ -865,11 +868,12 @@ function readrBoard($R){
                 }
             },
 			showLoginPanel: function(args, callback) {
+             // RDR.session.showLoginPanel
                 log('--showLoginPanel---');
                 $('.rdr_rewritable').removeClass('rdr_rewritable');
                 
-                if ( $('#rdr-loginPanel').length < 1 ) {
-                    // $('#rdr-loginPanel').remove();
+                if ( $('#rdr_loginPanel').length < 1 ) {
+                    // $('#rdr_loginPanel').remove();
                     //todo: weird, why did commenting this line out not do anything?...look into it
     				//porter says: the action bar used to just animate larger and get populated as a window
                     //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
@@ -881,17 +885,22 @@ function readrBoard($R){
 
                     var coords = [];
                     coords.left = ( $(window).width() / 2 ) - 200;
-                    coords.top =  ( $(window).height() / 2 + $(window).scrollTop() - 100 );
+                    // coords.top =  ( $(window).height() / 2 ) - 100 ;
+                    // coords.top =  ( $(window).height() / 2 + $(window).scrollTop() - 100 );
+                    coords.top = 150;
+                    console.dir(coords);
 
                     // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
                     // var coords = RDR.util.stayInWindow({coords:coords, width:360, height:185 });
 
                     var rindow = RDR.rindow.draw({
                         coords:coords,
-                        id: "rdr-loginPanel",
+                        id: "rdr_loginPanel",
                         pnlWidth:360,
                         pnls:1,
-                        height:225
+                        height:225,
+                        noCloseButton:true,
+                        ignoreWindowEdges:"bt"
                     });
 
                     // store the arguments and callback function that were in progress when this Login panel was called
@@ -913,6 +922,13 @@ function readrBoard($R){
         //                 rindow.append( $loginHtml );
         //             });
     				rindow.find('div.rdr_contentSpace').append( $loginHtml );
+
+                    var $overlay = $( '<div id="rdr_overlay" />' ).css('height', $(window).height()).css('width', $(window).width() );
+                    $overlay.click ( function() {
+                        $(this).remove();
+                        $('#rdr_loginPanel').remove();
+                    });
+                    rindow.after( $overlay );
                 }
 			},
 			killUser: function() {
@@ -995,38 +1011,6 @@ function readrBoard($R){
                             });
                     }
                 }
-            },    
-            educateUser: function() {
-                var $educateUser = $('<div id="rdr_ed_user" class="rdr"><div id="rdr_ed_user_1"><h1>Rate or discuss <span>anything</span> on this page!</h1></div><div id="rdr_ed_user_2">Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.</div><div id="rdr_ed_user_x">x</div>');
-                $('#rdr_sandbox').append( $educateUser );
-                $('#rdr_ed_user_x').click( function() {
-                    RDR.session.educateUserClose();
-                });
-                RDR.group.educateUserLocation = "top";
-                if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
-                    $educateUser.css('top','auto');
-                    $educateUser.css('bottom','-40px');
-                    $('#rdr_ed_user').animate({bottom:0});
-                } else {
-                    var bodyPaddingTop = parseInt( $('body').css('padding-top') );
-                    $('body').animate({ paddingTop: (bodyPaddingTop+35)+"px" });
-                    $('#rdr_ed_user').animate({top:0});
-                }
-            },
-            educateUserClose: function() {
-                if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
-                    $('#rdr_ed_user').animate({bottom:-40});
-                } else {
-                    var bodyPaddingTop = parseInt( $('body').css('padding-top') );
-                    $('body').animate({ paddingTop: (bodyPaddingTop-35)+"px" });
-                    $('#rdr_ed_user').animate({top:-40});
-                }
-                // set a cookie in the iframe saying not to show this anymore
-                $.postMessage(
-                    "educatedUser",
-                    RDR.session.iframeHost + "/xdm_status/",
-                    window.frames['rdr-xdm-hidden']
-                );
             }
 		},
         actions: {
@@ -1660,12 +1644,6 @@ function readrBoard($R){
                     //gets this summary's content_nodes from the server and populates the summary with them.
 
                     var summary = RDR.summaries[hash];
-                    //if( summary.hasOwnProperty('initiated') && summary.initiated ) return;
-                    //else
-
-                    //todo: I think this sorting needs be put back in
-                    function SortByTagCount(a,b) { return b.count - a.count; }
-
 
                     var sendData = {
                         "page_id" : RDR.page.id,
@@ -2666,7 +2644,9 @@ console.log('we considered this a tax success');
                             $indicator_details = summary.$indicator_details,
                             $tagsList = $indicator_details.find('.rdr_tags_list');
 
-                        $.each( summary.top_interactions.tags, function(tag_id, tag){
+                        $.each( summary.interaction_order.tags, function( idx, tagOrder ){
+                            var tag = summary.top_interactions.tags[ tagOrder.id ];
+
                             if(count === null) return; //a helper incrementer, set to 'null' below to mimic a 'break' out of the 'each' loop 
                             if(tag.count < 0) return; //this shouldn't happen, should be taken care of in summaries.update.  But just in case.
 
@@ -2675,7 +2655,7 @@ console.log('we considered this a tax success');
                                 $count = $('<em/>').append( '('+tag.count+')' ),
                                 $span = $('<span />').addClass('rdr_tags_list_tag');
 
-                            $span.append( $tag, $count).data('id',tag_id).data('selStates',[]);
+                            $span.append( $tag, $count).data('id',tagOrder.id).data('selStates',[]);
 
 
                             $tagsList.append( prefix, $span );
@@ -2741,56 +2721,7 @@ console.log('we considered this a tax success');
 
                         $indicator.find('.rdr_indicator_body').attr('style', inlineStyleStr);
                     }
-                },//end RDR.actions.indicators.utils
-                sortReactions: function( hash ){
-
-                    //todo: consider sorting on the backend
-                    // order the container's tags by tag_count
-                    function SortByTagCount(a,b) { return b.count - a.count; }
-                    var info = RDR.content_nodes[ hash ].info;
-                    info.tags = [];
-                    
-                
-                    info.total_tags = 0;
-                    
-                    // info.tags_order = [];
-
-                    // loop through the content object to create a similar object that has tags at the top of the hierarchy, 
-                    // to prevent looping through .content over and over
-                    for ( var j in info.content ) {
-                        // //[cleanlogz]console.dir(content);
-                        var content = info.content[j];
-
-                        for ( var i in content.tags ) {
-                            var tag = content.tags[i];
-
-                            var tag_idx = -1;
-                            for ( var z in info.tags ) {
-                                if ( info.tags[z].id == tag.id ) {
-                                    tag_idx = z;
-                                    break;
-                                }
-                            }
-                            if ( tag_idx == -1 ) {
-                                info.tags.push({ id:tag.id, body:tag.tag, count:0, com_count:0, content:{} });
-                                tag_idx = ( info.tags.length - 1 );
-                            }
-
-                            info.tags[ tag_idx ].count += tag.count;
-                            if (tag.comments) info.tags[ tag_idx ].com_count += tag.comments.length;
-                            info.tags[ tag_idx ].content[ j ] = { count:tag.count, tag_idx:parseInt(i) };
-                            info.total_tags += tag.count;
-                        }
-                    }
-
-                    //log('info.tags')
-                    //log(info.tags)
-                    info.tags.sort(SortByTagCount);
-                    RDR.content_nodes[ hash ].info = info;
-                    //todo: consider showing just tags here and simplifying
-
-                    return info;
-                }
+                }//end RDR.actions.indicators.utils
             },
             summaries:{
                 init: function(hash){
@@ -2800,7 +2731,7 @@ console.log('we considered this a tax success');
         
                     //data is in form {body:,kind:,hash:}
                     //todo: combine with above
-                    var container = RDR.containers[hash];                  
+                    var container = RDR.containers[hash];
 
                     //create an 'empty' summary object
                     var summary = {
@@ -2832,6 +2763,8 @@ console.log('we considered this a tax success');
                     //save the summary and add the $container as a property
                     RDR.summaries[hash] = summary;
                     summary.$container = $('.rdr-'+hash);
+
+                    RDR.actions.summaries.sortInteractions(hash);
                                 
                 },
                 update: function(hash, diff){
@@ -2928,6 +2861,34 @@ console.log('we considered this a tax success');
                         //RDR.actions.summaries.update( 'pageSummary' );
                     }
 
+                    RDR.actions.summaries.sortInteractions(hash);
+
+                },
+                sortInteractions: function(hash) {
+                    function SortByCount(a,b) { return b.count - a.count; }
+
+                    var summary = RDR.summaries[hash];
+                    summary.interaction_order = { coms:[], tags:[] };
+
+                    var topTags = summary.top_interactions.tags,
+                    topComs = summary.top_interactions.coms;
+
+                    // tags
+                    if ( !$.isEmptyObject( summary.top_interactions.tags ) ) {
+                        $.each( topTags, function( tagID, tag ){
+                            summary.interaction_order.tags.push( { id:tagID, count:tag.count } );
+                        });
+                    }
+                    summary.interaction_order.tags.sort( SortByCount );
+
+                    // comments
+                    if ( !$.isEmptyObject( summary.top_interactions.coms ) ) {
+                        $.each( topComs, function( comID, com ){
+                            summary.interaction_order.coms.push( { id:comID, count:com.count } );
+                        });
+                    }
+                    summary.interaction_order.coms.sort( SortByCount );
+
                 }
             },
             insertContainerIcon: function( hash ) {},
@@ -3003,18 +2964,18 @@ console.log('we considered this a tax success');
 
 
                 var topTags = summary.top_interactions.tags,
+                topTagsOrder = summary.interaction_order.tags,
                 topComs = summary.top_interactions.coms,
                 totalTags = summary.counts.tags,
                 totalComs = summary.counts.coms;
 
                 ////populate blesed_tags
-                $.each( topTags, function( tagID, tag ){
-                    //[cleanlogz]('tagID')    
-                    //[cleanlogz](tagID)    
+                $.each( topTagsOrder, function( idx, tagOrder ){
+                    var tag = topTags[ tagOrder.id ];
                     var percentage = Math.round( ( tag.count/totalTags ) * 100);                
-                    var $li = $('<li class="rdr_tag_'+tagID+'" />').data({
+                    var $li = $('<li class="rdr_tag_'+tagOrder.id+'" />').data({
                         'tag':{
-                            id:parseInt( tagID ),
+                            id:parseInt( tagOrder.id ),
                             body:tag.body,
                             count:tag.count
                         },
@@ -3028,7 +2989,7 @@ console.log('we considered this a tax success');
                     
                     // todo: [porter] i'm looping to see if there is a comment for this TAG.  can we just send this down from server?
                     for ( var i in topComs ) {
-                        if ( topComs[i].tag_id == tagID ) $li.addClass('rdr_has_comment');
+                        if ( topComs[i].tag_id == tagOrder.id ) $li.addClass('rdr_has_comment');
                     }
                     $tagBox.children('ul.rdr_tags').append($li);
                 

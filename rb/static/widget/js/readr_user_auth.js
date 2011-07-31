@@ -88,8 +88,9 @@ RDRAuth = {
 	createTempUser : function() {
 		// if not calling from the iframe, don't create a temp user right now.
 		if (parent.location == window.location) return;
+
 		if ( (!RDRAuth.rdr_user.user_id && !RDRAuth.rdr_user.readr_token) ||  // no user data
-			 ( RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token && RDRAuth.rdr_user.first_name) ) { // we have user data but it must be wrong
+			 ( RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token && !RDRAuth.rdr_user.temp_user) ) { // we have user data but believe it is wrong
 			var sendData = {
 				group_id : qs_args.group_id
 			};
@@ -107,8 +108,8 @@ RDRAuth = {
 					RDRAuth.setUser(response);
 					var sendData = {
 						data : {
-							first_name : RDRAuth.rdr_user.first_name,
-							full_name : RDRAuth.rdr_user.full_name,
+							// first_name : RDRAuth.rdr_user.first_name,
+							// full_name : RDRAuth.rdr_user.full_name,
 							img_url : RDRAuth.rdr_user.img_url,
 							user_id : RDRAuth.rdr_user.user_id,
 							readr_token : RDRAuth.rdr_user.readr_token
@@ -120,8 +121,8 @@ RDRAuth = {
 		} else {
 			var sendData = {
 				data : {
-					first_name : RDRAuth.rdr_user.first_name,
-					full_name : RDRAuth.rdr_user.full_name,
+					// first_name : RDRAuth.rdr_user.first_name,
+					// full_name : RDRAuth.rdr_user.full_name,
 					img_url : RDRAuth.rdr_user.img_url,
 					user_id : RDRAuth.rdr_user.user_id,
 					readr_token : RDRAuth.rdr_user.readr_token
@@ -186,20 +187,23 @@ RDRAuth = {
 	},
 	setUser : function(response) {
 		RDRAuth.rdr_user = {};
-		RDRAuth.rdr_user.first_name = response.data.first_name;
-		RDRAuth.rdr_user.full_name = response.data.full_name;
+		// if no first_name attribute is in the response, this is a temporary user.
+		if ( response.data.first_name ) RDRAuth.rdr_user.temp_user = false;
+		else RDRAuth.rdr_user.temp_user = true;
+		// RDRAuth.rdr_user.full_name = response.data.full_name;
 		RDRAuth.rdr_user.img_url = response.data.img_url;
 		RDRAuth.rdr_user.user_id = response.data.user_id;
 		RDRAuth.rdr_user.readr_token = response.data.readr_token;
-		$.cookie('first_name', RDRAuth.rdr_user.first_name, { expires: 365, path: '/' });
-		$.cookie('full_name', RDRAuth.rdr_user.full_name, { expires: 365, path: '/' });
+		// $.cookie('first_name', RDRAuth.rdr_user.first_name, { expires: 365, path: '/' });
+		// $.cookie('full_name', RDRAuth.rdr_user.full_name, { expires: 365, path: '/' });
+		$.cookie('temp_user', RDRAuth.rdr_user.temp_user, { expires: 365, path: '/' });
 		$.cookie('img_url', RDRAuth.rdr_user.img_url, { expires: 365, path: '/' });
 		$.cookie('user_id', RDRAuth.rdr_user.user_id, { expires: 365, path: '/' });
 		$.cookie('readr_token', RDRAuth.rdr_user.readr_token, { expires: 365, path: '/' });
 	},
 	readUserCookie : function() {
-		RDRAuth.rdr_user.first_name = $.cookie('first_name');
-		RDRAuth.rdr_user.full_name = $.cookie('full_name');
+		// RDRAuth.rdr_user.first_name = $.cookie('first_name');
+		// RDRAuth.rdr_user.full_name = $.cookie('full_name');
 		RDRAuth.rdr_user.img_url = $.cookie('img_url');
 		RDRAuth.rdr_user.user_id = $.cookie('user_id');
 		RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
@@ -208,8 +212,8 @@ RDRAuth = {
 		var sendData = {
 			// arguments are nested under data for consistency with passing values up to the parent
 			data : {
-				first_name : RDRAuth.rdr_user.first_name,
-				full_name : RDRAuth.rdr_user.full_name,
+				// first_name : RDRAuth.rdr_user.first_name,
+				// full_name : RDRAuth.rdr_user.full_name,
 				img_url : RDRAuth.rdr_user.img_url,
 				user_id : RDRAuth.rdr_user.user_id,
 				readr_token : RDRAuth.rdr_user.readr_token
@@ -237,8 +241,8 @@ RDRAuth = {
 					json: JSON.stringify( sendData )
 				},
 				success: function(response){
-					$.cookie('first_name', null, { path: '/' });
-					$.cookie('full_name', null, { path: '/' });
+					// $.cookie('first_name', null, { path: '/' });
+					// $.cookie('full_name', null, { path: '/' });
 					$.cookie('img_url', null, { path: '/' });
 					$.cookie('user_id', null, { path: '/' });
 					$.cookie('readr_token', null, { path: '/' });

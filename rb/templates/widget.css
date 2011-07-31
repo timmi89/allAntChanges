@@ -494,15 +494,16 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 
 /* user education bar */
-#rdr_sandbox #rdr_ed_user        { position:fixed; top:-40px; left:0; width:100%; background:#f0f0f0; height:35px; padding:0px; z-index:12000; overflow:hidden; -moz-box-shadow:0 0 10px 1px #aaa  !important; -webkit-box-shadow:0 0 10px 1px #aaa  !important; box-shadow:0 0 10px 1px #aaa !important; }
-#rdr_sandbox #rdr_ed_user a      { color:#008be4; }
-#rdr_sandbox #rdr_ed_user_1      { float:left; background: #fff; width:240px; height:35px;}
-#rdr_sandbox #rdr_ed_user_1 h1   { padding-top:6px;}
-#rdr_sandbox #rdr_ed_user_1 span { font-size:21px;}
-#rdr_sandbox #rdr_ed_user_2      { position:absolute; left:240px; background: url("{{ STATIC_URL }}widget/images/header_arrow.png") no-repeat scroll 0 -37px #f0f0f0; height:25px; padding:10px 0 0 18px; font-size:14px; color:#666; width:570px; white-space:nowrap; }
-#rdr_sandbox #rdr_ed_user_x      { position:absolute; right:10px; top:5px; font-size:18px; cursor:pointer; }
-#rdr_sandbox #rdr_sandbox div.rdr_ed_user_2 span {
-    background:url("{{ STATIC_URL }}widget/images/actionbar_icons.png") no-repeat -8px -8px transparent;
+#rdr_sandbox #rdr_alert_box        { position:fixed; bottom:-400px; left:10px; width:100%; background:#f0f0f0; width:300px; padding:0px; z-index:12000; overflow:hidden; -moz-box-shadow:0 0 10px 1px #aaa  !important; -webkit-box-shadow:0 0 10px 1px #aaa  !important; box-shadow:0 0 10px 1px #aaa !important; }
+#rdr_sandbox #rdr_alert_box a      { color:#008be4; }
+#rdr_sandbox #rdr_alert_box_1      { background: #fff; height:30px; }
+#rdr_sandbox #rdr_alert_box_1 h1   { padding:6px 0 0 20px; cursor:text;}
+
+#rdr_sandbox #rdr_alert_box_1 span { font-size:21px;}
+#rdr_sandbox #rdr_alert_box_2      { background: #f0f0f0; padding:10px 10px 30px; font-size:14px; color:#666;}
+#rdr_sandbox #rdr_alert_box_x      { position:absolute; right:10px; top:7px; font-size:14px; cursor:pointer; color:#999; }
+#rdr_sandbox #rdr_sandbox div.rdr_alert_box_2 span {
+    background:url({{ STATIC_URL }}widget/images/actionbar_icons.png) no-repeat -8px -8px transparent;
     display:inline-block;
     height:22px;
     width:16px;
@@ -603,6 +604,7 @@ div.rdr_indicator,
 
 /*indicator pin both*/
 div.rdr_indicator img.rdr_pin,
+#rdr_sandbox img.rdr_pin,
 #rdr_sandbox div.rdr_indicator_details img.rdr_pin,
 #rdr_sandbox div.rdr_sentimentBox img.rdr_pin { 
     background:url("{{ STATIC_URL }}widget/images/readr_icons.png") no-repeat 0 -1px !important; 
@@ -615,6 +617,11 @@ div.rdr_indicator img.rdr_pin{
 }
 /*indicator pin indicator details only*/
 div.rdr_indicator_details img.rdr_pin{ 
+}
+#rdr_sandbox #rdr_alert_box img.rdr_pin{ 
+    position:static !important;
+    margin:10px 0px 10px 7px !important;
+    float:left !important;
 }
 
 div.rdr_indicator div.rdr_indicator_body { 
@@ -731,15 +738,20 @@ div.rdr_indicator span.rdr_count{
     position: relative !important;
 }
 
+#rdr_sandbox div#rdr_loginPanel {
+    position:fixed;
+    z-index: 12101;
+}
+
 #rdr_sandbox div#rdr_overlay {
-    background-color: #777777;
+    background-color: #1f5b82;
     cursor: pointer;
     display: block;
     opacity: 0.7;
     left: 0;
-    position: absolute;
+    position: fixed;
     top: 0;
     width: 100%;
     height: 100%;
-    z-index: 1100;
+    z-index: 12100;
 }
