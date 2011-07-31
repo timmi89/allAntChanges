@@ -963,16 +963,22 @@ function readrBoard($R){
                         });
 
                         if ( rindow.find('div.rdr_tempUserMsg').length === 0 ){
+                            log(2)
+                            log(rindow.find('div.rdr_tempUserMsg'))
                             $tempMsgDiv.find('span').html( userMsg );
                             $tempMsgDivWrapper.append( $closeButton );
                             rindow.append( $tempMsgDiv );
 
                             //todo: fix this 103 height is guessing where the window is going to end up.  Move this to a proper callback.
+                            $tempMsgDivWrapper.hide();
                             rindow.animate({ height: rindow.height()+rindowHeightDefault }, function(){
-                                $tempMsgDivWrapper.hide().fadeIn(200);
+                                $tempMsgDivWrapper.fadeIn(200);
                             });
                         } else {
+                            log(1)
+                            log(rindow.find('div.rdr_tempUserMsg'))
                             $tempMsgDiv = rindow.find('div.rdr_tempUserMsg');
+                            $tempMsgDivWrapper = rindow.find('.rdr_tempUserMsg_wrapper');
                             $tempMsgDiv.find('span').html( userMsg );
                             $tempMsgDivWrapper.hide().fadeIn(200);
                         }
@@ -989,7 +995,7 @@ function readrBoard($R){
                                 rindowHeight = rindow.height(),
                                 durr = 300;
 
-                            rindow.animate({ height:rindowHeight-msgHeight }, durr);
+                            //rindow.animate({ height:rindowHeight }, durr);
                             $tempMsgDiv.animate({ height:0 },durr, function(){
                                 $tempMsgDiv.remove();
                             });
