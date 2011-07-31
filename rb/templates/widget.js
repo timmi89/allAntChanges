@@ -635,6 +635,7 @@ function readrBoard($R){
 
                         $msg2.click( function() {
                             RDR.actions.summaries.showLessPopularIndicators();
+                            $(this).closest('div.rdr_alert_box').find('div.rdr_alert_box_x').click();
                         });
                     }
                     $pinIcon = $('<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />');
@@ -1067,7 +1068,7 @@ function readrBoard($R){
                         RDR.group.selector_whitelist = RDR.group.selector_whitelist || "body p";
                         RDR.group.media_selector = RDR.group.media_selector || "embed, video, object, iframe.rdr_video"; //for now just play it safe with the iframe.
                         RDR.group.comment_length = RDR.group.comment_length || 300;
-                        RDR.group.initial_pin_limit = RDR.group.initial_pin_limit || 1;
+                        RDR.group.initial_pin_limit = RDR.group.initial_pin_limit || 3;
 
                         $RDR.dequeue('initAjax');
                     },
@@ -1197,6 +1198,18 @@ function readrBoard($R){
                         RDR.actionbar.closeAll();
                     }
                 });
+
+                $(document).bind('mousewheel.rdr', function(event, delta, deltaX, deltaY) {
+                    console.log(delta, deltaX, deltaY);
+                    if ( $(window).scrollTop() > 100 && $('#rdr_sandbox') && !$('#rdr_sandbox').data('showingAllIndicator') ) {
+                        $('#rdr_sandbox').data('showingAllIndicator', true)
+                        if ( RDR.total_containers > RDR.group.initial_pin_limit ) {
+                            // show the alert bar, which has a link to call RDR.actions.summaries.showLessPopularIndicators
+                            RDR.session.alertBar.make('showMorePins');
+                        }
+                    }
+                });
+
 
                 //hashNodes without any arguments will fetch the default set from the server.
                 var hashes = this.hashNodes();
@@ -2924,12 +2937,6 @@ console.log('we considered this a tax success');
                     for ( var i=0; i < RDR.group.initial_pin_limit; i++) {
                         $('#rdr_indicator_' + RDR.text_container_popularity[i].hash).removeClass('rdr_dont_show');
                     }
-
-                    if ( RDR.total_containers > RDR.group.initial_pin_limit ) {
-                        // show the alert bar, which has a link to call RDR.actions.summaries.showLessPopularIndicators
-                        RDR.session.alertBar.make('showMorePins');
-                    }
-
                 },
                 showLessPopularIndicators: function() {
                     // RDR.actions.summaries.showLessPopularIndicators
