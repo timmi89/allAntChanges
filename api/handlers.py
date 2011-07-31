@@ -124,10 +124,13 @@ class VoteHandler(InteractionHandler):
 class CommentHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
         comment = data['comment']
-
+        print " "
+        print " data from comment handler"
+        print data
+        print " "
         # optional
         parent_id = data.get('parent_id', None)
-
+        print parent_id
         # Get or create parent interaction
         if parent_id:
             try:
@@ -135,6 +138,8 @@ class CommentHandler(InteractionHandler):
             except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
                 raise JSONException(u'Could not find parent interaction specified')
         else:
+            #todo: temp translation here
+            data['content_node_data'] = data['content_node']
             parent = TagHandler().create(request, data, user, page, group)['interaction']
         
         try:
