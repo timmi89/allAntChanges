@@ -293,7 +293,8 @@ function readrBoard($R){
                     //now do the rdr_contentSet
                     
                     //RDR.actions.content_panel.make(node, tagClone, hash, $rindow);
-
+                    
+                    /*
                     var $contentSets = $rindow.find('#rdr_contentPanel .rdr_contentSet');
                     $contentSets.each(function(){
                         var parent_interaction_node = $(this).data('tag');
@@ -310,7 +311,7 @@ function readrBoard($R){
 
                         }
                     });
-                    
+                    */
 
                 }
 
@@ -1512,10 +1513,7 @@ function readrBoard($R){
                     // create the container sort to see which containers have the most activity
                     RDR.actions.summaries.sortPopularTextContainers();
                     RDR.actions.summaries.displayPopularIndicators();
-                                      
-                    log('hashesToShow - showing hashes in reg');
-                    log(hashesToShow);
-
+                    
                     RDR.actions.indicators.show(hashesToShow);
                 },
                 send: function(hashList){
@@ -1899,8 +1897,12 @@ function readrBoard($R){
                         create: function(args){
                             //RDR.actions.interactions.comment.onSuccess.create:
 
+
                             var rindow = args.rindow,
-                                hash = args.hash;
+                                hash = args.hash,
+                                response = args.response;
+
+                            var interaction = response.data.interaction;
 
                             rindow.find('div.rdr_commentBox').find('div.rdr_commentComplete').html('Thank you for your comment. You and others can now read this by clicking on the (pin) icon next to the content you commented upon.').show();
                             rindow.find('div.rdr_commentBox').find('div.rdr_tagFeedback, div.rdr_comment').hide();
@@ -1919,11 +1921,11 @@ function readrBoard($R){
 
                             //todo: unify this with the rest of the interactions
                             var intHelper = {
-                                id: args.int_id,
+                                id: interaction.id,
+                                body: interaction.interaction_node.body,
                                 parent_id: args.parent_id,
                                 content_id: args.content_id,
                                 parent_interaction_node: args.tag,
-                                body: args.comment,
                                 delta: 1,
                                 user: args.user,
                                 social_user: args.social_user
@@ -2497,6 +2499,9 @@ function readrBoard($R){
                     //todo: boolDontFade is a quick fix to not fade in indicators
                     //hashes should be an array or a single hash string
                     var $indicators = this.fetch(hashes);
+                    //todo: this works for now, but use a differnet signal later
+                    if ( $indicators.length == 1 ) $indicators.removeClass('rdr_dont_show');
+
                     $indicators.not('.rdr_dont_show').css({
                         'opacity':'0',
                         'visibility':'visible'
@@ -2917,7 +2922,7 @@ function readrBoard($R){
                     }
                     */
 
-                    log('//RDR.actions.summaries.update:');
+                    
                     //get summary, or if it doesn't exist, get a zero'ed out template of one.
 
                     //todo: use a try catch instead;
@@ -2929,7 +2934,7 @@ function readrBoard($R){
                         summary = RDR.summaries[hash];
                     }
                     
-                    //todo: not sure if this is being used.
+                    //todo: not sure if this is being used. - no it's not being used yet.  never got to it.
                     if( hash == "pageSummary" ){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
                         summary = RDR.page.summary;
@@ -2960,7 +2965,8 @@ function readrBoard($R){
                                     body: diffNode.body,
                                     count: diffNode.delta, //this should always be 1.
                                     id: id,
-                                    parent_id: diffNode.parent_id
+                                    parent_id: diffNode.parent_id,
+                                    parent_interaction_node: diffNode.parent_interaction_node
                                 };
 
                             }
@@ -2975,6 +2981,8 @@ function readrBoard($R){
                         });
 
                     });
+
+                    RDR.actions.summaries.sortInteractions(hash);
 
                     if( hash == "pageSummary" ){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
@@ -2995,7 +3003,6 @@ function readrBoard($R){
                         //RDR.actions.summaries.update( 'pageSummary' );
                     }
 
-                    RDR.actions.summaries.sortInteractions(hash);
 
                 },
                 sortInteractions: function(hash) {
@@ -3060,8 +3067,7 @@ function readrBoard($R){
                             }
                         }
                     }
-                    log('hashesToShow - showing hashes in showLessPopularIndicators');
-                    log(hashesToShow);
+                    
                     RDR.actions.indicators.show(hashesToShow);
                 }
             },
