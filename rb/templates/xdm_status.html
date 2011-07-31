@@ -38,7 +38,7 @@
 			
 			
 			if ( $.cookie('location') && $.cookie('container_hash') ) {
-				RDRAuth.notifyParent({message:false}, "sharedLink|" + $.cookie('container_hash') + "|" + $.cookie('location').replace(/"/g,'').replace('\\054',',') + "|" + $.cookie('reaction').replace(/"/g,'') + "|" + $.cookie('content').replace(/"/g,'') + "|" + $.cookie('referring_int_id') );
+				RDRAuth.notifyParent({message:false}, "sharedLink|" + $.cookie('container_hash') + "|" + RDRAuth.decodeDjangoCookie( $.cookie('location') ) + "|" + RDRAuth.decodeDjangoCookie( $.cookie('reaction') ) + "|" + RDRAuth.decodeDjangoCookie( $.cookie('content') ) + "|" + $.cookie('referring_int_id') );
 				$.cookie('container_hash', null, { path: '/' });
 				$.cookie('location', null, { path: '/' });
 				$.cookie('content', null, { path: '/' });

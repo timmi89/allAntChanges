@@ -14,16 +14,16 @@
 $.ajax({
     {% if user_id %}
       {% if kwargs %}
-        url: "/interactions/user/{{ user_id }}/{{ kwargs.view }}/",
+        url: "/interactions/user/{{ user_id }}/{{ kwargs.view }}/{% if query_string %}?q={{ query_string }}{% endif %}",
       {% else %}
-        url: "/interactions/user/{{ user_id }}/",
+        url: "/interactions/user/{{ user_id }}/{% if query_string %}?q={{ query_string }}{% endif %}",
       {% endif %}
     {% else %}
       {% if short_name %}
         {% if kwargs.view %}
-          url: "/interactions/group/{{ short_name }}/{{ kwargs.view }}",
+          url: "/interactions/group/{{ short_name }}/{{ kwargs.view }}/{% if query_string %}?q={{ query_string }}{% endif %}",
         {% else %}
-          url: "/interactions/group/{{ short_name }}/",
+          url: "/interactions/group/{{ short_name }}/{% if query_string %}?q={{ query_string }}{% endif %}",
         {% endif %}
       {% else %}
       url: "/cards/",

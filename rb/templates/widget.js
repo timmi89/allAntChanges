@@ -599,6 +599,8 @@ function readrBoard($R){
 		session: {
             alertBar: {
                 make: function( whichAlert, data) {
+                    log(whichAlert);
+                    // RDR.session.alertBar.make
                     //whichAlert to tell us if it's the educate user bar, or the sharedLink bar
                     //data if we want it, not using it now... - expects: 
                     /*
@@ -609,42 +611,50 @@ function readrBoard($R){
                     */
 
                     //todo: finish making these changes here:, but i didnt' want to do it before the DC demo.
-                    var msg1, msg2, closeType, pinIcon;
+                    var $msg1, $msg2, $pinIcon;
                     if( whichAlert == "educateUser"){
-                        msg1 = '<h1>&nbsp;Rate &amp; discuss <span>anything</span> on this page!</h1>';
-                        msg2 = 'Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.';
-                        closeType = "educatedUser";
+                        $msg1 = $('<h1>Rate &amp; discuss <span>anything</span> on this page!</h1>');
+                        $msg2 = $('Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.');
                     }
                     if( whichAlert == "fromShareLink"){
                         //put a better message here
-                        msg1 = '<h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shared with <span>ReadrBoard</span></h1>';
-                        msg2 = '&nbsp;&nbsp;<strong>' + data.reaction + ':</strong> <em>' + data.content.substr(0,40) + '...</em> <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>';
-                        closeType = "shareLink";
-                    }
-                    pinIcon = '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />';
+                        $msg1 = $('<h1>Shared with <span>ReadrBoard</span></h1>');
+                        $msg2 = $('<strong>' + data.reaction + ':</strong> <em>' + data.content.substr(0,140) + '...</em> <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>');
 
-                    var $alertContent = $('<div id="rdr_alert_box" class="rdr rdr_brtl rdr_brtr" />');
+                        $msg2.find('a.rdr_showSelection').click( function() {
+                            //show the alertBar sliding closed for just a second before scrolling down..
+                            // RDR.session.alertBar.close();
+                            setTimeout(function(){
+                                RDR.session.revealSharedContent(data);
+                            }, 200);
+                        });
+                    }
+                    if( whichAlert == "showMorePins"){
+                        //put a better message here
+                        $msg1 = $('<h1>See what readers are <span>saying</span>!</h1>');
+                        $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="rdr_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" /> icons.</div>');
+
+                        $msg2.find('a.rdr_show_more_pins').click( function() {
+                            RDR.actions.summaries.showLessPopularIndicators();
+                            $(this).closest('div.rdr_alert_box').find('div.rdr_alert_box_x').click();
+                        });
+                    }
+                    $pinIcon = $('<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />');
+
+                    var $alertContent = $('<div class="rdr_alert_box rdr rdr_brtl rdr_brtr rdr_' + whichAlert + '" />');
 
                     $alertContent.append(
-                        $('<div id="rdr_alert_box_1" class="rdr_brtl rdr_brtr" />').append(pinIcon).append(msg1),
-                        $('<div id="rdr_alert_box_2" />').append(msg2),
-                        '<div id="rdr_alert_box_x">x</div>'
+                        $('<div class="rdr_alert_box_1 rdr_brtl rdr_brtr" />').append($pinIcon).append($msg1),
+                        $('<div class="rdr_alert_box_2" />').append($msg2),
+                        '<div class="rdr rdr_alert_box_x">x</div>'
                     );
                                             
                     $('#rdr_sandbox').append( $alertContent );
-                    $('#rdr_alert_box_x').click( function() {
-                        RDR.session.alertBar.close( closeType );
+                    $('div.rdr_alert_box.rdr_'+whichAlert).find('.rdr_alert_box_x').click( function() {
+                        RDR.session.alertBar.close( whichAlert );
                     });
 
-                    $alertContent.find('.rdr_showSelection').click( function() {
-                        //show the alertBar sliding closed for just a second before scrolling down..
-                        // RDR.session.alertBar.close();
-                        setTimeout(function(){
-                            RDR.session.revealSharedContent(data);
-                        }, 200);
-                    });
-
-                    $('#rdr_alert_box').animate({bottom:0},1000);
+                    $('div.rdr_alert_box.rdr_'+whichAlert).animate({bottom:0},1000);
 
                     // OLD -- positioning/animation from when this was a bar
                     // RDR.group.educateUserLocation = "top";
@@ -659,11 +669,11 @@ function readrBoard($R){
                     // }
                     // END OLD
                 },
-                close: function( closeType ) {
-                    $('#rdr_alert_box').animate({bottom:-400},1000).remove();;
+                close: function( whichAlert ) {
+                    $('div.rdr_alert_box.rdr_'+whichAlert).remove();;
                     // set a cookie in the iframe saying not to show this anymore
                     $.postMessage(
-                        closeType,
+                        "close "+whichAlert,
                         RDR.session.iframeHost + "/xdm_status/",
                         window.frames['rdr-xdm-hidden']
                     );
@@ -673,7 +683,7 @@ function readrBoard($R){
                 //[cleanlogz]('revealSharedContent');
                 //[cleanlogz]console.dir(data);
                 var $container = $('.rdr-'+data.container_hash);
-                $container.addClass('rdr_shared');
+                // if ( RDR.summaries[ data.container_hash ].kind != "text" ) $container.addClass('rdr_shared');
                 
                 if ( data.location && data.location != "None" ) {
                     
@@ -718,14 +728,12 @@ function readrBoard($R){
                 }
 
                 var targetOffset = $container.offset().top,
-                windowPadding = 50,
+                windowPadding = 350,
                 scrollTarget = targetOffset-windowPadding || 0;
 
                 $('html,body').animate({scrollTop: scrollTarget}, 1000);
             },
             getSharedLinkInfo: function( data ){
-                //[cleanlogz]('--------data-------------');
-                //[cleanlogz]console.dir(data);
                 //some condition
                     
                 //TODO: sample data here, fill with info from cookie
@@ -843,8 +851,6 @@ function readrBoard($R){
                             } else if ( message.status == "educate user" ) {
                                 RDR.session.alertBar.make('educateUser');
                             } else if ( message.status.indexOf('sharedLink') != -1 ) {
-                                //[cleanlogz]('-------message.status-----------');
-                                //[cleanlogz](message.status);
                                 var sharedLink = message.status.split('|');
                                 if ( sharedLink[5] ) {
                                     RDR.session.referring_int_id = parseInt( sharedLink[5] );
@@ -900,7 +906,6 @@ function readrBoard($R){
                         pnlWidth:360,
                         pnls:1,
                         height:225,
-                        noCloseButton:true,
                         ignoreWindowEdges:"bt"
                     });
 
@@ -1069,6 +1074,7 @@ function readrBoard($R){
                         RDR.group.selector_whitelist = RDR.group.selector_whitelist || "body p";
                         RDR.group.media_selector = RDR.group.media_selector || "embed, video, object, iframe.rdr_video"; //for now just play it safe with the iframe.
                         RDR.group.comment_length = RDR.group.comment_length || 300;
+                        RDR.group.initial_pin_limit = RDR.group.initial_pin_limit || 2;
 
                         $RDR.dequeue('initAjax');
                     },
@@ -1199,6 +1205,18 @@ function readrBoard($R){
                     }
                 });
 
+                $(document).bind('scrollstop.rdr', function() {
+                    if ( $(window).scrollTop() > 100 && $('#rdr_sandbox') && !$('#rdr_sandbox').data('showingAllIndicator') ) {
+                        $('#rdr_sandbox').data('showingAllIndicator', true)
+                        if ( RDR.text_container_popularity && RDR.text_container_popularity.length > RDR.group.initial_pin_limit ) {
+                            // show the alert bar, which has a link to call RDR.actions.summaries.showLessPopularIndicators
+                            RDR.session.alertBar.make('showMorePins');
+                            $(document).unbind('scrollstop.rdr');
+                        }
+                    }
+                });
+
+
                 //hashNodes without any arguments will fetch the default set from the server.
                 var hashes = this.hashNodes();
                 if(hashes){
@@ -1316,7 +1334,7 @@ function readrBoard($R){
                 if( !hashes || !hashes.length ){ 
                     hashes = getAllHashes();
                 }
-                
+        
                 function getAllHashes(){
                     var hashes = [];
                     for (var hashKey in RDR.containers ) {
@@ -1475,6 +1493,9 @@ function readrBoard($R){
                         }
                     });
 
+                    // create the container sort to see which containers have the most activity
+                    RDR.actions.summaries.sortPopularTextContainers();
+                    RDR.actions.summaries.displayPopularIndicators();
                     RDR.actions.indicators.show(hashesToShow);
                 },
                 send: function(hashList){
@@ -2419,18 +2440,18 @@ function readrBoard($R){
                     //todo: boolDontFade is a quick fix to not fade in indicators
                     //hashes should be an array or a single hash string
                     var $indicators = this.fetch(hashes);
-                    $indicators.css({
+                    $indicators.not('.rdr_dont_show').css({
                         'opacity':'0',
                         'visibility':'visible'
                     });
                     if(boolDontFade){
-                        $indicators.css({
+                        $indicators.not('.rdr_dont_show').css({
                             'opacity':'0.4'
                         });
                         return;
                     }
                     //else
-                    $indicators.stop().fadeTo(800, 0.4);
+                    $indicators.not('.rdr_dont_show').stop().fadeTo(800, 0.4);
                     //use stop to ensure animations are smooth: http://api.jquery.com/fadeTo/#dsq-header-avatar-56650596
                 },
                 hide: function(hashes){
@@ -2545,6 +2566,7 @@ function readrBoard($R){
                     //Note that the text indicators still don't have content_node info.
                     //The content_nodes will only be populated and shown after hitting the server for details triggered by $indicator mouseover.
                     //on the offchance that this server call fails and the user hilite
+
                     if (kind == 'text'){
                         //Setup callback for a successful fetch of the content_nodes for this container
                         var onSuccessCallback = function(){
@@ -2657,7 +2679,7 @@ function readrBoard($R){
                                 $actionbar = $('rdr_actionbar_'+hash);
 
 
-                            $indicator.addClass('rdr_indicator_for_text');
+                            $indicator.addClass('rdr_indicator_for_text').addClass('rdr_dont_show');
                             $indicator_details.addClass('rdr_indicator_details_for_text');
 
                             $indicator.appendTo($container);
@@ -2918,6 +2940,7 @@ function readrBoard($R){
 
                 },
                 sortInteractions: function(hash) {
+                    // RDR.actions.summaries.sortInteractions
                     function SortByCount(a,b) { return b.count - a.count; }
 
                     var summary = RDR.summaries[hash];
@@ -2942,6 +2965,43 @@ function readrBoard($R){
                     }
                     summary.interaction_order.coms.sort( SortByCount );
 
+                },
+                sortPopularTextContainers: function() {
+                    // RDR.actions.summaries.sortPopularTextContainers
+                    // only sort the most popular whitelisted 
+                    function SortByCount(a,b) { return b.interactions - a.interactions; }
+
+                    RDR.text_container_popularity = [];
+
+                    $.each( RDR.summaries, function( hash, container ){
+                        if ( container.kind == "text" && container.counts.interactions > 0 ) {
+                            RDR.text_container_popularity.push( { hash:hash, interactions:container.counts.interactions } );
+                        }
+                    });
+
+                    RDR.text_container_popularity.sort( SortByCount );
+
+                },
+                displayPopularIndicators: function () {
+                    // RDR.actions.summaries.displayPopularIndicators
+
+                    for ( var i=0; i < RDR.group.initial_pin_limit; i++) {
+                        if ( RDR.text_container_popularity[i] ) $('#rdr_indicator_' + RDR.text_container_popularity[i].hash).removeClass('rdr_dont_show');
+                    }
+                },
+                showLessPopularIndicators: function() {
+                    // RDR.actions.summaries.showLessPopularIndicators
+                    var hashesToShow = [];
+
+                    for ( var i=RDR.group.initial_pin_limit; i<RDR.text_container_popularity.length; i++) {
+                        if ( RDR.text_container_popularity[i] ) {
+                            if ( RDR.text_container_popularity[i].interactions > 0 ) {
+                                $('#rdr_indicator_' + RDR.text_container_popularity[i].hash).removeClass('rdr_dont_show');
+                                hashesToShow.push( RDR.text_container_popularity[i].hash );
+                            }
+                        }
+                    }
+                    RDR.actions.indicators.show(hashesToShow);
                 }
             },
             insertContainerIcon: function( hash ) {},
@@ -4512,6 +4572,7 @@ function $RFunctions($R){
         plugin_jquery_autogrow($R);
         plugin_jquery_mousewheel($R);
         plugin_jquery_mousewheelIntent($R);
+        plugin_jquery_scrollStartAndStop($R);
         plugin_jquery_jScrollPane($R);
         plugin_jquery_rdrWidgetSummary($R);
         plugin_jquery_selectionographer($R, rangy);
@@ -5822,6 +5883,18 @@ function $RFunctions($R){
             var mwheelI={pos:[-260,-260]},minDif=3,doc=document,root=doc.documentElement,body=doc.body,longDelay,shortDelay;function unsetPos(){if(this===mwheelI.elem){mwheelI.pos=[-260,-260];mwheelI.elem=false;minDif=3;}}
             $.event.special.mwheelIntent={setup:function(){var jElm=$(this).bind('mousewheel',$.event.special.mwheelIntent.handler);if(this!==doc&&this!==root&&this!==body){jElm.bind('mouseleave',unsetPos);}
             jElm=null;return true;},teardown:function(){$(this).unbind('mousewheel',$.event.special.mwheelIntent.handler).unbind('mouseleave',unsetPos);return true;},handler:function(e,d){var pos=[e.clientX,e.clientY];if(this===mwheelI.elem||Math.abs(mwheelI.pos[0]-pos[0])>minDif||Math.abs(mwheelI.pos[1]-pos[1])>minDif){mwheelI.elem=this;mwheelI.pos=pos;minDif=250;clearTimeout(shortDelay);shortDelay=setTimeout(function(){minDif=10;},200);clearTimeout(longDelay);longDelay=setTimeout(function(){minDif=3;},1500);e=$.extend({},e,{type:'mwheelIntent'});return $.event.handle.apply(this,arguments);}}};$.fn.extend({mwheelIntent:function(fn){return fn?this.bind("mwheelIntent",fn):this.trigger("mwheelIntent");},unmwheelIntent:function(fn){return this.unbind("mwheelIntent",fn);}});$(function(){body=doc.body;$(doc).bind('mwheelIntent.mwheelIntentDefault',$.noop);});
+        };
+        //end function plugin_jquery_mousewheelIntent
+
+        function plugin_jquery_scrollStartAndStop(jQuery){
+            /**
+            * jQuery scrollstart and scrollstop
+            * @author james padolsey
+            * @version ??
+            */
+            // (function(){
+                var a=jQuery.event.special,b="D"+ +(new Date),c="D"+(+(new Date)+1);a.scrollstart={setup:function(){var c,d=function(b){var d=this,e=arguments;if(c){clearTimeout(c)}else{b.type="scrollstart";jQuery.event.handle.apply(d,e)}c=setTimeout(function(){c=null},a.scrollstop.latency)};jQuery(this).bind("scroll",d).data(b,d)},teardown:function(){jQuery(this).unbind("scroll",jQuery(this).data(b))}};a.scrollstop={latency:300,setup:function(){var b,d=function(c){var d=this,e=arguments;if(b){clearTimeout(b)}b=setTimeout(function(){b=null;c.type="scrollstop";jQuery.event.handle.apply(d,e)},a.scrollstop.latency)};jQuery(this).bind("scroll",d).data(c,d)},teardown:function(){jQuery(this).unbind("scroll",jQuery(this).data(c))}}
+            // })
         };
         //end function plugin_jquery_mousewheelIntent
 
