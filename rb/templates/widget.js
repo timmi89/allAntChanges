@@ -1065,6 +1065,7 @@ function readrBoard($R){
                         RDR.group.selector_whitelist = RDR.group.selector_whitelist || "body p";
                         RDR.group.media_selector = RDR.group.media_selector || "embed, video, object, iframe.rdr_video"; //for now just play it safe with the iframe.
                         RDR.group.comment_length = RDR.group.comment_length || 300;
+                        RDR.group.initial_pin_limit = RDR.group.initial_pin_limit || 2;
 
                         $RDR.dequeue('initAjax');
                     },
@@ -1471,6 +1472,9 @@ function readrBoard($R){
                         }
                     });
 
+                    // create the container sort to see which containers have the most activity
+                    RDR.actions.summaries.sortPopularTextContainers();
+                    RDR.actions.summaries.displayPopularIndicators();
                     RDR.actions.indicators.show(hashesToShow);
                 },
                 send: function(hashList){
@@ -2371,18 +2375,18 @@ console.log('we considered this a tax success');
                     //todo: boolDontFade is a quick fix to not fade in indicators
                     //hashes should be an array or a single hash string
                     var $indicators = this.fetch(hashes);
-                    $indicators.css({
+                    $indicators.not('.rdr_dont_show').css({
                         'opacity':'0',
                         'visibility':'visible'
                     });
                     if(boolDontFade){
-                        $indicators.css({
+                        $indicators.not('.rdr_dont_show').css({
                             'opacity':'0.4'
                         });
                         return;
                     }
                     //else
-                    $indicators.stop().fadeTo(800, 0.4);
+                    $indicators.not('.rdr_dont_show').stop().fadeTo(800, 0.4);
                     //use stop to ensure animations are smooth: http://api.jquery.com/fadeTo/#dsq-header-avatar-56650596
                 },
                 hide: function(hashes){
@@ -2497,6 +2501,7 @@ console.log('we considered this a tax success');
                     //Note that the text indicators still don't have content_node info.
                     //The content_nodes will only be populated and shown after hitting the server for details triggered by $indicator mouseover.
                     //on the offchance that this server call fails and the user hilite
+
                     if (kind == 'text'){
                         //Setup callback for a successful fetch of the content_nodes for this container
                         var onSuccessCallback = function(){
@@ -2609,7 +2614,7 @@ console.log('we considered this a tax success');
                                 $actionbar = $('rdr_actionbar_'+hash);
 
 
-                            $indicator.addClass('rdr_indicator_for_text');
+                            $indicator.addClass('rdr_indicator_for_text').addClass('rdr_dont_show');
                             $indicator_details.addClass('rdr_indicator_details_for_text');
 
                             $indicator.appendTo($container);
@@ -2868,6 +2873,7 @@ console.log('we considered this a tax success');
 
                 },
                 sortInteractions: function(hash) {
+                    // RDR.actions.summaries.sortInteractions
                     function SortByCount(a,b) { return b.count - a.count; }
 
                     var summary = RDR.summaries[hash];
@@ -2891,6 +2897,30 @@ console.log('we considered this a tax success');
                         });
                     }
                     summary.interaction_order.coms.sort( SortByCount );
+
+                },
+                sortPopularTextContainers: function() {
+                    // RDR.actions.summaries.sortPopularTextContainers
+                    // only sort the most popular whitelisted 
+                    function SortByCount(a,b) { return b.interactions - a.interactions; }
+
+                    RDR.text_container_popularity = [];
+
+                    $.each( RDR.summaries, function( hash, container ){
+                        if ( container.kind == "text" ) {
+                            RDR.text_container_popularity.push( { hash:hash, interactions:container.counts.interactions } );
+                        }
+                    });
+
+                    RDR.text_container_popularity.sort( SortByCount );
+
+                },
+                displayPopularIndicators: function () {
+                    //RDR.actions.summaries.displayPopularIndicators
+
+                    for ( var i=0; i < RDR.group.initial_pin_limit; i++) {
+                        $('#rdr_indicator_' + RDR.text_container_popularity[i].hash).removeClass('rdr_dont_show');
+                    }
 
                 }
             },
