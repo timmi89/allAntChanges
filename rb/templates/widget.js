@@ -346,7 +346,7 @@ function readrBoard($R){
                     coords = settings.coords,
                     kind = settings.kind,
                     content = settings.content,
-                    src_with_path = settings.src_with_path || undefined; //used for images and media only
+                    src_with_path = settings.src_with_path || undefined; //used for media only
                 
                 var actionbar_id = "rdr_actionbar_"+hash;
                 var $actionbars = $('div.rdr_actionbar');
@@ -1697,8 +1697,6 @@ function readrBoard($R){
                             //summary.initiated = true;
 
                             var content_nodes = response.data;
-                            log('content_nodes');
-                            log(content_nodes);
                             //todo: make this generic interactions instead of just tags
                             //summary.interactions.tags = 
                             
@@ -2035,7 +2033,7 @@ function readrBoard($R){
 
                         //[cleanlogz](content_node_data);
                         if(kind == 'img' || kind == 'media'){
-                            var body = ( content_node != null ) ? content_node.body : ( args.settings ) ? args.settings.content : args.settings.body;  // hack for inconsistent parameter use..
+                            var body = ( content_node != null ) ? content_node.body : ( args.settings.content ) ? args.settings.content : args.settings.body;  // hack for inconsistent parameter use..
 
                             content_node_data = {
                                 'container': rindow.data('container'),
@@ -2091,8 +2089,6 @@ function readrBoard($R){
                             //RDR.actions.interactions.tag.onSuccess.create:
                             //todo: clean up these args.
                             
-                            log('args');
-                            log(args);
                             var response = args.response,
                                 interaction = args.response.interaction,
                                 interaction_node = response.data.interaction.interaction_node;
@@ -2132,10 +2128,7 @@ function readrBoard($R){
                                 $this.siblings().removeClass('rdr_selected');
                                 $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
                                 
-                                var content_node_data = content_node_data || RDR.actions.content_nodes.make(content_node_data);
-
-                                log('content_node_data before senddata');
-                                log(content_node_data);
+                                var content_node_data = args.content_node || RDR.actions.content_nodes.make(content_node_data);
 
                                 if ( tag_li.length == 1 ) {
                                     tag_li.find('div.rdr_leftBox').unbind();
@@ -2563,7 +2556,7 @@ function readrBoard($R){
                     if (kind == 'text'){
                         //Setup callback for a successful fetch of the content_nodes for this container
                         var onSuccessCallback = function(){
-                            //$indicator.unbind('mouseover.contentNodeInit');
+                            $indicator.unbind('mouseover.contentNodeInit');
                             RDR.actions.indicators.utils.setupContentNodeHilites(hash);
                         };
                         //bind the hover event that will only be run once.  It gets removed on the success callback above.
@@ -3094,7 +3087,7 @@ function readrBoard($R){
                             $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
                             if ( kind == "img" ) {
                                 var hash = $this.data('hash');
-                                RDR.actions.viewCommentContent( {tag:$this.data('tag'), hash:hash, rindow:rindow, kind:kind, node:RDR.summaries[hash], content_node:summary.});
+                                RDR.actions.viewCommentContent( {tag:$this.data('tag'), hash:hash, rindow:rindow, kind:kind, node:RDR.summaries[hash] });
                             } else {
                                 RDR.actions.viewReactionContent( $this.data('tag'), $this.data('hash'), rindow, kind );
                             }
@@ -3324,15 +3317,8 @@ function readrBoard($R){
                     // log('--------- selState 1: '+selState);
                     log('tag');
                     log(tag);
-                    //temp fix.
-                    var content_node_summary = RDR.summaries[hash];
-                    log('content_node_summary')
-                    log(content_node_summary)
-                    var content_node_kind = content_node_summary.kind;
-                    content_node.kind = content_node_kind;
-                    content_node_summary
                     
-                    content_node = ( kind == "img" || kind == "media" ) ? { body:content_node_summary.$container.src, container:hash, kind:content_node_kind } : content_node;
+                    content_node = ( kind == "img" || kind == "media" ) ? { body:"", container:hash, kind:kind } : content_node;
                     
                     log('content_node');
                     log(content_node);
@@ -4178,10 +4164,6 @@ function readrBoard($R){
                     int_id = args.int_id,
                     content_node = args.content_node_data;
                 
-                log('!!!!!!!!!!!!!!');
-                log('content_node');
-                log(content_node);
-
                 //temp tie-over    
                 var hash = args.hash,
                     kind = args.kind;
@@ -4262,15 +4244,9 @@ function readrBoard($R){
                     //temp translations..
                     log('content_node');
                     log(content_node);
-                    log(1);
-                    var content_node_summary = RDR.summaries[hash];
-                    log('content_node_summary');
-                    log(content_node_summary);
-                    var content_node_kind = content_node_summary.kind;
+                    log(content_node);
 
-                    content_node.kind = content_node_kind;
-
-                    var args = { hash:hash, kind:content_node_kind, content_node:content_node, comment:comment, int_id:int_id, rindow:rindow, selState:content_node.selState, tag:tag};
+                    var args = { hash:hash, kind:kind, content_node:content_node, comment:comment, int_id:int_id, rindow:rindow, selState:content_node.selState, tag:tag};
                     //leave parent_id undefined for now - backend will find it.
                     RDR.actions.interactions.ajax( args, 'comment', 'create');
                 });
