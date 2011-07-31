@@ -684,7 +684,7 @@ function readrBoard($R){
                     // END OLD
                 },
                 close: function( whichAlert ) {
-                    $('div.rdr_alert_box.rdr_'+whichAlert).remove();;
+                    $('div.rdr_alert_box.rdr_'+whichAlert).remove();
                     // set a cookie in the iframe saying not to show this anymore
                     $.postMessage(
                         "close "+whichAlert,
@@ -1004,7 +1004,6 @@ function readrBoard($R){
 
                         if ( rindow.find('div.rdr_tempUserMsg').length === 0 ){
                             
-                            log(rindow.find('div.rdr_tempUserMsg'))
                             $tempMsgDiv.find('span').html( userMsg );
                             $tempMsgDivWrapper.append( $closeButton );
                             rindow.append( $tempMsgDiv );
@@ -1015,7 +1014,7 @@ function readrBoard($R){
                                 $tempMsgDivWrapper.fadeIn(200);
                             });
                         } else {
-                            log(rindow.find('div.rdr_tempUserMsg'))
+                            
                             $tempMsgDiv = rindow.find('div.rdr_tempUserMsg');
                             $tempMsgDivWrapper = rindow.find('.rdr_tempUserMsg_wrapper');
                             $tempMsgDiv.find('span').html( userMsg );
@@ -1224,7 +1223,7 @@ function readrBoard($R){
 
                 $(document).bind('scrollstop.rdr', function() {
                     if ( $(window).scrollTop() > 100 && $('#rdr_sandbox') && !$('#rdr_sandbox').data('showingAllIndicator') ) {
-                        $('#rdr_sandbox').data('showingAllIndicator', true)
+                        $('#rdr_sandbox').data('showingAllIndicator', true);
                         if ( RDR.text_container_popularity && RDR.text_container_popularity.length > RDR.group.initial_pin_limit ) {
                             // show the alert bar, which has a link to call RDR.actions.summaries.showLessPopularIndicators
                             RDR.session.alertBar.make('showMorePins');
@@ -2137,7 +2136,8 @@ function readrBoard($R){
                                 $this.siblings().removeClass('rdr_selected');
                                 $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
                                 
-                                var content_node_data = args.content_node || RDR.actions.content_nodes.make(content_node_data);
+                                //reset this var for now
+                                content_node_data = args.content_node || RDR.actions.content_nodes.make(content_node_data);
 
                                 if ( tag_li.length == 1 ) {
                                     tag_li.find('div.rdr_leftBox').unbind();
@@ -3808,15 +3808,16 @@ function readrBoard($R){
 
                     // log('tag');
                     // //[cleanlogz]console.dir(tag);
-
+                    var $contentSet;
                     if ( content_node.top_interactions.tags[ tag.id ] ) {
 
                         var content_node_key = hash+"-"+content_node.location;
                         // log('content_node_key')
 
                         //todo: pass everything through the content_node object- no need to expand all the attrs here in the params.
-                        var $contentSet = $('<div />').addClass('rdr_contentSet').data({node:content_node, content_node_key:content_node_key, hash:hash, location:content_node.location, tag:tag, content:content_node.body}),
-                            $header = $('<div class="rdr_contentHeader rdr_leftShadow" />'),
+                        $contentSet = $('<div />').addClass('rdr_contentSet').data({node:content_node, content_node_key:content_node_key, hash:hash, location:content_node.location, tag:tag, content:content_node.body});
+
+                        var $header = $('<div class="rdr_contentHeader rdr_leftShadow" />'),
                             $content = $('<div class="rdr_content rdr_leftShadow"><div class="rdr_otherTags"></div></div>');
                         $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+RDR.util.prettyNumber(content_node.top_interactions.tags[tag.id].count)+')</span> '+tag.body+'</a>' );
 
