@@ -536,6 +536,11 @@ section[role="complementary"] 			{
 	box-shadow:2px 0px 3px 1px #aaa;
 }
 
+section[role="complementary"] #user_data img {
+	
+}
+
+
 
 /* HEADINGS */
 /* TYPOGRAPHY */
