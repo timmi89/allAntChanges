@@ -116,7 +116,9 @@ function readrBoard($R){
                 }
 				// for now, any window closes all tooltips
                 //merge options and defaults
+
                 var settings = $.extend({}, this.defaults, options);
+
 				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
 				if ( $new_rindow.length === 0 ) { // there's no rewritable window available, so make one
 					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget"></div>');
@@ -149,7 +151,8 @@ function readrBoard($R){
 
 				if ( $new_rindow.find('h1').length === 0 ) {
                     $new_rindow.html('');
-                    $new_rindow.append( '<div class="rdr_close">x</div><h1></h1><div class="rdr rdr_contentSpace"></div>' );
+                    if ( !options.noCloseButton ) $new_rindow.append( '<div class="rdr_close">x</div>');
+                    $new_rindow.append( '<h1></h1><div class="rdr rdr_contentSpace"></div>' );
                     $new_rindow.find('div.rdr_close').click( function() {
                         //needed to change this to add triggers
                         RDR.rindow.close( $(this).parents('div.rdr.rdr_window') );
@@ -220,6 +223,7 @@ function readrBoard($R){
                 var $allRindows = $('div.rdr.rdr_window');
 				RDR.rindow.close( $allRindows );
                 $('.rdr_shared').removeClass('rdr_shared');
+                $('#rdr_overlay').remove();
 			},
             clearHilites: function( $rindows ){
                 var selStates = [];
@@ -835,7 +839,7 @@ function readrBoard($R){
                                 RDR.session.showLoginPanel( args );
                             } else if ( message.status == "already had user" ) {
                                 // todo: when is this used?
-                                $('#rdr-loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
+                                $('#rdr_loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
                             } else if ( message.status == "educate user" ) {
                                 RDR.session.alertBar.make('educateUser');
                             } else if ( message.status.indexOf('sharedLink') != -1 ) {
@@ -865,11 +869,12 @@ function readrBoard($R){
                 }
             },
 			showLoginPanel: function(args, callback) {
+             // RDR.session.showLoginPanel
                 log('--showLoginPanel---');
                 $('.rdr_rewritable').removeClass('rdr_rewritable');
                 
-                if ( $('#rdr-loginPanel').length < 1 ) {
-                    // $('#rdr-loginPanel').remove();
+                if ( $('#rdr_loginPanel').length < 1 ) {
+                    // $('#rdr_loginPanel').remove();
                     //todo: weird, why did commenting this line out not do anything?...look into it
     				//porter says: the action bar used to just animate larger and get populated as a window
                     //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
@@ -881,17 +886,22 @@ function readrBoard($R){
 
                     var coords = [];
                     coords.left = ( $(window).width() / 2 ) - 200;
-                    coords.top =  ( $(window).height() / 2 + $(window).scrollTop() - 100 );
+                    // coords.top =  ( $(window).height() / 2 ) - 100 ;
+                    // coords.top =  ( $(window).height() / 2 + $(window).scrollTop() - 100 );
+                    coords.top = 150;
+                    console.dir(coords);
 
                     // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
                     // var coords = RDR.util.stayInWindow({coords:coords, width:360, height:185 });
 
                     var rindow = RDR.rindow.draw({
                         coords:coords,
-                        id: "rdr-loginPanel",
+                        id: "rdr_loginPanel",
                         pnlWidth:360,
                         pnls:1,
-                        height:225
+                        height:225,
+                        noCloseButton:true,
+                        ignoreWindowEdges:"bt"
                     });
 
                     // store the arguments and callback function that were in progress when this Login panel was called
@@ -913,6 +923,13 @@ function readrBoard($R){
         //                 rindow.append( $loginHtml );
         //             });
     				rindow.find('div.rdr_contentSpace').append( $loginHtml );
+
+                    var $overlay = $( '<div id="rdr_overlay" />' ).css('height', $(window).height()).css('width', $(window).width() );
+                    $overlay.click ( function() {
+                        $(this).remove();
+                        $('#rdr_loginPanel').remove();
+                    });
+                    rindow.after( $overlay );
                 }
 			},
 			killUser: function() {
