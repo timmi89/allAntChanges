@@ -88,14 +88,16 @@ def profile(request, user_id, **kwargs):
 
 def main(request, user_id=None, short_name=None, **kwargs):
     cookies = request.COOKIES
-    query_string = request.GET.get('q', None)
+    query_string = request.GET.get('s', None)
+    page_num = request.GET.get('page', None)
     #cookie_user_id = cookies.get('user_id')
     context = {
         'fb_client_id': FACEBOOK_APP_ID,
         'user_id': user_id,
         'short_name': short_name,
         'query_string': query_string,
-        'kwargs': kwargs
+        'kwargs': kwargs,
+        'page_num': page_num
     }
     """
     if cookie_user_id:
@@ -107,7 +109,9 @@ def main(request, user_id=None, short_name=None, **kwargs):
 def interactions(request, user_id=None, short_name=None, **kwargs):
     interactions = Interaction.objects.all()
 
-    query_string = request.GET.get('q', None)
+    # Search interaction node body and content body
+    # for instances of the query string parameter
+    query_string = request.GET.get('s', None)
     if query_string:
         interactions = interactions.filter(
             Q(interaction_node__body__icontains=query_string) |
@@ -129,7 +133,15 @@ def interactions(request, user_id=None, short_name=None, **kwargs):
         if view == 'not_approved': interactions=interactions.filter(approved=False)
         else: interactions=interactions.filter(approved=True)
 
-    context = {'interactions': interactions}
+    interactions_paginator = Paginator(interactions, 5)
+
+    try: page_number = int(request.GET.get('page_num', 1))
+    except ValueError: page_number = 1
+
+    try: current_page = interactions_paginator.page(page_number)
+    except (EmptyPage, InvalidPage): current_page = paginator.page(paginator.num_pages)
+
+    context = {'current_page': current_page, 'query_string': query_string}
         
     return render_to_response("interactions.html", context, context_instance=RequestContext(request))
 
@@ -146,17 +158,21 @@ def cards(request, **kwargs):
     context = {'cards': cards}
     return render_to_response("cards.html", context, context_instance=RequestContext(request))
 
-def sidebar(request, user_id=None):
+def sidebar(request, user_id=None, short_name=None):
     context = {}
+    if short_name:
+        group = Group.objects.get(short_name=short_name)
+        context['group'] = group
+    
     if user_id:
         user = User.objects.get(id=user_id)
         context['user'] = user
                 
-        return render_to_response(
-            "sidebar.html",
-            context,
-            context_instance=RequestContext(request)
-        )
+    return render_to_response(
+        "sidebar.html",
+        context,
+        context_instance=RequestContext(request)
+    )
 
 class GroupForm(ModelForm):
     class Meta:

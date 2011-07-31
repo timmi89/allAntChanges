@@ -1,5 +1,4 @@
 # Django settings for readrboard project.
-
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -154,10 +153,10 @@ INSTALLED_APPS = (
     'api',
     'rb',
     'piston',
-    'south',
+    #'south',
     #'treebeard',
     #'debug_toolbar',
-    'autofixture'
+    #'autofixture',
     #'django_extensions',
     #'devserver'
 )

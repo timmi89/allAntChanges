@@ -57,13 +57,6 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
   <header role="banner" class="clearfix">
     <a href="/"><h1>ReadrBoard</h1></a>
     <div id="settings">
-      {% if cookie_user %}
-        <form action="/sidebar/user/{{ user.id }}/" method="post">
-          {% csrf_token %}
-          {{ privacy_form.as_p }}
-          <input type="submit" value="Submit" />
-        </form>
-      {% endif %}
       <a href="#"><img src="{{ STATIC_URL }}site/images/gear.png"/></a>
       <nav>
       <ul>
