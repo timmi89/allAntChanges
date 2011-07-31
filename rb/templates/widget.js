@@ -288,7 +288,7 @@ function readrBoard($R){
                     log($tags);
                     //$tags.find('li').removeClass('rdr_has_comment');
 
-                    $tag = $tags.find('.rdr_tag_'+diffNode.parent_id);
+                    $tag = $tags.find('.rdr_tag_'+diffNode.parent_interaction_node.id);
                     log($tag);
                     log(diffNode);
 
@@ -1892,7 +1892,9 @@ function readrBoard($R){
                         //RDR.actions.interactions.comment.onSuccess:
                         create: function(args){
                             //RDR.actions.interactions.comment.onSuccess.create:
-                            
+                            log('args in ractions.comment.onSucces');
+                            log(args);
+
                             var rindow = args.rindow,
                                 hash = args.hash;
 
@@ -1916,6 +1918,7 @@ function readrBoard($R){
                                 id: args.int_id,
                                 parent_id: args.parent_id,
                                 content_id: args.content_id,
+                                parent_interaction_node: args.tag,
                                 body: args.comment,
                                 delta: 1,
                                 user: args.user,
@@ -2033,7 +2036,7 @@ function readrBoard($R){
 
                         //[cleanlogz](content_node_data);
                         if(kind == 'img' || kind == 'media'){
-                            var body = ( content_node != null ) ? content_node.body : ( args.settings.content ) ? args.settings.content : args.settings.body;  // hack for inconsistent parameter use..
+                            var body = "";
 
                             content_node_data = {
                                 'container': rindow.data('container'),
@@ -2163,6 +2166,7 @@ function readrBoard($R){
                             var intNodeHelper = {
                                 id: interaction_node.id,
                                 parent_id: null,
+                                parent_interaction_node: tag,
                                 content_id: null, //todo add later
                                 body: interaction_node.body,
                                 delta: 1,
@@ -3085,12 +3089,12 @@ function readrBoard($R){
                             $this.addClass('rdr_selected');
                             $this.siblings().removeClass('rdr_selected');
                             $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-                            if ( kind == "img" ) {
+                            if ( kind == "img" || kind == "media" ) {
                                 var hash = $this.data('hash');
 
                                 var content_node = {
                                     kind:kind,
-                                    body:summary.$container.attr('src')
+                                    body:""
                                 };
 
                                 RDR.actions.viewCommentContent( {tag:$this.data('tag'), hash:hash, rindow:rindow, kind:kind, content_node:content_node });
@@ -3231,7 +3235,7 @@ function readrBoard($R){
                 // if ( $whyBody.data('jsp') ) $whyBody.data('jsp').destroy();
                 $whyBody.empty();
 
-                var comments = content_node.top_interactions.coms;
+                var comments = summary.top_interactions.coms;
                 var node_comments = 0;
                 for (var com in comments ) {
                     if ( comments[com].parent_id == tag.id ) {
@@ -3324,17 +3328,10 @@ function readrBoard($R){
                     log('tag');
                     log(tag);
 
-                    
-                    content_node = ( kind == "img" || kind == "media" ) ? { body:"", container:hash, kind:kind } : content_node;
-                    
                     log('content_node');
                     log(content_node);
-                    
-                    var content_node_summary = RDR.summaries[hash];
-                    log('content_node_summary');
-                    log(content_node_summary);
-                    var content_node_kind = content_node_summary.kind;
-                    content_node.kind = content_node_kind;
+                    //quick fix
+                    content_node.kind = summary.kind;
 
                     var args = { content_node:content_node, comment:comment, hash:hash, content:content_node.body, tag:tag, rindow:rindow, selState:selState};
                     //leave parent_id undefined for now - backend will find it.
@@ -4180,6 +4177,7 @@ function readrBoard($R){
                 
                 //temp tie-over    
                 var hash = args.hash,
+                    summary = RDR.summaries[hash],
                     kind = args.kind;
 
 
@@ -4259,15 +4257,10 @@ function readrBoard($R){
                     log('content_node');
                     log(content_node);
                     log(content_node);
-                    //temp fix
-                    var content_node_summary = RDR.summaries[hash];
-                    log('content_node_summary');
-                    log(content_node_summary);
-                    var content_node_kind = content_node_summary.kind;
-                    content_node.kind = content_node_kind;
+                    //quick fix
+                    content_node.kind = summary.kind;
 
-
-                    var args = { hash:hash, kind:content_node_kind, content_node:content_node, comment:comment, int_id:int_id, rindow:rindow, selState:content_node.selState, tag:tag};
+                    var args = { hash:hash, kind:summary.kind, content_node:content_node, comment:comment, int_id:int_id, rindow:rindow, selState:content_node.selState, tag:tag};
                     //leave parent_id undefined for now - backend will find it.
                     RDR.actions.interactions.ajax( args, 'comment', 'create');
                 });
