@@ -40,7 +40,7 @@ def fb(request):
     )
 
 def fblogin(request):
-    group_name =  request.get('group_name', None)
+    group_name =  request.GET.get('group_name', None)
     return render_to_response(
       "fblogin.html",
       {'fb_client_id': FACEBOOK_APP_ID, 'group_name': group_name},
