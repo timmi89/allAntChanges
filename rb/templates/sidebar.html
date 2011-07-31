@@ -1,3 +1,4 @@
+{% load static %}
 <style type="text/css">
 #sidebar		{padding:20px 0 0 0;}
 #sidebar h2		{font-size:46px; font-weight:normal; margin:0 10px;}
@@ -35,7 +36,7 @@ html.dailycandy #sidebar h3[role="profile_section_header"]	{display:block;}
 </style>
 {% if group %}
 <div id="avatar">
-	<img src="{{ logo_url_large }}" />
+	<img src="{% get_static_prefix %}{{ group.logo_url_lg }}" />
 </div>
 {% endif %}
 {% if user %}
