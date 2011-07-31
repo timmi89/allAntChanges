@@ -107,6 +107,12 @@ def main(request, user_id=None, short_name=None, **kwargs):
     return render_to_response("index.html", context, context_instance=RequestContext(request))
 
 def interactions(request, user_id=None, short_name=None, **kwargs):
+    context = {}
+    cookie_user = request.COOKIES.get('user_id', None)
+    if cookie_user:
+        logged_in_user = User.objects.get(id=cookie_user)
+        context['logged_in_user'] = logged_in_user
+    
     interactions = Interaction.objects.all()
 
     # Search interaction node body and content body
@@ -118,11 +124,17 @@ def interactions(request, user_id=None, short_name=None, **kwargs):
             Q(content__body__icontains=query_string)
         )
     
+    context['query_string'] = query_string
+    
     if user_id:
+        user = User.objects.get(id=user_id)
         interactions = interactions.filter(user=user_id)
+        context['user'] = user
         
     if short_name:
+        group = Group.objects.get(short_name=short_name)
         interactions = interactions.filter(page__site__group__short_name=short_name)
+        context['group'] = group
 
     if kwargs and 'view' in kwargs:
         view = kwargs['view']
@@ -141,7 +153,7 @@ def interactions(request, user_id=None, short_name=None, **kwargs):
     try: current_page = interactions_paginator.page(page_number)
     except (EmptyPage, InvalidPage): current_page = paginator.page(paginator.num_pages)
 
-    context = {'current_page': current_page, 'query_string': query_string}
+    context['current_page'] = current_page
         
     return render_to_response("interactions.html", context, context_instance=RequestContext(request))
 
