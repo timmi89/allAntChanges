@@ -628,7 +628,7 @@ function readrBoard($R){
                     var $msg1, $msg2, $pinIcon;
                     if( whichAlert == "educateUser"){
                         $msg1 = $('<h1>Rate &amp; discuss <span>anything</span> on this page!</h1>');
-                        $msg2 = $('Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.');
+                        $msg2 = $('<div>Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.</div>');
                     }
                     if( whichAlert == "fromShareLink"){
                         //put a better message here
@@ -3374,7 +3374,7 @@ function readrBoard($R){
                             });
                             */
 
-                            $commentReply.append( $commentReply_link );
+                            // $commentReply.append( $commentReply_link );
 
 
                             // var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);">'+thisTag.body+'</a>');
@@ -3389,7 +3389,7 @@ function readrBoard($R){
 
                             // $this_tag.append($tagShareButton, $tagCountButton);
                             // $content.find('div.rdr_otherTags').append( $this_tag );
-                            $commentSet.append( $commentBy, $comment, $commentReplies, $commentReply );
+                            $commentSet.append( $commentBy, $comment ); // , $commentReplies, $commentReply 
                             $whyBody.append( $commentSet );
                         }
                     }
