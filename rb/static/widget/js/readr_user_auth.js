@@ -21,7 +21,7 @@ if ( typeof $.receiveMessage == "function") {
 		    	case "killUser":
 		    		RDRAuth.killUser();
 		    		break;
-		    	case "educatedUser":
+		    	case "close educateUser":
 		    		$.cookie('educatedUser', true);
 		    		break;
 		    }
@@ -276,6 +276,9 @@ RDRAuth = {
 		// FB.getSession(function(response) {
 		// 	RDRAuth.getReadrToken(response);	
 		// });
+	},
+	decodeDjangoCookie : function(value) {
+		return value.replace(/"/g,'').replace(/\\054/g,",").replace(/\\073/g,";");
 	}
 }
 RDRAuth.init();

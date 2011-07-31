@@ -18,6 +18,7 @@ Share = Resource(handler=ShareHandler)
 Bookmark = Resource(handler=BookmarkHandler)
 Vote = Resource(handler=VoteHandler)
 Moderate = Resource(handler=ModerationHandler)
+Privacy = Resource(handler=PrivacyHandler)
 
 urlpatterns = patterns('',
     url(r'^settings/(\d+)/$', Settings),
@@ -57,5 +58,6 @@ urlpatterns = patterns('',
     url(r'^comment/replies/', Comment, kwargs={'action':'view'}),
     url(r'^admin_request/', FBLogin, kwargs={"admin_req": True}),
     url(r'^moderate/toggle/', Moderate),
+    url(r'^privacy/toggle/', Privacy),
     #url(r'^comments/', Comments),
 )

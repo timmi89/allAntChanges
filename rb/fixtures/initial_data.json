@@ -283,6 +283,26 @@
       "group": 3
     }
   },
+  
+  {
+    "model": "rb.Site",
+    "pk": 5,
+    "fields": {
+      "name": "local",
+      "domain": "readr.local:8080",
+      "group": 2
+    }
+  },
+  
+  {
+    "model": "rb.Site",
+    "pk": 6,
+    "fields": {
+      "name": "local",
+      "domain": "readr.local:8080",
+      "group": 3
+    }
+  },
 
   {
     "model": "rb.InteractionNode",
