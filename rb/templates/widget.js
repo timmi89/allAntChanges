@@ -269,8 +269,6 @@ function readrBoard($R){
                     $rindow_writemode = summary.$rindow_writemode;
                 
                 if( diffNode.int_type == "coms" ){
-                    log('diffNode');
-                    log(diffNode);
 
                     if($rindow_writemode){
                         _addComIndicator($rindow_writemode, diffNode);
@@ -284,14 +282,11 @@ function readrBoard($R){
                     var $tags, $tag;
                     
                     $tags = $rindow.find('.rdr_tags');
-                    log('$tags in addComindicator');
-                    log($tags);
+                    
                     //$tags.find('li').removeClass('rdr_has_comment');
 
                     $tag = $tags.find('.rdr_tag_'+diffNode.parent_interaction_node.id);
-                    log($tag);
-                    log(diffNode);
-
+                    
                     // todo: add case where diff is -1 and there is only 1 com- remove the comment
                     $tag.addClass('rdr_has_comment');
 
@@ -691,9 +686,7 @@ function readrBoard($R){
                 //[cleanlogz]('revealSharedContent');
                 //[cleanlogz]console.dir(data);
                 var $container = $('.rdr-'+data.container_hash);
-                log('$container');
-                log($container);
-
+                
                 var kind = $container.data('kind');
                 if(kind == 'img' || kind == 'media'){
                     $container.addClass('rdr_shared');
@@ -1004,7 +997,7 @@ function readrBoard($R){
                         });
 
                         if ( rindow.find('div.rdr_tempUserMsg').length === 0 ){
-                            log(2)
+                            
                             log(rindow.find('div.rdr_tempUserMsg'))
                             $tempMsgDiv.find('span').html( userMsg );
                             $tempMsgDivWrapper.append( $closeButton );
@@ -1016,7 +1009,6 @@ function readrBoard($R){
                                 $tempMsgDivWrapper.fadeIn(200);
                             });
                         } else {
-                            log(1)
                             log(rindow.find('div.rdr_tempUserMsg'))
                             $tempMsgDiv = rindow.find('div.rdr_tempUserMsg');
                             $tempMsgDivWrapper = rindow.find('.rdr_tempUserMsg_wrapper');
@@ -1804,13 +1796,9 @@ function readrBoard($R){
                     // take care of pre-ajax stuff, mostly UI stuff
                     RDR.actions.interactions[int_type].preAjax(args, action_type);
 
-                    log('starting actions.interactions ' + int_type);
-                    log('args');
-                    log(args);
                     //get user and only procceed on success of that.
                     RDR.session.getUser( args, function(newArgs){
-                        log('get user calback: args');
-                        log(newArgs);
+                        
                         //[cleanlogz]('user');
                         var defaultSendData = RDR.actions.interactions.defaultSendData(newArgs),
                             customSendData = RDR.actions.interactions[int_type].customSendData(newArgs),
@@ -1848,11 +1836,9 @@ function readrBoard($R){
                             args.response = response;
                             if ( response.status == "success" ) {
                                 //[cleanlogz](action_type);
-                                console.log('response in interaction create');
-                                console.log(response);
+                                
                                 var existing = args.response.data.existing;
                                 if(existing){
-                                    console.log('existing interaction');
                                     args.response.message = "existing interaction";
                                     RDR.actions.interactions[int_type].onFail(args);
                                     return;
@@ -1887,8 +1873,6 @@ function readrBoard($R){
                         //RDR.actions.interactions.comment.onSuccess:
                         create: function(args){
                             //RDR.actions.interactions.comment.onSuccess.create:
-                            log('args in ractions.comment.onSucces');
-                            log(args);
 
                             var rindow = args.rindow,
                                 hash = args.hash;
@@ -2281,15 +2265,11 @@ function readrBoard($R){
                         }else{
                             //[cleanlogz]console.warn('uiMode is not specified for interactions.tag...')
                         }
-                        log('args in bookmark')                        
-                        log(args);            
+                        
                     },
                     customSendData: function(args){
                         //RDR.actions.interactions.bookmark.customSendData:
                        
-                        log('args in cusotom send for bookmarks')
-                        log(args)
-
                        var hash = args.hash,
                             summary = RDR.summaries[hash],
                             kind = summary.kind;
@@ -2299,10 +2279,6 @@ function readrBoard($R){
                         var $tag = args.tag,
                             tag = $tag.data('tag');
 
-
-                        log('tag in cusotom send for bookmarks')
-                        log($tag)
-                        log(tag)
 
                         var content_node_data = {};
                         //If readmode, we will have a content_node.  If not, use content_node_data, and build a new content_node on success.
@@ -2775,9 +2751,7 @@ function readrBoard($R){
                         $.each( summary.interaction_order.tags, function( idx, tagOrder ){
                             var tag = summary.top_interactions.tags[ tagOrder.id ];
 
-                            log('summary in make tagslist')
-                            log(summary)
-
+                            
                             if(count === null) return; //a helper incrementer, set to 'null' below to mimic a 'break' out of the 'each' loop 
                             if( !tag || tag.count < 0) return; //this shouldn't happen, should be taken care of in summaries.update.  But just in case.
 
@@ -3077,7 +3051,7 @@ function readrBoard($R){
                     $indicator_stats = $('<div class="rdr_indicator_stats" />'),
                     $headerOverlay = $('<div class="rdr_header_overlay" />').append($indicator_stats);
                 
-                log('new one')
+                
 
                 var headers = ["Reactions <span>("+(summary.counts.tags)+")</span>", "", ""];  // removing comment count for now +info.com_count
                 $sentimentBox.append($reactionPanel, $contentPanel, $whyPanel); //$selectedTextPanel, 
@@ -3256,10 +3230,7 @@ function readrBoard($R){
                 });
                 function SortByTagCount(a,b) { return b.counts.tags - a.counts.tags; }
                 content.sort(SortByTagCount);
-                
-                console.log('content:');
-                console.dir(content);
-                
+                                
                 //todo: consolodate truncate functions
                 var maxHeaderLen = 20;
                 var tagBody = tag.body.length > maxHeaderLen ? tag.body.slice(0, maxHeaderLen)+"..." : tag.body;
@@ -3284,9 +3255,7 @@ function readrBoard($R){
                     rindow = args.rindow,
                     content_node = args.content_node;
 
-                log('tag in viewCommentContent');
-                log(args);
-
+                
                 //temp tie-over    
                 var hash = args.hash,
                     summary = RDR.summaries[hash],
@@ -3390,11 +3359,7 @@ function readrBoard($R){
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
                     // log('--------- selState 1: '+selState);
-                    log('tag');
-                    log(tag);
-
-                    log('content_node');
-                    log(content_node);
+                    
                     //quick fix
                     content_node.kind = summary.kind;
 
@@ -4311,17 +4276,12 @@ function readrBoard($R){
                 });
 
                 // $leaveComment.find('textarea').autogrow();
-                                    log('tag');
-                    log(tag);
-
+                                    
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
                     //[cleanlogz]('--------- selState 2: '+content_node.selState);
                     
                     //temp translations..
-                    log('content_node');
-                    log(content_node);
-                    log(content_node);
                     //quick fix
                     content_node.kind = summary.kind;
 
