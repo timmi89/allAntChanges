@@ -610,31 +610,33 @@ function readrBoard($R){
                     */
 
                     //todo: finish making these changes here:, but i didnt' want to do it before the DC demo.
-                    var msg1, msg2;
+                    var msg1, msg2, closeType;
                     if( whichAlert == "educateUser"){
                         msg1 = '<h1>&nbsp;Rate &amp; discuss <span>anything</span> on this page!</h1>';
                         msg2 = 'Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.';
+                        closeType = "educatedUser";
                     }
                     if( whichAlert == "fromShareLink"){
                         //put a better message here
                         msg1 = '<h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shared with <span>ReadrBoard</span></h1>';
                         msg2 = '&nbsp;&nbsp;<strong>' + data.reaction + ':</strong> <em>' + data.content.substr(0,40) + '...</em> <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>';
+                        closeType = "shareLink";
                     }
 
-                    var $educateUser = $('<div id="rdr_ed_user" class="rdr" />');
+                    var $alertContent = $('<div id="rdr_alert_bar" class="rdr rdr_brtl rdr_brtr" />');
 
-                    $educateUser.append(
-                        $('<div id="rdr_ed_user_1" />').append(msg1),
-                        $('<div id="rdr_ed_user_2" />').append(msg2),
-                        '<div id="rdr_ed_user_x">x</div>'
+                    $alertContent.append(
+                        $('<div id="rdr_alert_bar_1" class="rdr_brtl rdr_brtr" />').append(msg1),
+                        $('<div id="rdr_alert_bar_2" />').append(msg2),
+                        '<div id="rdr_alert_bar_x">x</div>'
                     );
                                             
-                    $('#rdr_sandbox').append( $educateUser );
-                    $('#rdr_ed_user_x').click( function() {
-                        RDR.session.educateUserClose();
+                    $('#rdr_sandbox').append( $alertContent );
+                    $('#rdr_alert_bar_x').click( function() {
+                        RDR.session.alertBar.close( closeType );
                     });
 
-                    $educateUser.find('.rdr_showSelection').click( function() {
+                    $alertContent.find('.rdr_showSelection').click( function() {
                         //show the alertBar sliding closed for just a second before scrolling down..
                         // RDR.session.alertBar.close();
                         setTimeout(function(){
@@ -642,28 +644,26 @@ function readrBoard($R){
                         }, 200);
                     });
 
-                    RDR.group.educateUserLocation = "top";
-                    if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
-                        $educateUser.css('top','auto');
-                        $educateUser.css('bottom','-40px');
-                        $('#rdr_ed_user').animate({bottom:0});
-                    } else {
-                        var bodyPaddingTop = parseInt( $('body').css('padding-top') );
-                        $('body').animate({ paddingTop: (bodyPaddingTop+35)+"px" });
-                        $('#rdr_ed_user').animate({top:0});
-                    }
+                    $('#rdr_alert_bar').animate({bottom:0},1000);
+
+                    // OLD -- positioning/animation from when this was a bar
+                    // RDR.group.educateUserLocation = "top";
+                    // if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
+                    //     $alertContent.css('top','auto');
+                    //     $alertContent.css('bottom','-40px');
+                    //     $('#rdr_alert_bar').animate({bottom:0});
+                    // } else {
+                    //     var bodyPaddingTop = parseInt( $('body').css('padding-top') );
+                    //     $('body').animate({ paddingTop: (bodyPaddingTop+35)+"px" });
+                    //     $('#rdr_alert_bar').animate({top:0});
+                    // }
+                    // END OLD
                 },
-                close: function() {
-                    if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
-                        $('#rdr_ed_user').animate({bottom:-40});
-                    } else {
-                        var bodyPaddingTop = parseInt( $('body').css('padding-top') );
-                        $('body').animate({ paddingTop: (bodyPaddingTop-35)+"px" });
-                        $('#rdr_ed_user').animate({top:-40});
-                    }
+                close: function( closeType ) {
+                    $('#rdr_alert_bar').animate({bottom:-400},1000).remove();;
                     // set a cookie in the iframe saying not to show this anymore
                     $.postMessage(
-                        "educatedUser",
+                        closeType,
                         RDR.session.iframeHost + "/xdm_status/",
                         window.frames['rdr-xdm-hidden']
                     );
@@ -1012,38 +1012,6 @@ function readrBoard($R){
                             });
                     }
                 }
-            },    
-            educateUser: function() {
-                var $educateUser = $('<div id="rdr_ed_user" class="rdr"><div id="rdr_ed_user_1"><h1>Rate or discuss <span>anything</span> on this page!</h1></div><div id="rdr_ed_user_2">Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.</div><div id="rdr_ed_user_x">x</div>');
-                $('#rdr_sandbox').append( $educateUser );
-                $('#rdr_ed_user_x').click( function() {
-                    RDR.session.educateUserClose();
-                });
-                RDR.group.educateUserLocation = "top";
-                if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
-                    $educateUser.css('top','auto');
-                    $educateUser.css('bottom','-40px');
-                    $('#rdr_ed_user').animate({bottom:0});
-                } else {
-                    var bodyPaddingTop = parseInt( $('body').css('padding-top') );
-                    $('body').animate({ paddingTop: (bodyPaddingTop+35)+"px" });
-                    $('#rdr_ed_user').animate({top:0});
-                }
-            },
-            educateUserClose: function() {
-                if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
-                    $('#rdr_ed_user').animate({bottom:-40});
-                } else {
-                    var bodyPaddingTop = parseInt( $('body').css('padding-top') );
-                    $('body').animate({ paddingTop: (bodyPaddingTop-35)+"px" });
-                    $('#rdr_ed_user').animate({top:-40});
-                }
-                // set a cookie in the iframe saying not to show this anymore
-                $.postMessage(
-                    "educatedUser",
-                    RDR.session.iframeHost + "/xdm_status/",
-                    window.frames['rdr-xdm-hidden']
-                );
             }
 		},
         actions: {
