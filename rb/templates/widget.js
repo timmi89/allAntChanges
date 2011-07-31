@@ -617,7 +617,10 @@ function readrBoard($R){
                     if( whichAlert == "fromShareLink"){
                         //put a better message here
                         msg1 = '<h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shared with <span>ReadrBoard</span></h1>';
-                        msg2 = '&nbsp;&nbsp;<strong>' + data.reaction + ':</strong> <em>' + data.content.substr(0,40) + '...</em> <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>';
+                        var content = new String(data.content);
+                        log( content );
+                        log( decodeURIComponent( content ) );
+                        msg2 = '&nbsp;&nbsp;<strong>' + decodeURIComponent(data.reaction) + ':</strong> <em>' + decodeURIComponent(data.content).substr(0,40) + '...</em> <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>';
                         closeType = "shareLink";
                     }
                     pinIcon = '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />';

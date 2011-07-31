@@ -276,6 +276,9 @@ RDRAuth = {
 		// FB.getSession(function(response) {
 		// 	RDRAuth.getReadrToken(response);	
 		// });
+	},
+	decodeDjangoCookie : function(value) {
+		return value.replace(/"/g,'').replace(/\\054/g,",").replace(/\\073/g,";");
 	}
 }
 RDRAuth.init();
