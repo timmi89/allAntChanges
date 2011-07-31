@@ -1660,12 +1660,6 @@ function readrBoard($R){
                     //gets this summary's content_nodes from the server and populates the summary with them.
 
                     var summary = RDR.summaries[hash];
-                    //if( summary.hasOwnProperty('initiated') && summary.initiated ) return;
-                    //else
-
-                    //todo: I think this sorting needs be put back in
-                    function SortByTagCount(a,b) { return b.count - a.count; }
-
 
                     var sendData = {
                         "page_id" : RDR.page.id,
@@ -2741,56 +2735,7 @@ console.log('we considered this a tax success');
 
                         $indicator.find('.rdr_indicator_body').attr('style', inlineStyleStr);
                     }
-                },//end RDR.actions.indicators.utils
-                sortReactions: function( hash ){
-
-                    //todo: consider sorting on the backend
-                    // order the container's tags by tag_count
-                    function SortByTagCount(a,b) { return b.count - a.count; }
-                    var info = RDR.content_nodes[ hash ].info;
-                    info.tags = [];
-                    
-                
-                    info.total_tags = 0;
-                    
-                    // info.tags_order = [];
-
-                    // loop through the content object to create a similar object that has tags at the top of the hierarchy, 
-                    // to prevent looping through .content over and over
-                    for ( var j in info.content ) {
-                        // //[cleanlogz]console.dir(content);
-                        var content = info.content[j];
-
-                        for ( var i in content.tags ) {
-                            var tag = content.tags[i];
-
-                            var tag_idx = -1;
-                            for ( var z in info.tags ) {
-                                if ( info.tags[z].id == tag.id ) {
-                                    tag_idx = z;
-                                    break;
-                                }
-                            }
-                            if ( tag_idx == -1 ) {
-                                info.tags.push({ id:tag.id, body:tag.tag, count:0, com_count:0, content:{} });
-                                tag_idx = ( info.tags.length - 1 );
-                            }
-
-                            info.tags[ tag_idx ].count += tag.count;
-                            if (tag.comments) info.tags[ tag_idx ].com_count += tag.comments.length;
-                            info.tags[ tag_idx ].content[ j ] = { count:tag.count, tag_idx:parseInt(i) };
-                            info.total_tags += tag.count;
-                        }
-                    }
-
-                    //log('info.tags')
-                    //log(info.tags)
-                    info.tags.sort(SortByTagCount);
-                    RDR.content_nodes[ hash ].info = info;
-                    //todo: consider showing just tags here and simplifying
-
-                    return info;
-                }
+                }//end RDR.actions.indicators.utils
             },
             summaries:{
                 init: function(hash){
@@ -2933,7 +2878,16 @@ console.log('we considered this a tax success');
                 }
             },
             sortInteractions: function(hash) {
+                var summary = RDR.summaries[hash];
+                if ( !summary.interaction_order ) summary.interaction = { coms:[], tags:[] };
+
+                // tags
+                if ( !$.isEmptyObject( summary.top_interactions.tags ) {
+                    
+                }
                 
+                function SortByCount(a,b) { return b.count - a.count; }
+
             },
             insertContainerIcon: function( hash ) {},
             viewContainerReactions: function( hash ) {
