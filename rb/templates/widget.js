@@ -2660,7 +2660,9 @@ console.log('we considered this a tax success');
                             $indicator_details = summary.$indicator_details,
                             $tagsList = $indicator_details.find('.rdr_tags_list');
 
-                        $.each( summary.top_interactions.tags, function(tag_id, tag){
+                        $.each( summary.interaction_order.tags, function( idx, tagOrder ){
+                            var tag = summary.top_interactions.tags[ tagOrder.id ];
+
                             if(count === null) return; //a helper incrementer, set to 'null' below to mimic a 'break' out of the 'each' loop 
                             if(tag.count < 0) return; //this shouldn't happen, should be taken care of in summaries.update.  But just in case.
 
@@ -2669,7 +2671,7 @@ console.log('we considered this a tax success');
                                 $count = $('<em/>').append( '('+tag.count+')' ),
                                 $span = $('<span />').addClass('rdr_tags_list_tag');
 
-                            $span.append( $tag, $count).data('id',tag_id).data('selStates',[]);
+                            $span.append( $tag, $count).data('id',tagOrder.id).data('selStates',[]);
 
 
                             $tagsList.append( prefix, $span );
@@ -2777,6 +2779,8 @@ console.log('we considered this a tax success');
                     //save the summary and add the $container as a property
                     RDR.summaries[hash] = summary;
                     summary.$container = $('.rdr-'+hash);
+
+                    RDR.actions.summaries.sortInteractions(hash);
                                 
                 },
                 update: function(hash, diff){
@@ -2875,19 +2879,33 @@ console.log('we considered this a tax success');
 
                     RDR.actions.summaries.sortInteractions(hash);
 
-                }
-            },
-            sortInteractions: function(hash) {
-                var summary = RDR.summaries[hash];
-                if ( !summary.interaction_order ) summary.interaction = { coms:[], tags:[] };
+                },
+                sortInteractions: function(hash) {
+                    function SortByCount(a,b) { return b.count - a.count; }
 
-                // tags
-                if ( !$.isEmptyObject( summary.top_interactions.tags ) {
-                    
-                }
-                
-                function SortByCount(a,b) { return b.count - a.count; }
+                    var summary = RDR.summaries[hash];
+                    if ( !summary.interaction_order ) summary.interaction_order = { coms:[], tags:[] };
 
+                    var topTags = summary.top_interactions.tags,
+                    topComs = summary.top_interactions.coms;
+
+                    // tags
+                    if ( !$.isEmptyObject( summary.top_interactions.tags ) ) {
+                        $.each( topTags, function( tagID, tag ){
+                            summary.interaction_order.tags.push( { id:tagID, count:tag.count } );
+                        });
+                    }
+                    summary.interaction_order.tags.sort( SortByCount );
+
+                    // comments
+                    if ( !$.isEmptyObject( summary.top_interactions.coms ) ) {
+                        $.each( topComs, function( comID, com ){
+                            summary.interaction_order.coms.push( { id:comID, count:com.count } );
+                        });
+                    }
+                    summary.interaction_order.coms.sort( SortByCount );
+
+                }
             },
             insertContainerIcon: function( hash ) {},
             viewContainerReactions: function( hash ) {
@@ -2962,18 +2980,18 @@ console.log('we considered this a tax success');
 
 
                 var topTags = summary.top_interactions.tags,
+                topTagsOrder = summary.interaction_order.tags,
                 topComs = summary.top_interactions.coms,
                 totalTags = summary.counts.tags,
                 totalComs = summary.counts.coms;
 
                 ////populate blesed_tags
-                $.each( topTags, function( tagID, tag ){
-                    //[cleanlogz]('tagID')    
-                    //[cleanlogz](tagID)    
+                $.each( topTagsOrder, function( idx, tagOrder ){
+                    var tag = topTags[ tagOrder.id ];
                     var percentage = Math.round( ( tag.count/totalTags ) * 100);                
-                    var $li = $('<li class="rdr_tag_'+tagID+'" />').data({
+                    var $li = $('<li class="rdr_tag_'+tagOrder.id+'" />').data({
                         'tag':{
-                            id:parseInt( tagID ),
+                            id:parseInt( tagOrder.id ),
                             body:tag.body,
                             count:tag.count
                         },
@@ -2987,7 +3005,7 @@ console.log('we considered this a tax success');
                     
                     // todo: [porter] i'm looping to see if there is a comment for this TAG.  can we just send this down from server?
                     for ( var i in topComs ) {
-                        if ( topComs[i].tag_id == tagID ) $li.addClass('rdr_has_comment');
+                        if ( topComs[i].tag_id == tagOrder.id ) $li.addClass('rdr_has_comment');
                     }
                     $tagBox.children('ul.rdr_tags').append($li);
                 
