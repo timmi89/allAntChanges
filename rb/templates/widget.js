@@ -39,8 +39,6 @@ function readrBoard($R){
         },
         group: {}, //to be set by RDR.actions.initGroupData
         user: {
-            first_name:		"",
-            full_name:		"",
             img_url:        "", 
             readr_token: 	"",
             user_id:        ""
