@@ -3087,7 +3087,13 @@ function readrBoard($R){
                             $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
                             if ( kind == "img" ) {
                                 var hash = $this.data('hash');
-                                RDR.actions.viewCommentContent( {tag:$this.data('tag'), hash:hash, rindow:rindow, kind:kind, node:RDR.summaries[hash] });
+
+                                var content_node = {
+                                    kind:kind,
+                                    body:summary.$container.attr('src')
+                                };
+
+                                RDR.actions.viewCommentContent( {tag:$this.data('tag'), hash:hash, rindow:rindow, kind:kind, content_node:content_node });
                             } else {
                                 RDR.actions.viewReactionContent( $this.data('tag'), $this.data('hash'), rindow, kind );
                             }
@@ -3317,11 +3323,19 @@ function readrBoard($R){
                     // log('--------- selState 1: '+selState);
                     log('tag');
                     log(tag);
+
                     
                     content_node = ( kind == "img" || kind == "media" ) ? { body:"", container:hash, kind:kind } : content_node;
                     
                     log('content_node');
                     log(content_node);
+                    
+                    var content_node_summary = RDR.summaries[hash];
+                    log('content_node_summary');
+                    log(content_node_summary);
+                    var content_node_kind = content_node_summary.kind;
+                    content_node.kind = content_node_kind;
+
                     var args = { content_node:content_node, comment:comment, hash:hash, content:content_node.body, tag:tag, rindow:rindow, selState:selState};
                     //leave parent_id undefined for now - backend will find it.
                     RDR.actions.interactions.ajax( args, 'comment', 'create');
@@ -4245,8 +4259,15 @@ function readrBoard($R){
                     log('content_node');
                     log(content_node);
                     log(content_node);
+                    //temp fix
+                    var content_node_summary = RDR.summaries[hash];
+                    log('content_node_summary');
+                    log(content_node_summary);
+                    var content_node_kind = content_node_summary.kind;
+                    content_node.kind = content_node_kind;
 
-                    var args = { hash:hash, kind:kind, content_node:content_node, comment:comment, int_id:int_id, rindow:rindow, selState:content_node.selState, tag:tag};
+
+                    var args = { hash:hash, kind:content_node_kind, content_node:content_node, comment:comment, int_id:int_id, rindow:rindow, selState:content_node.selState, tag:tag};
                     //leave parent_id undefined for now - backend will find it.
                     RDR.actions.interactions.ajax( args, 'comment', 'create');
                 });
