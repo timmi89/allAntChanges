@@ -536,6 +536,28 @@ section[role="complementary"] 			{
 	box-shadow:2px 0px 3px 1px #aaa;
 }
 
+section[role="complementary"] #user_data img {
+	max-width: 180px;
+}
+
+section[role="complementary"] #user_data label {
+	font-size:12px;
+	font-weight:bold;
+	margin-bottom:20px;
+	display:block;
+	overflow:visible;
+}
+
+section[role="complementary"] #user_data label span {
+	font-size:10px;
+	color:#666;
+	font-style:italic;
+	display:block;
+	margin-left:23px;
+	float:left;
+	clear:both;
+}
+
 
 /* HEADINGS */
 /* TYPOGRAPHY */
