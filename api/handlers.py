@@ -6,7 +6,6 @@ from exceptions import JSONException
 from utils import *
 from userutils import *
 from token import *
-from moderation import *
 from settings import BASE_URL
 
 class SocialUserHandler(AnonymousBaseHandler):
@@ -41,7 +40,7 @@ class ModerationHandler(AnonymousBaseHandler):
     @json_data
     @status_response
     def read(self, request, data):
-        return "Moderation yay!"
+        print data
 
 class InteractionHandler(AnonymousBaseHandler):
     @json_data

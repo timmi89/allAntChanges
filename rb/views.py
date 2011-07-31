@@ -41,8 +41,7 @@ def fb(request):
 def fblogin(request):
     return render_to_response(
       "fblogin.html",
-      {'fb_client_id': FACEBOOK_APP_ID,
-      'group_name': request.GET['group_name'] },
+      {'fb_client_id': FACEBOOK_APP_ID},
       context_instance=RequestContext(request)
     )
 
