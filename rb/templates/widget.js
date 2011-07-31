@@ -1202,7 +1202,7 @@ function readrBoard($R){
                 $(document).bind('scrollstop.rdr', function() {
                     if ( $(window).scrollTop() > 100 && $('#rdr_sandbox') && !$('#rdr_sandbox').data('showingAllIndicator') ) {
                         $('#rdr_sandbox').data('showingAllIndicator', true)
-                        if ( RDR.total_containers > RDR.group.initial_pin_limit ) {
+                        if ( RDR.text_container_popularity && RDR.text_container_popularity.length > RDR.group.initial_pin_limit ) {
                             // show the alert bar, which has a link to call RDR.actions.summaries.showLessPopularIndicators
                             RDR.session.alertBar.make('showMorePins');
                             $(document).unbind('scrollstop.rdr');
@@ -1328,7 +1328,6 @@ function readrBoard($R){
                 if( !hashes || !hashes.length ){ 
                     hashes = getAllHashes();
                 }
-                RDR.total_containers = hashes.length;
         
                 function getAllHashes(){
                     var hashes = [];
@@ -2923,7 +2922,7 @@ console.log('we considered this a tax success');
                     RDR.text_container_popularity = [];
 
                     $.each( RDR.summaries, function( hash, container ){
-                        if ( container.kind == "text" ) {
+                        if ( container.kind == "text" && container.counts.interactions > 0 ) {
                             RDR.text_container_popularity.push( { hash:hash, interactions:container.counts.interactions } );
                         }
                     });
@@ -2935,14 +2934,14 @@ console.log('we considered this a tax success');
                     // RDR.actions.summaries.displayPopularIndicators
 
                     for ( var i=0; i < RDR.group.initial_pin_limit; i++) {
-                        $('#rdr_indicator_' + RDR.text_container_popularity[i].hash).removeClass('rdr_dont_show');
+                        if ( RDR.text_container_popularity[i] ) $('#rdr_indicator_' + RDR.text_container_popularity[i].hash).removeClass('rdr_dont_show');
                     }
                 },
                 showLessPopularIndicators: function() {
                     // RDR.actions.summaries.showLessPopularIndicators
                     var hashesToShow = [];
 
-                    for ( var i=RDR.group.initial_pin_limit; i<RDR.total_containers; i++) {
+                    for ( var i=RDR.group.initial_pin_limit; i<RDR.text_container_popularity.length; i++) {
                         if ( RDR.text_container_popularity[i] ) {
                             if ( RDR.text_container_popularity[i].interactions > 0 ) {
                                 $('#rdr_indicator_' + RDR.text_container_popularity[i].hash).removeClass('rdr_dont_show');
