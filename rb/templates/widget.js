@@ -299,22 +299,22 @@ function readrBoard($R){
                     
                     //RDR.actions.content_panel.make(node, tagClone, hash, $rindow);
 
-                    // var $contentSets = $rindow.find('#rdr_contentPanel .rdr_contentSet');
-                    // $contentSets.each(functon(){
-                    //     var parent_id = $(this).data('tag').id;
-                    //     if( parent_id == diffNode.parent_id ){
-                    //         var $header = $(this).find('.rdr_contentHeader');
-                    //         var $comLink = $header.find('div.rdr_comment_link');
-                    //         if( $comLink.hasClass('rdr_can_comment') ){
-                    //                 $comLink.removeClass(rdr_can_comment);
-                    //                 $comLink.addClass();
-                    //         }else{
+                    var $contentSets = $rindow.find('#rdr_contentPanel .rdr_contentSet');
+                    $contentSets.each(function(){
+                        var parent_interaction_node = $(this).data('tag');
+                        if( parent_interaction_node.id == diffNode.parent_interaction_node.id ){
+                            var $header = $(this).find('.rdr_contentHeader');
+                            var $comLink = $header.find('div.rdr_comment_link');
+                            if( $comLink.hasClass('rdr_can_comment') ){
+                                    $comLink.removeClass('rdr_can_comment');
+                                    $comLink.addClass('rdr_has_comment');
+                            }else{
                                 
-                    //         }
+                            }
                             
 
-                    //     }
-                    // });
+                        }
+                    });
                     
 
                 }
@@ -1812,9 +1812,9 @@ function readrBoard($R){
                         log('get user calback: args');
                         log(newArgs);
                         //[cleanlogz]('user');
-                        var sendDataDefaults = RDR.actions.interactions.sendDataDefaults(newArgs),
+                        var defaultSendData = RDR.actions.interactions.defaultSendData(newArgs),
                             customSendData = RDR.actions.interactions[int_type].customSendData(newArgs),
-                            sendData = $.extend( {}, sendDataDefaults, customSendData );
+                            sendData = $.extend( {}, defaultSendData, customSendData );
                         
                         newArgs.sendData = sendData;
 
@@ -1866,10 +1866,14 @@ function readrBoard($R){
                         }
                     });
                 },
-                sendDataDefaults: function(args){
-                    //RDR.actions.interactions.sendDataDefaults:
+                defaultSendData: function(args){
+                    //RDR.actions.interactions.defaultSendData:
 
-                    //todo: move stuff into here that is generic.
+                    args.user_id = RDR.user.user_id;
+                    args.readr_token = RDR.user.readr_token;
+                    args.group_id = RDR.groupPermData.group_id;
+                    args.page_id = RDR.page.id;
+                    return args;
 
                 },
                 comment: {
@@ -1878,15 +1882,6 @@ function readrBoard($R){
                     },
                     customSendData: function(args){
                         //RDR.actions.interactions.comment.customSendData:
-                        
-                        log('args in custom for coms');
-                        log(args);
-
-                        args.user_id = RDR.user.user_id;
-                        args.readr_token = RDR.user.readr_token;
-                        args.group_id = RDR.groupPermData.group_id;
-                        args.page_id = RDR.page.id;
-                        return args;
                     },
                     onSuccess: {
                         //RDR.actions.interactions.comment.onSuccess:
@@ -2020,7 +2015,7 @@ function readrBoard($R){
 
                     },
                     customSendData: function(args){
-                        //RDR.actions.interactions.tag.customSendData:
+                        ////RDR.actions.interactions.tag.customSendData:
                         //temp tie-over    
                         var hash = args.hash,
                             summary = RDR.summaries[hash],
@@ -2286,11 +2281,81 @@ function readrBoard($R){
                         }else{
                             //[cleanlogz]console.warn('uiMode is not specified for interactions.tag...')
                         }
-                        
+                        log('args in bookmark')                        
+                        log(args);            
                     },
                     customSendData: function(args){
-                        if ( args.int_id ) return { int_id:args.int_id };
-                        else return {};
+                        //RDR.actions.interactions.bookmark.customSendData:
+                       
+                        log('args in cusotom send for bookmarks')
+                        log(args)
+
+                       var hash = args.hash,
+                            summary = RDR.summaries[hash],
+                            kind = summary.kind;
+                      
+                        var rindow = args.rindow,
+                            tag_li = args.tag;
+                        var $tag = args.tag,
+                            tag = $tag.data('tag');
+
+
+                        log('tag in cusotom send for bookmarks')
+                        log($tag)
+                        log(tag)
+
+                        var content_node_data = {};
+                        //If readmode, we will have a content_node.  If not, use content_node_data, and build a new content_node on success.
+                        var content_node = args.content_node || null;
+
+                        //[cleanlogz](content_node_data);
+                        if(kind == 'img' || kind == 'media'){
+                            var body = "";
+
+                            content_node_data = {
+                                'container': rindow.data('container'),
+                                'body': body,
+                                'kind':kind,
+                                'hash':hash
+                            };
+
+                        }else{
+                            //is text
+                            
+                            //todo: fix this temp hackery
+                            if(content_node){
+                                content_node_data = {
+                                    'container': rindow.data('container'),
+                                    'body': content_node.body,
+                                    'location': content_node.location,
+                                    'kind':kind
+                                };
+                            }else{
+                                var selState = rindow.data('selState');
+                                
+                                content_node_data = {
+                                    'container': rindow.data('container'),
+                                    'body': selState.text,
+                                    'location': selState.serialRange,
+                                    'kind': kind
+                                };
+                            }
+                        }
+
+                        var sendData = {
+                            //interaction level attrs
+                            "tag":tag,
+                            "node": content_node,                        //null if writemode
+                            "content_node_data":content_node_data,
+                            "hash": content_node_data.container,
+                            //page level attrs
+                            "user_id" : RDR.user.user_id,
+                            "readr_token" : RDR.user.readr_token,
+                            "group_id" : RDR.groupPermData.group_id,
+                            "page_id" : RDR.page.id,
+                            "int_id" : args.int_id
+                        };
+                        return sendData;
                     },
                     onSuccess: {
                         create: function(args){
