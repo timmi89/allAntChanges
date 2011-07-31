@@ -630,10 +630,10 @@ function readrBoard($R){
                     }
                     if( whichAlert == "showMorePins"){
                         //put a better message here
-                        $msg1 = $('<h1>See more <span>pins</span>!</h1>');
-                        $msg2 = $('<a class="rdr_show_more_pins" href="javascript:void(0);">see them</a>');
+                        $msg1 = $('<h1>See what readers are <span>saying</span>!</h1>');
+                        $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="rdr_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" /> icons.</div>');
 
-                        $msg2.click( function() {
+                        $msg2.find('a.rdr_show_more_pins').click( function() {
                             RDR.actions.summaries.showLessPopularIndicators();
                             $(this).closest('div.rdr_alert_box').find('div.rdr_alert_box_x').click();
                         });
@@ -1068,7 +1068,7 @@ function readrBoard($R){
                         RDR.group.selector_whitelist = RDR.group.selector_whitelist || "body p";
                         RDR.group.media_selector = RDR.group.media_selector || "embed, video, object, iframe.rdr_video"; //for now just play it safe with the iframe.
                         RDR.group.comment_length = RDR.group.comment_length || 300;
-                        RDR.group.initial_pin_limit = RDR.group.initial_pin_limit || 3;
+                        RDR.group.initial_pin_limit = RDR.group.initial_pin_limit || 2;
 
                         $RDR.dequeue('initAjax');
                     },
