@@ -494,15 +494,16 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 
 /* user education bar */
-#rdr_sandbox #rdr_alert_box        { position:fixed; bottom:-400px; left:10px; width:100%; background:#f0f0f0; width:300px; padding:0px; z-index:12000; overflow:hidden; -moz-box-shadow:0 0 10px 1px #aaa  !important; -webkit-box-shadow:0 0 10px 1px #aaa  !important; box-shadow:0 0 10px 1px #aaa !important; }
-#rdr_sandbox #rdr_alert_box a      { color:#008be4; }
-#rdr_sandbox #rdr_alert_box_1      { background: #fff; height:30px; }
-#rdr_sandbox #rdr_alert_box_1 h1   { padding:6px 0 0 20px; cursor:text;}
+#rdr_sandbox div.rdr_alert_box        { position:fixed; bottom:-400px; left:10px; width:100%; background:#f0f0f0; width:300px; padding:0px; z-index:12000; overflow:hidden; -moz-box-shadow:0 0 10px 1px #aaa  !important; -webkit-box-shadow:0 0 10px 1px #aaa  !important; box-shadow:0 0 10px 1px #aaa !important; }
+#rdr_sandbox div.rdr_alert_box a      { color:#008be4; }
+#rdr_sandbox div.rdr_alert_box_1      { background: #fff; height:30px; }
+#rdr_sandbox div.rdr_alert_box_1 h1   { padding:6px 0 0 20px; cursor:text;}
 
-#rdr_sandbox #rdr_alert_box_1 span { font-size:21px;}
-#rdr_sandbox #rdr_alert_box_2      { background: #f0f0f0; padding:10px 10px 30px; font-size:14px; color:#666;}
-#rdr_sandbox #rdr_alert_box_x      { position:absolute; right:10px; top:7px; font-size:14px; cursor:pointer; color:#999; }
-#rdr_sandbox #rdr_sandbox div.rdr_alert_box_2 span {
+#rdr_sandbox div.rdr_alert_box_1 span,
+#rdr_sandbox div.rdr_alert_box_1 h1 span { font-size:21px;}
+#rdr_sandbox div.rdr_alert_box_2      { background: #f0f0f0; padding:10px 10px 30px; font-size:12px; color:#666;}
+#rdr_sandbox div.rdr_alert_box_x      { position:absolute; right:10px; top:7px; font-size:14px; cursor:pointer; color:#999; }
+#rdr_sandbox div.rdr_alert_box_2 span {
     background:url({{ STATIC_URL }}widget/images/actionbar_icons.png) no-repeat -8px -8px transparent;
     display:inline-block;
     height:22px;
@@ -510,6 +511,17 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
     text-indent:-9999px;
 }
 
+#rdr_sandbox div.rdr_alert_box_1 img.rdr_pin { 
+    position:static !important;
+    margin:10px 0px 10px 7px !important;
+    float:left !important;
+}
+#rdr_sandbox div.rdr_alert_box_2 img.rdr_pin {
+    display: inline !important;
+    float: none !important;
+    margin: 0 0 -4px !important;
+    position: static !important;
+}
 
 /*everything below here is stuff that is inline to the client's document.  Generally will use !important for everything*/
 
@@ -601,7 +613,6 @@ div.rdr_indicator,
     white-space: nowrap;
 }
 
-
 /*indicator pin both*/
 div.rdr_indicator img.rdr_pin,
 #rdr_sandbox img.rdr_pin,
@@ -617,11 +628,6 @@ div.rdr_indicator img.rdr_pin{
 }
 /*indicator pin indicator details only*/
 div.rdr_indicator_details img.rdr_pin{ 
-}
-#rdr_sandbox #rdr_alert_box img.rdr_pin{ 
-    position:static !important;
-    margin:10px 0px 10px 7px !important;
-    float:left !important;
 }
 
 div.rdr_indicator div.rdr_indicator_body { 
