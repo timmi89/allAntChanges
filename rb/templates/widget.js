@@ -1512,6 +1512,10 @@ function readrBoard($R){
                     // create the container sort to see which containers have the most activity
                     RDR.actions.summaries.sortPopularTextContainers();
                     RDR.actions.summaries.displayPopularIndicators();
+                                      
+                    log('hashesToShow - showing hashes in reg');
+                    log(hashesToShow);
+
                     RDR.actions.indicators.show(hashesToShow);
                 },
                 send: function(hashList){
@@ -2913,6 +2917,7 @@ function readrBoard($R){
                     }
                     */
 
+                    log('//RDR.actions.summaries.update:');
                     //get summary, or if it doesn't exist, get a zero'ed out template of one.
 
                     //todo: use a try catch instead;
@@ -3055,6 +3060,8 @@ function readrBoard($R){
                             }
                         }
                     }
+                    log('hashesToShow - showing hashes in showLessPopularIndicators');
+                    log(hashesToShow);
                     RDR.actions.indicators.show(hashesToShow);
                 }
             },
