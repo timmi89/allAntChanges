@@ -126,12 +126,12 @@ class CommentHandler(InteractionHandler):
         comment = data['comment']
 
         # optional
-        interaction_id = data.get('int_id', None)
+        parent_id = data.get('parent_id', None)
 
         # Get or create parent interaction
-        if interaction_id:        
+        if parent_id:
             try:
-                parent = Interaction.objects.get(id=interaction_id)
+                parent = Interaction.objects.get(id=parent_id)
             except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
                 raise JSONException(u'Could not find parent interaction specified')
         else:
