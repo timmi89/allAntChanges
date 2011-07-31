@@ -598,6 +598,8 @@ function readrBoard($R){
 		session: {
             alertBar: {
                 make: function( whichAlert, data) {
+                    log(whichAlert);
+                    // RDR.session.alertBar.make
                     //whichAlert to tell us if it's the educate user bar, or the sharedLink bar
                     //data if we want it, not using it now... - expects: 
                     /*
@@ -608,45 +610,49 @@ function readrBoard($R){
                     */
 
                     //todo: finish making these changes here:, but i didnt' want to do it before the DC demo.
-                    var msg1, msg2, closeType, pinIcon;
+                    var $msg1, $msg2, $pinIcon;
                     if( whichAlert == "educateUser"){
-                        msg1 = '<h1>&nbsp;Rate &amp; discuss <span>anything</span> on this page!</h1>';
-                        msg2 = 'Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.';
-                        closeType = "educatedUser";
+                        $msg1 = $('<h1>Rate &amp; discuss <span>anything</span> on this page!</h1>');
+                        $msg2 = $('Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.');
                     }
                     if( whichAlert == "fromShareLink"){
                         //put a better message here
-                        msg1 = '<h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shared with <span>ReadrBoard</span></h1>';
-                        var content = new String(data.content);
-                        log( content );
-                        log( decodeURIComponent( content ) );
-                        msg2 = '&nbsp;&nbsp;<strong>' + decodeURIComponent(data.reaction) + ':</strong> <em>' + decodeURIComponent(data.content).substr(0,40) + '...</em> <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>';
-                        closeType = "shareLink";
-                    }
-                    pinIcon = '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />';
+                        $msg1 = $('<h1>Shared with <span>ReadrBoard</span></h1>');
+                        $msg2 = $('<strong>' + data.reaction + ':</strong> <em>' + data.content.substr(0,40) + '...</em> <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>');
 
-                    var $alertContent = $('<div id="rdr_alert_box" class="rdr rdr_brtl rdr_brtr" />');
+                        $msg2.find('a.rdr_showSelection').click( function() {
+                            //show the alertBar sliding closed for just a second before scrolling down..
+                            // RDR.session.alertBar.close();
+                            setTimeout(function(){
+                                RDR.session.revealSharedContent(data);
+                            }, 200);
+                        });
+                    }
+                    if( whichAlert == "showMorePins"){
+                        //put a better message here
+                        $msg1 = $('<h1>See more <span>pins</span>!</h1>');
+                        $msg2 = $('<a class="rdr_show_more_pins" href="javascript:void(0);">see them</a>');
+
+                        $msg2.click( function() {
+                            RDR.actions.summaries.showLessPopularIndicators();
+                        });
+                    }
+                    $pinIcon = $('<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />');
+
+                    var $alertContent = $('<div class="rdr_alert_box rdr rdr_brtl rdr_brtr rdr_' + whichAlert + '" />');
 
                     $alertContent.append(
-                        $('<div id="rdr_alert_box_1" class="rdr_brtl rdr_brtr" />').append(pinIcon).append(msg1),
-                        $('<div id="rdr_alert_box_2" />').append(msg2),
-                        '<div id="rdr_alert_box_x">x</div>'
+                        $('<div class="rdr_alert_box_1 rdr_brtl rdr_brtr" />').append($pinIcon).append($msg1),
+                        $('<div class="rdr_alert_box_2" />').append($msg2),
+                        '<div class="rdr rdr_alert_box_x">x</div>'
                     );
                                             
                     $('#rdr_sandbox').append( $alertContent );
-                    $('#rdr_alert_box_x').click( function() {
-                        RDR.session.alertBar.close( closeType );
+                    $('div.rdr_alert_box.rdr_'+whichAlert).find('.rdr_alert_box_x').click( function() {
+                        RDR.session.alertBar.close( whichAlert );
                     });
 
-                    $alertContent.find('.rdr_showSelection').click( function() {
-                        //show the alertBar sliding closed for just a second before scrolling down..
-                        // RDR.session.alertBar.close();
-                        setTimeout(function(){
-                            RDR.session.revealSharedContent(data);
-                        }, 200);
-                    });
-
-                    $('#rdr_alert_box').animate({bottom:0},1000);
+                    $('div.rdr_alert_box.rdr_'+whichAlert).animate({bottom:0},1000);
 
                     // OLD -- positioning/animation from when this was a bar
                     // RDR.group.educateUserLocation = "top";
@@ -661,11 +667,11 @@ function readrBoard($R){
                     // }
                     // END OLD
                 },
-                close: function( closeType ) {
-                    $('#rdr_alert_box').animate({bottom:-400},1000).remove();;
+                close: function( whichAlert ) {
+                    $('div.rdr_alert_box.rdr_'+whichAlert).animate({bottom:-400},1000).remove();;
                     // set a cookie in the iframe saying not to show this anymore
                     $.postMessage(
-                        closeType,
+                        "close "+whichAlert,
                         RDR.session.iframeHost + "/xdm_status/",
                         window.frames['rdr-xdm-hidden']
                     );
@@ -726,8 +732,6 @@ function readrBoard($R){
                 $('html,body').animate({scrollTop: scrollTarget}, 1000);
             },
             getSharedLinkInfo: function( data ){
-                //[cleanlogz]('--------data-------------');
-                //[cleanlogz]console.dir(data);
                 //some condition
                     
                 //TODO: sample data here, fill with info from cookie
@@ -845,8 +849,6 @@ function readrBoard($R){
                             } else if ( message.status == "educate user" ) {
                                 RDR.session.alertBar.make('educateUser');
                             } else if ( message.status.indexOf('sharedLink') != -1 ) {
-                                //[cleanlogz]('-------message.status-----------');
-                                //[cleanlogz](message.status);
                                 var sharedLink = message.status.split('|');
                                 if ( sharedLink[5] ) {
                                     RDR.session.referring_int_id = parseInt( sharedLink[5] );
@@ -1065,7 +1067,7 @@ function readrBoard($R){
                         RDR.group.selector_whitelist = RDR.group.selector_whitelist || "body p";
                         RDR.group.media_selector = RDR.group.media_selector || "embed, video, object, iframe.rdr_video"; //for now just play it safe with the iframe.
                         RDR.group.comment_length = RDR.group.comment_length || 300;
-                        RDR.group.initial_pin_limit = RDR.group.initial_pin_limit || 2;
+                        RDR.group.initial_pin_limit = RDR.group.initial_pin_limit || 1;
 
                         $RDR.dequeue('initAjax');
                     },
@@ -1313,7 +1315,8 @@ function readrBoard($R){
                 if( !hashes || !hashes.length ){ 
                     hashes = getAllHashes();
                 }
-                
+                RDR.total_containers = hashes.length;
+        
                 function getAllHashes(){
                     var hashes = [];
                     for (var hashKey in RDR.containers ) {
@@ -2916,12 +2919,31 @@ console.log('we considered this a tax success');
 
                 },
                 displayPopularIndicators: function () {
-                    //RDR.actions.summaries.displayPopularIndicators
+                    // RDR.actions.summaries.displayPopularIndicators
 
                     for ( var i=0; i < RDR.group.initial_pin_limit; i++) {
                         $('#rdr_indicator_' + RDR.text_container_popularity[i].hash).removeClass('rdr_dont_show');
                     }
 
+                    if ( RDR.total_containers > RDR.group.initial_pin_limit ) {
+                        // show the alert bar, which has a link to call RDR.actions.summaries.showLessPopularIndicators
+                        RDR.session.alertBar.make('showMorePins');
+                    }
+
+                },
+                showLessPopularIndicators: function() {
+                    // RDR.actions.summaries.showLessPopularIndicators
+                    var hashesToShow = [];
+
+                    for ( var i=RDR.group.initial_pin_limit; i<RDR.total_containers; i++) {
+                        if ( RDR.text_container_popularity[i] ) {
+                            if ( RDR.text_container_popularity[i].interactions > 0 ) {
+                                $('#rdr_indicator_' + RDR.text_container_popularity[i].hash).removeClass('rdr_dont_show');
+                                hashesToShow.push( RDR.text_container_popularity[i].hash );
+                            }
+                        }
+                    }
+                    RDR.actions.indicators.show(hashesToShow);
                 }
             },
             insertContainerIcon: function( hash ) {},

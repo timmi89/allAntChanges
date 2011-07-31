@@ -21,7 +21,7 @@ if ( typeof $.receiveMessage == "function") {
 		    	case "killUser":
 		    		RDRAuth.killUser();
 		    		break;
-		    	case "educatedUser":
+		    	case "close educateUser":
 		    		$.cookie('educatedUser', true);
 		    		break;
 		    }
