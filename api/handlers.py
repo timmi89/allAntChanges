@@ -40,7 +40,28 @@ class ModerationHandler(AnonymousBaseHandler):
     @json_data
     @status_response
     def read(self, request, data):
-        print data
+        data['group_id'] = 1
+        if not checkToken(data): raise JSONException(u"Token was invalid")
+        user_id = data.get('user_id')
+        int_id = data.get('int_id')
+        
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist, User.MultipleObjectsReturned:
+            raise JSONException(u"Interaction Handler: Error getting user!")
+        try:
+            interaction = Interaction.objects.get(id=int_id)
+        except User.DoesNotExist, User.MultipleObjectsReturned:
+            raise JSONException(u"Interaction Handler: Error getting interaction!")
+
+        if user.social_user.admin_approved:
+            if interaction.page.site.group_id == user.social_user.group_admin_id:
+                interaction.approved = False
+                interaction.save()
+            else:
+                raise JSONException(u'Admin not approved for this group!')
+        else:
+            raise JSONException(u'Admin not approved!')
 
 class InteractionHandler(AnonymousBaseHandler):
     @json_data
