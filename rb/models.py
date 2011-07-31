@@ -273,6 +273,9 @@ class SocialUser(models.Model):
     # For admin
     admin_approved = models.BooleanField(default=False)
     group_admin = models.ForeignKey(Group, blank=True, null=True)
+    
+    # For Privacy
+    private_profile = models.BooleanField(default=False)
 
     """Social Auth association model"""
     user = models.OneToOneField(User, related_name='social_user', unique=True)

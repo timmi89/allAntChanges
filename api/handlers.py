@@ -35,7 +35,22 @@ class ContainerHandler(AnonymousBaseHandler):
 class InteractionInstanceHandler(AnonymousBaseHandler):
     model = Interaction
     fields = ('id', 'interaction_node')
-    
+
+class PrivacyHandler(AnonymousBaseHandler):
+    @json_data
+    @status_response
+    def read(self, request, data):
+        if not checkToken(data): raise JSONException(u"Token was invalid")
+        user_id = data.get('user_id')
+        
+        try:
+            su = SocialUser.objects.get(user=user_id)
+        except SocialUser.DoesNotExist, SocialUser.MultipleObjectsReturned:
+            raise JSONException(u"Privacy Handler: Error getting socialuser!")
+            
+        su.private_profile = not su.private_profile
+        su.save()
+
 class ModerationHandler(AnonymousBaseHandler):
     @json_data
     @status_response
@@ -119,7 +134,6 @@ class InteractionHandler(AnonymousBaseHandler):
 class VoteHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
         pass
-    
 
 class CommentHandler(InteractionHandler):
     def create(self, request, data, user, page, group):

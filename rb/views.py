@@ -15,6 +15,7 @@ from django.utils.encoding import smart_str, smart_unicode
 from django.template import RequestContext
 from django.forms import ModelForm
 from django.forms.models import modelformset_factory
+from django.db.models import Q
 
 def widget(request,sn):
     # Widget code is retreived from the server using RBGroup shortname
@@ -39,9 +40,10 @@ def fb(request):
     )
 
 def fblogin(request):
+    group_name =  request.get('group_name', None)
     return render_to_response(
       "fblogin.html",
-      {'fb_client_id': FACEBOOK_APP_ID},
+      {'fb_client_id': FACEBOOK_APP_ID, 'group_name': group_name},
       context_instance=RequestContext(request)
     )
 
@@ -86,11 +88,13 @@ def profile(request, user_id, **kwargs):
 
 def main(request, user_id=None, short_name=None, **kwargs):
     cookies = request.COOKIES
+    query_string = request.GET.get('q', None)
     #cookie_user_id = cookies.get('user_id')
     context = {
         'fb_client_id': FACEBOOK_APP_ID,
         'user_id': user_id,
         'short_name': short_name,
+        'query_string': query_string,
         'kwargs': kwargs
     }
     """
@@ -103,6 +107,13 @@ def main(request, user_id=None, short_name=None, **kwargs):
 def interactions(request, user_id=None, short_name=None, **kwargs):
     interactions = Interaction.objects.all()
 
+    query_string = request.GET.get('q', None)
+    if query_string:
+        interactions = interactions.filter(
+            Q(interaction_node__body__icontains=query_string) |
+            Q(content__body__icontains=query_string)
+        )
+    
     if user_id:
         interactions = interactions.filter(user=user_id)
         
@@ -117,6 +128,7 @@ def interactions(request, user_id=None, short_name=None, **kwargs):
         if view == 'bookmarks': interactions=interactions.filter(kind="bkm")
         if view == 'not_approved': interactions=interactions.filter(approved=False)
         else: interactions=interactions.filter(approved=True)
+
     context = {'interactions': interactions}
         
     return render_to_response("interactions.html", context, context_instance=RequestContext(request))
@@ -139,7 +151,12 @@ def sidebar(request, user_id=None):
     if user_id:
         user = User.objects.get(id=user_id)
         context['user'] = user
-    return render_to_response("sidebar.html", context, context_instance=RequestContext(request))
+                
+        return render_to_response(
+            "sidebar.html",
+            context,
+            context_instance=RequestContext(request)
+        )
 
 class GroupForm(ModelForm):
     class Meta:
