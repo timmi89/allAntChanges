@@ -34,7 +34,7 @@
       <!-- <div class="who_action">{{ tag.content.interaction.user.social_user.full_name }}'s reaction to:</div> -->
       <div class="who_action">
       </div>
-      {% if tag.content.kind == "img" %}
+      {% if interaction.content.kind == "img" %}
       <div class="content image"><img src="{{ interaction.content.body }}"></div>
       {% else %}
       <div class="content text">{{ interaction.content.body }}</div>

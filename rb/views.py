@@ -107,6 +107,8 @@ def main(request, user_id=None, short_name=None, **kwargs):
 def interactions(request, user_id=None, short_name=None, **kwargs):
     interactions = Interaction.objects.all()
 
+    # Search interaction node body and content body
+    # for instances of the query string parameter
     query_string = request.GET.get('q', None)
     if query_string:
         interactions = interactions.filter(
@@ -146,17 +148,21 @@ def cards(request, **kwargs):
     context = {'cards': cards}
     return render_to_response("cards.html", context, context_instance=RequestContext(request))
 
-def sidebar(request, user_id=None):
+def sidebar(request, user_id=None, short_name=None):
     context = {}
+    if short_name:
+        group = Group.objects.get(short_name=short_name)
+        context['group'] = group
+    
     if user_id:
         user = User.objects.get(id=user_id)
         context['user'] = user
                 
-        return render_to_response(
-            "sidebar.html",
-            context,
-            context_instance=RequestContext(request)
-        )
+    return render_to_response(
+        "sidebar.html",
+        context,
+        context_instance=RequestContext(request)
+    )
 
 class GroupForm(ModelForm):
     class Meta:

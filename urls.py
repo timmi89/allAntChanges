@@ -57,6 +57,7 @@ urlpatterns = patterns('',
   
   url(r'^sidebar/$', 'rb.views.sidebar'),
   url(r'^sidebar/user/(?P<user_id>\d+)/$', 'rb.views.sidebar'),
+  url(r'^sidebar/group/(?P<short_name>[\w\-]+)/$', 'rb.views.sidebar'),
   #url(r'^cards/(?P<group_id>\d/$', 'rb.views.cards'),
 
   url(r'^api/', include('readrboard.api.urls')),

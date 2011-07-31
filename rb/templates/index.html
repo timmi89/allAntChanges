@@ -42,7 +42,11 @@ $.ajax({
     {% if user_id %}
     url: "/sidebar/user/{{ user_id }}/",
     {% else %}
-    url: "/sidebar/",
+      {% if short_name %}
+        url: "/sidebar/group/{{ short_name }}/",
+      {% else %}
+        url: "/sidebar/",
+      {% endif %}
     {% endif %}
     type: "get",
     success: function(response) {
