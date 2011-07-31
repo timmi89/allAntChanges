@@ -2869,7 +2869,7 @@ console.log('we considered this a tax success');
                     function SortByCount(a,b) { return b.count - a.count; }
 
                     var summary = RDR.summaries[hash];
-                    if ( !summary.interaction_order ) summary.interaction_order = { coms:[], tags:[] };
+                    summary.interaction_order = { coms:[], tags:[] };
 
                     var topTags = summary.top_interactions.tags,
                     topComs = summary.top_interactions.coms;
