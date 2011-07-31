@@ -39,8 +39,6 @@ function readrBoard($R){
         },
         group: {}, //to be set by RDR.actions.initGroupData
         user: {
-            first_name:		"",
-            full_name:		"",
             img_url:        "", 
             readr_token: 	"",
             user_id:        ""
@@ -629,7 +627,7 @@ function readrBoard($R){
                     */
 
                     //todo: finish making these changes here:, but i didnt' want to do it before the DC demo.
-                    var msg1, msg2, closeType;
+                    var msg1, msg2, closeType, pinIcon;
                     if( whichAlert == "educateUser"){
                         msg1 = '<h1>&nbsp;Rate &amp; discuss <span>anything</span> on this page!</h1>';
                         msg2 = 'Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.';
@@ -641,17 +639,18 @@ function readrBoard($R){
                         msg2 = '&nbsp;&nbsp;<strong>' + data.reaction + ':</strong> <em>' + data.content.substr(0,40) + '...</em> <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>';
                         closeType = "shareLink";
                     }
+                    pinIcon = '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />';
 
-                    var $alertContent = $('<div id="rdr_alert_bar" class="rdr rdr_brtl rdr_brtr" />');
+                    var $alertContent = $('<div id="rdr_alert_box" class="rdr rdr_brtl rdr_brtr" />');
 
                     $alertContent.append(
-                        $('<div id="rdr_alert_bar_1" class="rdr_brtl rdr_brtr" />').append(msg1),
-                        $('<div id="rdr_alert_bar_2" />').append(msg2),
-                        '<div id="rdr_alert_bar_x">x</div>'
+                        $('<div id="rdr_alert_box_1" class="rdr_brtl rdr_brtr" />').append(pinIcon).append(msg1),
+                        $('<div id="rdr_alert_box_2" />').append(msg2),
+                        '<div id="rdr_alert_box_x">x</div>'
                     );
                                             
                     $('#rdr_sandbox').append( $alertContent );
-                    $('#rdr_alert_bar_x').click( function() {
+                    $('#rdr_alert_box_x').click( function() {
                         RDR.session.alertBar.close( closeType );
                     });
 
@@ -663,23 +662,23 @@ function readrBoard($R){
                         }, 200);
                     });
 
-                    $('#rdr_alert_bar').animate({bottom:0},1000);
+                    $('#rdr_alert_box').animate({bottom:0},1000);
 
                     // OLD -- positioning/animation from when this was a bar
                     // RDR.group.educateUserLocation = "top";
                     // if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
                     //     $alertContent.css('top','auto');
                     //     $alertContent.css('bottom','-40px');
-                    //     $('#rdr_alert_bar').animate({bottom:0});
+                    //     $('#rdr_alert_box').animate({bottom:0});
                     // } else {
                     //     var bodyPaddingTop = parseInt( $('body').css('padding-top') );
                     //     $('body').animate({ paddingTop: (bodyPaddingTop+35)+"px" });
-                    //     $('#rdr_alert_bar').animate({top:0});
+                    //     $('#rdr_alert_box').animate({top:0});
                     // }
                     // END OLD
                 },
                 close: function( closeType ) {
-                    $('#rdr_alert_bar').animate({bottom:-400},1000).remove();;
+                    $('#rdr_alert_box').animate({bottom:-400},1000).remove();;
                     // set a cookie in the iframe saying not to show this anymore
                     $.postMessage(
                         closeType,
