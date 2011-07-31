@@ -618,7 +618,7 @@ function readrBoard($R){
                     if( whichAlert == "fromShareLink"){
                         //put a better message here
                         $msg1 = $('<h1>Shared with <span>ReadrBoard</span></h1>');
-                        $msg2 = $('<strong>' + data.reaction + ':</strong> <em>' + data.content.substr(0,40) + '...</em> <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>');
+                        $msg2 = $('<strong>' + data.reaction + ':</strong> <em>' + data.content.substr(0,140) + '...</em> <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>');
 
                         $msg2.find('a.rdr_showSelection').click( function() {
                             //show the alertBar sliding closed for just a second before scrolling down..
@@ -669,7 +669,7 @@ function readrBoard($R){
                     // END OLD
                 },
                 close: function( whichAlert ) {
-                    $('div.rdr_alert_box.rdr_'+whichAlert).animate({bottom:-400},1000).remove();;
+                    $('div.rdr_alert_box.rdr_'+whichAlert).remove();;
                     // set a cookie in the iframe saying not to show this anymore
                     $.postMessage(
                         "close "+whichAlert,
@@ -682,7 +682,7 @@ function readrBoard($R){
                 //[cleanlogz]('revealSharedContent');
                 //[cleanlogz]console.dir(data);
                 var $container = $('.rdr-'+data.container_hash);
-                $container.addClass('rdr_shared');
+                // if ( RDR.summaries[ data.container_hash ].kind != "text" ) $container.addClass('rdr_shared');
                 
                 if ( data.location && data.location != "None" ) {
                     
@@ -727,7 +727,7 @@ function readrBoard($R){
                 }
 
                 var targetOffset = $container.offset().top,
-                windowPadding = 50,
+                windowPadding = 350,
                 scrollTarget = targetOffset-windowPadding || 0;
 
                 $('html,body').animate({scrollTop: scrollTarget}, 1000);
@@ -905,7 +905,6 @@ function readrBoard($R){
                         pnlWidth:360,
                         pnls:1,
                         height:225,
-                        noCloseButton:true,
                         ignoreWindowEdges:"bt"
                     });
 
