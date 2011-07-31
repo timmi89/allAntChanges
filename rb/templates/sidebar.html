@@ -43,6 +43,30 @@ html.dailycandy #sidebar h3[role="profile_section_header"]	{display:block;}
 <div id="user_data">
   <img src="{{ user.social_user.img_url }}?type=large">
   <h3>{{ user.social_user.full_name }}</h3>
+  <label for="private_profile">
+  <input type="checkbox" id="private_profile" {% if user.social_user.private_profile %}checked="checked"{% endif %} /> 
+  Profile is only visible to me
+  </label>
+  <script type="text/javascript">
+  	$('#private_profile').click( function() {
+  		$('label[for="private_profile"] span').remove();
+  		var sendData = {
+  			user_id:RDRAuth.rdr_user.user_id, 
+  			readr_token:RDRAuth.rdr_user.readr_token,
+  			group_id:1
+  		};
+		$.ajax({
+		    url: "/api/privacy/toggle/",
+		    type: "get",
+		    data: {
+            	json: JSON.stringify(sendData)
+            },
+		    success: function(response) {
+		        $('label[for="private_profile"]').append('<span>Saved</span>');
+		    }
+		});
+  	});
+</script>
 </div>
 {% endif %}
 <h3>Activity</h3>
@@ -59,6 +83,7 @@ html.dailycandy #sidebar h3[role="profile_section_header"]	{display:block;}
 	<li role="bookmarks">Bookmarks</li>
 	-->
 </ul>
+<!--
 <h3 role="profile_section_header">Following (412)</h3>
 <div id="following">
 	<img src="/static/demo/images/following.jpg" />
@@ -67,3 +92,4 @@ html.dailycandy #sidebar h3[role="profile_section_header"]	{display:block;}
 <div id="followed_by">
 	<img src="/static/demo/images/followed_by.jpg" />
 </div>
+-->
