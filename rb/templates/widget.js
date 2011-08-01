@@ -2061,10 +2061,13 @@ console.dir(args);
                     customSendData: function(args){
                         ////RDR.actions.interactions.tag.customSendData:
                         //temp tie-over    
+
                         var hash = args.hash,
                             summary = RDR.summaries[hash],
                             kind = summary.kind;
                       
+                        var $container = $('.rdr-'+hash);
+
                         var rindow = args.rindow,
                             tag_li = args.tag;
                         var tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag;
@@ -2075,7 +2078,8 @@ console.dir(args);
 
                         //[cleanlogz](content_node_data);
                         if(kind == 'img' || kind == 'media'){
-                            var body = "";
+                            
+                            var body = $container[0].src;
 
                             content_node_data = {
                                 'container': rindow.data('container'),
@@ -2330,11 +2334,14 @@ console.dir(args);
                     },
                     customSendData: function(args){
                         //RDR.actions.interactions.bookmark.customSendData:
-                       
+                      
                        var hash = args.hash,
                             summary = RDR.summaries[hash],
                             kind = summary.kind;
                       
+                                            
+                        var $container = $('.rdr-'+hash);
+
                         var rindow = args.rindow,
                             tag_li = args.tag;
                         var $tag = args.tag,
@@ -2347,7 +2354,8 @@ console.dir(args);
 
                         //[cleanlogz](content_node_data);
                         if(kind == 'img' || kind == 'media'){
-                            var body = "";
+
+                            var body = $container[0].src;
 
                             content_node_data = {
                                 'container': rindow.data('container'),

@@ -478,6 +478,19 @@ section[role="main"] 	{
 	width:538px;
 }
 
+/* Tyler's crap, remove if wanted */
+.pagination {
+    position: relative;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.pagination .current {
+    margin-left: 180px;
+    margin-right: 180px;
+}
+/* End Tyler's Crap */
+
 html.dailycandy section[role="main"] {
 	background:#f1d6eb;
 }
@@ -523,7 +536,6 @@ section[role="main"] .card tbody .column2 .comment_container .comment   {overflo
 section[role="main"] .card tbody .column2 .comment_container .comment .count  {font:normal 12px Arial; }
 section[role="main"] .card tbody .column2 .comment_container .comment .quote.open  { background:url(/static/site/images/quote_open.png) top left no-repeat; top:8px;left:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
 section[role="main"] .card tbody .column2 .comment_container .comment .quote.close { background:url(/static/site/images/quote_close.png) top left no-repeat; bottom:20px;right:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
-
 
 /* COMPLEMENTARY */
 section[role="complementary"] 			{ 
