@@ -448,8 +448,6 @@ function readrBoard($R){
                         'top': $new_actionbar.offset().top,
                         'left': $new_actionbar.offset().left + $new_actionbar.width()
                     }
-                    log('$new_actionbar.width')
-                    log($new_actionbar.width())
                     $indicator_details.appendTo($new_actionbar)//chain
                     .css({
                         'display':'block',
@@ -614,7 +612,6 @@ function readrBoard($R){
 		session: {
             alertBar: {
                 make: function( whichAlert, data) {
-                    log(whichAlert);
                     // RDR.session.alertBar.make
                     //whichAlert to tell us if it's the educate user bar, or the sharedLink bar
                     //data if we want it, not using it now... - expects: 
@@ -695,8 +692,6 @@ function readrBoard($R){
                 }
             },
             revealSharedContent: function(data){
-                //[cleanlogz]('revealSharedContent');
-                //[cleanlogz]console.dir(data);
                 var $container = $('.rdr-'+data.container_hash);
                 
                 var kind = $container.data('kind');
@@ -708,9 +703,6 @@ function readrBoard($R){
                     
                 
                     var serialRange = data.location;
-
-                    //[cleanlogz]($container)
-                    // if (serialRange) log(serialRange);
 
                     var selogStack = $().selog('stack'); //just fyi, not using it... Will be an empty stack on page load.
 
@@ -771,7 +763,6 @@ function readrBoard($R){
             },
 			iframeHost : "{{ BASE_URL }}", // TODO put this in a template var
             getUser: function(args, callback) {
-                console.log('getUser:');
                 $.postMessage(
                     "getUser",
                     RDR.session.iframeHost + "/xdm_status/",
@@ -841,7 +832,6 @@ function readrBoard($R){
 
                 $.receiveMessage(
                     function(e){
-                        ////[cleanlogz]console.dir(e);
                         var message = JSON.parse( e.data );
 
                         if ( message.status ) {
@@ -850,7 +840,6 @@ function readrBoard($R){
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
 
-                                //[cleanlogz]console.dir(message);
                                 for ( var i in message.data ) {
                                     RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i]):message.data[i];
                                 }
@@ -896,7 +885,7 @@ function readrBoard($R){
             },
 			showLoginPanel: function(args, callback) {
              // RDR.session.showLoginPanel
-                log('--showLoginPanel---');
+
                 $('.rdr_rewritable').removeClass('rdr_rewritable');
                 
                 if ( $('#rdr_loginPanel').length < 1 ) {
@@ -913,9 +902,7 @@ function readrBoard($R){
                     var coords = [];
                     coords.left = ( $(window).width() / 2 ) - 200;
                     // coords.top =  ( $(window).height() / 2 ) - 100 ;
-                    // coords.top =  ( $(window).height() / 2 + $(window).scrollTop() - 100 );
                     coords.top = 150;
-                    console.dir(coords);
 
                     // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
                     // var coords = RDR.util.stayInWindow({coords:coords, width:360, height:185 });
@@ -1166,8 +1153,6 @@ function readrBoard($R){
                         }
 
                         //init the widgetSummary
-                        //[cleanlogz]('response page inti');
-                        //[cleanlogz]console.dir(response);
                         var widgetSummarySettings = response;
 
                         $('#rdr-summary').rdrWidgetSummary(widgetSummarySettings);
@@ -1371,8 +1356,6 @@ function readrBoard($R){
 					hashes: hashes
 				};
 
-                //[cleanlogz]('sendData: for /api/summary/containers/');
-                ////[cleanlogz]console.dir(sendData);
                 // send the data!
                 $.ajax({
                     url: "/api/summary/containers/",
@@ -1438,8 +1421,23 @@ function readrBoard($R){
                     var _setupFuncs = {
                         img: function(hash, summary){
                             
+                            log('summary in containers.setup');
+                            log(summary);
                             var containerInfo = RDR.containers[hash];
                             var $container = containerInfo.$this;
+
+                            //generate the content_node for this image container.  (the content_node is just the image itself)
+                            //todo: I'm pretty sure it'd be more efficient and safe to run on image hover, or image indicator click.
+                            var body = $container[0].src;
+
+                            content_node_data = {
+                                'body': body,
+                                'kind':summary.kind,
+                                'container': hash, //todo: Should we use this or hash? 
+                                'hash':hash
+                            };
+                            
+                            RDR.content_nodes[hash] = content_node_data;
 
                             $container.hover(
                                 function(){
@@ -1560,7 +1558,7 @@ function readrBoard($R){
                         };
 
                         tempEncode = encodeURIComponent ( JSON.stringify(sendContainer) );
-                        //log(tempEncode);
+
                         thisLen = tempEncode.length;
                         
                         //[cleanlogz]('container');
@@ -1601,19 +1599,19 @@ function readrBoard($R){
                             */
 
                             //signals the call to not save this container
-                            console.log('This container is too large.  Returning false to fail gracefully.');
+                            sendContainer = false;
                         }
                         else{
                             proposedLen += thisLen;
                             if(proposedLen > charLimit){
                                 //send the existing set that is curLen, not proposedLen
-                                //console.log('num chars of this container ' + curLen + ' goign to send..');
+
                                 RDR.actions.containers._ajaxSend(containers);
                                 resetChunks();
                             }
                             containers[hash] = sendContainer;
                             curLen += thisLen;
-                            //console.log('num chars of this container ' + curLen);
+
                         }
 
                     });
@@ -1635,7 +1633,7 @@ function readrBoard($R){
                     //don't call this directly! Always use this.send so you don't choke on your ajax.
 
                     var sendData = containers;
-                    //console.log('!!!!!sending total chars for this container ' +  encodeURIComponent ( JSON.stringify(sendData) ).length + ' sending...' );
+
                     $.ajax({
                         url: "/api/containers/create/",
                         type: "get",
@@ -1727,7 +1725,6 @@ function readrBoard($R){
                         data: { json: JSON.stringify(sendData) },
                         success: function(response) {
                             if ( response.status !== "success" ) {
-                                console.log('ajax failed');
                                 return false;
                             }
                             //else
@@ -1863,6 +1860,7 @@ function readrBoard($R){
                 },
                 send: function(args, int_type, action_type){
 
+                    // hack to cleanup the send data
                     var sendData = $.extend( true, {}, args.sendData);
                     if (sendData.rindow) delete sendData.rindow;
                     if (sendData.settings) delete sendData.settings;
@@ -1913,8 +1911,6 @@ function readrBoard($R){
                                     }
                                     else {
                                         // if it failed, see if we can fix it, and if so, try this function one more time
-                                        log('tag fail');
-                                        console.dir(args);
                                         RDR.session.handleGetUserFail( args, function() {
                                             RDR.actions.interactions.ajax( args, 'tag', 'create' );
                                         });
@@ -1926,13 +1922,11 @@ function readrBoard($R){
                 },
                 defaultSendData: function(args){
                     //RDR.actions.interactions.defaultSendData:
-console.log('defaultSendData');
+
                     args.user_id = RDR.user.user_id;
                     args.readr_token = RDR.user.readr_token;
                     args.group_id = RDR.groupPermData.group_id;
                     args.page_id = RDR.page.id;
-console.dir(RDR.user);
-console.dir(args);
                     return args;
 
                 },
@@ -2149,7 +2143,6 @@ console.dir(args);
                     onSuccess: {
                         //RDR.actions.interactions.tag.onSuccess:
                         create: function(args){
-                            console.log('we considered this a tax success.  A tax, huh? :) ');
                             //RDR.actions.interactions.tag.onSuccess.create:
                             //todo: clean up these args.
                             
@@ -2317,8 +2310,6 @@ console.dir(args);
                         }
                         else {
                             // if it failed, see if we can fix it, and if so, try this function one more time
-                            log('tag fail');
-                            console.dir(args);
                             RDR.session.handleGetUserFail( args, function() {
                                 RDR.actions.interactions.ajax( args, 'tag', 'create' );
                             });
@@ -2335,8 +2326,6 @@ console.dir(args);
 
                         //Do UI stuff particular to write mode
                         if (uiMode == "write"){
-                            //[cleanlogz]('bookmark: write mode')
-                            //[cleanlogz]console.dir(args);
                             //if tag has already been tried to be submitted, don't try again.
                             //todo: later verify on the backend and don't let user 'stuff the ballot'
 
@@ -2486,8 +2475,6 @@ console.dir(args);
                                 // RDR.actions.unrateSend(args); 
                                 var args = event.data.args;
                                 args.int_id = event.data.int_id;
-                                //[cleanlogz]('bookmark undo args');
-                                //[cleanlogz]console.dir(args);
                                 RDR.actions.interactions.ajax( args, 'bookmark', 'remove' );
                             });
 
@@ -2510,8 +2497,6 @@ console.dir(args);
                             RDR.session.checkForMaxInteractions(newArgs);
                         },
                         remove: function(args){
-                            //[cleanlogz]('bookmark delete!!');
-                            //[cleanlogz]console.dir(args);
                             var rindow = args.rindow,
                                 tag = args.tag,
                                 int_id = args.int_id;
@@ -2541,11 +2526,7 @@ console.dir(args);
                             RDR.session.showLoginPanel( args );
                         } else {
                             // if it failed, see if we can fix it, and if so, try this function one more time
-                            log('bookmark fail');
-                            console.dir(args);
                             RDR.session.handleGetUserFail( args, function() {
-                                log('inside callback');
-                                console.dir(args);
                                 RDR.actions.interactions.ajax( args, 'bookmark', 'create' );
                             });
                         }
@@ -3464,11 +3445,9 @@ console.dir(args);
                 $.each(socialNetworks, function(idx, val){
                     $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                     $shareLinks.find('li:last').click( function() {
-                        console.dir({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
-                        // ERIC IMAGE SHARING: the problem is that content_node here
-                        // does not have content_node.body or content_node.content
-                        // so the share "works" but there isn't an image URL passed in.
-                        RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
+                        var real_content_node = RDR.content_nodes[hash];
+                        //console.dir({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:real_content_node });
+                        RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:real_content_node });
                         return false;
                     });
                 });
@@ -3512,7 +3491,6 @@ console.dir(args);
 
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
-                    // log('--------- selState 1: '+selState);
                     
                     //quick fix
                     content_node.kind = summary.kind;
@@ -3530,7 +3508,6 @@ console.dir(args);
                 RDR.actions.panel.expand("whyPanel", rindow, kind );
             },
 			sentimentBox: function(settings) {
-             ////[cleanlogz]console.dir(settings);
 
                 var hash = settings.hash;
                 var summary = RDR.summaries[hash],
@@ -3857,13 +3834,10 @@ console.dir(args);
                     
                     var summary = RDR.summaries[hash];
 
-                    // log('tag');
-                    // //[cleanlogz]console.dir(tag);
                     var $contentSet;
                     if ( content_node.top_interactions.tags[ tag.id ] ) {
 
                         var content_node_key = hash+"-"+content_node.location;
-                        // log('content_node_key')
 
                         //todo: pass everything through the content_node object- no need to expand all the attrs here in the params.
                         $contentSet = $('<div />').addClass('rdr_contentSet').data({node:content_node, content_node_key:content_node_key, hash:hash, location:content_node.location, tag:tag, content:content_node.body});
@@ -3910,8 +3884,6 @@ console.dir(args);
                         $comment.click( function() {
                             var $this = $(this);
                             $this.closest('.rdr_contentSet').addClass('rdr_selected').siblings().removeClass('rdr_selected');
-                            //[cleanlogz]('---- rindow.data --------');
-                            //[cleanlogz]console.dir( rindow.data() );
                             RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:rindow, content_node:content_node, selState:content_node.selState});
                         });
 
@@ -3983,10 +3955,8 @@ console.dir(args);
 
                                 var content_node_info = $(this).closest('div.rdr_contentSet').data();
                                 var tag = $this.closest('a.rdr_tag').data('tag');
-                                //[cleanlogz]('------- attempting to share -------');
-                                //[cleanlogz]console.dir(tag);
                                 $shareTip.find('img.rdr_sns').click( function() {
-                                    console.dir({ hash:hash, kind:summary.kind, sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node_info:content_node_info });
+                                    // console.dir({ hash:hash, kind:summary.kind, sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node_info:content_node_info });
                                     RDR.actions.share_getLink({ hash:hash, kind:summary.kind, sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node:content_node_info });
                                 });
                             }
@@ -4004,8 +3974,7 @@ console.dir(args);
             // sentimentBox can be merged with / nested under this as sentimentPanel.draw at a later time mayhaps
             sentimentPanel: {
                 addCustomTagBox: function(args) {
-                    //log('addCustomTagBox args: ');
-                    ////[cleanlogz]console.dir(args);
+
                     var hash = args.hash;
 
                     var rindow = args.rindow,
@@ -4087,8 +4056,6 @@ console.dir(args);
                     summary = RDR.summaries[hash],
                     kind = summary.kind;
 
-                //[cleanlogz]('----share_getLink args----');
-                ////[cleanlogz]console.dir(args);
                 //example:
                 //tag:{body, id}, rindow:rindow, settings:settings, callback: 
                 
@@ -4150,12 +4117,9 @@ console.dir(args);
                             dataType: "jsonp",
                             data: { json: JSON.stringify(sendData) },
                             success: function(response) {
-                                //[cleanlogz]('---- share URL response -----');
-                                //[cleanlogz]console.dir(response);
-
                                 // todo cache the short url
                                 // RDR.summaries[content_node_info.hash].content_nodes[IDX].top_interactions.tags[tag.id].short_url = ;
-
+                                args.response = response;
 
                                 if ( response.status == "fail" ) {
                                     //[cleanlogz]('failllllllllll');
@@ -4215,7 +4179,6 @@ console.dir(args);
                 }
             },
             updateData: function(args) {
-                log('updating data - not being called right now');
                 var tag_text;
 
                 if ( args.kind == "tag" ) {
@@ -4359,10 +4322,6 @@ console.dir(args);
                     var args = event.data.args;
                         args.hash = hash;
 
-                    // if (!args.int_id = event.data.int_id;
-                    //[cleanlogz]('------------------------------------- clicked args');
-                    // log(event.data.int_id);
-                    //[cleanlogz]console.dir(args);
                     RDR.actions.interactions.ajax( args, 'tag', 'remove' );
                 });
 
@@ -4426,7 +4385,7 @@ console.dir(args);
                 $.each(socialNetworks, function(idx, val){
                     $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                     $shareLinks.find('li:last').click( function() {
-                        console.dir({ hash:hash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
+                        // console.dir({ hash:hash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
                         RDR.actions.share_getLink({ hash:hash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
                         return false;
                     });
@@ -5114,7 +5073,6 @@ function $RFunctions($R){
                     //push selState into stack
                     selStateStack[selState.idx] = selState;
 
-                    //log('saved selState ' + selState.idx + ': ' + selState.text); //selog temp logging
                     return selState;
                 },
                 activate: function(idxOrSelState){
@@ -5122,8 +5080,7 @@ function $RFunctions($R){
                     if(!selState) return false;
                     methods.clear();
                     _WSO().setSingleRange( selState.range );
-                    //log('activated range selection: ')
-                    //log(selState.range)
+
                     return selState;
                 },
                 clear: function(){
@@ -5243,8 +5200,7 @@ function $RFunctions($R){
                             ret.push(match.index);
                             check++;
                         }
-                        // log(this);
-                        // log(text);
+
                         return ret;
                     });
                 },
@@ -5463,8 +5419,7 @@ function $RFunctions($R){
                 if(selState.text.length === 0) return false;
                 //set hiliter - depends on idx, range, etc. being set already.
                 selState.hiliter = _hiliteInit(selState);
-                //log('created new selState: ');
-                //log(selState);
+
                 return selState;
             }
             function _fetchselState(idxOrSelState){
