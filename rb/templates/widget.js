@@ -1428,8 +1428,23 @@ function readrBoard($R){
                     var _setupFuncs = {
                         img: function(hash, summary){
                             
+                            log('summary in containers.setup');
+                            log(summary);
                             var containerInfo = RDR.containers[hash];
                             var $container = containerInfo.$this;
+
+                            //generate the content_node for this image container.  (the content_node is just the image itself)
+                            //todo: I'm pretty sure it'd be more efficient and safe to run on image hover, or image indicator click.
+                            var body = $container[0].src;
+
+                            content_node_data = {
+                                'body': body,
+                                'kind':summary.kind,
+                                'container': hash, //todo: Should we use this or hash? 
+                                'hash':hash
+                            };
+                            
+                            RDR.content_nodes[hash] = content_node_data;
 
                             $container.hover(
                                 function(){
@@ -3447,11 +3462,9 @@ console.dir(args);
                 $.each(socialNetworks, function(idx, val){
                     $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                     $shareLinks.find('li:last').click( function() {
-                        console.dir({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
-                        // ERIC IMAGE SHARING: the problem is that content_node here
-                        // does not have content_node.body or content_node.content
-                        // so the share "works" but there isn't an image URL passed in.
-                        RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
+                        var real_content_node = RDR.content_nodes[hash];
+                        //console.dir({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:real_content_node });
+                        RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:real_content_node });
                         return false;
                     });
                 });
