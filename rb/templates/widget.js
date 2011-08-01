@@ -1421,8 +1421,6 @@ function readrBoard($R){
                     var _setupFuncs = {
                         img: function(hash, summary){
                             
-                            log('summary in containers.setup');
-                            log(summary);
                             var containerInfo = RDR.containers[hash];
                             var $container = containerInfo.$this;
 
@@ -4522,15 +4520,12 @@ function readrBoard($R){
                     }
                 }
                 function _isValid($node){
-                    var bool = ( $node.css('display') == "block" && 
+                    var validity = ( $node.css('display') == "block" && 
                         $node.css('float') == "none" &&
                         ! $node.closest('.rdr_indicator').length &&
                         ! $node.is('html, body')
                     );
-                    log('$node');
-                    log($node);
-                    log(bool);
-                    return bool;
+                    return validity;
                 }
 
 
@@ -6181,10 +6176,3 @@ function $RFunctions($R){
 
 }
 //end $RFunctions()
-
-/*********************/
-/*
-temp notes:
-    look for logs:
-    [^(gz\])^e^(/)]log\(
-*/
