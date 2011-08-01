@@ -1348,6 +1348,8 @@ function readrBoard($R){
                 return hashList;
             },
             sendHashes: function( hashes, onSuccessCallback ) {
+                log('hashes in sendhashes');
+                log(hashes);
                 
                 if( !hashes || !hashes.length ){ 
                     hashes = getAllHashes();
@@ -4480,8 +4482,11 @@ console.dir(args);
                 else{
                     //hasn't been hashed yet.
                     //try to submit node to server.  Pass in an onsuccess function
-                    if ( $blockParent.text().length > 1800 ) return false;
+                    
+                    //don't measure char length here, let the ajax chunking figure it out.
+                    //if ( $blockParent.text().length > 1800 ) return false;
                     //else
+
 
                     //note: hashes in this case will just be a single hash. That's cool.
                     var hashes = RDR.actions.hashNodes( $blockParent );
