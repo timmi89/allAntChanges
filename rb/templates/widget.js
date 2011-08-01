@@ -1400,11 +1400,12 @@ function readrBoard($R){
                             //On sucess, these unknown hashes will get passed to RDR.actions.containers.setup with dummy summaries
                             RDR.actions.containers.send(unknownList, onSuccessCallback);
                         }
-                        if (summaries){
+                        if ( ! $.isEmptyObject(summaries) ){
                             //setup the known summaries
                             RDR.actions.containers.setup(summaries);
                             
                             //the callback verifies the new container and draws the actionbar
+                            //wont get run if this single hash is unknown.
                             if(typeof onSuccessCallback !== 'undefined'){
                                 onSuccessCallback();
                             }      
@@ -1550,8 +1551,6 @@ function readrBoard($R){
                     $.each( hashList, function(idx, hash){
                         //container is {body:,kind:,hash:}
                         var container = RDR.containers[hash];
-                        log('container');
-                        log(container);
 
                         //quick fix - copy the container object but without the $this obj
                         var sendContainer = {
@@ -1605,11 +1604,10 @@ function readrBoard($R){
 
                             //signals the call to not save this container
                             console.log('This container is too large.  Returning false to fail gracefully.');
-                            sendContainer = false;
                         }
                         else{
                             proposedLen += thisLen;
-
+                            log(proposedLen)
                             if(proposedLen > charLimit){
                                 //send the existing set that is curLen, not proposedLen
                                 //console.log('num chars of this container ' + curLen + ' goign to send..');
@@ -1623,8 +1621,9 @@ function readrBoard($R){
 
                     });
                     //do one last send.  Often this will be the only send.
-                    if(containers) {
-                        RDR.actions.containers._ajaxSend(containers);
+                    if( ! $.isEmptyObject(containers) ) {
+                        log('_ajaxSend from final call in containers send');
+                        RDR.actions.containers._ajaxSend(containers, onSuccessCallback);
                     }
 
                     //helper functions
@@ -1634,12 +1633,14 @@ function readrBoard($R){
                         proposedLen = 0;
                     }
                 },
-                _ajaxSend: function(containers){
+                _ajaxSend: function(containers, onSuccessCallback){
                     //RDR.actions.containers._ajaxSend:
                     //this is a helper for this.send:
                     //don't call this directly! Always use this.send so you don't choke on your ajax.
 
                     var sendData = containers;
+                    log('sendData')
+                    log(sendData)
                     //console.log('!!!!!sending total chars for this container ' +  encodeURIComponent ( JSON.stringify(sendData) ).length + ' sending...' );
                     $.ajax({
                         url: "/api/containers/create/",
@@ -1651,9 +1652,11 @@ function readrBoard($R){
                         },
                         success: function(response) {
                             //[cleanlogz]('response for containers create');
+                            log('response');
+                            log(response);
                             var savedHashes = response.data;
                             //savedHashes is in the form {hash:id}
-                            
+
                             //a dict for dummy zero'ed out summaries for containers.setup below
                             var dummySummaries = {};
 
@@ -1675,6 +1678,7 @@ function readrBoard($R){
                             //the callback verifies the new container and draws the actionbar
                             //this only gets called when a single hash gets passed through all the way from startSelect 
                             if(typeof onSuccessCallback !== 'undefined'){
+                                log('finally callback')
                                 onSuccessCallback();
                             }      
 
@@ -4568,7 +4572,15 @@ console.dir(args);
                     }
                 }
                 function _isValid($node){
-                    return ( $node.css('display') == "block" &&  $node.css('float') == "none" && !$node.closest('.rdr_indicator').length );
+                    var bool = ( $node.css('display') == "block" && 
+                        $node.css('float') == "none" &&
+                        ! $node.closest('.rdr_indicator').length &&
+                        ! $node.is('html, body')
+                    );
+                    log('$node');
+                    log($node);
+                    log(bool);
+                    return bool;
                 }
 
 
