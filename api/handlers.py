@@ -138,10 +138,6 @@ class VoteHandler(InteractionHandler):
 class CommentHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
         comment = data['comment']
-        print " "
-        print " data from comment handler"
-        print data
-        print " "
         # optional
         parent_id = data.get('parent_id', None)
         print parent_id

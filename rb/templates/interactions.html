@@ -17,16 +17,17 @@
           {{ interaction.human_kind }}
         {% endif %}
       </div>
-
+      {% if user and logged_in_user.social_user.admin_approved and interaction.page.site.group.id == logged_in_user.social_user.group_admin.id %}
       <div class="block_content">
         <a href="javascript:void(0);" onclick="RB.admin.blockContent({{interaction.id}});">
           {% if interaction.approved %}
-          Block tag
+            Block tag
           {% else %}
-          Unblock tag
+            Unblock tag
           {% endif %}
         </a>
       </div>
+      {% endif %}
 
       <!-- <div class="count"></div> -->
     </td>
@@ -61,7 +62,6 @@
   {% endfor %}
 </table>
 {% endfor %}
-{{ query_string }}
 <div class="pagination">
   <span class="step-links">
       {% if current_page.has_previous %}
