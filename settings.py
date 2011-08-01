@@ -1,5 +1,5 @@
 # Django settings for readrboard project.
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
