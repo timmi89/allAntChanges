@@ -3370,14 +3370,11 @@ console.dir(args);
                 var tag = args.tag, 
                     rindow = args.rindow,
                     content_node = args.content_node;
-
                 
                 //temp tie-over    
                 var hash = args.hash,
                     summary = RDR.summaries[hash],
                     kind = summary.kind;
-
-                
                     
                 if ( args.selState ) var selState = args.selState;
 
@@ -3385,7 +3382,8 @@ console.dir(args);
                 // if ( $whyBody.data('jsp') ) $whyBody.data('jsp').destroy();
                 $whyBody.empty();
 
-                var comments = summary.top_interactions.coms;
+                // var comments = summary.top_interactions.coms;
+                var comments = summary.content_nodes[ content_node.id ].top_interactions.coms;
                 var node_comments = 0;
                 for (var com in comments ) {
                     if ( comments[com].parent_id == tag.id ) {
