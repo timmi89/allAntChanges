@@ -773,7 +773,7 @@ function readrBoard($R){
             getUser: function(args, callback) {
                 console.log('getUser:');
                 $.postMessage(
-                    "returnUser",
+                    "getUser",
                     RDR.session.iframeHost + "/xdm_status/",
                     window.frames['rdr-xdm-hidden']
                 );
@@ -793,6 +793,7 @@ function readrBoard($R){
 
                     case "Temporary user interaction limit reached":
                         // TODO: something.  anything at all.
+                        RDR.session.showLoginPanel( args, callback );
                     break;
                     case "Container specified does not exist":
                         //[cleanlogz]('caught error: Container specified does not exist and implementing temp fix');
