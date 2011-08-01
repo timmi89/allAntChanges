@@ -1839,11 +1839,18 @@ function readrBoard($R){
                     });
                 },
                 send: function(args, int_type, action_type){
-                    //[cleanlogz]('sendddddddddddddddddd');
-                    //[cleanlogz]console.dir(args);
 
-                    var sendData = args.sendData;
-                    
+                    var sendData = $.extend( true, {}, args.sendData);
+                    if (sendData.rindow) delete sendData.rindow;
+                    if (sendData.settings) delete sendData.settings;
+                    if (sendData.selState) delete sendData.selState;
+                    if (sendData.content_node ) delete sendData.content_node;
+                    if (sendData.content_node_data && sendData.content_node_data.selState ) delete sendData.content_node_data.selState;
+                    if (sendData.content_node_data && sendData.content_node_data.counts ) delete sendData.content_node_data.counts;
+                    if (sendData.content_node_data && sendData.content_node_data.top_interactions ) delete sendData.content_node_data.top_interactions;
+                    if (sendData.node) delete sendData.node;
+                    if (sendData.uiMode) delete sendData.uiMode;
+
                     //todo: consider making a generic url router
                     var url = "/api/" +int_type+ "/"+action_type+"/";
                     
@@ -3436,7 +3443,7 @@ function readrBoard($R){
                     //quick fix
                     content_node.kind = summary.kind;
 
-                    var args = { content_node:content_node, comment:comment, hash:hash, content:content_node.body, tag:tag, rindow:rindow, selState:selState};
+                    var args = { content_node_data:content_node, comment:comment, hash:hash, content:content_node.body, tag:tag, rindow:rindow, selState:selState};
                     //leave parent_id undefined for now - backend will find it.
                     RDR.actions.interactions.ajax( args, 'comment', 'create');
                 });
@@ -4359,7 +4366,7 @@ function readrBoard($R){
                     //quick fix
                     content_node.kind = summary.kind;
 
-                    var args = { hash:hash, kind:summary.kind, content_node:content_node, comment:comment, int_id:int_id, rindow:rindow, selState:content_node.selState, tag:tag};
+                    var args = { hash:hash, kind:summary.kind, content_node_data:content_node, comment:comment, int_id:int_id, rindow:rindow, selState:content_node.selState, tag:tag};
                     //leave parent_id undefined for now - backend will find it.
                     RDR.actions.interactions.ajax( args, 'comment', 'create');
                 });
@@ -4408,35 +4415,6 @@ function readrBoard($R){
                     $('.rdr_share_count').text( $('.rdr_share textarea').val().length + " characters");
                 });
                 */
-            },
-            comment: function(args) {
-                //[cleanlogz]('---commenting---');
-                //[cleanlogz]console.dir(args);
-
-
-                    // // send the data!
-                    // $.ajax({
-                    //     url: "/api/comment/create/",
-                    //     type: "get",
-                    //     contentType: "application/json",
-                    //     dataType: "jsonp",
-                    //     data: { json: JSON.stringify(sendData) },
-                    //     success: function(response) {
-
-                    //         if ( response.status == "fail" ) {
-                    //             // if it failed, see if we can fix it, and if so, try this function one more time
-                    //             RDR.session.handleGetUserFail( args, function() {
-                    //             } );
-                    //         } else {
-                    //             log('response in comm crearte')                     
-                    //             log(response);
-                    //             //todo: RDR.actions.comment calls should later be moved to RDR.actions.interactions.ajax
-                    //             RDR.actions.interactions.comment.onSuccess.create(args);
-                    //         }
-
-                    //     }
-                    // });
-                
             },
             startSelect: function(e) {
                 //RDR.actions.startSelect:
