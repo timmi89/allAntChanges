@@ -1852,6 +1852,10 @@ function readrBoard($R){
                     if (sendData.node) delete sendData.node;
                     if (sendData.uiMode) delete sendData.uiMode;
 
+console.warn('old object');
+console.dir(args.sendData);
+console.warn('new object');
+console.dir(sendData);
                     //todo: consider making a generic url router
                     var url = "/api/" +int_type+ "/"+action_type+"/";
                     
@@ -1904,11 +1908,13 @@ function readrBoard($R){
                 },
                 defaultSendData: function(args){
                     //RDR.actions.interactions.defaultSendData:
-
+console.log('defaultSendData');
                     args.user_id = RDR.user.user_id;
                     args.readr_token = RDR.user.readr_token;
                     args.group_id = RDR.groupPermData.group_id;
                     args.page_id = RDR.page.id;
+console.dir(RDR.user);
+console.dir(args);
                     return args;
 
                 },

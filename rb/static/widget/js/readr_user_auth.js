@@ -153,7 +153,6 @@ RDRAuth = {
 					});
 		  		} else {
 		  			console.log('reauthUser 5');
-		  			// RDRAuth.createTempUser();
 		  			RDRAuth.notifyParent("", "fb user needs to login");
 		  		}
 		  	});
@@ -204,11 +203,12 @@ RDRAuth = {
 	readUserCookie : function() {
 		// RDRAuth.rdr_user.first_name = $.cookie('first_name');
 		// RDRAuth.rdr_user.full_name = $.cookie('full_name');
-		RDRAuth.rdr_user.img_url = $.cookie('img_url');
-		RDRAuth.rdr_user.user_id = $.cookie('user_id');
-		RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
+		if ( $.cookie('img_url') ) RDRAuth.rdr_user.img_url = $.cookie('img_url');
+		if ( $.cookie('user_id') ) RDRAuth.rdr_user.user_id = $.cookie('user_id');
+		if ( $.cookie('readr_token') ) RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
 	},
 	returnUser : function() {
+		RDRAuth.readUserCookie();
 		var sendData = {
 			// arguments are nested under data for consistency with passing values up to the parent
 			data : {
@@ -219,6 +219,8 @@ RDRAuth = {
 				readr_token : RDRAuth.rdr_user.readr_token
 			}
 		};
+		console.log('readr_user_auth user: ');
+		console.dir(sendData);
 		RDRAuth.notifyParent(sendData, "returning_user");
 	},
 	killUser : function(callback) {
@@ -268,7 +270,7 @@ RDRAuth = {
 		window.location.reload();
 	},
 	init : function() {
-		RDRAuth.readUserCookie();
+		// RDRAuth.readUserCookie();
 		RDRAuth.returnUser();
 
 		// now that SERVER is checking, we may not need this code:
