@@ -64,15 +64,15 @@
 {% endfor %}
 <div class="pagination">
   <span class="step-links">
-      {% if current_page.has_previous %}
-        <a href="?{% if query_string %}s={{ query_string }}{% endif %}&page={{ current_page.previous_page_number }}">previous</a>
-      {% endif %}
-      <span class="current">
-        Page {{ current_page.number }} of {{ current_page.paginator.num_pages }}
-      </span>
-      {% if current_page.has_next %}
-        <a href="?{% if query_string %}s={{ query_string }}{% endif %}&page={{ current_page.next_page_number }}">next</a>
-      {% endif %}
+    {% if current_page.has_previous %}
+      <a href="?{% if query_string %}s={{ query_string }}{% endif %}&page={{ current_page.previous_page_number }}">prev</a>
+    {% endif %}
+    <span class="current">
+      Page {{ current_page.number }} of {{ current_page.paginator.num_pages }}
     </span>
+    {% if current_page.has_next %}
+      <a href="?{% if query_string %}s={{ query_string }}{% endif %}&page={{ current_page.next_page_number }}">next</a>
+    {% endif %}
+  </span>
 </div>
 </div>
