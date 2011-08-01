@@ -478,10 +478,18 @@ section[role="main"] 	{
 	width:538px;
 }
 
+/* Tyler's crap, remove if wanted */
 .pagination {
+    position: relative;
     text-align: center;
     margin-bottom: 10px;
 }
+
+.pagination .current {
+    margin-left: 180px;
+    margin-right: 180px;
+}
+/* End Tyler's Crap */
 
 html.dailycandy section[role="main"] {
 	background:#f1d6eb;

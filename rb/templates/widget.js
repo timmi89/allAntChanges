@@ -773,7 +773,7 @@ function readrBoard($R){
             getUser: function(args, callback) {
                 console.log('getUser:');
                 $.postMessage(
-                    "returnUser",
+                    "getUser",
                     RDR.session.iframeHost + "/xdm_status/",
                     window.frames['rdr-xdm-hidden']
                 );
@@ -793,6 +793,7 @@ function readrBoard($R){
 
                     case "Temporary user interaction limit reached":
                         // TODO: something.  anything at all.
+                        RDR.session.showLoginPanel( args, callback );
                     break;
                     case "Container specified does not exist":
                         //[cleanlogz]('caught error: Container specified does not exist and implementing temp fix');
@@ -1852,6 +1853,10 @@ function readrBoard($R){
                     if (sendData.node) delete sendData.node;
                     if (sendData.uiMode) delete sendData.uiMode;
 
+console.warn('old object');
+console.dir(args.sendData);
+console.warn('new object');
+console.dir(sendData);
                     //todo: consider making a generic url router
                     var url = "/api/" +int_type+ "/"+action_type+"/";
                     
@@ -1904,11 +1909,13 @@ function readrBoard($R){
                 },
                 defaultSendData: function(args){
                     //RDR.actions.interactions.defaultSendData:
-
+console.log('defaultSendData');
                     args.user_id = RDR.user.user_id;
                     args.readr_token = RDR.user.readr_token;
                     args.group_id = RDR.groupPermData.group_id;
                     args.page_id = RDR.page.id;
+console.dir(RDR.user);
+console.dir(args);
                     return args;
 
                 },
@@ -2055,10 +2062,13 @@ function readrBoard($R){
                     customSendData: function(args){
                         ////RDR.actions.interactions.tag.customSendData:
                         //temp tie-over    
+
                         var hash = args.hash,
                             summary = RDR.summaries[hash],
                             kind = summary.kind;
                       
+                        var $container = $('.rdr-'+hash);
+
                         var rindow = args.rindow,
                             tag_li = args.tag;
                         var tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag;
@@ -2069,7 +2079,8 @@ function readrBoard($R){
 
                         //[cleanlogz](content_node_data);
                         if(kind == 'img' || kind == 'media'){
-                            var body = "";
+                            
+                            var body = $container[0].src;
 
                             content_node_data = {
                                 'container': rindow.data('container'),
@@ -2324,11 +2335,14 @@ function readrBoard($R){
                     },
                     customSendData: function(args){
                         //RDR.actions.interactions.bookmark.customSendData:
-                       
+                      
                        var hash = args.hash,
                             summary = RDR.summaries[hash],
                             kind = summary.kind;
                       
+                                            
+                        var $container = $('.rdr-'+hash);
+
                         var rindow = args.rindow,
                             tag_li = args.tag;
                         var $tag = args.tag,
@@ -2341,7 +2355,8 @@ function readrBoard($R){
 
                         //[cleanlogz](content_node_data);
                         if(kind == 'img' || kind == 'media'){
-                            var body = "";
+
+                            var body = $container[0].src;
 
                             content_node_data = {
                                 'container': rindow.data('container'),
