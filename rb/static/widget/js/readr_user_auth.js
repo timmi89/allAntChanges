@@ -10,7 +10,6 @@ for ( var i in qs ) {
 if ( typeof $.receiveMessage == "function") {
 	$.receiveMessage(
 		function(e){
-		    console.log( "e.data: "+e.data );
 		    switch( e.data ) {
 		    	case "getUser":
 		    		RDRAuth.getUser();
@@ -116,7 +115,6 @@ RDRAuth = {
 			var sendData = {
 				group_id : qs_args.group_id
 			};
-			// console.dir(sendData);
 			$.ajax({
 				url: "/api/tempuser/",
 				type: "get",
@@ -156,25 +154,13 @@ RDRAuth = {
 	reauthUser : function(args) {
 		RDRAuth.readUserCookie();
 		if ( !FB.getSession() || ( args && args.force_fb ) ) {
-			console.log('reauthUser 1');
 			FB.getLoginStatus(function(response) {
-				console.log('reauthUser 2');
 		  		if (response && response.session) {
-		  			// we have FB info for them -- so they are logged in and approved to user ReadrBoard
-		  			console.log('reauthUser 3');
-					// RDRAuth.rdr_user.first_name = null;
-					//user is logged in to Facebook
-
-
-
-
 					// TODO:  suspect we only need to killUser if there is a FB session change.
 					RDRAuth.killUser( function(response) {
-						console.log('reauthUser 4');
 						RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
 					});
 		  		} else {
-		  			console.log('reauthUser 5');
 		  			RDRAuth.notifyParent("", "fb user needs to login");
 		  		}
 		  	});
@@ -242,8 +228,6 @@ RDRAuth = {
 				readr_token : RDRAuth.rdr_user.readr_token
 			}
 		};
-		console.log('readr_user_auth user: ');
-		console.dir(sendData);
 		RDRAuth.notifyParent(sendData, "returning_user");
 	},
 	killUser : function(callback) {
@@ -304,21 +288,17 @@ RDRAuth.init();
 
 FB.Event.subscribe('auth.sessionChange', function(response) {
   // do something with response.session
-  console.log('xdm: fb session change');
   RDRAuth.reauthUser();
 });
 FB.Event.subscribe('auth.statusChange', function(response) {
   // do something with response.session
-  console.log('xdm: fb status change');
   RDRAuth.reauthUser();
 });
 FB.Event.subscribe('auth.login', function(response) {
   // do something with response.session
-  console.log('xdm: fb login');
   RDRAuth.reauthUser();
 });
 FB.Event.subscribe('auth.logout', function(response) {
   // do something with response.session
-  console.log('xdm: fb logout');
   RDRAuth.reauthUser();
 });
