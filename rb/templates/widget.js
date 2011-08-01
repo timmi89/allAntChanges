@@ -773,7 +773,7 @@ function readrBoard($R){
             getUser: function(args, callback) {
                 console.log('getUser:');
                 $.postMessage(
-                    "returnUser",
+                    "getUser",
                     RDR.session.iframeHost + "/xdm_status/",
                     window.frames['rdr-xdm-hidden']
                 );
@@ -793,6 +793,7 @@ function readrBoard($R){
 
                     case "Temporary user interaction limit reached":
                         // TODO: something.  anything at all.
+                        RDR.session.showLoginPanel( args, callback );
                     break;
                     case "Container specified does not exist":
                         //[cleanlogz]('caught error: Container specified does not exist and implementing temp fix');
@@ -1852,6 +1853,10 @@ function readrBoard($R){
                     if (sendData.node) delete sendData.node;
                     if (sendData.uiMode) delete sendData.uiMode;
 
+console.warn('old object');
+console.dir(args.sendData);
+console.warn('new object');
+console.dir(sendData);
                     //todo: consider making a generic url router
                     var url = "/api/" +int_type+ "/"+action_type+"/";
                     
@@ -1904,11 +1909,13 @@ function readrBoard($R){
                 },
                 defaultSendData: function(args){
                     //RDR.actions.interactions.defaultSendData:
-
+console.log('defaultSendData');
                     args.user_id = RDR.user.user_id;
                     args.readr_token = RDR.user.readr_token;
                     args.group_id = RDR.groupPermData.group_id;
                     args.page_id = RDR.page.id;
+console.dir(RDR.user);
+console.dir(args);
                     return args;
 
                 },
@@ -3363,14 +3370,11 @@ function readrBoard($R){
                 var tag = args.tag, 
                     rindow = args.rindow,
                     content_node = args.content_node;
-
                 
                 //temp tie-over    
                 var hash = args.hash,
                     summary = RDR.summaries[hash],
                     kind = summary.kind;
-
-                
                     
                 if ( args.selState ) var selState = args.selState;
 
@@ -3378,7 +3382,8 @@ function readrBoard($R){
                 // if ( $whyBody.data('jsp') ) $whyBody.data('jsp').destroy();
                 $whyBody.empty();
 
-                var comments = summary.top_interactions.coms;
+                // var comments = summary.top_interactions.coms;
+                var comments = summary.content_nodes[ content_node.id ].top_interactions.coms;
                 var node_comments = 0;
                 for (var com in comments ) {
                     if ( comments[com].parent_id == tag.id ) {
