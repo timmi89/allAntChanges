@@ -116,7 +116,7 @@ def interactions(request, user_id=None, short_name=None, **kwargs):
     interactions = Interaction.objects.all()
 
     # Search interaction node body and content body
-    # for instances of the query string parameter
+    # for instances of the 's' query string parameter
     query_string = request.GET.get('s', None)
     if query_string:
         interactions = interactions.filter(
@@ -172,6 +172,11 @@ def cards(request, **kwargs):
 
 def sidebar(request, user_id=None, short_name=None):
     context = {}
+    cookie_user = request.COOKIES.get('user_id', None)
+    if cookie_user:
+        logged_in_user = User.objects.get(id=cookie_user)
+        context['logged_in_user'] = logged_in_user
+    
     if short_name:
         group = Group.objects.get(short_name=short_name)
         context['group'] = group
