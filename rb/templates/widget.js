@@ -3374,16 +3374,16 @@ console.dir(args);
                 //temp tie-over    
                 var hash = args.hash,
                     summary = RDR.summaries[hash],
-                    kind = summary.kind;
-                    
+                    kind = summary.kind; // text, img, media
+
                 if ( args.selState ) var selState = args.selState;
 
                 var $whyBody = rindow.find('div.rdr_whyPanel div.rdr_body');
                 // if ( $whyBody.data('jsp') ) $whyBody.data('jsp').destroy();
                 $whyBody.empty();
 
-                // var comments = summary.top_interactions.coms;
-                var comments = summary.content_nodes[ content_node.id ].top_interactions.coms;
+                // () ? text_node : image_node
+                var comments = ( content_node.id ) ? summary.content_nodes[ content_node.id ].top_interactions.coms : summary.top_interactions.coms;
                 var node_comments = 0;
                 for (var com in comments ) {
                     if ( comments[com].parent_id == tag.id ) {
@@ -3435,8 +3435,31 @@ console.dir(args);
                         }
                     }
                 } else {
-                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Add a Comment');
+                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Say More');
                 }
+
+                var $socialBox = $('<div class="rdr_share_social"><strong>Share:</strong></div>'),
+                $shareLinks = $('<ul class="shareLinks"></ul>'),
+                socialNetworks = ["facebook","twitter"]; //,"tumblr","linkedin"];
+
+                var shareHash = hash;
+                //quick mockup version of this code
+                $.each(socialNetworks, function(idx, val){
+                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                    $shareLinks.find('li:last').click( function() {
+                        console.dir({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
+                        // ERIC IMAGE SHARING: the problem is that content_node here
+                        // does not have content_node.body or content_node.content
+                        // so the share "works" but there isn't an image URL passed in.
+                        RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
+                        return false;
+                    });
+                });
+                $socialBox.append($shareLinks);
+
+                var $shareDialogueBox = $('<div class="rdr_shareBox rdr_sntPnl_padder"></div>');
+                $shareDialogueBox.html( $socialBox );
+                $whyBody.append( $shareDialogueBox );
 
                 //todo: combine this with the tooltip for the tags
                 // var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+tag.id+'">Comment</button></div>');
@@ -3583,23 +3606,6 @@ console.dir(args);
                 });
                 RDR.actions.panel.setup("whyPanel", rindow);
 
-
-                /* temp... ignore..
-                        $sentimentBox.children().each(function(idx){
-                                    var $header = $('<div class="rdr_header" />'),
-                                    hedText = headers[idx].length > maxHeaderLen ? headers[idx].slice(0, maxHeaderLen)+"..." : headers[idx],
-                                    $hedTag = $('<h1>'+ hedText +'</h1>'),
-                                    $hedInner = $('<div class="rdr_headerInnerWrap" />').append($hedTag),
-                                    $body = $('<div class="rdr_body rdr_leftShadow"/>');
-                                    
-                                    
-                                    $header.append($hedInner);
-                                    $(this).append($header, $body).css({
-                                        // 'width':rindow.settings.pnlWidth
-                                    });
-                                });
-                */
-
                 //populate reactionPanel
                 $reactionPanel.find('div.rdr_body').append($borderLine, $tagBox);
                 
@@ -3630,19 +3636,6 @@ console.dir(args);
 
                     });
                 }
-
-                ////customTagDialogue - develop this...
-
-                /*
-                $customTagBox.append(
-                '<div class="rdr_instruct">Add your own ratings, separated by comma:</div>',
-                '<input type="text" class="freeformTagInput" name="unknown-tags" />',
-                '<button>Rate</button>',
-                '<div class="rdr_help">e.g., Love this, autumn, insightful</div>');
-
-                $reactionPanel.append($selectedTextPanel, $blessedTagBox, $customTagBox)
-                */
-                // add content and animate the actionbar to accommodate it
 
                 rindow.animate({
                     width: rindow.settings.pnlWidth +'px',
@@ -3976,7 +3969,8 @@ console.dir(args);
                                 //[cleanlogz]('------- attempting to share -------');
                                 //[cleanlogz]console.dir(tag);
                                 $shareTip.find('img.rdr_sns').click( function() {
-                                    RDR.actions.share_getLink({ hash:hash, kind:summary.kind, sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node_info:content_node_info });
+                                    console.dir({ hash:hash, kind:summary.kind, sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node_info:content_node_info });
+                                    RDR.actions.share_getLink({ hash:hash, kind:summary.kind, sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node:content_node_info });
                                 });
                             }
                         ).mouseleave(
@@ -4099,7 +4093,7 @@ console.dir(args);
                     var content_node_info = (params.content_node_info) ? params.content_node_info:params.content_node;
 
                     // translations.  TODO clean and remove
-                    if ( !content_node_info.hash ) content_node_info.hash = content_node_info.container;
+                    if ( !content_node_info.hash ) content_node_info.hash = ( content_node_info.container ) ? content_node_info.container:params.hash;
                     if ( !content_node_info.content ) content_node_info.content = content_node_info.body;
 
                     //patching in reliable info todo: redo this formating
@@ -4407,22 +4401,21 @@ console.dir(args);
 
                 $commentBox.append( $leaveComment );
 
-                var $socialBox = $('<div class="rdr_share_social"><strong>Share your reaction about this on:</strong></div>'),
+                var $socialBox = $('<div class="rdr_share_social"><strong>Share:</strong></div>'),
                 $shareLinks = $('<ul class="shareLinks"></ul>'),
                 socialNetworks = ["facebook","twitter"]; //,"tumblr","linkedin"];
 
-                //quick mockup version of this code
+                // embed icons/links for diff SNS
                 $.each(socialNetworks, function(idx, val){
                     $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                     $shareLinks.find('li:last').click( function() {
+                        console.dir({ hash:hash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
                         RDR.actions.share_getLink({ hash:hash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
                         return false;
                     });
                 });
                 $socialBox.append($shareLinks);
-                // $socialBox.append('<div>herro worrd</div><div>herro worrd</div><div>herro worrd</div><div>herro worrd</div><div>herro worrd</div>');
 
-                //TODO this is prototype code for demo.  fix it.
                 $shareDialogueBox.html( $socialBox );
 
                 RDR.actions.panel.expand("whyPanel", rindow);
