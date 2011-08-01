@@ -25,14 +25,12 @@
 
 		$(document).ready( function() {
 			RDRAuth.FBLoginResponse = function(response) {
-				console.log('xdm: fbloginresponse');
 				if (response.session) {
 					//user is logged in
 					RDRAuth.getReadrToken({response:response});
 				} else {
 					// user is not logged in
 					// TODO do something.  post to parent that there was a bug logging in to FB
-					// console.warn('some bug occurred logging into FB');
 				}	
 			}
 			
