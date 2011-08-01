@@ -154,6 +154,7 @@ function readrBoard($R){
                     $new_rindow.find('div.rdr_close').click( function() {
                         //needed to change this to add triggers
                         RDR.rindow.close( $(this).parents('div.rdr.rdr_window') );
+                        $('#rdr_overlay').remove();
                         return false; //make sure rindow for <a><img /></a> doesn't activate link
                     });
 					
@@ -807,8 +808,8 @@ function readrBoard($R){
                         // RDR.session.receiveMessage( args, callback );
                         RDR.session.showLoginPanel( args, callback );
                         $.postMessage(
-                            // "reauthUser",
-                            "killUser",
+                            "reauthUser",
+                            // "killUser",
                             RDR.session.iframeHost + "/xdm_status/",
                             window.frames['rdr-xdm-hidden']
                         );
@@ -1875,8 +1876,28 @@ function readrBoard($R){
                                 //else
                                 RDR.actions.interactions[int_type].onSuccess[action_type](args);
                             }else{
-                                console.log('onfail...');
-                                RDR.actions.interactions[int_type].onFail(args);
+                                if ( int_type == "tag" ) RDR.actions.interactions[int_type].onFail(args);
+                                else {
+                                    if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
+                                        //[cleanlogz]('uh oh better login, tempy 1');
+                                        RDR.session.showLoginPanel( args );
+                                    } if ( response.message == "existing interaction" ) {
+                                        //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
+                                        //showTempUserMsg should be adapted to be rindowUserMessage:{show:..., hide:...}
+                                            //with a message param.
+                                            //and a close 'x' button.
+                                            args.msgType = "existingInteraction";
+                                            RDR.session.rindowUserMessage.show( args );
+                                    }
+                                    else {
+                                        // if it failed, see if we can fix it, and if so, try this function one more time
+                                        log('tag fail');
+                                        console.dir(args);
+                                        RDR.session.handleGetUserFail( args, function() {
+                                            RDR.actions.interactions.ajax( args, 'tag', 'create' );
+                                        });
+                                    }
+                                }
                             }
                         }
                     });
