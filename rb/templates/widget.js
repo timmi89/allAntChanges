@@ -4084,7 +4084,7 @@ function readrBoard($R){
                             success: function(response) {
                                 // todo cache the short url
                                 // RDR.summaries[content_node_info.hash].content_nodes[IDX].top_interactions.tags[tag.id].short_url = ;
-
+                                args.response = response;
 
                                 if ( response.status == "fail" ) {
                                     //[cleanlogz]('failllllllllll');
