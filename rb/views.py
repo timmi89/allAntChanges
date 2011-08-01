@@ -145,7 +145,7 @@ def interactions(request, user_id=None, short_name=None, **kwargs):
         if view == 'not_approved': interactions=interactions.filter(approved=False)
         else: interactions=interactions.filter(approved=True)
 
-    interactions_paginator = Paginator(interactions, 5)
+    interactions_paginator = Paginator(interactions, 20)
 
     try: page_number = int(request.GET.get('page_num', 1))
     except ValueError: page_number = 1
