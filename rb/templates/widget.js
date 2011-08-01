@@ -1351,8 +1351,6 @@ function readrBoard($R){
                 return hashList;
             },
             sendHashes: function( hashes, onSuccessCallback ) {
-                log('hashes in sendhashes');
-                log(hashes);
                 
                 if( !hashes || !hashes.length ){ 
                     hashes = getAllHashes();
@@ -1607,7 +1605,6 @@ function readrBoard($R){
                         }
                         else{
                             proposedLen += thisLen;
-                            log(proposedLen)
                             if(proposedLen > charLimit){
                                 //send the existing set that is curLen, not proposedLen
                                 //console.log('num chars of this container ' + curLen + ' goign to send..');
@@ -1622,7 +1619,6 @@ function readrBoard($R){
                     });
                     //do one last send.  Often this will be the only send.
                     if( ! $.isEmptyObject(containers) ) {
-                        log('_ajaxSend from final call in containers send');
                         RDR.actions.containers._ajaxSend(containers, onSuccessCallback);
                     }
 
@@ -1639,8 +1635,6 @@ function readrBoard($R){
                     //don't call this directly! Always use this.send so you don't choke on your ajax.
 
                     var sendData = containers;
-                    log('sendData')
-                    log(sendData)
                     //console.log('!!!!!sending total chars for this container ' +  encodeURIComponent ( JSON.stringify(sendData) ).length + ' sending...' );
                     $.ajax({
                         url: "/api/containers/create/",
@@ -1652,8 +1646,6 @@ function readrBoard($R){
                         },
                         success: function(response) {
                             //[cleanlogz]('response for containers create');
-                            log('response');
-                            log(response);
                             var savedHashes = response.data;
                             //savedHashes is in the form {hash:id}
 
@@ -1678,7 +1670,6 @@ function readrBoard($R){
                             //the callback verifies the new container and draws the actionbar
                             //this only gets called when a single hash gets passed through all the way from startSelect 
                             if(typeof onSuccessCallback !== 'undefined'){
-                                log('finally callback')
                                 onSuccessCallback();
                             }      
 
