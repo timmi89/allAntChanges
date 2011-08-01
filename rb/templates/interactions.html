@@ -1,9 +1,10 @@
+{% load static %}
 <div>
 {% regroup current_page.object_list by page as pi %}
 {% for page in pi %}
 <table class="card" border="0" cellspacing="0" cellpadding="0">
   <thead>
-    <th class="column1"><img alt="{{ page.grouper.site.group.name }}" src="{{ page.grouper.site.group.logo_url_sm }}"></th>
+    <th class="column1"><img alt="{{ page.grouper.site.group.name }}" src="{% get_static_prefix %}{{ page.grouper.site.group.logo_url_sm }}"></th>
     <th class="column2">{{ page.grouper.title }}</th>
   </thead>
   {% for interaction in page.list %}
@@ -17,7 +18,7 @@
           {{ interaction.human_kind }}
         {% endif %}
       </div>
-      {% if user and logged_in_user.social_user.admin_approved and interaction.page.site.group.id == logged_in_user.social_user.group_admin.id %}
+      {% if user and interaction.kind = 'tag' and logged_in_user.social_user.admin_approved and interaction.page.site.group.id == logged_in_user.social_user.group_admin.id %}
       <div class="block_content">
         <a href="javascript:void(0);" onclick="RB.admin.blockContent({{interaction.id}});">
           {% if interaction.approved %}
@@ -53,7 +54,9 @@
           {{ interaction.interaction_node.body }}
           <div class="quote close">"</div>
         </div>
+        {% if user and logged_in_user.social_user.admin_approved and interaction.page.site.group.id == logged_in_user.social_user.group_admin.id %}
         <div class="block_content"><a href="javascript:void(0);" onclick="RB.admin.blockContent({{interaction.id}});">Block comment</a></div>
+        {% endif %}
       </div>
     </div>
     {% endif %}

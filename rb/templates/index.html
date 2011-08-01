@@ -16,7 +16,7 @@ $.ajax({
       {% if kwargs %}
         url: "/interactions/user/{{ user_id }}/{{ kwargs.view }}/?{% if query_string %}s={{ query_string }}{% endif %}&{% if page_num %}page_num={{ page_num }}{% endif %}",
       {% else %}
-        url: "/interactions/user/{{ user_id }}/?{% if query_string %}q={{ query_string }}{% endif %}&{% if page_num %}page_num={{ page_num }}{% endif %}",
+        url: "/interactions/user/{{ user_id }}/?{% if query_string %}s={{ query_string }}{% endif %}&{% if page_num %}page_num={{ page_num }}{% endif %}",
       {% endif %}
     {% else %}
       {% if short_name %}

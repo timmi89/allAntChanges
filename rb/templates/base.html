@@ -77,7 +77,8 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     <div id="search">
       <form method="get" id="searchform" action="">
         <fieldset>
-        <input type="text" value="" name="s" id="s" />
+        <label>Search</label>
+        <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />
         <button>Search</button>
         </fieldset>
       </form>
