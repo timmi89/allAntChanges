@@ -7,41 +7,40 @@ for ( var i in qs ) {
 	qs_args[this_arg[0]] = this_arg[1];
 }
 
-$.receiveMessage(
-	function(e){
-	    switch( e.data ) {
-	    	case "reauthUser":
-	    		RDRAuth.reauthUser({write_mode:true});
-	    		break;
-	    	case "reauthUserFB":
-	    		RDRAuth.reauthUser({force_fb:true});
-	    		break;
-	    	case "fbdo":
-	    		RDRAuth.fbdo();
-	    		break;
-	    	case "returnUser":
-	    		RDRAuth.returnUser(true);
-	    		break;
-	    	case "killUser":
-	    		RDRAuth.killUser();
-	    		break;
-	    	case "educatedUser":
-	    		$.cookie('educatedUser', true);
-	    		break;
-	    }
-	},
-	qs_args.parentHost
-);
+if ( typeof $.receiveMessage == "function") {
+	$.receiveMessage(
+		function(e){
+		    console.log( "e.data: "+e.data );
+		    switch( e.data ) {
+		    	case "reauthUser":
+		    		RDRAuth.reauthUser();
+		    		break;
+		    	case "returnUser":
+		    		RDRAuth.returnUser();
+		    		break;
+		    	case "killUser":
+		    		RDRAuth.killUser();
+		    		break;
+		    	case "close educateUser":
+		    		$.cookie('educatedUser', true);
+		    		break;
+		    }
+		},
+		qs_args.parentHost
+	);
+}
 var RDRAuth = RDRAuth ? RDRAuth : {};
 RDRAuth = {
 	rdr_user: {},
 	FBLoginResponse: function() {}, // define in the including HTML page
 	postMessage: function(params) {
-		$.postMessage(
-			params.message,
-			qs_args.parentUrl,
-			parent
-		);
+		if ( typeof $.postMessage == "function" ) {
+			$.postMessage(
+				params.message,
+				qs_args.parentUrl,
+				parent
+			);
+		}
 	},
 	notifyParent: function(response, status) {
 		response.status = status;
@@ -55,7 +54,7 @@ RDRAuth = {
             var fb_session = (fb_response.session) ? fb_response.session:fb_response
 			var sendData = {
 				fb: fb_session,
-				group_id: qs_args.group_id,
+				group_id: (qs_args.group_id) ? qs_args.group_id:1, // TODO aaaaaaaaaaaaaaagh remove GROUP ID and replace with NONCE
 				user_id: RDRAuth.rdr_user.user_id, // might be temp, might be the ID of a valid FB-created user
 				readr_token: RDRAuth.rdr_user.readr_token
 			};
@@ -73,18 +72,13 @@ RDRAuth = {
 						RDRAuth.createTempUser();
 					} else {
 						RDRAuth.setUser(response);
-						RDRAuth.returnUser(true);
+						RDRAuth.returnUser();
 					}
-					// RDRAuth.notifyParent(response, "fb_logged_in");
 				},
 				error: function(response) {
 					RDRAuth.createTempUser();
-					// RDRAuth.reauthUser({force_fb:true});
 				}
 			});
-			// } else {
-			// 	RDRAuth.notifyParent({message:false}, "already had user");
-			// }
 		} else {
 			RDRAuth.doFBLogin();
 		}
@@ -92,8 +86,11 @@ RDRAuth = {
 	// simply tell the widget what we currently know about the user
 	// optionally create a temp user
 	createTempUser : function() {
+		// if not calling from the iframe, don't create a temp user right now.
+		if (parent.location == window.location) return;
+
 		if ( (!RDRAuth.rdr_user.user_id && !RDRAuth.rdr_user.readr_token) ||  // no user data
-			 ( RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token && RDRAuth.rdr_user.first_name) ) { // we have user data but it must be wrong
+			 ( RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token && !RDRAuth.rdr_user.temp_user) ) { // we have user data but believe it is wrong
 			var sendData = {
 				group_id : qs_args.group_id
 			};
@@ -111,8 +108,8 @@ RDRAuth = {
 					RDRAuth.setUser(response);
 					var sendData = {
 						data : {
-							first_name : RDRAuth.rdr_user.first_name,
-							full_name : RDRAuth.rdr_user.full_name,
+							// first_name : RDRAuth.rdr_user.first_name,
+							// full_name : RDRAuth.rdr_user.full_name,
 							img_url : RDRAuth.rdr_user.img_url,
 							user_id : RDRAuth.rdr_user.user_id,
 							readr_token : RDRAuth.rdr_user.readr_token
@@ -124,8 +121,8 @@ RDRAuth = {
 		} else {
 			var sendData = {
 				data : {
-					first_name : RDRAuth.rdr_user.first_name,
-					full_name : RDRAuth.rdr_user.full_name,
+					// first_name : RDRAuth.rdr_user.first_name,
+					// full_name : RDRAuth.rdr_user.full_name,
 					img_url : RDRAuth.rdr_user.img_url,
 					user_id : RDRAuth.rdr_user.user_id,
 					readr_token : RDRAuth.rdr_user.readr_token
@@ -136,69 +133,92 @@ RDRAuth = {
 	},
 	reauthUser : function(args) {
 		RDRAuth.readUserCookie();
-		if ( args.write_mode ) {
-
-				if ( !FB.getSession() || args.force_fb ) {
-					
-					FB.getLoginStatus(function(response) {
-				  		if (response && response.session) {
-				  			// we have FB info for them -- so they are logged in and approved to user ReadrBoard
-				  			
-							// RDRAuth.rdr_user.first_name = null;
-							//user is logged in to Facebook
-
+		if ( !FB.getSession() || ( args && args.force_fb ) ) {
+			console.log('reauthUser 1');
+			FB.getLoginStatus(function(response) {
+				console.log('reauthUser 2');
+		  		if (response && response.session) {
+		  			// we have FB info for them -- so they are logged in and approved to user ReadrBoard
+		  			console.log('reauthUser 3');
+					// RDRAuth.rdr_user.first_name = null;
+					//user is logged in to Facebook
 
 
 
-							// TODO:  suspect we only need to killUser if there is a FB session change.
-							RDRAuth.killUser( function(response) {
-								RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
-							});
-				  		} else {
-				  			RDRAuth.createTempUser();
-				  		}
-				  	});
-				} else {
-					RDRAuth.getReadrToken( FB.getSession() );
-					// RDRAuth.returnUser(true);
-				}
+
+					// TODO:  suspect we only need to killUser if there is a FB session change.
+					RDRAuth.killUser( function(response) {
+						console.log('reauthUser 4');
+						RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
+					});
+		  		} else {
+		  			console.log('reauthUser 5');
+		  			// RDRAuth.createTempUser();
+		  			RDRAuth.notifyParent("", "fb user needs to login");
+		  		}
+		  	});
 		} else {
-			RDRAuth.returnUser(false);
+			RDRAuth.getReadrToken( FB.getSession() );
 		}
-
+	},
+	checkFBStatus : function(args) {
+		FB.getLoginStatus(function(response) {
+			if ( response.session && response.status && response.status == "connected" ) {
+				switch (args.requesting_action) {
+					case "admin_request":
+						// this call is from the website
+						$('#fb-logged-in').show();
+						$('#fb-logged-in button').click( function() {
+							if ( RB ) RB.admin.requestAccess( response, args.group_id );
+						});
+						$('#fb-logged-out').hide();
+						break;
+				}
+			} else {
+				switch (requesting_action) {
+					case "admin_request":
+						// this call is from the website
+						$('#fb-logged-in').hide();
+						$('#fb-logged-out').show();
+						break;
+				}
+			}
+		});
 	},
 	setUser : function(response) {
 		RDRAuth.rdr_user = {};
-		RDRAuth.rdr_user.first_name = response.data.first_name;
-		RDRAuth.rdr_user.full_name = response.data.full_name;
+		// if no first_name attribute is in the response, this is a temporary user.
+		if ( response.data.first_name ) RDRAuth.rdr_user.temp_user = false;
+		else RDRAuth.rdr_user.temp_user = true;
+		// RDRAuth.rdr_user.full_name = response.data.full_name;
 		RDRAuth.rdr_user.img_url = response.data.img_url;
 		RDRAuth.rdr_user.user_id = response.data.user_id;
 		RDRAuth.rdr_user.readr_token = response.data.readr_token;
-		$.cookie('first_name', RDRAuth.rdr_user.first_name, { expires: 365, path: '/' });
-		$.cookie('full_name', RDRAuth.rdr_user.full_name, { expires: 365, path: '/' });
+		// $.cookie('first_name', RDRAuth.rdr_user.first_name, { expires: 365, path: '/' });
+		// $.cookie('full_name', RDRAuth.rdr_user.full_name, { expires: 365, path: '/' });
+		$.cookie('temp_user', RDRAuth.rdr_user.temp_user, { expires: 365, path: '/' });
 		$.cookie('img_url', RDRAuth.rdr_user.img_url, { expires: 365, path: '/' });
 		$.cookie('user_id', RDRAuth.rdr_user.user_id, { expires: 365, path: '/' });
 		$.cookie('readr_token', RDRAuth.rdr_user.readr_token, { expires: 365, path: '/' });
 	},
 	readUserCookie : function() {
-		RDRAuth.rdr_user.first_name = $.cookie('first_name');
-		RDRAuth.rdr_user.full_name = $.cookie('full_name');
+		// RDRAuth.rdr_user.first_name = $.cookie('first_name');
+		// RDRAuth.rdr_user.full_name = $.cookie('full_name');
 		RDRAuth.rdr_user.img_url = $.cookie('img_url');
 		RDRAuth.rdr_user.user_id = $.cookie('user_id');
 		RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
 	},
-	returnUser : function(send_token) {
+	returnUser : function() {
 		var sendData = {
 			// arguments are nested under data for consistency with passing values up to the parent
 			data : {
-				first_name : RDRAuth.rdr_user.first_name,
-				full_name : RDRAuth.rdr_user.full_name,
+				// first_name : RDRAuth.rdr_user.first_name,
+				// full_name : RDRAuth.rdr_user.full_name,
 				img_url : RDRAuth.rdr_user.img_url,
 				user_id : RDRAuth.rdr_user.user_id,
 				readr_token : RDRAuth.rdr_user.readr_token
 			}
 		};
-		// if (!send_token) sendData.data.readr_token = null;
 		RDRAuth.notifyParent(sendData, "returning_user");
 	},
 	killUser : function(callback) {
@@ -221,8 +241,8 @@ RDRAuth = {
 					json: JSON.stringify( sendData )
 				},
 				success: function(response){
-					$.cookie('first_name', null, { path: '/' });
-					$.cookie('full_name', null, { path: '/' });
+					// $.cookie('first_name', null, { path: '/' });
+					// $.cookie('full_name', null, { path: '/' });
 					$.cookie('img_url', null, { path: '/' });
 					$.cookie('user_id', null, { path: '/' });
 					$.cookie('readr_token', null, { path: '/' });
@@ -239,9 +259,9 @@ RDRAuth = {
 			if (callback) callback();
 		}
 	},
-	doFBLogin: function() {
+	doFBLogin: function(requesting_action) {
 		FB.login( function(response) {
-			RDRAuth.FBLoginResponse(response);
+			RDRAuth.FBLoginResponse(response, requesting_action);
 		}, {perms:'email'});
 	},		
 	doFBlogout: function() {
@@ -249,10 +269,16 @@ RDRAuth = {
 	},
 	init : function() {
 		RDRAuth.readUserCookie();
-		RDRAuth.returnUser(true);
-		FB.getLoginStatus(function(response) {
-			RDRAuth.getReadrToken(response);	
-		});
+		RDRAuth.returnUser();
+
+		// now that SERVER is checking, we may not need this code:
+		// FB.getLoginStatus(function(response) {
+		// FB.getSession(function(response) {
+		// 	RDRAuth.getReadrToken(response);	
+		// });
+	},
+	decodeDjangoCookie : function(value) {
+		return value.replace(/"/g,'').replace(/\\054/g,",").replace(/\\073/g,";");
 	}
 }
 RDRAuth.init();
@@ -260,20 +286,20 @@ RDRAuth.init();
 FB.Event.subscribe('auth.sessionChange', function(response) {
   // do something with response.session
   console.log('xdm: fb session change');
-  RDRAuth.reauthUser({force_fb:true});
+  RDRAuth.reauthUser();
 });
 FB.Event.subscribe('auth.statusChange', function(response) {
   // do something with response.session
   console.log('xdm: fb status change');
-  RDRAuth.reauthUser({force_fb:true});
+  RDRAuth.reauthUser();
 });
 FB.Event.subscribe('auth.login', function(response) {
   // do something with response.session
   console.log('xdm: fb login');
-  RDRAuth.reauthUser({force_fb:true});
+  RDRAuth.reauthUser();
 });
 FB.Event.subscribe('auth.logout', function(response) {
   // do something with response.session
   console.log('xdm: fb logout');
-  RDRAuth.reauthUser({force_fb:true});
+  RDRAuth.reauthUser();
 });

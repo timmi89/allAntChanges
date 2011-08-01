@@ -1,6 +1,5 @@
 # Django settings for readrboard project.
-
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -151,13 +150,13 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'readrboard.api',
-    'readrboard.rb',
+    'api',
+    'rb',
     'piston',
-    'south',
+    #'south',
     #'treebeard',
     #'debug_toolbar',
-    'autofixture'
+    #'autofixture',
     #'django_extensions',
     #'devserver'
 )

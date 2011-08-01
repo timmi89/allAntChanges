@@ -40,11 +40,20 @@ body{
 /* the action bar */
 #rdr_sandbox div.rdr_actionbar {
     background:url("{{ STATIC_URL }}widget/images/actionbar_bg.png") no-repeat 0 0;
+    border:1px solid #c9c9c9; 
+    background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0, rgb(236,236,236)),
+    color-stop(0.39, rgb(255,255,255))
+    );
+    background-image: -moz-linear-gradient(center bottom , #ECECEC 0%, #fff 39%);
+
     padding:0;
     font:normal 12px Arial, sans-serif;
     position:relative;
     z-index:11000;
-    background:#fff;
     height:22px;
 }
 
@@ -138,11 +147,31 @@ body{
     width:100px;
     z-index:10000;
 }
-#rdr_sandbox div.rdr.rdr_tooltip-arrow-border { border-color:#80aec9 transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-16px; left:43%;}
+#rdr_sandbox div.rdr_actionbar_for_media div.rdr_tooltip {
+    border:2px solid #80aec9;
+    margin:0 0 0 13px;/* 0.5 icon width with compensation for border*/
+    padding:5px 0;
+    position:absolute;
+    text-align:center;
+    left:16px;
+    top:-4px;
+    width:100px;
+    z-index:10000;
+    display:block;
+}
+
 #rdr_sandbox div.rdr.rdr_tooltip-arrow { border-color:#fff transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-14px; left:43%;}
+#rdr_sandbox div.rdr.rdr_tooltip-arrow-border { border-color:#80aec9 transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-16px; left:43%;}
+
 
 #rdr_sandbox div.rdr_top div.rdr.rdr_tooltip-arrow-border { border-color:transparent transparent #80aec9; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:-16px; bottom:auto; left:43%;}
 #rdr_sandbox div.rdr_top div.rdr.rdr_tooltip-arrow { border-color:transparent transparent #fff; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:-14px; bottom:auto; left:43%;}
+ 
+
+#rdr_sandbox div.rdr_actionbar_for_media div.rdr.rdr_tooltip-arrow { border-color:transparent white transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:5px; left:-14px}
+#rdr_sandbox div.rdr_actionbar_for_media div.rdr.rdr_tooltip-arrow-border {
+border-color:transparent #80aec9 transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:5px; left:-16px}
+
 
 #rdr_sandbox div.rdr.rdr_tooltip div.rdr_tag_share    { display:block; width:12px; height:13px; background:url({{ STATIC_URL }}widget/images/tag_icons.png) -50px -13px no-repeat; left:45px; position:absolute;top:-20px; 
     -moz-border-radius:3px;
@@ -219,7 +248,7 @@ body{
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_subHeader        {text-align:center; padding-top:5px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl_padder                   {margin:0 15px; position:relative; overflow:hidden;}
 #rdr_sandbox div.rdr div.rdr_sntPnl textarea,
-#rdr_sandbox div.rdr div.rdr_sntPnl input[type="text"]   {padding:2px 6px; width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
+#rdr_sandbox div.rdr div.rdr_sntPnl input[type="text"]   { width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
 #rdr_sandbox div.rdr div.rdr_sntPnl button               {
     border:1px solid #aaa; 
     -moz-border-radius:3px 3px 3px 3px; 
@@ -235,18 +264,27 @@ body{
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_tagFeedback         {background: none repeat scroll 0 0 #ddd; border: 1px solid #bbb; margin: 5px 10px 0; padding: 5px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_tagFeedback strong  {font-weight:bold; color:#008be4;}
 
-#rdr_sandbox div.rdr div.rdr_tempUserMsg                     {position:absolute; z-index:50; bottom:0px; height:27px; border-top:1px solid #aaa;background:#fff; padding:9px; -moz-box-shadow:0px -45px 48px -50px #53aed9 inset; -webkit-box-shadow:0px -45px 48px -50px #53aed9 inset; box-shadow:0px -45px 48px -50px #53aed9 inset;}
+#rdr_sandbox div.rdr div.rdr_tempUserMsg                     {position:absolute; z-index:50; bottom:0px; border-top:1px solid #aaa;background:#fff; -moz-box-shadow:0px -45px 48px -50px #53aed9 inset; -webkit-box-shadow:0px -45px 48px -50px #53aed9 inset; box-shadow:0px -45px 48px -50px #53aed9 inset; width:100%;}
+
+#rdr_sandbox div.rdr div.rdr_tempUserMsg .rdr_tempUserMsg_wrapper {
+    padding:9px; width:auto; position:relative;
+}
+
 /*
 $('div.rdr_tempUserMsg').animate({bottom:'-48px'});
 */
 
 #rdr_sandbox div.rdr .rdr_tags           {padding:0 0 10px !important;}
 #rdr_sandbox div.rdr ul.rdr_tags         {list-style-type:none !important; padding:0 !important; margin:0 !important; }
-#rdr_sandbox div.rdr ul.rdr_tags li                  { border-color: transparent !important; border-style: solid !important; border-width: 1px 0 !important; padding:5px 0 !important; margin:0 !important; position:relative !important; overflow:auto !important; background:none !important; text-align:left !important;}
+#rdr_sandbox div.rdr ul.rdr_tags li                  { border-color: transparent !important; border-style: solid !important; border-width: 1px 0 !important; padding:5px 0 !important; margin:0 !important; position:relative !important; overflow:auto !important; background:none; text-align:left !important;}
 
 #rdr_sandbox div.rdr ul.rdr_tags li:hover,
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_hover, /* safari/chrome kludge -- :hover isn't working here */
-#rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected     {color:#008be4 !important; background:#e4f0f7 !important; display:block !important; border-color: #bbb transparent #ddd !important; cursor: pointer !important;}
+#rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected     {color:#008be4 !important; display:block !important; border-color: #bbb transparent #ddd !important; cursor: pointer !important;}
+
+#rdr_sandbox div.rdr ul.rdr_tags li.rdr_hover{background:#e4f0f7 !important;}
+#rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected{background:#D6e6F5 !important;}
+
 
 #rdr_sandbox div.rdr ul.rdr_tags li .rdr_leftBox     {width:38px; letter-spacing:1px; overflow:hidden; float:left; text-align:center; font-size:21px !important;  font-family:ReadrLeague, Arial, sans-serif !important; font-weight:normal !important; padding-top:2px; height:28px;}
 
@@ -258,8 +296,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_has_comment .rdr_rightBox     {background:url({{ STATIC_URL }}widget/images/widget_icons.png) -107px -4px no-repeat;}
 #rdr_sandbox div.rdr div.rdr_read ul.rdr_tags li .rdr_leftBox     {color:#008be4;}
 
-#rdr_sandbox div.rdr ul.rdr_tags li:hover .rdr_leftBox,
-#rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged div.rdr_leftBox   {background:url({{ STATIC_URL }}widget/images/widget_icons.png) 0px 0px no-repeat; }
+#rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged div.rdr_leftBox   {background:url({{ STATIC_URL }}widget/images/widget_icons.png) 1px -2px no-repeat; }
 
 /*clear for readmode*/
 #rdr_sandbox div.rdr div.rdr_read ul.rdr_tags li:hover div.rdr_leftBox,
@@ -269,15 +306,21 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected .rdr_rightBox   {background:url({{ STATIC_URL }}widget/images/widget_icons.png) -36px -4px no-repeat !important;}
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected .rdr_leftBox:hover,
-#rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged .rdr_leftBox:hover    {background-position:-72px 0px;}
+#rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged .rdr_leftBox:hover    {background-position:-70px -3px;}
 #rdr_sandbox div.rdr div.rdr_new ul.rdr_tags li.rdr_selected     {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
-#rdr_sandbox div.rdr div.rdr_sntPnl .rdr_borderLine                  {    background:#DDDDDD; clear:both; height:100%; left:38px; position:absolute; width:1px; z-index:2;}
+#rdr_sandbox div.rdr div.rdr_sntPnl .rdr_borderLine                  {    background:#bbb; clear:both; height:100%; left:38px; position:absolute; width:1px; z-index:2;}
+
+#rdr_sandbox div.rdr ul.rdr_tags li div.rdr_leftBox.rdr_kill_bg {background:none !important;}
 
 #rdr_sandbox div.rdr ul.rdr_preselected                              {font-size:24px !important; font-family:ReadrLeague, Arial, sans-serif !important; margin:-1px 0 0 !important; min-height:120px !important;}
 #rdr_sandbox div.rdr ul.rdr_preselected .rdr_tagText                 {color:#666 !important;text-decoration:none !important; display:block !important; float:left !important; width: 120px !important; padding-left:5px !important; overflow-x: hidden !important; font-weight:normal !important; font-size:24px !important; font-family:ReadrLeague, Arial, sans-serif !important;}
-#rdr_sandbox div.rdr li.rdr_customTagBox input.freeformTagInput      {font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0; text-align:left; border:none; background:none; -moz-box-shadow:none; -webkit-box-shadow:none; box-shadow:none; padding:2px 12px 2px 0; z-index:100;}
 
-#rdr_sandbox div.rdr li.rdr_customTagBox div.rdr_help                {left:43px; width:auto; z-index:90;}
+#rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged                      {background:#e4f0f7;}
+#rdr_sandbox div.rdr li.rdr_customTagBox .rdr_tagText                 {padding-left: 2px !important;}
+
+#rdr_sandbox div.rdr li.rdr_customTagBox input.freeformTagInput      {font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0; text-align:left; border:none; background:none; -moz-box-shadow:none; -webkit-box-shadow:none; box-shadow:none; z-index:100; padding-left: 2px;}
+
+#rdr_sandbox div.rdr li.rdr_customTagBox div.rdr_help                {left:44px; width:auto; z-index:90;}
 #rdr_sandbox div.rdr li.rdr_customTagBox div.rdr_help:hover          {text-decoration:underline;}
 #rdr_sandbox div.rdr li.rdr_customTagBox div.rdr_rightBox                {display:none;}
 #rdr_sandbox div.rdr li.rdr_customTagBox.rdr_selected div.rdr_rightBox   {display:block;}
@@ -347,7 +390,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_instruct    {color:#666; margin:5px 0;}
 #rdr_sandbox div.rdr div.rdr_help        {font:italic 11px Arial;color:#767676; xwidth:100%; position:absolute; top:12px; xtext-align:center; margin:0 !important;}
 
-#rdr_sandbox div.rdr div.rdr_comment textarea    { width:100%; height:92px; font-size:14px; margin:5px 0; resize:none; padding-bottom:10px;}
+#rdr_sandbox div.rdr div.rdr_comment textarea    { width:100%; height:92px; font-size:14px; margin:5px 0; resize:none; padding:5px 5px 10px 5px;}
 #rdr_sandbox div.rdr div.rdr_comment div.rdr_charCount          {font-size:10px; font-style:italic; color:#999; float:left;}
 #rdr_sandbox div.rdr div.rdr_share_count     { color:#999999; font-style:italic; margin:-3px 0 5px; }
 
@@ -465,21 +508,34 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 
 /* user education bar */
-#rdr_sandbox #rdr_ed_user        { position:fixed; top:-40px; left:0; width:100%; background:#f0f0f0; height:35px; padding:0px; z-index:12000; overflow:hidden; -moz-box-shadow:0 0 10px 1px #aaa  !important; -webkit-box-shadow:0 0 10px 1px #aaa  !important; box-shadow:0 0 10px 1px #aaa !important; }
-#rdr_sandbox #rdr_ed_user a      { color:#008be4; }
-#rdr_sandbox #rdr_ed_user_1      { float:left; background: #fff; width:240px; height:35px;}
-#rdr_sandbox #rdr_ed_user_1 h1   { padding-top:6px;}
-#rdr_sandbox #rdr_ed_user_1 span { font-size:21px;}
-#rdr_sandbox #rdr_ed_user_2      { position:absolute; left:240px; background: url("{{ STATIC_URL }}widget/images/header_arrow.png") no-repeat scroll 0 -37px #f0f0f0; height:25px; padding:10px 0 0 18px; font-size:14px; color:#666; width:570px; white-space:nowrap; }
-#rdr_sandbox #rdr_ed_user_x      { position:absolute; right:10px; top:5px; font-size:18px; cursor:pointer; }
-#rdr_sandbox #rdr_sandbox div.rdr_ed_user_2 span {
-    background:url("{{ STATIC_URL }}widget/images/actionbar_icons.png") no-repeat -8px -8px transparent;
+#rdr_sandbox div.rdr_alert_box        { position:fixed; bottom:-400px; left:10px; width:100%; background:#f0f0f0; width:300px; padding:0px; z-index:12000; overflow:hidden; -moz-box-shadow:0 0 10px 1px #aaa  !important; -webkit-box-shadow:0 0 10px 1px #aaa  !important; box-shadow:0 0 10px 1px #aaa !important; }
+#rdr_sandbox div.rdr_alert_box a      { color:#008be4; }
+#rdr_sandbox div.rdr_alert_box_1      { background: #fff; height:30px; }
+#rdr_sandbox div.rdr_alert_box_1 h1   { padding:6px 0 0 20px; cursor:text;}
+
+#rdr_sandbox div.rdr_alert_box_1 span,
+#rdr_sandbox div.rdr_alert_box_1 h1 span { font-size:21px;}
+#rdr_sandbox div.rdr_alert_box_2      { background: #f0f0f0; padding:10px 10px 30px; font-size:12px; color:#666;}
+#rdr_sandbox div.rdr_alert_box_x      { position:absolute; right:10px; top:7px; font-size:14px; cursor:pointer; color:#999; }
+#rdr_sandbox div.rdr_alert_box_2 span {
+    background:url({{ STATIC_URL }}widget/images/actionbar_icons.png) no-repeat -8px -8px transparent;
     display:inline-block;
     height:22px;
     width:16px;
     text-indent:-9999px;
 }
 
+#rdr_sandbox div.rdr_alert_box_1 img.rdr_pin { 
+    position:static !important;
+    margin:10px 0px 10px 7px !important;
+    float:left !important;
+}
+#rdr_sandbox div.rdr_alert_box_2 img.rdr_pin {
+    display: inline !important;
+    float: none !important;
+    margin: 0 0 -4px !important;
+    position: static !important;
+}
 
 /*everything below here is stuff that is inline to the client's document.  Generally will use !important for everything*/
 
@@ -537,21 +593,15 @@ div.rdr_indicator {
     font: 12px Arial,sans-serif;
     padding:4px 3px 3px 3px !important;
     border:1px solid #c9c9c9; 
-    /*don't need these - let the js do it.*/
-    /*
-    max-width:300px;
-    min-width:100px;
-    */
-    /*margin:-4px;*/
-    /*offset with margin to line up with indicator: compensating for the padding and the border*/
+    
     background-image: -webkit-gradient(
     linear,
     left bottom,
     left top,
-    color-stop(0, rgb(238,238,238)),
+    color-stop(0, rgb(236,236,236)),
     color-stop(0.39, rgb(255,255,255))
     );
-    background-image: -moz-linear-gradient(center bottom , #eee 0%, #fff 39%);
+    background-image: -moz-linear-gradient(center bottom , #ECECEC 0%, #fff 39%);
     margin:-5px 0 0 -4px;
     overflow:hidden;
     display:none; /*start with them hidden by default - will override with js*/
@@ -571,9 +621,9 @@ div.rdr_indicator,
     white-space: nowrap;
 }
 
-
 /*indicator pin both*/
 div.rdr_indicator img.rdr_pin,
+#rdr_sandbox img.rdr_pin,
 #rdr_sandbox div.rdr_indicator_details img.rdr_pin,
 #rdr_sandbox div.rdr_sentimentBox img.rdr_pin { 
     background:url("{{ STATIC_URL }}widget/images/readr_icons.png") no-repeat 0 -1px !important; 
@@ -615,7 +665,7 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
     linear,
     left bottom,
     left top,
-    color-stop(0, rgb(238,238,238)),
+    color-stop(0, rgb(236,236,236)),
     color-stop(0.39, rgb(255,255,255))
     )!important;
     background-image: -moz-linear-gradient(center bottom , #eee 0%, #fff 39%) !important;
@@ -700,4 +750,22 @@ div.rdr_indicator span.rdr_count{
     margin: 0 !important;
     padding: 0 !important;
     position: relative !important;
+}
+
+#rdr_sandbox div#rdr_loginPanel {
+    position:fixed;
+    z-index: 12101;
+}
+
+#rdr_sandbox div#rdr_overlay {
+    background-color: #3B4B5E;
+    cursor: pointer;
+    display: block;
+    opacity: 0.7;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 12100;
 }

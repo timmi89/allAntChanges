@@ -1,5 +1,5 @@
 <div>
-{% regroup interactions by page as pi %}
+{% regroup current_page.object_list by page as pi %}
 {% for page in pi %}
 <table class="card" border="0" cellspacing="0" cellpadding="0">
   <thead>
@@ -17,13 +17,25 @@
           {{ interaction.human_kind }}
         {% endif %}
       </div>
+      {% if user and logged_in_user.social_user.admin_approved and interaction.page.site.group.id == logged_in_user.social_user.group_admin.id %}
+      <div class="block_content">
+        <a href="javascript:void(0);" onclick="RB.admin.blockContent({{interaction.id}});">
+          {% if interaction.approved %}
+            Block tag
+          {% else %}
+            Unblock tag
+          {% endif %}
+        </a>
+      </div>
+      {% endif %}
+
       <!-- <div class="count"></div> -->
     </td>
     <td class="column2">
       <!-- <div class="who_action">{{ tag.content.interaction.user.social_user.full_name }}'s reaction to:</div> -->
       <div class="who_action">
       </div>
-      {% if tag.content.kind == "img" %}
+      {% if interaction.content.kind == "img" %}
       <div class="content image"><img src="{{ interaction.content.body }}"></div>
       {% else %}
       <div class="content text">{{ interaction.content.body }}</div>
@@ -41,6 +53,7 @@
           {{ interaction.interaction_node.body }}
           <div class="quote close">"</div>
         </div>
+        <div class="block_content"><a href="javascript:void(0);" onclick="RB.admin.blockContent({{interaction.id}});">Block comment</a></div>
       </div>
     </div>
     {% endif %}
@@ -49,4 +62,17 @@
   {% endfor %}
 </table>
 {% endfor %}
+<div class="pagination">
+  <span class="step-links">
+      {% if current_page.has_previous %}
+        <a href="?{% if query_string %}s={{ query_string }}{% endif %}&page={{ current_page.previous_page_number }}">previous</a>
+      {% endif %}
+      <span class="current">
+        Page {{ current_page.number }} of {{ current_page.paginator.num_pages }}
+      </span>
+      {% if current_page.has_next %}
+        <a href="?{% if query_string %}s={{ query_string }}{% endif %}&page={{ current_page.next_page_number }}">next</a>
+      {% endif %}
+    </span>
+</div>
 </div>

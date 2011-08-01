@@ -83,6 +83,7 @@ class Group(models.Model):
     name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=25, unique=True)
     language = models.CharField(max_length=25, default="en")
+    requires_approval = models.BooleanField(default=False)
     blessed_tags = models.ManyToManyField(InteractionNode)
 
     # black/whitelist fields
@@ -169,10 +170,7 @@ class Content(DateAwareModel):
     CONTENT_TYPES = (
         ('txt', 'text'),
         ('img', 'img'),
-        ('med', 'media'), #todo: media will later be a generic category for a box with video, or some interactive thing.
-        ('vid', 'video'),
-        ('snd', 'sound'),
-        ('fla', 'flash')
+        ('med', 'media'),
     )
     kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
     location = models.CharField(max_length=255, blank=True, null=True)
@@ -206,6 +204,7 @@ class Interaction(DateAwareModel, UserAwareModel):
     container = models.ForeignKey(Container, blank=True, null=True)
     content = models.ForeignKey(Content)
     interaction_node = models.ForeignKey(InteractionNode)
+    approved = models.BooleanField(default=True)
     anonymous = models.BooleanField(default=False)
     parent= models.ForeignKey('self', blank=True, null=True)
     kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)
@@ -262,7 +261,6 @@ class ScrubList(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User)
-    group_admin = models.ForeignKey(Group, blank=True, null=True)
     educated = models.BooleanField()
     #following = models.ForeignKey(User)
     
@@ -271,6 +269,13 @@ class SocialUser(models.Model):
         ('M', 'Male'),
         ('F', 'Female'),
     )
+    
+    # For admin
+    admin_approved = models.BooleanField(default=False)
+    group_admin = models.ForeignKey(Group, blank=True, null=True)
+    
+    # For Privacy
+    private_profile = models.BooleanField(default=False)
 
     """Social Auth association model"""
     user = models.OneToOneField(User, related_name='social_user', unique=True)
@@ -284,6 +289,9 @@ class SocialUser(models.Model):
     hometown = models.CharField(max_length=255, blank=True, null=True)
     bio = models.TextField(max_length=255, blank=True, null=True)
     img_url = models.URLField(blank=True)
+    
+    def is_admin(self):
+        return admin_approved
 
     def __unicode__(self):
         return self.user.username

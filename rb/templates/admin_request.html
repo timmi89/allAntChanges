@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block sidebarContent %}
+<div id="sidebar">
+<h2>{{ group.name }}</h2>
+<img src="{{ group.logo_url_lg }}" />
+</div>
+{% endblock sidebarContent %}
+
+{% block mainContent %}
+  <h1>Request Administrative Access</h1>
+
+  <div id="fb-logged-in" style="display:none;">
+	<button>Request Administrative Access for {{ group.name }}</button>
+  </div>
+
+  <div id="fb-logged-out" style="display:none;">
+	<div id="fb-login-button">
+		<a href="javascript:void(0);" onclick="RB.user_auth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" /></a>
+	</div>
+  </div>
+
+
+{% endblock mainContent %}
+
+{% block pageJS %}
+<script type="text/javascript">
+RDRAuth.checkFBStatus({requesting_action:'admin_request', group_id:{{group.id}} });
+</script>
+{% endblock %}
+
+{% block sidebarJS %}
+<script type="text/javascript">
+
+</script>
+{% endblock %}

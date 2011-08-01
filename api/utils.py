@@ -145,21 +145,18 @@ def createInteractionNode(body=None):
 
 def createInteractionNode(node_id=None, body=None, group=None):
     # Get or create InteractionNode for share
-    try:
-        if node_id:
-            # ID known retrieve existing
-            inode = InteractionNode.objects.get(id=node_id)
-        elif body:
-            # Check body for blacklisted word
-            """ for bad, good in blacklist.iteritems(): body = body.replace(bad, good) """
-            blacklist = [word.strip() for word in group.word_blacklist.split(',')]
-            pf = ProfanitiesFilter(blacklist, replacements="*", complete=False)
-            body = pf.clean(body)
-            # No id provided, using body to get_or_create
-            inode = InteractionNode.objects.get_or_create(body=body)[0]
-    except:
-        raise JSONException(u'Error creating or retrieving interaction node')
-    
+    if node_id:
+        # ID known retrieve existing
+        inode = InteractionNode.objects.get(id=node_id)
+    elif body:
+        # Check body for blacklisted word
+        """ for bad, good in blacklist.iteritems(): body = body.replace(bad, good) """
+        blacklist = [word.strip() for word in group.word_blacklist.split(',')]
+        pf = ProfanitiesFilter(blacklist, replacements="*", complete=False)
+        body = pf.clean(body)
+        # No id provided, using body to get_or_create
+        inode = InteractionNode.objects.get_or_create(body=body)[0]
+
     return inode
 
 def isTemporaryUser(user):

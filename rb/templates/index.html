@@ -14,13 +14,17 @@
 $.ajax({
     {% if user_id %}
       {% if kwargs %}
-        url: "/interactions/user/{{ user_id }}/{{ kwargs.view }}/",
+        url: "/interactions/user/{{ user_id }}/{{ kwargs.view }}/?{% if query_string %}s={{ query_string }}{% endif %}&{% if page_num %}page_num={{ page_num }}{% endif %}",
       {% else %}
-        url: "/interactions/user/{{ user_id }}/",
+        url: "/interactions/user/{{ user_id }}/?{% if query_string %}q={{ query_string }}{% endif %}&{% if page_num %}page_num={{ page_num }}{% endif %}",
       {% endif %}
     {% else %}
       {% if short_name %}
-      url: "/interactions/group/{{ short_name }}/",
+        {% if kwargs.view %}
+          url: "/interactions/group/{{ short_name }}/{{ kwargs.view }}/?{% if query_string %}s={{ query_string }}{% endif %}&{% if page_num %}page_num={{ page_num }}{% endif %}",
+        {% else %}
+          url: "/interactions/group/{{ short_name }}/?{% if query_string %}s={{ query_string }}{% endif %}&{% if page_num %}page_num={{ page_num }}{% endif %}",
+        {% endif %}
       {% else %}
       url: "/cards/",
       {% endif %}
@@ -38,7 +42,11 @@ $.ajax({
     {% if user_id %}
     url: "/sidebar/user/{{ user_id }}/",
     {% else %}
-    url: "/sidebar/",
+      {% if short_name %}
+        url: "/sidebar/group/{{ short_name }}/",
+      {% else %}
+        url: "/sidebar/",
+      {% endif %}
     {% endif %}
     type: "get",
     success: function(response) {

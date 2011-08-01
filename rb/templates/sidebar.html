@@ -1,3 +1,4 @@
+{% load static %}
 <style type="text/css">
 #sidebar		{padding:20px 0 0 0;}
 #sidebar h2		{font-size:46px; font-weight:normal; margin:0 10px;}
@@ -10,7 +11,7 @@
 #sidebar ul[role="filters"]					{list-style-type:none; font-size:13px;}
 #sidebar ul[role="filters"] li				{text-align:right; padding:2px 25px 1px 25px; border:1px solid #f0f0f0; border-left:0; border-right:0; cursor:pointer; }
 #sidebar ul[role="filters"] li:hover,
-#sidebar ul[role="filters"] li.active		{xfont-weight:bold; color:#008be4; background:url("/static/images/site/active_arrow.png") right center no-repeat #e4f0f7; border:1px solid #bababa; border-left:0; border-right:0;}
+#sidebar ul[role="filters"] li.active		{xfont-weight:bold; color:#008be4; border:1px solid #bababa; border-left:0; border-right:0;}
 #sidebar #following,
 #sidebar #followed_by	{margin:0 10px 10px;}
 
@@ -22,8 +23,7 @@
 #sidebar #follow,
 #sidebar #following,
 #sidebar #followed_by,
-#sidebar h3[role="profile_section_header"],
-#sidebar h3[role="profile_section_header"]	{display:none;}
+#sidebar h3[role="profile_section_header"]
 
 html.dailycandy #sidebar h2,
 html.dailycandy #sidebar #avatar,
@@ -34,23 +34,43 @@ html.dailycandy #sidebar h3[role="profile_section_header"],
 html.dailycandy #sidebar h3[role="profile_section_header"]	{display:block;}
 
 </style>
+{% if group %}
 <div id="avatar">
-	<img src="/static/demo/images/purse.png" />
+	<img src="{% get_static_prefix %}{{ group.logo_url_lg }}" />
 </div>
-<h2>DailyCandy</h2>
-<div id="social-icons" style="display:none;">
-	<img src="/static/demo/images/social-icons-loose/social-icon-facebook.png" />
-	<img src="/static/demo/images/social-icons-loose/social-icon-twitter.png" />
-	<img src="/static/demo/images/social-icons-loose/social-icon-tumblr.png" />
-	<img src="/static/demo/images/social-icons-loose/social-icon-linkedin.png" />
-</div>
-<div id="follow">
-	<button>+ Follow DailyCandy</button>
-</div>
+{% endif %}
+{% if user %}
 <div id="user_data">
   <img src="{{ user.social_user.img_url }}?type=large">
   <h3>{{ user.social_user.full_name }}</h3>
+  {% if logged_in_user.id = user.id %}
+  <label for="private_profile">
+  <input type="checkbox" id="private_profile" {% if user.social_user.private_profile %}checked="checked"{% endif %} /> 
+  Profile is only visible to me
+  </label>
+  {% endif  %}
+  <script type="text/javascript">
+  	$('#private_profile').click( function() {
+  		$('label[for="private_profile"] span').remove();
+  		var sendData = {
+  			user_id:RDRAuth.rdr_user.user_id, 
+  			readr_token:RDRAuth.rdr_user.readr_token,
+  			group_id:1
+  		};
+		$.ajax({
+		    url: "/api/privacy/toggle/",
+		    type: "get",
+		    data: {
+            	json: JSON.stringify(sendData)
+            },
+		    success: function(response) {
+		        $('label[for="private_profile"]').append('<span>Saved</span>');
+		    }
+		});
+  	});
+    </script>
 </div>
+{% endif %}
 <h3>Activity</h3>
 <ul role="filters" class="activity">
 	<li role="all">
@@ -65,11 +85,3 @@ html.dailycandy #sidebar h3[role="profile_section_header"]	{display:block;}
 	<li role="bookmarks">Bookmarks</li>
 	-->
 </ul>
-<h3 role="profile_section_header">Following (412)</h3>
-<div id="following">
-	<img src="/static/demo/images/following.jpg" />
-</div>
-<h3 role="profile_section_header">Followed By (186)</h3>
-<div id="followed_by">
-	<img src="/static/demo/images/followed_by.jpg" />
-</div>
