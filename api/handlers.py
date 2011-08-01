@@ -152,8 +152,6 @@ class CommentHandler(InteractionHandler):
             except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
                 raise JSONException(u'Could not find parent interaction specified')
         else:
-            #todo: temp translation here
-            data['content_node_data'] = data['content_node']
             parent = TagHandler().create(request, data, user, page, group)['interaction']
         
         try:
