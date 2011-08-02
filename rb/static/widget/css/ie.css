@@ -11,3 +11,7 @@ body div.rdr_indicator_for_text div.rdr_indicator_body,
 body div.rdr_indicator_for_media div.rdr_indicator_body {
 	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
 }
+
+#rdr_sandbox div#rdr_overlay {
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
+}
