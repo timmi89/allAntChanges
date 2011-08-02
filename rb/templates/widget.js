@@ -926,7 +926,7 @@ function readrBoard($R){
     				parentUrl = window.location.href,
                     parentHost = window.location.protocol + "//" + window.location.host;
     				$loginHtml.append( '<h1>Log In</h1><div class="rdr_body" />');
-    				$loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&group_name='+RDR.group.name+'&cachebust='+RDR.cachebuster+'" width="360" height="190" style="overflow:hidden;" />' );
+    				$loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&group_name='+RDR.group.name+'&cachebust='+RDR.cachebuster+'" width="360" height="190" frameborder="0" style="overflow:hidden;" />' );
     				
     				// rindow.animate({
         //                 width:'500px',
@@ -2477,7 +2477,7 @@ function readrBoard($R){
                             });
 
                             // TODO make this link to the user profile work
-                            var $seeTags = $('<div class="rdr_sntPnl_padder"><div>Your bookmarks are private - only you can see them.</div><strong>To view your tags, visit your <a href="javascript:void(0);" target="_blank">ReadrBoard profile</a>.</strong></div>');
+                            var $seeTags = $('<div class="rdr_sntPnl_padder"><div>Your bookmarks are private - only you can see them.</div><strong>To view your tags, visit your <a href="http://dev.readrboard.com/user/'+RDR.user.user_id+'" target="_blank">ReadrBoard profile</a>.</strong></div>');
                             
                             $whyPanel_tagCard.append(
                                 $tagFeedback.append($undoLink),
@@ -3380,9 +3380,10 @@ function readrBoard($R){
 
                 // () ? text_node : image_node
                 var comments = ( content_node.id ) ? summary.content_nodes[ content_node.id ].top_interactions.coms : summary.top_interactions.coms;
+                console.dir(comments);
                 var node_comments = 0;
                 for (var com in comments ) {
-                    if ( comments[com].parent_id == tag.id ) {
+                    if ( comments[com].tag_id == tag.id ) {
                         node_comments++;
                     }
                 }
@@ -3725,7 +3726,7 @@ function readrBoard($R){
 
                         case "whyPanel":
                             width = ((num_columns-1)*200)+250;
-                            minHeight = "280px";
+                            minHeight = "300px";
 
                             // corner logic
                             $thisPanel.removeClass('rdr_brtl').removeClass('rdr_brbl');

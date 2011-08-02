@@ -563,7 +563,7 @@ div.rdr_indicator, div.rdr_indicator * {
 }
 /*the indicator body will be moved up to compensate*/
 div.rdr_indicator_for_text{
-    vertical-align: text-bottom;
+    vertical-align: text-top;
 }
 
 div.rdr_indicator {
@@ -652,7 +652,7 @@ div.rdr_indicator div.rdr_indicator_body {
 /*for now give the text indicators a small offset so the details don't cover the end of content todo: id:12345*/
 div.rdr_indicator_for_text div.rdr_indicator_body{
     left: 4px !important;
-    top: -15px !important; /*moved up to compensate for the indicator being vertical-aligned to text-bottom: - reliable this way*/
+    /*top: -15px !important;*/
 }
 div.rdr_indicator_for_media div.rdr_indicator_body{
     background:white !important;
