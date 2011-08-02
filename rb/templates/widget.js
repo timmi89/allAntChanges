@@ -4926,7 +4926,7 @@ function $RFunctions($R){
                 
                 var total_interactions = 0;
                 for ( var i in RDR.page.summary ) {
-                    if ( RDR.page.summary[i].count ) total_interactions += RDR.page.summary[i].count;
+                    if ( RDR.page.summary[i].kind == "tag" ) total_interactions = RDR.page.summary[i].count;
                 }
 
                 if ( total_interactions > 0 ) {
