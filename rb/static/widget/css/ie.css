@@ -7,12 +7,7 @@ div.rdr_alert_box
 #rdr_sandbox div.rdr_actionbar { 
 	background:url("{{ STATIC_URL }}widget/images/actionbar_bg.png") no-repeat left bottom #fff;
 }
+body div.rdr_indicator_for_text div.rdr_indicator_body,
 body div.rdr_indicator_for_media div.rdr_indicator_body {
 	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
 }
-
-/*#rdr_sandbox div.rdr h1, 
-#rdr_sandbox div.rdr h2  {font-family:"Helvetica Neue",Arial,Helvetica,sans-serif;}
-
-#rdr_sandbox div.rdr ul.rdr_preselected                              {font-size:24px !important; font-family:ReadrLeague, Arial, sans-serif !important;
-*/

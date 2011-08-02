@@ -4568,16 +4568,6 @@ loadScript( "{{ STATIC_URL }}global/js/jquery-1.6.js", function(){
 function $RFunctions($R){
     //called after our version of jQuery ($R) is loaded
 
-    //init our plugins (includes rangy, but otherwise, mostly jquery plugins. The $R passed is our jQuery alias)
-    initPlugins($R);
-        
-    //initiate our RDR object
-    RDR = readrBoard($R);
-    
-    RDR.date = new Date();
-    // TODO use the following line.  it creates a cachebuster that represents the current day/week/month
-    // RDR.cachebuster = String( parseInt( RDR.date.getDate() / 7 )+1 )+String(RDR.date.getMonth()) + String(RDR.date.getYear()),
-    RDR.cachebuster = RDR.date.getTime();
 
     //load CSS
     var css = [
@@ -4587,7 +4577,7 @@ function $RFunctions($R){
     ];
 
     if ( $R.browser.msie ) {
-        css.push( "{{ STATIC_URL }}widget/css/ie.css?"+RDR.cachebuster );
+        css.push( "{{ STATIC_URL }}widget/css/ie.css" );
     }
     
     loadCSS(css);
@@ -4601,6 +4591,17 @@ function $RFunctions($R){
             }).appendTo('body');
         });
     }
+
+    //init our plugins (includes rangy, but otherwise, mostly jquery plugins. The $R passed is our jQuery alias)
+    initPlugins($R);
+        
+    //initiate our RDR object
+    RDR = readrBoard($R);
+    
+    RDR.date = new Date();
+    // TODO use the following line.  it creates a cachebuster that represents the current day/week/month
+    // RDR.cachebuster = String( parseInt( RDR.date.getDate() / 7 )+1 )+String(RDR.date.getMonth()) + String(RDR.date.getYear()),
+    RDR.cachebuster = RDR.date.getTime();
 
     //run init functions
     RDR.actions.init();
