@@ -152,7 +152,9 @@ def createInteractionNode(node_id=None, body=None, group=None):
         # Check body for blacklisted word
         """ for bad, good in blacklist.iteritems(): body = body.replace(bad, good) """
         blacklist = [word.strip() for word in group.word_blacklist.split(',')]
-        pf = ProfanitiesFilter(blacklist, replacements="*", complete=False)
+        # For demo search for bad words inside other bad words
+        inside_words = True if group.id == 1 else False
+        pf = ProfanitiesFilter(blacklist, replacements="*", complete=False, inside_words=inside_words)
         body = pf.clean(body)
         # No id provided, using body to get_or_create
         inode = InteractionNode.objects.get_or_create(body=body)[0]
