@@ -1,8 +1,9 @@
+{% load static %}
 <div>
 {% for card in cards %}
 <table class="card" border="0" cellspacing="0" cellpadding="0">
   <thead>
-    <th class="column1"><img alt="{{ card.page.site.group.name }}" src="{{ card.page.site.group.logo_url_sm }}"></th>
+    <th class="column1"><img alt="{{ card.page.site.group.name }}" src="{% get_static_prefix %}{{ card.page.site.group.logo_url_sm }}"></th>
     <th class="column2">{{ card.page.title }}</th>
   </thead>
   {% for tag in card.tags %}

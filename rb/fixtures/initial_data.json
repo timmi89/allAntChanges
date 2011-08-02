@@ -11,7 +11,8 @@
       "bookmark": 1,
       "search": 1,
       "secret": "secret123%awesome%test!",
-      "logo_url_sm": "",
+      "logo_url_sm": "demo/images/rb_logo_sm.png",
+      "logo_url_lg": "demo/images/rb_logo_lg.png",
       "twitter": "ReadrBoard",
       "word_blacklist": "fuck, shit, cock, cunt, balls, nigger, asshole",
       "requires_approval": "False"

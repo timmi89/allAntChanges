@@ -39,7 +39,7 @@ html.dailycandy #sidebar h3[role="profile_section_header"]	{display:block;}
 	<img src="{% get_static_prefix %}{{ group.logo_url_lg }}" />
 </div>
 {% endif %}
-{% if user %}
+{% if user_id %}
 <div id="user_data">
   <img src="{{ user.social_user.img_url }}?type=large">
   <h3>{{ user.social_user.full_name }}</h3>
