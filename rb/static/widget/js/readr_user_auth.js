@@ -53,7 +53,6 @@ RDRAuth = {
 	},
 	getUser: function() {
 		RDRAuth.readUserCookie();
-
 		if ( !RDRAuth.rdr_user.readr_token ) {
 			// user is null.  get a tempUser.
 			RDRAuth.createTempUser();
@@ -290,15 +289,15 @@ FB.Event.subscribe('auth.sessionChange', function(response) {
   // do something with response.session
   RDRAuth.reauthUser();
 });
-FB.Event.subscribe('auth.statusChange', function(response) {
-  // do something with response.session
-  RDRAuth.reauthUser();
-});
-FB.Event.subscribe('auth.login', function(response) {
-  // do something with response.session
-  RDRAuth.reauthUser();
-});
-FB.Event.subscribe('auth.logout', function(response) {
-  // do something with response.session
-  RDRAuth.reauthUser();
-});
+// FB.Event.subscribe('auth.statusChange', function(response) {
+//   // do something with response.session
+//   RDRAuth.reauthUser();
+// });
+// FB.Event.subscribe('auth.login', function(response) {
+//   // do something with response.session
+//   RDRAuth.reauthUser();
+// });
+// FB.Event.subscribe('auth.logout', function(response) {
+//   // do something with response.session
+//   RDRAuth.reauthUser();
+// });

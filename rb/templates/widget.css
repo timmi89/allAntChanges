@@ -39,7 +39,6 @@ body{
 
 /* the action bar */
 #rdr_sandbox div.rdr_actionbar {
-    background:url("{{ STATIC_URL }}widget/images/actionbar_bg.png") no-repeat 0 0;
     border:1px solid #c9c9c9; 
     background-image: -webkit-gradient(
     linear,
