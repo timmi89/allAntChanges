@@ -12,7 +12,7 @@
       "search": 1,
       "secret": "secret123%awesome%test!",
       "logo_url_sm": "",
-      "twitter": "",
+      "twitter": "ReadrBoard",
       "word_blacklist": "fuck",
       "requires_approval": "False"
     }
