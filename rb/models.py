@@ -84,6 +84,7 @@ class Group(models.Model):
     short_name = models.CharField(max_length=25, unique=True)
     language = models.CharField(max_length=25, default="en")
     requires_approval = models.BooleanField(default=False)
+    word_blacklist = models.TextField(blank=True)
     blessed_tags = models.ManyToManyField(InteractionNode)
 
     # black/whitelist fields
@@ -91,7 +92,6 @@ class Group(models.Model):
     img_whitelist = models.CharField(max_length=255, blank=True)
     img_blacklist = models.CharField(max_length=255, blank=True)
     no_readr = models.CharField(max_length=255, blank=True)
-    word_blacklist = models.TextField(blank=True)
     
     # logo fields
     logo_url_sm = models.URLField(blank=True, verify_exists=False)
