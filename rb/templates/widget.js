@@ -763,13 +763,16 @@ function readrBoard($R){
             },
 			iframeHost : "{{ BASE_URL }}", // TODO put this in a template var
             getUser: function(args, callback) {
+                if ( callback && args ) {
+                    RDR.session.receiveMessage( args, callback );
+                } else if ( callback ) {
+                    RDR.session.receiveMessage( false, callback );
+                }
                 $.postMessage(
                     "getUser",
                     RDR.session.iframeHost + "/xdm_status/",
                     window.frames['rdr-xdm-hidden']
                 );
-                if ( callback && args ) RDR.session.receiveMessage( args, callback );
-                else if ( callback ) RDR.session.receiveMessage( false, callback );
             },
             handleGetUserFail: function(args, callback) {
                 var response = args.response;
@@ -826,7 +829,7 @@ function readrBoard($R){
 				// this is the postMessage receiver for ALL messages posted.
                 // TODO: put this elsewhere so it's more logically placed and easier to find??
 			},
-            receiveMessage: function(args, callback) {
+            receiveMessage: function(args, callbackFunction) {
                 //args is passed through this function into the callback as a parameter.
                 //The only side effect is that it adds a user property to args ( args[user] ).
 
@@ -843,14 +846,15 @@ function readrBoard($R){
                                 for ( var i in message.data ) {
                                     RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i]):message.data[i];
                                 }
-                                if ( callback && args ) {
+
+                                if ( callbackFunction && args ) {
                                     args.user = RDR.user;
-                                    callback(args);
-                                    callback = null;
+                                    callbackFunction(args);
+                                    callbackFunction = null;
                                 }
-                                else if ( callback ) {
-                                    callback();
-                                    callback = null;
+                                else if ( callbackFunction ) {
+                                    callbackFunction();
+                                    callbackFunction = null;
                                 }
                             } else if ( message.status == "fb user needs to login" ) {
                                 RDR.session.showLoginPanel( args );
@@ -926,7 +930,7 @@ function readrBoard($R){
     				parentUrl = window.location.href,
                     parentHost = window.location.protocol + "//" + window.location.host;
     				$loginHtml.append( '<h1>Log In</h1><div class="rdr_body" />');
-    				$loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&group_name='+RDR.group.name+'&cachebust='+RDR.cachebuster+'" width="360" height="190" style="overflow:hidden;" />' );
+    				$loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&group_name='+RDR.group.name+'&cachebust='+RDR.cachebuster+'" width="360" height="190" frameborder="0" style="overflow:hidden;" />' );
     				
     				// rindow.animate({
         //                 width:'500px',
@@ -1032,7 +1036,6 @@ function readrBoard($R){
 		},
         actions: {
             aboutReadrBoard: function() {
-                alert('Testing... Readrboard gives you more revenue and deeper engagement!');
             },
             init: function(){
                 var that = this;
@@ -1085,8 +1088,6 @@ function readrBoard($R){
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
-                        //[cleanlogz]console.warn('ajax error');
-                        //[cleanlogz](response);
                     }
                 });
             },
@@ -1114,8 +1115,6 @@ function readrBoard($R){
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
-                        //[cleanlogz]console.warn('ajax error');
-                        //[cleanlogz](response);
                     }
                 });
             },
@@ -1165,8 +1164,6 @@ function readrBoard($R){
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
-                        //[cleanlogz]console.warn('ajax error');
-                        //[cleanlogz](response);
                     }
 				});
 
@@ -1209,7 +1206,7 @@ function readrBoard($R){
                 });
 
                 $(document).bind('scrollstop.rdr', function() {
-                    if ( $(window).scrollTop() > 100 && $('#rdr_sandbox') && !$('#rdr_sandbox').data('showingAllIndicator') ) {
+                    if ( $(window).scrollTop() > 150 && $('#rdr_sandbox') && !$('#rdr_sandbox').data('showingAllIndicator') ) {
                         $('#rdr_sandbox').data('showingAllIndicator', true);
                         if ( RDR.text_container_popularity && RDR.text_container_popularity.length > RDR.group.initial_pin_limit ) {
                             // show the alert bar, which has a link to call RDR.actions.summaries.showLessPopularIndicators
@@ -1651,7 +1648,6 @@ function readrBoard($R){
                             $.each( savedHashes, function(hash, id){
                                 //todo: we prob don't need to check with the bool - Tyler, do we need this?
                                 if( !id ){
-                                    //[cleanlogz]console.warn('something went wrong with saving the container');
                                     return;
                                 }
                                 //else
@@ -1740,8 +1736,6 @@ function readrBoard($R){
                                     node.selState = $container.selog('save', { 'serialRange': node.location });
                                 }
                                 catch(err){
-                                    //[cleanlogz]console.warn('rangy error');
-                                    //[cleanlogz](err);
                                     node.selState = undefined;
                                 }
 
@@ -1829,7 +1823,6 @@ function readrBoard($R){
                     if ( !action_type ) action_type = "create";
 
                     if( !RDR.actions.interactions.hasOwnProperty(int_type) ){
-                        //[cleanlogz]console.warn('invalid interaction type ' +int_type+ "for RDR.actions.interactions.ajax()");
                         return false; //don't continue
                     }
                     
@@ -1857,6 +1850,8 @@ function readrBoard($R){
                     });
                 },
                 send: function(args, int_type, action_type){
+                    // /api/tag/create
+                    // /api/comment/create
 
                     // hack to cleanup the send data
                     var sendData = $.extend( true, {}, args.sendData);
@@ -1872,7 +1867,7 @@ function readrBoard($R){
 
                     //todo: consider making a generic url router
                     var url = "/api/" +int_type+ "/"+action_type+"/";
-                    
+
                     // send the data!
                     $.ajax({
                         url: url,
@@ -2064,7 +2059,6 @@ function readrBoard($R){
                         }else if(uiMode == "read"){
                             //nothing here now
                         }else{
-                            //[cleanlogz]console.warn('uiMode is not specified for interactions.tag...')
                         }
 
                     },
@@ -2333,7 +2327,7 @@ function readrBoard($R){
                             }
 
                         }else{
-                            //[cleanlogz]console.warn('uiMode is not specified for interactions.tag...')
+
                         }
                         
                     },
@@ -2382,7 +2376,6 @@ function readrBoard($R){
                                 };
                             }else{
                                 var selState = rindow.data('selState');
-                                
                                 content_node_data = {
                                     'container': rindow.data('container'),
                                     'body': selState.text,
@@ -2477,7 +2470,7 @@ function readrBoard($R){
                             });
 
                             // TODO make this link to the user profile work
-                            var $seeTags = $('<div class="rdr_sntPnl_padder"><div>Your bookmarks are private - only you can see them.</div><strong>To view your tags, visit your <a href="javascript:void(0);" target="_blank">ReadrBoard profile</a>.</strong></div>');
+                            var $seeTags = $('<div class="rdr_sntPnl_padder"><div>Your bookmarks are private - only you can see them.</div><strong>To view your tags, visit your <a href="http://dev.readrboard.com/user/'+RDR.user.user_id+'" target="_blank">ReadrBoard profile</a>.</strong></div>');
                             
                             $whyPanel_tagCard.append(
                                 $tagFeedback.append($undoLink),
@@ -2596,7 +2589,6 @@ function readrBoard($R){
                     //this shouldn't happen though.
                     //todo: solve for duplicate content that will have the same hash.
                     $('#'+indicatorId, '#'+indicatorDetailsId).each(function(){
-                        console.warn('node' +this+ ' should not have existed already.  Killing it, and overwritting.');
                         $(this).remove();
                     });
 
@@ -2691,7 +2683,6 @@ function readrBoard($R){
                     if( !summary.hasOwnProperty('$indicator') ){
                         //init will add an $indicator object to summary and then re-call update.  This failsafe isn't really needed..
                         summary.$indicator = "infinte loop failsafe.  This will get overritten immediately by the indicators.init function.";
-                        console.warn('attempt to update indicators that were not initiated.  Initiating, and then running update again.');
                         RDR.actions.indicators.init(hash);
                     }
 
@@ -2880,9 +2871,13 @@ function readrBoard($R){
                             y: $container.offset().top - $indicator.offset().top,
                             x: $container.offset().right - $indicator.offset().right
                         };
-                        var cornerPadding = {
+                        var cornerPadding = ( !$.browser.msie ) ? 
+                        {
                             top: 7,
                             left: -15
+                        }:{
+                            top: -5,
+                            left: -5
                         };
                         var indicatorBodyWidth = $indicator.find('.rdr_indicator_body').width(),
                         topVal = (relOffsetToTopRightCorner.y + cornerPadding.top),
@@ -2933,7 +2928,6 @@ function readrBoard($R){
                         
                     var hash = summary.hash;
                     if( RDR.summaries.hasOwnProperty(hash) ){
-                        console.warn('summary ' +hash+ ' already exists.  Overwriting it.');
                     }
                     //save the summary and add the $container as a property
                     RDR.summaries[hash] = summary;
@@ -2968,7 +2962,6 @@ function readrBoard($R){
                     var summary;
                     if( !RDR.summaries.hasOwnProperty(hash) ){
                         summary = RDR.actions.summaries.init(hash);
-                        console.warn('summary '+hash+ ' was not initiated, recovered by making a new blank one.');
                     }else{
                         summary = RDR.summaries[hash];
                     }
@@ -3382,7 +3375,7 @@ function readrBoard($R){
                 var comments = ( content_node.id ) ? summary.content_nodes[ content_node.id ].top_interactions.coms : summary.top_interactions.coms;
                 var node_comments = 0;
                 for (var com in comments ) {
-                    if ( comments[com].parent_id == tag.id ) {
+                    if ( comments[com].tag_id == tag.id ) {
                         node_comments++;
                     }
                 }
@@ -3417,7 +3410,6 @@ function readrBoard($R){
                             // var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);">'+thisTag.body+'</a>');
                             
                             // var $tagShareButton = $('<span class="rdr_tag_share"></span>').click(function() {
-                            //     alert(4);
                             // });
                             
                             // var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
@@ -3444,7 +3436,6 @@ function readrBoard($R){
                     $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                     $shareLinks.find('li:last').click( function() {
                         var real_content_node = RDR.content_nodes[hash];
-                        //console.dir({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:real_content_node });
                         RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:real_content_node });
                         return false;
                     });
@@ -3725,7 +3716,7 @@ function readrBoard($R){
 
                         case "whyPanel":
                             width = ((num_columns-1)*200)+250;
-                            minHeight = "280px";
+                            minHeight = "300px";
 
                             // corner logic
                             $thisPanel.removeClass('rdr_brtl').removeClass('rdr_brbl');
@@ -3954,7 +3945,6 @@ function readrBoard($R){
                                 var content_node_info = $(this).closest('div.rdr_contentSet').data();
                                 var tag = $this.closest('a.rdr_tag').data('tag');
                                 $shareTip.find('img.rdr_sns').click( function() {
-                                    // console.dir({ hash:hash, kind:summary.kind, sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node_info:content_node_info });
                                     RDR.actions.share_getLink({ hash:hash, kind:summary.kind, sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node:content_node_info });
                                 });
                             }
@@ -4143,8 +4133,6 @@ function readrBoard($R){
                             },
                             error: function(response) {
                                 //for now, ignore error and carry on with mockup
-                                //[cleanlogz]console.warn('ajax error');
-                                //[cleanlogz](response);
                             }
                         });
                 });
@@ -4280,8 +4268,6 @@ function readrBoard($R){
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
-                        //[cleanlogz]console.warn('ajax error');
-                        //[cleanlogz](response);
                     }
                 });
                 
@@ -4383,7 +4369,6 @@ function readrBoard($R){
                 $.each(socialNetworks, function(idx, val){
                     $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                     $shareLinks.find('li:last').click( function() {
-                        // console.dir({ hash:hash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
                         RDR.actions.share_getLink({ hash:hash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
                         return false;
                     });
@@ -4583,31 +4568,6 @@ loadScript( "{{ STATIC_URL }}global/js/jquery-1.6.js", function(){
 function $RFunctions($R){
     //called after our version of jQuery ($R) is loaded
 
-
-    //load CSS
-    var css = [
-        RDR_rootPath+"/widgetCss/",
-        "{{ STATIC_URL }}global/css/readrleague.css",
-        "{{ STATIC_URL }}widget/css/jquery.jscrollpane.css"
-    ];
-
-    if ( $R.browser.msie ) {
-        css.push( "{{ STATIC_URL }}widget/css/ie.css" );
-        css.push( "{{ STATIC_URL }}widget/css/ie" + parseInt($R.browser.version) + ".css" );
-    }
-    
-    loadCSS(css);
-
-    function loadCSS(cssFileList){
-
-        $R.each(cssFileList, function(i, val){
-            $R('<link>').attr({
-                href: val,
-                rel: 'stylesheet'
-            }).appendTo('head');
-        });
-    }
-
     //init our plugins (includes rangy, but otherwise, mostly jquery plugins. The $R passed is our jQuery alias)
     initPlugins($R);
         
@@ -4618,6 +4578,29 @@ function $RFunctions($R){
     // TODO use the following line.  it creates a cachebuster that represents the current day/week/month
     // RDR.cachebuster = String( parseInt( RDR.date.getDate() / 7 )+1 )+String(RDR.date.getMonth()) + String(RDR.date.getYear()),
     RDR.cachebuster = RDR.date.getTime();
+
+    //load CSS
+    var css = [
+        RDR_rootPath+"/widgetCss/",
+        "{{ STATIC_URL }}global/css/readrleague.css",
+        "{{ STATIC_URL }}widget/css/jquery.jscrollpane.css"
+    ];
+
+    if ( $R.browser.msie ) {
+        css.push( "{{ STATIC_URL }}widget/css/ie.css?"+RDR.cachebuster );
+    }
+    
+    loadCSS(css);
+
+    function loadCSS(cssFileList){
+
+        $R.each(cssFileList, function(i, val){
+            $R('<link>').attr({
+                href: val,
+                rel: 'stylesheet'
+            }).appendTo('body');
+        });
+    }
 
     //run init functions
     RDR.actions.init();
@@ -4695,10 +4678,6 @@ function $RFunctions($R){
                     });
                 }   
             }
-
-            // if (typeof dir === "undefined" && typeof console.dir != "undefined"){
-            //     dir = console.dir;  
-            // }
 
             //add in alias temporaily to client $ so we can use regular $ instead of $R if we want
             if(typeof jQuery !== 'undefined'){
@@ -5117,13 +5096,13 @@ function $RFunctions($R){
                     //todo:checkout why first range is picking up new selState range (not a big deal)
                     var selState = _fetchselState(idxOrSelState);
                     if(!selState){
-                        console.warn('selState not found')
+                        // console.warn('selState not found')
                         return false;
                     }
                     
                     //extra protection against hiliting a ndoe with an invalid serialRange - flagged as false (not just undefined)
                     if( typeof selState.serialRange !== "undefined" && selState.serialRange == false ){
-                        console.warn('invalid serialRange, refusing to run hiliter');
+                        // console.warn('invalid serialRange, refusing to run hiliter');
                         return false;
                     }
                     
@@ -5395,7 +5374,7 @@ function $RFunctions($R){
                     try{
                         serialRange = rangy.serializeRange(range, true, selState.container ); //see rangy function serializeRange
                     } catch(e) {
-                        console.warn(e);
+                        // console.warn(e);
                         serialRange = false;
                     }
                 }
@@ -5404,7 +5383,7 @@ function $RFunctions($R){
                     range = rangy.deserializeRange(serialRange, selState.container ); //see rangy function deserializeRange
                 }
                 else{
-                    console.warn('should not have fallen all the way through decision tree @ _makeSelState');
+                    // console.warn('should not have fallen all the way through decision tree @ _makeSelState');
                 }
                 selState.serialRange = serialRange;
                 //todo: low: could think more about when to cloneRange to make it a tiny bit more efficient.
@@ -5435,7 +5414,6 @@ function $RFunctions($R){
                     return selState;
                 
                 //else
-                //[cleanlogz]console.warn('selState.idx not in stack');
                 return false;
             }
             function _hiliteInit(selState){
@@ -5506,7 +5484,7 @@ function $RFunctions($R){
                         hiliter.undoToRange(range);
                     }
                     else{
-                        console.warn('error ' + range)
+                        // console.warn('error ' + range)
                     }
                 }
                 
@@ -5578,7 +5556,7 @@ function $RFunctions($R){
                 }
                 $.each(doFilters, function(funcName, params){
                     var filterFunc = filters[ funcName ] || function(){
-                        console.error('bad filter name passed in param');return false
+                        // console.error('bad filter name passed in param');return false
                     };
                     //finally, run em'.
                     range = filterFunc(range, params);

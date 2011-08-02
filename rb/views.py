@@ -52,39 +52,7 @@ def xdm_status(request):
       "xdm_status.html",
       {'fb_client_id': FACEBOOK_APP_ID},
       context_instance=RequestContext(request)
-    )   
-
-def profile(request, user_id, **kwargs):
-    cookies = request.COOKIES
-    readr_token = cookies.get('readr_token')
-    interactions = Interaction.objects.filter(user=user_id).select_related().order_by('-created')
-    if 'view' in kwargs:
-        view = kwargs['view']
-        if view == 'tags': interactions=interactions.filter(kind="tag")
-        if view == 'comments': interactions=interactions.filter(kind="com")
-        if view == 'shares': interactions=interactions.filter(kind="shr")
-    paginator = Paginator(interactions, 5)
-
-    try:
-        page = int(request.GET.get('page', '1'))
-    except ValueError:
-        page = 1
-
-    try:
-        interaction_page = paginator.page(page)
-    except (EmptyPage, InvalidPage):
-        interaction_page = paginator.page(paginator.num_pages)
-
-    context = {'interactions': interaction_page, 'fb_client_id': FACEBOOK_APP_ID}
-
-    if user_id:
-        user = User.objects.get(id=user_id)
-        context['user'] = user
-    elif cookies.get('user_id'):
-        user_id = cookies.get('user_id')
-        user = User.objects.get(id=user_id)
-        context['user'] = user
-    return render_to_response("profile.html", context, context_instance=RequestContext(request))
+    )
 
 def main(request, user_id=None, short_name=None, **kwargs):
     cookies = request.COOKIES
