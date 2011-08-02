@@ -193,7 +193,7 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 
 /* global tag defs */
 #rdr_sandbox div.rdr h1, 
-#rdr_sandbox div.rdr h2  {font-family:ReadrLeague,"Helvetica Neue",Arial,Helvetica,sans-serif; color:#666; margin:0; line-height:1.1em !important;}
+#rdr_sandbox div.rdr h2  {font-family:ReadrLeague,Arial,Helvetica,sans-serif !important; color:#666; margin:0; line-height:1.1em !important;}
 #rdr_sandbox div.rdr h1  {font-size:21px; cursor:move; padding:3px 9px; font-weight:100;}
 #rdr_sandbox div.rdr h1 span {font-size:18px; color:#008be4;}
 
