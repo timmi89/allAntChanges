@@ -447,7 +447,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr-summary div.rdr-top-users img {
     width:20px !important;
     height:20px !important;
-    margin-right:3px !important;
+    margin:0 3px 0 0 !important;
 }
 
 /* custom in-page highlight */
@@ -631,6 +631,7 @@ div.rdr_indicator img.rdr_pin,
 #rdr_sandbox div.rdr_sentimentBox img.rdr_pin { 
     background:url("{{ STATIC_URL }}widget/images/readr_icons.png") no-repeat 0 -1px !important; 
     position:absolute !important;
+    margin:0 !important;
 }
 /*indicator pin inline indicator only*/
 div.rdr_indicator img.rdr_pin{ 
