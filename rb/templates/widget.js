@@ -1209,7 +1209,7 @@ function readrBoard($R){
                 });
 
                 $(document).bind('scrollstop.rdr', function() {
-                    if ( $(window).scrollTop() > 100 && $('#rdr_sandbox') && !$('#rdr_sandbox').data('showingAllIndicator') ) {
+                    if ( $(window).scrollTop() > 150 && $('#rdr_sandbox') && !$('#rdr_sandbox').data('showingAllIndicator') ) {
                         $('#rdr_sandbox').data('showingAllIndicator', true);
                         if ( RDR.text_container_popularity && RDR.text_container_popularity.length > RDR.group.initial_pin_limit ) {
                             // show the alert bar, which has a link to call RDR.actions.summaries.showLessPopularIndicators
