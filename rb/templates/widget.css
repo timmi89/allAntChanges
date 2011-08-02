@@ -686,11 +686,11 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
 /*now override styles for the image containers*/
 div.rdr_indicator_for_media {
     display:inline !important;
-    opacity:0.4 !important;
+    opacity:0.6 !important;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)"!important;
-    filter:alpha(opacity=40)!important;
-    -moz-opacity:0.4 !important;
-    -khtml-opacity:0.4 !important;
+    filter:alpha(opacity=60)!important;
+    -moz-opacity:0.6 !important;
+    -khtml-opacity:0.6 !important;
 
 }
 
