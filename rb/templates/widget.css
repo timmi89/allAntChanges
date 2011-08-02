@@ -345,7 +345,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 /* commentSet */
 #rdr_sandbox div.rdr div.rdr_commentSet          {margin:5px 10px; padding-bottom:5px; overflow:auto; border-bottom:1px solid #ddd;}
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentBy          {font: bold 11px Arial; color:#666; overflow:auto; padding-top:8px;}
-#rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentBy img      {width:24px; height:24px; float:left; margin:-8px 5px 0 0; border:1px solid #d0dee6;}
+#rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentBy img      {width:24px; height:24px; float:left; margin:-8px 5px 0 0 !important; border:1px solid #d0dee6;}
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_comment            {font: italic 14px Georgia; color:#999;padding:3px; }
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentReply       {font-weight:normal; margin-right:5px; text-transform:uppercase; font-size:9px; float:right;}
 #rdr_sandbox div.rdr div.rdr_commentSet a.rdr_tag                            {margin-top:3px;}

@@ -1079,7 +1079,7 @@ function readrBoard($R){
 
                         //todo:just for testing for now: - add defaults:
                         RDR.group.img_selector = RDR.group.img_selector || "body img";
-                        RDR.group.selector_whitelist = RDR.group.selector_whitelist || "body p";
+                        RDR.group.anno_whitelist = RDR.group.anno_whitelist || "body p";
                         RDR.group.media_selector = RDR.group.media_selector || "embed, video, object, iframe.rdr_video"; //for now just play it safe with the iframe.
                         RDR.group.comment_length = RDR.group.comment_length || 300;
                         RDR.group.initial_pin_limit = RDR.group.initial_pin_limit || 2;
@@ -1258,7 +1258,7 @@ function readrBoard($R){
                     { 
                         kind: 'text',
                         $group: null,
-                        whiteList: RDR.group.selector_whitelist,
+                        whiteList: RDR.group.anno_whitelist,
                         filterParam: function(idx, node){
                             //todo: reconsider using this - it's not super efficient to grab the text just to verify it's a node that has text.
                             // - Prob fine though since we're only testing hashes we pass in manually.
