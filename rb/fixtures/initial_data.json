@@ -317,7 +317,7 @@
     "model": "rb.InteractionNode",
     "pk": 2,
     "fields": {
-      "body": "Meh"
+      "body": "Not Sure"
     }
   },
   {
@@ -345,7 +345,7 @@
     "model": "rb.InteractionNode",
     "pk": 6,
     "fields": {
-      "body": "Lol nah!"
+      "body": "Cool"
     }
   }
 ]
