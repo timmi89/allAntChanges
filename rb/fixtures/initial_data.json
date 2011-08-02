@@ -3,8 +3,8 @@
     "model": "rb.Group",
     "pk": 1,
     "fields":{
-      "name": "Default Group",
-      "short_name": "default",
+      "name": "Readrboard's Demo",
+      "short_name": "demo",
       "share": 1,
       "comment": 1,
       "rate": 1,
@@ -13,7 +13,7 @@
       "secret": "secret123%awesome%test!",
       "logo_url_sm": "",
       "twitter": "ReadrBoard",
-      "word_blacklist": "fuck",
+      "word_blacklist": "fuck, shit, cock, cunt, balls, nigger, asshole",
       "requires_approval": "False"
     }
   },
