@@ -317,7 +317,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged                      {background:#e4f0f7;}
 #rdr_sandbox div.rdr li.rdr_customTagBox .rdr_tagText                 {padding-left: 2px !important;}
 
-#rdr_sandbox div.rdr li.rdr_customTagBox input.freeformTagInput      {font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0; text-align:left; border:none; background:none; -moz-box-shadow:none; -webkit-box-shadow:none; box-shadow:none; z-index:100; padding-left: 2px;}
+#rdr_sandbox div.rdr li.rdr_customTagBox input.freeformTagInput      {font-size:24px; font-family:ReadrLeague, Arial, sans-serif; margin:0; text-align:left; border:none; background:none; -moz-box-shadow:none; -webkit-box-shadow:none; box-shadow:none; z-index:100; padding-left: 2px; outline:none !important;}
 
 #rdr_sandbox div.rdr li.rdr_customTagBox div.rdr_help                {left:44px; width:auto; z-index:90;}
 #rdr_sandbox div.rdr li.rdr_customTagBox div.rdr_help:hover          {text-decoration:underline;}
