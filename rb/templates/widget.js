@@ -1326,7 +1326,10 @@ function readrBoard($R){
 
                     // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
                     // this makes it easy to find on the page later
-                    $(this).addClass( 'rdr-' + hash ).addClass('rdr-hashed');
+                    
+                    //don't do this here - do it on success of callback from server
+                    //$(this).addClass( 'rdr-' + hash ).addClass('rdr-hashed');
+                    
                     hashList.push(hash);
                     $(this).data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
                 });
@@ -1367,21 +1370,28 @@ function readrBoard($R){
                         var summaries = response.data.known,
                         unknownList = response.data.unknown;
                         
-                        //
+                        //the callback implementation here is a litte unintuitive:
+                        //it only gets passsed in when a single hash is run through here, 
+                        //so it will only get run here either on the $container that is a known summary,
+                        //or as a callback after the unknownhash is sent through the containers.send call.
+
                         if ( unknownList.length > 0 ) {
                             
                             //send the containers to the server.
                             //On sucess, these unknown hashes will get passed to RDR.actions.containers.setup with dummy summaries
-                            RDR.actions.containers.send(unknownList);
+                            RDR.actions.containers.send(unknownList, onSuccessCallback);
+                        }
+                        if ( ! $.isEmptyObject(summaries) ){
+                            //setup the known summaries
+                            RDR.actions.containers.setup(summaries);
+                            
+                            //the callback verifies the new container and draws the actionbar
+                            //wont get run if this single hash is unknown.
+                            if(typeof onSuccessCallback !== 'undefined'){
+                                onSuccessCallback();
+                            }      
                         }
                         
-                        //setup the known summaries
-                        RDR.actions.containers.setup(summaries);
-
-                        //the callback verifies the new container and draws the actionbar
-                        if(typeof onSuccessCallback !== 'undefined'){
-                            onSuccessCallback();
-                        }  
                         
                     }
                 });
@@ -1413,6 +1423,19 @@ function readrBoard($R){
                             
                             var containerInfo = RDR.containers[hash];
                             var $container = containerInfo.$this;
+
+                            //generate the content_node for this image container.  (the content_node is just the image itself)
+                            //todo: I'm pretty sure it'd be more efficient and safe to run on image hover, or image indicator click.
+                            var body = $container[0].src;
+
+                            content_node_data = {
+                                'body': body,
+                                'kind':summary.kind,
+                                'container': hash, //todo: Should we use this or hash? 
+                                'hash':hash
+                            };
+                            
+                            RDR.content_nodes[hash] = content_node_data;
 
                             $container.hover(
                                 function(){
@@ -1470,7 +1493,12 @@ function readrBoard($R){
                         
                         //save the hash as a summary attr for convenience.
                         summary.hash = hash;
+
+                        var containerInfo = RDR.containers[hash];
+                        var $container = containerInfo.$this;
                         
+                        $container.addClass( 'rdr-' + hash ).addClass('rdr-hashed');
+                                         
                         //temp type conversion for top_interactions.coms;
                         var newComs = {},
                             coms = summary.top_interactions.coms;
@@ -1500,7 +1528,7 @@ function readrBoard($R){
                     
                     RDR.actions.indicators.show(hashesToShow);
                 },
-                send: function(hashList){
+                send: function(hashList, onSuccessCallback){
                     //RDR.actions.containers.send:
                     // gets the containers from the hashList
                     // and cuts them up into delicious bite-sized chunks
@@ -1573,7 +1601,6 @@ function readrBoard($R){
                         }
                         else{
                             proposedLen += thisLen;
-
                             if(proposedLen > charLimit){
                                 //send the existing set that is curLen, not proposedLen
 
@@ -1587,8 +1614,9 @@ function readrBoard($R){
 
                     });
                     //do one last send.  Often this will be the only send.
-                    
-                    RDR.actions.containers._ajaxSend(containers);
+                    if( ! $.isEmptyObject(containers) ) {
+                        RDR.actions.containers._ajaxSend(containers, onSuccessCallback);
+                    }
 
                     //helper functions
                     function resetChunks(){
@@ -1597,7 +1625,7 @@ function readrBoard($R){
                         proposedLen = 0;
                     }
                 },
-                _ajaxSend: function(containers){
+                _ajaxSend: function(containers, onSuccessCallback){
                     //RDR.actions.containers._ajaxSend:
                     //this is a helper for this.send:
                     //don't call this directly! Always use this.send so you don't choke on your ajax.
@@ -1616,7 +1644,7 @@ function readrBoard($R){
                             //[cleanlogz]('response for containers create');
                             var savedHashes = response.data;
                             //savedHashes is in the form {hash:id}
-                            
+
                             //a dict for dummy zero'ed out summaries for containers.setup below
                             var dummySummaries = {};
 
@@ -1634,6 +1662,13 @@ function readrBoard($R){
                             });
                         
                             RDR.actions.containers.setup(dummySummaries);
+       
+                            //the callback verifies the new container and draws the actionbar
+                            //this only gets called when a single hash gets passed through all the way from startSelect 
+                            if(typeof onSuccessCallback !== 'undefined'){
+                                onSuccessCallback();
+                            }      
+
                         }
                     });
                 }
@@ -3408,11 +3443,9 @@ function readrBoard($R){
                 $.each(socialNetworks, function(idx, val){
                     $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                     $shareLinks.find('li:last').click( function() {
-                        // ERIC IMAGE SHARING: the problem is that content_node here
-                        // does not have content_node.body or content_node.content
-                        // so the share "works" but there isn't an image URL passed in.
-                        // console.dir({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
-                        RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
+                        var real_content_node = RDR.content_nodes[hash];
+                        //console.dir({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:real_content_node });
+                        RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:real_content_node });
                         return false;
                     });
                 });
@@ -4084,7 +4117,7 @@ function readrBoard($R){
                             success: function(response) {
                                 // todo cache the short url
                                 // RDR.summaries[content_node_info.hash].content_nodes[IDX].top_interactions.tags[tag.id].short_url = ;
-
+                                args.response = response;
 
                                 if ( response.status == "fail" ) {
                                     //[cleanlogz]('failllllllllll');
@@ -4392,7 +4425,7 @@ function readrBoard($R){
                 RDR.actionbar.closeAll();
                 
                 var $mouse_target = $(e.target);
-
+                
                 // make sure it's not selecting inside the RDR windows.
                 // todo: (the rdr_indicator is an expection.
                 // The way we're dealing with this is a little weird.  It works, but could be cleaner)
@@ -4420,14 +4453,11 @@ function readrBoard($R){
                 }
                 else{
                     //hasn't been hashed yet.
-                    //try to submit node to server.  Pass in an onsuccess function
-                    if ( $blockParent.text().length > 1800 ) return false;
-                    //else
-
+                    //try to submit node to server.  Draw the actionbar using an onsuccess function so we don't draw it if it fails.
                     //note: hashes in this case will just be a single hash. That's cool.
-                    var hashes = RDR.actions.hashNodes( $blockParent );
-                    if(hashes){
-                        RDR.actions.sendHashes( hashes, function(){
+                    var hash = RDR.actions.hashNodes( $blockParent );
+                    if(hash){
+                        RDR.actions.sendHashes( hash, function(){
                             _drawActionBar($blockParent);
                         });
                     }
@@ -4490,7 +4520,12 @@ function readrBoard($R){
                     }
                 }
                 function _isValid($node){
-                    return ( $node.css('display') == "block" &&  $node.css('float') == "none" && !$node.closest('.rdr_indicator').length );
+                    var validity = ( $node.css('display') == "block" && 
+                        $node.css('float') == "none" &&
+                        ! $node.closest('.rdr_indicator').length &&
+                        ! $node.is('html, body')
+                    );
+                    return validity;
                 }
 
 
@@ -6141,10 +6176,3 @@ function $RFunctions($R){
 
 }
 //end $RFunctions()
-
-/*********************/
-/*
-temp notes:
-    look for logs:
-    [^(gz\])^e^(/)]log\(
-*/
