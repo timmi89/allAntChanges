@@ -480,6 +480,10 @@ function readrBoard($R){
                         var hash = $actionbar.data('hash');
                         var $container = $('.rdr-'+hash);
                         $container.removeClass('rdr_engage_media');
+                        
+                        var $indicator = $('#rdr_indicator_'+hash);
+                        
+                        $indicator.removeClass('rdr_engage_media');
 
                         $actionbar.remove();
                     };
@@ -1446,6 +1450,10 @@ function readrBoard($R){
                                     };
 
                                     $container.addClass('rdr_engage_media');
+            
+                                    var $indicator = $('#rdr_indicator_'+hash);
+                                    $indicator.addClass('rdr_engage_media');
+
                                     //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
                                     // builds a new actionbar or just returns the existing $actionbar if it exists.
 

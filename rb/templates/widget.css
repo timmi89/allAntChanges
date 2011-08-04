@@ -687,11 +687,18 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
 div.rdr_indicator_for_media {
     display:inline !important;
     opacity:0.6 !important;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)"!important;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=60)"!important;
     filter:alpha(opacity=60)!important;
     -moz-opacity:0.6 !important;
     -khtml-opacity:0.6 !important;
-
+}
+div.rdr_indicator_for_media.rdr_engage_media {
+    display:inline !important;
+    opacity:0.9 !important;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=90)"!important;
+    filter:alpha(opacity=90)!important;
+    -moz-opacity:0.9 !important;
+    -khtml-opacity:0.9 !important;
 }
 
 #rdr_sandbox div.rdr_indicator_details_for_media {
