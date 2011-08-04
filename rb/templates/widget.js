@@ -180,35 +180,27 @@ function readrBoard($R){
 
                 $new_rindow.settings = settings;
 
-                $dragHandle = $('<div class="rdr_rindow_dragHandle" style="width:100%;height:8px;position:absolute;bottom:0;right:0;z-index:1000;cursor:s-resize;"/>');
-                $dragHandle.bind('mousedown.rdr', function() {
-
-                    var $this = $(this);
-                    var rindow = $this.parents('div.rdr.rdr_window');
-
-                    $(document).bind('mousemove.rdr', function(e) {
-                        var height = rindow.find('div.rdr_sntPnl div.rdr_body').first().height();
-                        if ( RDR.lastHeight !== 0 ) {
-                            var diff = e.pageY - RDR.lastHeight;
-                            rindow.find('div.rdr_sntPnl div.rdr_body').each( function() {
-                                // $(this).css('min-height','none');
-                                $(this).height( height + diff );
-                            } );
+                $dragHandle = $('<div class="rdr_rindow_dragHandle" style="width:100%;height:10px;position:absolute;bottom:0;right:0;z-index:1000;cursor:s-resize;"/>');
+                $dragHandle.hover(
+                    function(){
+                        $(this).addClass('rdr_hover');
+                    },
+                    function(){
+                        if( !$(this).data('hoverlock') ){
+                            $(this).removeClass('rdr_hover');
                         }
-                        RDR.lastHeight = e.pageY;
-                    });
-
-                    $('body').bind('mouseup.rdr', function() {
-                        $('body').unbind('mouseup.rdr');
-                        $(document).unbind('mousemove.rdr');
-                        RDR.lastHeight = 0;
-                    });
-                    RDR.rindow.checkHeight( rindow, 100 );
-                    return false;
-
-                });
+                    }
+                );
 
                 $new_rindow.append( $dragHandle );
+
+                $new_rindow.resizable({
+                    minHeight: 100,
+                    maxHeight: 250,
+                    grid: [100000, null],
+                    handles:'s,se'
+                });
+
 
                 return $new_rindow;
 			},
@@ -962,12 +954,18 @@ function readrBoard($R){
             },
             rindowUserMessage: {
                 show:  function(args) {
+                    var $rindow = args.rindow;
+
                     if ( args.rindow ) {
-                        var rindow = args.rindow,
-                            msgType = args.msgType || "tempUser", //defaults to tempUser
+                    
+                        var msgType = args.msgType || "tempUser", //defaults to tempUser
                             userMsg = "",
                             rindowHeightDefault; //todo: this is a patchy fix, make it better.
-                            
+
+                        var extraHeight = 45,  //$tempMsgDiv.height(),
+                            rindowHeight = $rindow.height(),
+                            durr = 300;
+
                         var $tempMsgDiv = $('<div class="rdr_tempUserMsg" />'),
                             $tempMsgDivWrapper = $('<div class="rdr_tempUserMsg_wrapper"><span /><strong /><div style="clear:both;"/></div>'),
                             $closeButton = $('<div class="rdr_close">x</div>');
@@ -990,7 +988,7 @@ function readrBoard($R){
     
                             case "existingInteraction":
                                 userMsg = "You have already given that reaction for this.";
-                                rindowHeightDefault = null;
+                                rindowHeightDefault = 103;
                                 break;
                         
                         }   
@@ -999,21 +997,26 @@ function readrBoard($R){
                             RDR.session.rindowUserMessage.hide( args );
                         });
 
-                        if ( rindow.find('div.rdr_tempUserMsg').length === 0 ){
+                        if ( $rindow.find('div.rdr_tempUserMsg').length === 0 ){
                             
                             $tempMsgDiv.find('span').html( userMsg );
                             $tempMsgDivWrapper.append( $closeButton );
-                            rindow.append( $tempMsgDiv );
+                            $rindow.append( $tempMsgDiv );
 
-                            //todo: fix this 103 height is guessing where the window is going to end up.  Move this to a proper callback.
                             $tempMsgDivWrapper.hide();
-                            rindow.animate({ height: rindow.height()+rindowHeightDefault }, function(){
-                                $tempMsgDivWrapper.fadeIn(200);
+                            $rindow.queue('userMessage', function(){
+                                $rindow.animate({ height: rindowHeight+extraHeight }, durr);
+                                $tempMsgDiv.animate({ height:extraHeight },durr, function(){
+                                    $tempMsgDivWrapper.fadeIn(200);
+                                });
+                                $(this).dequeue('userMessage');
                             });
+                            $rindow.dequeue('userMessage');
+
                         } else {
                             
-                            $tempMsgDiv = rindow.find('div.rdr_tempUserMsg');
-                            $tempMsgDivWrapper = rindow.find('.rdr_tempUserMsg_wrapper');
+                            $tempMsgDiv = $rindow.find('div.rdr_tempUserMsg');
+                            $tempMsgDivWrapper = $rindow.find('.rdr_tempUserMsg_wrapper');
                             $tempMsgDiv.find('span').html( userMsg );
                             $tempMsgDivWrapper.hide().fadeIn(200);
                         }
@@ -1022,18 +1025,25 @@ function readrBoard($R){
                 },
                 hide:  function(args) {
                     if ( args.rindow ) {
-                        var rindow = args.rindow,
+                        var $rindow = args.rindow,
                             $tempMsgDiv = $('div.rdr_tempUserMsg');
 
                             //todo: make this a better solution.  The simultaneous animations might not be ideal.
-                            var msgHeight = $tempMsgDiv.height(),
-                                rindowHeight = rindow.height(),
+                            var extraHeight = 45,  //$tempMsgDiv.height(),
+                                rindowHeight = $rindow.height(),
                                 durr = 300;
 
-                            //rindow.animate({ height:rindowHeight }, durr);
-                            $tempMsgDiv.animate({ height:0 },durr, function(){
-                                $tempMsgDiv.remove();
+                            //no need to use queue like this here, but this is how we can use it when we need to
+                            //expand the rindow first and then slide down the msgBar 
+                            $rindow.queue('userMessage', function(){
+                                $rindow.animate({ height: rindowHeight-extraHeight }, durr);
+                                $tempMsgDiv.animate({ height:0 },durr, function(){
+                                    $tempMsgDiv.remove();
+                                });
+                                $(this).dequeue('userMessage');
                             });
+                            $rindow.dequeue('userMessage');
+                            
                     }
                 }
             }
@@ -4551,19 +4561,23 @@ function loadScript(sScriptSrc,callbackfunction) {
 }
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
-loadScript( "{{ STATIC_URL }}global/js/jquery-1.6.js", function(){
+loadScript( "{{ STATIC_URL }}global/js/jquery-1.6.min.js", function(){
     //callback
-
-    //load jQuery UI while the $ and jQuery still refers to our new version
-    loadScript( "{{ STATIC_URL }}global/js/jquery-ui-1.8.6.custom.min.js", function(){
+    //loadScript( "{{ STATIC_URL }}global/js/jquery-1.6.js", function(){
+    //callback
+    
+    //loadScript( "{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom.min.js", function(){
+    loadScript( "{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom/js/jquery-ui-1.8.14.custom.min.js", function(){
         //callback
 
         //test that $.ui versioning is working correctly
         
         //within this scope while the $ refers to our version of jQuery, attach it to our Global var $R at least for now, for testing later
         //todo - I don't think it really matters, but consider making this just local later
-        $R = $.noConflict(true);
-
+        $R = jQuery.noConflict(true);
+        
+        console.log('dgdfgdfgsd')
+        
         //test that $.ui versioning is working correctly
 
         //A function to load all plugins including those (most) that depend on jQuery.
@@ -4581,7 +4595,8 @@ function $RFunctions($R){
     var css = [
         RDR_rootPath+"/widgetCss/",
         "{{ STATIC_URL }}global/css/readrleague.css",
-        "{{ STATIC_URL }}widget/css/jquery.jscrollpane.css"
+        "{{ STATIC_URL }}widget/css/jquery.jscrollpane.css",
+        "{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom/css/ui-lightness/jquery-ui-1.8.14.custom.css"
     ];
 
     if ( $R.browser.msie ) {
