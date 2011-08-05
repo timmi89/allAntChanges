@@ -68,7 +68,7 @@ function readrBoard($R){
                 },
                 pnlWidth:200,
                 animTime:100,
-                height:150,
+                height:350,
                 columns: false
             },
 			// content comes later.  this is just to identify or draw the container.
@@ -83,8 +83,7 @@ function readrBoard($R){
                     if ( $column.parents().hasClass('rdr_contentPanel') ) { this_panel_name="contentPanel"; }
                     if ( $column.parents().hasClass('rdr_reactionPanel') ) { this_panel_name="reactionPanel"; }
 
-                    var paneHeight = (rindow.height()-35);
-
+                    
                     // corner logic: the next line's conditional is so that a collapsing column that is set to hidden, but is tall,
                     // doesn't force the visible column's content to be too tall.  this way the corners are rightly rounded.
                     var contentHeight = ( $column.css('visibility') != "hidden" ) ? $column.height() : 10;
@@ -92,9 +91,7 @@ function readrBoard($R){
                     if ( contentHeight > tallest_column_height ) tallest_column_height = contentHeight;
 
                     if ( tallest_column_height >= 300 ) {
-                        rindow.find('div.rdr_reactionPanel div.rdr_body').animate({
-                            minHeight:"300px"
-                        }, rindow.settings.animTime );
+                        
                         if ( $column.find('.jspVerticalBar').length > 0 ) {
                             $column.data('jsp').reinitialise({ contentWidth:200, showArrows:true });
                         } else {
@@ -160,6 +157,7 @@ function readrBoard($R){
 					
 					if ( settings.noHeader ) $new_rindow.find('h1').remove();
 					
+                    
                     $new_rindow.draggable({
                         handle:'h1',
                         containment:'document',
@@ -172,7 +170,7 @@ function readrBoard($R){
                 }
 
                 // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-                var coords = RDR.util.stayInWindow({coords:settings.coords, height:300, ignoreWindowEdges:settings.ignoreWindowEdges});
+                var coords = RDR.util.stayInWindow({coords:settings.coords, ignoreWindowEdges:settings.ignoreWindowEdges});
 
                 $new_rindow.css('left', coords.left + 'px');
                 $new_rindow.css('top', coords.top + 'px');    
@@ -180,26 +178,23 @@ function readrBoard($R){
 
                 $new_rindow.settings = settings;
 
-                $dragHandle = $('<div class="rdr_rindow_dragHandle" style="width:100%;height:10px;position:absolute;bottom:0;right:0;z-index:1000;cursor:s-resize;"/>');
+                $new_rindow.resizable({
+                    grid: [100000, null], /*this is my own hack for locking the movement to the y axis, but I think it works well*/
+                    handles:'s,se'
+                });
+
+                $dragHandle = $new_rindow.find('.ui-resizable-s');
+                $dragHandle.addClass('rdr_window_dragHandle');
                 $dragHandle.hover(
                     function(){
                         $(this).addClass('rdr_hover');
                     },
                     function(){
-                        if( !$(this).data('hoverlock') ){
-                            $(this).removeClass('rdr_hover');
-                        }
+                        $(this).removeClass('rdr_hover');
                     }
                 );
 
                 $new_rindow.append( $dragHandle );
-
-                $new_rindow.resizable({
-                    minHeight: 100,
-                    maxHeight: 250,
-                    grid: [100000, null],
-                    handles:'s,se'
-                });
 
 
                 return $new_rindow;
@@ -3123,6 +3118,7 @@ function readrBoard($R){
             },
             insertContainerIcon: function( hash ) {},
             viewContainerReactions: function( hash ) {
+                log('viewContainerReactions');
                 var summary = RDR.summaries[hash],
                 kind = summary.kind;
                 
@@ -3182,7 +3178,8 @@ function readrBoard($R){
                     var $header = $('<div class="rdr_header rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />'),
                     $rdr_headerInnerWrap = $('<div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>').appendTo($header),
                     $body = $('<div class="rdr_body rdr_brbl rdr_brbr"/>'); // corner logic in those last two classes there.
-                    $(this).append($header, $body);
+                    var clearDiv = '<div style="clear:both;"></div>'
+                    $(this).append($header, $body, clearDiv);
 
                 });
                 $sentimentBox.prepend($headerOverlay);
@@ -3640,7 +3637,7 @@ function readrBoard($R){
 
                 rindow.animate({
                     width: rindow.settings.pnlWidth +'px',
-                    minHeight: rindow.settings.height +'px'
+                    //rinh height: rindow.settings.height +'px'
                 }, rindow.settings.animTime, function() {
 					$(this).css('width','auto');
                     // rindow.append($sentimentBox);
@@ -3711,6 +3708,8 @@ function readrBoard($R){
                     });
                 },
                 expand: function(_panel, rindow, interaction_id){
+                    //RDR.actions.panel.expand:
+                    log('panel expand')
                     var panel = _panel || "whyPanel";
 
                     // hack.  chrome and safari don't like rounded corners if the whyPanel is showing since it is wider than panel1
@@ -3719,12 +3718,19 @@ function readrBoard($R){
                     $thisPanel = $(rindow).find('.rdr_'+panel);
                     var num_columns = rindow.find('div.rdr_sntPnl').length;
                     rindow.addClass('rdr_columns'+num_columns);
-                    var width, minHeight;
+                    var width, minHeight, maxHeight;
+
+                    minHeight = 300;
+                    maxHeight = 400;
+
+                    rindow.resizable('option', {
+                        minHeight:minHeight,
+                        maxHeight:maxHeight
+                    });
 
                     switch (panel) {
                         case "contentPanel":
                             width = 400; // any time we're expanding the contentPanel, the rindow is gonna be 400px wide
-                            minHeight = "auto";
 
                             // corner logic
                             $thisPanel.removeClass('rdr_brtl').removeClass('rdr_brbl');
@@ -3734,7 +3740,6 @@ function readrBoard($R){
 
                         case "whyPanel":
                             width = ((num_columns-1)*200)+250;
-                            minHeight = "300px";
 
                             // corner logic
                             $thisPanel.removeClass('rdr_brtl').removeClass('rdr_brbl');
@@ -3754,10 +3759,18 @@ function readrBoard($R){
                         rindow.animate({
                             width: width +'px'
                         }, rindow.settings.animTime, function() {
-                            // rindow.find('div.rdr_body').animate({
-                            //     minHeight:minHeight
-                            // }, rindow.settings.animTime );
-                            RDR.rindow.checkHeight( rindow, 0, panel );
+                            
+                            log(this);
+                            var height = $(this).height();
+                            log(height);
+                            var gotoHeight = ( height < minHeight ) ? minHeight : (height > maxHeight) ? maxHeight : null;
+                            if( gotoHeight ){
+                                $(this).animate({
+                                    height:minHeight
+                                }, rindow.settings.animTime );
+
+                                RDR.rindow.checkHeight( rindow, 0, panel );
+                            }   
                         });
 
                         // rindow.animate({
@@ -3807,7 +3820,7 @@ function readrBoard($R){
                     var rindow_bg = (num_columns==3)?-450:0;
 
                     if ( rindow.find('div.rdr_tempUserMsg').length > 0 ) {
-                        rindow.height( rindow.height()-103 );
+                        //rinh rindow.height( rindow.height()-103 );
                         rindow.find('div.rdr_tempUserMsg').remove();
                     }
                     //temp hack
@@ -3818,7 +3831,7 @@ function readrBoard($R){
                         rindow.animate({
                             width: width +'px'
                         }, rindow.settings.animTime ).animate({
-                            minHeight:minHeight
+                            height:minHeight
                         }, rindow.settings.animTime, function() {
                             RDR.rindow.checkHeight( rindow, 0, panel );
                         });
@@ -5903,7 +5916,7 @@ function $RFunctions($R){
                                         .replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ' });
                     
                     shadow.html(val);
-                    $(this).css('height', Math.max(shadow.height()-10, minHeight));
+                    //rinh $(this).css('height', Math.max(shadow.height()-10, minHeight));
                     RDR.rindow.checkHeight( $this.closest('div.rdr.rdr_window'), 80 );
                 }
 
