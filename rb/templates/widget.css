@@ -222,7 +222,7 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
     position:absolute; top:35px; bottom:10px; width:100%; z-index:3;
 }
 
-#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_body                     {width:100%; z-index:4; overflow-x:hidden; overflow-y:hidden; padding:0; position:relative; height:100%; max-height:100%;} /*I'm not sure, but it looks like jscrollpane might be looking for max-height instead of height?*/
+#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_body                     {width:100%; z-index:4; overflow-x:hidden; overflow-y:hidden; padding:0; position:relative; height:100%; outline:none;}
 
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header                   {background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:5; }
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("{{ STATIC_URL }}widget/images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
@@ -241,7 +241,7 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr div.rdr_selectedTextPanel div.rdr_body  {background:#f0f0f0; -moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
 */
 
-#rdr_sandbox div.rdr div.rdr_reactionPanel                           {position:relative; z-index:20; width:200px; }
+#rdr_sandbox div.rdr div.rdr_reactionPanel                           {position:relative; z-index:20; width:200px; background:white;}
 #rdr_sandbox div.rdr div.rdr_reactionPanel div.rdr_body              {}
 #rdr_sandbox div.rdr div.rdr_reactionPanel div.rdr_body .jspPane,
 #rdr_sandbox div.rdr div.rdr_contentPanel div.rdr_body .jspPane      {width:200px !important; margin: 0 !important;}

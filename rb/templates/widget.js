@@ -3188,7 +3188,6 @@ function readrBoard($R){
                 var rindow = RDR.rindow.draw({
                     coords:rindowPosition,
                     pnlWidth:200,
-                    height:200,
                     ignoreWindowEdges:"bl",
                     noHeader:true,
                     selector:selector
@@ -3641,7 +3640,6 @@ function readrBoard($R){
                     $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
                     $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
-                    $borderLine = $('<div class="rdr_borderLine" />'),
                     $commentBox = $('<div class="rdr_commentBox" />'),
                     $shareBox = $('<div class="rdr_shareBox" />');
 
@@ -3650,16 +3648,19 @@ function readrBoard($R){
                 $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
                     var $header = $('<div class="rdr_header rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
-                    $body = $('<div class="rdr_body rdr_leftShadow "/>');
-                    $(this).append($header, $body).css({
-                        // 'width':rindow.settings.pnlWidth
-                    });
+                    $body = $('<div class="rdr_body "/>'),
+                    $bodyWrap = $('<div class="rdr_body_wrap"/>').append($body);
+
+                    var clearDiv = '<div style="clear:both;"></div>';
+                    $(this).append($header, $bodyWrap, clearDiv);
+
                 });
                 RDR.actions.panel.setup("whyPanel", rindow);
 
-                //populate reactionPanel
-                $reactionPanel.find('div.rdr_body').append($borderLine, $tagBox);
-                
+                //populate reactionPanel and add the borderline to it                
+                var $borderLine = $('<div class="rdr_borderLine" />');
+                $reactionPanel.append($borderLine).find('div.rdr_body').append($tagBox);
+
                 ////populate blesed_tags
                 if (actionType == "react") {
                     $.each(RDR.group.blessed_tags, function(idx, val){
@@ -3754,7 +3755,8 @@ function readrBoard($R){
                 setup: function(_panel, rindow){
                     var panel = _panel || "whyPanel";
                     
-                    $(rindow).find('.rdr_'+panel).children('.rdr_header, .rdr_body').css({
+                    //note: it appears this isn't doing anything anymore
+                    $(rindow).find('.rdr_'+panel).find('.rdr_header, .rdr_body').css({
                         'width': rindow.settings.pnlWidth +'px',
                         'right':'0',
                         'position':'absolute'
@@ -4102,7 +4104,7 @@ function readrBoard($R){
                         }
                     });
 
-                    var $tagTooltip = (args.actionType == "react") ? $('<div class="rdr_help">Add your own (ex. hip, woot)</div>'):$('<div class="rdr_help">Add a tag</div>');
+                    var $tagTooltip = (args.actionType == "react") ? $('<div class="rdr_help">Add your own</div>'):$('<div class="rdr_help">Add a tag</div>');
                     $freeformTagDiv.append($tagTooltip);
                     $customTagBox.append($freeformTagDiv);
 
@@ -4121,6 +4123,7 @@ function readrBoard($R){
                     });
 
                     rindow.find('ul.rdr_tags').append( $customTagBox );
+                    RDR.rindow.checkHeight( rindow );
                 }
             },
             rateSend: function(args) {
