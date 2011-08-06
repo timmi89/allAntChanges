@@ -218,15 +218,20 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 }
 #rdr_sandbox div.rdr div.rdr_sntPnl                                  {float:left; position:relative; display:block; height:100%; overflow:hidden; /*width is reset with js - rindow.settings.pnlWidth */ }
 
-#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_body                     {width:100%; z-index:3; overflow-x:hidden; overflow-y:hidden; padding:0; position:relative; }
-#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header                   {background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:3; }
+#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_body_wrap               {
+    position:absolute; top:35px; bottom:10px; width:100%; z-index:3;
+}
+
+#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_body                     {width:100%; z-index:4; overflow-x:hidden; overflow-y:hidden; padding:0; position:relative; height:100%; max-height:100%;} /*I'm not sure, but it looks like jscrollpane might be looking for max-height instead of height?*/
+
+#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header                   {background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:5; }
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("{{ STATIC_URL }}widget/images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header,
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_whyPanel div.rdr_header      {background:url({{ STATIC_URL }}widget/images/header_arrow.png) 0px -1px no-repeat #fff;}
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap {background:none; border-bottom:1px solid #bababa; bottom:0; padding-bottom:3px; text-align:center; width:100%; position:absolute; }
 #rdr_sandbox div.rdr div.rdr_sntPnl h1                               {padding:0 !important; }
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_pnlShadow                   {height:100%; width:16px; position:absolute; z-index:5; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; display:none;}
-#rdr_sandbox div.rdr .rdr_leftShadow .rdr_selected .rdr_content.rdr_leftShadow,
+
 #rdr_sandbox div.rdr .rdr_leftShadow {-moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; }
 #rdr_sandbox div.rdr .rdr_leftShadow .rdr_content.rdr_leftShadow {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; }
 
@@ -241,6 +246,9 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr div.rdr_reactionPanel div.rdr_body .jspPane,
 #rdr_sandbox div.rdr div.rdr_contentPanel div.rdr_body .jspPane      {width:200px !important; margin: 0 !important;}
 #rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_body .jspPane      {width:250px !important; margin: 0 !important;}
+#rdr_sandbox div.rdr div.jspContainer                           {height:100% !important;}
+
+
 #rdr_sandbox div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body  {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; background:url({{ STATIC_URL }}widget/images/rindow_bg_column.png);}
 
 #rdr_sandbox div.rdr div.rdr_contentPanel                            {position:absolute; z-index:15; left:200px; width:200px; background:url({{ STATIC_URL }}widget/images/rindow_bg_column.png) repeat -650px 0;}
@@ -270,9 +278,12 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_tagFeedback         {background: none repeat scroll 0 0 #ddd; border: 1px solid #bbb; margin: 5px 10px 0; padding: 5px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_tagFeedback strong  {font-weight:bold; color:#008be4;}
 
+#rdr_sandbox .rdr_tagBox  {}
+
 #rdr_sandbox div.rdr_window_dragHandle{
-    /*override the jquery ui hadle*/
-    height:14px;
+    /*override the jquery ui hadle css*/
+    height:15px;
+    /*bottom:-5px;*/ /*this is built into the jquery css*/
 
     opacity:0.1;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
@@ -314,12 +325,14 @@ $('div.rdr_tempUserMsg').animate({bottom:'-48px'});
 #rdr_sandbox div.rdr ul.rdr_tags         {list-style-type:none !important; padding:0 0 10px 0 !important; margin:0 !important; }
 #rdr_sandbox div.rdr ul.rdr_tags li                  { border-color: transparent !important; border-style: solid !important; border-width: 1px 0 !important; padding:5px 0 !important; margin:0 !important; position:relative !important; overflow:auto !important; background:none; text-align:left !important;}
 
-#rdr_sandbox div.rdr ul.rdr_tags li:hover,
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_hover, /* safari/chrome kludge -- :hover isn't working here */
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected     {color:#008be4 !important; display:block !important; border-color: #bbb transparent #ddd !important; cursor: pointer !important;}
 
-#rdr_sandbox div.rdr ul.rdr_tags li.rdr_hover{background:#e4f0f7 !important;}
-#rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected{background:#D6e6F5 !important;}
+#rdr_sandbox div.rdr_window ul.rdr_tags li.rdr_hover,
+#rdr_sandbox div.rdr_window div.rdr_contentSet.rdr_hover {background:#e4f0f7 !important;}
+
+#rdr_sandbox div.rdr_window ul.rdr_tags li.rdr_selected,
+#rdr_sandbox div.rdr_window div.rdr_contentSet.rdr_selected{background:#D6e6F5 !important;}
 
 
 #rdr_sandbox div.rdr ul.rdr_tags li .rdr_leftBox     {width:38px; letter-spacing:1px; overflow:hidden; float:left; text-align:center; font-size:21px !important;  font-family:ReadrLeague, Arial, sans-serif !important; font-weight:normal !important; padding-top:2px; height:28px;}
@@ -344,7 +357,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected .rdr_leftBox:hover,
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged .rdr_leftBox:hover    {background-position:-70px -3px;}
 #rdr_sandbox div.rdr div.rdr_new ul.rdr_tags li.rdr_selected     {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
-#rdr_sandbox div.rdr div.rdr_sntPnl .rdr_borderLine                  {    background:#bbb; clear:both; height:100%; left:38px; position:absolute; width:1px; z-index:2;}
+#rdr_sandbox div.rdr div.rdr_sntPnl .rdr_borderLine                  {    background:#bbb; clear:both; height:100%; left:38px; position:absolute; width:1px; z-index:6;}
 
 #rdr_sandbox div.rdr ul.rdr_tags li div.rdr_leftBox.rdr_kill_bg {background:none !important;}
 
@@ -376,7 +389,6 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content div.rdr_otherTags em         {color:#76a1ba; display: block; font-family:Arial; font-size:11px; margin-top:10px;}
 
 #rdr_sandbox div.rdr div.rdr_contentSet.rdr_selected div.rdr_contentHeader           {background:#d0dee6;}
-#rdr_sandbox div.rdr div.rdr_contentSet.rdr_selected div.rdr_content                 {background:#e4f0f7;}
 #rdr_sandbox div.rdr div.rdr_contentSet.rdr_selected div.rdr_contentHeader div.rdr_has_comment             {background-position: -46px -12px; text-indent: -9999px;}
 
 /* commentSet */

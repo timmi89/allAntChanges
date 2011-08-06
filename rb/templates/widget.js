@@ -68,41 +68,61 @@ function readrBoard($R){
                 },
                 pnlWidth:200,
                 animTime:100,
-                height:350,
+                height:260,
                 columns: false
             },
 			// content comes later.  this is just to identify or draw the container.
-            checkHeight: function( rindow, percentScroll, panel ) {
+            checkHeight: function( $rindow, percentScroll, panel ) {
+                log('$rindow in checkheight');
+                log($rindow);
 
-                var tallest_column_height = 0;
-                rindow.find('div.rdr_body').each( function() {
-                    var $column = $(this);
-                    var this_panel_name;
-                        
+                $rindow.find('div.rdr_body').each( function() {
+                    if( !$(this).hasClass('jspScrollable') ){
+                        $(this).jScrollPane({ contentWidth:200, showArrows:true });
+                    }else{
+                        var API = $(this).data('jsp');
+                        API.reinitialise();
+                    }
+                });
+
+
+/*
+                
+                            
                     if ( $column.parents().hasClass('rdr_whyPanel') ) { this_panel_name="whyPanel"; }
                     if ( $column.parents().hasClass('rdr_contentPanel') ) { this_panel_name="contentPanel"; }
                     if ( $column.parents().hasClass('rdr_reactionPanel') ) { this_panel_name="reactionPanel"; }
 
-                    
+                    log(this_panel_name)
+                    log('each')
+                    log(this)
+                    var testh = $(this).height();
+                    log(testh)
+                    testh = $(this).height;
+                    log(testh)
+
                     // corner logic: the next line's conditional is so that a collapsing column that is set to hidden, but is tall,
                     // doesn't force the visible column's content to be too tall.  this way the corners are rightly rounded.
                     var contentHeight = ( $column.css('visibility') != "hidden" ) ? $column.height() : 10;
-                    //[cleanlogz]('checkheight contentHeight: '+contentHeight);
-                    if ( contentHeight > tallest_column_height ) tallest_column_height = contentHeight;
 
-                    if ( tallest_column_height >= 300 ) {
-                        
+                    if ( 400 >= 300 ) {
+                        log(1)
                         if ( $column.find('.jspVerticalBar').length > 0 ) {
+                            //note: data.('jsp') is the jScrollPane provided API
                             $column.data('jsp').reinitialise({ contentWidth:200, showArrows:true });
+                        log(2)
                         } else {
                             $column.jScrollPane({ contentWidth:200, showArrows:true });
+                        log(3)
                         }
                     } else if (panel && panel == this_panel_name) {
+                        log(4)
                         rindow.find('div.rdr_reactionPanel div.rdr_body').animate({
                             minHeight:tallest_column_height+"px"
                         }, rindow.settings.animTime );
                     }
                 });
+                */
             },
 			draw: function(options) {
                 //RDR.rindow.draw:
@@ -173,14 +193,20 @@ function readrBoard($R){
                 var coords = RDR.util.stayInWindow({coords:settings.coords, ignoreWindowEdges:settings.ignoreWindowEdges});
 
                 $new_rindow.css('left', coords.left + 'px');
-                $new_rindow.css('top', coords.top + 'px');    
+                $new_rindow.css('top', coords.top + 'px');
+                if(settings.height){
+                    $new_rindow.height(settings.height);
+                }
+
+                RDR.rindow.checkHeight( $new_rindow );
+
                 RDR.actionbar.closeAll();  
 
                 $new_rindow.settings = settings;
 
                 $new_rindow.resizable({
                     grid: [100000, null], /*this is my own hack for locking the movement to the y axis, but I think it works well*/
-                    handles:'s,se'
+                    handles:'s,se',
                 });
 
                 $dragHandle = $new_rindow.find('.ui-resizable-s');
@@ -196,6 +222,18 @@ function readrBoard($R){
 
                 $new_rindow.append( $dragHandle );
 
+                //now add a watcher to reinitialize these scrollpanes when the rindow is resizing                
+                //rindow.res $scrollPanes.add($column);
+                /*
+                //this was way too slow
+                rindow.bind( "resize", function(event, ui) {
+                    var APIs = $scrollPanes.data('jsp');
+                    APIs.reinitialise();
+                });
+                */
+                $new_rindow.bind( "resizestop", function(event, ui) {
+                    RDR.rindow.checkHeight( $(this) );
+                });
 
                 return $new_rindow;
 			},
@@ -1781,6 +1819,8 @@ function readrBoard($R){
                         return invertedDict;
                     },
                     initHiliteStates: function( $tagSpan, content_nodes ){
+                        //todo: combine with others - i think this is just being used for indicator details
+
                         //RDR.actions.content_nodes.utils.initHiliteStates:
 
                         //add selStates to $tagSpan data.
@@ -1793,6 +1833,7 @@ function readrBoard($R){
                         //setup hover event to hilite and unhlite
                         $tagSpan.hover(
                             function() {
+                                    
                                 var selStates = $(this).data('selStates');
 
                                 //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
@@ -1807,6 +1848,7 @@ function readrBoard($R){
                                 */
                             },
                             function() {
+                                 
                                 var selStates = $(this).data('selStates');
                                 //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
                                 var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
@@ -3146,6 +3188,7 @@ function readrBoard($R){
                 var rindow = RDR.rindow.draw({
                     coords:rindowPosition,
                     pnlWidth:200,
+                    height:200,
                     ignoreWindowEdges:"bl",
                     noHeader:true,
                     selector:selector
@@ -3166,7 +3209,6 @@ function readrBoard($R){
                     $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
                     $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
-                    $borderLine = $('<div class="rdr_borderLine" />'),
                     $indicator_stats = $('<div class="rdr_indicator_stats" />'),
                     $headerOverlay = $('<div class="rdr_header_overlay" />').append($indicator_stats);
                 
@@ -3177,9 +3219,11 @@ function readrBoard($R){
                 $sentimentBox.children().each(function(idx){
                     var $header = $('<div class="rdr_header rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />'),
                     $rdr_headerInnerWrap = $('<div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>').appendTo($header),
-                    $body = $('<div class="rdr_body rdr_brbl rdr_brbr"/>'); // corner logic in those last two classes there.
-                    var clearDiv = '<div style="clear:both;"></div>'
-                    $(this).append($header, $body, clearDiv);
+                    $body = $('<div class="rdr_body "/>'),
+                    $bodyWrap = $('<div class="rdr_body_wrap"/>').append($body);
+
+                    var clearDiv = '<div style="clear:both;"></div>';
+                    $(this).append($header, $bodyWrap, clearDiv);
 
                 });
                 $sentimentBox.prepend($headerOverlay);
@@ -3191,7 +3235,8 @@ function readrBoard($R){
                 RDR.actions.panel.setup("contentPanel", rindow);
 
                 //populate reactionPanel
-                $reactionPanel.find('div.rdr_body').append($borderLine, $tagBox);
+                var $borderLine = $('<div class="rdr_borderLine" />');
+                $reactionPanel.append($borderLine).find('div.rdr_body').append($tagBox);
 
 
                 var topTags = summary.top_interactions.tags,
@@ -3290,6 +3335,8 @@ function readrBoard($R){
                     })//chain
                     .hover( 
                         function() {
+                            //don't do this for windows that are resizing
+                            if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return 
 
                             $(this).addClass('rdr_hover'); // safari/chrome kludge -- :hover isn't working here
                             var selStates = $(this).data('selStates');
@@ -3307,6 +3354,9 @@ function readrBoard($R){
                             */
                         },
                         function() {
+
+                            //don't do this for windows that are resizing
+                            if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return 
 
                             $(this).removeClass('rdr_hover');  // safari/chrome kludge -- :hover isn't working here
                             var selStates = $(this).data('selStates');
@@ -3328,6 +3378,8 @@ function readrBoard($R){
             },
             viewReactionContent: function(tag, hash, rindow){
                 //temp reconnecting:
+                log('view reaction');
+
                 var container = RDR.containers[hash];
                 var summary = RDR.summaries[hash];
                 
@@ -3356,6 +3408,7 @@ function readrBoard($R){
                 var tagBody = tag.body.length > maxHeaderLen ? tag.body.slice(0, maxHeaderLen)+"..." : tag.body;
 
                 rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tagBody+' <span> ('+tag.count+')</span>');
+                
                 if ( rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp').destroy();
                 rindow.find('div.rdr_contentPanel div.rdr_body').empty();
 
@@ -3597,7 +3650,7 @@ function readrBoard($R){
                 $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
                 $sentimentBox.children().each(function(idx){
                     var $header = $('<div class="rdr_header rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>'),
-                    $body = $('<div class="rdr_body rdr_leftShadow rdr_brbl rdr_brbr"/>');
+                    $body = $('<div class="rdr_body rdr_leftShadow "/>');
                     $(this).append($header, $body).css({
                         // 'width':rindow.settings.pnlWidth
                     });
@@ -3720,7 +3773,7 @@ function readrBoard($R){
                     rindow.addClass('rdr_columns'+num_columns);
                     var width, minHeight, maxHeight;
 
-                    minHeight = 300;
+                    minHeight = 100;
                     maxHeight = 400;
 
                     rindow.resizable('option', {
@@ -3880,11 +3933,18 @@ function readrBoard($R){
 
                         $contentSet.hover(
                             function() {
+                                //don't do this for windows that are resizing
+                                if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return 
+
+                                $(this).addClass('rdr_hover');
                                 if(content_node.selState){
                                     $().selog('hilite', content_node.selState, 'on');
                                 }
                             },
                             function() {
+                                //don't do this for windows that are resizing
+                                if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return 
+                                $(this).removeClass('rdr_hover');
                                 if(content_node.selState){
                                     $().selog('hilite', content_node.selState, 'off');
                                 }
