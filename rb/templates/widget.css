@@ -250,10 +250,10 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 
 #rdr_sandbox div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body  {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; background:url({{ STATIC_URL }}widget/images/rindow_bg_column.png);}
 
-#rdr_sandbox div.rdr div.rdr_contentPanel                            {position:absolute; z-index:15; left:200px; width:200px; background:url({{ STATIC_URL }}widget/images/rindow_bg_column.png) repeat -650px 0;}
+#rdr_sandbox div.rdr div.rdr_contentPanel                            {position:absolute; z-index:15; left:200px; width:200px; background:#e9e9e9; }
 #rdr_sandbox div.rdr div.rdr_contentPanel div.rdr_body               {width:200px;}
 
-#rdr_sandbox div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:250px; background:url({{ STATIC_URL }}widget/images/rindow_bg_column.png) -200px 0; visibility:hidden;}
+#rdr_sandbox div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:250px; background:#EEEEEE; visibility:hidden;}
 #rdr_sandbox div.rdr.rdr_columns3 div.rdr_whyPanel                   {background-position:-850px 0;}
 #rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_body                   {width:250px;}
 #rdr_sandbox div.rdr div.rdr_whyPanel hr                             {background: #ddd; border: none; clear: both; color: #ddd; float: none; height: 1px; margin: 10px 0; }
@@ -363,7 +363,8 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
     background:#bbb; clear:both; height:100%; left:38px; position:absolute; width:1px;
 }
 
-#rdr_sandbox div.rdr .rdr_contentPanel div.rdr_panelOverlay { 
+#rdr_sandbox div.rdr .rdr_contentPanel div.rdr_panelOverlay,
+#rdr_sandbox div.rdr .rdr_whyPanel div.rdr_panelOverlay { 
     height:100%;  
     width: 10px;
     opacity:0.5;
