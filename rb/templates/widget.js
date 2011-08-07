@@ -3775,7 +3775,7 @@ function readrBoard($R){
                     rindow.addClass('rdr_columns'+num_columns);
                     var width, minHeight, maxHeight;
 
-                    minHeight = 100;
+                    minHeight = RDR.rindow.defaults.height; //260
                     maxHeight = 400;
 
                     rindow.resizable('option', {
@@ -3790,7 +3790,6 @@ function readrBoard($R){
                             // corner logic
                             $thisPanel.removeClass('rdr_brtl').removeClass('rdr_brbl');
                             $thisPanel.find('div.rdr_header').removeClass('rdr_brtl').removeClass('rdr_brbl');
-
                             break;
 
                         case "whyPanel":
@@ -3800,7 +3799,6 @@ function readrBoard($R){
                             $thisPanel.removeClass('rdr_brtl').removeClass('rdr_brbl');
                             $thisPanel.find('div.rdr_header').removeClass('rdr_brtl').removeClass('rdr_brbl');
                             $(rindow).find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').removeClass('rdr_brbr').removeClass('rdr_brtr');
-
                             break;
                     }
                     var rindow_bg = (num_columns==3)?-450:0;
@@ -3810,21 +3808,26 @@ function readrBoard($R){
                         RDR.rindow.checkHeight( rindow, 0, panel );
                     }
                     else{
-                        rindow.css('background-position',rindow_bg+'px');
+                        rindow.css('background-position',rindow_bg+'px'); //todo: we shouldn't need this anymore
                         rindow.animate({
                             width: width +'px'
                         }, rindow.settings.animTime, function() {
-                            
                             log(this);
+
                             var height = $(this).height();
+                            log('height');
                             log(height);
+                            log('height min max');
+                            log(maxHeight);
+                            log(minHeight);
+
                             var gotoHeight = ( height < minHeight ) ? minHeight : (height > maxHeight) ? maxHeight : null;
                             if( gotoHeight ){
                                 $(this).animate({
                                     height:minHeight
-                                }, rindow.settings.animTime );
-
-                                RDR.rindow.checkHeight( rindow, 0, panel );
+                                }, rindow.settings.animTime, function(){
+                                    RDR.rindow.checkHeight( rindow );
+                                });
                             }   
                         });
 
@@ -4367,6 +4370,7 @@ function readrBoard($R){
                 
             },
             shareStart: function(args) {
+                log('sharestart');
                 var rindow = args.rindow, 
                     tag = args.tag,
                     int_id = args.int_id,
@@ -4384,6 +4388,8 @@ function readrBoard($R){
                 }
 
                 var $whyPanel_body = rindow.find('div.rdr_whyPanel div.rdr_body');
+                var $whyPanel_body_jsp = $whyPanel_body.find('.jspPane');
+                
                 var $whyPanel_tagCard = $('<div />').addClass('rdr_whyPanel_tagCard rdr_whyPanel_tagCard'+tag.id);
                 //$whyPanel_body.empty();
 
@@ -4392,9 +4398,9 @@ function readrBoard($R){
                 var $tagFeedback = $('<div class="rdr_tagFeedback">Your reaction: <strong>'+tag.body+'</strong>. </div>');
                 var $shareDialogueBox = $('<div class="rdr_shareBox rdr_sntPnl_padder"></div>');
                 var $commentBox = $('<div class="rdr_commentBox rdr_sntPnl_padder"></div>').html(
-                    '<div><strong>Leave a comment:</strong></div> <div class="rdr_commentComplete"></div>'
+                    '<div><h4>Leave a comment:</h4></div> <div class="rdr_commentComplete"></div>'
                 );
-                var $undoLink = $('<a style="text-decoration:underline;" href="javascript:void(0);">Undo?</a>')//chain
+                var $undoLink = $('<a class="rdr_undo_link" href="javascript:void(0);">Undo?</a>')//chain
                 .bind('click.rdr', { args:args }, function(event){
                     // RDR.actions.unrateSend(args); 
                     var args = event.data.args;
@@ -4408,12 +4414,19 @@ function readrBoard($R){
                     $shareDialogueBox,
                     $commentBox
                 );
-                
+            
                 //add to the $whyPanel_body and hide any sibling panels that have been made;
-                $whyPanel_tagCard.appendTo($whyPanel_body).siblings('.rdr_whyPanel_tagCard').hide();
+                if($whyPanel_body_jsp.length){
+                    $whyPanel_tagCard.appendTo($whyPanel_body_jsp);
+                }else{
+                    $whyPanel_tagCard.appendTo($whyPanel_body);
+                }
+                
+                $whyPanel_tagCard.siblings('.rdr_whyPanel_tagCard').hide();
 
                 //todo: combine this with the tooltip for the tags
                 var helpText = "because...";
+                //var $commentTextarea = 
                 var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><div class="rdr_charCount">'+RDR.group.comment_length+' characters let</div><button id="rdr_comment_on_'+int_id.id+'">Comment</button></div>');
                 $leaveComment.find('textarea').focus(function(){
                     if($('.leaveComment').val() == helpText ){
@@ -4455,7 +4468,7 @@ function readrBoard($R){
 
                 $commentBox.append( $leaveComment );
 
-                var $socialBox = $('<div class="rdr_share_social"><strong>Share:</strong></div>'),
+                var $socialBox = $('<div class="rdr_share_social"><h4>Share:</h4></div>'),
                 $shareLinks = $('<ul class="shareLinks"></ul>'),
                 socialNetworks = ["facebook","twitter"]; //,"tumblr","linkedin"];
 
@@ -4467,7 +4480,7 @@ function readrBoard($R){
                         return false;
                     });
                 });
-                $socialBox.append($shareLinks);
+                $socialBox.append($shareLinks, '<div style="clear:both;" />');
 
                 $shareDialogueBox.html( $socialBox );
 
