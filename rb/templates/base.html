@@ -69,7 +69,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     </div>
     <div id="user">
         {% if user %}
-          <strong><a href="/profile/{{ user.id }}">{{ user.social_user.full_name }}</a></strong>
+          <strong><img src="{{ user.social_user.img_url }}?type=square"/> <a href="/user/{{ user.id }}">{{ user.first_name }}</a></strong>
         {% else %}
           <fb:login-button>
         {% endif %}
@@ -163,5 +163,6 @@ if ( window.location.hash.indexOf('techcrunch') != -1 ) {
 
 {% block sidebarJS %}
 {% endblock %}
+
 </body>
 </html>

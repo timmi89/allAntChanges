@@ -58,7 +58,7 @@ def main(request, user_id=None, short_name=None, **kwargs):
     cookies = request.COOKIES
     query_string = request.GET.get('s', None)
     page_num = request.GET.get('page', None)
-    #cookie_user_id = cookies.get('user_id')
+    cookie_user_id = cookies.get('user_id')
     context = {
         'fb_client_id': FACEBOOK_APP_ID,
         'user_id': user_id,
@@ -67,11 +67,11 @@ def main(request, user_id=None, short_name=None, **kwargs):
         'kwargs': kwargs,
         'page_num': page_num
     }
-    """
+
     if cookie_user_id:
         user = User.objects.get(id=cookie_user_id)
         context['user'] = user
-    """
+
     return render_to_response("index.html", context, context_instance=RequestContext(request))
 
 def interactions(request, user_id=None, short_name=None, **kwargs):
