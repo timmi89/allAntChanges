@@ -1,7 +1,7 @@
 # Django settings for readrboard project.
-import os
+from os import uname
 
-if os.uname()[0] == "Linux": DEBUG = False
+if uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
 
 TEMPLATE_DEBUG = DEBUG
