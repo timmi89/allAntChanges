@@ -398,7 +398,7 @@ page-break-after:avoid; }
 }/*/mediaquery*/
 
 /*480px __________________________________________________________________________________________________________ */
-@media only screen and (min-width:480px) {
+/*@media only screen and (min-width:480px) {*/
 
 /* ROOT */
 /* HEADINGS */
@@ -418,10 +418,11 @@ page-break-after:avoid; }
 /* TEMPLATE SPECIFICS */
 /* MODERNIZR */
 
-}/*/mediaquery*/
+/*}*/
+/*/mediaquery*/
 
 /*768px __________________________________________________________________________________________________________ */
-@media only screen and (min-width:768px) {
+/*@media only screen and (min-width:768px) {*/
 
 /* HEADER */
 header[role="banner"]	{height:40px; background:url(/static/site/images/header_bg.gif) top left repeat-x; box-shadow:0px 2px 3px 0px #666;position:fixed;width:100%;z-index:10;top:0;font-size:12px;}
@@ -600,10 +601,11 @@ section[role="complementary"] #user_data label span {
 /* TEMPLATE SPECIFICS */
 /* MODERNIZR */
 
-}/*/mediaquery*/
+/*}*/
+/*/mediaquery*/
 
 /*992px __________________________________________________________________________________________________________ */
-@media only screen and (min-width:992px) {
+/*@media only screen and (min-width:992px) {*/
 
 /* ROOT */
 /* HEADINGS */
@@ -623,10 +625,11 @@ section[role="complementary"] #user_data label span {
 /* TEMPLATE SPECIFICS */
 /* MODERNIZR */
 
-}/*/mediaquery*/
+/*}*/
+/*/mediaquery*/
 
 /*1382px __________________________________________________________________________________________________________ */
-@media only screen and (min-width:1382px) {
+/*@media only screen and (min-width:1382px) {*/
 
 /* ROOT */
 /* HEADINGS */
@@ -646,10 +649,11 @@ section[role="complementary"] #user_data label span {
 /* TEMPLATE SPECIFICS */
 /* MODERNIZR */
 
-}/*/mediaquery*/
+/*}*/
+/*/mediaquery*/
 
 /*2x __________________________________________________________________________________________________________ */
-@media only screen and (-webkit-min-device-pixel-ratio:2), only screen and (min-device-pixel-ratio:2) {
+/*@media only screen and (-webkit-min-device-pixel-ratio:2), only screen and (min-device-pixel-ratio:2) {*/
 
 /* ROOT */
 /* HEADINGS */
@@ -669,7 +673,8 @@ section[role="complementary"] #user_data label span {
 /* TEMPLATE SPECIFICS */
 /* MODERNIZR */
 
-}/*/mediaquery*/
+/*}*/
+/*/mediaquery*/
 
 /* 
 Sources:
@@ -687,4 +692,3 @@ http://camendesign.com/design/
 http://yui.yahooapis.com/2.8.1/build/base/base.css
 http://webaim.org/techniques/css/invisiblecontent/
 http://drupal.org/node/897638
-*/
