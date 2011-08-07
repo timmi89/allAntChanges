@@ -68,8 +68,8 @@ def main(request, user_id=None, short_name=None, **kwargs):
     }
 
     if cookie_user_id:
-        user = User.objects.get(id=cookie_user_id)
-        context['user'] = user
+        cookie_user = User.objects.get(id=cookie_user_id)
+        context['cookie_user'] = cookie_user
         
     """ For interactions.html """
     interactions = Interaction.objects.all()

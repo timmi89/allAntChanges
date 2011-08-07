@@ -511,6 +511,7 @@ section[role="main"] .card {background:#d2dee4; width:100%; margin-bottom:10px; 
 section[role="main"] .card .interaction  {margin-top:1px; border-top:1px solid #d2dee4;}
 section[role="main"] .card .block_content a 	 {font-style:italic;font-size:10px; color:#e66;}
 section[role="main"] .card .column1  {text-align:center; vertical-align:middle;}
+section[role="main"] .card .interaction .column1 .reaction {padding-left: 5px; padding-right: 5px;}
 section[role="main"] .card .column2  {text-align:left; vertical-align:middle;}
 section[role="main"] .card .interaction .column2  {text-align:left; vertical-align:top;}
 section[role="main"] .card thead .column1      {width:113px; margin:0; padding:5px 0; background:#fff; text-align:center; }
@@ -558,6 +559,7 @@ section[role="complementary"] #user_data img {
 
 #sidebar h4 {
     text-align: right;
+    margin-top: 10px;
     margin-right: 25px;
     margin-bottom: 10px;
 }
