@@ -136,6 +136,9 @@ def cards(request, **kwargs):
     context = {'cards': cards}
     return render_to_response("cards.html", context, context_instance=RequestContext(request))
 
+def interactions(request):
+    pass
+
 def sidebar(request, user_id=None, short_name=None):
     context = {}
     cookie_user = request.COOKIES.get('user_id', None)
