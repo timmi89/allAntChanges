@@ -430,7 +430,9 @@ header[role="banner"] h1				{text-indent:-9999px; background:url(/static/site/im
 header[role="banner"] #search			{position:absolute; right:55px; top:8px; }*/
 header[role="banner"] #settings			{float:right;}
 header[role="banner"] #search			{float:right; padding-top:8px;}
-header[role="banner"] #user				{float:right; padding:8px 8px 0 20px; }
+header[role="banner"] #user				{float:right; padding:8px 8px 0 20px; font-size:12px; }
+header[role="banner"] #user img			{max-width:25px; max-height:25px; }
+header[role="banner"] #user a			{margin-top:-8px;}
 header[role="banner"] #search input		{border:1px solid #a4a4a4; border-radius:4px;padding:4px;}
 header[role="banner"] #search button	{width:24px; height:24px; background:url(/static/site/images/pin_button.png) top left no-repeat;border:none;text-indent:-9999px;cursor:pointer;}
 
