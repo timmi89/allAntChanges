@@ -61,6 +61,7 @@ urlpatterns = patterns('',
   #url(r'^cards/(?P<group_id>\d/$', 'rb.views.cards'),
 
   url(r'^api/', include('readrboard.api.urls')),
+  url(r'^analytics/', include('readrboard.analytics.urls')),
   url(r'^admin/', include(admin.site.urls)),
 )
 
