@@ -69,7 +69,7 @@ RDRAuth = {
 			RDRAuth.notifyParent(sendData, "returning_user");
 		}
 	},
-	getReadrToken: function(fb_response, force_fb_status) {
+	getReadrToken: function(fb_response, force_fb_status, reload) {
 		if ( fb_response ) {
             var fb_session = (fb_response.session) ? fb_response.session:fb_response
 			var sendData = {
@@ -93,6 +93,7 @@ RDRAuth = {
 					} else {
 						RDRAuth.setUser(response);
 						RDRAuth.returnUser();
+						if (reload) window.location.reload();
 					}
 				},
 				error: function(response) {
@@ -179,13 +180,26 @@ RDRAuth = {
 						});
 						$('#fb-logged-out').hide();
 						break;
+					
+					case "site_login":
+						$('#fb-logged-in').hide();
+						$('#fb-logged-out').show();
+						RDRAuth.getReadrToken( response, true, true );
+						break;
+
 				}
 			} else {
-				switch (requesting_action) {
+				switch (args.requesting_action) {
 					case "admin_request":
 						// this call is from the website
 						$('#fb-logged-in').hide();
 						$('#fb-logged-out').show();
+						break;
+
+					case "site_load":
+						$('#fb-logged-in').hide();
+						$('#fb-logged-out').show();
+						RDRAuth.getReadrToken( response, true );
 						break;
 				}
 			}
@@ -273,7 +287,19 @@ RDRAuth = {
 		}, {perms:'email'});
 	},		
 	doFBlogout: function() {
-		window.location.reload();
+		FB.getLoginStatus(function(response) {
+			if (response && response.session) {
+				FB.logout(function(response) {
+					RDRAuth.killUser( function() {
+						window.location.reload(); 
+					});		
+				});	
+			} else {
+				RDRAuth.killUser( function() {
+					window.location.reload(); 
+				});	
+			}
+		});
 	},
 	init : function() {
 		// RDRAuth.readUserCookie();
@@ -301,3 +327,5 @@ FB.Event.subscribe('auth.sessionChange', function(response) {
 //   // do something with response.session
 //   RDRAuth.reauthUser();
 // });
+
+

@@ -435,6 +435,7 @@ header[role="banner"] #search			{float:right; padding-top:8px;}
 header[role="banner"] #user				{float:right; padding:5px 8px 0 20px; }
 header[role="banner"] #user	img			{float:left; max-width:30px; max-height:30px;}
 header[role="banner"] #user	a			{float:left; margin: 8px 0px 0px 5px; }
+header[role="banner"] #user	a.fb_button	{margin-top:4px;}
 
 header[role="banner"] #search input		{border:1px solid #a4a4a4; border-radius:4px;padding:4px;}
 header[role="banner"] #search button	{width:24px; height:24px; background:url(/static/site/images/pin_button.png) top left no-repeat;border:none;text-indent:-9999px;cursor:pointer;}
