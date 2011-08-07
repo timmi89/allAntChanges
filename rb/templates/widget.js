@@ -2510,7 +2510,7 @@ function readrBoard($R){
 
                             var $whyPanel = rindow.find('div.rdr_whyPanel');
                             var $whyPanel_body = $whyPanel.find('div.rdr_body');
-                            var $whyPanel_tagCard = $('<div />').addClass('rdr_whyPanel_tagCard rdr_whyPanel_tagCard'+tag.id);
+                            var $whyPanel_tagCard = $('<div />').addClass('rdr_tagCard rdr_tagCard'+tag.id);
 
                             $whyPanel.find('h1').text('Bookmark Saved');
                             
@@ -2533,7 +2533,7 @@ function readrBoard($R){
                             );
                             
                             //add to the $whyPanel_body and hide any sibling panels that have been made;
-                            $whyPanel_tagCard.appendTo($whyPanel_body).siblings('.rdr_whyPanel_tagCard').hide();
+                            $whyPanel_tagCard.appendTo($whyPanel_body).siblings('.rdr_tagCard').hide();
 
                             RDR.actions.panel.expand("whyPanel", rindow);
                             
@@ -3211,7 +3211,6 @@ function readrBoard($R){
                     $indicator_stats = $('<div class="rdr_indicator_stats" />'),
                     $headerOverlay = $('<div class="rdr_header_overlay" />').append($indicator_stats);
                 
-                
 
                 var headers = ["Reactions <span>("+(summary.counts.tags)+")</span>", "", ""];  // removing comment count for now +info.com_count
                 $sentimentBox.append($reactionPanel, $contentPanel, $whyPanel); //$selectedTextPanel, 
@@ -3219,10 +3218,11 @@ function readrBoard($R){
                     var $header = $('<div class="rdr_header rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />'),
                     $rdr_headerInnerWrap = $('<div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>').appendTo($header),
                     $body = $('<div class="rdr_body "/>'),
-                    $bodyWrap = $('<div class="rdr_body_wrap"/>').append($body);
+                    $bodyWrap = $('<div class="rdr_body_wrap"/>').append($body),
+                    $panelOverlay = $('<div class="rdr_panelOverlay" />'); //for visual effects that need to sit on top of everything
 
                     var clearDiv = '<div style="clear:both;"></div>';
-                    $(this).append($header, $bodyWrap, clearDiv);
+                    $(this).append($header, $bodyWrap, clearDiv, $panelOverlay);
 
                 });
                 $sentimentBox.prepend($headerOverlay);
@@ -3234,8 +3234,7 @@ function readrBoard($R){
                 RDR.actions.panel.setup("contentPanel", rindow);
 
                 //populate reactionPanel
-                var $borderLine = $('<div class="rdr_borderLine" />');
-                $reactionPanel.append($borderLine).find('div.rdr_body').append($tagBox);
+                $reactionPanel.find('div.rdr_body').append($tagBox);
 
 
                 var topTags = summary.top_interactions.tags,
@@ -3639,9 +3638,7 @@ function readrBoard($R){
                     $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl" />'),
                     $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
-                    $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
-                    $commentBox = $('<div class="rdr_commentBox" />'),
-                    $shareBox = $('<div class="rdr_shareBox" />');
+                    $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />');
 
                 var firstPanelHeader = (actionType == "react") ? "What's your reaction?":"Bookmark this";
                 var headers = [firstPanelHeader, "Say More"];
@@ -3658,8 +3655,8 @@ function readrBoard($R){
                 RDR.actions.panel.setup("whyPanel", rindow);
 
                 //populate reactionPanel and add the borderline to it                
-                var $borderLine = $('<div class="rdr_borderLine" />');
-                $reactionPanel.append($borderLine).find('div.rdr_body').append($tagBox);
+                var $panelOverlay = $('<div class="rdr_panelOverlay" />');
+                $reactionPanel.append($panelOverlay).find('div.rdr_body').append($tagBox);
 
                 ////populate blesed_tags
                 if (actionType == "react") {
@@ -3716,9 +3713,9 @@ function readrBoard($R){
 
                             var tagID = $this.data('tag').id;
 
-                            //show the rdr_whyPanel_tagCard that belongs to this li tagButton, and hide sibling rdr_whyPanel_tagCards
-                            $('.rdr_whyPanel_tagCard'+tagID).show()//chain
-                            .siblings('.rdr_whyPanel_tagCard').hide();
+                            //show the rdr_tagCard that belongs to this li tagButton, and hide sibling rdr_tagCards
+                            $this.find('.rdr_tagCard'+tagID).show()//chain
+                            .siblings('.rdr_tagCard').hide();
 
                             //return false to prevent the rest of the interaction
                             return false;
@@ -3773,7 +3770,7 @@ function readrBoard($R){
                     $thisPanel = $(rindow).find('.rdr_'+panel);
                     var num_columns = rindow.find('div.rdr_sntPnl').length;
                     rindow.addClass('rdr_columns'+num_columns);
-                    var width, minHeight, maxHeight;
+                    var width, minHeight, maxHeight, gotoHeight = null;
 
                     minHeight = RDR.rindow.defaults.height; //260
                     maxHeight = 400;
@@ -3794,6 +3791,7 @@ function readrBoard($R){
 
                         case "whyPanel":
                             width = ((num_columns-1)*200)+250;
+                            gotoHeight = 300;
 
                             // corner logic
                             $thisPanel.removeClass('rdr_brtl').removeClass('rdr_brbl');
@@ -3810,21 +3808,14 @@ function readrBoard($R){
                     else{
                         rindow.css('background-position',rindow_bg+'px'); //todo: we shouldn't need this anymore
                         rindow.animate({
-                            width: width +'px'
+                            width: width
                         }, rindow.settings.animTime, function() {
-                            log(this);
 
                             var height = $(this).height();
-                            log('height');
-                            log(height);
-                            log('height min max');
-                            log(maxHeight);
-                            log(minHeight);
-
-                            var gotoHeight = ( height < minHeight ) ? minHeight : (height > maxHeight) ? maxHeight : null;
+                            gotoHeight = gotoHeight ? gotoHeight : ( height < minHeight ) ? minHeight : (height > maxHeight) ? maxHeight : null;
                             if( gotoHeight ){
                                 $(this).animate({
-                                    height:minHeight
+                                    height:gotoHeight
                                 }, rindow.settings.animTime, function(){
                                     RDR.rindow.checkHeight( rindow );
                                 });
@@ -3841,6 +3832,8 @@ function readrBoard($R){
                     $thisPanel.data('expanded', true);
                 },
                 collapse: function(_panel, rindow){
+                    //RDR.actions.panel.collapse:
+
                     // hack.  chrome and safari don't like rounded corners if the whyPanel is showing since it is wider than column1
                     rindow.find('div.rdr_whyPanel').css('visibility','hidden');
 
@@ -3850,11 +3843,20 @@ function readrBoard($R){
                     var num_columns = rindow.find('div.rdr_sntPnl').length;
                     rindow.addClass('rdr_columns'+num_columns);
                     
-                    var width, minHeight;
+                    var width, minHeight, maxHeight, gotoHeight = null;
+
+                    minHeight = RDR.rindow.defaults.height; //260
+                    maxHeight = 400;
+                    gotoHeight = 260;
+
+                    rindow.resizable('option', {
+                        minHeight:minHeight,
+                        maxHeight:maxHeight
+                    });
+
                     switch (panel) {
                         case "contentPanel":
                             width = 200;
-                            minHeight = "125px";
 
                             // corner logic
                             $thisPanel.addClass('rdr_brtl').addClass('rdr_brbl');
@@ -3864,7 +3866,6 @@ function readrBoard($R){
 
                         case "whyPanel":
                             width = ((num_columns-1)*200);
-                            minHeight = "125px";
 
                             // corner logic
                             $thisPanel.addClass('rdr_brtl').addClass('rdr_brbl');
@@ -3887,11 +3888,18 @@ function readrBoard($R){
                     else{
                         rindow.css('background-position',rindow_bg+'px');
                         rindow.animate({
-                            width: width +'px'
-                        }, rindow.settings.animTime ).animate({
-                            height:minHeight
-                        }, rindow.settings.animTime, function() {
-                            RDR.rindow.checkHeight( rindow, 0, panel );
+                            width: width
+                        }, rindow.settings.animTime, function(){
+
+                            var height = $(this).height();
+                            gotoHeight = gotoHeight ? gotoHeight : ( height < minHeight ) ? minHeight : (height > maxHeight) ? maxHeight : null;
+                            if( gotoHeight ){
+                                $(this).animate({
+                                    height:gotoHeight
+                                }, rindow.settings.animTime, function(){
+                                    RDR.rindow.checkHeight( rindow );
+                                });
+                            }
                         });
                     }
                     
@@ -3905,6 +3913,12 @@ function readrBoard($R){
                     
                 }              
 			},
+            comment_panel: {
+                //RDR.actions.comment_panel:
+                make: function(hash, rindow, tag ){
+                    //todo: add this and break out duplicate comment panel stuff
+                }
+            },
             content_panel: {
                 //RDR.actions.content_panel:
                 make: function(content_node, tag, hash, rindow){
@@ -4107,7 +4121,7 @@ function readrBoard($R){
                         }
                     });
 
-                    var $tagTooltip = (args.actionType == "react") ? $('<div class="rdr_help">Add your own</div>'):$('<div class="rdr_help">Add a tag</div>');
+                    var $tagTooltip = (args.actionType == "react") ? $('<div class="rdr_help">Add your own</div>') : $('<div class="rdr_help">Add a tag</div>');
                     $freeformTagDiv.append($tagTooltip);
                     $customTagBox.append($freeformTagDiv);
 
@@ -4390,7 +4404,7 @@ function readrBoard($R){
                 var $whyPanel_body = rindow.find('div.rdr_whyPanel div.rdr_body');
                 var $whyPanel_body_jsp = $whyPanel_body.find('.jspPane');
                 
-                var $whyPanel_tagCard = $('<div />').addClass('rdr_whyPanel_tagCard rdr_whyPanel_tagCard'+tag.id);
+                var $whyPanel_tagCard = $('<div />').addClass('rdr_tagCard rdr_tagCard'+tag.id);
                 //$whyPanel_body.empty();
 
                 
@@ -4422,7 +4436,7 @@ function readrBoard($R){
                     $whyPanel_tagCard.appendTo($whyPanel_body);
                 }
                 
-                $whyPanel_tagCard.siblings('.rdr_whyPanel_tagCard').hide();
+                $whyPanel_tagCard.siblings('.rdr_tagCard').hide();
 
                 //todo: combine this with the tooltip for the tags
                 var helpText = "because...";

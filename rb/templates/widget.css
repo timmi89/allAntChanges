@@ -233,10 +233,7 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_whyPanel div.rdr_header      {background:url({{ STATIC_URL }}widget/images/header_arrow.png) 0px -1px no-repeat #fff;}
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap {background:none; border-bottom:1px solid #bababa; bottom:0; padding-bottom:3px; text-align:center; width:100%; position:absolute; }
 #rdr_sandbox div.rdr div.rdr_sntPnl h1                               {padding:0 !important; }
-#rdr_sandbox div.rdr div.rdr_sntPnl .rdr_pnlShadow                   {height:100%; width:16px; position:absolute; z-index:5; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; display:none;}
 
-#rdr_sandbox div.rdr .rdr_leftShadow {-moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; }
-#rdr_sandbox div.rdr .rdr_leftShadow .rdr_content.rdr_leftShadow {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; }
 
 /*
 #rdr_sandbox div.rdr div.rdr_selectedTextPanel div.rdr_body div.rdr_selected     {font-family:Georgia; font-size:14px; padding:7px; background:#f2cfcf; display:block; position:relative; }
@@ -249,7 +246,6 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr div.rdr_reactionPanel div.rdr_body .jspPane,
 #rdr_sandbox div.rdr div.rdr_contentPanel div.rdr_body .jspPane      {width:200px !important; margin: 0 !important;}
 #rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_body .jspPane      {width:250px !important; margin: 0 !important;}
-#rdr_sandbox div.rdr div.jspContainer                           {height:100% !important;}
 
 
 #rdr_sandbox div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body  {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; background:url({{ STATIC_URL }}widget/images/rindow_bg_column.png);}
@@ -277,7 +273,7 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_submitTag           {width:100%; text-align:right;}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_submitTag button    {}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_commentButton       {width:100%;}
-#rdr_sandbox div.rdr div.rdr_sntPnl .leaveComment            {height:67px; margin-top:5px; max-width:94%; font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;}
+#rdr_sandbox div.rdr div.rdr_sntPnl .leaveComment            {height:80px; margin-top:5px; max-width:94%; font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_tagFeedback         {background: none repeat scroll 0 0 #ddd; border: 1px solid #bbb; padding: 5px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_tagFeedback strong  {font-weight:bold; color:#008be4;}
 
@@ -325,7 +321,7 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 $('div.rdr_tempUserMsg').animate({bottom:'-48px'});
 */
 
-#rdr_sandbox div.rdr ul.rdr_tags         {list-style-type:none !important; padding:0 0 10px 0 !important; margin:0 !important; }
+#rdr_sandbox div.rdr ul.rdr_tags         {list-style-type:none !important; padding: 0 !important; margin:0 !important; }
 #rdr_sandbox div.rdr ul.rdr_tags li                  { border-color: transparent !important; border-style: solid !important; border-width: 1px 0 !important; padding:5px 0 !important; margin:0 !important; position:relative !important; overflow:auto !important; background:none; text-align:left !important;}
 
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_hover, /* safari/chrome kludge -- :hover isn't working here */
@@ -360,7 +356,26 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected .rdr_leftBox:hover,
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged .rdr_leftBox:hover    {background-position:-70px -3px;}
 #rdr_sandbox div.rdr div.rdr_new ul.rdr_tags li.rdr_selected     {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
-#rdr_sandbox div.rdr div.rdr_sntPnl .rdr_borderLine                  {    background:#bbb; clear:both; height:100%; left:38px; position:absolute; width:1px; z-index:6;}
+
+
+#rdr_sandbox div.rdr div.rdr_panelOverlay { z-index: 6; position:absolute;}
+#rdr_sandbox div.rdr .rdr_reactionPanel div.rdr_panelOverlay { 
+    background:#bbb; clear:both; height:100%; left:38px; position:absolute; width:1px;
+}
+
+#rdr_sandbox div.rdr .rdr_contentPanel div.rdr_panelOverlay { 
+    height:100%;  
+    width: 10px;
+    opacity:0.5;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter:alpha(opacity=50);
+    -moz-opacity:0.5;
+    -khtml-opacity:0.5;
+
+    -moz-box-shadow: 5px 0 5px #aaa inset;
+    -webkit-box-shadow: 5px 0 5px #aaa inset;
+    box-shadow: 5px 0 5px #aaa inset;
+}
 
 #rdr_sandbox div.rdr ul.rdr_tags li div.rdr_leftBox.rdr_kill_bg {background:none !important;}
 
@@ -380,7 +395,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 /* contentSet */
 #rdr_sandbox div.rdr div.rdr_contentSet {margin-bottom:10px;}
-#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader                        {background:#e1e1e1; font-size:11px; font-weight:bold; padding:3px 5px; overflow:auto;}
+#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader                        {background:#e1e1e1; font-size:11px; font-weight:bold; padding:3px 8px; overflow:auto;}
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag              {margin:0; background:#ccc; font:inherit; color:#666; padding:0; }
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag:hover,
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag.rdr_hover        {background:#fff; }
@@ -440,10 +455,10 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 #rdr_sandbox div.rdr div.rdr_share_social                   { border-bottom: 1px solid #CCCCCC; margin: 3px 0 0; padding: 2px 0; }
 #rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; margin:16px 0 0 0; }
-#rdr_sandbox div.rdr_whyPanel_tagCard                       { padding: 8px 12px 0; }
-#rdr_sandbox div.rdr_whyPanel_tagCard .rdr_undo_link        { text-decoration; underline; float:right;}
-#rdr_sandbox div.rdr_whyPanel_tagCard  h4                   { position: relative; font-weight:bold; }
-#rdr_sandbox div.rdr_whyPanel_tagCard  div.rdr_share_social h4 {
+#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard                       { padding: 8px 12px 0; }
+#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard .rdr_undo_link        { text-decoration; underline; float:right; color: #008BE4;}
+#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard  h4                   { position: relative; font-weight:bold; }
+#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard  div.rdr_share_social h4 {
     float: left;
     top: 11px;
 }
