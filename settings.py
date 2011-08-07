@@ -1,5 +1,9 @@
 # Django settings for readrboard project.
-DEBUG = True
+import os
+
+if os.uname()[1] == "domU-12-31-39-04-0E-F6": DEBUG = True
+else: DEBUG = False
+
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
