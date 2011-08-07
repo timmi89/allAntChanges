@@ -141,6 +141,7 @@ def cards(request, **kwargs):
 def sidebar(request, user_id=None, short_name=None):
     context = {}
     cookie_user = request.COOKIES.get('user_id', None)
+    
     if cookie_user:
         logged_in_user = User.objects.get(id=cookie_user)
         context['logged_in_user'] = logged_in_user

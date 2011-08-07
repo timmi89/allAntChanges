@@ -1,86 +1,16 @@
 {% extends "base.html" %}
 
 {% block sidebarContent %}
-<div id="sidebar"></div>
+<div id="sidebar">
+  {% include "sidebar.html" %}
+</div>
 {% endblock sidebarContent %}
 
 {% block mainContent %}
 <h1>Latest Reactions</h1>
-<div id="cards"></div>
+<div id="cards">
+  {% include "interactions.html" %}
+</div>
 {% endblock mainContent %}
 
-{% block pageJS %}
-<script type="text/javascript">
-$.ajax({
-    {% if user_id %}
-      {% if kwargs %}
-        url: "/interactions/user/{{ user_id }}/{{ kwargs.view }}/?{% if query_string %}s={{ query_string }}{% endif %}&{% if page_num %}page_num={{ page_num }}{% endif %}",
-      {% else %}
-        url: "/interactions/user/{{ user_id }}/?{% if query_string %}s={{ query_string }}{% endif %}&{% if page_num %}page_num={{ page_num }}{% endif %}",
-      {% endif %}
-    {% else %}
-      {% if short_name %}
-        {% if kwargs.view %}
-          url: "/interactions/group/{{ short_name }}/{{ kwargs.view }}/?{% if query_string %}s={{ query_string }}{% endif %}&{% if page_num %}page_num={{ page_num }}{% endif %}",
-        {% else %}
-          url: "/interactions/group/{{ short_name }}/?{% if query_string %}s={{ query_string }}{% endif %}&{% if page_num %}page_num={{ page_num }}{% endif %}",
-        {% endif %}
-      {% else %}
-      url: "/cards/",
-      {% endif %}
-    {% endif %}
-    type: "get",
-    success: function(response) {
-        $('#cards').html( response );
-    }
-});
-</script>
-{% endblock %}
-{% block sidebarJS %}
-<script type="text/javascript">
-$.ajax({
-    {% if user_id %}
-    url: "/sidebar/user/{{ user_id }}/",
-    {% else %}
-      {% if short_name %}
-        url: "/sidebar/group/{{ short_name }}/",
-      {% else %}
-        url: "/sidebar/",
-      {% endif %}
-    {% endif %}
-    type: "get",
-    success: function(response) {
-        console.log(response);
-        $('#sidebar').html( response );
-    }
-});
 
-</script>
-{% endblock %}
-
-<!--
-<h3>Interactions</h3>
-<ul>
-{% for interaction in interactions %}
-<li>
-	{% if interaction.user.social_user %}
-        <img src = "{{ interaction.user.social_user.img_url }}">
-    {% else %}
-        <img src = "/static/images/anonymousplode.png">
-    {% endif %} 
-	<strong>
-    {% if interaction.user.social_user %}
-        <a href = "/profile/{{ interaction.user.id }}/">{{ interaction.user.first_name }} {{ interaction.user.last_name }}</a>
-    {% else %}
-        Some Anonymous Dude
-    {% endif %}
-    </strong>
-		{% if interaction.interaction_node.kind == "tag" %} tagged
-	{% else %} commented
-	{% endif %}
-	<em>"{{ interaction.interaction_node.body }}"</em> <strong>on</strong> "{{ interaction.content.body|slice:":50"}}"
-    <div class="context"><em>Context</em>: {{ interaction.container.body }}</div>
-</li>
-{% endfor %}
-</ul>
--->
