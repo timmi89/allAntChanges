@@ -56,31 +56,22 @@ def xdm_status(request):
 
 def main(request, user_id=None, short_name=None, **kwargs):
     cookies = request.COOKIES
-    query_string = request.GET.get('s', None)
-    page_num = request.GET.get('page', None)
+    page = request.GET.get('page', None)
+    page_num = request.GET.get('page_num', 1)
     cookie_user_id = cookies.get('user_id')
     context = {
         'fb_client_id': FACEBOOK_APP_ID,
         'user_id': user_id,
         'short_name': short_name,
-        'query_string': query_string,
         'kwargs': kwargs,
         'page_num': page_num
     }
 
     if cookie_user_id:
-        user = User.objects.get(id=cookie_user_id)
-        context['user'] = user
-
-    return render_to_response("index.html", context, context_instance=RequestContext(request))
-
-def interactions(request, user_id=None, short_name=None, **kwargs):
-    context = {}
-    cookie_user = request.COOKIES.get('user_id', None)
-    if cookie_user:
-        logged_in_user = User.objects.get(id=cookie_user)
-        context['logged_in_user'] = logged_in_user
-    
+        cookie_user = User.objects.get(id=cookie_user_id)
+        context['cookie_user'] = cookie_user
+        
+    """ For interactions.html """
     interactions = Interaction.objects.all()
 
     # Search interaction node body and content body
@@ -91,18 +82,23 @@ def interactions(request, user_id=None, short_name=None, **kwargs):
             Q(interaction_node__body__icontains=query_string) |
             Q(content__body__icontains=query_string)
         )
-    
+
     context['query_string'] = query_string
-    
+
     if user_id:
         user = User.objects.get(id=user_id)
         interactions = interactions.filter(user=user_id)
         context['user'] = user
-        
+
     if short_name:
         group = Group.objects.get(short_name=short_name)
         interactions = interactions.filter(page__site__group__short_name=short_name)
         context['group'] = group
+        
+    if page:
+        page = Page.objects.get(id=page)
+        interactions = interactions.filter(page=page)
+        context['page'] = page
 
     if kwargs and 'view' in kwargs:
         view = kwargs['view']
@@ -115,15 +111,17 @@ def interactions(request, user_id=None, short_name=None, **kwargs):
 
     interactions_paginator = Paginator(interactions, 20)
 
-    try: page_number = int(request.GET.get('page_num', 1))
+    try: page_number = int(page_num)
     except ValueError: page_number = 1
 
     try: current_page = interactions_paginator.page(page_number)
     except (EmptyPage, InvalidPage): current_page = paginator.page(paginator.num_pages)
 
     context['current_page'] = current_page
-        
-    return render_to_response("interactions.html", context, context_instance=RequestContext(request))
+    
+    """ For sidebar.html """
+
+    return render_to_response("index.html", context, context_instance=RequestContext(request))
 
 def cards(request, **kwargs):
     # Get interaction set based on filter criteria
@@ -137,6 +135,9 @@ def cards(request, **kwargs):
     cards = [Card(page, interactions.filter(page=page)) for page in pages]
     context = {'cards': cards}
     return render_to_response("cards.html", context, context_instance=RequestContext(request))
+
+def interactions(request):
+    pass
 
 def sidebar(request, user_id=None, short_name=None):
     context = {}

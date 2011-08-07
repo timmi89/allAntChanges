@@ -60,16 +60,15 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
       <a href="#"><img src="{{ STATIC_URL }}site/images/gear.png"/></a>
       <nav>
       <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/preferences/">Preferences</a></li>
-          <li><a href="/about/">About</a></li>
           <li><a href="/logout/">Logout</a></li>
+          <!-- <li><a href="/preferences/">Preferences</a></li> -->
+          <li><a href="/about/">About</a></li>
       </ul>
     </nav>
     </div>
     <div id="user">
         {% if user %}
-          <strong><img src="{{ user.social_user.img_url }}?type=square"/> <a href="/user/{{ user.id }}">{{ user.first_name }}</a></strong>
+          <img src="{{ cookie_user.social_user.img_url }}?type=square"/><strong><a href="/user/{{ cookie_user.id }}">{{ cookie_user.social_user.full_name }}</a></strong>
         {% else %}
           <fb:login-button>
         {% endif %}
