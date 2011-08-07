@@ -32,7 +32,11 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 <link rel="stylesheet" href="{{ STATIC_URL }}global/css/readrleague.css">
 <link rel="stylesheet" href="{{ STATIC_URL }}site/css/style.css?v=1">
 
-<!-- JavaScript at bottom except for Modernizr -->
+
+<script src="{{ STATIC_URL }}global/js/jquery-1.6.min.js"></script>
+<script src="{{ STATIC_URL }}site/js/readr_scripts.js"></script>
+<script src="/static/widget/js/jquery.json-2.2.min.js" type="text/javascript"></script>
+<script src="/static/widget/js/jquery.cookie.js" type="text/javascript"></script>
 <!-- [porter] using modernizr 2, new as of 6/1, even though 320andup ships with 1.7 -->
 <script src="{{ STATIC_URL }}site/320/js/libs/modernizr-2.uncompressed.js"></script>
 
@@ -60,18 +64,21 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
       <a href="#"><img src="{{ STATIC_URL }}site/images/gear.png"/></a>
       <nav>
       <ul>
-          <li><a href="/logout/">Logout</a></li>
+          {% if cookie_user.id %}
+          <li><a href="javascript:void(0);" onclick="RDRAuth.doFBlogout();">Logout</a></li>
+          {% endif %}
           <!-- <li><a href="/preferences/">Preferences</a></li> -->
           <li><a href="/about/">About</a></li>
       </ul>
     </nav>
     </div>
     <div id="user">
-        {% if user %}
+        <div id="fb-logged-in" {% if not cookie_user.id %}style="display:none;"{% endif %}>
           <img src="{{ cookie_user.social_user.img_url }}?type=square"/><strong><a href="/user/{{ cookie_user.id }}">{{ cookie_user.social_user.full_name }}</a></strong>
-        {% else %}
-          <fb:login-button>
-        {% endif %}
+        </div>
+        <div id="fb-logged-out" {% if cookie_user %}style="display:none;"{% endif %}>
+          <fb:login-button onlogin="RDRAuth.checkFBStatus({ requesting_action:'site_login'});">
+        </div>
       </div>
     <div id="search">
       <form method="get" id="searchform" action="">
@@ -112,11 +119,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     });
   </script>
 
-  <script src="{{ STATIC_URL }}global/js/jquery-1.6.min.js"></script>
-  <script src="{{ STATIC_URL }}site/js/readr_scripts.js"></script>
-  <script src="/static/widget/js/jquery.json-2.2.min.js" type="text/javascript"></script>
-  <script src="/static/widget/js/jquery.cookie.js" type="text/javascript"></script>
-  <script>
+  <script type="text/javascript">
     var date = new Date();
     // TODO use the following line.  it creates a cachebuster that represents the current day/week/month
     // var cachebuster = String( parseInt( date.getDate() / 7 )+1 )+String(date.getMonth()) + String(date.getYear());
@@ -124,6 +127,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     document.write(
       unescape( '%3Cscript src="/static/widget/js/readr_user_auth.js?' + cachebuster + '" type="text/javascript"%3E%3C/script%3E' )
     );
+
   </script>
   
   <!-- [porter] 320andup stuff -->
@@ -149,12 +153,7 @@ s.parentNode.insertBefore(g,s)}(document,'script'));
 <noscript>Your browser does not support JavaScript!</noscript>
 
 <script type="text/javascript">
-if ( window.location.hash.indexOf('dailycandy') != -1 ) {
-  $('html').addClass('dailycandy');
-}
-if ( window.location.hash.indexOf('techcrunch') != -1 ) {
-  $('html').addClass('techcrunch');
-}
+  RDRAuth.checkFBStatus({ requesting_action:'site_load'});
 </script>
 
 {% block pageJS %}
