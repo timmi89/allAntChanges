@@ -69,7 +69,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     </div>
     <div id="user">
         {% if user %}
-          <strong><img src="{{ user.social_user.img_url }}?type=square"/> <a href="/user/{{ user.id }}">{{ user.first_name }}</a></strong>
+          <img src="{{ user.social_user.img_url }}?type=square"/><strong><a href="/user/{{ user.id }}">{{ user.social_user.full_name }}</a></strong>
         {% else %}
           <fb:login-button>
         {% endif %}

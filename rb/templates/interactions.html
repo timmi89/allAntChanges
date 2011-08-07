@@ -5,7 +5,7 @@
 <table class="card" border="0" cellspacing="0" cellpadding="0">
   <thead>
     <th class="column1"><img alt="{{ page.grouper.site.group.name }}" src="{% get_static_prefix %}{{ page.grouper.site.group.logo_url_sm }}"></th>
-    <th class="column2">{{ page.grouper.title }}</th>
+    <th class="column2"><a href="?page={{ page.grouper.id }}">{{ page.grouper.title }}</a></th>
   </thead>
   {% for interaction in page.list %}
   <tbody>
@@ -68,13 +68,13 @@
 <div class="pagination">
   <span class="step-links">
     {% if current_page.has_previous %}
-      <a href="?{% if query_string %}s={{ query_string }}{% endif %}&page={{ current_page.previous_page_number }}">prev</a>
+      <a href="?{% if query_string %}s={{ query_string }}{% endif %}&page_num={{ current_page.previous_page_number }}">prev</a>
     {% endif %}
     <span class="current">
       Page {{ current_page.number }} of {{ current_page.paginator.num_pages }}
     </span>
     {% if current_page.has_next %}
-      <a href="?{% if query_string %}s={{ query_string }}{% endif %}&page={{ current_page.next_page_number }}">next</a>
+      <a href="?{% if query_string %}s={{ query_string }}{% endif %}&page_num={{ current_page.next_page_number }}">next</a>
     {% endif %}
   </span>
 </div>
