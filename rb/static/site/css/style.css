@@ -240,6 +240,67 @@ caption { background-color:transparent; }
 
 /* FORMS (See css/mylibs/forms.css) */
 
+p, h1, form {border:0; margin:0; padding:0;}
+.spacer{clear:both; height:1px;}
+
+/* ----------- My Form ----------- */
+form.in-page {
+	margin:0 auto;
+	width:480px;
+	padding:10px;
+}
+
+
+form.in-page {
+	border:solid 2px #b7ddf2;
+	background:#ebf4fb;
+}
+
+form.in-page h3 {
+	font-size:14px;
+	font-weight:bold;
+	margin-left:10px;
+	padding-top:10px;
+	margin-bottom:8px;
+	clear:both;
+	border-top:1px solid #b7ddf2;
+}
+
+form.in-page label {
+	display:block;
+	font-weight:bold;
+	text-align:right;
+	width:140px;
+	float:left;
+	font-size:12px; 
+}
+
+form.in-page label span {
+	color:#666666;
+	display:block;
+	font-size:11px;
+	font-weight:normal;
+	text-align:right;
+	width:140px;
+}
+
+form.in-page input {
+	float:left;
+	font-size:12px;
+	padding:4px 2px;
+	border:solid 1px #aacfe4;
+	width:200px;
+	margin:2px 0 20px 10px;
+}
+form.in-page input[type="checkbox"] {
+
+}
+
+form.in-page button {
+	clear:both;
+	margin-left:150px;
+}
+
 /* GLOBAL OBJECTS */
 
 .clearfix { zoom:1; }
@@ -457,22 +518,6 @@ section[role="content"]	{
 	position:relative;
 	box-shadow:0px 0 4px 2px #004b5b;
 }
-html.dailycandy section[role="content"]	{
-	box-shadow:0px 0 4px 2px #b496a3;
-}
-html.techcrunch section[role="content"]	{
-	box-shadow:0px 0 4px 2px #666;
-}
-
-html.dailycandy {
-	overflow-y:scroll;
-	background:url(/static/demo/images/dc_bg.png) top left fixed repeat-x #fff;
-}
-
-html.techcrunch {
-	overflow-y:scroll;
-	background:url(/static/demo/images/tc_bg.png) top left fixed repeat-x #fff;
-}
 
 /* MAIN */
 section[role="main"] 	{ 
@@ -496,18 +541,6 @@ section[role="main"] 	{
     margin-right: 180px;
 }
 /* End Tyler's Crap */
-
-html.dailycandy section[role="main"] {
-	background:#f1d6eb;
-}
-html.techcrunch section[role="main"] {
-	background:#d2f0d2;
-}
-html.dailycandy section[role="main"] .card tbody .column1      {background:#f8ebf5;}
-html.techcrunch section[role="main"] .card tbody .column1      {background:#ecf9ec;}
-
-html.dailycandy section[role="main"] h1      {text-shadow:2px 2px 1px #F8EBF5;}
-html.techcrunch section[role="main"] h1      {text-shadow:2px 2px 1px #59c959;}
 
 section[role="main"] h1 	{font-family:Arial; font-size:28px; color:#6b6b6b; text-shadow:2px 2px 1px #dee7ed; font-weight:normal; padding:10px; margin:0;}
 
