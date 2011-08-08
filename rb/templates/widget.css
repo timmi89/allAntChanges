@@ -33,9 +33,12 @@ body{
     overflow:hidden;
 }
 
+/*we shouldn't need this anymore*/
+/*
 #rdr_sandbox div.rdr.rdr_window.rdr_columns {
     background:url({{ STATIC_URL }}widget/images/rindow_bg_column.png);
 }
+*/
 
 /* the action bar */
 #rdr_sandbox div.rdr_actionbar {
@@ -200,7 +203,14 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr li {background:none; padding:0;}
 
 /* the widget */
-#rdr_sandbox div.rdr div.rdr_sentimentBox                            {}
+#rdr_sandbox div.rdr div.rdr_sentimentBox {
+    height:100%;
+}
+
+#rdr_sandbox .rdr_window .rdr_contentSpace{
+    height:100%;
+}
+
 #rdr_sandbox div.rdr_header_overlay {
     position:absolute;
     z-index:100;
@@ -211,17 +221,19 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 }
 #rdr_sandbox div.rdr div.rdr_sntPnl                                  {float:left; position:relative; display:block; height:100%; overflow:hidden; /*width is reset with js - rindow.settings.pnlWidth */ }
 
-#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_body                     {width:100%; xheight:100%; z-index:3; overflow-x:hidden; overflow-y:hidden; padding:0; position:relative; min-height:125px;}
-#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header                   {background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:3; }
+#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_body_wrap               {
+    position:absolute; top:35px; bottom:10px; width:100%; z-index:3;
+}
+
+#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_body                     {width:100%; z-index:4; overflow-x:hidden; overflow-y:hidden; padding:0; position:relative; height:100%; outline:none;}
+
+#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header                   {background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:5; }
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("{{ STATIC_URL }}widget/images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header,
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_whyPanel div.rdr_header      {background:url({{ STATIC_URL }}widget/images/header_arrow.png) 0px -1px no-repeat #fff;}
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap {background:none; border-bottom:1px solid #bababa; bottom:0; padding-bottom:3px; text-align:center; width:100%; position:absolute; }
 #rdr_sandbox div.rdr div.rdr_sntPnl h1                               {padding:0 !important; }
-#rdr_sandbox div.rdr div.rdr_sntPnl .rdr_pnlShadow                   {height:100%; width:16px; position:absolute; z-index:5; -moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; display:none;}
-#rdr_sandbox div.rdr .rdr_leftShadow .rdr_selected .rdr_content.rdr_leftShadow,
-#rdr_sandbox div.rdr .rdr_leftShadow {-moz-box-shadow:20px 0px 20px -23px #aaa inset;-webkit-box-shadow:20px 0px 20px -23px #aaa inset;box-shadow:20px 0px 20px -23px #aaa inset; }
-#rdr_sandbox div.rdr .rdr_leftShadow .rdr_content.rdr_leftShadow {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; }
+
 
 /*
 #rdr_sandbox div.rdr div.rdr_selectedTextPanel div.rdr_body div.rdr_selected     {font-family:Georgia; font-size:14px; padding:7px; background:#f2cfcf; display:block; position:relative; }
@@ -229,39 +241,73 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr div.rdr_selectedTextPanel div.rdr_body  {background:#f0f0f0; -moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
 */
 
-#rdr_sandbox div.rdr div.rdr_reactionPanel                           {position:relative; z-index:20; width:200px; }
-#rdr_sandbox div.rdr div.rdr_reactionPanel div.rdr_body              {max-height:300px;}
-#rdr_sandbox div.rdr div.rdr_reactionPanel div.rdr_body .jspPane,
-#rdr_sandbox div.rdr div.rdr_contentPanel div.rdr_body .jspPane      {width:200px !important; margin: 0 !important;}
-#rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_body .jspPane      {width:250px !important; margin: 0 !important;}
+#rdr_sandbox div.rdr div.rdr_reactionPanel                          {position:relative; z-index:20; width:200px; background:white;}
+#rdr_sandbox div.rdr div.rdr_reactionPanel div.rdr_body             {}
+#rdr_sandbox div.rdr_contentSpace div.jspPane                       {margin: 0 !important; width:100% !important;}
+
+
 #rdr_sandbox div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body  {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; background:url({{ STATIC_URL }}widget/images/rindow_bg_column.png);}
 
-#rdr_sandbox div.rdr div.rdr_contentPanel                            {position:absolute; z-index:15; left:200px; width:200px; background:url({{ STATIC_URL }}widget/images/rindow_bg_column.png) repeat -650px 0;}
-#rdr_sandbox div.rdr div.rdr_contentPanel div.rdr_body               {width:200px; max-height:300px; }
+#rdr_sandbox div.rdr div.rdr_contentPanel                            {position:absolute; z-index:15; left:200px; background:#e9e9e9; width:200px;}
+#rdr_sandbox div.rdr div.rdr_contentPanel div.rdr_body               {}
 
-#rdr_sandbox div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:250px; background:url({{ STATIC_URL }}widget/images/rindow_bg_column.png) -200px 0; visibility:hidden;}
-#rdr_sandbox div.rdr.rdr_columns3 div.rdr_whyPanel                   {background-position:-850px 0;}
-#rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_body                   {width:250px; max-height:300px; }
+#rdr_sandbox div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:250px; background:#EEEEEE; visibility:hidden;}
+#rdr_sandbox div.rdr.rdr_columns3 div.rdr_whyPanel                   {width:250px;}
+#rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_body                   {}
 #rdr_sandbox div.rdr div.rdr_whyPanel hr                             {background: #ddd; border: none; clear: both; color: #ddd; float: none; height: 1px; margin: 10px 0; }
 
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_subHeader        {text-align:center; padding-top:5px;}
-#rdr_sandbox div.rdr div.rdr_sntPnl_padder                   {margin:0 15px; position:relative; overflow:hidden;}
+#rdr_sandbox div.rdr div.rdr_sntPnl_padder                   {position:relative; overflow:hidden;}
 #rdr_sandbox div.rdr div.rdr_sntPnl textarea,
 #rdr_sandbox div.rdr div.rdr_sntPnl input[type="text"]   { width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
-#rdr_sandbox div.rdr div.rdr_sntPnl button               {
+#rdr_sandbox div.rdr div.rdr_sntPnl button {
     border:1px solid #aaa; 
     -moz-border-radius:3px 3px 3px 3px; 
     -webkit-border-radius:3px 3px 3px 3px; 
     border-radius:3px 3px 3px 3px; 
-    -moz-box-shadow:0 -6px 11px -6px #ccc inset; -webkit-box-shadow:0 -6px 11px -6px #ccc inset; box-shadow:0 -6px 11px -6px #ccc inset; color:#454545; font-family:Arial; font-size:12px; padding:2px 5px; width:auto; cursor:pointer; float:right;margin-right:6px;margin-bottom:10px;}
-#rdr_sandbox div.rdr div.rdr_sntPnl_padder > div                 {margin:4px 0;}
-#rdr_sandbox div.rdr div.rdr_share_social                        {border-bottom:1px solid #aaa;}
+    -moz-box-shadow:0 -6px 11px -6px #ccc inset; -webkit-box-shadow:0 -6px 11px -6px #ccc inset; box-shadow:0 -6px 11px -6px #ccc inset; color:#454545; font-family:Arial; font-size:12px; padding:2px 5px; width:auto; cursor:pointer; float:right;margin-right:6px;margin-bottom:10px;
+}
+
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_submitTag           {width:100%; text-align:right;}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_submitTag button    {}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_commentButton       {width:100%;}
-#rdr_sandbox div.rdr div.rdr_sntPnl .leaveComment            {height:67px; margin-top:5px; max-width:92%;font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;}
-#rdr_sandbox div.rdr div.rdr_sntPnl .rdr_tagFeedback         {background: none repeat scroll 0 0 #ddd; border: 1px solid #bbb; margin: 5px 10px 0; padding: 5px;}
+#rdr_sandbox div.rdr div.rdr_sntPnl .leaveComment            {height:80px; margin-top:5px; max-width:94%; font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;}
+#rdr_sandbox div.rdr div.rdr_sntPnl .rdr_tagFeedback         {background: none repeat scroll 0 0 #ddd; border: 1px solid #bbb; padding: 5px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_tagFeedback strong  {font-weight:bold; color:#008be4;}
+
+#rdr_sandbox .rdr_tagBox  {}
+
+#rdr_sandbox div.rdr_window_dragHandle{
+    /*override the jquery ui hadle css*/
+    height:15px;
+    /*bottom:-5px;*/ /*this is built into the jquery css*/
+
+    opacity:0.1;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
+    filter:alpha(opacity=10);
+    -moz-opacity:0.1;
+    -khtml-opacity:0.1;
+    background: #bbbbbb;
+    /*
+    background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0, rgb(201,201,201)),
+    color-stop(0.40, rgb(255,255,255))
+    );
+    background-image: -moz-linear-gradient(center bottom , #AAAAAA 0%, #C9C9C9 40%);
+    */
+}
+
+#rdr_sandbox div.rdr_window_dragHandle.rdr_hover,
+#rdr_sandbox div.rdr_window.ui-resizable-resizing .rdr_window_dragHandle {
+    opacity:0.3;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
+    filter:alpha(opacity=30);
+    -moz-opacity:0.3;
+    -khtml-opacity:0.3;
+}
 
 #rdr_sandbox div.rdr div.rdr_tempUserMsg                     {position:absolute; z-index:50; bottom:0px; border-top:1px solid #aaa;background:#fff; -moz-box-shadow:0px -45px 48px -50px #53aed9 inset; -webkit-box-shadow:0px -45px 48px -50px #53aed9 inset; box-shadow:0px -45px 48px -50px #53aed9 inset; width:100%;}
 
@@ -273,16 +319,17 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 $('div.rdr_tempUserMsg').animate({bottom:'-48px'});
 */
 
-#rdr_sandbox div.rdr .rdr_tags           {padding:0 0 10px !important;}
-#rdr_sandbox div.rdr ul.rdr_tags         {list-style-type:none !important; padding:0 !important; margin:0 !important; }
+#rdr_sandbox div.rdr ul.rdr_tags         {list-style-type:none !important; padding: 0 !important; margin:0 !important; }
 #rdr_sandbox div.rdr ul.rdr_tags li                  { border-color: transparent !important; border-style: solid !important; border-width: 1px 0 !important; padding:5px 0 !important; margin:0 !important; position:relative !important; overflow:auto !important; background:none; text-align:left !important;}
 
-#rdr_sandbox div.rdr ul.rdr_tags li:hover,
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_hover, /* safari/chrome kludge -- :hover isn't working here */
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected     {color:#008be4 !important; display:block !important; border-color: #bbb transparent #ddd !important; cursor: pointer !important;}
 
-#rdr_sandbox div.rdr ul.rdr_tags li.rdr_hover{background:#e4f0f7 !important;}
-#rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected{background:#D6e6F5 !important;}
+#rdr_sandbox div.rdr_window ul.rdr_tags li.rdr_hover,
+#rdr_sandbox div.rdr_window div.rdr_contentSet.rdr_hover {background:#e4f0f7 !important;}
+
+#rdr_sandbox div.rdr_window ul.rdr_tags li.rdr_selected,
+#rdr_sandbox div.rdr_window div.rdr_contentSet.rdr_selected{background:#D6e6F5 !important;}
 
 
 #rdr_sandbox div.rdr ul.rdr_tags li .rdr_leftBox     {width:38px; letter-spacing:1px; overflow:hidden; float:left; text-align:center; font-size:21px !important;  font-family:ReadrLeague, Arial, sans-serif !important; font-weight:normal !important; padding-top:2px; height:28px;}
@@ -307,11 +354,31 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected .rdr_leftBox:hover,
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged .rdr_leftBox:hover    {background-position:-70px -3px;}
 #rdr_sandbox div.rdr div.rdr_new ul.rdr_tags li.rdr_selected     {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
-#rdr_sandbox div.rdr div.rdr_sntPnl .rdr_borderLine                  {    background:#bbb; clear:both; height:100%; left:38px; position:absolute; width:1px; z-index:2;}
+
+
+#rdr_sandbox div.rdr div.rdr_panelOverlay { z-index: 6; position:absolute;}
+#rdr_sandbox div.rdr .rdr_reactionPanel div.rdr_panelOverlay { 
+    background:#bbb; clear:both; height:100%; left:38px; position:absolute; width:1px;
+}
+
+#rdr_sandbox div.rdr .rdr_contentPanel div.rdr_panelOverlay,
+#rdr_sandbox div.rdr .rdr_whyPanel div.rdr_panelOverlay { 
+    height:100%;  
+    width: 10px;
+    opacity:0.5;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter:alpha(opacity=50);
+    -moz-opacity:0.5;
+    -khtml-opacity:0.5;
+
+    -moz-box-shadow: 5px 0 5px #aaa inset;
+    -webkit-box-shadow: 5px 0 5px #aaa inset;
+    box-shadow: 5px 0 5px #aaa inset;
+}
 
 #rdr_sandbox div.rdr ul.rdr_tags li div.rdr_leftBox.rdr_kill_bg {background:none !important;}
 
-#rdr_sandbox div.rdr ul.rdr_preselected                              {font-size:24px !important; font-family:ReadrLeague, Arial, sans-serif !important; margin:-1px 0 0 !important; min-height:120px !important;}
+#rdr_sandbox div.rdr ul.rdr_preselected                              {font-size:24px !important; font-family:ReadrLeague, Arial, sans-serif !important; margin:-1px 0 0 !important; }
 #rdr_sandbox div.rdr ul.rdr_preselected .rdr_tagText                 {color:#666 !important;text-decoration:none !important; display:block !important; float:left !important; width: 120px !important; padding-left:5px !important; overflow-x: hidden !important; font-weight:normal !important; font-size:24px !important; font-family:ReadrLeague, Arial, sans-serif !important;}
 
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged                      {background:#e4f0f7;}
@@ -327,7 +394,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 /* contentSet */
 #rdr_sandbox div.rdr div.rdr_contentSet {margin-bottom:10px;}
-#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader                        {background:#e1e1e1; font-size:11px; font-weight:bold; padding:3px 5px; overflow:auto;}
+#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader                        {background:#e1e1e1; font-size:11px; font-weight:bold; padding:3px 8px; overflow:auto;}
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag              {margin:0; background:#ccc; font:inherit; color:#666; padding:0; }
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag:hover,
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag.rdr_hover        {background:#fff; }
@@ -339,7 +406,6 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content div.rdr_otherTags em         {color:#76a1ba; display: block; font-family:Arial; font-size:11px; margin-top:10px;}
 
 #rdr_sandbox div.rdr div.rdr_contentSet.rdr_selected div.rdr_contentHeader           {background:#d0dee6;}
-#rdr_sandbox div.rdr div.rdr_contentSet.rdr_selected div.rdr_content                 {background:#e4f0f7;}
 #rdr_sandbox div.rdr div.rdr_contentSet.rdr_selected div.rdr_contentHeader div.rdr_has_comment             {background-position: -46px -12px; text-indent: -9999px;}
 
 /* commentSet */
@@ -352,11 +418,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_commentSet a.rdr_tag div.rdr_tag_share          {margin-left:-12px;}
 #rdr_sandbox div.rdr div.rdr_commentSet a.rdr_tag:hover div.rdr_tag_share    {margin-left:3px;}
 
-
-#rdr_sandbox div.rdr div.rdr_commentBox   { clear:both; display:block; padding:0 10px 10px; margin:5px 0 0; }
-
 /* tags */
-
 #rdr_sandbox div.rdr a.rdr_tag     { display:block; background:#d0dee6; float:left; margin:0 10px 3px 0; font:normal 11px Arial; color:#678ca2; text-decoration:none; padding:1px; 
     -moz-border-radius:3px;
     -webkit-border-radius:3px;
@@ -389,13 +451,30 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_instruct    {color:#666; margin:5px 0;}
 #rdr_sandbox div.rdr div.rdr_help        {font:italic 11px Arial;color:#767676; xwidth:100%; position:absolute; top:12px; xtext-align:center; margin:0 !important;}
 
+
+#rdr_sandbox div.rdr div.rdr_share_social                   { border-bottom: 1px solid #CCCCCC; margin: 3px 0 0; padding: 2px 0; }
+#rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; margin:16px 0 0 0; }
+#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard                       { padding: 8px 12px 0; }
+#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard .rdr_undo_link        { text-decoration; underline; float:right; color: #008BE4;}
+#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard  h4                   { position: relative; font-weight:bold; }
+#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard  div.rdr_share_social h4 {
+    float: left;
+    top: 11px;
+}
+
 #rdr_sandbox div.rdr div.rdr_comment textarea    { width:100%; height:92px; font-size:14px; margin:5px 0; resize:none; padding:5px 5px 10px 5px;}
 #rdr_sandbox div.rdr div.rdr_comment div.rdr_charCount          {font-size:10px; font-style:italic; color:#999; float:left;}
 #rdr_sandbox div.rdr div.rdr_share_count     { color:#999999; font-style:italic; margin:-3px 0 5px; }
 
-#rdr_sandbox div.rdr ul.shareLinks           {padding:2px; margin:0;}
+#rdr_sandbox div.rdr ul.shareLinks {
+    display: block;
+    float: left;
+    margin: 0;
+    top: 0;
+    padding: 0 0 0 8px;
+}
 #rdr_sandbox div.rdr ul.shareLinks li        {padding:5px; display:inline-block; list-style:none;}
-#rdr_sandbox div.rdr ul.shareLinks img       {width:30px;}
+#rdr_sandbox div.rdr ul.shareLinks img       {width:25px; margin:0 !important;}
 
 /* forms */
 #rdr_sandbox div.rdr textarea,
@@ -478,18 +557,19 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 /*style for our widget components like the actionbar, indicator details etc.  Does rounded cornders, shadow, etc.*/
 #rdr_sandbox .rdr_widget{
-    -moz-box-shadow:0 0 10px 1px #aaa  !important;
-    -webkit-box-shadow:0 0 10px 1px #aaa  !important;
-    box-shadow:0 0 10px 1px #aaa  !important;
-    -moz-border-radius:8px  !important;
-    -webkit-border-radius:8px  !important;
-    border-radius:8px  !important;
+    -moz-box-shadow:0 0 10px 1px #aaa !important;
+    -webkit-box-shadow:0 0 10px 1px #aaa !important;
+    box-shadow:0 0 10px 1px #aaa !important;
+
+    -moz-border-radius:8px !important;
+    -webkit-border-radius:8px !important;
+    border-radius:8px !important;
 }
 /*rdr_widget_bar overrides rdr_widget*/
 #rdr_sandbox .rdr_widget_bar{
-    -moz-border-radius:5px  !important;
-    -webkit-border-radius:5px  !important;
-    border-radius:5px  !important;
+    -moz-border-radius:5px !important;
+    -webkit-border-radius:5px !important;
+    border-radius:5px !important;
 }
 
 /* round those corners */
