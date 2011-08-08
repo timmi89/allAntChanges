@@ -113,12 +113,12 @@ ol,
 ul, 
 dl, 
 address { 
-margin-bottom:1.5em; 
+/* margin-bottom:1.5em; */
 font-size:1em; /* 16 / 16 = 1 */ }
 
 ul, 
 ol { 
-margin:0 0 1.5em -24px; 
+margin:0 0 0 -24px; 
 padding-left:24px; }
 
 ul { 

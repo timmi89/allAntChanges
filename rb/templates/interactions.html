@@ -18,7 +18,7 @@
           {{ interaction.human_kind }}
         {% endif %}
       </div>
-      {% if user and interaction.kind = 'tag' and logged_in_user.social_user.admin_approved and interaction.page.site.group.id == logged_in_user.social_user.group_admin.id %}
+      {% if profile_user and interaction.kind = 'tag' and cookie_user.social_user.admin_approved and interaction.page.site.group.id == cookie_user.social_user.group_admin.id %}
       <div class="block_content">
         <a href="javascript:void(0);" onclick="RB.admin.blockContent({{interaction.id}});">
           {% if interaction.approved %}
@@ -54,11 +54,20 @@
           {{ interaction.interaction_node.body }}
           <div class="quote close">"</div>
         </div>
-        {% if user and logged_in_user.social_user.admin_approved and interaction.page.site.group.id == logged_in_user.social_user.group_admin.id %}
+        {% if profile_user and logged_in_user.social_user.admin_approved and interaction.page.site.group.id == logged_in_user.social_user.group_admin.id %}
         <div class="block_content"><a href="javascript:void(0);" onclick="RB.admin.blockContent({{interaction.id}});">Block comment</a></div>
         {% endif %}
       </div>
     </div>
+    {% endif %}
+    
+    {% if index %}
+      <h5>Other Reactions</h5>
+      <ul class="other_reactions">
+        {% for other_tag in interaction.related_tags %}
+            <li>{{ other_tag.body }}</li>
+        {% endfor %}
+      </ul>
     {% endif %}
     </td>
   </tbody>

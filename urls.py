@@ -20,27 +20,13 @@ urlpatterns = patterns('',
   url(r'^s/(?P<short>[0-9a-zA-Z])+/$', 'rb.views.expander'),
 
   # For main website
-  url(r'^$', 'rb.views.main'),
+  url(r'^$', 'rb.views.main', kwargs={"view":"index"}),
   url(r'^tags/$', 'rb.views.main', kwargs={"view":"tags"}),
   url(r'^comments/$', 'rb.views.main', kwargs={"view":"comments"}),
   url(r'^shares/$', 'rb.views.main', kwargs={"view":"shares"}),
   
   url(r'^settings/$', 'rb.views.settings'),
   url(r'^settings/(?P<short_name>[\w\-]+)/$', 'rb.views.settings'),
-
-  url(r'^cards/$', 'rb.views.cards'),
-  url(r'^interactions/user/(?P<user_id>\d+)/$', 'rb.views.interactions'),
-  url(r'^interactions/user/(?P<user_id>\d+)/tags/$', 'rb.views.interactions', kwargs={"view":"tags"}),
-  url(r'^interactions/user/(?P<user_id>\d+)/comments/$', 'rb.views.interactions', kwargs={"view":"comments"}),
-  url(r'^interactions/user/(?P<user_id>\d+)/shares/$', 'rb.views.interactions', kwargs={"view":"shares"}),
-  url(r'^interactions/user/(?P<user_id>\d+)/bookmarks/$', 'rb.views.interactions', kwargs={"view":"bookmarks"}),
-
-  url(r'^interactions/group/(?P<short_name>[\w\-]+)/$', 'rb.views.interactions'),
-  url(r'^interactions/group/(?P<short_name>[\w\-]+)/not_approved/$', 'rb.views.interactions', kwargs={"view":"not_approved"}),
-  url(r'^interactions/group/(?P<short_name>[\w\-]+)/tags/$', 'rb.views.interactions', kwargs={"view":"tags"}),
-  url(r'^interactions/group/(?P<short_name>[\w\-]+)/comments/$', 'rb.views.interactions', kwargs={"view":"comments"}),
-  url(r'^interactions/group/(?P<short_name>[\w\-]+)/shares/$', 'rb.views.interactions', kwargs={"view":"shares"}),
-  url(r'^interactions/group/(?P<short_name>[\w\-]+)/bookmarks/$', 'rb.views.interactions', kwargs={"view":"bookmarks"}),
 
   url(r'^user/(?P<user_id>\d+)/$', 'rb.views.main'),
   url(r'^user/(?P<user_id>\d+)/tags/$', 'rb.views.main', kwargs={"view":"tags"}),

@@ -39,37 +39,37 @@ html.dailycandy #sidebar h3[role="profile_section_header"]	{display:block;}
 	<img src="{% get_static_prefix %}{{ group.logo_url_lg }}" />
 </div>
 {% endif %}
-{% if user %}
-<div id="user_data">
-  <img src="{{ user.social_user.img_url }}?type=large">
-  <h3>{{ user.social_user.full_name }}</h3>
-  {% if cookie_user.id = user.id %}
-    <label for="private_profile">
-      <input type="checkbox" id="private_profile" {% if user.social_user.private_profile %}checked="checked"{% endif %} /> 
-      Profile is only visible to me
-    </label>
-  {% endif %}
-  <script type="text/javascript">
-  	$('#private_profile').click( function() {
-  		$('label[for="private_profile"] span').remove();
-  		var sendData = {
-  			user_id:RDRAuth.rdr_user.user_id, 
-  			readr_token:RDRAuth.rdr_user.readr_token,
-  			group_id:1
-  		};
-		$.ajax({
-		    url: "/api/privacy/toggle/",
-		    type: "get",
-		    data: {
-            	json: JSON.stringify(sendData)
-            },
-		    success: function(response) {
-		        $('label[for="private_profile"]').append('<span>Saved</span>');
-		    }
-		});
-  	});
+{% if profile_user %}
+  <div id="user_data">
+    <img src="{{ profile_user.social_user.img_url }}?type=large">
+    <h3>{{ profile_user.social_user.full_name }}</h3>
+    {% if cookie_user.id = profile_user.id %}
+      <label for="private_profile">
+        <input type="checkbox" id="private_profile" {% if user.social_user.private_profile %}checked="checked"{% endif %} /> 
+        Profile is only visible to me
+      </label>
+    {% endif %}
+    <script type="text/javascript">
+    	$('#private_profile').click( function() {
+    		$('label[for="private_profile"] span').remove();
+    		var sendData = {
+    			user_id:RDRAuth.rdr_user.user_id, 
+    			readr_token:RDRAuth.rdr_user.readr_token,
+    			group_id:1
+    		};
+  		$.ajax({
+  		    url: "/api/privacy/toggle/",
+  		    type: "get",
+  		    data: {
+              	json: JSON.stringify(sendData)
+              },
+  		    success: function(response) {
+  		        $('label[for="private_profile"]').append('<span>Saved</span>');
+  		    }
+  		});
+    	});
     </script>
-</div>
+  </div>
 {% endif %}
 <h4>Activity</h4>
 <ul role="filters" class="activity">

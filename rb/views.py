@@ -86,9 +86,9 @@ def main(request, user_id=None, short_name=None, **kwargs):
     context['query_string'] = query_string
 
     if user_id:
-        user = User.objects.get(id=user_id)
+        profile_user = User.objects.get(id=user_id)
         interactions = interactions.filter(user=user_id)
-        context['user'] = user
+        context['profile_user'] = profile_user
 
     if short_name:
         group = Group.objects.get(short_name=short_name)
@@ -100,12 +100,13 @@ def main(request, user_id=None, short_name=None, **kwargs):
         interactions = interactions.filter(page=page)
         context['page'] = page
 
-    if kwargs and 'view' in kwargs:
+    if 'view' in kwargs:
         view = kwargs['view']
         if view == 'tags': interactions=interactions.filter(kind="tag")
         if view == 'comments': interactions=interactions.filter(kind="com")
         if view == 'shares': interactions=interactions.filter(kind="shr")
         if view == 'bookmarks': interactions=interactions.filter(kind="bkm")
+        if view == 'index': context['index'] = True
         if view == 'not_approved': interactions=interactions.filter(approved=False)
         else: interactions=interactions.filter(approved=True)
 
@@ -118,8 +119,6 @@ def main(request, user_id=None, short_name=None, **kwargs):
     except (EmptyPage, InvalidPage): current_page = paginator.page(paginator.num_pages)
 
     context['current_page'] = current_page
-    
-    """ For sidebar.html """
 
     return render_to_response("index.html", context, context_instance=RequestContext(request))
 
@@ -140,26 +139,7 @@ def interactions(request):
     pass
 
 def sidebar(request, user_id=None, short_name=None):
-    context = {}
-    cookie_user = request.COOKIES.get('user_id', None)
-    
-    if cookie_user:
-        logged_in_user = User.objects.get(id=cookie_user)
-        context['logged_in_user'] = logged_in_user
-    
-    if short_name:
-        group = Group.objects.get(short_name=short_name)
-        context['group'] = group
-    
-    if user_id:
-        user = User.objects.get(id=user_id)
-        context['user'] = user
-                
-    return render_to_response(
-        "sidebar.html",
-        context,
-        context_instance=RequestContext(request)
-    )
+    pass
 
 class GroupForm(ModelForm):
     class Meta:
