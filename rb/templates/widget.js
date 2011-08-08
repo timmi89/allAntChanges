@@ -89,10 +89,10 @@ function readrBoard($R){
                 });
             },
             setHeight: function( $rindow, options ) {
-
+                //RDR.rindow.setHeight:
+                log('//RDR.rindow.setHeight:')
                 var settings = $.extend({}, this.defaults, options);
                 
-                //RDR.rindow.setHeight:
                 //
                 // log($tagBox.height());
 
@@ -120,10 +120,13 @@ function readrBoard($R){
 
                 if( !gotoHeight ) return;
                 if( !settings.animate ){
-                    rindow.height(gotoHeight);
+                    $rindow.height(gotoHeight);
                 }else{
-                    
+                    $rindow.animate({
+                        height:gotoHeight
+                    }, settings.animTime)
                 }
+                return gotoHeight;
             },
 			draw: function(options) {
                 //RDR.rindow.draw:
@@ -3221,7 +3224,7 @@ function readrBoard($R){
                 //todo: use the sentimentBox function instead..  Our Li events are gettign messed up with this duplication
                 var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new" />'),
 
-                    $reactionPanel = $('<div class="rdr_reactionPanel rdr_read rdr_sntPnl" />'),
+                    $reactionPanel = $('<div class="rdr_reactionPanel rdr_read rdr_sntPnl rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />'),
                     $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
                     $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
@@ -3383,7 +3386,16 @@ function readrBoard($R){
                     }
                 );
 
-                //todo: this should now point to rindow.setHeight which is in development
+                var rindowHeight = RDR.rindow.setHeight(rindow, {
+                    targetHeight: $tagBox.height() + 35 + 15, //+ header height + extra padding;
+                    animate:false
+                });
+
+                rindow.width(0).height(0).animate({
+                    width:200,
+                    height: rindowHeight
+                }, 200, 'swing');
+
             },
             viewReactionContent: function(tag, hash, rindow){
                 //temp reconnecting:
@@ -3659,7 +3671,7 @@ function readrBoard($R){
                 // build the ratePanel
 
                 var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new" />'),
-                    $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl" />'),
+                    $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />'),
                     $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
                     $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
                     $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />');
@@ -3710,71 +3722,78 @@ function readrBoard($R){
                     });
                 }
 
-                rindow.animate({
-                    width: rindow.settings.pnlWidth +'px',
-                    //rinh height: rindow.settings.height +'px'
-                }, rindow.settings.animTime, function() {
-					$(this).css('width','auto');
-                    // rindow.append($sentimentBox);
-                    rindow.find('div.rdr_contentSpace').append($sentimentBox);
-                    RDR.actions.sentimentPanel.addCustomTagBox({hash:hash, rindow:rindow, settings:settings, actionType:actionType});
-                    
 
-                    rindow.find('ul.rdr_preselected').delegate('li', 'click', function() {
-                        var $this = $(this);
+				$(this).css('width','auto');
+                // rindow.append($sentimentBox);
+                rindow.find('div.rdr_contentSpace').append($sentimentBox);
+                RDR.actions.sentimentPanel.addCustomTagBox({hash:hash, rindow:rindow, settings:settings, actionType:actionType});
+                
 
-                        //take care of case where the tag has already been clicked and submitted
-                        if ( $this.hasClass('rdr_tagged') ) {
-                            
-                            //clears the loader
-                            $this.find('div.rdr_leftBox').removeClass('rdr_kill_bg').html('');
+                rindow.find('ul.rdr_preselected').delegate('li', 'click', function() {
+                    var $this = $(this);
 
-                            $this.addClass('rdr_selected');
-                            $this.siblings().removeClass('rdr_selected');
-                            
-                            //todo: make this expand the panel again if we need it to.
-                            //RDR.actions.panel.expand("contentPanel", rindow);
-
-                            var tagID = $this.data('tag').id;
-
-                            //show the rdr_tagCard that belongs to this li tagButton, and hide sibling rdr_tagCards
-                            $this.find('.rdr_tagCard'+tagID).show()//chain
-                            .siblings('.rdr_tagCard').hide();
-
-                            //return false to prevent the rest of the interaction
-                            return false;
-                        }
-                        //else
-
-                        if ( ! $this.hasClass('rdr_customTagBox') ) {
-                            // $whyPanel.find('.rdr_body').html('');
+                    //take care of case where the tag has already been clicked and submitted
+                    if ( $this.hasClass('rdr_tagged') ) {
                         
-                            var newArgs;
-                            if (actionType == "react") {
-                                newArgs = { tag:$this, rindow:rindow, settings:settings, hash:hash };
+                        //clears the loader
+                        $this.find('div.rdr_leftBox').removeClass('rdr_kill_bg').html('');
 
-                                RDR.actions.interactions.ajax( newArgs, 'tag', 'create' );
+                        $this.addClass('rdr_selected');
+                        $this.siblings().removeClass('rdr_selected');
+                        
+                        //todo: make this expand the panel again if we need it to.
+                        //RDR.actions.panel.expand("contentPanel", rindow);
 
-                            } else {
-                                newArgs = { tag:$this, rindow:rindow, settings:settings, hash:hash };
-                                RDR.actions.interactions.ajax( newArgs, 'bookmark', 'create' );
-                                // RDR.actions.bookmarkStart({ tag:$this, rindow:rindow, settings:settings, actionType:"bookmark" });
+                        var tagID = $this.data('tag').id;
 
-                            }
+                        //show the rdr_tagCard that belongs to this li tagButton, and hide sibling rdr_tagCards
+                        $this.find('.rdr_tagCard'+tagID).show()//chain
+                        .siblings('.rdr_tagCard').hide();
+
+                        //return false to prevent the rest of the interaction
+                        return false;
+                    }
+                    //else
+
+                    if ( ! $this.hasClass('rdr_customTagBox') ) {
+                        // $whyPanel.find('.rdr_body').html('');
+                    
+                        var newArgs;
+                        if (actionType == "react") {
+                            newArgs = { tag:$this, rindow:rindow, settings:settings, hash:hash };
+
+                            RDR.actions.interactions.ajax( newArgs, 'tag', 'create' );
+
+                        } else {
+                            newArgs = { tag:$this, rindow:rindow, settings:settings, hash:hash };
+                            RDR.actions.interactions.ajax( newArgs, 'bookmark', 'create' );
+                            // RDR.actions.bookmarkStart({ tag:$this, rindow:rindow, settings:settings, actionType:"bookmark" });
+
                         }
-                    });
-
+                    }
                 });
+
+                var rindowHeight = RDR.rindow.setHeight(rindow, {
+                    targetHeight: $tagBox.height() + 35 + 15, //+ header height + extra padding;
+                    animate:false
+                });
+
+                rindow.width(0).height(0).animate({
+                    width:200,
+                    height: rindowHeight
+                }, 200, 'swing');
+
             },
 			panel: {
                 draw: function(_panel, rindow, interaction_id) {
+                    //RDR.actions.panel.draw:
                     var panel = _panel || "whyPanel";
                     
-                    var $thisPanel = $('<div class="rdr_'+panel+' rdr_sntPnl rdr_leftShadow rdr_brtl rdr_brtr rdr_brbr rdr_brbl" id="rdr_'+panel+'" />');  // don't seem to need this anymore:  .prepend($('<div class="rdr_pnlShadow"/>'));
+                    var $thisPanel = $('<div class="rdr_'+panel+' rdr_sntPnl rdr_leftShadow rdr_brtl rdr_brtr rdr_brbr rdr_brbl" id="rdr_'+panel+'" />');
                     return $thisPanel;
                 },
                 setup: function(_panel, rindow){
-                    //RDR.actions.panel.expand:
+                    //RDR.actions.panel.setup:
                     var panel = _panel || "whyPanel";
                     
                     //note: it appears this isn't doing anything anymore
@@ -3815,23 +3834,22 @@ function readrBoard($R){
                             break;
 
                         case "whyPanel":
-                            width = ((num_columns-1)*200)+250;
-                            gotoHeight = 300;
 
                             // corner logic
-                            $thisPanel.removeClass('rdr_brtl').removeClass('rdr_brbl');
-                            $thisPanel.find('div.rdr_header').removeClass('rdr_brtl').removeClass('rdr_brbl');
-                            $(rindow).find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').removeClass('rdr_brbr').removeClass('rdr_brtr');
+                            $thisPanel.removeClass('rdr_brtl rdr_brbl');
+                            $thisPanel.find('div.rdr_header').removeClass('rdr_brtl rdr_brbl');
+                            $(rindow).find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').removeClass('rdr_brbr rdr_brtr');
+                            
+                            width = (num_columns == 3) ? 200 + 200 + 250 : 200 + 250;
+                            gotoHeight = 300;
                             break;
                     }
-                    var rindow_bg = (num_columns==3)?-450:0;
-
+                    
                     //temp hack
                     if( $thisPanel.data('expanded') ){
                         RDR.rindow.jspUpdate( rindow );
                     }
                     else{
-                        rindow.css('background-position',rindow_bg+'px'); //todo: we shouldn't need this anymore
                         rindow.animate({
                             width: width
                         }, rindow.settings.animTime, function() {
@@ -3901,8 +3919,7 @@ function readrBoard($R){
 
                             break;
                     }
-                    var rindow_bg = (num_columns==3)?-450:0;
-
+                    
                     if ( rindow.find('div.rdr_tempUserMsg').length > 0 ) {
                         //rinh rindow.height( rindow.height()-103 );
                         rindow.find('div.rdr_tempUserMsg').remove();
@@ -3911,7 +3928,6 @@ function readrBoard($R){
                     if( !$thisPanel.data('expanded') ){
                     }
                     else{
-                        rindow.css('background-position',rindow_bg+'px');
                         rindow.animate({
                             width: width
                         }, rindow.settings.animTime, function(){
