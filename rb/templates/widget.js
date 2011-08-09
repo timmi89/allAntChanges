@@ -2574,7 +2574,7 @@ function readrBoard($R){
                             });
 
                             // TODO make this link to the user profile work
-                            var $seeTags = $('<div class="rdr_sntPnl_padder"><div>Your bookmarks are private - only you can see them.</div><strong>To view your tags, visit your <a href="http://dev.readrboard.com/user/'+RDR.user.user_id+'" target="_blank">ReadrBoard profile</a>.</strong></div>');
+                            var $seeTags = $('<div class="rdr_sntPnl_padder"><div>Your bookmarks are private - only you can see them.</div><br/ ><strong>To view your tags, visit your <a href="http://dev.readrboard.com/user/'+RDR.user.user_id+'" target="_blank">ReadrBoard profile</a>.</strong></div>');
                             
                             $whyPanel_tagCard.append(
                                 $tagFeedback.append($undoLink),

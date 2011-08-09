@@ -257,7 +257,7 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr div.rdr_whyPanel hr                             {background: #ddd; border: none; clear: both; color: #ddd; float: none; height: 1px; margin: 10px 0; }
 
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_subHeader        {text-align:center; padding-top:5px;}
-#rdr_sandbox div.rdr div.rdr_sntPnl_padder                   {position:relative; overflow:hidden;}
+#rdr_sandbox div.rdr div.rdr_sntPnl_padder                   {position:relative; overflow:hidden; margin: 8px 0;}
 #rdr_sandbox div.rdr div.rdr_sntPnl textarea,
 #rdr_sandbox div.rdr div.rdr_sntPnl input[type="text"]   { width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
 #rdr_sandbox div.rdr div.rdr_sntPnl button {
@@ -452,8 +452,8 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_help        {font:italic 11px Arial;color:#767676; xwidth:100%; position:absolute; top:12px; xtext-align:center; margin:0 !important;}
 
 
-#rdr_sandbox div.rdr div.rdr_share_social                   { border-bottom: 1px solid #CCCCCC; margin: 3px 0 0; padding: 2px 0; }
-#rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; margin:16px 0 0 0; }
+#rdr_sandbox div.rdr div.rdr_share_social                   { border-bottom: 1px solid #CCCCCC; }
+#rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; margin:12px 0 0 0; }
 #rdr_sandbox div.rdr_whyPanel div.rdr_tagCard                       { padding: 8px 12px 0; }
 #rdr_sandbox div.rdr_whyPanel div.rdr_tagCard .rdr_undo_link        { text-decoration; underline; float:right; color: #008BE4;}
 #rdr_sandbox div.rdr_whyPanel div.rdr_tagCard  h4                   { position: relative; font-weight:bold; }
