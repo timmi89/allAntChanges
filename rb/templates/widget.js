@@ -2254,10 +2254,16 @@ function readrBoard($R){
                                     tag_li.find('div.rdr_leftBox').unbind();
                                     tag_li.find('div.rdr_leftBox').click( function(e) {
                                         e.preventDefault();
-                                        args.int_id = int_id; // add the interaction_id info in, we need it for unrateSend
-                                        args.tag = tag_li;
+                                                            
+                                        var newArgs = {    
+                                            content_node_data: args.content_node_data,
+                                            hash: hash,
+                                            int_id: int_id,
+                                            tag:tag_li,
+                                            rindow: args.rindow
+                                        }
                                         // RDR.actions.unrateSend(args);
-                                        RDR.actions.interactions.ajax( args, 'tag', 'remove');
+                                        RDR.actions.interactions.ajax( newArgs, 'tag', 'remove' );
                                         return false; // prevent the tag call applied to the parent <li> from firing
                                     });
 
@@ -2501,9 +2507,16 @@ function readrBoard($R){
                                 tag_li.find('div.rdr_leftBox').unbind();
                                 tag_li.find('div.rdr_leftBox').click( function(e) {
                                     e.preventDefault();
-                                    args.int_id = int_id; // add the interaction_id info in, we need it for unrateSend
-                                    // RDR.actions.unrateSend(args);
-                                    RDR.actions.interactions.ajax( args, 'bookmark', 'remove' );
+                                    
+                                    var newArgs = {    
+                                        content_node_data: args.content_node_data,
+                                        hash: hash,
+                                        int_id: int_id,
+                                        tag:tag_li,
+                                        rindow: args.rindow
+                                    }
+
+                                    RDR.actions.interactions.ajax( newArgs, 'bookmark', 'remove' );
                                     return false; // prevent the tag call applied to the parent <li> from firing
                                 });
 
@@ -2548,8 +2561,16 @@ function readrBoard($R){
                             .bind('click.rdr', {args:args, int_id:int_id}, function(event){
                                 // RDR.actions.unrateSend(args); 
                                 var args = event.data.args;
-                                args.int_id = event.data.int_id;
-                                RDR.actions.interactions.ajax( args, 'bookmark', 'remove' );
+                                
+                                var newArgs = {    
+                                    content_node_data: args.content_node_data,
+                                    hash: hash,
+                                    int_id: event.data.int_id,
+                                    tag: args.tag,
+                                    rindow: args.rindow
+                                }
+                                RDR.actions.interactions.ajax( newArgs, 'bookmark', 'remove' );
+                                
                             });
 
                             // TODO make this link to the user profile work
@@ -4471,11 +4492,17 @@ function readrBoard($R){
                 );
                 var $undoLink = $('<a class="rdr_undo_link" href="javascript:void(0);">Undo?</a>')//chain
                 .bind('click.rdr', { args:args }, function(event){
-                    // RDR.actions.unrateSend(args); 
+                    // RDR.actions.unrateSend(args);
                     var args = event.data.args;
-                        args.hash = hash;
-
-                    RDR.actions.interactions.ajax( args, 'tag', 'remove' );
+                    
+                    var newArgs = {    
+                        content_node_data: args.content_node_data,
+                        hash: hash,
+                        int_id: args.int_id,
+                        tag: args.tag,
+                        rindow: args.rindow
+                    }
+                    RDR.actions.interactions.ajax( newArgs, 'tag', 'remove' );
                 });
 
                 $whyPanel_tagCard.append(
