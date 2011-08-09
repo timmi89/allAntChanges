@@ -762,7 +762,7 @@ function readrBoard($R){
                     //for now at least, make it so we can clear this easily.
                     $(document).bind('click.rdr', function(event) {
                         $().selog('hilite', selState, 'off');
-                        $(document).unbind('dblclick.rdr', arguments.callee);
+                        $(document).unbind('click.rdr', arguments.callee);
                     });
                    //bind an escape keypress to clear it.
                     //todo: for a real public API, this should be an option, or passed in function or something
@@ -1245,7 +1245,7 @@ function readrBoard($R){
                     //besides, the fail scenerio here is very minor - just that the actionbar hangs out till you click again.
                 });
 
-                $(document).bind('dblclick.rdr',function(event) {
+                $(document).bind('click.rdr',function(event) {
                     var $mouse_target = $(event.target);                                
 
                     if ( !$mouse_target.parents().hasClass('rdr')) {
