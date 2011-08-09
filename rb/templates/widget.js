@@ -1929,6 +1929,11 @@ function readrBoard($R){
                     if (sendData.content_node_data && sendData.content_node_data.top_interactions ) delete sendData.content_node_data.top_interactions;
                     if (sendData.node) delete sendData.node;
                     if (sendData.uiMode) delete sendData.uiMode;
+                    if (sendData.sendData) delete sendData.sendData; //this was happening for delete calls.
+
+
+                    log('sendData.sendData');
+                    log(sendData.sendData);
 
                     //todo: consider making a generic url router
                     var url = "/api/" +int_type+ "/"+action_type+"/";
