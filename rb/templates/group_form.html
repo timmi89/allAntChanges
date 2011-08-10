@@ -7,43 +7,42 @@
 {% block mainContent %}
   <h1>Group Settings</h1>
   <form action="/settings/{{ short_name }}/" method="post" class="in-page">{% csrf_token %}
+  {{ form.non_field_errors }}
 	<label for="id_name">Name <span>explanation</span></label>
-	{{ form.name }}
+	{{ form.name }}{{ form.name.errors }}
 	<label for="id_short_name">Short Name <span>explanation</span></label>
-	{{ form.short_name }}
+	{{ form.short_name }}{{ form.short_name.errors }}
 	<label for="id_twitter">Twitter Account <span>explanation</span></label>
-	{{ form.twitter }}
+	{{ form.twitter }}{{ form.twitter.errors }}
 	<label for="id_language">Language <span>explanation</span></label>
-	{{ form.language }}
+	{{ form.language }}{{ form.language.errors }}
 	<label for="id_anno_whitelist">Whitelist <span>explanation</span></label>
-	{{ form.anno_whitelist }}
+	{{ form.anno_whitelist }}{{ form.anno_whitelist.errors }}
 	<label for="id_no_readr">Section blacklist <span>explanation</span></label>
-	{{ form.no_readr }}
+	{{ form.no_readr }}{{ form.no_rdr.errors }}
 	<label for="id_img_whitelist">Image selector <span>explanation</span></label>
-	{{ form.img_whitelist }}
+	{{ form.img_whitelist }}{{ form.img_whitelist.errors }}
 	<label for="id_img_blacklist">Image Blacklist <span>explanation</span></label>
-	{{ form.img_blacklist }}
+	{{ form.img_blacklist }}{{ form.img_blacklist.errors }}
 	<label for="id_temp_interact">Temporary Interactions <span>explanation</span></label>
-	{{ form.temp_interact }}
+	{{ form.temp_interact }}{{ form.temp_interact.errors }}
 	<label for="id_logo_url_sm">Small Logo <span>explanation</span></label>
-	{{ form.logo_url_sm }}
+	{{ form.logo_url_sm }}{{ form.logo_url_sm.errors }}
 	<label for="id_logo_url_med">Medium Logo <span>explanation</span></label>
-	{{ form.logo_url_med }}
+	{{ form.logo_url_med }}{{ form.logo_url_med.errors }}
 	<label for="id_logo_url_lg">Large Logo <span>explanation</span></label>
-	{{ form.logo_url_lg }}
+	{{ form.logo_url_lg }}{{ form.logo_url_lg.errors }}
 	<h3>Moderation</h3>
 	<label for="id_requires_approval">Requires Approval? <span>explanation</span></label>
-	{{ form.requires_approval }}
+	{{ form.requires_approval }}{{ form.requires_approval.errors }}
 	<label for="id_word_blacklist">Word Blacklist <span>explanation</span></label>
-	{{ form.word_blacklist }}
+	{{ form.word_blacklist }}{{ form.word_blacklist.errors }}
 	<label for="id_css_url">Custom CSS <span>explanation</span></label>
-	{{ form.css_url }}
+	{{ form.css_url }}{{ form.css_url.errors }}
 	<label for="id_secret">Secret... <span>explanation</span></label>
-	{{ form.secret }}
+	{{ form.secret }}{{ form.secret.errors }}
 	<label for="id_blessed_tags">Blessed Tags <span>explanation</span></label>
-	{{ form.blessed_tags }}
-
-  {{ form.as_p }}
+	{{ form.blessed_tags }}{{ form.blessed_tags.errors }}
 
   <button type="submit">Submit</button>
   </form>

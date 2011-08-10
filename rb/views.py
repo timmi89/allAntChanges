@@ -144,6 +144,7 @@ def sidebar(request, user_id=None, short_name=None):
 class GroupForm(ModelForm):
     class Meta:
         model = Group
+        fields = ('name', 'short_name', 'twitter', 'language', 'anno_whitelist', 'no_readr', 'img_whitelist', 'img_blacklist', 'temp_interact', 'logo_url_sm', 'logo_url_med', 'logo_url_lg', 'requires_approval', 'word_blacklist', 'css_url', 'secret', 'blessed_tags' )
 
 def settings(request, short_name=None):
     try:
@@ -154,7 +155,6 @@ def settings(request, short_name=None):
         form = GroupForm(request.POST, instance=group)
         if form.is_valid():
             form.save()
-            # do something.
     else:
         form = GroupForm(instance=group)
     return render_to_response(

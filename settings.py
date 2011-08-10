@@ -157,7 +157,7 @@ INSTALLED_APPS = (
     'api',
     'rb',
     'piston',
-    #'south',
+    'south',
     #'treebeard',
     #'debug_toolbar',
     #'autofixture',
