@@ -213,7 +213,7 @@
   </style>
   <style type="text/css">
 /*<![CDATA[*/
-  body {
+  body #content{
     background: none repeat scroll 0 0 #FFFFFF;
     color: #444444;
     font-family: Georgia,"Times New Roman",Times,serif;
@@ -222,14 +222,22 @@
     margin: 0 auto;
     padding: 0;
   }
-  img {
+  #content img {
     padding:0;
     margin:0 5px 10px 0;
+  }
+  #content img.alignright {
+    display: inline;
+    margin: 0 0 10px 10px;
+    padding: 0;
+}
+  #content .alignleft{
+    margin-top:0;
   }
     #wrap{
         width:700px;   
     }
-    #navbar, .navbar {
+    #content #navbar, #content .navbar {
         border-bottom: 1px solid #000000;
         color: #FFFFFF;
         float: left;
@@ -275,7 +283,7 @@
     padding: 0;
     width: 100%;
   }
-  img.alignleft {
+  #content img.alignleft {
     display: inline;
     margin: 5px 10px 10px 0;
     padding: 0;
@@ -286,18 +294,18 @@
     width: 100%;
   }
 
-  .rdr-demo-block{
+  #content .rdr-demo-block{
     margin:26px 0;
 
   }
   #header{
     width:100%;
   }
-  .topMsg{
+  #content .topMsg{
     margin: 20px 0;
     width: 74%;
   }
-  blockquote{
+  #content blockquote{
     margin:15px 0;
   }
   #content h4 {
@@ -306,25 +314,23 @@
     text-transform: none;
     font-size:14px;
   }
-  .postarea ul li.inner{
+  #content .postarea ul li.inner{
     background: none repeat scroll 0 0 transparent;
     list-style: circle inside none;
     margin: 0 0 5px;
     padding: 0 0 0 50px;
   }
 
-  .solidlines{
+  #content .solidlines{
     border:5px black solid;
     border-left:none;
     border-right:none;
     padding: 10px 0 5px 0;
   }
-  img{
+  #content .contentImg{
     margin-top:10px !important;
   }
-  .alignleft{
-    margin-top:0;
-  }
+
   /*]]>*/
   </style>
   <script type="text/javascript">var _sf_startpt=(new Date()).getTime()</script>
@@ -333,7 +339,7 @@
 <body class=
 "single single-post postid-1 single-format-standard logged-in admin-bar typekit-enabled highlander-enabled highlander-light">
 <div id="wrap">
-<!--
+
     <div id="header">
       <div class="headerleft">
         <h1 id="title"><a href="#" title="Home"><span id=
@@ -351,7 +357,7 @@
         "Demo">Demo</a></li>
       </ul>
     </div>
--->
+
     <div style="clear:both;"></div>
 
     <div id="content">
@@ -360,16 +366,15 @@
           <div id="post-1" class=
           "post-1 post type-post status-publish format-standard hentry category-uncategorized">
           
-          <!--
+
           <div class="posttitle">
               <h3>Readrboard: new startup on the scene in
               NYC</h3>
             </div>
--->
+
             <!-- start content  -->
 
             <br>
-            <!--
             <div id="rdr-summary" class="rdr"></div>
             <div class="rdr-demo-block">
               <blockquote>
@@ -377,10 +382,7 @@
                 they will all be right." -<span>Teresa Nielsen Hayden</span>
               </blockquote>
             </div>
--->
-<!--
-            <img style="width:450px;" class="alignright size-medium wp-image-18" title="readrboard-widget" src="readrboard-demo/readrboard-widget-4.png" alt="" />
--->
+            <img style="width:450px;" class="contentImg alignright size-medium wp-image-18" title="readrboard-widget" src="readrboard-demo/readrboard-widget-4.png" alt="" />
               <p>Bonjourno. This is a fake article written to give
               you, the undoubtedly splendid reader, some pleasant
               content for playing with the ReadrBoard widget.</p>
@@ -406,9 +408,7 @@
 
             <div class="rdr-demo-block">
               <div class="alignleft">
-              <!--
-              <img src="readrboard-demo/puppy.png" alt="" width="200" />
-              -->
+              <img src="readrboard-demo/puppy.png" alt="" width="200" class="contentImg" />
               </div>
               <p>Alright, for those of you who might be a little
               click-shy, here's an easy one. Here's a picture of a

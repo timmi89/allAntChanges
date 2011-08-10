@@ -59,6 +59,20 @@ function readrBoard($R){
 		},
 		rindow: {
             stack:{
+                /*
+
+                hash: {
+                    settings:{},
+                    panels: [
+                        {
+                            panelCards: { 
+                            }
+                        }
+                    ]
+                    ]
+                }
+                
+                */
               
             },
             defaults:{
@@ -243,7 +257,7 @@ function readrBoard($R){
                                         body:val.body
                                     }
                                 }),
-                                $leftBox = '<div class="rdr_leftBox" />',
+                                $leftBox = '<div class="rdr_leftBox" ><span></span></div>',
                                 $tagText = '<div class="rdr_tagText">'+val.body+'</div>',
                                 $rightBox = '<div class="rdr_rightBox" />';
 
@@ -275,7 +289,7 @@ function readrBoard($R){
                             if ( $this.hasClass('rdr_tagged') ) {
                                 
                                 //clears the loader
-                                $this.find('div.rdr_leftBox').removeClass('rdr_kill_bg').html('');
+                                $this.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('span').html('');
 
                                 $this.addClass('rdr_selected');
                                 $this.siblings().removeClass('rdr_selected');
@@ -322,9 +336,6 @@ function readrBoard($R){
                             height: rindowHeight
                         }, 200, 'swing');
 
-                    
-
-                    
                     },
                     customOptions: {
                         
@@ -392,7 +403,7 @@ function readrBoard($R){
                             $headerOverlay = $('<div class="rdr_header_overlay" />').append($indicator_stats);
                         
 
-                        var headers = ["Reactions <span>("+(summary.counts.tags)+")</span>", "", ""];  // removing comment count for now +info.com_count
+                        var headers = ["Reactions", "", ""];  // removing comment count for now +info.com_count
                         $sentimentBox.append($reactionPanel, $contentPanel, $whyPanel); //$selectedTextPanel, 
                         $sentimentBox.children().each(function(idx){
                             var $header = $('<div class="rdr_header rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />'),
@@ -435,7 +446,7 @@ function readrBoard($R){
                                 },
                                 'hash':hash
                             }),
-                            $leftBox = '<div class="rdr_leftBox">'+percentage+'%</div>',
+                            $leftBox = '<div class="rdr_leftBox"><span>'+percentage+'%</span></div>',
                             $tagText = '<div class="rdr_tagText">'+tag.body+'</div>',
                             $rightBox = '<div class="rdr_rightBox" />';
 
@@ -585,6 +596,7 @@ function readrBoard($R){
                     customOptions = RDR.rindow._rindowTypes[rindowType].customOptions,
                     settings = $.extend( {}, defaultOptions, customOptions, options );
                     
+                //call make function for appropriate type
                 RDR.rindow._rindowTypes[rindowType].make(settings);
 
             },
@@ -2609,7 +2621,7 @@ function readrBoard($R){
                             $tagLi = $rindow.find('.rdr_tag_'+args.tag.id);
                         }
                         //Do UI stuff particular to write mode
-                        $tagLi.find('div.rdr_leftBox').addClass('rdr_kill_bg').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" />');
+                        $tagLi.find('div.rdr_leftBox').addClass('rdr_kill_bg').find('span').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" />');
                         if (uiMode == "write"){
                             //nothing here now
                         }else if(uiMode == "read"){
@@ -2725,7 +2737,7 @@ function readrBoard($R){
                             if ( !args.thumbsUp ) {
 
                                 //clear the loader                  
-                                tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').html('');
+                                tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('span').html('');
 
                                 //[cleanlogz]('tag successssssssssssss');
                                 var $this = tag_li;
@@ -2763,7 +2775,7 @@ function readrBoard($R){
                                         tag_li.addClass('rdr_selected');
                                         tag_li.find('input').remove();
                                         tag_li.find('div.rdr_help').remove();
-                                        tag_li.append( '<div class="rdr_tagText">'+tag.body+'</div>' );
+                                        tag_li.find('.rdr_tagText').html(tag.body);
                                         RDR.actions.sentimentPanel.addCustomTagBox({hash:hash, rindow:rindow, settings:args.settings, actionType:'react'});
                                     }
                                 }
@@ -2813,7 +2825,7 @@ function readrBoard($R){
                             if( ! $tagLi.jquery ){
                                 $tagLi = rindow.find('.rdr_tag_'+args.tag.id);
                             }
-                            $tagLi.find('div.rdr_leftBox').removeClass('rdr_kill_bg').html('');
+                            $tagLi.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('span').html('');
 
                             //update indicators
                             var hash = sendData.hash;
@@ -2848,7 +2860,7 @@ function readrBoard($R){
                         var response = args.response;
 
                         //clear the loader                  
-                        tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').html('');
+                        tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('span').html('');
 
 
                         if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
@@ -2885,7 +2897,7 @@ function readrBoard($R){
 
                             // optional loader.
                             if ( typeof args.tag.find == "function" ){
-                                args.tag.find('div.rdr_leftBox').addClass('rdr_kill_bg').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" />');
+                                args.tag.find('div.rdr_leftBox').addClass('rdr_kill_bg').find('span').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" />');
                             }
 
                         }else{
@@ -2978,7 +2990,7 @@ function readrBoard($R){
                             var hash = content_node_data.hash;
 
                             //clears the loader                          
-                            tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').html('');
+                            tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('span').html('');
 
                             //[cleanlogz]('bookmark successssssssssssss');
 
@@ -3096,7 +3108,7 @@ function readrBoard($R){
                         var response = args.response;
 
                         //clear the loader                  
-                        tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').html('');
+                        tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('span').html('');
 
 
                         if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
@@ -3725,7 +3737,7 @@ function readrBoard($R){
                 var maxHeaderLen = 20;
                 var tagBody = tag.body.length > maxHeaderLen ? tag.body.slice(0, maxHeaderLen)+"..." : tag.body;
 
-                rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tagBody+' <span> ('+tag.count+')</span>');
+                rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tagBody);
                 
                 if ( rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp').destroy();
                 rindow.find('div.rdr_contentPanel div.rdr_body').empty();
@@ -3782,7 +3794,7 @@ function readrBoard($R){
                 var hasComments = !$.isEmptyObject(comments);
 
                 if (hasComments) {
-                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments <span>('+node_comments+')</span>');
+                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
                     // ok, get the content associated with this tag!
                     for ( var i in comments ) {
                         var this_comment = comments[i];
@@ -3903,7 +3915,7 @@ function readrBoard($R){
                     //RDR.actions.panel.draw:
                     var panel = _panel || "whyPanel";
                     
-                    var $thisPanel = $('<div class="rdr_'+panel+' rdr_sntPnl rdr_leftShadow rdr_brtl rdr_brtr rdr_brbr rdr_brbl" id="rdr_'+panel+'" />');
+                    var $thisPanel = $('<div class="rdr_'+panel+' rdr_sntPnl rdr_brtl rdr_brtr rdr_brbr rdr_brbl" id="rdr_'+panel+'" />');
                     return $thisPanel;
                 },
                 setup: function(_panel, rindow){
@@ -3932,6 +3944,7 @@ function readrBoard($R){
 
                     minHeight = RDR.rindow.defaults.height; //260
                     maxHeight = 400;
+                    contentPanelWidth = 300; //temp var - Later will be a property of a panel object
 
                     rindow.resizable('option', {
                         minHeight:minHeight,
@@ -3940,7 +3953,7 @@ function readrBoard($R){
 
                     switch (panel) {
                         case "contentPanel":
-                            width = 400; // any time we're expanding the contentPanel, the rindow is gonna be 400px wide
+                            width = 200 + contentPanelWidth; // any time we're expanding the contentPanel, the rindow is gonna be 400px wide
 
                             // corner logic
                             $thisPanel.removeClass('rdr_brtl').removeClass('rdr_brbl');
@@ -3954,7 +3967,7 @@ function readrBoard($R){
                             $thisPanel.find('div.rdr_header').removeClass('rdr_brtl rdr_brbl');
                             $(rindow).find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').removeClass('rdr_brbr rdr_brtr');
                             
-                            width = (num_columns == 3) ? 200 + 200 + 250 : 200 + 250;
+                            width = (num_columns == 3) ? 200 + contentPanelWidth + 250 : 200 + 250;
                             gotoHeight = 300;
                             break;
                     }
@@ -4089,8 +4102,8 @@ function readrBoard($R){
                         //todo: pass everything through the content_node object- no need to expand all the attrs here in the params.
                         $contentSet = $('<div />').addClass('rdr_contentSet').data({node:content_node, content_node_key:content_node_key, hash:hash, location:content_node.location, tag:tag, content:content_node.body});
 
-                        var $header = $('<div class="rdr_contentHeader rdr_leftShadow" />'),
-                            $content = $('<div class="rdr_content rdr_leftShadow"><div class="rdr_otherTags"></div></div>');
+                        var $header = $('<div class="rdr_contentHeader" />'),
+                            $content = $('<div class="rdr_content"></div>');
                         $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+RDR.util.prettyNumber(content_node.top_interactions.tags[tag.id].count)+')</span> '+tag.body+'</a>' );
 
                         var $tagButton = $header.find('a.rdr_tag');
@@ -4143,6 +4156,10 @@ function readrBoard($R){
 
                         $header.append( $comment );
 
+                        $content.html( '<p>'+content_node.body+'</p>');
+                        
+                        //this code isn't used here anymore, but we will still need something like it in the new 3rd panel
+                        /* 
                         $content.find('div.rdr_otherTags').before( '"' + content_node.body + '"' );
                         var otherTags = content_node.top_interactions.tags;
                         if( !$.isEmptyObject(otherTags) ){
@@ -4178,6 +4195,7 @@ function readrBoard($R){
                                 }
                             }
                         }
+                        */
 
                         $contentSet.append( $header, $content );
 
@@ -4233,7 +4251,7 @@ function readrBoard($R){
                     var rindow = args.rindow,
                         settings = args.settings,
                         $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
-                        $customTagBox = $('<li class="rdr_customTagBox"><div class="rdr_rightBox"></div><div class="rdr_leftBox"></div></li>'),
+                        $customTagBox = $('<li class="rdr_customTagBox"><div class="rdr_rightBox"></div><div class="rdr_leftBox"><span></span></div></li>'),
                         $freeformTagDiv = $('<div class="rdr_tagText"><input type="text" class="freeformTagInput" name="unknown-tags" /></div>'),
                         $freeformTagInput = $freeformTagDiv.find('input');
 
@@ -4451,15 +4469,17 @@ function readrBoard($R){
                         
                     }
 
+                    
+                    //no count in headers anymore
+                    /*
                     var headline_tag = rindow.find('div.rdr_contentPanel h1').text();
                     headline_tag = headline_tag.substr(0, headline_tag.lastIndexOf('(')-1);
-
                     // make sure that the tag just clicked matches the tag of the column we're in before incrementing the count in the column header
                     if ( headline_tag == tag_text ) {
                         var total_count = rindow.find('div.rdr_contentPanel h1 span').text();
                         total_count = parseInt( total_count.substr(1, total_count.length-1) ) + 1;
                         rindow.find('div.rdr_contentPanel h1 span').text('('+total_count+')');
-                    }
+                    }*/
 
                     var total_reactions = rindow.find('div.rdr_reactionPanel h1 span').text();
                     total_reactions = parseInt( total_reactions.substr(1, total_reactions.length-1) ) + 1;
@@ -4470,7 +4490,7 @@ function readrBoard($R){
                         var this_count = ( $this.data('tag').id == tag.id ) ? count : $this.data('tag').count;
                         var percentage = Math.round( ( this_count / total_reactions) * 100);
                         // this should update all of the counts
-                        $this.find(' div.rdr_leftBox').text( percentage+'%' );
+                        $this.find(' div.rdr_leftBox span').text( percentage+'%' );
                     });
 
                     //I'm doing this somewhere else
