@@ -88,6 +88,8 @@ def main(request, user_id=None, short_name=None, **kwargs):
     if user_id:
         profile_user = User.objects.get(id=user_id)
         interactions = interactions.filter(user=user_id)
+        if cookie_user_id and (cookie_user != profile_user):
+            interactions = interactions.exclude(kind="bkm")
         context['profile_user'] = profile_user
 
     if short_name:
@@ -98,7 +100,7 @@ def main(request, user_id=None, short_name=None, **kwargs):
     if page:
         page = Page.objects.get(id=page)
         interactions = interactions.filter(page=page)
-        context['page'] = page
+        context['page'] = page        
 
     if 'view' in kwargs:
         view = kwargs['view']
@@ -106,7 +108,9 @@ def main(request, user_id=None, short_name=None, **kwargs):
         if view == 'comments': interactions=interactions.filter(kind="com")
         if view == 'shares': interactions=interactions.filter(kind="shr")
         if view == 'bookmarks': interactions=interactions.filter(kind="bkm")
-        if view == 'index': context['index'] = True
+        if view == 'index':
+            context['index'] = True
+            interactions=interactions.exclude(kind="bkm")
         if view == 'not_approved': interactions=interactions.filter(approved=False)
         else: interactions=interactions.filter(approved=True)
 
