@@ -3744,6 +3744,8 @@ function readrBoard($R){
                     $contentPanel = rindow.find('div.rdr_contentPanel'),
                     $whyPanel = rindow.find('div.rdr_whyPanel');
 
+                $whyPanel.removeClass('rdr_whyShowing');
+
 
                 /*
                 var content = [];
@@ -3805,9 +3807,18 @@ function readrBoard($R){
                 if ( args.selState ) var selState = args.selState;
 
 
-                var $whyPanel_body = rindow.find('div.rdr_whyPanel div.rdr_body');
-                var $whyPanel_body_jsp = $whyPanel_body.find('.jspPane');
+                var $whyPanel = rindow.find('div.rdr_whyPanel'),
+                    $whyPanel_body = $whyPanel.find('div.rdr_body'),
+                    $whyPanel_body_jsp = $whyPanel_body.find('.jspPane');
                 
+                $whyPanel.addClass('rdr_whyShowing');
+
+                var $backToQuotes = $('<div class="rdr_view_all">&lt;&lt; View All</div>');
+                $backToQuotes.click( function() {
+                    $whyPanel.removeClass('rdr_whyShowing');
+                });
+                if ( $whyPanel_body.find('div.rdr_view_all').length == 0 ) $whyPanel_body.append( $backToQuotes );
+
                 var $whyPanel_tagCard = $('<div />').addClass('rdr_tagCard rdr_tagCard'+tag.id);
                 //$whyPanel_body.empty();
             
@@ -3835,8 +3846,30 @@ function readrBoard($R){
 
                 rindow.find('div.rdr_whyPanel div.rdr_header h1').html( headerBody );
 
-                var hasComments = !$.isEmptyObject(comments);
+                var $socialBox = $('<div class="rdr_share_social"><h4>Share:</h4></div>'), 
+                $shareLinks = $('<ul class="shareLinks"></ul>'),
+                socialNetworks = ["facebook","twitter"]; //,"tumblr","linkedin"];
 
+                var shareHash = hash;
+                //quick mockup version of this code
+                $.each(socialNetworks, function(idx, val){
+                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                    $shareLinks.find('li:last').click( function() {
+                        var real_content_node = RDR.content_nodes[hash];
+                        RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:real_content_node });
+                        return false;
+                    });
+                });
+                $socialBox.append($shareLinks, '<div style="clear:both;" />');
+
+                var $infoSummary = $('<div class="rdr_info_summary"><h4>Reactions: '+content_node.counts.tags+'</h4></div>');
+
+                var $infoBox = $('<div class="rdr_shareBox"></div>');
+                $infoBox.append( $infoSummary, $socialBox );
+                $whyPanel_tagCard.append( $infoBox );
+
+
+                var hasComments = !$.isEmptyObject(comments);
                 if (hasComments) {
                     // rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
 
@@ -3879,26 +3912,6 @@ function readrBoard($R){
                         }
                     }
                 }
-
-                var $socialBox = $('<div class="rdr_share_social"><h4>Share:</h4></div>'), 
-                $shareLinks = $('<ul class="shareLinks"></ul>'),
-                socialNetworks = ["facebook","twitter"]; //,"tumblr","linkedin"];
-
-                var shareHash = hash;
-                //quick mockup version of this code
-                $.each(socialNetworks, function(idx, val){
-                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
-                    $shareLinks.find('li:last').click( function() {
-                        var real_content_node = RDR.content_nodes[hash];
-                        RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:real_content_node });
-                        return false;
-                    });
-                });
-                $socialBox.append($shareLinks, '<div style="clear:both;" />');
-
-                var $shareDialogueBox = $('<div class="rdr_shareBox rdr_sntPnl_padder"></div>');
-                $shareDialogueBox.html( $socialBox );
-                $whyPanel_tagCard.append( $shareDialogueBox );
 
                 //todo: combine this with the tooltip for the tags
                 // var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+tag.id+'">Comment</button></div>');
@@ -4013,7 +4026,7 @@ function readrBoard($R){
                             
                             // old, from when whyPanel was next to, not over, the contentPanel:
                             // width = (num_columns == 3) ? 200 + contentPanelWidth + 250 : 200 + 250;
-                            width = 500 + contentPanelWidth; // any time we're expanding the contentPanel, the rindow is gonna be 400px wide
+                            width = 200 + contentPanelWidth; // any time we're expanding the contentPanel, the rindow is gonna be 400px wide
                             gotoHeight = (num_columns == 3) ? 270  : 300; //quick hack to make it look a bit nicer
                             break;
                     }
