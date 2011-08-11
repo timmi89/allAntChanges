@@ -292,9 +292,22 @@ form.in-page input {
 	width:200px;
 	margin:2px 0 20px 10px;
 }
-form.in-page input[type="checkbox"] {
 
+form.in-page input[type="checkbox"] {
+	width:20px;
+	margin-right:180px;
+	margin-bottom:35px;
 }
+
+form.in-page textarea, form.in-page select {
+	float:left;
+	font-size:12px;
+	padding:4px 2px;
+	border:solid 1px #aacfe4;
+	width:300px;
+	margin:2px 0 20px 10px;
+}
+
 
 form.in-page button {
 	clear:both;

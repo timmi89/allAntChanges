@@ -6,7 +6,15 @@
 
 {% block mainContent %}
   <h1>Group Settings</h1>
-  <form action="/settings/{{ short_name }}/" method="post" class="in-page">{% csrf_token %}
+  <script>
+  function changeName() {
+  	// testing to see if I can modify form values before submit
+  	// in order to create the share/tag/etc function values from checkboxes
+  	// $('#id_name').val('SOMEOTHER GROUPNAME');
+  	return true;
+  }
+  </script>
+  <form action="/settings/{{ short_name }}/" method="post" class="in-page" onsubmit="return changeName()">{% csrf_token %}
 	<label for="id_name">Name <span>explanation</span></label>
 	{{ form.name }}
 	<label for="id_short_name">Short Name <span>explanation</span></label>
@@ -38,12 +46,18 @@
 	{{ form.word_blacklist }}
 	<label for="id_css_url">Custom CSS <span>explanation</span></label>
 	{{ form.css_url }}
+	
+	{% comment %}
 	<label for="id_secret">Secret... <span>explanation</span></label>
 	{{ form.secret }}
+	{% endcomment %}
+
 	<label for="id_blessed_tags">Blessed Tags <span>explanation</span></label>
 	{{ form.blessed_tags }}
 
+{% comment %}
   {{ form.as_p }}
+{% endcomment %}
 
   <button type="submit">Submit</button>
   </form>

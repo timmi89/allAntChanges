@@ -302,7 +302,6 @@ RDRAuth = {
 		});
 	},
 	init : function() {
-		// RDRAuth.readUserCookie();
 		RDRAuth.returnUser();
 	},
 	decodeDjangoCookie : function(value) {
