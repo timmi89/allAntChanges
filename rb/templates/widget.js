@@ -3736,11 +3736,7 @@ function readrBoard($R){
                 var $reactionPanel = rindow.find('div.rdr_reactionPanel'),
                     $contentPanel = rindow.find('div.rdr_contentPanel'),
                     $whyPanel = rindow.find('div.rdr_whyPanel');
-                    
 
-                // zero out the content in the whyPanel, since they just selected a new tag and the comments would not reflect the now-selected tag.
-                $whyPanel.find('div.rdr_header h1').html('Comments');
-                $whyPanel.find('div.rdr_body').html('<div class="rdr_commentSet rdr_tagCard rdr_tagCard_default ">Select something in the column to the left to leave a comment on it.</div>');
 
                 /*
                 var content = [];
@@ -3763,6 +3759,10 @@ function readrBoard($R){
                 var tagBody = tag.body.length > maxHeaderLen ? tag.body.slice(0, maxHeaderLen)+"..." : tag.body;
 
                 $contentPanel.find('div.rdr_header h1').html(tagBody);
+
+                // zero out the content in the whyPanel, since they just selected a new tag and the comments would not reflect the now-selected tag.
+                $whyPanel.find('div.rdr_header h1').html(tagBody + ": ");
+                $whyPanel.find('div.rdr_body').html('<div class="rdr_commentSet rdr_tagCard rdr_tagCard_default ">Select something in the column to the left to leave a comment on it.</div>');
 
                 //todo: this is for testing style for now, we need to swap it out when we click on the different sections
                 //$contentPanel.find('div.rdr_header h1').after('<h2><span> : </span>todo: quote here ...</h2>');
