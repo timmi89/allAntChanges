@@ -94,9 +94,9 @@ class Group(models.Model):
     no_readr = models.CharField(max_length=255, blank=True)
     
     # logo fields
-    logo_url_sm = models.URLField(blank=True, verify_exists=False)
-    logo_url_med = models.URLField(blank=True, verify_exists=False)
-    logo_url_lg = models.URLField(blank=True, verify_exists=False)
+    logo_url_sm = models.CharField(max_length=200, blank=True)
+    logo_url_med = models.CharField(max_length=200, blank=True)
+    logo_url_lg = models.CharField(max_length=200, blank=True)
 
     # features
     share = models.ForeignKey(Feature, related_name = 'Share Feature')
