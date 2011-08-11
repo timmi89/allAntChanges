@@ -3975,7 +3975,7 @@ function readrBoard($R){
 
                     minHeight = RDR.rindow.defaults.height; //260
                     maxHeight = 400;
-                    contentPanelWidth = 300; //temp var - Later will be a property of a panel object
+                    contentPanelWidth = 230; //temp var - Later will be a property of a panel object
 
                     rindow.resizable('option', {
                         minHeight:minHeight,
