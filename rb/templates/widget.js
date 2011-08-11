@@ -1,4 +1,3 @@
-alert(1);
 var RDRtimer,
 RDR, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
@@ -214,7 +213,8 @@ function readrBoard($R){
                             }
 
                         }
-                    
+                        log('coords')
+                        log(coords)
                         var rindow = RDR.rindow.draw({
                             coords: coords,
                             pnlWidth:200,
@@ -226,6 +226,8 @@ function readrBoard($R){
                             kind: kind,
                             selState: newSel
                         });
+                        log('coords')
+                        log(coords)
 
                         // TODO this is used to constrain the initial width of this rindow
                         // and then it animates larger when we slide the whyPanel out.
@@ -345,6 +347,30 @@ function readrBoard($R){
                             targetHeight: $tagBox.height() + 35 + 15, //+ header height + extra padding;
                             animate:false
                         });
+
+
+                log('settings in rindow draw')
+                log(settings)
+                log( rindow.width() )
+                log( rindow.height() )
+                log('rindowHeight')
+                log(rindowHeight)
+                        log('coords')
+                        log(coords)
+                    
+                var $temp = $('<div style="position:absolute; background:blue; height:100px; width:100px;" />');
+                $('body').append($temp);
+                $temp.css('left', coords.left );
+                $temp.css('top', coords.top );
+
+                // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
+                var coords = RDR.util.stayInWindow({coords:coords, width:200, height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
+
+                rindow.css('left', coords.left + 'px');
+                rindow.css('top', coords.top + 'px');
+                if(settings.height){
+                    rindow.height(settings.height);
+                }
 
                         rindow.width(0).height(0).animate({
                             width:200,
@@ -715,6 +741,14 @@ function readrBoard($R){
                     });
 
                 }
+                
+                //moving this to ...
+                /*
+                log('settings in rindow draw')
+                log(settings)
+
+                log( $new_rindow.width() )
+                log( $new_rindow.height() )
 
                 // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
                 var coords = RDR.util.stayInWindow({coords:settings.coords, ignoreWindowEdges:settings.ignoreWindowEdges});
@@ -724,6 +758,7 @@ function readrBoard($R){
                 if(settings.height){
                     $new_rindow.height(settings.height);
                 }
+                */
 
                 RDR.rindow.jspUpdate( $new_rindow );
 
@@ -1114,6 +1149,10 @@ function readrBoard($R){
 					h = settings.height,
 					coords = settings.coords,
 					ignoreWindowEdges = (settings.ignoreWindowEdges) ? settings.ignoreWindowEdges:""; // ignoreWindowEdges - check for index of t, r, b, l
+log('w,h,coords');
+                    log(w)
+                    log(h)
+                    log(coords)
 
                 if ( ( ignoreWindowEdges.indexOf('r') == -1 ) && (coords.left+w+16) >= winWidth ) {
                     coords.left = winWidth - w - 10;
