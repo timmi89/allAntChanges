@@ -82,10 +82,11 @@ function readrBoard($R){
                 },
                 pnlWidth:200,
                 animTime:100,
-                height:260,
                 columns: false,
+                defaultHeight:260,
                 minHeight: 200,
-                maxHeight: 400
+                maxHeight: 400,
+                forceHeight: false
             },
             jspUpdate: function( $rindow ) {
                 //RDR.rindow.jspUpdate:
@@ -128,11 +129,22 @@ function readrBoard($R){
                 // }   
 
                 var height = $rindow.height(),
-                gotoHeight = settings.targetHeight ? settings.targetHeight :
-                    ( height < settings.minHeight ) ? settings.minHeight :
-                    ( height > settings.maxHeight ) ? settings.maxHeight : null;
+                    gotoHeight = settings.targetHeight ? settings.targetHeight : settings.defaultHeight;
 
-                if( !gotoHeight ) return;
+                //check for outside range
+                gotoHeight = ( gotoHeight < settings.minHeight ) ? settings.minHeight :
+                ( gotoHeight > settings.maxHeight ) ? settings.maxHeight : gotoHeight;
+                log('gotoHeight 1')
+                log(gotoHeight)
+                //finally, if forceHeight, overide regardless
+
+                gotoHeight = settings.forceHeight ? settings.forceHeight : gotoHeight;
+    
+                log('gotoHeight 2')
+                log(gotoHeight)
+                
+                //for now, just return the height
+                /*
                 if( !settings.animate ){
                     $rindow.height(gotoHeight);
                 }else{
@@ -140,6 +152,8 @@ function readrBoard($R){
                         height:gotoHeight
                     }, settings.animTime)
                 }
+                */
+
                 return gotoHeight;
             },
             _rindowTypes: {
@@ -229,7 +243,7 @@ function readrBoard($R){
                             $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
                             $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />');
 
-                        var firstPanelHeader = (actionType == "react") ? "What's your reaction?":"Bookmark this";
+                        var firstPanelHeader = (actionType == "react") ? "Give a reaction":"Bookmark this";
                         var headers = [firstPanelHeader, "Say More"];
                         $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
                         $sentimentBox.children().each(function(idx){
@@ -334,7 +348,9 @@ function readrBoard($R){
                         rindow.width(0).height(0).animate({
                             width:200,
                             height: rindowHeight
-                        }, 200, 'swing');
+                        }, 200, 'swing', function(){
+                            RDR.rindow.jspUpdate( rindow );
+                        });
 
                     },
                     customOptions: {
@@ -377,7 +393,6 @@ function readrBoard($R){
                         var rindow = RDR.rindow.draw({
                             coords:rindowPosition,
                             pnlWidth:200,
-                            ignoreWindowEdges:"bl",
                             noHeader:true,
                             selector:selector
                         });
@@ -558,14 +573,19 @@ function readrBoard($R){
                         );
 
                         var rindowHeight = RDR.rindow.setHeight(rindow, {
-                            targetHeight: $tagBox.height() + 35 + 15, //+ header height + extra padding;
+                            targetHeight: $tagBox.height() + 35 + 10, //+ header height + extra padding;
+                            maxHeight:270,
                             animate:false
                         });
 
+                        log('rindowHeight')
+                        log(rindowHeight)
                         rindow.width(0).height(0).animate({
                             width:200,
                             height: rindowHeight
-                        }, 200, 'swing');
+                        }, 200, 'swing', function(){
+                            RDR.rindow.jspUpdate( rindow );
+                        });
 
             
                         
@@ -636,8 +656,8 @@ function readrBoard($R){
 
                 var settings = $.extend({}, this.defaults, options);
 
-                var minHeight = settings.height-100;
-                var maxHeight = settings.height+100;
+                var minHeight = settings.defaultHeight-100;
+                var maxHeight = settings.defaultHeight+100;
 
 
 				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
@@ -685,7 +705,7 @@ function readrBoard($R){
 					
                     
                     $new_rindow.draggable({
-                        handle:'h1',
+                        handle:'.rdr_header',
                         containment:'document',
                         stack:'.RDR.window',
                         start:function() {
@@ -3713,9 +3733,14 @@ function readrBoard($R){
                 var container = RDR.containers[hash];
                 var summary = RDR.summaries[hash];
                 
+                var $reactionPanel = rindow.find('div.rdr_reactionPanel'),
+                    $contentPanel = rindow.find('div.rdr_contentPanel'),
+                    $whyPanel = rindow.find('div.rdr_whyPanel');
+                    
+
                 // zero out the content in the whyPanel, since they just selected a new tag and the comments would not reflect the now-selected tag.
-                rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
-                rindow.find('div.rdr_whyPanel div.rdr_body').html('<div class="rdr_commentSet rdr_tagCard rdr_tagCard_default ">Select something in the column to the left to leave a comment on it.</div>');
+                $whyPanel.find('div.rdr_header h1').html('Comments');
+                $whyPanel.find('div.rdr_body').html('<div class="rdr_commentSet rdr_tagCard rdr_tagCard_default ">Select something in the column to the left to leave a comment on it.</div>');
 
                 /*
                 var content = [];
@@ -3737,7 +3762,13 @@ function readrBoard($R){
                 var maxHeaderLen = 20;
                 var tagBody = tag.body.length > maxHeaderLen ? tag.body.slice(0, maxHeaderLen)+"..." : tag.body;
 
-                rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tagBody);
+                $contentPanel.find('div.rdr_header h1').html(tagBody);
+
+                //todo: this is for testing style for now, we need to swap it out when we click on the different sections
+                //$contentPanel.find('div.rdr_header h1').after('<h2><span> : </span>todo: quote here ...</h2>');
+                
+                //todo: just a test - delete
+                //$contentPanel.find('div.rdr_headerInnerWrap').append('<h2>test</h2>');
                 
                 if ( rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp').destroy();
                 rindow.find('div.rdr_contentPanel div.rdr_body').empty();
@@ -3968,7 +3999,7 @@ function readrBoard($R){
                             $(rindow).find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').removeClass('rdr_brbr rdr_brtr');
                             
                             width = (num_columns == 3) ? 200 + contentPanelWidth + 250 : 200 + 250;
-                            gotoHeight = 300;
+                            gotoHeight = (num_columns == 3) ? 270  : 300; //quick hack to make it look a bit nicer
                             break;
                     }
                     
@@ -3981,15 +4012,15 @@ function readrBoard($R){
                             width: width
                         }, rindow.settings.animTime, function() {
 
-                            var height = $(this).height();
-                            gotoHeight = gotoHeight ? gotoHeight : ( height < minHeight ) ? minHeight : (height > maxHeight) ? maxHeight : null;
-                            if( gotoHeight ){
-                                $(this).animate({
-                                    height:gotoHeight
-                                }, rindow.settings.animTime, function(){
-                                    RDR.rindow.jspUpdate( rindow );
-                                });
-                            }   
+                            gotoHeight = RDR.rindow.setHeight(rindow, {
+                                targetHeight: gotoHeight
+                            });
+
+                            $(this).animate({
+                                height:gotoHeight
+                            }, rindow.settings.animTime, function(){
+                                RDR.rindow.jspUpdate( rindow );
+                            });
                         });
 
                         // rindow.animate({
@@ -4103,17 +4134,21 @@ function readrBoard($R){
                         $contentSet = $('<div />').addClass('rdr_contentSet').data({node:content_node, content_node_key:content_node_key, hash:hash, location:content_node.location, tag:tag, content:content_node.body});
 
                         var $header = $('<div class="rdr_contentHeader" />'),
-                            $content = $('<div class="rdr_content"></div>');
-                        $header.html( '<a class="rdr_tag hover" href="javascript:void(0);"><div class="rdr_tag_share"></div><span class="rdr_tag_count">('+RDR.util.prettyNumber(content_node.top_interactions.tags[tag.id].count)+')</span> '+tag.body+'</a>' );
-
+                            $content = $('<div class="rdr_content"></div>'),
+                            $tagInfo = $('<div class="rdr_tag_info" />'),
+                            $rightBox = $('<div class="rdr_rightBox" />');
+                    
+                         /*                     
+                         
                         var $tagButton = $header.find('a.rdr_tag');
                         $tagButton.data( 'tag', tag );
-
+      
                         $header.find('span.rdr_tag_count').click( function() {
                             var $interactionButton = $(this).closest('.rdr_tag');
                             var args = { tag:$interactionButton, rindow:rindow, content:content_node.body, hash:hash, uiMode:'read', content_node:content_node, thumbsUp:true};
                             RDR.actions.interactions.ajax( args, 'tag', 'create' );
                         });
+                        */
 
                         var container = $('.rdr-'+hash);
                         var location = $contentSet.data('location');
@@ -4121,6 +4156,7 @@ function readrBoard($R){
                         $contentSet.hover(
                             function() {
                                 //don't do this for windows that are resizing
+                                $(this).addClass('rdr_hover');
                                 if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return 
 
                                 $(this).addClass('rdr_hover');
@@ -4130,33 +4166,46 @@ function readrBoard($R){
                             },
                             function() {
                                 //don't do this for windows that are resizing
+                                $(this).removeClass('rdr_hover');
                                 if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return 
                                 $(this).removeClass('rdr_hover');
                                 if(content_node.selState){
                                     $().selog('hilite', content_node.selState, 'off');
                                 }
                             }
-                        );
-
-                        var node_comments = 0;
-                        for (var i in content_node.top_interactions.coms ) {
-                            if ( content_node.top_interactions.coms[i].tag_id == tag.id ) node_comments++;
-                        }
-                        if ( node_comments > 0 ) {
-                            $comment = $('<div class="rdr_comment_link rdr_has_comment">' +node_comments+ '</div>');
-                        } else {
-                            $comment = $('<div class="rdr_comment_link rdr_can_comment">Comment</div>');
-                        }
-
-                        $comment.click( function() {
+                        ).click( function() {
                             var $this = $(this);
                             $this.closest('.rdr_contentSet').addClass('rdr_selected').siblings().removeClass('rdr_selected');
                             RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:rindow, content_node:content_node, selState:content_node.selState});
                         });
 
-                        $header.append( $comment );
 
-                        $content.html( '<p>'+content_node.body+'</p>');
+                        var tagCount = RDR.util.prettyNumber( content_node.top_interactions.tags[tag.id].count ),
+                            tagCountNode = '<span class="rdr_tag_count">'+ '('+tagCount+')' +'</span>',
+                            label = ( tagCount == 1 ) ? 'Reaction' : 'Reactions';
+                        
+                        $tagInfo.html( tagCountNode + '&nbsp;&nbsp;<span class="rdr_tag_rep">'+tag.body+'</span>&nbsp;&nbsp;'+label );
+
+                        $header.append( $tagInfo, $rightBox );
+
+                        function trimToLastWord(str){
+                            var danglerRE = /\w+$/.exec(str);
+                            if( !danglerRE){
+                                return str;
+                            }
+                            else{
+                                return str.slice(0, str.length-danglerRE[0].length)
+                            }
+                        }
+
+                        //todo: consolodate truncate functions
+                        var content_node_body = content_node.body,
+                            maxLen = 80,
+                            content_node_body_trunc;
+                            
+                        content_node_body_trunc = (content_node_body.length > maxLen) ? trimToLastWord( content_node_body.slice(0, maxLen) )+"..." : content_node_body;
+
+                        $content.html( '<p>'+content_node_body_trunc+'</p>');
                         
                         //this code isn't used here anymore, but we will still need something like it in the new 3rd panel
                         /* 

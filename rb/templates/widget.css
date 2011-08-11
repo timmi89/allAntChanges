@@ -203,6 +203,28 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr li {background:none; padding:0;}
 
 /* the widget */
+#rdr_sandbox div.rdr_window h1,
+#rdr_sandbox div.rdr_window h2  {color:#999; font-size:24px;}
+
+#rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap{
+    text-align:left !important;
+    position:relative;
+}
+
+#rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap h1{
+    float: left;
+    margin-left: 28px;
+    position: relative;
+    width: auto;
+    color:#008BE4;
+}
+
+#rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap h2{
+    float: left;
+    margin-left: 8px;
+    position: relative;
+    font-weight:normal;
+}
 #rdr_sandbox div.rdr div.rdr_sentimentBox {
     height:100%;
 }
@@ -224,10 +246,13 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_body_wrap               {
     position:absolute; top:35px; bottom:10px; width:100%; z-index:3;
 }
+#rdr_sandbox div.rdr div.rdr_sntPnl.div.rdr_reactionPanel div.rdr_body_wrap {
+    background:#fafafa;
+}
 
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_body                     {width:100%; z-index:4; overflow-x:hidden; overflow-y:hidden; padding:0; position:relative; height:100%; outline:none;}
 
-#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header                   {background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:5; }
+#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header                   {background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:5; cursor:move !important;}
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("{{ STATIC_URL }}widget/images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header,
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_whyPanel div.rdr_header      {background:url({{ STATIC_URL }}widget/images/header_arrow.png) 0px -1px no-repeat #fff;}
@@ -246,12 +271,12 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr_contentSpace div.jspPane                       {margin: 0 !important; width:100% !important;}
 
 
-#rdr_sandbox div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body  {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none; background:url({{ STATIC_URL }}widget/images/rindow_bg_column.png);}
+#rdr_sandbox div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body  {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
 
-#rdr_sandbox div.rdr div.rdr_contentPanel                            {position:absolute; z-index:15; left:200px; background:#e9e9e9; width:300px;}
+#rdr_sandbox div.rdr div.rdr_contentPanel                            {position:absolute; z-index:15; left:200px; background:#eeeeee; width:300px;}
 #rdr_sandbox div.rdr div.rdr_contentPanel div.rdr_body               {}
 
-#rdr_sandbox div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:250px; background:#EEEEEE; visibility:hidden;}
+#rdr_sandbox div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:250px; background:#f2f2f2; visibility:hidden;}
 #rdr_sandbox div.rdr.rdr_columns3 div.rdr_whyPanel                   {width:250px;}
 #rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_body                   {}
 #rdr_sandbox div.rdr div.rdr_whyPanel hr                             {background: #ddd; border: none; clear: both; color: #ddd; float: none; height: 1px; margin: 10px 0; }
@@ -320,7 +345,14 @@ $('div.rdr_tempUserMsg').animate({bottom:'-48px'});
 */
 
 #rdr_sandbox div.rdr ul.rdr_tags            { list-style-type:none !important; padding: 0 !important; margin:0 !important; }
-#rdr_sandbox div.rdr ul.rdr_tags li         { border-color: transparent !important; border-style: solid !important; border-width: 1px 0 !important; padding: 0 !important; margin:0 !important; position:relative !important; overflow:auto !important; background:none; text-align:left !important; height:35px; white-space:nowrap;}
+#rdr_sandbox div.rdr ul.rdr_tags li         { 
+
+/*consider a very faint border - like an after image of the border from hovering*/
+/*
+border-color: #F2F2F2 transparent white transparent !important; 
+*/
+border-color: transparent !important; 
+border-style: solid !important; border-width: 1px 0 !important; padding: 0 !important; margin:0 !important; position:relative !important; overflow:auto !important; background:none; text-align:left !important; height:35px; white-space:nowrap;}
 
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_hover, /* safari/chrome kludge -- :hover isn't working here */
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected     {color:#008be4 !important; display:block !important; border-color: #bbb transparent #ddd !important; cursor: pointer !important;}
@@ -341,7 +373,7 @@ $('div.rdr_tempUserMsg').animate({bottom:'-48px'});
 #rdr_sandbox div.rdr ul.rdr_tags li div.rdr_rightBox {
     overflow:hidden; 
     position: absolute;
-    right: 3px;
+    right: 5px;
     width: 30px;
     height: 100%;
 }
@@ -368,7 +400,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 #rdr_sandbox div.rdr div.rdr_panelOverlay { z-index: 6; position:absolute;}
 #rdr_sandbox div.rdr .rdr_reactionPanel div.rdr_panelOverlay { 
-    background:#bbb; clear:both; height:100%; left:38px; position:absolute; width:1px;
+    background:#d6d6d6; clear:both; height:100%; left:38px; position:absolute; width:1px;
 }
 
 #rdr_sandbox div.rdr .rdr_contentPanel div.rdr_panelOverlay,
@@ -405,8 +437,41 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 
 /* contentSet */
-#rdr_sandbox div.rdr div.rdr_contentSet {margin-bottom:10px;}
-#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader                        {background:#e1e1e1; font-size:11px; font-weight:bold; padding:3px 8px; overflow:auto;}
+#rdr_sandbox div.rdr div.rdr_contentSet {
+    border-bottom: 1px solid #EEEEEE;
+    cursor:pointer;
+}
+#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content {
+    border-bottom: 1px solid #CCCCCC;
+}
+
+#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader {
+    background:#e1e1e1; font-size:11px; font-weight:bold; overflow:auto; position:relative; height:20px; font-weight:normal;
+}
+#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_tag_info {
+    position:absolute;
+    padding:4px 0 0 10px;
+}
+#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_tag_info span.rdr_tag_rep {
+    font-style:italic;
+    font-weight:bold;
+}
+#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_rightBox {   
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    right: 5px;
+    width: 30px;
+}
+#rdr_sandbox div.rdr div.rdr_contentSet.rdr_hover div.rdr_contentHeader div.rdr_rightBox {
+    background:url({{ STATIC_URL }}widget/images/widget_icons.png) -36px -10px no-repeat !important;
+    opacity:0.5;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter:alpha(opacity=50);
+    -moz-opacity:5.0;
+    -khtml-opacity:5.0;
+}
+
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag              {margin:0; background:#ccc; font:inherit; color:#666; padding:0; }
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag:hover,
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag.rdr_hover        {background:#fff; }
