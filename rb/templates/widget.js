@@ -1,3 +1,4 @@
+alert(1);
 var RDRtimer,
 RDR, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
