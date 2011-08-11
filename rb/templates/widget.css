@@ -204,19 +204,26 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 
 /* the widget */
 #rdr_sandbox div.rdr_window h1,
-#rdr_sandbox div.rdr_window h2  {color:#999; font-size:24px;}
+#rdr_sandbox div.rdr_window h2  {color:#666; font-size:24px;}
 
 #rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap{
     text-align:left !important;
     position:relative;
 }
 
-#rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap h1{
+#rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap h1,
+#rdr_sandbox div.rdr_window div.rdr_whyPanel div.rdr_headerInnerWrap h1{
     float: left;
     margin-left: 28px;
     position: relative;
     width: auto;
     color:#008BE4;
+}
+
+#rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap h1 span ,
+#rdr_sandbox div.rdr_window div.rdr_whyPanel div.rdr_headerInnerWrap h1 span {
+    color:#666;
+    font-size:24px;
 }
 
 #rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap h2{
@@ -273,11 +280,12 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 
 #rdr_sandbox div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body  {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
 
-#rdr_sandbox div.rdr div.rdr_contentPanel                            {position:absolute; z-index:15; left:200px; background:#eeeeee; width:230px;}
+#rdr_sandbox div.rdr div.rdr_contentPanel                            {position:absolute; z-index:15; left:200px; background:#eeeeee; width:300px;}
 #rdr_sandbox div.rdr div.rdr_contentPanel div.rdr_body               {}
 
-#rdr_sandbox div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:250px; background:#f2f2f2; visibility:hidden;}
-#rdr_sandbox div.rdr.rdr_columns3 div.rdr_whyPanel                   {width:250px;}
+#rdr_sandbox div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:300px; background:#f2f2f2; visibility:hidden;}
+#rdr_sandbox div.rdr div.rdr_whyPanel.rdr_whyShowing                  {z-index:16;}
+/*#rdr_sandbox div.rdr.rdr_columns3 div.rdr_whyPanel                   {width:300px;}*/
 #rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_body                   {}
 #rdr_sandbox div.rdr div.rdr_whyPanel hr                             {background: #ddd; border: none; clear: both; color: #ddd; float: none; height: 1px; margin: 10px 0; }
 
@@ -438,7 +446,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 /* contentSet */
 #rdr_sandbox div.rdr div.rdr_contentSet {
-    border-bottom: 1px solid #EEEEEE;
+    border-top: 1px solid #f4f4f4;
     cursor:pointer;
 }
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content {
@@ -478,13 +486,8 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_has_comment    {background: url("{{ STATIC_URL }}widget/images/widget_icons.png") no-repeat scroll -121px -12px transparent; float:right; padding-left:16px; font-weight:normal; margin-right:5px; cursor:pointer;}
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_can_comment    {background:none; float:right; font-weight:normal; margin-right:5px; text-transform:uppercase; font-size:9px; display:none; cursor:pointer; color:#666;}
 #rdr_sandbox div.rdr div.rdr_contentSet:hover div.rdr_contentHeader div.rdr_can_comment    {display:block;}
-#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content {
-color:#787878; font:italic 13px Georgia; padding:5px 9px; font-size:13px;
-}
-#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content p{
-width:auto;
-padding:4px;
-}
+#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content { color:#787878; font:italic 13px Georgia; padding:2px 9px; font-size:17px; }
+#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content p { width:auto; padding:0 4px; font-family:ReadrLeague, Arial, sans-serif; font-size:26px;}
 
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content div.rdr_otherTags            {overflow:auto; clear:both; }
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content div.rdr_otherTags em         {color:#76a1ba; display: block; font-family:Arial; font-size:11px; margin-top:10px;}
@@ -535,16 +538,17 @@ padding:4px;
 #rdr_sandbox div.rdr div.rdr_instruct    {color:#666; margin:5px 0;}
 #rdr_sandbox div.rdr div.rdr_help        {font:italic 11px Arial;color:#767676; xwidth:100%; position:absolute; top:12px; xtext-align:center; margin:0 !important;}
 
-
-#rdr_sandbox div.rdr div.rdr_share_social                   { border-bottom: 1px solid #CCCCCC; }
+#rdr_sandbox div.rdr div.rdr_shareBox                       { border-bottom: 1px solid #CCCCCC; overflow:auto; clear:both;}
+#rdr_sandbox div.rdr div.rdr_share_social                   { float:right; }
 #rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; margin:12px 0 0 0; }
 #rdr_sandbox div.rdr_whyPanel div.rdr_tagCard                       { padding: 8px 12px 0; }
 #rdr_sandbox div.rdr_whyPanel div.rdr_tagCard .rdr_undo_link        { text-decoration; underline; float:right; color: #008BE4;}
 #rdr_sandbox div.rdr_whyPanel div.rdr_tagCard  h4                   { position: relative; font-weight:bold; }
-#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard  div.rdr_share_social h4 {
-    float: left;
-    top: 11px;
-}
+#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard  div.rdr_share_social h4 { float: left; top: 7px; font-size:11px; }
+
+#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard  div.rdr_info_summary h4 { float: left; top: 7px; font-size:11px; }
+
+#rdr_sandbox div.rdr_whyPanel div.rdr_view_all { float: left; width:300px; background:#454545; font-size:9px; text-transform:uppercase; color:#fff; cursor:pointer;padding-left:12px;}
 
 #rdr_sandbox div.rdr div.rdr_comment textarea    { width:100%; height:92px; font-size:14px; margin:5px 0; resize:none; padding:5px 5px 10px 5px;}
 #rdr_sandbox div.rdr div.rdr_comment div.rdr_charCount          {font-size:10px; font-style:italic; color:#999; float:left;}
@@ -557,8 +561,8 @@ padding:4px;
     top: 0;
     padding: 0 0 0 8px;
 }
-#rdr_sandbox div.rdr ul.shareLinks li        {padding:5px; display:inline-block; list-style:none;}
-#rdr_sandbox div.rdr ul.shareLinks img       {width:25px; margin:0 !important;}
+#rdr_sandbox div.rdr ul.shareLinks li        {padding:5px 2px; display:inline-block; list-style:none;}
+#rdr_sandbox div.rdr ul.shareLinks img       {width:18px; margin:0 !important;}
 
 /* forms */
 #rdr_sandbox div.rdr textarea,

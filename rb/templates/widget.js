@@ -219,7 +219,6 @@ function readrBoard($R){
                             coords: coords,
                             pnlWidth:200,
                             columns:true,
-                            ignoreWindowEdges:"bl",
                             noHeader:true,
                             container: hash,
                             content: settings.content,
@@ -659,7 +658,6 @@ function readrBoard($R){
                     },
                     pnlWidth:200,
                     columns:true,
-                    ignoreWindowEdges:"bl",
                     noHeader:true,
                     container: hash,
                     content: settings.content,
@@ -1203,6 +1201,15 @@ log('w,h,coords');
                     if( parsedInt < nextfactor ){
                         return ""+ Math.floor( parsedInt/thisfactor ) + abr[i];
                     }
+                }
+            },
+            trimToLastWord: function(str){
+                var danglerRE = /\w+$/.exec(str);
+                if( !danglerRE){
+                    return str;
+                }
+                else{
+                    return str.slice(0, str.length-danglerRE[0].length)
                 }
             }
         },
@@ -2069,7 +2076,7 @@ log('w,h,coords');
                                     // builds a new actionbar or just returns the existing $actionbar if it exists.
 
                                     //use the image container info as the content, because the img itself is the content_node.
-                                    var $actionbar = RDR.actionbar.draw({ hash:hash, kind:containerInfo.kind, coords:coords, content:containerInfo.body, src_with_path:containerInfo.body, ignoreWindowEdges:"rb" });
+                                    var $actionbar = RDR.actionbar.draw({ hash:hash, kind:containerInfo.kind, coords:coords, content:containerInfo.body, src_with_path:containerInfo.body, ignoreWindowEdges:"tb" });
 
                                     //kill all rivals!!
                                     var $rivals = $('div.rdr_actionbar').not($actionbar);
@@ -3776,11 +3783,9 @@ log('w,h,coords');
                 var $reactionPanel = rindow.find('div.rdr_reactionPanel'),
                     $contentPanel = rindow.find('div.rdr_contentPanel'),
                     $whyPanel = rindow.find('div.rdr_whyPanel');
-                    
 
-                // zero out the content in the whyPanel, since they just selected a new tag and the comments would not reflect the now-selected tag.
-                $whyPanel.find('div.rdr_header h1').html('Comments');
-                $whyPanel.find('div.rdr_body').html('<div class="rdr_commentSet rdr_tagCard rdr_tagCard_default ">Select something in the column to the left to leave a comment on it.</div>');
+                $whyPanel.removeClass('rdr_whyShowing');
+
 
                 /*
                 var content = [];
@@ -3803,6 +3808,10 @@ log('w,h,coords');
                 var tagBody = tag.body.length > maxHeaderLen ? tag.body.slice(0, maxHeaderLen)+"..." : tag.body;
 
                 $contentPanel.find('div.rdr_header h1').html(tagBody);
+
+                // zero out the content in the whyPanel, since they just selected a new tag and the comments would not reflect the now-selected tag.
+                $whyPanel.find('div.rdr_header h1').html(tagBody + ": ");
+                $whyPanel.find('div.rdr_body').html('<div class="rdr_commentSet rdr_tagCard rdr_tagCard_default ">Select something in the column to the left to leave a comment on it.</div>');
 
                 //todo: this is for testing style for now, we need to swap it out when we click on the different sections
                 //$contentPanel.find('div.rdr_header h1').after('<h2><span> : </span>todo: quote here ...</h2>');
@@ -3829,7 +3838,7 @@ log('w,h,coords');
                 var tag = args.tag, 
                     rindow = args.rindow,
                     content_node = args.content_node;
-                
+                console.dir(args);
                 //temp tie-over    
                 var hash = args.hash,
                     summary = RDR.summaries[hash],
@@ -3838,9 +3847,18 @@ log('w,h,coords');
                 if ( args.selState ) var selState = args.selState;
 
 
-                var $whyPanel_body = rindow.find('div.rdr_whyPanel div.rdr_body');
-                var $whyPanel_body_jsp = $whyPanel_body.find('.jspPane');
+                var $whyPanel = rindow.find('div.rdr_whyPanel'),
+                    $whyPanel_body = $whyPanel.find('div.rdr_body'),
+                    $whyPanel_body_jsp = $whyPanel_body.find('.jspPane');
                 
+                $whyPanel.addClass('rdr_whyShowing');
+
+                var $backToQuotes = $('<div class="rdr_view_all">&lt;&lt; View All</div>');
+                $backToQuotes.click( function() {
+                    $whyPanel.removeClass('rdr_whyShowing');
+                });
+                if ( $whyPanel_body.find('div.rdr_view_all').length == 0 ) $whyPanel_body.append( $backToQuotes );
+
                 var $whyPanel_tagCard = $('<div />').addClass('rdr_tagCard rdr_tagCard'+tag.id);
                 //$whyPanel_body.empty();
             
@@ -3862,10 +3880,39 @@ log('w,h,coords');
                     }
                 }
 
-                var hasComments = !$.isEmptyObject(comments);
+                var headerBodyFull = tag.body + ": <span>" + content_node.body+"</span>",
+                    maxHeaderLen = 40;
+                var headerBody = ( ( headerBodyFull.length - 13 ) > maxHeaderLen ) ? headerBodyFull.slice(0, maxHeaderLen)+"..." : headerBodyFull;
 
+                rindow.find('div.rdr_whyPanel div.rdr_header h1').html( headerBody );
+
+                var $socialBox = $('<div class="rdr_share_social"><h4>Share:</h4></div>'), 
+                $shareLinks = $('<ul class="shareLinks"></ul>'),
+                socialNetworks = ["facebook","twitter"]; //,"tumblr","linkedin"];
+
+                var shareHash = hash;
+                //quick mockup version of this code
+                $.each(socialNetworks, function(idx, val){
+                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                    $shareLinks.find('li:last').click( function() {
+                        var real_content_node = RDR.content_nodes[hash];
+                        RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:real_content_node });
+                        return false;
+                    });
+                });
+                $socialBox.append($shareLinks, '<div style="clear:both;" />');
+
+                var $infoSummary = $('<div class="rdr_info_summary"><h4>Reactions: '+content_node.counts.tags+'</h4></div>');
+
+                var $infoBox = $('<div class="rdr_shareBox"></div>');
+                $infoBox.append( $infoSummary, $socialBox );
+                $whyPanel_tagCard.append( $infoBox );
+
+
+                var hasComments = !$.isEmptyObject(comments);
                 if (hasComments) {
-                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
+                    // rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
+
                     // ok, get the content associated with this tag!
                     for ( var i in comments ) {
                         var this_comment = comments[i];
@@ -3904,29 +3951,7 @@ log('w,h,coords');
                             $whyPanel_tagCard.append( $commentSet );
                         }
                     }
-                } else {
-                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Say More');
                 }
-
-                var $socialBox = $('<div class="rdr_share_social"><h4>Share:</h4></div>'), 
-                $shareLinks = $('<ul class="shareLinks"></ul>'),
-                socialNetworks = ["facebook","twitter"]; //,"tumblr","linkedin"];
-
-                var shareHash = hash;
-                //quick mockup version of this code
-                $.each(socialNetworks, function(idx, val){
-                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
-                    $shareLinks.find('li:last').click( function() {
-                        var real_content_node = RDR.content_nodes[hash];
-                        RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:real_content_node });
-                        return false;
-                    });
-                });
-                $socialBox.append($shareLinks, '<div style="clear:both;" />');
-
-                var $shareDialogueBox = $('<div class="rdr_shareBox rdr_sntPnl_padder"></div>');
-                $shareDialogueBox.html( $socialBox );
-                $whyPanel_tagCard.append( $shareDialogueBox );
 
                 //todo: combine this with the tooltip for the tags
                 // var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+tag.id+'">Comment</button></div>');
@@ -4015,7 +4040,8 @@ log('w,h,coords');
 
                     minHeight = RDR.rindow.defaults.height; //260
                     maxHeight = 400;
-                    contentPanelWidth = 230; //temp var - Later will be a property of a panel object
+                    contentPanelWidth = 300; //temp var - Later will be a property of a panel object
+                    whyPanelWidth = 300; //temp var - Later will be a property of a panel object
 
                     rindow.resizable('option', {
                         minHeight:minHeight,
@@ -4038,7 +4064,9 @@ log('w,h,coords');
                             $thisPanel.find('div.rdr_header').removeClass('rdr_brtl rdr_brbl');
                             $(rindow).find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').removeClass('rdr_brbr rdr_brtr');
                             
-                            width = (num_columns == 3) ? 200 + contentPanelWidth + 250 : 200 + 250;
+                            // old, from when whyPanel was next to, not over, the contentPanel:
+                            // width = (num_columns == 3) ? 200 + contentPanelWidth + 250 : 200 + 250;
+                            width = 200 + contentPanelWidth; // any time we're expanding the contentPanel, the rindow is gonna be 400px wide
                             gotoHeight = (num_columns == 3) ? 270  : 300; //quick hack to make it look a bit nicer
                             break;
                     }
@@ -4228,22 +4256,12 @@ log('w,h,coords');
 
                         $header.append( $tagInfo, $rightBox );
 
-                        function trimToLastWord(str){
-                            var danglerRE = /\w+$/.exec(str);
-                            if( !danglerRE){
-                                return str;
-                            }
-                            else{
-                                return str.slice(0, str.length-danglerRE[0].length)
-                            }
-                        }
-
                         //todo: consolodate truncate functions
                         var content_node_body = content_node.body,
-                            maxLen = 80,
+                            maxLen = 60,
                             content_node_body_trunc;
                             
-                        content_node_body_trunc = (content_node_body.length > maxLen) ? trimToLastWord( content_node_body.slice(0, maxLen) )+"..." : content_node_body;
+                        content_node_body_trunc = (content_node_body.length > maxLen) ? RDR.util.trimToLastWord( content_node_body.slice(0, maxLen) )+"..." : content_node_body;
 
                         $content.html( '<p>'+content_node_body_trunc+'</p>');
                         
@@ -4948,8 +4966,6 @@ loadScript( "{{ STATIC_URL }}global/js/jquery-1.6.min.js", function(){
         //within this scope while the $ refers to our version of jQuery, attach it to our Global var $R at least for now, for testing later
         //todo - I don't think it really matters, but consider making this just local later
         $R = jQuery.noConflict(true);
-        
-        console.log('dgdfgdfgsd')
         
         //test that $.ui versioning is working correctly
 
