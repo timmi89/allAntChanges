@@ -211,12 +211,19 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
     position:relative;
 }
 
-#rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap h1{
+#rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap h1,
+#rdr_sandbox div.rdr_window div.rdr_whyPanel div.rdr_headerInnerWrap h1{
     float: left;
     margin-left: 28px;
     position: relative;
     width: auto;
     color:#008BE4;
+}
+
+#rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap h1 span ,
+#rdr_sandbox div.rdr_window div.rdr_whyPanel div.rdr_headerInnerWrap h1 span {
+    color:#999;
+    font-size:24px;
 }
 
 #rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap h2{
@@ -273,11 +280,11 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 
 #rdr_sandbox div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body  {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
 
-#rdr_sandbox div.rdr div.rdr_contentPanel                            {position:absolute; z-index:15; left:200px; background:#eeeeee; width:230px;}
+#rdr_sandbox div.rdr div.rdr_contentPanel                            {position:absolute; z-index:15; left:200px; background:#eeeeee; width:300px;}
 #rdr_sandbox div.rdr div.rdr_contentPanel div.rdr_body               {}
 
-#rdr_sandbox div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:250px; background:#f2f2f2; visibility:hidden;}
-#rdr_sandbox div.rdr.rdr_columns3 div.rdr_whyPanel                   {width:250px;}
+#rdr_sandbox div.rdr div.rdr_whyPanel                                {position:absolute; z-index:10; right:0; width:300px; background:#f2f2f2; visibility:hidden;}
+/*#rdr_sandbox div.rdr.rdr_columns3 div.rdr_whyPanel                   {width:300px;}*/
 #rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_body                   {}
 #rdr_sandbox div.rdr div.rdr_whyPanel hr                             {background: #ddd; border: none; clear: both; color: #ddd; float: none; height: 1px; margin: 10px 0; }
 

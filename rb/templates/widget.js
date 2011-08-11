@@ -218,7 +218,6 @@ function readrBoard($R){
                             coords: coords,
                             pnlWidth:200,
                             columns:true,
-                            ignoreWindowEdges:"bl",
                             noHeader:true,
                             container: hash,
                             content: settings.content,
@@ -632,7 +631,6 @@ function readrBoard($R){
                     },
                     pnlWidth:200,
                     columns:true,
-                    ignoreWindowEdges:"bl",
                     noHeader:true,
                     container: hash,
                     content: settings.content,
@@ -1163,6 +1161,15 @@ function readrBoard($R){
                     if( parsedInt < nextfactor ){
                         return ""+ Math.floor( parsedInt/thisfactor ) + abr[i];
                     }
+                }
+            },
+            trimToLastWord: function(str){
+                var danglerRE = /\w+$/.exec(str);
+                if( !danglerRE){
+                    return str;
+                }
+                else{
+                    return str.slice(0, str.length-danglerRE[0].length)
                 }
             }
         },
@@ -2029,7 +2036,7 @@ function readrBoard($R){
                                     // builds a new actionbar or just returns the existing $actionbar if it exists.
 
                                     //use the image container info as the content, because the img itself is the content_node.
-                                    var $actionbar = RDR.actionbar.draw({ hash:hash, kind:containerInfo.kind, coords:coords, content:containerInfo.body, src_with_path:containerInfo.body, ignoreWindowEdges:"rb" });
+                                    var $actionbar = RDR.actionbar.draw({ hash:hash, kind:containerInfo.kind, coords:coords, content:containerInfo.body, src_with_path:containerInfo.body, ignoreWindowEdges:"tb" });
 
                                     //kill all rivals!!
                                     var $rivals = $('div.rdr_actionbar').not($actionbar);
@@ -3789,7 +3796,7 @@ function readrBoard($R){
                 var tag = args.tag, 
                     rindow = args.rindow,
                     content_node = args.content_node;
-                
+                console.dir(args);
                 //temp tie-over    
                 var hash = args.hash,
                     summary = RDR.summaries[hash],
@@ -3822,10 +3829,17 @@ function readrBoard($R){
                     }
                 }
 
+                var headerBodyFull = tag.body + ": <span>" + content_node.body+"</span>",
+                    maxHeaderLen = 40;
+                var headerBody = ( ( headerBodyFull.length - 13 ) > maxHeaderLen ) ? headerBodyFull.slice(0, maxHeaderLen)+"..." : headerBodyFull;
+
+                rindow.find('div.rdr_whyPanel div.rdr_header h1').html( headerBody );
+
                 var hasComments = !$.isEmptyObject(comments);
 
                 if (hasComments) {
-                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
+                    // rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
+
                     // ok, get the content associated with this tag!
                     for ( var i in comments ) {
                         var this_comment = comments[i];
@@ -3864,8 +3878,6 @@ function readrBoard($R){
                             $whyPanel_tagCard.append( $commentSet );
                         }
                     }
-                } else {
-                    rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Say More');
                 }
 
                 var $socialBox = $('<div class="rdr_share_social"><h4>Share:</h4></div>'), 
@@ -3975,7 +3987,8 @@ function readrBoard($R){
 
                     minHeight = RDR.rindow.defaults.height; //260
                     maxHeight = 400;
-                    contentPanelWidth = 230; //temp var - Later will be a property of a panel object
+                    contentPanelWidth = 300; //temp var - Later will be a property of a panel object
+                    whyPanelWidth = 300; //temp var - Later will be a property of a panel object
 
                     rindow.resizable('option', {
                         minHeight:minHeight,
@@ -3998,7 +4011,9 @@ function readrBoard($R){
                             $thisPanel.find('div.rdr_header').removeClass('rdr_brtl rdr_brbl');
                             $(rindow).find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').removeClass('rdr_brbr rdr_brtr');
                             
-                            width = (num_columns == 3) ? 200 + contentPanelWidth + 250 : 200 + 250;
+                            // old, from when whyPanel was next to, not over, the contentPanel:
+                            // width = (num_columns == 3) ? 200 + contentPanelWidth + 250 : 200 + 250;
+                            width = 500 + contentPanelWidth; // any time we're expanding the contentPanel, the rindow is gonna be 400px wide
                             gotoHeight = (num_columns == 3) ? 270  : 300; //quick hack to make it look a bit nicer
                             break;
                     }
@@ -4188,22 +4203,12 @@ function readrBoard($R){
 
                         $header.append( $tagInfo, $rightBox );
 
-                        function trimToLastWord(str){
-                            var danglerRE = /\w+$/.exec(str);
-                            if( !danglerRE){
-                                return str;
-                            }
-                            else{
-                                return str.slice(0, str.length-danglerRE[0].length)
-                            }
-                        }
-
                         //todo: consolodate truncate functions
                         var content_node_body = content_node.body,
-                            maxLen = 80,
+                            maxLen = 60,
                             content_node_body_trunc;
                             
-                        content_node_body_trunc = (content_node_body.length > maxLen) ? trimToLastWord( content_node_body.slice(0, maxLen) )+"..." : content_node_body;
+                        content_node_body_trunc = (content_node_body.length > maxLen) ? RDR.util.trimToLastWord( content_node_body.slice(0, maxLen) )+"..." : content_node_body;
 
                         $content.html( '<p>'+content_node_body_trunc+'</p>');
                         
@@ -4908,8 +4913,6 @@ loadScript( "{{ STATIC_URL }}global/js/jquery-1.6.min.js", function(){
         //within this scope while the $ refers to our version of jQuery, attach it to our Global var $R at least for now, for testing later
         //todo - I don't think it really matters, but consider making this just local later
         $R = jQuery.noConflict(true);
-        
-        console.log('dgdfgdfgsd')
         
         //test that $.ui versioning is working correctly
 
