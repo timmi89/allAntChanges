@@ -51,7 +51,7 @@ class PopularContentHandler(AnalyticsHandler):
         kind_interactions = kind_interactions.select_related('content')
         content = kind_interactions.order_by('content__body').values('content__id', 'content__body')
         content = content.annotate(count=Count('id')).order_by('-count')
-        content = content[:max_count] if data['max_count'] else content[:10]
+        content = content[:data['max_count']] if data['max_count'] else content[:10]
         
         result = []
         
@@ -70,7 +70,7 @@ class PopularTagHandler(AnalyticsHandler):
         interactions = interactions.order_by('interaction_node__body').values('interaction_node__body')
         interactions = interactions.annotate(count=Count('id')).order_by('-count')
         
-        interactions = interactions[:max_count] if data['max_count'] else interactions[:10]
+        interactions = interactions[:data['max_count']] if 'max_count' in data else interactions[:10]
 
         return interactions
         
@@ -79,7 +79,7 @@ class ActiveHandler(AnalyticsHandler):
         subject = kwargs['subject']
         grouped = interactions.order_by(subject).values(subject)
         active = grouped.annotate(count=Count('id')).order_by('-count')
-        active = active[:max_count] if data['max_count'] else active[:10]
+        active = active[:data['max_count']] if 'max_count' in data else active[:10]
         
         active_subjects = []
         
@@ -103,7 +103,7 @@ class RecentHandler(AnalyticsHandler):
     def process(self, interactions, data, **kwargs):
         page_ids = interactions.order_by('page').values('page')
         pages = Page.objects.filter(id__in=page_ids)
-        pages = pages[:max_count] if data['max_count'] else pages[:10]
+        pages = pages[:data['max_count']]if 'max_count' in data else pages[:10]
         return pages
 
 class TaggedHandler(AnalyticsHandler):
@@ -111,7 +111,7 @@ class TaggedHandler(AnalyticsHandler):
         tagged_interactions = interactions.filter(interaction_node__id=data['tag'])
         page_ids = tagged_interactions.order_by('page').values('page')
         pages = Page.objects.filter(id__in=page_ids)
-        pages = pages[:max_count] if data['max_count'] else pages[:10]
+        pages = pages[:data['max_count']] if 'max_count' in data else pages[:10]
         return pages
 
 class FrequencyHandler(AnalyticsHandler):
