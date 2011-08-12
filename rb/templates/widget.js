@@ -2020,8 +2020,7 @@ console.dir( summary );
                             };
                             
                             RDR.content_nodes[hash] = content_node_data;
-console.log('image setup');
-console.dir(content_node_data);
+
                             $container.hover(
                                 function(){
                                     $(this).data('hover',true);
@@ -3806,8 +3805,6 @@ console.dir(args.sendData);
                 RDR.actions.panel.expand("contentPanel", rindow);
             },
             viewCommentContent: function(args){
-console.log('viewCommentContent args:')
-console.dir(args);
 
                 var tag = args.tag, 
                     rindow = args.rindow,
@@ -3939,6 +3936,7 @@ console.dir(args);
 
 
                 var hasComments = !$.isEmptyObject(comments);
+                
                 if (hasComments) {
                     // rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
 
@@ -4312,6 +4310,7 @@ console.dir(args);
                         $tagInfo.html( tagCountNode + '&nbsp;&nbsp;<span class="rdr_tag_rep">'+tag.body+'</span>&nbsp;&nbsp;'+label );
 
                         $header.append( $tagInfo, $rightBox );
+                        if ( !$.isEmptyObject( RDR.summaries[hash].top_interactions.coms ) ) $header.addClass('rdr_has_comment');
 
                         //todo: consolodate truncate functions
                         var content_node_body = content_node.body,
@@ -4366,40 +4365,40 @@ console.dir(args);
                         rindow.find('div.rdr_contentPanel div.rdr_body').append( $contentSet );
 
                         // create the Share tooltips
-                        $contentSet.find( 'div.rdr_tag_share' ).mouseenter( 
-                            function() {
+                        // $contentSet.find( 'div.rdr_tag_share' ).mouseenter( 
+                        //     function() {
 
-                                var $this = $(this),
-                                    $shareTip = $( '<div class="rdr rdr_share_container"><div class="rdr rdr_tooltip rdr_top"><div class="rdr rdr_tooltip-content">Share this reaction<br/>'+
-                                                    '<img rel="facebook" src="/static/widget/images/social-icons-loose/social-icon-facebook.png" class="rdr_sns no-rdr"/>'+
-                                                    '<img rel="twitter" src="/static/widget/images/social-icons-loose/social-icon-twitter.png" class="rdr_sns no-rdr"/>'+
-                                                    // '<img rel="tumblr" src="/static/widget/images/social-icons-loose/social-icon-tumblr.png" class="rdr_sns no-rdr"/>'+
-                                                    // '<img rel="linkedin" src="/static/widget/images/social-icons-loose/social-icon-linkedin.png" class="rdr_sns no-rdr"/>'+
-                                                    '</div><div class="rdr rdr_tooltip-arrow-border" /><div class="rdr rdr_tooltip-arrow" /></div></div>' );
-                                var share_offsets = $this.offset(),
-                                    rindow_offsets = rindow.offset();
+                        //         var $this = $(this),
+                        //             $shareTip = $( '<div class="rdr rdr_share_container"><div class="rdr rdr_tooltip rdr_top"><div class="rdr rdr_tooltip-content">Share this reaction<br/>'+
+                        //                             '<img rel="facebook" src="/static/widget/images/social-icons-loose/social-icon-facebook.png" class="rdr_sns no-rdr"/>'+
+                        //                             '<img rel="twitter" src="/static/widget/images/social-icons-loose/social-icon-twitter.png" class="rdr_sns no-rdr"/>'+
+                        //                             // '<img rel="tumblr" src="/static/widget/images/social-icons-loose/social-icon-tumblr.png" class="rdr_sns no-rdr"/>'+
+                        //                             // '<img rel="linkedin" src="/static/widget/images/social-icons-loose/social-icon-linkedin.png" class="rdr_sns no-rdr"/>'+
+                        //                             '</div><div class="rdr rdr_tooltip-arrow-border" /><div class="rdr rdr_tooltip-arrow" /></div></div>' );
+                        //         var share_offsets = $this.offset(),
+                        //             rindow_offsets = rindow.offset();
 
-                                $this.addClass('rdr_hover').parent().addClass('rdr_hover');
-                                $shareTip.css('left', share_offsets.left+'px').css('top', share_offsets.top+'px');
+                        //         $this.addClass('rdr_hover').parent().addClass('rdr_hover');
+                        //         $shareTip.css('left', share_offsets.left+'px').css('top', share_offsets.top+'px');
 
-                                // $this.append( $shareTip );
-                                $('#rdr_sandbox').append( $shareTip );
-                                $shareTip.bind('mouseleave.rdr', { $tag_share:$this }, function(e) {
-                                    $(this).remove();
-                                    e.data.$tag_share.removeClass('rdr_hover').parent().removeClass('rdr_hover');
-                                });
+                        //         // $this.append( $shareTip );
+                        //         $('#rdr_sandbox').append( $shareTip );
+                        //         $shareTip.bind('mouseleave.rdr', { $tag_share:$this }, function(e) {
+                        //             $(this).remove();
+                        //             e.data.$tag_share.removeClass('rdr_hover').parent().removeClass('rdr_hover');
+                        //         });
 
-                                var content_node_info = $(this).closest('div.rdr_contentSet').data();
-                                var tag = $this.closest('a.rdr_tag').data('tag');
-                                $shareTip.find('img.rdr_sns').click( function() {
-                                    RDR.actions.share_getLink({ hash:hash, kind:summary.kind, sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node:content_node_info });
-                                });
-                            }
-                        ).mouseleave(
-                            function() {
-                                // $this.removeClass('rdr_hover');
-                            }
-                        );
+                        //         var content_node_info = $(this).closest('div.rdr_contentSet').data();
+                        //         var tag = $this.closest('a.rdr_tag').data('tag');
+                        //         $shareTip.find('img.rdr_sns').click( function() {
+                        //             RDR.actions.share_getLink({ hash:hash, kind:summary.kind, sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node:content_node_info });
+                        //         });
+                        //     }
+                        // ).mouseleave(
+                        //     function() {
+                        //         // $this.removeClass('rdr_hover');
+                        //     }
+                        // );
 
                     }
 

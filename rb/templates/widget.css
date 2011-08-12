@@ -204,7 +204,7 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 
 /* the widget */
 #rdr_sandbox div.rdr_window h1,
-#rdr_sandbox div.rdr_window h2  {color:#666; font-size:24px;}
+#rdr_sandbox div.rdr_window h2  {color:#666; font-size:22px;}
 
 #rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap{
     text-align:left !important;
@@ -224,7 +224,7 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap h1 span ,
 #rdr_sandbox div.rdr_window div.rdr_whyPanel div.rdr_headerInnerWrap h1 span {
     color:#666;
-    font-size:21px;
+    font-size:20px;
     margin-left: 4px;
     margin-top: 1px;
     position: absolute;
@@ -273,7 +273,7 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("{{ STATIC_URL }}widget/images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header  { background:url({{ STATIC_URL }}widget/images/header_arrow.png) 0px -1px no-repeat #fff; }
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_whyPanel div.rdr_header      { display:none; /*background:url({{ STATIC_URL }}widget/images/header_arrow.png) 0px -1px no-repeat #fff;*/ }
-#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap {background:none; border-bottom:1px solid #bababa; bottom:0; padding-bottom:2px; text-align:center; width:100%; position:absolute; }
+#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap {background:none; border-bottom:1px solid #bababa; bottom:0; padding-bottom:4px; text-align:center; width:100%; position:absolute; }
 #rdr_sandbox div.rdr div.rdr_sntPnl h1                               {padding:0 !important; }
 
 
@@ -480,7 +480,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
     overflow: hidden;
     position: absolute;
     right: 5px;
-    width: 30px;
+    width: 24px;
 }
 #rdr_sandbox div.rdr div.rdr_contentSet.rdr_hover div.rdr_contentHeader div.rdr_rightBox {
     background:url({{ STATIC_URL }}widget/images/widget_icons.png) -36px -10px no-repeat !important;
@@ -493,9 +493,9 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag              {margin:0; background:#ccc; font:inherit; color:#666; padding:0; }
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag:hover,
-#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag.rdr_hover        {background:#fff; }
-#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_has_comment    {background: url("{{ STATIC_URL }}widget/images/widget_icons.png") no-repeat scroll -121px -12px transparent; float:right; padding-left:16px; font-weight:normal; margin-right:5px; cursor:pointer;}
-#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_can_comment    {background:none; float:right; font-weight:normal; margin-right:5px; text-transform:uppercase; font-size:9px; display:none; cursor:pointer; color:#666;}
+#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag.rdr_hover                   {background:#fff; }
+#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader.rdr_has_comment div.rdr_rightBox      {background: url("{{ STATIC_URL }}widget/images/widget_icons.png") no-repeat scroll -95px -10px transparent; float:right; padding-left:16px; font-weight:normal; margin-right:5px; cursor:pointer;}
+#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_can_comment                   {background:none; float:right; font-weight:normal; margin-right:5px; text-transform:uppercase; font-size:9px; display:none; cursor:pointer; color:#666;}
 #rdr_sandbox div.rdr div.rdr_contentSet:hover div.rdr_contentHeader div.rdr_can_comment    {display:block;}
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content { color:#787878; font:italic 13px Georgia; padding:2px 9px; font-size:17px; }
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content p { width:auto; padding:0 4px; font-family:ReadrLeague, Arial, sans-serif; font-size:26px;}
