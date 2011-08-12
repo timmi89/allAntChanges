@@ -117,6 +117,16 @@ class TaggedHandler(AnalyticsHandler):
 class FrequencyHandler(AnalyticsHandler):
     def process(self, interactions, data, **kwargs):
         select_data = {"period": """strftime('%%m/%%d/%%Y:%%H', created)"""}
-        interaction_set = interactions.extra(select=select_data).values('period','kind').annotate(count=Count('kind')).order_by()
-            
-        return interactions
+        interaction_sets = interactions.extra(select=select_data).values('period','kind').annotate(count=Count('kind')).order_by()
+        
+        periods = {}
+        
+        for interaction_set in interaction_sets:
+            period = interaction_set['period']
+            if period not in periods:
+                periods[period] = []
+            periods[period].append(
+                dict([(interaction_set['kind'],interaction_set['count'])])
+            )
+         
+        return periods
