@@ -84,7 +84,7 @@ function readrBoard($R){
                 animTime:100,
                 columns: false,
                 defaultHeight:260,
-                minHeight: 200,
+                minHeight: 100,
                 maxHeight: 400,
                 forceHeight: false
             },
@@ -343,6 +343,12 @@ function readrBoard($R){
                             targetHeight: $tagBox.height() + 35 + 15, //+ header height + extra padding;
                             animate:false
                         });
+
+                        // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
+                        var coords = RDR.util.stayInWindow({coords:coords, width:200, height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
+
+                        rindow.css('left', coords.left + 'px');
+                        rindow.css('top', coords.top + 'px');
 
                         rindow.width(0).height(0).animate({
                             width:200,
@@ -701,7 +707,6 @@ function readrBoard($R){
 					
 					if ( settings.noHeader ) $new_rindow.find('h1').remove();
 					
-                    
                     $new_rindow.draggable({
                         handle:'.rdr_header',
                         containment:'document',
@@ -712,19 +717,18 @@ function readrBoard($R){
                     });
 
                 }
-
-                // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-                var coords = RDR.util.stayInWindow({coords:settings.coords, ignoreWindowEdges:settings.ignoreWindowEdges});
-
+                
+                var coords = settings.coords;
+                               
                 $new_rindow.css('left', coords.left + 'px');
                 $new_rindow.css('top', coords.top + 'px');
                 if(settings.height){
                     $new_rindow.height(settings.height);
                 }
-
+               
                 RDR.rindow.jspUpdate( $new_rindow );
 
-                RDR.actionbar.closeAll();  
+                RDR.actionbar.closeAll();
 
                 $new_rindow.settings = settings;
 
@@ -1110,21 +1114,22 @@ function readrBoard($R){
 					w = settings.width,
 					h = settings.height,
 					coords = settings.coords,
-					ignoreWindowEdges = (settings.ignoreWindowEdges) ? settings.ignoreWindowEdges:""; // ignoreWindowEdges - check for index of t, r, b, l
+                    padding = 10,
+                    ignoreWindowEdges = (settings.ignoreWindowEdges) ? settings.ignoreWindowEdges:""; // ignoreWindowEdges - check for index of t, r, b, l
 
-                if ( ( ignoreWindowEdges.indexOf('r') == -1 ) && (coords.left+w+16) >= winWidth ) {
-                    coords.left = winWidth - w - 10;
+                if ( ( ignoreWindowEdges.indexOf('r') == -1 ) && (coords.left+w+16) >= (winWidth - padding) ) {
+                    coords.left = winWidth - w - padding;
                 }
-                if ( ( ignoreWindowEdges.indexOf('b') == -1 ) &&  (coords.top+h) > winHeight + winScroll ) {
-                    coords.top = winHeight + winScroll - h + 75;
+                if ( ( ignoreWindowEdges.indexOf('b') == -1 ) &&  (coords.top+h) > (winHeight + winScroll - padding ) ) {
+                    coords.top = winHeight + winScroll - h - padding;
                 }
-                if ( ( ignoreWindowEdges.indexOf('l') == -1 ) && coords.left < 10 ) {
-					coords.left = 10;
+                if ( ( ignoreWindowEdges.indexOf('l') == -1 ) && coords.left < padding ) {
+					coords.left = padding;
 				}
-                if ( ( ignoreWindowEdges.indexOf('t') == -1 ) && coords.top - winScroll < 10 ) {
-					coords.top = winScroll + 10;
+                if ( ( ignoreWindowEdges.indexOf('t') == -1 ) && coords.top < (winScroll + padding) ) {
+					coords.top = winScroll + padding;
 				}
-                
+
                 return coords;
             },
             md5: {
@@ -4036,26 +4041,24 @@ function readrBoard($R){
                         RDR.rindow.jspUpdate( rindow );
                     }
                     else{
-                        rindow.animate({
-                            width: width
-                        }, rindow.settings.animTime, function() {
 
-                            gotoHeight = RDR.rindow.setHeight(rindow, {
-                                targetHeight: gotoHeight
-                            });
-
-                            $(this).animate({
-                                height:gotoHeight
-                            }, rindow.settings.animTime, function(){
-                                RDR.rindow.jspUpdate( rindow );
-                            });
+                        gotoHeight = RDR.rindow.setHeight(rindow, {
+                            targetHeight: gotoHeight
                         });
-
-                        // rindow.animate({
-                        //     width: width +'px'
-                        // }, rindow.settings.animTime, function() {
-                        //     RDR.rindow.jspUpdate( rindow, 0 );
-                        // } );
+                                            
+                        var coords = rindow.offset();
+                        log('coords in expand');
+                        log(coords);                        
+                        coords = RDR.util.stayInWindow({coords:coords, width:width, height:gotoHeight });
+                 
+                        rindow.animate({
+                            width: width,
+                            left: coords.left,
+                            height: gotoHeight,
+                            top: coords.top
+                        }, rindow.settings.animTime, function() {
+                            RDR.rindow.jspUpdate( rindow );
+                        });
 
                     }
                     $thisPanel.data('expanded', true);
