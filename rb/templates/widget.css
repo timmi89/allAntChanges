@@ -270,7 +270,8 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header                   { background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:5; cursor:move !important;}
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("{{ STATIC_URL }}widget/images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header  { background:url({{ STATIC_URL }}widget/images/header_arrow.png) 0px -1px no-repeat #fff; }
-#rdr_sandbox div.rdr_widow.rdr_readmode div.rdr_sntPnl.rdr_whyPanel div.rdr_header      { display:none; }
+
+#rdr_sandbox div.rdr_window.rdr_readmode div.rdr_sntPnl.rdr_whyPanel div.rdr_header      { display:none; }
 
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap {background:none; border-bottom:1px solid #bababa; bottom:0; padding-bottom:4px; text-align:center; width:100%; position:absolute; }
 #rdr_sandbox div.rdr div.rdr_sntPnl h1                               {padding:0 !important; }
@@ -303,7 +304,12 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr div.rdr_whyPanel hr                             {background: #ddd; border: none; clear: both; color: #ddd; float: none; height: 1px; margin: 10px 0; }
 
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_subHeader        {text-align:center; padding-top:5px;}
-#rdr_sandbox div.rdr div.rdr_sntPnl_padder                   {position:relative; overflow:hidden; margin: 8px 0;}
+#rdr_sandbox div.rdr div.rdr_sntPnl_padder {   
+    border-top: 1px solid #CCCCCC;
+    overflow: hidden;
+    padding: 8px 0;
+    position: relative;
+}
 #rdr_sandbox div.rdr div.rdr_sntPnl textarea,
 #rdr_sandbox div.rdr div.rdr_sntPnl input[type="text"]   { width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
 #rdr_sandbox div.rdr div.rdr_sntPnl button {
@@ -317,7 +323,7 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_submitTag           {width:100%; text-align:right;}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_submitTag button    {}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_commentButton       {width:100%;}
-#rdr_sandbox div.rdr div.rdr_sntPnl .leaveComment            {height:80px; margin-top:5px; max-width:94%; font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;}
+#rdr_sandbox div.rdr div.rdr_sntPnl .leaveComment            {margin-top:5px; max-width:94%; font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_tagFeedback         {background: none repeat scroll 0 0 #ddd; border: 1px solid #bbb; padding: 5px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_tagFeedback strong  {font-weight:bold; color:#008be4;}
 
@@ -503,7 +509,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content { color:#787878; font:italic 13px Georgia; padding:2px 9px; font-size:17px; }
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content p { width:auto; padding:0 4px; font-family:ReadrLeague, Arial, sans-serif; font-size:26px;}
 
-#rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_otherTags            { position:absolute; margin-left:2px; border-top:1px solid #ccc; background:#fff; color:#666; padding:3px; width:300px; font-size:11px; bottom:0;}
+#rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_otherTags            { position:absolute; margin-left:2px; border-top:1px solid #ccc; background:#fff; color:#666; padding:3px; width:300px; font-size:11px; bottom:0; height:20px; z-index:4;}
 #rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_otherTags em         {color:#76a1ba; display: block; font-family:Arial; font-size:11px; margin-top:10px;}
 
 #rdr_sandbox div.rdr div.rdr_contentSet.rdr_selected div.rdr_contentHeader           {background:#d0dee6;}
@@ -552,9 +558,9 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_instruct    {color:#666; margin:5px 0;}
 #rdr_sandbox div.rdr div.rdr_help        {font:italic 11px Arial;color:#767676; xwidth:100%; position:absolute; top:12px; xtext-align:center; margin:0 !important;}
 
-#rdr_sandbox div.rdr div.rdr_shareBox                       { border-bottom: 1px solid #CCCCCC; overflow:auto; clear:both; margin-top:8px; }
+#rdr_sandbox div.rdr div.rdr_shareBox                       { overflow:auto; clear:both; margin: 8px 0 5px 0;}
 #rdr_sandbox div.rdr div.rdr_share_social                   { float:right; }
-#rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; margin:12px 0 0 0; }
+#rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; }
 #rdr_sandbox div.rdr_whyPanel div.rdr_tagCard                       { padding: 8px 12px 0; position:relative;}
 #rdr_sandbox div.rdr_whyPanel div.rdr_tagCard.rdr_viewAll_hide      { padding-top: 0px; xmin-height:256px; }
 #rdr_sandbox div.rdr_whyPanel div.rdr_tagCard .rdr_undo_link        { text-decoration; underline; float:right; color: #008BE4;}
@@ -566,7 +572,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr_whyPanel div.rdr_view_all { float: left; position:relative; z-index:1; width:300px; background:#aaa; font-size:9px; text-transform:uppercase; color:#fff; cursor:pointer;padding-left:12px;}
 #rdr_sandbox div.rdr_whyPanel div.rdr_view_all.rdr_hide { margin-top:-10px; }
 
-#rdr_sandbox div.rdr div.rdr_comment textarea    { width:100%; height:92px; font-size:14px; margin:5px 0; resize:none; padding:5px 5px 10px 5px;}
+#rdr_sandbox div.rdr div.rdr_comment textarea    { width:100%; font-size:14px; margin:5px 0; resize:none; padding:5px;}
 #rdr_sandbox div.rdr div.rdr_comment div.rdr_charCount          {font-size:10px; font-style:italic; color:#999; float:left;}
 #rdr_sandbox div.rdr div.rdr_share_count     { color:#999999; font-style:italic; margin:-3px 0 5px; }
 

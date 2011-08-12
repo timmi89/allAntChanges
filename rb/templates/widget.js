@@ -344,18 +344,18 @@ function readrBoard($R){
                             }
                         });
 
-    log('tagBox.height() ');
-    log($tagBox.height() );
+                        log('tagBox.height() ');
+                        log($tagBox.height() );
+
                         var rindowHeight = RDR.rindow.setHeight(rindow, {
                             targetHeight: $tagBox.height() + 35 + 15, //+ header height + extra padding;
                             animate:false
                         });
 
-                        // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-                        var coords = RDR.util.stayInWindow({coords:coords, width:200, height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
+                        var newCoords = RDR.util.stayInWindow({coords:coords, width:200, height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
 
-                        rindow.css('left', coords.left + 'px');
-                        rindow.css('top', coords.top + 'px');
+                        rindow.css('left', newCoords.left + 'px');
+                        rindow.css('top', newCoords.top + 'px');
 
                         rindow.width(0).height(0).animate({
                             width:200,
@@ -391,7 +391,7 @@ console.dir( summary );
                             top: -5,
                             left: 1
                         };
-                        var rindowPosition = (kind == "img" || kind == "media" ) ?
+                        var coords = (kind == "img" || kind == "media" ) ?
                         {
                             top: $container.offset().top,
                             left: $container.offset().left + $container.width()
@@ -403,7 +403,7 @@ console.dir( summary );
                         };
                     
                         var rindow = RDR.rindow.draw({
-                            coords:rindowPosition,
+                            coords:coords,
                             pnlWidth:200,
                             noHeader:true,
                             selector:selector
@@ -589,20 +589,25 @@ console.dir( summary );
                             }
                         );
 
+                        log('tagBox.height() ');
+                        log($tagBox.height() );
+
                         var rindowHeight = RDR.rindow.setHeight(rindow, {
-                            targetHeight: $tagBox.height() + 35 + 10, //+ header height + extra padding;
-                            maxHeight:270,
+                            targetHeight: $tagBox.height() + 35 + 15, //+ header height + extra padding;
                             animate:false
                         });
+
+                        var newCoords = RDR.util.stayInWindow({coords:coords, width:200, height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
+
+                        rindow.css('left', newCoords.left );
+                        rindow.css('top', newCoords.top );
 
                         rindow.width(0).height(0).animate({
                             width:200,
                             height: rindowHeight
                         }, 200, 'swing', function(){
                             RDR.rindow.jspUpdate( rindow );
-                        });
-
-            
+                        });            
                         
                     },
                     customOptions: {
@@ -1487,9 +1492,6 @@ console.dir( summary );
                     coords.left = ( $(window).width() / 2 ) - 200;
                     // coords.top =  ( $(window).height() / 2 ) - 100 ;
                     coords.top = 150;
-
-                    // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-                    // var coords = RDR.util.stayInWindow({coords:coords, width:360, height:185 });
 
                     var rindow = RDR.rindow.draw({
                         coords:coords,
@@ -3864,7 +3866,7 @@ console.dir(args.sendData);
                 // other reactions
                 function SortByCount(a,b) { return b.count - a.count; }
 
-                $whyPanel_body.find('div.rdr_otherTags').remove();
+                $whyPanel.find('div.rdr_otherTags').remove();
                 var other_tags = [];
                 if ( kind == "text" ) {
                     for ( var i in content_node.top_interactions.tags ) {
@@ -3886,7 +3888,7 @@ console.dir(args.sendData);
                         $otherTags.append( '<span>('+other_tags[i].count+') '+other_tags[i].body+' &nbsp;</span>&nbsp;');
                     }
 
-                    $whyPanel_body.append( $otherTags );
+                    $whyPanel.append( $otherTags );
                 }
 
 
@@ -3948,48 +3950,7 @@ console.dir(args.sendData);
                 $whyPanel_tagCard.append( $infoBox );
 
 
-                var hasComments = !$.isEmptyObject(comments);
-                
-                if (hasComments) {
-                    // rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
 
-                    // ok, get the content associated with this tag!
-                    for ( var i in comments ) {
-                        var this_comment = comments[i];
-
-                        if( this_comment.tag_id == tag.id ){
-                            var $commentSet = $('<div class="rdr_commentSet" />'),
-                                $commentBy = $('<div class="rdr_commentBy" />'),
-                                $comment = $('<div class="rdr_comment" />'),
-                                $commentReplies = $('<div class="rdr_commentReplies" />'),
-                                $commentReply = $('<div class="rdr_commentReply" />'),
-                                $commentReply_link = $('<a href="javascript:void(0);">Reply</a>');
-                            var user_image_url = ( this_comment.social_user.img_url ) ? this_comment.social_user.img_url: '{{ STATIC_URL }}widget/images/anonymousplode.png';
-                            var user_name = ( this_comment.user.first_name === "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
-                            $commentBy.html( '<img src="'+user_image_url+'" class="no-rdr" /> ' + user_name );
-                            $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
-                            /*
-                            $commentReply_link.bind( 'click.rdr', function() {
-                            });
-                            */
-
-                            // $commentReply.append( $commentReply_link );
-
-
-                            // var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);">'+thisTag.body+'</a>');
-                            
-                            // var $tagShareButton = $('<span class="rdr_tag_share"></span>').click(function() {
-                            // });
-                            
-                            // var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
-                            //     RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:content_node.body, which:which });
-                            // });
-
-                            $commentSet.append( $commentBy, $comment ); // , $commentReplies, $commentReply 
-                            $whyPanel_tagCard.append( $commentSet );
-                        }
-                    }
-                }
 
                 //todo: combine this with the tooltip for the tags
                 // var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+tag.id+'">Comment</button></div>');
@@ -4035,6 +3996,59 @@ console.dir(args.sendData);
                 });
 
                 $whyPanel_tagCard.append( $commentBox.append( $leaveComment ) );
+
+
+
+
+                var hasComments = !$.isEmptyObject(comments);
+                
+                if (hasComments) {
+                    // rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
+
+                    // ok, get the content associated with this tag!
+
+                    var $otherComments = $('<div class="rdr_otherCommentsBox rdr_sntPnl_padder"></div>').html(
+                        '<div><h4>Comments from Others:</h4></div>'
+                    ).appendTo($whyPanel_tagCard);
+
+
+                    for ( var i in comments ) {
+                        var this_comment = comments[i];
+
+                        if( this_comment.tag_id == tag.id ){
+                            var $commentSet = $('<div class="rdr_commentSet" />'),
+                                $commentBy = $('<div class="rdr_commentBy" />'),
+                                $comment = $('<div class="rdr_comment" />'),
+                                $commentReplies = $('<div class="rdr_commentReplies" />'),
+                                $commentReply = $('<div class="rdr_commentReply" />'),
+                                $commentReply_link = $('<a href="javascript:void(0);">Reply</a>');
+                            var user_image_url = ( this_comment.social_user.img_url ) ? this_comment.social_user.img_url: '{{ STATIC_URL }}widget/images/anonymousplode.png';
+                            var user_name = ( this_comment.user.first_name === "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
+                            $commentBy.html( '<img src="'+user_image_url+'" class="no-rdr" /> ' + user_name );
+                            $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
+                            /*
+                            $commentReply_link.bind( 'click.rdr', function() {
+                            });
+                            */
+
+                            // $commentReply.append( $commentReply_link );
+
+
+                            // var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);">'+thisTag.body+'</a>');
+                            
+                            // var $tagShareButton = $('<span class="rdr_tag_share"></span>').click(function() {
+                            // });
+                            
+                            // var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
+                            //     RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:content_node.body, which:which });
+                            // });
+
+                            $commentSet.append( $commentBy, $comment ); // , $commentReplies, $commentReply 
+                            $otherComments.append( $commentSet );
+                        }
+                    }
+                }
+
 
                 // if ( kind == "img" || kind == "media" )  {
                 //     rindow.find('div.rdr_contentPanel').remove();
