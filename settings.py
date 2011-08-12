@@ -146,11 +146,11 @@ TEMPLATE_DIRS = (
     # so it's compatible on all our local machines
     "readrboard/rb/templates"
 )
-
+"""
 SERIALIZATION_MODULES = {
     'json': 'wadofstuff.django.serializers.json'
 }
-
+"""
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
