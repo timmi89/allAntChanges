@@ -147,6 +147,10 @@ TEMPLATE_DIRS = (
     "readrboard/rb/templates"
 )
 
+SERIALIZATION_MODULES = {
+    'json': 'wadofstuff.django.serializers.json'
+}
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
