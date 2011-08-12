@@ -100,7 +100,7 @@ function readrBoard($R){
                         API.reinitialise();
                     }
                 });
-                $rindow.find('div.rdr_otherTags').animate( {'top':( $rindow.height()-58 ) }, 200 );
+                //$rindow.find('div.rdr_otherTags').animate( {'top':( $rindow.height()-58 ) }, 200 );
             },
             setWidth: function( $rindow, width, callback ) {
                 $rindow.animate({
@@ -3881,7 +3881,7 @@ console.dir(args.sendData);
                     console.log('other_tags');
                     console.dir(other_tags);
                     // we set this div far down, then animate it up, because position:fixed doesn't stay within a rindow, it stays within the browser viewport
-                    var $otherTags = $('<div class="rdr_otherTags" style="top:1000px;"><strong>Other Reactions:</strong>&nbsp;</div>');
+                    var $otherTags = $('<div class="rdr_otherTags" ><strong>Other Reactions:</strong>&nbsp;</div>');
                     for ( var i in other_tags ) {
                         $otherTags.append( '<span>('+other_tags[i].count+') '+other_tags[i].body+' &nbsp;</span>&nbsp;');
                     }
