@@ -85,7 +85,7 @@ function readrBoard($R){
                 columns: false,
                 defaultHeight:260,
                 minHeight: 100,
-                maxHeight: 400,
+                maxHeight: 350,
                 forceHeight: false
             },
             jspUpdate: function( $rindow ) {
@@ -652,8 +652,8 @@ function readrBoard($R){
                     pnls:1,
                     height:225,
                     animTime:100,
-                    minHeight: 200,
-                    maxHeight: 400
+                    minHeight: 100,
+                    maxHeight: 350
                 }
                 */
 
@@ -4011,8 +4011,8 @@ function readrBoard($R){
                     rindow.addClass('rdr_columns'+num_columns);
                     var width, minHeight, maxHeight, gotoHeight = null;
 
-                    minHeight = RDR.rindow.defaults.height; //260
-                    maxHeight = 400;
+                    minHeight = RDR.rindow.defaults.minHeight; //100
+                    maxHeight = RDR.rindow.defaults.maxHeight; //350
                     contentPanelWidth = 300; //temp var - Later will be a property of a panel object
                     whyPanelWidth = 300; //temp var - Later will be a property of a panel object
 
@@ -4074,20 +4074,22 @@ function readrBoard($R){
                 collapse: function(_panel, rindow){
                     //RDR.actions.panel.collapse:
 
+                    log(rindow)
                     // hack.  chrome and safari don't like rounded corners if the whyPanel is showing since it is wider than column1
                     rindow.find('div.rdr_whyPanel').css('visibility','hidden');
 
-                    var panel = _panel || "whyPanel";
-                    $thisPanel = $(rindow).find('.rdr_'+panel);
+                    var panel = _panel || "whyPanel",
+                        $thisPanel = $(rindow).find('.rdr_'+panel),
+                        $tagBox = $(rindow).find('div.rdr_tagBox');
                     
                     var num_columns = rindow.find('div.rdr_sntPnl').length;
                     rindow.addClass('rdr_columns'+num_columns);
                     
-                    var width, minHeight, maxHeight, gotoHeight = null;
+                    var width, minHeight, maxHeight, gotoHeight, targetHeight;
 
-                    minHeight = RDR.rindow.defaults.height; //260
-                    maxHeight = 400;
-                    gotoHeight = 260;
+                    minHeight = RDR.rindow.defaults.minHeight; //100
+                    maxHeight = RDR.rindow.defaults.maxHeight; //350
+                    targetHeight = $tagBox.height() + 35 + 15; //+ header height + extra padding;
 
                     rindow.resizable('option', {
                         minHeight:minHeight,
@@ -4127,7 +4129,7 @@ function readrBoard($R){
                     else{
 
                         gotoHeight = RDR.rindow.setHeight(rindow, {
-                            targetHeight: gotoHeight
+                            targetHeight: targetHeight
                         });
                                             
                         var coords = rindow.offset();
