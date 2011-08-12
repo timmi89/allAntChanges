@@ -228,6 +228,7 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
     margin-left: 4px;
     margin-top: 1px;
     position: absolute;
+    width:160px;
 }
 
 #rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap h2{
