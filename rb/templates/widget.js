@@ -213,7 +213,8 @@ function readrBoard($R){
                             }
 
                         }
-                    
+                        log('coords')
+                        log(coords)
                         var rindow = RDR.rindow.draw({
                             coords: coords,
                             pnlWidth:200,
@@ -224,6 +225,8 @@ function readrBoard($R){
                             kind: kind,
                             selState: newSel
                         });
+                        log('coords')
+                        log(coords)
 
                         // TODO this is used to constrain the initial width of this rindow
                         // and then it animates larger when we slide the whyPanel out.
@@ -339,6 +342,8 @@ function readrBoard($R){
                             }
                         });
 
+    log('tagBox.height() ');
+    log($tagBox.height() );
                         var rindowHeight = RDR.rindow.setHeight(rindow, {
                             targetHeight: $tagBox.height() + 35 + 15, //+ header height + extra padding;
                             animate:false
@@ -660,8 +665,8 @@ function readrBoard($R){
 
                 var settings = $.extend({}, this.defaults, options);
 
-                var minHeight = settings.defaultHeight-100;
-                var maxHeight = settings.defaultHeight+100;
+                var minHeight = settings.minHeight
+                var maxHeight = settings.maxHeight
 
 
 				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
@@ -888,7 +893,6 @@ function readrBoard($R){
 		},
 		actionbar: {
 			draw: function(settings) {
-       
                 //RDR.actionbar.draw:
                 //expand to make settings explicit
 
@@ -922,17 +926,18 @@ function readrBoard($R){
                         left: coords.left + 3
                     }
                 };
-                var offsets = (kind == 'text') ? actionbarOffsets.text : actionbarOffsets.img;
-
-                //rewrite coords if needed
-                // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly                
-                //todo: bring this back when we have time to test it
-                //coords = RDR.util.stayInWindow({coords:coords, width:200, height:30, ignoreWindowEdges:settings.ignoreWindowEdges});
                 
+                coords = (kind == 'text') ? actionbarOffsets.text : actionbarOffsets.img;
+
+                //todo: for images and video, put the actionbar on the left side if the image is too far right
+                if (kind == 'text') {
+                    //rewrite coords if needed
+                    coords = RDR.util.stayInWindow({coords:coords, width:45, height:30, paddingY:40, paddingX:40, ignoreWindowEdges:settings.ignoreWindowEdges});                    
+                }
                 // TODO use settings check for certain features and content types to determine which of these to disable
                 var $new_actionbar = $('<div class="rdr rdr_actionbar rdr_widget rdr_widget_bar" id="' + actionbar_id + '" />').css({
-                   'top':offsets.top,
-                   'left':offsets.left
+                   'top':coords.top,
+                   'left':coords.left
                 }).data('hash',hash)//chain
                 .append('<ul/>');
 
@@ -1114,20 +1119,21 @@ function readrBoard($R){
 					w = settings.width,
 					h = settings.height,
 					coords = settings.coords,
-                    padding = 10,
+                    paddingY = settings.paddingY || 10,
+                    paddingX = settings.paddingX || 10,
                     ignoreWindowEdges = (settings.ignoreWindowEdges) ? settings.ignoreWindowEdges:""; // ignoreWindowEdges - check for index of t, r, b, l
 
-                if ( ( ignoreWindowEdges.indexOf('r') == -1 ) && (coords.left+w+16) >= (winWidth - padding) ) {
-                    coords.left = winWidth - w - padding;
+                if ( ( ignoreWindowEdges.indexOf('r') == -1 ) && (coords.left+w+16) >= (winWidth - paddingX) ) {
+                    coords.left = winWidth - w - paddingX;
                 }
-                if ( ( ignoreWindowEdges.indexOf('b') == -1 ) &&  (coords.top+h) > (winHeight + winScroll - padding ) ) {
-                    coords.top = winHeight + winScroll - h - padding;
+                if ( ( ignoreWindowEdges.indexOf('b') == -1 ) &&  (coords.top+h) > (winHeight + winScroll - paddingY ) ) {
+                    coords.top = winHeight + winScroll - h - paddingY;
                 }
-                if ( ( ignoreWindowEdges.indexOf('l') == -1 ) && coords.left < padding ) {
-					coords.left = padding;
+                if ( ( ignoreWindowEdges.indexOf('l') == -1 ) && coords.left < paddingX ) {
+					coords.left = paddingX;
 				}
-                if ( ( ignoreWindowEdges.indexOf('t') == -1 ) && coords.top < (winScroll + padding) ) {
-					coords.top = winScroll + padding;
+                if ( ( ignoreWindowEdges.indexOf('t') == -1 ) && coords.top < (winScroll + paddingY) ) {
+					coords.top = winScroll + paddingY;
 				}
 
                 return coords;
@@ -3007,6 +3013,7 @@ function readrBoard($R){
                         return sendData;
                     },
                     onSuccess: {
+                        //RDR.actions.interactions.tag.onSuccess:
                         create: function(args){
                             var response = args.response;
                             var sendData = args.sendData;
@@ -3119,17 +3126,18 @@ function readrBoard($R){
                             RDR.session.checkForMaxInteractions(newArgs);
                         },
                         remove: function(args){
+                            //RDR.actions.interactions.bookmark.onSuccess.remove:
                             var rindow = args.rindow,
                                 tag = args.tag,
                                 int_id = args.int_id;
 
                             RDR.actions.panel.collapse("whyPanel", rindow);
                             var $thisTagButton = rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id);
-                            $thisTagButton.removeClass('rdr_selected').removeClass('rdr_tagged').removeClass('rdr_int_node_'+int_id).html('');
+                            $thisTagButton.remove();
                         }
                     },
                     onFail: function(args){
-                        //RDR.actions.interactions.tag.onFail:
+                        //RDR.actions.interactions.bookmark.onFail:
 
                         //todo: we prob want to move most of this to a general onFail for all interactions.
                         // So this function would look like: doSpecificOnFailStuff....; RDR.actions.interactions.genericOnFail();
@@ -4117,20 +4125,25 @@ function readrBoard($R){
                     if( !$thisPanel.data('expanded') ){
                     }
                     else{
-                        rindow.animate({
-                            width: width
-                        }, rindow.settings.animTime, function(){
 
-                            var height = $(this).height();
-                            gotoHeight = gotoHeight ? gotoHeight : ( height < minHeight ) ? minHeight : (height > maxHeight) ? maxHeight : null;
-                            if( gotoHeight ){
-                                $(this).animate({
-                                    height:gotoHeight
-                                }, rindow.settings.animTime, function(){
-                                    RDR.rindow.jspUpdate( rindow );
-                                });
-                            }
+                        gotoHeight = RDR.rindow.setHeight(rindow, {
+                            targetHeight: gotoHeight
                         });
+                                            
+                        var coords = rindow.offset();
+                        log('coords in expand');
+                        log(coords);                        
+                        coords = RDR.util.stayInWindow({coords:coords, width:width, height:gotoHeight });
+                 
+                        rindow.animate({
+                            width: width,
+                            left: coords.left,
+                            height: gotoHeight,
+                            top: coords.top
+                        }, rindow.settings.animTime, function() {
+                            RDR.rindow.jspUpdate( rindow );
+                        });
+
                     }
                     
                     $thisPanel.data('expanded', false);
