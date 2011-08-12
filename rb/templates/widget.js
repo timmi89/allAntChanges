@@ -240,7 +240,7 @@ function readrBoard($R){
                             $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
                             $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />');
 
-                        var firstPanelHeader = (actionType == "react") ? "Give a reaction":"Bookmark this";
+                        var firstPanelHeader = (actionType == "react") ? "What's your reaction?":"Bookmark this";
                         var headers = [firstPanelHeader, "Say More"];
                         $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
                         $sentimentBox.children().each(function(idx){
@@ -369,7 +369,7 @@ function readrBoard($R){
                         var hash = settings.hash;
                         var summary = RDR.summaries[hash],
                         kind = summary.kind;
-                        console.dir( summary );
+console.dir( summary );
                         var selector = ".rdr-" + hash;
 
                         var $indicator = $('#rdr_indicator_'+hash),
@@ -491,9 +491,10 @@ function readrBoard($R){
                                     var content_node = summary.content_nodes[i];
                                 }
                             }
-console.dir(summary);
+
+                            // i.e. it's an image / media
                             if ( !content_node ) {
-                                var content_node = summary;
+                                var content_node = RDR.content_nodes[ $this.data('hash') ];
                             }
 
                             if ( !$this.hasClass('rdr_customTagBox') ) {
@@ -2019,7 +2020,8 @@ console.dir(summary);
                             };
                             
                             RDR.content_nodes[hash] = content_node_data;
-
+console.log('image setup');
+console.dir(content_node_data);
                             $container.hover(
                                 function(){
                                     $(this).data('hover',true);
@@ -2446,7 +2448,7 @@ console.dir(summary);
                 send: function(args, int_type, action_type){
                     // /api/tag/create
                     // /api/comment/create
-
+console.dir(args.sendData);
                     // hack to cleanup the send data
                     var sendData = $.extend( true, {}, args.sendData);
                     if (sendData.rindow) delete sendData.rindow;
@@ -2456,6 +2458,10 @@ console.dir(summary);
                     if (sendData.content_node_data && sendData.content_node_data.selState ) delete sendData.content_node_data.selState;
                     if (sendData.content_node_data && sendData.content_node_data.counts ) delete sendData.content_node_data.counts;
                     if (sendData.content_node_data && sendData.content_node_data.top_interactions ) delete sendData.content_node_data.top_interactions;
+                    if (sendData.content_node_data && sendData.content_node_data.$container) delete sendData.content_node_data.$container; //this was happening for delete calls.
+                    if (sendData.content_node_data && sendData.content_node_data.$indicator) delete sendData.content_node_data.$indicator; //this was happening for delete calls.
+                    if (sendData.content_node_data && sendData.content_node_data.$indicator_details) delete sendData.content_node_data.$indicator_details; //this was happening for delete calls.
+                    if (sendData.content_node_data && sendData.content_node_data.$rindow_readmode) delete sendData.content_node_data.$rindow_readmode; //this was happening for delete calls.
                     if (sendData.node) delete sendData.node;
                     if (sendData.uiMode) delete sendData.uiMode;
                     if (sendData.sendData) delete sendData.sendData; //this was happening for delete calls.
@@ -3850,8 +3856,14 @@ console.dir(args);
 
                 $whyPanel_body.find('div.rdr_otherTags').remove();
                 var other_tags = [];
-                for ( var i in content_node.top_interactions.tags ) {
-                    if ( i != tag.id ) other_tags.push({ tag_id:i, count:content_node.top_interactions.tags[i].count, body:content_node.top_interactions.tags[i].body });
+                if ( kind == "text" ) {
+                    for ( var i in content_node.top_interactions.tags ) {
+                        if ( i != tag.id ) other_tags.push({ tag_id:i, count:content_node.top_interactions.tags[i].count, body:content_node.top_interactions.tags[i].body });
+                    }
+                } else {
+                    for ( var i in summary.top_interactions.tags ) {
+                        if ( i != tag.id ) other_tags.push({ tag_id:i, count:summary.top_interactions.tags[i].count, body:summary.top_interactions.tags[i].body });
+                    }
                 }
 
                 if ( other_tags.length > 0 ) {
@@ -3871,7 +3883,12 @@ console.dir(args);
                 $whyPanel_tagCard.siblings('.rdr_tagCard').hide();
 
                 // () ? text_node : image_node
-                var comments = ( content_node.id && summary.content_nodes ) ? summary.content_nodes[ content_node.id ].top_interactions.coms : content_node.top_interactions.coms;
+                if ( kind == "text" ) {
+                    var comments = summary.content_nodes[ content_node.id ].top_interactions.coms;
+                } else {
+                    var comments = summary.top_interactions.coms;
+                }
+                
                 var node_comments = 0;
                 for (var com in comments ) {
                     if ( comments[com].tag_id == tag.id ) {
@@ -3907,7 +3924,14 @@ console.dir(args);
                 });
                 $socialBox.append($shareLinks, '<div style="clear:both;" />');
 
-                var $infoSummary = $('<div class="rdr_info_summary"><h4>('+content_node.top_interactions.tags[ tag.id ].count+') '+content_node.top_interactions.tags[ tag.id ].body+'</h4></div>');
+                if ( kind == "text" ) {
+                    var reaction_count = content_node.top_interactions.tags[ tag.id ].count;
+                    var reaction_body = content_node.top_interactions.tags[ tag.id ].body;
+                } else {
+                    var reaction_count = tag.count;
+                    var reaction_body = tag.body;
+                }
+                var $infoSummary = $('<div class="rdr_info_summary"><h4>('+reaction_count+') '+reaction_body+'</h4></div>');
 
                 var $infoBox = $('<div class="rdr_shareBox"></div>');
                 $infoBox.append( $infoSummary, $socialBox );
@@ -4015,7 +4039,7 @@ console.dir(args);
                     var panel = _panel || "whyPanel";
                     
                     var $thisPanel = $('<div class="rdr_'+panel+' rdr_sntPnl rdr_brtl rdr_brtr rdr_brbr rdr_brbl" id="rdr_'+panel+'" />');
-                    if ( panel == "whyPanel" ) $thisPanel.removeClass('rdr_brtr').removeClass('rdr_brtl');
+                    if ( panel == "whyPanel" ) $thisPanel.removeClass('rdr_brtl');
                     return $thisPanel;
                 },
                 setup: function(_panel, rindow){
