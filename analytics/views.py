@@ -2,7 +2,7 @@ from rb.models import *
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from datetime import datetime
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.core import serializers
 from piston.handler import AnonymousBaseHandler
 
@@ -88,11 +88,11 @@ class ActiveHandler(AnalyticsHandler):
                 active_subjects.append(
                     (active_subject, SocialUser.objects.get(user=active_subject['user']))
                 )
-            if subject == 'page':
+            elif subject == 'page':
                 active_subjects.append(
                     (active_subject, Page.objects.get(id=active_subject['page']))
                 )
-            if subject == 'content':
+            elif subject == 'content':
                 active_subjects.append(
                     (active_subject, Content.objects.get(id=active_subject['content']))
                 )
@@ -116,5 +116,7 @@ class TaggedHandler(AnalyticsHandler):
 
 class FrequencyHandler(AnalyticsHandler):
     def process(self, interactions, data, **kwargs):
-        select_data = {"d": """strftime('%%m/%%d/%%Y', time_stamp)"""}
-        data = My_Model.objects.extra(select=select_data).values('d').annotate(Sum("numbers_data")).order_by()
+        select_data = {"period": """strftime('%%m/%%d/%%Y:%%H', created)"""}
+        interaction_set = interactions.extra(select=select_data).values('period','kind').annotate(count=Count('kind')).order_by()
+            
+        return interactions
