@@ -84,8 +84,8 @@ function readrBoard($R){
                 animTime:100,
                 columns: false,
                 defaultHeight:260,
-                minHeight: 200,
-                maxHeight: 400,
+                minHeight: 100,
+                maxHeight: 350,
                 forceHeight: false
             },
             jspUpdate: function( $rindow ) {
@@ -211,7 +211,8 @@ function readrBoard($R){
                             }
 
                         }
-                    
+                        log('coords')
+                        log(coords)
                         var rindow = RDR.rindow.draw({
                             coords: coords,
                             pnlWidth:200,
@@ -222,6 +223,8 @@ function readrBoard($R){
                             kind: kind,
                             selState: newSel
                         });
+                        log('coords')
+                        log(coords)
 
                         // TODO this is used to constrain the initial width of this rindow
                         // and then it animates larger when we slide the whyPanel out.
@@ -341,10 +344,18 @@ function readrBoard($R){
                             }
                         });
 
+    log('tagBox.height() ');
+    log($tagBox.height() );
                         var rindowHeight = RDR.rindow.setHeight(rindow, {
                             targetHeight: $tagBox.height() + 35 + 15, //+ header height + extra padding;
                             animate:false
                         });
+
+                        // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
+                        var coords = RDR.util.stayInWindow({coords:coords, width:200, height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
+
+                        rindow.css('left', coords.left + 'px');
+                        rindow.css('top', coords.top + 'px');
 
                         rindow.width(0).height(0).animate({
                             width:200,
@@ -646,8 +657,8 @@ console.dir( summary );
                     pnls:1,
                     height:225,
                     animTime:100,
-                    minHeight: 200,
-                    maxHeight: 400
+                    minHeight: 100,
+                    maxHeight: 350
                 }
                 */
 
@@ -659,8 +670,8 @@ console.dir( summary );
 
                 var settings = $.extend({}, this.defaults, options);
 
-                var minHeight = settings.defaultHeight-100;
-                var maxHeight = settings.defaultHeight+100;
+                var minHeight = settings.minHeight
+                var maxHeight = settings.maxHeight
 
 
 				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
@@ -706,7 +717,6 @@ console.dir( summary );
 					
 					if ( settings.noHeader ) $new_rindow.find('h1').remove();
 					
-                    
                     $new_rindow.draggable({
                         handle:'.rdr_header',
                         containment:'document',
@@ -717,19 +727,18 @@ console.dir( summary );
                     });
 
                 }
-
-                // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly
-                var coords = RDR.util.stayInWindow({coords:settings.coords, ignoreWindowEdges:settings.ignoreWindowEdges});
-
+                
+                var coords = settings.coords;
+                               
                 $new_rindow.css('left', coords.left + 'px');
                 $new_rindow.css('top', coords.top + 'px');
                 if(settings.height){
                     $new_rindow.height(settings.height);
                 }
-
+               
                 RDR.rindow.jspUpdate( $new_rindow );
 
-                RDR.actionbar.closeAll();  
+                RDR.actionbar.closeAll();
 
                 $new_rindow.settings = settings;
 
@@ -889,7 +898,6 @@ console.dir( summary );
 		},
 		actionbar: {
 			draw: function(settings) {
-       
                 //RDR.actionbar.draw:
                 //expand to make settings explicit
 
@@ -923,17 +931,18 @@ console.dir( summary );
                         left: coords.left + 3
                     }
                 };
-                var offsets = (kind == 'text') ? actionbarOffsets.text : actionbarOffsets.img;
-
-                //rewrite coords if needed
-                // TODO: this probably should pass in the rindow and calculate, so that it can be done on the fly                
-                //todo: bring this back when we have time to test it
-                //coords = RDR.util.stayInWindow({coords:coords, width:200, height:30, ignoreWindowEdges:settings.ignoreWindowEdges});
                 
+                coords = (kind == 'text') ? actionbarOffsets.text : actionbarOffsets.img;
+
+                //todo: for images and video, put the actionbar on the left side if the image is too far right
+                if (kind == 'text') {
+                    //rewrite coords if needed
+                    coords = RDR.util.stayInWindow({coords:coords, width:45, height:30, paddingY:40, paddingX:40, ignoreWindowEdges:settings.ignoreWindowEdges});                    
+                }
                 // TODO use settings check for certain features and content types to determine which of these to disable
                 var $new_actionbar = $('<div class="rdr rdr_actionbar rdr_widget rdr_widget_bar" id="' + actionbar_id + '" />').css({
-                   'top':offsets.top,
-                   'left':offsets.left
+                   'top':coords.top,
+                   'left':coords.left
                 }).data('hash',hash)//chain
                 .append('<ul/>');
 
@@ -1115,21 +1124,23 @@ console.dir( summary );
 					w = settings.width,
 					h = settings.height,
 					coords = settings.coords,
-					ignoreWindowEdges = (settings.ignoreWindowEdges) ? settings.ignoreWindowEdges:""; // ignoreWindowEdges - check for index of t, r, b, l
+                    paddingY = settings.paddingY || 10,
+                    paddingX = settings.paddingX || 10,
+                    ignoreWindowEdges = (settings.ignoreWindowEdges) ? settings.ignoreWindowEdges:""; // ignoreWindowEdges - check for index of t, r, b, l
 
-                if ( ( ignoreWindowEdges.indexOf('r') == -1 ) && (coords.left+w+16) >= winWidth ) {
-                    coords.left = winWidth - w - 10;
+                if ( ( ignoreWindowEdges.indexOf('r') == -1 ) && (coords.left+w+16) >= (winWidth - paddingX) ) {
+                    coords.left = winWidth - w - paddingX;
                 }
-                if ( ( ignoreWindowEdges.indexOf('b') == -1 ) &&  (coords.top+h) > winHeight + winScroll ) {
-                    coords.top = winHeight + winScroll - h + 75;
+                if ( ( ignoreWindowEdges.indexOf('b') == -1 ) &&  (coords.top+h) > (winHeight + winScroll - paddingY ) ) {
+                    coords.top = winHeight + winScroll - h - paddingY;
                 }
-                if ( ( ignoreWindowEdges.indexOf('l') == -1 ) && coords.left < 10 ) {
-					coords.left = 10;
+                if ( ( ignoreWindowEdges.indexOf('l') == -1 ) && coords.left < paddingX ) {
+					coords.left = paddingX;
 				}
-                if ( ( ignoreWindowEdges.indexOf('t') == -1 ) && coords.top - winScroll < 10 ) {
-					coords.top = winScroll + 10;
+                if ( ( ignoreWindowEdges.indexOf('t') == -1 ) && coords.top < (winScroll + paddingY) ) {
+					coords.top = winScroll + paddingY;
 				}
-                
+
                 return coords;
             },
             md5: {
@@ -3011,6 +3022,7 @@ console.dir(args.sendData);
                         return sendData;
                     },
                     onSuccess: {
+                        //RDR.actions.interactions.tag.onSuccess:
                         create: function(args){
                             var response = args.response;
                             var sendData = args.sendData;
@@ -3123,17 +3135,18 @@ console.dir(args.sendData);
                             RDR.session.checkForMaxInteractions(newArgs);
                         },
                         remove: function(args){
+                            //RDR.actions.interactions.bookmark.onSuccess.remove:
                             var rindow = args.rindow,
                                 tag = args.tag,
                                 int_id = args.int_id;
 
                             RDR.actions.panel.collapse("whyPanel", rindow);
                             var $thisTagButton = rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id);
-                            $thisTagButton.removeClass('rdr_selected').removeClass('rdr_tagged').removeClass('rdr_int_node_'+int_id).html('');
+                            $thisTagButton.remove();
                         }
                     },
                     onFail: function(args){
-                        //RDR.actions.interactions.tag.onFail:
+                        //RDR.actions.interactions.bookmark.onFail:
 
                         //todo: we prob want to move most of this to a general onFail for all interactions.
                         // So this function would look like: doSpecificOnFailStuff....; RDR.actions.interactions.genericOnFail();
@@ -4064,8 +4077,8 @@ console.dir(args.sendData);
                     rindow.addClass('rdr_columns'+num_columns);
                     var width, minHeight, maxHeight, gotoHeight = null;
 
-                    minHeight = RDR.rindow.defaults.height; //260
-                    maxHeight = 400;
+                    minHeight = RDR.rindow.defaults.minHeight; //100
+                    maxHeight = RDR.rindow.defaults.maxHeight; //350
                     contentPanelWidth = 300; //temp var - Later will be a property of a panel object
                     whyPanelWidth = 300; //temp var - Later will be a property of a panel object
 
@@ -4124,40 +4137,51 @@ console.dir(args.sendData);
                     }
                     
                     //temp hack
-                    // if( $thisPanel.data('expanded') ){
-                    //     RDR.rindow.jspUpdate( rindow );
-                    // }
-                    // else{
-                        // div.rdr_panelOverlay
+                    if( $thisPanel.data('expanded') ){
+                        RDR.rindow.jspUpdate( rindow );
+                    }
+                    else{
 
-                        
+                        gotoHeight = RDR.rindow.setHeight(rindow, {
+                            targetHeight: gotoHeight
+                        });
+                                            
+                        var coords = rindow.offset();
+                        log('coords in expand');
+                        log(coords);                        
+                        coords = RDR.util.stayInWindow({coords:coords, width:width, height:gotoHeight });
+                 
+                        rindow.animate({
+                            width: width,
+                            left: coords.left,
+                            height: gotoHeight,
+                            top: coords.top
+                        }, rindow.settings.animTime, function() {
+                            RDR.rindow.jspUpdate( rindow );
+                        });
 
-                        // rindow.animate({
-                        //     width: width +'px'
-                        // }, rindow.settings.animTime, function() {
-                        //     RDR.rindow.jspUpdate( rindow, 0 );
-                        // } );
-
-                    // }
+                    }
                     $thisPanel.data('expanded', true);
                 },
                 collapse: function(_panel, rindow){
                     //RDR.actions.panel.collapse:
 
+                    log(rindow)
                     // hack.  chrome and safari don't like rounded corners if the whyPanel is showing since it is wider than column1
                     rindow.find('div.rdr_whyPanel').css('visibility','hidden');
 
-                    var panel = _panel || "whyPanel";
-                    $thisPanel = $(rindow).find('.rdr_'+panel);
+                    var panel = _panel || "whyPanel",
+                        $thisPanel = $(rindow).find('.rdr_'+panel),
+                        $tagBox = $(rindow).find('div.rdr_tagBox');
                     
                     var num_columns = rindow.find('div.rdr_sntPnl').length;
                     rindow.addClass('rdr_columns'+num_columns);
                     
-                    var width, minHeight, maxHeight, gotoHeight = null;
+                    var width, minHeight, maxHeight, gotoHeight, targetHeight;
 
-                    minHeight = RDR.rindow.defaults.height; //260
-                    maxHeight = 400;
-                    gotoHeight = 260;
+                    minHeight = RDR.rindow.defaults.minHeight; //100
+                    maxHeight = RDR.rindow.defaults.maxHeight; //350
+                    targetHeight = $tagBox.height() + 35 + 15; //+ header height + extra padding;
 
                     rindow.resizable('option', {
                         minHeight:minHeight,
@@ -4209,20 +4233,25 @@ console.dir(args.sendData);
                     if( !$thisPanel.data('expanded') ){
                     }
                     else{
-                        rindow.animate({
-                            width: width
-                        }, rindow.settings.animTime, function(){
 
-                            var height = $(this).height();
-                            gotoHeight = gotoHeight ? gotoHeight : ( height < minHeight ) ? minHeight : (height > maxHeight) ? maxHeight : null;
-                            if( gotoHeight ){
-                                $(this).animate({
-                                    height:gotoHeight
-                                }, rindow.settings.animTime, function(){
-                                    RDR.rindow.jspUpdate( rindow );
-                                });
-                            }
+                        gotoHeight = RDR.rindow.setHeight(rindow, {
+                            targetHeight: targetHeight
                         });
+                                            
+                        var coords = rindow.offset();
+                        log('coords in expand');
+                        log(coords);                        
+                        coords = RDR.util.stayInWindow({coords:coords, width:width, height:gotoHeight });
+                 
+                        rindow.animate({
+                            width: width,
+                            left: coords.left,
+                            height: gotoHeight,
+                            top: coords.top
+                        }, rindow.settings.animTime, function() {
+                            RDR.rindow.jspUpdate( rindow );
+                        });
+
                     }
                     
                     $thisPanel.data('expanded', false);
