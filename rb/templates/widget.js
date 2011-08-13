@@ -247,7 +247,7 @@ function readrBoard($R){
                         var headers = [firstPanelHeader, "Say More"];
                         $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
                         $sentimentBox.children().each(function(idx){
-                            var $header = $('<div class="rdr_header rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap" />'),
+                            var $header = $('<div class="rdr_header rdr_brtl rdr_brtr" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap" />'),
                             $body = $('<div class="rdr_body "/>'),
                             $bodyWrap = $('<div class="rdr_body_wrap"/>').append($body),
                             $panelOverlay = $('<div class="rdr_panelOverlay" />'); //for visual effects that need to sit on top of everything - borderline and shadow
@@ -377,7 +377,7 @@ function readrBoard($R){
                         var hash = settings.hash;
                         var summary = RDR.summaries[hash],
                         kind = summary.kind;
-console.dir( summary );
+
                         var selector = ".rdr-" + hash;
 
                         var $indicator = $('#rdr_indicator_'+hash),
@@ -430,7 +430,7 @@ console.dir( summary );
                         var headers = ["Reactions", "", ""];  // removing comment count for now +info.com_count
                         $sentimentBox.append($reactionPanel, $contentPanel, $whyPanel); //$selectedTextPanel, 
                         $sentimentBox.children().each(function(idx){
-                            var $header = $('<div class="rdr_header rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />'),
+                            var $header = $('<div class="rdr_header rdr_brtl rdr_brtr" />'),
                             $rdr_headerInnerWrap = $('<div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>').appendTo($header),
                             $body = $('<div class="rdr_body "/>'),
                             $bodyWrap = $('<div class="rdr_body_wrap"/>').append($body),
@@ -470,16 +470,38 @@ console.dir( summary );
                                 },
                                 'hash':hash
                             }),
-                            $leftBox = '<div class="rdr_leftBox"><span>'+percentage+'%</span></div>',
+                            // $leftBox = '<div class="rdr_leftBox"><span>'+percentage+'%</span></div>',
+                            $leftBox = '<div class="rdr_leftBox"><span>'+RDR.util.prettyNumber( tag.count )+'</span></div>',
                             $tagText = '<div class="rdr_tagText">'+tag.body+'</div>',
                             $rightBox = '<div class="rdr_rightBox" />';
 
                             $li.append($leftBox,$tagText,$rightBox);
                             
                             // todo: [porter] i'm looping to see if there is a comment for this TAG.  can we just send this down from server?
+                            var commentsHere = 0;
                             for ( var i in topComs ) {
-                                if ( topComs[i].tag_id == tagOrder.id ) $li.addClass('rdr_has_comment');
+                                if ( topComs[i].tag_id == tagOrder.id ) {
+                                    $li.addClass('rdr_has_comment');
+
+                                    // loop to see how many content_nodes' comments are under this tag
+                                    if ( kind == "text" ) {
+                                        for ( var j in summary.content_nodes ) {
+                                            for ( var k in summary.content_nodes[j].top_interactions.coms ) {
+                                                if ( summary.content_nodes[j].top_interactions.coms[k].tag_id == topComs[i].tag_id ) {
+                                                    commentsHere++; 
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        for ( var k in summary.top_interactions.coms ) {
+                                            if ( summary.top_interactions.coms[k].tag_id == topComs[i].tag_id ) {
+                                                commentsHere++; 
+                                            }
+                                        }
+                                    }
+                                }
                             }
+                            if ( commentsHere > 0 ) $li.find('div.rdr_rightBox').append('<span>' + RDR.util.prettyNumber( commentsHere ) + '</span>');
                             $tagBox.children('ul.rdr_tags').append($li);
                         
                         });
@@ -506,7 +528,8 @@ console.dir( summary );
                             }
 
                             if ( !$this.hasClass('rdr_customTagBox') ) {
-                                $this.addClass('rdr_selected').siblings().removeClass('rdr_selected');
+                                $this.addClass('rdr_selected');
+                                $this.siblings().removeClass('rdr_selected');
                                 $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
 
                                 if ( ( nodes_with_this_tag == 1 ) || kind == "img" || kind == "media" ) {
@@ -2456,7 +2479,7 @@ console.dir( summary );
                 send: function(args, int_type, action_type){
                     // /api/tag/create
                     // /api/comment/create
-console.dir(args.sendData);
+
                     // hack to cleanup the send data
                     var sendData = $.extend( true, {}, args.sendData);
                     if (sendData.rindow) delete sendData.rindow;
@@ -2473,10 +2496,6 @@ console.dir(args.sendData);
                     if (sendData.node) delete sendData.node;
                     if (sendData.uiMode) delete sendData.uiMode;
                     if (sendData.sendData) delete sendData.sendData; //this was happening for delete calls.
-
-
-                    log('sendData.sendData');
-                    log(sendData.sendData);
 
                     //todo: consider making a generic url router
                     var url = "/api/" +int_type+ "/"+action_type+"/";
@@ -3890,8 +3909,6 @@ console.dir(args.sendData);
 
                 if ( other_tags.length > 0 ) {
                     other_tags.sort( SortByCount );
-                    console.log('other_tags');
-                    console.dir(other_tags);
                     // we set this div far down, then animate it up, because position:fixed doesn't stay within a rindow, it stays within the browser viewport
                     var $otherTags = $('<div class="rdr_otherTags" ><strong>Other Reactions:</strong>&nbsp;</div>');
                     for ( var i in other_tags ) {
@@ -4077,6 +4094,53 @@ console.dir(args.sendData);
                     }
                 } //end makeOtherComments
 
+                //todo: combine this with the tooltip for the tags
+                // var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+tag.id+'">Comment</button></div>');
+                var $commentBox = $('<div class="rdr_commentBox rdr_sntPnl_padder"></div>').html(
+                    '<div class="rdr_commentComplete"><div><h4>Leave a comment:</h4></div></div>'
+                );
+                var helpText = "because...";
+                $leaveComment = $( '<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div><button>Comment</button></div>' );
+                $leaveComment.find('textarea').focus(function(){
+                    if($('.leaveComment').val() == helpText ){
+                        $('.leaveComment').val('');
+                    }
+                }).blur(function(){
+                    if($('.leaveComment').val() === "" ){
+                        $('.leaveComment').val(helpText);
+                    }
+                }).keyup(function(event) {
+                    $textarea = $(this);
+
+                    if (event.keyCode == '13') { //enter or comma
+                        //RDR.actions.panel.expand(rindow);
+                    }
+                    else if (event.keyCode == '27') { //esc
+                        //return false;
+                    } else if ( $textarea.val().length > RDR.group.comment_length ) {
+                        var commentText = $textarea.val();
+                        $textarea.val( commentText.substr(0, RDR.group.comment_length) );
+                    }
+                    $textarea.siblings('div').text( ( RDR.group.comment_length - $textarea.val().length ) + " characters left" );
+                });
+
+                // $leaveComment.find('textarea').autogrow();
+
+                $leaveComment.find('button').click(function() {
+                    var comment = $leaveComment.find('textarea').val();
+                    
+                    if ( comment != "because..." ) {
+                        //quick fix
+                        content_node.kind = summary.kind;
+
+                        var args = { content_node_data:content_node, comment:comment, hash:hash, content:content_node.body, tag:tag, rindow:rindow, selState:selState};
+                        //leave parent_id undefined for now - backend will find it.
+                        RDR.actions.interactions.ajax( args, 'comment', 'create');
+                    }
+                });
+
+                $whyPanel_tagCard.append( $commentBox.append( $leaveComment ) );
+
                 // if ( kind == "img" || kind == "media" )  {
                 //     rindow.find('div.rdr_contentPanel').remove();
                 // }
@@ -4145,7 +4209,7 @@ console.dir(args.sendData);
                             // corner logic
                             $thisPanel.removeClass('rdr_brtl rdr_brbl');
                             $thisPanel.find('div.rdr_header').removeClass('rdr_brtl rdr_brbl');
-                            rindow.find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').removeClass('rdr_brbr rdr_brtr');
+                            // rindow.find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').removeClass('rdr_brbr rdr_brtr');
                             
                             // old, from when whyPanel was next to, not over, the contentPanel:
                             // width = (num_columns == 3) ? 200 + contentPanelWidth + 250 : 200 + 250;
@@ -4225,10 +4289,8 @@ console.dir(args.sendData);
                             // corner logic
                             $thisPanel.addClass('rdr_brtl').addClass('rdr_brbl');
                             $thisPanel.find('div.rdr_header').addClass('rdr_brtl').addClass('rdr_brbl');
-                            rindow.find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').addClass('rdr_brbr').addClass('rdr_brtr');
-                            
-                            //todo: I'm not sure we should use attr style like this here... 
-                            //rindow.find('div.rdr_reactionPanel div.rdr_body').attr('style','');
+                            rindow.find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').addClass('rdr_brtr');
+                            rindow.find('div.rdr_reactionPanel div.rdr_body').attr('style','');
 
                             if( isReadMode ){
                                 log('readmode')
@@ -4301,6 +4363,7 @@ console.dir(args.sendData);
                         var $tagButton = $header.find('a.rdr_tag');
                         $tagButton.data( 'tag', tag );
       
+                        TODO: return the abillity to +1 a tag
                         $header.find('span.rdr_tag_count').click( function() {
                             var $interactionButton = $(this).closest('.rdr_tag');
                             var args = { tag:$interactionButton, rindow:rindow, content:content_node.body, hash:hash, uiMode:'read', content_node:content_node, thumbsUp:true};
@@ -4345,7 +4408,10 @@ console.dir(args.sendData);
                         $tagInfo.html( tagCountNode + '&nbsp;&nbsp;<span class="rdr_tag_rep">'+tag.body+'</span>&nbsp;&nbsp;'+label + ' for:');
 
                         $header.append( $tagInfo, $rightBox );
-                        if ( !$.isEmptyObject( RDR.summaries[hash].top_interactions.coms ) ) $header.addClass('rdr_has_comment');
+                        if ( !$.isEmptyObject( content_node.top_interactions.coms ) ) {
+                            $header.addClass('rdr_has_comment');
+                            $header.find('div.rdr_rightBox').append('<span>' + RDR.util.prettyNumber( content_node.top_interactions.coms.length ) + '</span>');
+                        }
 
                         //todo: consolodate truncate functions
                         var content_node_body = content_node.body,
@@ -4850,13 +4916,15 @@ console.dir(args.sendData);
                     var comment = $leaveComment.find('textarea').val();
                     //[cleanlogz]('--------- selState 2: '+content_node.selState);
                     
-                    //temp translations..
-                    //quick fix
-                    content_node.kind = summary.kind;
+                    if ( comment != "because..." ) {
+                        //temp translations..
+                        //quick fix
+                        content_node.kind = summary.kind;
 
-                    var args = { hash:hash, kind:summary.kind, content_node_data:content_node, comment:comment, int_id:int_id, rindow:rindow, selState:content_node.selState, tag:tag};
-                    //leave parent_id undefined for now - backend will find it.
-                    RDR.actions.interactions.ajax( args, 'comment', 'create');
+                        var args = { hash:hash, kind:summary.kind, content_node_data:content_node, comment:comment, int_id:int_id, rindow:rindow, selState:content_node.selState, tag:tag};
+                        //leave parent_id undefined for now - backend will find it.
+                        RDR.actions.interactions.ajax( args, 'comment', 'create');
+                    }
                 });
 
                 $commentBox.append( $leaveComment );
