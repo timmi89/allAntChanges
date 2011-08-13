@@ -4174,7 +4174,8 @@ function readrBoard($R){
                         });
                                             
                         var coords = rindow.offset();
-                 
+                        coords = RDR.util.stayInWindow({coords:coords, width:width, height:gotoHeight });
+
                         rindow.animate({
                             width: width,
                             left: coords.left,
