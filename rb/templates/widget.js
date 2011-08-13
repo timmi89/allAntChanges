@@ -252,9 +252,7 @@ function readrBoard($R){
                             $bodyWrap = $('<div class="rdr_body_wrap"/>').append($body),
                             $panelOverlay = $('<div class="rdr_panelOverlay" />'); //for visual effects that need to sit on top of everything - borderline and shadow
 
-                            if ( !$(this).hasClass('rdr_whyPanel') ) {
-                                $header.find('div.rdr_headerInnerWrap').append( '<h1>'+ headers[idx] +'</h1>' );
-                            }
+                            $header.find('div.rdr_headerInnerWrap').append( '<h1>'+ headers[idx] +'</h1>' );
 
                             var clearDiv = '<div style="clear:both;"></div>';
                             $(this).append($header, $bodyWrap, clearDiv, $panelOverlay);
@@ -2458,7 +2456,7 @@ console.dir( summary );
                 send: function(args, int_type, action_type){
                     // /api/tag/create
                     // /api/comment/create
-console.dir(args.sendData);
+
                     // hack to cleanup the send data
                     var sendData = $.extend( true, {}, args.sendData);
                     if (sendData.rindow) delete sendData.rindow;
@@ -2475,10 +2473,6 @@ console.dir(args.sendData);
                     if (sendData.node) delete sendData.node;
                     if (sendData.uiMode) delete sendData.uiMode;
                     if (sendData.sendData) delete sendData.sendData; //this was happening for delete calls.
-
-
-                    log('sendData.sendData');
-                    log(sendData.sendData);
 
                     //todo: consider making a generic url router
                     var url = "/api/" +int_type+ "/"+action_type+"/";
