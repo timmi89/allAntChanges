@@ -251,10 +251,7 @@ function readrBoard($R){
                             $body = $('<div class="rdr_body "/>'),
                             $bodyWrap = $('<div class="rdr_body_wrap"/>').append($body),
                             $panelOverlay = $('<div class="rdr_panelOverlay" />'); //for visual effects that need to sit on top of everything - borderline and shadow
-
-                            if ( !$(this).hasClass('rdr_whyPanel') ) {
-                                $header.find('div.rdr_headerInnerWrap').append( '<h1>'+ headers[idx] +'</h1>' );
-                            }
+                            $header.find('div.rdr_headerInnerWrap').append( '<h1>'+ headers[idx] +'</h1>' );
 
                             var clearDiv = '<div style="clear:both;"></div>';
                             $(this).append($header, $bodyWrap, clearDiv, $panelOverlay);
@@ -722,7 +719,7 @@ console.dir( summary );
 					if ( settings.noHeader ) $new_rindow.find('h1').remove();
 					
                     $new_rindow.draggable({
-                        handle:'.rdr_header',
+                        handle:'.rdr_header .rdr_header_overlay', //todo: move the header_overlay inside the header so we don't need this hack
                         containment:'document',
                         stack:'.RDR.window',
                         start:function() {
@@ -3840,10 +3837,17 @@ console.dir(args.sendData);
 
                 var $whyPanel_tagCard = $('<div />').addClass('rdr_tagCard rdr_tagCard'+tag.id+' rdr_viewAll_'+view_all_state);
 
-                $whyPanel_body.find('div.rdr_view_all').remove();
+                $whyPanel.find('div.rdr_view_all').remove();
+                $whyPanel_body.css({
+                     top:0
+                });
                 
                 if ( view_all_state != "hide" ) {
                     var $backToQuotes = $('<div class="rdr_view_all rdr_'+view_all_state+'">&lt;&lt; View All</div>');
+                    $whyPanel.find('.rdr_body_wrap').append( $backToQuotes );
+                    $whyPanel_body.css({
+                         top:16
+                    });
                     $backToQuotes.click( function() {
                         // $whyPanel.removeClass('rdr_whyShowing');
                         rindow.find('div.rdr_contentPanel div.rdr_header h1 span').remove();
@@ -3852,13 +3856,16 @@ console.dir(args.sendData);
                 }
 
                 //$whyPanel_body.empty();
-            
-                //add to the $whyPanel_body and hide any sibling panels that have been made;
+
                 if($whyPanel_body_jsp.length){
-                    if ( view_all_state != "hide" ) $whyPanel_body_jsp.before( $backToQuotes );
+                    if ( view_all_state != "hide" ) {
+                        //$whyPanel_body_jsp.before( $backToQuotes );
+                    }
                     $whyPanel_tagCard.appendTo( $whyPanel_body_jsp );
                 }else{
-                    if ( view_all_state != "hide" ) $whyPanel_tagCard.before( $backToQuotes );
+                    if ( view_all_state != "hide" ) {
+                        //$whyPanel_tagCard.before( $backToQuotes );
+                    }
                     $whyPanel_tagCard.appendTo($whyPanel_body);
                 }
 
@@ -3866,6 +3873,10 @@ console.dir(args.sendData);
                 function SortByCount(a,b) { return b.count - a.count; }
 
                 $whyPanel.find('div.rdr_otherTags').remove();
+                $whyPanel.find('.rdr_body').css({
+                    bottom:0
+                });
+
                 var other_tags = [];
                 if ( kind == "text" ) {
                     for ( var i in content_node.top_interactions.tags ) {
@@ -3887,7 +3898,10 @@ console.dir(args.sendData);
                         $otherTags.append( '<span>('+other_tags[i].count+') '+other_tags[i].body+' &nbsp;</span>&nbsp;');
                     }
 
-                    $whyPanel.append( $otherTags );
+                    $whyPanel.find('.rdr_body_wrap').append( $otherTags );
+                    $whyPanel.find('.rdr_body').css({
+                        bottom:14
+                    })
                 }
 
 
@@ -3927,7 +3941,7 @@ console.dir(args.sendData);
                 if (hasComments) {
                     _makeOtherComments(comments);
                 }
-                
+
                 $whyPanel_tagCard.append( _makeCommentBox() );
 
 
@@ -4104,6 +4118,8 @@ console.dir(args.sendData);
                     rindow.addClass('rdr_columns'+num_columns);
                     var width, minHeight, maxHeight, gotoHeight = null;
 
+                    var isReadMode = rindow.hasClass('rdr_readmode');
+
                     minHeight = RDR.rindow.defaults.minHeight; //100
                     maxHeight = RDR.rindow.defaults.maxHeight; //350
                     contentPanelWidth = 300; //temp var - Later will be a property of a panel object
@@ -4116,23 +4132,12 @@ console.dir(args.sendData);
 
                     switch (panel) {
                         case "contentPanel":
-                            width = 200 + contentPanelWidth; // any time we're expanding the contentPanel, the rindow is gonna be 400px wide
+                            width = 200 + contentPanelWidth;
 
                             // corner logic
                             $thisPanel.removeClass('rdr_brtl').removeClass('rdr_brbl');
                             $thisPanel.find('div.rdr_header').removeClass('rdr_brtl').removeClass('rdr_brbl');
 
-                            RDR.rindow.setWidth( rindow, width, function() {
-                                gotoHeight = RDR.rindow.setHeight( rindow, {
-                                    targetHeight: gotoHeight
-                                });
-
-                                $(this).animate({
-                                    height:gotoHeight
-                                }, rindow.settings.animTime, function(){
-                                    RDR.rindow.jspUpdate( rindow );
-                                });
-                            });
                             break;
 
                         case "whyPanel":
@@ -4147,19 +4152,8 @@ console.dir(args.sendData);
                             width = 200 + contentPanelWidth; // any time we're expanding the contentPanel, the rindow is gonna be 400px wide
                             gotoHeight = 300; //quick hack to make it look a bit nicer
 
-                            $thisPanel.animate( {right:0 }, rindow.settings.animTime, function() {
-                                    RDR.rindow.setWidth( rindow, width, function() {
-                                        gotoHeight = RDR.rindow.setHeight( rindow, {
-                                            targetHeight: gotoHeight
-                                        });
+                            $thisPanel.animate( {right:0 }, rindow.settings.animTime);
 
-                                        $(this).animate({
-                                            height:gotoHeight
-                                        }, rindow.settings.animTime, function(){
-                                            RDR.rindow.jspUpdate( rindow );
-                                        });
-                                    });
-                                });
                             break;
                     }
                     
@@ -4193,14 +4187,14 @@ console.dir(args.sendData);
                 collapse: function(_panel, rindow){
                     //RDR.actions.panel.collapse:
 
-                    log(rindow)
-                    // hack.  chrome and safari don't like rounded corners if the whyPanel is showing since it is wider than column1
-                    rindow.find('div.rdr_whyPanel').css('visibility','hidden');
+                    //rindow.find('div.rdr_whyPanel').css('visibility','hidden');
 
                     var panel = _panel || "whyPanel",
                         $thisPanel = $(rindow).find('.rdr_'+panel),
                         $tagBox = $(rindow).find('div.rdr_tagBox');
                     
+                    var isReadMode = rindow.hasClass('rdr_readmode');
+
                     var num_columns = rindow.find('div.rdr_sntPnl').length;
                     rindow.addClass('rdr_columns'+num_columns);
                     
@@ -4214,11 +4208,12 @@ console.dir(args.sendData);
                         minHeight:minHeight,
                         maxHeight:maxHeight
                     });
+                    
+                    width = 200;
 
                     switch (panel) {
                         case "contentPanel":
-                            width = 200;
-
+                            
                             // corner logic
                             $thisPanel.addClass('rdr_brtl').addClass('rdr_brbl');
                             $thisPanel.find('div.rdr_header').addClass('rdr_brtl').addClass('rdr_brbl');
@@ -4226,29 +4221,20 @@ console.dir(args.sendData);
                             break;
 
                         case "whyPanel":
-                            width = 500; // any time we're expanding the whyPanel, the rindow is gonna be 500px wide...
-
+                            
                             // corner logic
                             $thisPanel.addClass('rdr_brtl').addClass('rdr_brbl');
                             $thisPanel.find('div.rdr_header').addClass('rdr_brtl').addClass('rdr_brbl');
                             rindow.find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').addClass('rdr_brbr').addClass('rdr_brtr');
-                            rindow.find('div.rdr_reactionPanel div.rdr_body').attr('style','');
+                            
+                            //todo: I'm not sure we should use attr style like this here... 
+                            //rindow.find('div.rdr_reactionPanel div.rdr_body').attr('style','');
 
-                            $thisPanel.animate( {right:-300 }, rindow.settings.animTime, function() {
-                                RDR.rindow.setWidth( rindow, width, function() {
-                                    gotoHeight = RDR.rindow.setHeight( rindow, {
-                                        targetHeight: gotoHeight
-                                    });
-
-                                    $(this).animate({
-                                        height:gotoHeight
-                                    }, rindow.settings.animTime, function(){
-                                        RDR.rindow.jspUpdate( rindow );
-                                    });
-                                });
-                            });
-
-
+                            if( isReadMode ){
+                                log('readmode')
+                                width = 500;
+                                $thisPanel.animate( {right:-300 }, rindow.settings.animTime);
+                            }
                             break;
                     }
                     
@@ -4264,17 +4250,10 @@ console.dir(args.sendData);
                         gotoHeight = RDR.rindow.setHeight(rindow, {
                             targetHeight: targetHeight
                         });
-                                            
-                        var coords = rindow.offset();
-                        log('coords in expand');
-                        log(coords);                        
-                        coords = RDR.util.stayInWindow({coords:coords, width:width, height:gotoHeight });
-                 
+
                         rindow.animate({
                             width: width,
-                            left: coords.left,
-                            height: gotoHeight,
-                            top: coords.top
+                            height: gotoHeight
                         }, rindow.settings.animTime, function() {
                             RDR.rindow.jspUpdate( rindow );
                         });
@@ -4363,7 +4342,7 @@ console.dir(args.sendData);
                             tagCountNode = '<span class="rdr_tag_count">'+ '('+tagCount+')' +'</span>',
                             label = ( tagCount == 1 ) ? 'Reaction' : 'Reactions';
                         
-                        $tagInfo.html( tagCountNode + '&nbsp;&nbsp;<span class="rdr_tag_rep">'+tag.body+'</span>&nbsp;&nbsp;'+label );
+                        $tagInfo.html( tagCountNode + '&nbsp;&nbsp;<span class="rdr_tag_rep">'+tag.body+'</span>&nbsp;&nbsp;'+label + ' for:');
 
                         $header.append( $tagInfo, $rightBox );
                         if ( !$.isEmptyObject( RDR.summaries[hash].top_interactions.coms ) ) $header.addClass('rdr_has_comment');

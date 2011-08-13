@@ -211,8 +211,8 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
     position:relative;
 }
 
-#rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap h1,
-#rdr_sandbox div.rdr_window div.rdr_whyPanel div.rdr_headerInnerWrap h1{
+#rdr_sandbox div.rdr_window.rdr_readmode div.rdr_contentPanel div.rdr_headerInnerWrap h1,
+#rdr_sandbox div.rdr_window.rdr_readmode div.rdr_whyPanel div.rdr_headerInnerWrap h1{
     float: left;
     margin-left: 22px;
     position: relative;
@@ -248,9 +248,12 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
     position:absolute;
     z-index:100;
 }
+#rdr_sandbox div.rdr_header_overlay {
+}
 #rdr_sandbox div.rdr_header_overlay div.rdr_indicator_stats{
     position:absolute;
     margin:10px 0 0 3px;
+    cursor: move !important;
 }
 #rdr_sandbox div.rdr div.rdr_sntPnl                                  {float:left; position:relative; display:block; height:100%; overflow:hidden; /*width is reset with js - rindow.settings.pnlWidth */ }
 
@@ -264,8 +267,11 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr_window.rdr_readmode div.rdr_sntPnl.rdr_whyPanel div.rdr_panelOverlay{
     top:35px;
 }
+#rdr_sandbox div.rdr_window.rdr_readmode div.rdr_sntPnl.rdr_whyPanel div.rdr_body{
+    /*top:16px;*/ /*done in js instead just for panels that have the viewAll bar*/
+}
 
-#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_body                     {width:100%; z-index:4; overflow-x:hidden; overflow-y:hidden; padding:0; position:relative; height:100%; outline:none;}
+#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_body                     {width:100%; z-index:4; overflow-x:hidden; overflow-y:hidden; padding:0; position:absolute; outline:none; top:0; bottom:0; height:auto;}
 
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header                   { background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:5; cursor:move !important;}
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("{{ STATIC_URL }}widget/images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
@@ -307,7 +313,8 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr div.rdr_sntPnl_padder {   
     border-top: 1px solid #CCCCCC;
     overflow: hidden;
-    padding: 8px 0;
+    padding: 8px 0 0;
+    margin: 8px 0 0;
     position: relative;
 }
 #rdr_sandbox div.rdr div.rdr_sntPnl textarea,
@@ -509,7 +516,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content { color:#787878; font:italic 13px Georgia; padding:2px 9px; font-size:17px; }
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content p { width:auto; padding:0 4px; font-family:ReadrLeague, Arial, sans-serif; font-size:26px;}
 
-#rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_otherTags            { position:absolute; margin-left:2px; border-top:1px solid #ccc; background:#fff; color:#666; padding:3px; width:300px; font-size:11px; bottom:0; height:20px; z-index:4;}
+#rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_otherTags            { position:absolute; margin-left:2px; border-top:1px solid #ccc; background:#fff; color:#666; padding:3px; width:300px; font-size:11px; bottom:-14px; height:20px; z-index:4;}
 #rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_otherTags em         {color:#76a1ba; display: block; font-family:Arial; font-size:11px; margin-top:10px;}
 
 #rdr_sandbox div.rdr div.rdr_contentSet.rdr_selected div.rdr_contentHeader           {background:#d0dee6;}
@@ -558,18 +565,20 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_instruct    {color:#666; margin:5px 0;}
 #rdr_sandbox div.rdr div.rdr_help        {font:italic 11px Arial;color:#767676; xwidth:100%; position:absolute; top:12px; xtext-align:center; margin:0 !important;}
 
-#rdr_sandbox div.rdr div.rdr_shareBox                       { overflow:auto; clear:both; margin: 8px 0 5px 0;}
+#rdr_sandbox div.rdr div.rdr_shareBox                       { overflow:auto; clear:both; }
 #rdr_sandbox div.rdr div.rdr_share_social                   { float:right; }
 #rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; }
 #rdr_sandbox div.rdr_whyPanel div.rdr_tagCard                       { padding: 8px 12px 0; position:relative;}
-#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard.rdr_viewAll_hide      { padding-top: 0px; xmin-height:256px; }
+
+/*#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard.rdr_viewAll_hide      { padding-top: 0px; xmin-height:256px; }*/ /*pretty sure this is phased out*/
+
 #rdr_sandbox div.rdr_whyPanel div.rdr_tagCard .rdr_undo_link        { text-decoration; underline; float:right; color: #008BE4;}
 #rdr_sandbox div.rdr_whyPanel div.rdr_tagCard  h4                   { position: relative; font-weight:bold; }
 #rdr_sandbox div.rdr_whyPanel div.rdr_tagCard  div.rdr_share_social h4 { float: left; top: 2px; font-size:11px; }
 
 #rdr_sandbox div.rdr_whyPanel div.rdr_tagCard  div.rdr_info_summary h4 { float: left; top: 2px; font-size:11px; }
 
-#rdr_sandbox div.rdr_whyPanel div.rdr_view_all { float: left; position:relative; z-index:1; width:300px; background:#aaa; font-size:9px; text-transform:uppercase; color:#fff; cursor:pointer;padding-left:12px;}
+#rdr_sandbox div.rdr_whyPanel div.rdr_view_all { float: left; position:relative; z-index:1; width:300px; background:#aaa; font-size:9px; text-transform:uppercase; color:#fff; cursor:pointer; padding: 2px 12px;}
 #rdr_sandbox div.rdr_whyPanel div.rdr_view_all.rdr_hide { margin-top:-10px; }
 
 #rdr_sandbox div.rdr div.rdr_comment textarea    { width:100%; font-size:14px; margin:5px 0; resize:none; padding:5px;}
