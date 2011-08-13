@@ -277,7 +277,6 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header                   { background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:5; cursor:move !important;}
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("{{ STATIC_URL }}widget/images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header  { background:url({{ STATIC_URL }}widget/images/header_arrow.png) 0px -1px no-repeat #fff; }
-#rdr_sandbox div.rdr_window.rdr_readmode div.rdr_sntPnl.rdr_whyPanel div.rdr_header      { background:transparent; }
 
 #rdr_sandbox div.rdr_window.rdr_readmode div.rdr_sntPnl.rdr_whyPanel div.rdr_header      { background: none transparent; }
 
@@ -436,7 +435,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected .rdr_rightBox          {background:url({{ STATIC_URL }}widget/images/widget_icons.png) -45px -1px no-repeat !important;}
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected .rdr_leftBox:hover,
-#rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged .rdr_leftBox:hover       {background-position:-70px -1px;}
+#rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged .rdr_leftBox:hover       {background-position:-110px -1px;}
 #rdr_sandbox div.rdr div.rdr_new ul.rdr_tags li.rdr_selected            {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
 
 

@@ -4033,13 +4033,16 @@ function readrBoard($R){
                     
                     $leaveComment.find('button').click(function() {
                         var comment = $leaveComment.find('textarea').val();
-                        
-                        //quick fix
-                        content_node.kind = summary.kind;
+                    
+                        if ( comment != "because..." ) {
+                            //quick fix
+                            content_node.kind = summary.kind;
 
-                        var args = { content_node_data:content_node, comment:comment, hash:hash, content:content_node.body, tag:tag, rindow:rindow, selState:selState};
-                        //leave parent_id undefined for now - backend will find it.
-                        RDR.actions.interactions.ajax( args, 'comment', 'create');
+                            var args = { content_node_data:content_node, comment:comment, hash:hash, content:content_node.body, tag:tag, rindow:rindow, selState:selState};
+                            //leave parent_id undefined for now - backend will find it.
+                            RDR.actions.interactions.ajax( args, 'comment', 'create');
+                        }
+
                     });
 
                     return $commentBox.append( $leaveComment );
@@ -4093,53 +4096,6 @@ function readrBoard($R){
                         }
                     }
                 } //end makeOtherComments
-
-                //todo: combine this with the tooltip for the tags
-                // var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+tag.id+'">Comment</button></div>');
-                var $commentBox = $('<div class="rdr_commentBox rdr_sntPnl_padder"></div>').html(
-                    '<div class="rdr_commentComplete"><div><h4>Leave a comment:</h4></div></div>'
-                );
-                var helpText = "because...";
-                $leaveComment = $( '<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div><button>Comment</button></div>' );
-                $leaveComment.find('textarea').focus(function(){
-                    if($('.leaveComment').val() == helpText ){
-                        $('.leaveComment').val('');
-                    }
-                }).blur(function(){
-                    if($('.leaveComment').val() === "" ){
-                        $('.leaveComment').val(helpText);
-                    }
-                }).keyup(function(event) {
-                    $textarea = $(this);
-
-                    if (event.keyCode == '13') { //enter or comma
-                        //RDR.actions.panel.expand(rindow);
-                    }
-                    else if (event.keyCode == '27') { //esc
-                        //return false;
-                    } else if ( $textarea.val().length > RDR.group.comment_length ) {
-                        var commentText = $textarea.val();
-                        $textarea.val( commentText.substr(0, RDR.group.comment_length) );
-                    }
-                    $textarea.siblings('div').text( ( RDR.group.comment_length - $textarea.val().length ) + " characters left" );
-                });
-
-                // $leaveComment.find('textarea').autogrow();
-
-                $leaveComment.find('button').click(function() {
-                    var comment = $leaveComment.find('textarea').val();
-                    
-                    if ( comment != "because..." ) {
-                        //quick fix
-                        content_node.kind = summary.kind;
-
-                        var args = { content_node_data:content_node, comment:comment, hash:hash, content:content_node.body, tag:tag, rindow:rindow, selState:selState};
-                        //leave parent_id undefined for now - backend will find it.
-                        RDR.actions.interactions.ajax( args, 'comment', 'create');
-                    }
-                });
-
-                $whyPanel_tagCard.append( $commentBox.append( $leaveComment ) );
 
                 // if ( kind == "img" || kind == "media" )  {
                 //     rindow.find('div.rdr_contentPanel').remove();
