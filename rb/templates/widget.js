@@ -4336,8 +4336,9 @@ console.dir( summary );
                         $header.append( $tagInfo, $rightBox );
                         if ( !$.isEmptyObject( content_node.top_interactions.coms ) ) {
                             $header.addClass('rdr_has_comment');
+                            $header.find('div.rdr_rightBox').append('<span>' + content_node.top_interactions.coms.length + '</span>');
                         }
-                        
+
                         //todo: consolodate truncate functions
                         var content_node_body = content_node.body,
                             maxLen = 60,
