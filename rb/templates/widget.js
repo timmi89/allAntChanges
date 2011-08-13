@@ -4289,6 +4289,7 @@ console.dir( summary );
                         var $tagButton = $header.find('a.rdr_tag');
                         $tagButton.data( 'tag', tag );
       
+                        TODO: return the abillity to +1 a tag
                         $header.find('span.rdr_tag_count').click( function() {
                             var $interactionButton = $(this).closest('.rdr_tag');
                             var args = { tag:$interactionButton, rindow:rindow, content:content_node.body, hash:hash, uiMode:'read', content_node:content_node, thumbsUp:true};
@@ -4333,8 +4334,10 @@ console.dir( summary );
                         $tagInfo.html( tagCountNode + '&nbsp;&nbsp;<span class="rdr_tag_rep">'+tag.body+'</span>&nbsp;&nbsp;'+label );
 
                         $header.append( $tagInfo, $rightBox );
-                        if ( !$.isEmptyObject( RDR.summaries[hash].top_interactions.coms ) ) $header.addClass('rdr_has_comment');
-
+                        if ( !$.isEmptyObject( content_node.top_interactions.coms ) ) {
+                            $header.addClass('rdr_has_comment');
+                        }
+                        
                         //todo: consolodate truncate functions
                         var content_node_body = content_node.body,
                             maxLen = 60,
