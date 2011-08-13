@@ -4024,12 +4024,14 @@ console.dir( summary );
                 $leaveComment.find('button').click(function() {
                     var comment = $leaveComment.find('textarea').val();
                     
-                    //quick fix
-                    content_node.kind = summary.kind;
+                    if ( comment != "because..." ) {
+                        //quick fix
+                        content_node.kind = summary.kind;
 
-                    var args = { content_node_data:content_node, comment:comment, hash:hash, content:content_node.body, tag:tag, rindow:rindow, selState:selState};
-                    //leave parent_id undefined for now - backend will find it.
-                    RDR.actions.interactions.ajax( args, 'comment', 'create');
+                        var args = { content_node_data:content_node, comment:comment, hash:hash, content:content_node.body, tag:tag, rindow:rindow, selState:selState};
+                        //leave parent_id undefined for now - backend will find it.
+                        RDR.actions.interactions.ajax( args, 'comment', 'create');
+                    }
                 });
 
                 $whyPanel_tagCard.append( $commentBox.append( $leaveComment ) );
@@ -4846,13 +4848,15 @@ console.dir( summary );
                     var comment = $leaveComment.find('textarea').val();
                     //[cleanlogz]('--------- selState 2: '+content_node.selState);
                     
-                    //temp translations..
-                    //quick fix
-                    content_node.kind = summary.kind;
+                    if ( comment != "because..." ) {
+                        //temp translations..
+                        //quick fix
+                        content_node.kind = summary.kind;
 
-                    var args = { hash:hash, kind:summary.kind, content_node_data:content_node, comment:comment, int_id:int_id, rindow:rindow, selState:content_node.selState, tag:tag};
-                    //leave parent_id undefined for now - backend will find it.
-                    RDR.actions.interactions.ajax( args, 'comment', 'create');
+                        var args = { hash:hash, kind:summary.kind, content_node_data:content_node, comment:comment, int_id:int_id, rindow:rindow, selState:content_node.selState, tag:tag};
+                        //leave parent_id undefined for now - backend will find it.
+                        RDR.actions.interactions.ajax( args, 'comment', 'create');
+                    }
                 });
 
                 $commentBox.append( $leaveComment );
