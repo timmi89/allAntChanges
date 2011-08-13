@@ -509,8 +509,7 @@ console.dir( summary );
                             }
 
                             if ( !$this.hasClass('rdr_customTagBox') ) {
-                                // $this.addClass('rdr_selected');
-                                // $this.siblings().removeClass('rdr_selected');
+                                $this.addClass('rdr_selected').siblings().removeClass('rdr_selected');
                                 $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
 
                                 if ( ( nodes_with_this_tag == 1 ) || kind == "img" || kind == "media" ) {
@@ -3920,102 +3919,117 @@ console.dir(args.sendData);
 
                 rindow.find('div.rdr_contentPanel div.rdr_header h1').html( headerBody );
 
-                var $socialBox = $('<div class="rdr_share_social"><h4>Share:</h4></div>'), 
-                $shareLinks = $('<ul class="shareLinks"></ul>'),
-                socialNetworks = ["facebook","twitter"]; //,"tumblr","linkedin"];
-
-                var shareHash = hash;
-                //quick mockup version of this code
-                $.each(socialNetworks, function(idx, val){
-                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
-                    $shareLinks.find('li:last').click( function() {
-                        var real_content_node = RDR.content_nodes[hash];
-                        RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:real_content_node });
-                        return false;
-                    });
-                });
-                $socialBox.append($shareLinks, '<div style="clear:both;" />');
-
-                if ( kind == "text" ) {
-                    var reaction_count = content_node.top_interactions.tags[ tag.id ].count;
-                    var reaction_body = content_node.top_interactions.tags[ tag.id ].body;
-                } else {
-                    var reaction_count = tag.count;
-                    var reaction_body = tag.body;
-                }
-                var $infoSummary = $('<div class="rdr_info_summary"><h4>('+reaction_count+') '+reaction_body+'</h4></div>');
-
-                var $infoBox = $('<div class="rdr_shareBox"></div>');
-                $infoBox.append( $infoSummary, $socialBox );
-                $whyPanel_tagCard.append( $infoBox );
 
 
-
-
-                //todo: combine this with the tooltip for the tags
-                // var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+tag.id+'">Comment</button></div>');
-                var $commentBox = $('<div class="rdr_commentBox rdr_sntPnl_padder"></div>').html(
-                    '<div class="rdr_commentComplete"><div><h4>Leave a comment:</h4></div></div>'
-                );
-                var helpText = "because...";
-                $leaveComment = $( '<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div><button>Comment</button></div>' );
-                $leaveComment.find('textarea').focus(function(){
-                    if($('.leaveComment').val() == helpText ){
-                        $('.leaveComment').val('');
-                    }
-                }).blur(function(){
-                    if($('.leaveComment').val() === "" ){
-                        $('.leaveComment').val(helpText);
-                    }
-                }).keyup(function(event) {
-                    $textarea = $(this);
-
-                    if (event.keyCode == '13') { //enter or comma
-                        //RDR.actions.panel.expand(rindow);
-                    }
-                    else if (event.keyCode == '27') { //esc
-                        //return false;
-                    } else if ( $textarea.val().length > RDR.group.comment_length ) {
-                        var commentText = $textarea.val();
-                        $textarea.val( commentText.substr(0, RDR.group.comment_length) );
-                    }
-                    $textarea.siblings('div').text( ( RDR.group.comment_length - $textarea.val().length ) + " characters left" );
-                });
-
-                // $leaveComment.find('textarea').autogrow();
-
-                $leaveComment.find('button').click(function() {
-                    var comment = $leaveComment.find('textarea').val();
-                    
-                    //quick fix
-                    content_node.kind = summary.kind;
-
-                    var args = { content_node_data:content_node, comment:comment, hash:hash, content:content_node.body, tag:tag, rindow:rindow, selState:selState};
-                    //leave parent_id undefined for now - backend will find it.
-                    RDR.actions.interactions.ajax( args, 'comment', 'create');
-                });
-
-                $whyPanel_tagCard.append( $commentBox.append( $leaveComment ) );
-
-
-
+                $whyPanel_tagCard.append( _makeInfoBox() );
 
                 var hasComments = !$.isEmptyObject(comments);
-                
                 if (hasComments) {
+                    _makeOtherComments(comments);
+                }
+                
+                $whyPanel_tagCard.append( _makeCommentBox() );
+
+
+                //helper functions
+                function _makeInfoBox(){
+                    
+                    var $socialBox = $('<div class="rdr_share_social"><h4>Share:</h4></div>'), 
+                    $shareLinks = $('<ul class="shareLinks"></ul>'),
+                    socialNetworks = ["facebook","twitter"]; //,"tumblr","linkedin"];
+
+                    var shareHash = hash;
+                    //quick mockup version of this code
+                    $.each(socialNetworks, function(idx, val){
+                        $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                        $shareLinks.find('li:last').click( function() {
+                            var real_content_node = RDR.content_nodes[hash];
+                            RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:real_content_node });
+                            return false;
+                        });
+                    });
+                    $socialBox.append($shareLinks, '<div style="clear:both;" />');
+
+                    if ( kind == "text" ) {
+                        var reaction_count = content_node.top_interactions.tags[ tag.id ].count;
+                        var reaction_body = content_node.top_interactions.tags[ tag.id ].body;
+                    } else {
+                        var reaction_count = tag.count;
+                        var reaction_body = tag.body;
+                    }
+                    var $infoSummary = $('<div class="rdr_info_summary"><h4>('+reaction_count+') '+reaction_body+'</h4></div>');
+
+                    var $infoBox = $('<div class="rdr_shareBox"></div>');
+                    $infoBox.append( $infoSummary, $socialBox );
+                    
+                    return $infoBox;
+                }
+
+                function _makeCommentBox(){
+
+                    //todo: combine this with the tooltip for the tags
+                    // var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+tag.id+'">Comment</button></div>');
+                    var $commentBox = $('<div class="rdr_commentBox rdr_sntPnl_padder"></div>').html(
+                        '<div class="rdr_commentComplete"><div><h4>Leave a comment:</h4></div></div>'
+                    );
+                    var helpText = "because...";
+                    $leaveComment = $( '<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div><button>Comment</button></div>' );
+                    $leaveComment.find('textarea').focus(function(){
+                        if($('.leaveComment').val() == helpText ){
+                            $('.leaveComment').val('');
+                        }
+                    }).blur(function(){
+                        if($('.leaveComment').val() === "" ){
+                            $('.leaveComment').val(helpText);
+                        }
+                    }).keyup(function(event) {
+                        $textarea = $(this);
+
+                        if (event.keyCode == '13') { //enter or comma
+                            //RDR.actions.panel.expand(rindow);
+                        }
+                        else if (event.keyCode == '27') { //esc
+                            //return false;
+                        } else if ( $textarea.val().length > RDR.group.comment_length ) {
+                            var commentText = $textarea.val();
+                            $textarea.val( commentText.substr(0, RDR.group.comment_length) );
+                        }
+                        $textarea.siblings('div').text( ( RDR.group.comment_length - $textarea.val().length ) + " characters left" );
+                    });
+
+                    // $leaveComment.find('textarea').autogrow();
+
+                    
+                    $leaveComment.find('button').click(function() {
+                        var comment = $leaveComment.find('textarea').val();
+                        
+                        //quick fix
+                        content_node.kind = summary.kind;
+
+                        var args = { content_node_data:content_node, comment:comment, hash:hash, content:content_node.body, tag:tag, rindow:rindow, selState:selState};
+                        //leave parent_id undefined for now - backend will find it.
+                        RDR.actions.interactions.ajax( args, 'comment', 'create');
+                    });
+
+                    return $commentBox.append( $leaveComment );
+                }
+
+                function _makeOtherComments(comments){
+                    
                     // rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
 
                     // ok, get the content associated with this tag!
-
-                    var $otherComments = $('<div class="rdr_otherCommentsBox rdr_sntPnl_padder"></div>').html(
+                    var $otherComments = $('<div class="rdr_otherCommentsBox rdr_sntPnl_padder"></div>').hide().html(
                         '<div><h4>Comments from Others:</h4></div>'
                     ).appendTo($whyPanel_tagCard);
 
-
                     for ( var i in comments ) {
                         var this_comment = comments[i];
-
+                        log('gdsfgdsfghsfghsf')
                         if( this_comment.tag_id == tag.id ){
+                            
+                            $otherComments.show();
+                            
                             var $commentSet = $('<div class="rdr_commentSet" />'),
                                 $commentBy = $('<div class="rdr_commentBy" />'),
                                 $comment = $('<div class="rdr_comment" />'),
@@ -4047,8 +4061,7 @@ console.dir(args.sendData);
                             $otherComments.append( $commentSet );
                         }
                     }
-                }
-
+                } //end makeOtherComments
 
                 // if ( kind == "img" || kind == "media" )  {
                 //     rindow.find('div.rdr_contentPanel').remove();
@@ -4341,7 +4354,7 @@ console.dir(args.sendData);
                             }
                         ).click( function() {
                             var $this = $(this);
-                            // $this.closest('.rdr_contentSet').addClass('rdr_selected').siblings().removeClass('rdr_selected');
+                            $this.closest('.rdr_contentSet').addClass('rdr_selected').siblings().removeClass('rdr_selected');
                             RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:rindow, content_node:content_node, selState:content_node.selState});
                         });
 
