@@ -479,7 +479,10 @@ console.dir( summary );
                             
                             // todo: [porter] i'm looping to see if there is a comment for this TAG.  can we just send this down from server?
                             for ( var i in topComs ) {
-                                if ( topComs[i].tag_id == tagOrder.id ) $li.addClass('rdr_has_comment');
+                                if ( topComs[i].tag_id == tagOrder.id ) {
+                                    $li.addClass('rdr_has_comment');
+                                    $li.find('div.rdr_rightBox').append('<span>' + RDR.util.prettyNumber( totalComs ) + '</span>');
+                                }
                             }
                             $tagBox.children('ul.rdr_tags').append($li);
                         
