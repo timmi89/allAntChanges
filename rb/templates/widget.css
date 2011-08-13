@@ -416,6 +416,8 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_read ul.rdr_tags li.rdr_tagged div.rdr_leftBox             {background-image:none; color:#008be4; }
 
 #rdr_sandbox div.rdr div.rdr_sentimentBox  ul.rdr_tags li:hover .rdr_rightBox           {background:url({{ STATIC_URL }}widget/images/widget_icons.png) -211px -1px no-repeat;}
+#rdr_sandbox div.rdr div.rdr_sentimentBox  ul.rdr_tags li.rdr_tagged .rdr_rightBox span,
+#rdr_sandbox div.rdr div.rdr_sentimentBox  ul.rdr_tags li.rdr_selected .rdr_rightBox span,
 #rdr_sandbox div.rdr div.rdr_sentimentBox  ul.rdr_tags li:hover .rdr_rightBox span      {display:none;}
 
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected .rdr_rightBox          {background:url({{ STATIC_URL }}widget/images/widget_icons.png) -45px -1px no-repeat !important;}
@@ -502,7 +504,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag:hover,
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag.rdr_hover                   {background:#fff; }
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader.rdr_has_comment div.rdr_rightBox      {background: url("{{ STATIC_URL }}widget/images/widget_icons.png") no-repeat scroll -155px -10px transparent; float:right; font-weight:normal; margin-right:5px; cursor:pointer;}
-#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader.rdr_has_comment div.rdr_rightBox span {display: block; margin-right: 15px; margin-top: 1px; text-align: right;}
+#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader.rdr_has_comment div.rdr_rightBox span {display: block; margin-right: 15px; margin-top: 2px; text-align: right;}
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_can_comment                   {background:none; float:right; font-weight:normal; margin-right:5px; text-transform:uppercase; font-size:9px; display:none; cursor:pointer; color:#666;}
 #rdr_sandbox div.rdr div.rdr_contentSet:hover div.rdr_contentHeader div.rdr_can_comment    {display:block;}
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content { color:#787878; font:italic 13px Georgia; padding:2px 9px; font-size:17px; }

@@ -247,7 +247,7 @@ function readrBoard($R){
                         var headers = [firstPanelHeader, "Say More"];
                         $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
                         $sentimentBox.children().each(function(idx){
-                            var $header = $('<div class="rdr_header rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap" />'),
+                            var $header = $('<div class="rdr_header rdr_brtl rdr_brtr" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap" />'),
                             $body = $('<div class="rdr_body "/>'),
                             $bodyWrap = $('<div class="rdr_body_wrap"/>').append($body),
                             $panelOverlay = $('<div class="rdr_panelOverlay" />'); //for visual effects that need to sit on top of everything - borderline and shadow
@@ -431,7 +431,7 @@ console.dir( summary );
                         var headers = ["Reactions", "", ""];  // removing comment count for now +info.com_count
                         $sentimentBox.append($reactionPanel, $contentPanel, $whyPanel); //$selectedTextPanel, 
                         $sentimentBox.children().each(function(idx){
-                            var $header = $('<div class="rdr_header rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />'),
+                            var $header = $('<div class="rdr_header rdr_brtl rdr_brtr" />'),
                             $rdr_headerInnerWrap = $('<div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>').appendTo($header),
                             $body = $('<div class="rdr_body "/>'),
                             $bodyWrap = $('<div class="rdr_body_wrap"/>').append($body),
@@ -471,19 +471,22 @@ console.dir( summary );
                                 },
                                 'hash':hash
                             }),
-                            $leftBox = '<div class="rdr_leftBox"><span>'+percentage+'%</span></div>',
+                            // $leftBox = '<div class="rdr_leftBox"><span>'+percentage+'%</span></div>',
+                            $leftBox = '<div class="rdr_leftBox"><span>'+RDR.util.prettyNumber( tag.count )+'</span></div>',
                             $tagText = '<div class="rdr_tagText">'+tag.body+'</div>',
                             $rightBox = '<div class="rdr_rightBox" />';
 
                             $li.append($leftBox,$tagText,$rightBox);
                             
                             // todo: [porter] i'm looping to see if there is a comment for this TAG.  can we just send this down from server?
+                            var commentsHere = 0;
                             for ( var i in topComs ) {
                                 if ( topComs[i].tag_id == tagOrder.id ) {
                                     $li.addClass('rdr_has_comment');
-                                    $li.find('div.rdr_rightBox').append('<span>' + RDR.util.prettyNumber( totalComs ) + '</span>');
+                                    commentsHere++;
                                 }
                             }
+                            if ( commentsHere > 0 ) $li.find('div.rdr_rightBox').append('<span>' + RDR.util.prettyNumber( commentsHere ) + '</span>');
                             $tagBox.children('ul.rdr_tags').append($li);
                         
                         });
@@ -3875,8 +3878,6 @@ console.dir( summary );
 
                 if ( other_tags.length > 0 ) {
                     other_tags.sort( SortByCount );
-                    console.log('other_tags');
-                    console.dir(other_tags);
                     // we set this div far down, then animate it up, because position:fixed doesn't stay within a rindow, it stays within the browser viewport
                     var $otherTags = $('<div class="rdr_otherTags" ><strong>Other Reactions:</strong>&nbsp;</div>');
                     for ( var i in other_tags ) {
@@ -4110,7 +4111,7 @@ console.dir( summary );
                             // corner logic
                             $thisPanel.removeClass('rdr_brtl rdr_brbl');
                             $thisPanel.find('div.rdr_header').removeClass('rdr_brtl rdr_brbl');
-                            rindow.find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').removeClass('rdr_brbr rdr_brtr');
+                            // rindow.find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').removeClass('rdr_brbr rdr_brtr');
                             
                             // old, from when whyPanel was next to, not over, the contentPanel:
                             // width = (num_columns == 3) ? 200 + contentPanelWidth + 250 : 200 + 250;
@@ -4201,7 +4202,7 @@ console.dir( summary );
                             // corner logic
                             $thisPanel.addClass('rdr_brtl').addClass('rdr_brbl');
                             $thisPanel.find('div.rdr_header').addClass('rdr_brtl').addClass('rdr_brbl');
-                            rindow.find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').addClass('rdr_brbr').addClass('rdr_brtr');
+                            rindow.find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').addClass('rdr_brtr');
                             rindow.find('div.rdr_reactionPanel div.rdr_body').attr('style','');
 
                             $thisPanel.animate( {right:-300 }, rindow.settings.animTime, function() {
