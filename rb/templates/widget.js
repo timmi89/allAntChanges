@@ -162,9 +162,6 @@ function readrBoard($R){
                         //RDR.rindow._rindowTypes.writeMode.make:
                         //as the underscore suggests, this should not be called directly.  Instead, use RDR.rindow.make(rindowType [,options])
 
-                        log('settings');
-                        log(settings);
-
                         var hash = settings.hash;
                         var summary = RDR.summaries[hash],
                             $container = summary.$container,
@@ -211,8 +208,6 @@ function readrBoard($R){
                             }
 
                         }
-                        log('coords')
-                        log(coords)
                         var rindow = RDR.rindow.draw({
                             coords: coords,
                             pnlWidth:200,
@@ -223,8 +218,6 @@ function readrBoard($R){
                             kind: kind,
                             selState: newSel
                         });
-                        log('coords')
-                        log(coords)
 
                         // TODO this is used to constrain the initial width of this rindow
                         // and then it animates larger when we slide the whyPanel out.
@@ -341,9 +334,6 @@ function readrBoard($R){
                             }
                         });
 
-                        log('tagBox.height() ');
-                        log($tagBox.height() );
-
                         var rindowHeight = RDR.rindow.setHeight(rindow, {
                             targetHeight: $tagBox.height() + 35 + 15, //+ header height + extra padding;
                             animate:false
@@ -373,7 +363,6 @@ function readrBoard($R){
                     //RDR.rindow._rindowTypes.readMode:
                     make: function(settings){
                         //RDR.rindow._rindowTypes.readMode.make:               
-                        log('readmode make');
                         var hash = settings.hash;
                         var summary = RDR.summaries[hash],
                         kind = summary.kind;
@@ -493,8 +482,8 @@ function readrBoard($R){
                                             }
                                         }
                                     } else {
-                                        for ( var k in summary.top_interactions.coms ) {
-                                            if ( summary.top_interactions.coms[k].tag_id == topComs[i].tag_id ) {
+                                        for ( var l in summary.top_interactions.coms ) {
+                                            if ( summary.top_interactions.coms[l].tag_id == topComs[i].tag_id ) {
                                                 commentsHere++; 
                                             }
                                         }
@@ -512,19 +501,20 @@ function readrBoard($R){
                         // enable the "click on a blessed tag to choose it" functionality.  just css class based.
                         rindow.find('ul.rdr_preselected li').bind('click', function() {
                             var $this = $(this);
-
                             // see how many CONTENT_NODES have this TAG, to know if we should skip straight to the whyPanel on click
-                            var nodes_with_this_tag = 0;
+                            var nodes_with_this_tag = 0,
+                                content_node;
+
                             for ( var i in summary.content_nodes ) {
                                 if ( summary.content_nodes[i].top_interactions && summary.content_nodes[i].top_interactions.tags[ $this.data('tag').id ] ) {
                                     nodes_with_this_tag++;
-                                    var content_node = summary.content_nodes[i];
+                                    content_node = summary.content_nodes[i];
                                 }
                             }
 
                             // i.e. it's an image / media
                             if ( !content_node ) {
-                                var content_node = RDR.content_nodes[ $this.data('hash') ];
+                                content_node = RDR.content_nodes[ $this.data('hash') ];
                             }
 
                             if ( !$this.hasClass('rdr_customTagBox') ) {
@@ -570,7 +560,7 @@ function readrBoard($R){
                         .hover( 
                             function() {
                                 //don't do this for windows that are resizing
-                                if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return 
+                                if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
 
                                 $(this).addClass('rdr_hover'); // safari/chrome kludge -- :hover isn't working here
                                 var selStates = $(this).data('selStates');
@@ -590,7 +580,7 @@ function readrBoard($R){
                             function() {
 
                                 //don't do this for windows that are resizing
-                                if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return 
+                                if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
 
                                 $(this).removeClass('rdr_hover');  // safari/chrome kludge -- :hover isn't working here
                                 var selStates = $(this).data('selStates');
@@ -607,9 +597,6 @@ function readrBoard($R){
                                 */
                             }
                         );
-
-                        log('tagBox.height() ');
-                        log($tagBox.height() );
 
                         var rindowHeight = RDR.rindow.setHeight(rindow, {
                             targetHeight: $tagBox.height() + 35 + 15, //+ header height + extra padding;
@@ -694,8 +681,8 @@ function readrBoard($R){
 
                 var settings = $.extend({}, this.defaults, options);
 
-                var minHeight = settings.minHeight
-                var maxHeight = settings.maxHeight
+                var minHeight = settings.minHeight;
+                var maxHeight = settings.maxHeight;
 
 
 				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
@@ -1209,7 +1196,7 @@ function readrBoard($R){
                     return str;
                 }
                 else{
-                    return str.slice(0, str.length-danglerRE[0].length)
+                    return str.slice(0, str.length-danglerRE[0].length);
                 }
             }
         },
@@ -2823,7 +2810,7 @@ function readrBoard($R){
                                             int_id: int_id,
                                             tag:tag_li,
                                             rindow: args.rindow
-                                        }
+                                        };
                                         // RDR.actions.unrateSend(args);
                                         RDR.actions.interactions.ajax( newArgs, 'tag', 'remove' );
                                         return false; // prevent the tag call applied to the parent <li> from firing
@@ -3077,7 +3064,7 @@ function readrBoard($R){
                                         int_id: int_id,
                                         tag:tag_li,
                                         rindow: args.rindow
-                                    }
+                                    };
 
                                     RDR.actions.interactions.ajax( newArgs, 'bookmark', 'remove' );
                                     return false; // prevent the tag call applied to the parent <li> from firing
@@ -3131,7 +3118,7 @@ function readrBoard($R){
                                     int_id: event.data.int_id,
                                     tag: args.tag,
                                     rindow: args.rindow
-                                }
+                                };
                                 RDR.actions.interactions.ajax( newArgs, 'bookmark', 'remove' );
                                 
                             });
@@ -3774,8 +3761,6 @@ function readrBoard($R){
             },
             viewReactionContent: function(tag, hash, rindow){
                 //temp reconnecting:
-                log('view reaction');
-
                 var container = RDR.containers[hash];
                 var summary = RDR.summaries[hash];
                 
@@ -3902,8 +3887,8 @@ function readrBoard($R){
                         if ( i != tag.id ) other_tags.push({ tag_id:i, count:content_node.top_interactions.tags[i].count, body:content_node.top_interactions.tags[i].body });
                     }
                 } else {
-                    for ( var i in summary.top_interactions.tags ) {
-                        if ( i != tag.id ) other_tags.push({ tag_id:i, count:summary.top_interactions.tags[i].count, body:summary.top_interactions.tags[i].body });
+                    for ( var j in summary.top_interactions.tags ) {
+                        if ( j != tag.id ) other_tags.push({ tag_id:j, count:summary.top_interactions.tags[j].count, body:summary.top_interactions.tags[j].body });
                     }
                 }
 
@@ -3911,24 +3896,25 @@ function readrBoard($R){
                     other_tags.sort( SortByCount );
                     // we set this div far down, then animate it up, because position:fixed doesn't stay within a rindow, it stays within the browser viewport
                     var $otherTags = $('<div class="rdr_otherTags" ><strong>Other Reactions:</strong>&nbsp;</div>');
-                    for ( var i in other_tags ) {
-                        $otherTags.append( '<span>('+other_tags[i].count+') '+other_tags[i].body+' &nbsp;</span>&nbsp;');
+                    for ( var k in other_tags ) {
+                        $otherTags.append( '<span>('+other_tags[k].count+') '+other_tags[k].body+' &nbsp;</span>&nbsp;');
                     }
 
                     $whyPanel.find('.rdr_body_wrap').append( $otherTags );
                     $whyPanel.find('.rdr_body').css({
                         bottom:14
-                    })
+                    });
                 }
 
 
                 $whyPanel_tagCard.siblings('.rdr_tagCard').hide();
 
+                var comments;
                 // () ? text_node : image_node
                 if ( kind == "text" ) {
-                    var comments = summary.content_nodes[ content_node.id ].top_interactions.coms;
+                    comments = summary.content_nodes[ content_node.id ].top_interactions.coms;
                 } else {
-                    var comments = summary.top_interactions.coms;
+                    comments = summary.top_interactions.coms;
                 }
                 
                 var node_comments = 0;
@@ -3938,14 +3924,15 @@ function readrBoard($R){
                     }
                 }
 
-                var maxHeaderLen = 45;
-
+                var maxHeaderLen = 45,
+                    headerBodyFull,
+                    headerBody;
                 if ( kind != "img" && kind != "media" ) {
-                    var headerBodyFull = tag.body + ": <span>" + content_node.body+"</span>";
-                    var headerBody = ( ( headerBodyFull.length - 13 ) > maxHeaderLen ) ? headerBodyFull.slice(0, maxHeaderLen)+"..." : headerBodyFull;
+                    headerBodyFull = tag.body + ": <span>" + content_node.body+"</span>";
+                    headerBody = ( ( headerBodyFull.length - 13 ) > maxHeaderLen ) ? headerBodyFull.slice(0, maxHeaderLen)+"..." : headerBodyFull;
                 } else {
-                    var headerBodyFull = tag.body;
-                    var headerBody = ( ( headerBodyFull.length - 13 ) > maxHeaderLen ) ? headerBodyFull.slice(0, maxHeaderLen)+"..." : headerBodyFull;
+                    headerBodyFull = tag.body;
+                    headerBody = ( ( headerBodyFull.length - 13 ) > maxHeaderLen ) ? headerBodyFull.slice(0, maxHeaderLen)+"..." : headerBodyFull;
                 }
 
                 rindow.find('div.rdr_contentPanel div.rdr_header h1').html( headerBody );
@@ -3981,12 +3968,13 @@ function readrBoard($R){
                     });
                     $socialBox.append($shareLinks, '<div style="clear:both;" />');
 
+                    var reaction_count, reaction_body;
                     if ( kind == "text" ) {
-                        var reaction_count = content_node.top_interactions.tags[ tag.id ].count;
-                        var reaction_body = content_node.top_interactions.tags[ tag.id ].body;
+                        reaction_count = content_node.top_interactions.tags[ tag.id ].count;
+                        reaction_body = content_node.top_interactions.tags[ tag.id ].body;
                     } else {
-                        var reaction_count = tag.count;
-                        var reaction_body = tag.body;
+                        reaction_count = tag.count;
+                        reaction_body = tag.body;
                     }
                     var $infoSummary = $('<div class="rdr_info_summary"><h4>('+reaction_count+') '+reaction_body+'</h4></div>');
 
@@ -4059,7 +4047,6 @@ function readrBoard($R){
 
                     for ( var i in comments ) {
                         var this_comment = comments[i];
-                        log('gdsfgdsfghsfghsf')
                         if( this_comment.tag_id == tag.id ){
                             
                             $otherComments.show();
@@ -4127,7 +4114,6 @@ function readrBoard($R){
                 },
                 expand: function(_panel, rindow, interaction_id){
                     //RDR.actions.panel.expand:
-                    log('panel expand')
                     var panel = _panel || "whyPanel";
 
                     // hack.  chrome and safari don't like rounded corners if the whyPanel is showing since it is wider than panel1
@@ -4188,9 +4174,6 @@ function readrBoard($R){
                         });
                                             
                         var coords = rindow.offset();
-                        log('coords in expand');
-                        log(coords);                        
-                        coords = RDR.util.stayInWindow({coords:coords, width:width, height:gotoHeight });
                  
                         rindow.animate({
                             width: width,
@@ -4249,7 +4232,6 @@ function readrBoard($R){
                             rindow.find('div.rdr_reactionPanel div.rdr_body').attr('style','');
 
                             if( isReadMode ){
-                                log('readmode')
                                 width = 500;
                                 $thisPanel.animate( {right:-300 }, rindow.settings.animTime);
                             }
@@ -4334,7 +4316,7 @@ function readrBoard($R){
                             function() {
                                 //don't do this for windows that are resizing
                                 $(this).addClass('rdr_hover');
-                                if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return 
+                                if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
 
                                 $(this).addClass('rdr_hover');
                                 if(content_node.selState){
@@ -4344,7 +4326,7 @@ function readrBoard($R){
                             function() {
                                 //don't do this for windows that are resizing
                                 $(this).removeClass('rdr_hover');
-                                if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return 
+                                if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
                                 $(this).removeClass('rdr_hover');
                                 if(content_node.selState){
                                     $().selog('hilite', content_node.selState, 'off');
@@ -4779,7 +4761,6 @@ function readrBoard($R){
                 
             },
             shareStart: function(args) {
-                log('sharestart');
                 var rindow = args.rindow, 
                     tag = args.tag,
                     int_id = args.int_id,
@@ -4829,7 +4810,7 @@ function readrBoard($R){
                         int_id: args.int_id,
                         tag: args.tag,
                         rindow: args.rindow
-                    }
+                    };
                     RDR.actions.interactions.ajax( newArgs, 'tag', 'remove' );
                 });
 
