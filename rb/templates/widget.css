@@ -198,7 +198,7 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr h1, 
 #rdr_sandbox div.rdr h2  {font-family:ReadrLeague,Arial,Helvetica,sans-serif !important; color:#666; margin:0; line-height:1.1em !important;}
 #rdr_sandbox div.rdr h1  {font-size:21px; cursor:move; padding:3px 9px; font-weight:100;}
-#rdr_sandbox div.rdr h1 span {font-size:18px; color:#008be4;}
+#rdr_sandbox div.rdr h1 span.rdr_contentNode_text {font-size:18px; color:#008be4;}
 
 #rdr_sandbox div.rdr li {background:none; padding:0;}
 
@@ -221,8 +221,8 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
     width:200px;
 }
 
-#rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap h1 span ,
-#rdr_sandbox div.rdr_window div.rdr_whyPanel div.rdr_headerInnerWrap h1 span {
+#rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap h1 span.rdr_contentNode_text ,
+#rdr_sandbox div.rdr_window div.rdr_whyPanel div.rdr_headerInnerWrap h1 span.rdr_contentNode_text {
     color:#666;
     font-size:20px;
     margin-left: 4px;
@@ -280,8 +280,15 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 
 #rdr_sandbox div.rdr_window.rdr_readmode div.rdr_sntPnl.rdr_whyPanel div.rdr_header      { background: none transparent; }
 
-#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap {background:none; border-bottom:1px solid #bababa; bottom:0; padding-bottom:4px; text-align:center; width:100%; position:absolute; }
-#rdr_sandbox div.rdr div.rdr_sntPnl.rdr_whyPanel div.rdr_header > div.rdr_headerInnerWrap {text-align:left; }
+#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap {background:none; border-bottom:1px solid #bababa; bottom:0; padding-bottom:4px;
+ text-align:center; width:100%; position:absolute; }
+
+/* this wasn't on purpose to make the write mode header for the whyPanel left aligned was it? */
+/*
+#rdr_sandbox div.rdr div.rdr_sntPnl.rdr_whyPanel div.rdr_header > div.rdr_headerInnerWrap { text-align:left; }
+*/
+#rdr_sandbox div.rdr_window.rdr_readmode div.rdr_sntPnl.rdr_whyPanel div.rdr_header > div.rdr_headerInnerWrap { text-align:left; }
+
 #rdr_sandbox div.rdr div.rdr_sntPnl h1                               {padding:0 !important; }
 
 
@@ -572,7 +579,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_instruct    {color:#666; margin:5px 0;}
 #rdr_sandbox div.rdr div.rdr_help        {font:italic 11px Arial;color:#767676; xwidth:100%; position:absolute; top:12px; xtext-align:center; margin:0 !important;}
 
-#rdr_sandbox div.rdr div.rdr_shareBox                       { overflow:auto; clear:both; }
+#rdr_sandbox div.rdr div.rdr_shareBox                       { overflow:auto; clear:both; border-top: none;}
 #rdr_sandbox div.rdr div.rdr_share_social                   { float:right; }
 #rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; }
 #rdr_sandbox div.rdr_whyPanel div.rdr_tagCard                       { padding: 8px 12px 0; position:relative;}

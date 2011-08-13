@@ -3854,7 +3854,7 @@ function readrBoard($R){
                     });
                     $backToQuotes.click( function() {
                         // $whyPanel.removeClass('rdr_whyShowing');
-                        rindow.find('div.rdr_contentPanel div.rdr_header h1 span').remove();
+                        //rindow.find('div.rdr_contentPanel div.rdr_header h1 span').remove();
                         RDR.actions.panel.collapse("whyPanel", rindow, kind );
                     });
                 }
@@ -3924,20 +3924,29 @@ function readrBoard($R){
                     }
                 }
 
-                var maxHeaderLen = 45,
-                    headerBodyFull,
-                    headerBody;
+                var maxHeaderLen = 35,
+                    headerFullText,
+                    abrvBodyText,
+                    $headerBody;
+
+                //note: tag.body length should never be the full width
                 if ( kind != "img" && kind != "media" ) {
-                    headerBodyFull = tag.body + ": <span>" + content_node.body+"</span>";
-                    headerBody = ( ( headerBodyFull.length - 13 ) > maxHeaderLen ) ? headerBodyFull.slice(0, maxHeaderLen)+"..." : headerBodyFull;
+                    headerFullText = ""+tag.body + content_node.body;
+                    abrvBodyText = content_node.body;
+                    if( ( headerFullText.length ) > maxHeaderLen ){
+                        abrvBodyText = content_node.body.slice(0, (maxHeaderLen - tag.body.length) ) +  "...";
+                    }
+                    $headerBody = $("<span class='rdr_tag_text'>"+tag.body+"</span> : <span class='rdr_contentNode_text'>" + abrvBodyText +"</span>");
                 } else {
-                    headerBodyFull = tag.body;
-                    headerBody = ( ( headerBodyFull.length - 13 ) > maxHeaderLen ) ? headerBodyFull.slice(0, maxHeaderLen)+"..." : headerBodyFull;
+                    $headerBody = "<span class='rdr_tag_text'>"+tag.body+"</span>";
                 }
-
-                rindow.find('div.rdr_contentPanel div.rdr_header h1').html( headerBody );
-
-
+                
+                log($headerBody);
+                //trying this out:  I'm going to copy the same header into the whypanel, and then do some tricky hiding
+                // to make it look like the header slides in.
+                rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tag.body);
+                rindow.find('div.rdr_whyPanel div.rdr_header h1').empty().append($headerBody);
+                rindow.find('div.rdr_whyPanel div.rdr_header span.rdr_tag_text').css('visibility','hidden');
 
                 $whyPanel_tagCard.append( _makeInfoBox() );
 
@@ -4191,7 +4200,10 @@ function readrBoard($R){
                 collapse: function(_panel, rindow){
                     //RDR.actions.panel.collapse:
 
+                    //note: I'm commenting this out because I think it helps to see the why panel slide back
                     //rindow.find('div.rdr_whyPanel').css('visibility','hidden');
+                    //but I don't like seeing the header slide out, becuase the contentPanel header switches immediately
+                    rindow.find('div.rdr_whyPanel .rdr_header h1').empty();
 
                     var panel = _panel || "whyPanel",
                         $thisPanel = $(rindow).find('.rdr_'+panel),
