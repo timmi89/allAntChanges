@@ -507,8 +507,8 @@ console.dir( summary );
                             }
 
                             if ( !$this.hasClass('rdr_customTagBox') ) {
-                                // $this.addClass('rdr_selected');
-                                // $this.siblings().removeClass('rdr_selected');
+                                $this.addClass('rdr_selected');
+                                $this.siblings().removeClass('rdr_selected');
                                 $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
 
                                 if ( ( nodes_with_this_tag == 1 ) || kind == "img" || kind == "media" ) {
