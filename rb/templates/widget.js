@@ -378,7 +378,7 @@ function readrBoard($R){
                         var hash = settings.hash;
                         var summary = RDR.summaries[hash],
                         kind = summary.kind;
-console.dir( summary );
+
                         var selector = ".rdr-" + hash;
 
                         var $indicator = $('#rdr_indicator_'+hash),
@@ -483,7 +483,23 @@ console.dir( summary );
                             for ( var i in topComs ) {
                                 if ( topComs[i].tag_id == tagOrder.id ) {
                                     $li.addClass('rdr_has_comment');
-                                    commentsHere++;
+
+                                    // loop to see how many content_nodes' comments are under this tag
+                                    if ( kind == "text" ) {
+                                        for ( var j in summary.content_nodes ) {
+                                            for ( var k in summary.content_nodes[j].top_interactions.coms ) {
+                                                if ( summary.content_nodes[j].top_interactions.coms[k].tag_id == topComs[i].tag_id ) {
+                                                    commentsHere++; 
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        for ( var k in summary.top_interactions.coms ) {
+                                            if ( summary.top_interactions.coms[k].tag_id == topComs[i].tag_id ) {
+                                                commentsHere++; 
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             if ( commentsHere > 0 ) $li.find('div.rdr_rightBox').append('<span>' + RDR.util.prettyNumber( commentsHere ) + '</span>');
