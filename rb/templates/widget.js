@@ -3913,7 +3913,7 @@ function readrBoard($R){
                     
                     function SortByCount(a,b) { return b.count - a.count; }
 
-                    $whyPanel.find('div.rdr_otherTags').remove();
+                    $whyPanel.find('div.rdr_otherTagsWrap').remove();
                     $whyPanel.find('.rdr_body').css({
                         bottom:0
                     });

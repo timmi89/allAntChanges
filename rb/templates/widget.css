@@ -425,8 +425,8 @@ border-style: solid !important; border-width: 1px 0 !important; padding: 0 !impo
 /*overwrite for image readmode version*/
 div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !important;}
 
-#rdr_sandbox div.rdr ul.rdr_tags li.rdr_has_comment .rdr_rightBox       {background:url({{ STATIC_URL }}widget/images/widget_icons.png) -156px -1px no-repeat;}
-#rdr_sandbox div.rdr ul.rdr_tags li.rdr_has_comment .rdr_rightBox span  {display: block; font-family: Arial; font-size: 11px; margin-right: 15px; margin-top: 10px; text-align: right;}
+#rdr_sandbox div.rdr ul.rdr_tags li.rdr_has_comment .rdr_rightBox       {background:url({{ STATIC_URL }}widget/images/widget_icons.png) -158px -1px no-repeat;}
+#rdr_sandbox div.rdr ul.rdr_tags li.rdr_has_comment .rdr_rightBox span  {display: block; font-family: Arial; font-size: 11px; margin-right: 18px; margin-top: 11px; text-align: right;}
 #rdr_sandbox div.rdr div.rdr_read ul.rdr_tags li .rdr_leftBox           {color:#008be4;}
 
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged div.rdr_leftBox          {background:url({{ STATIC_URL }}widget/images/widget_icons.png) 1px -1px no-repeat; }
@@ -440,7 +440,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_sentimentBox  ul.rdr_tags li.rdr_selected .rdr_rightBox span,
 #rdr_sandbox div.rdr div.rdr_sentimentBox  ul.rdr_tags li:hover .rdr_rightBox span      {display:none;}
 
-#rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected .rdr_rightBox          {background:url({{ STATIC_URL }}widget/images/widget_icons.png) -45px -1px no-repeat !important;}
+#rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected .rdr_rightBox          {background:url({{ STATIC_URL }}widget/images/widget_icons.png) -46px -1px no-repeat !important;}
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected .rdr_leftBox:hover,
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged .rdr_leftBox:hover       {background-position:-110px -1px;}
 #rdr_sandbox div.rdr div.rdr_new ul.rdr_tags li.rdr_selected            {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
@@ -512,7 +512,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
     width: 38px;
 }
 #rdr_sandbox div.rdr div.rdr_contentSet.rdr_hover div.rdr_contentHeader div.rdr_rightBox {
-    background:url({{ STATIC_URL }}widget/images/widget_icons.png) -43px -10px no-repeat !important;
+    background:url({{ STATIC_URL }}widget/images/widget_icons.png) -46px -10px no-repeat !important;
     opacity:0.5;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
     filter:alpha(opacity=50);
@@ -523,8 +523,8 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag              {margin:0; background:#ccc; font:inherit; color:#666; padding:0; }
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag:hover,
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag.rdr_hover                   {background:#fff; }
-#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader.rdr_has_comment div.rdr_rightBox      {background: url("{{ STATIC_URL }}widget/images/widget_icons.png") no-repeat scroll -155px -10px transparent; float:right; font-weight:normal; margin-right:5px; cursor:pointer;}
-#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader.rdr_has_comment div.rdr_rightBox span {display: block; margin-right: 15px; margin-top: 2px; text-align: right;}
+#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader.rdr_has_comment div.rdr_rightBox      {background: url("{{ STATIC_URL }}widget/images/widget_icons.png") no-repeat scroll -158px -10px transparent; float:right; font-weight:normal; margin-right:5px; cursor:pointer;}
+#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader.rdr_has_comment div.rdr_rightBox span {display: block; margin-right: 18px; margin-top: 2px; text-align: right;}
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_can_comment                   {background:none; float:right; font-weight:normal; margin-right:5px; text-transform:uppercase; font-size:9px; display:none; cursor:pointer; color:#666;}
 #rdr_sandbox div.rdr div.rdr_contentSet:hover div.rdr_contentHeader div.rdr_can_comment    {display:block;}
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content { color:#787878; font:italic 13px Georgia; padding:2px 9px; font-size:17px; }
@@ -532,7 +532,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 #rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_otherTagsWrap  { position:absolute; border-top:1px solid #ccc; background:#fff; width:100%; bottom:-10px; height:22px; z-index:4;}
 
-#rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_otherTags { color:#666; padding:5px; font-size:11px; display:inline-block; width: auto; }
+#rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_otherTags { color:#666; padding:5px 12px; font-size:11px; display:inline-block; width: auto; }
 #rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_otherTags span.rdr_tags_list_tag{ padding:0 !important; }
 
 #rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_otherTags em         {color:#76a1ba; display: block; font-family:Arial; font-size:11px; margin-top:10px;}
