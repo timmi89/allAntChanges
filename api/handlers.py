@@ -14,7 +14,16 @@ class SocialUserHandler(AnonymousBaseHandler):
 
 class UserHandler(AnonymousBaseHandler):
     model = User
-    exclude = ('is_active', 'is_superuser', 'is_staff', 'password', 'last_login', 'email', 'date_joined', 'username')
+    exclude = (
+        'is_active',
+        'is_superuser',
+        'is_staff',
+        'password',
+        'last_login',
+        'email',
+        'date_joined',
+        'username'
+    )
 
 class InteractionNodeHandler(AnonymousBaseHandler):
     model = InteractionNode

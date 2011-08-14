@@ -28,12 +28,30 @@ urlpatterns = patterns('',
   url(r'^settings/$', 'rb.views.settings'),
   url(r'^settings/(?P<short_name>[\w\-]+)/$', 'rb.views.settings'),
 
+  # User profile pages
   url(r'^user/(?P<user_id>\d+)/$', 'rb.views.main'),
   url(r'^user/(?P<user_id>\d+)/tags/$', 'rb.views.main', kwargs={"view":"tags"}),
   url(r'^user/(?P<user_id>\d+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
   url(r'^user/(?P<user_id>\d+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
   url(r'^user/(?P<user_id>\d+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}),
 
+  # Specific page
+  url(r'^page/(?P<page_id>\d+)/$', 'rb.views.main'),
+  url(r'^page/(?P<page_id>\d+)/not_approved/$', 'rb.views.main', kwargs={"admin":"not_approved"}),
+  url(r'^page/(?P<page_id>\d+)/tags/$', 'rb.views.main', kwargs={"view":"tags"}),
+  url(r'^page/(?P<page_id>\d+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
+  url(r'^page/(?P<page_id>\d+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
+  url(r'^page/(?P<page_id>\d+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}),
+
+  # Specific site
+  url(r'^site/(?P<site_id>\d+)/$', 'rb.views.main'),
+  url(r'^site/(?P<site_id>\d+)/not_approved/$', 'rb.views.main', kwargs={"admin":"not_approved"}),
+  url(r'^site/(?P<site_id>\d+)/tags/$', 'rb.views.main', kwargs={"view":"tags"}),
+  url(r'^site/(?P<site_id>\d+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
+  url(r'^site/(?P<site_id>\d+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
+  url(r'^site/(?P<site_id>\d+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}),
+
+  # Specific group
   url(r'^group/(?P<short_name>[\w\-]+)/$', 'rb.views.main'),
   url(r'^group/(?P<short_name>[\w\-]+)/not_approved/$', 'rb.views.main', kwargs={"admin":"not_approved"}),
   url(r'^group/(?P<short_name>[\w\-]+)/tags/$', 'rb.views.main', kwargs={"view":"tags"}),

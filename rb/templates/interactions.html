@@ -5,7 +5,7 @@
 <table class="card" border="0" cellspacing="0" cellpadding="0">
   <thead>
     <th class="column1"><a href=/group/{{ page.grouper.site.group.short_name }}><img alt="{{ page.grouper.site.group.name }}" src="{% get_static_prefix %}{{ page.grouper.site.group.logo_url_sm }}"></a></th>
-    <th class="column2"><a href="?page={{ page.grouper.id }}">{{ page.grouper.title }}</a></th>
+    <th class="column2"><a href="/page/{{ page.grouper.id }}/">{{ page.grouper.title }}</a></th>
   </thead>
   {% for interaction in page.list %}
   <tbody>
