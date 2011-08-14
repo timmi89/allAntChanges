@@ -50,7 +50,7 @@ class UserAwareModel(models.Model):
 ReadrBoard Models
 """
 class InteractionNode(models.Model):
-    body = models.CharField(max_length=2048, unique=True)
+    body = models.CharField(max_length=2048)
     
     def natural_key(self):
         return self.body
