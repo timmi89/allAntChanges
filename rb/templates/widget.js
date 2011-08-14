@@ -94,6 +94,7 @@ function readrBoard($R){
 
                 $rindow.find('div.rdr_body').each( function() {
                     if( !$(this).hasClass('jspScrollable') ){
+                        // IE.  for some reason, THIS fires the scrollstop event.  WTF:
                         $(this).jScrollPane({ contentWidth:200, showArrows:true });
                     }else{
                         var API = $(this).data('jsp');
@@ -1234,7 +1235,7 @@ function readrBoard($R){
                     }
                     if( whichAlert == "showMorePins"){
                         //put a better message here
-                        $msg1 = $('<h1>See what readers are <span>saying</span>!</h1>');
+                        $msg1 = $('<h1>See <span>more reactions</span> on this page.</h1>');
                         $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="rdr_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" /> icons.</div>');
 
                         $msg2.find('a.rdr_show_more_pins').click( function() {
@@ -1812,7 +1813,7 @@ function readrBoard($R){
                     }
                 });
 
-                $(document).bind('scrollstop.rdr', function() {
+                $(document).bind('scrollstop', function() {
                     if ( $(window).scrollTop() > 150 && $('#rdr_sandbox') && !$('#rdr_sandbox').data('showingAllIndicator') ) {
                         $('#rdr_sandbox').data('showingAllIndicator', true);
                         if ( RDR.text_container_popularity && RDR.text_container_popularity.length > RDR.group.initial_pin_limit ) {
@@ -3187,18 +3188,22 @@ function readrBoard($R){
                     //todo: this works for now, but use a differnet signal later
                     if ( $indicators.length == 1 ) $indicators.removeClass('rdr_dont_show');
 
+                    var textIndicatorOpacity = ( !$.browser.msie ) ? '0.4':'1.0';
+
                     $indicators.not('.rdr_dont_show').css({
                         'opacity':'0',
                         'visibility':'visible'
                     });
                     if(boolDontFade){
                         $indicators.not('.rdr_dont_show').css({
-                            'opacity':'0.4'
+                            'opacity':textIndicatorOpacity
                         });
                         return;
+                    } else {
+                        $indicators.filter('div.rdr_indicator_for_text').not('.rdr_dont_show').stop().fadeTo(800, textIndicatorOpacity);
+                        $indicators.filter('div.rdr_indicator_for_media').not('.rdr_dont_show').stop().fadeTo(800, 0.4);
                     }
-                    //else
-                    $indicators.not('.rdr_dont_show').stop().fadeTo(800, 0.4);
+
                     //use stop to ensure animations are smooth: http://api.jquery.com/fadeTo/#dsq-header-avatar-56650596
                 },
                 hide: function(hashes){
@@ -5129,16 +5134,17 @@ function $RFunctions($R){
 
 
     //load CSS
-    var css = [
-        RDR_rootPath+"/widgetCss/",
-        "{{ STATIC_URL }}global/css/readrleague.css",
-        "{{ STATIC_URL }}widget/css/jquery.jscrollpane.css",
-        "{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom/css/ui-lightness/jquery-ui-1.8.14.custom.css"
-    ];
+    var css = [];
 
-    if ( $R.browser.msie ) {
+    if ( !$R.browser.msie ) {
+        css.push( "{{ STATIC_URL }}global/css/readrleague.css" );
+    } else {
         css.push( "{{ STATIC_URL }}widget/css/ie.css" );
     }
+
+    css.push( RDR_rootPath+"/widgetCss/" );
+    css.push( "{{ STATIC_URL }}widget/css/jquery.jscrollpane.css" );
+    css.push( "{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom/css/ui-lightness/jquery-ui-1.8.14.custom.css" );
     
     loadCSS(css);
 
@@ -5522,10 +5528,7 @@ function $RFunctions($R){
                     for ( var i = 0, j=10; i < j; i++ ) {
                         var this_user = RDR.page.topusers[i];
                         if ( this_user ) {
-                            log(this_user);
-                            var $userLink = $('<a href="'+RDR_rootPath+'/user/'+this_user.user+'" class="no-rdr" target="_blank" />'),
-                                userPic = '<img src="'+this_user.img_url+'" class="no-rdr" alt="'+this_user.full_name+'" title="'+this_user.full_name+'" />';
-                            $topusers.append( $userLink.append(userPic) );
+                            $topusers.append('<img src="'+this_user.img_url+'" class="no-rdr" />');
                         }
                     }
 
