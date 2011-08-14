@@ -5521,7 +5521,10 @@ function $RFunctions($R){
                     for ( var i = 0, j=10; i < j; i++ ) {
                         var this_user = RDR.page.topusers[i];
                         if ( this_user ) {
-                            $topusers.append('<img src="'+this_user.img_url+'" class="no-rdr" />');
+                            log(this_user);
+                            var $userLink = $('<a href="'+RDR_rootPath+'/user/'+this_user.id+'" class="no-rdr"/>'),
+                                userPic = '<img src="'+this_user.img_url+'" class="no-rdr" alt="'+this_user.full_name+'"/>';
+                            $topusers.append( $userLink.append(userPic) );
                         }
                     }
 
