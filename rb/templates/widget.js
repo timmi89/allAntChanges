@@ -5226,7 +5226,7 @@ function $RFunctions($R){
                 var logArgs = arguments || this;
                 $.log(logArgs);
                 return this;
-            }
+            } 
 
 
             //alias console.log to global log
