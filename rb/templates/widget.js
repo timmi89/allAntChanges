@@ -5522,8 +5522,8 @@ function $RFunctions($R){
                         var this_user = RDR.page.topusers[i];
                         if ( this_user ) {
                             log(this_user);
-                            var $userLink = $('<a href="'+RDR_rootPath+'/user/'+this_user.id+'" class="no-rdr"/>'),
-                                userPic = '<img src="'+this_user.img_url+'" class="no-rdr" alt="'+this_user.full_name+'"/>';
+                            var $userLink = $('<a href="'+RDR_rootPath+'/user/'+this_user.user+'" class="no-rdr" target="_blank" />'),
+                                userPic = '<img src="'+this_user.img_url+'" class="no-rdr" alt="'+this_user.full_name+'" title="'+this_user.full_name+'" />';
                             $topusers.append( $userLink.append(userPic) );
                         }
                     }
