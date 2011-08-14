@@ -85,35 +85,47 @@ def main(request, user_id=None, short_name=None, **kwargs):
 
     context['query_string'] = query_string
 
+    # Interactions for user profile
     if user_id:
         profile_user = User.objects.get(id=user_id)
         interactions = interactions.filter(user=user_id)
         if cookie_user_id and (cookie_user != profile_user):
             interactions = interactions.exclude(kind="bkm")
         context['profile_user'] = profile_user
+    else:
+        # If not viewing a user profile, remove bookmarks from interaction set
+        interactions = interactions.exclude(kind="bkm")
 
+    # Interactions for group profile
     if short_name:
         group = Group.objects.get(short_name=short_name)
         interactions = interactions.filter(page__site__group__short_name=short_name)
         context['group'] = group
-        
+    
+    # Interactions for specific page
     if page:
         page = Page.objects.get(id=page)
         interactions = interactions.filter(page=page)
         context['page'] = page        
 
+    # Process view filters
     if 'view' in kwargs:
         view = kwargs['view']
-        if view == 'tags': interactions=interactions.filter(kind="tag")
-        if view == 'comments': interactions=interactions.filter(kind="com")
-        if view == 'shares': interactions=interactions.filter(kind="shr")
-        if view == 'bookmarks': interactions=interactions.filter(kind="bkm")
-        if view == 'index':
-            context['index'] = True
-            interactions=interactions.exclude(kind="bkm")
-        if view == 'not_approved': interactions=interactions.filter(approved=False)
-        else: interactions=interactions.filter(approved=True)
+        if view == 'tags': interactions = interactions.filter(kind="tag")
+        if view == 'comments': interactions = interactions.filter(kind="com")
+        if view == 'shares': interactions = interactions.filter(kind="shr")
+        if view == 'bookmarks': interactions = interactions.filter(kind="bkm")
+        
+        # Index view involves grouping interactions
+        if view == 'index': context['index'] = True
+            
+    # Only show approved interactions -- check this logic
+    if 'admin' in kwargs and kwargs[admin] == 'not_approved':
+        interactions = interactions.filter(approved=False)
+    else:
+        interactions = interactions.filter(approved=True)
 
+    # Pagination
     interactions_paginator = Paginator(interactions, 20)
 
     try: page_number = int(page_num)

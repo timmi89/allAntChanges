@@ -16,13 +16,23 @@ def analytics_request(func):
     def wrapper(self, request, *args, **kwargs):
         params = request.GET
         data = {}
+        # All Analytics Handler's have access to these
         data['start'] = params.get('start', None)
         data['end'] = params.get('end', None)
         data['max_count'] = params.get('max_count', None)
+        
+        # Pass in either tag body or tag id
         data['tag'] = params.get('tag', None)
+        data['tag_id'] = params.get('tag_id', None)
         return func(self, request, data, *args, **kwargs)
     return wrapper
-    
+
+def maxCap(query_set, data):
+    if 'max_count' in data:
+        return query_set[:data['max_count']]
+    else:
+        return query_set[:10]
+
 class InteractionNodeHandler(AnonymousBaseHandler):
     model = InteractionNode
     fields = ('id', 'body', 'kind')
@@ -51,7 +61,7 @@ class PopularContentHandler(AnalyticsHandler):
         kind_interactions = kind_interactions.select_related('content')
         content = kind_interactions.order_by('content__body').values('content__id', 'content__body')
         content = content.annotate(count=Count('id')).order_by('-count')
-        content = content[:data['max_count']] if data['max_count'] else content[:10]
+        content = maxCap(content, data)
         
         result = []
         
@@ -70,32 +80,55 @@ class PopularTagHandler(AnalyticsHandler):
         interactions = interactions.order_by('interaction_node__body').values('interaction_node__body')
         interactions = interactions.annotate(count=Count('id')).order_by('-count')
         
-        interactions = interactions[:data['max_count']] if 'max_count' in data else interactions[:10]
+        interactions = maxCap(interactions, data)
 
         return interactions
-        
+
 class ActiveHandler(AnalyticsHandler):
     def process(self, interactions, data, **kwargs):
         subject = kwargs['subject']
-        grouped = interactions.order_by(subject).values(subject)
-        active = grouped.annotate(count=Count('id')).order_by('-count')
-        active = active[:data['max_count']] if 'max_count' in data else active[:10]
         
+        # Database level ordering
+        grouped = interactions.order_by(subject)
+        grouped_kinds = interactions.order_by(subject,'kind')
+        
+        # Values creates groupings
+        values = grouped.values(subject)
+        values_kinds = grouped_kinds.values(subject,'kind')
+        
+        # Annotate counts
+        active_counts = values.annotate(total=Count('id')).order_by('-total')
+        kinds_counts = values_kinds.annotate(count=Count('kind')).order_by('-count')
+        
+        active = maxCap(active_counts, data)
         active_subjects = []
         
         for active_subject in active:
+            
+            # Generate kind breakdown and add to current subject's dictionary
+            kind_breakdown = dict([
+                (kind_group['kind'], kind_group['count'])
+                for kind_group in kinds_counts
+                if kind_group[subject] == active_subject[subject]
+            ])
+            active_subject.update(kind_breakdown)
+            
+            # Get relevant subject meta data from respective table
             if subject == 'user':
-                active_subjects.append(
-                    (active_subject, SocialUser.objects.get(user=active_subject['user']))
-                )
+                active_subjects.append({
+                    'counts': active_subject,
+                    subject: SocialUser.objects.get(user=active_subject['user'])
+                })
             elif subject == 'page':
-                active_subjects.append(
-                    (active_subject, Page.objects.get(id=active_subject['page']))
-                )
+                active_subjects.append({
+                    'counts': active_subject, 
+                    subject: Page.objects.get(id=active_subject['page'])
+                })
             elif subject == 'content':
-                active_subjects.append(
-                    (active_subject, Content.objects.get(id=active_subject['content']))
-                )
+                active_subjects.append({
+                    'counts': active_subject, 
+                    subject: Content.objects.get(id=active_subject['content'])
+                })
                 
         return active_subjects
 
@@ -103,15 +136,18 @@ class RecentHandler(AnalyticsHandler):
     def process(self, interactions, data, **kwargs):
         page_ids = interactions.order_by('page').values('page')
         pages = Page.objects.filter(id__in=page_ids)
-        pages = pages[:data['max_count']]if 'max_count' in data else pages[:10]
+        pages = maxCap(pages, data)
         return pages
 
 class TaggedHandler(AnalyticsHandler):
     def process(self, interactions, data, **kwargs):
-        tagged_interactions = interactions.filter(interaction_node__id=data['tag'])
+        if data['tag_id']:
+            tagged_interactions = interactions.filter(interaction_node__id=data['tag_id'])
+        elif data['tag']:
+            tagg_interactions = interactions.filter(interaction_node__body=data['tag'])
         page_ids = tagged_interactions.order_by('page').values('page')
         pages = Page.objects.filter(id__in=page_ids)
-        pages = pages[:data['max_count']] if 'max_count' in data else pages[:10]
+        pages = maxCap(pages, data)
         return pages
 
 class FrequencyHandler(AnalyticsHandler):
