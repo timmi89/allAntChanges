@@ -347,8 +347,8 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 
 #rdr_sandbox div.rdr_window_dragHandle{
     /*override the jquery ui hadle css*/
-    height:15px;
-    /*bottom:-5px;*/ /*this is built into the jquery css*/
+    height:8px;
+    bottom:0 !important; /*overrides jquery css*/
 
     opacity:0.1;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
@@ -530,14 +530,21 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content { color:#787878; font:italic 13px Georgia; padding:2px 9px; font-size:17px; }
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content p { width:auto; padding:0 4px; font-family:ReadrLeague, Arial, sans-serif; font-size:26px;}
 
-#rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_otherTags            { position:absolute; margin-left:2px; border-top:1px solid #ccc; background:#fff; color:#666; padding:3px; width:300px; font-size:11px; bottom:-14px; height:20px; z-index:4;}
+#rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_otherTagsWrap  { position:absolute; border-top:1px solid #ccc; background:#fff; width:100%; bottom:-10px; height:22px; z-index:4;}
+
+#rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_otherTags { color:#666; padding:5px; font-size:11px; display:inline-block; width: auto; }
+#rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_otherTags span.rdr_tags_list_tag{ padding:0 !important; }
+
 #rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_otherTags em         {color:#76a1ba; display: block; font-family:Arial; font-size:11px; margin-top:10px;}
 
 #rdr_sandbox div.rdr div.rdr_contentSet.rdr_selected div.rdr_contentHeader           {background:#d0dee6;}
 #rdr_sandbox div.rdr div.rdr_contentSet.rdr_selected div.rdr_contentHeader div.rdr_has_comment             {background-position: -46px -12px; text-indent: -9999px;}
 
 /* commentSet */
-#rdr_sandbox div.rdr div.rdr_commentSet          {margin:5px 10px; padding-bottom:5px; overflow:auto; border-bottom:1px solid #ddd;}
+#rdr_sandbox div.rdr div.rdr_commentSet                     {margin:5px 10px; padding-bottom:5px; overflow:auto; border-bottom:1px solid #ddd;}
+#rdr_sandbox div.rdr div.rdr_commentSet:last-child,
+#rdr_sandbox div.rdr div.rdr_commentSet.rdr_lastchild       {border:none;} /*not the end of the world if this fails in IE, but compensate later*/
+
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentBy          {font: bold 11px Arial; color:#666; overflow:auto; padding-top:8px;}
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentBy img      {width:24px; height:24px; float:left; margin:-8px 5px 0 0 !important; border:1px solid #d0dee6;}
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_comment            {font: italic 14px Georgia; color:#999;padding:3px; }
@@ -953,7 +960,7 @@ div.rdr_indicator span.rdr_count{
 }
 
 #rdr_sandbox span.rdr_tags_list_tag {
-    padding:3px 3px 3px 4px !important; /*for some reason it looks better with the right padding a little smaller*/
+    padding:2px !important;
 }
 #rdr_sandbox div.rdr_indicator_details_for_text span.rdr_tags_list_tag:hover {
     background:#fe7 !important;

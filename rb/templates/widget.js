@@ -116,7 +116,7 @@ function readrBoard($R){
 
                 // var minHeight, maxHeight,
                 // height = rindow.height(),
-                // gotoHeight = $tagBox.height() + 35 + 15, //+ header height + extra padding;
+                // gotoHeight = $tagBox.height() + 35 + 8, //+ header height + extra padding;
                 // minHeight = gotoHeight;
 
                 // log('rindow height');
@@ -335,7 +335,7 @@ function readrBoard($R){
                         });
 
                         var rindowHeight = RDR.rindow.setHeight(rindow, {
-                            targetHeight: $tagBox.height() + 35 + 15, //+ header height + extra padding;
+                            targetHeight: $tagBox.height() + 35 + 10, //+ header height + extra padding;
                             animate:false
                         });
 
@@ -599,7 +599,7 @@ function readrBoard($R){
                         );
 
                         var rindowHeight = RDR.rindow.setHeight(rindow, {
-                            targetHeight: $tagBox.height() + 35 + 15, //+ header height + extra padding;
+                            targetHeight: $tagBox.height() + 35 + 10, //+ header height + extra padding;
                             animate:false
                         });
 
@@ -3468,7 +3468,7 @@ function readrBoard($R){
                             if(count === null) return; //a helper incrementer, set to 'null' below to mimic a 'break' out of the 'each' loop 
                             if( !tag || tag.count < 0) return; //this shouldn't happen, should be taken care of in summaries.update.  But just in case.
 
-                            var prefix = count ? ", " : "", //don't include the first time
+                            var $prefix = count ? $('<span>, </span>') : $(), //don't include the first time
                                 $tag = $('<strong/>').append(tag.body),
                                 $count = $('<em/>').append( '('+tag.count+')' ),
                                 $span = $('<span />').addClass('rdr_tags_list_tag');
@@ -3476,13 +3476,14 @@ function readrBoard($R){
                             $span.append( $tag, $count).data('id',tagOrder.id).data('selStates',[]);
 
 
-                            $tagsList.append( prefix, $span );
+                            $tagsList.append( $prefix, $span );
 
                             // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
                             if ( $tagsList.width() > ( tagsListMaxWidth - buffer ) ) {
-                                //the tag pushed the length over the limit, so kill it, and replace with more...
+                                //the tag pushed the length over the limit, so kill it, and replace with ...
                                 $span.remove();
-                                var $moreText = $('<span>More...</span>').addClass('rdr_see_more');
+                                $prefix.remove();
+                                var $moreText = $('<span>...</span>').addClass('rdr_see_more');
                                 $tagsList.append($moreText);
                                 //signal the rest of the each loop to just return;
                                 count = null;
@@ -3872,93 +3873,108 @@ function readrBoard($R){
                     }
                     $whyPanel_tagCard.appendTo($whyPanel_body);
                 }
-
-                // other reactions
-                function SortByCount(a,b) { return b.count - a.count; }
-
-                $whyPanel.find('div.rdr_otherTags').remove();
-                $whyPanel.find('.rdr_body').css({
-                    bottom:0
-                });
-
-                var other_tags = [];
-                if ( kind == "text" ) {
-                    for ( var i in content_node.top_interactions.tags ) {
-                        if ( i != tag.id ) other_tags.push({ tag_id:i, count:content_node.top_interactions.tags[i].count, body:content_node.top_interactions.tags[i].body });
-                    }
-                } else {
-                    for ( var j in summary.top_interactions.tags ) {
-                        if ( j != tag.id ) other_tags.push({ tag_id:j, count:summary.top_interactions.tags[j].count, body:summary.top_interactions.tags[j].body });
-                    }
-                }
-
-                if ( other_tags.length > 0 ) {
-                    other_tags.sort( SortByCount );
-                    // we set this div far down, then animate it up, because position:fixed doesn't stay within a rindow, it stays within the browser viewport
-                    var $otherTags = $('<div class="rdr_otherTags" ><strong>Other Reactions:</strong>&nbsp;</div>');
-                    for ( var k in other_tags ) {
-                        $otherTags.append( '<span>('+other_tags[k].count+') '+other_tags[k].body+' &nbsp;</span>&nbsp;');
-                    }
-
-                    $whyPanel.find('.rdr_body_wrap').append( $otherTags );
-                    $whyPanel.find('.rdr_body').css({
-                        bottom:14
-                    });
-                }
-
-
                 $whyPanel_tagCard.siblings('.rdr_tagCard').hide();
-
-                var comments;
-                // () ? text_node : image_node
-                if ( kind == "text" ) {
-                    comments = summary.content_nodes[ content_node.id ].top_interactions.coms;
-                } else {
-                    comments = summary.top_interactions.coms;
-                }
-                
-                var node_comments = 0;
-                for (var com in comments ) {
-                    if ( comments[com].tag_id == tag.id ) {
-                        node_comments++;
-                    }
-                }
-
-                var maxHeaderLen = 35,
-                    headerFullText,
-                    abrvBodyText,
-                    $headerBody;
-
-                //note: tag.body length should never be the full width
-                if ( kind != "img" && kind != "media" ) {
-                    headerFullText = ""+tag.body + content_node.body;
-                    abrvBodyText = content_node.body;
-                    if( ( headerFullText.length ) > maxHeaderLen ){
-                        abrvBodyText = content_node.body.slice(0, (maxHeaderLen - tag.body.length) ) +  "...";
-                    }
-                    $headerBody = $("<span class='rdr_tag_text'>"+tag.body+"</span> : <span class='rdr_contentNode_text'>" + abrvBodyText +"</span>");
-                } else {
-                    $headerBody = "<span class='rdr_tag_text'>"+tag.body+"</span>";
-                }
-                
-                log($headerBody);
-                //trying this out:  I'm going to copy the same header into the whypanel, and then do some tricky hiding
-                // to make it look like the header slides in.
-                rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tag.body);
-                rindow.find('div.rdr_whyPanel div.rdr_header h1').empty().append($headerBody);
-                rindow.find('div.rdr_whyPanel div.rdr_header span.rdr_tag_text').css('visibility','hidden');
-
                 $whyPanel_tagCard.append( _makeInfoBox() );
 
-                var hasComments = !$.isEmptyObject(comments);
-                if (hasComments) {
-                    _makeOtherComments(comments);
-                }
+                _makeHeaders();
+                _makeOtherReactions();
+                _makeOtherComments();
 
                 $whyPanel_tagCard.append( _makeCommentBox() );
 
 
-                //helper functions
+                //helper functions 
+                function _makeHeaders(){
+                    var maxHeaderLen = 35,
+                        headerFullText,
+                        abrvBodyText,
+                        $headerBody;
+
+                    //note: tag.body length should never be the full width
+                    if ( kind != "img" && kind != "media" ) {
+                        headerFullText = ""+tag.body + content_node.body;
+                        abrvBodyText = content_node.body;
+                        if( ( headerFullText.length ) > maxHeaderLen ){
+                            abrvBodyText = content_node.body.slice(0, (maxHeaderLen - tag.body.length) ) +  "...";
+                        }
+                        $headerBody = $("<span class='rdr_tag_text'>"+tag.body+"</span> : <span class='rdr_contentNode_text'>" + abrvBodyText +"</span>");
+                    } else {
+                        $headerBody = "<span class='rdr_tag_text'>"+tag.body+"</span>";
+                    }
+                    
+                    log($headerBody);
+                    //trying this out:  I'm going to copy the same header into the whypanel, and then do some tricky hiding
+                    // to make it look like the header slides in.
+                    rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tag.body);
+                    rindow.find('div.rdr_whyPanel div.rdr_header h1').empty().append($headerBody);
+                    rindow.find('div.rdr_whyPanel div.rdr_header span.rdr_tag_text').css('visibility','hidden');                    
+                }
+                function _makeOtherReactions(){
+                    
+                    function SortByCount(a,b) { return b.count - a.count; }
+
+                    $whyPanel.find('div.rdr_otherTags').remove();
+                    $whyPanel.find('.rdr_body').css({
+                        bottom:0
+                    });
+
+                    var other_tags = [];
+                    if ( kind == "text" ) {
+                        for ( var i in content_node.top_interactions.tags ) {
+                            if ( i != tag.id ) other_tags.push({ tag_id:i, count:content_node.top_interactions.tags[i].count, body:content_node.top_interactions.tags[i].body });
+                        }
+                    } else {
+                        for ( var j in summary.top_interactions.tags ) {
+                            if ( j != tag.id ) other_tags.push({ tag_id:j, count:summary.top_interactions.tags[j].count, body:summary.top_interactions.tags[j].body });
+                        }
+                    }
+
+                    if ( other_tags.length > 0 ) {
+                        other_tags.sort( SortByCount );
+                        // we set this div far down, then animate it up, because position:fixed doesn't stay within a rindow, it stays within the browser viewport
+                        var $otherTagsWrap = $('<div class="rdr_otherTagsWrap" />'),
+                            $otherTags = $('<div class="rdr_otherTags" ><strong>Other Reactions:</strong>&nbsp;</div>');
+                        $otherTags.appendTo($otherTagsWrap);
+
+                        $whyPanel.find('.rdr_body_wrap').append( $otherTagsWrap );
+                        $whyPanel.find('.rdr_body').css({
+                            bottom:14
+                        });
+
+                        //todo: consolodate with other truncate functions
+                        var count = 0, //a helper incrementer, set to 'null' below to mimic a 'break' out of each for loop 
+                            tagsListMaxWidth = 300,
+                            buffer = 20; //for the "other reactions" label and stuff
+                        $.each( other_tags, function(key, tag){
+
+                            if(count === null) return;
+                            
+                            var prefix = count ? ", " : "", //don't include the first time
+                                $tag = $('<span/>').append(tag.body),
+                                $count = $('<span/>').append( '('+tag.count+')' ),
+                                $wrap = $('<span />').addClass('rdr_tags_list_tag');
+                            $wrap.append( prefix, $tag, $count);
+                            $otherTags.append( $wrap );
+
+                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
+                            log( $otherTags.width() > ( tagsListMaxWidth - buffer ));
+                            log( $otherTags.width() );
+
+                            if ( $otherTags.width() > ( tagsListMaxWidth - buffer ) ) {
+                                //the tag pushed the length over the limit, so kill it, and replace with ...
+                                $wrap.remove();
+                                var $moreText = $('<span> ...</span>').addClass('rdr_see_more');
+                                $otherTags.append($moreText);
+                                //signal the rest of the each loop to just return;
+                                count = null;
+                                return;
+                            }
+                            count++;
+                            
+                        });
+                    }
+                }
+
                 function _makeInfoBox(){
                     
                     var $socialBox = $('<div class="rdr_share_social"><h4>Share:</h4></div>'), 
@@ -4047,6 +4063,24 @@ function readrBoard($R){
 
                 function _makeOtherComments(comments){
                     
+                    var comments;
+                    // () ? text_node : image_node
+                    if ( kind == "text" ) {
+                        comments = summary.content_nodes[ content_node.id ].top_interactions.coms;
+                    } else {
+                        comments = summary.top_interactions.coms;
+                    }
+                    
+                    var node_comments = 0;
+                    for (var com in comments ) {
+                        if ( comments[com].tag_id == tag.id ) {
+                            node_comments++;
+                        }
+                    }
+                    var hasComments = !$.isEmptyObject(comments);
+                    if(!hasComments) return;
+                    //else
+
                     // rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
 
                     // ok, get the content associated with this tag!
@@ -4091,6 +4125,9 @@ function readrBoard($R){
                             $otherComments.append( $commentSet );
                         }
                     }
+                    //do later for IE maybe
+                    //$otherComments.find('.rdr_commentSet:last-child').addClass('rdr_lastchild');
+
                 } //end makeOtherComments
 
                 // if ( kind == "img" || kind == "media" )  {
@@ -4218,7 +4255,7 @@ function readrBoard($R){
 
                     minHeight = RDR.rindow.defaults.minHeight; //100
                     maxHeight = RDR.rindow.defaults.maxHeight; //350
-                    targetHeight = $tagBox.height() + 35 + 15; //+ header height + extra padding;
+                    targetHeight = $tagBox.height() + 35 + 3; //+ header height + extra padding;
 
                     rindow.resizable('option', {
                         minHeight:minHeight,
@@ -4247,6 +4284,7 @@ function readrBoard($R){
                             if( isReadMode ){
                                 width = 500;
                                 $thisPanel.animate( {right:-300 }, rindow.settings.animTime);
+                                rindow.find('div.rdr_contentPanel .rdr_contentSet').removeClass('rdr_selected');
                             }
                             break;
                     }
