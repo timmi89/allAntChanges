@@ -54,9 +54,8 @@ def xdm_status(request):
       context_instance=RequestContext(request)
     )
 
-def main(request, user_id=None, short_name=None, **kwargs):
+def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **kwargs):
     cookies = request.COOKIES
-    page = request.GET.get('page', None)
     page_num = request.GET.get('page_num', 1)
     cookie_user_id = cookies.get('user_id')
     context = {
@@ -103,8 +102,14 @@ def main(request, user_id=None, short_name=None, **kwargs):
         context['group'] = group
     
     # Interactions for specific page
-    if page:
-        page = Page.objects.get(id=page)
+    if site_id:
+        site = Site.objects.get(id=site_id)
+        interactions = interactions.filter(page__site=site)
+        context['site'] = site    
+
+    # Interactions for specific page
+    if page_id:
+        page = Page.objects.get(id=page_id)
         interactions = interactions.filter(page=page)
         context['page'] = page        
 
