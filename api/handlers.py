@@ -40,14 +40,17 @@ class PrivacyHandler(AnonymousBaseHandler):
     @json_data
     @status_response
     def read(self, request, data):
+        # Check if current user's token has permission
         if not checkToken(data): raise JSONException(u"Token was invalid")
         user_id = data.get('user_id')
         
+        # Retrieve social user
         try:
             su = SocialUser.objects.get(user=user_id)
         except SocialUser.DoesNotExist, SocialUser.MultipleObjectsReturned:
             raise JSONException(u"Privacy Handler: Error getting socialuser!")
             
+        # Update and save social user -- toggle privacy
         su.private_profile = not su.private_profile
         su.save()
 
@@ -56,6 +59,8 @@ class ModerationHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, data):
         data['group_id'] = 1
+        
+        # Check if current user's token has permission
         if not checkToken(data): raise JSONException(u"Token was invalid")
         user_id = data.get('user_id')
         int_id = data.get('int_id')
@@ -139,7 +144,7 @@ class CommentHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
         comment = data['comment']
 
-        # optional
+        # Optional interaction id
         interaction_id = data.get('int_id', None)
 
         # Get or create parent interaction
@@ -151,11 +156,13 @@ class CommentHandler(InteractionHandler):
         else:
             parent = TagHandler().create(request, data, user, page, group)['interaction']
         
+        # Create the comment interaction node
         try:
             comment = createInteractionNode(body=comment, group=group)
         except:
             raise JSONException(u'Error creating comment interaction node')
         
+        # Create the interaction
         interaction = createInteraction(parent.page, parent.container, parent.content, user, 'com', comment, group, parent)
         
         return interaction
@@ -188,6 +195,7 @@ class TagHandler(InteractionHandler):
 
 class BookmarkHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
+        # Same as a tag but with bookmark kind -- makes private to user
         return dict(interaction=TagHandler().create(request, data, user, page, group, 'bkm')['interaction'])
 
 class ShareHandler(InteractionHandler):

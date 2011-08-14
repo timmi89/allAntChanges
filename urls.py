@@ -35,7 +35,7 @@ urlpatterns = patterns('',
   url(r'^user/(?P<user_id>\d+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}),
 
   url(r'^group/(?P<short_name>[\w\-]+)/$', 'rb.views.main'),
-  url(r'^group/(?P<short_name>[\w\-]+)/not_approved/$', 'rb.views.main', kwargs={"view":"not_approved"}),
+  url(r'^group/(?P<short_name>[\w\-]+)/not_approved/$', 'rb.views.main', kwargs={"admin":"not_approved"}),
   url(r'^group/(?P<short_name>[\w\-]+)/tags/$', 'rb.views.main', kwargs={"view":"tags"}),
   url(r'^group/(?P<short_name>[\w\-]+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
   url(r'^group/(?P<short_name>[\w\-]+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
