@@ -18,23 +18,17 @@ class CommentManager(models.Manager):
     def get_query_set(self):
         return super(CommentManager, self).get_query_set().filter(kind='com')
 
-# Sample manager w/ custom sql
 class InteractionManager(models.Manager):
-    def with_counts(self):
-        from django.db import connection
-        cursor = connection.cursor()
-        cursor.execute("""
-            SELECT p.id, p.question, p.poll_date, COUNT(*)
-            FROM polls_opinionpoll p, polls_response r
-            WHERE p.id = r.poll_id
-            GROUP BY 1, 2, 3
-            ORDER BY 3 DESC""")
-        result_list = []
-        for row in cursor.fetchall():
-            p = self.model(id=row[0], question=row[1], poll_date=row[2])
-            p.num_responses = row[3]
-            result_list.append(p)
-        return result_list
+    def node_count(self):
+        subquery = """(SELECT node.body, Count(interaction_node_id) AS count 
+                       FROM rb_interaction AS interaction, rb_interactionnode AS node
+                       GROUP BY interaction_node_id) AS interaction_count"""
+        condition = 'interaction.interaction_node_id = node.id' # Join
+        order = '-count'
+        return self.get_query_set().extra(
+            tables=[subquery],
+            where=[condition]).order_by(order
+        )
 
 """
 Abstract Models
@@ -56,7 +50,10 @@ class UserAwareModel(models.Model):
 ReadrBoard Models
 """
 class InteractionNode(models.Model):
-    body = models.CharField(max_length=2048)
+    body = models.CharField(max_length=2048, unique=True)
+    
+    def natural_key(self):
+        return self.body
     
     def tag_count(self, page=None, content=None):
         tags = self.interaction_set.filter(kind='tag')
@@ -192,6 +189,7 @@ class Container(models.Model):
         return unicode(self.id) + " : " + self.hash
 
 class Interaction(DateAwareModel, UserAwareModel):
+    objects = InteractionManager()
     INTERACTION_TYPES = (
         ('tag', 'Tag'),
         ('com', 'Comment'),
