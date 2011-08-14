@@ -40,7 +40,7 @@ class GroupAdmin(admin.ModelAdmin):
             'fields': ('logo_url_sm', 'logo_url_med' , 'logo_url_lg')
         }),
         ('Features', {
-            'fields': ('share', 'rate' , 'comment', 'search', 'bookmark')
+            'fields': ('share', 'rate' , 'comment', 'search', 'bookmark', 'twitter')
         }),
      )
 
