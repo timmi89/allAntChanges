@@ -10,7 +10,7 @@ from settings import BASE_URL
 
 class SocialUserHandler(AnonymousBaseHandler):
     model = SocialUser
-    fields = ('full_name', 'img_url')
+    fields = ('user','full_name', 'img_url')
 
 class UserHandler(AnonymousBaseHandler):
     model = User
@@ -332,8 +332,8 @@ class PageDataHandler(AnonymousBaseHandler):
         # ---Find top 10 non-temp users on a given page---
         socialusers = SocialUser.objects.filter(user__interaction__page=page.id)
 
-        userinteract = socialusers.annotate(interactions=Count('user__interaction'))
-        topusers = userinteract.order_by('-interactions').values('full_name','img_url','interactions')[:10]
+        userinteract = socialusers.annotate(interactions=Count('user__interaction')).select_related('user')
+        topusers = userinteract.order_by('-interactions').values('user','full_name','img_url','interactions')[:10]
         
         return dict(
             id=page.id,

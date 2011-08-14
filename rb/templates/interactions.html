@@ -46,8 +46,10 @@
       <div class="comment_container">
         <div class="header">
           <div class="when">{{ interaction.created }}</div>
-          <div class="avatar"><img src="{{ interaction.user.social_user.img_url }}"></div>
-          <div class="who">{{ interaction.user.social_user.full_name }}</div>
+          <a href="/user/{{interaction.user.id}}">
+            <div class="avatar"><img src="{{ interaction.user.social_user.img_url }}"></div>
+            <div class="who">{{ interaction.user.social_user.full_name }}</div>
+          </a>
         </div>
         <div class="comment">
           <div class="quote open">"</div>
