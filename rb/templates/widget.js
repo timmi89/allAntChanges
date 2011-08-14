@@ -1257,7 +1257,8 @@ function readrBoard($R){
                         RDR.session.alertBar.close( whichAlert );
                     });
 
-                    // TODO put this back in $('div.rdr_alert_box.rdr_'+whichAlert).animate({bottom:0},1000);
+                    // TODO put this back in 
+                $('div.rdr_alert_box.rdr_'+whichAlert).animate({bottom:0},1000);
 
                     // OLD -- positioning/animation from when this was a bar
                     // RDR.group.educateUserLocation = "top";
@@ -3787,7 +3788,7 @@ function readrBoard($R){
                 });
                 function SortByTagCount(a,b) { return b.counts.tags - a.counts.tags; }
                 content.sort(SortByTagCount);
-                console.dir(content);                
+
                 //todo: consolodate truncate functions
                 var maxHeaderLen = 20;
                 var tagBody = tag.body.length > maxHeaderLen ? tag.body.slice(0, maxHeaderLen)+"..." : tag.body;
@@ -4085,7 +4086,7 @@ function readrBoard($R){
 
                     // ok, get the content associated with this tag!
                     var $otherComments = $('<div class="rdr_otherCommentsBox rdr_sntPnl_padder"></div>').hide().html(
-                        '<div><h4>Comments from Others:</h4></div>'
+                        '<div><h4>(' + node_comments + ') Comments:</h4></div>'
                     ).appendTo($whyPanel_tagCard);
 
                     for ( var i in comments ) {
