@@ -1600,10 +1600,20 @@ function readrBoard($R){
                                 break;
                             
                             case "interactionSuccess":
-                                log(1)
-                                actionPastTense = interactionInfo.type == 'tag' ? 'tagged' : 'bookmarked';
-                                userMsg = "You have "+actionPastTense+" this <em>"+interactionInfo.body+"</em>.";
-                                userMsg += "  See your "+interactionInfo.type+"s at <a href='http://www.readrboard.com' target='_blank'>readrboard.com</a>";
+    
+                                if(interactionInfo.remove){
+                                    userMsg = "The "+interactionInfo.type+" <em>"+interactionInfo.body+"</em><br />has been removed." ;
+                                }else{
+                                    
+                                    userMsg = (interactionInfo.type == 'tag') ?
+                                        "You have tagged this <em>"+interactionInfo.body+"</em>." :
+                                    (interactionInfo.type == 'bookmark') ?
+                                        "You have bookmarked this <em>"+interactionInfo.body+"</em>." :
+                                    (interactionInfo.type == 'comment') ?
+                                        "You have left your comment." :
+                                        ""; //this default shouldn't happen
+                                    userMsg += " See your "+interactionInfo.type+"s at <a href='http://www.readrboard.com' target='_blank'>readrboard.com</a>";
+                                }
                                 rindowHeightDefault = 103;
                                 break;
                         
@@ -2525,6 +2535,10 @@ function readrBoard($R){
                                     return;
                                 }
                                 //else
+                                if(args.response.data.deleted_interaction){
+                                    args.deleted_interaction = args.response.data.deleted_interaction;
+                                }
+
                                 RDR.actions.interactions[int_type].onSuccess[action_type](args);
                             }else{
                                 if ( int_type == "tag" ) RDR.actions.interactions[int_type].onFail(args);
@@ -2611,9 +2625,22 @@ function readrBoard($R){
                             };
                             diff.coms[ intHelper.id ] = intHelper;
                             RDR.actions.summaries.update(hash, diff);
+
+                            var usrMsgArgs = {      
+                                msgType: "interactionSuccess",
+                                interactionInfo: {
+                                    type: 'comment'
+                                },
+                                rindow:rindow
+                            }
+                            //queued up to be released in the sharestart function after the animation finishes    
+                            rindow.queue('userMessage', function(){
+                                RDR.session.rindowUserMessage.show( usrMsgArgs );
+                            });
+
                         },
                         remove: function(args){
-                            //RDR.actions.interactions.tag.onSuccess.remove:
+                            //RDR.actions.interactions.comment.onSuccess.remove:
 
 /*
                             var sendData = args.sendData;
@@ -2929,6 +2956,19 @@ function readrBoard($R){
 
                             RDR.actions.summaries.update(hash, diff);
 
+                            var usrMsgArgs = {      
+                                msgType: "interactionSuccess",
+                                interactionInfo: {
+                                    type: 'tag',
+                                    body: interaction_node.body,
+                                    remove: true
+                                },
+                                rindow:rindow
+                            }
+                            //queued up to be released in the sharestart function after the animation finishes    
+                            rindow.queue('userMessage', function(){
+                                RDR.session.rindowUserMessage.show( usrMsgArgs );
+                            });
                         }
                     },
                     onFail: function(args){
@@ -3190,9 +3230,27 @@ function readrBoard($R){
                         },
                         remove: function(args){
                             //RDR.actions.interactions.bookmark.onSuccess.remove:
+                            log('args');
+                            log(args);
+
                             var rindow = args.rindow,
                                 tag = args.tag,
-                                int_id = args.int_id;
+                                int_id = args.int_id,
+                                deleted_interaction_node = args.deleted_interaction.interaction_node;
+
+                            var usrMsgArgs = {      
+                                msgType: "interactionSuccess",
+                                interactionInfo: {
+                                    type: 'bookmark',
+                                    body: deleted_interaction_node.body,
+                                    remove: true
+                                },
+                                rindow:rindow
+                            }
+                            //queued up to be released in the sharestart function after the animation finishes    
+                            rindow.queue('userMessage', function(){
+                                RDR.session.rindowUserMessage.show( usrMsgArgs );
+                            });
 
                             RDR.actions.panel.collapse("whyPanel", rindow);
                             var $thisTagButton = rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id);
@@ -4358,7 +4416,7 @@ function readrBoard($R){
                                 rindow.queue('panels', function(){
                                     $thisPanel.animate( {right:-300 }, rindow.settings.animTime, function(){
                                         rindow.find('div.rdr_contentPanel .rdr_contentSet').removeClass('rdr_selected');
-                                        rindow.dequeue('panels');                                
+                                        rindow.dequeue('panels');
                                     });
                                 });
                             }
@@ -4384,7 +4442,8 @@ function readrBoard($R){
                                 height: gotoHeight
                             }, rindow.settings.animTime, function() {
                                 RDR.rindow.jspUpdate( rindow );
-                                rindow.dequeue('panels');                                
+                                rindow.dequeue('panels');
+                                rindow.dequeue('userMessage');
                             });
                         });
                         rindow.dequeue('panels');
