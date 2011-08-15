@@ -378,14 +378,14 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
     -khtml-opacity:0.3;
 }
 
-#rdr_sandbox div.rdr div.rdr_tempUserMsg                     {position:absolute; z-index:50; bottom:0px; border-top:1px solid #aaa;background:#fff; -moz-box-shadow:0px -45px 48px -50px #53aed9 inset; -webkit-box-shadow:0px -45px 48px -50px #53aed9 inset; box-shadow:0px -45px 48px -50px #53aed9 inset; width:100%;}
+#rdr_sandbox div.rdr div.rdr_rindow_message                     {position:absolute; z-index:50; bottom:0px; border-top:1px solid #aaa;background:#fff; -moz-box-shadow:0px -45px 48px -50px #53aed9 inset; -webkit-box-shadow:0px -45px 48px -50px #53aed9 inset; box-shadow:0px -45px 48px -50px #53aed9 inset; width:100%;}
 
-#rdr_sandbox div.rdr div.rdr_tempUserMsg .rdr_tempUserMsg_wrapper {
-    padding:9px; width:auto; position:relative;
+#rdr_sandbox div.rdr div.rdr_rindow_message .rdr_rindow_message_innerwrap {
+    padding:9px 12px 0 9px; width:auto; position:relative;
 }
 
 /*
-$('div.rdr_tempUserMsg').animate({bottom:'-48px'});
+$('div.rdr_rindow_message').animate({bottom:'-48px'});
 */
 
 #rdr_sandbox div.rdr ul.rdr_tags            { list-style-type:none !important; padding: 0 !important; margin:0 !important; }

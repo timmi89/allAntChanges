@@ -117,7 +117,7 @@ function readrBoard($R){
 
                 // var minHeight, maxHeight,
                 // height = rindow.height(),
-                // gotoHeight = $tagBox.height() + 35 + 8, //+ header height + extra padding;
+                // gotoHeight = $tagBox.height() + 35 + 10, //+ header height + extra padding;
                 // minHeight = gotoHeight;
 
                 // log('rindow height');
@@ -1548,31 +1548,44 @@ function readrBoard($R){
             },
             rindowUserMessage: {
                 show:  function(args) {
+                    //RDR.session.rindowUserMessage.show:
+                    log(2)
                     var $rindow = args.rindow;
                     var interactionInfo = args.interactionInfo;
 
-                    if ( args.rindow ) {
+                    if ( $rindow ) {
                     
                         var msgType = args.msgType || "tempUser", //defaults to tempUser
                             userMsg = "",
+                            actionPastTense,
                             rindowHeightDefault; //todo: this is a patchy fix, make it better.
 
-                        var extraHeight = 45,  //$tempMsgDiv.height(),
+                        var extraHeight = 45,  //$rindowMsgDiv.height(),
                             rindowHeight = $rindow.height(),
                             durr = 300;
 
-                        var $tempMsgDiv = $('<div class="rdr_tempUserMsg" />'),
-                            $tempMsgDivWrapper = $('<div class="rdr_tempUserMsg_wrapper"><span /><strong /><div style="clear:both;"/></div>'),
+                        var $existingMsgDiv = $rindow.find('div.rdr_rindow_message'),
+                            $rindowMsgDiv;
+
+                        if( $existingMsgDiv.length ){
+                            $rindowMsgDiv = $existingMsgDiv.empty();
+                            extraHeight = 0;
+                        }else{
+                            $rindowMsgDiv = $('<div class="rdr_rindow_message" />');
+                        }
+                        
+                        var $rindowMsgDivInnerwrap = $('<div class="rdr_rindow_message_innerwrap"><span /><strong /><div style="clear:both;"/></div>'),
                             $closeButton = $('<div class="rdr_close">x</div>');
                         
-                        $tempMsgDiv.append($tempMsgDivWrapper);
+                        $rindowMsgDiv.append($rindowMsgDivInnerwrap);
+
                         switch (msgType) {
 
                             case "tempUser":
                                 var num_interactions_left = RDR.group.temp_interact - parseInt( args.num_interactions ),
                                     $loginLink = $('<a href="javascript:void(0);">Connect with Facebook</a>.');
                                 
-                                $tempMsgDivWrapper.append( $loginLink );
+                                $rindowMsgDivInnerwrap.append( $loginLink );
                                 $loginLink.click( function() {
                                     RDR.session.showLoginPanel( args );
                                 });
@@ -1587,7 +1600,10 @@ function readrBoard($R){
                                 break;
                             
                             case "interactionSuccess":
-                                userMsg = "You have "+interactionInfo.type+"ed this as "+interactionInfo.body+".";
+                                log(1)
+                                actionPastTense = interactionInfo.type == 'tag' ? 'tagged' : 'bookmarked';
+                                userMsg = "You have "+actionPastTense+" this <em>"+interactionInfo.body+"</em>.";
+                                userMsg += "  See your "+interactionInfo.type+"s at <a href='http://www.readrboard.com' target='_blank'>readrboard.com</a>";
                                 rindowHeightDefault = 103;
                                 break;
                         
@@ -1597,39 +1613,34 @@ function readrBoard($R){
                             RDR.session.rindowUserMessage.hide( args );
                         });
 
-                        if ( $rindow.find('div.rdr_tempUserMsg').length === 0 ){
                             
-                            $tempMsgDiv.find('span').html( userMsg );
-                            $tempMsgDivWrapper.append( $closeButton );
-                            $rindow.append( $tempMsgDiv );
+                        $rindowMsgDiv.find('span').html( userMsg );
+                        $rindowMsgDivInnerwrap.append( $closeButton );
+                        $rindow.append( $rindowMsgDiv );
 
-                            $tempMsgDivWrapper.hide();
-                            $rindow.queue('userMessage', function(){
+                        $rindowMsgDivInnerwrap.hide();
+                        $rindow.queue('userMessage', function(){
+                            if(extraHeight){
                                 $rindow.animate({ height: rindowHeight+extraHeight }, durr);
-                                $tempMsgDiv.animate({ height:extraHeight },durr, function(){
-                                    $tempMsgDivWrapper.fadeIn(400);
+                                $rindowMsgDiv.animate({ height:extraHeight },durr, function(){
+                                    $rindowMsgDivInnerwrap.fadeIn(400);
                                     $(this).dequeue('userMessage');
                                 });
-                            });
-                            $rindow.dequeue('userMessage');
-
-                        } else {
-                            
-                            $tempMsgDiv = $rindow.find('div.rdr_tempUserMsg');
-                            $tempMsgDivWrapper = $rindow.find('.rdr_tempUserMsg_wrapper');
-                            $tempMsgDiv.find('span').html( userMsg );
-                            $tempMsgDivWrapper.hide().fadeIn(400);
-                        }
-                        
+                            }else{
+                                $rindowMsgDivInnerwrap.fadeIn(400);
+                                $(this).dequeue('userMessage');
+                            }
+                        });
+                        $rindow.dequeue('userMessage');
                     }
                 },
                 hide:  function(args) {
                     if ( args.rindow ) {
                         var $rindow = args.rindow,
-                            $tempMsgDiv = $('div.rdr_tempUserMsg');
+                            $rindowMsgDiv = $('div.rdr_rindow_message');
 
                             //todo: make this a better solution.  The simultaneous animations might not be ideal.
-                            var extraHeight = 45,  //$tempMsgDiv.height(),
+                            var extraHeight = 45,  //$rindowMsgDiv.height(),
                                 rindowHeight = $rindow.height(),
                                 durr = 300;
 
@@ -1637,8 +1648,8 @@ function readrBoard($R){
                             //expand the rindow first and then slide down the msgBar 
                             $rindow.queue('userMessage', function(){
                                 $rindow.animate({ height: rindowHeight-extraHeight }, durr);
-                                $tempMsgDiv.animate({ height:0 },durr, function(){
-                                    $tempMsgDiv.remove();
+                                $rindowMsgDiv.animate({ height:0 },durr, function(){
+                                    $rindowMsgDiv.remove();
                                     $(this).dequeue('userMessage');
                                 });
                             });
@@ -2562,7 +2573,6 @@ function readrBoard($R){
                         create: function(args){
                             //RDR.actions.interactions.comment.onSuccess.create:
 
-
                             var rindow = args.rindow,
                                 hash = args.hash,
                                 response = args.response;
@@ -2839,6 +2849,20 @@ function readrBoard($R){
                                     }
                                 }
 
+                                var usrMsgArgs = {      
+                                    msgType: "interactionSuccess",
+                                    interactionInfo: {
+                                        type: 'tag',
+                                        body: tag.body
+                                    },
+                                    rindow:rindow
+                                }
+
+                                //queued up to be released in the sharestart function after the animation finishes    
+                                rindow.queue('userMessage', function(){
+                                    RDR.session.rindowUserMessage.show( usrMsgArgs );
+                                });
+
                                 RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_data:content_node_data, hash:hash});
                             }
 
@@ -3034,7 +3058,7 @@ function readrBoard($R){
                         return sendData;
                     },
                     onSuccess: {
-                        //RDR.actions.interactions.tag.onSuccess:
+                        //RDR.actions.interactions.bookmark.onSuccess:
                         create: function(args){
                             var response = args.response;
                             var sendData = args.sendData;
@@ -3139,6 +3163,23 @@ function readrBoard($R){
                                 $seeTags
                             );
                             
+
+                            var usrMsgArgs = {      
+                                msgType: "interactionSuccess",
+                                interactionInfo: {
+                                    type: 'bookmark',
+                                    body: tag.body
+                                },
+                                rindow:rindow
+                            }
+
+                            //queued up to be released in the sharestart function after the animation finishes    
+                            rindow.queue('userMessage', function(){
+                                RDR.session.rindowUserMessage.show( usrMsgArgs );
+                            });
+
+
+
                             //(tag success expand the comment section)                            
                             RDR.actions.panel.expand("whyPanel", rindow);
                             
@@ -4181,7 +4222,7 @@ function readrBoard($R){
                 expand: function(_panel, rindow, interaction_id){
                     //RDR.actions.panel.expand:
                     var panel = _panel || "whyPanel";
-
+                    log('call expanded')
                     // hack.  chrome and safari don't like rounded corners if the whyPanel is showing since it is wider than panel1
                     rindow.find('div.rdr_whyPanel').css('visibility','visible');
 
@@ -4236,6 +4277,7 @@ function readrBoard($R){
                     //temp hack
                     if( $thisPanel.data('expanded') ){
                         RDR.rindow.jspUpdate( rindow );
+                        rindow.dequeue('userMessage');
                     }
                     else{
 
@@ -4256,6 +4298,7 @@ function readrBoard($R){
                             }, rindow.settings.animTime, function() {
                                 RDR.rindow.jspUpdate( rindow );
                                 rindow.dequeue('panels');
+                                rindow.dequeue('userMessage');
                             });
                         });
                         rindow.dequeue('panels');
@@ -4283,7 +4326,7 @@ function readrBoard($R){
 
                     minHeight = RDR.rindow.defaults.minHeight; //100
                     maxHeight = RDR.rindow.defaults.maxHeight; //350
-                    targetHeight = $tagBox.height() + 35 + 3; //+ header height + extra padding;
+                    targetHeight = $tagBox.height() + 35 + 10; //+ header height + extra padding;
 
                     rindow.resizable('option', {
                         minHeight:minHeight,
@@ -4323,9 +4366,9 @@ function readrBoard($R){
                             break;
                     }
                     
-                    if ( rindow.find('div.rdr_tempUserMsg').length > 0 ) {
+                    if ( rindow.find('div.rdr_rindow_message').length > 0 ) {
                         //rinh rindow.height( rindow.height()-103 );
-                        rindow.find('div.rdr_tempUserMsg').remove();
+                        rindow.find('div.rdr_rindow_message').remove();
                     }
                     //temp hack
                     if( !$thisPanel.data('expanded') ){
