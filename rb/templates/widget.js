@@ -1547,6 +1547,7 @@ function readrBoard($R){
             rindowUserMessage: {
                 show:  function(args) {
                     var $rindow = args.rindow;
+                    var interactionInfo = args.interactionInfo;
 
                     if ( args.rindow ) {
                     
@@ -1582,6 +1583,11 @@ function readrBoard($R){
                                 userMsg = "You have already given that reaction for this.";
                                 rindowHeightDefault = 103;
                                 break;
+                            
+                            case "interactionSuccess":
+                                userMsg = "You have "+interactionInfo.type+"ed this as "+interactionInfo.body+".";
+                                rindowHeightDefault = 103;
+                                break;
                         
                         }   
                         
@@ -1599,7 +1605,7 @@ function readrBoard($R){
                             $rindow.queue('userMessage', function(){
                                 $rindow.animate({ height: rindowHeight+extraHeight }, durr);
                                 $tempMsgDiv.animate({ height:extraHeight },durr, function(){
-                                    $tempMsgDivWrapper.fadeIn(200);
+                                    $tempMsgDivWrapper.fadeIn(400);
                                 });
                                 $(this).dequeue('userMessage');
                             });
@@ -1610,7 +1616,7 @@ function readrBoard($R){
                             $tempMsgDiv = $rindow.find('div.rdr_tempUserMsg');
                             $tempMsgDivWrapper = $rindow.find('.rdr_tempUserMsg_wrapper');
                             $tempMsgDiv.find('span').html( userMsg );
-                            $tempMsgDivWrapper.hide().fadeIn(200);
+                            $tempMsgDivWrapper.hide().fadeIn(400);
                         }
                         
                     }
@@ -3268,6 +3274,8 @@ function readrBoard($R){
                             //shouldn't need this if anymore - make sure visibility:hidden consistently disables hover event.
                             if( !$indicator_details.children().length ) return;
                             //else
+                            if ( $indicator_details.data('freshlyKilled')) return false;
+                            //else
                             $indicator_details.css({
                                 'display':'block',
                                 'top': $indicatorBody.offset().top,
@@ -3275,6 +3283,7 @@ function readrBoard($R){
                             });
                         },
                         function() {
+                            $indicator_details.data( 'freshlyKilled', false);
                         }
                     );
 
@@ -3282,6 +3291,8 @@ function readrBoard($R){
                         //store it's offset in data(), because offset doesn't work if the node is hidden.  It was giving me problems before
                         $indicator_details.data( 'top', $indicator_details.offset().top );
                         $indicator_details.data( 'left', $indicator_details.offset().left );
+                        $indicator_details.data( 'freshlyKilled', true);
+                        $indicator_details.hide();
                         RDR.rindow.make( "readMode", {hash:hash} );
                     })//chain
                     .hover(
@@ -4061,7 +4072,7 @@ function readrBoard($R){
                     return $commentBox.append( $leaveComment );
                 }
 
-                function _makeOtherComments(comments){
+                function _makeOtherComments(){
                     
                     var comments;
                     // () ? text_node : image_node
@@ -4453,6 +4464,8 @@ function readrBoard($R){
                         $contentSet.append( $header, $content );
 
                         rindow.find('div.rdr_contentPanel div.rdr_body').append( $contentSet );
+                        log(' $contentSet.data() ');
+                        log( $contentSet.data() );
 
                         // create the Share tooltips
                         // $contentSet.find( 'div.rdr_tag_share' ).mouseenter( 
@@ -4599,6 +4612,8 @@ function readrBoard($R){
                     var rindow = params.rindow,
                         tag = params.tag;
 
+                    log('params');
+                    log(params);
                     var content_node_info = (params.content_node_info) ? params.content_node_info:params.content_node;
 
                     // translations.  TODO clean and remove
@@ -4831,7 +4846,7 @@ function readrBoard($R){
                 var $whyPanel_body = rindow.find('div.rdr_whyPanel div.rdr_body');
                 var $whyPanel_body_jsp = $whyPanel_body.find('.jspPane');
                 
-                var $whyPanel_tagCard = $('<div />').addClass('rdr_tagCard rdr_tagCard'+tag.id);
+                var $whyPanel_tagCard = $('<div />').addClass('rdr_tagCard rdr_tagCard'+tag.id).data('id',tag.id);
                 //$whyPanel_body.empty();
             
                 //add to the $whyPanel_body and hide any sibling panels that have been made;
