@@ -117,9 +117,13 @@ class ActiveHandler(AnalyticsHandler):
             
             # Get relevant subject meta data from respective table
             if subject == 'user':
+                try:
+                    u = SocialUser.objects.get(user=active_subject['user'])
+                except SocialUser.DoesNotExist:
+                    u = {'full_name': "Temp User"}
                 active_subjects.append({
                     'counts': active_subject,
-                    subject: SocialUser.objects.get(user=active_subject['user'])
+                    subject: u
                 })
             elif subject == 'page':
                 active_subjects.append({
