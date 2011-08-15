@@ -35,7 +35,13 @@ Abstract Models
 """
 class DateAwareModel(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False)
-    modified = models.DateTimeField(auto_now=True, editable=False)    
+    modified = models.DateTimeField(auto_now=True, editable=False) 
+    
+    def getCreated(self):
+        return self.created.date()
+        
+    def getModified(self):
+        return self.modified.date()
 
     class Meta:
         abstract = True
