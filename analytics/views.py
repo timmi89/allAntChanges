@@ -1,3 +1,4 @@
+from itertools import groupby
 from rb.models import *
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
@@ -152,17 +153,6 @@ class TaggedHandler(AnalyticsHandler):
 
 class FrequencyHandler(AnalyticsHandler):
     def process(self, interactions, data, **kwargs):
-        select_data = {"period": """strftime('%%m/%%d/%%Y:%%H', created)"""}
-        interaction_sets = interactions.extra(select=select_data).values('period','kind').annotate(count=Count('kind')).order_by()
-        
         periods = {}
-        
-        for interaction_set in interaction_sets:
-            period = interaction_set['period']
-            if period not in periods:
-                periods[period] = []
-            periods[period].append(
-                dict([(interaction_set['kind'],interaction_set['count'])])
-            )
-         
-        return periods
+        for (period, interactions) in groupby(interactions, key=lambda x:x.getCreated()):
+            
