@@ -196,7 +196,7 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 
 /* global tag defs */
 #rdr_sandbox div.rdr h1, 
-#rdr_sandbox div.rdr h2  {font-family:ReadrLeague,Arial,Helvetica,sans-serif !important; color:#666; margin:0; line-height:1.1em !important;}
+#rdr_sandbox div.rdr h2  {font-family:'ReadrLeague',Arial,Helvetica,sans-serif !important; color:#666; margin:0; line-height:1.1em !important;}
 #rdr_sandbox div.rdr h1  {font-size:21px; cursor:move; padding:3px 9px; font-weight:100;}
 #rdr_sandbox div.rdr h1 span.rdr_contentNode_text {font-size:18px; color:#008be4;}
 
@@ -411,7 +411,7 @@ border-style: solid !important; border-width: 1px 0 !important; padding: 0 !impo
 
 #rdr_sandbox div.rdr ul.rdr_tags li div.rdr_leftBox     {width:38px; height:100%; overflow:hidden; text-align:center; position:absolute; }
 
-#rdr_sandbox div.rdr ul.rdr_tags li div.rdr_leftBox span {top:4px; position:relative; font-size:18px !important;  font-family:ReadrLeague, Arial, sans-serif !important; font-weight:normal !important; letter-spacing:0.6px;}
+#rdr_sandbox div.rdr ul.rdr_tags li div.rdr_leftBox span {top:4px; position:relative; font-size:18px !important;  font-family:'ReadrLeague', Arial, sans-serif !important; font-weight:normal !important; letter-spacing:0.6px;}
 
 #rdr_sandbox div.rdr ul.rdr_tags li div.rdr_leftBox img     { margin-top:-5px;}
 
@@ -469,15 +469,15 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 #rdr_sandbox div.rdr ul.rdr_tags li div.rdr_leftBox.rdr_kill_bg {background:none !important;}
 
-#rdr_sandbox div.rdr ul.rdr_preselected                              {font-size:22px !important; font-family:ReadrLeague, Arial, sans-serif !important; margin:-1px 0 0 !important; }
-#rdr_sandbox div.rdr ul.rdr_preselected .rdr_tagText                 {color:#666 !important;text-decoration:none !important; display:block !important; float:left !important; width: 120px !important; padding-left:5px !important; overflow-x: hidden !important; font-weight:normal !important; font-size:22px !important; font-family:ReadrLeague, Arial, sans-serif !important; margin-top:5px !important; position:absolute !important; left:38px;}
+#rdr_sandbox div.rdr ul.rdr_preselected                              {font-size:22px !important; font-family:'ReadrLeague', Arial, sans-serif !important; margin:-1px 0 0 !important; }
+#rdr_sandbox div.rdr ul.rdr_preselected .rdr_tagText                 {color:#666 !important;text-decoration:none !important; display:block !important; float:left !important; width: 120px !important; padding-left:5px !important; overflow-x: hidden !important; font-weight:normal !important; font-size:22px !important; font-family:'ReadrLeague', Arial, sans-serif !important; margin-top:5px !important; position:absolute !important; left:38px;}
 
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged                      {background:#e4f0f7;}
 #rdr_sandbox div.rdr li.rdr_customTagBox .rdr_tagText               {padding-left: 2px !important;}
 
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_hover .rdr_help             {text-decoration:underline !important;}
 
-#rdr_sandbox div.rdr li.rdr_customTagBox input.freeformTagInput     {font-size:22px; font-family:ReadrLeague, Arial, sans-serif; margin:0; text-align:left; border:none; background:none; -moz-box-shadow:none; -webkit-box-shadow:none; box-shadow:none; z-index:100; padding-left: 2px; outline:none !important; }
+#rdr_sandbox div.rdr li.rdr_customTagBox input.freeformTagInput     {font-size:22px; font-family:'ReadrLeague', Arial, sans-serif; margin:0; text-align:left; border:none; background:none; -moz-box-shadow:none; -webkit-box-shadow:none; box-shadow:none; z-index:100; padding-left: 2px; outline:none !important; }
 
 #rdr_sandbox div.rdr li.rdr_customTagBox div.rdr_help                {width:auto; z-index:90; left: 5px; top: 6px;}
 #rdr_sandbox div.rdr li.rdr_customTagBox div.rdr_help:hover          {text-decoration:underline;}
@@ -528,8 +528,8 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader.rdr_has_comment div.rdr_rightBox span {display: block; margin-right: 18px; margin-top: 2px; text-align: right;}
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_can_comment                   {background:none; float:right; font-weight:normal; margin-right:5px; text-transform:uppercase; font-size:9px; display:none; cursor:pointer; color:#666;}
 #rdr_sandbox div.rdr div.rdr_contentSet:hover div.rdr_contentHeader div.rdr_can_comment    {display:block;}
-#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content { color:#787878; font:italic 13px Georgia; padding:2px 9px; font-size:17px; }
-#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content p { width:auto; padding:0 4px; font-family:ReadrLeague, Arial, sans-serif; font-size:26px;}
+#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content { color:#787878; font:17px Georgia; padding:2px 9px; }
+#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_content p { width:auto; padding:0 4px; font-family:'ReadrLeague', Arial, sans-serif; font-size:26px;}
 
 #rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_otherTagsWrap  { position:absolute; border-top:1px solid #ccc; background:#fff; width:100%; bottom:-10px; height:22px; z-index:4;}
 
@@ -790,8 +790,6 @@ div.rdr_indicator {
     /*start with 0 opacity so it can fade in properly*/
     /* opacity for .rdr_indicator set in js instead of here. Fade it in on load so we can still use display:inline; */
     opacity:0.0;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
-    filter:alpha(opacity=00);
     -moz-opacity:0.0;
     -khtml-opacity:0.0;
 

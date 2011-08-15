@@ -14,7 +14,16 @@ class SocialUserHandler(AnonymousBaseHandler):
 
 class UserHandler(AnonymousBaseHandler):
     model = User
-    exclude = ('is_active', 'is_superuser', 'is_staff', 'password', 'last_login', 'email', 'date_joined', 'username')
+    exclude = (
+        'is_active',
+        'is_superuser',
+        'is_staff',
+        'password',
+        'last_login',
+        'email',
+        'date_joined',
+        'username'
+    )
 
 class InteractionNodeHandler(AnonymousBaseHandler):
     model = InteractionNode
@@ -364,7 +373,7 @@ class SettingsHandler(AnonymousBaseHandler):
               'logo_url_lg',
               'css_url',
               'temp_interact',
-              'twitter'
+              'twitter',
              )
              
     @status_response
