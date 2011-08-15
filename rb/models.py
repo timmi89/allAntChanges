@@ -50,7 +50,7 @@ class UserAwareModel(models.Model):
 ReadrBoard Models
 """
 class InteractionNode(models.Model):
-    body = models.CharField(max_length=2048)
+    body = models.TextField()
     
     def natural_key(self):
         return self.body
@@ -138,14 +138,6 @@ class Site(models.Model):
     include_selectors = models.CharField(max_length=255, blank=True)
     no_rdr_selectors = models.CharField(max_length=255, blank=True)
     css = models.URLField(blank=True)
-    
-    # social shiz
-    twitter = models.CharField(max_length=64, blank=True)
-    
-    # logo fields
-    logo_url_sm = models.CharField(max_length=200, blank=True)
-    logo_url_med = models.CharField(max_length=200, blank=True)
-    logo_url_lg = models.CharField(max_length=200, blank=True)
 
     class Meta:
         unique_together = ('name', 'domain', 'group')

@@ -1,22 +1,22 @@
 # encoding: utf-8
 import datetime
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
 
-class Migration(DataMigration):
+class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        for site in orm.Site.objects.all():
-            site.twitter = site.group.twitter
-            site.logo_url_sm = site.group.logo_url_sm
-            site.logo_url_med = site.group.logo_url_med
-            site.logo_url_lg = site.group.logo_url_lg
-            site.save()
+        
+        # Changing field 'InteractionNode.body'
+        db.alter_column('rb_interactionnode', 'body', self.gf('django.db.models.fields.TextField')())
 
 
     def backwards(self, orm):
-        raise RuntimeError("Cannot reverse this migration.")
+        
+        # Changing field 'InteractionNode.body'
+        db.alter_column('rb_interactionnode', 'body', self.gf('django.db.models.fields.CharField')(max_length=2048))
+
 
     models = {
         'auth.group': {
@@ -121,7 +121,7 @@ class Migration(DataMigration):
         },
         'rb.interactionnode': {
             'Meta': {'object_name': 'InteractionNode'},
-            'body': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '2048'}),
+            'body': ('django.db.models.fields.TextField', [], {}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
         'rb.link': {
@@ -165,12 +165,8 @@ class Migration(DataMigration):
             'group': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.Group']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'include_selectors': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'logo_url_lg': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'logo_url_med': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'logo_url_sm': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'no_rdr_selectors': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'twitter': ('django.db.models.fields.CharField', [], {'max_length': '64', 'blank': 'True'})
+            'no_rdr_selectors': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'})
         },
         'rb.socialauth': {
             'Meta': {'unique_together': "(('auth_token', 'expires'),)", 'object_name': 'SocialAuth'},
