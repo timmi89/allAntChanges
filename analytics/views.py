@@ -6,6 +6,7 @@ from datetime import datetime
 from django.db.models import Count, Sum
 from django.core import serializers
 from piston.handler import AnonymousBaseHandler
+from settings import DEBUG
 
 def analytics(request, short_name=None):
     group = Group.objects.get(short_name=short_name)
@@ -153,6 +154,22 @@ class TaggedHandler(AnalyticsHandler):
 
 class FrequencyHandler(AnalyticsHandler):
     def process(self, interactions, data, **kwargs):
+        if DEBUG:
+            select_data = {"period": """strftime('%%m/%%d/%%Y:%%H:00', created)"""}
+        else:
+            select_data = {"period": """DATE_FORMAT(created, '%%m/%%d/%%Y:%%H:00')"""}
+            
+        interaction_sets = interactions.extra(select=select_data).values('period','kind').annotate(count=Count('kind')).order_by()
+
         periods = {}
-        for (period, interactions) in groupby(interactions, key=lambda x:x.getCreated()):
+
+        for interaction_set in interaction_sets:
+            period = interaction_set['period']
+            if period not in periods:
+                periods[period] = []
+            periods[period].append(
+                dict([(interaction_set['kind'],interaction_set['count'])])
+            )
+
+        return periods
             
