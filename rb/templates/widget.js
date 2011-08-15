@@ -5105,7 +5105,7 @@ function loadScript(sScriptSrc,callbackfunction) {
 }
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
-loadScript( "{{ STATIC_URL }}global/js/jquery-1.6.min.js", function(){
+loadScript( "{{ STATIC_URL }}global/js/jquery-1.6.2.min.js", function(){
     //callback
     //loadScript( "{{ STATIC_URL }}global/js/jquery-1.6.js", function(){
     //callback
@@ -5114,6 +5114,9 @@ loadScript( "{{ STATIC_URL }}global/js/jquery-1.6.min.js", function(){
     loadScript( "{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom/js/jquery-ui-1.8.14.custom.min.js", function(){
         //callback
 
+        if ( $.browser.msie  && parseInt($.browser.version) == 7 ) {
+            loadScript( "{{ STATIC_URL }}widget/js/json2.min.js", function() { return; } );
+        }
         //test that $.ui versioning is working correctly
         
         //within this scope while the $ refers to our version of jQuery, attach it to our Global var $R at least for now, for testing later
