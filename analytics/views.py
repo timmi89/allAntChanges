@@ -49,7 +49,7 @@ class AnalyticsHandler(AnonymousBaseHandler):
         
         if data['page_id']:
             page = Page.objects.get(id=data['page_id'])
-            interactions = Interactions.filter(page=page)
+            interactions = interactions.filter(page=page)
     
         if data['start']:
             interactions = interactions.filter(
