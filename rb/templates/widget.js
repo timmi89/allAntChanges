@@ -1606,8 +1606,8 @@ function readrBoard($R){
                                 $rindow.animate({ height: rindowHeight+extraHeight }, durr);
                                 $tempMsgDiv.animate({ height:extraHeight },durr, function(){
                                     $tempMsgDivWrapper.fadeIn(400);
+                                    $(this).dequeue('userMessage');
                                 });
-                                $(this).dequeue('userMessage');
                             });
                             $rindow.dequeue('userMessage');
 
@@ -1637,8 +1637,8 @@ function readrBoard($R){
                                 $rindow.animate({ height: rindowHeight-extraHeight }, durr);
                                 $tempMsgDiv.animate({ height:0 },durr, function(){
                                     $tempMsgDiv.remove();
+                                    $(this).dequeue('userMessage');
                                 });
-                                $(this).dequeue('userMessage');
                             });
                             $rindow.dequeue('userMessage');
                             
@@ -3137,6 +3137,7 @@ function readrBoard($R){
                                 $seeTags
                             );
                             
+                            //(tag success expand the comment section)                            
                             RDR.actions.panel.expand("whyPanel", rindow);
                             
                             //todo: fix the way we use args here
@@ -4144,6 +4145,8 @@ function readrBoard($R){
                 // if ( kind == "img" || kind == "media" )  {
                 //     rindow.find('div.rdr_contentPanel').remove();
                 // }
+
+                //expand comment section for readmode
                 RDR.actions.panel.expand("whyPanel", rindow, kind );
             },
 			sentimentBox: function(settings) {
@@ -4215,8 +4218,12 @@ function readrBoard($R){
                             width = 200 + contentPanelWidth; // any time we're expanding the contentPanel, the rindow is gonna be 400px wide
                             gotoHeight = 300; //quick hack to make it look a bit nicer
 
-                            $thisPanel.animate( {right:0 }, rindow.settings.animTime);
-
+                            rindow.queue('panels', function(){
+                                $thisPanel.animate( {right:0 }, rindow.settings.animTime, function(){
+                                    rindow.dequeue('panels');
+                                });
+                            });
+                            
                             break;
                     }
                     
@@ -4233,15 +4240,19 @@ function readrBoard($R){
                         var coords = rindow.offset();
                         coords = RDR.util.stayInWindow({coords:coords, width:width, height:gotoHeight });
 
-                        rindow.animate({
-                            width: width,
-                            left: coords.left,
-                            height: gotoHeight,
-                            top: coords.top
-                        }, rindow.settings.animTime, function() {
-                            RDR.rindow.jspUpdate( rindow );
-                        });
+                        rindow.queue('panels', function(){
 
+                            rindow.animate({
+                                width: width,
+                                left: coords.left,
+                                height: gotoHeight,
+                                top: coords.top
+                            }, rindow.settings.animTime, function() {
+                                RDR.rindow.jspUpdate( rindow );
+                                rindow.dequeue('panels');
+                            });
+                        });
+                        rindow.dequeue('panels');
                     }
                     $thisPanel.data('expanded', true);
                 },
@@ -4294,9 +4305,15 @@ function readrBoard($R){
 
                             if( isReadMode ){
                                 width = 500;
-                                $thisPanel.animate( {right:-300 }, rindow.settings.animTime);
-                                rindow.find('div.rdr_contentPanel .rdr_contentSet').removeClass('rdr_selected');
+
+                                rindow.queue('panels', function(){
+                                    $thisPanel.animate( {right:-300 }, rindow.settings.animTime, function(){
+                                        rindow.find('div.rdr_contentPanel .rdr_contentSet').removeClass('rdr_selected');
+                                        rindow.dequeue('panels');                                
+                                    });
+                                });
                             }
+
                             break;
                     }
                     
@@ -4312,14 +4329,16 @@ function readrBoard($R){
                         gotoHeight = RDR.rindow.setHeight(rindow, {
                             targetHeight: targetHeight
                         });
-
-                        rindow.animate({
-                            width: width,
-                            height: gotoHeight
-                        }, rindow.settings.animTime, function() {
-                            RDR.rindow.jspUpdate( rindow );
+                        rindow.queue('panels', function(){
+                            rindow.animate({
+                                width: width,
+                                height: gotoHeight
+                            }, rindow.settings.animTime, function() {
+                                RDR.rindow.jspUpdate( rindow );
+                                rindow.dequeue('panels');                                
+                            });
                         });
-
+                        rindow.dequeue('panels');
                     }
                     
                     $thisPanel.data('expanded', false);
