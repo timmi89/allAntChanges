@@ -2643,7 +2643,7 @@ function readrBoard($R){
                                     type: 'comment'
                                 },
                                 rindow:rindow
-                            }
+                            };
                             //queued up to be released in the sharestart function after the animation finishes    
                             rindow.queue('userMessage', function(){
                                 RDR.session.rindowUserMessage.show( usrMsgArgs );
@@ -2905,7 +2905,7 @@ function readrBoard($R){
                                         body: tag.body
                                     },
                                     rindow:rindow
-                                }
+                                };
 
                                 //queued up to be released in the sharestart function after the animation finishes    
                                 rindow.queue('userMessage', function(){
@@ -2981,7 +2981,7 @@ function readrBoard($R){
                                     remove: true
                                 },
                                 rindow:rindow
-                            }
+                            };
                             //queued up to be released in the sharestart function after the animation finishes    
                             rindow.queue('userMessage', function(){
                                 RDR.session.rindowUserMessage.show( usrMsgArgs );
@@ -3244,7 +3244,7 @@ function readrBoard($R){
                                     body: tag.body
                                 },
                                 rindow:rindow
-                            }
+                            };
 
                             //queued up to be released in the sharestart function after the animation finishes    
                             rindow.queue('userMessage', function(){
@@ -3273,7 +3273,7 @@ function readrBoard($R){
                                     remove: true
                                 },
                                 rindow:rindow
-                            }
+                            };
                             //queued up to be released in the sharestart function after the animation finishes    
                             rindow.queue('userMessage', function(){
                                 RDR.session.rindowUserMessage.show( usrMsgArgs );
