@@ -1713,7 +1713,7 @@ function readrBoard($R){
                 // request the RBGroup Data
 
                 $.ajax({
-                    url: "/api/settings/"+RDR.groupPermData.group_id+"/",
+                    url: RDR_rootPath+"/api/settings/"+RDR.groupPermData.group_id+"/",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
@@ -1743,7 +1743,7 @@ function readrBoard($R){
             initUserData: function(userShortName){
                 // request the RBGroup Data
                 $.ajax({
-                    url: "/api/rbuser/",
+                    url: RDR_rootPath+"/api/rbuser/",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
@@ -1781,7 +1781,7 @@ function readrBoard($R){
 				//TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
 				//might not want to send canonical, or, send it separately if/only if it's different than URL
 				$.ajax({
-                    url: "/api/page/",
+                    url: RDR_rootPath+"/api/page/",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
@@ -2004,7 +2004,7 @@ function readrBoard($R){
 
                 // send the data!
                 $.ajax({
-                    url: "/api/summary/containers/",
+                    url: RDR_rootPath+"/api/summary/containers/",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
@@ -2291,7 +2291,7 @@ function readrBoard($R){
                     var sendData = containers;
 
                     $.ajax({
-                        url: "/api/containers/create/",
+                        url: RDR_rootPath+"/api/containers/create/",
                         type: "get",
                         contentType: "application/json",
                         dataType: "jsonp",
@@ -2373,7 +2373,7 @@ function readrBoard($R){
                     };
 
                     $.ajax({
-                        url: "/api/summary/container/content/",
+                        url: RDR_rootPath+"/api/summary/container/content/",
                         type: "get",
                         contentType: "application/json",
                         dataType: "jsonp",
@@ -2536,7 +2536,7 @@ function readrBoard($R){
                     if (sendData.sendData) delete sendData.sendData; //this was happening for delete calls.
 
                     //todo: consider making a generic url router
-                    var url = "/api/" +int_type+ "/"+action_type+"/";
+                    var url = RDR_rootPath+"/api/" +int_type+ "/"+action_type+"/";
 
                     // send the data!
                     $.ajax({
@@ -4870,7 +4870,7 @@ function readrBoard($R){
                     // if ( !tag_li.hasClass('rdr_tagged') ) {
                         // send the data!
                         $.ajax({
-                            url: "/api/share/",
+                            url: RDR_rootPath+"/api/share/",
                             type: "get",
                             contentType: "application/json",
                             dataType: "jsonp",
@@ -5036,7 +5036,7 @@ function readrBoard($R){
 
                 // send the data!
                 $.ajax({
-                    url: "/api/tag/delete/",
+                    url: RDR_rootPath+"/api/tag/delete/",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",

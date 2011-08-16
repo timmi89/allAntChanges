@@ -380,7 +380,7 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr div.rdr_rindow_message                     {position:absolute; z-index:50; bottom:0px; border-top:1px solid #aaa;background:#fff; -moz-box-shadow:0px -45px 48px -50px #53aed9 inset; -webkit-box-shadow:0px -45px 48px -50px #53aed9 inset; box-shadow:0px -45px 48px -50px #53aed9 inset; width:100%; font-size: 11px !important;}
 
 #rdr_sandbox div.rdr div.rdr_rindow_message .rdr_rindow_message_innerwrap {
-    padding:9px 12px 0 9px; width:auto; position:relative;
+    padding:9px 16px 0 9px; width:auto; position:relative;
 }
 
 /*
@@ -779,6 +779,7 @@ div.rdr_indicator, div.rdr_indicator * {
     left: 0 !important;
     z-index:11000 !important;
     text-decoration:none !important;
+    border:none !important;
 }
 /*the indicator body will be moved up to compensate*/
 div.rdr_indicator_for_text{
@@ -865,6 +866,7 @@ div.rdr_indicator div.rdr_indicator_body {
     top:0; /*don't make important so that our js can update*/
     left:0; /*don't make important so that our js can update*/
     margin:0 !important;
+    overflow:hidden !important;
 }
 
 /*for now give the text indicators a small offset so the details don't cover the end of content todo: id:12345*/
