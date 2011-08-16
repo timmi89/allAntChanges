@@ -4039,7 +4039,7 @@ function readrBoard($R){
                     $whyPanel_panelCard.appendTo($whyPanel_body);
                 }
                 $whyPanel_panelCard.siblings('.rdr_panelCard').hide();
-                $whyPanel_panelCard.append( _makeInfoBox() );
+                $whyPanel_panelCard.append( _makeInfoBox(content_node) );
 
                 _makeHeaders();
                 _makeOtherReactions();
@@ -4115,7 +4115,7 @@ function readrBoard($R){
                             
                             var prefix = count ? ", " : "", //don't include the first time
                                 $tag = $('<span/>').append(tag.body),
-                                $count = $('<span/>').append( '('+tag.count+')' ),
+                                $count = $('<span/>').append( ' ('+tag.count+')' ),
                                 $wrap = $('<span />').addClass('rdr_tags_list_tag');
                             $wrap.append( prefix, $tag, $count);
                             $otherTags.append( $wrap );
@@ -4137,8 +4137,8 @@ function readrBoard($R){
                     }
                 }
 
-                function _makeInfoBox(){
-                    
+                function _makeInfoBox(content_node){
+
                     var $socialBox = $('<div class="rdr_share_social"><h4>Share:</h4></div>'), 
                     $shareLinks = $('<ul class="shareLinks"></ul>'),
                     socialNetworks = ["facebook","twitter"]; //,"tumblr","linkedin"];
@@ -4148,8 +4148,8 @@ function readrBoard($R){
                     $.each(socialNetworks, function(idx, val){
                         $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                         $shareLinks.find('li:last').click( function() {
-                            var real_content_node = RDR.content_nodes[hash];
-                            RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:real_content_node });
+                            // var real_content_node = ( RDR.content_nodes[hash] ) ? RDR.content_nodes[hash] : RDR.summaries[hash].content;
+                            RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
                             return false;
                         });
                     });
@@ -4694,7 +4694,6 @@ function readrBoard($R){
                         //         var content_node_info = $(this).closest('div.rdr_contentSet').data();
                         //         var tag = $this.closest('a.rdr_tag').data('tag');
                         //         $shareTip.find('img.rdr_sns').click( function() {
-                        //             RDR.actions.share_getLink({ hash:hash, kind:summary.kind, sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node:content_node_info });
                         //         });
                         //     }
                         // ).mouseleave(
@@ -4882,7 +4881,7 @@ function readrBoard($R){
                                     }
 
                                     //successfully got a short URL
-                                    RDR.actions.shareContent({ sns:params.sns, content:content_node_info.content, short_url:response.data.short_url, reaction:tag.body });
+                                    RDR.actions.shareContent({ sns:params.sns, content_node_info:content_node_info, short_url:response.data.short_url, reaction:tag.body });
                                 }
                             },
                             error: function(response) {
@@ -4892,16 +4891,19 @@ function readrBoard($R){
                 });
             },
             shareContent: function(args) {
+
+                var content = args.content_node_info.content;
                 switch (args.sns) {
                     case "facebook":
                     // TODO make dynamic
-                        window.open('http://www.facebook.com/sharer.php?s=100&p[title]="'+encodeURI(args.content.substr(0, content_length) )+'"&p[summary]='+encodeURI(args.reaction)+'&p[url]='+args.short_url,"readr_share_fb","menubar=1,resizable=1,width=626,height=436");
+                        window.open('http://www.facebook.com/sharer.php?s=100&p[title]='+encodeURI(content.substr(0, content_length) )+'&p[summary]='+encodeURI(args.reaction)+'&p[url]='+args.short_url,"readr_share_fb","menubar=1,resizable=1,width=626,height=436");
                     //&p[images][0]=<?php echo $image;?>', 'sharer',
                     break;
 
                     case "twitter":
                         var content_length = ( 90 - args.reaction.length );
-                        window.open('http://twitter.com/intent/tweet?url='+args.short_url+'&via='+RDR.group.twitter+'&text='+encodeURI(args.reaction)+':+"'+encodeURI(args.content.substr(0, content_length) )+'"',"readr_share_tw","menubar=1,resizable=1,width=626,height=436");
+                        var twitter_acct = ( RDR.group.twitter ) ? '&via='+RDR.group.twitter : '';
+                        window.open('http://twitter.com/intent/tweet?url='+args.short_url+twitter_acct+'&text='+encodeURI(args.reaction)+':+"'+encodeURI(content.substr(0, content_length) )+'"',"readr_share_tw","menubar=1,resizable=1,width=626,height=436");
                     break;
 
                     case "tumblr":
