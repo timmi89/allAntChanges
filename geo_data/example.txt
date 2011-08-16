@@ -1,0 +1,8 @@
+>>> import pygeoip
+>>> gi = pygeoip.GeoIP('geo_data/GeoLiteCity.dat')
+>>> gi.region_by_addr('207.239.107.3')
+{'region_name': '', 'country_code': 'US'}
+>>> gi.region_by_addr('50.74.0.42')
+{'region_name': 'NY', 'country_code': 'US'}
+>>> gi.region_by_addr('50.74.0.42')
+{'region_name': 'NY', 'country_code': 'US'}

@@ -25,7 +25,10 @@ urlpatterns = patterns('',
   url(r'^comments/$', 'rb.views.main', kwargs={"view":"comments"}),
   url(r'^shares/$', 'rb.views.main', kwargs={"view":"shares"}),
   
+   # Client Facing Registration & Settings
   url(r'^settings/$', 'rb.views.settings'),
+  url(r'^register/$', 'rb.views.group'),
+  url(r'^sites/$'), 'rb.views.sites'),
   url(r'^settings/(?P<short_name>[\w\-]+)/$', 'rb.views.settings'),
 
   # User profile pages
