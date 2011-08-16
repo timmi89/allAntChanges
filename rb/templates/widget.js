@@ -4611,8 +4611,14 @@ function readrBoard($R){
 
                         $header.append( $tagInfo, $rightBox );
                         if ( !$.isEmptyObject( content_node.top_interactions.coms ) ) {
-                            $header.addClass('rdr_has_comment');
-                            $header.find('div.rdr_rightBox').append('<span>' + RDR.util.prettyNumber( content_node.top_interactions.coms.length ) + '</span>');
+                            var num_comments = 0;
+                            for ( var i in content_node.top_interactions.coms ) {
+                                if ( content_node.top_interactions.coms[i].tag_id == tag.id ) num_comments++;
+                            }
+                            if ( num_comments > 0 ) {
+                                $header.find('div.rdr_rightBox').append('<span>' + RDR.util.prettyNumber( num_comments ) + '</span>');
+                                $header.addClass('rdr_has_comment');
+                            }
                         }
 
                         //todo: consolodate truncate functions
