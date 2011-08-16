@@ -2,16 +2,10 @@ var RDRtimer,
 RDR, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
 $R = {}, //init var: our clone of jQuery
-client$ = {}, //init var: clients copy of jQuery
 RDR_rootPath = "{{ BASE_URL }}"; //todo: when we get our hosting up change to readrboard.com or our CDN.
 
-function handleError() {
-    return true;
-}
-// window.onerror = handleError;
-
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
-//This function gets called by the function $RFunctions() via the function loadScript().
+//This function gets called by the function $RFunctions() via the function rdr_loadScript().
 function readrBoard($R){
 
     var $ = $R;
@@ -5279,8 +5273,8 @@ function readrBoard($R){
 }
 
 
-//loadScript copied from http://www.logiclabz.com/javascript/dynamically-loading-javascript-file-with-callback-event-handlers.aspx
-function loadScript(sScriptSrc,callbackfunction) {
+//rdr_loadScript copied from http://www.logiclabz.com/javascript/dynamically-loading-javascript-file-with-callback-event-handlers.aspx
+function rdr_loadScript(sScriptSrc,callbackfunction) {
     var oHead = document.getElementsByTagName('head')[0];
     if(oHead) {
         var oScript = document.createElement('script');
@@ -5300,17 +5294,17 @@ function loadScript(sScriptSrc,callbackfunction) {
 }
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
-loadScript( "{{ STATIC_URL }}global/js/jquery-1.6.2.min.js", function(){
+rdr_loadScript( "{{ STATIC_URL }}global/js/jquery-1.6.2.min.js", function(){
     //callback
-    //loadScript( "{{ STATIC_URL }}global/js/jquery-1.6.js", function(){
+    //rdr_loadScript( "{{ STATIC_URL }}global/js/jquery-1.6.js", function(){
     //callback
     
-    //loadScript( "{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom.min.js", function(){
-    loadScript( "{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom/js/jquery-ui-1.8.14.custom.min.js", function(){
+    //rdr_loadScript( "{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom.min.js", function(){
+    rdr_loadScript( "{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom/js/jquery-ui-1.8.14.custom.min.js", function(){
         //callback
 
         if ( $.browser.msie  && parseInt($.browser.version) == 7 ) {
-            loadScript( "{{ STATIC_URL }}widget/js/json2.min.js", function() { return; } );
+            rdr_loadScript( "{{ STATIC_URL }}widget/js/json2.min.js", function() { return; } );
         }
         //test that $.ui versioning is working correctly
         
@@ -5725,8 +5719,11 @@ function $RFunctions($R){
 
                     for ( var i = 0, j=10; i < j; i++ ) {
                         var this_user = RDR.page.topusers[i];
+                    
                         if ( this_user ) {
-                            $topusers.append('<img src="'+this_user.img_url+'" class="no-rdr" />');
+                            var $userLink = $('<a href="'+RDR_rootPath+'/user/'+this_user.user+'" class="no-rdr" target="_blank" />'),
+                                userPic = '<img src="'+this_user.img_url+'" class="no-rdr" alt="'+this_user.full_name+'" title="'+this_user.full_name+'" />';
+                            $topusers.append( $userLink.append(userPic) );
                         }
                     }
 
