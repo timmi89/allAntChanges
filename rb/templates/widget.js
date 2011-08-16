@@ -530,8 +530,12 @@ function readrBoard($R){
                                 $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
 
                                 if ( ( nodes_with_this_tag == 1 ) || kind == "img" || kind == "media" ) {
+
                                     var hash = $this.data('hash');
 
+                                    //try to add selState to content_node - there should only be one
+                                    var selState = $this.data('selStates')[0];
+                                    content_node.selState = selState;
                                     RDR.actions.viewCommentContent( {tag:$this.data('tag'), hash:hash, rindow:rindow, kind:kind, content_node:content_node, view_all_state:"hide" });
                                 } else {
                                     RDR.actions.viewReactionContent( $this.data('tag'), $this.data('hash'), rindow );
@@ -3990,7 +3994,27 @@ function readrBoard($R){
                 $whyPanel_panelCard.data({
                     'tagID':tag.id,
                     'intactID':int_id
-                });
+                }).hover(
+                    function() {
+                        //don't do this for windows that are resizing
+                        if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
+                        //else
+                        $(this).addClass('rdr_hover');
+                        log(content_node);
+                        if(content_node.selState){
+                            $().selog('hilite', content_node.selState, 'on');
+                        }
+                    },
+                    function() {
+                        //don't do this for windows that are resizing
+                        if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
+                        //else
+                        $(this).removeClass('rdr_hover');
+                        if(content_node.selState){
+                            $().selog('hilite', content_node.selState, 'off');
+                        }
+                    }
+                );
 
                 $whyPanel.find('div.rdr_view_all').remove();
 
@@ -4535,9 +4559,7 @@ function readrBoard($R){
                         $contentSet.hover(
                             function() {
                                 //don't do this for windows that are resizing
-                                $(this).addClass('rdr_hover');
                                 if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
-
                                 $(this).addClass('rdr_hover');
                                 if(content_node.selState){
                                     $().selog('hilite', content_node.selState, 'on');
@@ -4545,7 +4567,6 @@ function readrBoard($R){
                             },
                             function() {
                                 //don't do this for windows that are resizing
-                                $(this).removeClass('rdr_hover');
                                 if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
                                 $(this).removeClass('rdr_hover');
                                 if(content_node.selState){
