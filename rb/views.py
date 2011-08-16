@@ -9,8 +9,8 @@ from baseconv import base62
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models import Count
 from api.utils import *
-from api.exceptions import JSONException
-from api.token import checkCookieToken
+from authentication.token import checkCookieToken
+from authentication.decorators import requires_admin
 from cards import Card
 from django.utils.encoding import smart_str, smart_unicode
 from django.template import RequestContext
@@ -52,6 +52,9 @@ def xdm_status(request):
       {'fb_client_id': FACEBOOK_APP_ID},
       context_instance=RequestContext(request)
     )
+
+def sites(request):
+    pass    
 
 def group(request):
     pass
@@ -162,7 +165,7 @@ def interactions(request):
 def sidebar(request, user_id=None, short_name=None):
     pass
 
-#@requires_admin
+@requires_admin
 def settings(request, group=None):
     if request.method == 'POST':
         form = GroupForm(request.POST, instance=group)
