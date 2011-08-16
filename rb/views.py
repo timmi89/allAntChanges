@@ -196,10 +196,7 @@ def expander(request, short):
     link_id = base62.to_decimal(short);
 
     # Retrieve Link object
-    try:
-        link = Link.objects.get(id=link_id);
-    except Link.DoesNotExist:
-        return HttpResponseRedirect('/')
+    link = Link.objects.get(id=link_id);
 
     # Update usage count
     link.usage_count += 1
