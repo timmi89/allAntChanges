@@ -1,6 +1,7 @@
 from api.token import checkCookieToken
 from rb.models import Group, User, SocialUSer
 from django.http import HttpResponseRedirect
+from api.exceptions import JSONException
 
 def requires_login(func):
     pass
@@ -16,7 +17,7 @@ def requires_admin(func):
             try:
                 group = Group.objects.get(short_name=short_name)
             except Group.DoesNotExist:
-                return HttpResponseRedirect('/')
+                return JSONException(u'Invalid group')
             try:
                 social_user = SocialUser.objects.get(user=cookie_user)
             except SocialUser.DoesNotExist:
