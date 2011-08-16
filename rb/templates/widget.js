@@ -3988,33 +3988,16 @@ function readrBoard($R){
                     $whyPanel_body_jsp = $whyPanel_body.find('.jspPane');
                 
                 // DONTNEED: $whyPanel.addClass('rdr_whyShowing');
-                var int_id = "need to add this int_id, but faking it for now to push and merge";
+                var int_id = "null"; //don't worry about this for now - we don't need it
 
                 var $whyPanel_panelCard = $('<div />').addClass('rdr_panelCard rdr_panelCard'+int_id).addClass('rdr_viewAll_'+view_all_state);
                 $whyPanel_panelCard.data({
                     'tagID':tag.id,
-                    'intactID':int_id
-                }).hover(
-                    function() {
-                        //don't do this for windows that are resizing
-                        if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
-                        //else
-                        $(this).addClass('rdr_hover');
-                        log(content_node);
-                        if(content_node.selState){
-                            $().selog('hilite', content_node.selState, 'on');
-                        }
-                    },
-                    function() {
-                        //don't do this for windows that are resizing
-                        if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
-                        //else
-                        $(this).removeClass('rdr_hover');
-                        if(content_node.selState){
-                            $().selog('hilite', content_node.selState, 'off');
-                        }
-                    }
-                );
+                    'intactID':int_id,
+                    'content_node':content_node
+                });
+                //note: hover event on the whyPanel to hilite the content is done on the whole panel instead of just the panelCard,
+                // because there is always only one panelCard showing, and it is not always the whole height.
 
                 $whyPanel.find('div.rdr_view_all').remove();
 
@@ -4318,8 +4301,42 @@ function readrBoard($R){
                     //RDR.actions.panel.draw:
                     var panel = _panel || "whyPanel";
                     
+                    var isReadmode = rindow.hasClass('rdr_readmode');
                     var $thisPanel = $('<div class="rdr_'+panel+' rdr_sntPnl rdr_brtl rdr_brtr rdr_brbr rdr_brbl" id="rdr_'+panel+'" />');
-                    if ( panel == "whyPanel" ) $thisPanel.removeClass('rdr_brtl');
+                    if ( panel == "whyPanel" ) {
+                        
+                        $thisPanel.removeClass('rdr_brtl');
+                        //this is just a little bit hacky
+                        if(isReadmode){
+                            $thisPanel.hover(
+                                function() {
+                                    //don't do this for windows that are resizing
+                                    if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
+                                    //else
+                                    var $activePanelCard = $(this).find('.rdr_panelCard:visible');
+                        
+                                    var content_node = $activePanelCard.data('content_node');
+                                    $activePanelCard.addClass('rdr_hover');
+                                    if(content_node.selState){
+                                        $().selog('hilite', content_node.selState, 'on');
+                                    }
+                                },
+                                function() {
+                                    //don't do this for windows that are resizing
+                                    if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
+                                    //else
+                                    var $activePanelCard = $(this).find('.rdr_panelCard:visible');
+                                    var content_node = $activePanelCard.data('content_node');
+
+                                    $activePanelCard.removeClass('rdr_hover');
+                                    if(content_node.selState){
+                                        $().selog('hilite', content_node.selState, 'off');
+                                    }
+                                }
+                            );
+                        }
+
+                    }
                     return $thisPanel;
                 },
                 setup: function(_panel, rindow){
