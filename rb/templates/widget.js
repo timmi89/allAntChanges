@@ -1567,8 +1567,7 @@ function readrBoard($R){
                     
                         var msgType = args.msgType || "tempUser", //defaults to tempUser
                             userMsg = "",
-                            actionPastTense,
-                            rindowHeightDefault; //todo: this is a patchy fix, make it better.
+                            actionPastTense;
 
                         var extraHeight = 45,  //$rindowMsgDiv.height(),
                             rindowHeight = $rindow.height(),
@@ -1592,6 +1591,9 @@ function readrBoard($R){
                         switch (msgType) {
 
                             case "tempUser":
+                                //for now, just ignore this
+                                break;
+                                /*
                                 var num_interactions_left = RDR.group.temp_interact - parseInt( args.num_interactions ),
                                     $loginLink = $('<a href="javascript:void(0);">Connect with Facebook</a>.');
                                 
@@ -1601,13 +1603,12 @@ function readrBoard($R){
                                 });
                                 
                                 var tmpUserMsg = 'You can react or comment <strong>' + num_interactions_left + ' more times</strong> before you must ';
-                                rindowHeightDefault = 103;
                                 $rindowMsgDivInnerwrap.after('<span>'+tmpUserMsg+'</span>');
                                 break;
+                                */
     
                             case "existingInteraction":
                                 userMsg = "You have already given that reaction for this.";
-                                rindowHeightDefault = 103;
                                 break;
                             
                             case "interactionSuccess":
@@ -1625,7 +1626,6 @@ function readrBoard($R){
                                         ""; //this default shouldn't happen
                                     userMsg += " See your "+interactionInfo.type+"s at <a href='"+RDR_rootPath+"' target='_blank'>readrboard.com</a>";
                                 }
-                                rindowHeightDefault = 103;
                                 break;
                         
                         }   
@@ -1641,15 +1641,17 @@ function readrBoard($R){
 
                         $rindowMsgDivInnerwrap.hide();
                         $rindow.queue('userMessage', function(){
-                            if(extraHeight){
+                            if( $rindowMsgDiv.height() > 0 ){
+                                //already expanded
+                                $rindowMsgDivInnerwrap.fadeIn(400);
+                                $(this).dequeue('userMessage');
+                            }else{
+                                //expand it and expand the window with it.
                                 $rindow.animate({ height: rindowHeight+extraHeight }, durr);
                                 $rindowMsgDiv.animate({ height:extraHeight },durr, function(){
                                     $rindowMsgDivInnerwrap.fadeIn(400);
                                     $(this).dequeue('userMessage');
                                 });
-                            }else{
-                                $rindowMsgDivInnerwrap.fadeIn(400);
-                                $(this).dequeue('userMessage');
                             }
                         });
                         $rindow.dequeue('userMessage');
@@ -1663,7 +1665,7 @@ function readrBoard($R){
                             //else
 
                             //todo: make this a better solution.  The simultaneous animations might not be ideal.
-                            var extraHeight = 45,  //$rindowMsgDiv.height(),
+                            var extraHeight = $rindowMsgDiv.height(),  //$rindowMsgDiv.height(),
                                 rindowHeight = $rindow.height(),
                                 durr = 300;
 
@@ -1677,7 +1679,6 @@ function readrBoard($R){
                                 });
                             });
                             $rindow.dequeue('userMessage');
-                            
                     }
                 }
             }
