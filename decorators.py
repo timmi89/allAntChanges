@@ -7,7 +7,10 @@ def requires_login(func):
 
 def requires_admin(func):
     def wrapper(request, short_name, *args, **kwargs):
-        cookie_user = checkCookieToken(request)
+        try:
+            cookie_user = checkCookieToken(request)
+        except:
+            return HttpResponseRedirect('/')
         # If a user is registered and logged in
         if cookie_user:
             try:
