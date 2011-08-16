@@ -14,17 +14,16 @@ from api.token import checkCookieToken
 from cards import Card
 from django.utils.encoding import smart_str, smart_unicode
 from django.template import RequestContext
-from django.forms import ModelForm
-from django.forms.models import modelformset_factory
 from django.db.models import Q
+from forms import *
+from decorators import requires_admin
 
-def widget(request,sn):
+def widget(request, sn):
     # Widget code is retreived from the server using RBGroup shortname
     try:
         rbg = Group.objects.get(short_name = sn)
     except Group.DoesNotExist:
         raise Exception('RB group with this short_name does not exist')
-    print BASE_URL
     return render_to_response("widget.js",{'group_id': rbg.id, 'short_name': sn, 'BASE_URL': BASE_URL}, context_instance=RequestContext(request), mimetype = 'application/javascript')
 
 def widgetCss(request):
@@ -164,28 +163,18 @@ def interactions(request):
 def sidebar(request, user_id=None, short_name=None):
     pass
 
-class GroupForm(ModelForm):
-    class Meta:
-        model = Group
-        fields = ('name', 'short_name', 'twitter', 'language', 'anno_whitelist', 'no_readr', 'img_whitelist', 'img_blacklist', 'temp_interact', 'logo_url_sm', 'logo_url_med', 'logo_url_lg', 'requires_approval', 'word_blacklist', 'css_url', 'secret', 'blessed_tags' )
-
-def settings(request, short_name=None):
-    cookie_user = checkCookieToken(request)
-    print cookie_user
-    
-    try:
-        group = Group.objects.get(short_name=short_name)
-    except Group.DoesNotExist:
-        return JSONException(u'Invalid group')
+@requires_admin
+def settings(request, group=None):
     if request.method == 'POST':
         form = GroupForm(request.POST, instance=group)
         if form.is_valid():
             form.save()
     else:
         form = GroupForm(instance=group)
+
     return render_to_response(
         "group_form.html", 
-        {"form": form, "short_name": short_name},
+        {"form": form, "short_name": group.short_name},
         context_instance=RequestContext(request)
     )
 
@@ -194,6 +183,7 @@ def admin_request(request, short_name=None):
         group = Group.objects.get(short_name=short_name)
     except Group.DoesNotExist:
         return JSONException(u'Invalid group')
+
     return render_to_response(
         "admin_request.html",
         {"group": group},

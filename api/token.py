@@ -64,31 +64,26 @@ def checkToken(data):
         auth_token = 'R3dRB0aRdR0X'
     
     # Create token with passed in credentials
-    readr_token = createToken(data['user_id'], auth_token, data['group_id'])
+    readr_token = createToken(data['user_id'], auth_token)
 
     return user if (readr_token == data['readr_token']) else None
 
-def createToken(django_id, auth_token, group_id):
+def createToken(django_id, auth_token):
     """
     Create an SHA token from django id, social network
     auth token and group secret.
     """
     # Get the group secret which only we know
-    if django_id and auth_token and group_id:
-        try:
-            group_secret = Group.objects.get(id=group_id).secret
-        except Group.DoesNotExist:
-            raise JSONException("Group does not exist")
+    if django_id and auth_token:
         try:
             username = User.objects.get(id=django_id).username
         except User.DoesNotExist:
             raise JSONException("User does not exist")
 
-        print "Creating readr_token %s %s %s" % (django_id, auth_token, group_secret)
+        print "Creating readr_token %s %s" % (django_id, auth_token)
         token = sha_constructor(
             unicode(username) +
-            unicode(auth_token) +
-            unicode(group_secret)
+            unicode(auth_token)
         ).hexdigest()[::2]
         print "Created token", token
         return token

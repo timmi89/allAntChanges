@@ -80,7 +80,7 @@ class FBHandler(BaseHandler):
             convertUser(user_id, django_user)
 
         # Make a token for this guy
-        readr_token = createToken(django_user.id, social_auth.auth_token, group_id)
+        readr_token = createToken(django_user.id, social_auth.auth_token)
 
         return dict(
             user_id=django_user.id,
