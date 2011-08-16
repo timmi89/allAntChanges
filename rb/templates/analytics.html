@@ -1,48 +1,16 @@
 {% extends "wide_base.html" %}
 
 {% block mainContent %}
-
-<style>
-	section[role="analytics header"] 			{ width:100%; background:#7f7f7f; color:#eee; overflow:auto; box-shadow:0px -10px 9px -9px #454545 inset; }
-	section[role="analytics header"] h3			{ float:left; overflow:auto; padding:10px; margin:0; font-size:16px; background: none repeat scroll 0 0 #638296; box-shadow: 0 -10px 9px -9px #454545 inset; }
-
-	section[role="controls"] 		{ padding:10px; font-size:12px; float:left; border-left:1px solid #ddd; text-shadow:1px 1px 2px #454545;}
-	section[role="controls"] input	{ width:80px; text-align:center; margin:o 3px; }
-</style>
-
 <section role="analytics header">
 	<h3>{{ group.name }} Activity</h3>
 	<section role="controls">
 		<label>Date Range: </label>
-		<input type="text" name="start_date" />
+		<input type="text" name="start_date" value="{% now "m/d/y" %}" />
 		<label>to</label>
-		<input type="text" name="end_date" />
+		<input type="text" name="end_date" value="{% now "m/d/y" %}" />
 		<button>Update</button>
 	</section>
 </section>
-
-<style>
-	section[role="panels"] 					{ float:left; overflow:auto; padding:10px; }
-
-	section[role="wide panels"] 			{ float:left; padding:0 10px 10px; width: 740px; }
-	section[role="wide panels"] section		{ margin-bottom:20px; }
-	section[role="wide panels"] h3 			{ font-family:'ReadrLeague'; font-size:30px; margin:0; border-top:1px solid #aaa; padding:7px 0; }
-	section[role="wide panels"] h4 			{ font-family:'ReadrLeague'; font-size:24px; margin:0; }
-
-	section[role="interaction frequency"] 				{ overflow:auto; text-align:center; }
-	section[role="interaction frequency"] h1			{ font-family:'ReadrLeague'; font-size:80px; text-shadow: 1px 2px 1px #fff; padding:0; margin:0; color:#638296; }
-	div[role="total interactions"]						{ width:130px; float:left; overflow:auto; }
-	div[role="frequency chart"]							{ width:610px; margin-left:130px; background:#aaa; color:#ddd; box-shadow:0px -10px 9px -9px #454545 inset; min-height:100px; padding-top:40px; }
-
-	section[role="most popular tags"] ol				{ margin:0; padding:0; overflow:auto; list-style-type:none;}
-	section[role="most popular tags"] ol li				{ margin:0 10px 0 0; display:inline-block; padding-right:25px; }
-	section[role="most popular tags"] ol li.large		{ font-size:24px; }
-	section[role="most popular tags"] ol li.medium		{ font-size:16px; }
-	section[role="most popular tags"] ol li.small		{ font-size:12px; }
-
-	section[role="thin panels"] 			{ float:left; padding:0 10px 10px; width:320px; font-size:12px; }
-	section[role="thin panels"] h3 			{ font-family:'ReadrLeague'; font-size:24px; margin-bottom:0; border-top:1px solid #aaa; padding:7px 0; }
-</style>
 
 <section role="panels">
 	<section role="wide panels">
@@ -61,51 +29,6 @@
 			<h3>Most Popular Tags</h3>
 			<ol></ol>
 		</section> <!-- /most popular tags -->
-
-<style>
-	table[role="active content table"] thead td,
-	table[role="active pages table"] thead td						{ font-weight:bold;}
-
-	table[role="active content table"] tr:hover,
-	table[role="active pages table"] tr:hover						{ background:#d8e8f6;}
-
-	table[role="active content table"] td,
-	table[role="active pages table"] td								{ vertical-align:top; font-size:12px; }
-
-	table[role="active content table"] td[role="via"],
-	table[role="active pages table"] td[role="url"]					{ width:130px; overflow:visible;}
-
-	table[role="active content table"] td[role="via"] div,
-	table[role="active pages table"] td[role="url"]	div				{ width:120px; overflow:hidden; white-space:nowrap; border:1px solid #fff; }
-
-	table[role="active content table"] td[role="via"] div a,
-	table[role="active pages table"] td[role="url"]	div	a			{ text-decoration:none; color:#666; }
-
-	table[role="active content table"] td[role="via"] div a img,
-	table[role="active pages table"] td[role="url"]	div	a img		{ display:none; }
-	
-	table[role="active content table"] td[role="via"] div:hover,
-	table[role="active pages table"] td[role="url"]	div:hover		{ width:auto; background:#ddd; border:1px solid #999; position:absolute; }
-	
-	table[role="active content table"] td[role="via"] div:hover a,
-	table[role="active pages table"] td[role="url"]	div:hover a		{ text-decoration:underline; color:#1777af; }
-	
-	table[role="active content table"] td[role="via"] div:hover a img,
-	table[role="active pages table"] td[role="url"]	div:hover a	img	{ display:inline; }
-	
-	table[role="active content table"] tbody td[role="content"]		{ font-size:14px; font-weight:bold; width:515px;}
-	table[role="active content table"] tbody td[role="content"] img	{ max-width:80px; max-height:80px; }
-	table[role="active pages table"] tbody td[role="title"]			{ font-style:italic; }
-	
-	table[role="active content table"] td[role="reactions"],
-	table[role="active pages table"] td[role="reactions"]			{ width:90px; text-align:center; color:; }
-	
-	table[role="active content table"] td[role="shares"],
-	table[role="active pages table"] td[role="shares"]				{ width:90px; text-align:center; color:; }
-	
-	table[role="active content table"] td[role="comments"],
-	table[role="active pages table"] td[role="comments"]			{ width:90px; text-align:center; color:; }
-</style>
 
 		<section role="most active pages">
 			<h3>Most Active Pages</h3>
@@ -140,22 +63,7 @@
 		</section> <!-- /most active content -->
 
 	</section> <!-- / wide panels -->
-<style>
-	table[role="active user table"] thead td				{ font-weight:bold; }
-	table[role="active user table"] td 						{ vertical-align:middle; font-size:12px; }
-	table[role="active user table"] td[role="avatar"]		{ width:35px; text-align:left;}
-	table[role="active user table"] td[role="avatar"] img	{ width:25px; }
-	
-	table[role="active user table"] td[role="reactions"],
-	table[role="active user table"] td[role="shares"],
-	table[role="active user table"] td[role="comments"]		{ text-align:center; width:30px; }
 
-	td[role="reactions"] img.icon	{ background:url(/static/widget/images/readr_icons.png) 0px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
-	td[role="shares"] img.icon		{ background:url(/static/widget/images/readr_icons.png) -50px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
-	td[role="comments"] img.icon	{ background:url(/static/widget/images/readr_icons.png) -24px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
-	
-	section[role="thin panels"] section[role="most active readers"] h3	{ border-top:0; }
-</style>
 	<section role="thin panels">
 		<section role="most active readers">
 			<h3>Most Active Readers</h3>
@@ -170,28 +78,12 @@
 			</table>
 		</section> <!-- / most active readers -->
 
-<style>
-	table[role="recent pages table"] td 						{ vertical-align:middle; }
-	table[role="recent pages table"] td[role="via"]			{ padding-bottom:10px;}
-</style>
-
 		<section role="recent pages">
 			<h3>Recently Interacted Pages</h3>
 			<table role="recent pages table" cellpadding="0" cellspacing="0" border="0">
 				<tbody></tbody>
 			</table>
 		</section> <!-- / most popular bookmarks -->
-
-<style>
-	table[role="popular shares"] td 					{ vertical-align:middle; }
-	table[role="popular shares"] td[role="content"]		{ font-size:14px;}
-	table[role="popular shares"] td[role="reactions"]	{ padding:0 0 10px 23px; }
-	table[role="popular shares"] td[role="via"]			{ padding-bottom:10px;}
-	table[role="popular bookmarks"] td 						{ vertical-align:middle; }
-	table[role="popular bookmarks"] td[role="content"]			{ font-size:14px;}
-	table[role="popular bookmarks"] td[role="reactions"]	{ padding:0 0 10px 23px; }
-	table[role="popular bookmarks"] td[role="via"]			{ padding-bottom:10px;}
-</style>
 
 		<section role="most popular shares">
 			<h3>Popular Shared Content</h3>
@@ -215,16 +107,22 @@ $( 'section[role="controls"] input' ).datepicker({ dateFormat: 'mm/dd/y' });
 
 // put in external file...
 RB.analytics = {
-	defaultStart: "08/14/11", //TODO make this "today"
-	defaultEnd: "08/15/11", //TODO make this "today"
+	startDate: "{% now "m/d/y" %}", //TODO make this "today"
+	endDate: "{% now "m/d/y" %}", //TODO make this "today"
 
-	mostPopular: function( type, start, end ) {
-		if ( !start ) start = RB.analytics.defaultStart;
-		if ( !end ) end = RB.analytics.defaultEnd;
-		if ( !type ) type = "tags";
+	mostPopular: function( args ) {
+		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
+		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
+		var type = ( args && args.type ) ? args.type : "tags";  // users, pages, content
+		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
+
+		var querystring = "?" +
+			"start="+start
+			"&end="+end
+			"&max_count="+max_count;
 
 		$.ajax({
-			url: '/analytics/group/'+RB.group.short_name+'/'+type+'/popular/',
+			url: '/analytics/group/'+RB.group.short_name+'/'+type+'/popular/'+querystring,
 			type: "get",
 			contentType: "application/json",
 			dataType: "jsonp",
@@ -273,13 +171,19 @@ RB.analytics = {
 			}
 		});
 	},
-	mostActive: function( type, start, end ) {
-		if ( !start ) start = RB.analytics.defaultStart;
-		if ( !end ) end = RB.analytics.defaultEnd;
-		if ( !type ) type = "pages";  // users, pages, content
+	mostActive: function( args ) {
+		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
+		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
+		var type = ( args && args.type ) ? args.type : "pages";  // users, pages, content
+		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
+
+		var querystring = "?" +
+			"start="+start
+			"&end="+end
+			"&max_count="+max_count;
 
 		$.ajax({
-			url: '/analytics/group/'+RB.group.short_name+'/'+type+'/active/',
+			url: '/analytics/group/'+RB.group.short_name+'/'+type+'/active/'+querystring,
 			type: "get",
 			contentType: "application/json",
 			dataType: "jsonp",
@@ -330,13 +234,19 @@ RB.analytics = {
 			}
 		});
 	},
-	recentlyActive: function( type, start, end ) {
-		if ( !start ) start = RB.analytics.defaultStart;
-		if ( !end ) end = RB.analytics.defaultEnd;
-		if ( !type ) type = "pages";  // users, pages, content
+	recentlyActive: function( args ) {
+		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
+		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
+		var type = ( args && args.type ) ? args.type : "pages";  // users, pages, content
+		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
+
+		var querystring = "?" +
+			"start="+start
+			"&end="+end
+			"&max_count="+max_count;
 
 		$.ajax({
-			url: '/analytics/group/'+RB.group.short_name+'/'+type+'/recent/',
+			url: '/analytics/group/'+RB.group.short_name+'/'+type+'/recent/'+querystring,
 			type: "get",
 			contentType: "application/json",
 			dataType: "jsonp",
@@ -352,13 +262,19 @@ RB.analytics = {
 			}
 		});
 	},
-	interactionFrequency: function( type, start, end ) {
-		if ( !start ) start = RB.analytics.defaultStart;
-		if ( !end ) end = RB.analytics.defaultEnd;
-		if ( !type ) type = "pages";  // users, pages, content
+	interactionFrequency: function( args ) {
+		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
+		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
+		var type = ( args && args.type ) ? args.type : "pages";  // users, pages, content
+		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
+
+		var querystring = "?" +
+			"start="+start
+			"&end="+end
+			"&max_count="+max_count;
 
 		$.ajax({
-			url: '/analytics/group/'+RB.group.short_name+'/frequency/',
+			url: '/analytics/group/'+RB.group.short_name+'/frequency/'+querystring,
 			type: "get",
 			contentType: "application/json",
 			dataType: "jsonp",
@@ -382,24 +298,35 @@ RB.analytics = {
 				$('div[role="total interactions"] h1').text( total );
 			}
 		});
+	}, 
+	updateAll: function() {
+		RB.analytics.interactionFrequency();
+
+		RB.analytics.mostPopular();
+		RB.analytics.mostPopular( {type:'bookmarks'} );
+		RB.analytics.mostPopular( {type:'shares'} );
+
+		RB.analytics.mostActive();
+		RB.analytics.mostActive({type:'users'});
+		RB.analytics.mostActive({type:'content'});
+
+		RB.analytics.recentlyActive();
+		
 	}
 };
+
+$('section[role="controls"] button').click( function() {
+	RB.analytics.startDate = $('input[name="start_date"]').val();
+	RB.analytics.endDate = $('input[name="end_date"]').val();
+	RB.analytics.updateAll();
+});
+
 
 // defined in template
 RB.group.short_name = "{{ group.short_name }}";
 RB.group.full_name = "{{ group.name }}";
 
-RB.analytics.interactionFrequency();
-
-RB.analytics.mostPopular();
-RB.analytics.mostPopular('bookmarks');
-RB.analytics.mostPopular('shares');
-
-RB.analytics.mostActive();
-RB.analytics.mostActive('users');
-RB.analytics.mostActive('content');
-
-RB.analytics.recentlyActive();
+RB.analytics.updateAll();
 </script>
 
 
