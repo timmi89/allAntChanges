@@ -1478,8 +1478,7 @@ function readrBoard($R){
             checkForMaxInteractions: function(args){
                 //later get rid of args if we don't need it for showLoginPanel - if we can use rindow instead.
                 var num_interactions = args.num_interactions;
-                log('checkedchecked')
-                log(num_interactions)
+                
                 if ( num_interactions ) {
                     if ( num_interactions < RDR.group.temp_interact ){
                         RDR.session.rindowUserMessage.show( args );
@@ -2822,10 +2821,8 @@ function readrBoard($R){
                             var hitMax = RDR.session.checkForMaxInteractions(checkMaxIntActsArgs);
                             if(hitMax){
                                 // don't continue with the rest of this function
-                                log('stop');
                                 return;
                             }
-                                log('nothing here');
 
                             var response = args.response,
                                 interaction = args.response.interaction,
@@ -3262,9 +3259,7 @@ function readrBoard($R){
                         },
                         remove: function(args){
                             //RDR.actions.interactions.bookmark.onSuccess.remove:
-                            log('args');
-                            log(args);
-
+                            
                             var rindow = args.rindow,
                                 tag = args.tag,
                                 int_id = args.int_id,
@@ -3975,8 +3970,7 @@ function readrBoard($R){
                     rindow = args.rindow,
                     content_node = args.content_node;
                 
-                log(args)
-
+                
                 //temp tie-over    
                 var hash = args.hash,
                     summary = RDR.summaries[hash],
@@ -4060,7 +4054,6 @@ function readrBoard($R){
                         $headerBody = "<span class='rdr_tag_text'>"+tag.body+"</span>";
                     }
                     
-                    log($headerBody);
                     //trying this out:  I'm going to copy the same header into the whypanel, and then do some tricky hiding
                     // to make it look like the header slides in.
                     rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tag.body);
@@ -4115,9 +4108,7 @@ function readrBoard($R){
                             $otherTags.append( $wrap );
 
                             // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                            log( $otherTags.width() > ( tagsListMaxWidth - buffer ));
-                            log( $otherTags.width() );
-
+                            
                             if ( $otherTags.width() > ( tagsListMaxWidth - buffer ) ) {
                                 //the tag pushed the length over the limit, so kill it, and replace with ...
                                 $wrap.remove();
@@ -4321,7 +4312,6 @@ function readrBoard($R){
                 expand: function(_panel, rindow, interaction_id){
                     //RDR.actions.panel.expand:
                     var panel = _panel || "whyPanel";
-                    log('call expanded')
                     // hack.  chrome and safari don't like rounded corners if the whyPanel is showing since it is wider than panel1
                     rindow.find('div.rdr_whyPanel').css('visibility','visible');
 
@@ -4632,9 +4622,7 @@ function readrBoard($R){
                         $contentSet.append( $header, $content );
 
                         rindow.find('div.rdr_contentPanel div.rdr_body').append( $contentSet );
-                        log(' $contentSet.data() ');
-                        log( $contentSet.data() );
-
+                        
                         // create the Share tooltips
                         // $contentSet.find( 'div.rdr_tag_share' ).mouseenter( 
                         //     function() {
@@ -4780,8 +4768,6 @@ function readrBoard($R){
                     var rindow = params.rindow,
                         tag = params.tag;
 
-                    log('params');
-                    log(params);
                     var content_node_info = (params.content_node_info) ? params.content_node_info:params.content_node;
 
                     // translations.  TODO clean and remove
@@ -5017,16 +5003,13 @@ function readrBoard($R){
 
                 var $whyPanel_body = rindow.find('div.rdr_whyPanel div.rdr_body');
                 var $whyPanel_body_jsp = $whyPanel_body.find('.jspPane');
-                
-                log('int_id');
-                log(int_id);
+            
                 var $whyPanel_panelCard = $('<div />').addClass('rdr_panelCard rdr_panelCard'+int_id);
                 $whyPanel_panelCard.data({
                     'tagID':tag.id,
                     'intactID':int_id
                 });
                 
-                log($whyPanel_panelCard );
                 //$whyPanel_body.empty();
             
                 //add to the $whyPanel_body and hide any sibling panels that have been made;
