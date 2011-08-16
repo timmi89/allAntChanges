@@ -4895,7 +4895,7 @@ function readrBoard($R){
                 switch (args.sns) {
                     case "facebook":
                     // TODO make dynamic
-                        window.open('http://www.facebook.com/sharer.php?s=100&p[title]="'+args.content+'"&p[summary]=hilarious&p[url]='+args.short_url,"readr_share_fb","menubar=1,resizable=1,width=626,height=436");
+                        window.open('http://www.facebook.com/sharer.php?s=100&p[title]="'+encodeURI(args.content.substr(0, content_length) )+'"&p[summary]='+encodeURI(args.reaction)+'&p[url]='+args.short_url,"readr_share_fb","menubar=1,resizable=1,width=626,height=436");
                     //&p[images][0]=<?php echo $image;?>', 'sharer',
                     break;
 
