@@ -57,6 +57,9 @@ else:
 # Facebook shit
 LOGIN_REDIRECT_URL = '/'
 
+#GeoIP shit
+GEOIP_PATH = 'geo_data'
+
 MANAGERS = ADMINS
 
 # Local time zone for this installation. Choices can be found here:
