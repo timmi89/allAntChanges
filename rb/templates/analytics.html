@@ -131,7 +131,8 @@ RB.analytics = {
 					var tag_list = "";
 					for ( var i in response ) {
 						var sizeClass = ( response[i].count > 7 ) ? "large" : (response[i].count > 4 ) ? "medium" : "small";
-						tag_list += '<li class="'+sizeClass+'"><a href="#">('+response[i].count+') '+response[i].interaction_node__body+'</a></li>';
+						tag_list += '<li class="'+sizeClass+'">('+response[i].count+') '+response[i].interaction_node__body+'</li>';
+						// tag_list += '<li class="'+sizeClass+'"><a href="#">('+response[i].count+') '+response[i].interaction_node__body+'</a></li>';
 					}
 					$('section[role="most popular tags"] ol').html( $(tag_list) );
 				} else if (type=="bookmarks") {
@@ -192,7 +193,8 @@ RB.analytics = {
 					var pageHtml = "";
 					
 					for ( var i in response) {
-						pageHtml += '<tr><td role="url"><div><a href="'+response[i].page.canonical_url+'" target="_blank">'+response[i].page.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
+						pageHtml += '<tr><td role="url"><div>'+response[i].page.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" />&nbsp;&nbsp;</div></td>'
+						// pageHtml += '<tr><td role="url"><div><a href="'+response[i].page.canonical_url+'" target="_blank">'+response[i].page.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
 						+'<td role="title">'+response[i].page.title+'</td>'
 						+'<td role="reactions">'+response[i].counts.tag+'</td>'
 						+'<td role="shares">'+response[i].counts.shr+'</td>'
@@ -254,7 +256,8 @@ RB.analytics = {
 
 				var recentHtml = "";
 				for (var i in response) {
-					recentHtml += '<tr><td><strong><a href="'+response[0].id+'">'+response[0].title+'</a></strong></td></tr><tr>';
+					recentHtml += '<tr><td><strong>'+response[0].title+'</strong></td></tr><tr>';
+					// recentHtml += '<tr><td><strong><a href="'+response[0].id+'">'+response[0].title+'</a></strong></td></tr><tr>';
 					// TODO make above line link to page profile
 				}
 
