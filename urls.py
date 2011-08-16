@@ -27,9 +27,9 @@ urlpatterns = patterns('',
   
   # Client Facing Registration & Settings
   #url(r'^settings/$', 'rb.views.settings'),
-  #url(r'^register/$', 'rb.views.group'),
+  url(r'^register/$', 'rb.views.group'),
   #url(r'^sites/$'), 'rb.views.sites'),
-  #url(r'^settings/(?P<short_name>[\w\-]+)/$', 'rb.views.settings'),
+  url(r'^settings/(?P<short_name>[\w\-]+)/$', 'rb.views.settings'),
 
   # User profile pages
   url(r'^user/(?P<user_id>\d+)/$', 'rb.views.main'),

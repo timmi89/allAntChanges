@@ -50,12 +50,12 @@ class PrivacyHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, data):
         # Check if current user's token has permission
-        if not checkToken(data): raise JSONException(u"Token was invalid")
-        user_id = data.get('user_id')
+        user = checkToken(data)
+        if not user: raise JSONException(u"Token was invalid")
         
         # Retrieve social user
         try:
-            su = SocialUser.objects.get(user=user_id)
+            su = SocialUser.objects.get(user=user)
         except SocialUser.DoesNotExist, SocialUser.MultipleObjectsReturned:
             raise JSONException(u"Privacy Handler: Error getting socialuser!")
             
@@ -70,14 +70,11 @@ class ModerationHandler(AnonymousBaseHandler):
         data['group_id'] = 1
         
         # Check if current user's token has permission
-        if not checkToken(data): raise JSONException(u"Token was invalid")
-        user_id = data.get('user_id')
-        int_id = data.get('int_id')
+        user = checkToken(data)
+        if not user: raise JSONException(u"Token was invalid")
         
-        try:
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist, User.MultipleObjectsReturned:
-            raise JSONException(u"Interaction Handler: Error getting user!")
+        int_id = data.get('int_id')
+
         try:
             interaction = Interaction.objects.get(id=int_id)
         except User.DoesNotExist, User.MultipleObjectsReturned:
@@ -110,13 +107,8 @@ class InteractionHandler(AnonymousBaseHandler):
         
         else:
             # check to see if user's token is valid
-            if not checkToken(data): raise JSONException(u"Token was invalid")
-            # get user data
-            user_id = data.get('user_id')
-            try:
-                user = User.objects.get(id=user_id)
-            except User.DoesNotExist, User.MultipleObjectsReturned:
-                raise JSONException(u"Interaction Handler: Error getting user!")
+            user = checkToken(data)
+            if not user: raise JSONException(u"Token was invalid")
 
             # do create action - varies per interaction
             if action == 'create':

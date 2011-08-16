@@ -10,6 +10,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models import Count
 from api.utils import *
 from api.exceptions import JSONException
+from api.token import checkCookieToken
 from cards import Card
 from django.utils.encoding import smart_str, smart_unicode
 from django.template import RequestContext
@@ -54,10 +55,12 @@ def xdm_status(request):
       context_instance=RequestContext(request)
     )
 
+def group(request):
+    pass
+
 def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **kwargs):
-    cookies = request.COOKIES
+    cookie_user = checkCookieToken(request)
     page_num = request.GET.get('page_num', 1)
-    cookie_user_id = cookies.get('user_id')
     context = {
         'fb_client_id': FACEBOOK_APP_ID,
         'user_id': user_id,
@@ -66,8 +69,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
         'page_num': page_num
     }
 
-    if cookie_user_id:
-        cookie_user = User.objects.get(id=cookie_user_id)
+    if cookie_user:
         context['cookie_user'] = cookie_user
         
     """ For interactions.html """
@@ -168,6 +170,9 @@ class GroupForm(ModelForm):
         fields = ('name', 'short_name', 'twitter', 'language', 'anno_whitelist', 'no_readr', 'img_whitelist', 'img_blacklist', 'temp_interact', 'logo_url_sm', 'logo_url_med', 'logo_url_lg', 'requires_approval', 'word_blacklist', 'css_url', 'secret', 'blessed_tags' )
 
 def settings(request, short_name=None):
+    cookie_user = checkCookieToken(request)
+    print cookie_user
+    
     try:
         group = Group.objects.get(short_name=short_name)
     except Group.DoesNotExist:
