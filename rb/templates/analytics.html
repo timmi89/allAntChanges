@@ -49,7 +49,7 @@
 		
 		<section role="interaction frequency">
 			<div role="total interactions">
-				<h1>1,100</h1>
+				<h1>0</h1>
 				<h4>Interactions</h4>
 			</div>
 			<div role="frequency chart">
@@ -284,7 +284,6 @@ RB.analytics = {
 			contentType: "application/json",
 			dataType: "jsonp",
 			success: function(response){
-				
 				if ( type == "pages" ) {
 					var pageHtml = "";
 					
@@ -342,7 +341,6 @@ RB.analytics = {
 			contentType: "application/json",
 			dataType: "jsonp",
 			success: function(response){
-				console.dir(response);
 
 				var recentHtml = "";
 				for (var i in response) {
@@ -369,8 +367,7 @@ RB.analytics = {
 					shares = 0,
 					comments = 0,
 					bookmarks = 0;
-				console.log('interactionFrequency');
-				console.dir(response);
+
 				for ( var i in response ) {
 					for ( var j in response[i]) {
 						if ( response[i][j].tag ) tags += response[i][j].tag;
@@ -381,7 +378,7 @@ RB.analytics = {
 				}
 
 				var total = tags + shares + comments + bookmarks;
-console.log( total );
+
 				$('div[role="total interactions"] h1').text( total );
 			}
 		});
