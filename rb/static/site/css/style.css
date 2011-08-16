@@ -226,7 +226,7 @@ border-collapse:collapse;
 border-spacing:0;
 margin-bottom:1.4em; 
 width:100%;
-font-size:.875em; /* 14 / 16 = .875 */ }
+}
 
 th { 
 font-weight:bold; }
@@ -631,6 +631,33 @@ section[role="complementary"] #user_data label span {
 	float:left;
 	clear:both;
 }
+
+/*************** WIDE PAGES ***************/
+/* CONTENT CONTAINER */
+body.wide section[role="content"]	{
+	width:1120px;
+	margin:40px auto 0;
+	padding:0;
+	background:#ccc;
+	overflow:auto;
+	position:relative;
+	box-shadow:none;
+}
+
+/* MAIN */
+body.wide section[role="main"] 	{ 
+	clear:both;
+	margin:0;
+	padding:0;
+	/*float:left;*/
+	background:#fff; /* D2DEE4 */
+	width:1120px;
+}
+
+body.wide section[role="complementary"] { 
+	display:none;
+}
+
 
 
 /* HEADINGS */
