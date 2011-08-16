@@ -673,9 +673,9 @@ section[role="wide panels"] h3 			{ font-family:'ReadrLeague'; font-size:30px; m
 section[role="wide panels"] h4 			{ font-family:'ReadrLeague'; font-size:24px; margin:0; }
 
 section[role="interaction frequency"] 				{ overflow:auto; text-align:center; }
-section[role="interaction frequency"] h1			{ font-family:'ReadrLeague'; font-size:80px; text-shadow: 1px 2px 1px #fff; padding:0; margin:0; color:#638296; }
+section[role="interaction frequency"] h1			{ font-family:'ReadrLeague'; font-size:80px; text-shadow: 1px 2px 1px #fff; padding:25px 0 0; margin:0; color:#638296; }
 div[role="total interactions"]						{ width:130px; float:left; overflow:auto; }
-div[role="frequency chart"]							{ width:610px; margin-left:130px; background:#aaa; color:#ddd; box-shadow:0px -10px 9px -9px #454545 inset; min-height:100px; padding-top:40px; }
+div[role="frequency chart"]							{ width:610px; margin-left:130px; color:#ddd; box-shadow:0px -10px 9px -9px #454545 inset; min-height:100px; }
 
 section[role="most popular tags"] ol				{ margin:0; padding:0; overflow:auto; list-style-type:none;}
 section[role="most popular tags"] ol li				{ margin:0 10px 0 0; display:inline-block; padding-right:25px; }
