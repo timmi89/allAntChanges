@@ -16,7 +16,6 @@ from django.utils.encoding import smart_str, smart_unicode
 from django.template import RequestContext
 from django.db.models import Q
 from forms import *
-from decorators import requires_admin
 
 def widget(request, sn):
     # Widget code is retreived from the server using RBGroup shortname
