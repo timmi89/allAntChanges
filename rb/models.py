@@ -80,6 +80,7 @@ class Group(models.Model):
     name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=25, unique=True)
     language = models.CharField(max_length=25, default="en")
+    approved = models.BooleanField(default=False)
     requires_approval = models.BooleanField(default=False)
     word_blacklist = models.TextField(blank=True)
     blessed_tags = models.ManyToManyField(InteractionNode)

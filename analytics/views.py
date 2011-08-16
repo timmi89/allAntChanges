@@ -47,10 +47,12 @@ class AnalyticsHandler(AnonymousBaseHandler):
         group = Group.objects.get(short_name=short_name)
         interactions = interactions.filter(page__site__group=group)
         
+        # Page specific filters
         if data['page_id']:
             page = Page.objects.get(id=data['page_id'])
             interactions = interactions.filter(page=page)
-    
+        
+        # Date range filters    
         if data['start']:
             interactions = interactions.filter(
                 created__gte=datetime.strptime(data['start'], "%m/%d/%y")

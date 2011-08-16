@@ -476,7 +476,7 @@ function readrBoard($R){
                             // todo: [porter] i'm looping to see if there is a comment for this TAG.  can we just send this down from server?
                             var commentsHere = 0;
                             for ( var i in topComs ) {
-                                if ( topComs[i].tag_id == tagOrder.id ) {
+                                if ( (topComs[i].tag_id == tagOrder.id) || ( i == tagOrder.id ) ) {  // first is for text, second option is for images/media
                                     $li.addClass('rdr_has_comment');
 
                                     // loop to see how many content_nodes' comments are under this tag
@@ -489,10 +489,8 @@ function readrBoard($R){
                                             }
                                         }
                                     } else {
-                                        for ( var l in summary.top_interactions.coms ) {
-                                            if ( summary.top_interactions.coms[l].tag_id == topComs[i].tag_id ) {
+                                        for ( var l in summary.top_interactions.coms[i] ) {
                                                 commentsHere++; 
-                                            }
                                         }
                                     }
                                 }
@@ -2028,6 +2026,7 @@ function readrBoard($R){
                             //On sucess, these unknown hashes will get passed to RDR.actions.containers.setup with dummy summaries
                             RDR.actions.containers.send(unknownList, onSuccessCallback);
                         }
+
                         if ( ! $.isEmptyObject(summaries) ){
                             //setup the known summaries
                             RDR.actions.containers.setup(summaries);
@@ -2063,11 +2062,9 @@ function readrBoard($R){
                 },
                 setup: function(summaries){
                     //RDR.actions.containers.setup:
-
                     //then define type-specific setup functions and run them
                     var _setupFuncs = {
                         img: function(hash, summary){
-                            
                             var containerInfo = RDR.containers[hash];
                             var $container = containerInfo.$this;
 
@@ -2127,7 +2124,6 @@ function readrBoard($R){
                                     RDR.actionbar.closeSuggest(hash);
                                 }
                             );
-                            
                         },
                         media: function(hash, summary){
                             //for now, just pass through to img.
@@ -2141,7 +2137,7 @@ function readrBoard($R){
                     var hashesToShow = []; //filled below
                     $.each(summaries, function(hash, summary){
                         //first do generic stuff
-                        
+
                         //save the hash as a summary attr for convenience.
                         summary.hash = hash;
 
@@ -2153,10 +2149,20 @@ function readrBoard($R){
                         //temp type conversion for top_interactions.coms;
                         var newComs = {},
                             coms = summary.top_interactions.coms;
+
                         $.each(coms, function(arrIdx, com){
                             //sortby tag_id
-                            newComs[com.tag_id] = com;
+
+                            // [ porter ] this shouldn't be needed, but it is, 
+                            // because the correct comment set, for text, is actually found in summary.content_nodes.top_interactions, which does not exist for images
+                            if ( summary.kind == "text" ) {
+                                newComs[com.tag_id] = com;
+                            } else {
+                                if ( !newComs[com.tag_id] ) newComs[com.tag_id] = [];
+                                newComs[com.tag_id].push(com);
+                            }
                         });
+
                         summary.top_interactions.coms = newComs;
 
                         RDR.actions.summaries.save(summary);
@@ -4033,7 +4039,7 @@ function readrBoard($R){
                     $whyPanel_panelCard.appendTo($whyPanel_body);
                 }
                 $whyPanel_panelCard.siblings('.rdr_panelCard').hide();
-                $whyPanel_panelCard.append( _makeInfoBox() );
+                $whyPanel_panelCard.append( _makeInfoBox(content_node) );
 
                 _makeHeaders();
                 _makeOtherReactions();
@@ -4109,7 +4115,7 @@ function readrBoard($R){
                             
                             var prefix = count ? ", " : "", //don't include the first time
                                 $tag = $('<span/>').append(tag.body),
-                                $count = $('<span/>').append( '('+tag.count+')' ),
+                                $count = $('<span/>').append( ' ('+tag.count+')' ),
                                 $wrap = $('<span />').addClass('rdr_tags_list_tag');
                             $wrap.append( prefix, $tag, $count);
                             $otherTags.append( $wrap );
@@ -4131,8 +4137,8 @@ function readrBoard($R){
                     }
                 }
 
-                function _makeInfoBox(){
-                    
+                function _makeInfoBox(content_node){
+
                     var $socialBox = $('<div class="rdr_share_social"><h4>Share:</h4></div>'), 
                     $shareLinks = $('<ul class="shareLinks"></ul>'),
                     socialNetworks = ["facebook","twitter"]; //,"tumblr","linkedin"];
@@ -4142,8 +4148,8 @@ function readrBoard($R){
                     $.each(socialNetworks, function(idx, val){
                         $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                         $shareLinks.find('li:last').click( function() {
-                            var real_content_node = RDR.content_nodes[hash];
-                            RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:real_content_node });
+                            // var real_content_node = ( RDR.content_nodes[hash] ) ? RDR.content_nodes[hash] : RDR.summaries[hash].content;
+                            RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
                             return false;
                         });
                     });
@@ -4231,13 +4237,13 @@ function readrBoard($R){
                 }
 
                 function _makeOtherComments(){
-                    
+
                     var comments;
                     // () ? text_node : image_node
                     if ( kind == "text" ) {
                         comments = summary.content_nodes[ content_node.id ].top_interactions.coms;
                     } else {
-                        comments = summary.top_interactions.coms;
+                        comments = summary.top_interactions.coms[tag.id];
                     }
                     
                     var node_comments = 0;
@@ -4620,8 +4626,14 @@ function readrBoard($R){
 
                         $header.append( $tagInfo, $rightBox );
                         if ( !$.isEmptyObject( content_node.top_interactions.coms ) ) {
-                            $header.addClass('rdr_has_comment');
-                            $header.find('div.rdr_rightBox').append('<span>' + RDR.util.prettyNumber( content_node.top_interactions.coms.length ) + '</span>');
+                            var num_comments = 0;
+                            for ( var i in content_node.top_interactions.coms ) {
+                                if ( content_node.top_interactions.coms[i].tag_id == tag.id ) num_comments++;
+                            }
+                            if ( num_comments > 0 ) {
+                                $header.find('div.rdr_rightBox').append('<span>' + RDR.util.prettyNumber( num_comments ) + '</span>');
+                                $header.addClass('rdr_has_comment');
+                            }
                         }
 
                         //todo: consolodate truncate functions
@@ -4703,7 +4715,6 @@ function readrBoard($R){
                         //         var content_node_info = $(this).closest('div.rdr_contentSet').data();
                         //         var tag = $this.closest('a.rdr_tag').data('tag');
                         //         $shareTip.find('img.rdr_sns').click( function() {
-                        //             RDR.actions.share_getLink({ hash:hash, kind:summary.kind, sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node:content_node_info });
                         //         });
                         //     }
                         // ).mouseleave(
@@ -4891,7 +4902,7 @@ function readrBoard($R){
                                     }
 
                                     //successfully got a short URL
-                                    RDR.actions.shareContent({ sns:params.sns, content:content_node_info.content, short_url:response.data.short_url, reaction:tag.body });
+                                    RDR.actions.shareContent({ sns:params.sns, content_node_info:content_node_info, short_url:response.data.short_url, reaction:tag.body });
                                 }
                             },
                             error: function(response) {
@@ -4901,16 +4912,19 @@ function readrBoard($R){
                 });
             },
             shareContent: function(args) {
+
+                var content = args.content_node_info.content;
                 switch (args.sns) {
                     case "facebook":
                     // TODO make dynamic
-                        window.open('http://www.facebook.com/sharer.php?s=100&p[title]="'+args.content+'"&p[summary]=hilarious&p[url]='+args.short_url,"readr_share_fb","menubar=1,resizable=1,width=626,height=436");
+                        window.open('http://www.facebook.com/sharer.php?s=100&p[title]='+encodeURI(content.substr(0, content_length) )+'&p[summary]='+encodeURI(args.reaction)+'&p[url]='+args.short_url,"readr_share_fb","menubar=1,resizable=1,width=626,height=436");
                     //&p[images][0]=<?php echo $image;?>', 'sharer',
                     break;
 
                     case "twitter":
                         var content_length = ( 90 - args.reaction.length );
-                        window.open('http://twitter.com/intent/tweet?url='+args.short_url+'&via='+RDR.group.twitter+'&text='+encodeURI(args.reaction)+':+"'+encodeURI(args.content.substr(0, content_length) )+'"',"readr_share_tw","menubar=1,resizable=1,width=626,height=436");
+                        var twitter_acct = ( RDR.group.twitter ) ? '&via='+RDR.group.twitter : '';
+                        window.open('http://twitter.com/intent/tweet?url='+args.short_url+twitter_acct+'&text='+encodeURI(args.reaction)+':+"'+encodeURI(content.substr(0, content_length) )+'"',"readr_share_tw","menubar=1,resizable=1,width=626,height=436");
                     break;
 
                     case "tumblr":
