@@ -199,7 +199,7 @@ def expander(request, short):
     try:
         link = Link.objects.get(id=link_id);
     except Link.DoesNotExist:
-        raise JSONException("Link didn't exist (it's in ur base killin ur dudez)")
+        return HttpResponseRedirect('/')
 
     # Update usage count
     link.usage_count += 1
