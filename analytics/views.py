@@ -7,7 +7,7 @@ from django.db.models import Count, Sum
 from django.core import serializers
 from piston.handler import AnonymousBaseHandler
 from settings import DEBUG
-from decorators import requires_admin
+from authentication.decorators import requires_admin
 
 @requires_admin
 def analytics(request, group=None):
