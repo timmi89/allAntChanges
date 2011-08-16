@@ -7,9 +7,10 @@ from django.db.models import Count, Sum
 from django.core import serializers
 from piston.handler import AnonymousBaseHandler
 from settings import DEBUG
+from decorators import requires_admin
 
-def analytics(request, short_name=None):
-    group = Group.objects.get(short_name=short_name)
+@requires_admin
+def analytics(request, group=None):
     context = {}
     context['group'] = group
     return render_to_response("analytics.html", context)
@@ -42,9 +43,8 @@ class InteractionNodeHandler(AnonymousBaseHandler):
     
 class AnalyticsHandler(AnonymousBaseHandler):
     @analytics_request
-    def read(self, request, data, short_name, **kwargs):
+    def read(self, request, data, **kwargs):
         interactions = Interaction.objects.all()
-        group = Group.objects.get(short_name=short_name)
         interactions = interactions.filter(page__site__group=group)
         
         # Page specific filters

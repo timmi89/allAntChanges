@@ -89,7 +89,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
     if user_id:
         profile_user = User.objects.get(id=user_id)
         interactions = interactions.filter(user=user_id)
-        if cookie_user_id and (cookie_user != profile_user):
+        if cookie_user != profile_user:
             interactions = interactions.exclude(kind="bkm")
         context['profile_user'] = profile_user
     else:
