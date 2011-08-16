@@ -4168,53 +4168,66 @@ function readrBoard($R){
                 function _makeCommentBox(){
 
                     //todo: combine this with the tooltip for the tags
-                    // var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+tag.id+'">Comment</button></div>');
+                    // var $commentDiv =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+tag.id+'">Comment</button></div>');
                     var $commentBox = $('<div class="rdr_commentBox rdr_sntPnl_padder"></div>').html(
                         '<div class="rdr_commentComplete"><div><h4>Leave a comment:</h4></div></div>'
                     );
-                    var helpText = "because...";
-                    $leaveComment = $( '<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div><button>Comment</button></div>' );
-                    $leaveComment.find('textarea').focus(function(){
-                        if($('.leaveComment').val() == helpText ){
-                            $('.leaveComment').val('');
+                   //todo: combine this with the other make comments code
+                    var helpText = "because...",
+                        $commentDiv =  $('<div class="rdr_comment">'),
+                        $commentTextarea = $('<textarea class="commentTextArea">' +helpText+ '</textarea>'),
+                        $rdr_charCount =  $('<div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div>'),
+                        $submitButton =  $('<button id="rdr_comment_on_'+int_id.id+'">Comment</button>');
+                    
+                    $commentDiv.append( $commentTextarea, $rdr_charCount, $submitButton );
+                    
+                    $commentTextarea.focus(function(){
+                        if( $(this).val() == helpText ){
+                            $(this).val('');
                         }
                     }).blur(function(){
-                        if($('.leaveComment').val() === "" ){
-                            $('.leaveComment').val(helpText);
+                        if( $(this).val() === "" ){
+                            $(this).val( helpText );
                         }
                     }).keyup(function(event) {
-                        $textarea = $(this);
-
-                        if (event.keyCode == '13') { //enter or comma
-                            //RDR.actions.panel.expand(rindow);
-                        }
-                        else if (event.keyCode == '27') { //esc
+                        var commentText = $commentTextarea.val();
+                        if (event.keyCode == '27') { //esc
                             //return false;
-                        } else if ( $textarea.val().length > RDR.group.comment_length ) {
-                            var commentText = $textarea.val();
-                            $textarea.val( commentText.substr(0, RDR.group.comment_length) );
+                        } else if ( commentText.length > RDR.group.comment_length ) {
+                            commentText = commentText.substr(0, RDR.group.comment_length);
+                            $commentTextarea.val( commentText );
                         }
-                        $textarea.siblings('div').text( ( RDR.group.comment_length - $textarea.val().length ) + " characters left" );
+                        $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
                     });
 
-                    // $leaveComment.find('textarea').autogrow();
+                    // $commentDiv.find('textarea').autogrow();
+                                        
+                    $submitButton.click(function(e) {
+                        var commentText = $commentTextarea.val();
 
-                    
-                    $leaveComment.find('button').click(function() {
-                        var comment = $leaveComment.find('textarea').val();
-                    
-                        if ( comment != "because..." ) {
+                        //keyup doesn't guarentee this, so check again (they could paste in for example);
+                        if ( commentText.length > RDR.group.comment_length ) {
+                            commentText = commentText.substr(0, RDR.group.comment_length);
+                            $commentTextarea.val( commentText );
+                            $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
+                        }
+                        
+                        if ( commentText != helpText ) {
+                            //temp translations..
                             //quick fix
                             content_node.kind = summary.kind;
-
-                            var args = { content_node_data:content_node, comment:comment, hash:hash, content:content_node.body, tag:tag, rindow:rindow, selState:selState};
+                            
+                            var args = {  hash:hash, content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:rindow, selState:selState};
                             //leave parent_id undefined for now - backend will find it.
                             RDR.actions.interactions.ajax( args, 'comment', 'create');
-                        }
 
+                        } else{
+                            $commentTextarea.focus();
+                        }
+                        return false; //so the page won't reload
                     });
 
-                    return $commentBox.append( $leaveComment );
+                    return $commentBox.append( $commentDiv );
                 }
 
                 function _makeOtherComments(){
@@ -4498,7 +4511,9 @@ function readrBoard($R){
                     
                     if ( rindow.find('div.rdr_rindow_message').length > 0 ) {
                         //rinh rindow.height( rindow.height()-103 );
-                        rindow.find('div.rdr_rindow_message').remove();
+                        RDR.session.rindowUserMessage.hide({
+                            rindow:rindow
+                        });
                     }
                     //temp hack
                     if( !$thisPanel.data('expanded') ){
@@ -5087,51 +5102,63 @@ function readrBoard($R){
                     $commentBox
                 );
 
-                //todo: combine this with the tooltip for the tags
-                var helpText = "because...";
-                //var $commentTextarea = 
-                var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><div class="rdr_charCount">'+RDR.group.comment_length+' characters let</div><button id="rdr_comment_on_'+int_id.id+'">Comment</button></div>');
-                $leaveComment.find('textarea').focus(function(){
-                    if($('.leaveComment').val() == helpText ){
-                        $('.leaveComment').val('');
+               //todo: combine this with the other make comments code
+                var helpText = "because...",
+                    $commentDiv =  $('<div class="rdr_comment">'),
+                    $commentTextarea = $('<textarea class="commentTextArea">' +helpText+ '</textarea>'),
+                    $rdr_charCount =  $('<div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div>'),
+                    $submitButton =  $('<button id="rdr_comment_on_'+int_id.id+'">Comment</button>');
+                
+                $commentDiv.append( $commentTextarea, $rdr_charCount, $submitButton );
+                
+                $commentTextarea.focus(function(){
+                    if( $(this).val() == helpText ){
+                        $(this).val('');
                     }
                 }).blur(function(){
-                    if($('.leaveComment').val() === "" ){
-                        $('.leaveComment').val(helpText);
+                    if( $(this).val() === "" ){
+                        $(this).val( helpText );
                     }
                 }).keyup(function(event) {
-                    $textarea = $(this);
-
-                    if (event.keyCode == '13') { //enter or comma
-                        //RDR.actions.panel.expand(rindow);
-                    }
-                    else if (event.keyCode == '27') { //esc
+                    var commentText = $commentTextarea.val();
+                    if (event.keyCode == '27') { //esc
                         //return false;
-                    } else if ( $textarea.val().length > RDR.group.comment_length ) {
-                        var commentText = $textarea.val();
-                        $textarea.val( commentText.substr(0, RDR.group.comment_length) );
+                    } else if ( commentText.length > RDR.group.comment_length ) {
+                        commentText = commentText.substr(0, RDR.group.comment_length);
+                        $commentTextarea.val( commentText );
                     }
-                    $textarea.siblings('div').text( ( RDR.group.comment_length - $textarea.val().length ) + " characters left" );
+                    $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
                 });
 
-                // $leaveComment.find('textarea').autogrow();
+                // $commentDiv.find('textarea').autogrow();
                                     
-                $leaveComment.find('button').click(function() {
-                    var comment = $leaveComment.find('textarea').val();
-                    //[cleanlogz]('--------- selState 2: '+content_node.selState);
+                $submitButton.click(function(e) {
+                    var commentText = $commentTextarea.val();
+
+                    //keyup doesn't guarentee this, so check again (they could paste in for example);
+                    if ( commentText.length > RDR.group.comment_length ) {
+                        commentText = commentText.substr(0, RDR.group.comment_length);
+                        $commentTextarea.val( commentText );
+                        $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
+                    }
                     
-                    if ( comment != "because..." ) {
+                    if ( commentText != helpText ) {
                         //temp translations..
                         //quick fix
                         content_node.kind = summary.kind;
 
-                        var args = { hash:hash, kind:summary.kind, content_node_data:content_node, comment:comment, int_id:int_id, rindow:rindow, selState:content_node.selState, tag:tag};
+                        var args = { hash:hash, kind:summary.kind, content_node_data:content_node, comment:commentText, int_id:int_id, rindow:rindow, selState:content_node.selState, tag:tag};                            
                         //leave parent_id undefined for now - backend will find it.
                         RDR.actions.interactions.ajax( args, 'comment', 'create');
-                    }
-                });
 
-                $commentBox.append( $leaveComment );
+                    } else{
+                        $commentTextarea.focus();
+                    }
+                    return false; //so the page won't reload
+                });
+                //end comment.make section - to be merged later with other duplicated code
+
+                $commentBox.append( $commentDiv );
 
                 var $socialBox = $('<div class="rdr_share_social"><h4>Share:</h4></div>'),
                 $shareLinks = $('<ul class="shareLinks"></ul>'),
