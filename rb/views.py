@@ -54,7 +54,7 @@ def xdm_status(request):
     )
 
 def sites(request):
-    pass    
+    pass
 
 def group(request):
     pass
