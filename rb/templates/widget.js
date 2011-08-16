@@ -1628,7 +1628,7 @@ function readrBoard($R){
                                     (interactionInfo.type == 'comment') ?
                                         "You have left your comment." :
                                         ""; //this default shouldn't happen
-                                    userMsg += " See your "+interactionInfo.type+"s at <a href='http://www.readrboard.com' target='_blank'>readrboard.com</a>";
+                                    userMsg += " See your "+interactionInfo.type+"s at <a href='"+RDR_rootPath+"' target='_blank'>readrboard.com</a>";
                                 }
                                 rindowHeightDefault = 103;
                                 break;
@@ -3238,7 +3238,7 @@ function readrBoard($R){
                             });
 
                             // TODO make this link to the user profile work
-                            var $seeTags = $('<div class="rdr_sntPnl_padder"><div>Your bookmarks are private - only you can see them.</div><br/ ><strong>To view your bookmarks, visit your <a href="http://dev.readrboard.com/user/'+RDR.user.user_id+'" target="_blank">ReadrBoard profile</a>.</strong></div>');
+                            var $seeTags = $('<div class="rdr_sntPnl_padder"><div>Your bookmarks are private - only you can see them.</div><br/ ><strong>To view your bookmarks, visit your <a href="'+RDR_rootPath+'/user/'+RDR.user.user_id+'" target="_blank">ReadrBoard profile</a>.</strong></div>');
                             
                             $whyPanel_panelCard.append(
                                 $tagFeedback.append($undoLink),
