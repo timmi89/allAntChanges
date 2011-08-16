@@ -1,7 +1,6 @@
 from readrboard.rb.models import *
 from django.utils.hashcompat import sha_constructor
 from datetime import datetime
-from exceptions import JSONException
 from extras.facebook import GraphAPI, GraphAPIError
 
 def checkCookieToken(request):
@@ -10,8 +9,8 @@ def checkCookieToken(request):
     """
     cookies = request.COOKIES
     data = {}
-    data['user_id'] = cookies.get('user_id')
-    data['readr_token'] = cookies.get('readr_token')
+    data['user_id'] = cookies.get('user_id', None)
+    data['readr_token'] = cookies.get('readr_token', None)
     return checkToken(data)
 
 def checkToken(data):
@@ -39,10 +38,7 @@ def checkToken(data):
     # Check and set auth_token for registered social user
     if len(social_user) == 1:
         print "Checking token for registered user"
-        try:
-            social_auth = SocialAuth.objects.get(social_user__user=data['user_id'])
-        except SocialAuth.DoesNotExist:
-            raise JSONException(u'Social Auth does not exist for user')
+        social_auth = SocialAuth.objects.get(social_user__user=data['user_id'])
 
         # Check with facebook to see if token is still valid
         # Note: this is slow -- look for a way to improve
@@ -50,14 +46,13 @@ def checkToken(data):
             graph = GraphAPI(social_auth.auth_token)
             graph.get_object("me")
         except GraphAPIError:
-            raise JSONException(u'FB graph error - token invalid')
-        
+            return None 
         # If facebook approves, check if expired -- could be redundant
         now = datetime.now()
         if social_auth.expires > now:
             auth_token = social_auth.auth_token
         else:
-            raise JSONException(u'Facebook token expired')
+            return None
     
     # Set auth_token for temporary user
     else:
@@ -87,5 +82,4 @@ def createToken(django_id, auth_token):
         ).hexdigest()[::2]
         print "Created token", token
         return token
-    else:
-        raise JSONException(u"Data to create token is missing")
+    return None

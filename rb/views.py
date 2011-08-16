@@ -9,14 +9,13 @@ from baseconv import base62
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models import Count
 from api.utils import *
-from api.exceptions import JSONException
-from api.token import checkCookieToken
+from authentication.token import checkCookieToken
+from authentication.decorators import requires_admin
 from cards import Card
 from django.utils.encoding import smart_str, smart_unicode
 from django.template import RequestContext
 from django.db.models import Q
 from forms import *
-from decorators import requires_admin
 
 def widget(request, sn):
     # Widget code is retreived from the server using RBGroup shortname
@@ -53,6 +52,9 @@ def xdm_status(request):
       {'fb_client_id': FACEBOOK_APP_ID},
       context_instance=RequestContext(request)
     )
+
+def sites(request):
+    pass
 
 def group(request):
     pass

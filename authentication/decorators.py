@@ -1,7 +1,7 @@
-from api.token import checkCookieToken
-from rb.models import Group, User, SocialUSer
+from authentication.token import checkCookieToken
+from rb.models import Group, User, SocialUser
 from django.http import HttpResponseRedirect
-from api.exceptions import JSONException
+from extras.facebook import GraphAPIError
 
 def requires_login(func):
     pass
@@ -10,14 +10,11 @@ def requires_admin(func):
     def wrapper(request, short_name, *args, **kwargs):
         try:
             cookie_user = checkCookieToken(request)
-        except:
+        except GraphAPIError:
             return HttpResponseRedirect('/')
         # If a user is registered and logged in
         if cookie_user:
-            try:
-                group = Group.objects.get(short_name=short_name)
-            except Group.DoesNotExist:
-                return JSONException(u'Invalid group')
+            group = Group.objects.get(short_name=short_name)
             try:
                 social_user = SocialUser.objects.get(user=cookie_user)
             except SocialUser.DoesNotExist:
