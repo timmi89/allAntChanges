@@ -1567,8 +1567,7 @@ function readrBoard($R){
                     
                         var msgType = args.msgType || "tempUser", //defaults to tempUser
                             userMsg = "",
-                            actionPastTense,
-                            rindowHeightDefault; //todo: this is a patchy fix, make it better.
+                            actionPastTense;
 
                         var extraHeight = 45,  //$rindowMsgDiv.height(),
                             rindowHeight = $rindow.height(),
@@ -1592,6 +1591,9 @@ function readrBoard($R){
                         switch (msgType) {
 
                             case "tempUser":
+                                //for now, just ignore this
+                                break;
+                                /*
                                 var num_interactions_left = RDR.group.temp_interact - parseInt( args.num_interactions ),
                                     $loginLink = $('<a href="javascript:void(0);">Connect with Facebook</a>.');
                                 
@@ -1601,13 +1603,12 @@ function readrBoard($R){
                                 });
                                 
                                 var tmpUserMsg = 'You can react or comment <strong>' + num_interactions_left + ' more times</strong> before you must ';
-                                rindowHeightDefault = 103;
                                 $rindowMsgDivInnerwrap.after('<span>'+tmpUserMsg+'</span>');
                                 break;
+                                */
     
                             case "existingInteraction":
                                 userMsg = "You have already given that reaction for this.";
-                                rindowHeightDefault = 103;
                                 break;
                             
                             case "interactionSuccess":
@@ -1625,7 +1626,6 @@ function readrBoard($R){
                                         ""; //this default shouldn't happen
                                     userMsg += " See your "+interactionInfo.type+"s at <a href='"+RDR_rootPath+"' target='_blank'>readrboard.com</a>";
                                 }
-                                rindowHeightDefault = 103;
                                 break;
                         
                         }   
@@ -1641,15 +1641,17 @@ function readrBoard($R){
 
                         $rindowMsgDivInnerwrap.hide();
                         $rindow.queue('userMessage', function(){
-                            if(extraHeight){
+                            if( $rindowMsgDiv.height() > 0 ){
+                                //already expanded
+                                $rindowMsgDivInnerwrap.fadeIn(400);
+                                $(this).dequeue('userMessage');
+                            }else{
+                                //expand it and expand the window with it.
                                 $rindow.animate({ height: rindowHeight+extraHeight }, durr);
                                 $rindowMsgDiv.animate({ height:extraHeight },durr, function(){
                                     $rindowMsgDivInnerwrap.fadeIn(400);
                                     $(this).dequeue('userMessage');
                                 });
-                            }else{
-                                $rindowMsgDivInnerwrap.fadeIn(400);
-                                $(this).dequeue('userMessage');
                             }
                         });
                         $rindow.dequeue('userMessage');
@@ -1663,7 +1665,7 @@ function readrBoard($R){
                             //else
 
                             //todo: make this a better solution.  The simultaneous animations might not be ideal.
-                            var extraHeight = 45,  //$rindowMsgDiv.height(),
+                            var extraHeight = $rindowMsgDiv.height(),  //$rindowMsgDiv.height(),
                                 rindowHeight = $rindow.height(),
                                 durr = 300;
 
@@ -1677,7 +1679,6 @@ function readrBoard($R){
                                 });
                             });
                             $rindow.dequeue('userMessage');
-                            
                     }
                 }
             }
@@ -4039,7 +4040,7 @@ function readrBoard($R){
                     $whyPanel_panelCard.appendTo($whyPanel_body);
                 }
                 $whyPanel_panelCard.siblings('.rdr_panelCard').hide();
-                $whyPanel_panelCard.append( _makeInfoBox() );
+                $whyPanel_panelCard.append( _makeInfoBox(content_node) );
 
                 _makeHeaders();
                 _makeOtherReactions();
@@ -4115,7 +4116,7 @@ function readrBoard($R){
                             
                             var prefix = count ? ", " : "", //don't include the first time
                                 $tag = $('<span/>').append(tag.body),
-                                $count = $('<span/>').append( '('+tag.count+')' ),
+                                $count = $('<span/>').append( ' ('+tag.count+')' ),
                                 $wrap = $('<span />').addClass('rdr_tags_list_tag');
                             $wrap.append( prefix, $tag, $count);
                             $otherTags.append( $wrap );
@@ -4137,8 +4138,8 @@ function readrBoard($R){
                     }
                 }
 
-                function _makeInfoBox(){
-                    
+                function _makeInfoBox(content_node){
+
                     var $socialBox = $('<div class="rdr_share_social"><h4>Share:</h4></div>'), 
                     $shareLinks = $('<ul class="shareLinks"></ul>'),
                     socialNetworks = ["facebook","twitter"]; //,"tumblr","linkedin"];
@@ -4148,8 +4149,8 @@ function readrBoard($R){
                     $.each(socialNetworks, function(idx, val){
                         $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                         $shareLinks.find('li:last').click( function() {
-                            var real_content_node = RDR.content_nodes[hash];
-                            RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:real_content_node });
+                            // var real_content_node = ( RDR.content_nodes[hash] ) ? RDR.content_nodes[hash] : RDR.summaries[hash].content;
+                            RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
                             return false;
                         });
                     });
@@ -4174,53 +4175,66 @@ function readrBoard($R){
                 function _makeCommentBox(){
 
                     //todo: combine this with the tooltip for the tags
-                    // var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+tag.id+'">Comment</button></div>');
+                    // var $commentDiv =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+tag.id+'">Comment</button></div>');
                     var $commentBox = $('<div class="rdr_commentBox rdr_sntPnl_padder"></div>').html(
                         '<div class="rdr_commentComplete"><div><h4>Leave a comment:</h4></div></div>'
                     );
-                    var helpText = "because...";
-                    $leaveComment = $( '<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div><button>Comment</button></div>' );
-                    $leaveComment.find('textarea').focus(function(){
-                        if($('.leaveComment').val() == helpText ){
-                            $('.leaveComment').val('');
+                   //todo: combine this with the other make comments code
+                    var helpText = "because...",
+                        $commentDiv =  $('<div class="rdr_comment">'),
+                        $commentTextarea = $('<textarea class="commentTextArea">' +helpText+ '</textarea>'),
+                        $rdr_charCount =  $('<div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div>'),
+                        $submitButton =  $('<button id="rdr_comment_on_'+int_id.id+'">Comment</button>');
+                    
+                    $commentDiv.append( $commentTextarea, $rdr_charCount, $submitButton );
+                    
+                    $commentTextarea.focus(function(){
+                        if( $(this).val() == helpText ){
+                            $(this).val('');
                         }
                     }).blur(function(){
-                        if($('.leaveComment').val() === "" ){
-                            $('.leaveComment').val(helpText);
+                        if( $(this).val() === "" ){
+                            $(this).val( helpText );
                         }
                     }).keyup(function(event) {
-                        $textarea = $(this);
-
-                        if (event.keyCode == '13') { //enter or comma
-                            //RDR.actions.panel.expand(rindow);
-                        }
-                        else if (event.keyCode == '27') { //esc
+                        var commentText = $commentTextarea.val();
+                        if (event.keyCode == '27') { //esc
                             //return false;
-                        } else if ( $textarea.val().length > RDR.group.comment_length ) {
-                            var commentText = $textarea.val();
-                            $textarea.val( commentText.substr(0, RDR.group.comment_length) );
+                        } else if ( commentText.length > RDR.group.comment_length ) {
+                            commentText = commentText.substr(0, RDR.group.comment_length);
+                            $commentTextarea.val( commentText );
                         }
-                        $textarea.siblings('div').text( ( RDR.group.comment_length - $textarea.val().length ) + " characters left" );
+                        $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
                     });
 
-                    // $leaveComment.find('textarea').autogrow();
+                    // $commentDiv.find('textarea').autogrow();
+                                        
+                    $submitButton.click(function(e) {
+                        var commentText = $commentTextarea.val();
 
-                    
-                    $leaveComment.find('button').click(function() {
-                        var comment = $leaveComment.find('textarea').val();
-                    
-                        if ( comment != "because..." ) {
+                        //keyup doesn't guarentee this, so check again (they could paste in for example);
+                        if ( commentText.length > RDR.group.comment_length ) {
+                            commentText = commentText.substr(0, RDR.group.comment_length);
+                            $commentTextarea.val( commentText );
+                            $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
+                        }
+                        
+                        if ( commentText != helpText ) {
+                            //temp translations..
                             //quick fix
                             content_node.kind = summary.kind;
-
-                            var args = { content_node_data:content_node, comment:comment, hash:hash, content:content_node.body, tag:tag, rindow:rindow, selState:selState};
+                            
+                            var args = {  hash:hash, content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:rindow, selState:selState};
                             //leave parent_id undefined for now - backend will find it.
                             RDR.actions.interactions.ajax( args, 'comment', 'create');
-                        }
 
+                        } else{
+                            $commentTextarea.focus();
+                        }
+                        return false; //so the page won't reload
                     });
 
-                    return $commentBox.append( $leaveComment );
+                    return $commentBox.append( $commentDiv );
                 }
 
                 function _makeOtherComments(){
@@ -4504,7 +4518,9 @@ function readrBoard($R){
                     
                     if ( rindow.find('div.rdr_rindow_message').length > 0 ) {
                         //rinh rindow.height( rindow.height()-103 );
-                        rindow.find('div.rdr_rindow_message').remove();
+                        RDR.session.rindowUserMessage.hide({
+                            rindow:rindow
+                        });
                     }
                     //temp hack
                     if( !$thisPanel.data('expanded') ){
@@ -4611,8 +4627,14 @@ function readrBoard($R){
 
                         $header.append( $tagInfo, $rightBox );
                         if ( !$.isEmptyObject( content_node.top_interactions.coms ) ) {
-                            $header.addClass('rdr_has_comment');
-                            $header.find('div.rdr_rightBox').append('<span>' + RDR.util.prettyNumber( content_node.top_interactions.coms.length ) + '</span>');
+                            var num_comments = 0;
+                            for ( var i in content_node.top_interactions.coms ) {
+                                if ( content_node.top_interactions.coms[i].tag_id == tag.id ) num_comments++;
+                            }
+                            if ( num_comments > 0 ) {
+                                $header.find('div.rdr_rightBox').append('<span>' + RDR.util.prettyNumber( num_comments ) + '</span>');
+                                $header.addClass('rdr_has_comment');
+                            }
                         }
 
                         //todo: consolodate truncate functions
@@ -4694,7 +4716,6 @@ function readrBoard($R){
                         //         var content_node_info = $(this).closest('div.rdr_contentSet').data();
                         //         var tag = $this.closest('a.rdr_tag').data('tag');
                         //         $shareTip.find('img.rdr_sns').click( function() {
-                        //             RDR.actions.share_getLink({ hash:hash, kind:summary.kind, sns:$(this).attr('rel'), rindow:rindow, tag:tag, content_node:content_node_info });
                         //         });
                         //     }
                         // ).mouseleave(
@@ -4882,7 +4903,7 @@ function readrBoard($R){
                                     }
 
                                     //successfully got a short URL
-                                    RDR.actions.shareContent({ sns:params.sns, content:content_node_info.content, short_url:response.data.short_url, reaction:tag.body });
+                                    RDR.actions.shareContent({ sns:params.sns, content_node_info:content_node_info, short_url:response.data.short_url, reaction:tag.body });
                                 }
                             },
                             error: function(response) {
@@ -4892,16 +4913,19 @@ function readrBoard($R){
                 });
             },
             shareContent: function(args) {
+
+                var content = args.content_node_info.content;
                 switch (args.sns) {
                     case "facebook":
                     // TODO make dynamic
-                        window.open('http://www.facebook.com/sharer.php?s=100&p[title]="'+args.content+'"&p[summary]=hilarious&p[url]='+args.short_url,"readr_share_fb","menubar=1,resizable=1,width=626,height=436");
+                        window.open('http://www.facebook.com/sharer.php?s=100&p[title]='+encodeURI(content.substr(0, content_length) )+'&p[summary]='+encodeURI(args.reaction)+'&p[url]='+args.short_url,"readr_share_fb","menubar=1,resizable=1,width=626,height=436");
                     //&p[images][0]=<?php echo $image;?>', 'sharer',
                     break;
 
                     case "twitter":
                         var content_length = ( 90 - args.reaction.length );
-                        window.open('http://twitter.com/intent/tweet?url='+args.short_url+'&via='+RDR.group.twitter+'&text='+encodeURI(args.reaction)+':+"'+encodeURI(args.content.substr(0, content_length) )+'"',"readr_share_tw","menubar=1,resizable=1,width=626,height=436");
+                        var twitter_acct = ( RDR.group.twitter ) ? '&via='+RDR.group.twitter : '';
+                        window.open('http://twitter.com/intent/tweet?url='+args.short_url+twitter_acct+'&text='+encodeURI(args.reaction)+':+"'+encodeURI(content.substr(0, content_length) )+'"',"readr_share_tw","menubar=1,resizable=1,width=626,height=436");
                     break;
 
                     case "tumblr":
@@ -5093,51 +5117,63 @@ function readrBoard($R){
                     $commentBox
                 );
 
-                //todo: combine this with the tooltip for the tags
-                var helpText = "because...";
-                //var $commentTextarea = 
-                var $leaveComment =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><div class="rdr_charCount">'+RDR.group.comment_length+' characters let</div><button id="rdr_comment_on_'+int_id.id+'">Comment</button></div>');
-                $leaveComment.find('textarea').focus(function(){
-                    if($('.leaveComment').val() == helpText ){
-                        $('.leaveComment').val('');
+               //todo: combine this with the other make comments code
+                var helpText = "because...",
+                    $commentDiv =  $('<div class="rdr_comment">'),
+                    $commentTextarea = $('<textarea class="commentTextArea">' +helpText+ '</textarea>'),
+                    $rdr_charCount =  $('<div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div>'),
+                    $submitButton =  $('<button id="rdr_comment_on_'+int_id.id+'">Comment</button>');
+                
+                $commentDiv.append( $commentTextarea, $rdr_charCount, $submitButton );
+                
+                $commentTextarea.focus(function(){
+                    if( $(this).val() == helpText ){
+                        $(this).val('');
                     }
                 }).blur(function(){
-                    if($('.leaveComment').val() === "" ){
-                        $('.leaveComment').val(helpText);
+                    if( $(this).val() === "" ){
+                        $(this).val( helpText );
                     }
                 }).keyup(function(event) {
-                    $textarea = $(this);
-
-                    if (event.keyCode == '13') { //enter or comma
-                        //RDR.actions.panel.expand(rindow);
-                    }
-                    else if (event.keyCode == '27') { //esc
+                    var commentText = $commentTextarea.val();
+                    if (event.keyCode == '27') { //esc
                         //return false;
-                    } else if ( $textarea.val().length > RDR.group.comment_length ) {
-                        var commentText = $textarea.val();
-                        $textarea.val( commentText.substr(0, RDR.group.comment_length) );
+                    } else if ( commentText.length > RDR.group.comment_length ) {
+                        commentText = commentText.substr(0, RDR.group.comment_length);
+                        $commentTextarea.val( commentText );
                     }
-                    $textarea.siblings('div').text( ( RDR.group.comment_length - $textarea.val().length ) + " characters left" );
+                    $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
                 });
 
-                // $leaveComment.find('textarea').autogrow();
+                // $commentDiv.find('textarea').autogrow();
                                     
-                $leaveComment.find('button').click(function() {
-                    var comment = $leaveComment.find('textarea').val();
-                    //[cleanlogz]('--------- selState 2: '+content_node.selState);
+                $submitButton.click(function(e) {
+                    var commentText = $commentTextarea.val();
+
+                    //keyup doesn't guarentee this, so check again (they could paste in for example);
+                    if ( commentText.length > RDR.group.comment_length ) {
+                        commentText = commentText.substr(0, RDR.group.comment_length);
+                        $commentTextarea.val( commentText );
+                        $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
+                    }
                     
-                    if ( comment != "because..." ) {
+                    if ( commentText != helpText ) {
                         //temp translations..
                         //quick fix
                         content_node.kind = summary.kind;
 
-                        var args = { hash:hash, kind:summary.kind, content_node_data:content_node, comment:comment, int_id:int_id, rindow:rindow, selState:content_node.selState, tag:tag};
+                        var args = { hash:hash, kind:summary.kind, content_node_data:content_node, comment:commentText, int_id:int_id, rindow:rindow, selState:content_node.selState, tag:tag};                            
                         //leave parent_id undefined for now - backend will find it.
                         RDR.actions.interactions.ajax( args, 'comment', 'create');
-                    }
-                });
 
-                $commentBox.append( $leaveComment );
+                    } else{
+                        $commentTextarea.focus();
+                    }
+                    return false; //so the page won't reload
+                });
+                //end comment.make section - to be merged later with other duplicated code
+
+                $commentBox.append( $commentDiv );
 
                 var $socialBox = $('<div class="rdr_share_social"><h4>Share:</h4></div>'),
                 $shareLinks = $('<ul class="shareLinks"></ul>'),
