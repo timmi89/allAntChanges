@@ -20,7 +20,7 @@
 				<h1>0</h1>
 				<h4>Interactions</h4>
 			</div>
-			<div role="frequency chart">
+			<div role="frequency chart" id="frequency_chart">
 				<h5>frequency chart</h5>
 			</div>
 		</section> <!-- / interaction frequency -->
@@ -79,7 +79,7 @@
 		</section> <!-- / most active readers -->
 
 		<section role="recent pages">
-			<h3>Recently Interacted Pages</h3>
+			<h3>Recently Active Pages</h3>
 			<table role="recent pages table" cellpadding="0" cellspacing="0" border="0">
 				<tbody></tbody>
 			</table>
@@ -296,6 +296,52 @@ RB.analytics = {
 				var total = tags + shares + comments + bookmarks;
 
 				$('div[role="total interactions"] h1').text( total );
+
+				// make chart
+				var chart;
+				chart = new Highcharts.Chart({
+					chart: {
+						renderTo: 'frequency_chart',
+						defaultSeriesType: 'bar',
+						height:'200'
+					},
+					title: {
+						text: 'Interaction Distribution'
+					},
+					xAxis: {
+					},
+					yAxis: {
+						min: 0
+					},
+					legend: {
+						backgroundColor: '#FFFFFF',
+						reversed: true
+					},
+					tooltip: {
+						formatter: function() {
+							return ''+
+							this.series.name +': '+ this.y +'';
+						}
+					},
+					plotOptions: {
+						series: {
+							stacking: 'normal'
+						}
+					},
+					series: [{
+						name: 'Bookmarks',
+						data: [bookmarks]
+					}, {
+						name: 'Comments',
+						data: [comments]
+					}, {
+						name: 'Shares',
+						data: [shares]
+					}, {
+						name: 'Reactions',
+						data: [tags]
+					}]
+				});
 			}
 		});
 	}, 
@@ -311,7 +357,6 @@ RB.analytics = {
 		RB.analytics.mostActive({type:'content'});
 
 		RB.analytics.recentlyActive();
-		
 	}
 };
 
