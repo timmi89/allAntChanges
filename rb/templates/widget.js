@@ -476,7 +476,7 @@ function readrBoard($R){
                             // todo: [porter] i'm looping to see if there is a comment for this TAG.  can we just send this down from server?
                             var commentsHere = 0;
                             for ( var i in topComs ) {
-                                if ( topComs[i].tag_id == tagOrder.id ) {
+                                if ( (topComs[i].tag_id == tagOrder.id) || ( i == tagOrder.id ) ) {  // first is for text, second option is for images/media
                                     $li.addClass('rdr_has_comment');
 
                                     // loop to see how many content_nodes' comments are under this tag
@@ -489,10 +489,8 @@ function readrBoard($R){
                                             }
                                         }
                                     } else {
-                                        for ( var l in summary.top_interactions.coms ) {
-                                            if ( summary.top_interactions.coms[l].tag_id == topComs[i].tag_id ) {
+                                        for ( var l in summary.top_interactions.coms[i] ) {
                                                 commentsHere++; 
-                                            }
                                         }
                                     }
                                 }
@@ -2028,6 +2026,7 @@ function readrBoard($R){
                             //On sucess, these unknown hashes will get passed to RDR.actions.containers.setup with dummy summaries
                             RDR.actions.containers.send(unknownList, onSuccessCallback);
                         }
+
                         if ( ! $.isEmptyObject(summaries) ){
                             //setup the known summaries
                             RDR.actions.containers.setup(summaries);
@@ -2063,11 +2062,9 @@ function readrBoard($R){
                 },
                 setup: function(summaries){
                     //RDR.actions.containers.setup:
-
                     //then define type-specific setup functions and run them
                     var _setupFuncs = {
                         img: function(hash, summary){
-                            
                             var containerInfo = RDR.containers[hash];
                             var $container = containerInfo.$this;
 
@@ -2127,7 +2124,6 @@ function readrBoard($R){
                                     RDR.actionbar.closeSuggest(hash);
                                 }
                             );
-                            
                         },
                         media: function(hash, summary){
                             //for now, just pass through to img.
@@ -2141,7 +2137,7 @@ function readrBoard($R){
                     var hashesToShow = []; //filled below
                     $.each(summaries, function(hash, summary){
                         //first do generic stuff
-                        
+
                         //save the hash as a summary attr for convenience.
                         summary.hash = hash;
 
@@ -2153,10 +2149,20 @@ function readrBoard($R){
                         //temp type conversion for top_interactions.coms;
                         var newComs = {},
                             coms = summary.top_interactions.coms;
+
                         $.each(coms, function(arrIdx, com){
                             //sortby tag_id
-                            newComs[com.tag_id] = com;
+
+                            // [ porter ] this shouldn't be needed, but it is, 
+                            // because the correct comment set, for text, is actually found in summary.content_nodes.top_interactions, which does not exist for images
+                            if ( summary.kind == "text" ) {
+                                newComs[com.tag_id] = com;
+                            } else {
+                                if ( !newComs[com.tag_id] ) newComs[com.tag_id] = [];
+                                newComs[com.tag_id].push(com);
+                            }
                         });
+
                         summary.top_interactions.coms = newComs;
 
                         RDR.actions.summaries.save(summary);
@@ -4218,13 +4224,13 @@ function readrBoard($R){
                 }
 
                 function _makeOtherComments(){
-                    
+
                     var comments;
                     // () ? text_node : image_node
                     if ( kind == "text" ) {
                         comments = summary.content_nodes[ content_node.id ].top_interactions.coms;
                     } else {
-                        comments = summary.top_interactions.coms;
+                        comments = summary.top_interactions.coms[tag.id];
                     }
                     
                     var node_comments = 0;
