@@ -590,15 +590,15 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_shareBox                       { overflow:auto; clear:both; border-top: none;}
 #rdr_sandbox div.rdr div.rdr_share_social                   { float:right; }
 #rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; }
-#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard                       { padding: 8px 12px 0; position:relative;}
+#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard                       { padding: 8px 12px 0; position:relative;}
 
-/*#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard.rdr_viewAll_hide      { padding-top: 0px; xmin-height:256px; }*/ /*pretty sure this is phased out*/
+/*#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard.rdr_viewAll_hide      { padding-top: 0px; xmin-height:256px; }*/ /*pretty sure this is phased out*/
 
-#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard .rdr_undo_link        { text-decoration; underline; float:right; color: #008BE4;}
-#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard  h4                   { position: relative; font-weight:bold; }
-#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard  div.rdr_share_social h4 { float: left; top: 2px; font-size:11px; }
+#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard .rdr_undo_link        { text-decoration; underline; float:right; color: #008BE4;}
+#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  h4                   { position: relative; font-weight:bold; }
+#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  div.rdr_share_social h4 { float: left; top: 2px; font-size:11px; }
 
-#rdr_sandbox div.rdr_whyPanel div.rdr_tagCard  div.rdr_info_summary h4 { float: left; top: 2px; font-size:11px; }
+#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  div.rdr_info_summary h4 { float: left; top: 2px; font-size:11px; }
 
 #rdr_sandbox div.rdr_whyPanel div.rdr_view_all { float: left; position:relative; z-index:1; width:300px; background:#aaa; font-size:9px; text-transform:uppercase; color:#fff; cursor:pointer; padding: 2px 12px;}
 #rdr_sandbox div.rdr_whyPanel div.rdr_view_all.rdr_hide { margin-top:-10px; }

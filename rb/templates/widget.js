@@ -308,10 +308,22 @@ function readrBoard($R){
 
                                 var tagID = $this.data('tag').id;
 
-                                //show the rdr_tagCard that belongs to this li tagButton, and hide sibling rdr_tagCards
-                                $this.find('.rdr_tagCard'+tagID).show()//chain
-                                .siblings('.rdr_tagCard').hide();
+                                //show the rdr_panelCard that belongs to this li tagButton, and hide sibling rdr_panelCards
+                                var $panelCards = rindow.find('.rdr_panelCard');
 
+                                //todo: could be prettier, but this works fine
+                                $panelCards.each(function(){
+                                    if( $(this).data('tagID') == tagID ){
+                                        $(this).show()//chain
+                                        .siblings('.rdr_panelCard').hide();
+                                    }
+                                });
+
+                                //expand the panel if it isn't already expanded
+                                RDR.actions.panel.expand("whyPanel", rindow);
+                                RDR.session.rindowUserMessage.hide({
+                                    rindow:rindow
+                                });
                                 //return false to prevent the rest of the interaction
                                 return false;
                             }
@@ -1472,12 +1484,16 @@ function readrBoard($R){
             checkForMaxInteractions: function(args){
                 //later get rid of args if we don't need it for showLoginPanel - if we can use rindow instead.
                 var num_interactions = args.num_interactions;
-
+                log('checkedchecked')
+                log(num_interactions)
                 if ( num_interactions ) {
                     if ( num_interactions < RDR.group.temp_interact ){
                         RDR.session.rindowUserMessage.show( args );
                     }
-                    else RDR.session.showLoginPanel( args );
+                    else {
+                        RDR.session.showLoginPanel( args );
+                        return true;
+                    }
                 }
             },
 			showLoginPanel: function(args, callback) {
@@ -1549,7 +1565,6 @@ function readrBoard($R){
             rindowUserMessage: {
                 show:  function(args) {
                     //RDR.session.rindowUserMessage.show:
-                    log(2)
                     var $rindow = args.rindow;
                     var interactionInfo = args.interactionInfo;
 
@@ -1585,13 +1600,14 @@ function readrBoard($R){
                                 var num_interactions_left = RDR.group.temp_interact - parseInt( args.num_interactions ),
                                     $loginLink = $('<a href="javascript:void(0);">Connect with Facebook</a>.');
                                 
-                                $rindowMsgDivInnerwrap.append( $loginLink );
+                                $rindowMsgDivInnerwrap.after( $loginLink );
                                 $loginLink.click( function() {
                                     RDR.session.showLoginPanel( args );
                                 });
                                 
-                                userMsg = 'You can react or comment <strong>' + num_interactions_left + ' more times</strong> before you must ';
+                                var tmpUserMsg = 'You can react or comment <strong>' + num_interactions_left + ' more times</strong> before you must ';
                                 rindowHeightDefault = 103;
+                                $rindowMsgDivInnerwrap.after('<span>'+tmpUserMsg+'</span>');
                                 break;
     
                             case "existingInteraction":
@@ -1644,10 +1660,12 @@ function readrBoard($R){
                         $rindow.dequeue('userMessage');
                     }
                 },
-                hide:  function(args) {
+                hide: function(args) {
                     if ( args.rindow ) {
                         var $rindow = args.rindow,
                             $rindowMsgDiv = $('div.rdr_rindow_message');
+                            if( !$rindowMsgDiv.length ) return;
+                            //else
 
                             //todo: make this a better solution.  The simultaneous animations might not be ideal.
                             var extraHeight = 45,  //$rindowMsgDiv.height(),
@@ -2637,6 +2655,8 @@ function readrBoard($R){
                             rindow.queue('userMessage', function(){
                                 RDR.session.rindowUserMessage.show( usrMsgArgs );
                             });
+                            //the comment doesn't rely on any panel movement, so just dequeue now
+                            rindow.dequeue('userMessage');
 
                         },
                         remove: function(args){
@@ -2802,6 +2822,17 @@ function readrBoard($R){
                             //RDR.actions.interactions.tag.onSuccess.create:
                             //todo: clean up these args.
                             
+                            //todo: fix the way we use args here
+                            var checkMaxIntActsArgs = args.response.data;
+                            checkMaxIntActsArgs.rindow = args.rindow;
+                            var hitMax = RDR.session.checkForMaxInteractions(checkMaxIntActsArgs);
+                            if(hitMax){
+                                // don't continue with the rest of this function
+                                log('stop');
+                                return;
+                            }
+                                log('nothing here');
+
                             var response = args.response,
                                 interaction = args.response.interaction,
                                 interaction_node = response.data.interaction.interaction_node;
@@ -2911,11 +2942,6 @@ function readrBoard($R){
                             diff.tags[ intNodeHelper.id ] = intNodeHelper;
 
                             RDR.actions.summaries.update(hash, diff);
-
-                            //todo: fix the way we use args here
-                            var newArgs = response.data;
-                            newArgs.rindow = rindow;
-                            RDR.session.checkForMaxInteractions(newArgs);
 
                         },
                         remove: function(args){
@@ -3100,6 +3126,16 @@ function readrBoard($R){
                     onSuccess: {
                         //RDR.actions.interactions.bookmark.onSuccess:
                         create: function(args){
+
+                            //todo: fix the way we use args here
+                            var checkMaxIntActsArgs = args.response.data;
+                            checkMaxIntActsArgs.rindow = args.rindow;
+                            var hitMax = RDR.session.checkForMaxInteractions(checkMaxIntActsArgs);
+                            if(hitMax){
+                                // don't continue with the rest of this function
+                                return;
+                            }
+
                             var response = args.response;
                             var sendData = args.sendData;
                             var rindow = args.rindow,
@@ -3163,21 +3199,27 @@ function readrBoard($R){
                             var $whyPanel_body = rindow.find('div.rdr_whyPanel div.rdr_body');
                             var $whyPanel_body_jsp = $whyPanel_body.find('.jspPane');
                             
-                            var $whyPanel_tagCard = $('<div />').addClass('rdr_tagCard rdr_tagCard'+tag.id);
+                            var $whyPanel_panelCard = $('<div />').addClass('rdr_panelCard rdr_panelCard'+int_id);
+                            $whyPanel_panelCard.data({
+                                'tagID':tag.id,
+                                'intactID':int_id
+                            });
+
+
                             //$whyPanel_body.empty();
                         
                             //add to the $whyPanel_body and hide any sibling panels that have been made;
                             if($whyPanel_body_jsp.length){
-                                $whyPanel_tagCard.appendTo($whyPanel_body_jsp);
+                                $whyPanel_panelCard.appendTo($whyPanel_body_jsp);
                             }else{
-                                $whyPanel_tagCard.appendTo($whyPanel_body);
+                                $whyPanel_panelCard.appendTo($whyPanel_body);
                             }
-                            $whyPanel_tagCard.siblings('.rdr_tagCard').hide();
+                            $whyPanel_panelCard.siblings('.rdr_panelCard').hide();
 
 
                             $whyPanel.find('h1').text('Bookmark Saved');
                             
-                            //build $whyPanel_tagCard
+                            //build $whyPanel_panelCard
                             var $tagFeedback = $('<div class="rdr_tagFeedback">You bookmarked this and tagged it: <strong>'+tag.body+'</strong>. </div>');
                             var $undoLink = $('<a style="text-decoration:underline;" href="javascript:void(0);">Undo?</a>')//chain
                             .bind('click.rdr', {args:args, int_id:int_id}, function(event){
@@ -3196,9 +3238,9 @@ function readrBoard($R){
                             });
 
                             // TODO make this link to the user profile work
-                            var $seeTags = $('<div class="rdr_sntPnl_padder"><div>Your bookmarks are private - only you can see them.</div><br/ ><strong>To view your tags, visit your <a href="http://dev.readrboard.com/user/'+RDR.user.user_id+'" target="_blank">ReadrBoard profile</a>.</strong></div>');
+                            var $seeTags = $('<div class="rdr_sntPnl_padder"><div>Your bookmarks are private - only you can see them.</div><br/ ><strong>To view your bookmarks, visit your <a href="http://dev.readrboard.com/user/'+RDR.user.user_id+'" target="_blank">ReadrBoard profile</a>.</strong></div>');
                             
-                            $whyPanel_tagCard.append(
+                            $whyPanel_panelCard.append(
                                 $tagFeedback.append($undoLink),
                                 $seeTags
                             );
@@ -3223,10 +3265,6 @@ function readrBoard($R){
                             //(tag success expand the comment section)                            
                             RDR.actions.panel.expand("whyPanel", rindow);
                             
-                            //todo: fix the way we use args here
-                            var newArgs = response.data;
-                            newArgs.rindow = rindow;
-                            RDR.session.checkForMaxInteractions(newArgs);
                         },
                         remove: function(args){
                             //RDR.actions.interactions.bookmark.onSuccess.remove:
@@ -3914,7 +3952,7 @@ function readrBoard($R){
                 // zero out the content in the whyPanel, since they just selected a new tag and the comments would not reflect the now-selected tag.
                 // DONTNEED: if animating in whypanel:
                 // DONTNEED: $whyPanel.find('div.rdr_header h1').html(tagBody + ": ");
-                // DONTNEED: $whyPanel.find('div.rdr_body').html('<div class="rdr_commentSet rdr_tagCard rdr_tagCard_default ">Select something in the column to the left to leave a comment on it.</div>');
+                // DONTNEED: $whyPanel.find('div.rdr_body').html('<div class="rdr_commentSet rdr_panelCard rdr_panelCard_default ">Select something in the column to the left to leave a comment on it.</div>');
 
                 //todo: this is for testing style for now, we need to swap it out when we click on the different sections
                 //$contentPanel.find('div.rdr_header h1').after('<h2><span> : </span>todo: quote here ...</h2>');
@@ -3943,6 +3981,8 @@ function readrBoard($R){
                     rindow = args.rindow,
                     content_node = args.content_node;
                 
+                log(args)
+
                 //temp tie-over    
                 var hash = args.hash,
                     summary = RDR.summaries[hash],
@@ -3956,10 +3996,17 @@ function readrBoard($R){
                     $whyPanel_body_jsp = $whyPanel_body.find('.jspPane');
                 
                 // DONTNEED: $whyPanel.addClass('rdr_whyShowing');
+                var int_id = "need to add this int_id, but faking it for now to push and merge";
 
-                var $whyPanel_tagCard = $('<div />').addClass('rdr_tagCard rdr_tagCard'+tag.id+' rdr_viewAll_'+view_all_state);
+                var $whyPanel_panelCard = $('<div />').addClass('rdr_panelCard rdr_panelCard'+int_id).addClass('rdr_viewAll_'+view_all_state);
+                $whyPanel_panelCard.data({
+                    'tagID':tag.id,
+                    'intactID':int_id
+                });
 
                 $whyPanel.find('div.rdr_view_all').remove();
+
+                //I don't think we need this anymore
                 $whyPanel_body.css({
                      top:0
                 });
@@ -3983,21 +4030,21 @@ function readrBoard($R){
                     if ( view_all_state != "hide" ) {
                         //$whyPanel_body_jsp.before( $backToQuotes );
                     }
-                    $whyPanel_tagCard.appendTo( $whyPanel_body_jsp );
+                    $whyPanel_panelCard.appendTo( $whyPanel_body_jsp );
                 }else{
                     if ( view_all_state != "hide" ) {
-                        //$whyPanel_tagCard.before( $backToQuotes );
+                        //$whyPanel_panelCard.before( $backToQuotes );
                     }
-                    $whyPanel_tagCard.appendTo($whyPanel_body);
+                    $whyPanel_panelCard.appendTo($whyPanel_body);
                 }
-                $whyPanel_tagCard.siblings('.rdr_tagCard').hide();
-                $whyPanel_tagCard.append( _makeInfoBox() );
+                $whyPanel_panelCard.siblings('.rdr_panelCard').hide();
+                $whyPanel_panelCard.append( _makeInfoBox() );
 
                 _makeHeaders();
                 _makeOtherReactions();
                 _makeOtherComments();
 
-                $whyPanel_tagCard.append( _makeCommentBox() );
+                $whyPanel_panelCard.append( _makeCommentBox() );
 
 
                 //helper functions 
@@ -4203,7 +4250,7 @@ function readrBoard($R){
                     // ok, get the content associated with this tag!
                     var $otherComments = $('<div class="rdr_otherCommentsBox rdr_sntPnl_padder"></div>').hide().html(
                         '<div><h4>(' + node_comments + ') Comments:</h4></div>'
-                    ).appendTo($whyPanel_tagCard);
+                    ).appendTo($whyPanel_panelCard);
 
                     for ( var i in comments ) {
                         var this_comment = comments[i];
@@ -4800,14 +4847,18 @@ function readrBoard($R){
                                         });
                                     }
                                 } else {
+                            
+                                    //todo: fix the way we use args here
+                                    var checkMaxIntActsArgs = response.data;
+                                    checkMaxIntActsArgs.rindow = args.rindow;
+                                    var hitMax = RDR.session.checkForMaxInteractions(checkMaxIntActsArgs);
+                                    if(hitMax){
+                                        // don't continue with the rest of this function
+                                        return;
+                                    }
 
                                     //successfully got a short URL
                                     RDR.actions.shareContent({ sns:params.sns, content:content_node_info.content, short_url:response.data.short_url, reaction:tag.body });
-                                                
-                                    //todo: fix the way we use args here
-                                    var newArgs = response.data;
-                                    newArgs.rindow = rindow;
-                                    RDR.session.checkForMaxInteractions(newArgs);
                                 }
                             },
                             error: function(response) {
@@ -4973,20 +5024,28 @@ function readrBoard($R){
                 var $whyPanel_body = rindow.find('div.rdr_whyPanel div.rdr_body');
                 var $whyPanel_body_jsp = $whyPanel_body.find('.jspPane');
                 
-                var $whyPanel_tagCard = $('<div />').addClass('rdr_tagCard rdr_tagCard'+tag.id).data('id',tag.id);
+                log('int_id');
+                log(int_id);
+                var $whyPanel_panelCard = $('<div />').addClass('rdr_panelCard rdr_panelCard'+int_id);
+                $whyPanel_panelCard.data({
+                    'tagID':tag.id,
+                    'intactID':int_id
+                });
+                
+                log($whyPanel_panelCard );
                 //$whyPanel_body.empty();
             
                 //add to the $whyPanel_body and hide any sibling panels that have been made;
                 if($whyPanel_body_jsp.length){
-                    $whyPanel_tagCard.appendTo($whyPanel_body_jsp);
+                    $whyPanel_panelCard.appendTo($whyPanel_body_jsp);
                 }else{
-                    $whyPanel_tagCard.appendTo($whyPanel_body);
+                    $whyPanel_panelCard.appendTo($whyPanel_body);
                 }
                 
-                $whyPanel_tagCard.siblings('.rdr_tagCard').hide();
+                $whyPanel_panelCard.siblings('.rdr_panelCard').hide();
 
                 
-                //build $whyPanel_tagCard
+                //build $whyPanel_panelCard
                 var $tagFeedback = $('<div class="rdr_tagFeedback">Your reaction: <strong>'+tag.body+'</strong>. </div>');
                 var $shareDialogueBox = $('<div class="rdr_shareBox rdr_sntPnl_padder"></div>');
                 var $commentBox = $('<div class="rdr_commentBox rdr_sntPnl_padder"></div>').html(
@@ -5007,7 +5066,7 @@ function readrBoard($R){
                     RDR.actions.interactions.ajax( newArgs, 'tag', 'remove' );
                 });
 
-                $whyPanel_tagCard.append(
+                $whyPanel_panelCard.append(
                     $tagFeedback.append($undoLink),
                     $shareDialogueBox,
                     $commentBox
