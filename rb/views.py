@@ -193,10 +193,13 @@ def admin_request(request, short_name=None):
     )
 
 def expander(request, short):
-    link_id = base62.to_decimal(short);
+    link_id = base62.to_decimal(short)
 
     # Retrieve Link object
-    link = Link.objects.get(id=link_id);
+    try:
+        link = Link.objects.get(id=link_id)
+    except Link.DoesNotExist:
+        return HttpResponseRedirect('/')
 
     # Update usage count
     link.usage_count += 1
