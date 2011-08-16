@@ -17,7 +17,7 @@ class TempUserHandler(BaseHandler):
             username=generateUsername(), 
             email='tempuser@readrboard.com'
         )
-        readr_token = createToken(user.id, 'R3dRB0aRdR0X', group_id)
+        readr_token = createToken(user.id, 'R3dRB0aRdR0X')
         return dict(
             user_id=user.id,
             readr_token=readr_token
