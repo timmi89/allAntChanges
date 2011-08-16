@@ -10,8 +10,8 @@ def checkCookieToken(request):
     """
     cookies = request.COOKIES
     data = {}
-    data['user_id'] = cookies.get('user_id')
-    data['readr_token'] = cookies.get('readr_token')
+    data['user_id'] = cookies.get('user_id', None)
+    data['readr_token'] = cookies.get('readr_token', None)
     return checkToken(data)
 
 def checkToken(data):
