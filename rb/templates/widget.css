@@ -779,6 +779,7 @@ div.rdr_indicator, div.rdr_indicator * {
     left: 0 !important;
     z-index:11000 !important;
     text-decoration:none !important;
+    border:none !important;
 }
 /*the indicator body will be moved up to compensate*/
 div.rdr_indicator_for_text{
@@ -865,6 +866,7 @@ div.rdr_indicator div.rdr_indicator_body {
     top:0; /*don't make important so that our js can update*/
     left:0; /*don't make important so that our js can update*/
     margin:0 !important;
+    overflow:hidden !important;
 }
 
 /*for now give the text indicators a small offset so the details don't cover the end of content todo: id:12345*/
