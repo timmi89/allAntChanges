@@ -5,7 +5,7 @@ from decorators import status_response, json_data
 from exceptions import JSONException
 from utils import *
 from userutils import *
-from token import *
+from authentication.token import *
 from settings import BASE_URL
 
 class SocialUserHandler(AnonymousBaseHandler):
