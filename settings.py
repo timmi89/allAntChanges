@@ -1,8 +1,7 @@
 # Django settings for readrboard project.
 from os import uname
 
-if uname()[0] == "Linux": DEBUG = False
-else: DEBUG = True
+DEBUG = True
 
 TEMPLATE_DEBUG = DEBUG
 
@@ -13,46 +12,29 @@ ADMINS = (
     ('Eric Chaves', 'eric@readrboard.com'),
 )
 
-if DEBUG:
-    FACEBOOK_APP_ID = '186217208100982'
-    FACEBOOK_APP_SECRET = 'f285b17e71770615189e7676c1d7d0f9'
 
-    BASE_URL = 'http://readr.local:8080'
+FACEBOOK_APP_ID = '163759626987948'
+FACEBOOK_APP_SECRET = 'f14061a2ed9d7ae8ed1c3b231a8148c9'
 
-    DATABASES = {
-      'default': {
-          'ENGINE':   'django.db.backends.sqlite3',
-          'NAME':     'readrdb.db',
-          'USER':     '',
-          'PASSWORD': '',
-          'HOST':     '', 
-          'PORT':     '', 
-        }
+BASE_URL = 'http://www.readrboard.com'
+
+DATABASES = {
+  'default': {
+    'ENGINE':   'django.db.backends.mysql',
+    'NAME':     'readrboard',
+    'USER':     'root',
+    'PASSWORD': '',
+    'HOST':     'localhost',
+    'PORT':     '3306',
     }
+}
 
-else:
-    FACEBOOK_APP_ID = '163759626987948'
-    FACEBOOK_APP_SECRET = 'f14061a2ed9d7ae8ed1c3b231a8148c9'
-
-    BASE_URL = 'http://www.readrboard.com'
-
-    DATABASES = {
-      'default': {
-        'ENGINE':   'django.db.backends.mysql',
-        'NAME':     'readrboard',
-        'USER':     'root',
-        'PASSWORD': '',
-        'HOST':     'localhost',
-        'PORT':     '3306',
-        }
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'readr.cache'
     }
-
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'readr.cache'
-        }
-    }
+}
 
 # Facebook shit
 LOGIN_REDIRECT_URL = '/'
