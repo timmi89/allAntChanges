@@ -16,7 +16,7 @@ def requires_admin(func):
             try:
                 group = Group.objects.get(short_name=short_name)
             except Group.DoesNotExist:
-                return JSONException(u'Invalid group')
+                return HttpResponseRedirect('/')
             try:
                 social_user = SocialUser.objects.get(user=cookie_user)
             except SocialUser.DoesNotExist:
