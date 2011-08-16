@@ -9,8 +9,9 @@ from piston.handler import AnonymousBaseHandler
 from settings import DEBUG
 from authentication.decorators import requires_admin
 
-@requires_admin
-def analytics(request, group=None):
+#@requires_admin
+def analytics(request, group=None, short_name=None):
+    group = Group.objects.get(short_name=short_name)
     context = {}
     context['group'] = group
     return render_to_response("analytics.html", context)
@@ -43,7 +44,8 @@ class InteractionNodeHandler(AnonymousBaseHandler):
     
 class AnalyticsHandler(AnonymousBaseHandler):
     @analytics_request
-    def read(self, request, data, **kwargs):
+    def read(self, request, data, short_name=None, **kwargs):
+        group = Group.objects.get(short_name=short_name)
         interactions = Interaction.objects.all()
         interactions = interactions.filter(page__site__group=group)
         
