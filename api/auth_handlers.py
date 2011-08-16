@@ -3,7 +3,7 @@ from extras.facebook import GraphAPI, GraphAPIError
 from settings import FACEBOOK_APP_SECRET
 from decorators import status_response, json_data
 from exceptions import JSONException
-from token import *
+from authentication.token import *
 from utils import *
 from userutils import *
 import json
