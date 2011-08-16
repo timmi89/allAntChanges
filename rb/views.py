@@ -162,7 +162,7 @@ def interactions(request):
 def sidebar(request, user_id=None, short_name=None):
     pass
 
-@requires_admin
+#@requires_admin
 def settings(request, group=None):
     if request.method == 'POST':
         form = GroupForm(request.POST, instance=group)
