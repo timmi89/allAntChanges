@@ -22,6 +22,7 @@ def analytics_request(func):
         data['start'] = params.get('start', None)
         data['end'] = params.get('end', None)
         data['max_count'] = params.get('max_count', None)
+        data['page_id'] = params.get('page_id', None)
         
         # Pass in either tag body or tag id
         data['tag'] = params.get('tag', None)
@@ -45,6 +46,10 @@ class AnalyticsHandler(AnonymousBaseHandler):
         interactions = Interaction.objects.all()
         group = Group.objects.get(short_name=short_name)
         interactions = interactions.filter(page__site__group=group)
+        
+        if data['page_id']:
+            page = Page.objects.get(id=data['page_id'])
+            interactions = interactions.filter(page=page)
     
         if data['start']:
             interactions = interactions.filter(
@@ -117,9 +122,13 @@ class ActiveHandler(AnalyticsHandler):
             
             # Get relevant subject meta data from respective table
             if subject == 'user':
+                try:
+                    u = SocialUser.objects.get(user=active_subject['user'])
+                except SocialUser.DoesNotExist:
+                    continue
                 active_subjects.append({
                     'counts': active_subject,
-                    subject: SocialUser.objects.get(user=active_subject['user'])
+                    subject: u
                 })
             elif subject == 'page':
                 active_subjects.append({
