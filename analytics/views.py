@@ -9,6 +9,7 @@ from piston.handler import AnonymousBaseHandler
 from settings import DEBUG, FACEBOOK_APP_ID
 from authentication.decorators import requires_admin
 from django.template import RequestContext
+from authentication.token import checkCookieToken
 
 @requires_admin
 def analytics(request, group=None, short_name=None):
