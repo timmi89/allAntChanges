@@ -4,7 +4,7 @@ env.hosts = ['aws']
 env.remote_dir = "~/readrboard"
 
 def commit_local():
-    local("git add -p")
+    local("git add .")
     local("git commit -am 'deploying'")
     local("git push")
 
@@ -14,4 +14,4 @@ def pull_remote():
 
 def deploy():
     commit_local()
-    deploy_remote()
+    pull_remote()
