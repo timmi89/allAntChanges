@@ -80,27 +80,19 @@ SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
 
-# Absolute path to the directory that holds media.
-# Example: "/home/media/media.lawrence.com/"
-# [porter] wtf.
-MEDIA_ROOT = 'rb/static'
-
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash if there is a path component (optional in other cases).
-# Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = ''
-
-# URL prefix for admin static files -- CSS, JavaScript and images.                    
-# Make sure to use a trailing slash.                                                  
-# Examples: "http://foo.com/static/admin/", "/static/admin/".                         
-ADMIN_MEDIA_PREFIX = '/static/site/admin/'
+MEDIA_ROOT = 'media/'
+MEDIA_URL = '/media/'
+STATIC_ROOT = 'static/'
+STATIC_URL = '/static/'                        
+ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 
 # Additional locations of static files                                                
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".           
     # Always use forward slashes, even on Windows.                                    
-    # Don't forget to use absolute paths, not relative paths.                         
+    # Don't forget to use absolute paths, not relative paths.
+    'website/',                         
 )
 
 STATICFILES_FINDERS = (
@@ -171,9 +163,6 @@ INSTALLED_APPS = [
     #'django_extensions',
     #'devserver'
 ]
-
-if DEBUG:
-    INSTALLED_APPS += ['devserver']
 
 DEVSERVER_MODULES = (
     'devserver.modules.sql.SQLRealTimeModule',
@@ -257,5 +246,3 @@ DEVSERVER_IGNORED_PREFIXES = ['/media', '/uploads']
 #FACEBOOK_EXTENDED_PERMISSIONS = ('email')
 
 #SESSION_COOKIE_DOMAIN = '.readr.local'
-
-STATIC_URL = BASE_URL + '/'

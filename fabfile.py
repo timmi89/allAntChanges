@@ -14,6 +14,7 @@ def commit_local():
 def pull_remote():
     with cd(code_dir):
         run("git pull")
+        run("./manage.py collectstatic --noinput")
     sudo("apache2ctl restart")
 
 def deploy():
