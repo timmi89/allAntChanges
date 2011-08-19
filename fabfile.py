@@ -13,7 +13,7 @@ def commit_local():
 def pull_remote():
     with cd(code_dir):
         run("git pull")
-    run("sudo apache2ctl restart")
+    sudo("apache2ctl restart")
 
 def deploy():
     require("hosts")
