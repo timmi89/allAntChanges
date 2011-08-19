@@ -2,7 +2,7 @@ from fabric.api import *
 
 env.hosts = ['50.19.211.244']
 env.user = 'django'
-env.remote_dir = "~/readrboard"
+env.remote_dir = "/home/users/readrboard"
 
 def commit_local():
     local("git add .")
