@@ -82,7 +82,7 @@ USE_L10N = True
 
 MEDIA_ROOT = 'media/'
 MEDIA_URL = '/media/'
-STATIC_ROOT = 'static/'
+STATIC_ROOT = 'rb/static/'
 STATIC_URL = '/static/'                        
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 
