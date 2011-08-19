@@ -1,4 +1,19 @@
-{% extends "wide_base.html" %}
+{% extends "base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ STATIC_URL }}/static/global/css/readrleague.css">
+<link rel="stylesheet" href="{{ STATIC_URL }}/static/site/css/style.css?v=1">
+<link rel="stylesheet" href="{{ STATIC_URL }}/static/global/css/datepicker_css/ui-lightness/jquery-ui-1.8.15.custom.css">
+{% endblock %}
+
+{% block topjavascript %}
+<script src="{{ STATIC_URL }}/static/global/js/jquery-1.6.2.min.js"></script>
+<script src="{{ STATIC_URL }}/static/site/js/readr_scripts.js"></script>
+<script src="{{ STATIC_URL }}/static/global/js/jquery-ui-datepicker.custom.min.js"></script>
+<script src="{{ STATIC_URL }}/static/site/js/highcharts/highcharts.js"></script>
+<script src="/static/widget/js/jquery.json-2.2.min.js" type="text/javascript"></script>
+<script src="/static/widget/js/jquery.cookie.js" type="text/javascript"></script>
+{% endblock %}
 
 {% block mainContent %}
 <section role="analytics header">

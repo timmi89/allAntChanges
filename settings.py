@@ -17,7 +17,7 @@ if DEBUG:
     FACEBOOK_APP_ID = '186217208100982'
     FACEBOOK_APP_SECRET = 'f285b17e71770615189e7676c1d7d0f9'
 
-    BASE_URL = 'http://readr.local:8080'
+    BASE_URL = 'http://local.readrboard.com:8080'
 
     DATABASES = {
       'default': {
@@ -88,7 +88,7 @@ MEDIA_ROOT = 'rb/static'
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/static/'
+MEDIA_URL = ''
 
 # URL prefix for admin static files -- CSS, JavaScript and images.                    
 # Make sure to use a trailing slash.                                                  
@@ -154,7 +154,7 @@ SERIALIZATION_MODULES = {
     'json': 'wadofstuff.django.serializers.json'
 }
 """
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -170,7 +170,10 @@ INSTALLED_APPS = (
     #'autofixture',
     #'django_extensions',
     #'devserver'
-)
+]
+
+if DEBUG:
+    INSTALLED_APPS += ['devserver']
 
 DEVSERVER_MODULES = (
     'devserver.modules.sql.SQLRealTimeModule',
@@ -187,7 +190,7 @@ DEVSERVER_MODULES = (
 DEVSERVER_IGNORED_PREFIXES = ['/media', '/uploads']
 
 # for get_profile()
-AUTH_PROFILE_MODULE = 'rb.Profile'
+#AUTH_PROFILE_MODULE = 'rb.Profile'
 
 # for sessions
 #SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
@@ -255,4 +258,4 @@ DEVSERVER_IGNORED_PREFIXES = ['/media', '/uploads']
 
 #SESSION_COOKIE_DOMAIN = '.readr.local'
 
-STATIC_URL = BASE_URL + '/static/'
+STATIC_URL = BASE_URL + '/'

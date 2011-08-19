@@ -176,7 +176,7 @@ def settings(request, group=None):
 
     return render_to_response(
         "group_form.html", 
-        {"form": form, "short_name": group.short_name},
+        {"form": form, "short_name": group.short_name, "fb_client_id": FACEBOOK_APP_ID},
         context_instance=RequestContext(request)
     )
 
@@ -188,18 +188,18 @@ def admin_request(request, short_name=None):
 
     return render_to_response(
         "admin_request.html",
-        {"group": group},
+        {"group": group, "fb_client_id": FACEBOOK_APP_ID},
         context_instance=RequestContext(request)
     )
 
 def expander(request, short):
-    link_id = base62.to_decimal(short);
+    link_id = base62.to_decimal(short)
 
     # Retrieve Link object
     try:
-        link = Link.objects.get(id=link_id);
+        link = Link.objects.get(id=link_id)
     except Link.DoesNotExist:
-        raise JSONException("Link didn't exist (it's in ur base killin ur dudez)")
+        return HttpResponseRedirect('/')
 
     # Update usage count
     link.usage_count += 1

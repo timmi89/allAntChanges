@@ -6,13 +6,14 @@ from datetime import datetime
 from django.db.models import Count, Sum
 from django.core import serializers
 from piston.handler import AnonymousBaseHandler
-from settings import DEBUG
+from settings import DEBUG, FACEBOOK_APP_ID
 from authentication.decorators import requires_admin
 
 @requires_admin
-def analytics(request, group=None):
+def analytics(request, group=None, short_name=None):
     context = {}
     context['group'] = group
+    context['fb_client_id'] = FACEBOOK_APP_ID
     return render_to_response("analytics.html", context)
 
 def analytics_request(func):
@@ -42,8 +43,10 @@ class InteractionNodeHandler(AnonymousBaseHandler):
     fields = ('id', 'body', 'kind')
     
 class AnalyticsHandler(AnonymousBaseHandler):
+    @requires_admin
     @analytics_request
-    def read(self, request, data, **kwargs):
+    def read(self, request, data, short_name=None, **kwargs):
+        group = Group.objects.get(short_name=short_name)
         interactions = Interaction.objects.all()
         interactions = interactions.filter(page__site__group=group)
         
