@@ -244,4 +244,4 @@ DEVSERVER_IGNORED_PREFIXES = ['/media', '/uploads']
 #SOCIAL_AUTH_EXPIRATION = 'expires'
 #FACEBOOK_EXTENDED_PERMISSIONS = ('email')
 
-#SESSION_COOKIE_DOMAIN = '.readr.local'
+#SESSION_COOKIE_DOMAIN = '.local.readrboard.com'
