@@ -88,7 +88,7 @@ MEDIA_ROOT = 'rb/static'
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/static/'
+MEDIA_URL = ''
 
 # URL prefix for admin static files -- CSS, JavaScript and images.                    
 # Make sure to use a trailing slash.                                                  
@@ -190,7 +190,7 @@ DEVSERVER_MODULES = (
 DEVSERVER_IGNORED_PREFIXES = ['/media', '/uploads']
 
 # for get_profile()
-AUTH_PROFILE_MODULE = 'rb.Profile'
+#AUTH_PROFILE_MODULE = 'rb.Profile'
 
 # for sessions
 #SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
@@ -258,4 +258,4 @@ DEVSERVER_IGNORED_PREFIXES = ['/media', '/uploads']
 
 #SESSION_COOKIE_DOMAIN = '.readr.local'
 
-STATIC_URL = BASE_URL + '/static/'
+STATIC_URL = BASE_URL + '/'
