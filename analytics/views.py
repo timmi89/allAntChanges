@@ -15,6 +15,7 @@ def analytics(request, group=None, short_name=None):
     context = {}
     context['group'] = group
     context['fb_client_id'] = FACEBOOK_APP_ID
+    context['cookie_user'] = checkCookieToken(request)
     return render_to_response(
         "analytics.html",
         context,
