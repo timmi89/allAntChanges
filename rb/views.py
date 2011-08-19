@@ -176,7 +176,7 @@ def settings(request, group=None):
 
     return render_to_response(
         "group_form.html", 
-        {"form": form, "short_name": group.short_name},
+        {"form": form, "short_name": group.short_name, "fb_client_id": FACEBOOK_APP_ID},
         context_instance=RequestContext(request)
     )
 
@@ -188,7 +188,7 @@ def admin_request(request, short_name=None):
 
     return render_to_response(
         "admin_request.html",
-        {"group": group},
+        {"group": group, "fb_client_id": FACEBOOK_APP_ID},
         context_instance=RequestContext(request)
     )
 

@@ -17,7 +17,7 @@ if DEBUG:
     FACEBOOK_APP_ID = '186217208100982'
     FACEBOOK_APP_SECRET = 'f285b17e71770615189e7676c1d7d0f9'
 
-    BASE_URL = 'http://readr.local:8080'
+    BASE_URL = 'http://local.readrboard.com:8080'
 
     DATABASES = {
       'default': {
@@ -154,7 +154,7 @@ SERIALIZATION_MODULES = {
     'json': 'wadofstuff.django.serializers.json'
 }
 """
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -170,7 +170,10 @@ INSTALLED_APPS = (
     #'autofixture',
     #'django_extensions',
     #'devserver'
-)
+]
+
+if DEBUG:
+    INSTALLED_APPS += ['devserver']
 
 DEVSERVER_MODULES = (
     'devserver.modules.sql.SQLRealTimeModule',
