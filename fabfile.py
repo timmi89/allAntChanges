@@ -1,6 +1,7 @@
 from fabric.api import *
 
-env.hosts = ['aws']
+env.hosts = ['50.19.211.244']
+env.user = 'django'
 env.remote_dir = "~/readrboard"
 
 def commit_local():
@@ -9,6 +10,7 @@ def commit_local():
     local("git push")
 
 def pull_remote():
+    run("cd $remote_dir")
     run("git pull")
     run("sudo apache2ctl restart")
 
