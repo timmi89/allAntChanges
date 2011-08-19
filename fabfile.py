@@ -15,5 +15,8 @@ def pull_remote():
     run("sudo apache2ctl restart")
 
 def deploy():
+    require("hosts")
+    require("user")
+    require("remote_dir")
     commit_local()
     pull_remote()
