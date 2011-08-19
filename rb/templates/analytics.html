@@ -132,7 +132,7 @@ RB.analytics = {
 					for ( var i in response ) {
 						var sizeClass = ( response[i].count > 7 ) ? "large" : (response[i].count > 4 ) ? "medium" : "small";
 						tag_list += '<li class="'+sizeClass+'">('+response[i].count+') '+response[i].interaction_node__body+'</li>';
-						// tag_list += '<li class="'+sizeClass+'"><a href="#">('+response[i].count+') '+response[i].interaction_node__body+'</a></li>';
+						// tag_list += '<li class="'+sizeClass+'"><a href="/group/{{ group.short_name }}/?s='+response[i].interaction_node__body+'" target="_blank">('+response[i].count+') '+response[i].interaction_node__body+'</a></li>';
 					}
 					$('section[role="most popular tags"] ol').html( $(tag_list) );
 				} else if (type=="bookmarks") {
