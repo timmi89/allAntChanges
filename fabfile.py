@@ -9,8 +9,8 @@ def commit_local():
     local("git push")
 
 def pull_remote():
-    remote("git pull")
-    remote("sudo apache2ctl restart")
+    run("git pull")
+    run("sudo apache2ctl restart")
 
 def deploy():
     commit_local()
