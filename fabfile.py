@@ -2,6 +2,7 @@ from fabric.api import *
 
 env.hosts = ['50.19.211.244']
 env.user = 'django'
+env.password = 'gubnah'
 
 code_dir = "~/readrboard"
 
