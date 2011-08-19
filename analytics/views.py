@@ -8,13 +8,18 @@ from django.core import serializers
 from piston.handler import AnonymousBaseHandler
 from settings import DEBUG, FACEBOOK_APP_ID
 from authentication.decorators import requires_admin
+from django.template import RequestContext
 
 @requires_admin
 def analytics(request, group=None, short_name=None):
     context = {}
     context['group'] = group
     context['fb_client_id'] = FACEBOOK_APP_ID
-    return render_to_response("analytics.html", context)
+    return render_to_response(
+        "analytics.html",
+        context,
+        context_instance=RequestContext(request)
+    )
 
 def analytics_request(func):
     def wrapper(self, request, *args, **kwargs):
