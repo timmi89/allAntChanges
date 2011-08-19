@@ -508,7 +508,7 @@ header[role="banner"] #search			{float:right; padding-top:8px;}
 
 header[role="banner"] #user				{float:right; padding:5px 8px 0 20px; }
 header[role="banner"] #user	img			{float:left; max-width:30px; max-height:30px;}
-header[role="banner"] #user	a			{float:left; margin: 8px 0px 0px 5px; }
+header[role="banner"] #user	strong		{float:left; margin: 8px 0px 0px 5px; }
 header[role="banner"] #user	a.fb_button	{margin-top:4px;}
 
 header[role="banner"] #search input		{border:1px solid #a4a4a4; border-radius:4px;padding:4px;}
@@ -738,9 +738,9 @@ table[role="active user table"] td[role="reactions"],
 table[role="active user table"] td[role="shares"],
 table[role="active user table"] td[role="comments"]		{ text-align:center; width:30px; }
 
-td[role="reactions"] img.icon	{ background:url(/static/widget/images/readr_icons.png) 0px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
-td[role="shares"] img.icon		{ background:url(/static/widget/images/readr_icons.png) -50px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
-td[role="comments"] img.icon	{ background:url(/static/widget/images/readr_icons.png) -24px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
+td[role="reactions"] img.icon	{ background:url(/widget/images/readr_icons.png) 0px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
+td[role="shares"] img.icon		{ background:url(/widget/images/readr_icons.png) -50px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
+td[role="comments"] img.icon	{ background:url(/widget/images/readr_icons.png) -24px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
 
 section[role="thin panels"] section[role="most active readers"] h3	{ border-top:0; }
 
@@ -852,7 +852,7 @@ http://meyerweb.com/eric/tools/css/reset
 http://people.opera.com/patrickl/experiments/keyboard/test
 http://gist.github.com/413930
 http://pathf.com/blogs/2008/05/formatting-quoted-code-in-blog-posts-css21-white-space-pre-wrap
-http://sitepoint.com/blogs/2010/08/20/ie-remove-textarea-scrollbars
+http://static/sitepoint.com/blogs/2010/08/20/ie-remove-textarea-scrollbars
 http://tjkdesign.com/ez-css/css/base.css
 http://viget.com/inspire/styling-the-button-element-in-internet-explorer
 http://code.flickr.com/blog/2008/11/12/on-ui-quality-the-little-things-client-side-image-resizing
