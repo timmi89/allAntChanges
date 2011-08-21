@@ -130,7 +130,7 @@ def getPage(request, pageid=None):
             defaults={'url':fullurl, 'site':site, 'title':title}
         )
     else:
-        page = Page.objects.get_or_create(url=fullurl, canonical=''
+        page = Page.objects.get_or_create(url=fullurl, canonical=None
             defaults={'site': site, 'title':title}
         )
         
