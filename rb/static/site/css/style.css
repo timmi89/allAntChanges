@@ -738,9 +738,9 @@ table[role="active user table"] td[role="reactions"],
 table[role="active user table"] td[role="shares"],
 table[role="active user table"] td[role="comments"]		{ text-align:center; width:30px; }
 
-td[role="reactions"] img.icon	{ background:url(/widget/images/readr_icons.png) 0px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
-td[role="shares"] img.icon		{ background:url(/widget/images/readr_icons.png) -50px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
-td[role="comments"] img.icon	{ background:url(/widget/images/readr_icons.png) -24px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
+td[role="reactions"] img.icon	{ background:url(/static/widget/images/readr_icons.png) 0px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
+td[role="shares"] img.icon		{ background:url(/static/widget/images/readr_icons.png) -50px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
+td[role="comments"] img.icon	{ background:url(/static/widget/images/readr_icons.png) -24px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
 
 section[role="thin panels"] section[role="most active readers"] h3	{ border-top:0; }
 
