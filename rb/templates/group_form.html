@@ -7,7 +7,7 @@
 {% block mainContent %}
   <h1>Group Settings</h1>
 
-  <form action="/settings/{{ short_name }}/" method="post" class="in-page">{% csrf_token %}
+  <form action="/settings/{{ short_name }}/" enctype="multipart/form-data" method="post" class="in-page">{% csrf_token %}
   {{ form.non_field_errors }}
 
 	<label for="id_name">Name <span>explanation</span></label>
@@ -28,6 +28,8 @@
 	{{ form.temp_interact }}{{ form.temp_interact.errors }}
 	<label for="id_logo_url_sm">Small Logo <span>explanation</span></label>
 	{{ form.logo_url_sm }}{{ form.logo_url_sm.errors }}
+	<label for="id_logo_sm"> <span>explanation</span></label>
+	{{ form.logo_sm }}{{ form.logo_sm.errors }}
 	<label for="id_logo_url_med">Medium Logo <span>explanation</span></label>
 	{{ form.logo_url_med }}{{ form.logo_url_med.errors }}
 	<label for="id_logo_url_lg">Large Logo <span>explanation</span></label>
@@ -40,11 +42,6 @@
 	<label for="id_css_url">Custom CSS <span>explanation</span></label>
 
 	{{ form.css_url }}
-	
-	{% comment %}
-	<label for="id_secret">Secret... <span>explanation</span></label>
-	{{ form.secret }}
-	{% endcomment %}
 
 	<label for="id_blessed_tags">Blessed Tags <span>explanation</span></label>
 	{{ form.blessed_tags }}
