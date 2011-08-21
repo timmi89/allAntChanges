@@ -329,7 +329,6 @@ function readrBoard($R){
                                 var newArgs;
                                 if (actionType == "react") {
                                     newArgs = { tag:$this, rindow:rindow, settings:settings, hash:hash };
-
                                     RDR.actions.interactions.ajax( newArgs, 'tag', 'create' );
 
                                 } else {
@@ -369,7 +368,8 @@ function readrBoard($R){
                 readMode: {
                     //RDR.rindow._rindowTypes.readMode:
                     make: function(settings){
-                        //RDR.rindow._rindowTypes.readMode.make:               
+                        //RDR.rindow._rindowTypes.readMode.make:
+
                         var hash = settings.hash;
                         var summary = RDR.summaries[hash],
                         kind = summary.kind;
@@ -3011,6 +3011,9 @@ function readrBoard($R){
                         var response = args.response;
 
                         //clear the loader                  
+                        if ( typeof tag_li.find != "function" ) {
+                            tag_li = rindow.find('li.rdr_tag_' + args.tag.id);
+                        }
                         tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('span').html('');
 
 
@@ -4142,7 +4145,7 @@ function readrBoard($R){
 
                     var $socialBox = $('<div class="rdr_share_social"><h4>Share:</h4></div>'), 
                     $shareLinks = $('<ul class="shareLinks"></ul>'),
-                    socialNetworks = ["facebook","twitter"]; //,"tumblr","linkedin"];
+                    socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
 
                     var shareHash = hash;
                     //quick mockup version of this code
@@ -4164,7 +4167,22 @@ function readrBoard($R){
                         reaction_count = tag.count;
                         reaction_body = tag.body;
                     }
-                    var $infoSummary = $('<div class="rdr_info_summary"><h4>('+reaction_count+') '+reaction_body+'</h4></div>');
+                    var $infoSummary = $('<div class="rdr_info_summary"><h4><span>('+reaction_count+')</span> '+reaction_body+'</h4></div>');
+
+                    $tooltip = RDR.tooltip.draw({ "item":"vote_up","tipText":"Vote reaction up" }).addClass('rdr_top').hide();
+                    $infoSummary.append( $tooltip );
+
+                    $infoSummary.click( function() {
+                        // click
+                        args = { tag:tag, rindow:rindow, hash:hash, content_node:content_node };                            
+                        RDR.actions.interactions.ajax( args, 'tag', 'create' );
+                    }).hover( function() {
+                        // hover
+                        $(this).find('div.rdr_tooltip').show();
+                    }, function() {
+                        // hover out
+                        $(this).find('div.rdr_tooltip').hide();
+                    });
 
                     var $infoBox = $('<div class="rdr_shareBox"></div>');
                     $infoBox.append( $infoSummary, $socialBox );
@@ -4913,29 +4931,37 @@ function readrBoard($R){
                 });
             },
             shareContent: function(args) {
-
+console.log('share args');
+console.dir(args);
                 var content = args.content_node_info.content;
                 switch (args.sns) {
                     case "facebook":
-                    // TODO make dynamic
-                        window.open('http://www.facebook.com/sharer.php?s=100&p[title]='+encodeURI(content.substr(0, content_length) )+'&p[summary]='+encodeURI(args.reaction)+'&p[url]='+args.short_url,"readr_share_fb","menubar=1,resizable=1,width=626,height=436");
+                        window.open('http://www.facebook.com/sharer.php?s=100&p[title]='+encodeURI(content.substr(0, content_length) )+'&p[summary]='+encodeURI(args.reaction)+'&p[url]='+args.short_url,"readr_share_facebook","menubar=1,resizable=1,width=626,height=436");
                     //&p[images][0]=<?php echo $image;?>', 'sharer',
                     break;
 
                     case "twitter":
                         var content_length = ( 90 - args.reaction.length );
                         var twitter_acct = ( RDR.group.twitter ) ? '&via='+RDR.group.twitter : '';
-                        window.open('http://twitter.com/intent/tweet?url='+args.short_url+twitter_acct+'&text='+encodeURI(args.reaction)+':+"'+encodeURI(content.substr(0, content_length) )+'"',"readr_share_tw","menubar=1,resizable=1,width=626,height=436");
+                        window.open('http://twitter.com/intent/tweet?url='+args.short_url+twitter_acct+'&text='+encodeURI(args.reaction)+':+"'+encodeURI(content.substr(0, content_length) )+'"',"readr_share_twitter","menubar=1,resizable=1,width=626,height=436");
                     break;
 
                     case "tumblr":
-                    /*
-                    http://www.tumblr.com/share/quote?quote=53%20percent%20of%20Americans%20now%20support%20gay%20marriage.%20Which%20means%20that%2047%25%20of%20the%20country%20are%20still%20assholes.&source=Bill%20Maher
+                        var source = '&source='+RDR.group.name;
+                        switch ( args.content_node_info.kind) {
+                            case "txt":
+                                window.open('http://www.tumblr.com/share/quote?quote='+encodeURI(content.substr(0, content_length) )+encodeURI(source),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
+                            break;
 
-                    http://www.tumblr.com/share/photo?source=http%3A%2F%2Ffarm6.static.flickr.com%2F5030%2F5601726196_08725e1979_z.jpg&caption=%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20This%20example%20uses%20the%20basic%20Tumblr%20Button%20in%20the%20article%27s%20footer%20to%20let%20Tumblr%20users%20easily%20promote%20this%20article%20on%20their%20blogs.%0A%20%20%20%20%20%20%20%20%20%20%20%20&click_thru=http%3A%2F%2Fwww.flickr.com%2Fphotos%2Fjfisher%2F5601726196
+                            case "img":
+                                var canonical = ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href'):window.location.href;
+                                window.open('http://www.tumblr.com/share/photo?source='+encodeURIComponent(args.content_node_info.body)+'&caption='+encodeURIComponent(args.reaction)+'&click_thru='+encodeURIComponent(canonical),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
+                            break;
 
-                    http://www.tumblr.com/share/video?embed=%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ciframe%20src%3D%22http%3A%2F%2Fwww.youtube.com%2Fembed%2FtxqiwrbYGrs%22%20title%3D%22YouTube%20video%20player%22%20allowfullscreen%3D%22%22%20frameborder%3D%220%22%20height%3D%22480%22%20width%3D%22600%22%3E%3C%2Fiframe%3E%0A%20%20%20%20%20%20%20%20&caption=%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20This%20example%20uses%20the%20basic%20Tumblr%20Button%20in%20the%20article%27s%20footer%20to%20let%20Tumblr%20users%20easily%20promote%20this%20article%20on%20their%20blogs.%0A
-                    */
+                            case "media":
+                                window.open('http://www.tumblr.com/share/video?embed='+encodeURIComponent(args.content_node_info.body)+'&caption='+encodeURIComponent(args.reaction),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
+                            break;
+                        }
                     break;
 
                     case "linkedin":
@@ -5177,7 +5203,7 @@ function readrBoard($R){
 
                 var $socialBox = $('<div class="rdr_share_social"><h4>Share:</h4></div>'),
                 $shareLinks = $('<ul class="shareLinks"></ul>'),
-                socialNetworks = ["facebook","twitter"]; //,"tumblr","linkedin"];
+                socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
 
                 // embed icons/links for diff SNS
                 $.each(socialNetworks, function(idx, val){
