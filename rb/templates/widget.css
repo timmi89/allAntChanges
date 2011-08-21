@@ -769,12 +769,28 @@ box-shadow:0 0 10px 1px #008be4 !important;
 */
 
 /* container indicator icons */
+div.rdr_indicator {
+    /*start with 0 opacity so it can fade in properly*/
+    /* opacity for .rdr_indicator set in js instead of here. Fade it in on load so we can still use display:inline; */
+    opacity:0.0;
+    -moz-opacity:0.0;
+    -khtml-opacity:0.0;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+    z-index:11000;
+    text-decoration:none;
+    border:none;
+}
 
-/*reset for all indicator stuff - this is the stuff that's not in the sandbox, so we need !important here everything */
+/*for the text ones reset it with !important because it will be inline to the doc, so it won't be in the the sandbox,*/
 /*this should stay above the rest of the indicator stuff so it can get overwridden as needed. */
-div.rdr_indicator, div.rdr_indicator * {
-    position: relative !important;
+/*todo: should all these things really be in the * part (the all children part) ?  */
+div.rdr_indicator_for_text, div.rdr_indicator_for_text * {
     display:inline !important;
+    position: relative !important;
     margin: 0 !important;
     padding: 0 !important;
     top: 0 !important;
@@ -782,24 +798,15 @@ div.rdr_indicator, div.rdr_indicator * {
     z-index:11000 !important;
     text-decoration:none !important;
     border:none !important;
-}
-/*the indicator body will be moved up to compensate*/
-div.rdr_indicator_for_text{
-    vertical-align: text-top;
-}
-
-div.rdr_indicator {
-    /*start with 0 opacity so it can fade in properly*/
-    /* opacity for .rdr_indicator set in js instead of here. Fade it in on load so we can still use display:inline; */
-    opacity:0.0;
-    -moz-opacity:0.0;
-    -khtml-opacity:0.0;
-
     -webkit-user-select: none !important;
     -khtml-user-select: none !important;
     -moz-user-select: none !important;
     -o-user-select: none !important;
     user-select: none !important;
+}
+/*the indicator body will be moved up to compensate*/
+div.rdr_indicator_for_text{
+    vertical-align: text-top !important;
 }
 
 #rdr_sandbox #rdr_indicator_details_wrapper{
@@ -877,6 +884,8 @@ div.rdr_indicator_for_text div.rdr_indicator_body{
     /*top: -15px !important;*/
 }
 div.rdr_indicator_for_media div.rdr_indicator_body{
+    left:auto !important;
+    right:0 !important;
     background:white !important;
     border: 1px solid #bbb !important;
     height: auto !important;

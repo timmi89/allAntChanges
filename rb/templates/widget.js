@@ -3642,7 +3642,8 @@ function readrBoard($R){
                             $tagsList = $('<div class="rdr_tags_list" />');
 
                         log($indicator_details_body);
-                        log($indicator_body);
+                        log('$indicator_body).html() ');
+                        log($indicator_body.html() );
                         $indicator_details_body.html( $indicator_body.html() );
 
                         $indicator_details.empty().append( $indicator_details_body, categoryTitle, $tagsList );
@@ -3728,24 +3729,34 @@ function readrBoard($R){
                             $indicator_details = summary.$indicator_details,
                             $container_tracker = $('#rdr_container_tracker_'+hash);
 
-                        //todo: work out ie differences
-                        var cornerPadding = ( !$.browser.msie ) ? 
-                        {
-                            top: 20,
-                            left: -18
-                        }:{
-                            top: 20,
-                            left: -18
-                        };
-                        var indicatorBodyWidth = $indicator_body.width(),
-                            topVal = cornerPadding.top,
-                            leftVal = $container.width() + indicatorBodyWidth + cornerPadding.left;
+                        //todo: consolodate this with the other case of it
+                        var containerWidth, containerHeight;
+                        //this will calc to 0 if there is no border. 
+                        var hasBorder = parseInt( $container.css('border-top-width') ) + 
+                            parseInt( $container.css('border-bottom-width') ) + 
+                            parseInt( $container.css('border-left-width') ) + 
+                            parseInt( $container.css('border-right-width') );
 
-                        RDR.util.cssSuperImportant($indicator, {
-                            top: topVal,
-                            left: leftVal
+                        if(hasBorder){
+                            containerWidth = $container.outerWidth();
+                            containerHeight = $container.outerHeight();
+                        }else{
+                            containerWidth = $container.width();
+                            containerHeight = $container.height();
+                        }
+
+                        var cornerPadding = 8,
+                            indicatorBodyWidth = $indicator_body.width();
+                        
+                        $indicator.css({
+                            top: 0,
+                            left: containerWidth
                         });
 
+                        RDR.util.cssSuperImportant($indicator_body, {
+                            top: cornerPadding,
+                            right: cornerPadding
+                        });
                     },
                     setupMediaBorderHilites: function(hash){
 
