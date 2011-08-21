@@ -37,13 +37,18 @@
     section[role="main"] .card tbody .column2 .content_link { font-size:12px; padding-top:5px; }
     </style>
       <!-- <div class="who_action">{{ tag.content.interaction.user.social_user.full_name }}'s reaction to:</div> -->
-      <div class="who_action">
-      </div>
+      <div class="who_action"></div>
+
       {% if interaction.content.kind == "img" %}
       <div class="content image"><img src="{{ interaction.content.body }}"></div>
-      {% else %}
+      {% endif %}
+      {% if interaction.content.kind == "med" %}
+      <div class="content text"><iframe width="150" frameborder="0" src="{{ interaction.content.body }}"></iframe></div>
+      {% endif %}
+      {% if interaction.content.kind == "txt" %}
       <div class="content text">{{ interaction.content.body }}</div>
       {% endif %}
+
       {% if interaction.kind == 'com' %}
       <h5 class="label small"></h5>
       <div class="comment_container">

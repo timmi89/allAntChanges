@@ -83,8 +83,8 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
           <fb:login-button onlogin="RDRAuth.checkFBStatus({ requesting_action:'site_login'});">
         </div>
       </div>
-    <div id="search">
-      <form method="get" id="searchform" action="">
+    <div id="site_search">
+      <form method="get" id="searchform" action="/">
         <fieldset>
         <label>Search</label>
         <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />
