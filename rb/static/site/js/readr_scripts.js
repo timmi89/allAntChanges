@@ -107,6 +107,24 @@ RB = {
             	newHash = "#" + key + "=" + value;
             	window.location.hash = newHash;
             }
-        }
+        },
+		loadScript : function(sScriptSrc,callbackfunction) {
+		var oHead = document.getElementsByTagName('head')[0];
+		if(oHead) {
+		    var oScript = document.createElement('script');
+
+		    oScript.setAttribute('src',sScriptSrc);
+		    oScript.setAttribute('type','text/javascript');
+
+		    var loadFunction = function() {
+		        if (this.readyState == 'complete' || this.readyState == 'loaded') {
+		            callbackfunction();
+		        }
+		    };
+		    oScript.onload = callbackfunction;
+		    oScript.onreadystatechange = loadFunction;
+		    oHead.appendChild(oScript);
+			}
+		}
 	}
 };
