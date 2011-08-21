@@ -1064,8 +1064,7 @@ function readrBoard($R){
                     }
                     else{
                         cleanup($actionbar, hash);
-                        log($containerTracker)
-                        log($mediaBorderWrap)
+                        
                         $mediaBorderWrap.hide();
                                             
                         var $indicator = $('#rdr_indicator_'+hash);
@@ -3539,7 +3538,6 @@ function readrBoard($R){
                                         
                     //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
                     var $count = $indicator_body.find('.rdr_count');
-                    log($count)
                     $count.html( RDR.util.prettyNumber( summary.counts.tags ) );
 
                     //build tags in $tagsList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
@@ -3644,9 +3642,7 @@ function readrBoard($R){
                             categoryTitle = '<span class="rdr_indicator_categoryTitle">' +categoryTitleText+ '</span>',
                             $tagsList = $('<div class="rdr_tags_list" />');
 
-                        log($indicator_details_body);
-                        log('$indicator_body).html() ');
-                        log($indicator_body.html() );
+                        
                         $indicator_details_body.html( $indicator_body.html() );
 
                         $indicator_details.empty().append( $indicator_details_body, categoryTitle, $tagsList );
@@ -3721,7 +3717,7 @@ function readrBoard($R){
                             top: $container.offset().top,
                             left: $container.offset().left
                         });
-                        log($container.offset().top);
+                        
                     },
                     positionMediaIndicator: function(hash){
                         //RDR.actions.indicators.utils.positionMediaIndicator:
@@ -5057,8 +5053,7 @@ function readrBoard($R){
                 });
             },
             shareContent: function(args) {
-console.log('share args');
-console.dir(args);
+
                 var content = args.content_node_info.content;
                 switch (args.sns) {
                     case "facebook":
