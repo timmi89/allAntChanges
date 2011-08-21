@@ -4143,7 +4143,7 @@ function readrBoard($R){
 
                 function _makeInfoBox(content_node){
 
-                    var $socialBox = $('<div class="rdr_share_social"><h4>Share:</h4></div>'), 
+                    var $socialBox = $('<div class="rdr_share_social" />'), 
                     $shareLinks = $('<ul class="shareLinks"></ul>'),
                     socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
 
@@ -5201,7 +5201,7 @@ console.dir(args);
 
                 $commentBox.append( $commentDiv );
 
-                var $socialBox = $('<div class="rdr_share_social"><h4>Share:</h4></div>'),
+                var $socialBox = $('<div class="rdr_share_social" />'),
                 $shareLinks = $('<ul class="shareLinks"></ul>'),
                 socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
 
