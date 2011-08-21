@@ -92,6 +92,9 @@ class Group(models.Model):
     no_readr = models.CharField(max_length=255, blank=True)
     
     # logo fields
+    logo_sm = models.ImageField(blank=True, null=True, upload_to="logos/")
+    logo_med =models.ImageField(blank=True, null=True, upload_to="logos/")
+    logo_lg = models.ImageField(blank=True, null=True, upload_to="logos/")
     logo_url_sm = models.CharField(max_length=200, blank=True)
     logo_url_med = models.CharField(max_length=200, blank=True)
     logo_url_lg = models.CharField(max_length=200, blank=True)
@@ -144,6 +147,9 @@ class Site(models.Model):
     twitter = models.CharField(max_length=64, blank=True)
     
     # logo fields
+    logo_sm = models.ImageField(blank=True, null=True, upload_to="logos/")
+    logo_med = models.ImageField(blank=True, null=True, upload_to="logos/")
+    logo_lg = models.ImageField(blank=True, null=True, upload_to="logos/")
     logo_url_sm = models.CharField(max_length=200, blank=True)
     logo_url_med = models.CharField(max_length=200, blank=True)
     logo_url_lg = models.CharField(max_length=200, blank=True)
