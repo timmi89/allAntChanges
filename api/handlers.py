@@ -371,7 +371,7 @@ class SettingsHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, group=None):
         print request
-        host = request.META['HTTP_HOST']
+        host = request.get('host_name')
         path = request.path
         fp = request.get_full_path()
         group_id = int(group) if group else 1
