@@ -1428,7 +1428,7 @@ function readrBoard($R){
                 }
             },
 			createXDMframe: function() {
-console.dir(RDR);
+
                 RDR.session.receiveMessage();
 
                 var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
