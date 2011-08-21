@@ -22,9 +22,9 @@
 	<h3>{{ group.name }} Activity</h3>
 	<section role="controls">
 		<label>Date Range: </label>
-		<input type="text" name="start_date" value="{% now "m/d/y" %}" />
+		<input type="text" name="start_date" />
 		<label>to</label>
-		<input type="text" name="end_date" value="{% now "m/d/y" %}" />
+		<input type="text" name="end_date" />
 		<button>Update</button>
 	</section>
 </section>
@@ -124,8 +124,6 @@ $( 'section[role="controls"] input' ).datepicker({ dateFormat: 'mm/dd/y' });
 
 // put in external file...
 RB.analytics = {
-	startDate: "{% now "m/d/y" %}", //TODO make this "today"
-	endDate: "{% now "m/d/y" %}", //TODO make this "today"
 
 	mostPopular: function( args ) {
 		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
@@ -379,6 +377,21 @@ RB.analytics = {
 		RB.analytics.recentlyActive();
 	}
 };
+{% if start != "none"  %}
+RB.analytics.startDate = "{{ start }}";
+{% else %}
+RB.analytics.startDate = "{% now "m/d/y" %}";
+{% endif %}
+
+{% if end != "none"  %}
+RB.analytics.endDate = "{{ end }}";
+{% else %}
+RB.analytics.endDate = "{% now "m/d/y" %}";
+{% endif %}
+
+$('input[name="start_date"]').val( RB.analytics.startDate )
+$('input[name="end_date"]').val( RB.analytics.endDate )
+
 
 $('section[role="controls"] button').click( function() {
 	RB.analytics.startDate = $('input[name="start_date"]').val();
