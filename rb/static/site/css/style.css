@@ -716,7 +716,7 @@ table[role="active pages table"] td[role="url"]	div:hover a		{ text-decoration:u
 table[role="active content table"] td[role="via"] div:hover a img,
 table[role="active pages table"] td[role="url"]	div:hover a	img	{ display:inline; }
 
-table[role="active content table"] tbody td[role="content"]		{ font-size:14px; font-weight:bold; width:515px;}
+table[role="active content table"] tbody td[role="content"]		{ font-size:12px; font-style:italic; padding:0 0 10px 0; width:515px;}
 table[role="active content table"] tbody td[role="content"] img	{ max-width:80px; max-height:80px; }
 table[role="active pages table"] tbody td[role="title"]			{ font-style:italic; }
 
@@ -753,8 +753,8 @@ table[role="popular shares"] td[role="reactions"]	{ padding:0 0 10px 23px; }
 table[role="popular shares"] td[role="via"]			{ padding-bottom:10px;}
 table[role="popular bookmarks"] td 						{ vertical-align:middle; }
 table[role="popular bookmarks"] td[role="content"]			{ font-size:14px;}
+table[role="popular bookmarks"] td[role="via"],
 table[role="popular bookmarks"] td[role="reactions"]	{ padding:0 0 10px 23px; }
-table[role="popular bookmarks"] td[role="via"]			{ padding-bottom:10px;}
 
 /* HEADINGS */
 /* TYPOGRAPHY */

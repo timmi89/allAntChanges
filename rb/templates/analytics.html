@@ -146,12 +146,10 @@ RB.analytics = {
 					var tag_list = "";
 					for ( var i in response ) {
 						var sizeClass = ( response[i].count > 7 ) ? "large" : (response[i].count > 4 ) ? "medium" : "small";
-						// tag_list += '<li class="'+sizeClass+'">('+response[i].count+') '+response[i].interaction_node__body+'</li>';
 						tag_list += '<li class="'+sizeClass+'"><a href="/group/{{ group.short_name }}/?s='+response[i].interaction_node__body+'" target="_blank">('+response[i].count+') '+response[i].interaction_node__body+'</a></li>';
 					}
 					$('section[role="most popular tags"] ol').html( $(tag_list) );
 				} else if (type=="bookmarks") {
-
 					var bookmarkHtml = "";
 					for ( var i in response ) {
 						var bookmark = response[i];
@@ -161,8 +159,8 @@ RB.analytics = {
 							bookmarkHtml += '('+reaction.count+') '+reaction.interaction_node__body;
 							if ( j < bookmark[1].related_reactions.length - 1 ) bookmarkHtml += ", ";
 						}
-						bookmarkHtml += '</td></tr><tr>'; 
-						// TODO bookmarkHtml += '<td role="via"><em>via <a href="#" target="_blank">www.dailycandy.com/some-article</a></em></td></tr>';
+						bookmarkHtml += '</td></tr>'; 
+						// bookmarkHtml += '<tr><td role="via"><em>View <a href="#" target="_blank">On your site <img src="/static/site/images/external_link_icon.gif" /></a> | <a href="#" target="_blank">Page Info</a></em></td></tr>';
 					}
 
 					$('table[role="popular bookmarks"] tbody').html( $(bookmarkHtml) );
@@ -178,7 +176,7 @@ RB.analytics = {
 							if ( j < share[1].related_reactions.length - 1 ) shareHtml += ", ";
 						}
 						shareHtml += '</td></tr><tr>'; 
-						// TODO shareHtml += '<td role="via"><em>via <a href="#" target="_blank">www.dailycandy.com/some-article</a></em></td></tr>';
+						// shareHtml += '<tr><td role="via"><em>View <a href="#" target="_blank">On your site <img src="/static/site/images/external_link_icon.gif" /></a> | <a href="#" target="_blank">Page Info</a></em></td></tr>';
 					}
 
 					$('table[role="popular shares"] tbody').html( $(shareHtml) );
@@ -206,11 +204,9 @@ RB.analytics = {
 			success: function(response){
 				if ( type == "pages" ) {
 					var pageHtml = "";
-					
 					for ( var i in response) {
-						pageHtml += '<tr><td role="url"><div>'+response[i].page.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" />&nbsp;&nbsp;</div></td>'
-						// pageHtml += '<tr><td role="url"><div><a href="'+response[i].page.canonical_url+'" target="_blank">'+response[i].page.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
-						+'<td role="title">'+response[i].page.title+'</td>'
+						pageHtml += '<tr><td role="url"><div><a href="'+response[i].page.canonical_url+'" target="_blank">'+response[i].page.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
+						+'<td role="title"><a href="/page/'+response[i].page.id+'" target="_blank">'+response[i].page.title+'</td>'
 						+'<td role="reactions">'+response[i].counts.tag+'</td>'
 						+'<td role="shares">'+response[i].counts.shr+'</td>'
 						+'<td role="comments">'+response[i].counts.com+'</td></tr>';
@@ -237,9 +233,10 @@ RB.analytics = {
 				} else if ( type == "users" ) {
 					
 					var userHtml = "";
+					console.dir(response);
 					for ( var i in response) {
 						if ( response[i].user.img_url ) {
-							userHtml += '<tr><td role="avatar"><img src="'+response[i].user.img_url+'" /></td><td>'+response[i].user.full_name+'</td>'
+							userHtml += '<tr><td role="avatar"><a href="/user/'+response[i].user.user_id+'" target="_blank"><img src="'+response[i].user.img_url+'" /></a></td><td><a href="/user/'+response[i].user.user_id+'" target="_blank">'+response[i].user.full_name+'</a></td>'
 								+ '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
 								+ '<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
 								+ '<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td>'
@@ -271,8 +268,8 @@ RB.analytics = {
 
 				var recentHtml = "";
 				for (var i in response) {
-					recentHtml += '<tr><td><strong>'+response[0].title+'</strong></td></tr><tr>';
-					// recentHtml += '<tr><td><strong><a href="'+response[0].id+'">'+response[0].title+'</a></strong></td></tr><tr>';
+					// recentHtml += '<tr><td><strong>'+response[0].title+'</strong></td></tr><tr>';
+					recentHtml += '<tr><td><strong><a href="/page/'+response[0].id+'" target="_blank">'+response[0].title+'</a></strong></td></tr><tr>';
 					// TODO make above line link to page profile
 				}
 
