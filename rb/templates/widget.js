@@ -2232,9 +2232,11 @@ function readrBoard($R){
                         var container = RDR.containers[hash];
 
                         //quick fix - copy the container object but without the $this obj
+                        //for now we're just not sending the body
                         var sendContainer = {
                             HTMLkind: container.HTMLkind,
-                            body: container.body,
+                            body: "",
+                            //body: container.body,
                             hash: container.hash,
                             id: container.id,
                             kind: container.kind
