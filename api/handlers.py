@@ -370,8 +370,7 @@ class SettingsHandler(AnonymousBaseHandler):
              
     @status_response
     def read(self, request, group=None):
-        print request
-        host = request.get('host_name')
+        host = request.GET.get('host_name')
         path = request.path
         fp = request.get_full_path()
         group_id = int(group) if group else 1
@@ -381,6 +380,8 @@ class SettingsHandler(AnonymousBaseHandler):
             return HttpResponse("RB Group does not exist!")
         sites = Site.objects.filter(group=group_object)
         domains = sites.values_list('domain', flat=True)
+        print host
+        print domains
         if host in domains:
             return group_object
         elif group_id == 1:
