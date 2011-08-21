@@ -215,13 +215,14 @@ RB.analytics = {
 					$('table[role="active pages table"] tbody').html( pageHtml );
 				} else if ( type == "content" ) {
 					var contentHtml = "";
-					
 					for ( var i in response) {
 						contentHtml += '<tr>'; // TODO add back in:  <td role="via"><div><a href="'+response[i].content.canonical_url+'" target="_blank">'+response[i].content.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
 						if ( response[i].content.kind == "img" ) {
 							contentHtml += '<td role="content"><img src="'+response[i].content.body+'" /></td>'
 						} else if ( response[i].content.kind == "txt" ) {
 							contentHtml += '<td role="content">'+response[i].content.body+'</td>'
+						} else if ( response[i].content.kind == "med" ) {
+							contentHtml += '<td role="content">[ Video ] <a href="javascript:void(0);" onclick="$(this).next().toggle();">See It</a><div style="display:none;" class="video"><iframe src="'+response[i].content.body+'" width="200" frameborder="0"/></div></td>'
 						}
 						contentHtml += '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
 						+'<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
@@ -233,7 +234,6 @@ RB.analytics = {
 				} else if ( type == "users" ) {
 					
 					var userHtml = "";
-					console.dir(response);
 					for ( var i in response) {
 						if ( response[i].user.img_url ) {
 							userHtml += '<tr><td role="avatar"><a href="/user/'+response[i].user.user_id+'" target="_blank"><img src="'+response[i].user.img_url+'" /></a></td><td><a href="/user/'+response[i].user.user_id+'" target="_blank">'+response[i].user.full_name+'</a></td>'
