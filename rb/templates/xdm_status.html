@@ -45,26 +45,42 @@
 			} else if ( !$.cookie('educatedUser') ) {
 				RDRAuth.notifyParent({message:false}, "educate user");
 			}
-		});
-	</script>
 
-	<script type="text/javascript">
-	var _sf_async_config={uid:26845,domain:"readrboard.com"};
-	(function(){
-	  function loadChartbeat() {
-	    window._sf_endpt=(new Date()).getTime();
-	    var e = document.createElement('script');
-	    e.setAttribute('language', 'javascript');
-	    e.setAttribute('type', 'text/javascript');
-	    e.setAttribute('src',
-	       (("https:" == document.location.protocol) ? "https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/" : "http://static.chartbeat.com/") +
-	       "js/chartbeat.js");
-	    document.body.appendChild(e);
-	  }
-	  var oldonload = window.onload;
-	  window.onload = (typeof window.onload != 'function') ?
-			loadChartbeat : function() { oldonload(); loadChartbeat(); pSUPERFLY.virtualPage("/widget", "Widget");  };
-	})();
+			rdr_loadScript
+		});
+
+		function rdr_loadScript(sScriptSrc,callbackfunction) {
+		    var oHead = document.getElementsByTagName('head')[0];
+		    if(oHead) {
+		        var oScript = document.createElement('script');
+
+		        oScript.setAttribute('src',sScriptSrc);
+		        oScript.setAttribute('type','text/javascript');
+
+		        var loadFunction = function() {
+		            if (this.readyState == 'complete' || this.readyState == 'loaded') {
+		                callbackfunction();
+		            }
+		        };
+		        oScript.onload = callbackfunction;
+		        oScript.onreadystatechange = loadFunction;
+		        oHead.appendChild(oScript);
+		    }
+		}
+
+		var qs = ( window.location.search + window.location.hash ).substr(1).split('&');
+		var qs_args = [];
+		for ( var i in qs ) {
+			var this_arg = qs[i].split('=');
+			qs_args[this_arg[0]] = this_arg[1];
+		}
+
+		var _sf_async_config={uid:26845,domain:"readrboard.com"};
+		var chartbeat_script = (("https:" == document.location.protocol) ? "https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/" : "http://static.chartbeat.com/") + "js/chartbeat.js";
+
+		rdr_loadScript( chartbeat_script, function() {
+			pSUPERFLY.virtualPage(qs_args.parentUrl, decodeURIComponent(qs_args.group_name) );
+		});
 
 	</script>
    </body>
