@@ -14,6 +14,11 @@ def requires_admin(func):
         else:
             thisobj = args[0]
             request = args[1]
+            host = request.get_host()
+            print 'ajax'
+            if host not in ('local.readrboard.com:8080', 'www.readrboard.com'):
+                return HttpResponseRedirect('no hax fucker!')
+            
         try:
             cookie_user = checkCookieToken(request)
         except GraphAPIError:

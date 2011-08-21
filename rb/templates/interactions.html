@@ -15,7 +15,7 @@
         {% if interaction.kind = 'tag' or interaction.kind = 'bkm' %}
           {{ interaction.interaction_node.body }}
           {% else %}
-          {{ interaction.human_kind }}
+          {{ interaction.human_kind }}:
         {% endif %}
       </div>
       {% if profile_user and interaction.kind = 'tag' and cookie_user.social_user.admin_approved and interaction.page.site.group.id == cookie_user.social_user.group_admin.id %}
@@ -33,6 +33,9 @@
       <!-- <div class="count"></div> -->
     </td>
     <td class="column2">
+    <style>
+    section[role="main"] .card tbody .column2 .content_link { font-size:12px; padding-top:5px; }
+    </style>
       <!-- <div class="who_action">{{ tag.content.interaction.user.social_user.full_name }}'s reaction to:</div> -->
       <div class="who_action">
       </div>
@@ -60,8 +63,8 @@
         <div class="block_content"><a href="javascript:void(0);" onclick="RB.admin.blockContent({{interaction.id}});">Block comment</a></div>
         {% endif %}
       </div>
-    </div>
-    {% endif %}
+      {% endif %}
+      <div class="content_link"><a href="{{ interaction.page.canonical_url }}" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a>
     
     {% if index %}
       <h5>Other Reactions</h5>

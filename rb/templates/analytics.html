@@ -22,9 +22,9 @@
 	<h3>{{ group.name }} Activity</h3>
 	<section role="controls">
 		<label>Date Range: </label>
-		<input type="text" name="start_date" value="{% now "m/d/y" %}" />
+		<input type="text" name="start_date" />
 		<label>to</label>
-		<input type="text" name="end_date" value="{% now "m/d/y" %}" />
+		<input type="text" name="end_date" />
 		<button>Update</button>
 	</section>
 </section>
@@ -124,8 +124,6 @@ $( 'section[role="controls"] input' ).datepicker({ dateFormat: 'mm/dd/y' });
 
 // put in external file...
 RB.analytics = {
-	startDate: "{% now "m/d/y" %}", //TODO make this "today"
-	endDate: "{% now "m/d/y" %}", //TODO make this "today"
 
 	mostPopular: function( args ) {
 		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
@@ -148,12 +146,10 @@ RB.analytics = {
 					var tag_list = "";
 					for ( var i in response ) {
 						var sizeClass = ( response[i].count > 7 ) ? "large" : (response[i].count > 4 ) ? "medium" : "small";
-						tag_list += '<li class="'+sizeClass+'">('+response[i].count+') '+response[i].interaction_node__body+'</li>';
-						// tag_list += '<li class="'+sizeClass+'"><a href="/group/{{ group.short_name }}/?s='+response[i].interaction_node__body+'" target="_blank">('+response[i].count+') '+response[i].interaction_node__body+'</a></li>';
+						tag_list += '<li class="'+sizeClass+'"><a href="/group/{{ group.short_name }}/?s='+response[i].interaction_node__body+'" target="_blank">('+response[i].count+') '+response[i].interaction_node__body+'</a></li>';
 					}
 					$('section[role="most popular tags"] ol').html( $(tag_list) );
 				} else if (type=="bookmarks") {
-
 					var bookmarkHtml = "";
 					for ( var i in response ) {
 						var bookmark = response[i];
@@ -163,8 +159,8 @@ RB.analytics = {
 							bookmarkHtml += '('+reaction.count+') '+reaction.interaction_node__body;
 							if ( j < bookmark[1].related_reactions.length - 1 ) bookmarkHtml += ", ";
 						}
-						bookmarkHtml += '</td></tr><tr>'; 
-						// TODO bookmarkHtml += '<td role="via"><em>via <a href="#" target="_blank">www.dailycandy.com/some-article</a></em></td></tr>';
+						bookmarkHtml += '</td></tr>'; 
+						// bookmarkHtml += '<tr><td role="via"><em>View <a href="#" target="_blank">On your site <img src="/static/site/images/external_link_icon.gif" /></a> | <a href="#" target="_blank">Page Info</a></em></td></tr>';
 					}
 
 					$('table[role="popular bookmarks"] tbody').html( $(bookmarkHtml) );
@@ -180,7 +176,7 @@ RB.analytics = {
 							if ( j < share[1].related_reactions.length - 1 ) shareHtml += ", ";
 						}
 						shareHtml += '</td></tr><tr>'; 
-						// TODO shareHtml += '<td role="via"><em>via <a href="#" target="_blank">www.dailycandy.com/some-article</a></em></td></tr>';
+						// shareHtml += '<tr><td role="via"><em>View <a href="#" target="_blank">On your site <img src="/static/site/images/external_link_icon.gif" /></a> | <a href="#" target="_blank">Page Info</a></em></td></tr>';
 					}
 
 					$('table[role="popular shares"] tbody').html( $(shareHtml) );
@@ -208,11 +204,9 @@ RB.analytics = {
 			success: function(response){
 				if ( type == "pages" ) {
 					var pageHtml = "";
-					
 					for ( var i in response) {
-						pageHtml += '<tr><td role="url"><div>'+response[i].page.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" />&nbsp;&nbsp;</div></td>'
-						// pageHtml += '<tr><td role="url"><div><a href="'+response[i].page.canonical_url+'" target="_blank">'+response[i].page.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
-						+'<td role="title">'+response[i].page.title+'</td>'
+						pageHtml += '<tr><td role="url"><div><a href="'+response[i].page.canonical_url+'" target="_blank">'+response[i].page.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
+						+'<td role="title"><a href="/page/'+response[i].page.id+'" target="_blank">'+response[i].page.title+'</td>'
 						+'<td role="reactions">'+response[i].counts.tag+'</td>'
 						+'<td role="shares">'+response[i].counts.shr+'</td>'
 						+'<td role="comments">'+response[i].counts.com+'</td></tr>';
@@ -221,13 +215,14 @@ RB.analytics = {
 					$('table[role="active pages table"] tbody').html( pageHtml );
 				} else if ( type == "content" ) {
 					var contentHtml = "";
-					
 					for ( var i in response) {
 						contentHtml += '<tr>'; // TODO add back in:  <td role="via"><div><a href="'+response[i].content.canonical_url+'" target="_blank">'+response[i].content.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
 						if ( response[i].content.kind == "img" ) {
 							contentHtml += '<td role="content"><img src="'+response[i].content.body+'" /></td>'
 						} else if ( response[i].content.kind == "txt" ) {
 							contentHtml += '<td role="content">'+response[i].content.body+'</td>'
+						} else if ( response[i].content.kind == "med" ) {
+							contentHtml += '<td role="content">[ Video ] <a href="javascript:void(0);" onclick="$(this).next().toggle();">See It</a><div style="display:none;" class="video"><iframe src="'+response[i].content.body+'" width="200" frameborder="0"/></div></td>'
 						}
 						contentHtml += '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
 						+'<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
@@ -241,7 +236,7 @@ RB.analytics = {
 					var userHtml = "";
 					for ( var i in response) {
 						if ( response[i].user.img_url ) {
-							userHtml += '<tr><td role="avatar"><img src="'+response[i].user.img_url+'" /></td><td>'+response[i].user.full_name+'</td>'
+							userHtml += '<tr><td role="avatar"><a href="/user/'+response[i].user.user_id+'" target="_blank"><img src="'+response[i].user.img_url+'" /></a></td><td><a href="/user/'+response[i].user.user_id+'" target="_blank">'+response[i].user.full_name+'</a></td>'
 								+ '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
 								+ '<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
 								+ '<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td>'
@@ -273,8 +268,8 @@ RB.analytics = {
 
 				var recentHtml = "";
 				for (var i in response) {
-					recentHtml += '<tr><td><strong>'+response[0].title+'</strong></td></tr><tr>';
-					// recentHtml += '<tr><td><strong><a href="'+response[0].id+'">'+response[0].title+'</a></strong></td></tr><tr>';
+					// recentHtml += '<tr><td><strong>'+response[0].title+'</strong></td></tr><tr>';
+					recentHtml += '<tr><td><strong><a href="/page/'+response[0].id+'" target="_blank">'+response[0].title+'</a></strong></td></tr><tr>';
 					// TODO make above line link to page profile
 				}
 
@@ -380,9 +375,32 @@ RB.analytics = {
 	}
 };
 
+if ( RB.util.getHashValue('start') ) {
+	RB.analytics.startDate = RB.util.getHashValue('start');
+} else {
+	RB.analytics.startDate = "{% now "m/d/y" %}";
+}
+
+if ( RB.util.getHashValue('end') ) {
+	RB.analytics.endDate = RB.util.getHashValue('end');
+} else {
+	RB.analytics.endDate = "{% now "m/d/y" %}";
+}
+
+$('input[name="start_date"]').val( RB.analytics.startDate );
+$('input[name="end_date"]').val( RB.analytics.endDate );
+
+
 $('section[role="controls"] button').click( function() {
+	// get form values
 	RB.analytics.startDate = $('input[name="start_date"]').val();
 	RB.analytics.endDate = $('input[name="end_date"]').val();
+
+	// update hash, too
+	RB.util.setHashValue('start', RB.analytics.startDate );
+	RB.util.setHashValue('end', RB.analytics.endDate );
+
+	// re-execute the API calls
 	RB.analytics.updateAll();
 });
 

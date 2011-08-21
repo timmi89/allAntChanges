@@ -61,5 +61,52 @@ RB = {
                 }
             });
 		}
+	},
+	util : {
+		getHashValue: function( key ) {
+            var hash = window.location.hash;
+            if ( hash.length > 0 ) {
+                var pairs = hash.split('#');
+
+                for ( var i in pairs ) {
+                    if ( key == pairs[i].split('=')[0] ) {
+                        // remove any &.... and ?... data.  why?  for a hash value, we don't expect nor want querystring key/value pairs.
+                        // it's a bit blunt, but works.
+                        var value = pairs[i].split('=');
+                        if ( value.length > 1 ) {
+                            value[1] = value[1].split('?')[0].split('&')[0];
+                            return value[1];
+                        } else {
+                            // if there's a key but no value, return empty string so we at least knew if the key was present.
+                            // lets us distinguish between a key not being present (return false) or presents sans value (return "")
+                            // this is called premature optimization.  
+                            return "";
+                        }
+                        
+                    }
+                }
+                // key not found, so return false
+                return false;
+            }
+        },
+        setHashValue: function( key, value ) {
+            var hash = window.location.hash;
+            var newHash = "";
+
+            if ( hash.length > 0 ) {
+                var pairs = hash.split('#');
+                for ( var i in pairs ) {
+                    if ( key == pairs[i].split('=')[0] ) {
+                    	newHash += "#" + key + "=" + value;
+                    } else if (pairs[i].length > 0 ) {
+                    	newHash += "#" + pairs[i];
+                    }
+                }
+                window.location.hash = newHash;
+            } else {
+            	newHash = "#" + key + "=" + value;
+            	window.location.hash = newHash;
+            }
+        }
 	}
 };

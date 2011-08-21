@@ -149,7 +149,8 @@ body{
     width:100px;
     z-index:10000;
 }
-#rdr_sandbox div.rdr_actionbar_for_media div.rdr_tooltip {
+#rdr_sandbox div.rdr_actionbar_for_media div.rdr_tooltip,
+#rdr_sandbox div.rdr_tooltip.rdr_tooltip_sideways {
     border:2px solid #80aec9;
     margin:0 0 0 13px;/* 0.5 icon width with compensation for border*/
     padding:5px 0;
@@ -170,8 +171,11 @@ body{
 #rdr_sandbox div.rdr_top div.rdr.rdr_tooltip-arrow { border-color:transparent transparent #fff; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:-14px; bottom:auto; left:43%;}
  
 
-#rdr_sandbox div.rdr_actionbar_for_media div.rdr.rdr_tooltip-arrow { border-color:transparent white transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:5px; left:-14px}
-#rdr_sandbox div.rdr_actionbar_for_media div.rdr.rdr_tooltip-arrow-border {
+#rdr_sandbox div.rdr_actionbar_for_media div.rdr.rdr_tooltip-arrow,
+#rdr_sandbox div.rdr_tooltip.rdr_tooltip_sideways div.rdr.rdr_tooltip-arrow { border-color:transparent white transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:5px; left:-14px}
+
+#rdr_sandbox div.rdr_actionbar_for_media div.rdr.rdr_tooltip-arrow-border,
+#rdr_sandbox div.rdr_tooltip.rdr_tooltip_sideways div.rdr.rdr_tooltip-arrow-border {
 border-color:transparent #80aec9 transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:5px; left:-16px}
 
 
@@ -595,9 +599,12 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 #rdr_sandbox div.rdr_whyPanel div.rdr_panelCard .rdr_undo_link        { text-decoration; underline; float:right; color: #008BE4;}
 #rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  h4                   { position: relative; font-weight:bold; }
-#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  div.rdr_share_social h4 { float: left; top: 2px; font-size:11px; }
+#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  div.rdr_share_social h4 { float: left; top: 4px; font-size:11px; }
 
-#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  div.rdr_info_summary h4 { float: left; top: 2px; font-size:11px; }
+#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  div.rdr_info_summary                   { cursor:pointer; }
+#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  div.rdr_info_summary h4                { float: left; top: 2px; font-size:11px; padding: 2px; border-radius:4px;}
+#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  div.rdr_info_summary h4:hover          { float: left; top: 2px; font-size:11px; background:#ddd;}
+#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  div.rdr_info_summary div.rdr_tooltip   { left: 0; top: 32px; }
 
 #rdr_sandbox div.rdr_whyPanel div.rdr_view_all { float: left; position:relative; z-index:1; width:300px; background:#aaa; font-size:9px; text-transform:uppercase; color:#fff; cursor:pointer; padding: 2px 12px;}
 #rdr_sandbox div.rdr_whyPanel div.rdr_view_all.rdr_hide { margin-top:-10px; }

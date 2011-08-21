@@ -16,6 +16,7 @@ from django.utils.encoding import smart_str, smart_unicode
 from django.template import RequestContext
 from django.db.models import Q
 from forms import *
+import pprint
 
 def widget(request, sn):
     # Widget code is retreived from the server using RBGroup shortname
@@ -30,6 +31,13 @@ def widgetCss(request):
     return render_to_response("widget.css",
       context_instance=RequestContext(request),
       mimetype = 'text/css')
+
+def about(request):
+    return render_to_response(
+      "about.html",
+      {'fb_client_id': FACEBOOK_APP_ID},
+      context_instance=RequestContext(request)
+    )
 
 def fb(request):
     return render_to_response(
@@ -181,14 +189,17 @@ def settings(request, group=None):
     )
 
 def admin_request(request, short_name=None):
+    context = {}
+    context['cookie_user'] = checkCookieToken(request)
     try:
-        group = Group.objects.get(short_name=short_name)
+        context['group'] = Group.objects.get(short_name=short_name)
     except Group.DoesNotExist:
         return JSONException(u'Invalid group')
 
+    context['fb_client_id'] = FACEBOOK_APP_ID
     return render_to_response(
         "admin_request.html",
-        {"group": group, "fb_client_id": FACEBOOK_APP_ID},
+        context,
         context_instance=RequestContext(request)
     )
 
