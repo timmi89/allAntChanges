@@ -7,14 +7,26 @@ def requires_login(func):
     pass
 
 def requires_admin(func):
-    def wrapper(request, short_name, *args, **kwargs):
+    def wrapper(*args, **kwargs):
+        if len(args) == 1:
+            thisobj = None
+            request = args[0]
+        else:
+            thisobj = args[0]
+            request = args[1]
+            host = request.get_host()
+            print 'ajax'
+            if host not in ('local.readrboard.com:8080', 'www.readrboard.com'):
+                return HttpResponseRedirect('no hax fucker!')
+            
         try:
             cookie_user = checkCookieToken(request)
         except GraphAPIError:
             return HttpResponseRedirect('/')
         # If a user is registered and logged in
         if cookie_user:
-            group = Group.objects.get(short_name=short_name)
+            group = Group.objects.get(short_name=kwargs['short_name'])
+            del kwargs['short_name']
             try:
                 social_user = SocialUser.objects.get(user=cookie_user)
             except SocialUser.DoesNotExist:
@@ -25,6 +37,10 @@ def requires_admin(func):
                 admin_user = None
         else:
             admin_user = None
-        if admin_user: return func(request, group, *args, **kwargs)
+        if admin_user: 
+            if thisobj:
+                return func(thisobj, request, group, **kwargs)
+            else:
+                return func(request, group, **kwargs)
         else: return HttpResponseRedirect('/')
     return wrapper

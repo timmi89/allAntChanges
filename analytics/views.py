@@ -12,7 +12,7 @@ from django.template import RequestContext
 from authentication.token import checkCookieToken
 
 @requires_admin
-def analytics(request, group=None, short_name=None):
+def analytics(request, group=None):
     context = {}
     context['group'] = group
     context['fb_client_id'] = FACEBOOK_APP_ID
@@ -52,8 +52,7 @@ class InteractionNodeHandler(AnonymousBaseHandler):
 class AnalyticsHandler(AnonymousBaseHandler):
     @requires_admin
     @analytics_request
-    def read(self, request, data, short_name=None, **kwargs):
-        group = Group.objects.get(short_name=short_name)
+    def read(self, request, data, group, **kwargs):
         interactions = Interaction.objects.all()
         interactions = interactions.filter(page__site__group=group)
         

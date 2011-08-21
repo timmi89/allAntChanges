@@ -18,7 +18,7 @@ urlpatterns = patterns('',
   
   # For short URL expander
   url(r'^s/(?P<short>[0-9a-zA-Z])+/$', 'rb.views.expander'),
-
+  
   # For main website
   url(r'^$', 'rb.views.main', kwargs={"view":"index"}),
   url(r'^tags/$', 'rb.views.main', kwargs={"view":"tags"}),
@@ -62,6 +62,10 @@ urlpatterns = patterns('',
   url(r'^group/(?P<short_name>[\w\-]+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
   url(r'^group/(?P<short_name>[\w\-]+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}), 
   
+  # Supporting Pages
+  url(r'^about/$', 'rb.views.about'),
+  
+  # Sidebar
   url(r'^sidebar/$', 'rb.views.sidebar'),
   url(r'^sidebar/user/(?P<user_id>\d+)/$', 'rb.views.sidebar'),
   url(r'^sidebar/group/(?P<short_name>[\w\-]+)/$', 'rb.views.sidebar'),
