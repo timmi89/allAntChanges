@@ -388,6 +388,11 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
     padding:9px 16px 0 9px; width:auto; position:relative;
 }
 
+#rdr_sandbox div.rdr_rindow_message .rdr_rindow_message_innerwrap .rdr_rindow_message_tempUserMsg{
+    margin-top: 1px;
+    position: relative;
+}
+
 /*
 $('div.rdr_rindow_message').animate({bottom:'-48px'});
 */
@@ -791,6 +796,11 @@ div.rdr_indicator {
     z-index:11000;
     text-decoration:none;
     border:none;
+    -webkit-user-select: none !important;
+    -khtml-user-select: none !important;
+    -moz-user-select: none !important;
+    -o-user-select: none !important;
+    user-select: none !important;
 }
 
 /*for the text ones reset it with !important because it will be inline to the doc, so it won't be in the the sandbox,*/
@@ -844,6 +854,11 @@ div.rdr_indicator_for_text{
     margin:-5px 0 0 -4px;
     overflow:hidden;
     display:none; /*start with them hidden by default - will override with js*/
+    -webkit-user-select: none !important;
+    -khtml-user-select: none !important;
+    -moz-user-select: none !important;
+    -o-user-select: none !important;
+    user-select: none !important;
 }
 #rdr_sandbox div.rdr_indicator_details .rdr_see_more {
     padding: 0 3px;

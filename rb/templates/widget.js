@@ -315,9 +315,11 @@ function readrBoard($R){
 
                                 //expand the panel if it isn't already expanded
                                 RDR.actions.panel.expand("whyPanel", rindow);
+                                /*
                                 RDR.session.rindowUserMessage.hide({
                                     rindow:rindow
                                 });
+                                */
                                 //return false to prevent the rest of the interaction
                                 return false;
                             }
@@ -779,9 +781,12 @@ function readrBoard($R){
                         $(this).removeClass('rdr_hover');
                     }
                 );
-
+                
                 $new_rindow.append( $dragHandle );
-
+                
+                $rindowMsgDiv = $('<div class="rdr_rindow_message" />');
+                $new_rindow.append( $rindowMsgDiv );
+                
                 //now add a watcher to reinitialize these scrollpanes when the rindow is resizing                
                 //rindow.res $scrollPanes.add($column);
                 /*
@@ -842,9 +847,14 @@ function readrBoard($R){
                         }
                     });
                 });
-
                 $.each( selStates, function(idx, selState){
-                    $().selog('hilite', selState, 'off');
+                    try{
+                        $().selog('hilite', selState, 'off');
+                    }
+                    catch(err){
+                        //console.warn(err);
+                        //console.log('rangy is cranky ' + selState);
+                    }
                 });
             },
             update: function(hash, diffNode){
@@ -1582,43 +1592,41 @@ function readrBoard($R){
                             actionPastTense;
 
                         var extraHeight = 45,  //$rindowMsgDiv.height(),
+                            bodyWrapHeight = 10,
                             rindowHeight = $rindow.height(),
                             durr = 300;
 
-                        var $existingMsgDiv = $rindow.find('div.rdr_rindow_message'),
-                            $rindowMsgDiv;
+                        var $bodyWraps = $rindow.find('.rdr_body_wrap');
 
-                        if( $existingMsgDiv.length ){
-                            $rindowMsgDiv = $existingMsgDiv.empty();
-                            extraHeight = 0;
-                        }else{
-                            $rindowMsgDiv = $('<div class="rdr_rindow_message" />');
-                        }
-                        
+                        var $rindowMsgDiv = $rindow.find('div.rdr_rindow_message');
+                        var $rindowMsgDiv = $rindow.find('div.rdr_rindow_message');
                         var $rindowMsgDivInnerwrap = $('<div class="rdr_rindow_message_innerwrap"><span /><strong /><div style="clear:both;"/></div>'),
                             $closeButton = $('<div class="rdr_close">x</div>');
                         
-                        $rindowMsgDiv.append($rindowMsgDivInnerwrap);
+                        //quick hack for temp user errors
+                        var $tmpUserMsg = $('<div class="rdr_rindow_message_tempUserMsg" />');
+                        $rindowMsgDivInnerwrap.append($tmpUserMsg);
+
+                        $rindowMsgDiv.empty().show().append($rindowMsgDivInnerwrap);
 
                         switch (msgType) {
 
                             case "tempUser":
                                 //for now, just ignore this
-                                break;
-                                /*
                                 var num_interactions_left = RDR.group.temp_interact - parseInt( args.num_interactions ),
                                     $loginLink = $('<a href="javascript:void(0);">Connect with Facebook</a>.');
                                 
-                                $rindowMsgDivInnerwrap.after( $loginLink );
                                 $loginLink.click( function() {
                                     RDR.session.showLoginPanel( args );
                                 });
                                 
                                 var tmpUserMsg = 'You can react or comment <strong>' + num_interactions_left + ' more times</strong> before you must ';
-                                $rindowMsgDivInnerwrap.after('<span>'+tmpUserMsg+'</span>');
+                                
+                                $tmpUserMsg.append('<span>'+tmpUserMsg+'</span>');
+                                $tmpUserMsg.append($loginLink);
+                                
                                 break;
-                                */
-    
+                                
                             case "existingInteraction":
                                 userMsg = "You have already given that reaction for this.";
                                 break;
@@ -1649,8 +1657,7 @@ function readrBoard($R){
                             
                         $rindowMsgDiv.find('span').html( userMsg );
                         $rindowMsgDivInnerwrap.append( $closeButton );
-                        $rindow.append( $rindowMsgDiv );
-
+                        
                         $rindowMsgDivInnerwrap.hide();
                         $rindow.queue('userMessage', function(){
                             if( $rindowMsgDiv.height() > 0 ){
@@ -1661,6 +1668,9 @@ function readrBoard($R){
                                 //expand it and expand the window with it.
                                 $rindow.animate({ height: rindowHeight+extraHeight }, durr);
                                 $rindowMsgDiv.animate({ height:extraHeight },durr, function(){
+                                    $bodyWraps.css({
+                                        bottom: extraHeight
+                                    });
                                     $rindowMsgDivInnerwrap.fadeIn(400);
                                     $(this).dequeue('userMessage');
                                 });
@@ -1670,23 +1680,30 @@ function readrBoard($R){
                     }
                 },
                 hide: function(args) {
+                    //RDR.session.rindowUserMessage.hide:
                     if ( args.rindow ) {
                         var $rindow = args.rindow,
                             $rindowMsgDiv = $('div.rdr_rindow_message');
-                            if( !$rindowMsgDiv.length ) return;
+
+                        var $bodyWraps = $rindow.find('.rdr_body_wrap');
                             //else
 
                             //todo: make this a better solution.  The simultaneous animations might not be ideal.
                             var extraHeight = $rindowMsgDiv.height(),  //$rindowMsgDiv.height(),
                                 rindowHeight = $rindow.height(),
-                                durr = 300;
+                                durr = 300,
+                                bodyWrapHeight = 10;
 
                             //no need to use queue like this here, but this is how we can use it when we need to
                             //expand the rindow first and then slide down the msgBar 
                             $rindow.queue('userMessage', function(){
                                 $rindow.animate({ height: rindowHeight-extraHeight }, durr);
                                 $rindowMsgDiv.animate({ height:0 },durr, function(){
-                                    $rindowMsgDiv.remove();
+                                    $rindowMsgDiv.hide();
+                                    
+                                    $bodyWraps.css({
+                                        bottom: bodyWrapHeight
+                                    });
                                     $(this).dequeue('userMessage');
                                 });
                             });
@@ -2984,10 +3001,6 @@ function readrBoard($R){
                                 tag = args.tag,
                                 int_id = args.int_id;
 
-                            RDR.actions.panel.collapse("whyPanel", rindow);
-                            var $thisTagButton = rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id);
-                            $thisTagButton.removeClass('rdr_selected').removeClass('rdr_tagged').removeClass('rdr_int_node_'+int_id);
-
                             //todo: quick hack -- fix later
                             if( ! $tagLi.jquery ){
                                 $tagLi = rindow.find('.rdr_tag_'+args.tag.id);
@@ -3026,6 +3039,10 @@ function readrBoard($R){
                             rindow.queue('userMessage', function(){
                                 RDR.session.rindowUserMessage.show( usrMsgArgs );
                             });
+                            RDR.actions.panel.collapse("whyPanel", rindow);
+
+                            var $thisTagButton = rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id);
+                            $thisTagButton.removeClass('rdr_selected').removeClass('rdr_tagged').removeClass('rdr_int_node_'+int_id);
                         }
                     },
                     onFail: function(args){
@@ -4660,12 +4677,16 @@ function readrBoard($R){
                     
                     if ( rindow.find('div.rdr_rindow_message').length > 0 ) {
                         //rinh rindow.height( rindow.height()-103 );
+                        /*
                         RDR.session.rindowUserMessage.hide({
                             rindow:rindow
                         });
+                        */
                     }
                     //temp hack
                     if( !$thisPanel.data('expanded') ){
+                        
+                        rindow.dequeue('userMessage');
                     }
                     else{
 
