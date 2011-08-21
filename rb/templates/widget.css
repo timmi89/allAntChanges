@@ -7,6 +7,7 @@ body{
     /*temp reset*/
     margin:0;
     padding:0;
+    color:#666;
 }
 #rdr_sandbox{
     /*temp reset*/
@@ -598,7 +599,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 /*#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard.rdr_viewAll_hide      { padding-top: 0px; xmin-height:256px; }*/ /*pretty sure this is phased out*/
 
 #rdr_sandbox div.rdr_whyPanel div.rdr_panelCard .rdr_undo_link        { text-decoration; underline; float:right; color: #008BE4;}
-#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  h4                   { position: relative; font-weight:bold; }
+#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  h4                   { position: relative; font-weight:bold; font-family:Arial;}
 #rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  div.rdr_share_social h4 { float: left; top: 4px; font-size:11px; }
 
 #rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  div.rdr_info_summary                   { cursor:pointer; }
