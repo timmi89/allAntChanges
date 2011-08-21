@@ -1,50 +1,37 @@
-"""
-Convert numbers from base 10 integers to base X strings and back again.
+ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-Original: http://www.djangosnippets.org/snippets/1431/
-"""
+def base62_encode(num, alphabet=ALPHABET):
+    """Encode a number in Base X
 
-class BaseConverter(object):
-    decimal_digits = "0123456789"
-    
-    def __init__(self, digits):
-        self.digits = digits
-    
-    def from_decimal(self, i):
-        return self.convert(i, self.decimal_digits, self.digits)
-    
-    def to_decimal(self, s):
-        return int(self.convert(s, self.digits, self.decimal_digits))
-    
-    def convert(number, fromdigits, todigits):
-        # Based on http://code.activestate.com/recipes/111286/
-        if str(number)[0] == '-':
-            number = str(number)[1:]
-            neg = 1
-        else:
-            neg = 0
+    `num`: The number to encode
+    `alphabet`: The alphabet to use for encoding
+    """
+    if (num == 0):
+        return alphabet[0]
+    arr = []
+    base = len(alphabet)
+    while num:
+        rem = num % base
+        num = num // base
+        arr.append(alphabet[rem])
+    arr.reverse()
+    return ''.join(arr)
 
-        # make an integer out of the number
-        x = 0
-        for digit in str(number):
-           x = x * len(fromdigits) + fromdigits.index(digit)
-    
-        # create the result in base 'len(todigits)'
-        if x == 0:
-            res = todigits[0]
-        else:
-            res = ""
-            while x > 0:
-                digit = x % len(todigits)
-                res += todigits[digit]
-                x = int(x / len(todigits))
-            if neg:
-                res = '-' + res
-        return res
-    convert = staticmethod(convert)
+def base62_decode(string, alphabet=ALPHABET):
+    """Decode a Base X encoded string into the number
 
-bin = BaseConverter('01')
-hexconv = BaseConverter('0123456789ABCDEF')
-base62 = BaseConverter(
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz'
-)
+    Arguments:
+    - `string`: The encoded string
+    - `alphabet`: The alphabet to use for encoding
+    """
+    base = len(alphabet)
+    strlen = len(string)
+    num = 0
+
+    idx = 0
+    for char in string:
+        power = (strlen - (idx + 1))
+        num += alphabet.index(char) * (base ** power)
+        idx += 1
+
+    return num

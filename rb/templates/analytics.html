@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block title %}{{ group.name }} Analytics{%endblock%}
+
 {% block bodyClass %}wide{% endblock %}
 
 {% block css %}
@@ -410,6 +412,22 @@ RB.group.short_name = "{{ group.short_name }}";
 RB.group.full_name = "{{ group.name }}";
 
 RB.analytics.updateAll();
+/* for links:
+
+http://local.readrboard.com:8080/page/3/?s=not+sure
+
+http://local.readrboard.com:8080/group/demo/
+http://local.readrboard.com:8080/group/demo/tags/?s=not+sure
+http://local.readrboard.com:8080/group/demo/shares/?s=not+sure
+
+http://local.readrboard.com:8080/user/2/
+
+Aanlytics links
+Profile stream links (interactions.html)
+Sidebar links
+
+Ajaxify the dashboard QS.
+*/
 </script>
 
 

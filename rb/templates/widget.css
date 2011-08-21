@@ -7,6 +7,7 @@ body{
     /*temp reset*/
     margin:0;
     padding:0;
+    color:#666;
 }
 #rdr_sandbox{
     /*temp reset*/
@@ -343,7 +344,7 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_submitTag           {width:100%; text-align:right;}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_submitTag button    {}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_commentButton       {width:100%;}
-#rdr_sandbox div.rdr div.rdr_sntPnl .commentTextArea        {margin-top:5px; max-width:94%; font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;}
+#rdr_sandbox div.rdr div.rdr_sntPnl .commentTextArea        {margin-top:5px; max-width:94%; font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;background:#fff;}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_tagFeedback         {background: none repeat scroll 0 0 #ddd; border: 1px solid #bbb; padding: 5px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_tagFeedback strong  {font-weight:bold; color:#008be4;}
 
@@ -603,9 +604,9 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 /*#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard.rdr_viewAll_hide      { padding-top: 0px; xmin-height:256px; }*/ /*pretty sure this is phased out*/
 
 #rdr_sandbox div.rdr_whyPanel div.rdr_panelCard .rdr_undo_link        { text-decoration; underline; float:right; color: #008BE4;}
-#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  h4                   { position: relative; font-weight:bold; }
+#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  h4                   { position: relative; font-weight:bold; font-family:Arial;}
 #rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  div.rdr_share_social h4 { float: left; top: 4px; font-size:11px; }
-
+#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard div.rdr_commentBox h4 {font-size:12px;}   
 #rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  div.rdr_info_summary                   { cursor:pointer; }
 #rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  div.rdr_info_summary h4                { float: left; top: 2px; font-size:11px; padding: 2px; border-radius:4px;}
 #rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  div.rdr_info_summary h4:hover          { float: left; top: 2px; font-size:11px; background:#ddd;}

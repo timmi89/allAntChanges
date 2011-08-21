@@ -370,11 +370,11 @@ class SettingsHandler(AnonymousBaseHandler):
              
     @status_response
     def read(self, request, group=None):
-        host = request.get_host()
+        print request
+        host = request.META['HTTP_HOST']
         path = request.path
         fp = request.get_full_path()
         group_id = int(group) if group else 1
-
         try:
             group_object = Group.objects.get(id=group_id)
         except Group.DoesNotExist:
@@ -384,7 +384,8 @@ class SettingsHandler(AnonymousBaseHandler):
         if host in domains:
             return group_object
         elif group_id == 1:
-            Site.objects.create(name=host,domain=host,group_id=1)
+            print "host" + str(host)
+            Site.objects.get_or_create(name=host,domain=host,group_id=1)
             return group_object
         else:
             raise JSONException("Group (" + str(group) + ") settings request invalid for this domain (" + host + ")" + str(domains))

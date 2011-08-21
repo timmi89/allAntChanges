@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core import serializers
 from settings import FACEBOOK_APP_ID, BASE_URL
-from baseconv import base62
+from baseconv import base62_decode
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models import Count
 from api.utils import *
@@ -16,7 +16,6 @@ from django.utils.encoding import smart_str, smart_unicode
 from django.template import RequestContext
 from django.db.models import Q
 from forms import *
-import pprint
 
 def widget(request, sn):
     # Widget code is retreived from the server using RBGroup shortname
@@ -204,8 +203,8 @@ def admin_request(request, short_name=None):
     )
 
 def expander(request, short):
-    link_id = base62.to_decimal(short)
-
+    link_id = base62_decode(short)
+    print 'link_id = ', link_id
     # Retrieve Link object
     try:
         link = Link.objects.get(id=link_id)

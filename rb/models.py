@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from django.db.models import Count
 #from treebeard.mp_tree import MP_Node
 from django.contrib.auth.models import User
-from baseconv import base62
+from baseconv import base62_encode
 import datetime
 
 """
@@ -253,7 +253,7 @@ class Link(models.Model):
     usage_count = models.IntegerField(default=0, editable=False)
     
     def to_base62(self):
-        return base62.from_decimal(self.id)
+        return base62_encode(self.id)
 
     def short_url(self):
         return settings.SITE_BASE_URL + self.to_base62()

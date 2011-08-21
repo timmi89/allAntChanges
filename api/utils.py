@@ -115,7 +115,7 @@ def getPage(request, pageid=None):
     title = request.GET.get('title', None)
     group = request.GET.get('group_id', 1)
 
-    host = request.get_host()
+    host = request.META['HTTP_HOST']
     site = Site.objects.get(domain=host, group=group)
 
     # Handle sites with hash but no bang
@@ -130,7 +130,7 @@ def getPage(request, pageid=None):
             defaults={'url':fullurl, 'site':site, 'title':title}
         )
     else:
-        page = Page.objects.get_or_create(url=fullurl,
+        page = Page.objects.get_or_create(url=fullurl, canonical_url="",
             defaults={'site': site, 'title':title}
         )
         
