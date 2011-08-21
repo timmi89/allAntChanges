@@ -1256,14 +1256,14 @@ function readrBoard($R){
                     if( whichAlert == "showMorePins"){
                         //put a better message here
                         $msg1 = $('<h1>See <span>more reactions</span> on this page.</h1>');
-                        $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="rdr_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" /> icons.</div>');
+                        $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="rdr_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <img src="{{ BASE_URL }}{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" /> icons.</div>');
 
                         $msg2.find('a.rdr_show_more_pins').click( function() {
                             RDR.actions.summaries.showLessPopularIndicators();
                             $(this).closest('div.rdr_alert_box').find('div.rdr_alert_box_x').click();
                         });
                     }
-                    $pinIcon = $('<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />');
+                    $pinIcon = $('<img src="{{ BASE_URL }}{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />');
 
                     var $alertContent = $('<div class="rdr_alert_box rdr rdr_brtl rdr_brtr rdr_' + whichAlert + '" />');
 
@@ -2768,7 +2768,7 @@ function readrBoard($R){
                             $tagLi = $rindow.find('.rdr_tag_'+args.tag.id);
                         }
                         //Do UI stuff particular to write mode
-                        $tagLi.find('div.rdr_leftBox').addClass('rdr_kill_bg').find('span').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" />');
+                        $tagLi.find('div.rdr_leftBox').addClass('rdr_kill_bg').find('span').html('<img src="{{ BASE_URL }}{{ STATIC_URL }}widget/images/loader.gif" />');
                         if (uiMode == "write"){
                             //nothing here now
                         }else if(uiMode == "read"){
@@ -3078,7 +3078,7 @@ function readrBoard($R){
 
                             // optional loader.
                             if ( typeof args.tag.find == "function" ){
-                                args.tag.find('div.rdr_leftBox').addClass('rdr_kill_bg').find('span').html('<img src="{{ STATIC_URL }}widget/images/loader.gif" />');
+                                args.tag.find('div.rdr_leftBox').addClass('rdr_kill_bg').find('span').html('<img src="{{ BASE_URL }}{{ STATIC_URL }}widget/images/loader.gif" />');
                             }
 
                         }else{
@@ -3433,7 +3433,7 @@ function readrBoard($R){
                     var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body" />').attr('id',indicatorBodyId)//chain
                     .appendTo($indicator)//chain
                     .append(
-                        '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
+                        '<img src="{{ BASE_URL }}{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
                         '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
                     )//chain
                     .data( {'which':hash} );
@@ -4272,7 +4272,7 @@ function readrBoard($R){
                     var shareHash = hash;
                     //quick mockup version of this code
                     $.each(socialNetworks, function(idx, val){
-                        $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                        $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ BASE_URL }}{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                         $shareLinks.find('li:last').click( function() {
                             // var real_content_node = ( RDR.content_nodes[hash] ) ? RDR.content_nodes[hash] : RDR.summaries[hash].content;
                             RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
@@ -4416,7 +4416,7 @@ function readrBoard($R){
                                 $commentReplies = $('<div class="rdr_commentReplies" />'),
                                 $commentReply = $('<div class="rdr_commentReply" />'),
                                 $commentReply_link = $('<a href="javascript:void(0);">Reply</a>');
-                            var user_image_url = ( this_comment.social_user.img_url ) ? this_comment.social_user.img_url: '{{ STATIC_URL }}widget/images/anonymousplode.png';
+                            var user_image_url = ( this_comment.social_user.img_url ) ? this_comment.social_user.img_url: '{{ BASE_URL }}{{ STATIC_URL }}widget/images/anonymousplode.png';
                             var user_name = ( this_comment.user.first_name === "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
                             $commentBy.html( '<img src="'+user_image_url+'" class="no-rdr" /> ' + user_name );
                             $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
@@ -5328,7 +5328,7 @@ function readrBoard($R){
 
                 // embed icons/links for diff SNS
                 $.each(socialNetworks, function(idx, val){
-                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ BASE_URL }}{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                     $shareLinks.find('li:last').click( function() {
                         RDR.actions.share_getLink({ hash:hash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
                         return false;
@@ -5504,17 +5504,17 @@ function rdr_loadScript(sScriptSrc,callbackfunction) {
 }
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
-rdr_loadScript( "{{ STATIC_URL }}global/js/jquery-1.6.2.min.js", function(){
+rdr_loadScript( "{{ BASE_URL }}{{ STATIC_URL }}global/js/jquery-1.6.2.min.js", function(){
     //callback
-    //rdr_loadScript( "{{ STATIC_URL }}global/js/jquery-1.6.js", function(){
+    //rdr_loadScript( "{{ BASE_URL }}{{ STATIC_URL }}global/js/jquery-1.6.js", function(){
     //callback
     
-    //rdr_loadScript( "{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom.min.js", function(){
-    rdr_loadScript( "{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom/js/jquery-ui-1.8.14.custom.min.js", function(){
+    //rdr_loadScript( "{{ BASE_URL }}{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom.min.js", function(){
+    rdr_loadScript( "{{ BASE_URL }}{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom/js/jquery-ui-1.8.14.custom.min.js", function(){
         //callback
 
         if ( $.browser.msie  && parseInt($.browser.version) == 7 ) {
-            rdr_loadScript( "{{ STATIC_URL }}widget/js/json2.min.js", function() { return; } );
+            rdr_loadScript( "{{ BASE_URL }}{{ STATIC_URL }}widget/js/json2.min.js", function() { return; } );
         }
         //test that $.ui versioning is working correctly
         
@@ -5539,14 +5539,14 @@ function $RFunctions($R){
     var css = [];
 
     if ( !$R.browser.msie ) {
-        css.push( "{{ STATIC_URL }}global/css/readrleague.css" );
+        css.push( "{{ BASE_URL }}{{ STATIC_URL }}global/css/readrleague.css" );
     } else {
-        css.push( "{{ STATIC_URL }}widget/css/ie.css" );
+        css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/ie.css" );
     }
 
     css.push( RDR_rootPath+"/widgetCss/" );
-    css.push( "{{ STATIC_URL }}widget/css/jquery.jscrollpane.css" );
-    css.push( "{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom/css/ui-lightness/jquery-ui-1.8.14.custom.css" );
+    css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/jquery.jscrollpane.css" );
+    css.push( "{{ BASE_URL }}{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom/css/ui-lightness/jquery-ui-1.8.14.custom.css" );
     
     loadCSS(css);
 
