@@ -5548,6 +5548,7 @@ function $RFunctions($R){
         css.push( "{{ BASE_URL }}{{ STATIC_URL }}global/css/readrleague.css" );
     } else {
         css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/ie.css" );
+        css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/ie"+parseInt( $R.browser.version) +".css" );
     }
 
     css.push( RDR_rootPath+"/widgetCss/" );
