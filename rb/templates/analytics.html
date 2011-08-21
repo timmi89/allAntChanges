@@ -146,8 +146,8 @@ RB.analytics = {
 					var tag_list = "";
 					for ( var i in response ) {
 						var sizeClass = ( response[i].count > 7 ) ? "large" : (response[i].count > 4 ) ? "medium" : "small";
-						tag_list += '<li class="'+sizeClass+'">('+response[i].count+') '+response[i].interaction_node__body+'</li>';
-						// tag_list += '<li class="'+sizeClass+'"><a href="/group/{{ group.short_name }}/?s='+response[i].interaction_node__body+'" target="_blank">('+response[i].count+') '+response[i].interaction_node__body+'</a></li>';
+						// tag_list += '<li class="'+sizeClass+'">('+response[i].count+') '+response[i].interaction_node__body+'</li>';
+						tag_list += '<li class="'+sizeClass+'"><a href="/group/{{ group.short_name }}/?s='+response[i].interaction_node__body+'" target="_blank">('+response[i].count+') '+response[i].interaction_node__body+'</a></li>';
 					}
 					$('section[role="most popular tags"] ol').html( $(tag_list) );
 				} else if (type=="bookmarks") {
@@ -377,25 +377,33 @@ RB.analytics = {
 		RB.analytics.recentlyActive();
 	}
 };
-{% if start != "none"  %}
-RB.analytics.startDate = "{{ start }}";
-{% else %}
-RB.analytics.startDate = "{% now "m/d/y" %}";
-{% endif %}
 
-{% if end != "none"  %}
-RB.analytics.endDate = "{{ end }}";
-{% else %}
-RB.analytics.endDate = "{% now "m/d/y" %}";
-{% endif %}
+if ( RB.util.getHashValue('start') ) {
+	RB.analytics.startDate = RB.util.getHashValue('start');
+} else {
+	RB.analytics.startDate = "{% now "m/d/y" %}";
+}
 
-$('input[name="start_date"]').val( RB.analytics.startDate )
-$('input[name="end_date"]').val( RB.analytics.endDate )
+if ( RB.util.getHashValue('end') ) {
+	RB.analytics.endDate = RB.util.getHashValue('end');
+} else {
+	RB.analytics.endDate = "{% now "m/d/y" %}";
+}
+
+$('input[name="start_date"]').val( RB.analytics.startDate );
+$('input[name="end_date"]').val( RB.analytics.endDate );
 
 
 $('section[role="controls"] button').click( function() {
+	// get form values
 	RB.analytics.startDate = $('input[name="start_date"]').val();
 	RB.analytics.endDate = $('input[name="end_date"]').val();
+
+	// update hash, too
+	RB.util.setHashValue('start', RB.analytics.startDate );
+	RB.util.setHashValue('end', RB.analytics.endDate );
+
+	// re-execute the API calls
 	RB.analytics.updateAll();
 });
 
