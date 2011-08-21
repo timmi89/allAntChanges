@@ -765,21 +765,39 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 /*everything below here is stuff that is inline to the client's document.  Generally will use !important for everything*/
 
+/*this is done in js now to account for differences in image padding/border etc.*/
+/*
 .rdr_engage_media,
 .rdr_shared {
 -moz-box-shadow:0 0 10px 1px #008be4 !important;
 -webkit-box-shadow:0 0 10px 1px #008be4 !important;
 box-shadow:0 0 10px 1px #008be4 !important;
 }
-
+*/
 
 /* container indicator icons */
+div.rdr_indicator {
+    /*start with 0 opacity so it can fade in properly*/
+    /* opacity for .rdr_indicator set in js instead of here. Fade it in on load so we can still use display:inline; */
+    opacity:0.0;
+    -moz-opacity:0.0;
+    -khtml-opacity:0.0;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+    z-index:11000;
+    text-decoration:none;
+    border:none;
+}
 
-/*reset for all indicator stuff - this is the stuff that's not in the sandbox, so we need !important here everything */
+/*for the text ones reset it with !important because it will be inline to the doc, so it won't be in the the sandbox,*/
 /*this should stay above the rest of the indicator stuff so it can get overwridden as needed. */
-div.rdr_indicator, div.rdr_indicator * {
-    position: relative !important;
+/*todo: should all these things really be in the * part (the all children part) ?  */
+div.rdr_indicator_for_text, div.rdr_indicator_for_text * {
     display:inline !important;
+    position: relative !important;
     margin: 0 !important;
     padding: 0 !important;
     top: 0 !important;
@@ -787,24 +805,15 @@ div.rdr_indicator, div.rdr_indicator * {
     z-index:11000 !important;
     text-decoration:none !important;
     border:none !important;
-}
-/*the indicator body will be moved up to compensate*/
-div.rdr_indicator_for_text{
-    vertical-align: text-top;
-}
-
-div.rdr_indicator {
-    /*start with 0 opacity so it can fade in properly*/
-    /* opacity for .rdr_indicator set in js instead of here. Fade it in on load so we can still use display:inline; */
-    opacity:0.0;
-    -moz-opacity:0.0;
-    -khtml-opacity:0.0;
-
     -webkit-user-select: none !important;
     -khtml-user-select: none !important;
     -moz-user-select: none !important;
     -o-user-select: none !important;
     user-select: none !important;
+}
+/*the indicator body will be moved up to compensate*/
+div.rdr_indicator_for_text{
+    vertical-align: text-top !important;
 }
 
 #rdr_sandbox #rdr_indicator_details_wrapper{
@@ -882,6 +891,8 @@ div.rdr_indicator_for_text div.rdr_indicator_body{
     /*top: -15px !important;*/
 }
 div.rdr_indicator_for_media div.rdr_indicator_body{
+    left:auto !important;
+    right:0 !important;
     background:white !important;
     border: 1px solid #bbb !important;
     height: auto !important;
@@ -912,7 +923,7 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
 
 /*now override styles for the image containers*/
 div.rdr_indicator_for_media {
-    display:inline !important;
+    display:absolute !important;
     opacity:0.6 !important;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=60)"!important;
     filter:alpha(opacity=60)!important;
@@ -920,7 +931,6 @@ div.rdr_indicator_for_media {
     -khtml-opacity:0.6 !important;
 }
 div.rdr_indicator_for_media.rdr_engage_media {
-    display:inline !important;
     opacity:0.9 !important;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=90)"!important;
     filter:alpha(opacity=90)!important;
@@ -932,7 +942,52 @@ div.rdr_indicator_for_media.rdr_engage_media {
     overflow:hidden; /*for the animate out to work nicely*/
     margin:0 0 0 2px; /*don't need the -5px 0 0 -4px margin here.  Kick it left a tiny bit */
 }
+#rdr_sandbox div.rdr_container_tracker{
+    position:absolute !important;
+}
 
+#rdr_sandbox div.rdr_media_border_wrap{
+    position:absolute !important;
+    top:0 !important;
+    left:0 !important;
+}
+/*the only divs here will be the border elements*/
+#rdr_sandbox div.rdr_media_border_wrap div{
+    position:absolute;
+}
+
+#rdr_sandbox div.rdr_mediaHilite_top{
+    box-shadow:  0 -1px 10px 1px #008BE4;
+    -moz-box-shadow:  0 -1px 10px 1px #008BE4;
+    -webkit-box-shadow:  0 -1px 10px 1px #008BE4;
+    border:none;
+    border-top: 2px solid #80C5F1;
+    border-left: 2px solid #80C5F1;
+    border-right: 2px solid #80C5F1;
+}
+#rdr_sandbox div.rdr_mediaHilite_right{
+    box-shadow: 1px 0 10px 1px #008BE4;
+    -moz-box-shadow: 1px 0 10px 1px #008BE4;
+    -webkit-box-shadow: 1px 0 10px 1px #008BE4;
+    border:none;
+    border-right: 2px solid #80C5F1;
+}
+#rdr_sandbox div.rdr_mediaHilite_bottom{
+    box-shadow: 0 1px 10px 1px #008BE4;
+    -moz-box-shadow: 0 1px 10px 1px #008BE4;
+    -webkit-box-shadow: 0 1px 10px 1px #008BE4;
+    border:none;
+    border-bottom: 2px solid #80C5F1;
+    border-left: 2px solid #80C5F1;
+    border-right: 2px solid #80C5F1;
+}
+#rdr_sandbox div.rdr_mediaHilite_left{
+    box-shadow: -1px 0 10px 1px #008BE4;
+    -moz-box-shadow: -1px 0 10px 1px #008BE4;
+    -webkit-box-shadow: -1px 0 10px 1px #008BE4;
+    border:none;
+    border-left: 2px solid #80C5F1;
+}
 
 div.rdr_indicator span.rdr_count, 
 #rdr_sandbox div.rdr_indicator_details span.rdr_count,

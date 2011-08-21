@@ -377,6 +377,7 @@ function readrBoard($R){
                         var selector = ".rdr-" + hash;
 
                         var $indicator = $('#rdr_indicator_'+hash),
+                        $indicator_body = $('#rdr_indicator_body_'+ hash),
                         $indicatorDetails = $('#rdr_indicator_details_'+ hash),
                         $container = $('.rdr-'+hash);
 
@@ -438,9 +439,8 @@ function readrBoard($R){
                         });
                         $sentimentBox.prepend($headerOverlay);
             
-                        //populate the $indicator_stats.  This will also be updated as needed from summaries.update                
-                        var $indicatorBody = $indicator.find('.rdr_indicator_body');
-                        $indicator_stats.html( $indicatorBody.html() );
+                        //populate the $indicator_stats.  This will also be updated as needed from summaries.update
+                        $indicator_stats.html( $indicator_body.html() );
 
                         RDR.actions.panel.setup("contentPanel", rindow);
 
@@ -905,11 +905,11 @@ function readrBoard($R){
                 if( $rindow_readmode){
                 
                     var $indicator = summary.$indicator,
-                    $indicator_stats = $rindow_readmode.find('.rdr_indicator_stats'),
-                
-                    $indicatorBody = $indicator.find('.rdr_indicator_body');
+                        $indicator_body = summary.$indicator_body,
+                        $indicator_stats = $rindow_readmode.find('.rdr_indicator_stats');
+
                     $indicator_stats.fadeOut(100, function(){
-                        $indicator_stats.html( $indicatorBody.html() );
+                        $indicator_stats.html( $indicator_body.html() );
                         $indicator_stats.fadeIn(300);
                     });
                     
@@ -1048,39 +1048,42 @@ function readrBoard($R){
                 //RDR.actionbar.close:
                 $actionbars.each(function(){
                     var $actionbar = $(this),
-                    cleanup = function(){
-                        var timeoutCloseEvt = $actionbar.data('timeoutCloseEvt');
-                        var timeoutCollapseEvt = $actionbar.data('timeoutCollapseEvt');
-                        clearTimeout(timeoutCloseEvt);
-                        clearTimeout(timeoutCollapseEvt);
+                        hash = $actionbar.data('hash'),
+                        $containerTracker = $('#rdr_container_tracker_'+hash),
+                        $mediaBorderWrap = $containerTracker.find('.rdr_media_border_wrap');
 
-                        //make sure the indicator_details bail out before going down with the actionbar.
-                        //note: this is only relevant for the image, but has no effect for text.
-                        //todo: no need to re-create the actionbar every time - just hide it.
-/* 
-                        var $indicator_details = $('#rdr_indicator_details_'+ $actionbar.data('hash') );
-                        $indicator_details.appendTo('#rdr_indicator_details_wrapper');
-
-*/                        
-                        var hash = $actionbar.data('hash');
-                        var $container = $('.rdr-'+hash);
-                        $container.removeClass('rdr_engage_media');
-                        
-                        var $indicator = $('#rdr_indicator_'+hash);
-                        
-                        $indicator.removeClass('rdr_engage_media');
-
-                        $actionbar.remove();
-                    };
-
-                    if(typeof effect !== "undefined"){
+                    if(typeof effect !== "undefined"){ //quick hack to signal fade effect
                         //make more robust if we want more animations
-                        $actionbar.fadeOut(200, cleanup);
+                        var $fadeSet = $().add($actionbar).add($mediaBorderWrap);
+                        //I wanted to combine these into one animation, but jquery didn't like that.
+                        $actionbar.fadeOut(200);
+                        $mediaBorderWrap.fadeOut(200, function(){
+                            $(this).hide();
+                            cleanup($actionbar, hash);
+                        });
                     }
                     else{
-                        cleanup();
+                        cleanup($actionbar, hash);
+                        
+                        $mediaBorderWrap.hide();
+                                            
+                        var $indicator = $('#rdr_indicator_'+hash);
+                        $indicator.removeClass('rdr_engage_media');
                     }
                 });
+
+                //helper function
+                function cleanup($actionbar, hash){
+                    var timeoutCloseEvt = $actionbar.data('timeoutCloseEvt');
+                    var timeoutCollapseEvt = $actionbar.data('timeoutCollapseEvt');
+                    clearTimeout(timeoutCloseEvt);
+                    clearTimeout(timeoutCollapseEvt);
+
+                    var $container = $('.rdr-'+hash);
+                    $container.removeClass('rdr_engage_media');
+                    $actionbar.remove();
+                };
+
 			},
             closeSuggest: function(hashes) {
                 //hashes can be a single hash or a list of hashes
@@ -1207,6 +1210,15 @@ function readrBoard($R){
                 else{
                     return str.slice(0, str.length-danglerRE[0].length);
                 }
+            },
+            cssSuperImportant: function($domNode, cssDict){
+                //RDR.util.cssSuperImportant:
+                var inlineStyleStr = "";
+                $.each(cssDict,function(key,val){
+                    inlineStyleStr += (key+ ':' +val+ 'px !important; ');
+                });
+                $domNode.attr('style', inlineStyleStr);
+                return $domNode; //return the node for the hell of it.
             }
         },
 		session: {
@@ -1824,8 +1836,12 @@ function readrBoard($R){
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
                 var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr"/>').appendTo('body');
 
+                //div to hold indicatorBodies for media (images and video)
+                $('<div id="rdr_container_tracker_wrap" />').appendTo($rdrSandbox);
+
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
-                var $indicatorDetailsWrapper = $('<div id="rdr_indicator_details_wrapper" />').appendTo($rdrSandbox);
+                $('<div id="rdr_indicator_details_wrapper" />').appendTo($rdrSandbox);
+
 
                 $(document).bind('mouseup.rdr', function(e){
                     //temp fix for bug where a click that clears a selection still picks up the selected text:
@@ -2085,6 +2101,19 @@ function readrBoard($R){
                             $container.hover(
                                 function(){
                                     $(this).data('hover',true);
+                                                                        
+                                    var $indicator = $('#rdr_indicator_'+hash),
+                                        $containerTracker = $('#rdr_container_tracker_'+hash),
+                                        $mediaBorderWrap = $containerTracker.find('.rdr_media_border_wrap');
+                                    
+                                    $indicator.addClass('rdr_engage_media');
+                                    
+                                    //update here just to make sure at least a mouse hover always resets any unexpected weirdness
+                                    RDR.actions.indicators.utils.positionContainerTracker(hash);
+                                    
+                                    $mediaBorderWrap.show();
+                                    
+
                                     var src = $container.attr('src'),
                                     src_with_path = this.src;
 
@@ -2093,10 +2122,8 @@ function readrBoard($R){
                                         left: $container.offset().right
                                     };
 
+
                                     $container.addClass('rdr_engage_media');
-            
-                                    var $indicator = $('#rdr_indicator_'+hash);
-                                    $indicator.addClass('rdr_engage_media');
 
                                     //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
                                     // builds a new actionbar or just returns the existing $actionbar if it exists.
@@ -3388,6 +3415,7 @@ function readrBoard($R){
                     var summary = RDR.summaries[hash],
                         $container = summary.$container,                    
                         indicatorId = 'rdr_indicator_'+hash,
+                        indicatorBodyId = 'rdr_indicator_body_'+hash,
                         indicatorDetailsId = 'rdr_indicator_details_'+hash;
 
                     //check for and remove any existing indicator and indicator_details and remove for now.
@@ -3401,8 +3429,9 @@ function readrBoard($R){
                     //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
                     $indicator.css('visibility','hidden');
 
-                    //$indicatorBody is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
-                    var $indicatorBody = $('<div class="rdr rdr_indicator_body" />').appendTo($indicator)//chain
+                    //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
+                    var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body" />').attr('id',indicatorBodyId)//chain
+                    .appendTo($indicator)//chain
                     .append(
                         '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
                         '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
@@ -3425,8 +3454,8 @@ function readrBoard($R){
                             //else
                             $indicator_details.css({
                                 'display':'block',
-                                'top': $indicatorBody.offset().top,
-                                'left': $indicatorBody.offset().left
+                                'top': $indicator_body.offset().top,
+                                'left': $indicator_body.offset().left
                             });
                         },
                         function() {
@@ -3498,15 +3527,17 @@ function readrBoard($R){
 
                     var $container = summary.$container,
                         $indicator = summary.$indicator,
+                        $indicator_body = summary.$indicator_body,
                         $indicator_details = summary.$indicator_details;
+
                     
 
                     //check if the total is 0.  If so, just return here.
                     if(summary.counts.interactions <= 0) return;
                     //else
                                         
-                    //$indicatorBody is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
-                    var $count = $indicator.find('.rdr_count');
+                    //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
+                    var $count = $indicator_body.find('.rdr_count');
                     $count.html( RDR.util.prettyNumber( summary.counts.tags ) );
 
                     //build tags in $tagsList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
@@ -3515,8 +3546,9 @@ function readrBoard($R){
 
                     var kind = summary.kind;
                     
+                    //todo: doesn't make sense to do this here
                     if(kind == 'img' || kind == 'media'){
-                        RDR.actions.indicators.utils.positionImgIndicator(hash);
+                        RDR.actions.indicators.utils.positionContainerTracker(hash);
                     }
                     $indicator_details.css({ 'visiblity':'visible' }).hide();
                               
@@ -3528,21 +3560,31 @@ function readrBoard($R){
                             var summary = RDR.summaries[hash],
                                 $container = summary.$container,
                                 $indicator = summary.$indicator,
+                                $indicator_body = summary.$indicator_body,
                                 $indicator_details = summary.$indicator_details,
-                                $indicatorBody = $indicator.find('.rdr_indicator_body');
+                                $container_tracker_wrap = $('#rdr_container_tracker_wrap'),
+                                $container_tracker = $('<div class="rdr_container_tracker" />');
+
+                            $container_tracker.attr('id', 'rdr_container_tracker_'+hash).appendTo($container_tracker_wrap);
                             
-                            $indicator.insertAfter($container);
+                            //position the containerTracker at the top left of the image or videos.  We'll position the indicator and hiliteborder relative to this.
+                            RDR.actions.indicators.utils.positionContainerTracker(hash);
+                            
+                            $indicator.appendTo($container_tracker);
+                            $indicator.addClass('rdr_indicator_for_media');
+                            
+                            //makes and appends the mediaBorder to the container_tracker
+                            RDR.actions.indicators.utils.setupMediaBorderHilites(hash);
+                            RDR.actions.indicators.utils.positionMediaIndicator(hash);
 
-                            $indicator.addClass('rdr_indicator_for_media')//chain
-                            .hover(
+                            $indicator.hover(
                                 function() {
-
                                     $indicator_details.css({
                                         'width': 'auto'
                                     });                     
                                     
                                     var indDetailsWidth = $indicator_details.width(),
-                                    indDetailsLeftOffset = $indicatorBody.offset().left + $indicatorBody.width() - indDetailsWidth - 3; //account for 3px padding 
+                                    indDetailsLeftOffset = $indicator_body.offset().left + $indicator_body.width() - indDetailsWidth - 3; //account for 3px padding 
 
                                     $indicator_details.css({
                                         'width': 10
@@ -3565,8 +3607,6 @@ function readrBoard($R){
                                     $(this).data('hover', false);
                                 }
                             );
-
-                            RDR.actions.indicators.utils.positionImgIndicator(hash);
                         },
                         media: function( hash ){
                             //for now just treat it like an img
@@ -3576,8 +3616,8 @@ function readrBoard($R){
                             var summary = RDR.summaries[hash],
                                 $container = summary.$container,
                                 $indicator = summary.$indicator,
+                                $indicator_body = summary.$indicator_body,
                                 $indicator_details = summary.$indicator_details,
-                                $indicatorBody = $indicator.find('.rdr_indicator_body'),
                                 $actionbar = $('rdr_actionbar_'+hash);
 
 
@@ -3593,8 +3633,8 @@ function readrBoard($R){
                         var summary = RDR.summaries[hash],
                             $container = summary.$container,
                             $indicator = summary.$indicator,
+                            $indicator_body = summary.$indicator_body,
                             $indicator_details = summary.$indicator_details,
-                            $indicatorBody = $indicator.find('.rdr_indicator_body'),
                             $actionbar = $('rdr_actionbar_'+hash);
 
                         var $indicator_details_body = $('<div class="rdr rdr_indicator_details_body" />'),
@@ -3602,7 +3642,8 @@ function readrBoard($R){
                             categoryTitle = '<span class="rdr_indicator_categoryTitle">' +categoryTitleText+ '</span>',
                             $tagsList = $('<div class="rdr_tags_list" />');
 
-                        $indicator_details_body.html( $indicatorBody.html() );
+                        
+                        $indicator_details_body.html( $indicator_body.html() );
 
                         $indicator_details.empty().append( $indicator_details_body, categoryTitle, $tagsList );
 
@@ -3666,41 +3707,122 @@ function readrBoard($R){
                             RDR.actions.content_nodes.utils.initHiliteStates( $(this), relevant_content_nodes );
                         });
                     },
-                    positionImgIndicator: function(hash){
-                        //RDR.actions.indicators.utils.positionImgIndicator:
+                    positionContainerTracker: function(hash){
+                        //RDR.actions.indicators.utils.positionContainerTracker:
+                        var summary = RDR.summaries[hash],
+                            $container = summary.$container,
+                            $container_tracker = $('#rdr_container_tracker_'+hash);
+
+                        RDR.util.cssSuperImportant($container_tracker, {
+                            top: $container.offset().top,
+                            left: $container.offset().left
+                        });
+                        
+                    },
+                    positionMediaIndicator: function(hash){
+                        //RDR.actions.indicators.utils.positionMediaIndicator:
                         var summary = RDR.summaries[hash],
                             $container = summary.$container,
                             $indicator = summary.$indicator,
-                            $indicator_details = summary.$indicator_details;
+                            $indicator_body = summary.$indicator_body,
+                            $indicator_details = summary.$indicator_details,
+                            $container_tracker = $('#rdr_container_tracker_'+hash);
 
-                        // get the relative distance of the indicator to the top right corner of the media.
-                        // note: we have the indicator inline so that it will float around the page with the media,
-                        // but we're not sure exactly where it will end up relative to the media.  This compensates
-                        // for that and still let's us have it move around with the image if, say a banner ad expands the page.                        
+                        //todo: consolodate this with the other case of it
+                        var containerWidth, containerHeight;
+                        //this will calc to 0 if there is no border. 
+                        var hasBorder = parseInt( $container.css('border-top-width') ) + 
+                            parseInt( $container.css('border-bottom-width') ) + 
+                            parseInt( $container.css('border-left-width') ) + 
+                            parseInt( $container.css('border-right-width') );
+
+                        if(hasBorder){
+                            containerWidth = $container.outerWidth();
+                            containerHeight = $container.outerHeight();
+                        }else{
+                            containerWidth = $container.width();
+                            containerHeight = $container.height();
+                        }
+
+                        var cornerPadding = 8,
+                            indicatorBodyWidth = $indicator_body.width();
                         
-                        var relOffsetToTopRightCorner = {
-                            y: $container.offset().top - $indicator.offset().top,
-                            x: $container.offset().right - $indicator.offset().right
-                        };
-                        var cornerPadding = ( !$.browser.msie ) ? 
-                        {
-                            top: 7,
-                            left: -15
-                        }:{
-                            top: -5,
-                            left: -5
-                        };
-                        var indicatorBodyWidth = $indicator.find('.rdr_indicator_body').width(),
-                        topVal = (relOffsetToTopRightCorner.y + cornerPadding.top),
-                        leftVal = (relOffsetToTopRightCorner.x + cornerPadding.left - indicatorBodyWidth);
+                        $indicator.css({
+                            top: 0,
+                            left: containerWidth
+                        });
 
-                        //because this lives outside our sandbox, it has been 'css-reset' with !important for zero'd out margins, position...
-                        //so we can't use $.css here which won't allow for !important.  Use the following instead.
-                        //note that this overwrites any existing inline style. 
-                        //todo: use regex instead to ensure we don't overwrite inline styles (though there shouldn't be any)
-                        var inlineStyleStr = 'top:' +topVal+ 'px !important; left:' +leftVal+ 'px !important;';
+                        RDR.util.cssSuperImportant($indicator_body, {
+                            top: cornerPadding,
+                            right: cornerPadding
+                        });
+                    },
+                    setupMediaBorderHilites: function(hash){
 
-                        $indicator.find('.rdr_indicator_body').attr('style', inlineStyleStr);
+                        var $indicator = $('#rdr_indicator_'+hash),
+                            $container = $('.rdr-'+hash),
+                            $container_tracker = $('#rdr_container_tracker_'+hash),
+                            $mediaBorderWrap = $('<div class="rdr_media_border_wrap" />').appendTo($container_tracker),
+                            $topHilite = $('<div class="rdr_mediaHilite_top" />').appendTo($mediaBorderWrap),
+                            $rightHilite = $('<div class="rdr_mediaHilite_right" />').appendTo($mediaBorderWrap),
+                            $bottomHilite = $('<div class="rdr_mediaHilite_bottom" />').appendTo($mediaBorderWrap),
+                            $leftHilite = $('<div class="rdr_mediaHilite_left" />').appendTo($mediaBorderWrap);
+
+                        $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
+                        var hiliteThickness = 2;
+
+                        //check if it has a border.
+                        //If so we'll use outerWidth and outerHeight to take it into account.
+                        //If not, we use just the regular height and width so we'll ignore padding which would make the borderHilite look crappy.
+
+                        var containerWidth, containerHeight;
+
+                        //this will calc to 0 if there is no border. 
+                        var hasBorder = parseInt( $container.css('border-top-width') ) + 
+                            parseInt( $container.css('border-bottom-width') ) + 
+                            parseInt( $container.css('border-left-width') ) + 
+                            parseInt( $container.css('border-right-width') );
+
+                        if(hasBorder){
+                            containerWidth = $container.outerWidth();
+                            containerHeight = $container.outerHeight();
+                        }else{
+                            containerWidth = $container.width();
+                            containerHeight = $container.height();
+                        }
+
+                        var hiliteCss = {
+                            t: {
+                                width: containerWidth,
+                                height: 0,
+                                top: -hiliteThickness,
+                                left: -hiliteThickness
+                            },
+                            r: {
+                                width:0,
+                                height: containerHeight,
+                                top: 0,
+                                left: containerWidth
+                            },
+                            b: {
+                                width: containerWidth,
+                                height: 0,
+                                top: containerHeight,
+                                left: -hiliteThickness
+                            },
+                            l: {
+                                width: 0,
+                                height: containerHeight,
+                                top: 0,
+                                left: -hiliteThickness
+                            }
+                        };
+
+                        RDR.util.cssSuperImportant($topHilite, hiliteCss.t);
+                        RDR.util.cssSuperImportant($rightHilite, hiliteCss.r);
+                        RDR.util.cssSuperImportant($bottomHilite, hiliteCss.b);
+                        RDR.util.cssSuperImportant($leftHilite, hiliteCss.l);
+                       
                     }
                 }//end RDR.actions.indicators.utils
             },
@@ -4931,8 +5053,7 @@ function readrBoard($R){
                 });
             },
             shareContent: function(args) {
-console.log('share args');
-console.dir(args);
+
                 var content = args.content_node_info.content;
                 switch (args.sns) {
                     case "facebook":
