@@ -5373,6 +5373,7 @@ function readrBoard($R){
                 RDR.actionbar.closeAll();
                 
                 var $mouse_target = $(e.target);
+                var maxChars = 800;
                 
                 // make sure it's not selecting inside the RDR windows.
                 // todo: (the rdr_indicator is an expection.
@@ -5394,6 +5395,9 @@ function readrBoard($R){
                 var selected = $blockParent.selog('save');
                 if ( !selected.serialRange || !selected.text || (/^\s*$/g.test(selected.text)) ) return;
                 //else
+
+                //don't send text that's too long - mostly so that the ajax won't choke.
+                if(selected.text.length > maxChars) return;
 
                 // check if the blockparent is already hashed
                 if ( $blockParent.hasClass('rdr-hashed') ) {
