@@ -5544,7 +5544,7 @@ function $RFunctions($R){
     //load CSS
     var css = [];
 
-    if ( !$R.browser.msie ) {
+    if ( !$R.browser.msie || ( $R.browser.msie && parseInt( $R.browser.version ) > 8 ) ) {
         css.push( "{{ BASE_URL }}{{ STATIC_URL }}global/css/readrleague.css" );
     } else {
         css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/ie.css" );

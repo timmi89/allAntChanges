@@ -1,10 +1,3 @@
-@font-face {
-    font-family:'ReadrLeague';
-    /* IE */
-    src:url( 'http://www.readrboard.com/static/global/css/LeagueGothic.eot' );
-    /*src:url('mhtml:http://www.readrboard.com/static/widget/css/ie.css!ReadrLeagueEncoded');*/
-}
-
 #rdr_sandbox div.rdr_actionbar { 
 	background:url("http://www.readrboard.com/widget/images/actionbar_bg.png") no-repeat left bottom #fff;
 }
