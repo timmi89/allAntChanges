@@ -3625,7 +3625,7 @@ function readrBoard($R){
 
                             var $prefix = count ? $('<span>, </span>') : $(), //don't include the first time
                                 $tag = $('<strong/>').append(tag.body),
-                                $count = $('<em/>').append( '('+tag.count+')' ),
+                                $count = $('<em/>').append( ' ('+tag.count+')' ),
                                 $span = $('<span />').addClass('rdr_tags_list_tag');
 
                             $span.append( $tag, $count).data('id',tagOrder.id).data('selStates',[]);
