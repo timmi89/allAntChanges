@@ -45,8 +45,6 @@
 			} else if ( !$.cookie('educatedUser') ) {
 				RDRAuth.notifyParent({message:false}, "educate user");
 			}
-
-			pSUPERFLY.virtualPage("/widget", "Widget"); 
 		});
 	</script>
 
@@ -65,7 +63,7 @@
 	  }
 	  var oldonload = window.onload;
 	  window.onload = (typeof window.onload != 'function') ?
-			loadChartbeat : function() { oldonload(); loadChartbeat(); };
+			loadChartbeat : function() { oldonload(); loadChartbeat(); pSUPERFLY.virtualPage("/widget", "Widget");  };
 	})();
 
 	</script>
