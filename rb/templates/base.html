@@ -144,6 +144,11 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 <script src="{{ STATIC_URL }}site/320/js/libs/respond.min.js"></script>
 <![endif]-->
 
+<script type="text/javascript">
+  // logged in?
+  RDRAuth.checkFBStatus({ requesting_action:'site_load'});
+</script>
+
 <!-- http://t.co/HZe9oJ4 -->
 <script>
 var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']]; // Change UA-XXXXX-X to be your site's ID
@@ -154,7 +159,22 @@ s.parentNode.insertBefore(g,s)}(document,'script'));
 <noscript>Your browser does not support JavaScript!</noscript>
 
 <script type="text/javascript">
-  RDRAuth.checkFBStatus({ requesting_action:'site_load'});
+var _sf_async_config={uid:26845,domain:"readrboard.com"};
+(function(){
+  function loadChartbeat() {
+    window._sf_endpt=(new Date()).getTime();
+    var e = document.createElement('script');
+    e.setAttribute('language', 'javascript');
+    e.setAttribute('type', 'text/javascript');
+    e.setAttribute('src',
+       (("https:" == document.location.protocol) ? "https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/" : "http://static.chartbeat.com/") +
+       "js/chartbeat.js");
+    document.body.appendChild(e);
+  }
+  var oldonload = window.onload;
+  window.onload = (typeof window.onload != 'function') ?
+     loadChartbeat : function() { oldonload(); loadChartbeat(); };
+})();
 </script>
 
 {% block pageJS %}
