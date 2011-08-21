@@ -1,7 +1,16 @@
-from django.forms import ModelForm, Textarea
+from django import forms
 from rb.models import Group
 
-class GroupForm(ModelForm):
+class BlessedTags(forms.Field):
+    def to_python(self, value):
+        pass
+        
+    def validate(self, value):
+        pass
+
+class GroupForm(forms.ModelForm):
+    blessed_tags = forms.CharField()
+    
     class Meta:
         model = Group
         fields = (
@@ -23,5 +32,4 @@ class GroupForm(ModelForm):
             'requires_approval',
             'word_blacklist',
             'css_url',
-            'blessed_tags'
         )
