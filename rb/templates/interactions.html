@@ -69,7 +69,7 @@
         {% endif %}
       </div>
       {% endif %}
-      <div class="content_link"><a href="{{ interaction.page.canonical_url }}" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a>
+      <div class="content_link"><a href="{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url }}{% else %}{{ interaction.page.url }}{% endif %}" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a>
     
     {% if index %}
       <h5>Other Reactions</h5>

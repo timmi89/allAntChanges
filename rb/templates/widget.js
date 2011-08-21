@@ -1428,13 +1428,13 @@ function readrBoard($R){
                 }
             },
 			createXDMframe: function() {
-
+console.dir(RDR);
                 RDR.session.receiveMessage();
 
                 var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
                 parentUrl = window.location.href,
                 parentHost = window.location.protocol + "//" + window.location.host;
-                $xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&cachebust='+RDR.cachebuster+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
+                $xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&group_name='+encodeURIComponent(RDR.group.name)+'&cachebust='+RDR.cachebuster+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
                 );
                 $('#rdr_sandbox').append( $xdmIframe );
 
@@ -2232,9 +2232,11 @@ function readrBoard($R){
                         var container = RDR.containers[hash];
 
                         //quick fix - copy the container object but without the $this obj
+                        //for now we're just not sending the body
                         var sendContainer = {
                             HTMLkind: container.HTMLkind,
-                            body: container.body,
+                            body: "",
+                            //body: container.body,
                             hash: container.hash,
                             id: container.id,
                             kind: container.kind
@@ -5371,6 +5373,7 @@ function readrBoard($R){
                 RDR.actionbar.closeAll();
                 
                 var $mouse_target = $(e.target);
+                var maxChars = 800;
                 
                 // make sure it's not selecting inside the RDR windows.
                 // todo: (the rdr_indicator is an expection.
@@ -5392,6 +5395,9 @@ function readrBoard($R){
                 var selected = $blockParent.selog('save');
                 if ( !selected.serialRange || !selected.text || (/^\s*$/g.test(selected.text)) ) return;
                 //else
+
+                //don't send text that's too long - mostly so that the ajax won't choke.
+                if(selected.text.length > maxChars) return;
 
                 // check if the blockparent is already hashed
                 if ( $blockParent.hasClass('rdr-hashed') ) {
