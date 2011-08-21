@@ -758,13 +758,15 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 /*everything below here is stuff that is inline to the client's document.  Generally will use !important for everything*/
 
+/*this is done in js now to account for differences in image padding/border etc.*/
+/*
 .rdr_engage_media,
 .rdr_shared {
 -moz-box-shadow:0 0 10px 1px #008be4 !important;
 -webkit-box-shadow:0 0 10px 1px #008be4 !important;
 box-shadow:0 0 10px 1px #008be4 !important;
 }
-
+*/
 
 /* container indicator icons */
 
@@ -924,6 +926,9 @@ div.rdr_indicator_for_media.rdr_engage_media {
     overflow:hidden; /*for the animate out to work nicely*/
     margin:0 0 0 2px; /*don't need the -5px 0 0 -4px margin here.  Kick it left a tiny bit */
 }
+#rdr_sandbox div.rdr_container_tracker{
+    position:absolute !important;
+}
 
 #rdr_sandbox div.rdr_media_border_wrap{
     position:absolute !important;
@@ -936,7 +941,9 @@ div.rdr_indicator_for_media.rdr_engage_media {
 }
 
 #rdr_sandbox div.rdr_mediaHilite_top{
-    box-shadow: 0 -1px 10px 1px #008BE4;
+    box-shadow:  0 -1px 10px 1px #008BE4;
+    -moz-box-shadow:  0 -1px 10px 1px #008BE4;
+    -webkit-box-shadow:  0 -1px 10px 1px #008BE4;
     border:none;
     border-top: 2px solid #80C5F1;
     border-left: 2px solid #80C5F1;
@@ -944,11 +951,15 @@ div.rdr_indicator_for_media.rdr_engage_media {
 }
 #rdr_sandbox div.rdr_mediaHilite_right{
     box-shadow: 1px 0 10px 1px #008BE4;
+    -moz-box-shadow: 1px 0 10px 1px #008BE4;
+    -webkit-box-shadow: 1px 0 10px 1px #008BE4;
     border:none;
     border-right: 2px solid #80C5F1;
 }
 #rdr_sandbox div.rdr_mediaHilite_bottom{
     box-shadow: 0 1px 10px 1px #008BE4;
+    -moz-box-shadow: 0 1px 10px 1px #008BE4;
+    -webkit-box-shadow: 0 1px 10px 1px #008BE4;
     border:none;
     border-bottom: 2px solid #80C5F1;
     border-left: 2px solid #80C5F1;
@@ -956,6 +967,8 @@ div.rdr_indicator_for_media.rdr_engage_media {
 }
 #rdr_sandbox div.rdr_mediaHilite_left{
     box-shadow: -1px 0 10px 1px #008BE4;
+    -moz-box-shadow: -1px 0 10px 1px #008BE4;
+    -webkit-box-shadow: -1px 0 10px 1px #008BE4;
     border:none;
     border-left: 2px solid #80C5F1;
 }

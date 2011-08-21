@@ -1048,39 +1048,43 @@ function readrBoard($R){
                 //RDR.actionbar.close:
                 $actionbars.each(function(){
                     var $actionbar = $(this),
-                    cleanup = function(){
-                        var timeoutCloseEvt = $actionbar.data('timeoutCloseEvt');
-                        var timeoutCollapseEvt = $actionbar.data('timeoutCollapseEvt');
-                        clearTimeout(timeoutCloseEvt);
-                        clearTimeout(timeoutCollapseEvt);
+                        hash = $actionbar.data('hash'),
+                        $containerTracker = $('#rdr_container_tracker_'+hash),
+                        $mediaBorderWrap = $containerTracker.find('.rdr_media_border_wrap');
 
-                        //make sure the indicator_details bail out before going down with the actionbar.
-                        //note: this is only relevant for the image, but has no effect for text.
-                        //todo: no need to re-create the actionbar every time - just hide it.
-/* 
-                        var $indicator_details = $('#rdr_indicator_details_'+ $actionbar.data('hash') );
-                        $indicator_details.appendTo('#rdr_indicator_details_wrapper');
-
-*/                        
-                        var hash = $actionbar.data('hash');
-                        var $container = $('.rdr-'+hash);
-                        $container.removeClass('rdr_engage_media');
-                        
-                        var $indicator = $('#rdr_indicator_'+hash);
-                        
-                        $indicator.removeClass('rdr_engage_media');
-
-                        $actionbar.remove();
-                    };
-
-                    if(typeof effect !== "undefined"){
+                    if(typeof effect !== "undefined"){ //quick hack to signal fade effect
                         //make more robust if we want more animations
-                        $actionbar.fadeOut(200, cleanup);
+                        var $fadeSet = $().add($actionbar).add($mediaBorderWrap);
+                        //I wanted to combine these into one animation, but jquery didn't like that.
+                        $actionbar.fadeOut(200);
+                        $mediaBorderWrap.fadeOut(200, function(){
+                            $(this).hide();
+                            cleanup($actionbar, hash);
+                        });
                     }
                     else{
-                        cleanup();
+                        cleanup($actionbar, hash);
+                        log($containerTracker)
+                        log($mediaBorderWrap)
+                        $mediaBorderWrap.hide();
+                                            
+                        var $indicator = $('#rdr_indicator_'+hash);
+                        $indicator.removeClass('rdr_engage_media');
                     }
                 });
+
+                //helper function
+                function cleanup($actionbar, hash){
+                    var timeoutCloseEvt = $actionbar.data('timeoutCloseEvt');
+                    var timeoutCollapseEvt = $actionbar.data('timeoutCollapseEvt');
+                    clearTimeout(timeoutCloseEvt);
+                    clearTimeout(timeoutCollapseEvt);
+
+                    var $container = $('.rdr-'+hash);
+                    $container.removeClass('rdr_engage_media');
+                    $actionbar.remove();
+                };
+
 			},
             closeSuggest: function(hashes) {
                 //hashes can be a single hash or a list of hashes
@@ -2099,9 +2103,18 @@ function readrBoard($R){
                                 function(){
                                     $(this).data('hover',true);
                                                                         
+                                    var $indicator = $('#rdr_indicator_'+hash),
+                                        $containerTracker = $('#rdr_container_tracker_'+hash),
+                                        $mediaBorderWrap = $containerTracker.find('.rdr_media_border_wrap');
+                                    
+                                    $indicator.addClass('rdr_engage_media');
+                                    
                                     //update here just to make sure at least a mouse hover always resets any unexpected weirdness
                                     RDR.actions.indicators.utils.positionContainerTracker(hash);
                                     
+                                    $mediaBorderWrap.show();
+                                    
+
                                     var src = $container.attr('src'),
                                     src_with_path = this.src;
 
@@ -2110,10 +2123,8 @@ function readrBoard($R){
                                         left: $container.offset().right
                                     };
 
+
                                     $container.addClass('rdr_engage_media');
-            
-                                    var $indicator = $('#rdr_indicator_'+hash);
-                                    $indicator.addClass('rdr_engage_media');
 
                                     //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
                                     // builds a new actionbar or just returns the existing $actionbar if it exists.
@@ -3558,12 +3569,14 @@ function readrBoard($R){
                             //position the containerTracker at the top left of the image or videos.  We'll position the indicator and hiliteborder relative to this.
                             RDR.actions.indicators.utils.positionContainerTracker(hash);
                             
+                            $indicator.appendTo($container_tracker);
+                            $indicator.addClass('rdr_indicator_for_media');
+                            
                             //makes and appends the mediaBorder to the container_tracker
                             RDR.actions.indicators.utils.setupMediaBorderHilites(hash);
+                            RDR.actions.indicators.utils.positionMediaIndicator(hash);
 
-                            $indicator.appendTo($container_tracker);
-                            $indicator.addClass('rdr_indicator_for_media')//chain
-                            .hover(
+                            $indicator.hover(
                                 function() {
                                     $indicator_details.css({
                                         'width': 'auto'
@@ -3628,6 +3641,8 @@ function readrBoard($R){
                             categoryTitle = '<span class="rdr_indicator_categoryTitle">' +categoryTitleText+ '</span>',
                             $tagsList = $('<div class="rdr_tags_list" />');
 
+                        log($indicator_details_body);
+                        log($indicator_body);
                         $indicator_details_body.html( $indicator_body.html() );
 
                         $indicator_details.empty().append( $indicator_details_body, categoryTitle, $tagsList );
@@ -3702,6 +3717,7 @@ function readrBoard($R){
                             top: $container.offset().top,
                             left: $container.offset().left
                         });
+                        log($container.offset().top);
                     },
                     positionMediaIndicator: function(hash){
                         //RDR.actions.indicators.utils.positionMediaIndicator:
@@ -3742,10 +3758,7 @@ function readrBoard($R){
                             $bottomHilite = $('<div class="rdr_mediaHilite_bottom" />').appendTo($mediaBorderWrap),
                             $leftHilite = $('<div class="rdr_mediaHilite_left" />').appendTo($mediaBorderWrap);
 
-                            log('$indicator');
-                            log($indicator);
-                            log('$indicatorgfdhfsg');
-                            log($mediaBorderWrap);
+                        $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
                         var hiliteThickness = 2;
 
                         //check if it has a border.
@@ -3772,26 +3785,26 @@ function readrBoard($R){
                             t: {
                                 width: containerWidth,
                                 height: 0,
-                                top: $container.offset().top - hiliteThickness,
-                                left: $container.offset().left - hiliteThickness
+                                top: -hiliteThickness,
+                                left: -hiliteThickness
                             },
                             r: {
                                 width:0,
                                 height: containerHeight,
-                                top: $container.offset().top,
-                                left: $container.offset().left + containerWidth
+                                top: 0,
+                                left: containerWidth
                             },
                             b: {
                                 width: containerWidth,
                                 height: 0,
-                                top: $container.offset().top + containerHeight,
-                                left: $container.offset().left - hiliteThickness
+                                top: containerHeight,
+                                left: -hiliteThickness
                             },
                             l: {
                                 width: 0,
                                 height: containerHeight,
-                                top: $container.offset().top,
-                                left: $container.offset().left - hiliteThickness
+                                top: 0,
+                                left: -hiliteThickness
                             }
                         };
 
@@ -3799,8 +3812,7 @@ function readrBoard($R){
                         RDR.util.cssSuperImportant($rightHilite, hiliteCss.r);
                         RDR.util.cssSuperImportant($bottomHilite, hiliteCss.b);
                         RDR.util.cssSuperImportant($leftHilite, hiliteCss.l);
-                        
-                        $mediaBorderWrap.appendTo($container_tracker);
+                       
                     }
                 }//end RDR.actions.indicators.utils
             },
