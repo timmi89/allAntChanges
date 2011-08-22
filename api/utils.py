@@ -116,11 +116,7 @@ def getPage(request, pageid=None):
     title = request.GET.get('title', None)
     group = request.GET.get('group_id', 1)
 
-    host = urlparse(request.META['HTTP_REFERER']).hostname.split(".")
-    if host[0] == 'www': host = host[1:]
-    host = ".".join(len(host[-2]) < 4 and host[-3:] or host[-2:])
-    
-    print 'host', host
+    host = urlparse(request.META['HTTP_REFERER']).hostname
     
     site = Site.objects.get(domain=host, group=group)
 
