@@ -1620,8 +1620,9 @@ function readrBoard($R){
 
                         var $bodyWraps = $rindow.find('.rdr_body_wrap');
                         var $rindowMsgDiv = $rindow.find('div.rdr_rindow_message'),
-                            $rindowMsgDivInnerwrap = $rindow.find('.rdr_rindow_message_innerwrap');
-                        
+                            $rindowMsgDivInnerwrap = $rindow.find('.rdr_rindow_message_innerwrap'),
+                            $tmpUserMsg = $rindow.find('.rdr_rindow_message_tempUserMsg');
+                    
                         $rindowMsgDiv.show();
 
                         switch (msgType) {
@@ -1710,7 +1711,7 @@ function readrBoard($R){
                             //expand the rindow first and then slide down the msgBar 
                             $rindow.queue('userMessage', function(){
                                 $rindow.animate({ height: rindowHeight-extraHeight }, durr);
-                                $rindowMsgDiv.animate({ height:0 },durr, function(){
+                                $rindowMsgDiv.animate({ height:0 }, durr, function(){
                                     $rindowMsgDiv.hide();
                                     
                                     $bodyWraps.css({
