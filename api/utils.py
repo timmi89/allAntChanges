@@ -5,6 +5,7 @@ import json
 import re
 from exceptions import FBException, JSONException
 from readrboard.rb.profanity_filter import ProfanitiesFilter
+from urlparse import urlparse
 
 blacklist = ['fuck','shit','poop','cock','cunt']
 
@@ -115,9 +116,8 @@ def getPage(request, pageid=None):
     title = request.GET.get('title', None)
     group = request.GET.get('group_id', 1)
 
-    host = request.META['HTTP_REFERER']
-    host = host[7:]
-    host = host[:host.index('/')]
+    host = urlparse(request.META['HTTP_REFERER']).hostname
+    
     site = Site.objects.get(domain=host, group=group)
 
     # Handle sites with hash but no bang
