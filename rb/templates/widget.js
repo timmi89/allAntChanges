@@ -939,7 +939,12 @@ function readrBoard($R){
                     });
                     
                 }
-            }
+                //this is really a rindow update function and should be moved somewhere here, 
+                //but I'm drawing from the existing update function, so leave it there for the time being
+                /*
+                RDR.actions.newUpdateData(hash);
+                */
+            }//end RDR.rindow.update
 		},
 		actionbar: {
 			draw: function(settings) {
@@ -1330,11 +1335,34 @@ function readrBoard($R){
                 }
             },
             revealSharedContent: function(data){
-                var $container = $('.rdr-'+data.container_hash);
+                var hash = data.container_hash,
+                    $container = $('.rdr-'+hash);
                 
                 var kind = $container.data('kind');
                 if(kind == 'img' || kind == 'media'){
                     $container.addClass('rdr_shared');
+
+                    var $containerTracker = $('#rdr_container_tracker_'+hash),
+                        $mediaBorderWrap = $containerTracker.find('.rdr_media_border_wrap');
+                    //make sure it's still positioned right, though page load should have set it.
+                    RDR.actions.indicators.utils.positionContainerTracker(hash);
+                    $mediaBorderWrap.show();
+
+                    //we don't need this here, becuase this is already bound to the document
+                    
+                    $(document).bind('click.rdr', function(event) {
+                        $mediaBorderWrap.hide();
+                        //remove the binding after it's been called.
+                        $(document).unbind('click.rdr', arguments.callee);
+                    });
+                    $(document).bind('keyup.rdr', function(event) {
+                        //todo: merge all esc key events (use an array of functions that we can just dequeue?)
+                        if (event.keyCode == '27') { //esc
+                            $mediaBorderWrap.hide();
+                            //remove the binding after it's been called.
+                            $(document).unbind('keyup.rdr', arguments.callee);
+                        }
+                    });
                 }
                 
                 if ( data.location && data.location != "None" ) {
@@ -1621,6 +1649,7 @@ function readrBoard($R){
                         var $bodyWraps = $rindow.find('.rdr_body_wrap');
                         var $rindowMsgDiv = $rindow.find('div.rdr_rindow_message'),
                             $rindowMsgDivInnerwrap = $rindow.find('.rdr_rindow_message_innerwrap'),
+                            $otherTagsWrap = $('div.rdr_otherTagsWrap'),
                             $tmpUserMsg = $rindow.find('.rdr_rindow_message_tempUserMsg');
                     
                         $rindowMsgDiv.show();
@@ -1675,16 +1704,18 @@ function readrBoard($R){
                         $rindow.queue('userMessage', function(){
                             if( $rindowMsgDiv.height() > 0 ){
                                 //already expanded
-                                $rindowMsgDivInnerwrap.fadeIn(400);
+                                $rindowMsgDivInnerwrap.fadeIn(500);
                                 $(this).dequeue('userMessage');
                             }else{
                                 //expand it and expand the window with it.
+                                //I know this simo animations together are a bit much - this should be redesigned
                                 $rindow.animate({ height: rindowHeight+extraHeight }, durr);
+                                $otherTagsWrap.animate({ bottom:0 }, durr);
+                                $bodyWraps.animate({
+                                    bottom: extraHeight
+                                }, durr);
                                 $rindowMsgDiv.animate({ height:extraHeight },durr, function(){
-                                    $bodyWraps.css({
-                                        bottom: extraHeight
-                                    });
-                                    $rindowMsgDivInnerwrap.fadeIn(400);
+                                    $rindowMsgDivInnerwrap.fadeIn(500);
                                     $(this).dequeue('userMessage');
                                 });
                             }
@@ -1697,6 +1728,7 @@ function readrBoard($R){
                     if ( $rindow ) {
                         
                         var $rindowMsgDiv = $('div.rdr_rindow_message');
+                            $otherTagsWrap = $('div.rdr_otherTagsWrap');
 
                         var $bodyWraps = $rindow.find('.rdr_body_wrap');
                             //else
@@ -1711,12 +1743,12 @@ function readrBoard($R){
                             //expand the rindow first and then slide down the msgBar 
                             $rindow.queue('userMessage', function(){
                                 $rindow.animate({ height: rindowHeight-extraHeight }, durr);
+                                $otherTagsWrap.animate({ bottom: 0-bodyWrapHeight }, durr);
+                                $bodyWraps.animate({
+                                    bottom: bodyWrapHeight
+                                }, durr);
                                 $rindowMsgDiv.animate({ height:0 }, durr, function(){
                                     $rindowMsgDiv.hide();
-                                    
-                                    $bodyWraps.css({
-                                        bottom: bodyWrapHeight
-                                    });
                                     $(this).dequeue('userMessage');
                                 });
                             });
@@ -2687,7 +2719,7 @@ function readrBoard($R){
                             //     tag_id: ,
                             //     user: 
                             // }
-                            //update indicators
+                            //do updates
 
                             //todo: unify this with the rest of the interactions
                             var intHelper = {
@@ -2743,7 +2775,7 @@ function readrBoard($R){
                             }
                             $tagLi.find('div.rdr_leftBox').html('');
 
-                            //update indicators
+                            //do updates
                             var hash = sendData.hash;
                             var intNodeHelper = {
                                 id: interaction_node.id,
@@ -2893,6 +2925,8 @@ function readrBoard($R){
                                 // don't continue with the rest of this function
                                 return;
                             }
+                            
+                            var uiMode = args.uiMode || 'write';
 
                             var response = args.response,
                                 interaction = args.response.interaction,
@@ -2981,9 +3015,16 @@ function readrBoard($R){
                                 RDR.session.rindowUserMessage.show( usrMsgArgs );
                             });
 
-                            RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_data:content_node_data, hash:hash});
+                            //temp quick fix to show msg for vote up in 3rd panel
+                            if( uiMode === "read" ){
+                                rindow.dequeue('userMessage');
+                            }
 
-                            //update indicators
+                            if( uiMode !== "read" ){
+                                RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_data:content_node_data, hash:hash});
+                            }
+
+                            //do updates
                             var intNodeHelper = {
                                 id: interaction_node.id,
                                 parent_id: null,
@@ -3018,7 +3059,7 @@ function readrBoard($R){
                             }
                             $tagLi.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('span').html('');
 
-                            //update indicators
+                            //do updates
                             var hash = sendData.hash;
                             var intNodeHelper = {
                                 id: interaction_node.id,
@@ -3498,6 +3539,8 @@ function readrBoard($R){
                         $indicator_details.data( 'top', $indicator_details.offset().top );
                         $indicator_details.data( 'left', $indicator_details.offset().left );
                         $indicator_details.data( 'freshlyKilled', true);
+                        var selStates = $(this).data('selStates');
+
                         $indicator_details.hide();
                         RDR.rindow.make( "readMode", {hash:hash} );
                     })//chain
@@ -3576,10 +3619,6 @@ function readrBoard($R){
 
                     var kind = summary.kind;
                     
-                    //todo: doesn't make sense to do this here
-                    if(kind == 'img' || kind == 'media'){
-                        RDR.actions.indicators.utils.positionContainerTracker(hash);
-                    }
                     $indicator_details.css({ 'visiblity':'visible' }).hide();
                               
                 },
@@ -4326,7 +4365,7 @@ function readrBoard($R){
 
                     $infoSummary.click( function() {
                         // click
-                        args = { tag:tag, rindow:rindow, hash:hash, content_node:content_node };
+                        args = { tag:tag, rindow:rindow, hash:hash, content_node:content_node, uiMode:'read'};
                         RDR.actions.interactions.ajax( args, 'tag', 'create' );
                     }).hover( function() {
                         // hover
@@ -5091,6 +5130,18 @@ function readrBoard($R){
                     case "linkedin":
                     break;
                 }
+            },
+            newUpdateData: function(hash){
+                //RDR.actions.newUpdateData:
+                //not using this yet...
+                var summary = RDR.summaries[hash],
+                    $rindow_readmode = summary.$rindow_readmode,
+                    $rindow_writemode = summary.$rindow_writemode;
+                    /*
+                    log(summary);
+                    log($rindow_readmode);
+                    log($rindow_writemode);
+                    */
             },
             updateData: function(args) {
                 var tag_text;
