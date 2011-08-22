@@ -1443,7 +1443,7 @@ function readrBoard($R){
 
                 var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
                 parentUrl = window.location.href,
-                parentHost = window.location.protocol + "//" + window.location.host;
+                parentHost = window.location.protocol + "//" + window.location.host,
                 $xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&group_name='+encodeURIComponent(RDR.group.name)+'&cachebust='+RDR.cachebuster+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
                 );
                 $('#rdr_sandbox').append( $xdmIframe );
