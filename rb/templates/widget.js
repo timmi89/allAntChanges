@@ -784,8 +784,21 @@ function readrBoard($R){
                 
                 $new_rindow.append( $dragHandle );
                 
-                $rindowMsgDiv = $('<div class="rdr_rindow_message" />');
+                $rindowMsgDiv = $('<div class="rdr_rindow_message" />'),
+                    $rindowMsgDivInnerwrap = $('<div class="rdr_rindow_message_innerwrap"><span class="rdr_userMsg" /><strong /><div style="clear:both;"/></div>'),
+                    $tmpUserMsg = $('<div class="rdr_rindow_message_tempUserMsg" />'),
+                    $closeButton = $('<div class="rdr_close">x</div>');
+
+                $closeButton.click(function(){
+                    RDR.session.rindowUserMessage.hide( $new_rindow );
+                });
+
+                $rindowMsgDivInnerwrap.append( $tmpUserMsg );
+                $rindowMsgDivInnerwrap.append( $closeButton );
+
+                $rindowMsgDiv.append($rindowMsgDivInnerwrap).hide();
                 $new_rindow.append( $rindowMsgDiv );
+                
                 
                 //now add a watcher to reinitialize these scrollpanes when the rindow is resizing                
                 //rindow.res $scrollPanes.add($column);
@@ -1505,7 +1518,14 @@ function readrBoard($R){
                 
                 if ( num_interactions ) {
                     if ( num_interactions < RDR.group.temp_interact ){
-                        RDR.session.rindowUserMessage.show( args );
+
+                        var usrMsgArgs = {      
+                            msgType: "tempUser",
+                            rindow:args.rindow,
+                            num_interactions: num_interactions
+                        };
+
+                        RDR.session.rindowUserMessage.show( usrMsgArgs );
                     }
                     else {
                         RDR.session.showLoginPanel( args );
@@ -1587,8 +1607,8 @@ function readrBoard($R){
 
                     if ( $rindow ) {
                     
-                        var msgType = args.msgType || "tempUser", //defaults to tempUser
-                            userMsg = "",
+                        var msgType = args.msgType || null, //defaults to tempUser
+                            userMsg = null,
                             actionPastTense;
 
                         var extraHeight = 45,  //$rindowMsgDiv.height(),
@@ -1599,16 +1619,13 @@ function readrBoard($R){
                         var $bodyWraps = $rindow.find('.rdr_body_wrap');
 
                         var $rindowMsgDiv = $rindow.find('div.rdr_rindow_message');
-                        var $rindowMsgDiv = $rindow.find('div.rdr_rindow_message');
-                        var $rindowMsgDivInnerwrap = $('<div class="rdr_rindow_message_innerwrap"><span /><strong /><div style="clear:both;"/></div>'),
-                            $closeButton = $('<div class="rdr_close">x</div>');
                         
-                        //quick hack for temp user errors
-                        var $tmpUserMsg = $('<div class="rdr_rindow_message_tempUserMsg" />');
-                        $rindowMsgDivInnerwrap.append($tmpUserMsg);
+                        $rindowMsgDiv.show();
 
-                        $rindowMsgDiv.empty().show().append($rindowMsgDivInnerwrap);
-
+                        if(args.msgType == 'tempUser'){
+                            
+                        }
+                        
                         switch (msgType) {
 
                             case "tempUser":
@@ -1622,7 +1639,7 @@ function readrBoard($R){
                                 
                                 var tmpUserMsg = 'You can react or comment <strong>' + num_interactions_left + ' more times</strong> before you must ';
                                 
-                                $tmpUserMsg.append('<span>'+tmpUserMsg+'</span>');
+                                $tmpUserMsg.empty().append('<span>'+tmpUserMsg+'</span>');
                                 $tmpUserMsg.append($loginLink);
                                 
                                 break;
@@ -1635,6 +1652,7 @@ function readrBoard($R){
     
                                 if(interactionInfo.remove){
                                     userMsg = "The "+interactionInfo.type+" <em>"+interactionInfo.body+"</em><br />has been removed." ;
+                                    $tmpUserMsg.empty();
                                 }else{
                                     
                                     userMsg = (interactionInfo.type == 'tag') ?
@@ -1644,20 +1662,16 @@ function readrBoard($R){
                                     (interactionInfo.type == 'comment') ?
                                         "You have left your comment." :
                                         ""; //this default shouldn't happen
-                                    userMsg += " See your "+interactionInfo.type+"s at <a href='"+RDR_rootPath+"' target='_blank'>readrboard.com</a>";
+                                    userMsg += " See your "+interactionInfo.type+"s at <strong><a href='"+RDR_rootPath+"' target='_blank'>readrboard.com</a></strong>";
                                 }
                                 break;
                         
                         }   
                         
-                        $closeButton.click(function(){
-                            RDR.session.rindowUserMessage.hide( args );
-                        });
+                        if(userMsg){
+                            $rindowMsgDiv.find('span.rdr_userMsg').html( userMsg );
+                        }
 
-                            
-                        $rindowMsgDiv.find('span').html( userMsg );
-                        $rindowMsgDivInnerwrap.append( $closeButton );
-                        
                         $rindowMsgDivInnerwrap.hide();
                         $rindow.queue('userMessage', function(){
                             if( $rindowMsgDiv.height() > 0 ){
@@ -1679,11 +1693,11 @@ function readrBoard($R){
                         $rindow.dequeue('userMessage');
                     }
                 },
-                hide: function(args) {
+                hide: function($rindow) {
                     //RDR.session.rindowUserMessage.hide:
-                    if ( args.rindow ) {
-                        var $rindow = args.rindow,
-                            $rindowMsgDiv = $('div.rdr_rindow_message');
+                    if ( $rindow ) {
+                        
+                        var $rindowMsgDiv = $('div.rdr_rindow_message');
 
                         var $bodyWraps = $rindow.find('.rdr_body_wrap');
                             //else
@@ -2885,7 +2899,6 @@ function readrBoard($R){
                                 interaction = args.response.interaction,
                                 interaction_node = response.data.interaction.interaction_node;
                             
-
                             var sendData = args.sendData;
                             var rindow = args.rindow,
                                 tag_li = args.tag,
