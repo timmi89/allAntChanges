@@ -1,5 +1,4 @@
-var RDRtimer,
-RDR, //our global RDR object
+var RDR, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
 $R = {}, //init var: our clone of jQuery
 RDR_rootPath = "{{ BASE_URL }}"; //todo: when we get our hosting up change to readrboard.com or our CDN.
@@ -771,7 +770,7 @@ function readrBoard($R){
                     maxHeight:maxHeight
                 });
 
-                $dragHandle = $new_rindow.find('.ui-resizable-s');
+                var $dragHandle = $new_rindow.find('.ui-resizable-s');
                 $dragHandle.addClass('rdr_window_dragHandle');
                 $dragHandle.hover(
                     function(){
@@ -784,7 +783,7 @@ function readrBoard($R){
                 
                 $new_rindow.append( $dragHandle );
                 
-                $rindowMsgDiv = $('<div class="rdr_rindow_message" />'),
+                var $rindowMsgDiv = $('<div class="rdr_rindow_message" />'),
                     $rindowMsgDivInnerwrap = $('<div class="rdr_rindow_message_innerwrap"><span class="rdr_userMsg" /><strong /><div style="clear:both;"/></div>'),
                     $tmpUserMsg = $('<div class="rdr_rindow_message_tempUserMsg" />'),
                     $closeButton = $('<div class="rdr_close">x</div>');
@@ -965,8 +964,8 @@ function readrBoard($R){
                         left: 'add this here'
                     },
                     img:  {
-                        top: coords.top,
-                        left: coords.left
+                        top: coords.top - 2,
+                        left: coords.left + 2
                     },
                     text:  {
                         //the extra offsets here move the actionbar above the click - not exact numbers.
@@ -1105,7 +1104,7 @@ function readrBoard($R){
                     var $container = $('.rdr-'+hash);
                     $container.removeClass('rdr_engage_media');
                     $actionbar.remove();
-                };
+                }
 
 			},
             closeSuggest: function(hashes) {
