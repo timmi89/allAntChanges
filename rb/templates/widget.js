@@ -2893,72 +2893,68 @@ function readrBoard($R){
                             content_node_data.hash = content_node_data.container;
                             content_node_data.kind = sendData.kind;
 
-                            // do stuff you'd only do if this was NOT a "thumbs-up" tag creation
-                            if ( !args.meToo ) {
+                            //clear the loader        
+                            if ( typeof tag_li.find != "function" ) {
+                                tag_li = rindow.find('li.rdr_tag_' + args.tag.id);
+                            }
+                            tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('span').html('');
 
-                                //clear the loader        
-                                if ( typeof tag_li.find != "function" ) {
-                                    tag_li = rindow.find('li.rdr_tag_' + args.tag.id);
-                                }
-                                tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('span').html('');
+                            //[cleanlogz]('tag successssssssssssss');
+                            var $this = tag_li;
+                            $this.addClass('rdr_selected');
+                            $this.siblings().removeClass('rdr_selected');
+                            $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+                            
+                            //reset this var for now
+                            content_node_data = args.content_node || RDR.actions.content_nodes.make(content_node_data);
 
-                                //[cleanlogz]('tag successssssssssssss');
-                                var $this = tag_li;
-                                $this.addClass('rdr_selected');
-                                $this.siblings().removeClass('rdr_selected');
-                                $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-                                
-                                //reset this var for now
-                                content_node_data = args.content_node || RDR.actions.content_nodes.make(content_node_data);
-
-                                if ( tag_li.length == 1 ) {
-                                    tag_li.find('div.rdr_leftBox').unbind();
-                                    tag_li.find('div.rdr_leftBox').click( function(e) {
-                                        e.preventDefault();
-                                                            
-                                        var newArgs = {    
-                                            content_node_data: args.content_node_data,
-                                            hash: hash,
-                                            int_id: int_id,
-                                            tag:tag_li,
-                                            rindow: args.rindow
-                                        };
-                                        // RDR.actions.unrateSend(args);
-                                        RDR.actions.interactions.ajax( newArgs, 'tag', 'remove' );
-                                        return false; // prevent the tag call applied to the parent <li> from firing
-                                    });
-
-                                    tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+int_id);
-                                    tag_li.data('interaction_id', int_id);
-
-                                    // if it was a custom tag, do a few things
-                                    if ( tag_li.hasClass('rdr_customTagBox') ) {
-                                        tag_li.removeClass('rdr_customTagBox');
-                                        tag_li.siblings().removeClass('rdr_selected');
-                                        tag_li.addClass('rdr_selected');
-                                        tag_li.find('input').remove();
-                                        tag_li.find('div.rdr_help').remove();
-                                        tag_li.find('.rdr_tagText').html(tag.body);
-                                        RDR.actions.sentimentPanel.addCustomTagBox({hash:hash, rindow:rindow, settings:args.settings, actionType:'react'});
-                                    }
-                                }
-
-                                var usrMsgArgs = {      
-                                    msgType: "interactionSuccess",
-                                    interactionInfo: {
-                                        type: 'tag',
-                                        body: tag.body
-                                    },
-                                    rindow:rindow
-                                };
-
-                                //queued up to be released in the sharestart function after the animation finishes    
-                                rindow.queue('userMessage', function(){
-                                    RDR.session.rindowUserMessage.show( usrMsgArgs );
+                            if ( tag_li.length == 1 ) {
+                                tag_li.find('div.rdr_leftBox').unbind();
+                                tag_li.find('div.rdr_leftBox').click( function(e) {
+                                    e.preventDefault();
+                                                        
+                                    var newArgs = {    
+                                        content_node_data: args.content_node_data,
+                                        hash: hash,
+                                        int_id: int_id,
+                                        tag:tag_li,
+                                        rindow: args.rindow
+                                    };
+                                    // RDR.actions.unrateSend(args);
+                                    RDR.actions.interactions.ajax( newArgs, 'tag', 'remove' );
+                                    return false; // prevent the tag call applied to the parent <li> from firing
                                 });
 
-                                RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_data:content_node_data, hash:hash});
+                                tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+int_id);
+                                tag_li.data('interaction_id', int_id);
+
+                                // if it was a custom tag, do a few things
+                                if ( tag_li.hasClass('rdr_customTagBox') ) {
+                                    tag_li.removeClass('rdr_customTagBox');
+                                    tag_li.siblings().removeClass('rdr_selected');
+                                    tag_li.addClass('rdr_selected');
+                                    tag_li.find('input').remove();
+                                    tag_li.find('div.rdr_help').remove();
+                                    tag_li.find('.rdr_tagText').html(tag.body);
+                                    RDR.actions.sentimentPanel.addCustomTagBox({hash:hash, rindow:rindow, settings:args.settings, actionType:'react'});
+                                }
                             }
+
+                            var usrMsgArgs = {      
+                                msgType: "interactionSuccess",
+                                interactionInfo: {
+                                    type: 'tag',
+                                    body: tag.body
+                                },
+                                rindow:rindow
+                            };
+
+                            //queued up to be released in the sharestart function after the animation finishes    
+                            rindow.queue('userMessage', function(){
+                                RDR.session.rindowUserMessage.show( usrMsgArgs );
+                            });
+
+                            RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_data:content_node_data, hash:hash});
 
                             //update indicators
                             var intNodeHelper = {
@@ -4839,42 +4835,6 @@ function readrBoard($R){
                         $contentSet.append( $header, $content );
 
                         rindow.find('div.rdr_contentPanel div.rdr_body').append( $contentSet );
-                        
-                        // create the Share tooltips
-                        // $contentSet.find( 'div.rdr_tag_share' ).mouseenter( 
-                        //     function() {
-
-                        //         var $this = $(this),
-                        //             $shareTip = $( '<div class="rdr rdr_share_container"><div class="rdr rdr_tooltip rdr_top"><div class="rdr rdr_tooltip-content">Share this reaction<br/>'+
-                        //                             '<img rel="facebook" src="/static/widget/images/social-icons-loose/social-icon-facebook.png" class="rdr_sns no-rdr"/>'+
-                        //                             '<img rel="twitter" src="/static/widget/images/social-icons-loose/social-icon-twitter.png" class="rdr_sns no-rdr"/>'+
-                        //                             // '<img rel="tumblr" src="/static/widget/images/social-icons-loose/social-icon-tumblr.png" class="rdr_sns no-rdr"/>'+
-                        //                             // '<img rel="linkedin" src="/static/widget/images/social-icons-loose/social-icon-linkedin.png" class="rdr_sns no-rdr"/>'+
-                        //                             '</div><div class="rdr rdr_tooltip-arrow-border" /><div class="rdr rdr_tooltip-arrow" /></div></div>' );
-                        //         var share_offsets = $this.offset(),
-                        //             rindow_offsets = rindow.offset();
-
-                        //         $this.addClass('rdr_hover').parent().addClass('rdr_hover');
-                        //         $shareTip.css('left', share_offsets.left+'px').css('top', share_offsets.top+'px');
-
-                        //         // $this.append( $shareTip );
-                        //         $('#rdr_sandbox').append( $shareTip );
-                        //         $shareTip.bind('mouseleave.rdr', { $tag_share:$this }, function(e) {
-                        //             $(this).remove();
-                        //             e.data.$tag_share.removeClass('rdr_hover').parent().removeClass('rdr_hover');
-                        //         });
-
-                        //         var content_node_info = $(this).closest('div.rdr_contentSet').data();
-                        //         var tag = $this.closest('a.rdr_tag').data('tag');
-                        //         $shareTip.find('img.rdr_sns').click( function() {
-                        //         });
-                        //     }
-                        // ).mouseleave(
-                        //     function() {
-                        //         // $this.removeClass('rdr_hover');
-                        //     }
-                        // );
-
                     }
 
                     return $contentSet;
@@ -5079,9 +5039,10 @@ function readrBoard($R){
                     break;
 
                     case "tumblr":
-                        var source = '&source='+RDR.group.name;
+                        var source = '&source=' + args.reaction +' ... from ' + RDR.group.name;
                         switch ( args.content_node_info.kind) {
                             case "txt":
+                            default:
                                 window.open('http://www.tumblr.com/share/quote?quote='+encodeURI(content.substr(0, content_length) )+encodeURI(source),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
                             break;
 
@@ -5338,10 +5299,11 @@ function readrBoard($R){
                 socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
 
                 // embed icons/links for diff SNS
+                var shareHash = hash;
                 $.each(socialNetworks, function(idx, val){
                     $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ BASE_URL }}{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                     $shareLinks.find('li:last').click( function() {
-                        RDR.actions.share_getLink({ hash:hash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
+                        RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
                         return false;
                     });
                 });
