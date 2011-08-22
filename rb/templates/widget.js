@@ -1619,8 +1619,8 @@ function readrBoard($R){
                             durr = 300;
 
                         var $bodyWraps = $rindow.find('.rdr_body_wrap');
-
-                        var $rindowMsgDiv = $rindow.find('div.rdr_rindow_message');
+                        var $rindowMsgDiv = $rindow.find('div.rdr_rindow_message'),
+                            $rindowMsgDivInnerwrap = $rindow.find('.rdr_rindow_message_innerwrap');
                         
                         $rindowMsgDiv.show();
 
