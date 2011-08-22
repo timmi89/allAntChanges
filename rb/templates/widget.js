@@ -2874,7 +2874,7 @@ function readrBoard($R){
                             var sendData = args.sendData;
                             var rindow = args.rindow,
                                 tag_li = args.tag,
-                                tag = args.tag.data('tag'),
+                                tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
                                 int_id = response.data.interaction.id;
 
                             //temp tie-over    
@@ -2894,9 +2894,12 @@ function readrBoard($R){
                             content_node_data.kind = sendData.kind;
 
                             // do stuff you'd only do if this was NOT a "thumbs-up" tag creation
-                            if ( !args.thumbsUp ) {
+                            if ( !args.meToo ) {
 
-                                //clear the loader                  
+                                //clear the loader        
+                                if ( typeof tag_li.find != "function" ) {
+                                    tag_li = rindow.find('li.rdr_tag_' + args.tag.id);
+                                }
                                 tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('span').html('');
 
                                 //[cleanlogz]('tag successssssssssssss');
@@ -4300,7 +4303,7 @@ function readrBoard($R){
 
                     $infoSummary.click( function() {
                         // click
-                        args = { tag:tag, rindow:rindow, hash:hash, content_node:content_node };                            
+                        args = { tag:tag, rindow:rindow, hash:hash, content_node:content_node };
                         RDR.actions.interactions.ajax( args, 'tag', 'create' );
                     }).hover( function() {
                         // hover
@@ -4495,7 +4498,7 @@ function readrBoard($R){
                                     var content_node = $activePanelCard.data('content_node');
 
                                     $activePanelCard.removeClass('rdr_hover');
-                                    if(content_node.selState){
+                                    if(content_node && content_node.selState){
                                         $().selog('hilite', content_node.selState, 'off');
                                     }
                                 }
