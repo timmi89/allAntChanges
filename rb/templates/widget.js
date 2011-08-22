@@ -6959,8 +6959,9 @@ function $RFunctions($R){
 
              Copyright 2011, Tim Down
              Licensed under the MIT license.
-             Version: 1.1.2
-             Build date: 30 May 2011
+             //todo: update the version number
+             Version: 1.1.2 - I believe this is now using Rangy 1.2 beta 2 release from 5 August 2011 
+             Build date: 30 May 2011 - I believe this is now using Rangy 1.2 beta 2 release from 5 August 2011 
             */
             
             /*readrboard tweak to code:  replaced 4 instances of "span" with the var rdr_node */
