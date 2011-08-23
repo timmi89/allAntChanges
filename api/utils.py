@@ -117,7 +117,6 @@ def getPage(request, pageid=None):
     group = request.GET.get('group_id', 1)
 
     host = urlparse(request.META['HTTP_REFERER']).hostname
-    
     site = Site.objects.get(domain=host, group=group)
 
     # Handle sites with hash but no bang

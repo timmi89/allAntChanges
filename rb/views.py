@@ -174,16 +174,22 @@ def sidebar(request, user_id=None, short_name=None):
 
 @requires_admin
 def settings(request, group=None):
+    context = {}
+    context['cookie_user'] = checkCookieToken(request)
     if request.method == 'POST':
         form = GroupForm(request.POST, request.FILES, instance=group)
         if form.is_valid():
             form.save()
     else:
         form = GroupForm(instance=group)
+        dir(form)
 
+    context['form'] = form
+    context['short_name'] = group.short_name
+    context['"fb_client_id'] = FACEBOOK_APP_ID
     return render_to_response(
-        "group_form.html", 
-        {"form": form, "short_name": group.short_name, "fb_client_id": FACEBOOK_APP_ID},
+        "group_form.html",
+        context,
         context_instance=RequestContext(request)
     )
 

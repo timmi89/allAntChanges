@@ -310,10 +310,10 @@ RDRAuth = {
 }
 RDRAuth.init();
 
-FB.Event.subscribe('auth.sessionChange', function(response) {
-  // do something with response.session
-  RDRAuth.reauthUser();
-});
+// FB.Event.subscribe('auth.sessionChange', function(response) {
+//   // do something with response.session
+//   RDRAuth.reauthUser();
+// });
 // FB.Event.subscribe('auth.statusChange', function(response) {
 //   // do something with response.session
 //   RDRAuth.reauthUser();
