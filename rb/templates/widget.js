@@ -1803,7 +1803,7 @@ function readrBoard($R){
                         //todo:just for testing for now: - add defaults:
                         RDR.group.img_selector = RDR.group.img_selector || "body img";
                         RDR.group.anno_whitelist = RDR.group.anno_whitelist || "body p";
-                        RDR.group.media_selector = RDR.group.media_selector || "embed, video, object, iframe.rdr_video"; //for now just play it safe with the iframe.
+                        RDR.group.media_selector = RDR.group.media_selector || "embed, video, object, iframe#youtube-XQBskPol5hA";
                         RDR.group.comment_length = RDR.group.comment_length || 300;
                         RDR.group.initial_pin_limit = RDR.group.initial_pin_limit || 2;
 
@@ -1943,7 +1943,29 @@ function readrBoard($R){
                     }
                 });
 
-
+                //todo: this is a pretty wide hackey net - rethink later.
+                $('embed, video, object, iframe, img').live('mouseenter', function(){
+                    var hasBeenHashed = $(this).hasClass('rdr-hashed');
+                    var $this = $(this);
+                    log('hasBeenHashed');
+                    log(hasBeenHashed);
+                    if(!hasBeenHashed){
+                        $this.addClass('rdr_live_hover');
+                        var hash = RDR.actions.hashNodes( $(this) );
+                        log('hash');
+                        log(hash);
+                        if(hash){
+                            RDR.actions.sendHashes( hash, function(){
+                                if( $this.hasClass('rdr_live_hover') ){
+                                    $this.mouseenter();
+                                }
+                            });
+                        }
+                    }
+                }).live('mouseleave', function(){
+                    $(this).removeClass('rdr_live_hover');
+                });
+                
                 //hashNodes without any arguments will fetch the default set from the server.
                 var hashes = this.hashNodes();
                 if(hashes){
@@ -1961,7 +1983,7 @@ function readrBoard($R){
                         kind: 'media',
                         $group: null,
                         whiteList: RDR.group.media_selector,
-                        filterParam: 'embed, video, object',
+                        filterParam: 'embed, video, object, iframe',
                         setupFunc: function(){
                             var body = this.src;
                             $(this).data({
@@ -2008,8 +2030,11 @@ function readrBoard($R){
                 
                 //go through the groups in order and pick out valid nodes of that type. Default to text if it's valid for that.
                 $.each( nodeGroups, function( idx, group ){
-                    var $group = $nodes ? $nodes.filter( group.filterParam ) : $( group.whiteList );
-                    
+
+                    var nodesPassedIn = (typeof $nodes!=="undefined") && $nodes.length;
+                    log(nodesPassedIn);
+                    var $group = nodesPassedIn ? $nodes.filter( group.filterParam ) : $( group.whiteList );
+                    log($group);
                     //take out prev categorized nodes (text is last, so we default to that)
                     $group = $group.not($allNodes);
 
