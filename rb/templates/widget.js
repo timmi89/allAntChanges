@@ -1877,7 +1877,7 @@ function readrBoard($R){
                         //init the widgetSummary
                         var widgetSummarySettings = response;
 
-                        $('#rdr-summary').rdrWidgetSummary(widgetSummarySettings);
+                        $('#rdr-summary-wrap').rdrWidgetSummary(widgetSummarySettings);
                         RDR.page.hash = hash;
 
                         //insertImgIcons(response);
@@ -5951,7 +5951,10 @@ function $RFunctions($R){
                 //[cleanlogz]('building page')
                 RDR.page = response.data;
                 //[cleanlogz](RDR.page);
-                var $summary_widget = $(response.parentContainer);
+                var $summary_widget_parent = $(response.parentContainer),
+                    $summary_widget = $('<div id="rdr-summary" />');
+
+                $summary_widget.appendTo($summary_widget_parent);
                 
                 var total_interactions = 0;
                 for ( var i in RDR.page.summary ) {
