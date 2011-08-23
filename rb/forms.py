@@ -62,4 +62,7 @@ class GroupForm(forms.ModelForm):
             'requires_approval',
             'word_blacklist',
             'css_url'
+            'post_selector',
+            'post_href_selector',
+            'summary_widget_selector'
         )
