@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 
 {% block sidebarContent %}
-<div id="sidebar"></div>
+<div id="sidebar">
+	<p>Configure your group using the settings form to the right.</p>
+	<p>Any questions?  <a href="mailto:info@readrboard.com">Contact us via email</a>.</p>
+</div>
 {% endblock sidebarContent %}
 
 {% block mainContent %}
@@ -10,39 +13,67 @@
   <form action="/settings/{{ short_name }}/" enctype="multipart/form-data" method="post" class="in-page">{% csrf_token %}
   {{ form.non_field_errors }}
 
-	<label for="id_name">Name <span>explanation</span></label>
-	{{ form.name }}{{ form.name.errors }}
-	<label for="id_short_name">Short Name <span>explanation</span></label>
+	<div>
+		<label for="id_name">Name </label>
+		{{ form.name }}{{ form.name.errors }}
+	</div>
+	<div>
+	<label for="id_short_name">Short Name <span>Used in URLs on readrboard.com</span></label>
 	{{ form.short_name }}{{ form.short_name.errors }}
-	<label for="id_language">Language <span>explanation</span></label>
+	</div>
+	<div>
+	<label for="id_blessed_tags">Default Reactions <span>Default tags for people to react with.</span></label>
+	{{ form.blessed_tags }}
+	</div>
+	<div>
+	<label for="id_language">Language <span>For now, only "en" supported</span></label>
 	{{ form.language }}{{ form.language.errors }}
-	<label for="id_anno_whitelist">Whitelist <span>explanation</span></label>
+	</div>
+	<div>
+	<label for="id_anno_whitelist">Active Text <span>CSS Selectors for text ReadrBoard interacts with by default.</span></label>
 	{{ form.anno_whitelist }}{{ form.anno_whitelist.errors }}
-	<label for="id_no_readr">Section blacklist <span>explanation</span></label>
+	</div>
+	<div>
+	<label for="id_no_readr">Inactive Text <span>CSS Selectors for text ReadrBoard should always ignore.</span></label>
 	{{ form.no_readr }}{{ form.no_rdr.errors }}
-	<label for="id_img_whitelist">Image selector <span>explanation</span></label>
+	</div>
+	<div>
+	<label for="id_img_whitelist">Active Images <span>CSS Selectors for images ReadrBoard interacts with by default.</span></label>
 	{{ form.img_whitelist }}{{ form.img_whitelist.errors }}
-	<label for="id_img_blacklist">Image Blacklist <span>explanation</span></label>
+	</div>
+	<div>
+	<label for="id_img_blacklist">Inactive Images <span>CSS Selectors for text ReadrBoard should always ignore.</span></label>
 	{{ form.img_blacklist }}{{ form.img_blacklist.errors }}
-	<label for="id_temp_interact">Temporary Interactions <span>explanation</span></label>
+	</div>
+	<div>
+	<label for="id_temp_interact">Temporary Interactions <span>How many times someone can react, comment &amp; share before logging in.</span></label>
 	{{ form.temp_interact }}{{ form.temp_interact.errors }}
-	<label for="id_logo_url_sm">Small Logo <span>explanation</span></label>
+	</div>
+	<div>
+	<label for="id_logo_url_sm">Small Logo <span>URL to a small logo file (max 64x18)</span></label>
 	{{ form.logo_url_sm }}{{ form.logo_url_sm.errors }}
-	<label for="id_logo_url_med">Medium Logo <span>explanation</span></label>
+	</div>
+	<div>
+	<label for="id_logo_url_med">Medium Logo <span>URL to a medium logo file (max 100x50)</span></label>
 	{{ form.logo_url_med }}{{ form.logo_url_med.errors }}
-	<label for="id_logo_url_lg">Large Logo <span>explanation</span></label>
+	</div>
+	<div>
+	<label for="id_logo_url_lg">Large Logo <span>URL to a large logo file (max 300x250)</span></label>
 	{{ form.logo_url_lg }}{{ form.logo_url_lg.errors }}
+	</div>
 	<h3>Moderation</h3>
+	<div>
 	<label for="id_requires_approval">Requires Approval? <span>explanation</span></label>
 	{{ form.requires_approval }}{{ form.requires_approval.errors }}
-	<label for="id_word_blacklist">Word Blacklist <span>explanation</span></label>
+	</div>
+	<div>
+	<label for="id_word_blacklist">Word Blacklist <span>Words that are automatically censored.</span></label>
 	{{ form.word_blacklist }}{{ form.word_blacklist.errors }}
-	<label for="id_css_url">Custom CSS <span>explanation</span></label>
-
+	</div>
+	<div>
+	<label for="id_css_url">Custom CSS <span>Custom CSS rules to embed on the page.</span></label>
 	{{ form.css_url }}
-
-	<label for="id_blessed_tags">Blessed Tags <span>explanation</span></label>
-	{{ form.blessed_tags }}
+	</div>
 
 {% comment %}
   {{ form.as_p }}
