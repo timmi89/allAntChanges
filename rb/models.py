@@ -90,6 +90,9 @@ class Group(models.Model):
     img_whitelist = models.CharField(max_length=255, blank=True)
     img_blacklist = models.CharField(max_length=255, blank=True)
     no_readr = models.CharField(max_length=255, blank=True)
+    post_selector = models.CharField(max_length=255, blank=True)
+    post_href_selector = models.CharField(max_length=255, blank=True)
+    summary_widget_selector = models.CharField(max_length=255, blank=True)
     
     # logo fields
     logo_url_sm = models.CharField(max_length=200, blank=True)
