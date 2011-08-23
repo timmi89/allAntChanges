@@ -135,7 +135,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
         if view == 'index': context['index'] = True
             
     # Only show approved interactions -- check this logic
-    if 'admin' in kwargs and kwargs[admin] == 'not_approved':
+    if 'admin' in kwargs and kwargs['admin'] == 'not_approved':
         interactions = interactions.filter(approved=False)
     else:
         interactions = interactions.filter(approved=True)
