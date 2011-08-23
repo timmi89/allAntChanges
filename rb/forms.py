@@ -4,23 +4,37 @@ from rb.models import *
 class GroupForm(forms.ModelForm):
     blessed_tags = forms.CharField(label='Blessed Tags')
     
+    # Override init for the form to set blessed tags for group instance
+    def __init__(self, *args, **kwargs):
+        super(GroupForm, self).__init__(*args, **kwargs)
+        tags = []
+        for tag in self.instance.blessed_tags.all():
+            tags.append(tag.body)
+        self.fields['blessed_tags'].initial = ','.join(tags)
+    
+    # Get or create blessed tag interaction nodes to prepare for save
     def clean_blessed_tags(self):
         tags = self.cleaned_data['blessed_tags']
-        interaction_nodes = []
+        new_blessed_tags = []
         for tag in tags.split(','):
             new_blessed_tags.append(
-                InteractionNode.objects.get_or_create(body=tag)
+                InteractionNode.objects.get_or_create(body=tag)[0]
             )
         self.new_blessed_tags = new_blessed_tags
-        
+        print new_blessed_tags
+    
+    # Write the many to many relationships
     def save(self):
-        current_blessed_tags = self.instance.blessed_tags
+        current_blessed_tags = self.instance.blessed_tags.all()
+        # Add all the new blessed tags
         for tag in self.new_blessed_tags:
             if tag not in current_blessed_tags:
-                current_blessed_tags.add(tag)
-        for tag in self.instance.blessed_tags:
-            if tag not in new_blessed_tags:
-                current_blessed_tags.remove(tag)
+                print tag
+                self.instance.blessed_tags.add(tag)
+        # Remove all the old blessed tags
+        for tag in self.instance.blessed_tags.all():
+            if tag not in self.new_blessed_tags:
+                self.instance.blessed_tags.remove(tag)
             
     
     class Meta:

@@ -182,6 +182,7 @@ def settings(request, group=None):
             form.save()
     else:
         form = GroupForm(instance=group)
+        dir(form)
 
     context['form'] = form
     context['short_name'] = group.short_name
