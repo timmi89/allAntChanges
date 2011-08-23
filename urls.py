@@ -71,6 +71,10 @@ urlpatterns = patterns('',
   url(r'^sidebar/group/(?P<short_name>[\w\-]+)/$', 'rb.views.sidebar'),
   #url(r'^cards/(?P<group_id>\d/$', 'rb.views.cards'),
 
+  # Extras
+  url(r'^robots\.txt$', 'django.views.generic.simple.direct_to_template', {'template': 'robots.txt', 'mimetype': 'text/plain'}),
+  url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/site/images/favicon.ico'}),
+
   url(r'^api/', include('readrboard.api.urls')),
   url(r'^analytics/', include('readrboard.analytics.urls')),
   url(r'^admin/', include(admin.site.urls)),

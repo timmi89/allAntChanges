@@ -24,7 +24,8 @@ class GroupForm(forms.ModelForm):
         print new_blessed_tags
     
     # Write the many to many relationships
-    def save(self):
+    def save(self, force_insert=False, force_update=False, commit=True):
+        m = super(GroupForm, self).save(commit=False)
         current_blessed_tags = self.instance.blessed_tags.all()
         # Add all the new blessed tags
         for tag in self.new_blessed_tags:
@@ -35,6 +36,9 @@ class GroupForm(forms.ModelForm):
         for tag in self.instance.blessed_tags.all():
             if tag not in self.new_blessed_tags:
                 self.instance.blessed_tags.remove(tag)
+        if commit:
+            m.save()
+        return m
             
     
     class Meta:
