@@ -259,7 +259,7 @@ function readrBoard($R){
                                         body:val.body
                                     }
                                 }),
-                                $leftBox = '<div class="rdr_leftBox" ><span></span></div>',
+                                $leftBox = '<div class="rdr_leftBox" ><span class="rdr_not_loader" /></div>',
                                 $tagText = '<div class="rdr_tagText">'+val.body+'</div>',
                                 $rightBox = '<div class="rdr_rightBox" />';
 
@@ -291,7 +291,7 @@ function readrBoard($R){
                             if ( $this.hasClass('rdr_tagged') ) {
                                 
                                 //clears the loader
-                                $this.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('span').html('');
+                                $this.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
 
                                 $this.addClass('rdr_selected');
                                 $this.siblings().removeClass('rdr_selected');
@@ -468,7 +468,7 @@ function readrBoard($R){
                                 'hash':hash
                             }),
                             // $leftBox = '<div class="rdr_leftBox"><span>'+percentage+'%</span></div>',
-                            $leftBox = '<div class="rdr_leftBox"><span>'+RDR.util.prettyNumber( tag.count )+'</span></div>',
+                            $leftBox = '<div class="rdr_leftBox"><span class="rdr_not_loader" >'+RDR.util.prettyNumber( tag.count )+'</span></div>',
                             $tagText = '<div class="rdr_tagText">'+tag.body+'</div>',
                             $rightBox = '<div class="rdr_rightBox" />';
 
@@ -2850,15 +2850,16 @@ function readrBoard($R){
                         if( ! $tagLi.jquery ){
                             $tagLi = $rindow.find('.rdr_tag_'+args.tag.id);
                         }
-                        //Do UI stuff particular to write mode
-                        $tagLi.find('div.rdr_leftBox').addClass('rdr_kill_bg').find('span').html('<img src="{{ BASE_URL }}{{ STATIC_URL }}widget/images/loader.gif" />');
-                        if (uiMode == "write"){
+                        if (uiMode === "write"){
                             //nothing here now
-                        }else if(uiMode == "read"){
-                            //nothing here now
-                        }else{
+                        }else if(uiMode === "read"){
+                            //superhack!
+                            $tagLi.data('html', $tagLi.html() );
                         }
-
+                        //Do UI stuff particular to write mode
+                        var $loader = $('<span class="rdr_loader" />').append('<img src="{{ BASE_URL }}{{ STATIC_URL }}widget/images/loader.gif" />');
+                        $tagLi.find('div.rdr_leftBox').addClass('rdr_kill_bg').find('span').addClass('rdr_not_loader').hide();
+                        $tagLi.find('div.rdr_leftBox').append($loader);
                     },
                     customSendData: function(args){
                         ////RDR.actions.interactions.tag.customSendData:
@@ -2977,7 +2978,7 @@ function readrBoard($R){
                             if ( typeof tag_li.find != "function" ) {
                                 tag_li = rindow.find('li.rdr_tag_' + args.tag.id);
                             }
-                            tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('span').html('');
+                            tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
 
                             //[cleanlogz]('tag successssssssssssss');
                             var $this = tag_li;
@@ -3037,6 +3038,19 @@ function readrBoard($R){
                             //temp quick fix to show msg for vote up in 3rd panel
                             if( uiMode === "read" ){
                                 rindow.dequeue('userMessage');
+                                //hackity hack number incrementer
+                                var $number = tag_li.find('div.rdr_leftBox').find('.rdr_not_loader');
+                                $number.show();
+                                $number.html( RDR.util.prettyNumber( parseInt($number.text())+1 ) );
+
+                                //this one's even more hacky - doesn't really matter, but fix this soon.
+                                var $number2 = rindow.find('.rdr_info_summary').find('.rdr_reaction_count');
+                                if($number2.length){
+                                    var theNumber = RDR.util.prettyNumber( $number2.data('count')+1 );
+                                    $number2.html( '(' +theNumber+ ') ');
+                                }
+                                //hack complete.
+
                             }
 
                             if( uiMode !== "read" ){
@@ -3076,7 +3090,7 @@ function readrBoard($R){
                             if( ! $tagLi.jquery ){
                                 $tagLi = rindow.find('.rdr_tag_'+args.tag.id);
                             }
-                            $tagLi.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('span').html('');
+                            tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
 
                             //do updates
                             var hash = sendData.hash;
@@ -3131,7 +3145,7 @@ function readrBoard($R){
                         if ( typeof tag_li.find != "function" ) {
                             tag_li = rindow.find('li.rdr_tag_' + args.tag.id);
                         }
-                        tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('span').html('');
+                        tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
 
 
                         if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
@@ -3168,7 +3182,8 @@ function readrBoard($R){
 
                             // optional loader.
                             if ( typeof args.tag.find == "function" ){
-                                args.tag.find('div.rdr_leftBox').addClass('rdr_kill_bg').find('span').html('<img src="{{ BASE_URL }}{{ STATIC_URL }}widget/images/loader.gif" />');
+                                var $loader = $('<span class="rdr_loader" />').append('<img src="{{ BASE_URL }}{{ STATIC_URL }}widget/images/loader.gif" />');
+                                args.tag.find('div.rdr_leftBox').addClass('rdr_kill_bg').find('span').hide().append($loader);
                             }
 
                         }else{
@@ -3272,7 +3287,7 @@ function readrBoard($R){
                             var hash = content_node_data.hash;
 
                             //clears the loader                          
-                            tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('span').html('');
+                            tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
 
                             //[cleanlogz]('bookmark successssssssssssss');
 
@@ -3427,7 +3442,7 @@ function readrBoard($R){
                         var response = args.response;
 
                         //clear the loader                  
-                        tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('span').html('');
+                        tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
 
 
                         if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
@@ -4377,7 +4392,9 @@ function readrBoard($R){
                         reaction_count = tag.count;
                         reaction_body = tag.body;
                     }
-                    var $infoSummary = $('<div class="rdr_info_summary"><h4><span>('+reaction_count+')</span> '+reaction_body+'</h4></div>');
+                    var $reactionCount = $('<span class="rdr_reaction_count">('+reaction_count+') </span>').data('count', reaction_count),
+                        $h4 = $('<h4>'+reaction_body+'</h4>').prepend($reactionCount),
+                        $infoSummary = $('<div class="rdr_info_summary" />').append($h4);
 
                     $tooltip = RDR.tooltip.draw({ "item":"vote_up","tipText":"Vote reaction up" }).addClass('rdr_top').hide();
                     $infoSummary.append( $tooltip );
