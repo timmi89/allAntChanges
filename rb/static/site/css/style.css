@@ -253,7 +253,7 @@ form.in-page {
 
 form.in-page {
 	border:solid 2px #b7ddf2;
-	background:#ebf4fb;
+	background:#e5eff5;
 }
 
 form.in-page h3 {
@@ -284,13 +284,19 @@ form.in-page label span {
 	width:140px;
 }
 
+form.in-page div {
+	clear:both;
+	margin-bottom:20px;
+	overflow:auto;
+}
+
 form.in-page input {
 	float:left;
 	font-size:12px;
 	padding:4px 2px;
 	border:solid 1px #aacfe4;
 	width:200px;
-	margin:2px 0 20px 10px;
+	margin:2px 0 0px 10px;
 }
 
 form.in-page input[type="checkbox"] {
@@ -605,6 +611,15 @@ section[role="complementary"] {
 
 section[role="complementary"] #user_data img {
 	max-width: 180px;
+}
+
+#sidebar {
+	padding:20px;
+	font-size:12px;
+}
+
+#sidebar p {
+	margin-bottom:20px;
 }
 
 #sidebar h4 {
