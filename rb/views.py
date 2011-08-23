@@ -135,7 +135,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
         if view == 'index': context['index'] = True
             
     # Only show approved interactions -- check this logic
-    if 'admin' in kwargs and kwargs[admin] == 'not_approved':
+    if 'admin' in kwargs and kwargs['admin'] == 'not_approved':
         interactions = interactions.filter(approved=False)
     else:
         interactions = interactions.filter(approved=True)
@@ -176,17 +176,20 @@ def sidebar(request, user_id=None, short_name=None):
 def settings(request, group=None):
     context = {}
     context['cookie_user'] = checkCookieToken(request)
+
     if request.method == 'POST':
         form = GroupForm(request.POST, request.FILES, instance=group)
         if form.is_valid():
             form.save()
+            print 'saving form'
+        else:
+            print form.errors
     else:
         form = GroupForm(instance=group)
-        dir(form)
 
     context['form'] = form
     context['short_name'] = group.short_name
-    context['"fb_client_id'] = FACEBOOK_APP_ID
+    context['fb_client_id'] = FACEBOOK_APP_ID
     return render_to_response(
         "group_form.html",
         context,
