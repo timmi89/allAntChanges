@@ -1945,13 +1945,11 @@ function readrBoard($R){
                 $('embed, video, object, iframe, img').live('mouseenter', function(){
                     var hasBeenHashed = $(this).hasClass('rdr-hashed');
                     var $this = $(this);
-                    log('hasBeenHashed');
-                    log(hasBeenHashed);
+                    
                     if(!hasBeenHashed){
                         $this.addClass('rdr_live_hover');
                         var hash = RDR.actions.hashNodes( $(this) );
-                        log('hash');
-                        log(hash);
+                        
                         if(hash){
                             RDR.actions.sendHashes( hash, function(){
                                 if( $this.hasClass('rdr_live_hover') ){
@@ -2030,9 +2028,7 @@ function readrBoard($R){
                 $.each( nodeGroups, function( idx, group ){
 
                     var nodesPassedIn = (typeof $nodes!=="undefined") && $nodes.length;
-                    log(nodesPassedIn);
                     var $group = nodesPassedIn ? $nodes.filter( group.filterParam ) : $( group.whiteList );
-                    log($group);
                     //take out prev categorized nodes (text is last, so we default to that)
                     $group = $group.not($allNodes);
 
