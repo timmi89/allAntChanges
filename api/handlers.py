@@ -366,6 +366,9 @@ class SettingsHandler(AnonymousBaseHandler):
               'css_url',
               'temp_interact',
               'twitter',
+              'post_selector',
+              'post_href_selector',
+              'summary_widget_selector'
              )
              
     @status_response
