@@ -867,8 +867,6 @@ function readrBoard($R){
                         $().selog('hilite', selState, 'off');
                     }
                     catch(err){
-                        //console.warn(err);
-                        //console.log('rangy is cranky ' + selState);
                     }
                 });
             },
