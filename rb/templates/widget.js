@@ -3090,7 +3090,7 @@ function readrBoard($R){
                             if( ! $tagLi.jquery ){
                                 $tagLi = rindow.find('.rdr_tag_'+args.tag.id);
                             }
-                            tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
+                            $tagLi.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
 
                             //do updates
                             var hash = sendData.hash;
@@ -3146,8 +3146,8 @@ function readrBoard($R){
                             tag_li = rindow.find('li.rdr_tag_' + args.tag.id);
                         }
                         tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
-
-
+                        tag_li.find('div.rdr_leftBox').find('.rdr_not_loader').show();
+                        
                         if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
                             //[cleanlogz]('uh oh better login, tempy 1');
                             RDR.session.showLoginPanel( args );
