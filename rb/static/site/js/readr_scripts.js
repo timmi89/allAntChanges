@@ -27,12 +27,10 @@ RB = {
 						json: JSON.stringify( sendData )
 					},
 					success: function(response){
-						console.log('requested admin access');
-						console.dir(response);
 						
 					},
 					error: function(response) {
-						console.log('woops');
+
 					}
 				});
 			}
@@ -52,12 +50,10 @@ RB = {
                 dataType: "jsonp",
                 data: { json: JSON.stringify(sendData) },
                 success: function(response) {
-                	console.log('successfully toggled!');
-                    console.dir(response);
+
                 },
                 error: function(response) {
-                	console.log('TOGGLE FAIL');
-                    console.dir(response);
+
                 }
             });
 		}
