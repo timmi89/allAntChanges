@@ -181,9 +181,11 @@ def settings(request, group=None):
         form = GroupForm(request.POST, request.FILES, instance=group)
         if form.is_valid():
             form.save()
+            print 'saving form'
+        else:
+            print form.errors
     else:
         form = GroupForm(instance=group)
-        dir(form)
 
     context['form'] = form
     context['short_name'] = group.short_name
