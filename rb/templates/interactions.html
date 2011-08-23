@@ -18,7 +18,7 @@
           {{ interaction.human_kind }}:
         {% endif %}
       </div>
-      {% if cookie_user and interaction.kind = 'tag' and cookie_user.social_user.admin_approved and interaction.page.site.group.id == cookie_user.social_user.group_admin.id %}
+      {% if cookie_user and cookie_user.social_user.admin_approved and interaction.page.site.group.id == cookie_user.social_user.group_admin.id %}
       <div class="block_content">
         <a href="javascript:void(0);" onclick="RB.admin.blockContent({{interaction.id}});">
           {% if interaction.approved %}
