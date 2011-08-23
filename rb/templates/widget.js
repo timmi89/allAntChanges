@@ -1874,8 +1874,10 @@ function readrBoard($R){
 
                         //init the widgetSummary
                         var widgetSummarySettings = response;
+                        widgetSummarySettings.anchor = "#rdr-summary-wrap"; //change to group.summaryWidgetAnchorNode or whatever
+                        widgetSummarySettings.jqFunc = "append";
 
-                        $('#rdr-summary-wrap').rdrWidgetSummary(widgetSummarySettings);
+                        $(widgetSummarySettings.anchor).rdrWidgetSummary(widgetSummarySettings);
                         RDR.page.hash = hash;
 
                         //insertImgIcons(response);
@@ -5991,7 +5993,9 @@ function $RFunctions($R){
                 var $summary_widget_parent = $(response.parentContainer),
                     $summary_widget = $('<div id="rdr-summary" />');
 
-                $summary_widget.appendTo($summary_widget_parent);
+                //response.jqFunc would be something like 'append' or 'after',
+                //so this would read $summary_widget_parent.append($summary_widget);
+                $summary_widget_parent[response.jqFunc]($summary_widget);
                 
                 var total_interactions = 0;
                 for ( var i in RDR.page.summary ) {
