@@ -1,1 +1,137 @@
-test
+{% extends "base.html" %}
+
+{% block title %}{{ group.name }} Analytics{%endblock%}
+
+{% block bodyClass %}wide{% endblock %}
+
+{% block mainContent %}
+<section role="analytics header">
+	<section role="controls">
+		Hello!  
+	</section>
+</section>
+
+<section role="panels">
+	<section role="wide panels">
+	
+	<section role="most active pages">
+		<br>
+		<h3>A reaction button for the web.</h3>
+		<p>
+			ReadrBoard are Eric, Tyler, and Porter, and our goal is to make it super easy for readers to say how they feel about whatever content online is <strong>really</strong> spurring their interest or their reaction.
+		</p>
+		<br>
+		<p>
+			More soon...
+		</p>
+	</section>
+<!--
+	<table width="100%;">
+			<tr>
+				<td style="width:28%;">
+					<img src="images/bayne.jpg" />
+					<br>
+					<strong class="blue">Porter Bayne</strong>
+					<div class="bio">
+						Before moving back to NYC in June 2010, Porter launched two angel-funded startups in Seattle - more or less at the same time.  Nearlyweds, which he sits on the board of, acquired OneWed.com in Fall 2010 and is poised to bring much needed innovation to the intersection of online bridal technology, media, and vendor recommendations.  He also launched Ameritocracy in Spring 2008, which sought to address many similar problems and opportunities with online engagement as ReadrBoard does.  Ameritocracy closed in August 2010, and from the lessons learned there, ReadrBoard was born.
+					</div>
+					<div class="bio">
+						Exemplifying the "will, not skill" mantra of startups, Porter is an expert at surrounding himself with people notably cleverer than he (in particular, the others shown here) - which, he likes to think, isn't as quite easy as it sounds.
+					</div>
+					<div class="bio">
+						His earlier career includes designing &amp; building online software for Verizon Wireless, TV Guide, Zagat, aura readers, and defense contractors.
+					</div>
+				</td>
+				<td style="width:8%;">&nbsp;</td>
+				<td style="width:28%;">
+					<img src="images/brock.jpg" />
+					<br>
+					<strong class="blue">Tyler Brock</strong>
+					<div class="bio">
+						Tyler graduated from Duke University in 2007 with degrees in Economics
+						and Computer Science as well as a certificate in Markets and
+						Management. He was awarded distinction in Computer Science for his
+						work on a database research project in conjunction with the Duke
+						biology department.
+					</div>
+					<div class="bio">
+						Since returning home to New York, Tyler has worked in the finance
+						industry, first at BlackRock and more recently as Vice President of
+						Trading & Research at Harvest Volatility Management. While at Harvest,
+						Tyler played a major role in developing and executing a trading
+						strategy which lead to the fund raising over $1 billion AUM in the
+						course of three years.
+					</div>
+					<div class="bio">
+						The kind of person that enjoys the routing of packets and the hum of a
+						disk, Tyler is as passionate about digital interactions as the
+						technology behind them.
+					</div>
+				</td>
+				<td style="width:8%;">&nbsp;</td>
+				<td style="width:28%;">
+					<img src="images/chaves.jpg" />
+					<br>
+					<strong class="blue">Eric Chaves</strong>
+					<div class="bio">
+						Eric moved from San Francisco a year ago to establish roots in New York and to start a company that will evolve how we respond to content on the web.  Luckily, he met Porter and Tyler who were eagerly working on the same problem. They've been working on ReadrBoard together since.
+					</div>
+					<div class="bio">
+						Eric is a web designer and developer.  After graduating from Dartmouth in 2005, he moved to San Francisco where he worked in architecture and product design before later building a web development freelance business.  Under the branding "thinksketchdesign" he designed user interfaces and built custom websites for small businesses.
+					</div>
+					<div class="bio">
+						Since moving to New York, he has continued work as a full-time freelancer while bootstrapping ReadrBoard.   He worked as a design tech for The Daily as it was launching its iPad newspaper, and he currently works for CNNMoney as a webmaster.
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div style="padding:10px 100px; text-align:center;">
+		<img src="images/advisers.png" />
+		<br>
+		<br>
+		<table width="100%;">
+			<tr>
+				<td style="width:40%;">
+					<img src="images/ohanian.jpg" />
+					<br>
+					<strong class="blue">Alexis Ohanian</strong>
+					<div class="bio gray">
+						<strong>Alexis is damned smart and knows a thing or two about ways to design for better online community and engagement.  So we asked if he'd help us avoid reinventing any wheels, and come up with some new ones.  He agreed.</strong>
+						<br>
+					</div>
+					<div class="bio">
+						<strong>In <a href="http://alexisohanian.com/">his words</a>:</strong>
+						Guten Tag! TechCrunch calls me "one of the more passionate and audacious young entrepreneurs in tech." Hide your kids.
+						</div>
+						<div class="bio">
+						After graduating from UVA in 2005, I started reddit.com with Steve Huffman. Founded Breadpig, which creates geeky things, sells them, and gives away all the profits -- $180,000 so far. Publisher of xkcd: volume 0. Bottler of AwesomeSauce. Maker of LOLMagnetz. Said WTFCNN?! one too many times. Bassist in a Rock Band. Ambassador to the East for Y Combinator. Angel investor at Das Kapital Capital, LLC. Head marketing dude at hipmunk. Once rendered in CGI on NMA.TV. Contributor with regular appearances on Bloomberg TV as "hoodie-clad tech entrepreneur." Gave a TED talk at 26 about a whale named Mr. Splashy Pants.
+						</div>
+						<div class="bio">
+						And my favorite: Stephen Colbert once sent me this photo posing with a mug I made him (and even gave me a shoutout in a letter to reddit).
+						</div>
+						<div class="bio">
+						If you've ever told someone about any of my projects, I owe you a beer. (Thanks!)
+						</div>
+				</td>
+				<td style="width:20%;">&nbsp;</td>
+				<td style="width:40%;">
+					<h1>?</h1>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div style="padding:10px 100px; text-align:center;">
+		<img src="images/investors.png" />
+		<br>
+		<br>
+		Well, us (boot)strapping cofounders, so far.  <a href="http://porterbayne.wufoo.com/forms/m7x3k1/" onclick="window.open(this.href,  null, 'height=410, width=775, toolbar=0, location=0, status=1, scrollbars=1, resizable=1'); return false" title="Tell me more about ReadrBoard!!">Interested?</a>
+		<br>
+		<br>
+		<br>
+		<br>
+	</div>
+	-->
+	</section>
+</section>
+{% endblock %}
