@@ -89,6 +89,7 @@ html.dailycandy #sidebar h3[role="profile_section_header"]	{display:block;}
 	<li role="bookmarks">Bookmarks</li>
 	-->
 </ul>
+{% if cookie_user %}
 {% if group.id == cookie_user.social_user.group_admin.id %}
 <h5>Links You'll Love</h5>
 <ul>
@@ -96,4 +97,5 @@ html.dailycandy #sidebar h3[role="profile_section_header"]	{display:block;}
   <li><a href="/analytics/group/{{ short_name }}">Analytics Dashboard</a></li>
   <li><a href="/group/{{ short_name }}/not_approved/">Content You've Blocked</a></li>
 </ul>
+{% endif %}
 {% endif %}
