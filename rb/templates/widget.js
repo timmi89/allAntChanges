@@ -969,10 +969,7 @@ function readrBoard($R){
                         top: 'add this here',
                         left: 'add this here'
                     },
-                    img:  {
-                        top: coords.top - 2,
-                        left: coords.left + 2
-                    },
+                    img:  _getMediaCoords, //function below (yeah this is a little weird, make nicer later)
                     text:  {
                         //the extra offsets here move the actionbar above the click - not exact numbers.
                         top: coords.top - 33,
@@ -980,7 +977,7 @@ function readrBoard($R){
                     }
                 };
                 
-                coords = (kind == 'text') ? actionbarOffsets.text : actionbarOffsets.img;
+                coords = (kind == 'text') ? actionbarOffsets.text : actionbarOffsets.img(coords);
 
                 //todo: for images and video, put the actionbar on the left side if the image is too far right
                 if (kind == 'text') {
@@ -1055,6 +1052,10 @@ function readrBoard($R){
                     $new_actionbar.addClass('rdr_actionbar_for_media');
                     $new_actionbar.append('<div style="clear:both;" />').removeClass('rdr_widget rdr_widget_bar');
 
+                    //for now, just move the actionbar here overridding the positioning from above:
+
+
+
                     /*                    
                     $indicator_details = $('#rdr_indicator_details_'+containerHash).removeClass('rdr_widget rdr_widget_bar');
                     var indicatorDetailsOffset = {
@@ -1067,6 +1068,23 @@ function readrBoard($R){
                         'position':'relative'
                     });
                     */
+                }
+
+                function _getMediaCoords(coords){
+                    /*
+                    var newCoords = {
+                        top: coords.top - 2,
+                        left: coords.left + 2
+                    };
+                    */
+                    var $containerTracker = $('#rdr_container_tracker_'+hash),
+                        $topHilite = $containerTracker.find('.rdr_mediaHilite_top');
+                    
+                    var newCoords = {
+                        top: $topHilite.offset().top,
+                        left: $topHilite.offset().right
+                    };
+                    return newCoords;
                 }
 
                 return $new_actionbar;
@@ -1343,7 +1361,7 @@ function readrBoard($R){
                     var $containerTracker = $('#rdr_container_tracker_'+hash),
                         $mediaBorderWrap = $containerTracker.find('.rdr_media_border_wrap');
                     //make sure it's still positioned right, though page load should have set it.
-                    RDR.actions.indicators.utils.positionContainerTracker(hash);
+                    RDR.actions.indicators.utils.updateContainerTracker(hash);
                     $mediaBorderWrap.show();
 
                     //we don't need this here, becuase this is already bound to the document
@@ -2192,7 +2210,7 @@ function readrBoard($R){
                                     $indicator.addClass('rdr_engage_media');
                                     
                                     //update here just to make sure at least a mouse hover always resets any unexpected weirdness
-                                    RDR.actions.indicators.utils.positionContainerTracker(hash);
+                                    RDR.actions.indicators.utils.updateContainerTracker(hash);
                                     
                                     $mediaBorderWrap.show();
                                     
@@ -3673,15 +3691,11 @@ function readrBoard($R){
                             $container_tracker.attr('id', 'rdr_container_tracker_'+hash).appendTo($container_tracker_wrap);
                             
                             //position the containerTracker at the top left of the image or videos.  We'll position the indicator and hiliteborder relative to this.
-                            RDR.actions.indicators.utils.positionContainerTracker(hash);
+                            RDR.actions.indicators.utils.updateContainerTracker(hash);
                             
                             $indicator.appendTo($container_tracker);
                             $indicator.addClass('rdr_indicator_for_media');
                             
-                            //makes and appends the mediaBorder to the container_tracker
-                            RDR.actions.indicators.utils.setupMediaBorderHilites(hash);
-                            RDR.actions.indicators.utils.positionMediaIndicator(hash);
-
                             $indicator.hover(
                                 function() {
                                     $indicator_details.css({
@@ -3812,20 +3826,39 @@ function readrBoard($R){
                             RDR.actions.content_nodes.utils.initHiliteStates( $(this), relevant_content_nodes );
                         });
                     },
-                    positionContainerTracker: function(hash){
-                        //RDR.actions.indicators.utils.positionContainerTracker:
+                    updateContainerTracker: function(hash){
+                        //RDR.actions.indicators.utils.updateContainerTracker:
                         var summary = RDR.summaries[hash],
                             $container = summary.$container,
                             $container_tracker = $('#rdr_container_tracker_'+hash);
+                        
+                        var padding = {
+                            top: parseInt( $container.css('padding-top') ),
+                            right: parseInt( $container.css('padding-right') ),
+                            bottom: parseInt( $container.css('padding-bottom') ),
+                            left: parseInt( $container.css('padding-left') )
+                        };
 
+                        var hasBorder = parseInt( $container.css('border-top-width') ) + 
+                            parseInt( $container.css('border-bottom-width') ) + 
+                            parseInt( $container.css('border-left-width') ) + 
+                            parseInt( $container.css('border-right-width') );
+
+                        var paddingOffset = {};
+                        paddingOffset.top = !hasBorder ? padding.top : 0;
+                        paddingOffset.left = !hasBorder ? padding.left : 0;
+
+                        //compensate for padding - which we want to ignore
                         RDR.util.cssSuperImportant($container_tracker, {
-                            top: $container.offset().top,
-                            left: $container.offset().left
+                            top: $container.offset().top + paddingOffset.top,
+                            left: $container.offset().left + paddingOffset.left
                         });
                         
+                        this.updateMediaTracker(hash);
+                        this.updateMediaBorderHilites(hash);
                     },
-                    positionMediaIndicator: function(hash){
-                        //RDR.actions.indicators.utils.positionMediaIndicator:
+                    updateMediaTracker: function(hash){
+                        //RDR.actions.indicators.utils.updateMediaTracker:
                         var summary = RDR.summaries[hash],
                             $container = summary.$container,
                             $indicator = summary.$indicator,
@@ -3848,6 +3881,14 @@ function readrBoard($R){
                             containerWidth = $container.width();
                             containerHeight = $container.height();
                         }
+                        
+                        var padding = {
+                            top: parseInt( $container.css('padding-top') ),
+                            right: parseInt( $container.css('padding-right') ),
+                            bottom: parseInt( $container.css('padding-bottom') ),
+                            left: parseInt( $container.css('padding-left') )
+                        };
+
 
                         var cornerPadding = 8,
                             indicatorBodyWidth = $indicator_body.width();
@@ -3861,17 +3902,34 @@ function readrBoard($R){
                             top: cornerPadding,
                             right: cornerPadding
                         });
+                        
                     },
-                    setupMediaBorderHilites: function(hash){
-
+                    updateMediaBorderHilites: function(hash){
+                        //RDR.actions.indicators.utils.updateMediaBorderHilites:
                         var $indicator = $('#rdr_indicator_'+hash),
                             $container = $('.rdr-'+hash),
-                            $container_tracker = $('#rdr_container_tracker_'+hash),
-                            $mediaBorderWrap = $('<div class="rdr_media_border_wrap" />').appendTo($container_tracker),
-                            $topHilite = $('<div class="rdr_mediaHilite_top" />').appendTo($mediaBorderWrap),
-                            $rightHilite = $('<div class="rdr_mediaHilite_right" />').appendTo($mediaBorderWrap),
-                            $bottomHilite = $('<div class="rdr_mediaHilite_bottom" />').appendTo($mediaBorderWrap),
+                            $container_tracker = $('#rdr_container_tracker_'+hash);
+                        
+                        var $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
+                        if( !$mediaBorderWrap.length ){
+                            $mediaBorderWrap = $('<div class="rdr_media_border_wrap" />').appendTo($container_tracker);
+                        }
+                        var $topHilite = $container_tracker.find('.rdr_mediaHilite_top');
+                        if( !$topHilite.length ){
+                            $topHilite = $('<div class="rdr_mediaHilite_top" />').appendTo($mediaBorderWrap);
+                        }
+                        var $rightHilite = $container_tracker.find('.rdr_mediaHilite_right');
+                        if( !$rightHilite.length ){
+                            $rightHilite = $('<div class="rdr_mediaHilite_right" />').appendTo($mediaBorderWrap);
+                        }
+                        var $bottomHilite = $container_tracker.find('.rdr_mediaHilite_bottom');
+                        if( !$bottomHilite.length ){
+                            $bottomHilite = $('<div class="rdr_mediaHilite_bottom" />').appendTo($mediaBorderWrap);
+                        }
+                        var $leftHilite = $container_tracker.find('.rdr_mediaHilite_left');
+                        if( !$leftHilite.length ){
                             $leftHilite = $('<div class="rdr_mediaHilite_left" />').appendTo($mediaBorderWrap);
+                        }
 
                         $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
                         var hiliteThickness = 2;
@@ -3883,10 +3941,10 @@ function readrBoard($R){
                         var containerWidth, containerHeight;
 
                         //this will calc to 0 if there is no border. 
-                        var hasBorder = parseInt( $container.css('border-top-width') ) + 
-                            parseInt( $container.css('border-bottom-width') ) + 
-                            parseInt( $container.css('border-left-width') ) + 
-                            parseInt( $container.css('border-right-width') );
+                        var hasBorder = parseInt( $container.css('border-top-width') ) +
+                            parseInt( $container.css('border-right-width') ) +
+                            parseInt( $container.css('border-bottom-width') ) +
+                            parseInt( $container.css('border-left-width') );
 
                         if(hasBorder){
                             containerWidth = $container.outerWidth();
