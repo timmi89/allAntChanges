@@ -1127,8 +1127,11 @@ function readrBoard($R){
                     clearTimeout(timeoutCloseEvt);
                     clearTimeout(timeoutCollapseEvt);
 
-                    var $container = $('.rdr-'+hash);
+                    var $container = $('.rdr-'+hash),
+                        $indicator = $('#rdr_indicator_'+hash);
+
                     $container.removeClass('rdr_engage_media');
+                    $indicator.removeClass('rdr_engage_media');
                     $actionbar.remove();
                 }
 
