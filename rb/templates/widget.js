@@ -1821,7 +1821,7 @@ function readrBoard($R){
                         RDR.group.anno_whitelist = RDR.group.anno_whitelist || "body p";
                         RDR.group.media_selector = RDR.group.media_selector || "embed, video, object, iframe#youtube-XQBskPol5hA";
                         RDR.group.comment_length = RDR.group.comment_length || 300;
-                        RDR.group.initial_pin_limit = RDR.group.initial_pin_limit || 20;
+                        RDR.group.initial_pin_limit = RDR.group.initial_pin_limit || 30;
                         RDR.group.no_readr = RDR.group.no_readr || "";
                         RDR.group.img_blacklist = RDR.group.img_blacklist || "";
 
