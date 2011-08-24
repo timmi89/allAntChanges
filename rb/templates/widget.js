@@ -2064,7 +2064,7 @@ function readrBoard($R){
                     $allNodes = $allNodes.add($group);
 
                 });
-                
+
                 if( !$allNodes.length ) return false;
                 //else
 
@@ -2096,10 +2096,10 @@ function readrBoard($R){
                     hashList.push(hash);
                     $(this).data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
                 });
+
                 return hashList;
             },
             sendHashes: function( hashes, onSuccessCallback ) {
-                
                 if( !hashes || !hashes.length ){ 
                     hashes = getAllHashes();
                 }
