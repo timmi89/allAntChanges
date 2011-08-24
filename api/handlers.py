@@ -389,8 +389,6 @@ class SettingsHandler(AnonymousBaseHandler):
             return HttpResponse("RB Group does not exist!")
         sites = Site.objects.filter(group=group_object)
         domains = sites.values_list('domain', flat=True)
-        print host
-        print domains
         if host in domains:
             return group_object
         elif group_id == 1:
