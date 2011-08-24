@@ -5669,7 +5669,7 @@ rdr_loadScript( "{{ BASE_URL }}{{ STATIC_URL }}global/js/jquery-1.6.2.min.js", f
     rdr_loadScript( "{{ BASE_URL }}{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom/js/jquery-ui-1.8.14.custom.min.js", function(){
         //callback
 
-        if ( $.browser.msie  && parseInt($.browser.version) == 7 ) {
+        if ( $.browser.msie  && parseInt($.browser.version) < 8 ) {
             rdr_loadScript( "{{ BASE_URL }}{{ STATIC_URL }}widget/js/json2.min.js", function() { return; } );
         }
         //test that $.ui versioning is working correctly
