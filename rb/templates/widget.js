@@ -1,3 +1,4 @@
+delete JSON;
 var RDR, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
 $R = {}, //init var: our clone of jQuery
@@ -1517,7 +1518,7 @@ function readrBoard($R){
 
                 $.receiveMessage(
                     function(e){
-                        var message = JSON.parse( e.data );
+                        var message = $.evalJSON( e.data );
 
                         if ( message.status ) {
                             if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
@@ -2126,7 +2127,7 @@ function readrBoard($R){
                     contentType: "application/json",
                     dataType: "jsonp",
                     data: {
-                    	json: JSON.stringify(sendData)
+                    	json: $.toJSON(sendData)
                     },
                     success: function(response) {
 
@@ -2343,7 +2344,7 @@ function readrBoard($R){
                             kind: container.kind
                         };
 
-                        tempEncode = encodeURIComponent ( JSON.stringify(sendContainer) );
+                        tempEncode = encodeURIComponent ( $.toJSON(sendContainer) );
 
                         thisLen = tempEncode.length;
                         
@@ -2426,7 +2427,7 @@ function readrBoard($R){
                         contentType: "application/json",
                         dataType: "jsonp",
                         data: {
-                            json: JSON.stringify(sendData)
+                            json: $.toJSON(sendData)
                         },
                         success: function(response) {
                             //[cleanlogz]('response for containers create');
@@ -2507,7 +2508,7 @@ function readrBoard($R){
                         type: "get",
                         contentType: "application/json",
                         dataType: "jsonp",
-                        data: { json: JSON.stringify(sendData) },
+                        data: { json: $.toJSON(sendData) },
                         success: function(response) {
                             if ( response.status !== "success" ) {
                                 return false;
@@ -2674,7 +2675,7 @@ function readrBoard($R){
                         type: "get",
                         contentType: "application/json",
                         dataType: "jsonp",
-                        data: { json: JSON.stringify(sendData) },
+                        data: { json: $.toJSON(sendData) },
                         success: function(response) {
                             args.response = response;
                             if ( response.status == "success" ) {
@@ -5151,7 +5152,7 @@ function readrBoard($R){
                             type: "get",
                             contentType: "application/json",
                             dataType: "jsonp",
-                            data: { json: JSON.stringify(sendData) },
+                            data: { json: $.toJSON(sendData) },
                             success: function(response) {
                                 // todo cache the short url
                                 // RDR.summaries[content_node_info.hash].content_nodes[IDX].top_interactions.tags[tag.id].short_url = ;
@@ -5338,7 +5339,7 @@ function readrBoard($R){
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
-                    data: { json: JSON.stringify(sendData) },
+                    data: { json: $.toJSON(sendData) },
                     success: function(response) {
                         RDR.actions.panel.collapse("whyPanel", rindow);
                         var $thisTagButton = rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id);
@@ -5662,16 +5663,14 @@ function rdr_loadScript(sScriptSrc,callbackfunction) {
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
 rdr_loadScript( "{{ BASE_URL }}{{ STATIC_URL }}global/js/jquery-1.6.2.min.js", function(){
     //callback
-    //rdr_loadScript( "{{ BASE_URL }}{{ STATIC_URL }}global/js/jquery-1.6.js", function(){
-    //callback
+    if ( $.browser.msie  && parseInt($.browser.version) < 7 ) {
+        return false;
+    }
     
     //rdr_loadScript( "{{ BASE_URL }}{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom.min.js", function(){
     rdr_loadScript( "{{ BASE_URL }}{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom/js/jquery-ui-1.8.14.custom.min.js", function(){
         //callback
 
-        if ( $.browser.msie  && parseInt($.browser.version) < 8 ) {
-            rdr_loadScript( "{{ BASE_URL }}{{ STATIC_URL }}widget/js/json2.min.js", function() { return; } );
-        }
         //test that $.ui versioning is working correctly
         
         //within this scope while the $ refers to our version of jQuery, attach it to our Global var $R at least for now, for testing later
