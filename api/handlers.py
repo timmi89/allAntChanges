@@ -274,7 +274,11 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         # Force evaluation by making lists
         containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash','kind'))
         ids = [container[0] for container in containers]
-        interactions = list(Interaction.objects.filter(container__in=ids, page=page).select_related('interaction_node','content','user',('social_user')))
+        interactions = list(Interaction.objects.filter(
+            container__in=ids,
+            page=page,
+            approved=True
+        ).select_related('interaction_node','content','user',('social_user')))
 
         known = getContainerSummaries(interactions, containers)
         unknown = list(set(hashes) - set(known.keys()))
@@ -295,6 +299,7 @@ class ContentSummaryHandler(AnonymousBaseHandler):
         interactions = list(Interaction.objects.filter(
             container=container_id,
             page=page_id,
+            approved=True
         ))
         content_ids = (interaction.content_id for interaction in interactions)
         content = list(Content.objects.filter(id__in=content_ids).values_list('id','body','kind','location'))
@@ -374,7 +379,6 @@ class SettingsHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, group=None):
         host = request.GET.get('host_name').split('.')
-        if host[0] == 'www': host = host[1:]
         host = '.'.join(host)
         path = request.path
         fp = request.get_full_path()
@@ -385,8 +389,6 @@ class SettingsHandler(AnonymousBaseHandler):
             return HttpResponse("RB Group does not exist!")
         sites = Site.objects.filter(group=group_object)
         domains = sites.values_list('domain', flat=True)
-        print host
-        print domains
         if host in domains:
             return group_object
         elif group_id == 1:
