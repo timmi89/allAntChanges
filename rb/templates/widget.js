@@ -1821,7 +1821,14 @@ function readrBoard($R){
                         RDR.group.anno_whitelist = RDR.group.anno_whitelist || "body p";
                         RDR.group.media_selector = RDR.group.media_selector || "embed, video, object, iframe#youtube-XQBskPol5hA";
                         RDR.group.comment_length = RDR.group.comment_length || 300;
-                        RDR.group.temp_interact = RDR.group.temp_interact || 2;
+                        RDR.group.initial_pin_limit = RDR.group.initial_pin_limit || 20;
+                        RDR.group.no_readr = RDR.group.no_readr || "";
+                        RDR.group.img_blacklist = RDR.group.img_blacklist || "";
+
+                        $(RDR.group.no_readr).each( function() { 
+                            $(this).addClass('no-rdr'); 
+                            $(this).find('img').addClass('no-rdr');
+                        });
 
                         $RDR.dequeue('initAjax');
                     },
@@ -1953,7 +1960,7 @@ function readrBoard($R){
                 $(document).bind('scrollstop', function() {
                     if ( $(window).scrollTop() > 150 && $('#rdr_sandbox') && !$('#rdr_sandbox').data('showingAllIndicator') ) {
                         $('#rdr_sandbox').data('showingAllIndicator', true);
-                        if ( RDR.text_container_popularity && RDR.text_container_popularity.length > RDR.group.temp_interact ) {
+                        if ( RDR.text_container_popularity && RDR.text_container_popularity.length > RDR.group.initial_pin_limit ) {
                             // show the alert bar, which has a link to call RDR.actions.summaries.showLessPopularIndicators
                             RDR.session.alertBar.make('showMorePins');
                             $(document).unbind('scrollstop.rdr');
@@ -4179,7 +4186,7 @@ function readrBoard($R){
                 displayPopularIndicators: function () {
                     // RDR.actions.summaries.displayPopularIndicators
 
-                    for ( var i=0; i < RDR.group.temp_interact; i++) {
+                    for ( var i=0; i < RDR.group.initial_pin_limit; i++) {
                         if ( RDR.text_container_popularity[i] ) $('#rdr_indicator_' + RDR.text_container_popularity[i].hash).removeClass('rdr_dont_show');
                     }
                 },
@@ -4187,7 +4194,7 @@ function readrBoard($R){
                     // RDR.actions.summaries.showLessPopularIndicators
                     var hashesToShow = [];
 
-                    for ( var i=RDR.group.temp_interact; i<RDR.text_container_popularity.length; i++) {
+                    for ( var i=RDR.group.initial_pin_limit; i<RDR.text_container_popularity.length; i++) {
                         if ( RDR.text_container_popularity[i] ) {
                             if ( RDR.text_container_popularity[i].interactions > 0 ) {
                                 $('#rdr_indicator_' + RDR.text_container_popularity[i].hash).removeClass('rdr_dont_show');
@@ -5909,14 +5916,6 @@ function $RFunctions($R){
                 if(string.match(_escapeable))
 
                 {
-
-                    {
-                            var c=_meta[a];
-                            if(typeof c==='string')return c;
-                            c=a.charCodeAt();
-                            return'\\u00'+Math.floor(c/16).toString(16)+(c%16).toString(16);
-                        })+'"');
-
                     return'"'+string.replace(_escapeable,function(a)
 
                     {
