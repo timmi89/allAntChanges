@@ -136,13 +136,6 @@ def getPage(request, pageid=None):
         )
         
     return page[0]
-"""
-def createInteractionNode(body=None):
-    if body:
-        node = InteractionNode.objects.get_or_create(body=body)[0]
-        print "Success getting/creating InteractionNode with id %s" % node.id
-        return node
-"""
 
 def createInteractionNode(node_id=None, body=None, group=None):
     # Get or create InteractionNode for share
