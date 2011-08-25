@@ -1189,12 +1189,14 @@ function readrBoard($R){
                 if (!prop) prop = "id";
                 if (!hash) return 11;
 
+                // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
                 var page_id = ( $('.rdr-'+hash).data('page_id') ) ? $('.rdr-'+hash).data('page_id') : $('.rdr-'+hash).closest('.rdr-page-container').data('page_id');
+                
+                // store the page_id on this node to prevent walking-up again later
                 if ( !$('.rdr-'+hash).data('page_id') ) {
                     $('.rdr-'+hash).data('page_id', page_id)
                 }
 
-console.log('page id is................. '+page_id);
                 return page_id;
             },
             stayInWindow: function(settings) {
@@ -1886,12 +1888,10 @@ console.log('page id is................. '+page_id);
                 // make one call for the page unless post_selector, post_href_selector, summary_widget_selector are all set to not-an-empty-string AND are present on page
 
                 // defaults for just one page / main page
-                var urls = [ window.location.href ]; // + window.location.hash;
-                var canonicals = ( $('link[rel="canonical"]').length > 0 ) ? [ $('link[rel="canonical"]').attr('href') ] : [""];
-                var titles = ( $('meta[property="og:title"]').attr('content') ) ? [ $('meta[property="og:title"]').attr('content')] : [ $('title').text()] ;
-                    if ( !titles ) titles = [""];
-
-                var container_selectors = ['body']; // so we know where to append the page ID, without overwriting RDR.group.post_selector
+                var urls = [];
+                var canonicals = [];
+                var titles = [];
+                var container_selectors = [];
 
                 // if multiple posts, add additional "pages"
                 if ( 
@@ -1905,14 +1905,12 @@ console.log('page id is................. '+page_id);
                         });
                         container_selectors.push( RDR.group.post_selector ); // so we know where to append the page ID, without overwriting RDR.group.post_selector
                 }
-                
-                // if there isn't a place for the main page summary and there are multiple URLs to call, drop the info for this PAGE, and just call for the POSTS
-                // if ( $('#rdr-page-summary').length == 0 && urls.length > 1 ) {
-                //     urls.shift();
-                //     canonicals.shift();
-                //     titles.shift();
-                //     container_selectors.shift();
-                // }
+
+                // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
+                urls.push( window.location.href ); // + window.location.hash;
+                canonicals.push( ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href') : "" );
+                titles.push( ( $('meta[property="og:title"]').attr('content') ) ? $('meta[property="og:title"]').attr('content') : ( $('title').text() ) ? $('title').text():"" );
+                container_selectors.push( 'body' ); // so we know where to append the page ID, without overwriting RDR.group.post_selector
 
     			var key = 0;
                 for ( var i in urls ) {
@@ -1951,6 +1949,14 @@ console.log('page id is................. '+page_id);
                                 $container.data( 'page_id', String(response.data.id) ); // the page ID
                             }
 
+                            // hash the "page" children
+                            var hashes = RDR.actions.hashNodes( $container );
+
+                            if(hashes){
+                                RDR.actions.sendHashes( hashes );    
+                            }
+                            
+
                             //init the widgetSummary
                             var widgetSummarySettings = response;
                             widgetSummarySettings.anchor = ( RDR.group.summary_widget_selector != "" ) ? RDR.group.summary_widget_selector : "#rdr-page-summary"; //change to group.summaryWidgetAnchorNode or whatever
@@ -1962,7 +1968,7 @@ console.log('page id is................. '+page_id);
                             }
 
                             //insertImgIcons(response);
-                                                       
+                           
                             //to be normally called on success of ajax call
                             $RDR.dequeue('initAjax');
 
@@ -2035,9 +2041,8 @@ console.log('page id is................. '+page_id);
                     if(!hasBeenHashed){
                         $this.addClass('rdr_live_hover');
                         var hash = RDR.actions.hashNodes( $(this) );
-                        
+                        console.log('image, and it has a hash: ' + hash);
                         if(hash){
-                            console.log('image, and there is a hash');
                             RDR.actions.sendHashes( hash, function(){
                                 if( $this.hasClass('rdr_live_hover') ){
                                     $this.mouseenter();
@@ -2050,15 +2055,20 @@ console.log('page id is................. '+page_id);
                 });
                 
                 //hashNodes without any arguments will fetch the default set from the server.
-                var hashes = this.hashNodes();
-                if(hashes){
-                    RDR.actions.sendHashes( hashes );    
-                }
+                // var hashes = this.hashNodes();
+
+                // if(hashes){
+                //     RDR.actions.sendHashes( hashes );    
+                // }
                 
 				$RDR.dequeue('initAjax');
             },
-            hashNodes: function( $nodes ) {
+            hashNodes: function( $node ) {
                 //RDR.actions.hashNodes:
+                
+                // [porter]: needs a node or nodes
+                if ( typeof $node==="undefined" ) return;
+
                 //todo: consider how to do this whitelist, initialset stuff right
                 var $allNodes = $(),
                 nodeGroups = [
@@ -2095,7 +2105,10 @@ console.log('page id is................. '+page_id);
                             //todo: reconsider using this - it's not super efficient to grab the text just to verify it's a node that has text.
                             // - Prob fine though since we're only testing hashes we pass in manually.
                             //proves it has text (so ellminates images for example.) //the !! is just a convention indicating it's used as a bool.
-                            return !!$(node).text();
+                            console.log('tagName: '+$(node)[0].tagName.toLowerCase() );
+                            if ( $(node).text() != $(node).parent().text() ) {
+                                return !!$(node).text();
+                            }
                         },
                         setupFunc: function(){
                             // get the node's text and smash case
@@ -2114,8 +2127,16 @@ console.log('page id is................. '+page_id);
                 //go through the groups in order and pick out valid nodes of that type. Default to text if it's valid for that.
                 $.each( nodeGroups, function( idx, group ){
 
-                    var nodesPassedIn = (typeof $nodes!=="undefined") && $nodes.length;
-                    var $group = nodesPassedIn ? $nodes.filter( group.filterParam ) : $( group.whiteList );
+                    // var nodesPassedIn = (typeof $nodes!=="undefined") && $nodes.length;
+                    // var $group = nodesPassedIn ? $nodes.filter( group.filterParam ) : $( group.whiteList );
+
+                    // take the $node passed in, add it to group via filters
+                    var $group = $node.filter( group.filterParam );
+
+                    // add vaild descendants of the $node
+                    $group = $group.add( $node.find( group.whiteList ) );
+
+
                     //take out prev categorized nodes (text is last, so we default to that)
                     $group = $group.not($allNodes);
 
@@ -2153,7 +2174,7 @@ console.log('page id is................. '+page_id);
                         kind:kind,
                         hash:hash,
                         HTMLkind:HTMLkind,
-                        $this: $(this)
+                        $this: $this
                     });
 
                     // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
@@ -2161,83 +2182,102 @@ console.log('page id is................. '+page_id);
                     
                     //don't do this here - do it on success of callback from server
                     // [porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
-                    $(this).addClass( 'rdr-' + hash );
+                    $this.addClass( 'rdr-' + hash ).addClass('rdr-hashed');
                     
-                    hashList.push(hash);
-                    $(this).data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
+                    var page_id = RDR.util.getPageProperty('id', hash );
+                    if ( !hashList[ page_id ] ) hashList[ page_id ] = [];
+                    
+                    hashList[ page_id ].push(hash);
+                    $this.data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
                 });
+
+console.log('hashList');
+console.dir(hashList);
 
                 return hashList;
             },
             sendHashes: function( hashes, onSuccessCallback ) {
-                console.log('sendHashes');
-                if( !hashes || !hashes.length ){ 
-                    hashes = getAllHashes();
-                }
+                console.log('sendHashes: ');
+                console.dir(hashes);
+
+                // if ( hashes.length == 1 ) {
+                //     var hash = hashes[0];
+                //     var page_id = RDR.util.getPageProperty( 'id', hash );
+                //     hashes = [];
+                //     hashes[ page_id ] = hash;
+                // }
+
+                // if( !hashes || !hashes.length ){ 
+                //     hashes = getAllHashes();
+                // }
         
-                function getAllHashes(){
-                    var hashes = [];
-                    for (var hashKey in RDR.containers ) {
-                        hashes.push( hashKey );
+                // function getAllHashes(){
+                //     var hashes = [];
+                //     for (var hashKey in RDR.containers ) {
+                //         console.log('RDR.containers[hashkey].kind: '+RDR.containers[hashkey].kind); 
+                //         if ( RDR.containers[hashkey].kind != "page" ) hashes.push( hashKey );
+                //     }
+                //     return hashes;
+                // }
+
+                for (var i in hashes) {
+                    var page_id = i;
+                    var sendable_hashes = hashes[i];
+    // console.dir(hashes);
+
+
+                    if ( !page_id ) {
+                        return;
                     }
-                    return hashes;
-                }
-console.dir(hashes);
-                if ( hashes.length == 1 ) {
-                    var page_id = RDR.util.getPageProperty('id', hashes[0]);
-                }
 
-                if ( !page_id ) {
-                    return;
-                }
+                    //build the sendData with the hashes from above
+    				var sendData = {
+    					short_name : RDR.group.short_name,
+    					pageID: page_id,
+    					hashes: sendable_hashes
+    				};
 
-                //build the sendData with the hashes from above
-				var sendData = {
-					short_name : RDR.group.short_name,
-					pageID: RDR.util.getPageProperty('id'),
-					hashes: hashes
-				};
-
-                // send the data!
-                $.ajax({
-                    url: RDR_rootPath+"/api/summary/containers/",
-                    type: "get",
-                    contentType: "application/json",
-                    dataType: "jsonp",
-                    data: {
-                    	json: $.toJSON(sendData)
-                    },
-                    success: function(response) {
-
-                        var summaries = response.data.known,
-                        unknownList = response.data.unknown;
-                        
-                        //the callback implementation here is a litte unintuitive:
-                        //it only gets passsed in when a single hash is run through here, 
-                        //so it will only get run here either on the $container that is a known summary,
-                        //or as a callback after the unknownhash is sent through the containers.send call.
-
-                        if ( unknownList.length > 0 ) {
+                    // send the data!
+                    $.ajax({
+                        url: RDR_rootPath+"/api/summary/containers/",
+                        type: "get",
+                        contentType: "application/json",
+                        dataType: "jsonp",
+                        data: {
+                        	json: $.toJSON(sendData)
+                        },
+                        success: function(response) {
+console.log('successful hash send');
+                            var summaries = response.data.known,
+                            unknownList = response.data.unknown;
                             
-                            //send the containers to the server.
-                            //On sucess, these unknown hashes will get passed to RDR.actions.containers.setup with dummy summaries
-                            RDR.actions.containers.send(unknownList, onSuccessCallback);
-                        }
+                            //the callback implementation here is a litte unintuitive:
+                            //it only gets passsed in when a single hash is run through here, 
+                            //so it will only get run here either on the $container that is a known summary,
+                            //or as a callback after the unknownhash is sent through the containers.send call.
 
-                        if ( ! $.isEmptyObject(summaries) ){
-                            //setup the known summaries
-                            RDR.actions.containers.setup(summaries);
+                            // if ( unknownList.length > 0 ) {
+                                
+                            //     //send the containers to the server.
+                            //     //On sucess, these unknown hashes will get passed to RDR.actions.containers.setup with dummy summaries
+                            //     RDR.actions.containers.send(unknownList, onSuccessCallback);
+                            // }
+
+                            if ( ! $.isEmptyObject(summaries) ){
+                                //setup the known summaries
+                                RDR.actions.containers.setup(summaries);
+                                
+                                //the callback verifies the new container and draws the actionbar
+                                //wont get run if this single hash is unknown.
+                                if(typeof onSuccessCallback !== 'undefined'){
+                                    onSuccessCallback();
+                                }      
+                            }
                             
-                            //the callback verifies the new container and draws the actionbar
-                            //wont get run if this single hash is unknown.
-                            if(typeof onSuccessCallback !== 'undefined'){
-                                onSuccessCallback();
-                            }      
+                            
                         }
-                        
-                        
-                    }
-                });
+                    });
+                }
             },
             containers: {
                 save: function(settings){
@@ -2342,8 +2382,7 @@ console.dir(hashes);
                             
                         }
                     };
-console.log('setting up containers');
-console.dir(summaries);
+
                     var hashesToShow = []; //filled below
                     $.each(summaries, function(hash, summary){
                         //first do generic stuff
