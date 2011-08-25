@@ -132,7 +132,7 @@ body{
 #rdr_sandbox div.rdr_actionbar span.rdr_icon_divider         { width:1px; background:#BBB; height:70%; position:absolute; top:15%; right:0; display:none;/*show dynamically*/}
 
 /* the tooltip */
-#rdr_sandbox div.rdr.rdr_tooltip {
+div.rdr.rdr_tooltip {
     -moz-border-radius:5px;
     -webkit-border-radius:5px;
     border-radius:5px;
@@ -150,8 +150,8 @@ body{
     width:100px;
     z-index:10000;
 }
-#rdr_sandbox div.rdr_actionbar_for_media div.rdr_tooltip,
-#rdr_sandbox div.rdr_tooltip.rdr_tooltip_sideways {
+div.rdr_actionbar_for_media div.rdr_tooltip,
+div.rdr_tooltip.rdr_tooltip_sideways {
     border:2px solid #80aec9;
     margin:0 0 0 13px;/* 0.5 icon width with compensation for border*/
     padding:5px 0;
@@ -164,35 +164,39 @@ body{
     display:block;
 }
 
-#rdr_sandbox div.rdr.rdr_tooltip-arrow { border-color:#fff transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-14px; left:43%;}
-#rdr_sandbox div.rdr.rdr_tooltip-arrow-border { border-color:#80aec9 transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-16px; left:43%;}
+div.rdr_tooltip.rdr_tooltip_wide { 
+    width:200px; 
+    padding:8px 10px;
+}
+
+div.rdr.rdr_tooltip-arrow { border-color:#fff transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-14px; left:43%;}
+div.rdr.rdr_tooltip-arrow-border { border-color:#80aec9 transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-16px; left:43%;}
 
 
-#rdr_sandbox div.rdr_top div.rdr.rdr_tooltip-arrow-border { border-color:transparent transparent #80aec9; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:-16px; bottom:auto; left:43%;}
-#rdr_sandbox div.rdr_top div.rdr.rdr_tooltip-arrow { border-color:transparent transparent #fff; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:-14px; bottom:auto; left:43%;}
+div.rdr_top div.rdr.rdr_tooltip-arrow-border { border-color:transparent transparent #80aec9; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:-16px; bottom:auto; left:43%;}
+div.rdr_top div.rdr.rdr_tooltip-arrow { border-color:transparent transparent #fff; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:-14px; bottom:auto; left:43%;}
  
 
-#rdr_sandbox div.rdr_actionbar_for_media div.rdr.rdr_tooltip-arrow,
-#rdr_sandbox div.rdr_tooltip.rdr_tooltip_sideways div.rdr.rdr_tooltip-arrow { border-color:transparent white transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:5px; left:-14px}
+div.rdr_actionbar_for_media div.rdr.rdr_tooltip-arrow,
+div.rdr_tooltip.rdr_tooltip_sideways div.rdr.rdr_tooltip-arrow { border-color:transparent white transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:5px; left:-14px}
 
-#rdr_sandbox div.rdr_actionbar_for_media div.rdr.rdr_tooltip-arrow-border,
-#rdr_sandbox div.rdr_tooltip.rdr_tooltip_sideways div.rdr.rdr_tooltip-arrow-border {
+div.rdr_actionbar_for_media div.rdr.rdr_tooltip-arrow-border,
+div.rdr_tooltip.rdr_tooltip_sideways div.rdr.rdr_tooltip-arrow-border {
 border-color:transparent #80aec9 transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:5px; left:-16px}
 
 
-#rdr_sandbox div.rdr.rdr_tooltip div.rdr_tag_share    { display:block; width:12px; height:13px; background:url({{ STATIC_URL }}widget/images/tag_icons.png) -50px -13px no-repeat; left:45px; position:absolute;top:-20px; 
+div.rdr.rdr_tooltip div.rdr_tag_share    { display:block; width:12px; height:13px; background:url({{ STATIC_URL }}widget/images/tag_icons.png) -50px -13px no-repeat; left:45px; position:absolute;top:-20px; 
     -moz-border-radius:3px;
     -webkit-border-radius:3px;
     border-radius:3px;
 }
 
 #rdr_sandbox div.rdr.rdr_share_container                     {position:absolute;height:50px;width:20px;z-index:13000;}
-#rdr_sandbox div.rdr.rdr_share_container div.rdr.rdr_tooltip {left:-58px;top:20px; }
-#rdr_sandbox div.rdr.rdr_share_container div.rdr.rdr_tooltip .rdr_tooltip-content {font-size:11px; color:#787878; }
-#rdr_sandbox div.rdr.rdr_share_container div.rdr.rdr_tooltip img.rdr_sns {width:16px;margin:2px 5px 0 0; cursor:pointer;}
+div.rdr.rdr_share_container div.rdr.rdr_tooltip {left:-58px;top:20px; }
+div.rdr.rdr_share_container div.rdr.rdr_tooltip .rdr_tooltip-content {font-size:11px; color:#787878; }
+div.rdr.rdr_share_container div.rdr.rdr_tooltip img.rdr_sns {width:16px;margin:2px 5px 0 0; cursor:pointer;}
 
-/*span.rdr_tag_share div.rdr_tooltip            { display:none; }*/
-#rdr_sandbox div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
+div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
 
 /*compress ths about icon width*/
 #rdr_sandbox div.rdr_actionbar li.rdr_icon_about             { width:24px; } /*normal width is 30px */
@@ -206,6 +210,8 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
 #rdr_sandbox div.rdr h1 span.rdr_contentNode_text {font-size:18px; color:#008be4;}
 
 #rdr_sandbox div.rdr li {background:none; padding:0;}
+
+div.rdr strong {font-weight:bold !important;}
 
 /* the widget */
 #rdr_sandbox div.rdr_window h1,
@@ -635,7 +641,9 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr button              {font-size:14px; }
 
 /* summary widget */
-#rdr-summary {
+#rdr-page-summary {position:relative;}
+
+.rdr-summary {
     -moz-box-shadow:0 0 6px 0 #aaa !important;
     -webkit-box-shadow:0 0 6px 0 #aaa !important;
     box-shadow:0 0 6px 0 #aaa !important;
@@ -644,39 +652,44 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
     margin-bottom:10px !important;
     overflow:auto !important;
     clear:both !important;
+    /* racialicious */
+    width:500px; 
+    margin-top:7px;
 }
 
 /*blunt attack for now*/
-#rdr-summary * {
+.rdr-summary * {
     font:normal 12px Arial, sans-serif !important;
 }
 
-#rdr-summary div.rdr-sum-headline {
+.rdr-summary div.rdr-sum-headline {
     background:url({{ STATIC_URL }}widget/images/readr_icons.png) -162px 5px no-repeat !important;
     padding:7px 5px 5px 38px !important;
     float:left !important;
     color:#787878 !important;
 }
-#rdr-summary div.rdr-top-tags {
+.rdr-summary div.rdr-top-tags {
     padding:8px 5px 0px 8px !important;
     float:left !important;
 }
-#rdr-summary div.rdr-top-tags span {
+.rdr-summary div.rdr-top-tags span {
     white-space:nowrap !important;
     font-weight:bold !important;
     color:#666 !important;
 }
-#rdr-summary div.rdr-top-tags span em {
+.rdr-summary div.rdr-top-tags span em {
     font-style:normal !important;
     color:#aaa !important;
 }
-#rdr-summary div.rdr-top-users {
+.rdr-summary div.rdr-top-users {
     padding:7px !important;
     overflow:hidden !important;
     height:16px !important;
     float:left !important;
+    /* racialicious */
+    display:none;
 }
-#rdr-summary div.rdr-top-users img {
+.rdr-summary div.rdr-top-users img {
     width:20px !important;
     height:20px !important;
     margin:0 3px 0 0 !important;

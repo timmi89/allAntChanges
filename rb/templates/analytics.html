@@ -207,11 +207,14 @@ RB.analytics = {
 				if ( type == "pages" ) {
 					var pageHtml = "";
 					for ( var i in response) {
+						var tagCount = (response[i].counts.tag) ? response[i].counts.tag:0;
+						var shrCount = (response[i].counts.shr) ? response[i].counts.shr:0;
+						var comCount = (response[i].counts.com) ? response[i].counts.com:0;
 						pageHtml += '<tr><td role="url"><div><a href="'+response[i].page.canonical_url+'" target="_blank">'+response[i].page.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
 						+'<td role="title"><a href="/page/'+response[i].page.id+'" target="_blank">'+response[i].page.title+'</td>'
-						+'<td role="reactions">'+response[i].counts.tag+'</td>'
-						+'<td role="shares">'+response[i].counts.shr+'</td>'
-						+'<td role="comments">'+response[i].counts.com+'</td></tr>';
+						+'<td role="reactions">'+tagCount+'</td>'
+						+'<td role="shares">'+shrCount+'</td>'
+						+'<td role="comments">'+comCount+'</td></tr>';
 					}
 
 					$('table[role="active pages table"] tbody').html( pageHtml );
