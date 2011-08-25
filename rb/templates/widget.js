@@ -1,7 +1,9 @@
 var RDR, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
 $R = {}, //init var: our clone of jQuery
-RDR_rootPath = "{{ BASE_URL }}"; //todo: when we get our hosting up change to readrboard.com or our CDN.
+RDR_scriptPaths = {},
+RDR_rootPath = "{{ BASE_URL }}", //todo: when we get our hosting up change to readrboard.com or our CDN.
+RDR_offline = RDR_rootPath.indexOf('local') != -1;
 
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
 //This function gets called by the function $RFunctions() via the function rdr_loadScript().
@@ -1126,8 +1128,11 @@ function readrBoard($R){
                     clearTimeout(timeoutCloseEvt);
                     clearTimeout(timeoutCollapseEvt);
 
-                    var $container = $('.rdr-'+hash);
+                    var $container = $('.rdr-'+hash),
+                        $indicator = $('#rdr_indicator_'+hash);
+
                     $container.removeClass('rdr_engage_media');
+                    $indicator.removeClass('rdr_engage_media');
                     $actionbar.remove();
                 }
 
@@ -5748,25 +5753,29 @@ function rdr_loadScript(sScriptSrc,callbackfunction) {
 }
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
-var jqueryPath =  ( RDR_rootPath.indexOf('local.readrboard') != -1 ) ? "http://local.readrboard.com:8080/static/global/js/jquery-1.6.2.min.js":"http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js";
-rdr_loadScript( jqueryPath, function(){
+RDR_scriptPaths.jquery = RDR_offline ?
+    "{{ BASE_URL }}{{ STATIC_URL }}global/js/jquery-1.6.2.min.js" :
+    "http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js";
+RDR_scriptPaths.jqueryUI = RDR_offline ?
+    "{{ BASE_URL }}{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom.min.js" :
+    "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js";
+RDR_scriptPaths.jqueryUI_CSS = RDR_offline ?
+    "{{ BASE_URL }}{{ STATIC_URL }}global/css/jquery-ui-1.8.14.base.css" :
+    "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/themes/base/jquery-ui.css";
+
+rdr_loadScript( RDR_scriptPaths.jquery, function(){
     //callback
     if ( $.browser.msie  && parseInt($.browser.version) < 7 ) {
         return false;
     }
     
-    //rdr_loadScript( "{{ BASE_URL }}{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom.min.js", function(){
-    rdr_loadScript( "{{ BASE_URL }}{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom/js/jquery-ui-1.8.14.custom.min.js", function(){
+    rdr_loadScript( RDR_scriptPaths.jqueryUI, function(){
         //callback
 
-        //test that $.ui versioning is working correctly
-        
         //within this scope while the $ refers to our version of jQuery, attach it to our Global var $R at least for now, for testing later
         //todo - I don't think it really matters, but consider making this just local later
         $R = jQuery.noConflict(true);
         
-        //test that $.ui versioning is working correctly
-
         //A function to load all plugins including those (most) that depend on jQuery.
         //The rest of our code is then set off with RDR.actions.init();
         $RFunctions($R);
@@ -5786,12 +5795,13 @@ function $RFunctions($R){
     } 
     if ( $R.browser.msie ) {
         css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/ie.css" );
+        //todo: make sure that if this css file doens't exist, it won't bork.  Otherwise as soon as IE10 comes out, this will kill it.
         css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/ie"+parseInt( $R.browser.version) +".css" );
     }
 
     css.push( RDR_rootPath+"/widgetCss/" );
+    css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/jquery.jscrollpane.css" );
-    css.push( "{{ BASE_URL }}{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom/css/ui-lightness/jquery-ui-1.8.14.custom.css" );
     
     loadCSS(css);
 
