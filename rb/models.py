@@ -182,7 +182,7 @@ class Site(models.Model):
     include_selectors = models.CharField(max_length=255, blank=True)
     no_rdr_selectors = models.CharField(max_length=255, blank=True)
     css = models.URLField(blank=True)
-    content_querystring = models.BooleanField(default=False)
+    querystring_content = models.BooleanField(default=False)
     
     # social shiz
     twitter = models.CharField(max_length=64, blank=True)
