@@ -68,7 +68,8 @@ class SiteAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'domain',
-        'group'
+        'group',
+        'querystring_content'
     )
 
 class PageAdmin(admin.ModelAdmin):

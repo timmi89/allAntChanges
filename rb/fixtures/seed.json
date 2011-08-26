@@ -3,8 +3,8 @@
     "model": "rb.Group",
     "pk": 1,
     "fields":{
-      "name": "ReadrBoard's Demo",
-      "short_name": "demo",
+      "name": "ReadrBoard Default",
+      "short_name": "default",
       "share": 1,
       "comment": 1,
       "rate": 1,

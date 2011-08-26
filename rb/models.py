@@ -135,11 +135,11 @@ class Group(models.Model):
     logo_url_lg = models.CharField(max_length=200, blank=True)
 
     # features
-    share = models.ForeignKey(Feature, related_name = 'Share Feature')
-    rate = models.ForeignKey(Feature, related_name = 'Rate Feature')
-    comment = models.ForeignKey(Feature, related_name = 'Comment Feature')
-    bookmark = models.ForeignKey(Feature, related_name = 'Bookmark Feature')
-    search = models.ForeignKey(Feature, related_name = 'Search Feature')
+    share = models.ForeignKey(Feature, related_name = 'Share Feature', default=1)
+    rate = models.ForeignKey(Feature, related_name = 'Rate Feature', default=1)
+    comment = models.ForeignKey(Feature, related_name = 'Comment Feature', default=1)
+    bookmark = models.ForeignKey(Feature, related_name = 'Bookmark Feature', default=1)
+    search = models.ForeignKey(Feature, related_name = 'Search Feature', default=1)
 
     # social shiz
     twitter = models.CharField(max_length=64, blank=True)
