@@ -171,10 +171,11 @@ class CommentHandler(InteractionHandler):
 class TagHandler(InteractionHandler):
     def create(self, request, data, user, page, group, kind='tag'):
         tag_body = data['tag']['body']
-        container_hash = data['hash']
+        container_hash = data['container']
+        container_kind = data['container_kind']
         content_node_data = data['content_node_data']
         content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[ content_node_data['kind'] ]
-        
+
         #optional
         tag_id = data['tag'].get('id', None)
         location = content_node_data.get('location', None)
@@ -184,11 +185,11 @@ class TagHandler(InteractionHandler):
         inode = createInteractionNode(tag_id, tag_body, group)
 
         # Get the container
-        try:
-            container = Container.objects.get(hash=container_hash)
-        except Container.DoesNotExist:
-            raise JSONException("Container specified does not exist")
-        
+        container = Container.objects.get_or_create(
+            hash = container_hash,
+            defaults = {'kind': container_kind,}
+        )
+
         # Create an interaction
         interaction = createInteraction(page, container, content, user, kind, inode, group)
 
