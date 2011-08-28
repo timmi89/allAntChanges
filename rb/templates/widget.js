@@ -645,7 +645,30 @@ function readrBoard($R){
                 //temp tie-over    
                 var hash = options.hash,
                     summary = RDR.summaries[hash],
-                    kind = summary.kind;
+                    kind = options.kind;
+                
+                if (!summary) {
+                    // setup the summary
+                    summary = {};
+                    summary[hash] = {};
+                    summary[hash].kind = kind;
+                    summary[hash].top_interactions = {};
+                    summary[hash].top_interactions.coms = {};
+                    summary[hash].top_interactions.tags = {};
+                    summary[hash].top_interactions.shr = {};
+
+                    summary[hash].interaction_order = {};
+                    summary[hash].interaction_order.coms = {};
+                    summary[hash].interaction_order.tags = {};
+
+                    summary[hash].counts = {};
+                    summary[hash].counts.tags = 0;
+                    summary[hash].counts.interactions = 0; // TODO not sure why we have this and also "tags"
+                    summary[hash].counts.coms = 0;
+
+                    summary[hash].hash = hash;
+                    RDR.actions.containers.setup(summary);
+                }
                     
                 //checks for rindowType
                 if ( !rindowType ) rindowType = "readMode";
@@ -953,7 +976,6 @@ function readrBoard($R){
                 //expand to make settings explicit
 
                 //node: summary may not be defined at this point, so get info from settings.
-                
                 var hash = settings.hash,
                     coords = settings.coords,
                     kind = settings.kind,
@@ -1902,30 +1924,33 @@ function readrBoard($R){
                 // if multiple posts, add additional "pages"
                 if ( 
                     ( RDR.group.post_selector != "" && RDR.group.post_href_selector != "" && RDR.group.summary_widget_selector != "" ) &&
-                    ( $(RDR.group.post_selector).length > 0 && $(RDR.group.post_href_selector).length > 0 && $(RDR.group.summary_widget_selector).length > 0  ) 
+                    ( $(RDR.group.post_selector).length > 0 ) 
                    ) {
-                        $.each( $(RDR.group.post_selector), function( idx, post ){
-                            var $post = $(post);
+                        $(RDR.group.post_selector).each( function(){
+                            var $post = $(this);
                             var $post_href = $post.find(RDR.group.post_href_selector);
-                            console.log($post_href.length);
-                            console.dir($post_href);
                             var $summary_widget = $post.find(RDR.group.summary_widget_selector);
-                            urls.push( $post_href.attr('href') );
-                            canonicals.push( $post_href.attr('href') );
-                            titles.push( $post_href.text() );
-                            $post.addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
-                            $summary_widget.addClass('rdr-page-widget-key-'+key);
-                            key++;
+                            if ( $post_href.attr('href') ) {
+                                urls.push( $post_href.attr('href') );
+                                canonicals.push( $post_href.attr('href') );
+                                titles.push( $post_href.text() );
+                                $post.addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
+                                $summary_widget.addClass('rdr-page-widget-key-'+key);
+                                key++;
+                            }
                         });
-                        // container_selectors.push( RDR.group.post_selector ); // so we know where to append the page ID, without overwriting RDR.group.post_selector
                 }
-console.dir(urls);
+
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
                 urls.push( window.location.href ); // + window.location.hash;
                 canonicals.push( ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href') : "" );
                 titles.push( ( $('meta[property="og:title"]').attr('content') ) ? $('meta[property="og:title"]').attr('content') : ( $('title').text() ) ? $('title').text():"" );
                 $( 'body' ).addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
-                if ( $('#rdr-page-summary').length == 1 ) $('#rdr-page-summary').addClass('rdr-page-widget-key-'+key);
+                if ( $('#rdr-page-summary').length == 1 ) {
+                    $('#rdr-page-summary').addClass('rdr-page-widget-key-'+key);
+                } else {
+                    $( 'body' ).find(RDR.group.summary_widget_selector).addClass('rdr-page-widget-key-'+key);
+                }
 
     			var key = 0;
                 for ( var i in urls ) {
@@ -1981,7 +2006,7 @@ console.dir(urls);
                                 widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector + '.rdr-page-widget-key-'+key);
                                 widgetSummarySettings.jqFunc = "after";
                             } else {
-                                widgetSummarySettings.$anchor = "#rdr-page-summary"; //change to group.summaryWidgetAnchorNode or whatever
+                                widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
                                 widgetSummarySettings.jqFunc = "append";
                             }
                             
@@ -2068,7 +2093,6 @@ console.dir(urls);
                     if(!hasBeenHashed){
                         $this.addClass('rdr_live_hover');
                         var hash = RDR.actions.hashNodes( $(this) );
-                        console.log('image, and it has a hash: ' + hash);
                         if(hash){
                             RDR.actions.sendHashes( hash, function(){
                                 if( $this.hasClass('rdr_live_hover') ){
@@ -2234,7 +2258,6 @@ console.dir(urls);
                 // function getAllHashes(){
                 //     var hashes = [];
                 //     for (var hashKey in RDR.containers ) {
-                //         console.log('RDR.containers[hashkey].kind: '+RDR.containers[hashkey].kind); 
                 //         if ( RDR.containers[hashkey].kind != "page" ) hashes.push( hashKey );
                 //     }
                 //     return hashes;
@@ -2282,6 +2305,7 @@ console.dir(urls);
                                     unknown_summary.kind = "media";
                                 }
 
+                                // WE MAY NOT NEED THIS ANYMORE THANKS TO ONLY CALLING THIS FOR CONTAINERS WITH PRIOR INTERACTIONS
                                 // fill out some empty defaults
                                 unknown_summary.top_interactions = {};
                                 unknown_summary.top_interactions.coms = {};
@@ -2353,6 +2377,7 @@ console.dir(urls);
                 setup: function(summaries){
                     //RDR.actions.containers.setup:
                     //then define type-specific setup functions and run them
+
                     var _setupFuncs = {
                         img: function(hash, summary){
                             var containerInfo = RDR.containers[hash];
@@ -5736,7 +5761,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     // closes undragged windows
                     //close with our own event instead of removing directly so that I can bind an event to the remove event (thanks ie.)
                     RDR.rindow.close( $('div.rdr.rdr_window.rdr.rdr_rewritable') );
-           
+
                     RDR.actionbar.draw({
                         coords:{
                             top:parseInt(e.pageY),
