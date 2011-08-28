@@ -76,13 +76,48 @@ class Feature(models.Model):
     def __unicode__(self):
         return u'Feature(Text: {0}, Images: {1}, Flash: {2})'.format(self.text, self.images, self.flash)
 
+class SocialUser(models.Model):
+    GENDER_CHOICES = (
+        ('M', 'Male'),
+        ('F', 'Female'),
+    )
+
+    # For Privacy
+    private_profile = models.BooleanField(default=False)
+
+    """Social Auth association model"""
+    user = models.OneToOneField(User, related_name='social_user', unique=True)
+    provider = models.CharField(max_length=32)
+    uid = models.CharField(max_length=255, unique=True)
+    full_name = models.CharField(max_length=255)
+
+    # Might not get these -> blank=True
+    username = models.CharField(max_length=255, blank=True, unique=True, null=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True)
+    hometown = models.CharField(max_length=255, blank=True, null=True)
+    bio = models.TextField(max_length=255, blank=True, null=True)
+    img_url = models.URLField(blank=True)
+
+    def is_admin(self):
+        return admin_approved
+
+    def __unicode__(self):
+        return self.user.username
+
+    class Meta:
+        unique_together = ('provider', 'uid')
+
 class Group(models.Model):
     name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=25, unique=True)
     language = models.CharField(max_length=25, default="en")
     approved = models.BooleanField(default=False)
     requires_approval = models.BooleanField(default=False)
+    demo_group = models.BooleanField(default=False)
     word_blacklist = models.TextField(blank=True)
+    
+    # Many to many relations
+    admins = models.ManyToManyField(SocialUser, through='GroupAdmin')
     blessed_tags = models.ManyToManyField(InteractionNode)
 
     # black/whitelist fields
@@ -100,11 +135,11 @@ class Group(models.Model):
     logo_url_lg = models.CharField(max_length=200, blank=True)
 
     # features
-    share = models.ForeignKey(Feature, related_name = 'Share Feature')
-    rate = models.ForeignKey(Feature, related_name = 'Rate Feature')
-    comment = models.ForeignKey(Feature, related_name = 'Comment Feature')
-    bookmark = models.ForeignKey(Feature, related_name = 'Bookmark Feature')
-    search = models.ForeignKey(Feature, related_name = 'Search Feature')
+    share = models.ForeignKey(Feature, related_name = 'Share Feature', default=1)
+    rate = models.ForeignKey(Feature, related_name = 'Rate Feature', default=1)
+    comment = models.ForeignKey(Feature, related_name = 'Comment Feature', default=1)
+    bookmark = models.ForeignKey(Feature, related_name = 'Bookmark Feature', default=1)
+    search = models.ForeignKey(Feature, related_name = 'Search Feature', default=1)
 
     # social shiz
     twitter = models.CharField(max_length=64, blank=True)
@@ -124,6 +159,17 @@ class Group(models.Model):
     class Meta:
         ordering = ['short_name']
 
+class GroupAdmin(models.Model):
+    group = models.ForeignKey(Group)
+    social_user = models.ForeignKey(SocialUser)
+    approved = models.BooleanField(default=False)
+    
+    def __unicode__(self):
+        return str(self.group) + ":" + self.social_user.full_name + ":" + str(self.approved)
+    
+    class Meta:
+        unique_together = ('group', 'social_user')
+
 class NodeValue(models.Model):
     group = models.ForeignKey(Group)
     node = models.ForeignKey(InteractionNode)
@@ -142,6 +188,7 @@ class Site(models.Model):
     include_selectors = models.CharField(max_length=255, blank=True)
     no_rdr_selectors = models.CharField(max_length=255, blank=True)
     css = models.URLField(blank=True)
+    querystring_content = models.BooleanField(default=False)
     
     # social shiz
     twitter = models.CharField(max_length=64, blank=True)
@@ -190,7 +237,6 @@ class Content(DateAwareModel):
     
     class Meta:
         verbose_name_plural = "content"
-        #unique_together = ('kind','body') - breaks mySQL
 
 class Container(models.Model):
     hash = models.CharField(max_length=32, unique=True, db_index=True)
@@ -273,41 +319,6 @@ class Profile(models.Model):
     user = models.OneToOneField(User)
     educated = models.BooleanField()
     #following = models.ForeignKey(User)
-    
-class SocialUser(models.Model):
-    GENDER_CHOICES = (
-        ('M', 'Male'),
-        ('F', 'Female'),
-    )
-    
-    # For admin
-    admin_approved = models.BooleanField(default=False)
-    group_admin = models.ForeignKey(Group, blank=True, null=True)
-    
-    # For Privacy
-    private_profile = models.BooleanField(default=False)
-
-    """Social Auth association model"""
-    user = models.OneToOneField(User, related_name='social_user', unique=True)
-    provider = models.CharField(max_length=32)
-    uid = models.CharField(max_length=255, unique=True)
-    full_name = models.CharField(max_length=255)
-
-    # Might not get these -> blank=True
-    username = models.CharField(max_length=255, blank=True, unique=True, null=True)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True)
-    hometown = models.CharField(max_length=255, blank=True, null=True)
-    bio = models.TextField(max_length=255, blank=True, null=True)
-    img_url = models.URLField(blank=True)
-    
-    def is_admin(self):
-        return admin_approved
-
-    def __unicode__(self):
-        return self.user.username
-
-    class Meta:
-        unique_together = ('provider', 'uid')
 
 class SocialAuth(models.Model):
     social_user = models.ForeignKey(SocialUser, related_name='social_auth')

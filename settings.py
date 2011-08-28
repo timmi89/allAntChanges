@@ -149,7 +149,6 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.admin',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api',
@@ -163,7 +162,11 @@ INSTALLED_APPS = [
     #'devserver'
 ]
 
-if DEBUG: INSTALLED_APPS.append('devserver')
+if DEBUG: INSTALLED_APPS.append(
+    'devserver',
+    'django.contrib.admin'
+)
+
 
 DEVSERVER_MODULES = (
     'devserver.modules.sql.SQLRealTimeModule',

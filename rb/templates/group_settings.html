@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block sidebarContent %}
+<div id="sidebar">
+	<p>Configure your group using the settings form to the right.</p>
+	<p>Any questions?  <a href="mailto:info@readrboard.com">Contact us via email</a>.</p>
+	<p>&nbsp;</p>
+	<h5>Links You'll Love</h5>
+	<ul>
+		<li><a href="/group/{{ short_name }}">Group Profile</a></li>
+		<li><a href="/analytics/group/{{ short_name }}">Analytics Dashboard</a></li>
+		<li><a href="/group/{{ short_name }}/not_approved/">Content You've Blocked</a></li>
+	</ul>
+</div>
+{% endblock sidebarContent %}
+
+{% block mainContent %}
+  <h1>Group Settings</h1>
+
+  <form action="/settings/{{ short_name }}/" enctype="multipart/form-data" method="post" class="in-page">{% csrf_token %}
+  {{ form.non_field_errors }}
+
+	<div>
+		<label for="id_name">Name </label>
+		{{ form.name }}{{ form.name.errors }}
+	</div>
+	<div>
+	<label for="id_short_name">Short Name <span>Used in URLs on readrboard.com</span></label>
+	{{ form.short_name }}{{ form.short_name.errors }}
+	</div>
+	<div>
+	<label for="id_blessed_tags">Default Reactions <span>Default tags for people to react with.</span></label>
+	{{ form.blessed_tags }}
+	</div>
+	<div>
+	<label for="id_language">Language <span>For now, only "en" supported</span></label>
+	{{ form.language }}{{ form.language.errors }}
+	</div>
+	<div>
+	<label for="id_anno_whitelist">Active Text <span>CSS Selectors for text ReadrBoard interacts with by default.</span></label>
+	{{ form.anno_whitelist }}{{ form.anno_whitelist.errors }}
+	</div>
+	<div>
+	<label for="id_no_readr">Inactive Text <span>CSS Selectors for text ReadrBoard should always ignore.</span></label>
+	{{ form.no_readr }}{{ form.no_rdr.errors }}
+	</div>
+	<div>
+	<label for="id_img_whitelist">Active Images <span>CSS Selectors for images ReadrBoard interacts with by default.</span></label>
+	{{ form.img_whitelist }}{{ form.img_whitelist.errors }}
+	</div>
+	<div>
+	<label for="id_img_blacklist">Inactive Images <span>CSS Selectors for text ReadrBoard should always ignore.</span></label>
+	{{ form.img_blacklist }}{{ form.img_blacklist.errors }}
+	</div>
+	<div>
+	<label for="id_temp_interact">Post Selector <span></span></label>
+	{{ form.post_selector }}{{ form.post_selector.errors }}
+	</div>
+	<div>
+	<label for="id_temp_interact">Post HREF Selector <span></span></label>
+	{{ form.post_href_selector }}{{ form.post_href_selector.errors }}
+	</div>
+	<div>
+	<label for="id_temp_interact">Summary Widget Selector <span></span></label>
+	{{ form.summary_widget_selector }}{{ form.summary_widget_selector.errors }}
+	</div>
+	<div>
+	<label for="id_temp_interact">Temporary Interactions <span>How many times someone can react, comment &amp; share before logging in.</span></label>
+	{{ form.temp_interact }}{{ form.temp_interact.errors }}
+	</div>
+	<div>
+	<label for="id_logo_url_sm">Small Logo <span>URL to a small logo file (max 64x18)</span></label>
+	{{ form.logo_url_sm }}{{ form.logo_url_sm.errors }}
+	</div>
+	<div>
+	<label for="id_logo_url_med">Medium Logo <span>URL to a medium logo file (max 100x50)</span></label>
+	{{ form.logo_url_med }}{{ form.logo_url_med.errors }}
+	</div>
+	<div>
+	<label for="id_logo_url_lg">Large Logo <span>URL to a large logo file (max 300x250)</span></label>
+	{{ form.logo_url_lg }}{{ form.logo_url_lg.errors }}
+	</div>
+	<h3>Moderation</h3>
+	<div>
+	<label for="id_requires_approval">Requires Approval? <span>explanation</span></label>
+	{{ form.requires_approval }}{{ form.requires_approval.errors }}
+	</div>
+	<div>
+	<label for="id_word_blacklist">Word Blacklist <span>Words that are automatically censored.</span></label>
+	{{ form.word_blacklist }}{{ form.word_blacklist.errors }}
+	</div>
+	<div>
+	<label for="id_css_url">Custom CSS <span>Custom CSS rules to embed on the page.</span></label>
+	{{ form.css_url }}
+	</div>
+
+{% comment %}
+  {{ form.as_p }}
+{% endcomment %}
+
+
+  <button type="submit">Submit</button>
+  </form>
+{% endblock mainContent %}
+
+{% block pageJS %}
+{% endblock %}

@@ -357,49 +357,62 @@ class PageDataHandler(AnonymousBaseHandler):
 
 class SettingsHandler(AnonymousBaseHandler):
     model = Group
-    fields = ('id',
-              'name',
-              'short_name',
-              'language',
-              'blessed_tags',
-              'anno_whitelist',
-              'img_whitelist',
-              'img_blacklist',
-              'no_readr',
-              ('share', ('images', 'text', 'flash')),
-              ('rate', ('images', 'text', 'flash')),
-              ('comment', ('images', 'text', 'flash')),
-              ('bookmark', ('images', 'text', 'flash')),
-              ('search', ('images', 'text', 'flash')),
-              'logo_url_sm',
-              'logo_url_med',
-              'logo_url_lg',
-              'css_url',
-              'temp_interact',
-              'twitter',
-              'post_selector',
-              'post_href_selector',
-              'summary_widget_selector'
-             )
+    fields = (
+        'id',
+        'name',
+        'short_name',
+        'language',
+        'blessed_tags',
+        'anno_whitelist',
+        'img_whitelist',
+        'img_blacklist',
+        'no_readr',
+        ('share', ('images', 'text', 'flash')),
+        ('rate', ('images', 'text', 'flash')),
+        ('comment', ('images', 'text', 'flash')),
+        ('bookmark', ('images', 'text', 'flash')),
+        ('search', ('images', 'text', 'flash')),
+        'logo_url_sm',
+        'logo_url_med',
+        'logo_url_lg',
+        'css_url',
+        'temp_interact',
+        'twitter',
+        'post_selector',
+        'post_href_selector',
+        'summary_widget_selector'
+    )
              
+    """
+    Returns the settings for a group
+    """
     @status_response
     def read(self, request, group=None):
-        host = request.GET.get('host_name').split('.')
-        host = '.'.join(host)
-        path = request.path
-        fp = request.get_full_path()
+        # Get hostname, stripping www if present
+        host = getHost(request)
+        
+        # If no group has been provided, set to default
         group_id = int(group) if group else 1
+        
+        # Get the group object out of the database
         try:
             group_object = Group.objects.get(id=group_id)
         except Group.DoesNotExist:
             return HttpResponse("RB Group does not exist!")
+        
+        # Get the domains for that particular group from site objects  
         sites = Site.objects.filter(group=group_object)
         domains = sites.values_list('domain', flat=True)
+        
+        # If site is known, return group settings
+        # If not known create site for default group and return settings
+        # If site is not registered for group settings request, raise error
         if host in domains:
             return group_object
         elif group_id == 1:
-            print "host" + str(host)
             Site.objects.get_or_create(name=host,domain=host,group_id=1)
             return group_object
         else:
-            raise JSONException("Group (" + str(group) + ") settings request invalid for this domain (" + host + ")" + str(domains))
+            raise JSONException(
+                "Group (" + str(group) + ") settings request invalid for this domain (" + host + ")" + str(domains)
+            )
