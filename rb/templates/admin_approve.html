@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block sidebarContent %}
+<div id="sidebar">
+<h2>{{ group.name }}</h2>
+<img src="{{ group.logo_url_lg }}" />
+</div>
+{% endblock sidebarContent %}
+
+{% block mainContent %}
+  <h1>{{ group.name }} Approve Administrators</h1>
+  
+  {% endif %}
+{% endblock mainContent %}

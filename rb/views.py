@@ -195,11 +195,32 @@ def settings(request, group=None):
         context,
         context_instance=RequestContext(request)
     )
+    
+def admin_approve(request):
+    context = {}
+    cookie_user = checkCookieToken(request)
+    if not cookie_user: return HttpResponseRedirect('/')
+    
+    groups = GroupAdmin.objects.filter(social_user=cookie_user.social_user)
+    requests = GroupAdmin.obejcts.filter(group=groups)
+    
+    context['groups'] = groups
+    context['requests'] = requests
+    
+    if request.method == 'POST':
+        pass
+    
+    return render_to_response(
+        "admin_approve.html",
+        context,
+        context_instance=RequestContext(request)
+    )
 
 def admin_request(request, short_name=None):
     context = {}
     context['requested'] = False
     cookie_user = checkCookieToken(request)
+    if not cookie_user: return HttpResponseRedirect('/')
     
     # Get the Group and related group admins
     group = Group.objects.get(
@@ -207,16 +228,17 @@ def admin_request(request, short_name=None):
     )
     context['group'] = group
     
+    # If this is a post request access
     if request.method == 'POST':
         ga = GroupAdmin(
             group = group,
             social_user = cookie_user.social_user,
         )
         ga.save()
-        return HttpResponseRedirect('')
-    else:
-        if cookie_user.social_user.groupadmin_set.filter(group=group):
-            context['requested'] = True
+    
+    # Check if user has already requested admin access
+    if cookie_user.social_user.groupadmin_set.filter(group=group):
+        context['requested'] = True
 
     context['fb_client_id'] = FACEBOOK_APP_ID
     return render_to_response(
@@ -245,6 +267,8 @@ def expander(request, short):
     # Create redirect response
     url = page.url;
     redirect_response = HttpResponseRedirect(unicode(url))
+    
+    # Setup cookie for redirect
     redirect_response.set_cookie(key='container_hash', value=smart_str(interaction.container.hash))
     redirect_response.set_cookie(key='location', value=smart_str(interaction.content.location))
     redirect_response.set_cookie(key='content', value=smart_str(interaction.content.body))
