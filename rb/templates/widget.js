@@ -1194,11 +1194,6 @@ function readrBoard($R){
             getPageProperty : function( prop, hash ) {
                 if (!prop) prop = "id";
                 if (!hash) return 11; // TODO no.
-
-                // console.log("let's seeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-                // console.log( hash );
-                // console.log($('.rdr-'+hash).closest('.rdr-page-container').data('page_id'));
-                // console.log( $('.rdr-'+hash).data('page_id') );
                 
                 // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
                 var page_id = ( $('.rdr-'+hash).data('page_id') ) ? $('.rdr-'+hash).data('page_id') : $('.rdr-'+hash).closest('.rdr-page-container').data('page_id');
@@ -1902,7 +1897,7 @@ function readrBoard($R){
                 var urls = [];
                 var canonicals = [];
                 var titles = [];
-                var container_selectors = [];
+                var key = 0; // we use this to know which container to point to in the success call
 
                 // if multiple posts, add additional "pages"
                 if ( 
@@ -1910,18 +1905,21 @@ function readrBoard($R){
                     ( $(RDR.group.post_selector).length > 0 && $(RDR.group.post_href_selector).length > 0 && $(RDR.group.summary_widget_selector).length > 0  ) 
                    ) {
                         $.each( $(RDR.group.post_href_selector), function( idx, post_href ){
-                            urls.push( $(post_href).attr('href') );
-                            canonicals.push( $(post_href).attr('href') );
-                            titles.push( $(post_href).text() );
+                            var $post_href = $(post_href);
+                            urls.push( $post_href.attr('href') );
+                            canonicals.push( $post_href.attr('href') );
+                            titles.push( $post_href.text() );
+                            $post_href.closest( RDR.group.post_selector ).addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
+                            key++;
                         });
-                        container_selectors.push( RDR.group.post_selector ); // so we know where to append the page ID, without overwriting RDR.group.post_selector
+                        // container_selectors.push( RDR.group.post_selector ); // so we know where to append the page ID, without overwriting RDR.group.post_selector
                 }
 
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
                 urls.push( window.location.href ); // + window.location.hash;
                 canonicals.push( ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href') : "" );
                 titles.push( ( $('meta[property="og:title"]').attr('content') ) ? $('meta[property="og:title"]').attr('content') : ( $('title').text() ) ? $('title').text():"" );
-                container_selectors.push( 'body' ); // so we know where to append the page ID, without overwriting RDR.group.post_selector
+                $( 'body' ).addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
 
     			var key = 0;
                 for ( var i in urls ) {
@@ -1929,14 +1927,13 @@ function readrBoard($R){
                     var url = urls[i];
                     var canonical = canonicals[i];
                     var title = titles[i];
-                    var $container = $(container_selectors.join()).eq(key);
 
                     //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
     				//might not want to send canonical, or, send it separately if/only if it's different than URL
     				$.ajax({
                         url: RDR_rootPath+"/api/page/",
                         type: "get",
-                        context: { container:$container, key:key },
+                        context: { key:key },
                         contentType: "application/json",
                         dataType: "jsonp",
                         data: {
@@ -1946,8 +1943,9 @@ function readrBoard($R){
                             title: title
     					},
     					success: function(response) {
-                            var $container = this.container;
                             var key = this.key;
+                            var $container = ( $(RDR.group.post_selector + '.rdr-page-key-'+key).length > 0 ) ? $(RDR.group.post_selector + '.rdr-page-key-'+key) : $('body.rdr-page-key-'+key);
+                            $container.removeClass( 'rdr-page-key-' + key );
 
                             var hash = RDR.util.md5.hex_md5( String(response.data.id) );
                             var tagName = $container[0].tagName.toLowerCase();
@@ -1956,10 +1954,9 @@ function readrBoard($R){
                                 RDR.containers[hash] = {};
                                 RDR.containers[hash].id = String(response.data.id);
                                 RDR.containers[hash].kind = "page";
-                                $container.addClass( 'rdr-page-container' ); // for stepping up a tree to find a "page"
                                 $container.data( 'page_id', String(response.data.id) ); // the page ID
                             }
-
+if ( !response.data.id ) console.log('no page id');
                             // hash the "page" children
                             var hashes = RDR.actions.hashNodes( $container );
 
@@ -1988,6 +1985,8 @@ function readrBoard($R){
                             //for now, ignore error and carry on with mockup
                         }
     				});
+                
+                // increment the key counter
                 key++;
                 }
 
@@ -2172,9 +2171,9 @@ function readrBoard($R){
                     kind = $this.data('kind'),
                     HTMLkind = $this[0].tagName.toLowerCase();
 
+                    if ( HTMLkind=="img" && !body ) body = $(this).attr('src');
                     var hashText = "rdr-"+kind+"-"+body; //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
                     var hash = RDR.util.md5.hex_md5( hashText );
-
 
                     // add an object with the text and hash to the RDR.containers dictionary
                     //todo: consider putting this info directly onto the DOM node data object
@@ -2239,7 +2238,7 @@ function readrBoard($R){
     					pageID: page_id,
     					hashes: sendable_hashes
     				};
-
+console.dir(hashes);
                     // send the data!
                     $.ajax({
                         url: RDR_rootPath+"/api/summary/containers/",
@@ -2260,12 +2259,12 @@ function readrBoard($R){
                                 // get the kind
                                 if ( $('img.rdr-'+hash).length == 1 ) {
                                     unknown_summary.kind = "img";
-                                } else if ( $('.rdr-'+hash).text() && $('.rdr-'+hash).text().length > 1 ) { // TODO seems fragile.
+                                } else if ( $('.rdr-'+hash).text() ) { // TODO seems fragile.
                                     unknown_summary.kind = "text";
                                 } else {
                                     unknown_summary.kind = "media";
                                 }
-if ( hash == "24882abd09f5677b40fb135154d11075" ) console.log(unknown_summary.kind);
+
                                 // fill out some empty defaults
                                 unknown_summary.top_interactions = {};
                                 unknown_summary.top_interactions.coms = {};
@@ -2819,6 +2818,7 @@ if ( hash == "24882abd09f5677b40fb135154d11075" ) console.log(unknown_summary.ki
                     if (sendData.uiMode) delete sendData.uiMode;
                     if (sendData.sendData) delete sendData.sendData; //this was happening for delete calls.
 
+// TODO force forcing
 sendData.container_kind = RDR.summaries[sendData.hash].kind;
 // sendData.container_kind = sendData.hash;
 if (sendData.content_node_data && sendData.content_node_data.container ) delete sendData.content_node_data.container;
