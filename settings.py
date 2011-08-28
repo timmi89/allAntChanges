@@ -162,10 +162,8 @@ INSTALLED_APPS = [
     #'devserver'
 ]
 
-if DEBUG: INSTALLED_APPS.append(
-    'devserver',
-    'django.contrib.admin'
-)
+if DEBUG: INSTALLED_APPS.append('devserver')
+if DEBUG: INSTALLED_APPS.append('django.contrib.admin')
 
 
 DEVSERVER_MODULES = (
