@@ -319,6 +319,9 @@ class PageDataHandler(AnonymousBaseHandler):
         iop = Interaction.objects.filter(page=page)
         iop = iop.exclude(content__kind='page')
         
+        # Retrieve containers
+        containers = Container.objects.filter(id__in=iop.values('container'))
+        
         # ---Get page interaction counts, grouped by kind---
         # Focus on values for 'kind'
         values = iop.order_by('kind').values('kind')
@@ -349,6 +352,7 @@ class PageDataHandler(AnonymousBaseHandler):
             toptags=toptags,
             topusers=topusers,
             topshares=topshares,
+            containers=containers
         )
 
 class SettingsHandler(AnonymousBaseHandler):
