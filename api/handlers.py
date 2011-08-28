@@ -171,7 +171,7 @@ class CommentHandler(InteractionHandler):
 class TagHandler(InteractionHandler):
     def create(self, request, data, user, page, group, kind='tag'):
         tag_body = data['tag']['body']
-        container_hash = data['container']
+        container_hash = data['hash']
         container_kind = data['container_kind']
         content_node_data = data['content_node_data']
         content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[ content_node_data['kind'] ]
@@ -203,7 +203,7 @@ class BookmarkHandler(InteractionHandler):
 class ShareHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
         tag_body = data['tag']['body']
-        container_hash = data['container']
+        container_hash = data['hash']
         container_kind = data['container_kind']
         content_node_data = data['content_node_data']
         content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[ content_node_data['kind'] ]
