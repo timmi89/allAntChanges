@@ -196,20 +196,30 @@ def settings(request, group=None):
         context_instance=RequestContext(request)
     )
     
-def admin_approve(request):
+def admin_approve(request, request_id=None):
     context = {}
     cookie_user = checkCookieToken(request)
     if not cookie_user: return HttpResponseRedirect('/')
     
-    groups = GroupAdmin.objects.filter(social_user=cookie_user.social_user)
-    requests = GroupAdmin.obejcts.filter(group=groups)
+    groups = GroupAdmin.objects.filter(
+        social_user=cookie_user.social_user,
+        approved=True
+    )
     
-    context['groups'] = groups
+    requests = GroupAdmin.objects.filter(
+        group=groups,
+        approved=False
+    ).exclude(social_user=cookie_user.social_user)
+    
+    if request_id:
+        admin_request = requests.get(id=request_id)
+        admin_request.approved = True
+        admin_request.save()
+        requests.exclude(id=request_id)
+    
     context['requests'] = requests
     
-    if request.method == 'POST':
-        pass
-    
+    context['fb_client_id'] = FACEBOOK_APP_ID
     return render_to_response(
         "admin_approve.html",
         context,

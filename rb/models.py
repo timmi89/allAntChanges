@@ -164,6 +164,9 @@ class GroupAdmin(models.Model):
     social_user = models.ForeignKey(SocialUser)
     approved = models.BooleanField(default=False)
     
+    def __unicode__(self):
+        return str(self.group) + ":" + self.social_user.full_name + ":" + str(self.approved)
+    
     class Meta:
         unique_together = ('group', 'social_user')
 

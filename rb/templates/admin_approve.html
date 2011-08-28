@@ -9,6 +9,15 @@
 
 {% block mainContent %}
   <h1>{{ group.name }} Approve Administrators</h1>
-  
-  {% endif %}
+  {% regroup requests by group as groups %}
+    {% for group in groups %}
+      Admin Requests for {{ group.grouper.name }}
+      <ul>
+        {% for request in group.list %}
+          <li>{{ request.social_user.full_name }}<a href="/admin_approve/{{ request.id }}">Approve</a></li>
+        {% endfor %}
+      </ul>
+    {% empty %}
+        <p>Nobody to approve!</p>
+    {% endfor %}
 {% endblock mainContent %}
