@@ -203,7 +203,8 @@ class BookmarkHandler(InteractionHandler):
 class ShareHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
         tag_body = data['tag']['body']
-        container_hash = data['hash']
+        container_hash = data['container']
+        container_kind = data['container_kind']
         content_node_data = data['content_node_data']
         content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[ content_node_data['kind'] ]
 
@@ -220,10 +221,10 @@ class ShareHandler(InteractionHandler):
         inode = createInteractionNode(tag_id, tag_body, group)
 
         # Get the container
-        try:
-            container = Container.objects.get(hash=container_hash)
-        except Container.DoesNotExist:
-            return JSONException("Container specified does not exist")
+        container = Container.objects.get_or_create(
+            hash = container_hash,
+            defaults = {'kind': container_kind,}
+        )
 
         # Create appropriate parent
         if referring_int_id:
