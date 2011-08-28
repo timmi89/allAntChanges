@@ -987,6 +987,7 @@ function readrBoard($R){
                     //rewrite coords if needed
                     coords = RDR.util.stayInWindow({coords:coords, width:45, height:30, paddingY:40, paddingX:40, ignoreWindowEdges:settings.ignoreWindowEdges});                    
                 }
+
                 // TODO use settings check for certain features and content types to determine which of these to disable
                 var $new_actionbar = $('<div class="rdr rdr_actionbar rdr_widget rdr_widget_bar" id="' + actionbar_id + '" />').css({
                    'top':coords.top,
@@ -1191,14 +1192,20 @@ function readrBoard($R){
 		},
 		util: {
             getPageProperty : function( prop, hash ) {
+                console.log( 'getPageProperty: '+ prop + ', ' + hash );
                 if (!prop) prop = "id";
-                if (!hash) return 11;
+                if (!hash) return 11; // TODO no.
 
+                // console.log("let's seeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+                // console.log( hash );
+                // console.log($('.rdr-'+hash).closest('.rdr-page-container').data('page_id'));
+                // console.log( $('.rdr-'+hash).data('page_id') );
+                
                 // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
                 var page_id = ( $('.rdr-'+hash).data('page_id') ) ? $('.rdr-'+hash).data('page_id') : $('.rdr-'+hash).closest('.rdr-page-container').data('page_id');
                 
                 // store the page_id on this node to prevent walking-up again later
-                if ( !$('.rdr-'+hash).data('page_id') ) {
+                if ( $('.rdr-'+hash).hasClass('rdr-page-container') && !$('.rdr-'+hash).data('page_id') ) {
                     $('.rdr-'+hash).data('page_id', page_id)
                 }
 
@@ -2110,7 +2117,6 @@ function readrBoard($R){
                             //todo: reconsider using this - it's not super efficient to grab the text just to verify it's a node that has text.
                             // - Prob fine though since we're only testing hashes we pass in manually.
                             //proves it has text (so ellminates images for example.) //the !! is just a convention indicating it's used as a bool.
-                            console.log('tagName: '+$(node)[0].tagName.toLowerCase() );
                             if ( $(node).text() != $(node).parent().text() ) {
                                 return !!$(node).text();
                             }
@@ -2128,10 +2134,9 @@ function readrBoard($R){
                         
                     }
                 ];
-                
+
                 //go through the groups in order and pick out valid nodes of that type. Default to text if it's valid for that.
                 $.each( nodeGroups, function( idx, group ){
-
                     // var nodesPassedIn = (typeof $nodes!=="undefined") && $nodes.length;
                     // var $group = nodesPassedIn ? $nodes.filter( group.filterParam ) : $( group.whiteList );
 
@@ -2158,7 +2163,7 @@ function readrBoard($R){
 
                 });
 
-                if( !$allNodes.length ) return false;
+                if( !$allNodes.data('body') ) return false;
                 //else
 
                 var hashList = [];
@@ -2196,14 +2201,9 @@ function readrBoard($R){
                     $this.data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
                 });
 
-console.log('hashList');
-console.dir(hashList);
-
                 return hashList;
             },
             sendHashes: function( hashes, onSuccessCallback ) {
-                console.log('sendHashes: ');
-                console.dir(hashes);
 
                 // if ( hashes.length == 1 ) {
                 //     var hash = hashes[0];
@@ -2228,7 +2228,6 @@ console.dir(hashList);
                 for (var i in hashes) {
                     var page_id = i;
                     var sendable_hashes = hashes[i];
-    // console.dir(hashes);
 
 
                     if ( !page_id ) {
@@ -2252,9 +2251,45 @@ console.dir(hashList);
                         	json: $.toJSON(sendData)
                         },
                         success: function(response) {
-console.log('successful hash send');
-                            var summaries = response.data.known,
-                            unknownList = response.data.unknown;
+                            console.log('------------ RESPONSE CHECK -----------');
+                            console.dir(response.data.known);
+                            console.dir(response.data.unknown);
+                            
+                            var summaries = response.data.known;
+                            
+                            // TODO this is a hack.  we should change how we receive known and unknown to make them the same format.
+                            for ( var i in response.data.unknown ) {
+                                var unknown_summary = {},
+                                    hash = response.data.unknown[i];
+                                
+                                // get the kind
+                                if ( $('img.rdr-'+hash).length == 1 ) {
+                                    unknown_summary.kind = "img";
+                                } else if ( $('.rdr-'+hash).text() ) {
+                                    unknown_summary.kind = "text";
+                                } else {
+                                    unknown_summary.kind = "media";
+                                }
+
+                                // fill out some empty defaults
+                                unknown_summary.top_interactions = {};
+                                unknown_summary.top_interactions.coms = {};
+                                unknown_summary.top_interactions.tags = {};
+                                unknown_summary.top_interactions.shr = {};
+
+                                unknown_summary.interaction_order = {};
+                                unknown_summary.interaction_order.coms = {};
+                                unknown_summary.interaction_order.tags = {};
+
+                                unknown_summary.counts = {};
+                                unknown_summary.counts.tags = 0;
+                                unknown_summary.counts.interactions = 0; // TODO not sure why we have this and also "tags"
+                                unknown_summary.counts.coms = 0;
+
+                                unknown_summary.hash = hash;
+
+                                summaries[ hash ] = unknown_summary;
+                            }
                             
                             //the callback implementation here is a litte unintuitive:
                             //it only gets passsed in when a single hash is run through here, 
@@ -2268,8 +2303,11 @@ console.log('successful hash send');
                             //     RDR.actions.containers.send(unknownList, onSuccessCallback);
                             // }
 
-                            if ( ! $.isEmptyObject(summaries) ){
-                                //setup the known summaries
+                            // [ porter ]: since we're not storing containers anymore, just setup all hashes regardless of "known" status
+                            // if ( !$.isEmptyObject(summaries) ){
+
+                                //setup the summaries
+                                console.log('ok go setup the summaries');
                                 RDR.actions.containers.setup(summaries);
                                 
                                 //the callback verifies the new container and draws the actionbar
@@ -2277,7 +2315,7 @@ console.log('successful hash send');
                                 if(typeof onSuccessCallback !== 'undefined'){
                                     onSuccessCallback();
                                 }      
-                            }
+                            // }
                             
                             
                         }
@@ -2389,9 +2427,10 @@ console.log('successful hash send');
                     };
 
                     var hashesToShow = []; //filled below
+
                     $.each(summaries, function(hash, summary){
                         //first do generic stuff
-
+console.log('container setup LOOP: '+hash);
                         //save the hash as a summary attr for convenience.
                         summary.hash = hash;
 
@@ -2570,7 +2609,6 @@ console.log('successful hash send');
                                 //else
                                 var node = RDR.containers[hash];
                                 node.id = id;
-                                
                                 dummySummaries[hash] = RDR.actions.summaries.init(hash);
                             });
                         
@@ -2752,9 +2790,6 @@ console.log('successful hash send');
 
                     //get user and only procceed on success of that.
                     RDR.session.getUser( args, function(newArgs){
-                        console.log('newArgs');
-                        console.dir(newArgs);
-                        //[cleanlogz]('user');
                         var defaultSendData = RDR.actions.interactions.defaultSendData(newArgs),
                             customSendData = RDR.actions.interactions[int_type].customSendData(newArgs),
                             sendData = $.extend( {}, defaultSendData, customSendData );
@@ -2791,7 +2826,7 @@ console.log('successful hash send');
                     if (sendData.node) delete sendData.node;
                     if (sendData.uiMode) delete sendData.uiMode;
                     if (sendData.sendData) delete sendData.sendData; //this was happening for delete calls.
-
+console.dir(args.sendData);
                     //todo: consider making a generic url router
                     var url = RDR_rootPath+"/api/" +int_type+ "/"+action_type+"/";
 
@@ -3073,7 +3108,7 @@ console.log('successful hash send');
                             "page_id" : RDR.util.getPageProperty('id', hash),
                             "int_id" : args.int_id
                         };
-                        
+                        console.log('PAGE ID: '+sendData.page_id);
                         return sendData;
 
                     },
@@ -5633,6 +5668,9 @@ console.log('successful hash send');
                 }
                 //if no valid blockParent was found, we're done here.
                 if( $blockParent === null ) return;
+                else {
+                    $rdrParent = $blockParent.closest('.rdr-hashed');
+                }
                 //else
                 //let selog use serialrange to check if the selected text is contained in the $blockParent (also check for "" of just whitespace)
                 var selected = $blockParent.selog('save');
@@ -5643,8 +5681,8 @@ console.log('successful hash send');
                 if(selected.text.length > maxChars) return;
 
                 // check if the blockparent is already hashed
-                if ( $blockParent.hasClass('rdr-hashed') ) {
-                    _drawActionBar($blockParent);
+                if ( $rdrParent.hasClass('rdr-hashed') && !$rdrParent.hasClass('rdr-page-container') ) {
+                    _drawActionBar($rdrParent);
                 }
                 else{
                     //hasn't been hashed yet.
@@ -5677,7 +5715,6 @@ console.log('successful hash send');
                     return $blockParent;
                 }
                 function _drawActionBar ($blockParent){
-
                     var hash = $blockParent.data('hash');
 
                     if ( _writeModeOpenForThisContainer(hash) ) return false;
