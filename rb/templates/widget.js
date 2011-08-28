@@ -2819,6 +2819,10 @@ if ( hash == "24882abd09f5677b40fb135154d11075" ) console.log(unknown_summary.ki
                     if (sendData.uiMode) delete sendData.uiMode;
                     if (sendData.sendData) delete sendData.sendData; //this was happening for delete calls.
 
+sendData.container_kind = RDR.summaries[sendData.hash].kind;
+// sendData.container_kind = sendData.hash;
+if (sendData.content_node_data && sendData.content_node_data.container ) delete sendData.content_node_data.container;
+
                     //todo: consider making a generic url router
                     var url = RDR_rootPath+"/api/" +int_type+ "/"+action_type+"/";
 
