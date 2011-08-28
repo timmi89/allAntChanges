@@ -218,7 +218,6 @@ def admin_approve(request, request_id=None):
         requests.exclude(id=request_id)
     
     context['requests'] = requests
-    
     context['fb_client_id'] = FACEBOOK_APP_ID
     return render_to_response(
         "admin_approve.html",
