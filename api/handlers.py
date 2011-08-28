@@ -188,7 +188,7 @@ class TagHandler(InteractionHandler):
         container = Container.objects.get_or_create(
             hash = container_hash,
             defaults = {'kind': container_kind,}
-        )
+        )[0]
 
         # Create an interaction
         interaction = createInteraction(page, container, content, user, kind, inode, group)
@@ -224,7 +224,7 @@ class ShareHandler(InteractionHandler):
         container = Container.objects.get_or_create(
             hash = container_hash,
             defaults = {'kind': container_kind,}
-        )
+        )[0]
 
         # Create appropriate parent
         if referring_int_id:
