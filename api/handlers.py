@@ -383,10 +383,7 @@ class SettingsHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, group=None):
         # Get hostname, stripping www if present
-        host = request.GET.get('host_name').split('.')
-        if 'www' in host[0]:
-            host = host[1:]
-        host = '.'.join(host)
+        host = getHost(request)
         
         # If no group has been provided, set to default
         group_id = int(group) if group else 1

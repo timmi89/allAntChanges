@@ -28,10 +28,10 @@ class ProfileAdmin(admin.ModelAdmin):
         'follower_count'
     )
 
-class GroupAdmin(admin.ModelAdmin):
+class RBGroupAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
-            'fields': ('name', 'short_name')
+            'fields': ('name', 'short_name', 'demo_group', 'approved')
         }),
         ('Advanced', {
             'fields': ('blessed_tags', 'anno_whitelist', 'temp_interact', 'img_whitelist', 'img_blacklist', 'no_readr', 'secret', 'word_blacklist')
@@ -124,7 +124,7 @@ class LinkAdmin(admin.ModelAdmin):
 admin.site.register(SocialAuth, SocialAuthAdmin)
 admin.site.register(Link, LinkAdmin)
 admin.site.register(Page, PageAdmin)
-admin.site.register(Group, GroupAdmin)
+admin.site.register(Group, RBGroupAdmin)
 admin.site.register(Site, SiteAdmin)
 admin.site.register(Container, ContainerAdmin)
 admin.site.register(Interaction, InteractionAdmin)
@@ -132,3 +132,4 @@ admin.site.register(SocialUser, SocialUserAdmin)
 admin.site.register(NodeValue, NodeValueAdmin)
 admin.site.register(Content, ContentAdmin)
 admin.site.register(Profile)
+admin.site.register(GroupAdmin)

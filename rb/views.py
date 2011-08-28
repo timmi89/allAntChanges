@@ -191,18 +191,32 @@ def settings(request, group=None):
     context['short_name'] = group.short_name
     context['fb_client_id'] = FACEBOOK_APP_ID
     return render_to_response(
-        "group_form.html",
+        "group_settings.html",
         context,
         context_instance=RequestContext(request)
     )
 
 def admin_request(request, short_name=None):
     context = {}
-    context['cookie_user'] = checkCookieToken(request)
-    try:
-        context['group'] = Group.objects.get(short_name=short_name)
-    except Group.DoesNotExist:
-        return JSONException(u'Invalid group')
+    context['requested'] = False
+    cookie_user = checkCookieToken(request)
+    
+    # Get the Group and related group admins
+    group = Group.objects.get(
+        short_name=short_name
+    )
+    context['group'] = group
+    
+    if request.method == 'POST':
+        ga = GroupAdmin(
+            group = group,
+            social_user = cookie_user.social_user,
+        )
+        ga.save()
+        return HttpResponseRedirect('')
+    else:
+        if cookie_user.social_user.groupadmin_set.filter(group=group):
+            context['requested'] = True
 
     context['fb_client_id'] = FACEBOOK_APP_ID
     return render_to_response(

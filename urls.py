@@ -14,7 +14,6 @@ urlpatterns = patterns('',
   url(r'^fb/$', 'rb.views.fb'),
   url(r'^fblogin/$', 'rb.views.fblogin'),
   url(r'^xdm_status/$', 'rb.views.xdm_status'),
-  url(r'^admin_request/(?P<short_name>\w+)/$', 'rb.views.admin_request'),
   
   # For short URL expander
   url(r'^s/(?P<short>[0-9a-zA-Z])+/$', 'rb.views.expander'),
@@ -77,10 +76,11 @@ urlpatterns = patterns('',
 
   url(r'^api/', include('readrboard.api.urls')),
   url(r'^analytics/', include('readrboard.analytics.urls')),
-  url(r'^admin/', include(admin.site.urls)),
+  url(r'^admin_request/(?P<short_name>\w+)/$', 'rb.views.admin_request'),
 )
 
 if settings.DEBUG:
+  urlpatterns += url(r'^admin/', include(admin.site.urls)),
   urlpatterns += staticfiles_urlpatterns()
   urlpatterns += patterns('',
           url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {

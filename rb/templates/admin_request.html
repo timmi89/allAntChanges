@@ -8,15 +8,13 @@
 {% endblock sidebarContent %}
 
 {% block mainContent %}
-  <h1>Request Administrative Access</h1>
-
-  <div id="fb-logged-in" style="display:none;">
-	<button>Request Administrative Access for {{ group.name }}</button>
-  </div>
-
-  <div id="fb-logged-out" style="display:none;">
-	<div id="fb-login-button">
-		<a href="javascript:void(0);" onclick="RB.user_auth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" /></a>
-	</div>
-  </div>
+  <h1>{{ group.name }} Administrative Access</h1>
+  {% if requested %}
+    <h2>Administrative access for {{ group.name }} has been requested!</h2>
+  {% else %}
+    <form action="/admin_request/{{ group.short_name }}/" method="post">
+      {% csrf_token %}
+      <button type="submit">Request Access</button>
+    </form>
+  {% endif %}
 {% endblock mainContent %}

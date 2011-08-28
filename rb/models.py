@@ -113,7 +113,7 @@ class Group(models.Model):
     language = models.CharField(max_length=25, default="en")
     approved = models.BooleanField(default=False)
     requires_approval = models.BooleanField(default=False)
-    demonstration_group = models.BooleanField(default=False)
+    demo_group = models.BooleanField(default=False)
     word_blacklist = models.TextField(blank=True)
     
     # Many to many relations
@@ -163,6 +163,9 @@ class GroupAdmin(models.Model):
     group = models.ForeignKey(Group)
     social_user = models.ForeignKey(SocialUser)
     approved = models.BooleanField(default=False)
+    
+    class Meta:
+        unique_together = ('group', 'social_user')
 
 class NodeValue(models.Model):
     group = models.ForeignKey(Group)
