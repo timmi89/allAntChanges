@@ -1904,22 +1904,28 @@ function readrBoard($R){
                     ( RDR.group.post_selector != "" && RDR.group.post_href_selector != "" && RDR.group.summary_widget_selector != "" ) &&
                     ( $(RDR.group.post_selector).length > 0 && $(RDR.group.post_href_selector).length > 0 && $(RDR.group.summary_widget_selector).length > 0  ) 
                    ) {
-                        $.each( $(RDR.group.post_href_selector), function( idx, post_href ){
-                            var $post_href = $(post_href);
+                        $.each( $(RDR.group.post_selector), function( idx, post ){
+                            var $post = $(post);
+                            var $post_href = $post.find(RDR.group.post_href_selector);
+                            console.log($post_href.length);
+                            console.dir($post_href);
+                            var $summary_widget = $post.find(RDR.group.summary_widget_selector);
                             urls.push( $post_href.attr('href') );
                             canonicals.push( $post_href.attr('href') );
                             titles.push( $post_href.text() );
-                            $post_href.closest( RDR.group.post_selector ).addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
+                            $post.addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
+                            $summary_widget.addClass('rdr-page-widget-key-'+key);
                             key++;
                         });
                         // container_selectors.push( RDR.group.post_selector ); // so we know where to append the page ID, without overwriting RDR.group.post_selector
                 }
-
+console.dir(urls);
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
                 urls.push( window.location.href ); // + window.location.hash;
                 canonicals.push( ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href') : "" );
                 titles.push( ( $('meta[property="og:title"]').attr('content') ) ? $('meta[property="og:title"]').attr('content') : ( $('title').text() ) ? $('title').text():"" );
                 $( 'body' ).addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
+                if ( $('#rdr-page-summary').length == 1 ) $('#rdr-page-summary').addClass('rdr-page-widget-key-'+key);
 
     			var key = 0;
                 for ( var i in urls ) {
@@ -1956,24 +1962,35 @@ function readrBoard($R){
                                 RDR.containers[hash].kind = "page";
                                 $container.data( 'page_id', String(response.data.id) ); // the page ID
                             }
-if ( !response.data.id ) console.log('no page id');
-                            // hash the "page" children
-                            var hashes = RDR.actions.hashNodes( $container );
 
-                            if(hashes){
+                            // hash the "page" descendant nodes
+                            RDR.actions.hashNodes( $container );
+
+                            if ( response.data.containers.length > 0 ) {
+                                var hashes = [];
+                                hashes[ response.data.id ] = [];
+                                for ( var i in response.data.containers ) {
+                                    hashes[ response.data.id ].push( response.data.containers[i].hash );
+                                }
                                 RDR.actions.sendHashes( hashes );    
                             }
-                            
 
                             //init the widgetSummary
                             var widgetSummarySettings = response;
-                            widgetSummarySettings.anchor = ( RDR.group.summary_widget_selector != "" ) ? RDR.group.summary_widget_selector : "#rdr-page-summary"; //change to group.summaryWidgetAnchorNode or whatever
-                            widgetSummarySettings.jqFunc = ( RDR.group.summary_widget_selector != "" ) ? "after" : "append";
+                            if ( $container.find( RDR.group.summary_widget_selector + '.rdr-page-widget-key-' + key).length == 1 ) {
+                                widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector + '.rdr-page-widget-key-'+key);
+                                widgetSummarySettings.jqFunc = "after";
+                            } else {
+                                widgetSummarySettings.$anchor = "#rdr-page-summary"; //change to group.summaryWidgetAnchorNode or whatever
+                                widgetSummarySettings.jqFunc = "append";
+                            }
+                            
+                            widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
 
                             // [ porter ] i can explain...
-                            if ( ( $('#rdr-page-summary').length == 1 && key == 0 ) || ( urls.length > 1 && key > 0 ) || ( urls.length == 1 ) ) {
-                                $container.find(widgetSummarySettings.anchor+':eq(0)').rdrWidgetSummary(widgetSummarySettings);
-                            }
+                            // if ( ( $('#rdr-page-summary').length == 1 && key == 0 ) || ( urls.length > 1 && key > 0 ) || ( urls.length == 1 ) ) {
+                            // if (  ) {}
+                            // }
 
                             //insertImgIcons(response);
                            
@@ -2238,7 +2255,7 @@ if ( !response.data.id ) console.log('no page id');
     					pageID: page_id,
     					hashes: sendable_hashes
     				};
-console.dir(hashes);
+
                     // send the data!
                     $.ajax({
                         url: RDR_rootPath+"/api/summary/containers/",
