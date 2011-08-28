@@ -645,7 +645,30 @@ function readrBoard($R){
                 //temp tie-over    
                 var hash = options.hash,
                     summary = RDR.summaries[hash],
-                    kind = summary.kind;
+                    kind = options.kind;
+                
+                if (!summary) {
+                    // setup the summary
+                    summary = {};
+                    summary[hash] = {};
+                    summary[hash].kind = kind;
+                    summary[hash].top_interactions = {};
+                    summary[hash].top_interactions.coms = {};
+                    summary[hash].top_interactions.tags = {};
+                    summary[hash].top_interactions.shr = {};
+
+                    summary[hash].interaction_order = {};
+                    summary[hash].interaction_order.coms = {};
+                    summary[hash].interaction_order.tags = {};
+
+                    summary[hash].counts = {};
+                    summary[hash].counts.tags = 0;
+                    summary[hash].counts.interactions = 0; // TODO not sure why we have this and also "tags"
+                    summary[hash].counts.coms = 0;
+
+                    summary[hash].hash = hash;
+                    RDR.actions.containers.setup(summary);
+                }
                     
                 //checks for rindowType
                 if ( !rindowType ) rindowType = "readMode";
@@ -953,7 +976,6 @@ function readrBoard($R){
                 //expand to make settings explicit
 
                 //node: summary may not be defined at this point, so get info from settings.
-                
                 var hash = settings.hash,
                     coords = settings.coords,
                     kind = settings.kind,
@@ -1194,11 +1216,6 @@ function readrBoard($R){
             getPageProperty : function( prop, hash ) {
                 if (!prop) prop = "id";
                 if (!hash) return 11; // TODO no.
-
-                // console.log("let's seeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-                // console.log( hash );
-                // console.log($('.rdr-'+hash).closest('.rdr-page-container').data('page_id'));
-                // console.log( $('.rdr-'+hash).data('page_id') );
                 
                 // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
                 var page_id = ( $('.rdr-'+hash).data('page_id') ) ? $('.rdr-'+hash).data('page_id') : $('.rdr-'+hash).closest('.rdr-page-container').data('page_id');
@@ -1902,26 +1919,38 @@ function readrBoard($R){
                 var urls = [];
                 var canonicals = [];
                 var titles = [];
-                var container_selectors = [];
+                var key = 0; // we use this to know which container to point to in the success call
 
                 // if multiple posts, add additional "pages"
                 if ( 
                     ( RDR.group.post_selector != "" && RDR.group.post_href_selector != "" && RDR.group.summary_widget_selector != "" ) &&
-                    ( $(RDR.group.post_selector).length > 0 && $(RDR.group.post_href_selector).length > 0 && $(RDR.group.summary_widget_selector).length > 0  ) 
+                    ( $(RDR.group.post_selector).length > 0 ) 
                    ) {
-                        $.each( $(RDR.group.post_href_selector), function( idx, post_href ){
-                            urls.push( $(post_href).attr('href') );
-                            canonicals.push( $(post_href).attr('href') );
-                            titles.push( $(post_href).text() );
+                        $(RDR.group.post_selector).each( function(){
+                            var $post = $(this);
+                            var $post_href = $post.find(RDR.group.post_href_selector);
+                            var $summary_widget = $post.find(RDR.group.summary_widget_selector);
+                            if ( $post_href.attr('href') ) {
+                                urls.push( $post_href.attr('href') );
+                                canonicals.push( $post_href.attr('href') );
+                                titles.push( $post_href.text() );
+                                $post.addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
+                                $summary_widget.addClass('rdr-page-widget-key-'+key);
+                                key++;
+                            }
                         });
-                        container_selectors.push( RDR.group.post_selector ); // so we know where to append the page ID, without overwriting RDR.group.post_selector
                 }
 
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
                 urls.push( window.location.href ); // + window.location.hash;
                 canonicals.push( ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href') : "" );
                 titles.push( ( $('meta[property="og:title"]').attr('content') ) ? $('meta[property="og:title"]').attr('content') : ( $('title').text() ) ? $('title').text():"" );
-                container_selectors.push( 'body' ); // so we know where to append the page ID, without overwriting RDR.group.post_selector
+                $( 'body' ).addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
+                if ( $('#rdr-page-summary').length == 1 ) {
+                    $('#rdr-page-summary').addClass('rdr-page-widget-key-'+key);
+                } else {
+                    $( 'body' ).find(RDR.group.summary_widget_selector).addClass('rdr-page-widget-key-'+key);
+                }
 
     			var key = 0;
                 for ( var i in urls ) {
@@ -1929,14 +1958,13 @@ function readrBoard($R){
                     var url = urls[i];
                     var canonical = canonicals[i];
                     var title = titles[i];
-                    var $container = $(container_selectors.join()).eq(key);
 
                     //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
     				//might not want to send canonical, or, send it separately if/only if it's different than URL
     				$.ajax({
                         url: RDR_rootPath+"/api/page/",
                         type: "get",
-                        context: { container:$container, key:key },
+                        context: { key:key },
                         contentType: "application/json",
                         dataType: "jsonp",
                         data: {
@@ -1946,8 +1974,9 @@ function readrBoard($R){
                             title: title
     					},
     					success: function(response) {
-                            var $container = this.container;
                             var key = this.key;
+                            var $container = ( $(RDR.group.post_selector + '.rdr-page-key-'+key).length > 0 ) ? $(RDR.group.post_selector + '.rdr-page-key-'+key) : $('body.rdr-page-key-'+key);
+                            $container.removeClass( 'rdr-page-key-' + key );
 
                             var hash = RDR.util.md5.hex_md5( String(response.data.id) );
                             var tagName = $container[0].tagName.toLowerCase();
@@ -1956,27 +1985,37 @@ function readrBoard($R){
                                 RDR.containers[hash] = {};
                                 RDR.containers[hash].id = String(response.data.id);
                                 RDR.containers[hash].kind = "page";
-                                $container.addClass( 'rdr-page-container' ); // for stepping up a tree to find a "page"
                                 $container.data( 'page_id', String(response.data.id) ); // the page ID
                             }
 
-                            // hash the "page" children
-                            var hashes = RDR.actions.hashNodes( $container );
+                            // hash the "page" descendant nodes
+                            RDR.actions.hashNodes( $container );
 
-                            if(hashes){
+                            if ( response.data.containers.length > 0 ) {
+                                var hashes = [];
+                                hashes[ response.data.id ] = [];
+                                for ( var i in response.data.containers ) {
+                                    hashes[ response.data.id ].push( response.data.containers[i].hash );
+                                }
                                 RDR.actions.sendHashes( hashes );    
                             }
-                            
 
                             //init the widgetSummary
                             var widgetSummarySettings = response;
-                            widgetSummarySettings.anchor = ( RDR.group.summary_widget_selector != "" ) ? RDR.group.summary_widget_selector : "#rdr-page-summary"; //change to group.summaryWidgetAnchorNode or whatever
-                            widgetSummarySettings.jqFunc = ( RDR.group.summary_widget_selector != "" ) ? "after" : "append";
+                            if ( $container.find( RDR.group.summary_widget_selector + '.rdr-page-widget-key-' + key).length == 1 ) {
+                                widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector + '.rdr-page-widget-key-'+key);
+                                widgetSummarySettings.jqFunc = "after";
+                            } else {
+                                widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
+                                widgetSummarySettings.jqFunc = "append";
+                            }
+                            
+                            widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
 
                             // [ porter ] i can explain...
-                            if ( ( $('#rdr-page-summary').length == 1 && key == 0 ) || ( urls.length > 1 && key > 0 ) || ( urls.length == 1 ) ) {
-                                $container.find(widgetSummarySettings.anchor+':eq(0)').rdrWidgetSummary(widgetSummarySettings);
-                            }
+                            // if ( ( $('#rdr-page-summary').length == 1 && key == 0 ) || ( urls.length > 1 && key > 0 ) || ( urls.length == 1 ) ) {
+                            // if (  ) {}
+                            // }
 
                             //insertImgIcons(response);
                            
@@ -1988,6 +2027,8 @@ function readrBoard($R){
                             //for now, ignore error and carry on with mockup
                         }
     				});
+                
+                // increment the key counter
                 key++;
                 }
 
@@ -2052,7 +2093,6 @@ function readrBoard($R){
                     if(!hasBeenHashed){
                         $this.addClass('rdr_live_hover');
                         var hash = RDR.actions.hashNodes( $(this) );
-                        console.log('image, and it has a hash: ' + hash);
                         if(hash){
                             RDR.actions.sendHashes( hash, function(){
                                 if( $this.hasClass('rdr_live_hover') ){
@@ -2172,9 +2212,9 @@ function readrBoard($R){
                     kind = $this.data('kind'),
                     HTMLkind = $this[0].tagName.toLowerCase();
 
+                    if ( HTMLkind=="img" && !body ) body = $(this).attr('src');
                     var hashText = "rdr-"+kind+"-"+body; //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
                     var hash = RDR.util.md5.hex_md5( hashText );
-
 
                     // add an object with the text and hash to the RDR.containers dictionary
                     //todo: consider putting this info directly onto the DOM node data object
@@ -2218,7 +2258,6 @@ function readrBoard($R){
                 // function getAllHashes(){
                 //     var hashes = [];
                 //     for (var hashKey in RDR.containers ) {
-                //         console.log('RDR.containers[hashkey].kind: '+RDR.containers[hashkey].kind); 
                 //         if ( RDR.containers[hashkey].kind != "page" ) hashes.push( hashKey );
                 //     }
                 //     return hashes;
@@ -2260,12 +2299,13 @@ function readrBoard($R){
                                 // get the kind
                                 if ( $('img.rdr-'+hash).length == 1 ) {
                                     unknown_summary.kind = "img";
-                                } else if ( $('.rdr-'+hash).text() && $('.rdr-'+hash).text().length > 1 ) { // TODO seems fragile.
+                                } else if ( $('.rdr-'+hash).text() ) { // TODO seems fragile.
                                     unknown_summary.kind = "text";
                                 } else {
                                     unknown_summary.kind = "media";
                                 }
-if ( hash == "24882abd09f5677b40fb135154d11075" ) console.log(unknown_summary.kind);
+
+                                // WE MAY NOT NEED THIS ANYMORE THANKS TO ONLY CALLING THIS FOR CONTAINERS WITH PRIOR INTERACTIONS
                                 // fill out some empty defaults
                                 unknown_summary.top_interactions = {};
                                 unknown_summary.top_interactions.coms = {};
@@ -2337,6 +2377,7 @@ if ( hash == "24882abd09f5677b40fb135154d11075" ) console.log(unknown_summary.ki
                 setup: function(summaries){
                     //RDR.actions.containers.setup:
                     //then define type-specific setup functions and run them
+
                     var _setupFuncs = {
                         img: function(hash, summary){
                             var containerInfo = RDR.containers[hash];
@@ -2819,6 +2860,7 @@ if ( hash == "24882abd09f5677b40fb135154d11075" ) console.log(unknown_summary.ki
                     if (sendData.uiMode) delete sendData.uiMode;
                     if (sendData.sendData) delete sendData.sendData; //this was happening for delete calls.
 
+// TODO force forcing
 sendData.container_kind = RDR.summaries[sendData.hash].kind;
 // sendData.container_kind = sendData.hash;
 if (sendData.content_node_data && sendData.content_node_data.container ) delete sendData.content_node_data.container;
@@ -5719,7 +5761,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     // closes undragged windows
                     //close with our own event instead of removing directly so that I can bind an event to the remove event (thanks ie.)
                     RDR.rindow.close( $('div.rdr.rdr_window.rdr.rdr_rewritable') );
-           
+
                     RDR.actionbar.draw({
                         coords:{
                             top:parseInt(e.pageY),
