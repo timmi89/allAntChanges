@@ -2256,16 +2256,16 @@ function readrBoard($R){
                             for ( var i in response.data.unknown ) {
                                 var unknown_summary = {},
                                     hash = response.data.unknown[i];
-                                
+
                                 // get the kind
                                 if ( $('img.rdr-'+hash).length == 1 ) {
                                     unknown_summary.kind = "img";
-                                } else if ( $('.rdr-'+hash).text() ) {
+                                } else if ( $('.rdr-'+hash).text() && $('.rdr-'+hash).text().length > 1 ) { // TODO seems fragile.
                                     unknown_summary.kind = "text";
                                 } else {
                                     unknown_summary.kind = "media";
                                 }
-
+if ( hash == "24882abd09f5677b40fb135154d11075" ) console.log(unknown_summary.kind);
                                 // fill out some empty defaults
                                 unknown_summary.top_interactions = {};
                                 unknown_summary.top_interactions.coms = {};
