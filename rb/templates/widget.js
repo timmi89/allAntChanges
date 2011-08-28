@@ -1192,7 +1192,6 @@ function readrBoard($R){
 		},
 		util: {
             getPageProperty : function( prop, hash ) {
-                console.log( 'getPageProperty: '+ prop + ', ' + hash );
                 if (!prop) prop = "id";
                 if (!hash) return 11; // TODO no.
 
@@ -2251,10 +2250,6 @@ function readrBoard($R){
                         	json: $.toJSON(sendData)
                         },
                         success: function(response) {
-                            console.log('------------ RESPONSE CHECK -----------');
-                            console.dir(response.data.known);
-                            console.dir(response.data.unknown);
-                            
                             var summaries = response.data.known;
                             
                             // TODO this is a hack.  we should change how we receive known and unknown to make them the same format.
@@ -2307,7 +2302,6 @@ function readrBoard($R){
                             // if ( !$.isEmptyObject(summaries) ){
 
                                 //setup the summaries
-                                console.log('ok go setup the summaries');
                                 RDR.actions.containers.setup(summaries);
                                 
                                 //the callback verifies the new container and draws the actionbar
@@ -2341,7 +2335,6 @@ function readrBoard($R){
                     return container;
                 },
                 setup: function(summaries){
-                    console.log('RDR.actions.containers.setup');
                     //RDR.actions.containers.setup:
                     //then define type-specific setup functions and run them
                     var _setupFuncs = {
@@ -2430,7 +2423,6 @@ function readrBoard($R){
 
                     $.each(summaries, function(hash, summary){
                         //first do generic stuff
-console.log('container setup LOOP: '+hash);
                         //save the hash as a summary attr for convenience.
                         summary.hash = hash;
 
@@ -2826,7 +2818,7 @@ console.log('container setup LOOP: '+hash);
                     if (sendData.node) delete sendData.node;
                     if (sendData.uiMode) delete sendData.uiMode;
                     if (sendData.sendData) delete sendData.sendData; //this was happening for delete calls.
-console.dir(args.sendData);
+
                     //todo: consider making a generic url router
                     var url = RDR_rootPath+"/api/" +int_type+ "/"+action_type+"/";
 
@@ -3108,7 +3100,7 @@ console.dir(args.sendData);
                             "page_id" : RDR.util.getPageProperty('id', hash),
                             "int_id" : args.int_id
                         };
-                        console.log('PAGE ID: '+sendData.page_id);
+
                         return sendData;
 
                     },
