@@ -42,6 +42,9 @@ class GroupAdmin(admin.ModelAdmin):
         ('Features', {
             'fields': ('share', 'rate' , 'comment', 'search', 'bookmark', 'twitter')
         }),
+        ('Selectors', {
+            'fields': ('post_selector', 'post_href_selector', 'summary_widget_selector')
+        })
      )
 
 class SocialUserAdmin(admin.ModelAdmin):
