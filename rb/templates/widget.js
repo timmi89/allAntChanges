@@ -649,6 +649,7 @@ function readrBoard($R){
                 
                 if (!summary) {
                     // setup the summary
+                    // FORCING SUMMARY CREATION
                     summary = {};
                     summary[hash] = {};
                     summary[hash].kind = kind;
@@ -667,6 +668,7 @@ function readrBoard($R){
                     summary[hash].counts.coms = 0;
 
                     summary[hash].hash = hash;
+
                     RDR.actions.containers.setup(summary);
                 }
                     
@@ -1860,7 +1862,7 @@ function readrBoard($R){
 						//RDR.group.group_id
 
                         //todo:just for testing for now: - add defaults:
-                        RDR.group.img_selector = RDR.group.img_selector || "body img";
+                        RDR.group.img_selector = RDR.group.img_selector || "img";
                         RDR.group.anno_whitelist = RDR.group.anno_whitelist || "body p";
                         RDR.group.media_selector = RDR.group.media_selector || "embed, video, object, iframe#youtube-XQBskPol5hA";
                         RDR.group.comment_length = RDR.group.comment_length || 300;
@@ -2085,11 +2087,11 @@ function readrBoard($R){
                     }
                 });
 
-                //todo: this is a pretty wide hackey net - rethink later.
+                // todo: this is a pretty wide hackey net - rethink later.
                 $('embed, video, object, iframe, img').live('mouseenter', function(){
                     var hasBeenHashed = $(this).hasClass('rdr-hashed');
                     var $this = $(this);
-                    
+
                     if(!hasBeenHashed){
                         $this.addClass('rdr_live_hover');
                         var hash = RDR.actions.hashNodes( $(this) );
@@ -2100,6 +2102,8 @@ function readrBoard($R){
                                 }
                             });
                         }
+                    } else {
+                        $this.addClass('rdr_live_hover');
                     }
                 }).live('mouseleave', function(){
                     $(this).removeClass('rdr_live_hover');
@@ -2185,7 +2189,6 @@ function readrBoard($R){
                     // add vaild descendants of the $node
                     $group = $group.add( $node.find( group.whiteList ) );
 
-
                     //take out prev categorized nodes (text is last, so we default to that)
                     $group = $group.not($allNodes);
 
@@ -2202,6 +2205,7 @@ function readrBoard($R){
 
                 });
 
+                // TODO when would this do anything?
                 if( !$allNodes.data('body') ) return false;
                 //else
 
@@ -2214,6 +2218,7 @@ function readrBoard($R){
 
                     if ( HTMLkind=="img" && !body ) body = $(this).attr('src');
                     var hashText = "rdr-"+kind+"-"+body; //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
+
                     var hash = RDR.util.md5.hex_md5( hashText );
 
                     // add an object with the text and hash to the RDR.containers dictionary
@@ -2225,6 +2230,8 @@ function readrBoard($R){
                         HTMLkind:HTMLkind,
                         $this: $this
                     });
+                    console.log(hash);
+                    RDR.actions.summaries.init(hash);
 
                     // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
                     // this makes it easy to find on the page later
@@ -2239,7 +2246,8 @@ function readrBoard($R){
                     hashList[ page_id ].push(hash);
                     $this.data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
                 });
-
+console.dir(RDR.summaries);
+                RDR.actions.containers.setup(hashList);
                 return hashList;
             },
             sendHashes: function( hashes, onSuccessCallback ) {
@@ -2307,6 +2315,7 @@ function readrBoard($R){
 
                                 // WE MAY NOT NEED THIS ANYMORE THANKS TO ONLY CALLING THIS FOR CONTAINERS WITH PRIOR INTERACTIONS
                                 // fill out some empty defaults
+                                // FORCING SUMMARY CREATION
                                 unknown_summary.top_interactions = {};
                                 unknown_summary.top_interactions.coms = {};
                                 unknown_summary.top_interactions.tags = {};
@@ -2377,12 +2386,13 @@ function readrBoard($R){
                 setup: function(summaries){
                     //RDR.actions.containers.setup:
                     //then define type-specific setup functions and run them
-
+console.log('containers.setup');
                     var _setupFuncs = {
                         img: function(hash, summary){
+                            console.log('img _setupFuncs');
                             var containerInfo = RDR.containers[hash];
                             var $container = containerInfo.$this;
-
+console.log(1);
                             //generate the content_node for this image container.  (the content_node is just the image itself)
                             //todo: I'm pretty sure it'd be more efficient and safe to run on image hover, or image indicator click.
                             var body = $container[0].src;
@@ -2393,28 +2403,28 @@ function readrBoard($R){
                                 'container': hash, //todo: Should we use this or hash? 
                                 'hash':hash
                             };
-                            
+console.log(2);                            
                             RDR.content_nodes[hash] = content_node_data;
-
+console.log(3);
                             $container.hover(
                                 function(){
                                     $(this).data('hover',true);
-                                                                        
+console.log('hover 1');                                                                        
                                     var $indicator = $('#rdr_indicator_'+hash),
                                         $containerTracker = $('#rdr_container_tracker_'+hash),
                                         $mediaBorderWrap = $containerTracker.find('.rdr_media_border_wrap');
                                     
                                     $indicator.addClass('rdr_engage_media');
-                                    
+console.log('hover 2');                                    
                                     //update here just to make sure at least a mouse hover always resets any unexpected weirdness
                                     RDR.actions.indicators.utils.updateContainerTracker(hash);
-                                    
+console.log('hover 3');                                    
                                     $mediaBorderWrap.show();
-                                    
+console.log('hover 4');                                    
 
                                     var src = $container.attr('src'),
                                     src_with_path = this.src;
-
+console.log('hover 5');
                                     var coords = {
                                         top: $container.offset().top,
                                         left: $container.offset().right
@@ -2461,48 +2471,51 @@ function readrBoard($R){
                     };
 
                     var hashesToShow = []; //filled below
-
+console.dir(summaries);
                     $.each(summaries, function(hash, summary){
                         //first do generic stuff
                         //save the hash as a summary attr for convenience.
                         summary.hash = hash;
 
                         var containerInfo = RDR.containers[hash];
-                        var $container = containerInfo.$this;
-                        
-                        // $container.addClass( 'rdr-' + hash ).addClass('rdr-hashed');
-                        $container.addClass('rdr-hashed');
-                                         
-                        //temp type conversion for top_interactions.coms;
-                        var newComs = {},
-                            coms = summary.top_interactions.coms;
 
-                        $.each(coms, function(arrIdx, com){
-                            //sortby tag_id
+                        if ( containerInfo) {
+                            var $container = containerInfo.$this;
+                            
+                            $container.addClass( 'rdr-' + hash ).addClass('rdr-hashed');
+                            // $container.addClass('rdr-hashed');
+                                             
+                            //temp type conversion for top_interactions.coms;
+                            var newComs = {},
+                                coms = summary.top_interactions.coms;
 
-                            // [ porter ] this shouldn't be needed, but it is, 
-                            // because the correct comment set, for text, is actually found in summary.content_nodes.top_interactions, which does not exist for images
-                            if ( summary.kind == "text" ) {
-                                newComs[com.tag_id] = com;
-                            } else {
-                                if ( !newComs[com.tag_id] ) newComs[com.tag_id] = [];
-                                newComs[com.tag_id].push(com);
+                            $.each(coms, function(arrIdx, com){
+                                //sortby tag_id
+
+                                // [ porter ] this shouldn't be needed, but it is, 
+                                // because the correct comment set, for text, is actually found in summary.content_nodes.top_interactions, which does not exist for images
+                                if ( summary.kind == "text" ) {
+                                    newComs[com.tag_id] = com;
+                                } else {
+                                    if ( !newComs[com.tag_id] ) newComs[com.tag_id] = [];
+                                    newComs[com.tag_id].push(com);
+                                }
+                            });
+
+                            summary.top_interactions.coms = newComs;
+
+                            RDR.actions.summaries.save(summary);
+                            RDR.actions.indicators.init( hash );
+
+                            //now run the type specific function with the //run the setup func above
+                            var kind = summary.kind;
+                            _setupFuncs[kind](hash, summary);
+                            
+                            //note:all of them should have interactions, because these are fresh from the server.  But, check anyway.
+                            //if(summary.counts.interactions > 0){ //we're only showing tags for now, so use that instead.
+                            if(summary.counts.tags > 0){
+                                hashesToShow.push(hash);
                             }
-                        });
-
-                        summary.top_interactions.coms = newComs;
-
-                        RDR.actions.summaries.save(summary);
-                        RDR.actions.indicators.init( hash );
-
-                        //now run the type specific function with the //run the setup func above
-                        var kind = summary.kind;
-                        _setupFuncs[kind](hash, summary);
-                        
-                        //note:all of them should have interactions, because these are fresh from the server.  But, check anyway.
-                        //if(summary.counts.interactions > 0){ //we're only showing tags for now, so use that instead.
-                        if(summary.counts.tags > 0){
-                            hashesToShow.push(hash);
                         }
                     });
 
@@ -2618,6 +2631,7 @@ function readrBoard($R){
 
                     var sendData = containers;
 
+                    // TODO do we even need this anymore?
                     $.ajax({
                         url: RDR_rootPath+"/api/containers/create/",
                         type: "get",
@@ -2644,7 +2658,7 @@ function readrBoard($R){
                                 node.id = id;
                                 dummySummaries[hash] = RDR.actions.summaries.init(hash);
                             });
-                        
+
                             RDR.actions.containers.setup(dummySummaries);
        
                             //the callback verifies the new container and draws the actionbar
@@ -4191,6 +4205,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
             summaries:{
                 init: function(hash){
                     //RDR.actions.summaries.init:
+                    console.log('RDR.actions.summaries.init');
 
                     //todo: it might make sense to just get this from the backend, since it has a function to do this already.
         
