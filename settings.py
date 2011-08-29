@@ -158,13 +158,12 @@ INSTALLED_APPS = [
     #'treebeard',
     #'debug_toolbar',
     #'autofixture',
-    #'django_extensions',
     #'devserver'
 ]
 
 #if DEBUG: INSTALLED_APPS.append('devserver')
 if DEBUG: INSTALLED_APPS.append('django.contrib.admin')
-
+if DEBUG: INSTALLED_APPS.append('django_extensions')
 
 DEVSERVER_MODULES = (
     'devserver.modules.sql.SQLRealTimeModule',
