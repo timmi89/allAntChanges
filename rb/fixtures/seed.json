@@ -43,7 +43,7 @@
     "model": "rb.Group",
     "pk": 3,
     "fields":{
-      "name": "Daily Candy",
+      "name": "DailyCandy",
       "short_name": "dc",
       "share": 1,
       "comment": 1,
