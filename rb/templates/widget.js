@@ -5322,7 +5322,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     // var selState = rindow.data('selState');
  
                     var content_node_data = {
-                        'container': rindow.settings.container,
                         'hash': hash,
                         'body': content_node_info.content,
                         'location': content_node_info.location,
@@ -5330,7 +5329,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     };
 
                     var content_node = RDR.actions.content_nodes.make(content_node_data);
-
 
                     var sendData = {
                         "tag" : tag,
@@ -5340,7 +5338,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         "readr_token" : RDR.user.readr_token,
                         "group_id" : RDR.groupPermData.group_id,
                         "page_id" : RDR.util.getPageProperty('id', hash),
-                        "referring_int_id" : RDR.session.referring_int_id
+                        "referring_int_id" : RDR.session.referring_int_id,
+                        "container_kind" : RDR.summaries[hash].kind
                     };
 
                     // if ( !tag_li.hasClass('rdr_tagged') ) {
