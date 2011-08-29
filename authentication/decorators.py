@@ -1,5 +1,5 @@
 from authentication.token import checkCookieToken
-from rb.models import Group, User, SocialUser
+from rb.models import Group, User, SocialUser, GroupAdmin
 from django.http import HttpResponseRedirect
 from extras.facebook import GraphAPIError
 
@@ -23,6 +23,7 @@ def requires_admin(func):
             cookie_user = checkCookieToken(request)
         except GraphAPIError:
             return HttpResponseRedirect('/')
+
         # If a user is registered and logged in
         if cookie_user:
             group = Group.objects.get(short_name=kwargs['short_name'])
@@ -31,9 +32,10 @@ def requires_admin(func):
                 social_user = SocialUser.objects.get(user=cookie_user)
             except SocialUser.DoesNotExist:
                 return HttpResponseRedirect('/')
-            if social_user.group_admin == group and social_user.admin_approved:
+            try:
+                GroupAdmin.objects.get(social_user=social_user, group=group, approved=True)
                 admin_user = cookie_user
-            else:
+            except GroupAdmin.DoesNotExist:
                 admin_user = None
         else:
             admin_user = None
