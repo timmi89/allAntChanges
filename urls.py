@@ -6,6 +6,9 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 admin.autodiscover()
 
 urlpatterns = patterns('',
+  # For admin
+  url(r'^admin/', include(admin.site.urls)),
+
   # For widget
   url(r'^widget/(.{,25})/$', 'rb.views.widget'),
   url(r'^widgetCss/', 'rb.views.widgetCss'),
@@ -78,8 +81,7 @@ urlpatterns = patterns('',
   url(r'^analytics/', include('readrboard.analytics.urls')),
   url(r'^admin_request/(?P<short_name>[\w\-]+)/$', 'rb.views.admin_request'),
   url(r'^admin_approve/$', 'rb.views.admin_approve'),
-  url(r'^admin_approve/(?P<request_id>\d+)/$', 'rb.views.admin_approve'),
-  url(r'^admin/', include(admin.site.urls)),
+  url(r'^admin_approve/(?P<request_id>\d+)/$', 'rb.views.admin_approve')
 )
 
 if settings.DEBUG:
