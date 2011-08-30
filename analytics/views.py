@@ -12,11 +12,11 @@ from django.template import RequestContext
 from authentication.token import checkCookieToken
 
 @requires_admin
-def analytics(request, group=None):
+def analytics(request, group=None, **kwargs):
     context = {}
     context['group'] = group
     context['fb_client_id'] = FACEBOOK_APP_ID
-    context['cookie_user'] = checkCookieToken(request)
+    context['cookie_user'] = kwargs['cookie_user']
 
     return render_to_response(
         "analytics.html",

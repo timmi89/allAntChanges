@@ -65,10 +65,8 @@ def checkToken(data):
 
 def createToken(django_id, auth_token):
     """
-    Create an SHA token from django id, social network
-    auth token and group secret.
+    Create an SHA token from django id, social network auth token
     """
-    # Get the group secret which only we know
     if django_id and auth_token:
         try:
             username = User.objects.get(id=django_id).username

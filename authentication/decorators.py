@@ -1,5 +1,5 @@
 from authentication.token import checkCookieToken
-from rb.models import Group, User, SocialUser
+from rb.models import Group, User, SocialUser, GroupAdmin
 from django.http import HttpResponseRedirect
 from extras.facebook import GraphAPIError
 
@@ -18,29 +18,40 @@ def requires_admin(func):
             print 'ajax'
             if host not in ('local.readrboard.com:8080', 'www.readrboard.com'):
                 return HttpResponseRedirect('no hax fucker!')
-            
         try:
             cookie_user = checkCookieToken(request)
+            kwargs['cookie_user'] = cookie_user
         except GraphAPIError:
             return HttpResponseRedirect('/')
+
         # If a user is registered and logged in
         if cookie_user:
-            group = Group.objects.get(short_name=kwargs['short_name'])
-            del kwargs['short_name']
+            short_name = kwargs.get('short_name', None)
+            group = None
+            if short_name:
+                group = Group.objects.get(short_name=short_name)
+                del kwargs['short_name']
             try:
                 social_user = SocialUser.objects.get(user=cookie_user)
             except SocialUser.DoesNotExist:
                 return HttpResponseRedirect('/')
-            if social_user.group_admin == group and social_user.admin_approved:
+            try:
+                if short_name:
+                    ga = GroupAdmin.objects.get(social_user=social_user, group=group, approved=True)
+                else:
+                    ga = GroupAdmin.objects.get(social_user=social_user, approved=True)
                 admin_user = cookie_user
-            else:
+            except GroupAdmin.DoesNotExist:
+                print 'failed yo'
                 admin_user = None
         else:
             admin_user = None
         if admin_user: 
             if thisobj:
                 return func(thisobj, request, group, **kwargs)
-            else:
+            if group:
                 return func(request, group, **kwargs)
+            else:
+                return func(request, **kwargs)
         else: return HttpResponseRedirect('/')
     return wrapper

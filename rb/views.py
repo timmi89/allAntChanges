@@ -173,9 +173,9 @@ def sidebar(request, user_id=None, short_name=None):
     pass
 
 @requires_admin
-def settings(request, group=None):
+def settings(request, group=None, **kwargs):
     context = {}
-    context['cookie_user'] = checkCookieToken(request)
+    context['cookie_user'] = kwargs['cookie_user']
 
     if request.method == 'POST':
         form = GroupForm(request.POST, request.FILES, instance=group)
@@ -191,18 +191,64 @@ def settings(request, group=None):
     context['short_name'] = group.short_name
     context['fb_client_id'] = FACEBOOK_APP_ID
     return render_to_response(
-        "group_form.html",
+        "group_settings.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+    
+@requires_admin
+def admin_approve(request, request_id=None, **kwargs):
+    context = {}
+    cookie_user = kwargs['cookie_user']
+    context['cookie_user'] = cookie_user
+    
+    groups = GroupAdmin.objects.filter(
+        social_user=cookie_user.social_user,
+        approved=True
+    )
+    
+    requests = GroupAdmin.objects.filter(
+        group=groups,
+        approved=False
+    ).exclude(social_user=cookie_user.social_user)
+    
+    if request_id:
+        admin_request = requests.get(id=request_id)
+        admin_request.approved = True
+        admin_request.save()
+        requests.exclude(id=request_id)
+    
+    context['requests'] = requests
+    context['fb_client_id'] = FACEBOOK_APP_ID
+    return render_to_response(
+        "admin_approve.html",
         context,
         context_instance=RequestContext(request)
     )
 
 def admin_request(request, short_name=None):
     context = {}
-    context['cookie_user'] = checkCookieToken(request)
-    try:
-        context['group'] = Group.objects.get(short_name=short_name)
-    except Group.DoesNotExist:
-        return JSONException(u'Invalid group')
+    context['requested'] = False
+    cookie_user = checkCookieToken(request)
+    if not cookie_user: return HttpResponseRedirect('/')
+    
+    # Get the Group and related group admins
+    group = Group.objects.get(
+        short_name=short_name
+    )
+    context['group'] = group
+    
+    # If this is a post request access
+    if request.method == 'POST':
+        ga = GroupAdmin(
+            group = group,
+            social_user = cookie_user.social_user,
+        )
+        ga.save()
+    
+    # Check if user has already requested admin access
+    if cookie_user.social_user.groupadmin_set.filter(group=group):
+        context['requested'] = True
 
     context['fb_client_id'] = FACEBOOK_APP_ID
     return render_to_response(
@@ -231,6 +277,8 @@ def expander(request, short):
     # Create redirect response
     url = page.url;
     redirect_response = HttpResponseRedirect(unicode(url))
+    
+    # Setup cookie for redirect
     redirect_response.set_cookie(key='container_hash', value=smart_str(interaction.container.hash))
     redirect_response.set_cookie(key='location', value=smart_str(interaction.content.location))
     redirect_response.set_cookie(key='content', value=smart_str(interaction.content.body))

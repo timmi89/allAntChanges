@@ -149,9 +149,9 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.admin',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admin',
     'api',
     'rb',
     'piston',
@@ -159,9 +159,11 @@ INSTALLED_APPS = [
     #'treebeard',
     #'debug_toolbar',
     #'autofixture',
-    #'django_extensions',
     #'devserver'
 ]
+
+#if DEBUG: INSTALLED_APPS.append('devserver')
+if DEBUG: INSTALLED_APPS.append('django_extensions')
 
 DEVSERVER_MODULES = (
     'devserver.modules.sql.SQLRealTimeModule',
@@ -169,10 +171,10 @@ DEVSERVER_MODULES = (
     'devserver.modules.profile.ProfileSummaryModule',
 
     # Modules not enabled by default
-    #'devserver.modules.ajax.AjaxDumpModule',
-    #'devserver.modules.profile.MemoryUseModule',
-    #'devserver.modules.cache.CacheSummaryModule',
-    #'devserver.modules.profile.LineProfilerModule',
+    'devserver.modules.ajax.AjaxDumpModule',
+    'devserver.modules.profile.MemoryUseModule',
+    'devserver.modules.cache.CacheSummaryModule',
+    'devserver.modules.profile.LineProfilerModule',
 )
 
 DEVSERVER_IGNORED_PREFIXES = ['/media', '/uploads']

@@ -172,9 +172,10 @@ class TagHandler(InteractionHandler):
     def create(self, request, data, user, page, group, kind='tag'):
         tag_body = data['tag']['body']
         container_hash = data['hash']
+        container_kind = data['container_kind']
         content_node_data = data['content_node_data']
         content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[ content_node_data['kind'] ]
-        
+
         #optional
         tag_id = data['tag'].get('id', None)
         location = content_node_data.get('location', None)
@@ -184,11 +185,11 @@ class TagHandler(InteractionHandler):
         inode = createInteractionNode(tag_id, tag_body, group)
 
         # Get the container
-        try:
-            container = Container.objects.get(hash=container_hash)
-        except Container.DoesNotExist:
-            raise JSONException("Container specified does not exist")
-        
+        container = Container.objects.get_or_create(
+            hash = container_hash,
+            defaults = {'kind': container_kind,}
+        )[0]
+
         # Create an interaction
         interaction = createInteraction(page, container, content, user, kind, inode, group)
 
@@ -203,6 +204,7 @@ class ShareHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
         tag_body = data['tag']['body']
         container_hash = data['hash']
+        container_kind = data['container_kind']
         content_node_data = data['content_node_data']
         content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[ content_node_data['kind'] ]
 
@@ -219,10 +221,10 @@ class ShareHandler(InteractionHandler):
         inode = createInteractionNode(tag_id, tag_body, group)
 
         # Get the container
-        try:
-            container = Container.objects.get(hash=container_hash)
-        except Container.DoesNotExist:
-            return JSONException("Container specified does not exist")
+        container = Container.objects.get_or_create(
+            hash = container_hash,
+            defaults = {'kind': container_kind,}
+        )[0]
 
         # Create appropriate parent
         if referring_int_id:
@@ -317,6 +319,9 @@ class PageDataHandler(AnonymousBaseHandler):
         iop = Interaction.objects.filter(page=page)
         iop = iop.exclude(content__kind='page')
         
+        # Retrieve containers
+        containers = Container.objects.filter(id__in=iop.values('container'))
+        
         # ---Get page interaction counts, grouped by kind---
         # Focus on values for 'kind'
         values = iop.order_by('kind').values('kind')
@@ -347,53 +352,67 @@ class PageDataHandler(AnonymousBaseHandler):
             toptags=toptags,
             topusers=topusers,
             topshares=topshares,
+            containers=containers
         )
 
 class SettingsHandler(AnonymousBaseHandler):
     model = Group
-    fields = ('id',
-              'name',
-              'short_name',
-              'language',
-              'blessed_tags',
-              'anno_whitelist',
-              'img_whitelist',
-              'img_blacklist',
-              'no_readr',
-              ('share', ('images', 'text', 'flash')),
-              ('rate', ('images', 'text', 'flash')),
-              ('comment', ('images', 'text', 'flash')),
-              ('bookmark', ('images', 'text', 'flash')),
-              ('search', ('images', 'text', 'flash')),
-              'logo_url_sm',
-              'logo_url_med',
-              'logo_url_lg',
-              'css_url',
-              'temp_interact',
-              'twitter',
-              'post_selector',
-              'post_href_selector',
-              'summary_widget_selector'
-             )
+    fields = (
+        'id',
+        'name',
+        'short_name',
+        'language',
+        'blessed_tags',
+        'anno_whitelist',
+        'img_whitelist',
+        'img_blacklist',
+        'no_readr',
+        ('share', ('images', 'text', 'flash')),
+        ('rate', ('images', 'text', 'flash')),
+        ('comment', ('images', 'text', 'flash')),
+        ('bookmark', ('images', 'text', 'flash')),
+        ('search', ('images', 'text', 'flash')),
+        'logo_url_sm',
+        'logo_url_med',
+        'logo_url_lg',
+        'css_url',
+        'temp_interact',
+        'twitter',
+        'post_selector',
+        'post_href_selector',
+        'summary_widget_selector'
+    )
              
+    """
+    Returns the settings for a group
+    """
     @status_response
     def read(self, request, group=None):
-        host = request.GET.get('host_name').split('.')
-        host = '.'.join(host)
-        path = request.path
-        fp = request.get_full_path()
+        # Get hostname, stripping www if present
+        host = getHost(request)
+        
+        # If no group has been provided, set to default
         group_id = int(group) if group else 1
+        
+        # Get the group object out of the database
         try:
             group_object = Group.objects.get(id=group_id)
         except Group.DoesNotExist:
             return HttpResponse("RB Group does not exist!")
+        
+        # Get the domains for that particular group from site objects  
         sites = Site.objects.filter(group=group_object)
         domains = sites.values_list('domain', flat=True)
+        
+        # If site is known, return group settings
+        # If not known create site for default group and return settings
+        # If site is not registered for group settings request, raise error
         if host in domains:
             return group_object
         elif group_id == 1:
-            print "host" + str(host)
             Site.objects.get_or_create(name=host,domain=host,group_id=1)
             return group_object
         else:
-            raise JSONException("Group (" + str(group) + ") settings request invalid for this domain (" + host + ")" + str(domains))
+            raise JSONException(
+                "Group (" + str(group) + ") settings request invalid for this domain (" + host + ")" + str(domains)
+            )

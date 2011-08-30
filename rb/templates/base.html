@@ -74,25 +74,23 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
           {% if cookie_user.id %}
           <li><a href="javascript:void(0);" onclick="RDRAuth.doFBlogout();">Logout</a></li>
           {% endif %}
-          <!-- <li><a href="/preferences/">Preferences</a></li> -->
-          <li><a href="/about/">About</a></li>
       </ul>
     </nav>
     </div>
     <div id="user">
-        <div id="fb-logged-in" {% if not cookie_user.id %}style="display:none;"{% endif %}>
+        <div id="fb-logged-in" {% if not cookie_user %}style="display:none;"{% endif %}>
           <a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/><strong>{{ cookie_user.social_user.full_name }}</strong></a>
         </div>
         <div id="fb-logged-out" {% if cookie_user %}style="display:none;"{% endif %}>
-          <fb:login-button onlogin="RDRAuth.checkFBStatus({ requesting_action:'site_login'});">
+          <fb:login-button onlogin="console.log('onlogin');RDRAuth.checkFBStatus({ requesting_action:'site_login'});">
         </div>
       </div>
     <div id="site_search">
       <form method="get" id="searchform" action="/">
         <fieldset>
-        <label>Search</label>
-        <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />
-        <button>Search</button>
+          <label>Search</label>
+          <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />
+          <button>Search</button>
         </fieldset>
       </form>
     </div>

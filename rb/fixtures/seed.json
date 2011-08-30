@@ -3,8 +3,8 @@
     "model": "rb.Group",
     "pk": 1,
     "fields":{
-      "name": "ReadrBoard's Demo",
-      "short_name": "demo",
+      "name": "ReadrBoard Default",
+      "short_name": "default",
       "share": 1,
       "comment": 1,
       "rate": 1,
@@ -43,7 +43,7 @@
     "model": "rb.Group",
     "pk": 3,
     "fields":{
-      "name": "Daily Candy",
+      "name": "DailyCandy",
       "short_name": "dc",
       "share": 1,
       "comment": 1,
@@ -251,8 +251,8 @@
     "model": "rb.Site",
     "pk": 1,
     "fields": {
-      "name": "localhost",
-      "domain": "localhost:8080",
+      "name": "local.readrboard.com:8080",
+      "domain": "local.readrboard.com:8080",
       "group": 2
     }
   },
@@ -282,7 +282,7 @@
     "pk": 4,
     "fields": {
       "name": "The Dog Daily",
-      "domain": "localhost:8080",
+      "domain": "local.readrboard.com:8080",
       "group": 3
     }
   },

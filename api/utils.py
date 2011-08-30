@@ -5,7 +5,7 @@ import json
 import re
 from exceptions import FBException, JSONException
 from readrboard.rb.profanity_filter import ProfanitiesFilter
-from urlparse import urlparse
+from urlparse import urlsplit, urlunsplit
 
 blacklist = ['fuck','shit','poop','cock','cunt']
 
@@ -110,40 +110,52 @@ def interactionNodeCounts(interactions, kinds=[], content=None):
         counts.append(filtered.count())
     return counts
 
+def getHost(request):
+    # Using referer for now, could be url as well
+    referer = request.META['HTTP_REFERER']
+    split_host = urlsplit(referer).netloc.split('.')
+    if 'www' in split_host[0]: split_host = split_host[1:]
+    host = '.'.join(split_host)
+    return host
+
+def stripQueryString(url):
+    qs = urlsplit(url).query
+    if qs:
+        print "stripping"
+        url = url[:url.index(qs)-1]
+    return url
+
 def getPage(request, pageid=None):
     canonical = request.GET.get('canonical_url', None)
-    fullurl = request.GET.get('url', None)
+    url = request.GET.get('url', None)
     title = request.GET.get('title', None)
-    group = request.GET.get('group_id', 1)
+    group_id = request.GET.get('group_id', 1)
+    host = getHost(request)
+    
+    site = Site.objects.get(domain=host, group=group_id)
 
-    host = urlparse(request.META['HTTP_REFERER']).hostname
-    site = Site.objects.get(domain=host, group=group)
+    # Remove querystring if it doesn't determine content
+    if not site.querystring_content:
+        url = stripQueryString(url)
 
     # Handle sites with hash but no bang
-    if '#' in fullurl and '!' not in fullurl:
-        fullurl = fullurl[:fullurl.index('#')]
+    if '#' in url and '!' not in url:
+        url = url[:url.index('#')]
 
     if pageid:
         return Page.objects.get(id=pageid)
     elif canonical:
         page = Page.objects.get_or_create(
             canonical_url=canonical,
-            defaults={'url':fullurl, 'site':site, 'title':title}
+            defaults={'url':url, 'site':site, 'title':title}
         )
     else:
-        page = Page.objects.get_or_create(url=fullurl, canonical_url="",
-            defaults={'site': site, 'title':title}
+        page = Page.objects.get_or_create(url=url,
+            defaults={'site': site, 'title':title, 'canonical':None}
         )
         
     return page[0]
-"""
-def createInteractionNode(body=None):
-    if body:
-        node = InteractionNode.objects.get_or_create(body=body)[0]
-        print "Success getting/creating InteractionNode with id %s" % node.id
-        return node
-"""
-
+    
 def createInteractionNode(node_id=None, body=None, group=None):
     # Get or create InteractionNode for share
     if node_id:
