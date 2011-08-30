@@ -116,7 +116,10 @@ class InteractionAdmin(admin.ModelAdmin):
 
 class NodeValueAdmin(admin.ModelAdmin):
     list_display = ('group', 'node', 'value')
-    
+
+class GroupAdminAdmin(admin.ModelAdmin):
+    list_display = ('group', 'social_user', 'approved')
+
 class LinkAdmin(admin.ModelAdmin):
     def base62(self, obj):
             return obj.to_base62()
@@ -135,4 +138,4 @@ admin.site.register(SocialUser, SocialUserAdmin)
 admin.site.register(NodeValue, NodeValueAdmin)
 admin.site.register(Content, ContentAdmin)
 admin.site.register(Profile)
-admin.site.register(GroupAdmin)
+admin.site.register(GroupAdmin, GroupAdminAdmin)
