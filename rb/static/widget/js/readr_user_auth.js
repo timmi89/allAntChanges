@@ -182,9 +182,15 @@ RDRAuth = {
 						break;
 					
 					case "site_login":
-						$('#fb-logged-in').hide();
-						$('#fb-logged-out').show();
+						$('#fb-logged-in').show();
+						$('#fb-logged-out').hide();
 						RDRAuth.getReadrToken( response, true, true );
+						break;
+
+					case "site_load":
+						$('#fb-logged-in').show();
+						$('#fb-logged-out').hide();
+						RDRAuth.getReadrToken( response, true );
 						break;
 
 				}
@@ -194,6 +200,12 @@ RDRAuth = {
 						// this call is from the website
 						$('#fb-logged-in').hide();
 						$('#fb-logged-out').show();
+						break;
+
+					case "site_login":
+						$('#fb-logged-in').hide();
+						$('#fb-logged-out').show();
+						RDRAuth.getReadrToken( response, true, true );
 						break;
 
 					case "site_load":
