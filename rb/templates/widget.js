@@ -1995,8 +1995,10 @@ function readrBoard($R){
                             }
 
                             // hash the "page" descendant nodes
+                            console.log('-------- RDR.actions.hashNodes( $container );');
                             RDR.actions.hashNodes( $container );
 
+                            console.log('-------- if ( response.data.containers.length > 0 ) {');
                             if ( response.data.containers.length > 0 ) {
                                 var hashes = [];
                                 hashes[ response.data.id ] = [];
@@ -2006,6 +2008,7 @@ function readrBoard($R){
                                 RDR.actions.sendHashes( hashes );    
                             }
 
+                            console.log('---------- var widgetSummarySettings = response;');
                             //init the widgetSummary
                             var widgetSummarySettings = response;
                             if ( $container.find( RDR.group.summary_widget_selector + '.rdr-page-widget-key-' + key).length == 1 ) {
@@ -2216,13 +2219,14 @@ function readrBoard($R){
                 var hashList = [];
                 $allNodes.each(function(){
                     var $this = $(this);
+                    console.dir( $this.data() );
                     var body = $this.data('body'),
                     kind = $this.data('kind'),
                     HTMLkind = $this[0].tagName.toLowerCase();
 
-                    if ( HTMLkind=="img" && !body ) body = $(this).attr('src');
+                    // if ( HTMLkind=="img" && !body ) body = $(this).attr('src');
                     var hashText = "rdr-"+kind+"-"+body; //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
-
+console.log(hashText);
                     var hash = RDR.util.md5.hex_md5( hashText );
 
                     // add an object with the text and hash to the RDR.containers dictionary
@@ -2396,6 +2400,8 @@ function readrBoard($R){
                     var _setupFuncs = {
                         img: function(hash, summary){
                             console.log('img _setupFuncs');
+                            console.log(hash);
+                            console.dir(summary);
                             var containerInfo = RDR.containers[hash];
                             var $container = containerInfo.$this;
 
@@ -2466,6 +2472,9 @@ function readrBoard($R){
                             );
                         },
                         media: function(hash, summary){
+                            console.log('media setup');
+                            console.log(hash);
+                            console.dir(summary);
                             //for now, just pass through to img.
                             this.img(hash, summary);
                         },
