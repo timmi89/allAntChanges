@@ -1995,7 +1995,8 @@ function readrBoard($R){
                             }
 
                             // hash the "page" descendant nodes
-                            RDR.actions.hashNodes( $container, "nomedia" );
+                            // RDR.actions.hashNodes( $container, "nomedia" );
+                            RDR.actions.hashNodes( $container );
 
                             if ( response.data.containers.length > 0 ) {
                                 var hashes = [];
@@ -2184,8 +2185,6 @@ function readrBoard($R){
 
                 //go through the groups in order and pick out valid nodes of that type. Default to text if it's valid for that.
                 $.each( nodeGroups, function( idx, group ){
-                    // var nodesPassedIn = (typeof $nodes!=="undefined") && $nodes.length;
-                    // var $group = nodesPassedIn ? $nodes.filter( group.filterParam ) : $( group.whiteList );
 
                     // take the $node passed in, add it to group via filters
                     var $group = $node.filter( group.filterParam );
@@ -2220,12 +2219,15 @@ function readrBoard($R){
                     kind = $this.data('kind'),
                     HTMLkind = $this[0].tagName.toLowerCase();
 
-                    if ( nomedia && ( 
-                        HTMLkind == "img" || HTMLkind == "embed" || HTMLkind == "iframe" || HTMLkind == "object" || HTMLkind == "video" ) ) {
-                            
-                    } else {
-                        var hashText = "rdr-"+kind+"-"+body; //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
-                        var hash = RDR.util.md5.hex_md5( hashText );
+                    // if ( nomedia && ( 
+                        // HTMLkind == "img" || HTMLkind == "embed" || HTMLkind == "iframe" || HTMLkind == "object" || HTMLkind == "video" ) ) {
+                    
+                    var hashText = "rdr-"+kind+"-"+body; //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
+                    var hash = RDR.util.md5.hex_md5( hashText );
+
+                    // if ( !RDR ) {
+
+                    // } else {
 
                         // add an object with the text and hash to the RDR.containers dictionary
                         //todo: consider putting this info directly onto the DOM node data object
@@ -2242,7 +2244,7 @@ function readrBoard($R){
                         
                         //don't do this here - do it on success of callback from server
                         // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
-                        $this.addClass( 'rdr-' + hash ).addClass('rdr-hashed');
+                        $this.addClass( 'rdr-' + hash );//.addClass('rdr-hashed');
 
                         summary = RDR.actions.summaries.init(hash);
                         RDR.actions.summaries.save(summary);
@@ -2253,7 +2255,7 @@ function readrBoard($R){
                         
                         hashList[ page_id ].push(hash);
                         $this.data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
-                    }
+                    // }
                 });
 
                 RDR.actions.containers.setup(hashList);
@@ -2287,6 +2289,10 @@ function readrBoard($R){
 
                     if ( !page_id ) {
                         return;
+                    }
+
+                    for ( var i in sendable_hashes ) {
+                        $('.rdr-'+sendable_hashes[i]).addClass('rdr-hashed');
                     }
 
                     //build the sendData with the hashes from above
@@ -2325,6 +2331,7 @@ function readrBoard($R){
                                 }
                                 summaries[ hash ] = unknown_summary;
                             }
+
                             
                             //the callback implementation here is a litte unintuitive:
                             //it only gets passsed in when a single hash is run through here, 
