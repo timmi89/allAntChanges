@@ -1755,7 +1755,7 @@ function readrBoard($R){
                                     (interactionInfo.type == 'comment') ?
                                         "You have left your comment." :
                                         ""; //this default shouldn't happen
-                                    userMsg += " See your "+interactionInfo.type+"s at <strong><a href='"+RDR_rootPath+"' target='_blank'>readrboard.com</a></strong>";
+                                    userMsg += " See your "+interactionInfo.type+"s on this page, and at <strong><a href='"+RDR_rootPath+"' target='_blank'>readrboard.com</a></strong>";
                                 }
                                 break;
                         
@@ -2003,7 +2003,7 @@ function readrBoard($R){
                                 for ( var i in response.data.containers ) {
                                     hashes[ response.data.id ].push( response.data.containers[i].hash );
                                 }
-                                RDR.actions.sendHashes( hashes );    
+                                RDR.actions.sendHashes( hashes );
                             }
 
                             //init the widgetSummary
@@ -2306,10 +2306,8 @@ function readrBoard($R){
                         	json: $.toJSON(sendData)
                         },
                         success: function(response) {
-                            var summaries = [];
+                            var summaries = {};
                             summaries[ page_id ] = response.data.known;
-console.log('sum containers response');
-console.dir(response);                            
                             
                             // TODO this is a hack.  we should change how we receive known and unknown to make them the same format.
                             // this shouldn't be doing ANYTHING AT ALL (b/c we don't receive back unknown containers):
@@ -2325,26 +2323,6 @@ console.dir(response);
                                 } else {
                                     unknown_summary = RDR.util.makeEmptySummary( hash, "media" );
                                 }
-
-                                // WE MAY NOT NEED THIS ANYMORE THANKS TO ONLY CALLING THIS FOR CONTAINERS WITH PRIOR INTERACTIONS
-                                // fill out some empty defaults
-                                // FORCING SUMMARY CREATION
-                                // unknown_summary.top_interactions = {};
-                                // unknown_summary.top_interactions.coms = {};
-                                // unknown_summary.top_interactions.tags = {};
-                                // unknown_summary.top_interactions.shr = {};
-
-                                // unknown_summary.interaction_order = {};
-                                // unknown_summary.interaction_order.coms = {};
-                                // unknown_summary.interaction_order.tags = {};
-
-                                // unknown_summary.counts = {};
-                                // unknown_summary.counts.tags = 0;
-                                // unknown_summary.counts.interactions = 0; // TODO not sure why we have this and also "tags"
-                                // unknown_summary.counts.coms = 0;
-
-                                // unknown_summary.hash = hash;
-
                                 summaries[ hash ] = unknown_summary;
                             }
                             
@@ -2480,67 +2458,62 @@ console.dir(response);
                         }
                     };
 
+                    
                     var hashesToShow = []; //filled below
-console.dir(summaries);
-// console.dir(RDR.summaries['504e6e16db152b503519a6531dc48f33']);
+
                     for ( var i in summaries ) {
                         var page_id = i;
-console.log('page_id: '+page_id);
+
                         for ( var j in summaries[i] ) {
-                            var hash = j;
-console.log('hash: '+hash);
-                            // var summary = RDR.util.makeEmptySummary( hash );
-                            var summary = summaries[i][j]; // ( RDR.summaries[hash] ) ? RDR.summaries[hash] : RDR.util.makeEmptySummary( hash );
-if ( hash == "504e6e16db152b503519a6531dc48f33" ) {
-    console.dir( summary );
-    console.dir(RDR.containers);
-}
-                            //first do generic stuff
-                            //save the hash as a summary attr for convenience.
-                            summary.hash = hash;
+                            
+                            if ( typeof j == "string" && typeof summaries[i][j] == "object" ) {
 
-                            var containerInfo = RDR.containers[hash];
+                                var hash = j;
+                                var summary = summaries[i][j]; // ( RDR.summaries[hash] ) ? RDR.summaries[hash] : RDR.util.makeEmptySummary( hash );
 
-                            if ( containerInfo) {
-                                var $container = containerInfo.$this;
-                                
-                                // neeed this?
-                                // $container.addClass( 'rdr-' + hash ).addClass('rdr-hashed');
-                                // $container.addClass('rdr-hashed');
-                                                 
-                                //temp type conversion for top_interactions.coms;
-                                var newComs = {},
-                                    coms = summary.top_interactions.coms;
+                                //first do generic stuff
+                                //save the hash as a summary attr for convenience.
+                                summary.hash = hash;
 
-                                $.each(coms, function(arrIdx, com){
-                                    //sortby tag_id
+                                var containerInfo = RDR.containers[hash];
 
-                                    // [ porter ] this shouldn't be needed, but it is, 
-                                    // because the correct comment set, for text, is actually found in summary.content_nodes.top_interactions, which does not exist for images
-                                    if ( summary.kind == "text" ) {
-                                        newComs[com.tag_id] = com;
-                                    } else {
-                                        if ( !newComs[com.tag_id] ) newComs[com.tag_id] = [];
-                                        newComs[com.tag_id].push(com);
+                                if ( containerInfo) {
+                                    var $container = containerInfo.$this;
+                                    
+                                    // neeed this?
+                                    // $container.addClass( 'rdr-' + hash ).addClass('rdr-hashed');
+                                    // $container.addClass('rdr-hashed');
+                                                     
+                                    //temp type conversion for top_interactions.coms;
+                                    var newComs = {},
+                                        coms = summary.top_interactions.coms;
+
+                                    $.each(coms, function(arrIdx, com){
+                                        //sortby tag_id
+
+                                        // [ porter ] this shouldn't be needed, but it is, 
+                                        // because the correct comment set, for text, is actually found in summary.content_nodes.top_interactions, which does not exist for images
+                                        if ( summary.kind == "text" ) {
+                                            newComs[com.tag_id] = com;
+                                        } else {
+                                            if ( !newComs[com.tag_id] ) newComs[com.tag_id] = [];
+                                            newComs[com.tag_id].push(com);
+                                        }
+                                    });
+
+                                    summary.top_interactions.coms = newComs;
+                                    RDR.actions.summaries.save(summary);
+                                    RDR.actions.indicators.init( hash );
+
+                                    //now run the type specific function with the //run the setup func above
+                                    var kind = summary.kind;
+                                    _setupFuncs[kind](hash, summary);
+                                    
+                                    //note:all of them should have interactions, because these are fresh from the server.  But, check anyway.
+                                    //if(summary.counts.interactions > 0){ //we're only showing tags for now, so use that instead.
+                                    if(summary.counts.tags > 0){
+                                        hashesToShow.push(hash);
                                     }
-                                });
-console.log('hash: '+hash);
-if ( hash == "504e6e16db152b503519a6531dc48f33" ) console.dir( summary );
-                                summary.top_interactions.coms = newComs;
-console.log('hash: '+hash);
-if ( hash == "504e6e16db152b503519a6531dc48f33" ) console.dir( summary );
-                                RDR.actions.summaries.save(summary);
-                                RDR.actions.indicators.init( hash );
-console.log('hash: '+hash);
-if ( hash == "504e6e16db152b503519a6531dc48f33" ) console.dir( summary );
-                                //now run the type specific function with the //run the setup func above
-                                var kind = summary.kind;
-                                _setupFuncs[kind](hash, summary);
-                                
-                                //note:all of them should have interactions, because these are fresh from the server.  But, check anyway.
-                                //if(summary.counts.interactions > 0){ //we're only showing tags for now, so use that instead.
-                                if(summary.counts.tags > 0){
-                                    hashesToShow.push(hash);
                                 }
                             }
                         }
@@ -3781,8 +3754,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         indicatorId = 'rdr_indicator_'+hash,
                         indicatorBodyId = 'rdr_indicator_body_'+hash,
                         indicatorDetailsId = 'rdr_indicator_details_'+hash;
-// console.log('RDR.actions.indicators.init: '+hash);
-// console.dir(summary);
+
                     //check for and remove any existing indicator and indicator_details and remove for now.
                     //this shouldn't happen though.
                     //todo: solve for duplicate content that will have the same hash.
