@@ -1868,7 +1868,7 @@ function readrBoard($R){
                         //todo:just for testing for now: - add defaults:
                         RDR.group.img_selector = RDR.group.img_selector || "img";
                         RDR.group.anno_whitelist = RDR.group.anno_whitelist || "body p";
-                        RDR.group.media_selector = RDR.group.media_selector || "embed, video, object, iframe#youtube-XQBskPol5hA";
+                        RDR.group.media_selector = RDR.group.media_selector || "embed, video, object, iframe";
                         RDR.group.comment_length = RDR.group.comment_length || 300;
                         RDR.group.initial_pin_limit = RDR.group.initial_pin_limit || 30;
                         RDR.group.no_readr = RDR.group.no_readr || "";
@@ -1995,10 +1995,8 @@ function readrBoard($R){
                             }
 
                             // hash the "page" descendant nodes
-                            console.log('-------- RDR.actions.hashNodes( $container );');
-                            RDR.actions.hashNodes( $container );
+                            RDR.actions.hashNodes( $container, "nomedia" );
 
-                            console.log('-------- if ( response.data.containers.length > 0 ) {');
                             if ( response.data.containers.length > 0 ) {
                                 var hashes = [];
                                 hashes[ response.data.id ] = [];
@@ -2008,7 +2006,6 @@ function readrBoard($R){
                                 RDR.actions.sendHashes( hashes );    
                             }
 
-                            console.log('---------- var widgetSummarySettings = response;');
                             //init the widgetSummary
                             var widgetSummarySettings = response;
                             if ( $container.find( RDR.group.summary_widget_selector + '.rdr-page-widget-key-' + key).length == 1 ) {
@@ -2125,7 +2122,7 @@ function readrBoard($R){
                 
 				$RDR.dequeue('initAjax');
             },
-            hashNodes: function( $node ) {
+            hashNodes: function( $node, nomedia ) {
                 //RDR.actions.hashNodes:
                 
                 // [porter]: needs a node or nodes
@@ -2219,42 +2216,44 @@ function readrBoard($R){
                 var hashList = [];
                 $allNodes.each(function(){
                     var $this = $(this);
-                    console.dir( $this.data() );
                     var body = $this.data('body'),
                     kind = $this.data('kind'),
                     HTMLkind = $this[0].tagName.toLowerCase();
 
-                    // if ( HTMLkind=="img" && !body ) body = $(this).attr('src');
-                    var hashText = "rdr-"+kind+"-"+body; //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
-console.log(hashText);
-                    var hash = RDR.util.md5.hex_md5( hashText );
+                    if ( nomedia && ( 
+                        HTMLkind == "img" || HTMLkind == "embed" || HTMLkind == "iframe" || HTMLkind == "object" || HTMLkind == "video" ) ) {
+                            
+                    } else {
+                        var hashText = "rdr-"+kind+"-"+body; //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
+                        var hash = RDR.util.md5.hex_md5( hashText );
 
-                    // add an object with the text and hash to the RDR.containers dictionary
-                    //todo: consider putting this info directly onto the DOM node data object
-                    RDR.actions.containers.save({
-                        body:body,
-                        kind:kind,
-                        hash:hash,
-                        HTMLkind:HTMLkind,
-                        $this: $this
-                    });
+                        // add an object with the text and hash to the RDR.containers dictionary
+                        //todo: consider putting this info directly onto the DOM node data object
+                        RDR.actions.containers.save({
+                            body:body,
+                            kind:kind,
+                            hash:hash,
+                            HTMLkind:HTMLkind,
+                            $this: $this
+                        });
 
-                    // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
-                    // this makes it easy to find on the page later
-                    
-                    //don't do this here - do it on success of callback from server
-                    // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
-                    $this.addClass( 'rdr-' + hash ).addClass('rdr-hashed');
+                        // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
+                        // this makes it easy to find on the page later
+                        
+                        //don't do this here - do it on success of callback from server
+                        // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
+                        $this.addClass( 'rdr-' + hash ).addClass('rdr-hashed');
 
-                    summary = RDR.actions.summaries.init(hash);
-                    RDR.actions.summaries.save(summary);
+                        summary = RDR.actions.summaries.init(hash);
+                        RDR.actions.summaries.save(summary);
 
-                    
-                    var page_id = RDR.util.getPageProperty('id', hash );
-                    if ( !hashList[ page_id ] ) hashList[ page_id ] = [];
-                    
-                    hashList[ page_id ].push(hash);
-                    $this.data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
+                        
+                        var page_id = RDR.util.getPageProperty('id', hash );
+                        if ( !hashList[ page_id ] ) hashList[ page_id ] = [];
+                        
+                        hashList[ page_id ].push(hash);
+                        $this.data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
+                    }
                 });
 
                 RDR.actions.containers.setup(hashList);
@@ -2399,9 +2398,6 @@ console.log(hashText);
 
                     var _setupFuncs = {
                         img: function(hash, summary){
-                            console.log('img _setupFuncs');
-                            console.log(hash);
-                            console.dir(summary);
                             var containerInfo = RDR.containers[hash];
                             var $container = containerInfo.$this;
 
@@ -2472,9 +2468,6 @@ console.log(hashText);
                             );
                         },
                         media: function(hash, summary){
-                            console.log('media setup');
-                            console.log(hash);
-                            console.dir(summary);
                             //for now, just pass through to img.
                             this.img(hash, summary);
                         },
