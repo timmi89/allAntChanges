@@ -2230,23 +2230,26 @@ function readrBoard($R){
                         HTMLkind:HTMLkind,
                         $this: $this
                     });
-                    console.log(hash);
                     RDR.actions.summaries.init(hash);
 
                     // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
                     // this makes it easy to find on the page later
                     
                     //don't do this here - do it on success of callback from server
-                    // [porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
+                    // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
                     $this.addClass( 'rdr-' + hash ).addClass('rdr-hashed');
                     
+                    console.log('hash: '+hash);
                     var page_id = RDR.util.getPageProperty('id', hash );
+                    console.log('page_id: '+page_id);
                     if ( !hashList[ page_id ] ) hashList[ page_id ] = [];
                     
                     hashList[ page_id ].push(hash);
                     $this.data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
                 });
-console.dir(RDR.summaries);
+// console.dir(RDR.summaries);
+console.log('hashList');
+                console.dir(hashList);
                 RDR.actions.containers.setup(hashList);
                 return hashList;
             },
