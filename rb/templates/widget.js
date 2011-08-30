@@ -1755,8 +1755,21 @@ function readrBoard($R){
                                     (interactionInfo.type == 'comment') ?
                                         "You have left your comment." :
                                         ""; //this default shouldn't happen
-                                    userMsg += " See your "+interactionInfo.type+"s at <strong><a href='"+RDR_rootPath+"' target='_blank'>readrboard.com</a></strong>";
+                                    userMsg += " See your "+interactionInfo.type+"s on this page, and at <strong><a href='"+RDR_rootPath+"' target='_blank'>readrboard.com</a></strong>";
                                 }
+
+                                var click_args = args;
+                                if ( $rindow.find('div.rdr_rindow_message_tempUserMsg').text().length > 0 ) {
+                                    $inlineTempMsg = $('<div />');
+                                    $inlineTempMsg.html( '<h4 style="font-size:17px;">You can react '+ $rindow.find('div.rdr_rindow_message_tempUserMsg strong').text() +'.</h4><br/><p><a style="font-weight:bold;color:#008be4;" href="javascript:void(0);">Connect with Facebook</a> to react as much as you want &amp; show other readers here what you think.</p><br/><p>Plus, you can share and comment in-line!</p><br/><a href="javascript:void(0);"><img src="{{ BASE_URL }}{{ STATIC_URL }}widget/images/fb-login_to_readrboard.png" alt="Connect with Facebook" /></a>');
+                                    $inlineTempMsg.find('a').click( function() {
+                                        RDR.session.showLoginPanel( click_args );
+                                    });
+                                    
+                                    $rindow.find('div.rdr_shareBox').html( $inlineTempMsg );
+                                    $rindow.find('div.rdr_commentBox').hide();
+                                }
+
                                 break;
                         
                         }   
@@ -1868,7 +1881,7 @@ function readrBoard($R){
                         //todo:just for testing for now: - add defaults:
                         RDR.group.img_selector = RDR.group.img_selector || "img";
                         RDR.group.anno_whitelist = RDR.group.anno_whitelist || "body p";
-                        RDR.group.media_selector = RDR.group.media_selector || "embed, video, object, iframe#youtube-XQBskPol5hA";
+                        RDR.group.media_selector = RDR.group.media_selector || "embed, video, object, iframe";
                         RDR.group.comment_length = RDR.group.comment_length || 300;
                         RDR.group.initial_pin_limit = RDR.group.initial_pin_limit || 30;
                         RDR.group.no_readr = RDR.group.no_readr || "";
@@ -1995,6 +2008,7 @@ function readrBoard($R){
                             }
 
                             // hash the "page" descendant nodes
+                            // RDR.actions.hashNodes( $container, "nomedia" );
                             RDR.actions.hashNodes( $container );
 
                             if ( response.data.containers.length > 0 ) {
@@ -2003,7 +2017,7 @@ function readrBoard($R){
                                 for ( var i in response.data.containers ) {
                                     hashes[ response.data.id ].push( response.data.containers[i].hash );
                                 }
-                                RDR.actions.sendHashes( hashes );    
+                                RDR.actions.sendHashes( hashes );
                             }
 
                             //init the widgetSummary
@@ -2122,7 +2136,7 @@ function readrBoard($R){
                 
 				$RDR.dequeue('initAjax');
             },
-            hashNodes: function( $node ) {
+            hashNodes: function( $node, nomedia ) {
                 //RDR.actions.hashNodes:
                 
                 // [porter]: needs a node or nodes
@@ -2184,8 +2198,6 @@ function readrBoard($R){
 
                 //go through the groups in order and pick out valid nodes of that type. Default to text if it's valid for that.
                 $.each( nodeGroups, function( idx, group ){
-                    // var nodesPassedIn = (typeof $nodes!=="undefined") && $nodes.length;
-                    // var $group = nodesPassedIn ? $nodes.filter( group.filterParam ) : $( group.whiteList );
 
                     // take the $node passed in, add it to group via filters
                     var $group = $node.filter( group.filterParam );
@@ -2220,37 +2232,43 @@ function readrBoard($R){
                     kind = $this.data('kind'),
                     HTMLkind = $this[0].tagName.toLowerCase();
 
-                    if ( HTMLkind=="img" && !body ) body = $(this).attr('src');
+                    // if ( nomedia && ( 
+                        // HTMLkind == "img" || HTMLkind == "embed" || HTMLkind == "iframe" || HTMLkind == "object" || HTMLkind == "video" ) ) {
+                    
                     var hashText = "rdr-"+kind+"-"+body; //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
-
                     var hash = RDR.util.md5.hex_md5( hashText );
 
-                    // add an object with the text and hash to the RDR.containers dictionary
-                    //todo: consider putting this info directly onto the DOM node data object
-                    RDR.actions.containers.save({
-                        body:body,
-                        kind:kind,
-                        hash:hash,
-                        HTMLkind:HTMLkind,
-                        $this: $this
-                    });
+                    // if ( !RDR ) {
 
-                    // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
-                    // this makes it easy to find on the page later
-                    
-                    //don't do this here - do it on success of callback from server
-                    // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
-                    $this.addClass( 'rdr-' + hash ).addClass('rdr-hashed');
+                    // } else {
 
-                    summary = RDR.actions.summaries.init(hash);
-                    RDR.actions.summaries.save(summary);
+                        // add an object with the text and hash to the RDR.containers dictionary
+                        //todo: consider putting this info directly onto the DOM node data object
+                        RDR.actions.containers.save({
+                            body:body,
+                            kind:kind,
+                            hash:hash,
+                            HTMLkind:HTMLkind,
+                            $this: $this
+                        });
 
-                    
-                    var page_id = RDR.util.getPageProperty('id', hash );
-                    if ( !hashList[ page_id ] ) hashList[ page_id ] = [];
-                    
-                    hashList[ page_id ].push(hash);
-                    $this.data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
+                        // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
+                        // this makes it easy to find on the page later
+                        
+                        //don't do this here - do it on success of callback from server
+                        // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
+                        $this.addClass( 'rdr-' + hash );//.addClass('rdr-hashed');
+
+                        summary = RDR.actions.summaries.init(hash);
+                        RDR.actions.summaries.save(summary);
+
+                        
+                        var page_id = RDR.util.getPageProperty('id', hash );
+                        if ( !hashList[ page_id ] ) hashList[ page_id ] = [];
+                        
+                        hashList[ page_id ].push(hash);
+                        $this.data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
+                    // }
                 });
 
                 RDR.actions.containers.setup(hashList);
@@ -2286,6 +2304,10 @@ function readrBoard($R){
                         return;
                     }
 
+                    for ( var i in sendable_hashes ) {
+                        $('.rdr-'+sendable_hashes[i]).addClass('rdr-hashed');
+                    }
+
                     //build the sendData with the hashes from above
     				var sendData = {
     					short_name : RDR.group.short_name,
@@ -2303,9 +2325,11 @@ function readrBoard($R){
                         	json: $.toJSON(sendData)
                         },
                         success: function(response) {
-                            var summaries = response.data.known;
+                            var summaries = {};
+                            summaries[ page_id ] = response.data.known;
                             
                             // TODO this is a hack.  we should change how we receive known and unknown to make them the same format.
+                            // this shouldn't be doing ANYTHING AT ALL (b/c we don't receive back unknown containers):
                             for ( var i in response.data.unknown ) {
                                 
                                 var hash = response.data.unknown[i];
@@ -2318,28 +2342,9 @@ function readrBoard($R){
                                 } else {
                                     unknown_summary = RDR.util.makeEmptySummary( hash, "media" );
                                 }
-
-                                // WE MAY NOT NEED THIS ANYMORE THANKS TO ONLY CALLING THIS FOR CONTAINERS WITH PRIOR INTERACTIONS
-                                // fill out some empty defaults
-                                // FORCING SUMMARY CREATION
-                                // unknown_summary.top_interactions = {};
-                                // unknown_summary.top_interactions.coms = {};
-                                // unknown_summary.top_interactions.tags = {};
-                                // unknown_summary.top_interactions.shr = {};
-
-                                // unknown_summary.interaction_order = {};
-                                // unknown_summary.interaction_order.coms = {};
-                                // unknown_summary.interaction_order.tags = {};
-
-                                // unknown_summary.counts = {};
-                                // unknown_summary.counts.tags = 0;
-                                // unknown_summary.counts.interactions = 0; // TODO not sure why we have this and also "tags"
-                                // unknown_summary.counts.coms = 0;
-
-                                // unknown_summary.hash = hash;
-
                                 summaries[ hash ] = unknown_summary;
                             }
+
                             
                             //the callback implementation here is a litte unintuitive:
                             //it only gets passsed in when a single hash is run through here, 
@@ -2354,7 +2359,7 @@ function readrBoard($R){
                             // }
 
                             // [ porter ]: since we're not storing containers anymore, just setup all hashes regardless of "known" status
-                            // if ( !$.isEmptyObject(summaries) ){
+                            if ( !$.isEmptyObject(summaries) ){
 
                                 //setup the summaries
                                 RDR.actions.containers.setup(summaries);
@@ -2364,7 +2369,7 @@ function readrBoard($R){
                                 if(typeof onSuccessCallback !== 'undefined'){
                                     onSuccessCallback();
                                 }      
-                            // }
+                            }
                             
                             
                         }
@@ -2395,7 +2400,6 @@ function readrBoard($R){
 
                     var _setupFuncs = {
                         img: function(hash, summary){
-                            console.log('img _setupFuncs');
                             var containerInfo = RDR.containers[hash];
                             var $container = containerInfo.$this;
 
@@ -2474,60 +2478,62 @@ function readrBoard($R){
                         }
                     };
 
+                    
                     var hashesToShow = []; //filled below
 
                     for ( var i in summaries ) {
                         var page_id = i;
 
                         for ( var j in summaries[i] ) {
-                            var hash = summaries[i][j];
                             
-                            // var summary = RDR.util.makeEmptySummary( hash );
-                            var summary = ( RDR.summaries[hash] ) ? RDR.summaries[hash] : RDR.util.makeEmptySummary( hash );
+                            if ( typeof j == "string" && typeof summaries[i][j] == "object" ) {
 
-                            //first do generic stuff
-                            //save the hash as a summary attr for convenience.
-                            summary.hash = hash;
+                                var hash = j;
+                                var summary = summaries[i][j]; // ( RDR.summaries[hash] ) ? RDR.summaries[hash] : RDR.util.makeEmptySummary( hash );
 
-                            var containerInfo = RDR.containers[hash];
+                                //first do generic stuff
+                                //save the hash as a summary attr for convenience.
+                                summary.hash = hash;
 
-                            if ( containerInfo) {
-                                var $container = containerInfo.$this;
-                                
-                                // neeed this?
-                                $container.addClass( 'rdr-' + hash ).addClass('rdr-hashed');
-                                // $container.addClass('rdr-hashed');
-                                                 
-                                //temp type conversion for top_interactions.coms;
-                                var newComs = {},
-                                    coms = summary.top_interactions.coms;
+                                var containerInfo = RDR.containers[hash];
 
-                                $.each(coms, function(arrIdx, com){
-                                    //sortby tag_id
+                                if ( containerInfo) {
+                                    var $container = containerInfo.$this;
+                                    
+                                    // neeed this?
+                                    // $container.addClass( 'rdr-' + hash ).addClass('rdr-hashed');
+                                    // $container.addClass('rdr-hashed');
+                                                     
+                                    //temp type conversion for top_interactions.coms;
+                                    var newComs = {},
+                                        coms = summary.top_interactions.coms;
 
-                                    // [ porter ] this shouldn't be needed, but it is, 
-                                    // because the correct comment set, for text, is actually found in summary.content_nodes.top_interactions, which does not exist for images
-                                    if ( summary.kind == "text" ) {
-                                        newComs[com.tag_id] = com;
-                                    } else {
-                                        if ( !newComs[com.tag_id] ) newComs[com.tag_id] = [];
-                                        newComs[com.tag_id].push(com);
+                                    $.each(coms, function(arrIdx, com){
+                                        //sortby tag_id
+
+                                        // [ porter ] this shouldn't be needed, but it is, 
+                                        // because the correct comment set, for text, is actually found in summary.content_nodes.top_interactions, which does not exist for images
+                                        if ( summary.kind == "text" ) {
+                                            newComs[com.tag_id] = com;
+                                        } else {
+                                            if ( !newComs[com.tag_id] ) newComs[com.tag_id] = [];
+                                            newComs[com.tag_id].push(com);
+                                        }
+                                    });
+
+                                    summary.top_interactions.coms = newComs;
+                                    RDR.actions.summaries.save(summary);
+                                    RDR.actions.indicators.init( hash );
+
+                                    //now run the type specific function with the //run the setup func above
+                                    var kind = summary.kind;
+                                    _setupFuncs[kind](hash, summary);
+                                    
+                                    //note:all of them should have interactions, because these are fresh from the server.  But, check anyway.
+                                    //if(summary.counts.interactions > 0){ //we're only showing tags for now, so use that instead.
+                                    if(summary.counts.tags > 0){
+                                        hashesToShow.push(hash);
                                     }
-                                });
-
-                                summary.top_interactions.coms = newComs;
-
-                                RDR.actions.summaries.save(summary);
-                                RDR.actions.indicators.init( hash );
-
-                                //now run the type specific function with the //run the setup func above
-                                var kind = summary.kind;
-                                _setupFuncs[kind](hash, summary);
-                                
-                                //note:all of them should have interactions, because these are fresh from the server.  But, check anyway.
-                                //if(summary.counts.interactions > 0){ //we're only showing tags for now, so use that instead.
-                                if(summary.counts.tags > 0){
-                                    hashesToShow.push(hash);
                                 }
                             }
                         }
@@ -3762,7 +3768,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 init: function(hash){
                     //RDR.actions.indicators.init:
                     //note: this should generally be called via RDR.actions.containers.setup
-
                     var scope = this;
                     var summary = RDR.summaries[hash],
                         $container = summary.$container,                    
