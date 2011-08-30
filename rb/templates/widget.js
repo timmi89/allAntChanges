@@ -2306,9 +2306,13 @@ function readrBoard($R){
                         	json: $.toJSON(sendData)
                         },
                         success: function(response) {
-                            var summaries = response.data.known;
+                            var summaries = [];
+                            summaries[ page_id ] = response.data.known;
+console.log('sum containers response');
+console.dir(response);                            
                             
                             // TODO this is a hack.  we should change how we receive known and unknown to make them the same format.
+                            // this shouldn't be doing ANYTHING AT ALL (b/c we don't receive back unknown containers):
                             for ( var i in response.data.unknown ) {
                                 
                                 var hash = response.data.unknown[i];
@@ -2357,7 +2361,7 @@ function readrBoard($R){
                             // }
 
                             // [ porter ]: since we're not storing containers anymore, just setup all hashes regardless of "known" status
-                            // if ( !$.isEmptyObject(summaries) ){
+                            if ( !$.isEmptyObject(summaries) ){
 
                                 //setup the summaries
                                 RDR.actions.containers.setup(summaries);
@@ -2367,7 +2371,7 @@ function readrBoard($R){
                                 if(typeof onSuccessCallback !== 'undefined'){
                                     onSuccessCallback();
                                 }      
-                            // }
+                            }
                             
                             
                         }
@@ -2477,16 +2481,20 @@ function readrBoard($R){
                     };
 
                     var hashesToShow = []; //filled below
-
+console.dir(summaries);
+// console.dir(RDR.summaries['504e6e16db152b503519a6531dc48f33']);
                     for ( var i in summaries ) {
                         var page_id = i;
-
+console.log('page_id: '+page_id);
                         for ( var j in summaries[i] ) {
-                            var hash = summaries[i][j];
-                            
+                            var hash = j;
+console.log('hash: '+hash);
                             // var summary = RDR.util.makeEmptySummary( hash );
-                            var summary = ( RDR.summaries[hash] ) ? RDR.summaries[hash] : RDR.util.makeEmptySummary( hash );
-
+                            var summary = summaries[i][j]; // ( RDR.summaries[hash] ) ? RDR.summaries[hash] : RDR.util.makeEmptySummary( hash );
+if ( hash == "504e6e16db152b503519a6531dc48f33" ) {
+    console.dir( summary );
+    console.dir(RDR.containers);
+}
                             //first do generic stuff
                             //save the hash as a summary attr for convenience.
                             summary.hash = hash;
@@ -2497,7 +2505,7 @@ function readrBoard($R){
                                 var $container = containerInfo.$this;
                                 
                                 // neeed this?
-                                $container.addClass( 'rdr-' + hash ).addClass('rdr-hashed');
+                                // $container.addClass( 'rdr-' + hash ).addClass('rdr-hashed');
                                 // $container.addClass('rdr-hashed');
                                                  
                                 //temp type conversion for top_interactions.coms;
@@ -2516,12 +2524,15 @@ function readrBoard($R){
                                         newComs[com.tag_id].push(com);
                                     }
                                 });
-
+console.log('hash: '+hash);
+if ( hash == "504e6e16db152b503519a6531dc48f33" ) console.dir( summary );
                                 summary.top_interactions.coms = newComs;
-
+console.log('hash: '+hash);
+if ( hash == "504e6e16db152b503519a6531dc48f33" ) console.dir( summary );
                                 RDR.actions.summaries.save(summary);
                                 RDR.actions.indicators.init( hash );
-
+console.log('hash: '+hash);
+if ( hash == "504e6e16db152b503519a6531dc48f33" ) console.dir( summary );
                                 //now run the type specific function with the //run the setup func above
                                 var kind = summary.kind;
                                 _setupFuncs[kind](hash, summary);
@@ -3764,14 +3775,14 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 init: function(hash){
                     //RDR.actions.indicators.init:
                     //note: this should generally be called via RDR.actions.containers.setup
-
                     var scope = this;
                     var summary = RDR.summaries[hash],
                         $container = summary.$container,                    
                         indicatorId = 'rdr_indicator_'+hash,
                         indicatorBodyId = 'rdr_indicator_body_'+hash,
                         indicatorDetailsId = 'rdr_indicator_details_'+hash;
-
+// console.log('RDR.actions.indicators.init: '+hash);
+// console.dir(summary);
                     //check for and remove any existing indicator and indicator_details and remove for now.
                     //this shouldn't happen though.
                     //todo: solve for duplicate content that will have the same hash.
