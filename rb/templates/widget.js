@@ -2238,18 +2238,16 @@ function readrBoard($R){
                     //don't do this here - do it on success of callback from server
                     // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
                     $this.addClass( 'rdr-' + hash ).addClass('rdr-hashed');
+                    RDR.actions.summaries.init( hash );
+
                     
-                    console.log('hash: '+hash);
                     var page_id = RDR.util.getPageProperty('id', hash );
-                    console.log('page_id: '+page_id);
                     if ( !hashList[ page_id ] ) hashList[ page_id ] = [];
                     
                     hashList[ page_id ].push(hash);
                     $this.data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
                 });
-// console.dir(RDR.summaries);
-console.log('hashList');
-                console.dir(hashList);
+
                 RDR.actions.containers.setup(hashList);
                 return hashList;
             },
@@ -2390,6 +2388,7 @@ console.log('hashList');
                     //RDR.actions.containers.setup:
                     //then define type-specific setup functions and run them
 console.log('containers.setup');
+console.dir(summaries);
                     var _setupFuncs = {
                         img: function(hash, summary){
                             console.log('img _setupFuncs');
@@ -2474,7 +2473,7 @@ console.log('hover 5');
                     };
 
                     var hashesToShow = []; //filled below
-console.dir(summaries);
+
                     $.each(summaries, function(hash, summary){
                         //first do generic stuff
                         //save the hash as a summary attr for convenience.
@@ -2485,6 +2484,7 @@ console.dir(summaries);
                         if ( containerInfo) {
                             var $container = containerInfo.$this;
                             
+                            // neeed this?
                             $container.addClass( 'rdr-' + hash ).addClass('rdr-hashed');
                             // $container.addClass('rdr-hashed');
                                              
