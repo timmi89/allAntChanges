@@ -151,6 +151,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admin',
     'api',
     'rb',
     'piston',
@@ -162,7 +163,6 @@ INSTALLED_APPS = [
 ]
 
 #if DEBUG: INSTALLED_APPS.append('devserver')
-if DEBUG: INSTALLED_APPS.append('django.contrib.admin')
 if DEBUG: INSTALLED_APPS.append('django_extensions')
 
 DEVSERVER_MODULES = (
