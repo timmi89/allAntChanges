@@ -5,31 +5,59 @@
 {% block bodyClass %}wide{% endblock %}
 
 {% block mainContent %}
+
+<style>
+
+body{
+}
+
+body.wide section[role="main"] {
+    width: 900px;
+}
+body section[role="controls"]{
+	border:none;	
+}
+body.wide section[role="content"]{
+	width: 900px;
+	background:none;
+}
+section[role="wide panels"]{
+	width:auto;
+	padding: 0 6%;
+}
+section.introBlurb{
+	margin-bottom:40px !important;
+}
+.introBlurb .readrboard_logo{
+	float:left;
+	padding-right:8px;
+	margin-top:4px;
+}
+
+
+</style>
+
 <section role="analytics header">
 	<section role="controls">
-		Hello!  
+		Hello!
 	</section>
 </section>
 
 <section role="panels">
 	<section role="wide panels">
-	
-	<section role="most active pages">
-		<br>
-		<h3>A reaction button for the web.</h3>
-		<p>
-			ReadrBoard are Eric, Tyler, and Porter, and our goal is to make it super easy for readers to say how they feel about whatever content online is <strong>really</strong> spurring their interest or their reaction.
-		</p>
-		<br>
-		<p>
-			More soon...
-		</p>
-	</section>
-<!--
+		
+		<section role="most active pages" class="introBlurb">
+			<img class="readrboard_logo" src="{{BASE_URL}}{{STATIC_URL}}site/images/logo.png" />
+			<h3>A reaction button for the web.</h3>
+			<p>
+				ReadrBoard are Eric, Tyler, and Porter, and our goal is to make it super easy for readers to say how they feel about whatever content online is <strong>really</strong> spurring their interest or their reaction.
+			</p>
+		</section>
+
 	<table width="100%;">
 			<tr>
 				<td style="width:28%;">
-					<img src="images/bayne.jpg" />
+					<img src="{{BASE_URL}}{{STATIC_URL}}site/images/about/bayne.jpg" />
 					<br>
 					<strong class="blue">Porter Bayne</strong>
 					<div class="bio">
@@ -44,7 +72,7 @@
 				</td>
 				<td style="width:8%;">&nbsp;</td>
 				<td style="width:28%;">
-					<img src="images/brock.jpg" />
+					<img src="{{BASE_URL}}{{STATIC_URL}}site/images/about/brock.jpg" />
 					<br>
 					<strong class="blue">Tyler Brock</strong>
 					<div class="bio">
@@ -70,7 +98,7 @@
 				</td>
 				<td style="width:8%;">&nbsp;</td>
 				<td style="width:28%;">
-					<img src="images/chaves.jpg" />
+					<img src="{{BASE_URL}}{{STATIC_URL}}site/images/about/chaves.jpg" />
 					<br>
 					<strong class="blue">Eric Chaves</strong>
 					<div class="bio">
@@ -86,14 +114,14 @@
 			</tr>
 		</table>
 	</div>
-	<div style="padding:10px 100px; text-align:center;">
-		<img src="images/advisers.png" />
+	<div style="padding:10px 10%; text-align:center;">
+		<img src="{{BASE_URL}}{{STATIC_URL}}site/images/about/advisers.png" />
 		<br>
 		<br>
 		<table width="100%;">
 			<tr>
 				<td style="width:40%;">
-					<img src="images/ohanian.jpg" />
+					<img src="{{BASE_URL}}{{STATIC_URL}}site/images/about/ohanian.jpg" />
 					<br>
 					<strong class="blue">Alexis Ohanian</strong>
 					<div class="bio gray">
@@ -114,15 +142,18 @@
 						If you've ever told someone about any of my projects, I owe you a beer. (Thanks!)
 						</div>
 				</td>
-				<td style="width:20%;">&nbsp;</td>
+				<td style="width:15%;">&nbsp;</td>
 				<td style="width:40%;">
 					<h1>?</h1>
+					<div>
+						<strong>Are you an experienced advisor who wants to help Readrboard take off?</strong>
+					</div>
 				</td>
 			</tr>
 		</table>
 	</div>
 	<div style="padding:10px 100px; text-align:center;">
-		<img src="images/investors.png" />
+		<img src="{{BASE_URL}}{{STATIC_URL}}site/images/about/investors.png" />
 		<br>
 		<br>
 		Well, us (boot)strapping cofounders, so far.  <a href="http://porterbayne.wufoo.com/forms/m7x3k1/" onclick="window.open(this.href,  null, 'height=410, width=775, toolbar=0, location=0, status=1, scrollbars=1, resizable=1'); return false" title="Tell me more about ReadrBoard!!">Interested?</a>
@@ -131,7 +162,14 @@
 		<br>
 		<br>
 	</div>
-	-->
+	<div>
+	<!--
+		<a href="http://local.readrboard.com:8080/static/demo/index.html" ></a>
+		test lfksj dlkjdf gdsflkgjdf kjdlkjdf gdsflkgjdf kjdlkjdf gdsflkgjdf kjdlkjdf gdsflkgjdf kjdlkjdf gdsflkgjdf kjdlkjdf gdsflkgjdf kjdlkjdf gdsflkgjdf kjdlkjdf gdsflkgjdf kjdlkjdf gdsflkgjdf kj
+		-->
+	</div>
+	
+	
 	</section>
 </section>
 {% endblock %}
