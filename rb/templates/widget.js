@@ -1757,6 +1757,19 @@ function readrBoard($R){
                                         ""; //this default shouldn't happen
                                     userMsg += " See your "+interactionInfo.type+"s on this page, and at <strong><a href='"+RDR_rootPath+"' target='_blank'>readrboard.com</a></strong>";
                                 }
+
+                                var click_args = args;
+                                if ( $rindow.find('div.rdr_rindow_message_tempUserMsg').text().length > 0 ) {
+                                    $inlineTempMsg = $('<div />');
+                                    $inlineTempMsg.html( '<h4 style="font-size:17px;">You can react '+ $rindow.find('div.rdr_rindow_message_tempUserMsg strong').text() +'.</h4><br/><p><a style="font-weight:bold;color:#008be4;" href="javascript:void(0);">Connect with Facebook</a> to react as much as you want &amp; show other readers here what you think.</p><br/><p>Plus, you can share and comment in-line!</p><br/><a href="javascript:void(0);"><img src="{{ BASE_URL }}{{ STATIC_URL }}widget/images/fb-login_to_readrboard.png" alt="Connect with Facebook" /></a>');
+                                    $inlineTempMsg.find('a').click( function() {
+                                        RDR.session.showLoginPanel( click_args );
+                                    });
+                                    
+                                    $rindow.find('div.rdr_shareBox').html( $inlineTempMsg );
+                                    $rindow.find('div.rdr_commentBox').hide();
+                                }
+
                                 break;
                         
                         }   
