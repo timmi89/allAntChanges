@@ -148,7 +148,7 @@ class Group(models.Model):
     temp_interact = models.IntegerField(default=5)
 
     # css
-    css_url = models.URLField(blank=True,verify_exists=False)
+    css_url = models.TextField(blank=True)
     
     # for token
     secret = models.CharField(max_length=128)
@@ -323,7 +323,7 @@ class Profile(models.Model):
 class SocialAuth(models.Model):
     social_user = models.ForeignKey(SocialUser, related_name='social_auth')
     auth_token = models.CharField(max_length=103, unique=True)
-    expires = models.DateTimeField(null=True)
+    expires = models.DateTimeField(null=True, editable=False)
 
     class Meta:
         unique_together = ('auth_token', 'expires')
