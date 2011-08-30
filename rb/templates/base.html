@@ -71,11 +71,11 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
       <a href="#"><img src="{{ STATIC_URL }}site/images/gear.png"/></a>
       <nav>
       <ul>
+          <!-- <li><a href="/preferences/">Preferences</a></li> -->
+          <li><a href="/about/">About</a></li>
           {% if cookie_user.id %}
           <li><a href="javascript:void(0);" onclick="RDRAuth.doFBlogout();">Logout</a></li>
           {% endif %}
-          <!-- <li><a href="/preferences/">Preferences</a></li> -->
-          <li><a href="/about/">About</a></li>
       </ul>
     </nav>
     </div>
@@ -90,9 +90,9 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     <div id="site_search">
       <form method="get" id="searchform" action="/">
         <fieldset>
-        <label>Search</label>
-        <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />
-        <button>Search</button>
+          <label>Search</label>
+          <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />
+          <button>Search</button>
         </fieldset>
       </form>
     </div>

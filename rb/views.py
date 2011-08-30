@@ -173,9 +173,9 @@ def sidebar(request, user_id=None, short_name=None):
     pass
 
 @requires_admin
-def settings(request, group=None):
+def settings(request, group=None, **kwargs):
     context = {}
-    context['cookie_user'] = checkCookieToken(request)
+    context['cookie_user'] = kwargs['cookie_user']
 
     if request.method == 'POST':
         form = GroupForm(request.POST, request.FILES, instance=group)
@@ -196,10 +196,11 @@ def settings(request, group=None):
         context_instance=RequestContext(request)
     )
     
-def admin_approve(request, request_id=None):
+@requires_admin
+def admin_approve(request, request_id=None, **kwargs):
     context = {}
-    cookie_user = checkCookieToken(request)
-    if not cookie_user: return HttpResponseRedirect('/')
+    cookie_user = kwargs['cookie_user']
+    context['cookie_user'] = cookie_user
     
     groups = GroupAdmin.objects.filter(
         social_user=cookie_user.social_user,

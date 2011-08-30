@@ -76,7 +76,7 @@ urlpatterns = patterns('',
 
   url(r'^api/', include('readrboard.api.urls')),
   url(r'^analytics/', include('readrboard.analytics.urls')),
-  url(r'^admin_request/(?P<short_name>\w+)/$', 'rb.views.admin_request'),
+  url(r'^admin_request/(?P<short_name>[\w\-]+)/$', 'rb.views.admin_request'),
   url(r'^admin_approve/$', 'rb.views.admin_approve'),
   url(r'^admin_approve/(?P<request_id>\d+)/$', 'rb.views.admin_approve'),
 )
