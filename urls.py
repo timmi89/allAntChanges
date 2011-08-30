@@ -79,13 +79,9 @@ urlpatterns = patterns('',
   url(r'^admin_request/(?P<short_name>[\w\-]+)/$', 'rb.views.admin_request'),
   url(r'^admin_approve/$', 'rb.views.admin_approve'),
   url(r'^admin_approve/(?P<request_id>\d+)/$', 'rb.views.admin_approve'),
-  url(r'^admin/', include(admin.site.urls),
+  url(r'^admin/', include(admin.site.urls)),
 )
 
 if settings.DEBUG:
   urlpatterns += staticfiles_urlpatterns()
-  urlpatterns += patterns('',
-          url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
-              'document_root': settings.MEDIA_ROOT,
-          }),
-     )
+  urlpatterns += patterns('', url(r'^media/(?P<path>.*)$', 'django.views.static.serve', { 'document_root': settings.MEDIA_ROOT }),)
