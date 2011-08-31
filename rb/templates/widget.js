@@ -1995,51 +1995,53 @@ function readrBoard($R){
     					success: function(response) {
                             var key = this.key;
                             var $container = ( $(RDR.group.post_selector + '.rdr-page-key-'+key).length > 0 ) ? $(RDR.group.post_selector + '.rdr-page-key-'+key) : $('body.rdr-page-key-'+key);
-                            $container.removeClass( 'rdr-page-key-' + key );
+                            if ( $container ) {
+                                $container.removeClass( 'rdr-page-key-' + key );
 
-                            var hash = RDR.util.md5.hex_md5( String(response.data.id) );
-                            var tagName = $container[0].tagName.toLowerCase();
+                                var hash = RDR.util.md5.hex_md5( String(response.data.id) );
+                                var tagName = $container.get(0).nodeName.toLowerCase();
 
-                            if ( !RDR.containers[hash] ) {
-                                RDR.containers[hash] = {};
-                                RDR.containers[hash].id = String(response.data.id);
-                                RDR.containers[hash].kind = "page";
-                                $container.data( 'page_id', String(response.data.id) ); // the page ID
-                            }
-
-                            // hash the "page" descendant nodes
-                            // RDR.actions.hashNodes( $container, "nomedia" );
-                            RDR.actions.hashNodes( $container );
-
-                            if ( response.data.containers.length > 0 ) {
-                                var hashes = [];
-                                hashes[ response.data.id ] = [];
-                                for ( var i in response.data.containers ) {
-                                    hashes[ response.data.id ].push( response.data.containers[i].hash );
+                                if ( !RDR.containers[hash] ) {
+                                    RDR.containers[hash] = {};
+                                    RDR.containers[hash].id = String(response.data.id);
+                                    RDR.containers[hash].kind = "page";
+                                    $container.data( 'page_id', String(response.data.id) ); // the page ID
                                 }
-                                RDR.actions.sendHashes( hashes );
+
+                                // hash the "page" descendant nodes
+                                // RDR.actions.hashNodes( $container, "nomedia" );
+                                RDR.actions.hashNodes( $container );
+
+                                if ( response.data.containers.length > 0 ) {
+                                    var hashes = [];
+                                    hashes[ response.data.id ] = [];
+                                    for ( var i in response.data.containers ) {
+                                        hashes[ response.data.id ].push( response.data.containers[i].hash );
+                                    }
+                                    RDR.actions.sendHashes( hashes );
+                                }
+
+                                //init the widgetSummary
+                                var widgetSummarySettings = response;
+                                if ( $container.find( RDR.group.summary_widget_selector + '.rdr-page-widget-key-' + key).length == 1 ) {
+                                    widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector + '.rdr-page-widget-key-'+key);
+                                    widgetSummarySettings.jqFunc = "after";
+                                } else {
+                                    widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
+                                    widgetSummarySettings.jqFunc = "append";
+                                }
+                                
+                                widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
+
+                                // [ porter ] i can explain...
+                                // if ( ( $('#rdr-page-summary').length == 1 && key == 0 ) || ( urls.length > 1 && key > 0 ) || ( urls.length == 1 ) ) {
+                                // if (  ) {}
+                                // }
+
+                                //insertImgIcons(response);
+                               
+                                //to be normally called on success of ajax call
                             }
-
-                            //init the widgetSummary
-                            var widgetSummarySettings = response;
-                            if ( $container.find( RDR.group.summary_widget_selector + '.rdr-page-widget-key-' + key).length == 1 ) {
-                                widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector + '.rdr-page-widget-key-'+key);
-                                widgetSummarySettings.jqFunc = "after";
-                            } else {
-                                widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
-                                widgetSummarySettings.jqFunc = "append";
-                            }
-                            
-                            widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
-
-                            // [ porter ] i can explain...
-                            // if ( ( $('#rdr-page-summary').length == 1 && key == 0 ) || ( urls.length > 1 && key > 0 ) || ( urls.length == 1 ) ) {
-                            // if (  ) {}
-                            // }
-
-                            //insertImgIcons(response);
-                           
-                            //to be normally called on success of ajax call
                             $RDR.dequeue('initAjax');
 
                         },
@@ -2230,7 +2232,7 @@ function readrBoard($R){
                     var $this = $(this);
                     var body = $this.data('body'),
                     kind = $this.data('kind'),
-                    HTMLkind = $this[0].tagName.toLowerCase();
+                    HTMLkind = $this.get(0).nodeName.toLowerCase();
 
                     // if ( nomedia && ( 
                         // HTMLkind == "img" || HTMLkind == "embed" || HTMLkind == "iframe" || HTMLkind == "object" || HTMLkind == "video" ) ) {
