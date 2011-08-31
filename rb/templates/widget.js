@@ -6335,7 +6335,7 @@ function $RFunctions($R){
                         $(this).find('.rdr_tooltip').show();
                     },
                     function() {
-                        // $(this).find('.rdr_tooltip').hide();
+                        $(this).find('.rdr_tooltip').hide();
                     }
                 );
 
