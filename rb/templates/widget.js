@@ -1998,7 +1998,7 @@ function readrBoard($R){
                             $container.removeClass( 'rdr-page-key-' + key );
 
                             var hash = RDR.util.md5.hex_md5( String(response.data.id) );
-                            var tagName = $container[0].tagName.toLowerCase();
+                            var tagName = $container[0].nodeName.toLowerCase();
 
                             if ( !RDR.containers[hash] ) {
                                 RDR.containers[hash] = {};
@@ -2230,7 +2230,7 @@ function readrBoard($R){
                     var $this = $(this);
                     var body = $this.data('body'),
                     kind = $this.data('kind'),
-                    HTMLkind = $this[0].tagName.toLowerCase();
+                    HTMLkind = $this[0].nodeName.toLowerCase();
 
                     // if ( nomedia && ( 
                         // HTMLkind == "img" || HTMLkind == "embed" || HTMLkind == "iframe" || HTMLkind == "object" || HTMLkind == "video" ) ) {
