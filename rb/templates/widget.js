@@ -1995,7 +1995,9 @@ function readrBoard($R){
     					success: function(response) {
                             var key = this.key;
                             var $container = ( $(RDR.group.post_selector + '.rdr-page-key-'+key).length > 0 ) ? $(RDR.group.post_selector + '.rdr-page-key-'+key) : $('body.rdr-page-key-'+key);
-                            if ( $container ) {
+
+                            if ( $container.length == 1 ) {
+                                
                                 $container.removeClass( 'rdr-page-key-' + key );
 
                                 var hash = RDR.util.md5.hex_md5( String(response.data.id) );
@@ -2302,12 +2304,18 @@ function readrBoard($R){
                     var sendable_hashes = hashes[i];
 
 
-                    if ( !page_id ) {
+                    if ( !page_id || typeof sendable_hashes != "object" ) {
                         return;
                     }
-
-                    for ( var i in sendable_hashes ) {
-                        $('.rdr-'+sendable_hashes[i]).addClass('rdr-hashed');
+                    
+                    for ( var j in sendable_hashes ) {
+                        if ( typeof sendable_hashes[j] == "string" ) {
+                            if ( sendable_hashes[j] ) var $hashable_node = $('.rdr-' + sendable_hashes[j]);
+                            if ( $hashable_node && $hashable_node.length == 1 ) $hashable_node.addClass('rdr-hashed');
+                        }
+                        // } else {
+                        //     delete sendable_hashes[j];
+                        // }
                     }
 
                     //build the sendData with the hashes from above
