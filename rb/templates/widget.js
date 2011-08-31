@@ -2343,16 +2343,17 @@ function readrBoard($R){
                             for ( var i in response.data.unknown ) {
                                 
                                 var hash = response.data.unknown[i];
-                                
-                                // get the kind
-                                if ( $('img.rdr-'+hash).length == 1 ) {
-                                    unknown_summary = RDR.util.makeEmptySummary( hash, "img" );
-                                } else if ( $('.rdr-'+hash).text() ) { // TODO seems fragile.
-                                    unknown_summary = RDR.util.makeEmptySummary( hash, "text" );
-                                } else {
-                                    unknown_summary = RDR.util.makeEmptySummary( hash, "media" );
+                                if (typeof hash == "string") {
+                                    // get the kind
+                                    if ( $('img.rdr-'+hash).length == 1 ) {
+                                        unknown_summary = RDR.util.makeEmptySummary( hash, "img" );
+                                    } else if ( $('.rdr-'+hash).text() ) { // TODO seems fragile.
+                                        unknown_summary = RDR.util.makeEmptySummary( hash, "text" );
+                                    } else {
+                                        unknown_summary = RDR.util.makeEmptySummary( hash, "media" );
+                                    }
+                                    summaries[ hash ] = unknown_summary;
                                 }
-                                summaries[ hash ] = unknown_summary;
                             }
 
                             
