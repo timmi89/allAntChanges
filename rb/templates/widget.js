@@ -6328,13 +6328,14 @@ function $RFunctions($R){
 
                 $tooltip.css('bottom', ( $summary_widget.height() + 15 ) + "px" );
                 $tooltip.css('top', 'auto' );
+                $tooltip.css('left', ( ( $summary_widget.width() / 2 ) - 125 ) + "px" );
 
                 $summary_widget.hover(
                     function() {
                         $(this).find('.rdr_tooltip').show();
                     },
                     function() {
-                        $(this).find('.rdr_tooltip').hide();
+                        // $(this).find('.rdr_tooltip').hide();
                     }
                 );
 
