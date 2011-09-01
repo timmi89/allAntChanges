@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ group.name }} Analytics{%endblock%}
+{% block title %}About Readrboard{%endblock%}
 
 {% block bodyClass %}wide{% endblock %}
 
@@ -26,12 +26,22 @@ section[role="wide panels"]{
 	padding: 0 6%;
 }
 section.introBlurb{
-	margin-bottom:40px !important;
+	margin:30px 0 40px 0 !important;
 }
 .introBlurb .readrboard_logo{
 	float:left;
 	padding-right:8px;
 	margin-top:4px;
+}
+.introBlurb h3{
+	border:none !important;
+}
+.footerLinks{
+	padding-bottom:20px;
+}
+.footerLinks ul{
+	margin-left:10px;
+	font-size:0.8em;
 }
 
 
@@ -39,7 +49,7 @@ section.introBlurb{
 
 <section role="analytics header">
 	<section role="controls">
-		Hello!
+		About Readrboard
 	</section>
 </section>
 
@@ -47,7 +57,7 @@ section.introBlurb{
 	<section role="wide panels">
 		
 		<section role="most active pages" class="introBlurb">
-			<img class="readrboard_logo" src="{{BASE_URL}}{{STATIC_URL}}site/images/logo.png" />
+			<a href="{{BASE_URL}}" ><img class="readrboard_logo" src="{{BASE_URL}}{{STATIC_URL}}site/images/logo.png" /></a>
 			<h3>A reaction button for the web.</h3>
 			<p>
 				ReadrBoard are Eric, Tyler, and Porter, and our goal is to make it super easy for readers to say how they feel about whatever content online is <strong>really</strong> spurring their interest or their reaction.
@@ -162,11 +172,15 @@ section.introBlurb{
 		<br>
 		<br>
 	</div>
-	<div>
-	<!--
-		<a href="http://local.readrboard.com:8080/static/demo/index.html" ></a>
-		test lfksj dlkjdf gdsflkgjdf kjdlkjdf gdsflkgjdf kjdlkjdf gdsflkgjdf kjdlkjdf gdsflkgjdf kjdlkjdf gdsflkgjdf kjdlkjdf gdsflkgjdf kjdlkjdf gdsflkgjdf kjdlkjdf gdsflkgjdf kjdlkjdf gdsflkgjdf kj
-		-->
+	<div class="footerLinks">
+		<ul>
+			<li>
+				<span>Try Readrboard on our <a href="{{BASE_URL}}{{STATIC_URL}}demo/index.html" >demo page</a>.</span>
+			</li>
+			<li>
+				<span>See what people are <a href="{{BASE_URL}}" >saying on Readrboard</a>.</span>
+			</li>
+		</ul>
 	</div>
 	
 	
