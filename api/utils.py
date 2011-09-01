@@ -121,7 +121,6 @@ def getHost(request):
 def stripQueryString(url):
     qs = urlsplit(url).query
     if qs:
-        print "stripping"
         url = url[:url.index(qs)-1]
     return url
 
