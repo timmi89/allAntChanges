@@ -4117,42 +4117,43 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $indicator_details = summary.$indicator_details,
                             $container_tracker = $('#rdr_container_tracker_'+hash);
 
-                        //todo: consolodate this with the other case of it
-                        var containerWidth, containerHeight;
-                        //this will calc to 0 if there is no border. 
-                        var hasBorder = parseInt( $container.css('border-top-width') ) + 
-                            parseInt( $container.css('border-bottom-width') ) + 
-                            parseInt( $container.css('border-left-width') ) + 
-                            parseInt( $container.css('border-right-width') );
+                        if ( $indicator_body ) {
+                            //todo: consolodate this with the other case of it
+                            var containerWidth, containerHeight;
+                            //this will calc to 0 if there is no border. 
+                            var hasBorder = parseInt( $container.css('border-top-width') ) + 
+                                parseInt( $container.css('border-bottom-width') ) + 
+                                parseInt( $container.css('border-left-width') ) + 
+                                parseInt( $container.css('border-right-width') );
 
-                        if(hasBorder){
-                            containerWidth = $container.outerWidth();
-                            containerHeight = $container.outerHeight();
-                        }else{
-                            containerWidth = $container.width();
-                            containerHeight = $container.height();
+                            if(hasBorder){
+                                containerWidth = $container.outerWidth();
+                                containerHeight = $container.outerHeight();
+                            }else{
+                                containerWidth = $container.width();
+                                containerHeight = $container.height();
+                            }
+                            
+                            var padding = {
+                                top: parseInt( $container.css('padding-top') ),
+                                right: parseInt( $container.css('padding-right') ),
+                                bottom: parseInt( $container.css('padding-bottom') ),
+                                left: parseInt( $container.css('padding-left') )
+                            };
+
+                            var cornerPadding = 8,
+                                indicatorBodyWidth = $indicator_body.width();
+                            
+                            $indicator.css({
+                                top: 0,
+                                left: containerWidth
+                            });
+
+                            RDR.util.cssSuperImportant($indicator_body, {
+                                top: cornerPadding,
+                                right: cornerPadding
+                            });
                         }
-                        
-                        var padding = {
-                            top: parseInt( $container.css('padding-top') ),
-                            right: parseInt( $container.css('padding-right') ),
-                            bottom: parseInt( $container.css('padding-bottom') ),
-                            left: parseInt( $container.css('padding-left') )
-                        };
-
-
-                        var cornerPadding = 8,
-                            indicatorBodyWidth = $indicator_body.width();
-                        
-                        $indicator.css({
-                            top: 0,
-                            left: containerWidth
-                        });
-
-                        RDR.util.cssSuperImportant($indicator_body, {
-                            top: cornerPadding,
-                            right: cornerPadding
-                        });
                         
                     },
                     updateMediaBorderHilites: function(hash){
