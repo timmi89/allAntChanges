@@ -67,7 +67,7 @@ class ModerationHandler(AnonymousBaseHandler):
     @json_data
     @status_response
     def read(self, request, data):
-        data['group_id'] = 1
+        #data['group_id'] = 1
         
         # Check if current user's token has permission
         user = checkToken(data)
@@ -80,14 +80,16 @@ class ModerationHandler(AnonymousBaseHandler):
         except User.DoesNotExist, User.MultipleObjectsReturned:
             raise JSONException(u"Interaction Handler: Error getting interaction!")
 
-        if user.social_user.admin_approved:
-            if interaction.page.site.group_id == user.social_user.group_admin_id:
-                interaction.approved = False
-                interaction.save()
-            else:
-                raise JSONException(u'Admin not approved for this group!')
+        gas = GroupAdmin.objects.filter(
+            social_user=cookie_user.social_user,
+            approved=True
+        )
+
+        if interaction.page.site.group in gas:
+            interaction.approved = False
+            interaction.save()
         else:
-            raise JSONException(u'Admin not approved!')
+            raise JSONException(u'Admin not approved for this group!')
 
 class InteractionHandler(AnonymousBaseHandler):
     @json_data
