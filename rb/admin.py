@@ -29,6 +29,7 @@ class ProfileAdmin(admin.ModelAdmin):
     )
 
 class RBGroupAdmin(admin.ModelAdmin):
+    list_display = ('name', 'short_name', 'demo_group')
     fieldsets = (
         (None, {
             'fields': ('name', 'short_name', 'demo_group', 'approved')
