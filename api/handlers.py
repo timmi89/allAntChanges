@@ -80,9 +80,9 @@ class ModerationHandler(AnonymousBaseHandler):
         except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
             raise JSONException(u"Interaction Handler: Error getting interaction!")
 
-        gas = GroupAdmin.objects.filter(
-            social_user=user.social_user,
-            approved=True
+        approved_groups = Group.objects.filter(
+            admins__social_user=user.social_user,
+            admins__approved=True
         )
 
         if interaction.page.site.group in gas:
