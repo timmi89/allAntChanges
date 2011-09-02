@@ -688,6 +688,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
     width:20px !important;
     height:20px !important;
     margin:0 3px 0 0 !important;
+    padding:0 !important;
 }
 
 /* custom in-page highlight */
