@@ -6340,7 +6340,6 @@ function $RFunctions($R){
                     tooltip_left = ( summaryOffsets.left + ( $summary_widget.width() / 2 ) - 125 );
 
                 $tooltip.css('top', tooltip_top + "px" );
-                // $tooltip.css('top', 'auto' );
                 $tooltip.css('left', tooltip_left + "px" );
 
                 $summary_widget.hover(
