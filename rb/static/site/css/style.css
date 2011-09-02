@@ -524,7 +524,7 @@ header[role="banner"] #site_search button	{width:24px; height:24px; background:u
 nav ul 		{ list-style:none; }
 nav li 		{ padding-left:5px; }
 nav li#user 	{ display:inline; padding-left:0px; padding-right:10px;}
-nav 			{  background: none repeat scroll 0 0 #ddd; border:1px solid #aaa; border-top:0; font-size: 12px; padding: 10px 15px 0 0; position: absolute; right: 5px; text-align: right; top: 41px; width: 100px; display:none; }
+nav 			{  background: none repeat scroll 0 0 #ddd; border:1px solid #aaa; border-top:0; font-size: 12px; padding: 10px 15px 0 0; position: absolute; right: 5px; text-align: right; top: 41px; width: 150px; display:none; }
 header[role="banner"] #settings:hover nav {display:block;}
 
 /* CONTENT CONTAINER */
