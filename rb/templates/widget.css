@@ -652,9 +652,6 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
     margin-bottom:10px !important;
     overflow:auto !important;
     clear:both !important;
-    /* racialicious */
-    width:500px; 
-    margin-top:7px;
 }
 
 /*blunt attack for now*/
@@ -686,8 +683,6 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
     overflow:hidden !important;
     height:16px !important;
     float:left !important;
-    /* racialicious */
-    display:none;
 }
 .rdr-summary div.rdr-top-users img {
     width:20px !important;

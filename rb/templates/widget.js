@@ -1892,6 +1892,12 @@ function readrBoard($R){
                             $(this).find('img').addClass('no-rdr');
                         });
 
+                        // it's not a CSS URL, but rather custom CSS rules.  We should change the name in the model...
+                        // this embeds custom CSS.
+                        if ( RDR.group.css_url != "" ) {
+                            $('head').append( $('<style type="text/css">' + RDR.group.css_url + '</style>') );
+                        }
+
                         $RDR.dequeue('initAjax');
                     },
                     error: function(response) {
@@ -3731,7 +3737,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     //todo: this works for now, but use a differnet signal later
                     if ( $indicators.length == 1 ) $indicators.removeClass('rdr_dont_show');
 
-                    var textIndicatorOpacity = ( !$.browser.msie ) ? '0.4':'1.0';
+                    // var textIndicatorOpacity = ( !$.browser.msie ) ? '0.4':'1.0';
+                    var textIndicatorOpacity = ( !$.browser.msie ) ? '1.0':'1.0';
 
                     $indicators.not('.rdr_dont_show').css({
                         'opacity':'0',
