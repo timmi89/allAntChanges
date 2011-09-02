@@ -77,11 +77,11 @@ class ModerationHandler(AnonymousBaseHandler):
 
         try:
             interaction = Interaction.objects.get(id=int_id)
-        except User.DoesNotExist, User.MultipleObjectsReturned:
+        except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
             raise JSONException(u"Interaction Handler: Error getting interaction!")
 
         gas = GroupAdmin.objects.filter(
-            social_user=cookie_user.social_user,
+            social_user=user.social_user,
             approved=True
         )
 
