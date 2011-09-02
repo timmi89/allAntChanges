@@ -1933,6 +1933,9 @@ function readrBoard($R){
                 });
             },
             initPageData: function(){
+                //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
+                var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr"/>').appendTo('body');
+
                 // RDR.session.educateUser(); //this function has changed now
                //? do we want to model this here to be symetrical with user and group data?
 
@@ -2065,10 +2068,8 @@ function readrBoard($R){
             },
             initEnvironment: function(){
                 
-                //dont know if it makes sense to return anything here like im doing now...
-
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
-                var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr"/>').appendTo('body');
+                var $rdrSandbox = $('div#rdr_sandbox').appendTo('body');
 
                 //div to hold indicatorBodies for media (images and video)
                 $('<div id="rdr_container_tracker_wrap" />').appendTo($rdrSandbox);
@@ -6328,21 +6329,26 @@ function $RFunctions($R){
                     $summary_widget.append( $topusers );
 
                 }
-
                 // instructional tooltip
                 $tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"<strong style='font-weight:bold;'>Tell us what you think!</strong><br>React by selecting any text, or roll your mouse over images and video, and look for the pin icon."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
-                $summary_widget.append( $tooltip );
+                $tooltip.attr( 'id', 'rdr-tooltip-'+page.id );
+                $('#rdr_sandbox').append( $tooltip );
 
-                $tooltip.css('bottom', ( $summary_widget.height() + 15 ) + "px" );
-                $tooltip.css('top', 'auto' );
-                $tooltip.css('left', ( ( $summary_widget.width() / 2 ) - 125 ) + "px" );
+
+                var summaryOffsets = $summary_widget.offset();
+                var tooltip_top = ( summaryOffsets.top - $(window).scrollTop() - 82 ),
+                    tooltip_left = ( summaryOffsets.left + ( $summary_widget.width() / 2 ) - 125 );
+
+                $tooltip.css('top', tooltip_top + "px" );
+                // $tooltip.css('top', 'auto' );
+                $tooltip.css('left', tooltip_left + "px" );
 
                 $summary_widget.hover(
                     function() {
-                        $(this).find('.rdr_tooltip').show();
+                        $('#rdr-tooltip-' + page.id).show();
                     },
                     function() {
-                        $(this).find('.rdr_tooltip').hide();
+                        $('#rdr-tooltip-' + page.id).hide();
                     }
                 );
 
