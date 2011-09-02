@@ -1949,6 +1949,10 @@ function readrBoard($R){
                 var titles = [];
                 var key = 0; // we use this to know which container to point to in the success call
 
+                RDR.group.post_href_selector = "h3 a";
+                RDR.group.post_selector = "div.post";
+                RDR.group.summary_widget_selector = "div.post-content h3";
+
                 // if multiple posts, add additional "pages"
                 if ( 
                     ( RDR.group.post_selector != "" && RDR.group.post_href_selector != "" && RDR.group.summary_widget_selector != "" ) &&
@@ -1970,14 +1974,17 @@ function readrBoard($R){
                 }
 
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
-                urls.push( window.location.href ); // + window.location.hash;
-                canonicals.push( ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href') : "" );
-                titles.push( ( $('meta[property="og:title"]').attr('content') ) ? $('meta[property="og:title"]').attr('content') : ( $('title').text() ) ? $('title').text():"" );
-                $( 'body' ).addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
-                if ( $('#rdr-page-summary').length == 1 ) {
-                    $('#rdr-page-summary').addClass('rdr-page-widget-key-'+key);
-                } else {
-                    $( 'body' ).find(RDR.group.summary_widget_selector).addClass('rdr-page-widget-key-'+key);
+
+                if ( $.inArray(window.location.href, urls) == -1 ) {
+                    urls.push( window.location.href ); // + window.location.hash;
+                    canonicals.push( ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href') : "" );
+                    titles.push( ( $('meta[property="og:title"]').attr('content') ) ? $('meta[property="og:title"]').attr('content') : ( $('title').text() ) ? $('title').text():"" );
+                    $( 'body' ).addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
+                    if ( $('#rdr-page-summary').length == 1 ) {
+                        $('#rdr-page-summary').addClass('rdr-page-widget-key-'+key);
+                    } else {
+                        $( 'body' ).find(RDR.group.summary_widget_selector).addClass('rdr-page-widget-key-'+key);
+                    }
                 }
 
     			var key = 0;
