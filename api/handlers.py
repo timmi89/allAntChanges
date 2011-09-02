@@ -83,8 +83,8 @@ class ModerationHandler(AnonymousBaseHandler):
         group_ids = GroupAdmin.objects.filter(
             social_user=user.social_user,
             approved=True
-        ).values_list('id', flat=True)
-
+        ).values_list('group_id', flat=True)
+        
         if interaction.page.site.group.id in group_ids:
             interaction.approved = False
             interaction.save()
