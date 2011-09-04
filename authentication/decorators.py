@@ -8,10 +8,8 @@ def requires_login(func):
 
 def requires_admin(func):
     def wrapper(*args, **kwargs):
-        if len(args) == 1:
-            request = args[0]
-        else:
-            request = args[1]
+        request = args[0] if len(args) == 1 else args[1]
+
         # Check to see if user is logged in to facebook
         try:
             cookie_user = checkCookieToken(request)
