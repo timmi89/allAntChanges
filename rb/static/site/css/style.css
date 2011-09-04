@@ -485,7 +485,7 @@ section[role="main"] 	{
 }
 /* End Tyler's Crap */
 
-section[role="main"] h1 	{font-family:Arial; font-size:28px; color:#6b6b6b; text-shadow:2px 2px 1px #dee7ed; font-weight:normal; padding:10px; margin:0;}
+section[role="main"] h1 	{font-family:Arial; font-size:28px; color:#6b6b6b; text-shadow:2px 2px 2px #95b6cb; font-weight:normal; padding:10px 20px; margin:0; background:#d2e5f1;}
 
 section[role="main"] .card {background:#d2dee4; width:100%; margin-bottom:10px; border:1px solid #becdd7; border-right:0; border-left:0;}
 section[role="main"] .card .interaction  {margin-top:1px; border-top:1px solid #d2dee4;}
@@ -609,10 +609,10 @@ ul.link-list li a			{ color:#fff; }
 ul.link-list li.active a	{ color:#95c9ea; font-weight:bold; }
 
 /* settings form */
-form.big-form 			{ padding:20px; }
+form.big-form 			{ padding:10px 20px; }
 form.big-form label		{ }
 
-section[role="datepicker"]			{ font-size:12px; background:#eee; padding:5px; border-bottom:1px solid #7f7f7f; }
+section[role="datepicker"]			{ font-size:12px; background:#eee; padding:5px; border-top:1px solid #7f7f7f; border-bottom:1px solid #7f7f7f; }
 section[role="datepicker"] input	{ width:80px; text-align:center; margin:o 3px; }
 
 section[role="panels"] 					{ float:left; overflow:auto; padding:10px; }
@@ -623,7 +623,7 @@ section[role="wide panels"] h3 			{ font-family:'ReadrLeague'; font-size:30px; m
 section[role="wide panels"] h4 			{ font-family:'ReadrLeague'; font-size:24px; margin:0; }
 
 section[role="interaction frequency"] 				{ overflow:auto; text-align:center; }
-section[role="interaction frequency"] h1			{ font-family:'ReadrLeague'; font-size:80px; text-shadow: 1px 2px 1px #fff; padding:25px 0 0; margin:0; color:#638296; }
+section[role="interaction frequency"] h1			{ font-family:'ReadrLeague'; font-size:80px; text-shadow: 1px 2px 1px #fff; padding:25px 0 0; margin:0; color:#638296; background:none;}
 div[role="total interactions"]						{ width:130px; float:left; overflow:auto; }
 div[role="frequency chart"]							{ width:610px; margin-left:130px; color:#ddd; box-shadow:0px -10px 9px -9px #454545 inset; min-height:100px; }
 
