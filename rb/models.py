@@ -101,7 +101,6 @@ class SocialUser(models.Model):
 
     def admin_groups(self):
         ga = GroupAdmin.objects.filter(social_user=self, approved=True)
-        print Group.objects.filter(id__in=ga.values('group'))
         return Group.objects.filter(id__in=ga.values('group'))
         
     def admin_group(self):
