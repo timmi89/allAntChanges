@@ -137,6 +137,8 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
         
         # Index view involves grouping interactions
         if view == 'index': context['index'] = True
+        
+    interactions = interactions.exclude(page__site__group__demo_group=True)
             
     # Only show approved interactions -- check this logic
     if 'admin' in kwargs and kwargs['admin'] == 'not_approved':

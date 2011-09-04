@@ -1,0 +1,17 @@
+/* -=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=- //
+// Utilities
+// -=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=- */
+
+.dot            {background: url('/static/i/sprites.png') repeat-x 0 -1081px; height:5px; margin-bottom:5px;}
+.dash           {background: url('/static/i/sprites.png') repeat-x 0 -1129px; height:5px; margin-bottom:5px;}
+.dash-black     {background: url('/static/i/sprites.png') repeat-x 0 -1167px; height:5px; margin-bottom:5px;}
+.dash-simple    {background: url('/static/i/sprites.png') repeat-x 0 -1167px; height:5px;}
+
+figcaption      {color:#666; font-size:14px; font-style:italic;}
+
+
+/* -=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=- //
+// Ads
+// -=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=- */
+
+.top_banner {margin-bottom:20px; text-align:center; border-bottom:1px solid #ccc;}
