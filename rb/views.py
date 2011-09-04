@@ -187,8 +187,9 @@ def create_group(request):
         if form.is_valid():
             form.save()
             context['requested'] = True
-    
-    form = CreateGroupForm()
+    else:
+        form = CreateGroupForm()
+        
     context['form'] = form
     context['fb_client_id'] = FACEBOOK_APP_ID
     

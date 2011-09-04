@@ -1,16 +1,23 @@
 from django import forms
 from rb.models import *
-from django.core.exceptions import ValidationError
 
 class CreateGroupForm(forms.Form):
     name = forms.CharField(label='Company Name')
     short_name = forms.CharField(label='Short Name')
     domain = forms.CharField(label='Domain Name')
     
+    def clean_domain(self):
+        requested_domain = self.cleaned_data['domain']
+        split_domain = requested_domain.split('.')
+        if 'www' in split_domain[0]:
+            split_domain = split_domain[1:]
+        domain = '.'.join(split_domain)
+        return domain
+    
     def clean_short_name(self):
         requested_sn = self.cleaned_data['short_name'].lower()
         if len(Group.objects.filter(short_name=requested_sn)) > 0:
-            raise ValidationError("Requested short name is not unique")
+            raise forms.ValidationError("Requested short name is not unique!")
         else:
             return requested_sn
     
