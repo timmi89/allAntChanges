@@ -401,6 +401,9 @@ class SettingsHandler(AnonymousBaseHandler):
             group_object = Group.objects.get(id=group_id)
         except Group.DoesNotExist:
             return HttpResponse("RB Group does not exist!")
+            
+        if group_object.approved == False:
+            return HttpResponse("Group not approved")
         
         # Get the domains for that particular group from site objects  
         sites = Site.objects.filter(group=group_object)

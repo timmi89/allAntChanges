@@ -181,14 +181,16 @@ def sidebar(request, user_id=None, short_name=None):
 def create_group(request):
     context = {}
     cookie_user = checkCookieToken(request)
+    if not cookie_user: return HttpResponseRedirect('/')
     
     if request.method == 'POST':
         form = CreateGroupForm(request.POST)
         if form.is_valid():
-            form.save()
+            form.save(cookie_user)
             context['requested'] = True
-    
-    form = CreateGroupForm()
+    else:
+        form = CreateGroupForm()
+        
     context['form'] = form
     context['fb_client_id'] = FACEBOOK_APP_ID
     
