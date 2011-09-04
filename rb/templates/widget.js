@@ -1892,6 +1892,12 @@ function readrBoard($R){
                             $(this).find('img').addClass('no-rdr');
                         });
 
+                        // it's not a CSS URL, but rather custom CSS rules.  We should change the name in the model...
+                        // this embeds custom CSS.
+                        if ( RDR.group.css_url != "" ) {
+                            $('head').append( $('<style type="text/css">' + RDR.group.css_url + '</style>') );
+                        }
+
                         $RDR.dequeue('initAjax');
                     },
                     error: function(response) {
@@ -1927,6 +1933,9 @@ function readrBoard($R){
                 });
             },
             initPageData: function(){
+                //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
+                var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr"/>').appendTo('body');
+
                 // RDR.session.educateUser(); //this function has changed now
                //? do we want to model this here to be symetrical with user and group data?
 
@@ -1961,14 +1970,17 @@ function readrBoard($R){
                 }
 
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
-                urls.push( window.location.href ); // + window.location.hash;
-                canonicals.push( ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href') : "" );
-                titles.push( ( $('meta[property="og:title"]').attr('content') ) ? $('meta[property="og:title"]').attr('content') : ( $('title').text() ) ? $('title').text():"" );
-                $( 'body' ).addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
-                if ( $('#rdr-page-summary').length == 1 ) {
-                    $('#rdr-page-summary').addClass('rdr-page-widget-key-'+key);
-                } else {
-                    $( 'body' ).find(RDR.group.summary_widget_selector).addClass('rdr-page-widget-key-'+key);
+
+                if ( $.inArray(window.location.href, urls) == -1 ) {
+                    urls.push( window.location.href ); // + window.location.hash;
+                    canonicals.push( ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href') : "" );
+                    titles.push( ( $('meta[property="og:title"]').attr('content') ) ? $('meta[property="og:title"]').attr('content') : ( $('title').text() ) ? $('title').text():"" );
+                    $( 'body' ).addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
+                    if ( $('#rdr-page-summary').length == 1 ) {
+                        $('#rdr-page-summary').addClass('rdr-page-widget-key-'+key);
+                    } else {
+                        $( 'body' ).find(RDR.group.summary_widget_selector).addClass('rdr-page-widget-key-'+key);
+                    }
                 }
 
     			var key = 0;
@@ -2059,10 +2071,8 @@ function readrBoard($R){
             },
             initEnvironment: function(){
                 
-                //dont know if it makes sense to return anything here like im doing now...
-
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
-                var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr"/>').appendTo('body');
+                var $rdrSandbox = $('div#rdr_sandbox').appendTo('body');
 
                 //div to hold indicatorBodies for media (images and video)
                 $('<div id="rdr_container_tracker_wrap" />').appendTo($rdrSandbox);
@@ -3731,7 +3741,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     //todo: this works for now, but use a differnet signal later
                     if ( $indicators.length == 1 ) $indicators.removeClass('rdr_dont_show');
 
-                    var textIndicatorOpacity = ( !$.browser.msie ) ? '0.4':'1.0';
+                    // var textIndicatorOpacity = ( !$.browser.msie ) ? '0.4':'1.0';
+                    var textIndicatorOpacity = ( !$.browser.msie ) ? '1.0':'1.0';
 
                     $indicators.not('.rdr_dont_show').css({
                         'opacity':'0',
@@ -4109,42 +4120,43 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $indicator_details = summary.$indicator_details,
                             $container_tracker = $('#rdr_container_tracker_'+hash);
 
-                        //todo: consolodate this with the other case of it
-                        var containerWidth, containerHeight;
-                        //this will calc to 0 if there is no border. 
-                        var hasBorder = parseInt( $container.css('border-top-width') ) + 
-                            parseInt( $container.css('border-bottom-width') ) + 
-                            parseInt( $container.css('border-left-width') ) + 
-                            parseInt( $container.css('border-right-width') );
+                        if ( $indicator_body ) {
+                            //todo: consolodate this with the other case of it
+                            var containerWidth, containerHeight;
+                            //this will calc to 0 if there is no border. 
+                            var hasBorder = parseInt( $container.css('border-top-width') ) + 
+                                parseInt( $container.css('border-bottom-width') ) + 
+                                parseInt( $container.css('border-left-width') ) + 
+                                parseInt( $container.css('border-right-width') );
 
-                        if(hasBorder){
-                            containerWidth = $container.outerWidth();
-                            containerHeight = $container.outerHeight();
-                        }else{
-                            containerWidth = $container.width();
-                            containerHeight = $container.height();
+                            if(hasBorder){
+                                containerWidth = $container.outerWidth();
+                                containerHeight = $container.outerHeight();
+                            }else{
+                                containerWidth = $container.width();
+                                containerHeight = $container.height();
+                            }
+                            
+                            var padding = {
+                                top: parseInt( $container.css('padding-top') ),
+                                right: parseInt( $container.css('padding-right') ),
+                                bottom: parseInt( $container.css('padding-bottom') ),
+                                left: parseInt( $container.css('padding-left') )
+                            };
+
+                            var cornerPadding = 8,
+                                indicatorBodyWidth = $indicator_body.width();
+                            
+                            $indicator.css({
+                                top: 0,
+                                left: containerWidth
+                            });
+
+                            RDR.util.cssSuperImportant($indicator_body, {
+                                top: cornerPadding,
+                                right: cornerPadding
+                            });
                         }
-                        
-                        var padding = {
-                            top: parseInt( $container.css('padding-top') ),
-                            right: parseInt( $container.css('padding-right') ),
-                            bottom: parseInt( $container.css('padding-bottom') ),
-                            left: parseInt( $container.css('padding-left') )
-                        };
-
-
-                        var cornerPadding = 8,
-                            indicatorBodyWidth = $indicator_body.width();
-                        
-                        $indicator.css({
-                            top: 0,
-                            left: containerWidth
-                        });
-
-                        RDR.util.cssSuperImportant($indicator_body, {
-                            top: cornerPadding,
-                            right: cornerPadding
-                        });
                         
                     },
                     updateMediaBorderHilites: function(hash){
@@ -6321,21 +6333,25 @@ function $RFunctions($R){
                     $summary_widget.append( $topusers );
 
                 }
-
                 // instructional tooltip
                 $tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"<strong style='font-weight:bold;'>Tell us what you think!</strong><br>React by selecting any text, or roll your mouse over images and video, and look for the pin icon."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
-                $summary_widget.append( $tooltip );
+                $tooltip.attr( 'id', 'rdr-tooltip-'+page.id );
+                $('#rdr_sandbox').append( $tooltip );
 
-                $tooltip.css('bottom', ( $summary_widget.height() + 15 ) + "px" );
-                $tooltip.css('top', 'auto' );
-                $tooltip.css('left', ( ( $summary_widget.width() / 2 ) - 125 ) + "px" );
+
+                var summaryOffsets = $summary_widget.offset();
+                var tooltip_top = ( summaryOffsets.top - $(window).scrollTop() - 82 ),
+                    tooltip_left = ( summaryOffsets.left + ( $summary_widget.width() / 2 ) - 125 );
+
+                $tooltip.css('top', tooltip_top + "px" );
+                $tooltip.css('left', tooltip_left + "px" );
 
                 $summary_widget.hover(
                     function() {
-                        $(this).find('.rdr_tooltip').show();
+                        $('#rdr-tooltip-' + page.id).show();
                     },
                     function() {
-                        $(this).find('.rdr_tooltip').hide();
+                        $('#rdr-tooltip-' + page.id).hide();
                     }
                 );
 
