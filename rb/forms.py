@@ -21,16 +21,18 @@ class CreateGroupForm(forms.Form):
         else:
             return requested_sn
     
-    def save(self, force_insert=False, force_update=False, commit=True):
+    def save(self, cookie_user, force_insert=False, force_update=False, commit=True):
         group = Group.objects.create(
             name=self.cleaned_data['name'],
             short_name=self.cleaned_data['short_name']
         )
-        site = Site.objects.create(
+        Site.objects.create(
             name=self.cleaned_data['domain'],
             domain=self.cleaned_data['domain'],
             group=group
         )
+        social_user = SocialUser.objects.get(user=cookie_user)
+        GroupAdmin.objects.create(group=group,social_user=social_user,approved=True)
         return group
         
 
