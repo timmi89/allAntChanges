@@ -1,5 +1,6 @@
 from django import forms
 from rb.models import *
+import re
 
 class CreateGroupForm(forms.Form):
     name = forms.CharField(label='Company Name')
@@ -16,6 +17,7 @@ class CreateGroupForm(forms.Form):
     
     def clean_short_name(self):
         requested_sn = self.cleaned_data['short_name'].lower()
+        requested_sn = re.sub(r'\s', '', requested_sn)
         if len(Group.objects.filter(short_name=requested_sn)) > 0:
             raise forms.ValidationError("Requested short name is not unique!")
         else:
