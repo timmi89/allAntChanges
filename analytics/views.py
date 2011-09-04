@@ -12,9 +12,9 @@ from django.template import RequestContext
 from authentication.token import checkCookieToken
 
 @requires_admin
-def analytics(request, group=None, **kwargs):
+def analytics(request, short_name=None, **kwargs):
     context = {}
-    context['group'] = group
+    context['group'] = Group.objects.get(short_name=short_name)
     context['fb_client_id'] = FACEBOOK_APP_ID
     context['cookie_user'] = kwargs['cookie_user']
 
@@ -27,6 +27,7 @@ def analytics(request, group=None, **kwargs):
 def analytics_request(func):
     def wrapper(self, request, *args, **kwargs):
         params = request.GET
+        group = Group.objects.get(short_name=kwargs['short_name'])
         data = {}
         # All Analytics Handler's have access to these
         data['start'] = params.get('start', None)
@@ -37,7 +38,7 @@ def analytics_request(func):
         # Pass in either tag body or tag id
         data['tag'] = params.get('tag', None)
         data['tag_id'] = params.get('tag_id', None)
-        return func(self, request, data, *args, **kwargs)
+        return func(self, request, data, group, *args, **kwargs)
     return wrapper
 
 def maxCap(query_set, data):
