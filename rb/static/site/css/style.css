@@ -609,8 +609,10 @@ ul.link-list li a			{ color:#fff; }
 ul.link-list li.active a	{ color:#95c9ea; font-weight:bold; }
 
 /* settings form */
-form.big-form 			{ padding:10px 20px; }
-form.big-form label		{ }
+form.big-form 				{ padding:10px 20px; }
+form.big-form label			{ display:block; }
+form.big-form label span	{ display:block; font-style:italic; font-size:12px; }
+form.big-form input			{ font-size:18px; margin-bottom:10px; font-family:Arial; }
 
 section[role="datepicker"]			{ font-size:12px; background:#eee; padding:5px; border-top:1px solid #7f7f7f; border-bottom:1px solid #7f7f7f; }
 section[role="datepicker"] input	{ width:80px; text-align:center; margin:o 3px; }
