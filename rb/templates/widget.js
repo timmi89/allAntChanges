@@ -6264,7 +6264,7 @@ function $RFunctions($R){
                 var page = response.data;
 
                 var $summary_widget_parent = $(response.parentContainer),
-                    $summary_widget = $('<div class="rdr-summary" />');
+                    $summary_widget = $('<div class="rdr rdr-summary" />');
 
                 //response.jqFunc would be something like 'append' or 'after',
                 //so this would read $summary_widget_parent.append($summary_widget);
