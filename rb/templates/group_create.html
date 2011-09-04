@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block sidebarContent %}
+<div id="sidebar">
+</div>
+{% endblock sidebarContent %}
+
+{% block mainContent %}
+  <h1>ReadrBoard Beta Signup</h1>
+  {% if requested %}
+    <h3>Thanks!</h3>
+    <a href = "/">Home</a>
+  {% else %}
+    <form action="/signup/" enctype="multipart/form-data" method="post" class="in-page">
+    {% csrf_token %}
+  
+    {{ form.non_field_errors }}
+
+  	<div>
+  		<label for="id_name">Company Name </label>
+  		{{ form.name }}{{ form.name.errors }}
+  	</div>
+  	<div>
+    	<label for="id_short_name">Short Name <span>Used in URLs on readrboard.com</span></label>
+    	{{ form.short_name }}{{ form.short_name.errors }}
+  	</div>
+  	<div>
+  	  <label for="id_site">Domain <span>Your website's domain (example: readrboard.com)</span></label>
+  	  {{ form.domain }}{{ form.domain.errors }}
+  	</div>
+
+    <button type="submit">Submit</button>
+    </form>
+  {% endif %}
+{% endblock mainContent %}
+
+{% block pageJS %}
+{% endblock %}

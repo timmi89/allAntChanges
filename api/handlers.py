@@ -67,7 +67,7 @@ class ModerationHandler(AnonymousBaseHandler):
     @json_data
     @status_response
     def read(self, request, data):
-        data['group_id'] = 1
+        #data['group_id'] = 1
         
         # Check if current user's token has permission
         user = checkToken(data)
@@ -77,17 +77,19 @@ class ModerationHandler(AnonymousBaseHandler):
 
         try:
             interaction = Interaction.objects.get(id=int_id)
-        except User.DoesNotExist, User.MultipleObjectsReturned:
+        except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
             raise JSONException(u"Interaction Handler: Error getting interaction!")
 
-        if user.social_user.admin_approved:
-            if interaction.page.site.group_id == user.social_user.group_admin_id:
-                interaction.approved = False
-                interaction.save()
-            else:
-                raise JSONException(u'Admin not approved for this group!')
+        group_ids = GroupAdmin.objects.filter(
+            social_user=user.social_user,
+            approved=True
+        ).values_list('group_id', flat=True)
+        
+        if interaction.page.site.group.id in group_ids:
+            interaction.approved = False
+            interaction.save()
         else:
-            raise JSONException(u'Admin not approved!')
+            raise JSONException(u'Admin not approved for this group!')
 
 class InteractionHandler(AnonymousBaseHandler):
     @json_data
@@ -399,6 +401,9 @@ class SettingsHandler(AnonymousBaseHandler):
             group_object = Group.objects.get(id=group_id)
         except Group.DoesNotExist:
             return HttpResponse("RB Group does not exist!")
+            
+        if group_object.approved == False:
+            return HttpResponse("Group not approved")
         
         # Get the domains for that particular group from site objects  
         sites = Site.objects.filter(group=group_object)

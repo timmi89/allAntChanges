@@ -144,6 +144,8 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
         
         # Index view involves grouping interactions
         if view == 'index': context['index'] = True
+        
+    interactions = interactions.exclude(page__site__group__demo_group=True)
             
     # Only show approved interactions -- check this logic
     if 'admin' in kwargs and kwargs['admin'] == 'not_approved':
@@ -182,19 +184,40 @@ def interactions(request):
 
 def sidebar(request, user_id=None, short_name=None):
     pass
+    
+def create_group(request):
+    context = {}
+    cookie_user = checkCookieToken(request)
+    if not cookie_user: return HttpResponseRedirect('/')
+    
+    if request.method == 'POST':
+        form = CreateGroupForm(request.POST)
+        if form.is_valid():
+            form.save(cookie_user)
+            context['requested'] = True
+    else:
+        form = CreateGroupForm()
+        
+    context['form'] = form
+    context['fb_client_id'] = FACEBOOK_APP_ID
+    
+    return render_to_response(
+        "group_create.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+    
 
 @requires_admin
-def settings(request, group=None, **kwargs):
+def settings(request, **kwargs):
     context = {}
+    group = Group.objects.get(short_name=kwargs['short_name'])
     context['cookie_user'] = kwargs['cookie_user']
 
     if request.method == 'POST':
         form = GroupForm(request.POST, request.FILES, instance=group)
         if form.is_valid():
             form.save()
-            print 'saving form'
-        else:
-            print form.errors
     else:
         form = GroupForm(instance=group)
 
@@ -213,13 +236,10 @@ def admin_approve(request, request_id=None, **kwargs):
     cookie_user = kwargs['cookie_user']
     context['cookie_user'] = cookie_user
     
-    groups = GroupAdmin.objects.filter(
-        social_user=cookie_user.social_user,
-        approved=True
-    )
+    groups = cookie_user.social_user.admin_groups()
     
     requests = GroupAdmin.objects.filter(
-        group=groups,
+        group__in=groups,
         approved=False
     ).exclude(social_user=cookie_user.social_user)
     

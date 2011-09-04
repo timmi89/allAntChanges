@@ -683,13 +683,12 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
     overflow:hidden !important;
     height:16px !important;
     float:left !important;
-    /* racialicious */
-    display:none;
 }
 .rdr-summary div.rdr-top-users img {
     width:20px !important;
     height:20px !important;
     margin:0 3px 0 0 !important;
+    padding:0 !important;
 }
 
 /* custom in-page highlight */
@@ -751,12 +750,12 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 /* user education bar */
 #rdr_sandbox div.rdr_alert_box        { position:fixed; bottom:-400px; left:10px; width:100%; background:#f0f0f0; width:300px; padding:0px; z-index:12000; overflow:hidden; -moz-box-shadow:0 0 10px 1px #aaa  !important; -webkit-box-shadow:0 0 10px 1px #aaa  !important; box-shadow:0 0 10px 1px #aaa !important; }
-#rdr_sandbox div.rdr_alert_box a      { color:#008be4; }
-#rdr_sandbox div.rdr_alert_box_1      { background: #fff; height:30px; }
-#rdr_sandbox div.rdr_alert_box_1 h1   { padding:6px 0 0 20px; cursor:text;}
+#rdr_sandbox div.rdr_alert_box a      { color:#008be4 !important; }
+#rdr_sandbox div.rdr_alert_box_1      { background: #fff !important; height:30px !important; }
+#rdr_sandbox div.rdr_alert_box_1 h1   { padding:6px 0 0 20px !important; cursor:text !important; clear:none !important;}
 
 #rdr_sandbox div.rdr_alert_box_1 span,
-#rdr_sandbox div.rdr_alert_box_1 h1 span { font-size:21px;}
+#rdr_sandbox div.rdr_alert_box_1 h1 span { font-size:21px; !important}
 #rdr_sandbox div.rdr_alert_box_2      { background: #f0f0f0; padding:10px 10px 30px; font-size:12px; color:#666;}
 #rdr_sandbox div.rdr_alert_box_x      { position:absolute; right:10px; top:7px; font-size:14px; cursor:pointer; color:#999; }
 #rdr_sandbox div.rdr_alert_box_2 span {

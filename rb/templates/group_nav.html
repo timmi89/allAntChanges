@@ -1,0 +1,17 @@
+{% if cookie_user %}
+<section role="group panel header">
+	<h3>{{ cookie_user.social_user.admin_group.name }} Admin</h3>
+	<section role="group links">
+		<ul class="link-list">
+			<li class="{{ profile_active }}"><a href="/group/{{ cookie_user.social_user.admin_group.short_name }}/">Group Profile</a></li>
+			<li class="{{ settings_active }}"><a href="/settings/{{ cookie_user.social_user.admin_group.short_name }}/">Settings</a></li>
+			<li class="{{ analytics_active }}"><a href="/analytics/group/{{ cookie_user.social_user.admin_group.short_name }}/">Analytics</a></li>
+			<li class="{{ blocked_active }}"><a href="/group/{{ cookie_user.social_user.admin_group.short_name }}/not_approved/">Blocked Content</a></li>
+			<li class="{{ admin_approve_active }}"><a href="/admin_approve/">Admin Requests</a></li>
+		</ul>
+	</section>
+</section>
+<style>
+section[role="content"] {padding-bottom:30px !important;}
+</style>
+{% endif %}

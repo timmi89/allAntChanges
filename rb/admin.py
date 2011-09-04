@@ -29,12 +29,13 @@ class ProfileAdmin(admin.ModelAdmin):
     )
 
 class RBGroupAdmin(admin.ModelAdmin):
+    list_display = ('name', 'short_name', 'demo_group', 'approved', 'requires_approval')
     fieldsets = (
         (None, {
             'fields': ('name', 'short_name', 'demo_group', 'approved')
         }),
         ('Advanced', {
-            'fields': ('blessed_tags', 'anno_whitelist', 'temp_interact', 'img_whitelist', 'img_blacklist', 'no_readr', 'secret', 'word_blacklist')
+            'fields': ('blessed_tags', 'anno_whitelist', 'temp_interact', 'img_whitelist', 'img_blacklist', 'no_readr', 'word_blacklist')
         }),
         ('Logos', {
             'fields': ('logo_url_sm', 'logo_url_med' , 'logo_url_lg')
