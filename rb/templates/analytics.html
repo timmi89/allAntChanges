@@ -20,18 +20,20 @@
 {% endblock %}
 
 {% block mainContent %}
-{% include "group_nav.html" %}
+	{% with analytics_active="active" %}
+	{% include "group_nav.html" %}
+	{% endwith %}
 
+<section role="datepicker">
+	<label>Date Range: </label>
+	<input type="text" name="start_date" />
+	<label>to</label>
+	<input type="text" name="end_date" />
+	<button>Update</button>
+</section>
 <section role="panels">
+
 	<section role="wide panels">
-	<section role="controls">
-		<label>Date Range: </label>
-		<input type="text" name="start_date" />
-		<label>to</label>
-		<input type="text" name="end_date" />
-		<button>Update</button>
-	</section>
-		
 		<section role="interaction frequency">
 			<div role="total interactions">
 				<h1>0</h1>

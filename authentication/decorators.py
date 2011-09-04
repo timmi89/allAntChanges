@@ -39,7 +39,7 @@ def requires_admin(func):
                 if short_name:
                     ga = GroupAdmin.objects.get(social_user=social_user, group=group, approved=True)
                 else:
-                    ga = GroupAdmin.objects.get(social_user=social_user, approved=True)
+                    ga = GroupAdmin.objects.filter(social_user=social_user, approved=True)
                 admin_user = cookie_user
             except GroupAdmin.DoesNotExist:
                 print 'failed yo'

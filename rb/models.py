@@ -51,6 +51,7 @@ ReadrBoard Models
 """
 class InteractionNode(models.Model):
     body = models.TextField()
+    #hash = models.CharField(max_length=32, unique=True, db_index=True)
     
     def natural_key(self):
         return self.body
@@ -149,9 +150,6 @@ class Group(models.Model):
 
     # css
     css_url = models.TextField(blank=True)
-    
-    # for token
-    secret = models.CharField(max_length=128)
 
     def __unicode__(self):
         return self.name
@@ -231,6 +229,7 @@ class Content(DateAwareModel):
     kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
     location = models.CharField(max_length=255, blank=True, null=True)
     body = models.TextField()
+    #hash = models.CharField(max_length=32, unique=True, db_index=True)
     
     def __unicode__(self):
         return u'Kind: {0}, ID: {1}'.format(self.kind, self.id)

@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}{{ group.name }} Settings{%endblock%}
+{% block title %}{{ form.instance.name }} Settings{%endblock%}
 
 {% block bodyClass %}wide{% endblock %}
 
 {% block mainContent %}
 {% with group=form.instance %}
-  {% include "group_nav.html" %}
+	{% with settings_active="active" %}
+	{% include "group_nav.html" %}
+	{% endwith %}
 
   <form action="/settings/{{ short_name }}/" enctype="multipart/form-data" method="post" class="big-form">{% csrf_token %}
   {{ form.non_field_errors }}

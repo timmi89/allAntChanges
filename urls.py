@@ -64,7 +64,7 @@ urlpatterns = patterns('',
   url(r'^group/(?P<short_name>[\w\-]+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
   url(r'^group/(?P<short_name>[\w\-]+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}), 
   
-  # Supporting Pages
+  # Main Site Supporting Pages
   url(r'^about/$', 'rb.views.about'),
   
   # Sidebar
@@ -77,7 +77,11 @@ urlpatterns = patterns('',
   url(r'^robots\.txt$', 'django.views.generic.simple.direct_to_template', {'template': 'robots.txt', 'mimetype': 'text/plain'}),
   url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/site/images/favicon.ico'}),
 
+  # API
   url(r'^api/', include('readrboard.api.urls')),
+  
+  # Group Supporting Pages
+  url(r'^signup/$', 'rb.views.create_group'),
   url(r'^analytics/', include('readrboard.analytics.urls')),
   url(r'^admin_request/(?P<short_name>[\w\-]+)/$', 'rb.views.admin_request'),
   url(r'^admin_approve/$', 'rb.views.admin_approve'),

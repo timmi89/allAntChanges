@@ -245,11 +245,12 @@ p, h1, form {border:0; margin:0; padding:0;}
 
 ul.link-list 		{ list-style-type:none; overflow:auto; margin:5px 0 0 -20px; float:right;}
 ul.link-list li 	{ float:left; margin-right:20px; }
-ul.link-list li a	{ color:#fff; }
+ul.link-list li a			{ color:#fff; }
+ul.link-list li.active a	{ color:#95c9ea; font-weight:bold; }
 
 /* settings form */
-form.big-form 		{ padding:20px; }
-form.big-form label		{ padding:20px; }
+form.big-form 			{ padding:20px; }
+form.big-form label		{ }
 
 
 /* GLOBAL OBJECTS */
@@ -611,6 +612,9 @@ section[role="group panel header"] h3			{ float:left; overflow:auto; padding:10p
 
 section[role="controls"] 		{ padding:10px; font-size:12px; float:left; border-left:1px solid #ddd; text-shadow:1px 1px 2px #454545;}
 section[role="controls"] input	{ width:80px; text-align:center; margin:o 3px; }
+
+section[role="datepicker"]			{ font-size:12px; background:#eee; padding:5px; border-bottom:1px solid #7f7f7f; }
+section[role="datepicker"] input	{ width:80px; text-align:center; margin:o 3px; }
 
 section[role="panels"] 					{ float:left; overflow:auto; padding:10px; }
 
