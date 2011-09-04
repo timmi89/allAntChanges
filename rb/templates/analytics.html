@@ -20,9 +20,6 @@
 {% endblock %}
 
 {% block mainContent %}
-	{% with analytics_active="active" %}
-	{% include "group_nav.html" %}
-	{% endwith %}
 
 <section role="datepicker">
 	<label>Date Range: </label>
@@ -122,7 +119,7 @@
 </section>
 
 <script>
-$( 'section[role="controls"] input' ).datepicker({ dateFormat: 'mm/dd/y' });
+$( 'section[role="datepicker"] input' ).datepicker({ dateFormat: 'mm/dd/y' });
 
 // put in external file...
 RB.analytics = {
@@ -396,7 +393,7 @@ $('input[name="start_date"]').val( RB.analytics.startDate );
 $('input[name="end_date"]').val( RB.analytics.endDate );
 
 
-$('section[role="controls"] button').click( function() {
+$('section[role="datepicker"] button').click( function() {
 	// get form values
 	RB.analytics.startDate = $('input[name="start_date"]').val();
 	RB.analytics.endDate = $('input[name="end_date"]').val();

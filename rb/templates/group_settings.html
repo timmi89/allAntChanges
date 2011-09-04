@@ -6,9 +6,6 @@
 
 {% block mainContent %}
 {% with group=form.instance %}
-	{% with settings_active="active" %}
-	{% include "group_nav.html" %}
-	{% endwith %}
 
   <form action="/settings/{{ short_name }}/" enctype="multipart/form-data" method="post" class="big-form">{% csrf_token %}
   {{ form.non_field_errors }}

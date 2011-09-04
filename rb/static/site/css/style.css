@@ -243,15 +243,6 @@ caption { background-color:transparent; }
 p, h1, form {border:0; margin:0; padding:0;}
 .spacer{clear:both; height:1px;}
 
-ul.link-list 		{ list-style-type:none; overflow:auto; margin:5px 0 0 -20px; float:right;}
-ul.link-list li 	{ float:left; margin-right:20px; }
-ul.link-list li a			{ color:#fff; }
-ul.link-list li.active a	{ color:#95c9ea; font-weight:bold; }
-
-/* settings form */
-form.big-form 			{ padding:20px; }
-form.big-form label		{ }
-
 
 /* GLOBAL OBJECTS */
 
@@ -607,11 +598,19 @@ body.wide section[role="complementary"] {
 }
 
 /* analytics dashboard */
-section[role="group panel header"] 			{ width:100%; background:#7f7f7f; color:#eee; overflow:auto; box-shadow:0px -10px 9px -9px #454545 inset; }
-section[role="group panel header"] h3			{ float:left; overflow:auto; padding:10px; margin:0; font-size:16px; background: none repeat scroll 0 0 #638296; box-shadow: 0 -10px 9px -9px #454545 inset; }
+section[role="group panel header"] 			{ width:100%; background:#7f7f7f; color:#eee; overflow:auto; box-shadow:0px -10px 9px -9px #454545 inset; position:fixed; bottom:0; z-index:1; }
+section[role="group panel header"] h3			{ float:left; overflow:auto; padding:5px; margin:0; font-size:12px; font-weight:bold; background: none repeat scroll 0 0 #638296; box-shadow: 0 -10px 9px -9px #454545 inset; }
 
-section[role="controls"] 		{ padding:10px; font-size:12px; float:left; border-left:1px solid #ddd; text-shadow:1px 1px 2px #454545;}
-section[role="controls"] input	{ width:80px; text-align:center; margin:o 3px; }
+section[role="group links"] 		{ padding:4px; font-size:12px; float:left; border-left:1px solid #ddd; text-shadow:1px 1px 2px #454545;}
+
+ul.link-list 		{ list-style-type:none; overflow:auto; float:right; margin-left: -18px;}
+ul.link-list li 	{ float:left; margin-right:20px; }
+ul.link-list li a			{ color:#fff; }
+ul.link-list li.active a	{ color:#95c9ea; font-weight:bold; }
+
+/* settings form */
+form.big-form 			{ padding:20px; }
+form.big-form label		{ }
 
 section[role="datepicker"]			{ font-size:12px; background:#eee; padding:5px; border-bottom:1px solid #7f7f7f; }
 section[role="datepicker"] input	{ width:80px; text-align:center; margin:o 3px; }
