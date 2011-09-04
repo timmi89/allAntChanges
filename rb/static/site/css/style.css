@@ -61,7 +61,7 @@ cursor:help; }
 
 html {
 	overflow-y:scroll;
-	background:url(/static/site/images/page_bg.jpg) top left fixed repeat-x #254559;
+	background:#254559;
 }
 
 body { 
@@ -70,7 +70,55 @@ body {
 	font:100%/1.4 Arial;
 	color:#666;
 }
+#background-layer{
+	height:100%;
+	width:100%;
+	top:0;
+	left:0;
+	position: fixed;
+}
+#background-layer .background-texture{
+	height:100%;
+	width:100%;
+	top:0;
+	left:0;
+	position: absolute;
+	background: url("/static/site/images/texture-overlay.gif");
+    opacity:0.4;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+    filter:alpha(opacity=40);
+    -moz-opacity:0.4;
+    -khtml-opacity:0.4;
+}
+#background-layer .background-radial-grad{
+	background: url("/static/site/images/spotlight.png") no-repeat scroll 0 0 transparent;
+	/* For WebKit (Safari, Google Chrome etc) */
+	/*background: -webkit-gradient(radial, 825px 500px, 0, 40% 40%, 60, from(#fff), to(transparent));*/
+	/* For Mozilla/Gecko (Firefox etc) */
+	/*background: -moz-radial-gradient(825px 500px, farthest-side, white, transparent);*/
+	/* For Internet Explorer */
+	/* no way */
+	height:100%;
+	width:100%;
+    top: 80px;
+    left: 400px;
+    position: absolute;
 
+	opacity:0.4;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+    filter:alpha(opacity=40);
+    -moz-opacity:0.4;
+    -khtml-opacity:0.4;
+}
+#background-layer .pin-large-icon{
+    background: url("/static/site/images/pin-icon-large.png") no-repeat scroll 0 0 transparent;
+	height:200px;
+	width:200px;
+    top: 400px;
+    left: 735px;
+    position: absolute;
+    width: 200px;
+}
 /* HEADINGS */
 
 h1, 
