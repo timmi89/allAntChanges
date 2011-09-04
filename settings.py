@@ -185,7 +185,6 @@ DEVSERVER_IGNORED_PREFIXES = ['/media', '/uploads']
 # for sessions
 #SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
-# for lazy signup
 AUTHENTICATION_BACKENDS = (
   'django.contrib.auth.backends.ModelBackend',
 )
