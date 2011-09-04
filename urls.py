@@ -66,6 +66,7 @@ urlpatterns = patterns('',
   
   # Supporting Pages
   url(r'^about/$', 'rb.views.about'),
+  url(r'^splash/$', 'rb.views.splash'),
   
   # Sidebar
   url(r'^sidebar/$', 'rb.views.sidebar'),

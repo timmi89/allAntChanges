@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Readrboard{%endblock%}
+
+{% block bodyClass %}wide{% endblock %}
+
+{% block mainContent %}
+
+<style>
+
+body{
+}
+
+body.wide section[role="main"] {
+    width: 900px;
+}
+body section[role="controls"]{
+	border:none;	
+}
+body.wide section[role="content"]{
+	width: 900px;
+	background:none;
+}
+section[role="wide panels"]{
+	width:auto;
+	padding: 0 6%;
+}
+section.introBlurb{
+	margin:30px 0 40px 0 !important;
+}
+.introBlurb .readrboard_logo{
+	float:left;
+	padding-right:8px;
+	margin-top:4px;
+}
+.introBlurb h3{
+	border:none !important;
+}
+.footerLinks{
+	padding-bottom:20px;
+}
+.footerLinks ul{
+	margin-left:10px;
+	font-size:0.8em;
+}
+
+
+</style>
+
+<section role="analytics header">
+	<section role="controls">
+		About Readrboard
+	</section>
+</section>
+
+<section role="panels">
+	<section role="wide panels">
+		
+		<section role="most active pages" class="introBlurb">
+			<a href="{{BASE_URL}}" ><img class="readrboard_logo" src="{{BASE_URL}}{{STATIC_URL}}site/images/logo.png" /></a>
+			<h3>A reaction button for the web.</h3>
+			<p>
+				something here...
+			</p>
+			<ul>
+				<li>
+					<a href="http://www.fathomaway.com/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/fathom-logo-lg.png" alt="fathom logo" />
+					</a>
+				</li>
+				<li>
+					<a href="http://www.reuters.com/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/reuters-logo-lg.png" alt="reuters logo" />
+					</a>
+				</li>
+				<li>
+					<a href="http://www.dailycandy.com/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/dailycandy-logo-lg.png" alt="dailycandy logo" />
+					</a>
+				</li>
+				<li>
+					<a href="http://www.foodnetwork.co.uk/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/foodnetwork_uk-logo-lg.png" alt="foodnetwork logo" />
+					</a>
+				</li>
+				<li>
+					<a href="http://hypervocal.com/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/hypervocal-logo-lg.png" alt="hypervocal logo" />
+					</a>
+				</li>
+				<li>
+					<a href="http://www.nearlyweds.com/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/nearlyweds-logo-lg.png" alt="nearlyweds logo" />
+					</a>
+				</li>
+				<li>
+					<a href="http://www.politico.com/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/politico-logo-lg.png" alt="politico logo" />
+					</a>
+				</li>
+				<li>
+					<a href="http://www.racialicious.com/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/racialicious-logo-lg.png" alt="racialicious logo" />
+					</a>
+				</li>
+				<li>
+					<a href="http://www.themarknews.com/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/themark-logo-lg.png" alt="themarknews logo" />
+					</a>
+				</li>
+				<li>
+					<a href="http://www.fathomaway.com/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/fathom-logo-lg.png" alt="fathomaway logo" />
+					</a>
+				</li>
+				<li>
+					<a href="http://www.fathomaway.com/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/fathom-logo-lg.png" />
+					</a>
+				</li>
+
+			</ul>
+		</section>
+
+	<div style="float: right; margin: 0 0 0 10px; padding: 5px;">
+      <iframe class="rdr_video" src="http://player.vimeo.com/video/21956758?title=0&amp;byline=0&amp;portrait=0" width="400" height="250" frameborder="0" style="border:8px solid #ddd;"></iframe>
+  </div>
+	</div>
+	<div style="padding:10px 10%; text-align:center;">
+		<img src="{{BASE_URL}}{{STATIC_URL}}site/images/about/advisers.png" />
+		<br>
+		<br>
+	</div>
+	<div style="padding:10px 100px; text-align:center;">
+		<img src="{{BASE_URL}}{{STATIC_URL}}site/images/about/investors.png" />
+		<br>
+		<br>
+		Well, us (boot)strapping cofounders, so far.  <a href="http://porterbayne.wufoo.com/forms/m7x3k1/" onclick="window.open(this.href,  null, 'height=410, width=775, toolbar=0, location=0, status=1, scrollbars=1, resizable=1'); return false" title="Tell me more about ReadrBoard!!">Interested?</a>
+		<br>
+		<br>
+		<br>
+		<br>
+	</div>
+	<div class="footerLinks">
+		<ul>
+			<li>
+				<span>Try Readrboard on our <a href="{{BASE_URL}}{{STATIC_URL}}demo/index.html" >demo page</a>.</span>
+			</li>
+			<li>
+				<span>See what people are <a href="{{BASE_URL}}" >saying on Readrboard</a>.</span>
+			</li>
+		</ul>
+	</div>
+	
+	
+	</section>
+</section>
+{% endblock %}
