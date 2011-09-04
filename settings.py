@@ -4,6 +4,7 @@ from os import uname
 if uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
 
+# Don't remove
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
