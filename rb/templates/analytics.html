@@ -20,8 +20,10 @@
 {% endblock %}
 
 {% block mainContent %}
-<section role="analytics header">
-	<h3>{{ group.name }} Activity</h3>
+{% include "group_nav.html" %}
+
+<section role="panels">
+	<section role="wide panels">
 	<section role="controls">
 		<label>Date Range: </label>
 		<input type="text" name="start_date" />
@@ -29,10 +31,6 @@
 		<input type="text" name="end_date" />
 		<button>Update</button>
 	</section>
-</section>
-
-<section role="panels">
-	<section role="wide panels">
 		
 		<section role="interaction frequency">
 			<div role="total interactions">
