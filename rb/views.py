@@ -202,8 +202,9 @@ def create_group(request):
     
 
 @requires_admin
-def settings(request, group=None, **kwargs):
+def settings(request, **kwargs):
     context = {}
+    group = Group.objects.get(short_name=kwargs['short_name'])
     context['cookie_user'] = kwargs['cookie_user']
 
     if request.method == 'POST':
