@@ -1949,10 +1949,6 @@ function readrBoard($R){
                 var titles = [];
                 var key = 0; // we use this to know which container to point to in the success call
 
-                RDR.group.post_href_selector = "h3 a";
-                RDR.group.post_selector = "div.post";
-                RDR.group.summary_widget_selector = "div.post-content h3";
-
                 // if multiple posts, add additional "pages"
                 if ( 
                     ( RDR.group.post_selector != "" && RDR.group.post_href_selector != "" && RDR.group.summary_widget_selector != "" ) &&
