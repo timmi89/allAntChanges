@@ -51,6 +51,7 @@ ReadrBoard Models
 """
 class InteractionNode(models.Model):
     body = models.TextField()
+    #hash = models.CharField(max_length=32, unique=True, db_index=True)
     
     def natural_key(self):
         return self.body
@@ -98,8 +99,13 @@ class SocialUser(models.Model):
     bio = models.TextField(max_length=255, blank=True, null=True)
     img_url = models.URLField(blank=True)
 
-    def is_admin(self):
-        return admin_approved
+    def admin_groups(self):
+        ga = GroupAdmin.objects.filter(social_user=self, approved=True)
+        print Group.objects.filter(id__in=ga.values('group'))
+        return Group.objects.filter(id__in=ga.values('group'))
+        
+    def admin_group(self):
+        return self.admin_groups()[0]
 
     def __unicode__(self):
         return self.user.username
@@ -109,7 +115,7 @@ class SocialUser(models.Model):
 
 class Group(models.Model):
     name = models.CharField(max_length=250)
-    short_name = models.CharField(max_length=25, unique=True)
+    short_name = models.CharField(max_length=50, unique=True)
     language = models.CharField(max_length=25, default="en")
     approved = models.BooleanField(default=False)
     requires_approval = models.BooleanField(default=False)
@@ -149,9 +155,6 @@ class Group(models.Model):
 
     # css
     css_url = models.TextField(blank=True)
-    
-    # for token
-    secret = models.CharField(max_length=128)
 
     def __unicode__(self):
         return self.name
@@ -231,6 +234,7 @@ class Content(DateAwareModel):
     kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
     location = models.CharField(max_length=255, blank=True, null=True)
     body = models.TextField()
+    #hash = models.CharField(max_length=32, unique=True, db_index=True)
     
     def __unicode__(self):
         return u'Kind: {0}, ID: {1}'.format(self.kind, self.id)

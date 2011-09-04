@@ -1,23 +1,14 @@
 {% extends "base.html" %}
 
-{% block sidebarContent %}
-<div id="sidebar">
-	<p>Configure your group using the settings form to the right.</p>
-	<p>Any questions?  <a href="mailto:info@readrboard.com">Contact us via email</a>.</p>
-	<p>&nbsp;</p>
-	<h5>Links You'll Love</h5>
-	<ul>
-		<li><a href="/group/{{ short_name }}">Group Profile</a></li>
-		<li><a href="/analytics/group/{{ short_name }}">Analytics Dashboard</a></li>
-		<li><a href="/group/{{ short_name }}/not_approved/">Content You've Blocked</a></li>
-	</ul>
-</div>
-{% endblock sidebarContent %}
+{% block title %}{{ form.instance.name }} Settings{%endblock%}
+
+{% block bodyClass %}wide{% endblock %}
 
 {% block mainContent %}
-  <h1>Group Settings</h1>
+{% with group=form.instance %}
 
-  <form action="/settings/{{ short_name }}/" enctype="multipart/form-data" method="post" class="in-page">{% csrf_token %}
+  <h1>{{group.name}} Settings</h1>
+  <form action="/settings/{{ short_name }}/" enctype="multipart/form-data" method="post" class="big-form">{% csrf_token %}
   {{ form.non_field_errors }}
 
 	<div>
@@ -32,10 +23,10 @@
 	<label for="id_blessed_tags">Default Reactions <span>Default tags for people to react with.</span></label>
 	{{ form.blessed_tags }}
 	</div>
-	<div>
+	<!-- <div>
 	<label for="id_language">Language <span>For now, only "en" supported</span></label>
 	{{ form.language }}{{ form.language.errors }}
-	</div>
+	</div> -->
 	<div>
 	<label for="id_anno_whitelist">Active Text <span>CSS Selectors for text ReadrBoard interacts with by default.</span></label>
 	{{ form.anno_whitelist }}{{ form.anno_whitelist.errors }}
@@ -101,6 +92,7 @@
 
   <button type="submit">Submit</button>
   </form>
+{% endwith %}
 {% endblock mainContent %}
 
 {% block pageJS %}

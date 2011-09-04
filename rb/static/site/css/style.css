@@ -243,82 +243,6 @@ caption { background-color:transparent; }
 p, h1, form {border:0; margin:0; padding:0;}
 .spacer{clear:both; height:1px;}
 
-/* ----------- My Form ----------- */
-form.in-page {
-	margin:0 auto;
-	width:480px;
-	padding:10px;
-}
-
-
-form.in-page {
-	border:solid 2px #b7ddf2;
-	background:#e5eff5;
-}
-
-form.in-page h3 {
-	font-size:14px;
-	font-weight:bold;
-	margin-left:10px;
-	padding-top:10px;
-	margin-bottom:8px;
-	clear:both;
-	border-top:1px solid #b7ddf2;
-}
-
-form.in-page label {
-	display:block;
-	font-weight:bold;
-	text-align:right;
-	width:140px;
-	float:left;
-	font-size:12px; 
-}
-
-form.in-page label span {
-	color:#666666;
-	display:block;
-	font-size:11px;
-	font-weight:normal;
-	text-align:right;
-	width:140px;
-}
-
-form.in-page div {
-	clear:both;
-	margin-bottom:20px;
-	overflow:auto;
-}
-
-form.in-page input {
-	float:left;
-	font-size:12px;
-	padding:4px 2px;
-	border:solid 1px #aacfe4;
-	width:200px;
-	margin:2px 0 0px 10px;
-}
-
-form.in-page input[type="checkbox"] {
-	width:20px;
-	margin-right:180px;
-	margin-bottom:35px;
-}
-
-form.in-page textarea, form.in-page select {
-	float:left;
-	font-size:12px;
-	padding:4px 2px;
-	border:solid 1px #aacfe4;
-	width:300px;
-	margin:2px 0 20px 10px;
-}
-
-
-form.in-page button {
-	clear:both;
-	margin-left:150px;
-}
 
 /* GLOBAL OBJECTS */
 
@@ -561,7 +485,7 @@ section[role="main"] 	{
 }
 /* End Tyler's Crap */
 
-section[role="main"] h1 	{font-family:Arial; font-size:28px; color:#6b6b6b; text-shadow:2px 2px 1px #dee7ed; font-weight:normal; padding:10px; margin:0;}
+section[role="main"] h1 	{font-family:Arial; font-size:28px; color:#6b6b6b; text-shadow:2px 2px 2px #95b6cb; font-weight:normal; padding:10px 20px; margin:0; background:#d2e5f1;}
 
 section[role="main"] .card {background:#d2dee4; width:100%; margin-bottom:10px; border:1px solid #becdd7; border-right:0; border-left:0;}
 section[role="main"] .card .interaction  {margin-top:1px; border-top:1px solid #d2dee4;}
@@ -674,11 +598,24 @@ body.wide section[role="complementary"] {
 }
 
 /* analytics dashboard */
-section[role="analytics header"] 			{ width:100%; background:#7f7f7f; color:#eee; overflow:auto; box-shadow:0px -10px 9px -9px #454545 inset; }
-section[role="analytics header"] h3			{ float:left; overflow:auto; padding:10px; margin:0; font-size:16px; background: none repeat scroll 0 0 #638296; box-shadow: 0 -10px 9px -9px #454545 inset; }
+section[role="group panel header"] 			{ width:100%; background:#7f7f7f; color:#eee; overflow:auto; box-shadow:0px -10px 9px -9px #454545 inset; position:fixed; bottom:0; z-index:1; }
+section[role="group panel header"] h3			{ float:left; overflow:auto; padding:5px; margin:0; font-size:12px; font-weight:bold; background: none repeat scroll 0 0 #638296; box-shadow: 0 -10px 9px -9px #454545 inset; }
 
-section[role="controls"] 		{ padding:10px; font-size:12px; float:left; border-left:1px solid #ddd; text-shadow:1px 1px 2px #454545;}
-section[role="controls"] input	{ width:80px; text-align:center; margin:o 3px; }
+section[role="group links"] 		{ padding:4px; font-size:12px; float:left; border-left:1px solid #ddd; text-shadow:1px 1px 2px #454545;}
+
+ul.link-list 		{ list-style-type:none; overflow:auto; float:right; margin-left: -18px;}
+ul.link-list li 	{ float:left; margin-right:20px; }
+ul.link-list li a			{ color:#fff; }
+ul.link-list li.active a	{ color:#95c9ea; font-weight:bold; }
+
+/* settings form */
+form.big-form 				{ padding:10px 20px; }
+form.big-form label			{ display:block; }
+form.big-form label span	{ display:block; font-style:italic; font-size:12px; }
+form.big-form input			{ font-size:18px; margin-bottom:10px; font-family:Arial; }
+
+section[role="datepicker"]			{ font-size:12px; background:#eee; padding:5px; border-top:1px solid #7f7f7f; border-bottom:1px solid #7f7f7f; }
+section[role="datepicker"] input	{ width:80px; text-align:center; margin:o 3px; }
 
 section[role="panels"] 					{ float:left; overflow:auto; padding:10px; }
 
@@ -688,7 +625,7 @@ section[role="wide panels"] h3 			{ font-family:'ReadrLeague'; font-size:30px; m
 section[role="wide panels"] h4 			{ font-family:'ReadrLeague'; font-size:24px; margin:0; }
 
 section[role="interaction frequency"] 				{ overflow:auto; text-align:center; }
-section[role="interaction frequency"] h1			{ font-family:'ReadrLeague'; font-size:80px; text-shadow: 1px 2px 1px #fff; padding:25px 0 0; margin:0; color:#638296; }
+section[role="interaction frequency"] h1			{ font-family:'ReadrLeague'; font-size:80px; text-shadow: 1px 2px 1px #fff; padding:25px 0 0; margin:0; color:#638296; background:none;}
 div[role="total interactions"]						{ width:130px; float:left; overflow:auto; }
 div[role="frequency chart"]							{ width:610px; margin-left:130px; color:#ddd; box-shadow:0px -10px 9px -9px #454545 inset; min-height:100px; }
 

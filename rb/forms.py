@@ -1,5 +1,42 @@
 from django import forms
 from rb.models import *
+import re
+
+class CreateGroupForm(forms.Form):
+    name = forms.CharField(label='Company Name')
+    short_name = forms.CharField(label='Short Name')
+    domain = forms.CharField(label='Domain Name')
+    
+    def clean_domain(self):
+        requested_domain = self.cleaned_data['domain']
+        split_domain = requested_domain.split('.')
+        if 'www' in split_domain[0]:
+            split_domain = split_domain[1:]
+        domain = '.'.join(split_domain)
+        return domain
+    
+    def clean_short_name(self):
+        requested_sn = self.cleaned_data['short_name'].lower()
+        requested_sn = re.sub(r'\s', '', requested_sn)
+        if len(Group.objects.filter(short_name=requested_sn)) > 0:
+            raise forms.ValidationError("Requested short name is not unique!")
+        else:
+            return requested_sn
+    
+    def save(self, cookie_user, force_insert=False, force_update=False, commit=True):
+        group = Group.objects.create(
+            name=self.cleaned_data['name'],
+            short_name=self.cleaned_data['short_name']
+        )
+        Site.objects.create(
+            name=self.cleaned_data['domain'],
+            domain=self.cleaned_data['domain'],
+            group=group
+        )
+        social_user = SocialUser.objects.get(user=cookie_user)
+        GroupAdmin.objects.create(group=group,social_user=social_user,approved=True)
+        return group
+        
 
 class GroupForm(forms.ModelForm):
     blessed_tags = forms.CharField(label='Blessed Tags')
@@ -21,7 +58,6 @@ class GroupForm(forms.ModelForm):
                 InteractionNode.objects.get_or_create(body=tag)[0]
             )
         self.new_blessed_tags = new_blessed_tags
-        print new_blessed_tags
     
     # Write the many to many relationships
     def save(self, force_insert=False, force_update=False, commit=True):
