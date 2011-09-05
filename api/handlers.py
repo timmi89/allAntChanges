@@ -88,6 +88,7 @@ class ModerationHandler(AnonymousBaseHandler):
         if interaction.page.site.group.id in group_ids:
             interaction.approved = False
             interaction.save()
+            #return HttpResponseRedirect(request.path)
         else:
             raise JSONException(u'Admin not approved for this group!')
 
@@ -230,7 +231,6 @@ class ShareHandler(InteractionHandler):
 
         # Create appropriate parent
         if referring_int_id:
-            print "received referring id"
             try:
                 parent = Interaction.objects.get(id=referring_int_id)
             except Interaction.DoesNotExist:
