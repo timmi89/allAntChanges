@@ -12,13 +12,15 @@ body{
 }
 
 body.wide section[role="main"] {
-    width: 900px;
+    width: 100%;
+    background:none;
+
 }
 body section[role="controls"]{
 	border:none;	
 }
 body.wide section[role="content"]{
-	width: 900px;
+	width: 100%;
 	background:none;
 }
 section[role="wide panels"]{
@@ -37,14 +39,89 @@ section.introBlurb{
 	border:none !important;
 }
 .footerLinks{
-	padding-bottom:20px;
+	
 }
 .footerLinks ul{
 	margin-left:10px;
 	font-size:0.8em;
 }
+</style>
 
 
+<style>
+ul.partner-logos{
+	
+}
+ul.partner-logos li{
+	list-style:none;
+}
+ul.partner-logos li img{
+	width:100px;
+	float:left;
+	padding:10px;
+}
+.video-wrap{
+    clear: both;
+    float: left;
+}
+.blurb{
+	width:100%;
+	clear:both;
+	
+}
+.blurb .bullet-points{
+	list-style:none;
+}
+.blurb .bullet-points h4{
+	float:left;
+}
+.blurb .bullet-points span{
+	float:left;
+	padding:0 5px;
+}
+.main-section{
+	background:white;
+	margin-top:600px;
+	position:relative;
+}
+#background-layer .pin-large-icon{
+	display:none;
+}
+#background-layer .background-radial-grad{
+	left: -400px; 			/*The width of the image is 800px*/
+    margin-left: 50%;
+    position: absolute;
+    width: 100%;
+    top:0;
+
+	opacity:0.4;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+    filter:alpha(opacity=40);
+    -moz-opacity:0.4;
+    -khtml-opacity:0.4;
+}
+.splash-section{
+	margin-top:70px;
+	text-align:center;
+	width:100%;
+	position:absolute;
+}
+.splash-section h2, h3{
+	padding:40px 0;
+    color: white;
+    font-family: ReadrLeague,Arial;
+    font-weight: normal;
+    /*text-shadow: 2px 2px 2px #95B6CB;*/
+}
+.splash-section h2{
+    font-size:62px;
+}
+.splash-section h3{
+    font-size:40px;
+}
+.splash-section .rindow{
+	
+}
 </style>
 
 <section role="analytics header">
@@ -53,94 +130,105 @@ section.introBlurb{
 	</section>
 </section>
 
-<section role="panels">
-	<section role="wide panels">
-		
-		<section role="most active pages" class="introBlurb">
-			<a href="{{BASE_URL}}" ><img class="readrboard_logo" src="{{BASE_URL}}{{STATIC_URL}}site/images/logo.png" /></a>
-			<h3>A reaction button for the web.</h3>
-			<p>
-				something here...
-			</p>
-			<ul>
-				<li>
-					<a href="http://www.fathomaway.com/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/fathom-logo-lg.png" alt="fathom logo" />
-					</a>
-				</li>
-				<li>
-					<a href="http://www.reuters.com/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/reuters-logo-lg.png" alt="reuters logo" />
-					</a>
-				</li>
-				<li>
-					<a href="http://www.dailycandy.com/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/dailycandy-logo-lg.png" alt="dailycandy logo" />
-					</a>
-				</li>
-				<li>
-					<a href="http://www.foodnetwork.co.uk/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/foodnetwork_uk-logo-lg.png" alt="foodnetwork logo" />
-					</a>
-				</li>
-				<li>
-					<a href="http://hypervocal.com/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/hypervocal-logo-lg.png" alt="hypervocal logo" />
-					</a>
-				</li>
-				<li>
-					<a href="http://www.nearlyweds.com/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/nearlyweds-logo-lg.png" alt="nearlyweds logo" />
-					</a>
-				</li>
-				<li>
-					<a href="http://www.politico.com/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/politico-logo-lg.png" alt="politico logo" />
-					</a>
-				</li>
-				<li>
-					<a href="http://www.racialicious.com/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/racialicious-logo-lg.png" alt="racialicious logo" />
-					</a>
-				</li>
-				<li>
-					<a href="http://www.themarknews.com/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/themark-logo-lg.png" alt="themarknews logo" />
-					</a>
-				</li>
-				<li>
-					<a href="http://www.fathomaway.com/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/fathom-logo-lg.png" alt="fathomaway logo" />
-					</a>
-				</li>
-				<li>
-					<a href="http://www.fathomaway.com/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/fathom-logo-lg.png" />
-					</a>
-				</li>
+<div class="splash-section">
+	<h2>A reaction button for the web.</h2>
+	<div class="rindow-img">
+		<img src="{{BASE_URL}}{{STATIC_URL}}site/images/rindow-on-splashpage.png" />
+	</div>
+	<h3>Empower your readers to react to any phrase, image, or video.</h3>
+</div>
+<div class="main-section">
+	<div class="introBlurb">
+		<a href="{{BASE_URL}}">
+			<img class="readrboard_logo" src="{{BASE_URL}}{{STATIC_URL}}site/images/logo.png" />
+		</a>
+		<h3>A reaction button for the web.</h3>
+		<p>
+			something here...
+		</p>
+		<ul class="partner-logos">
+			<li>
+				<a href="http://www.fathomaway.com/" target="_blank">
+					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/fathom-logo-lg.png" alt="fathom logo" />
+				</a>
+			</li>
+			<li>
+				<a href="http://www.reuters.com/" target="_blank">
+					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/reuters-logo-lg.png" alt="reuters logo" />
+				</a>
+			</li>
+			<li>
+				<a href="http://www.dailycandy.com/" target="_blank">
+					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/dailycandy-logo-lg.png" alt="dailycandy logo" />
+				</a>
+			</li>
+			<li>
+				<a href="http://www.foodnetwork.co.uk/" target="_blank">
+					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/foodnetwork_uk-logo-lg.png" alt="foodnetwork logo" />
+				</a>
+			</li>
+			<li>
+				<a href="http://hypervocal.com/" target="_blank">
+					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/hypervocal-logo-lg.png" alt="hypervocal logo" />
+				</a>
+			</li>
+			<li>
+				<a href="http://www.nearlyweds.com/" target="_blank">
+					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/nearlyweds-logo-lg.png" alt="nearlyweds logo" />
+				</a>
+			</li>
+			<li>
+				<a href="http://www.onewed.com/" target="_blank">
+					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/onewed-logo-lg.png" alt="onewed logo" />
+				</a>
+			</li>
+			<li>
+				<a href="http://www.politico.com/" target="_blank">
+					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/politico-logo-lg.png" alt="politico logo" />
+				</a>
+			</li>
+			<li>
+				<a href="http://www.racialicious.com/" target="_blank">
+					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/racialicious-logo-lg.png" alt="racialicious logo" />
+				</a>
+			</li>
+			<li>
+				<a href="http://www.themarknews.com/" target="_blank">
+					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/themark-logo-lg.png" alt="themarknews logo" />
+				</a>
+			</li>
+		</ul>
+	</div>
+	<div class="video-wrap">
+		<iframe class="rdr_video" src="http://player.vimeo.com/video/21956758?title=0&amp;byline=0&amp;portrait=0" width="400" height="250" frameborder="0" style="border:8px solid #ddd;">
+		</iframe>
+	</div>
 
-			</ul>
-		</section>
+	<div class="blurb blurb-for-readers">
+		<h2>
+			For Readers
+		</h2>
+		<ul class="bullet-points">
+			<li>
+				Say what you really feel.
+			</li>
+		</ul>
+		<div style="clear:both;"></div>
+	</div>
 
-	<div style="float: right; margin: 0 0 0 10px; padding: 5px;">
-      <iframe class="rdr_video" src="http://player.vimeo.com/video/21956758?title=0&amp;byline=0&amp;portrait=0" width="400" height="250" frameborder="0" style="border:8px solid #ddd;"></iframe>
-  </div>
+	<div class="blurb blurb-for-publishers">
+		<h2>
+			For Publishers
+		</h2>
+		<ul class="bullet-points">
+			<li>
+				<h4>React</h4>
+				<span>Quickly see exactly what your readers are really thinking.</span>
+			</li>
+		</ul>
+		<div style="clear:both;"></div>
 	</div>
-	<div style="padding:10px 10%; text-align:center;">
-		<img src="{{BASE_URL}}{{STATIC_URL}}site/images/about/advisers.png" />
-		<br>
-		<br>
-	</div>
-	<div style="padding:10px 100px; text-align:center;">
-		<img src="{{BASE_URL}}{{STATIC_URL}}site/images/about/investors.png" />
-		<br>
-		<br>
-		Well, us (boot)strapping cofounders, so far.  <a href="http://porterbayne.wufoo.com/forms/m7x3k1/" onclick="window.open(this.href,  null, 'height=410, width=775, toolbar=0, location=0, status=1, scrollbars=1, resizable=1'); return false" title="Tell me more about ReadrBoard!!">Interested?</a>
-		<br>
-		<br>
-		<br>
-		<br>
-	</div>
+
 	<div class="footerLinks">
 		<ul>
 			<li>
@@ -151,8 +239,5 @@ section.introBlurb{
 			</li>
 		</ul>
 	</div>
-	
-	
-	</section>
-</section>
+</div>
 {% endblock %}
