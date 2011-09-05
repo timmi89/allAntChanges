@@ -55,6 +55,7 @@ class FBHandler(BaseHandler):
         # Get user profile from facebook graph
         try:
             profile = graph.get_object("me")
+            print "***profile***: ", profile
         except GraphAPIError:
             raise JSONException(u'Error getting graph object from Facebook')
 
