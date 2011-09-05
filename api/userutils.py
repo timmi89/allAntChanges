@@ -34,7 +34,7 @@ def createSocialAuth(social_user, django_user, group_id, fb_session):
     # We know this exists because we aren't asking for 
     # offline access. If not we would need to check.
     dt = datetime.fromtimestamp(fb_session['expires'])
-    access_token = fb_session['access_token']
+    access_token = fb_session['accessToken']
 
     # Store the information and link it to the SocialUser
     social_auth = SocialAuth.objects.get_or_create(
