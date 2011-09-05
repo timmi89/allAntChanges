@@ -33,7 +33,7 @@ def createSocialAuth(social_user, django_user, group_id, fb_session):
     # Create expiration time from Facebook timestamp.
     # We know this exists because we aren't asking for 
     # offline access. If not we would need to check.
-    dt = datetime.fromtimestamp(fb_session['expires'])
+    dt = datetime.fromtimestamp(fb_session['expiresIn'])
     access_token = fb_session['accessToken']
 
     # Store the information and link it to the SocialUser
@@ -50,7 +50,7 @@ def createSocialAuth(social_user, django_user, group_id, fb_session):
 
 def createSocialUser(django_user, profile):
     base = 'http://graph.facebook.com'
-    profile['img_url'] = '%s/%s/picture' % (base, profile['id'])
+    profile['img_url'] = '%s/%s/picture' % (base, profile['userID'])
 
     # Make Gender key look like our model
     if 'gender' in profile.keys():
@@ -60,7 +60,7 @@ def createSocialUser(django_user, profile):
     social = SocialUser.objects.get_or_create(
         user = django_user,
         provider = 'Facebook',
-        uid = profile['id'],
+        uid = profile['userID'],
         defaults = {
             "full_name": profile['name'],
             "username": profile.get('username', None),
