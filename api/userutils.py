@@ -1,7 +1,8 @@
 from readrboard.rb.models import *
-from datetime import datetime
+from datetime import datetime, timedelta
 import base64
 import uuid
+from django.core.mail import send_mail
 
 def convertUser(temp_user, existing_user):
     existing = Interaction.objects.filter(user=existing_user)
@@ -33,20 +34,25 @@ def createSocialAuth(social_user, django_user, group_id, fb_session):
     # Create expiration time from Facebook timestamp.
     # We know this exists because we aren't asking for 
     # offline access. If not we would need to check.
-    dt = datetime.fromtimestamp(fb_session['expiresIn'])
     access_token = fb_session['accessToken']
+    expires_in = fb_session['expiresIn']
 
     # Store the information and link it to the SocialUser
-    social_auth = SocialAuth.objects.get_or_create(
+    social_auth = SocialAuth.objects.get(
         social_user = social_user,
         auth_token = access_token,
-        expires = dt
     )
+    
+    if not social_auth or social_auth.expires > datetime.now:        
+        # Remove stale tokens (if they exist)
+        SocialAuth.objects.filter(social_user=social_user).exclude(auth_token=access_token).delete()
+        social_auth = SocialAuth.objects.create(
+            social_user = social_user,
+            auth_token = access_token,
+            expires = datetime.now + timedelta(minutes=expires_in)
+        )[0]
 
-    # Remove stale tokens (if they exist)
-    SocialAuth.objects.filter(social_user=social_user).exclude(auth_token=access_token).delete()
-
-    return social_auth[0]
+    return social_auth
 
 def createSocialUser(django_user, profile):
     base = 'http://graph.facebook.com'
@@ -70,9 +76,16 @@ def createSocialUser(django_user, profile):
             "img_url": profile.get('img_url', None)
         }
     )
-
     # Print out the result
     social_user = social[0]
+    if social[1]:
+        send_mail(
+            'New ReadrBoard User',
+            social_user.full_name + ' just joined RB!',
+            'server@readrboard.com',
+            ['tyler@readrboard.com'],
+            fail_silently=True
+        )
     result = ("Created new" if social[1] else "Retreived existing")
     print result, "social user %s (%s: %s)" % (
         social_user.full_name,
