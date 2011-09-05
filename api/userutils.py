@@ -36,23 +36,27 @@ def createSocialAuth(social_user, django_user, group_id, fb_session):
     # offline access. If not we would need to check.
     access_token = fb_session['accessToken']
     expires_in = fb_session['expiresIn']
+    expires = datetime.now() + timedelta(minutes=expires_in)
 
     # Store the information and link it to the SocialUser
-    social_auth = SocialAuth.objects.get(
+    social_auth = SocialAuth.objects.get_or_create(
         social_user = social_user,
         auth_token = access_token,
+        defaults = {
+            "expires": expires
+        }
     )
-    
-    if not social_auth or social_auth.expires > datetime.now():        
+        
+    if not social_auth[1] and social_auth.expires > datetime.now():        
         # Remove stale tokens (if they exist)
         SocialAuth.objects.filter(social_user=social_user).exclude(auth_token=access_token).delete()
         social_auth = SocialAuth.objects.create(
             social_user = social_user,
             auth_token = access_token,
-            expires = datetime.now() + timedelta(minutes=expires_in)
-        )[0]
+            expires = expires
+        )
 
-    return social_auth
+    return social_auth[0]
 
 def createSocialUser(django_user, profile):
     base = 'http://graph.facebook.com'
