@@ -42,7 +42,7 @@ def createSocialAuth(social_user, django_user, group_id, fb_session):
     social_auth = SocialAuth.objects.get_or_create(
         social_user = social_user,
         defaults = {
-            "auth_token": access_token
+            "auth_token": access_token,
             "expires": expires
         }
     )

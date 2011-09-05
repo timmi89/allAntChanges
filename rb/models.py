@@ -324,8 +324,8 @@ class Profile(models.Model):
     #following = models.ForeignKey(User)
 
 class SocialAuth(models.Model):
-    social_user = models.ForeignKey(SocialUser, related_name='social_auth')
-    auth_token = models.CharField(max_length=103, unique=True)
+    social_user = models.ForeignKey(SocialUser, related_name='social_auth', unique=True)
+    auth_token = models.CharField(max_length=103)
     expires = models.DateTimeField(null=True, editable=False)
 
     class Meta:
