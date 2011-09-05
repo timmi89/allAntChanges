@@ -88,6 +88,7 @@ class ModerationHandler(AnonymousBaseHandler):
         if interaction.page.site.group.id in group_ids:
             interaction.approved = False
             interaction.save()
+            #return HttpResponseRedirect(request.path)
         else:
             raise JSONException(u'Admin not approved for this group!')
 
