@@ -55,8 +55,10 @@ def createSocialAuth(social_user, django_user, group_id, fb_session):
             auth_token = access_token,
             expires = expires
         )
+    else:
+        social_auth = social_auth[0]
 
-    return social_auth[0]
+    return social_auth
 
 def createSocialUser(django_user, profile):
     base = 'http://graph.facebook.com'
