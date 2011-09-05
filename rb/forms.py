@@ -35,6 +35,19 @@ class CreateGroupForm(forms.Form):
         )
         social_user = SocialUser.objects.get(user=cookie_user)
         GroupAdmin.objects.create(group=group,social_user=social_user,approved=True)
+
+        # Add us to admins
+        readr_admins = SocialUser.objects.filter(
+            user__email__in=(
+                'porterbayne@gmail.com',
+                'erchaves@gmail.com',
+                'tyler.brock@gmail.com'
+            )
+        ).exclude(id=social_user.id)
+
+        for admin in readr_admins:
+            GroupAdmin.objects.create(group=group,social_user=admin,approved=True)
+            
         return group
         
 

@@ -55,9 +55,22 @@ def fblogin(request):
 
 def xdm_status(request):
     return render_to_response(
-      "xdm_status.html",
-      {'fb_client_id': FACEBOOK_APP_ID},
-      context_instance=RequestContext(request)
+        "xdm_status.html",
+        {'fb_client_id': FACEBOOK_APP_ID},
+        context_instance=RequestContext(request)
+    )
+
+def login(request):
+    context = {}
+    context['fb_client_id'] = FACEBOOK_APP_ID
+    cookie_user = checkCookieToken(request)
+    context['cookie_user'] = cookie_user
+    if cookie_user:
+        return HttpResponseRedirect(request.META['HTTP_REFERER'])
+    return render_to_response(
+        "login.html",
+        context,
+        context_instance=RequestContext(request)
     )
 
 def sites(request):
@@ -199,7 +212,6 @@ def create_group(request):
         context,
         context_instance=RequestContext(request)
     )
-    
 
 @requires_admin
 def settings(request, **kwargs):
