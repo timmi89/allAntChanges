@@ -69,7 +69,7 @@ RDRAuth = {
 			RDRAuth.notifyParent(sendData, "returning_user");
 		}
 	},
-	getReadrToken: function(fb_response, force_fb_status, reload) {
+	getReadrToken: function(fb_response, callback ) {
 		if ( fb_response ) {
             var fb_session = (fb_response.session) ? fb_response.session:fb_response
 			var sendData = {
@@ -174,6 +174,7 @@ RDRAuth = {
 				switch (args.requesting_action) {
 					case "admin_request":
 						// this call is from the website
+						// still using this?
 						$('#fb-logged-in').show();
 						$('#fb-logged-in button').click( function() {
 							if ( RB ) RB.admin.requestAccess( response, args.group_id );
@@ -182,15 +183,17 @@ RDRAuth = {
 						break;
 					
 					case "site_login":
-						$('#fb-logged-in').show();
-						$('#fb-logged-out').hide();
-						RDRAuth.getReadrToken( response, true, true );
+						console.log('connected site login');
+						RDRAuth.getReadrToken( response, function() { window.location.reload(); });
 						break;
 
 					case "site_load":
-						$('#fb-logged-in').show();
-						$('#fb-logged-out').hide();
-						RDRAuth.getReadrToken( response, true );
+						console.log('connected site load');
+						RDRAuth.getReadrToken( response, function() { 
+							$('#fb-logged-in').show();
+							$('#fb-logged-out').hide(); 
+							// now write the html for the user
+						});
 						break;
 
 				}
@@ -198,20 +201,23 @@ RDRAuth = {
 				switch (args.requesting_action) {
 					case "admin_request":
 						// this call is from the website
+						// still using this?
 						$('#fb-logged-in').hide();
 						$('#fb-logged-out').show();
 						break;
 
 					case "site_login":
-						$('#fb-logged-in').hide();
-						$('#fb-logged-out').show();
-						RDRAuth.getReadrToken( response, true, true );
+						console.log('not connected site login');
+						// $('#fb-logged-in').hide();
+						// $('#fb-logged-out').show();
+						// RDRAuth.getReadrToken( response, function() { window.location.reload(); });
 						break;
 
 					case "site_load":
+						console.log('not connected site load');
 						$('#fb-logged-in').hide();
 						$('#fb-logged-out').show();
-						RDRAuth.getReadrToken( response, true );
+						// RDRAuth.getReadrToken( response, true );
 						break;
 				}
 			}

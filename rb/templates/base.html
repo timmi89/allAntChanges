@@ -83,7 +83,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
           <a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/><strong>{{ cookie_user.social_user.full_name }}</strong></a>
         </div>
         <div id="fb-logged-out" {% if cookie_user %}style="display:none;"{% endif %}>
-          <fb:login-button onlogin="console.log('onlogin');RDRAuth.checkFBStatus({ requesting_action:'site_login'});">
+          <fb:login-button onlogin="RDRAuth.checkFBStatus({ requesting_action:'site_login'});">
         </div>
       </div>
     <div id="site_search">

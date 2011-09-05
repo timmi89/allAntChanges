@@ -600,7 +600,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_close       {position:absolute;top:8px;right:7px;color:#999;cursor:pointer;font-size:14px;z-index:150;}
 
 #rdr_sandbox div.rdr div.rdr_instruct    {color:#666; margin:5px 0;}
-#rdr_sandbox div.rdr div.rdr_help        {font:italic 11px Arial;color:#767676; xwidth:100%; position:absolute; top:12px; xtext-align:center; margin:0 !important;}
+#rdr_sandbox div.rdr div.rdr_help        {font:italic 13px Arial;color:#767676; xwidth:100%; position:absolute; top:12px; xtext-align:center; margin:0 !important;}
 
 #rdr_sandbox div.rdr div.rdr_shareBox                       { overflow:auto; clear:both; border-top: none; }
 #rdr_sandbox div.rdr div.rdr_share_social                   { float:right; }
