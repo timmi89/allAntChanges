@@ -43,8 +43,7 @@ class FBHandler(BaseHandler):
     def read(self, request, admin_req=False):
         data = json.loads(request.GET['json'])
         fb_session = data['fb']
-        group_id = data['group_id']
-        access_token = fb_session.get('access_token', None)
+        access_token = fb_session.get('accessToken', None)
         user_id = data.get('user_id', None)
 
         if(access_token):
@@ -55,7 +54,6 @@ class FBHandler(BaseHandler):
         # Get user profile from facebook graph
         try:
             profile = graph.get_object("me")
-            print "***profile***: ", profile
         except GraphAPIError:
             raise JSONException(u'Error getting graph object from Facebook')
 
