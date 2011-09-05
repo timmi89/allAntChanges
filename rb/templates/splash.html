@@ -12,13 +12,15 @@ body{
 }
 
 body.wide section[role="main"] {
-    width: 900px;
+    width: 100%;
+    background:none;
+
 }
 body section[role="controls"]{
 	border:none;	
 }
 body.wide section[role="content"]{
-	width: 900px;
+	width: 100%;
 	background:none;
 }
 section[role="wide panels"]{
@@ -37,7 +39,7 @@ section.introBlurb{
 	border:none !important;
 }
 .footerLinks{
-	padding-bottom:20px;
+	
 }
 .footerLinks ul{
 	margin-left:10px;
@@ -65,7 +67,7 @@ ul.partner-logos li img{
 .blurb{
 	width:100%;
 	clear:both;
-	padding:10px 20px;
+	
 }
 .blurb .bullet-points{
 	list-style:none;
@@ -77,6 +79,49 @@ ul.partner-logos li img{
 	float:left;
 	padding:0 5px;
 }
+.main-section{
+	background:white;
+	margin-top:600px;
+	position:relative;
+}
+#background-layer .pin-large-icon{
+	display:none;
+}
+#background-layer .background-radial-grad{
+	left: -400px; 			/*The width of the image is 800px*/
+    margin-left: 50%;
+    position: absolute;
+    width: 100%;
+    top:0;
+
+	opacity:0.4;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+    filter:alpha(opacity=40);
+    -moz-opacity:0.4;
+    -khtml-opacity:0.4;
+}
+.splash-section{
+	margin-top:70px;
+	text-align:center;
+	width:100%;
+	position:absolute;
+}
+.splash-section h2, h3{
+	padding:40px 0;
+    color: white;
+    font-family: ReadrLeague,Arial;
+    font-weight: normal;
+    /*text-shadow: 2px 2px 2px #95B6CB;*/
+}
+.splash-section h2{
+    font-size:62px;
+}
+.splash-section h3{
+    font-size:40px;
+}
+.splash-section .rindow{
+	
+}
 </style>
 
 <section role="analytics header">
@@ -85,6 +130,13 @@ ul.partner-logos li img{
 	</section>
 </section>
 
+<div class="splash-section">
+	<h2>A reaction button for the web.</h2>
+	<div class="rindow-img">
+		<img src="{{BASE_URL}}{{STATIC_URL}}site/images/rindow-on-splashpage.png" />
+	</div>
+	<h3>Empower your readers to react to any phrase, image, or video.</h3>
+</div>
 <div class="main-section">
 	<div class="introBlurb">
 		<a href="{{BASE_URL}}">
