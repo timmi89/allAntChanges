@@ -74,6 +74,7 @@ RDRAuth = {
             var fb_session = (fb_response.session) ? fb_response.session:fb_response
 			var sendData = {
 				fb: fb_session,
+				group_id: (qs_args.group_id) ? qs_args.group_id:1, // TODO aaaaaaaaaaaaaaagh remove GROUP ID and replace with NONCE
 				user_id: RDRAuth.rdr_user.user_id, // might be temp, might be the ID of a valid FB-created user
 				readr_token: RDRAuth.rdr_user.readr_token
 			};
