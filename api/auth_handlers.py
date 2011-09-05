@@ -44,7 +44,7 @@ class FBHandler(BaseHandler):
         data = json.loads(request.GET['json'])
         fb_session = data['fb']
         group_id = data['group_id']
-        access_token = fb_session.get('access_token', None)
+        access_token = fb_session.get('accessToken', None)
         user_id = data.get('user_id', None)
 
         if(access_token):

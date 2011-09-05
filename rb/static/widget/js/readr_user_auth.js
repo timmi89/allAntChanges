@@ -10,6 +10,7 @@ for ( var i in qs ) {
 if ( typeof $.receiveMessage == "function") {
 	$.receiveMessage(
 		function(e){
+			console.log('received message: '+e.data );
 		    switch( e.data ) {
 		    	case "getUser":
 		    		RDRAuth.getUser();
@@ -34,7 +35,6 @@ if ( typeof $.receiveMessage == "function") {
 var RDRAuth = RDRAuth ? RDRAuth : {};
 RDRAuth = {
 	rdr_user: {},
-	FBLoginResponse: function() {}, // define in the including HTML page
 	postMessage: function(params) {
 		if ( typeof $.postMessage == "function" ) {
 			$.postMessage(
@@ -69,7 +69,10 @@ RDRAuth = {
 			RDRAuth.notifyParent(sendData, "returning_user");
 		}
 	},
-	getReadrToken: function(fb_response, force_fb_status, reload) {
+	getReadrToken: function(fb_response, callback ) {
+		console.log('getReadrToken');
+		console.dir(fb_response);
+
 		if ( fb_response ) {
             var fb_session = (fb_response.session) ? fb_response.session:fb_response
 			var sendData = {
@@ -88,12 +91,14 @@ RDRAuth = {
 					json: JSON.stringify( sendData )
 				},
 				success: function(response){
+					console.log('getReaderToken Success');
+					console.dir(response);
 					if ( response.status == "fail" ) {
 						RDRAuth.createTempUser();
 					} else {
 						RDRAuth.setUser(response);
 						RDRAuth.returnUser();
-						if (reload) window.location.reload();
+						if (callback) callback();
 					}
 				},
 				error: function(response) {
@@ -153,7 +158,8 @@ RDRAuth = {
 	},
 	reauthUser : function(args) {
 		RDRAuth.readUserCookie();
-		if ( !FB.getSession() || ( args && args.force_fb ) ) {
+		if ( !FB.getAuthResponse() || ( args && args.force_fb ) ) {
+			console.log('reauth 1');
 			FB.getLoginStatus(function(response) {
 		  		if (response && response.session) {
 					// TODO:  suspect we only need to killUser if there is a FB session change.
@@ -165,15 +171,25 @@ RDRAuth = {
 		  		}
 		  	});
 		} else {
-			RDRAuth.getReadrToken( FB.getSession() );
+			console.log('reauth 2');
+			RDRAuth.killUser( function(response) {
+				RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
+			});
+			// RDRAuth.getReadrToken( FB.getAuthResponse() );
 		}
 	},
 	checkFBStatus : function(args) {
+		console.log('checking fb status');
 		FB.getLoginStatus(function(response) {
-			if ( response.session && response.status && response.status == "connected" ) {
+			console.log('fb status response:');
+			console.dir(response);
+			console.log('fb status USER:');
+			console.dir(args.user);
+			if ( response.authResponse && response.status && response.status == "connected" ) {
 				switch (args.requesting_action) {
 					case "admin_request":
 						// this call is from the website
+						// still using this?
 						$('#fb-logged-in').show();
 						$('#fb-logged-in button').click( function() {
 							if ( RB ) RB.admin.requestAccess( response, args.group_id );
@@ -182,15 +198,19 @@ RDRAuth = {
 						break;
 					
 					case "site_login":
+						console.log('connected site login');
+						RDRAuth.getReadrToken( response.authResponse, function() { window.location.reload(); });
+						break;
+
+					case "widget_login":
 						$('#fb-logged-in').show();
-						$('#fb-logged-out').hide();
-						RDRAuth.getReadrToken( response, true, true );
+						$('#fb-logged-out').hide(); 
 						break;
 
 					case "site_load":
 						$('#fb-logged-in').show();
-						$('#fb-logged-out').hide();
-						RDRAuth.getReadrToken( response, true );
+						$('#fb-logged-out').hide(); 
+							// now write the html for the user
 						break;
 
 				}
@@ -198,20 +218,23 @@ RDRAuth = {
 				switch (args.requesting_action) {
 					case "admin_request":
 						// this call is from the website
+						// still using this?
 						$('#fb-logged-in').hide();
 						$('#fb-logged-out').show();
 						break;
 
 					case "site_login":
-						$('#fb-logged-in').hide();
-						$('#fb-logged-out').show();
-						RDRAuth.getReadrToken( response, true, true );
+						console.log('not connected site login');
+						// $('#fb-logged-in').hide();
+						// $('#fb-logged-out').show();
+						// RDRAuth.getReadrToken( response, function() { window.location.reload(); });
 						break;
 
 					case "site_load":
+						console.log('not connected site load');
 						$('#fb-logged-in').hide();
 						$('#fb-logged-out').show();
-						RDRAuth.getReadrToken( response, true );
+						// RDRAuth.getReadrToken( response, true );
 						break;
 				}
 			}
@@ -262,8 +285,7 @@ RDRAuth = {
 			// deauth a full user
 			var sendData = {
 				user_id : RDRAuth.rdr_user.user_id,
-				readr_token : RDRAuth.rdr_user.readr_token,
-				group_id : qs_args.group_id
+				readr_token : RDRAuth.rdr_user.readr_token
 			};
 
 			$.ajax({
@@ -294,13 +316,53 @@ RDRAuth = {
 		}
 	},
 	doFBLogin: function(requesting_action) {
-		FB.login( function(response) {
-			RDRAuth.FBLoginResponse(response, requesting_action);
-		}, {perms:'email'});
+		// RDRAuth.doFBLogin
+		console.log('RDRAuth.doFBLogin');
+
+		FB.login(function(response) {
+		  if (response.authResponse) {
+		    FB.api('/me', function(response) {
+		      // console.log('Good to see you, ' + response.name + '.');
+		      
+		      
+		      RDRAuth.getReadrToken( FB.getAuthResponse(), function() {
+		      	RDRAuth.checkFBStatus( { user:response, requesting_action:requesting_action } );
+		      });
+
+
+		      /*
+		      jQuery1606043299664238055_1315254810872({
+			    "status": "success", 
+			    "data": {
+			        "user_id": 43, 
+			        "first_name": "Porter", 
+			        "img_url": "http://graph.facebook.com/613765056/picture", 
+			        "full_name": "Porter Bayne", 
+			        "readr_token": "0e3a4209a04003e3fa6e"
+			    }
+			})
+		      */
+
+
+
+
+
+
+		      // FB.logout(function(response) {
+		        // console.log('Logged out.');
+		      // });
+		    });
+		  } else {
+		    // console.log('User cancelled login or did not fully authorize.');
+		  }
+		}, {scope: 'email'});
+
+
+
 	},		
 	doFBlogout: function() {
 		FB.getLoginStatus(function(response) {
-			if (response && response.session) {
+			if (response) {
 				FB.logout(function(response) {
 					RDRAuth.killUser( function() {
 						window.location.reload(); 

@@ -12,7 +12,7 @@
      <script type="text/javascript">
 		FB.init({ 
 			appId:'{{ fb_client_id }}', cookie:true, 
-			status:true, xfbml:true 
+			status:true, xfbml:true, oauth:true
 		});
 
 		var date = new Date();
@@ -23,17 +23,7 @@
 			unescape( '%3Cscript src="/static/widget/js/readr_user_auth.js?' + cachebuster + '" type="text/javascript"%3E%3C/script%3E' )
 		);
 
-		$(document).ready( function() {
-			RDRAuth.FBLoginResponse = function(response) {
-				if (response.session) {
-					//user is logged in
-					RDRAuth.getReadrToken({response:response});
-				} else {
-					// user is not logged in
-					// TODO do something.  post to parent that there was a bug logging in to FB
-				}	
-			}
-			
+		$(document).ready( function() {			
 			
 			if ( $.cookie('location') && $.cookie('container_hash') ) {
 				RDRAuth.notifyParent({message:false}, "sharedLink|" + $.cookie('container_hash') + "|" + RDRAuth.decodeDjangoCookie( $.cookie('location') ) + "|" + RDRAuth.decodeDjangoCookie( $.cookie('reaction') ) + "|" + RDRAuth.decodeDjangoCookie( $.cookie('content') ) + "|" + $.cookie('referring_int_id') );

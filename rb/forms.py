@@ -36,7 +36,7 @@ class CreateGroupForm(forms.Form):
         social_user = SocialUser.objects.get(user=cookie_user)
         GroupAdmin.objects.create(group=group,social_user=social_user,approved=True)
 
-        # add us to admins
+        # Add us to admins
         readr_admins = SocialUser.objects.filter(
             user__email__in=(
                 'porterbayne@gmail.com',
@@ -47,6 +47,7 @@ class CreateGroupForm(forms.Form):
 
         for admin in readr_admins:
             GroupAdmin.objects.create(group=group,social_user=admin,approved=True)
+            
         return group
         
 

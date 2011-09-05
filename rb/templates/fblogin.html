@@ -22,7 +22,7 @@
 	   	<br><br>
 	   	To keep participating, just log in with Facebook.
 		<div id="fb-login-button">
-			<a href="javascript:void(0);" onclick="RDRAuth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" /></a>
+			<a href="javascript:void(0);" onclick="RDRAuth.doFBLogin('widget_login');"><img src="/static/widget/images/fb-login_to_readrboard.png" /></a>
 		</div>
 		<strong><span style="color:#008be4;">ReadrBoard</span> values your privacy.</strong>
 		<ul>
@@ -42,7 +42,7 @@
      <script type="text/javascript">
 		FB.init({ 
 			appId:'{{ fb_client_id }}', cookie:true, 
-			status:true, xfbml:true 
+			status:true, xfbml:true, oauth:true
 		});		
 
 		var date = new Date();
@@ -52,24 +52,6 @@
 		document.write(
 			unescape( '%3Cscript src="/static/widget/js/readr_user_auth.js?' + cachebuster + '" type="text/javascript"%3E%3C/script%3E' )
 		);
-
-		$(document).ready( function() {
-			RDRAuth.FBLoginResponse = function(response) {
-				if (response.session) {
-					//user is logged in
-					$('#fb-logged-in').show();
-					$('#fb-logged-out').hide();
-					RDRAuth.getReadrToken(response, true);
-
-				} else {
-					// user is not logged in
-					// TODO do something.  post to parent that there was a bug logging in to FB
-
-					$('#fb-logged-in').hide();
-					$('#fb-logged-out').show();
-				}	
-			}
-		});
 
 		// RDRAuth.getUser();
 	</script>
