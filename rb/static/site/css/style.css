@@ -83,12 +83,12 @@ body {
 	top:0;
 	left:0;
 	position: absolute;
-	background: url("/static/site/images/texture-overlay.gif");
-    opacity:0.4;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-    filter:alpha(opacity=40);
-    -moz-opacity:0.4;
-    -khtml-opacity:0.4;
+	background: url("/static/site/images/texture-cloth.png");
+    opacity:0.1;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+    filter:alpha(opacity=10);
+    -moz-opacity:0.1;
+    -khtml-opacity:0.1;
 }
 #background-layer .background-radial-grad{
 	background: url("/static/site/images/spotlight.png") no-repeat scroll 0 0 transparent;
@@ -104,11 +104,11 @@ body {
     left: 400px;
     position: absolute;
 
-	opacity:0.4;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-    filter:alpha(opacity=40);
-    -moz-opacity:0.4;
-    -khtml-opacity:0.4;
+	opacity:0.2;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+    filter:alpha(opacity=20);
+    -moz-opacity:0.2;
+    -khtml-opacity:0.2;
 }
 #background-layer .pin-large-icon{
     background: url("/static/site/images/pin-icon-large.png") no-repeat scroll 0 0 transparent;
