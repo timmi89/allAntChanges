@@ -40,8 +40,8 @@ else:
       'default': {
         'ENGINE':   'django.db.backends.mysql',
         'NAME':     'readrboard',
-        'USER':     'root',
-        'PASSWORD': '',
+        'USER':     'django',
+        'PASSWORD': 'gubnah',
         'HOST':     'localhost',
         'PORT':     '3306',
         }
