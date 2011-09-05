@@ -10,6 +10,7 @@ for ( var i in qs ) {
 if ( typeof $.receiveMessage == "function") {
 	$.receiveMessage(
 		function(e){
+			console.log('received message: '+e.data );
 		    switch( e.data ) {
 		    	case "getUser":
 		    		RDRAuth.getUser();
@@ -34,7 +35,6 @@ if ( typeof $.receiveMessage == "function") {
 var RDRAuth = RDRAuth ? RDRAuth : {};
 RDRAuth = {
 	rdr_user: {},
-	FBLoginResponse: function() {}, // define in the including HTML page
 	postMessage: function(params) {
 		if ( typeof $.postMessage == "function" ) {
 			$.postMessage(
@@ -70,6 +70,9 @@ RDRAuth = {
 		}
 	},
 	getReadrToken: function(fb_response, callback ) {
+		console.log('getReadrToken');
+		console.dir(fb_response);
+
 		if ( fb_response ) {
             var fb_session = (fb_response.session) ? fb_response.session:fb_response
 			var sendData = {
@@ -88,12 +91,14 @@ RDRAuth = {
 					json: JSON.stringify( sendData )
 				},
 				success: function(response){
+					console.log('getReaderToken Success');
+					console.dir(response);
 					if ( response.status == "fail" ) {
 						RDRAuth.createTempUser();
 					} else {
 						RDRAuth.setUser(response);
 						RDRAuth.returnUser();
-						if (reload) window.location.reload();
+						if (callback) callback();
 					}
 				},
 				error: function(response) {
@@ -154,6 +159,7 @@ RDRAuth = {
 	reauthUser : function(args) {
 		RDRAuth.readUserCookie();
 		if ( !FB.getAuthResponse() || ( args && args.force_fb ) ) {
+			console.log('reauth 1');
 			FB.getLoginStatus(function(response) {
 		  		if (response && response.session) {
 					// TODO:  suspect we only need to killUser if there is a FB session change.
@@ -165,7 +171,11 @@ RDRAuth = {
 		  		}
 		  	});
 		} else {
-			RDRAuth.getReadrToken( FB.getAuthResponse() );
+			console.log('reauth 2');
+			RDRAuth.killUser( function(response) {
+				RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
+			});
+			// RDRAuth.getReadrToken( FB.getAuthResponse() );
 		}
 	},
 	checkFBStatus : function(args) {
@@ -173,6 +183,8 @@ RDRAuth = {
 		FB.getLoginStatus(function(response) {
 			console.log('fb status response:');
 			console.dir(response);
+			console.log('fb status USER:');
+			console.dir(args.user);
 			if ( response.authResponse && response.status && response.status == "connected" ) {
 				switch (args.requesting_action) {
 					case "admin_request":
@@ -190,13 +202,15 @@ RDRAuth = {
 						RDRAuth.getReadrToken( response.authResponse, function() { window.location.reload(); });
 						break;
 
+					case "widget_login":
+						$('#fb-logged-in').show();
+						$('#fb-logged-out').hide(); 
+						break;
+
 					case "site_load":
-						console.log('connected site load');
-						RDRAuth.getReadrToken( response.authResponse, function() { 
-							$('#fb-logged-in').show();
-							$('#fb-logged-out').hide(); 
+						$('#fb-logged-in').show();
+						$('#fb-logged-out').hide(); 
 							// now write the html for the user
-						});
 						break;
 
 				}
@@ -302,22 +316,38 @@ RDRAuth = {
 		}
 	},
 	doFBLogin: function(requesting_action) {
-		// FB.login( function(response) {
-		// 	RDRAuth.FBLoginResponse(response, requesting_action);
-		// }, {scope:'email'});
+		// RDRAuth.doFBLogin
+		console.log('RDRAuth.doFBLogin');
 
-console.log('wtf 1');
 		FB.login(function(response) {
-			console.log('wtf 2');
 		  if (response.authResponse) {
-		  	console.log('wtf 3');
-		    // console.log('Welcome!  Fetching your information.... ');
 		    FB.api('/me', function(response) {
-		    	console.log('wtf 4');
-		    	console.log('requesting_action: '+requesting_action);
-		    	console.dir(response);
 		      // console.log('Good to see you, ' + response.name + '.');
-		      RDRAuth.checkFBStatus(response, requesting_action);
+		      
+		      
+		      RDRAuth.getReadrToken( FB.getAuthResponse(), function() {
+		      	RDRAuth.checkFBStatus( { user:response, requesting_action:requesting_action } );
+		      });
+
+
+		      /*
+		      jQuery1606043299664238055_1315254810872({
+			    "status": "success", 
+			    "data": {
+			        "user_id": 43, 
+			        "first_name": "Porter", 
+			        "img_url": "http://graph.facebook.com/613765056/picture", 
+			        "full_name": "Porter Bayne", 
+			        "readr_token": "0e3a4209a04003e3fa6e"
+			    }
+			})
+		      */
+
+
+
+
+
+
 		      // FB.logout(function(response) {
 		        // console.log('Logged out.');
 		      // });
