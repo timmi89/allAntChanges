@@ -40,7 +40,6 @@ def createSocialAuth(social_user, django_user, group_id, fb_session):
 
     # Store the information and link it to the SocialUser
     social_auth = SocialAuth.objects.get_or_create(
-        print "->existing token"
         social_user = social_user,
         defaults = {
             "auth_token": access_token,
