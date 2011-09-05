@@ -74,7 +74,6 @@ RDRAuth = {
             var fb_session = (fb_response.session) ? fb_response.session:fb_response
 			var sendData = {
 				fb: fb_session,
-				group_id: (qs_args.group_id) ? qs_args.group_id:1, // TODO aaaaaaaaaaaaaaagh remove GROUP ID and replace with NONCE
 				user_id: RDRAuth.rdr_user.user_id, // might be temp, might be the ID of a valid FB-created user
 				readr_token: RDRAuth.rdr_user.readr_token
 			};
@@ -153,7 +152,7 @@ RDRAuth = {
 	},
 	reauthUser : function(args) {
 		RDRAuth.readUserCookie();
-		if ( !FB.getSession() || ( args && args.force_fb ) ) {
+		if ( !FB.getAuthResponse() || ( args && args.force_fb ) ) {
 			FB.getLoginStatus(function(response) {
 		  		if (response && response.session) {
 					// TODO:  suspect we only need to killUser if there is a FB session change.
@@ -165,12 +164,15 @@ RDRAuth = {
 		  		}
 		  	});
 		} else {
-			RDRAuth.getReadrToken( FB.getSession() );
+			RDRAuth.getReadrToken( FB.getAuthResponse() );
 		}
 	},
 	checkFBStatus : function(args) {
+		console.log('checking fb status');
 		FB.getLoginStatus(function(response) {
-			if ( response.session && response.status && response.status == "connected" ) {
+			console.log('fb status response:');
+			console.dir(response);
+			if ( response.authResponse && response.status && response.status == "connected" ) {
 				switch (args.requesting_action) {
 					case "admin_request":
 						// this call is from the website
@@ -184,12 +186,12 @@ RDRAuth = {
 					
 					case "site_login":
 						console.log('connected site login');
-						RDRAuth.getReadrToken( response, function() { window.location.reload(); });
+						RDRAuth.getReadrToken( response.authResponse, function() { window.location.reload(); });
 						break;
 
 					case "site_load":
 						console.log('connected site load');
-						RDRAuth.getReadrToken( response, function() { 
+						RDRAuth.getReadrToken( response.authResponse, function() { 
 							$('#fb-logged-in').show();
 							$('#fb-logged-out').hide(); 
 							// now write the html for the user
@@ -268,8 +270,7 @@ RDRAuth = {
 			// deauth a full user
 			var sendData = {
 				user_id : RDRAuth.rdr_user.user_id,
-				readr_token : RDRAuth.rdr_user.readr_token,
-				group_id : qs_args.group_id
+				readr_token : RDRAuth.rdr_user.readr_token
 			};
 
 			$.ajax({
@@ -300,13 +301,37 @@ RDRAuth = {
 		}
 	},
 	doFBLogin: function(requesting_action) {
-		FB.login( function(response) {
-			RDRAuth.FBLoginResponse(response, requesting_action);
-		}, {perms:'email'});
+		// FB.login( function(response) {
+		// 	RDRAuth.FBLoginResponse(response, requesting_action);
+		// }, {scope:'email'});
+
+console.log('wtf 1');
+		FB.login(function(response) {
+			console.log('wtf 2');
+		  if (response.authResponse) {
+		  	console.log('wtf 3');
+		    // console.log('Welcome!  Fetching your information.... ');
+		    FB.api('/me', function(response) {
+		    	console.log('wtf 4');
+		    	console.log('requesting_action: '+requesting_action);
+		    	console.dir(response);
+		      // console.log('Good to see you, ' + response.name + '.');
+		      RDRAuth.checkFBStatus(response, requesting_action);
+		      // FB.logout(function(response) {
+		        // console.log('Logged out.');
+		      // });
+		    });
+		  } else {
+		    // console.log('User cancelled login or did not fully authorize.');
+		  }
+		}, {scope: 'email'});
+
+
+
 	},		
 	doFBlogout: function() {
 		FB.getLoginStatus(function(response) {
-			if (response && response.session) {
+			if (response) {
 				FB.logout(function(response) {
 					RDRAuth.killUser( function() {
 						window.location.reload(); 
