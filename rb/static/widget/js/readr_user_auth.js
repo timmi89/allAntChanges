@@ -196,16 +196,30 @@ RDRAuth = {
 
 					case "site_load":
 
-						// var $user = $('<a/>'),
-						// 	$avatar = $('<img/>'),
-						// 	$name = $('<strong/>');
-
-						// $user.attr('href', '');
-						// $avatar.attr('src', '?type=square');
-
 						$('#fb-logged-in').show().css('visibility','visible');
 						$('#fb-logged-out').hide().css('visibility','hidden');
+						
+
+						// QUICK KLUDGE
+						// TODO what we really need is a /api/getUserInfo call to get first/last name from our server, and store it in a session, not a cookie
 						// now write the html for the user
+						if ( $.cookie('user_id') && $.cookie('user_id') ) {
+							FB.api('/me', function(response) {
+			      				var $user = $('<a/>'),
+								$avatar = $('<img/>'),
+								$name = $('<strong/>');
+
+								$user.attr('href', '/user/'+$.cookie('user_id') );
+								$avatar.attr('src', $.cookie('img_url') + '?type=square');
+								$name.text( response.name );
+
+								$user.append( $avatar, $name );
+
+								$('#fb-logged-in').html( $user );
+			      			});
+						} else {
+							RDRAuth.getReadrToken( response.authResponse, function() { window.location.reload(); });
+						}
 						break;
 
 				}
@@ -314,10 +328,9 @@ RDRAuth = {
 		FB.login(function(response) {
 		  if (response.authResponse) {
 		    FB.api('/me', function(response) {
-		      
-		      
+
 		      RDRAuth.getReadrToken( FB.getAuthResponse(), function() {
-		      	RDRAuth.checkFBStatus( { user:response, requesting_action:requesting_action } );
+		      	RDRAuth.checkFBStatus( { user:user, requesting_action:requesting_action } );
 		      });
 
 
@@ -340,11 +353,11 @@ RDRAuth = {
 
 
 		      // FB.logout(function(response) {
-		        // console.log('Logged out.');
+
 		      // });
 		    });
 		  } else {
-		    // console.log('User cancelled login or did not fully authorize.');
+
 		  }
 		}, {scope: 'email'});
 
