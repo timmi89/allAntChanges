@@ -158,6 +158,8 @@ RDRAuth = {
 	},
 	reauthUser : function(args) {
 		RDRAuth.readUserCookie();
+		console.log('reauthing user');
+		console.dir( FB.getAuthResponse() );
 		if ( !FB.getAuthResponse() || ( args && args.force_fb ) ) {
 			console.log('reauth 1');
 			FB.getLoginStatus(function(response) {
@@ -282,6 +284,7 @@ RDRAuth = {
 
 		// if ( RDRAuth.rdr_user && RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token && RDRAuth.rdr_user.first_name ) {
 		if ( RDRAuth.rdr_user && RDRAuth.rdr_user.first_name ) {
+			console.log('killUser 1');
 			// deauth a full user
 			var sendData = {
 				user_id : RDRAuth.rdr_user.user_id,
@@ -297,6 +300,7 @@ RDRAuth = {
 					json: JSON.stringify( sendData )
 				},
 				success: function(response){
+					console.log('killUser SUCCESS');
 					// $.cookie('first_name', null, { path: '/' });
 					// $.cookie('full_name', null, { path: '/' });
 					$.cookie('img_url', null, { path: '/' });
@@ -307,6 +311,7 @@ RDRAuth = {
 				}
 			});
 		} else {
+			console.log('killUser 2');
 			// just a temp user
 			$.cookie('img_url', null, { path: '/' });
 			$.cookie('user_id', null, { path: '/' });
@@ -383,22 +388,4 @@ RDRAuth = {
 	}
 }
 RDRAuth.init();
-
-// FB.Event.subscribe('auth.sessionChange', function(response) {
-//   // do something with response.session
-//   RDRAuth.reauthUser();
-// });
-// FB.Event.subscribe('auth.statusChange', function(response) {
-//   // do something with response.session
-//   RDRAuth.reauthUser();
-// });
-// FB.Event.subscribe('auth.login', function(response) {
-//   // do something with response.session
-//   RDRAuth.reauthUser();
-// });
-// FB.Event.subscribe('auth.logout', function(response) {
-//   // do something with response.session
-//   RDRAuth.reauthUser();
-// });
-
 
