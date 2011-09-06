@@ -1532,7 +1532,7 @@ function readrBoard($R){
                     case "Data to create token is missing": // call fb login
                         // the token is out of sync.  could be a mistake or a hack.
                         // RDR.session.receiveMessage( args, callback );
-                        RDR.session.showLoginPanel( args, callback );
+                        // RDR.session.showLoginPanel( args, callback );
                         $.postMessage(
                             "reauthUser",
                             // "killUser",
