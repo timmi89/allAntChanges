@@ -10,7 +10,6 @@ for ( var i in qs ) {
 if ( typeof $.receiveMessage == "function") {
 	$.receiveMessage(
 		function(e){
-			console.log('received message: '+e.data );
 		    switch( e.data ) {
 		    	case "getUser":
 		    		RDRAuth.getUser();
@@ -70,8 +69,6 @@ RDRAuth = {
 		}
 	},
 	getReadrToken: function(fb_response, callback ) {
-		console.log('getReadrToken');
-		console.dir(fb_response);
 
 		if ( fb_response ) {
             var fb_session = (fb_response.session) ? fb_response.session:fb_response
@@ -91,8 +88,6 @@ RDRAuth = {
 					json: JSON.stringify( sendData )
 				},
 				success: function(response){
-					console.log('getReaderToken Success');
-					console.dir(response);
 					if ( response.status == "fail" ) {
 						RDRAuth.createTempUser();
 					} else {
@@ -158,26 +153,18 @@ RDRAuth = {
 	},
 	reauthUser : function(args) {
 		RDRAuth.readUserCookie();
-		console.log('reauthing user');
-		console.dir( FB.getAuthResponse() );
 		if ( !FB.getAuthResponse() ) {
-			console.log('reauth 1');
 			FB.getLoginStatus(function(response) {
-				console.log('reauth fb.getloginStatus');
-				console.dir(response);
 		  		if (response && response.session) {
-		  			console.log('response && response.session');
 					// TODO:  suspect we only need to killUser if there is a FB session change.
 					RDRAuth.killUser( function(response) {
 						RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
 					});
 		  		} else {
-		  			console.log('fb user needs to login');
 		  			RDRAuth.notifyParent("", "fb user needs to login");
 		  		}
 		  	});
 		} else {
-			console.log('reauth 2');
 			RDRAuth.killUser( function(response) {
 				RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
 			});
@@ -185,12 +172,7 @@ RDRAuth = {
 		}
 	},
 	checkFBStatus : function(args) {
-		console.log('checking fb status');
 		FB.getLoginStatus(function(response) {
-			console.log('fb status response:');
-			console.dir(response);
-			// console.log('fb status USER:');
-			// console.dir(args.user);
 			if ( response.authResponse && response.status && response.status == "connected" ) {
 				switch (args.requesting_action) {
 					case "admin_request":
@@ -204,19 +186,26 @@ RDRAuth = {
 						break;
 					
 					case "site_login":
-						console.log('connected site login');
 						RDRAuth.getReadrToken( response.authResponse, function() { window.location.reload(); });
 						break;
 
 					case "widget_login":
-						$('#fb-logged-in').show();
-						$('#fb-logged-out').hide(); 
+						$('#fb-logged-in').show().css('visibility','visible');
+						$('#fb-logged-out').hide().css('visibility','hidden'); 
 						break;
 
 					case "site_load":
-						$('#fb-logged-in').show();
-						$('#fb-logged-out').hide(); 
-							// now write the html for the user
+
+						// var $user = $('<a/>'),
+						// 	$avatar = $('<img/>'),
+						// 	$name = $('<strong/>');
+
+						// $user.attr('href', '');
+						// $avatar.attr('src', '?type=square');
+
+						$('#fb-logged-in').show().css('visibility','visible');
+						$('#fb-logged-out').hide().css('visibility','hidden');
+						// now write the html for the user
 						break;
 
 				}
@@ -225,21 +214,19 @@ RDRAuth = {
 					case "admin_request":
 						// this call is from the website
 						// still using this?
-						$('#fb-logged-in').hide();
-						$('#fb-logged-out').show();
+						$('#fb-logged-in').hide().css('visibility','hidden');
+						$('#fb-logged-out').show().css('visibility','visible');
 						break;
 
 					case "site_login":
-						console.log('not connected site login');
 						// $('#fb-logged-in').hide();
 						// $('#fb-logged-out').show();
 						// RDRAuth.getReadrToken( response, function() { window.location.reload(); });
 						break;
 
 					case "site_load":
-						console.log('not connected site load');
-						$('#fb-logged-in').hide();
-						$('#fb-logged-out').show();
+						$('#fb-logged-in').hide().css('visibility','hidden');
+						$('#fb-logged-out').show().css('visibility','visible');
 						// RDRAuth.getReadrToken( response, true );
 						break;
 				}
@@ -263,8 +250,8 @@ RDRAuth = {
 		$.cookie('readr_token', RDRAuth.rdr_user.readr_token, { expires: 365, path: '/' });
 	},
 	readUserCookie : function() {
-		// RDRAuth.rdr_user.first_name = $.cookie('first_name');
-		// RDRAuth.rdr_user.full_name = $.cookie('full_name');
+		RDRAuth.rdr_user.first_name = $.cookie('first_name');
+		RDRAuth.rdr_user.full_name = $.cookie('full_name');
 		if ( $.cookie('img_url') ) RDRAuth.rdr_user.img_url = $.cookie('img_url');
 		if ( $.cookie('user_id') ) RDRAuth.rdr_user.user_id = $.cookie('user_id');
 		if ( $.cookie('readr_token') ) RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
@@ -288,7 +275,6 @@ RDRAuth = {
 
 		// if ( RDRAuth.rdr_user && RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token && RDRAuth.rdr_user.first_name ) {
 		if ( RDRAuth.rdr_user && RDRAuth.rdr_user.first_name ) {
-			console.log('killUser 1');
 			// deauth a full user
 			var sendData = {
 				user_id : RDRAuth.rdr_user.user_id,
@@ -304,7 +290,6 @@ RDRAuth = {
 					json: JSON.stringify( sendData )
 				},
 				success: function(response){
-					console.log('killUser SUCCESS');
 					// $.cookie('first_name', null, { path: '/' });
 					// $.cookie('full_name', null, { path: '/' });
 					$.cookie('img_url', null, { path: '/' });
@@ -315,7 +300,6 @@ RDRAuth = {
 				}
 			});
 		} else {
-			console.log('killUser 2');
 			// just a temp user
 			$.cookie('img_url', null, { path: '/' });
 			$.cookie('user_id', null, { path: '/' });
@@ -326,12 +310,10 @@ RDRAuth = {
 	},
 	doFBLogin: function(requesting_action) {
 		// RDRAuth.doFBLogin
-		console.log('RDRAuth.doFBLogin');
 
 		FB.login(function(response) {
 		  if (response.authResponse) {
 		    FB.api('/me', function(response) {
-		      // console.log('Good to see you, ' + response.name + '.');
 		      
 		      
 		      RDRAuth.getReadrToken( FB.getAuthResponse(), function() {

@@ -88,8 +88,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
           <a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/><strong>{{ cookie_user.social_user.full_name }}</strong></a>
         </div>
         <div id="fb-logged-out" {% if cookie_user %}style="display:none;"{% endif %}>
-          <!-- <fb:login-button onlogin="RDRAuth.checkFBStatus({ requesting_action:'site_login'});"> -->
-          <a href="javascript:void(0);" onclick="RDRAuth.doFBLogin('site_login')">FB Login</a>
+          <a href="javascript:void(0);" onclick="RDRAuth.doFBLogin('site_login')"><img src="/static/site/images/fb_login.png" border="0" alt="Connect with Facebook" /></a>
         </div>
       </div>
     <div id="site_search">
