@@ -377,7 +377,7 @@ class SettingsHandler(AnonymousBaseHandler):
         'logo_url_sm',
         'logo_url_med',
         'logo_url_lg',
-        'css_url',
+        'custom_css',
         'temp_interact',
         'twitter',
         'post_selector',
