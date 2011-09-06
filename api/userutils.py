@@ -41,23 +41,17 @@ def createSocialAuth(social_user, django_user, group_id, fb_session):
     # Store the information and link it to the SocialUser
     social_auth = SocialAuth.objects.get_or_create(
         social_user = social_user,
+        auth_token = access_token,
         defaults = {
-            "auth_token": access_token,
             "expires": expires
         }
     )
-        
-    if (not social_auth[1]) and (social_auth[0].expires < datetime.now()):        
+    new = social_auth[1]
+    social_auth = social_auth[0]
+    
+    if new:
         # Remove stale tokens (if they exist)
-        print "->token expired (time)"
-        SocialAuth.objects.filter(social_user=social_user).delete()
-        social_auth = SocialAuth.objects.create(
-            social_user = social_user,
-            auth_token = access_token,
-            expires = expires
-        )
-    else:
-        social_auth = social_auth[0]
+        SocialAuth.objects.filter(social_user=social_user).exclude(id=social_auth.id).delete()
 
     return social_auth
 

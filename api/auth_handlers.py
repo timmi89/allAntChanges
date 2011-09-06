@@ -67,13 +67,6 @@ class FBHandler(BaseHandler):
             fb_session
         )
 
-        # If admin was requested, record the group number it was requested for
-        if admin_req:
-            if not social_user.group_admin:
-                print "Adding admin request..."
-                social_user.group_admin_id = group_id
-                social_user.save()
-
         # Check to see if user passed in was temporary, if yes, convert
         # temporary user's interactions to social user interactions
         if user_id and len(SocialUser.objects.filter(user__id=user_id)) == 0:

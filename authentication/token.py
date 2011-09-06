@@ -29,11 +29,8 @@ def checkToken(data):
         user = User.objects.get(id=user_id)
     except User.DoesNotExist, User.MultipleObjectsReturned:
         return None
-        
-    try:    
-        social_user = SocialUser.objects.filter(user=user_id)
-    except SocialUser.DoesNotExist, SocialUser.MultipleObjectsReturned:
-        return None
+    
+    social_user = SocialUser.objects.filter(user=user_id)
     
     # Check and set auth_token for registered social user
     if len(social_user) == 1:
@@ -41,6 +38,7 @@ def checkToken(data):
         try:
             social_auth = SocialAuth.objects.get(social_user__user=data['user_id'])
         except SocialAuth.DoesNotExist:
+            print "social auth didn't exist"
             return None
 
         # Check with facebook to see if token is still valid
@@ -48,8 +46,10 @@ def checkToken(data):
         try:
             graph = GraphAPI(social_auth.auth_token)
             graph.get_object("me")
-        except GraphAPIError:
+        except GraphAPIError as GAE:
+            print GAE.message 
             return None 
+            
         # If facebook approves, check if expired -- could be redundant
         now = datetime.now()
         if social_auth.expires > now:
