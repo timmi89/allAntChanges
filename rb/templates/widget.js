@@ -5463,13 +5463,12 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         switch ( args.content_node_info.kind) {
                             case "txt":
                             default:
-                                window.open('http://www.tumblr.com/share/quote?quote='+encodeURI(content.substr(0, content_length) )+encodeURI(source),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
-                                // window.open('http://www.tumblr.com/share/v=3&u='+encodeURI(args.short_url)+'&s='+encodeURI(content.substr(0, content_length) )+encodeURIComponent(source),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
+                                window.open('http://www.tumblr.com/share?v=3&type=quote&u='+encodeURIComponent(args.short_url)+'&t='+encodeURI(RDR.group.name)+'&s='+encodeURI(content.substr(0, content_length) ),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
                             break;
 
                             case "img":
                                 var canonical = ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href'):window.location.href;
-                                window.open('http://www.tumblr.com/share/photo?u='+encodeURIComponent(args.short_url)+'&source='+encodeURIComponent(args.content_node_info.body)+'&caption='+encodeURIComponent(args.reaction)+'&click_thru='+encodeURIComponent(canonical),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
+                                window.open('http://www.tumblr.com/share/photo?clickthru='+encodeURIComponent(args.short_url)+'&source='+encodeURIComponent(args.content_node_info.body)+'&caption='+encodeURIComponent(args.reaction),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
                             break;
 
                             case "media":
