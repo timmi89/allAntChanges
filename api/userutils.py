@@ -31,7 +31,6 @@ def generateUsername():
         return username
 
 def createSocialAuth(social_user, django_user, group_id, fb_session):
-    print "*** print social user creating shit ***"
     # Create expiration time from Facebook timestamp.
     # We know this exists because we aren't asking for 
     # offline access. If not we would need to check.
@@ -40,7 +39,6 @@ def createSocialAuth(social_user, django_user, group_id, fb_session):
     expires = datetime.now() + timedelta(minutes=expires_in)
 
     # Store the information and link it to the SocialUser
-    print "social_user", social_user
     try:
         social_auth = SocialAuth.objects.get_or_create(
             social_user = social_user,

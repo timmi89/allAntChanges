@@ -38,7 +38,10 @@ def checkToken(data):
     # Check and set auth_token for registered social user
     if len(social_user) == 1:
         print "Checking token for registered user"
-        social_auth = SocialAuth.objects.get(social_user__user=data['user_id'])
+        try:
+            social_auth = SocialAuth.objects.get(social_user__user=data['user_id'])
+        except SocialAuth.DoesNotExist:
+            return None
 
         # Check with facebook to see if token is still valid
         # Note: this is slow -- look for a way to improve
