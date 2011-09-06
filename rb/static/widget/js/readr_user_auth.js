@@ -160,15 +160,19 @@ RDRAuth = {
 		RDRAuth.readUserCookie();
 		console.log('reauthing user');
 		console.dir( FB.getAuthResponse() );
-		if ( !FB.getAuthResponse() || ( args && args.force_fb ) ) {
+		if ( !FB.getAuthResponse() ) {
 			console.log('reauth 1');
 			FB.getLoginStatus(function(response) {
+				console.log('reauth fb.getloginStatus');
+				console.dir(response);
 		  		if (response && response.session) {
+		  			console.log('response && response.session');
 					// TODO:  suspect we only need to killUser if there is a FB session change.
 					RDRAuth.killUser( function(response) {
 						RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
 					});
 		  		} else {
+		  			console.log('fb user needs to login');
 		  			RDRAuth.notifyParent("", "fb user needs to login");
 		  		}
 		  	});
@@ -185,8 +189,8 @@ RDRAuth = {
 		FB.getLoginStatus(function(response) {
 			console.log('fb status response:');
 			console.dir(response);
-			console.log('fb status USER:');
-			console.dir(args.user);
+			// console.log('fb status USER:');
+			// console.dir(args.user);
 			if ( response.authResponse && response.status && response.status == "connected" ) {
 				switch (args.requesting_action) {
 					case "admin_request":
