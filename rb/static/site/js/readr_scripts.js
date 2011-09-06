@@ -4,20 +4,14 @@ RB = {
 	group : {},
 	user_auth : {
 		doFBLogin : function(requesting_action) {
-          console.log('omg 1');
 			FB.login(function(response) {
-             console.log('omg 2');
               if (response.authResponse) {
-                // console.log('Welcome!  Fetching your information.... ');
                 FB.api('/me', function(response) {
-                  // console.log('Good to see you, ' + response.name + '.');
                   RDRAuth.FBLoginResponse(response, requesting_action);
                   // FB.logout(function(response) {
-                    // console.log('Logged out.');
                   // });
                 });
               } else {
-                // console.log('User cancelled login or did not fully authorize.');
               }
             }, {scope: 'email'});
 		}
