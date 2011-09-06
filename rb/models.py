@@ -153,7 +153,7 @@ class Group(models.Model):
     temp_interact = models.IntegerField(default=5)
 
     # css
-    css_url = models.TextField(blank=True)
+    custom_css = models.TextField(blank=True)
 
     def __unicode__(self):
         return self.name
