@@ -39,7 +39,7 @@ def createSocialAuth(social_user, django_user, group_id, fb_session):
     expires = datetime.now() + timedelta(minutes=expires_in)
 
     # Store the information and link it to the SocialUser
-    print "social_user"
+    print "social_user", social_user
     try:
         social_auth = SocialAuth.objects.get_or_create(
             social_user = social_user,
