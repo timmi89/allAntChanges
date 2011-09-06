@@ -326,7 +326,7 @@ class Profile(models.Model):
 class SocialAuth(models.Model):
     social_user = models.ForeignKey(SocialUser, related_name='social_auth', unique=True)
     auth_token = models.CharField(max_length=103)
-    expires = models.DateTimeField(null=True, editable=False)
+    expires = models.DateTimeField(null=True)
 
     class Meta:
         unique_together = ('auth_token', 'expires')
