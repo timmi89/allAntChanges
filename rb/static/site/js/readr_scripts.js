@@ -57,7 +57,15 @@ RB = {
                 dataType: "jsonp",
                 data: { json: JSON.stringify(sendData) },
                 success: function(response) {
-
+                    if (response.status == "success") {
+                        var $blockLink = $('#moderate_'+int_id);
+                        var blockText = $.trim( $blockLink.text() );
+                        if ( blockText == "Block" ) {
+                            $blockLink.text('Unblock');
+                        } else {
+                            $blockLink.text('Block');
+                        }
+                    }
                 },
                 error: function(response) {
 

@@ -20,11 +20,11 @@
       </div>
       {% if cookie_user and interaction.page.site.group.id in ga_ids %}
       <div class="block_content">
-        <a href="javascript:void(0);" onclick="RB.admin.blockContent({{interaction.id}});">
+        <a href="javascript:void(0);" onclick="RB.admin.blockContent({{interaction.id}});" id="moderate_{{interaction.id}}">
           {% if interaction.approved %}
-            Block tag
+            Block
           {% else %}
-            Unblock tag
+            Unblock
           {% endif %}
         </a>
       </div>
