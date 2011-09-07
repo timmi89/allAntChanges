@@ -28,7 +28,11 @@
 
 /*readrmarklet for local.readrboard.com*/
 javascript:(function(){function rdr_getScript(url,success){var head=document.getElementsByTagName("head")[0],done=false;var script=document.createElement("script");script.src=url;script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success();}};head.appendChild(script);}
-var script="http://local.readrboard.com:8080/widget/default/";rdr_getScript(script,function(){});})();
+var script="http://local.readrboard.com:8080/widget/demo/";rdr_getScript(script,function(){});})();
+
+/*readrmarklet for local.readrboard.com at hypervocal*/
+javascript:(function(){function rdr_getScript(url,success){var head=document.getElementsByTagName("head")[0],done=false;var script=document.createElement("script");script.src=url;script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success();}};head.appendChild(script);}
+var script="http://local.readrboard.com:8080/widget/demo/";rdr_getScript(script,function(){});})();
 
 /*readrmarklet for live on the web*/
 javascript:(function(){function rdr_getScript(url,success){var head=document.getElementsByTagName("head")[0],done=false;var script=document.createElement("script");script.src=url;script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success();}};head.appendChild(script);}var script="http://www.readrboard.com/widget/default/";rdr_getScript(script,function(){});})();
