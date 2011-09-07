@@ -167,7 +167,7 @@ class GroupBlessedTag(models.Model):
     order =  models.IntegerField()
     
     class Meta:
-        ordering = ['-order']
+        ordering = ['order']
 
 class GroupAdmin(models.Model):
     group = models.ForeignKey(Group)
