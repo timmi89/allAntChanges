@@ -1314,6 +1314,30 @@ function readrBoard($R){
                 });
                 $domNode.attr('style', inlineStyleStr);
                 return $domNode; //return the node for the hell of it.
+            },
+            fixBodyBorderOffsetIssue: function(){
+                //RDR.util.fixBodyBorderOffsetIssue:
+                //a fix for the rare case where the body element has a border on it.
+                //this is needed because jQuery's offset doesn't account for that.
+                //suposedly it also doesn't account for margin or padding on the body, but a fix for those doesnt' seem to be needed.
+
+                //todo: this works fine for now - makes the indicators look right on hypervocal,
+                    //but there is still a little functionality outside the sandbox that should be incorporated into this fix.
+                    //for example - the stay-in-window function doesn't compensate for the body border, but it doens't matter for a small border anyway.
+
+                var $body = $('body'),
+                    borderTop = parseInt( $body.css('border-top-width') ),
+                    borderLeft = parseInt( $body.css('border-left-width') ),
+                    $sandbox = $('#rdr_sandbox');
+                
+                if( !borderTop && !borderLeft ) return;
+                //else
+
+                RDR.util.cssSuperImportant($sandbox, {
+                    top: borderTop,
+                    left: borderLeft
+                });
+
             }
         },
 		session: {
@@ -2079,6 +2103,7 @@ function readrBoard($R){
                 
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
                 var $rdrSandbox = $('div#rdr_sandbox').appendTo('body');
+                RDR.util.fixBodyBorderOffsetIssue();
 
                 //div to hold indicatorBodies for media (images and video)
                 $('<div id="rdr_container_tracker_wrap" />').appendTo($rdrSandbox);
