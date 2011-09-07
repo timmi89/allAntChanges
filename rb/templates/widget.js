@@ -1962,7 +1962,9 @@ function readrBoard($R){
                                 urls.push( $post_href.attr('href') );
                                 canonicals.push( $post_href.attr('href') );
                                 titles.push( $post_href.text() );
-                                $post.addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
+                                if ( !$post.hasClass('rdr-page-container') ) {
+                                    $post.addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
+                                }
                                 $summary_widget.addClass('rdr-page-widget-key-'+key);
                                 key++;
                             }
@@ -1975,11 +1977,13 @@ function readrBoard($R){
                     urls.push( window.location.href ); // + window.location.hash;
                     canonicals.push( ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href') : "" );
                     titles.push( ( $('meta[property="og:title"]').attr('content') ) ? $('meta[property="og:title"]').attr('content') : ( $('title').text() ) ? $('title').text():"" );
-                    $( 'body' ).addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
-                    if ( $('#rdr-page-summary').length == 1 ) {
-                        $('#rdr-page-summary').addClass('rdr-page-widget-key-'+key);
-                    } else {
-                        $( 'body' ).find(RDR.group.summary_widget_selector).addClass('rdr-page-widget-key-'+key);
+                    if ( !$( 'body' ).hasClass('rdr-page-container') ) {
+                        $( 'body' ).addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
+                        if ( $('#rdr-page-summary').length == 1 ) {
+                            $('#rdr-page-summary').addClass('rdr-page-widget-key-'+key);
+                        } else {
+                            $( 'body' ).find(RDR.group.summary_widget_selector).addClass('rdr-page-widget-key-'+key);
+                        }
                     }
                 }
 
@@ -2045,7 +2049,9 @@ function readrBoard($R){
                                     widgetSummarySettings.jqFunc = "append";
                                 }
                                 
-                                widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
+                                if ( ($('div.rdr-summary').length==0) || ( $('div.rdr-summary').length < $(RDR.group.post_selector).length ) ) {
+                                    widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
+                                }
 
                                 // [ porter ] i can explain...
                                 // if ( ( $('#rdr-page-summary').length == 1 && key == 0 ) || ( urls.length > 1 && key > 0 ) || ( urls.length == 1 ) ) {
@@ -6336,7 +6342,6 @@ function $RFunctions($R){
                 $tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"<strong style='font-weight:bold;'>Tell us what you think!</strong><br>React by selecting any text, or roll your mouse over images and video, and look for the pin icon."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
                 $tooltip.attr( 'id', 'rdr-tooltip-'+page.id );
                 $('#rdr_sandbox').append( $tooltip );
-
 
                 var summaryOffsets = $summary_widget.offset();
                 var tooltip_top = ( summaryOffsets.top - $(window).scrollTop() - 82 ),
