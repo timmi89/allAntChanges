@@ -1894,8 +1894,8 @@ function readrBoard($R){
 
                         // it's not a CSS URL, but rather custom CSS rules.  We should change the name in the model...
                         // this embeds custom CSS.
-                        if ( RDR.group.css_url != "" ) {
-                            $('head').append( $('<style type="text/css">' + RDR.group.css_url + '</style>') );
+                        if ( RDR.group.custom_css && RDR.group.custom_css != "" ) {
+                            $('head').append( $('<style type="text/css">' + RDR.group.custom_css + '</style>') );
                         }
 
                         $RDR.dequeue('initAjax');
