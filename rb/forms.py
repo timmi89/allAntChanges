@@ -58,7 +58,7 @@ class GroupForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(GroupForm, self).__init__(*args, **kwargs)
         tags = []
-        for tag in self.instance.blessed_tags.all():
+        for tag in self.instance.blessed_tags.all().order_by('order'):
             tags.append(tag.body)
         self.fields['blessed_tags'].initial = ','.join(tags)
     
