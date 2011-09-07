@@ -162,7 +162,7 @@ INSTALLED_APPS = [
     #'devserver'
 ]
 
-#if DEBUG: INSTALLED_APPS.append('devserver')
+if DEBUG: INSTALLED_APPS.append('devserver')
 #if DEBUG: INSTALLED_APPS.append('django_extensions')
 
 DEVSERVER_MODULES = (
