@@ -480,7 +480,7 @@ header[role="banner"] #search			{position:absolute; right:55px; top:8px; }*/
 header[role="banner"] #settings			{float:right;}
 header[role="banner"] #site_search			{float:right; padding-top:8px;}
 
-header[role="banner"] #user				{float:right; padding:5px 8px 0 20px; }
+header[role="banner"] #user				{float:right; padding:5px 8px 0 20px; min-width:120px;}
 header[role="banner"] #user	#fb-logged-in,
 header[role="banner"] #user	#fb-logged-out 	{visibility:hidden;}
 header[role="banner"] #user	#fb-logged-in img	{float:left; max-width:30px; max-height:30px;}
