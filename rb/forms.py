@@ -66,7 +66,8 @@ class GroupForm(forms.ModelForm):
     def clean_blessed_tags(self):
         tags = self.cleaned_data['blessed_tags']
         new_blessed_tags = []
-        for tag.strip() in tags.split(','):
+        for tag in tags.split(','):
+            tag = tag.strip()
             new_blessed_tags.append(
                 InteractionNode.objects.get_or_create(body=tag)[0]
             )
