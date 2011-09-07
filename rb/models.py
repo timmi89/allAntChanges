@@ -166,6 +166,9 @@ class GroupBlessedTag(models.Model):
     node = models.ForeignKey(InteractionNode)
     order =  models.IntegerField()
     
+    def __unicode__(self):
+        return str(self.group) + ":" + str(self.node) + "" + str(self.order)
+    
     class Meta:
         ordering = ['order']
 
