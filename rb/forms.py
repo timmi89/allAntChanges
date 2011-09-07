@@ -58,8 +58,8 @@ class GroupForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(GroupForm, self).__init__(*args, **kwargs)
         tags = []
-        for tag in self.instance.blessed_tags.all():
-            tags.append(tag.body)
+        for tag in GroupBlessedTag.objects.filter(group=self.instance):
+            tags.append(tag.node.body)
         self.fields['blessed_tags'].initial = ','.join(tags)
     
     # Get or create blessed tag interaction nodes to prepare for save
