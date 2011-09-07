@@ -1894,8 +1894,8 @@ function readrBoard($R){
 
                         // it's not a CSS URL, but rather custom CSS rules.  We should change the name in the model...
                         // this embeds custom CSS.
-                        if ( RDR.group.css_url != "" ) {
-                            $('head').append( $('<style type="text/css">' + RDR.group.css_url + '</style>') );
+                        if ( RDR.group.custom_css && RDR.group.custom_css != "" ) {
+                            $('head').append( $('<style type="text/css">' + RDR.group.custom_css + '</style>') );
                         }
 
                         $RDR.dequeue('initAjax');
@@ -1962,7 +1962,9 @@ function readrBoard($R){
                                 urls.push( $post_href.attr('href') );
                                 canonicals.push( $post_href.attr('href') );
                                 titles.push( $post_href.text() );
-                                $post.addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
+                                if ( !$post.hasClass('rdr-page-container') ) {
+                                    $post.addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
+                                }
                                 $summary_widget.addClass('rdr-page-widget-key-'+key);
                                 key++;
                             }
@@ -1975,11 +1977,13 @@ function readrBoard($R){
                     urls.push( window.location.href ); // + window.location.hash;
                     canonicals.push( ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href') : "" );
                     titles.push( ( $('meta[property="og:title"]').attr('content') ) ? $('meta[property="og:title"]').attr('content') : ( $('title').text() ) ? $('title').text():"" );
-                    $( 'body' ).addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
-                    if ( $('#rdr-page-summary').length == 1 ) {
-                        $('#rdr-page-summary').addClass('rdr-page-widget-key-'+key);
-                    } else {
-                        $( 'body' ).find(RDR.group.summary_widget_selector).addClass('rdr-page-widget-key-'+key);
+                    if ( !$( 'body' ).hasClass('rdr-page-container') ) {
+                        $( 'body' ).addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
+                        if ( $('#rdr-page-summary').length == 1 ) {
+                            $('#rdr-page-summary').addClass('rdr-page-widget-key-'+key);
+                        } else {
+                            $( 'body' ).find(RDR.group.summary_widget_selector).addClass('rdr-page-widget-key-'+key);
+                        }
                     }
                 }
 
@@ -2045,7 +2049,9 @@ function readrBoard($R){
                                     widgetSummarySettings.jqFunc = "append";
                                 }
                                 
-                                widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
+                                if ( ($('div.rdr-summary').length==0) || ( $('div.rdr-summary').length < $(RDR.group.post_selector).length ) ) {
+                                    widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
+                                }
 
                                 // [ porter ] i can explain...
                                 // if ( ( $('#rdr-page-summary').length == 1 && key == 0 ) || ( urls.length > 1 && key > 0 ) || ( urls.length == 1 ) ) {
@@ -5463,13 +5469,12 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         switch ( args.content_node_info.kind) {
                             case "txt":
                             default:
-                                window.open('http://www.tumblr.com/share/quote?quote='+encodeURI(content.substr(0, content_length) )+encodeURI(source),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
-                                // window.open('http://www.tumblr.com/share/v=3&u='+encodeURI(args.short_url)+'&s='+encodeURI(content.substr(0, content_length) )+encodeURIComponent(source),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
+                                window.open('http://www.tumblr.com/share?v=3&type=quote&u='+encodeURIComponent(args.short_url)+'&t='+encodeURI(RDR.group.name)+'&s='+encodeURI(content.substr(0, content_length) ),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
                             break;
 
                             case "img":
                                 var canonical = ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href'):window.location.href;
-                                window.open('http://www.tumblr.com/share/photo?u='+encodeURIComponent(args.short_url)+'&source='+encodeURIComponent(args.content_node_info.body)+'&caption='+encodeURIComponent(args.reaction)+'&click_thru='+encodeURIComponent(canonical),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
+                                window.open('http://www.tumblr.com/share/photo?clickthru='+encodeURIComponent(args.short_url)+'&source='+encodeURIComponent(args.content_node_info.body)+'&caption='+encodeURIComponent(args.reaction),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
                             break;
 
                             case "media":
@@ -6337,7 +6342,6 @@ function $RFunctions($R){
                 $tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"<strong style='font-weight:bold;'>Tell us what you think!</strong><br>React by selecting any text, or roll your mouse over images and video, and look for the pin icon."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
                 $tooltip.attr( 'id', 'rdr-tooltip-'+page.id );
                 $('#rdr_sandbox').append( $tooltip );
-
 
                 var summaryOffsets = $summary_widget.offset();
                 var tooltip_top = ( summaryOffsets.top - $(window).scrollTop() - 82 ),

@@ -234,11 +234,10 @@ RB.analytics = {
 					$('table[role="active content table"] tbody').html( contentHtml );
 					
 				} else if ( type == "users" ) {
-					
 					var userHtml = "";
 					for ( var i in response) {
 						if ( response[i].user.img_url ) {
-							userHtml += '<tr><td role="avatar"><a href="/user/'+response[i].user.user_id+'" target="_blank"><img src="'+response[i].user.img_url+'" /></a></td><td><a href="/user/'+response[i].user.user_id+'" target="_blank">'+response[i].user.full_name+'</a></td>'
+							userHtml += '<tr><td role="avatar"><a href="/user/'+response[i].user.user.id+'" target="_blank"><img src="'+response[i].user.img_url+'" /></a></td><td><a href="/user/'+response[i].user.user.id+'" target="_blank">'+response[i].user.full_name+'</a></td>'
 								+ '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
 								+ '<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
 								+ '<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td>'
@@ -267,7 +266,7 @@ RB.analytics = {
 			contentType: "application/json",
 			dataType: "jsonp",
 			success: function(response){
-
+console.dir(response);
 				var recentHtml = "";
 				for (var i in response) {
 					// recentHtml += '<tr><td><strong>'+response[0].title+'</strong></td></tr><tr>';

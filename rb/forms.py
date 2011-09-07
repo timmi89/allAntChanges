@@ -96,7 +96,6 @@ class GroupForm(forms.ModelForm):
             'name',
             'short_name', 
             'twitter',
-            'language',
             'anno_whitelist',
             'no_readr',
             'img_whitelist',
@@ -110,7 +109,7 @@ class GroupForm(forms.ModelForm):
             'logo_url_lg',
             'requires_approval',
             'word_blacklist',
-            'css_url',
+            'custom_css',
             'post_selector',
             'post_href_selector',
             'summary_widget_selector'
