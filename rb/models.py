@@ -170,7 +170,7 @@ class GroupBlessedTag(models.Model):
         return str(self.group) + ":" + str(self.node) + "" + str(self.order)
     
     class Meta:
-        ordering = ['order']
+        ordering = ['-order']
 
 class GroupAdmin(models.Model):
     group = models.ForeignKey(Group)
