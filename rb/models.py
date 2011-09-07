@@ -123,7 +123,7 @@ class Group(models.Model):
     
     # Many to many relations
     admins = models.ManyToManyField(SocialUser, through='GroupAdmin')
-    blessed_tags = models.ManyToManyField(InteractionNode)
+    blessed_tags = models.ManyToManyField(InteractionNode, through='GroupBlessedTag')
 
     # black/whitelist fields
     anno_whitelist = models.CharField(max_length=255, blank=True, default=u"p,img")
@@ -160,6 +160,14 @@ class Group(models.Model):
         
     class Meta:
         ordering = ['short_name']
+
+class GroupBlessedTag(models.Model):
+    group = models.ForeignKey(Group)
+    node = models.ForeignKey(InteractionNode)
+    order =  models.IntegerField()
+    
+    class Meta:
+        ordering = ['order']
 
 class GroupAdmin(models.Model):
     group = models.ForeignKey(Group)
