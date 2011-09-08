@@ -47,7 +47,7 @@ def checkToken(data):
             graph = GraphAPI(social_auth.auth_token)
             graph.get_object("me")
         except GraphAPIError as GAE:
-            print GAE.message 
+            print GAE.message
             return None 
             
         # If facebook approves, check if expired -- could be redundant

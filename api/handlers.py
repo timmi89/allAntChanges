@@ -7,6 +7,7 @@ from utils import *
 from userutils import *
 from authentication.token import *
 from settings import BASE_URL
+from django.forms.models import model_to_dict
 
 class SocialUserHandler(AnonymousBaseHandler):
     model = SocialUser
@@ -24,6 +25,10 @@ class UserHandler(AnonymousBaseHandler):
         'date_joined',
         'username'
     )
+    
+class GroupBlessedTagHandlers(AnonymousBaseHandler):
+    model = GroupBlessedTag
+    fields = ('group','node','order')
 
 class InteractionNodeHandler(AnonymousBaseHandler):
     model = InteractionNode
@@ -364,7 +369,6 @@ class SettingsHandler(AnonymousBaseHandler):
         'name',
         'short_name',
         'language',
-        'blessed_tags',
         'anno_whitelist',
         'img_whitelist',
         'img_blacklist',
@@ -405,6 +409,14 @@ class SettingsHandler(AnonymousBaseHandler):
         if group_object.approved == False:
             return HttpResponse("Group not approved")
         
+        #blessed_tags = GroupBlessedTag.objects.filter(group=group_object).order_by('order').values('node__id','node__body')
+        blessed_tags = InteractionNode.objects.filter(
+            groupblessedtag__group=group_object
+        ).order_by('groupblessedtag__order')
+        
+        group_dict = model_to_dict(group_object)
+        group_dict['blessed_tags'] = blessed_tags
+        
         # Get the domains for that particular group from site objects  
         sites = Site.objects.filter(group=group_object)
         domains = sites.values_list('domain', flat=True)
@@ -413,10 +425,10 @@ class SettingsHandler(AnonymousBaseHandler):
         # If not known create site for default group and return settings
         # If site is not registered for group settings request, raise error
         if host in domains:
-            return group_object
+            return group_dict
         elif group_id == 1:
             Site.objects.get_or_create(name=host,domain=host,group_id=1)
-            return group_object
+            return group_dict
         else:
             raise JSONException(
                 "Group (" + str(group) + ") settings request invalid for this domain (" + host + ")" + str(domains)

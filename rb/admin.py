@@ -35,7 +35,7 @@ class RBGroupAdmin(admin.ModelAdmin):
             'fields': ('name', 'short_name', 'demo_group', 'approved')
         }),
         ('Advanced', {
-            'fields': ('blessed_tags', 'custom_css', 'anno_whitelist', 'temp_interact', 'img_whitelist', 'img_blacklist', 'no_readr', 'word_blacklist')
+            'fields': ('custom_css', 'anno_whitelist', 'temp_interact', 'img_whitelist', 'img_blacklist', 'no_readr', 'word_blacklist')
         }),
         ('Logos', {
             'fields': ('logo_url_sm', 'logo_url_med' , 'logo_url_lg')
@@ -120,6 +120,9 @@ class NodeValueAdmin(admin.ModelAdmin):
 
 class GroupAdminAdmin(admin.ModelAdmin):
     list_display = ('group', 'social_user', 'approved')
+    
+class GroupBlessedTagAdmin(admin.ModelAdmin):
+    list_display = ('group', 'node', 'order')
 
 class LinkAdmin(admin.ModelAdmin):
     def base62(self, obj):
@@ -140,3 +143,4 @@ admin.site.register(NodeValue, NodeValueAdmin)
 admin.site.register(Content, ContentAdmin)
 admin.site.register(Profile)
 admin.site.register(GroupAdmin, GroupAdminAdmin)
+admin.site.register(GroupBlessedTag, GroupBlessedTagAdmin)

@@ -58,8 +58,8 @@ class GroupForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(GroupForm, self).__init__(*args, **kwargs)
         tags = []
-        for tag in self.instance.blessed_tags.all():
-            tags.append(tag.body)
+        for tag in GroupBlessedTag.objects.filter(group=self.instance):
+            tags.append(tag.node.body)
         self.fields['blessed_tags'].initial = ','.join(tags)
     
     # Get or create blessed tag interaction nodes to prepare for save
@@ -67,24 +67,25 @@ class GroupForm(forms.ModelForm):
         tags = self.cleaned_data['blessed_tags']
         new_blessed_tags = []
         for tag in tags.split(','):
+            print tag
+            tag = tag.strip()
             new_blessed_tags.append(
                 InteractionNode.objects.get_or_create(body=tag)[0]
             )
+        print new_blessed_tags
         self.new_blessed_tags = new_blessed_tags
     
     # Write the many to many relationships
     def save(self, force_insert=False, force_update=False, commit=True):
         m = super(GroupForm, self).save(commit=False)
-        current_blessed_tags = self.instance.blessed_tags.all()
-        # Add all the new blessed tags
-        for tag in self.new_blessed_tags:
-            if tag not in current_blessed_tags:
-                print tag
-                self.instance.blessed_tags.add(tag)
+        
         # Remove all the old blessed tags
-        for tag in self.instance.blessed_tags.all():
-            if tag not in self.new_blessed_tags:
-                self.instance.blessed_tags.remove(tag)
+        GroupBlessedTag.objects.filter(group=self.instance).delete()
+        
+        # Add all the new blessed tags
+        for tag in enumerate(self.new_blessed_tags):
+            print "enumerate", tag
+            GroupBlessedTag.objects.create(group=self.instance, node=tag[1], order=tag[0])
         if commit:
             m.save()
         return m
