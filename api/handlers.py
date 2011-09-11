@@ -388,9 +388,7 @@ class SettingsHandler(AnonymousBaseHandler):
             groupblessedtag__group=group_object
         ).order_by('groupblessedtag__order')
         
-        group_dict = model_to_dict(group_object)
-        for item in ['admins', 'word_blacklist', 'approved', 'requires_approval', 'share', 'rate', 'comment', 'bookmark', 'search', 'logo_url_sm', 'logo_url_med', 'logo_url_lg', 'twitter']:
-            del group_dict[item]
+        group_dict = model_to_dict(group_object, exclude=['admins', 'word_blacklist', 'approved', 'requires_approval', 'share', 'rate', 'comment', 'bookmark', 'search', 'logo_url_sm', 'logo_url_med', 'logo_url_lg', 'twitter'])
         group_dict['blessed_tags'] = blessed_tags
         
         # Get the domains for that particular group from site objects  
