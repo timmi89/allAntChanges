@@ -6,6 +6,9 @@ else: DEBUG = True
 
 TEMPLATE_DEBUG = DEBUG
 
+FACEBOOK_APP_ID = '163759626987948'
+FACEBOOK_APP_SECRET = 'f14061a2ed9d7ae8ed1c3b231a8148c9'
+
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),    
     ('Tyler Brock', 'tyler@readrboard.com'),
@@ -14,9 +17,7 @@ ADMINS = (
 )
 
 if DEBUG:
-    FACEBOOK_APP_ID = '186217208100982'
-    FACEBOOK_APP_SECRET = 'f285b17e71770615189e7676c1d7d0f9'
-
+    
     BASE_URL = 'http://local.readrboard.com:8080'
 
     DATABASES = {
@@ -31,8 +32,6 @@ if DEBUG:
     }
 
 else:
-    FACEBOOK_APP_ID = '163759626987948'
-    FACEBOOK_APP_SECRET = 'f14061a2ed9d7ae8ed1c3b231a8148c9'
 
     BASE_URL = 'http://www.readrboard.com'
 

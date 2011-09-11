@@ -1611,7 +1611,7 @@ function readrBoard($R){
                                     callbackFunction();
                                     callbackFunction = null;
                                 }
-                            } else if ( message.status == "fb user needs to login" ) {
+                            } else if ( message.status == "fb_user_needs_to_login" ) {
                                 RDR.session.showLoginPanel( args );
                             } else if ( message.status == "already had user" ) {
                                 // todo: when is this used?

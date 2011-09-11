@@ -69,9 +69,7 @@ RDRAuth = {
 		}
 	},
 	getReadrToken: function(fb_response, callback ) {
-console.log('RDRAuth.getReadrToken');
 		if ( fb_response ) {
-			console.log('RDRAuth.getReadrToken 1');
             var fb_session = (fb_response.authResponse) ? fb_response.authResponse:fb_response
 			var sendData = {
 				fb: fb_session,
@@ -102,7 +100,6 @@ console.log('RDRAuth.getReadrToken');
 				}
 			});
 		} else {
-			console.log('RDRAuth.getReadrToken 2');
 			RDRAuth.doFBLogin();
 		}
 	},
@@ -154,25 +151,18 @@ console.log('RDRAuth.getReadrToken');
 		}
 	},
 	reauthUser : function(args) {
-		console.log('RDRAuth.reauthUser');
 		RDRAuth.readUserCookie();
 		if ( !FB.getAuthResponse() ) {
-			console.log('RDRAuth.reauthUser 1');
 			FB.getLoginStatus(function(response) {
 		  		if (response && response.status == "connected") {
-		  			console.log('RDRAuth.reauthUser 1a');
 					RDRAuth.killUser( function(response) {
-						console.log('KillUser CALLBACK');
-						console.dir(response);
 						RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
 					}, response);
 		  		} else {
-		  			console.log('RDRAuth.reauthUser 1b');
-		  			RDRAuth.notifyParent("", "fb user needs to login");
+		  			RDRAuth.notifyParent({}, "fb_user_needs_to_login");
 		  		}
 		  	});
 		} else {
-			console.log('RDRAuth.reauthUser 2');
 			RDRAuth.killUser( function(response) {
 				RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
 			});
@@ -180,13 +170,9 @@ console.log('RDRAuth.getReadrToken');
 		}
 	},
 	checkFBStatus : function(args) {
-console.log('checkFBStatus');
 		FB.getLoginStatus( function(response) {
-			console.log('checkFBStatus 1');
-			console.dir(response);
 			if (response.status && response.status == "connected" ) {
 				if (top == self) {
-					console.log('checkFBStatus 1a');
 					// QUICK KLUDGE
 					// TODO what we really need is a /api/getUserInfo call to get first/last name from our server, and store it in a session, not a cookie
 					// now write the html for the user
@@ -210,14 +196,17 @@ console.log('checkFBStatus');
 							$('#fb-logged-in').html( $user );
 		      			});
 					} else {
-						console.log('checkFBStatus 1b');
-						RDRAuth.getReadrToken( response.authResponse, function() { console.log('window.location.reload(); 2'); });
+						RDRAuth.getReadrToken( response.authResponse, function() { 
+						});
 					}
+				} else {
+					// widget
+					$('#fb-logged-in').show().css('visibility','visible');
+					$('#fb-logged-out').hide().css('visibility','hidden');
+					RDRAuth.returnUser();
 				}
 			} else {
-				console.log('checkFBStatus 2');
 				if (top == self) {
-					console.log('checkFBStatus 2a');
 					$('#fb-logged-in').hide().css('visibility','hidden');
 					$('#fb-logged-out').show().css('visibility','visible');
 					// RDRAuth.getReadrToken( response, true );
@@ -226,8 +215,6 @@ console.log('checkFBStatus');
 		});
 	},
 	setUser : function(response) {
-		console.log('RDRAuth.setUser');
-		console.dir(response);
 		RDRAuth.rdr_user = {};
 		// if no first_name attribute is in the response, this is a temporary user.
 		if ( response.data.first_name ) RDRAuth.rdr_user.temp_user = false;
@@ -245,7 +232,6 @@ console.log('checkFBStatus');
 		$.cookie('rdr_session', 'true');
 	},
 	readUserCookie : function() {
-		console.log('RDRAuth.readUserCookie');
 		// RDRAuth.rdr_user.first_name = $.cookie('first_name');
 		// RDRAuth.rdr_user.full_name = $.cookie('full_name');
 		if ( $.cookie('img_url') ) RDRAuth.rdr_user.img_url = $.cookie('img_url');
@@ -254,7 +240,6 @@ console.log('checkFBStatus');
 		if ( $.cookie('temp_user') ) RDRAuth.rdr_user.temp_user = $.cookie('temp_user');
 	},
 	returnUser : function() {
-		console.log('RDRAuth.returnUser');
 		RDRAuth.readUserCookie();
 		if (top == self) {
 			// we're on the site
@@ -274,12 +259,8 @@ console.log('checkFBStatus');
 		}
 	},
 	killUser : function(callback, callback_args) {
-console.log('RDRAuth.killUser');
-console.dir(callback_args);
-console.dir(RDRAuth.rdr_user);
 		// if ( RDRAuth.rdr_user && RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token && RDRAuth.rdr_user.first_name ) {
 		if ( RDRAuth.rdr_user && RDRAuth.rdr_user.temp_user == "false" ) {
-			console.log('RDRAuth.killUser 1');
 			// deauth a full user
 			var sendData = {
 				user_id : RDRAuth.rdr_user.user_id,
@@ -296,8 +277,6 @@ console.dir(RDRAuth.rdr_user);
 					json: JSON.stringify( sendData )
 				},
 				success: function(response){
-					console.dir(this.callback_args);
-					console.dir(callback_args);
 					$.cookie('first_name', null, { path: '/' });
 					$.cookie('full_name', null, { path: '/' });
 					$.cookie('img_url', null, { path: '/' });
@@ -306,16 +285,13 @@ console.dir(RDRAuth.rdr_user);
 					$.cookie('rdr_session', null);
 					RDRAuth.rdr_user = {};
 					if (callback && this.callback_args) {
-						console.log('killUser SUCCESS 1');
 						callback(this.callback_args);
 					} else if (callback) {
-						console.log('killUser SUCCESS 2'); 
 						callback();
 					}
 				}
 			});
 		} else {
-			console.log('RDRAuth.killUser 2');
 			// just a temp user
 			$.cookie('img_url', null, { path: '/' });
 			$.cookie('user_id', null, { path: '/' });
@@ -324,17 +300,14 @@ console.dir(RDRAuth.rdr_user);
 			$.cookie('temp_user', null);
 			RDRAuth.rdr_user = {};
 			if (callback && callback_args) {
-				console.log('RDRAuth.killUser 2a');
 				callback(callback_args);
 			} else if (callback) {
-				console.log('RDRAuth.killUser 2b');
 				callback();
 			}
 		}
 	},
 	doFBLogin: function(requesting_action) {
 		// RDRAuth.doFBLogin
-console.log('RDRAuth.doFBLogin');
 		FB.login(function(response) {
 		  if (response.authResponse) {
 		    // FB.api('/me', function(response) {
@@ -366,7 +339,6 @@ console.log('RDRAuth.doFBLogin');
 		});
 	},
 	init : function() {
-		console.log('RDRAuth.init();');
 		RDRAuth.returnUser();
 	},
 	decodeDjangoCookie : function(value) {
