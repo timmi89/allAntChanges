@@ -80,9 +80,7 @@ class PageAdmin(admin.ModelAdmin):
         'id',
         'site',
         'url',
-        'canonical_url',
-        'created',
-        'modified'
+        'canonical_url'
     )
 
 class ContainerAdmin(admin.ModelAdmin):
