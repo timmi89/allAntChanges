@@ -409,7 +409,6 @@ class SettingsHandler(AnonymousBaseHandler):
         if group_object.approved == False:
             return HttpResponse("Group not approved")
         
-        #blessed_tags = GroupBlessedTag.objects.filter(group=group_object).order_by('order').values('node__id','node__body')
         blessed_tags = InteractionNode.objects.filter(
             groupblessedtag__group=group_object
         ).order_by('groupblessedtag__order')
