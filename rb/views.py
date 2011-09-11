@@ -99,10 +99,11 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
 
     if cookie_user:
         context['cookie_user'] = cookie_user
-        context['ga_ids'] = GroupAdmin.objects.filter(
-            social_user=cookie_user.social_user,
-            approved=True
-        ).values_list('group_id', flat=True)
+        if len(SocialUser.objects.filter(user=cookie_user)) == 1:
+            context['ga_ids'] = GroupAdmin.objects.filter(
+                social_user=cookie_user.social_user,
+                approved=True
+            ).values_list('group_id', flat=True)
         
     """ For interactions.html """
     interactions = Interaction.objects.all()
