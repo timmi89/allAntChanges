@@ -6317,33 +6317,108 @@ function $RFunctions($R){
                     if ( page.summary[i].kind == "tag" ) total_interactions = page.summary[i].count;
                 }
 
-                if ( total_interactions > 0 ) {
-                    var people = ( page.topusers.length > 1 ) ? page.topusers.length + " people" : "1 person";
-                    // racialicious:
-                    // $summary_widget.append('<div class="rdr-sum-headline">'+total_interactions+' reactions from '+people+'</div>');
-                    $summary_widget.append('<div class="rdr-sum-headline">'+total_interactions+' reactions:</div>');
-                } else {
-                    $summary_widget.append('<div class="rdr-sum-headline">No reactions yet.  Select something and react!</div>');
-                }
+                var $react = $('<div class="rdr-sum-headline">React: </div>');
+                $summary_widget.append( $react );
 
+                // if ( total_interactions > 0 ) {
+                //     var people = ( page.topusers.length > 1 ) ? page.topusers.length + " people" : "1 person";
+                //     // racialicious:
+                //     // $summary_widget.append('<div class="rdr-sum-headline">'+total_interactions+' reactions from '+people+'</div>');
+                //     $summary_widget.append('<div class="rdr-sum-headline">'+total_interactions+' reactions:</div>');
+                // } else {
+
+                // }
+console.dir(page);
                 // summary widget: specific tag totals
                 if ( page.toptags.length > 0 ){
-                    var $toptags = $('<div class="rdr-top-tags" />');
-                    $summary_widget.append( $toptags );
+                    // var $toptags = $('<div class="rdr-top-tags" />');
+                    // $summary_widget.append( $toptags );
 
                     for ( var i = 0, j=4; i < j; i++ ) {
                         var this_tag = page.toptags[i];
+
                         if ( this_tag ) {
-                            $toptags.append(' <span>'+ this_tag.body +' <em>('+this_tag.tag_count+')</em></span>&nbsp;&nbsp;&nbsp;');
+                            writeTag( this_tag );
+
+                            // $toptags.append(' <span>'+ this_tag.body +' <em>('+this_tag.tag_count+')</em></span>&nbsp;&nbsp;&nbsp;');
                         }
                         
                         // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                        if ( $toptags.width() > $summary_widget.width() - 125 ) {
-                            $toptags.children().last().html('and more...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
+                        if ( $react.width() > $summary_widget.width() - 125 ) {
+                            $react.children().last().html('and more...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
                             break;
                         }
                     }
 
+                }
+
+                for ( var i in RDR.group.blessed_tags ) {
+                    writeTag( RDR.group.blessed_tags[i] );
+                }
+                    
+                function writeTag(tag) {
+                    if (!tag.id) tag.id = 1;
+
+                    if ( $react.find('a.rdr_tag_'+tag.id).length == 0 ) {
+                        var tagCount = ( tag.tag_count ) ? tag.tag_count:"";
+                        var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'">'+tag.body+'</a>').data('tag_id',tag.id)
+                            $span = $('<span class="rdr_tag_count">'+tagCount+'</span>');
+
+                        $a.append( $span );
+
+                        var $a_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"Add this reaction to this page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
+                        $a_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-'+tag.id );
+                        $('#rdr_sandbox').append( $a_tooltip );
+
+                        var $span_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"N people reacted <strong style='font-weight:bold;color:#008be4;'>"+tag.body+"</strong> to something on this page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
+                        $span_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-count-'+tag.id );
+                        $('#rdr_sandbox').append( $span_tooltip );
+                        
+                        $react.append( $a );
+
+                        $a.hover(
+                            function() {
+                                var $a = $(this),
+                                    $tooltip = $('#rdr-tooltip-summary-tag-' + $(this).data('tag_id') ),
+                                    aOffsets = $a.offset();
+                                
+                                var tooltip_top = ( aOffsets.top - 43 ),
+                                    tooltip_left = ( aOffsets.left + ( $a.width() / 2 ) - 125 );
+
+                                $tooltip.css('top', tooltip_top + "px" );
+                                $tooltip.css('left', tooltip_left + "px" );
+                                $tooltip.show();
+                            },
+                            function() {
+                                $('#rdr-tooltip-summary-tag-' + $(this).data('tag_id') ).hide();
+                            }
+                        );
+
+                        $span.hover(
+                            function() {
+                                var $span = $(this),
+                                    $tooltip = $('#rdr-tooltip-summary-tag-count-' + $(this).parent().data('tag_id') ),
+                                    spanOffsets = $span.offset();
+                                
+                                var tooltip_top = ( spanOffsets.top - 58 ),
+                                    tooltip_left = ( spanOffsets.left + ( $span.width() / 2 ) - 115 );
+
+                                $tooltip.css('top', tooltip_top + "px" );
+                                $tooltip.css('left', tooltip_left + "px" );
+                                $tooltip.show();
+                                
+                                $('#rdr-tooltip-summary-tag-' + $(this).parent().data('tag_id') ).hide();
+
+                                // prevent bubbling up to $a
+                                return false;
+                            },
+                            function() {
+                                $('#rdr-tooltip-summary-tag-count-' + $(this).parent().data('tag_id') ).hide();
+                            }
+                        );
+                    }
+
+                    if ( tagCount == "" ) $span.hide();
                 }
 
                 if ( page.topusers.length > 0 ){
@@ -6363,26 +6438,28 @@ function $RFunctions($R){
                     $summary_widget.append( $topusers );
 
                 }
-                // instructional tooltip
-                $tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"<strong style='font-weight:bold;'>Tell us what you think!</strong><br>React by selecting any text, or roll your mouse over images and video, and look for the pin icon."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
-                $tooltip.attr( 'id', 'rdr-tooltip-'+page.id );
-                $('#rdr_sandbox').append( $tooltip );
+                
 
-                var summaryOffsets = $summary_widget.offset();
-                var tooltip_top = ( summaryOffsets.top - $(window).scrollTop() - 82 ),
-                    tooltip_left = ( summaryOffsets.left + ( $summary_widget.width() / 2 ) - 125 );
+                // instructional tooltip summary box tooltip
+                // var $tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"<strong style='font-weight:bold;'>Tell us what you think!</strong><br>React by selecting any text, or roll your mouse over images and video, and look for the pin icon."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
+                // $tooltip.attr( 'id', 'rdr-tooltip-'+page.id );
+                // $('#rdr_sandbox').append( $tooltip );
 
-                $tooltip.css('top', tooltip_top + "px" );
-                $tooltip.css('left', tooltip_left + "px" );
+                // var summaryOffsets = $summary_widget.offset();
+                // var tooltip_top = ( summaryOffsets.top - $(window).scrollTop() - 82 ),
+                //     tooltip_left = ( summaryOffsets.left + ( $summary_widget.width() / 2 ) - 125 );
 
-                $summary_widget.hover(
-                    function() {
-                        $('#rdr-tooltip-' + page.id).show();
-                    },
-                    function() {
-                        $('#rdr-tooltip-' + page.id).hide();
-                    }
-                );
+                // $tooltip.css('top', tooltip_top + "px" );
+                // $tooltip.css('left', tooltip_left + "px" );
+
+                // $summary_widget.hover(
+                //     function() {
+                //         $('#rdr-tooltip-' + page.id).show();
+                //     },
+                //     function() {
+                //         $('#rdr-tooltip-' + page.id).hide();
+                //     }
+                // );
 
             }
             function _insertImgIcons(response){
