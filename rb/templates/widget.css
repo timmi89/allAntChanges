@@ -574,9 +574,10 @@ div.rdr.rdr-summary a.rdr_tag     {
     -moz-border-radius:3px;
     -webkit-border-radius:3px;
     border-radius:3px;
+    box-shadow:0px 10px 2px #e7e7e7 inset;
     z-index:100001;
     text-decoration:none;
-    background:#ddd;
+    background:#d6d6d6;
     padding:3px 5px;
     border-radius:3px;
     margin-right:10px;
@@ -589,14 +590,14 @@ div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
     font-size: 11px !important;
     background:#eee !important;
     margin-right:-5px;
-    padding:4px 5px 3px 3px;
+    padding:4px 5px 3px 5px;
     margin-left:4px;
     color: #666; !important;
     cursor:default;
 }
 
 div.rdr.rdr-summary a.rdr_tag:hover,
-div.rdr.rdr-summary a.rdr_tag.rdr_hover { color:#fff; background:#008be4;}
+div.rdr.rdr-summary a.rdr_tag.rdr_hover { color:#fff; background:#008be4; box-shadow:none; }
 
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count:hover,
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count.rdr_hover { background:#fff !important; color:#008be4 !important;}
