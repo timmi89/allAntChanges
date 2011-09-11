@@ -1591,7 +1591,7 @@ function readrBoard($R){
                 $.receiveMessage(
                     function(e){
                         var message = $.evalJSON( e.data );
-
+console.dir(message);
                         if ( message.status ) {
                             if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
 
@@ -1611,7 +1611,7 @@ function readrBoard($R){
                                     callbackFunction();
                                     callbackFunction = null;
                                 }
-                            } else if ( message.status == "fb user needs to login" ) {
+                            } else if ( message.status == "fb_user_needs_to_login" ) {
                                 RDR.session.showLoginPanel( args );
                             } else if ( message.status == "already had user" ) {
                                 // todo: when is this used?

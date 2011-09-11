@@ -168,7 +168,7 @@ console.log('RDRAuth.getReadrToken');
 					}, response);
 		  		} else {
 		  			console.log('RDRAuth.reauthUser 1b');
-		  			RDRAuth.notifyParent("", "fb user needs to login");
+		  			RDRAuth.notifyParent({}, "fb_user_needs_to_login");
 		  		}
 		  	});
 		} else {
@@ -210,9 +210,16 @@ console.log('checkFBStatus');
 							$('#fb-logged-in').html( $user );
 		      			});
 					} else {
-						console.log('checkFBStatus 1b');
-						RDRAuth.getReadrToken( response.authResponse, function() { console.log('window.location.reload(); 2'); });
+						RDRAuth.getReadrToken( response.authResponse, function() { 
+							console.log('window.location.reload(); 2'); 
+						});
 					}
+				} else {
+					// widget
+					console.log('checkFBStatus 1b');
+					$('#fb-logged-in').show().css('visibility','visible');
+					$('#fb-logged-out').hide().css('visibility','hidden');
+					RDRAuth.returnUser();
 				}
 			} else {
 				console.log('checkFBStatus 2');
