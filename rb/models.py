@@ -237,11 +237,12 @@ class Page(models.Model):
 
 class Content(DateAwareModel):
     CONTENT_TYPES = (
+        ('pag', 'page'),
         ('txt', 'text'),
         ('img', 'img'),
         ('med', 'media'),
     )
-    kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='txt')
+    kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='pag')
     location = models.CharField(max_length=255, blank=True, null=True)
     body = models.TextField()
     #hash = models.CharField(max_length=32, unique=True, db_index=True)
