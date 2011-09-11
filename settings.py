@@ -40,9 +40,9 @@ else:
       'default': {
         'ENGINE':   'django.db.backends.mysql',
         'NAME':     'readrboard',
-        'USER':     'django',
+        'USER':     'readrboard',
         'PASSWORD': 'gubnah',
-        'HOST':     'localhost',
+        'HOST':     '10.210.155.60',
         'PORT':     '3306',
         }
     }
@@ -162,7 +162,7 @@ INSTALLED_APPS = [
     #'devserver'
 ]
 
-if DEBUG: INSTALLED_APPS.append('devserver')
+#if DEBUG: INSTALLED_APPS.append('devserver')
 #if DEBUG: INSTALLED_APPS.append('django_extensions')
 
 DEVSERVER_MODULES = (

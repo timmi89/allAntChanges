@@ -1,7 +1,7 @@
 import os
 import sys
 
-path = '/home/django/', '/home/django/readrboard'
+path = '/home/readrboard', '/home/readrboard/readrboard'
 
 sys.path.extend(path)
 
