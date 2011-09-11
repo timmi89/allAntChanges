@@ -1591,7 +1591,7 @@ function readrBoard($R){
                 $.receiveMessage(
                     function(e){
                         var message = $.evalJSON( e.data );
-console.dir(message);
+
                         if ( message.status ) {
                             if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
 
