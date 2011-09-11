@@ -4,8 +4,11 @@ from os import uname
 if uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
 
-TEMPLATE_DEBUG = DEBUG
+# For Amazon web services
+AWS_ACCESS_KEY_ID = ''
+AWS_SECRET_ACCESS_KEY = ''
 
+# For Facebook
 FACEBOOK_APP_ID = '163759626987948'
 FACEBOOK_APP_SECRET = 'f14061a2ed9d7ae8ed1c3b231a8148c9'
 
@@ -76,8 +79,8 @@ SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
-USE_I18N = True
-USE_L10N = True
+USE_I18N = False
+USE_L10N = False
 
 MEDIA_ROOT = 'media/'
 MEDIA_URL = '/media/'
@@ -161,8 +164,8 @@ INSTALLED_APPS = [
     #'devserver'
 ]
 
-#if DEBUG: INSTALLED_APPS.append('devserver')
-#if DEBUG: INSTALLED_APPS.append('django_extensions')
+if DEBUG: INSTALLED_APPS.append('devserver')
+if DEBUG: INSTALLED_APPS.append('django_extensions')
 
 DEVSERVER_MODULES = (
     'devserver.modules.sql.SQLRealTimeModule',

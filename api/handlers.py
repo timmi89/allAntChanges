@@ -339,7 +339,7 @@ class PageDataHandler(AnonymousBaseHandler):
         tags = InteractionNode.objects.filter(interaction__kind='tag', interaction__page=page)
         ordered_tags = tags.order_by('body')
         tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
-        toptags = tagcounts.order_by('-tag_count')[:10].values('tag_count','body')
+        toptags = tagcounts.order_by('-tag_count')[:10].values('id','tag_count','body')
           
         # ---Find top 10 shares on a give page---
         content = Content.objects.filter(interaction__page=page.id)
@@ -388,7 +388,24 @@ class SettingsHandler(AnonymousBaseHandler):
             groupblessedtag__group=group_object
         ).order_by('groupblessedtag__order')
         
-        group_dict = model_to_dict(group_object, exclude=['admins', 'word_blacklist', 'approved', 'requires_approval', 'share', 'rate', 'comment', 'bookmark', 'search', 'logo_url_sm', 'logo_url_med', 'logo_url_lg', 'twitter'])
+        group_dict = model_to_dict(
+            group_object,
+            exclude=[
+                'admins',
+                'word_blacklist',
+                'approved',
+                'requires_approval',
+                'share',
+                'rate',
+                'comment',
+                'bookmark',
+                'search',
+                'logo_url_sm',
+                'logo_url_med',
+                'logo_url_lg',
+                'twitter']
+        )
+        
         group_dict['blessed_tags'] = blessed_tags
         
         # Get the domains for that particular group from site objects  
