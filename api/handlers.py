@@ -339,7 +339,7 @@ class PageDataHandler(AnonymousBaseHandler):
         tags = InteractionNode.objects.filter(interaction__kind='tag', interaction__page=page)
         ordered_tags = tags.order_by('body')
         tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
-        toptags = tagcounts.order_by('-tag_count')[:10].values('tag_count','body')
+        toptags = tagcounts.order_by('-tag_count')[:10].values('id','tag_count','body')
           
         # ---Find top 10 shares on a give page---
         content = Content.objects.filter(interaction__page=page.id)
@@ -364,31 +364,6 @@ class PageDataHandler(AnonymousBaseHandler):
 
 class SettingsHandler(AnonymousBaseHandler):
     model = Group
-    fields = (
-        'id',
-        'name',
-        'short_name',
-        'language',
-        'anno_whitelist',
-        'img_whitelist',
-        'img_blacklist',
-        'no_readr',
-        ('share', ('images', 'text', 'flash')),
-        ('rate', ('images', 'text', 'flash')),
-        ('comment', ('images', 'text', 'flash')),
-        ('bookmark', ('images', 'text', 'flash')),
-        ('search', ('images', 'text', 'flash')),
-        'logo_url_sm',
-        'logo_url_med',
-        'logo_url_lg',
-        'custom_css',
-        'temp_interact',
-        'twitter',
-        'post_selector',
-        'post_href_selector',
-        'summary_widget_selector'
-    )
-             
     """
     Returns the settings for a group
     """
@@ -413,7 +388,24 @@ class SettingsHandler(AnonymousBaseHandler):
             groupblessedtag__group=group_object
         ).order_by('groupblessedtag__order')
         
-        group_dict = model_to_dict(group_object)
+        group_dict = model_to_dict(
+            group_object,
+            exclude=[
+                'admins',
+                'word_blacklist',
+                'approved',
+                'requires_approval',
+                'share',
+                'rate',
+                'comment',
+                'bookmark',
+                'search',
+                'logo_url_sm',
+                'logo_url_med',
+                'logo_url_lg',
+                'twitter']
+        )
+        
         group_dict['blessed_tags'] = blessed_tags
         
         # Get the domains for that particular group from site objects  
