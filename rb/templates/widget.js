@@ -2896,7 +2896,7 @@ function readrBoard($R){
                     //temp tie-over    
                     var hash = args.hash,
                         summary = RDR.summaries[hash],
-                        kind = summary.kind;
+                        kind = (summary) ? summary.kind:"";
                         
                     if ( !action_type ) action_type = "create";
 
@@ -2928,9 +2928,9 @@ function readrBoard($R){
                 send: function(args, int_type, action_type){
                     // /api/tag/create
                     // /api/comment/create
-
                     // hack to cleanup the send data
                     var sendData = $.extend( true, {}, args.sendData);
+console.dir(sendData);
                     if (sendData.rindow) delete sendData.rindow;
                     if (sendData.settings) delete sendData.settings;
                     if (sendData.selState) delete sendData.selState;
@@ -2947,7 +2947,7 @@ function readrBoard($R){
                     if (sendData.sendData) delete sendData.sendData; //this was happening for delete calls.
 
 // TODO force forcing
-sendData.container_kind = RDR.summaries[sendData.hash].kind;
+if ( RDR.summaries[sendData.hash] ) sendData.container_kind = RDR.summaries[sendData.hash].kind;
 // sendData.container_kind = sendData.hash;
 if (sendData.content_node_data && sendData.content_node_data.container ) delete sendData.content_node_data.container;
 
@@ -3136,6 +3136,44 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         
                     }
 
+                },
+                page: {
+                    preAjax: function(args, action_type){
+                    },
+                    customSendData: function(args) {
+                        var hash = args.hash,
+                            tag = args.tag,
+                            kind = "page";
+
+                        content_node_data = {
+                            'container': hash,
+                            'body': "",
+                            'kind':kind,
+                            'hash':hash
+                        };
+
+                        var sendData = {
+                            //interaction level attrs
+                            "tag" : tag,
+                            "node": null,
+                            "content_node_data":content_node_data,
+                            "hash": hash,
+                            //page level attrs
+                            "user_id" : RDR.user.user_id,
+                            "readr_token" : RDR.user.readr_token,
+                            "group_id" : RDR.groupPermData.group_id,
+                            "page_id" : RDR.util.getPageProperty('id', hash)
+                        };
+
+                        return sendData;
+                    },
+                    onSuccess: {
+                        //RDR.actions.interactions.tag.onSuccess:
+                        create: function(args){
+                            console.log('page tag success!');
+                            console.dir(args);
+                        }
+                    }
                 },
                 tag: {
                     preAjax: function(args, action_type){
@@ -6328,7 +6366,7 @@ function $RFunctions($R){
                 // } else {
 
                 // }
-console.dir(page);
+
                 // summary widget: specific tag totals
                 if ( page.toptags.length > 0 ){
                     // var $toptags = $('<div class="rdr-top-tags" />');
@@ -6357,10 +6395,10 @@ console.dir(page);
                 }
                     
                 function writeTag(tag) {
-                    if (!tag.id) tag.id = 1;
 
                     if ( $react.find('a.rdr_tag_'+tag.id).length == 0 ) {
-                        var tagCount = ( tag.tag_count ) ? tag.tag_count:"";
+                        var tagCount = ( tag.tag_count ) ? tag.tag_count:"",
+                            peoples = ( tagCount < 2 ) ? "person":"people";
                         var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'">'+tag.body+'</a>').data('tag_id',tag.id)
                             $span = $('<span class="rdr_tag_count">'+tagCount+'</span>');
 
@@ -6370,7 +6408,7 @@ console.dir(page);
                         $a_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-'+tag.id );
                         $('#rdr_sandbox').append( $a_tooltip );
 
-                        var $span_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"N people reacted <strong style='font-weight:bold;color:#008be4;'>"+tag.body+"</strong> to something on this page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
+                        var $span_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText": tagCount+" "+peoples+" reacted <strong style='font-weight:bold;color:#008be4;'>"+tag.body+"</strong> to something on this page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
                         $span_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-count-'+tag.id );
                         $('#rdr_sandbox').append( $span_tooltip );
                         
@@ -6381,7 +6419,7 @@ console.dir(page);
                                 var $a = $(this),
                                     $tooltip = $('#rdr-tooltip-summary-tag-' + $(this).data('tag_id') ),
                                     aOffsets = $a.offset();
-                                
+
                                 var tooltip_top = ( aOffsets.top - 43 ),
                                     tooltip_left = ( aOffsets.left + ( $a.width() / 2 ) - 125 );
 
@@ -6393,6 +6431,13 @@ console.dir(page);
                                 $('#rdr-tooltip-summary-tag-' + $(this).data('tag_id') ).hide();
                             }
                         );
+
+                        $a.click( function() {
+                            var hash = RDR.util.md5.hex_md5( $(this).closest('.rdr-page-container').data('page_id') );
+                            args = { tag:tag, hash:hash, uiMode:'write'};
+                            console.dir( args );
+                            RDR.actions.interactions.ajax( args, 'page', 'create');
+                        });
 
                         $span.hover(
                             function() {

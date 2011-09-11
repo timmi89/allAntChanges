@@ -592,6 +592,7 @@ div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
     padding:4px 5px 3px 3px;
     margin-left:4px;
     color: #666; !important;
+    cursor:default;
 }
 
 div.rdr.rdr-summary a.rdr_tag:hover,
@@ -664,7 +665,7 @@ div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count.rdr_hover { background:#fff !im
 
 .rdr-summary div.rdr-sum-headline {
     background:url({{ STATIC_URL }}widget/images/readr_icons.png) -162px 5px no-repeat !important;
-    padding:7px 5px 5px 38px !important;
+    padding:9px 5px 5px 38px !important;
     float:left !important;
     color:#787878 !important;
 }
