@@ -364,31 +364,6 @@ class PageDataHandler(AnonymousBaseHandler):
 
 class SettingsHandler(AnonymousBaseHandler):
     model = Group
-    fields = (
-        'id',
-        'name',
-        'short_name',
-        'language',
-        'anno_whitelist',
-        'img_whitelist',
-        'img_blacklist',
-        'no_readr',
-        ('share', ('images', 'text', 'flash')),
-        ('rate', ('images', 'text', 'flash')),
-        ('comment', ('images', 'text', 'flash')),
-        ('bookmark', ('images', 'text', 'flash')),
-        ('search', ('images', 'text', 'flash')),
-        'logo_url_sm',
-        'logo_url_med',
-        'logo_url_lg',
-        'custom_css',
-        'temp_interact',
-        'twitter',
-        'post_selector',
-        'post_href_selector',
-        'summary_widget_selector'
-    )
-             
     """
     Returns the settings for a group
     """
@@ -414,6 +389,8 @@ class SettingsHandler(AnonymousBaseHandler):
         ).order_by('groupblessedtag__order')
         
         group_dict = model_to_dict(group_object)
+        for item in ['admins', 'word_blacklist', 'approved', 'requires_approval', 'share', 'rate', 'comment', 'bookmark', 'search', 'logo_url_sm', 'logo_url_med', 'logo_url_lg', 'twitter']:
+            del group_dict[item]
         group_dict['blessed_tags'] = blessed_tags
         
         # Get the domains for that particular group from site objects  

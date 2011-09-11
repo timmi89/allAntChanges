@@ -99,6 +99,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
 
     if cookie_user:
         context['cookie_user'] = cookie_user
+        # Look for a better way to do this
         if len(SocialUser.objects.filter(user=cookie_user)) == 1:
             context['ga_ids'] = GroupAdmin.objects.filter(
                 social_user=cookie_user.social_user,
