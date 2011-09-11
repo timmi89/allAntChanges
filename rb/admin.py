@@ -58,7 +58,6 @@ class SocialUserAdmin(admin.ModelAdmin):
         'username',
         'gender',
         'hometown'
-        ''
     )
 
 class SocialAuthAdmin(admin.ModelAdmin):
@@ -81,7 +80,9 @@ class PageAdmin(admin.ModelAdmin):
         'id',
         'site',
         'url',
-        'canonical_url'
+        'canonical_url',
+        'created',
+        'modified'
     )
 
 class ContainerAdmin(admin.ModelAdmin):
