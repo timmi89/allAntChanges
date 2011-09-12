@@ -44,7 +44,7 @@ else:
         'NAME':     'readrboard',
         'USER':     'readrboard',
         'PASSWORD': 'gubnah',
-        'HOST':     '10.210.155.60',
+        'HOST':     '10.215.10.164',
         'PORT':     '3306',
         }
     }
