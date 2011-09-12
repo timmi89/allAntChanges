@@ -1,0 +1,227 @@
+body{
+}
+
+body.wide section[role="main"] {
+    width: 100%;
+    background:none;
+
+}
+body section[role="controls"]{
+	border:none;	
+}
+body.wide section[role="content"]{
+	width: 100%;
+	background:none;
+}
+section[role="wide panels"]{
+	width:auto;
+	padding: 0 6%;
+}
+section.introBlurb{
+	margin:30px 0 40px 0 !important;
+}
+.clearDiv{
+	clear:both;
+}
+.introBlurb .readrboard_logo{
+	float:left;
+	padding-right:8px;
+	margin-top:4px;
+}
+.introBlurb h3{
+	border:none !important;
+}
+.footerLinks{
+	
+}
+.footerLinks ul{
+	margin-left:10px;
+	font-size:0.8em;
+}
+
+ul.partner-logos{
+	
+}
+ul.partner-logos li{
+	list-style:none;
+}
+ul.partner-logos li img{
+	width:100px;
+	float:left;
+	padding:10px;
+}
+#background-layer .pin-large-icon{
+	display:none;
+}
+#background-layer .background-radial-grad{
+	left: -400px; 			/*The width of the image is 800px*/
+    margin-left: 50%;
+    position: absolute;
+    width: 100%;
+    top:0;
+
+	opacity:0.4;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+    filter:alpha(opacity=40);
+    -moz-opacity:0.4;
+    -khtml-opacity:0.4;
+}
+#splashAnnounce{
+	text-align:center;
+	width:100%;
+	position:relative;
+	padding:50px 0;
+}
+#splashBlurbs{
+	background:white;
+	position:relative;
+}
+#splashAnnounce h2, h3{
+	padding:40px 0;
+    color: white;
+    font-family: ReadrLeague,Arial;
+    font-weight: normal;
+    /*text-shadow: 2px 2px 2px #95B6CB;*/
+}
+#splashAnnounce h2{
+    font-size:62px;
+}
+#splashAnnounce h3{
+    font-size:40px;
+}
+#splashAnnounce .rindow-img{
+	
+}
+
+#splashBlurbs .blurbs-inner{
+	width:960px;
+	margin:auto;
+	padding-top:30px;
+}
+#blurbMenu{
+	padding:20px 0;
+	position:relative;
+}
+#blurbMenu ul{
+	display:inline-block;
+}
+#blurbMenu li {
+	list-style:none;
+	float:left;
+	margin:0 20px 0 0;
+    opacity:0.5;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter:alpha(opacity=50);
+    -moz-opacity:0.5;
+    -khtml-opacity:0.5;
+}
+#blurbMenu li.hover{
+    opacity:.8;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+    filter:alpha(opacity80);
+    -moz-opacity:0.8;
+    -khtml-opacity:0.8;
+    cursor: pointer;
+}
+#blurbMenu li.hover div{
+    color:#7997B1;
+}
+#blurbMenu li.selected div{
+    /*override above if selected*/
+    /*color:#666;*/
+    color:#26465A;
+}
+#blurbMenu li.selected{
+    opacity:1;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+    filter:alpha(opacity=100);
+    -moz-opacity:1;
+    -khtml-opacity:1;
+}
+
+#blurbMenu li div{
+    border:1px solid #CCC; 
+    
+    background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0, rgb(221,221,221)),
+    color-stop(0.50, rgb(255,255,255))
+    );
+    background-image: -moz-linear-gradient(center bottom , #DDD 0%, #FFF 50%);
+
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+
+    -moz-box-shadow:1px 1px 10px 2px #DDDDDD;
+    -webkit-box-shadow:1px 1px 10px 2px #DDDDDD;
+    box-shadow:1px 1px 10px 2px #DDDDDD;
+	
+	font-family: ReadrLeague,Arial;
+	font-size: 30px;
+	font-style: italic;
+	padding: 5px 25px 5px 22px;
+}
+#blurbBody{
+	height:520px;
+}
+#blurbBody > div{
+	display:none;
+}
+#blurbBody > div.selected{
+	display:block;
+}
+#blurbBody .bullets{
+	float:left;
+	width:46%;
+}
+#blurbBody .media{
+	width:52%;
+	float:right;
+	text-align:right;
+}
+#blurbBody div.media img, #blurbBody div.media iframe{
+    -moz-box-shadow:1px 1px 10px 2px #bbb;
+    -webkit-box-shadow:1px 1px 10px 2px #bbb;
+    box-shadow:1px 1px 10px 2px #bbb;
+}
+#blurbBody div.media img{
+	width:100%;
+}
+#splashBlurbs .blurb{
+	width:100%;
+	clear:both;
+	
+}
+#splashBlurbs h2, #splashBlurbs h3{
+	color:#26465A;
+	padding:0;
+	margin:0;
+	clear:both;
+	font-size:30px;
+}
+#splashBlurbs .blurb .bullet-points{
+	list-style:none;
+}
+#splashBlurbs .bullet-points li{
+	margin-bottom: 20px;
+	padding: 0 5px;
+}
+#splashBlurbs div.blurb .bullet-points span{
+	padding:0;
+	font-size:16px;
+}
+#splashBlurbs div.blurb ul.sub-bullets li{
+	padding:5px 0 0 0;
+	margin: 0;
+	display:block;
+}
+#splashBlurbs div.blurb ul.sub-bullets span{
+	font-size:14px;
+}
+.footer{
+	padding:15px 0;
+	background:#333;	
+}

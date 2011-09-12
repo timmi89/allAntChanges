@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 
 {% block title %}Readrboard{%endblock%}
+{% block extendedHead %}
+<link rel="stylesheet" href="{{ STATIC_URL }}site/css/splash.css">
+<script src="{{ STATIC_URL }}site/js/splash.js"></script>
+{%endblock%}
 
 {% block bodyClass %}wide{% endblock %}
 
@@ -8,239 +12,124 @@
 
 <style>
 
-body{
-}
-
-body.wide section[role="main"] {
-    width: 100%;
-    background:none;
-
-}
-body section[role="controls"]{
-	border:none;	
-}
-body.wide section[role="content"]{
-	width: 100%;
-	background:none;
-}
-section[role="wide panels"]{
-	width:auto;
-	padding: 0 6%;
-}
-section.introBlurb{
-	margin:30px 0 40px 0 !important;
-}
-.introBlurb .readrboard_logo{
-	float:left;
-	padding-right:8px;
-	margin-top:4px;
-}
-.introBlurb h3{
-	border:none !important;
-}
-.footerLinks{
-	
-}
-.footerLinks ul{
-	margin-left:10px;
-	font-size:0.8em;
-}
 </style>
-
-
-<style>
-ul.partner-logos{
-	
-}
-ul.partner-logos li{
-	list-style:none;
-}
-ul.partner-logos li img{
-	width:100px;
-	float:left;
-	padding:10px;
-}
-.video-wrap{
-    clear: both;
-    float: left;
-}
-.blurb{
-	width:100%;
-	clear:both;
-	
-}
-.blurb .bullet-points{
-	list-style:none;
-}
-.blurb .bullet-points h4{
-	float:left;
-}
-.blurb .bullet-points span{
-	float:left;
-	padding:0 5px;
-}
-.main-section{
-	background:white;
-	margin-top:600px;
-	position:relative;
-}
-#background-layer .pin-large-icon{
-	display:none;
-}
-#background-layer .background-radial-grad{
-	left: -400px; 			/*The width of the image is 800px*/
-    margin-left: 50%;
-    position: absolute;
-    width: 100%;
-    top:0;
-
-	opacity:0.4;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-    filter:alpha(opacity=40);
-    -moz-opacity:0.4;
-    -khtml-opacity:0.4;
-}
-.splash-section{
-	margin-top:70px;
-	text-align:center;
-	width:100%;
-	position:absolute;
-}
-.splash-section h2, h3{
-	padding:40px 0;
-    color: white;
-    font-family: ReadrLeague,Arial;
-    font-weight: normal;
-    /*text-shadow: 2px 2px 2px #95B6CB;*/
-}
-.splash-section h2{
-    font-size:62px;
-}
-.splash-section h3{
-    font-size:40px;
-}
-.splash-section .rindow{
-	
-}
-</style>
-
+<!--
 <section role="analytics header">
 	<section role="controls">
 		About Readrboard
 	</section>
 </section>
-
-<div class="splash-section">
-	<h2>A reaction button for the web.</h2>
+-->
+<div id="splashAnnounce">
+	<!--
+	<h2>Is your content listening to your readers?</h2>
+	<h2>A quick new way to interact with content</h2>
+	-->
+	<h2>How do readers feel about your content?</h2>
 	<div class="rindow-img">
-		<img src="{{BASE_URL}}{{STATIC_URL}}site/images/rindow-on-splashpage.png" />
-	</div>
-	<h3>Empower your readers to react to any phrase, image, or video.</h3>
-</div>
-<div class="main-section">
-	<div class="introBlurb">
-		<a href="{{BASE_URL}}">
-			<img class="readrboard_logo" src="{{BASE_URL}}{{STATIC_URL}}site/images/logo.png" />
-		</a>
-		<h3>A reaction button for the web.</h3>
-		<p>
-			something here...
-		</p>
-		<!--
-		<ul class="partner-logos">
-			<li>
-				<a href="http://www.fathomaway.com/" target="_blank">
-					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/fathom-logo-lg.png" alt="fathom logo" />
-				</a>
-			</li>
-			<li>
-				<a href="http://www.reuters.com/" target="_blank">
-					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/reuters-logo-lg.png" alt="reuters logo" />
-				</a>
-			</li>
-			<li>
-				<a href="http://www.dailycandy.com/" target="_blank">
-					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/dailycandy-logo-lg.png" alt="dailycandy logo" />
-				</a>
-			</li>
-			<li>
-				<a href="http://www.foodnetwork.co.uk/" target="_blank">
-					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/foodnetwork_uk-logo-lg.png" alt="foodnetwork logo" />
-				</a>
-			</li>
-			<li>
-				<a href="http://hypervocal.com/" target="_blank">
-					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/hypervocal-logo-lg.png" alt="hypervocal logo" />
-				</a>
-			</li>
-			<li>
-				<a href="http://www.nearlyweds.com/" target="_blank">
-					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/nearlyweds-logo-lg.png" alt="nearlyweds logo" />
-				</a>
-			</li>
-			<li>
-				<a href="http://www.onewed.com/" target="_blank">
-					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/onewed-logo-lg.png" alt="onewed logo" />
-				</a>
-			</li>
-			<li>
-				<a href="http://www.politico.com/" target="_blank">
-					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/politico-logo-lg.png" alt="politico logo" />
-				</a>
-			</li>
-			<li>
-				<a href="http://www.racialicious.com/" target="_blank">
-					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/racialicious-logo-lg.png" alt="racialicious logo" />
-				</a>
-			</li>
-			<li>
-				<a href="http://www.themarknews.com/" target="_blank">
-					<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/themark-logo-lg.png" alt="themarknews logo" />
-				</a>
-			</li>
-		</ul>
-		-->
+		<img src="{{STATIC_URL}}site/images/rindow-for-splashpage.png" />
 	</div>
 	<!--
-	<div class="video-wrap">
-		<iframe class="rdr_video" src="http://player.vimeo.com/video/21956758?title=0&amp;byline=0&amp;portrait=0" width="400" height="250" frameborder="0" style="border:8px solid #ddd;">
-		</iframe>
-	</div>
+	<h3>Get instant reactions about anything on your page.</h3>
 	-->
-	<div class="blurb blurb-for-readers">
-		<h2>
-			For Readers
-		</h2>
-		<ul class="bullet-points">
-			<li>
-				Say what you really feel.
-			</li>
-		</ul>
-		<div style="clear:both;"></div>
+	<h3>Now they can tell you in one click</h3>
+</div>
+<div id="splashBlurbs">
+	<div class="blurbs-inner">
+		<div id="blurbMenu">
+			<ul>
+				<li id="blurbMenu-0" class="readers selected">
+					<div>For Readers</div>
+				</li>
+				<li id="blurbMenu-1" class="publishers blurbMenu-1">
+					<div>For Publishers</div>
+				</li>
+			</ul>
+		</div>
+		<div id="blurbBody">
+			<div class="blurb blurb-for-readers selected">
+				<div class="bullets">
+					<ul class="bullet-points">
+						<li>
+							<h3>React</h3>
+							<span>Quickly react to any phrase, image, or video.</span>
+						</li>
+						<li>
+							<h3>Bookmark</h3>
+							<span>Save favorite content in your private bookmark list.</span>
+						</li>
+						<li>
+							<h3>Share</h3>
+							<span>Easily share your reaction to specific parts of a page.</span>
+						</li>
+						<li>
+							<h3>Discover</h3>
+							<span>Discover reactions from readers who share your interests.</span>
+						</li>
+					</ul>
+				</div>	
+				<div class="media">
+					<div class="video-wrap">
+						<iframe class="rdr_video" src="http://player.vimeo.com/video/21956758?title=0&amp;byline=0&amp;portrait=0" width="480" height="300" frameborder="0" style="border:8px solid #ddd;">
+						</iframe>
+					</div>
+				</div>
+				<div class="clearDiv"></div>
+			</div>
+			<div class="blurb blurb-for-publishers">
+				<div class="bullets">
+					<ul class="bullet-points">
+						<li>
+							<h3>Know your Readers</h3>
+							<span>Profile your community's tastes, sentiments, and interests.</span>
+						</li>
+						<li>
+							<h3>Analytics</h3>
+							<span>Deeply understand how your content drives engagement.</span>
+						</li>
+						<li>
+							<h3>Engagement</h3>
+							<span>Boost your metrics through:</span>
+							<div class="test">
+								<ul class="sub-bullets">
+									<li>
+										<span>increased shared links</span>
+									</li>
+									<li>
+										<span>longer site visits</span>
+									</li>
+									<li>
+										<span>better quality interactions with your content</span>
+									</li>
+								</ul>
+							</div>
+						</li>
+					</ul>
+				</div>	
+				<div class="media">
+					<a target="_blank" href="{{STATIC_URL}}site/images/demo-analytics-mockup.jpg" title="Demo Publisher Analytics for Readrboard" >
+						<img src="{{STATIC_URL}}site/images/demo-analytics-mockup-sm.jpg" alt="Demo Publisher Analytics"/>
+					</a>
+				</div>
+				<div class="clearDiv"></div>
+			</div>
+		</div>
 	</div>
-
-	<div class="blurb blurb-for-publishers">
-		<h2>
-			For Publishers
-		</h2>
-		<ul class="bullet-points">
-			<li>
-				<h4>React</h4>
-				<span>Quickly see exactly what your readers are really thinking.</span>
-			</li>
-		</ul>
-		<div style="clear:both;"></div>
-	</div>
-
+</div>
+<div class="footer">
 	<div class="footerLinks">
 		<ul>
 			<li>
-				<span>Try Readrboard on our <a href="{{BASE_URL}}{{STATIC_URL}}demo/index.html" >demo page</a>.</span>
+				<span>Try Readrboard on our <a href="{{STATIC_URL}}demo/index.html" >demo page</a>.</span>
 			</li>
 			<li>
-				<span>See what people are <a href="{{BASE_URL}}" >saying on Readrboard</a>.</span>
+				<span>See what people are <a href="/" >saying on Readrboard</a>.</span>
 			</li>
 		</ul>
 	</div>
 </div>
+
+{% endblock %}
+
+{% block footer %}
 {% endblock %}
