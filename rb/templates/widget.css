@@ -571,18 +571,18 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 /* summary box tags */
 div.rdr.rdr-summary a.rdr_tag     { 
-    -moz-border-radius:3px;
-    -webkit-border-radius:3px;
-    border-radius:3px;
-    box-shadow:0px 0px 4px #aaa;
-    z-index:100001;
-    text-decoration:none;
-    background:#fff;
-    padding:3px 5px;
-    border-radius:3px;
-    margin-right:10px;
-    margin-left:2px;
-    cursor:pointer;
+    background: #fff;
+    border: 1px solid #ddd;
+    -moz-border-radius: 3px 3px 3px 3px;
+    -webkit-border-radius: 3px 3px 3px 3px;
+    border-radius: 3px 3px 3px 3px;
+    box-shadow: 0 -5px 9px -5px #ccc inset;
+    cursor: pointer;
+    margin-left: 2px;
+    margin-right: 10px;
+    padding: 4px 5px;
+    text-decoration: none;
+    z-index: 100001;
 }
 
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    { 
@@ -592,7 +592,7 @@ div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
     font-size: 11px !important;
     background:#eee !important;
     margin-right:-5px;
-    padding:4px 5px 3px 5px;
+    padding:5px 5px 4px 5px;
     margin-left:4px;
     color: #666; !important;
     cursor:default;
@@ -610,13 +610,14 @@ div.rdr.rdr-summary a.rdr_tag.rdr_custom_tag input.rdr_default {
 }
 
 div.rdr.rdr-summary a.rdr_tag:hover,
-div.rdr.rdr-summary a.rdr_tag.rdr_hover { color:#fff; background:#008be4; box-shadow:none; }
+div.rdr.rdr-summary a.rdr_tag:hover span.rdr_tag_count,
+div.rdr.rdr-summary a.rdr_tag.rdr_hover { /*color:#fff; background:#008be4;*/ box-shadow: 0 -5px 9px -5px #008be4 inset; }
 
 div.rdr.rdr-summary a.rdr_tag.rdr_custom_tag:hover,
-div.rdr.rdr-summary a.rdr_tag.rdr_custom_tag.rdr_hover { color:#008be4; background:#fff; box-shadow:0px 0px 4px #aaa;; }
+div.rdr.rdr-summary a.rdr_tag.rdr_custom_tag.rdr_hover { color:#008be4; background:#fff; box-shadow:0px 0px 4px #aaa; }
 
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count:hover,
-div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count.rdr_hover { background:#fff !important; color:#008be4 !important;}
+div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count.rdr_hover { background:#fff !important; color:#008be4 !important; box-shadow:none;}
 
 div.rdr.rdr-summary div.rdr_note        { clear: both; margin: 5px; padding: 5px; border: 1px solid #008be4; background:#fff; display:none; }
 div.rdr.rdr-summary div.rdr_note em     { font-style:italic !important; }
