@@ -589,6 +589,7 @@ div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
     -moz-border-radius:0px 3px 3px 0px; 
     -webkit-border-radius:0px 3px 3px 0px; 
     border-radius:0px 3px 3px 0px; 
+    box-shadow: 0 -5px 9px -5px #CCCCCC inset;
     font-size: 11px !important;
     background:#eee !important;
     margin-right:-5px;
