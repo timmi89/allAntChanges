@@ -620,7 +620,7 @@ div.rdr.rdr-summary a.rdr_tag.rdr_custom_tag.rdr_hover { color:#008be4; backgrou
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count:hover,
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count.rdr_hover { background:#fff !important; color:#008be4 !important; box-shadow:none;}
 
-div.rdr.rdr-summary div.rdr_note        { clear: both; margin: 5px; padding: 5px; border: 1px solid #008be4; background:#fff; display:none; }
+div.rdr.rdr-summary div.rdr_note        { clear: both; margin: 35px 5px 5px; padding: 5px; border: 1px solid #008be4; background:#fff; display:none; }
 div.rdr.rdr-summary div.rdr_note em     { font-style:italic !important; }
 div.rdr.rdr-summary div.rdr_note ins    { text-decoration:none !important; }
 
