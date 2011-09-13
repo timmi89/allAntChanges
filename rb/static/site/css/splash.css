@@ -31,14 +31,6 @@ section.introBlurb{
 .introBlurb h3{
 	border:none !important;
 }
-.footerLinks{
-	
-}
-.footerLinks ul{
-	margin-left:10px;
-	font-size:0.8em;
-}
-
 ul.partner-logos{
 	
 }
@@ -221,7 +213,36 @@ ul.partner-logos li img{
 #splashBlurbs div.blurb ul.sub-bullets span{
 	font-size:14px;
 }
-.footer{
+#footer{
 	padding:15px 0;
 	background:#333;	
+}
+#footer div.footerLinks{
+	width:960px;
+	margin:auto;
+	position:relative;
+}
+#footer div.footerLinks ul{
+	list-style:none;
+}
+#footer div.footerLinks ul li{
+	float:left;
+	padding:10px;
+	margin-right:40px;
+}
+#footer div.footerLinks ul.footerLinksRight{
+	position:absolute;
+	right:0;	
+}
+#footer div.footerLinks ul.footerLinksRight li{
+	float:right;
+	margin-left:40px;
+	margin-right:0;
+}
+#footer div.footerLinks a{
+	font-style:none;
+	text-decoration:none;
+}
+#footer div.footerLinks a:hover{
+	color:#7997B1;
 }
