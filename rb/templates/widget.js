@@ -3486,11 +3486,22 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         }
                     },
                     onFail: function(args){
-
                         if (args.kind && args.kind == "page") {
-                            $summary_box = $('.rdr-page-container.rdr-'+args.hash+' div.rdr-summary');
-                            $summary_box.find('div.rdr_note').html( $('<em>You have already given that reaction.</em><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon.</ins>') );
-                            $summary_box.find('div.rdr_note').show(400);
+                            if ( args.response.message == "Token was invalid" ) {
+                                var $message = $('<em>You have already given that reaction.</em><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon.</ins>');
+                            } else if ( args.response.message.indexOf("Temporary user interaction limit reached") != -1 ) {
+                                var $message = $('<em>To continue adding reactions, please <a href="javascript:void(0);" style="color:#008be4;" onclick="RDR.session.showLoginPanel();">Connect with Facebook</a>.</em><br><br><strong>Why:</strong> To encourage <strong style="color:#008be4;">high-quality participation from the community</strong>, <ins>we ask that you log in with Facebook. You\'ll also have a profile where you can revisit your reactions, bookmarks, and comments made using <strong style="color:#008be4;">ReadrBoard</strong>!</ins>');
+                            } else {
+                                RDR.session.handleGetUserFail( args, function() {
+                                    RDR.actions.interactions.ajax( args, 'tag', 'create' );
+                                });
+                            }
+
+                            if ( $message ) {
+                                $summary_box = $('.rdr-page-container.rdr-'+args.hash+' div.rdr-summary');
+                                $summary_box.find('div.rdr_note').html( $message );
+                                $summary_box.find('div.rdr_note').show(400);
+                            }
                         } else {
                             //RDR.actions.interactions.tag.onFail:
 
