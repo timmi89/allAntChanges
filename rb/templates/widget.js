@@ -2930,7 +2930,7 @@ function readrBoard($R){
                     // /api/comment/create
                     // hack to cleanup the send data
                     var sendData = $.extend( true, {}, args.sendData);
-console.dir(sendData);
+
                     if (sendData.rindow) delete sendData.rindow;
                     if (sendData.settings) delete sendData.settings;
                     if (sendData.selState) delete sendData.selState;
@@ -3270,12 +3270,16 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         create: function(args){
                             //RDR.actions.interactions.tag.onSuccess.create:
                             //todo: clean up these args.
-                            
                             if (args.kind && args.kind == "page") {
-                                console.log('page tag success!');
-                                console.dir(args);
                                 $summary_box = $('.rdr-page-container.rdr-'+args.hash+' div.rdr-summary');
                                 $span = $summary_box.find('a.rdr_tag_' + args.tag.id + ' span');
+
+                                if ( $span.length == 0 && $summary_box.find('a.rdr_tag_' + args.tag.id).length == 0 ) { // it's a custom tag
+                                    $summary_box.find('a.rdr_custom_tag').html( args.tag.body );
+                                    $summary_box.find('a.rdr_custom_tag').append( '<span class="rdr_tag_count">1</span>' );
+                                    $('#rdr-tooltip-summary-tag-custom').remove();
+                                }
+
                                 var tagCount = ( $span.text() == "" ) ? 0 : parseInt( $span.text() );
                                 tagCount++;
 
@@ -3283,10 +3287,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                                 $span.show(200).css('visibility','visible');
 
-                                if ( $summary_box.find('div.rdr_note').length == 0) $summary_box.append( $('<div class="rdr_note" style="display:block;clear:both;margin:5px;padding:5px;border:1px solid #008be4;background:#fff;display:none;">Thanks!</div>') );
-                                else $summary_box.find('div.rdr_note').text('Thanks AGAIN!!!!!');
-
-                                $summary_box.find('div.rdr_note').show(200);
+                                $summary_box.find('div.rdr_note').html( $('<em>Thanks!</em><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon.</ins>') );
+                                $summary_box.find('div.rdr_note').show(400);
 
                             } else {
                                 //todo: fix the way we use args here
@@ -3484,39 +3486,46 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         }
                     },
                     onFail: function(args){
-                        //RDR.actions.interactions.tag.onFail:
 
-                        //todo: we prob want to move most of this to a general onFail for all interactions.
-                        // So this function would look like: doSpecificOnFailStuff....; RDR.actions.interactions.genericOnFail();
+                        if (args.kind && args.kind == "page") {
+                            $summary_box = $('.rdr-page-container.rdr-'+args.hash+' div.rdr-summary');
+                            $summary_box.find('div.rdr_note').html( $('<em>You have already given that reaction.</em><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon.</ins>') );
+                            $summary_box.find('div.rdr_note').show(400);
+                        } else {
+                            //RDR.actions.interactions.tag.onFail:
 
-                        var rindow = args.rindow,
-                            tag_li = args.tag;
+                            //todo: we prob want to move most of this to a general onFail for all interactions.
+                            // So this function would look like: doSpecificOnFailStuff....; RDR.actions.interactions.genericOnFail();
 
-                        var response = args.response;
+                            var rindow = args.rindow,
+                                tag_li = args.tag;
 
-                        //clear the loader                  
-                        if ( typeof tag_li.find != "function" ) {
-                            tag_li = rindow.find('li.rdr_tag_' + args.tag.id);
-                        }
-                        tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
-                        tag_li.find('div.rdr_leftBox').find('.rdr_not_loader').show();
-                        
-                        if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                            //[cleanlogz]('uh oh better login, tempy 1');
-                            RDR.session.showLoginPanel( args );
-                        } if ( response.message == "existing interaction" ) {
-                            //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
-                            //showTempUserMsg should be adapted to be rindowUserMessage:{show:..., hide:...}
-                                //with a message param.
-                                //and a close 'x' button.
-                                args.msgType = "existingInteraction";
-                                RDR.session.rindowUserMessage.show( args );
-                        }
-                        else {
-                            // if it failed, see if we can fix it, and if so, try this function one more time
-                            RDR.session.handleGetUserFail( args, function() {
-                                RDR.actions.interactions.ajax( args, 'tag', 'create' );
-                            });
+                            var response = args.response;
+
+                            //clear the loader                  
+                            if ( typeof tag_li.find != "function" ) {
+                                tag_li = rindow.find('li.rdr_tag_' + args.tag.id);
+                            }
+                            tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
+                            tag_li.find('div.rdr_leftBox').find('.rdr_not_loader').show();
+                            
+                            if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
+                                //[cleanlogz]('uh oh better login, tempy 1');
+                                RDR.session.showLoginPanel( args );
+                            } if ( response.message == "existing interaction" ) {
+                                //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
+                                //showTempUserMsg should be adapted to be rindowUserMessage:{show:..., hide:...}
+                                    //with a message param.
+                                    //and a close 'x' button.
+                                    args.msgType = "existingInteraction";
+                                    RDR.session.rindowUserMessage.show( args );
+                            }
+                            else {
+                                // if it failed, see if we can fix it, and if so, try this function one more time
+                                RDR.session.handleGetUserFail( args, function() {
+                                    RDR.actions.interactions.ajax( args, 'tag', 'create' );
+                                });
+                            }
                         }
                     }
                 },
@@ -6406,9 +6415,9 @@ function $RFunctions($R){
                     
                 function writeTag(tag) {
 
-                    if ( $react.find('a.rdr_tag_'+tag.id).length == 0 ) {
+                    if ( $react.find('a.rdr_tag_'+tag.id).length == 0 && $react.find('a.rdr_tag').length < 4 ) {
                         var tagCount = ( tag.tag_count ) ? tag.tag_count:"",
-                            peoples = ( tagCount < 2 ) ? "person":"people";
+                            peoples = ( tagCount == 1 ) ? "person":"people";
                         var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'">'+tag.body+'</a>').data('tag_id',tag.id)
                             $span = $('<span class="rdr_tag_count">'+tagCount+'</span>');
 
@@ -6430,7 +6439,7 @@ function $RFunctions($R){
                                     $tooltip = $('#rdr-tooltip-summary-tag-' + $(this).data('tag_id') ),
                                     aOffsets = $a.offset();
 
-                                var tooltip_top = ( aOffsets.top - 43 ),
+                                var tooltip_top = ( aOffsets.top - 45 ),
                                     tooltip_left = ( aOffsets.left + ( $a.width() / 2 ) - 125 );
 
                                 $tooltip.css('top', tooltip_top + "px" );
@@ -6445,7 +6454,6 @@ function $RFunctions($R){
                         $a.click( function() {
                             var hash = $(this).closest('.rdr-page-container').data('hash');
                             args = { tag:tag, hash:hash, uiMode:'write', kind:"page"};
-                            console.dir( args );
                             RDR.actions.interactions.ajax( args, 'tag', 'create');
                         });
 
@@ -6455,7 +6463,7 @@ function $RFunctions($R){
                                     $tooltip = $('#rdr-tooltip-summary-tag-count-' + $(this).parent().data('tag_id') ),
                                     spanOffsets = $span.offset();
                                 
-                                var tooltip_top = ( spanOffsets.top - 58 ),
+                                var tooltip_top = ( spanOffsets.top - 60 ),
                                     tooltip_left = ( spanOffsets.left + ( $span.width() / 2 ) - 115 );
 
                                 $tooltip.css('top', tooltip_top + "px" );
@@ -6476,6 +6484,72 @@ function $RFunctions($R){
                     if ( tagCount == "" ) $span.hide();
                 }
 
+                // add custom tag
+                var $a_custom = $('<a class="rdr_tag rdr_custom_tag"><input type="text" value="Add yours..." class="rdr_default"/></a>');
+                $a_custom.find('input').focus( function() {
+                    var $input = $(this);
+                    $input.removeClass('rdr_default');
+                    if ( $input.val() == "Add yours..." ) {
+                        $input.val('');
+                    }
+                }).blur( function() {
+                    var $input = $(this);
+                    if ( $input.val() == "" ) {
+                        $input.val('Add yours...');
+                    }
+                    if ( $input.val() == "Add yours..." ) {
+                        $input.addClass('rdr_default');
+                    }
+                }).keyup( function(event) {
+                    var $input = $(this),
+                        tag = {},
+                        hash = $input.closest('.rdr-page-container').data('hash');
+
+                    if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
+                        // $whyPanel.find('div.rdr_body').empty();
+
+                        tag.body = $input.val();
+
+                        args = { tag:tag, hash:hash, kind:"page" };                            
+                        RDR.actions.interactions.ajax( args, 'tag', 'create' );
+                        $input.blur();
+                    }
+                    else if (event.keyCode == '27') { //esc
+                        //return false;
+                        $input.blur();
+                    } else if ( $input.val().length > 20 ) {
+                        var customTag = $input.val();
+                        $input.val( customTag.substr(0, 20) );
+                    }
+                });
+
+                var $a_custom_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"Add a custom reaction to this page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
+                $a_custom_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-custom' );
+                $('#rdr_sandbox').append( $a_custom_tooltip );
+                
+                $react.append( $a_custom );
+
+                $a_custom.hover(
+                    function() {
+                        var $a_custom = $(this),
+                            $tooltip = $('#rdr-tooltip-summary-tag-custom'),
+                            aOffsets = $a_custom.offset();
+
+                        var tooltip_top = ( aOffsets.top - 45 ),
+                            tooltip_left = ( aOffsets.left + ( $a_custom.width() / 2 ) - 125 );
+
+                        $tooltip.css('top', tooltip_top + "px" );
+                        $tooltip.css('left', tooltip_left + "px" );
+                        $tooltip.show();
+                    },
+                    function() {
+                        $('#rdr-tooltip-summary-tag-custom').hide();
+                    }
+                );
+
+
+
+
                 if ( page.topusers.length > 0 ){
                     var $topusers = $('<div class="rdr-top-users" />');
 
@@ -6493,6 +6567,8 @@ function $RFunctions($R){
                     $summary_widget.append( $topusers );
 
                 }
+
+                $summary_widget.append( $('<div class="rdr_note" />') );
                 
 
                 // instructional tooltip summary box tooltip
