@@ -3271,24 +3271,31 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             //RDR.actions.interactions.tag.onSuccess.create:
                             //todo: clean up these args.
                             if (args.kind && args.kind == "page") {
-                                $summary_box = $('.rdr-page-container.rdr-'+args.hash+' div.rdr-summary');
-                                $span = $summary_box.find('a.rdr_tag_' + args.tag.id + ' span');
+                                if ( args.response.message == "Token was invalid" ) {
+                                    var $message = $('<em>You have already given that reaction.</em><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon.</ins>');
+                                } else {
+                                    $summary_box = $('.rdr-page-container.rdr-'+args.hash+' div.rdr-summary');
+                                    $span = $summary_box.find('a.rdr_tag_' + args.tag.id + ' span');
 
-                                if ( $span.length == 0 && $summary_box.find('a.rdr_tag_' + args.tag.id).length == 0 ) { // it's a custom tag
-                                    $summary_box.find('a.rdr_custom_tag').html( args.tag.body );
-                                    $summary_box.find('a.rdr_custom_tag').append( '<span class="rdr_tag_count">1</span>' );
-                                    $('#rdr-tooltip-summary-tag-custom').remove();
+                                    if ( $span.length == 0 && $summary_box.find('a.rdr_tag_' + args.tag.id).length == 0 ) { // it's a custom tag
+                                        $summary_box.find('a.rdr_custom_tag').html( args.tag.body );
+                                        $summary_box.find('a.rdr_custom_tag').append( '<span class="rdr_tag_count">1</span>' );
+                                        $('#rdr-tooltip-summary-tag-custom').remove();
+                                    }
+
+                                    var tagCount = ( $span.text() == "" ) ? 0 : parseInt( $span.text() );
+                                    tagCount++;
+
+                                    $span.text( tagCount );
+                                    $span.show(200).css('visibility','visible');
+
+                                    var $message = $('<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon: <img src="{{ BASE_URL }}{{ STATIC_URL }}widget/images/blank.png" class="no-rdr" style="background:url({{ BASE_URL }}{{ STATIC_URL }}widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>');
                                 }
-
-                                var tagCount = ( $span.text() == "" ) ? 0 : parseInt( $span.text() );
-                                tagCount++;
-
-                                $span.text( tagCount );
-
-                                $span.show(200).css('visibility','visible');
-
-                                $summary_box.find('div.rdr_note').html( $('<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon: <img src="{{ BASE_URL }}{{ STATIC_URL }}widget/images/blank.png" class="no-rdr" style="background:url({{ BASE_URL }}{{ STATIC_URL }}widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>') );
-                                $summary_box.find('div.rdr_note').show(400);
+                                if ( $message ) {
+                                    $summary_box = $('.rdr-page-container.rdr-'+args.hash+' div.rdr-summary');
+                                    $summary_box.find('div.rdr_note').html( $message );
+                                    $summary_box.find('div.rdr_note').show(400);
+                                }
 
                             } else {
                                 //todo: fix the way we use args here
@@ -3487,9 +3494,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     },
                     onFail: function(args){
                         if (args.kind && args.kind == "page") {
-                            if ( args.response.message == "Token was invalid" ) {
-                                var $message = $('<em>You have already given that reaction.</em><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon.</ins>');
-                            } else if ( args.response.message.indexOf("Temporary user interaction limit reached") != -1 ) {
+                            if ( args.response.message.indexOf("Temporary user interaction limit reached") != -1 ) {
                                 var $message = $('<em>To continue adding reactions, please <a href="javascript:void(0);" style="color:#008be4;" onclick="RDR.session.showLoginPanel();">Connect with Facebook</a>.</em><br><br><strong>Why:</strong> To encourage <strong style="color:#008be4;">high-quality participation from the community</strong>, <ins>we ask that you log in with Facebook. You\'ll also have a profile where you can revisit your reactions, bookmarks, and comments made using <strong style="color:#008be4;">ReadrBoard</strong>!</ins>');
                             } else {
                                 RDR.session.handleGetUserFail( args, function() {
