@@ -67,12 +67,10 @@ class GroupForm(forms.ModelForm):
         tags = self.cleaned_data['blessed_tags']
         new_blessed_tags = []
         for tag in tags.split(','):
-            print tag
             tag = tag.strip()
             new_blessed_tags.append(
                 InteractionNode.objects.get_or_create(body=tag)[0]
             )
-        print new_blessed_tags
         self.new_blessed_tags = new_blessed_tags
     
     # Write the many to many relationships
@@ -84,7 +82,6 @@ class GroupForm(forms.ModelForm):
         
         # Add all the new blessed tags
         for tag in enumerate(self.new_blessed_tags):
-            print "enumerate", tag
             GroupBlessedTag.objects.create(group=self.instance, node=tag[1], order=tag[0])
         if commit:
             m.save()
