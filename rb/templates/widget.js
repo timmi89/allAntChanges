@@ -3270,8 +3270,10 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         create: function(args){
                             //RDR.actions.interactions.tag.onSuccess.create:
                             //todo: clean up these args.
+                            console.dir(args);
+                            console.log(args.response.data.existing);
                             if (args.kind && args.kind == "page") {
-                                if ( args.response.message == "Token was invalid" ) {
+                                if ( args.response.data.existing ) {
                                     var $message = $('<em>You have already given that reaction.</em><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon.</ins>');
                                 } else {
                                     $summary_box = $('.rdr-page-container.rdr-'+args.hash+' div.rdr-summary');
