@@ -6439,7 +6439,7 @@ function $RFunctions($R){
                         $a_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-'+tag.id );
                         $('#rdr_sandbox').append( $a_tooltip );
 
-                        var $span_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText": tagCount+" "+peoples+" reacted <strong style='font-weight:bold;color:#008be4;'>"+tag.body+"</strong> to something on this page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
+                        var $span_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText": tagCount+' '+peoples+' reacted <strong style="font-weight:bold;color:#008be4;">'+tag.body+'</strong> to something on this page.<br/>Look for the <img src="{{ BASE_URL }}{{ STATIC_URL }}widget/images/blank.png" class="no-rdr" style="background:url({{ BASE_URL }}{{ STATIC_URL }}widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /> icon to see why.'}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
                         $span_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-count-'+tag.id );
                         $('#rdr_sandbox').append( $span_tooltip );
                         
@@ -6475,7 +6475,7 @@ function $RFunctions($R){
                                     $tooltip = $('#rdr-tooltip-summary-tag-count-' + $(this).parent().data('tag_id') ),
                                     spanOffsets = $span.offset();
                                 
-                                var tooltip_top = ( spanOffsets.top - 60 ),
+                                var tooltip_top = ( spanOffsets.top - 70 ),
                                     tooltip_left = ( spanOffsets.left + ( $span.width() / 2 ) - 115 );
 
                                 $tooltip.css('top', tooltip_top + "px" );
@@ -6535,7 +6535,7 @@ function $RFunctions($R){
                     }
                 });
 
-                var $a_custom_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"Add a custom reaction to this page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
+                var $a_custom_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"Add your own reaction to this page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
                 $a_custom_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-custom' );
                 $('#rdr_sandbox').append( $a_custom_tooltip );
                 
