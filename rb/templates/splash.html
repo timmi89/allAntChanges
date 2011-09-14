@@ -200,26 +200,15 @@
 		</ul>
 		<ul class="footerLinksRight">
 			<li>
-			    <div id="settings">
-					<a href="#"><img src="{{ STATIC_URL }}site/images/gear.png"/></a>
-					<nav>
-						<ul>
-							{% if cookie_user.id %}
-							<li><a href="javascript:void(0);" onclick="RDRAuth.doFBlogout();">Logout</a></li>
-							{% else %}
-							<li>login</li>
-							{% endif %}
-						</ul>
-					</nav>
-				</div>
-			</li>
-			<li>
+				<!--
+				this isn't working yet... cookie_user isn't being passed in yet.
+				-->
 			    <div id="user">
 					<div id="fb-logged-in" {% if not cookie_user.social_user %}style="display:none;"{% endif %}>
 						<a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/><strong>{{ cookie_user.social_user.full_name }}</strong></a>
 					</div>
 					<div id="fb-logged-out" {% if cookie_user.social_user %}style="display:none;"{% endif %}>
-						<a href="javascript:void(0);" onclick="RDRAuth.doFBLogin('site_login')"><img src="/static/site/images/fb_login.png" border="0" alt="Connect with Facebook" /></a>
+						<a href="javascript:void(0);" onclick="RDRAuth.doFBLogin('site_login')"><img src="/static/site/images/fb_connect_button.png" border="0" alt="Connect with Facebook" /></a>
 					</div>
 				</div>
 			</li>
