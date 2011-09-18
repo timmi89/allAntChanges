@@ -321,11 +321,11 @@ class PageDataHandler(AnonymousBaseHandler):
     @json_data
     @status_response
     def read(self, request, data, pageid=None):
-        pages = data['pages']
+        requested_pages = data['pages']
         pages_data = []
         
-        for page in pages:
-            current_page = getPage(request, page)
+        for requested_page in requested_pages:
+            current_page = getPage(request, requested_page)
         
             # Find all the interactions on page
             iop = Interaction.objects.filter(page=current_page)
