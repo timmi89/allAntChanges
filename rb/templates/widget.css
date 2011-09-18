@@ -688,8 +688,8 @@ div.rdr.rdr-summary div.rdr_note ins    { text-decoration:none !important; }
 }
 
 .rdr-summary div.rdr-sum-headline {
-    background:url({{ STATIC_URL }}widget/images/readr_icons.png) -162px 5px no-repeat !important;
-    padding:9px 5px 5px 38px !important;
+    background:url({{ STATIC_URL }}widget/images/readr_icons.png) -160px 8px no-repeat !important;
+    padding:8px 5px 7px 40px !important;
     float:left !important;
     color:#787878 !important;
 }
