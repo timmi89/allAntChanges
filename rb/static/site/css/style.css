@@ -83,7 +83,7 @@ body {
 	top:0;
 	left:0;
 	position: absolute;
-	background: url("/static/site/images/texture-cloth.png");
+	background: url("../images/texture-cloth.png");
     opacity:0.1;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
     filter:alpha(opacity=10);
@@ -91,7 +91,7 @@ body {
     -khtml-opacity:0.1;
 }
 #background-layer .background-radial-grad{
-	background: url("/static/site/images/spotlight.png") no-repeat scroll 0 0 transparent;
+	background: url("../images/spotlight.png") no-repeat scroll 0 0 transparent;
 	/* For WebKit (Safari, Google Chrome etc) */
 	/*background: -webkit-gradient(radial, 825px 500px, 0, 40% 40%, 60, from(#fff), to(transparent));*/
 	/* For Mozilla/Gecko (Firefox etc) */
@@ -111,7 +111,7 @@ body {
     -khtml-opacity:0.2;
 }
 #background-layer .pin-large-icon{
-    background: url("/static/site/images/pin-icon-large.png") no-repeat scroll 0 0 transparent;
+    background: url("../images/pin-icon-large.png") no-repeat scroll 0 0 transparent;
 	height:200px;
 	width:200px;
     top: 400px;
@@ -473,8 +473,8 @@ page-break-after:avoid; }
 /*@media only screen and (min-width:768px) {*/
 
 /* HEADER */
-header[role="banner"]	{height:40px; background:url(/static/site/images/header_bg.gif) top left repeat-x; box-shadow:0px 2px 3px 0px #666;position:fixed;width:100%;z-index:10;top:0;font-size:12px;}
-header[role="banner"] h1				{text-indent:-9999px; background:url(/static/site/images/logo.png) top center no-repeat;height:40px;width:128px;margin-left:68px;float:left;}
+header[role="banner"]	{height:40px; background:url(../images/header_bg.gif) top left repeat-x; box-shadow:0px 2px 3px 0px #666;position:fixed;width:100%;z-index:10;top:0;font-size:12px;}
+header[role="banner"] h1				{text-indent:-9999px; background:url(../images/logo.png) top center no-repeat;height:40px;width:128px;margin-left:68px;float:left;}
 /*header[role="banner"] #settings			{position:absolute; right:0; top:-1px;}
 header[role="banner"] #search			{position:absolute; right:55px; top:8px; }*/
 header[role="banner"] #settings			{float:right;}
@@ -488,7 +488,7 @@ header[role="banner"] #user	strong		{float:left; margin: 8px 0px 0px 5px; }
 header[role="banner"] #user	#fb-logged-out 	{ margin-top:5px; }
 
 header[role="banner"] #site_search input		{border:1px solid #a4a4a4; border-radius:4px;padding:4px;}
-header[role="banner"] #site_search button	{width:24px; height:24px; background:url(/static/site/images/pin_button.png) top left no-repeat;border:none;text-indent:-9999px;cursor:pointer;}
+header[role="banner"] #site_search button	{width:24px; height:24px; background:url(../images/pin_button.png) top left no-repeat;border:none;text-indent:-9999px;cursor:pointer;}
 
 /* NAVIGATION */
 nav ul 		{ list-style:none; }
@@ -542,7 +542,7 @@ section[role="main"] .card .column2  {text-align:left; vertical-align:middle;}
 section[role="main"] .card .interaction .column2  {text-align:left; vertical-align:top;}
 section[role="main"] .card thead .column1      {width:113px; margin:0; padding:5px 0; background:#fff; text-align:center; }
 section[role="main"] .card thead .column1 img  {margin-top:3px }
-section[role="main"] .card thead .column2      {margin:0; padding:5px 5px 5px 15px; background:url(/static/site/images/shaded_arrow.png) center left no-repeat #fff; font:italic bold 14px Arial; color:#6b6b6b;}
+section[role="main"] .card thead .column2      {margin:0; padding:5px 5px 5px 15px; background:url(../images/shaded_arrow.png) center left no-repeat #fff; font:italic bold 14px Arial; color:#6b6b6b;}
  
 section[role="main"] .card tbody .column1      {background:#eaf0f3; vertical-align:top; border-right:1px solid #d2dee4;}
 section[role="main"] .card tbody .column1 .reaction    {font-family:ReadrLeague, Arial; font-size:18px; color:#6b6b6b; font-size:24px; margin:10px 0px 5px 0px; }
@@ -565,8 +565,8 @@ section[role="main"] .card tbody .column2 .comment_container .header .who       
 
 section[role="main"] .card tbody .column2 .comment_container .comment   {overflow:hidden; color:#666; clear:both; position:relative; padding:5px 25px; font:normal 24px ReadrLeague;}
 section[role="main"] .card tbody .column2 .comment_container .comment .count  {font:normal 12px Arial; }
-section[role="main"] .card tbody .column2 .comment_container .comment .quote.open  { background:url(/static/site/images/quote_open.png) top left no-repeat; top:8px;left:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
-section[role="main"] .card tbody .column2 .comment_container .comment .quote.close { background:url(/static/site/images/quote_close.png) top left no-repeat; bottom:20px;right:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
+section[role="main"] .card tbody .column2 .comment_container .comment .quote.open  { background:url(../images/quote_open.png) top left no-repeat; top:8px;left:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
+section[role="main"] .card tbody .column2 .comment_container .comment .quote.close { background:url(../images/quote_close.png) top left no-repeat; bottom:20px;right:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
 
 /* COMPLEMENTARY */
 section[role="complementary"] { 
@@ -736,9 +736,9 @@ table[role="active user table"] td[role="reactions"],
 table[role="active user table"] td[role="shares"],
 table[role="active user table"] td[role="comments"]		{ text-align:center; width:30px; }
 
-td[role="reactions"] img.icon	{ background:url(/static/widget/images/readr_icons.png) 0px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
-td[role="shares"] img.icon		{ background:url(/static/widget/images/readr_icons.png) -50px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
-td[role="comments"] img.icon	{ background:url(/static/widget/images/readr_icons.png) -24px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
+td[role="reactions"] img.icon	{ background:url(../../widget/images/readr_icons.png) 0px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
+td[role="shares"] img.icon		{ background:url(../../widget/images/readr_icons.png) -50px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
+td[role="comments"] img.icon	{ background:url(../../widget/images/readr_icons.png) -24px 0px no-repeat transparent; width:16px; margin:0 3px -4px;}
 
 section[role="thin panels"] section[role="most active readers"] h3	{ border-top:0; }
 
