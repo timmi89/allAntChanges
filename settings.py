@@ -11,6 +11,9 @@ AWS_SECRET_ACCESS_KEY = '3JsWyCnRyzebR+bO6ptyFJ/ifh7PN2X4/cr4OxLE'
 # For S3
 AWS_STORAGE_BUCKET_NAME = "readrboard"
 AWS_CALLING_FORMAT = ""
+AWS_HEADERS = {
+    'Cache-Control': 'max-age=25200',
+}
 
 # For Facebook
 FACEBOOK_APP_ID = '163759626987948'
@@ -45,7 +48,7 @@ else:
     BASE_URL = 'http://www.readrboard.com'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    STATIC_URL = 'http://s3.amazonaws.com/%s/' % AWS_STORAGE_BUCKET_NAME
+    STATIC_URL = 'http://s3.amazonaws.com/readrboard/'
     
     DATABASES = {
       'default': {
@@ -53,7 +56,7 @@ else:
         'NAME':     'readrboard',
         'USER':     'readrboard',
         'PASSWORD': 'gubnah',
-        'HOST':     '10.210.155.60',
+        'HOST':     '10.215.10.164',
         'PORT':     '3306',
         }
     }
@@ -94,7 +97,7 @@ USE_L10N = False
 MEDIA_ROOT = 'media/'
 MEDIA_URL = '/media/'
     
-ADMIN_MEDIA_PREFIX = 'admin/'
+#ADMIN_MEDIA_PREFIX = 'admin/'
 
 # Additional locations of static files                                                
 STATICFILES_DIRS = (
