@@ -1984,7 +1984,8 @@ function readrBoard($R){
                     }
                 }
 
-    			var sendData = [];
+    			var sendData = {},
+                    sendData.pages = [];
                 for ( var i in urls ) {
                     var url = urls[i];
                     var canonical = canonicals[i];
@@ -1997,7 +1998,7 @@ function readrBoard($R){
                         title: title
                     }
                     console.dir(page);
-                    sendData.push( page );
+                    sendData.pages.push( page );
                 }
 console.dir(sendData);
                 //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
