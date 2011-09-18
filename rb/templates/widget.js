@@ -1984,8 +1984,9 @@ function readrBoard($R){
                     }
                 }
 
-    			var sendData = {},
-                    sendData.pages = [];
+    			var sendData = {};
+                sendData.pages = [];
+                
                 for ( var i in urls ) {
                     var url = urls[i];
                     var canonical = canonicals[i];
