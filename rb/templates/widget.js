@@ -1979,14 +1979,14 @@ function readrBoard($R){
                         if ( $('#rdr-page-summary').length == 1 ) {
                             $('#rdr-page-summary').addClass('rdr-page-widget-key-'+key);
                         } else {
-                            $( 'body' ).find(RDR.group.summary_widget_selector).addClass('rdr-page-widget-key-'+key);
+                            $( 'body' ).find(RDR.group.summary_widget_selector).eq(0).addClass('rdr-page-widget-key-'+key);
                         }
                     }
                 }
 
     			var sendData = {};
                 sendData.pages = [];
-                
+
                 for ( var i in urls ) {
                     var url = urls[i];
                     var canonical = canonicals[i];
@@ -1998,10 +1998,9 @@ function readrBoard($R){
                         canonical_url: canonical,
                         title: title
                     }
-                    console.dir(page);
                     sendData.pages.push( page );
                 }
-console.dir(sendData);
+
                 //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
 				//might not want to send canonical, or, send it separately if/only if it's different than URL
 				$.ajax({
@@ -2011,51 +2010,53 @@ console.dir(sendData);
                     dataType: "jsonp",
                     data: { json: $.toJSON(sendData) },
 					success: function(response) {
-                        var key = this.key;
-                        var $container = ( $(RDR.group.post_selector + '.rdr-page-key-'+key).length > 0 ) ? $(RDR.group.post_selector + '.rdr-page-key-'+key) : $('body.rdr-page-key-'+key);
+                        for ( var key in response.data ) {
+                            var page = response.data[key];
+                            var $container = ( $(RDR.group.post_selector + '.rdr-page-key-'+key).length > 0 ) ? $(RDR.group.post_selector + '.rdr-page-key-'+key) : $('body.rdr-page-key-'+key);
 
-                        if ( $container.length == 1 ) {
-                            
-                            $container.removeClass( 'rdr-page-key-' + key );
+                            if ( $container.length == 1 ) {
+                                
+                                $container.removeClass( 'rdr-page-key-' + key );
 
-                            var hash = RDR.util.md5.hex_md5( String(response.data.id) );
-                            var tagName = $container.get(0).nodeName.toLowerCase();
+                                var hash = RDR.util.md5.hex_md5( String(page.id) );
+                                var tagName = $container.get(0).nodeName.toLowerCase();
 
-                            if ( !RDR.containers[hash] ) {
-                                RDR.containers[hash] = {};
-                                RDR.containers[hash].id = String(response.data.id);
-                                RDR.containers[hash].kind = "page";
-                                $container.data( 'page_id', String(response.data.id) ); // the page ID
-                            }
-
-                            // hash the "page" descendant nodes
-                            // RDR.actions.hashNodes( $container, "nomedia" );
-                            RDR.actions.hashNodes( $container );
-
-                            if ( response.data.containers.length > 0 ) {
-                                var hashes = [];
-                                hashes[ response.data.id ] = [];
-                                for ( var i in response.data.containers ) {
-                                    hashes[ response.data.id ].push( response.data.containers[i].hash );
+                                if ( !RDR.containers[hash] ) {
+                                    RDR.containers[hash] = {};
+                                    RDR.containers[hash].id = String(page.id);
+                                    RDR.containers[hash].kind = "page";
+                                    $container.data( 'page_id', String(page.id) ); // the page ID
                                 }
-                                RDR.actions.sendHashes( hashes );
-                            }
 
-                            //init the widgetSummary
-                            var widgetSummarySettings = response;
-                            if ( $container.find( RDR.group.summary_widget_selector + '.rdr-page-widget-key-' + key).length == 1 ) {
-                                widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector + '.rdr-page-widget-key-'+key);
-                                widgetSummarySettings.jqFunc = "after";
-                            } else {
-                                widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
-                                widgetSummarySettings.jqFunc = "append";
+                                // hash the "page" descendant nodes
+                                // RDR.actions.hashNodes( $container, "nomedia" );
+                                RDR.actions.hashNodes( $container );
+
+                                if ( page.containers.length > 0 ) {
+                                    var hashes = [];
+                                    hashes[ page.id ] = [];
+                                    for ( var i in page.containers ) {
+                                        hashes[ page.id ].push( page.containers[i].hash );
+                                    }
+                                    RDR.actions.sendHashes( hashes );
+                                }
+
+                                //init the widgetSummary
+                                var widgetSummarySettings = page;
+                                if ( $container.find( RDR.group.summary_widget_selector + '.rdr-page-widget-key-' + key).length == 1 ) {
+                                    widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector + '.rdr-page-widget-key-'+key);
+                                    widgetSummarySettings.jqFunc = "after";
+                                } else {
+                                    widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
+                                    widgetSummarySettings.jqFunc = "append";
+                                }
+                                
+                                if ( ($('div.rdr-summary').length==0) || ( $('div.rdr-summary').length < $(RDR.group.post_selector).length ) ) {
+                                    widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
+                                }
                             }
-                            
-                            if ( ($('div.rdr-summary').length==0) || ( $('div.rdr-summary').length < $(RDR.group.post_selector).length ) ) {
-                                widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
-                            }
+                            $RDR.dequeue('initAjax');
                         }
-                        $RDR.dequeue('initAjax');
 
                     },
                     error: function(response) {
@@ -6284,6 +6285,8 @@ function $RFunctions($R){
              */
 
             $.fn.rdrWidgetSummary = function( params ) {
+                console.log('params');
+                console.dir(params);
                 //jQuery plugin pattern :http://docs.jquery.com/Plugins/Authoring
                 if ( methods[params] ) {
                     return methods[params].apply( this, Array.prototype.slice.call( arguments, 1 ));
@@ -6335,61 +6338,169 @@ function $RFunctions($R){
 
             //helper function for ajax above
             function _makeSummaryWidget(response){
-                // don't forget a design for when there are no tags.
-                //[cleanlogz]('building page')
-                var page = response.data;
 
-                var $summary_widget_parent = $(response.parentContainer),
-                    $summary_widget = $('<div class="rdr rdr-summary" />');
+                    var page = response;
 
-                //response.jqFunc would be something like 'append' or 'after',
-                //so this would read $summary_widget_parent.append($summary_widget);
-                $summary_widget_parent[response.jqFunc]($summary_widget);
-                
-                var total_interactions = 0;
-                for ( var i in page.summary ) {
-                    if ( page.summary[i].kind == "tag" ) total_interactions = page.summary[i].count;
-                }
+                    var $summary_widget_parent = $(response.parentContainer),
+                        $summary_widget = $('<div class="rdr rdr-summary" />');
 
-                var $react = $('<div class="rdr-sum-headline">React: </div>');
-                $summary_widget.append( $react );
-
-                // if ( total_interactions > 0 ) {
-                //     var people = ( page.topusers.length > 1 ) ? page.topusers.length + " people" : "1 person";
-                //     // racialicious:
-                //     // $summary_widget.append('<div class="rdr-sum-headline">'+total_interactions+' reactions from '+people+'</div>');
-                //     $summary_widget.append('<div class="rdr-sum-headline">'+total_interactions+' reactions:</div>');
-                // } else {
-
-                // }
-
-                // summary widget: specific tag totals
-                if ( page.toptags.length > 0 ){
-                    // var $toptags = $('<div class="rdr-top-tags" />');
-                    // $summary_widget.append( $toptags );
-
-                    for ( var i = 0, j=4; i < j; i++ ) {
-                        var this_tag = page.toptags[i];
-
-                        if ( this_tag ) {
-                            writeTag( this_tag );
-
-                            // $toptags.append(' <span>'+ this_tag.body +' <em>('+this_tag.tag_count+')</em></span>&nbsp;&nbsp;&nbsp;');
-                        }
-                        
-                        // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                        if ( $react.width() > $summary_widget.width() - 125 ) {
-                            $react.children().last().html('and more...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
-                            break;
-                        }
+                    //response.jqFunc would be something like 'append' or 'after',
+                    //so this would read $summary_widget_parent.append($summary_widget);
+                    $summary_widget_parent[response.jqFunc]($summary_widget);
+                    
+                    var total_interactions = 0;
+                    for ( var i in page.summary ) {
+                        if ( page.summary[i].kind == "tag" ) total_interactions = page.summary[i].count;
                     }
 
-                }
+                    var $react = $('<div class="rdr-sum-headline">React: </div>');
+                    $summary_widget.append( $react );
 
-                for ( var i in RDR.group.blessed_tags ) {
-                    writeTag( RDR.group.blessed_tags[i] );
-                }
+                    // if ( total_interactions > 0 ) {
+                    //     var people = ( page.topusers.length > 1 ) ? page.topusers.length + " people" : "1 person";
+                    //     // racialicious:
+                    //     // $summary_widget.append('<div class="rdr-sum-headline">'+total_interactions+' reactions from '+people+'</div>');
+                    //     $summary_widget.append('<div class="rdr-sum-headline">'+total_interactions+' reactions:</div>');
+                    // } else {
+
+                    // }
+
+                    // summary widget: specific tag totals
+                    if ( page.toptags.length > 0 ){
+                        // var $toptags = $('<div class="rdr-top-tags" />');
+                        // $summary_widget.append( $toptags );
+
+                        for ( var i = 0, j=4; i < j; i++ ) {
+                            var this_tag = page.toptags[i];
+
+                            if ( this_tag ) {
+                                writeTag( this_tag );
+
+                                // $toptags.append(' <span>'+ this_tag.body +' <em>('+this_tag.tag_count+')</em></span>&nbsp;&nbsp;&nbsp;');
+                            }
+                            
+                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
+                            if ( $react.width() > $summary_widget.width() - 125 ) {
+                                $react.children().last().html('and more...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
+                                break;
+                            }
+                        }
+
+                    }
+
+                    for ( var i in RDR.group.blessed_tags ) {
+                        writeTag( RDR.group.blessed_tags[i] );
+                    }
+
+                    // add custom tag
+                    var $a_custom = $('<a class="rdr_tag rdr_custom_tag"><input type="text" value="Add yours..." class="rdr_default"/></a>');
+                    $a_custom.find('input').focus( function() {
+                        var $input = $(this);
+                        $input.removeClass('rdr_default');
+                        if ( $input.val() == "Add yours..." ) {
+                            $input.val('');
+                        }
+                    }).blur( function() {
+                        var $input = $(this);
+                        if ( $input.val() == "" ) {
+                            $input.val('Add yours...');
+                        }
+                        if ( $input.val() == "Add yours..." ) {
+                            $input.addClass('rdr_default');
+                        }
+                    }).keyup( function(event) {
+                        var $input = $(this),
+                            tag = {},
+                            hash = $input.closest('.rdr-page-container').data('hash');
+
+                        if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
+                            // $whyPanel.find('div.rdr_body').empty();
+
+                            tag.body = $input.val();
+
+                            args = { tag:tag, hash:hash, kind:"page" };                            
+                            RDR.actions.interactions.ajax( args, 'tag', 'create' );
+                            $input.blur();
+                        }
+                        else if (event.keyCode == '27') { //esc
+                            //return false;
+                            $input.blur();
+                        } else if ( $input.val().length > 20 ) {
+                            var customTag = $input.val();
+                            $input.val( customTag.substr(0, 20) );
+                        }
+                    });
+
+                    var $a_custom_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"Add your own reaction to this page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
+                    $a_custom_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-custom' );
+                    $('#rdr_sandbox').append( $a_custom_tooltip );
                     
+                    $react.append( $a_custom );
+
+                    $a_custom.hover(
+                        function() {
+                            var $a_custom = $(this),
+                                $tooltip = $('#rdr-tooltip-summary-tag-custom'),
+                                aOffsets = $a_custom.offset();
+
+                            var tooltip_top = ( aOffsets.top - 45 ),
+                                tooltip_left = ( aOffsets.left + ( $a_custom.width() / 2 ) - 125 );
+
+                            $tooltip.css('top', tooltip_top + "px" );
+                            $tooltip.css('left', tooltip_left + "px" );
+                            $tooltip.show();
+                        },
+                        function() {
+                            $('#rdr-tooltip-summary-tag-custom').hide();
+                        }
+                    );
+
+
+
+
+                    if ( page.topusers.length > 0 ){
+                        var $topusers = $('<div class="rdr-top-users" />');
+
+                        for ( var i = 0, j=10; i < j; i++ ) {
+                            var this_user = page.topusers[i];
+                        
+                            if ( this_user ) {
+                                var $userLink = $('<a href="'+RDR_rootPath+'/user/'+this_user.user+'" class="no-rdr" target="_blank" />'),
+                                    userPic = '<img src="'+this_user.img_url+'" class="no-rdr" alt="'+this_user.full_name+'" title="'+this_user.full_name+'" />';
+                                $topusers.append( $userLink.append(userPic) );
+                            }
+                        }
+
+                        //hacked in html('') to clear it so that i can re-use this later to update the thingy.  todo: make it pretty.
+                        $summary_widget.append( $topusers );
+
+                    }
+
+                    $summary_widget.append( $('<div class="rdr_note" />') );
+                    
+
+                    // instructional tooltip summary box tooltip
+                    // var $tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"<strong style='font-weight:bold;'>Tell us what you think!</strong><br>React by selecting any text, or roll your mouse over images and video, and look for the pin icon."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
+                    // $tooltip.attr( 'id', 'rdr-tooltip-'+page.id );
+                    // $('#rdr_sandbox').append( $tooltip );
+
+                    // var summaryOffsets = $summary_widget.offset();
+                    // var tooltip_top = ( summaryOffsets.top - $(window).scrollTop() - 82 ),
+                    //     tooltip_left = ( summaryOffsets.left + ( $summary_widget.width() / 2 ) - 125 );
+
+                    // $tooltip.css('top', tooltip_top + "px" );
+                    // $tooltip.css('left', tooltip_left + "px" );
+
+                    // $summary_widget.hover(
+                    //     function() {
+                    //         $('#rdr-tooltip-' + page.id).show();
+                    //     },
+                    //     function() {
+                    //         $('#rdr-tooltip-' + page.id).hide();
+                    //     }
+                    // );
+
+
                 function writeTag(tag) {
 
                     if ( $react.find('a.rdr_tag_'+tag.id).length == 0 && $react.find('a.rdr_tag').length < 4 ) {
@@ -6413,7 +6524,7 @@ function $RFunctions($R){
                                     aOffsets = $a.offset();
 
                                 var tooltip_top = ( aOffsets.top - 45 ),
-                                    tooltip_left = ( aOffsets.left + ( $a.width() / 2 ) - 100 );
+                                    tooltip_left = ( aOffsets.left + ( $a.width() / 2 ) - 110 );
 
                                 $tooltip.css('top', tooltip_top + "px" );
                                 $tooltip.css('left', tooltip_left + "px" );
@@ -6434,117 +6545,9 @@ function $RFunctions($R){
                     if ( tagCount == "" ) $span.hide();
                 }
 
-                // add custom tag
-                var $a_custom = $('<a class="rdr_tag rdr_custom_tag"><input type="text" value="Add yours..." class="rdr_default"/></a>');
-                $a_custom.find('input').focus( function() {
-                    var $input = $(this);
-                    $input.removeClass('rdr_default');
-                    if ( $input.val() == "Add yours..." ) {
-                        $input.val('');
-                    }
-                }).blur( function() {
-                    var $input = $(this);
-                    if ( $input.val() == "" ) {
-                        $input.val('Add yours...');
-                    }
-                    if ( $input.val() == "Add yours..." ) {
-                        $input.addClass('rdr_default');
-                    }
-                }).keyup( function(event) {
-                    var $input = $(this),
-                        tag = {},
-                        hash = $input.closest('.rdr-page-container').data('hash');
-
-                    if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
-                        // $whyPanel.find('div.rdr_body').empty();
-
-                        tag.body = $input.val();
-
-                        args = { tag:tag, hash:hash, kind:"page" };                            
-                        RDR.actions.interactions.ajax( args, 'tag', 'create' );
-                        $input.blur();
-                    }
-                    else if (event.keyCode == '27') { //esc
-                        //return false;
-                        $input.blur();
-                    } else if ( $input.val().length > 20 ) {
-                        var customTag = $input.val();
-                        $input.val( customTag.substr(0, 20) );
-                    }
-                });
-
-                var $a_custom_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"Add your own reaction to this page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
-                $a_custom_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-custom' );
-                $('#rdr_sandbox').append( $a_custom_tooltip );
-                
-                $react.append( $a_custom );
-
-                $a_custom.hover(
-                    function() {
-                        var $a_custom = $(this),
-                            $tooltip = $('#rdr-tooltip-summary-tag-custom'),
-                            aOffsets = $a_custom.offset();
-
-                        var tooltip_top = ( aOffsets.top - 45 ),
-                            tooltip_left = ( aOffsets.left + ( $a_custom.width() / 2 ) - 125 );
-
-                        $tooltip.css('top', tooltip_top + "px" );
-                        $tooltip.css('left', tooltip_left + "px" );
-                        $tooltip.show();
-                    },
-                    function() {
-                        $('#rdr-tooltip-summary-tag-custom').hide();
-                    }
-                );
-
-
-
-
-                if ( page.topusers.length > 0 ){
-                    var $topusers = $('<div class="rdr-top-users" />');
-
-                    for ( var i = 0, j=10; i < j; i++ ) {
-                        var this_user = page.topusers[i];
-                    
-                        if ( this_user ) {
-                            var $userLink = $('<a href="'+RDR_rootPath+'/user/'+this_user.user+'" class="no-rdr" target="_blank" />'),
-                                userPic = '<img src="'+this_user.img_url+'" class="no-rdr" alt="'+this_user.full_name+'" title="'+this_user.full_name+'" />';
-                            $topusers.append( $userLink.append(userPic) );
-                        }
-                    }
-
-                    //hacked in html('') to clear it so that i can re-use this later to update the thingy.  todo: make it pretty.
-                    $summary_widget.append( $topusers );
-
-                }
-
-                $summary_widget.append( $('<div class="rdr_note" />') );
-                
-
-                // instructional tooltip summary box tooltip
-                // var $tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"<strong style='font-weight:bold;'>Tell us what you think!</strong><br>React by selecting any text, or roll your mouse over images and video, and look for the pin icon."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
-                // $tooltip.attr( 'id', 'rdr-tooltip-'+page.id );
-                // $('#rdr_sandbox').append( $tooltip );
-
-                // var summaryOffsets = $summary_widget.offset();
-                // var tooltip_top = ( summaryOffsets.top - $(window).scrollTop() - 82 ),
-                //     tooltip_left = ( summaryOffsets.left + ( $summary_widget.width() / 2 ) - 125 );
-
-                // $tooltip.css('top', tooltip_top + "px" );
-                // $tooltip.css('left', tooltip_left + "px" );
-
-                // $summary_widget.hover(
-                //     function() {
-                //         $('#rdr-tooltip-' + page.id).show();
-                //     },
-                //     function() {
-                //         $('#rdr-tooltip-' + page.id).hide();
-                //     }
-                // );
-
             }
             function _insertImgIcons(response){
-                var page = response.data;
+                var page = response;
                 var tempd = $.extend( {}, response );
                 for ( var i in page.imagedata ){
                     //todo: combine this with the other indicator code and make the imagedata give us a hash from the db
