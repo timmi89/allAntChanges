@@ -11,10 +11,12 @@ AWS_SECRET_ACCESS_KEY = '3JsWyCnRyzebR+bO6ptyFJ/ifh7PN2X4/cr4OxLE'
 # For S3
 AWS_STORAGE_BUCKET_NAME = "readrboard"
 AWS_CALLING_FORMAT = ""
-AWS_HEADERS = {
-    'Expires': 'Thu, 15 Apr 2020 20:00:00 GMT',
-    'Cache-Control': 'public, max-age=25200',
-}
+AWS_HEADERS = [
+    ('.*', {
+        #'Expires': 'Sat, 30 Oct 2010 20:00:00 GMT',
+        'Cache-Control': 'public, max-age=31556926'
+    })
+]
 
 # For Facebook
 FACEBOOK_APP_ID = '163759626987948'
