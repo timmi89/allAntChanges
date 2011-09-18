@@ -124,12 +124,13 @@ def stripQueryString(url):
         url = url[:url.index(qs)-1]
     return url
 
-def getPage(request, pageid=None):
-    canonical = request.GET.get('canonical_url', None)
-    url = request.GET.get('url', None)
-    title = request.GET.get('title', None)
-    group_id = request.GET.get('group_id', 1)
+def getPage(request, page_request, page_id=None):
+    canonical = page_request.get('canonical_url', None)
+    url = page_request.get('url', None)
+    title = page_request.get('title', None)
+    group_id = page_request.get('group_id', 1)
     host = getHost(request)
+    print "domain", host, "group", group_id
     
     site = Site.objects.get(domain=host, group=group_id)
 
@@ -141,8 +142,8 @@ def getPage(request, pageid=None):
     if '#' in url and '!' not in url:
         url = url[:url.index('#')]
 
-    if pageid:
-        return Page.objects.get(id=pageid)
+    if page_id:
+        return Page.objects.get(id=page_id)
     elif canonical:
         page = Page.objects.get_or_create(
             canonical_url=canonical,
