@@ -1979,7 +1979,9 @@ function readrBoard($R){
                         if ( $('#rdr-page-summary').length == 1 ) {
                             $('#rdr-page-summary').addClass('rdr-page-widget-key-'+key);
                         } else {
-                            $( 'body' ).find(RDR.group.summary_widget_selector).eq(0).addClass('rdr-page-widget-key-'+key);
+                            var $widget_key_last = $( 'body' ).find(RDR.group.summary_widget_selector).eq(0);
+                            // this seems unnecessary, but, on a blogroll, we don't want to have two widget keys on the first post's summary box
+                            if ( !$widget_key_last.hasClass('rdr-page-widget-key-0') ) $widget_key_last.addClass('rdr-page-widget-key-'+key);
                         }
                     }
                 }
