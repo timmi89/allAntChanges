@@ -325,10 +325,10 @@ class PageDataHandler(AnonymousBaseHandler):
         pages_data = []
         
         for page in pages:
-            page = getPage(request, pageid)
+            current_page = getPage(request, page)
         
             # Find all the interactions on page
-            iop = Interaction.objects.filter(page=page)
+            iop = Interaction.objects.filter(page=current_page)
             iop = iop.exclude(content__kind='page')
         
             # Retrieve containers
@@ -341,26 +341,26 @@ class PageDataHandler(AnonymousBaseHandler):
             summary = values.annotate(count=Count('id'))
         
             # ---Find top 10 tags on a given page---
-            tags = InteractionNode.objects.filter(interaction__kind='tag', interaction__page=page)
+            tags = InteractionNode.objects.filter(interaction__kind='tag', interaction__page=current_page)
             ordered_tags = tags.order_by('body')
             tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
             toptags = tagcounts.order_by('-tag_count')[:10].values('id','tag_count','body')
           
             # ---Find top 10 shares on a give page---
-            content = Content.objects.filter(interaction__page=page.id)
+            content = Content.objects.filter(interaction__page=current_page.id)
             shares = content.filter(interaction__kind='shr')
             sharecounts = shares.annotate(Count("id"))
             topshares = sharecounts.values("body").order_by()[:10]
 
             # ---Find top 10 non-temp users on a given page---
-            socialusers = SocialUser.objects.filter(user__interaction__page=page.id)
+            socialusers = SocialUser.objects.filter(user__interaction__page=current_page.id)
 
             userinteract = socialusers.annotate(interactions=Count('user__interaction')).select_related('user')
             topusers = userinteract.order_by('-interactions').values('user','full_name','img_url','interactions')[:10]
         
             pages_data.append(
                 dict(
-                    id=page.id,
+                    id=current_page.id,
                     summary=summary,
                     toptags=toptags,
                     topusers=topusers,
