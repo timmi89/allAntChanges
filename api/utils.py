@@ -144,6 +144,7 @@ def getPage(request, page_request, page_id=None):
     if page_id:
         return Page.objects.get(id=page_id)
     elif canonical:
+        if canonical == "same": canonical = url
         page = Page.objects.get_or_create(
             canonical_url=canonical,
             defaults={'url':url, 'site':site, 'title':title}
