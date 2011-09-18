@@ -1990,14 +1990,16 @@ function readrBoard($R){
                     var canonical = canonicals[i];
                     var title = titles[i];
 
-                    sendData.push( {
+                    var page = {
                         group_id: RDR.groupPermData.group_id,
                         url: url,
                         canonical_url: canonical,
                         title: title
-                    });
+                    }
+                    console.dir(page);
+                    sendData.push( page );
                 }
-
+console.dir(sendData);
                 //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
 				//might not want to send canonical, or, send it separately if/only if it's different than URL
 				$.ajax({
@@ -2005,7 +2007,7 @@ function readrBoard($R){
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
-                    data: json: $.toJSON(sendData),
+                    data: { json: $.toJSON(sendData) },
 					success: function(response) {
                         var key = this.key;
                         var $container = ( $(RDR.group.post_selector + '.rdr-page-key-'+key).length > 0 ) ? $(RDR.group.post_selector + '.rdr-page-key-'+key) : $('body.rdr-page-key-'+key);
