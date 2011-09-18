@@ -37,7 +37,7 @@ body{
 /*we shouldn't need this anymore*/
 /*
 #rdr_sandbox div.rdr.rdr_window.rdr_columns {
-    background:url({{ STATIC_URL }}widget/images/rindow_bg_column.png);
+    background:url(../images/rindow_bg_column.png);
 }
 */
 
@@ -73,7 +73,7 @@ body{
 }
 
 #rdr_sandbox div.rdr_actionbar li a {
-    background:url("{{ STATIC_URL }}widget/images/actionbar_icons.png") no-repeat 0 0 transparent;
+    background:url("../images/actionbar_icons.png") no-repeat 0 0 transparent;
     display:block;
     height:22px;
     width:22px;
@@ -185,7 +185,7 @@ div.rdr_tooltip.rdr_tooltip_sideways div.rdr.rdr_tooltip-arrow-border {
 border-color:transparent #80aec9 transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:5px; left:-16px}
 
 
-div.rdr.rdr_tooltip div.rdr_tag_share    { display:block; width:12px; height:13px; background:url({{ STATIC_URL }}widget/images/tag_icons.png) -50px -13px no-repeat; left:45px; position:absolute;top:-20px; 
+div.rdr.rdr_tooltip div.rdr_tag_share    { display:block; width:12px; height:13px; background:url(../images/tag_icons.png) -50px -13px no-repeat; left:45px; position:absolute;top:-20px; 
     -moz-border-radius:3px;
     -webkit-border-radius:3px;
     border-radius:3px;
@@ -286,8 +286,8 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_body                     {width:100%; z-index:4; overflow-x:hidden; overflow-y:hidden; padding:0; position:absolute; outline:none; top:0; bottom:0; height:auto;}
 
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header                   { background:#fff; position:relative; height:35px; /*var rdr_headerHeight*/ width:100%; z-index:5; cursor:move !important;}
-#rdr_sandbox div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("{{ STATIC_URL }}widget/images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
-#rdr_sandbox div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header  { background:url({{ STATIC_URL }}widget/images/header_arrow.png) 0px -1px no-repeat #fff; }
+#rdr_sandbox div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("../images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
+#rdr_sandbox div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header  { background:url(../images/header_arrow.png) 0px -1px no-repeat #fff; }
 
 #rdr_sandbox div.rdr_window.rdr_readmode div.rdr_sntPnl.rdr_whyPanel div.rdr_header      { background: none transparent; }
 
@@ -441,22 +441,22 @@ border-style: solid !important; border-width: 1px 0 !important; padding: 0 !impo
 /*overwrite for image readmode version*/
 div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !important;}
 
-#rdr_sandbox div.rdr ul.rdr_tags li.rdr_has_comment .rdr_rightBox       {background:url({{ STATIC_URL }}widget/images/widget_icons.png) -158px -1px no-repeat;}
+#rdr_sandbox div.rdr ul.rdr_tags li.rdr_has_comment .rdr_rightBox       {background:url(../images/widget_icons.png) -158px -1px no-repeat;}
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_has_comment .rdr_rightBox span  {display: block; font-family: Arial; font-size: 11px; margin-right: 18px; margin-top: 11px; text-align: right;}
 #rdr_sandbox div.rdr div.rdr_read ul.rdr_tags li .rdr_leftBox           {color:#008be4;}
 
-#rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged div.rdr_leftBox          {background:url({{ STATIC_URL }}widget/images/widget_icons.png) 1px -1px no-repeat; }
+#rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged div.rdr_leftBox          {background:url(../images/widget_icons.png) 1px -1px no-repeat; }
 
 /*clear for readmode*/
 #rdr_sandbox div.rdr div.rdr_read ul.rdr_tags li:hover div.rdr_leftBox,
 #rdr_sandbox div.rdr div.rdr_read ul.rdr_tags li.rdr_tagged div.rdr_leftBox             {background-image:none; color:#008be4; }
 
-#rdr_sandbox div.rdr div.rdr_sentimentBox  ul.rdr_tags li:hover .rdr_rightBox           {background:url({{ STATIC_URL }}widget/images/widget_icons.png) -211px -1px no-repeat;}
+#rdr_sandbox div.rdr div.rdr_sentimentBox  ul.rdr_tags li:hover .rdr_rightBox           {background:url(../images/widget_icons.png) -211px -1px no-repeat;}
 #rdr_sandbox div.rdr div.rdr_sentimentBox  ul.rdr_tags li.rdr_tagged .rdr_rightBox span,
 #rdr_sandbox div.rdr div.rdr_sentimentBox  ul.rdr_tags li.rdr_selected .rdr_rightBox span,
 #rdr_sandbox div.rdr div.rdr_sentimentBox  ul.rdr_tags li:hover .rdr_rightBox span      {display:none;}
 
-#rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected .rdr_rightBox          {background:url({{ STATIC_URL }}widget/images/widget_icons.png) -46px -1px no-repeat !important;}
+#rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected .rdr_rightBox          {background:url(../images/widget_icons.png) -46px -1px no-repeat !important;}
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_selected .rdr_leftBox:hover,
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged .rdr_leftBox:hover       {background-position:-110px -1px;}
 #rdr_sandbox div.rdr div.rdr_new ul.rdr_tags li.rdr_selected            {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
@@ -528,7 +528,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
     width: 38px;
 }
 #rdr_sandbox div.rdr div.rdr_contentSet.rdr_hover div.rdr_contentHeader div.rdr_rightBox {
-    background:url({{ STATIC_URL }}widget/images/widget_icons.png) -46px -10px no-repeat !important;
+    background:url(../images/widget_icons.png) -46px -10px no-repeat !important;
     opacity:0.5;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
     filter:alpha(opacity=50);
@@ -539,7 +539,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag              {margin:0; background:#ccc; font:inherit; color:#666; padding:0; }
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag:hover,
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader a.rdr_tag.rdr_hover                   {background:#fff; }
-#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader.rdr_has_comment div.rdr_rightBox      {background: url("{{ STATIC_URL }}widget/images/widget_icons.png") no-repeat scroll -158px -10px transparent; float:right; font-weight:normal; margin-right:5px; cursor:pointer;}
+#rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader.rdr_has_comment div.rdr_rightBox      {background: url("../images/widget_icons.png") no-repeat scroll -158px -10px transparent; float:right; font-weight:normal; margin-right:5px; cursor:pointer;}
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader.rdr_has_comment div.rdr_rightBox span {display: block; margin-right: 18px; margin-top: 2px; text-align: right;}
 #rdr_sandbox div.rdr div.rdr_contentSet div.rdr_contentHeader div.rdr_can_comment                   {background:none; float:right; font-weight:normal; margin-right:5px; text-transform:uppercase; font-size:9px; display:none; cursor:pointer; color:#666;}
 #rdr_sandbox div.rdr div.rdr_contentSet:hover div.rdr_contentHeader div.rdr_can_comment    {display:block;}
@@ -688,7 +688,7 @@ div.rdr.rdr-summary div.rdr_note ins    { text-decoration:none !important; }
 }
 
 .rdr-summary div.rdr-sum-headline {
-    background:url({{ STATIC_URL }}widget/images/readr_icons.png) -160px 8px no-repeat !important;
+    background:url(../images/readr_icons.png) -160px 8px no-repeat !important;
     padding:8px 5px 7px 40px !important;
     float:left !important;
     color:#787878 !important;
@@ -787,7 +787,7 @@ div.rdr.rdr-summary div.rdr_note ins    { text-decoration:none !important; }
 #rdr_sandbox div.rdr_alert_box_2      { background: #f0f0f0; padding:10px 10px 30px; font-size:12px; color:#666;}
 #rdr_sandbox div.rdr_alert_box_x      { position:absolute; right:10px; top:7px; font-size:14px; cursor:pointer; color:#999; }
 #rdr_sandbox div.rdr_alert_box_2 span {
-    background:url({{ STATIC_URL }}widget/images/actionbar_icons.png) no-repeat -8px -8px transparent;
+    background:url(../images/actionbar_icons.png) no-repeat -8px -8px transparent;
     display:inline-block;
     height:22px;
     width:16px;
@@ -917,7 +917,7 @@ div.rdr_indicator img.rdr_pin,
 #rdr_sandbox img.rdr_pin,
 #rdr_sandbox div.rdr_indicator_details img.rdr_pin,
 #rdr_sandbox div.rdr_sentimentBox img.rdr_pin { 
-    background:url("{{ STATIC_URL }}widget/images/readr_icons.png") no-repeat 0 -1px !important; 
+    background:url("../images/readr_icons.png") no-repeat 0 -1px !important; 
     position:absolute !important;
     margin:0 !important;
 }

@@ -6028,7 +6028,7 @@ function $RFunctions($R){
         css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/ie"+parseInt( $R.browser.version) +".css" );
     }
 
-    css.push( RDR_rootPath+"/widgetCss/" );
+    css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/widget.css" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/jquery.jscrollpane.css" );
     
