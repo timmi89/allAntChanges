@@ -19,18 +19,21 @@ def requires_admin(func):
 
         # If a user is registered and logged in
         if cookie_user:
-            admin_groups = cookie_user.social_user.admin_groups()
-            short_name = kwargs.get('short_name', None)
-            if short_name:
-                group = Group.objects.get(short_name=short_name)
-                if group not in admin_groups:
-                    return HttpResponseRedirect('/')
+            if len(SocialUser.objects.filter(user=cookie_user)) == 1:
+                admin_groups = cookie_user.social_user.admin_groups()
+                short_name = kwargs.get('short_name', None)
+                if short_name:
+                    group = Group.objects.get(short_name=short_name)
+                    if group not in admin_groups:
+                        return HttpResponseRedirect('/')
+                    else:
+                        kwargs['admin_groups'] = [group]
                 else:
-                    kwargs['admin_groups'] = [group]
-            else:
-                kwargs['admin_groups'] = admin_groups
+                    kwargs['admin_groups'] = admin_groups
                 
-            return func(*args, **kwargs)
+                return func(*args, **kwargs)
+            else:
+                return HttpResponseRedirect('/')
         else:
             return HttpResponseRedirect('/')
     return wrapper

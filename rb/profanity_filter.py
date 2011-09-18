@@ -52,7 +52,7 @@ class ProfanitiesFilter(object):
         regexp_insidewords = {
             True: r'(%s)',
             False: r'\b(%s)\b',
-            }
+        }
 
         regexp = (regexp_insidewords[self.inside_words] % 
                   '|'.join(self.badwords))

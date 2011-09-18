@@ -5,8 +5,14 @@ if uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
 
 # For Amazon web services
-AWS_ACCESS_KEY_ID = ''
-AWS_SECRET_ACCESS_KEY = ''
+AWS_ACCESS_KEY_ID = 'AKIAINM2FE35X6K77P2A'
+AWS_SECRET_ACCESS_KEY = '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'
+
+# For S3
+AWS_STORAGE_BUCKET_NAME = "readrboard"
+AWS_CALLING_FORMAT = ""
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
 # For Facebook
 FACEBOOK_APP_ID = '163759626987948'
@@ -44,7 +50,7 @@ else:
         'NAME':     'readrboard',
         'USER':     'readrboard',
         'PASSWORD': 'gubnah',
-        'HOST':     '10.215.10.164',
+        'HOST':     '10.210.155.60',
         'PORT':     '3306',
         }
     }
@@ -85,7 +91,11 @@ USE_L10N = False
 MEDIA_ROOT = 'media/'
 MEDIA_URL = '/media/'
 STATIC_ROOT = 'rb/static/'
-STATIC_URL = '/static/'                        
+#STATIC_URL = '/static/'                        
+if DEBUG:
+    STATIC_URL = 'https://local.readrboard.com:8080/'
+else:
+    STATIC_URL = 'https://s3.amazonaws.com/readrboard/'
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 
@@ -158,6 +168,7 @@ INSTALLED_APPS = [
     'rb',
     'piston',
     'south',
+    'storages'
     #'treebeard',
     #'debug_toolbar',
     #'autofixture',

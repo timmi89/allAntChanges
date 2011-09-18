@@ -56,8 +56,8 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 -->
 
 <!-- For favicon -->
-<link rel=”shortcut icon” href=”/static/site/images/favicon.ico” type=”image/x-icon”>
-<link rel=”icon” href=”/static/site/images/favicon.ico” type=”image/x-icon”>
+<link rel=”shortcut icon” href=”{{ STATIC_URL }}site/images/favicon.ico” type=”image/x-icon”>
+<link rel=”icon” href=”{{ STATIC_URL }}site/images/favicon.ico” type=”image/x-icon”>
 
 <!-- http://t.co/y1jPVnT -->
 <link rel="canonical" href="/">
@@ -93,7 +93,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
           <a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/><strong>{{ cookie_user.social_user.full_name }}</strong></a>
         </div>
         <div id="fb-logged-out" {% if cookie_user.social_user %}style="display:none;"{% endif %}>
-          <a href="javascript:void(0);" onclick="RDRAuth.doFBLogin('site_login')"><img src="/static/site/images/fb_login.png" border="0" alt="Connect with Facebook" /></a>
+          <a href="javascript:void(0);" onclick="RDRAuth.doFBLogin('site_login')"><img src="{{ STATIC_URL }}site/images/fb_login.png" border="0" alt="Connect with Facebook" /></a>
         </div>
       </div>
     <div id="site_search">
@@ -141,7 +141,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     // var cachebuster = String( parseInt( date.getDate() / 7 )+1 )+String(date.getMonth()) + String(date.getYear());
     var cachebuster = date.getTime();
     document.write(
-      unescape( '%3Cscript src="/static/widget/js/readr_user_auth.js?' + cachebuster + '" type="text/javascript"%3E%3C/script%3E' )
+      unescape( '%3Cscript src="{{ STATIC_URL }}widget/js/readr_user_auth.js?' + cachebuster + '" type="text/javascript"%3E%3C/script%3E' )
     );
 
   </script>
