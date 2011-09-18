@@ -94,7 +94,7 @@ USE_L10N = False
 MEDIA_ROOT = 'media/'
 MEDIA_URL = '/media/'
     
-ADMIN_MEDIA_PREFIX = 'admin/'
+#ADMIN_MEDIA_PREFIX = 'admin/'
 
 # Additional locations of static files                                                
 STATICFILES_DIRS = (
