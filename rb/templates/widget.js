@@ -3858,104 +3858,106 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     //note: this should generally be called via RDR.actions.containers.setup
                     var scope = this;
                     var summary = RDR.summaries[hash],
+                        kind = summary.kind,
                         $container = summary.$container,                    
                         indicatorId = 'rdr_indicator_'+hash,
                         indicatorBodyId = 'rdr_indicator_body_'+hash,
                         indicatorDetailsId = 'rdr_indicator_details_'+hash;
 
-                    //check for and remove any existing indicator and indicator_details and remove for now.
-                    //this shouldn't happen though.
-                    //todo: solve for duplicate content that will have the same hash.
-                    $('#'+indicatorId, '#'+indicatorDetailsId).each(function(){
-                        $(this).remove();
-                    });
-
-                    var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId);
-                    //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
-                    $indicator.css('visibility','hidden');
-
-                    //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
-                    var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body" />').attr('id',indicatorBodyId)//chain
-                    .appendTo($indicator)//chain
-                    .append(
-                        '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
-                        '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
-                    )//chain
-                    .data( {'which':hash} );
-
-                    //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the body.
-                    //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
-                    var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
-                    .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar')//chain
-                    .appendTo('#rdr_indicator_details_wrapper');
-
-                    $indicator.hover(
-                        function() {
-
-                            //shouldn't need this if anymore - make sure visibility:hidden consistently disables hover event.
-                            if( !$indicator_details.children().length ) return;
-                            //else
-                            if ( $indicator_details.data('freshlyKilled')) return false;
-                            //else
-                            $indicator_details.css({
-                                'display':'block',
-                                'top': $indicator_body.offset().top,
-                                'left': $indicator_body.offset().left
-                            });
-                        },
-                        function() {
-                            $indicator_details.data( 'freshlyKilled', false);
-                        }
-                    );
-
-                    $indicator_details.click( function() {
-                        //store it's offset in data(), because offset doesn't work if the node is hidden.  It was giving me problems before
-                        $indicator_details.data( 'top', $indicator_details.offset().top );
-                        $indicator_details.data( 'left', $indicator_details.offset().left );
-                        $indicator_details.data( 'freshlyKilled', true);
-                        var selStates = $(this).data('selStates');
-
-                        $indicator_details.hide();
-                        RDR.rindow.make( "readMode", {hash:hash} );
-                    })//chain
-                    .hover(
-                        function() {
-                            var timeout = $(this).data('timeout');
-                            clearTimeout(timeout);
-                        },
-                        function() {
-                            var $this = $(this);
-                            var timeout = setTimeout(function(){
-                                $this.fadeOut(300);
-                            },500);
-                            $(this).data('timeout', timeout);
-                        }
-                    );
-
-
-                    var kind = summary.kind;
-
-                    //run setup specific to this type
-                    
-                    scope.utils.kindSpecificSetup[kind]( hash );
-
-
-                    RDR.actions.indicators.update(hash);
-
-                    //Note that the text indicators still don't have content_node info.
-                    //The content_nodes will only be populated and shown after hitting the server for details triggered by $indicator mouseover.
-                    //on the offchance that this server call fails and the user hilite
-
-                    if (kind == 'text'){
-                        //Setup callback for a successful fetch of the content_nodes for this container
-                        var onSuccessCallback = function(){
-                            $indicator.unbind('mouseover.contentNodeInit');
-                            RDR.actions.indicators.utils.setupContentNodeHilites(hash);
-                        };
-                        //bind the hover event that will only be run once.  It gets removed on the success callback above.
-                        $indicator.bind('mouseover.contentNodeInit', function(){
-                            RDR.actions.content_nodes.init(hash, onSuccessCallback);
+                    // don't insert floating pins for page-level interactions
+                    if ( !$container.hasClass('rdr-page-container') ) {
+                        //check for and remove any existing indicator and indicator_details and remove for now.
+                        //this shouldn't happen though.
+                        //todo: solve for duplicate content that will have the same hash.
+                        $('#'+indicatorId, '#'+indicatorDetailsId).each(function(){
+                            $(this).remove();
                         });
+
+                        var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId);
+                        //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
+                        $indicator.css('visibility','hidden');
+
+                        //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
+                        var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body" />').attr('id',indicatorBodyId)//chain
+                        .appendTo($indicator)//chain
+                        .append(
+                            '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
+                            '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
+                        )//chain
+                        .data( {'which':hash} );
+
+                        //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the body.
+                        //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
+                        var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
+                        .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar')//chain
+                        .appendTo('#rdr_indicator_details_wrapper');
+
+                        $indicator.hover(
+                            function() {
+
+                                //shouldn't need this if anymore - make sure visibility:hidden consistently disables hover event.
+                                if( !$indicator_details.children().length ) return;
+                                //else
+                                if ( $indicator_details.data('freshlyKilled')) return false;
+                                //else
+                                $indicator_details.css({
+                                    'display':'block',
+                                    'top': $indicator_body.offset().top,
+                                    'left': $indicator_body.offset().left
+                                });
+                            },
+                            function() {
+                                $indicator_details.data( 'freshlyKilled', false);
+                            }
+                        );
+
+                        $indicator_details.click( function() {
+                            //store it's offset in data(), because offset doesn't work if the node is hidden.  It was giving me problems before
+                            $indicator_details.data( 'top', $indicator_details.offset().top );
+                            $indicator_details.data( 'left', $indicator_details.offset().left );
+                            $indicator_details.data( 'freshlyKilled', true);
+                            var selStates = $(this).data('selStates');
+
+                            $indicator_details.hide();
+                            RDR.rindow.make( "readMode", {hash:hash} );
+                        })//chain
+                        .hover(
+                            function() {
+                                var timeout = $(this).data('timeout');
+                                clearTimeout(timeout);
+                            },
+                            function() {
+                                var $this = $(this);
+                                var timeout = setTimeout(function(){
+                                    $this.fadeOut(300);
+                                },500);
+                                $(this).data('timeout', timeout);
+                            }
+                        );
+
+
+                        //run setup specific to this type
+                        
+                        scope.utils.kindSpecificSetup[kind]( hash );
+
+
+                        RDR.actions.indicators.update(hash);
+
+                        //Note that the text indicators still don't have content_node info.
+                        //The content_nodes will only be populated and shown after hitting the server for details triggered by $indicator mouseover.
+                        //on the offchance that this server call fails and the user hilite
+
+                        if (kind == 'text'){
+                            //Setup callback for a successful fetch of the content_nodes for this container
+                            var onSuccessCallback = function(){
+                                $indicator.unbind('mouseover.contentNodeInit');
+                                RDR.actions.indicators.utils.setupContentNodeHilites(hash);
+                            };
+                            //bind the hover event that will only be run once.  It gets removed on the success callback above.
+                            $indicator.bind('mouseover.contentNodeInit', function(){
+                                RDR.actions.content_nodes.init(hash, onSuccessCallback);
+                            });
+                        }
                     }
 
                 },
@@ -6285,8 +6287,6 @@ function $RFunctions($R){
              */
 
             $.fn.rdrWidgetSummary = function( params ) {
-                console.log('params');
-                console.dir(params);
                 //jQuery plugin pattern :http://docs.jquery.com/Plugins/Authoring
                 if ( methods[params] ) {
                     return methods[params].apply( this, Array.prototype.slice.call( arguments, 1 ));
