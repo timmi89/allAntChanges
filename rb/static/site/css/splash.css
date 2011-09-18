@@ -57,7 +57,7 @@ section.introBlurb{
 	background:white;
 	position:relative;
 }
-#splashAnnounce h2, h3{
+#splashAnnounce h2, #splashAnnounce h3{
 	padding:40px 0;
     color: white;
     font-family: ReadrLeague,Arial;
@@ -264,4 +264,84 @@ section.introBlurb{
 }
 #footer div.footerLinks a:hover{
 	color:#7997B1;
+}
+
+/*for slideshow*/
+#promoDiv{
+	width:960px;
+	position:relative;
+	margin:auto;
+	height:320px;
+
+}
+#promoGallery{
+	width:100%;
+}
+.promoGalleryBody{
+    width:100%;
+    position: relative;
+    height:300px;
+    display:none; /*to be overriden by js*/
+}
+.promoGalleryBody.startSlide{
+    display: block;
+}
+.promoGalleryBody h2{
+}
+#promoControls{
+    position: absolute;
+    left:50%;
+    bottom:0;
+    z-index: 100;
+}
+#promoControls #promoControlsInnerWrap{
+	position:relative;
+	left:-50%;
+}
+#promoControls #promoControlsInnerWrap > div{
+    float:left;
+}
+#promoControls a{
+    opacity: 0.5;
+    -moz-opacity: 0.5;
+    -khtml-opacity: 0.5;
+    filter: alpha(opacity=50);
+}
+#promoControls a:hover{
+    opacity: 0.8;
+    -moz-opacity: 0.8;
+    -khtml-opacity: 0.8;
+    filter: alpha(opacity=80);
+}
+#promoControls a:active{
+    opacity: 1.0;
+    -moz-opacity: 1.0;
+    -khtml-opacity: 1.0;
+    filter: alpha(opacity=100);
+}
+#promoControls img{
+    width:30px;
+}
+#promoGallery .textSlide{
+	background:white;
+	padding:20px;
+    margin: auto;
+    padding: 20px;
+    width: 670px;
+}
+#promoGallery .textSlide blockquote{
+	border:none;
+	font-size: 17px;
+	margin-bottom: 10px;
+	margin-top: 14px;
+	text-align: left;
+}
+#promoGallery .textSlide span.author{
+	font-size:11px;
+	display:block;
+	text-align:left;
+	margin-left:20px;
+}
+#promoGallery h4{
+	color:#666;
 }

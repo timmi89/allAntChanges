@@ -5818,7 +5818,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 // make sure it's not selecting inside the RDR windows.
                 // todo: (the rdr_indicator is an expection.
                 // The way we're dealing with this is a little weird.  It works, but could be cleaner)
-                if ( $mouse_target.closest('.rdr').length && !$mouse_target.closest('.rdr_indicator').length ) return;
+                if ( $mouse_target.closest('.rdr, .no-rdr').length && !$mouse_target.closest('.rdr_indicator').length ) return;
                 //else
 
                 var $blockParent = null;
