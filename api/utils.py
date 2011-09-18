@@ -130,7 +130,6 @@ def getPage(request, page_request, page_id=None):
     title = page_request.get('title', None)
     group_id = page_request.get('group_id', 1)
     host = getHost(request)
-    print "domain", host, "group", group_id
     
     site = Site.objects.get(domain=host, group=group_id)
 
