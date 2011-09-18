@@ -3,7 +3,6 @@
 {% block title %}Readrboard{%endblock%}
 {% block extendedHead %}
 <link rel="stylesheet" href="{{ STATIC_URL }}site/css/splash.css">
-<script src="{{ STATIC_URL }}site/js/splash.js"></script>
 {%endblock%}
 
 {% block bodyClass %}wide{% endblock %}
@@ -20,19 +19,73 @@
 	</section>
 </section>
 -->
-<div id="splashAnnounce">
+<div id="splashAnnounce" class="rdr">
 	<!--
 	<h2>Is your content listening to your readers?</h2>
 	<h2>A quick new way to interact with content</h2>
 	-->
-	<h2>How do readers feel about your content?</h2>
-	<div class="rindow-img">
-		<img src="{{STATIC_URL}}site/images/rindow-for-splashpage.png" />
+	<h2>How are readers reacting to your content?</h2>
+	<div id="promoDiv" class="animationDiv">
+		<div id="promoGallery">
+			<div class="promoGalleryBody startSlide">
+				<div class="rindow-img">
+					<img src="{{STATIC_URL}}site/images/rindow-for-splashpage.png" />
+				</div>
+			</div>
+			<div class="promoGalleryBody">
+				<img src="{{ STATIC_URL }}/demo/readrboard-demo/puppy.png" alt="" width="250" class="contentImg" />
+			</div>
+			<div class="promoGalleryBody">
+				<div class="textSlide">
+					<blockquote>
+						"If you ask 20 different readers why they read, they will all be right." <span class="author">-Teresa Nielsen Hayden</span>
+					</blockquote>
+					<blockquote>
+						"I'll never make that mistake again, reading the experts' opinions." <span class="author">-Richard Feynman</span>
+					</blockquote>
+					<blockquote>
+						"It was impossible to get a conversation going, everybody was talking too much." <span class="author">-Yogi Berra</span>
+					</blockquote>
+					<blockquote>
+						"Write a wise saying and your name will live forever." <span class="author">-Anonymous</span>
+					</blockquote>
+					<p>
+					</p>
+				</div>
+			</div>
+			<div class="promoGalleryBody">
+				<!--chrome was FOUCing this without this hack - hide here, show with js-->
+				<iframe style="display:none;" width="450" height="280" frameborder="0" allowfullscreen="" src="http://www.youtube.com/embed/eD1i6IpU56o" class="rdr_video"></iframe>
+			</div>
+		</div>
+		<div id="promoControls" class="rdr">
+			<div id="promoControlsInnerWrap">
+				<div class="promoPrev">
+					<a href="#">
+						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/controls-prev.png" alt="prev" />
+					</a>
+				</div>
+				<div class="promoPlayPause">
+					<a href="#" class="promoPlay" >
+						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/controls-play.png" alt="play" />
+					</a>
+					<a href="#" class="promoPause">
+						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/controls-pause.png" alt="pause" />
+					</a>
+				</div>
+				<div class="promoNext">
+					<a href="#">
+						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/controls-next.png" alt="next" />
+					</a>
+				</div>
+			</div>
+		</div>
 	</div>
+
 	<!--
 	<h3>Get instant reactions about anything on your page.</h3>
 	-->
-	<h3>Now, they can tell you in one click.</h3>
+	<h3>Let them tell you in a single click.</h3>
 </div>
 <div id="splashBlurbs">
 	<div class="blurbsInner">
@@ -46,7 +99,7 @@
 				</li>
 			</ul>
 		</div>
-		<div id="blurbBody">
+		<div id="blurbBody" class="rdr">
 			<div class="blurb blurb-for-readers selected">
 				<div class="bullets">
 					<ul class="bullet-points">
@@ -119,62 +172,62 @@
 			</div>
 		</div>
 	</div>
-	<div class="partnerLogoSection">
+	<div class="rdr partnerLogoSection">
 		<h3>Try ReadrBoard live on our Partners' websites</h3>
 		<div class="partnerLogoSection">
 			<ul class="partnerLogos">
 				<li>
-				    <a href="http://hypervocal.com/" target="_blank">
-				        <img class="greyscaleImg" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/hypervocal-logo-lg.png" alt="hypervocal logo" />
-				        <img class="colorImg" style="display:none;" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/hypervocal-logo-lg.png" alt="hypervocal logo" />
-				    </a>
+					<a href="http://hypervocal.com/" target="_blank">
+						<img class="greyscaleImg" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/hypervocal-logo-lg.png" alt="hypervocal logo" />
+						<img class="colorImg" style="display:none;" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/hypervocal-logo-lg.png" alt="hypervocal logo" />
+					</a>
 				</li>
 				<li>
-				    <a href="http://www.racialicious.com/" target="_blank">
-				        <img class="greyscaleImg wideImg" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/racialicious-logo-for-splash.png" alt="racialicious logo" />
-				        <img class="colorImg wideImg" style="display:none;" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/racialicious-logo-for-splash.png" alt="racialicious logo" />
-				    </a>
+					<a href="http://www.racialicious.com/" target="_blank">
+						<img class="greyscaleImg wideImg" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/racialicious-logo-for-splash.png" alt="racialicious logo" />
+						<img class="colorImg wideImg" style="display:none;" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/racialicious-logo-for-splash.png" alt="racialicious logo" />
+					</a>
 				</li>
 				<!--
 				<li>
-				    <a href="http://www.fathomaway.com/" target="_blank">
-				        <img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/fathom-logo-lg.png" alt="fathom logo" />
-				    </a>
+					<a href="http://www.fathomaway.com/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/fathom-logo-lg.png" alt="fathom logo" />
+					</a>
 				</li>
 				<li>
-				    <a href="http://www.reuters.com/" target="_blank">
-				        <img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/reuters-logo-lg.png" alt="reuters logo" />
-				    </a>
+					<a href="http://www.reuters.com/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/reuters-logo-lg.png" alt="reuters logo" />
+					</a>
 				</li>
 				<li>
-				    <a href="http://www.dailycandy.com/" target="_blank">
-				        <img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/dailycandy-logo-lg.png" alt="dailycandy logo" />
-				    </a>
+					<a href="http://www.dailycandy.com/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/dailycandy-logo-lg.png" alt="dailycandy logo" />
+					</a>
 				</li>
 				<li>
-				    <a href="http://www.foodnetwork.co.uk/" target="_blank">
-				        <img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/foodnetwork_uk-logo-lg.png" alt="foodnetwork logo" />
-				    </a>
+					<a href="http://www.foodnetwork.co.uk/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/foodnetwork_uk-logo-lg.png" alt="foodnetwork logo" />
+					</a>
 				</li>
 				<li>
-				    <a href="http://www.nearlyweds.com/" target="_blank">
-				        <img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/nearlyweds-logo-lg.png" alt="nearlyweds logo" />
-				    </a>
+					<a href="http://www.nearlyweds.com/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/nearlyweds-logo-lg.png" alt="nearlyweds logo" />
+					</a>
 				</li>
 				<li>
-				    <a href="http://www.onewed.com/" target="_blank">
-				        <img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/onewed-logo-lg.png" alt="onewed logo" />
-				    </a>
+					<a href="http://www.onewed.com/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/onewed-logo-lg.png" alt="onewed logo" />
+					</a>
 				</li>
 				<li>
-				    <a href="http://www.politico.com/" target="_blank">
-				        <img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/politico-logo-lg.png" alt="politico logo" />
-				    </a>
+					<a href="http://www.politico.com/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/politico-logo-lg.png" alt="politico logo" />
+					</a>
 				</li>
 				<li>
-				    <a href="http://www.themarknews.com/" target="_blank">
-				        <img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/themark-logo-lg.png" alt="themarknews logo" />
-				    </a>
+					<a href="http://www.themarknews.com/" target="_blank">
+						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/themark-logo-lg.png" alt="themarknews logo" />
+					</a>
 				</li>
 				-->
 			</ul>
@@ -185,7 +238,7 @@
 		</div>
 	</div>
 </div>
-<div id="footer">
+<div id="footer" class="rdr">
 	<div class="footerLinks">
 		<ul class="footerLinksLeft">
 			<li>
@@ -203,7 +256,7 @@
 				<!--
 				this isn't working yet... cookie_user isn't being passed in yet.
 				-->
-			    <div id="user">
+				<div id="user">
 					<div id="fb-logged-in" {% if not cookie_user.social_user %}style="display:none;"{% endif %}>
 						<a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/><strong>{{ cookie_user.social_user.full_name }}</strong></a>
 					</div>
@@ -216,8 +269,14 @@
 		<div class="clearDiv"></div>
 	</div>
 </div>
-
 {% endblock %}
 
 {% block footer %}
 {% endblock %}
+
+{% block pageJS %}
+<script type="text/javascript" src="{{ STATIC_URL }}site/js/jquery.cycle/jquery.cycle.all.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}site/js/splash.js"></script>
+<script src="/widget/readrboard_splash/" type="text/javascript"></script>
+{% endblock %}
+<!-- widget for slideshow -->
