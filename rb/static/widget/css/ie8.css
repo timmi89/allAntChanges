@@ -1,7 +1,7 @@
 @font-face {
     font-family:'ReadrLeague';
     /* IE */
-    src:url( 'http://www.readrboard.com/static/global/css/LeagueGothic.eot' );
+    src:url( '../../static/global/css/LeagueGothic.eot' );
     /*src:url('mhtml:http://www.readrboard.com/static/widget/css/ie.css!ReadrLeagueEncoded');*/
 }
 
