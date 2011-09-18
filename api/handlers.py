@@ -320,7 +320,7 @@ class ContentSummaryHandler(AnonymousBaseHandler):
 class PageDataHandler(AnonymousBaseHandler):
     @json_data
     @status_response
-    def read(self, request, pageid=None):
+    def read(self, request, data, pageid=None):
         pages = data['pages']
         pages_data = []
         

@@ -12,7 +12,8 @@ AWS_SECRET_ACCESS_KEY = '3JsWyCnRyzebR+bO6ptyFJ/ifh7PN2X4/cr4OxLE'
 AWS_STORAGE_BUCKET_NAME = "readrboard"
 AWS_CALLING_FORMAT = ""
 AWS_HEADERS = {
-    'Cache-Control': 'max-age=25200',
+    'Expires': 'Thu, 15 Apr 2020 20:00:00 GMT',
+    'Cache-Control': 'public, max-age=25200',
 }
 
 # For Facebook
