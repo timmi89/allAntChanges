@@ -91,12 +91,17 @@ USE_L10N = False
 MEDIA_ROOT = 'media/'
 MEDIA_URL = '/media/'
 STATIC_ROOT = 'rb/static/'
-#STATIC_URL = '/static/'                        
+#STATIC_URL = '/static/'
+                    
 if DEBUG:
     STATIC_URL = 'https://local.readrboard.com:8080/'
 else:
     STATIC_URL = 'https://s3.amazonaws.com/readrboard/'
-ADMIN_MEDIA_PREFIX = '/static/admin/'
+    
+if DEBUG:
+    ADMIN_MEDIA_PREFIX = 'static/admin/'
+else:
+    ADMIN_MEDIA_PREFIX = 'admin/'
 
 
 # Additional locations of static files                                                
