@@ -229,7 +229,10 @@ RDRAuth = {
 		$.cookie('img_url', RDRAuth.rdr_user.img_url, { expires: 365, path: '/' });
 		$.cookie('user_id', RDRAuth.rdr_user.user_id, { expires: 365, path: '/' });
 		$.cookie('readr_token', RDRAuth.rdr_user.readr_token, { expires: 365, path: '/' });
-		$.cookie('rdr_session', 'true');
+
+		var session_expiry = new Date(); 
+		session_expiry.setMinutes( session_expiry.getMinutes() + 15 );
+		$.cookie('rdr_session', 'true', { expires:session_expiry, path:'/' });
 	},
 	readUserCookie : function() {
 		// RDRAuth.rdr_user.first_name = $.cookie('first_name');

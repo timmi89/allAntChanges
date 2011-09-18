@@ -1929,33 +1929,6 @@ function readrBoard($R){
                     }
                 });
             },
-            initUserData: function(userShortName){
-                // request the RBGroup Data
-                $.ajax({
-                    url: RDR_rootPath+"/api/rbuser/",
-                    type: "get",
-                    contentType: "application/json",
-                    dataType: "jsonp",
-                    data: {
-                        short_name : userShortName
-                    },
-                    success: function(response, textStatus, XHR) {
-
-                        //get this from the DB?
-                        //this.anno_whitelist = "#module-article p";
-
-                        $.each(response, function(index, value){
-                            var rb_group = value;
-                            //Only expects back one user (index==0)
-
-                        });
-
-                    },
-                    error: function(response) {
-                        //for now, ignore error and carry on with mockup
-                    }
-                });
-            },
             initPageData: function(){
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
                 var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr"/>').appendTo('body');
@@ -2011,92 +1984,80 @@ function readrBoard($R){
                     }
                 }
 
-    			var key = 0;
+    			var sendData = [];
                 for ( var i in urls ) {
-
                     var url = urls[i];
                     var canonical = canonicals[i];
                     var title = titles[i];
 
-                    //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
-    				//might not want to send canonical, or, send it separately if/only if it's different than URL
-    				$.ajax({
-                        url: RDR_rootPath+"/api/page/",
-                        type: "get",
-                        context: { key:key },
-                        contentType: "application/json",
-                        dataType: "jsonp",
-                        data: {
-    						group_id: RDR.groupPermData.group_id,
-    						url: url,
-    						canonical_url: canonical,
-                            title: title
-    					},
-    					success: function(response) {
-                            var key = this.key;
-                            var $container = ( $(RDR.group.post_selector + '.rdr-page-key-'+key).length > 0 ) ? $(RDR.group.post_selector + '.rdr-page-key-'+key) : $('body.rdr-page-key-'+key);
-
-                            if ( $container.length == 1 ) {
-                                
-                                $container.removeClass( 'rdr-page-key-' + key );
-
-                                var hash = RDR.util.md5.hex_md5( String(response.data.id) );
-                                var tagName = $container.get(0).nodeName.toLowerCase();
-
-                                if ( !RDR.containers[hash] ) {
-                                    RDR.containers[hash] = {};
-                                    RDR.containers[hash].id = String(response.data.id);
-                                    RDR.containers[hash].kind = "page";
-                                    $container.data( 'page_id', String(response.data.id) ); // the page ID
-                                }
-
-                                // hash the "page" descendant nodes
-                                // RDR.actions.hashNodes( $container, "nomedia" );
-                                RDR.actions.hashNodes( $container );
-
-                                if ( response.data.containers.length > 0 ) {
-                                    var hashes = [];
-                                    hashes[ response.data.id ] = [];
-                                    for ( var i in response.data.containers ) {
-                                        hashes[ response.data.id ].push( response.data.containers[i].hash );
-                                    }
-                                    RDR.actions.sendHashes( hashes );
-                                }
-
-                                //init the widgetSummary
-                                var widgetSummarySettings = response;
-                                if ( $container.find( RDR.group.summary_widget_selector + '.rdr-page-widget-key-' + key).length == 1 ) {
-                                    widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector + '.rdr-page-widget-key-'+key);
-                                    widgetSummarySettings.jqFunc = "after";
-                                } else {
-                                    widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
-                                    widgetSummarySettings.jqFunc = "append";
-                                }
-                                
-                                if ( ($('div.rdr-summary').length==0) || ( $('div.rdr-summary').length < $(RDR.group.post_selector).length ) ) {
-                                    widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
-                                }
-
-                                // [ porter ] i can explain...
-                                // if ( ( $('#rdr-page-summary').length == 1 && key == 0 ) || ( urls.length > 1 && key > 0 ) || ( urls.length == 1 ) ) {
-                                // if (  ) {}
-                                // }
-
-                                //insertImgIcons(response);
-                               
-                                //to be normally called on success of ajax call
-                            }
-                            $RDR.dequeue('initAjax');
-
-                        },
-                        error: function(response) {
-                            //for now, ignore error and carry on with mockup
-                        }
-    				});
-                
-                // increment the key counter
-                key++;
+                    sendData.push( {
+                        group_id: RDR.groupPermData.group_id,
+                        url: url,
+                        canonical_url: canonical,
+                        title: title
+                    });
                 }
+
+                //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
+				//might not want to send canonical, or, send it separately if/only if it's different than URL
+				$.ajax({
+                    url: RDR_rootPath+"/api/page/",
+                    type: "get",
+                    contentType: "application/json",
+                    dataType: "jsonp",
+                    data: json: $.toJSON(sendData),
+					success: function(response) {
+                        var key = this.key;
+                        var $container = ( $(RDR.group.post_selector + '.rdr-page-key-'+key).length > 0 ) ? $(RDR.group.post_selector + '.rdr-page-key-'+key) : $('body.rdr-page-key-'+key);
+
+                        if ( $container.length == 1 ) {
+                            
+                            $container.removeClass( 'rdr-page-key-' + key );
+
+                            var hash = RDR.util.md5.hex_md5( String(response.data.id) );
+                            var tagName = $container.get(0).nodeName.toLowerCase();
+
+                            if ( !RDR.containers[hash] ) {
+                                RDR.containers[hash] = {};
+                                RDR.containers[hash].id = String(response.data.id);
+                                RDR.containers[hash].kind = "page";
+                                $container.data( 'page_id', String(response.data.id) ); // the page ID
+                            }
+
+                            // hash the "page" descendant nodes
+                            // RDR.actions.hashNodes( $container, "nomedia" );
+                            RDR.actions.hashNodes( $container );
+
+                            if ( response.data.containers.length > 0 ) {
+                                var hashes = [];
+                                hashes[ response.data.id ] = [];
+                                for ( var i in response.data.containers ) {
+                                    hashes[ response.data.id ].push( response.data.containers[i].hash );
+                                }
+                                RDR.actions.sendHashes( hashes );
+                            }
+
+                            //init the widgetSummary
+                            var widgetSummarySettings = response;
+                            if ( $container.find( RDR.group.summary_widget_selector + '.rdr-page-widget-key-' + key).length == 1 ) {
+                                widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector + '.rdr-page-widget-key-'+key);
+                                widgetSummarySettings.jqFunc = "after";
+                            } else {
+                                widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
+                                widgetSummarySettings.jqFunc = "append";
+                            }
+                            
+                            if ( ($('div.rdr-summary').length==0) || ( $('div.rdr-summary').length < $(RDR.group.post_selector).length ) ) {
+                                widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
+                            }
+                        }
+                        $RDR.dequeue('initAjax');
+
+                    },
+                    error: function(response) {
+                        //for now, ignore error and carry on with mockup
+                    }
+				});
 
             },
             initEnvironment: function(){
@@ -6438,10 +6399,6 @@ function $RFunctions($R){
                         var $a_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"Add this reaction to this page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
                         $a_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-'+tag.id );
                         $('#rdr_sandbox').append( $a_tooltip );
-
-                        var $span_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText": tagCount+' '+peoples+' reacted <strong style="font-weight:bold;color:#008be4;">'+tag.body+'</strong> to something on this page.'}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
-                        $span_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-count-'+tag.id );
-                        $('#rdr_sandbox').append( $span_tooltip );
                         
                         $react.append( $a );
 
@@ -6452,7 +6409,7 @@ function $RFunctions($R){
                                     aOffsets = $a.offset();
 
                                 var tooltip_top = ( aOffsets.top - 45 ),
-                                    tooltip_left = ( aOffsets.left + ( $a.width() / 2 ) - 125 );
+                                    tooltip_left = ( aOffsets.left + ( $a.width() / 2 ) - 100 );
 
                                 $tooltip.css('top', tooltip_top + "px" );
                                 $tooltip.css('left', tooltip_left + "px" );
@@ -6468,29 +6425,6 @@ function $RFunctions($R){
                             args = { tag:tag, hash:hash, uiMode:'write', kind:"page"};
                             RDR.actions.interactions.ajax( args, 'tag', 'create');
                         });
-
-                        $span.hover(
-                            function() {
-                                var $span = $(this),
-                                    $tooltip = $('#rdr-tooltip-summary-tag-count-' + $(this).parent().data('tag_id') ),
-                                    spanOffsets = $span.offset();
-                                
-                                var tooltip_top = ( spanOffsets.top - 70 ),
-                                    tooltip_left = ( spanOffsets.left + ( $span.width() / 2 ) - 115 );
-
-                                $tooltip.css('top', tooltip_top + "px" );
-                                $tooltip.css('left', tooltip_left + "px" );
-                                $tooltip.show();
-                                
-                                $('#rdr-tooltip-summary-tag-' + $(this).parent().data('tag_id') ).hide();
-
-                                // prevent bubbling up to $a
-                                return false;
-                            },
-                            function() {
-                                $('#rdr-tooltip-summary-tag-count-' + $(this).parent().data('tag_id') ).hide();
-                            }
-                        );
                     }
 
                     if ( tagCount == "" ) $span.hide();
