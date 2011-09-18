@@ -318,49 +318,58 @@ class ContentSummaryHandler(AnonymousBaseHandler):
         return content_summaries
 
 class PageDataHandler(AnonymousBaseHandler):
+    @json_data
     @status_response
-    def read(self, request, pageid=None):
-        page = getPage(request, pageid)
+    def read(self, request, data, pageid=None):
+        pages = data['pages']
+        pages_data = []
         
-        # Find all the interactions on page
-        iop = Interaction.objects.filter(page=page)
-        iop = iop.exclude(content__kind='page')
+        for page in pages:
+            current_page = getPage(request, page)
         
-        # Retrieve containers
-        containers = Container.objects.filter(id__in=iop.values('container'))
+            # Find all the interactions on page
+            iop = Interaction.objects.filter(page=current_page)
+            iop = iop.exclude(content__kind='page')
         
-        # ---Get page interaction counts, grouped by kind---
-        # Focus on values for 'kind'
-        values = iop.order_by('kind').values('kind')
-        # Annotate values with count of interactions
-        summary = values.annotate(count=Count('id'))
+            # Retrieve containers
+            containers = Container.objects.filter(id__in=iop.values('container'))
         
-        # ---Find top 10 tags on a given page---
-        tags = InteractionNode.objects.filter(interaction__kind='tag', interaction__page=page)
-        ordered_tags = tags.order_by('body')
-        tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
-        toptags = tagcounts.order_by('-tag_count')[:10].values('id','tag_count','body')
+            # ---Get page interaction counts, grouped by kind---
+            # Focus on values for 'kind'
+            values = iop.order_by('kind').values('kind')
+            # Annotate values with count of interactions
+            summary = values.annotate(count=Count('id'))
+        
+            # ---Find top 10 tags on a given page---
+            tags = InteractionNode.objects.filter(interaction__kind='tag', interaction__page=current_page)
+            ordered_tags = tags.order_by('body')
+            tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
+            toptags = tagcounts.order_by('-tag_count')[:10].values('id','tag_count','body')
           
-        # ---Find top 10 shares on a give page---
-        content = Content.objects.filter(interaction__page=page.id)
-        shares = content.filter(interaction__kind='shr')
-        sharecounts = shares.annotate(Count("id"))
-        topshares = sharecounts.values("body").order_by()[:10]
+            # ---Find top 10 shares on a give page---
+            content = Content.objects.filter(interaction__page=current_page.id)
+            shares = content.filter(interaction__kind='shr')
+            sharecounts = shares.annotate(Count("id"))
+            topshares = sharecounts.values("body").order_by()[:10]
 
-        # ---Find top 10 non-temp users on a given page---
-        socialusers = SocialUser.objects.filter(user__interaction__page=page.id)
+            # ---Find top 10 non-temp users on a given page---
+            socialusers = SocialUser.objects.filter(user__interaction__page=current_page.id)
 
-        userinteract = socialusers.annotate(interactions=Count('user__interaction')).select_related('user')
-        topusers = userinteract.order_by('-interactions').values('user','full_name','img_url','interactions')[:10]
+            userinteract = socialusers.annotate(interactions=Count('user__interaction')).select_related('user')
+            topusers = userinteract.order_by('-interactions').values('user','full_name','img_url','interactions')[:10]
         
-        return dict(
-            id=page.id,
-            summary=summary,
-            toptags=toptags,
-            topusers=topusers,
-            topshares=topshares,
-            containers=containers
-        )
+            pages_data.append(
+                dict(
+                    id=current_page.id,
+                    summary=summary,
+                    toptags=toptags,
+                    topusers=topusers,
+                    topshares=topshares,
+                    containers=containers
+                )
+            )
+        
+        return pages_data
 
 class SettingsHandler(AnonymousBaseHandler):
     model = Group

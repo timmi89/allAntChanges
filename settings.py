@@ -5,8 +5,16 @@ if uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
 
 # For Amazon web services
-AWS_ACCESS_KEY_ID = ''
-AWS_SECRET_ACCESS_KEY = ''
+AWS_ACCESS_KEY_ID = 'AKIAINM2FE35X6K77P2A'
+AWS_SECRET_ACCESS_KEY = '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'
+
+# For S3
+AWS_STORAGE_BUCKET_NAME = "readrboard"
+AWS_CALLING_FORMAT = ""
+AWS_HEADERS = {
+    'Expires': 'Thu, 15 Apr 2020 20:00:00 GMT',
+    'Cache-Control': 'public, max-age=25200',
+}
 
 # For Facebook
 FACEBOOK_APP_ID = '163759626987948'
@@ -22,6 +30,8 @@ ADMINS = (
 if DEBUG:
     
     BASE_URL = 'http://local.readrboard.com:8080'
+    STATIC_URL = '/static/'
+    STATIC_ROOT = 'rb/static/'
 
     DATABASES = {
       'default': {
@@ -37,7 +47,10 @@ if DEBUG:
 else:
 
     BASE_URL = 'http://www.readrboard.com'
-
+    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    STATIC_URL = 'http://s3.amazonaws.com/readrboard/'
+    
     DATABASES = {
       'default': {
         'ENGINE':   'django.db.backends.mysql',
@@ -84,10 +97,8 @@ USE_L10N = False
 
 MEDIA_ROOT = 'media/'
 MEDIA_URL = '/media/'
-STATIC_ROOT = 'rb/static/'
-STATIC_URL = '/static/'                        
-ADMIN_MEDIA_PREFIX = '/static/admin/'
-
+    
+#ADMIN_MEDIA_PREFIX = 'admin/'
 
 # Additional locations of static files                                                
 STATICFILES_DIRS = (
@@ -99,7 +110,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',                       
+#   'django.contrib.staticfiles.finders.DefaultStorageFinder',                       
 )
 
 # Make this unique, and don't share it with anybody.
@@ -158,6 +169,7 @@ INSTALLED_APPS = [
     'rb',
     'piston',
     'south',
+    'storages'
     #'treebeard',
     #'debug_toolbar',
     #'autofixture',
