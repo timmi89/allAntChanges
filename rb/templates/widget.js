@@ -1997,7 +1997,7 @@ function readrBoard($R){
                     var page = {
                         group_id: RDR.groupPermData.group_id,
                         url: url,
-                        canonical_url: canonical,
+                        canonical_url: url == canonical ? "same" : canonical,
                         title: title
                     }
                     sendData.pages.push( page );
