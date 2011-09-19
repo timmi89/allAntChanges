@@ -119,9 +119,9 @@ def getHost(request):
     return host
 
 def stripQueryString(url):
-    qs = urlsplit(url).query
-    if qs:
-        url = url[:url.index(qs)-1]
+    #qs = urlsplit(url).query
+    #if qs:
+    #    url = url[:url.index(qs)-1]
     return url
 
 def getPage(host, page_request, page_id=None):
