@@ -321,7 +321,6 @@ class PageDataHandler(AnonymousBaseHandler):
     @json_data
     @status_response
     def read(self, request, data, pageid=None):
-        return
         requested_pages = data['pages']
         pages_data = []
         
