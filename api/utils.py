@@ -119,23 +119,21 @@ def getHost(request):
     return host
 
 def stripQueryString(url):
-    qs = urlsplit(url).query
-    if qs:
-        url = url[:url.index(qs)-1]
+    #qs = urlsplit(url).query
+    #if qs:
+    #    url = url[:url.index(qs)-1]
     return url
 
-def getPage(request, page_request, page_id=None):
+def getPage(host, page_request, page_id=None):
     canonical = page_request.get('canonical_url', None)
     url = page_request.get('url', None)
     title = page_request.get('title', None)
     group_id = page_request.get('group_id', 1)
-    host = getHost(request)
-    
     site = Site.objects.get(domain=host, group=group_id)
 
     # Remove querystring if it doesn't determine content
-    if not site.querystring_content:
-        url = stripQueryString(url)
+    #if not site.querystring_content:
+        #url = stripQueryString(url)
 
     # Handle sites with hash but no bang
     if '#' in url and '!' not in url:
@@ -144,6 +142,7 @@ def getPage(request, page_request, page_id=None):
     if page_id:
         return Page.objects.get(id=page_id)
     elif canonical:
+        if canonical == "same": canonical = url
         page = Page.objects.get_or_create(
             canonical_url=canonical,
             defaults={'url':url, 'site':site, 'title':title}

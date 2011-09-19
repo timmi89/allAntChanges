@@ -1987,7 +1987,7 @@ function readrBoard($R){
                 }
 
     			var sendData = {};
-                sendData.pages = [];
+                sendData.pages = {};
 
                 for ( var i in urls ) {
                     var url = urls[i];
@@ -2000,7 +2000,8 @@ function readrBoard($R){
                         canonical_url: (url == canonical) ? "same" : canonical,
                         title: title
                     }
-                    sendData.pages.push( page );
+                    // sendData.pages.push( page );
+                    $.extend( sendData.pages, page );
                 }
 
                 //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
