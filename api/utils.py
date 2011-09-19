@@ -124,12 +124,11 @@ def stripQueryString(url):
         url = url[:url.index(qs)-1]
     return url
 
-def getPage(request, page_request, page_id=None):
+def getPage(host, page_request, page_id=None):
     canonical = page_request.get('canonical_url', None)
     url = page_request.get('url', None)
     title = page_request.get('title', None)
     group_id = page_request.get('group_id', 1)
-    host = getHost(request)
     
     site = Site.objects.get(domain=host, group=group_id)
 
