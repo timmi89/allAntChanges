@@ -128,7 +128,8 @@ def getPage(host, page_request, page_id=None):
     url = page_request.get('url', None)
     title = page_request.get('title', None)
     group_id = page_request.get('group_id', 1)
-    site = Site.objects.get(domain=host, group=group_id)
+    print "TYPE !!!! ---- ", type(group_id)
+    site = Site.objects.get(domain=host, group=int(group_id))
 
     # Remove querystring if it doesn't determine content
     if not site.querystring_content:
