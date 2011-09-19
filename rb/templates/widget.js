@@ -1995,7 +1995,7 @@ function readrBoard($R){
                     var title = titles[i];
 
                     var page = {
-                        group_id: RDR.groupPermData.group_id,
+                        group_id: parseInt(RDR.groupPermData.group_id),
                         url: url,
                         canonical_url: canonical,
                         title: title
