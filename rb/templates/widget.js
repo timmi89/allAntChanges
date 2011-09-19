@@ -1988,7 +1988,7 @@ function readrBoard($R){
 
     			var sendData = {};
                 sendData.pages = [];
-
+console.dir(urls);
                 for ( var i in urls ) {
                     var url = urls[i];
                     var canonical = canonicals[i];
@@ -2000,9 +2000,12 @@ function readrBoard($R){
                         canonical_url: canonical,
                         title: title
                     }
-                    sendData.pages.push( page );
+                    
+                    if ( typeof page.url == "string" && typeof page.group_id == "number" && typeof page.canonical_url == "string" && typeof page.title == "string" ) {
+                        sendData.pages.push( page );
+                    }
                 }
-
+console.dir(sendData);
                 //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
 				//might not want to send canonical, or, send it separately if/only if it's different than URL
 				$.ajax({
