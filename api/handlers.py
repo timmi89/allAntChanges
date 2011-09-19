@@ -328,6 +328,7 @@ class PageDataHandler(AnonymousBaseHandler):
         
         for requested_page in requested_pages:
             current_page = getPage(host, requested_page)
+            print "======> ", requested_page['url']
         
             # Find all the interactions on page
             iop = Interaction.objects.filter(page=current_page)
