@@ -10,7 +10,6 @@ from urlparse import urlsplit, urlunsplit
 blacklist = ['fuck','shit','poop','cock','cunt']
 
 def getTagCommentData(comment):
-    print comment
     comment_data = {}
     comment_data['comment'] = comment.interaction_node.body
     comment_data['user'] = comment.user
@@ -119,9 +118,9 @@ def getHost(request):
     return host
 
 def stripQueryString(url):
-    #qs = urlsplit(url).query
-    #if qs:
-    #    url = url[:url.index(qs)-1]
+    qs = urlsplit(url).query
+    if qs:
+        url = url[:url.index(qs)-1]
     return url
 
 def getPage(host, page_request, page_id=None):
@@ -132,8 +131,8 @@ def getPage(host, page_request, page_id=None):
     site = Site.objects.get(domain=host, group=group_id)
 
     # Remove querystring if it doesn't determine content
-    #if not site.querystring_content:
-        #url = stripQueryString(url)
+    if not site.querystring_content:
+        url = stripQueryString(url)
 
     # Handle sites with hash but no bang
     if '#' in url and '!' not in url:
