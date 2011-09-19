@@ -1987,7 +1987,7 @@ function readrBoard($R){
                 }
 
     			var sendData = {};
-                sendData.pages = {};
+                sendData.pages = [];
 
                 for ( var i in urls ) {
                     var url = urls[i];
@@ -1997,11 +1997,10 @@ function readrBoard($R){
                     var page = {
                         group_id: RDR.groupPermData.group_id,
                         url: url,
-                        canonical_url: url == canonical ? "same" : canonical,
+                        canonical_url: canonical,
                         title: title
                     }
-                    // sendData.pages.push( page );
-                    $.extend( sendData.pages, page );
+                    sendData.pages.push( page );
                 }
 
                 //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
@@ -5819,7 +5818,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 // make sure it's not selecting inside the RDR windows.
                 // todo: (the rdr_indicator is an expection.
                 // The way we're dealing with this is a little weird.  It works, but could be cleaner)
-                if ( $mouse_target.closest('.rdr, .no-rdr').length && !$mouse_target.closest('.rdr_indicator').length ) return;
+                if ( $mouse_target.closest('.rdr').length && !$mouse_target.closest('.rdr_indicator').length ) return;
                 //else
 
                 var $blockParent = null;
