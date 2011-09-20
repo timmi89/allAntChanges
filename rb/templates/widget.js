@@ -1988,7 +1988,7 @@ function readrBoard($R){
 
     			var sendData = {};
                 sendData.pages = [];
-
+console.dir(urls);
                 for ( var i in urls ) {
                     var url = urls[i];
                     var canonical = canonicals[i];
@@ -1997,12 +1997,15 @@ function readrBoard($R){
                     var page = {
                         group_id: parseInt(RDR.groupPermData.group_id),
                         url: url,
-                        canonical_url: canonical,
+                        canonical_url: (url == canonical) ? "same" : canonical,
                         title: title
                     }
-                    sendData.pages.push( page );
+                    
+                    if ( typeof page.url == "string" && typeof page.group_id == "number" && typeof page.canonical_url == "string" && typeof page.title == "string" ) {
+                        sendData.pages.push( page );
+                    }
                 }
-
+console.dir(sendData);
                 //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
 				//might not want to send canonical, or, send it separately if/only if it's different than URL
 				$.ajax({
@@ -5818,7 +5821,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 // make sure it's not selecting inside the RDR windows.
                 // todo: (the rdr_indicator is an expection.
                 // The way we're dealing with this is a little weird.  It works, but could be cleaner)
-                if ( $mouse_target.closest('.rdr').length && !$mouse_target.closest('.rdr_indicator').length ) return;
+                if ( $mouse_target.closest('.rdr, .no-rdr').length && !$mouse_target.closest('.rdr_indicator').length ) return;
                 //else
 
                 var $blockParent = null;
