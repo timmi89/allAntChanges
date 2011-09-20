@@ -322,28 +322,34 @@ class PageDataHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, data, pageid=None):
         requested_pages = data['pages']
-        pages_data = []
-        
         host = getHost(request)
         
+        pages = []
         for requested_page in requested_pages:
-            current_page = getPage(host, requested_page)
+            pages.append(getPage(host, requested_page))
         
+        pages_data = []
+        
+        # Explicitly call list to evaluate queryset here
+        interactions = Interaction.objects.filter(page__in=pages)
+        
+        for current_page in pages:
             # Find all the interactions on page
-            iop = Interaction.objects.filter(page=current_page)
-            iop = iop.exclude(content__kind='page')
+            iop = interactions.filter(page=current_page)
         
             # Retrieve containers
             containers = Container.objects.filter(id__in=iop.values('container'))
         
-            # ---Get page interaction counts, grouped by kind---
-            # Focus on values for 'kind'
+            # Get page interaction counts, grouped by kind
             values = iop.order_by('kind').values('kind')
             # Annotate values with count of interactions
             summary = values.annotate(count=Count('id'))
         
             # ---Find top 10 tags on a given page---
-            tags = InteractionNode.objects.filter(interaction__kind='tag', interaction__page=current_page)
+            tags = InteractionNode.objects.filter(
+                interaction__kind='tag',
+                interaction__page=current_page
+            )
             ordered_tags = tags.order_by('body')
             tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
             toptags = tagcounts.order_by('-tag_count')[:10].values('id','tag_count','body')
