@@ -650,7 +650,7 @@ function readrBoard($R){
                 if (!summary) {
                     // setup the summary
                     // FORCING SUMMARY CREATION
-                    var summary = RDR.util.makeEmptySummary(hash);
+                    summary = RDR.util.makeEmptySummary(hash);
                     RDR.actions.containers.setup(summary);
                 }
                 // summary = RDR.summaries[hash];
@@ -1228,7 +1228,7 @@ function readrBoard($R){
                 
                 // store the page_id on this node to prevent walking-up again later
                 if ( $('.rdr-'+hash).hasClass('rdr-page-container') && !$('.rdr-'+hash).data('page_id') ) {
-                    $('.rdr-'+hash).data('page_id', page_id)
+                    $('.rdr-'+hash).data('page_id', page_id);
                 }
 
                 return page_id;
@@ -1918,7 +1918,7 @@ function readrBoard($R){
 
                         // it's not a CSS URL, but rather custom CSS rules.  We should change the name in the model...
                         // this embeds custom CSS.
-                        if ( RDR.group.custom_css && RDR.group.custom_css != "" ) {
+                        if ( RDR.group.custom_css && RDR.group.custom_css !== "" ) {
                             $('head').append( $('<style type="text/css">' + RDR.group.custom_css + '</style>') );
                         }
 
@@ -1948,7 +1948,7 @@ function readrBoard($R){
 
                 // if multiple posts, add additional "pages"
                 if ( 
-                    ( RDR.group.post_selector != "" && RDR.group.post_href_selector != "" && RDR.group.summary_widget_selector != "" ) &&
+                    ( RDR.group.post_selector !== "" && RDR.group.post_href_selector !== "" && RDR.group.summary_widget_selector !== "" ) &&
                     ( $(RDR.group.post_selector).length > 0 ) 
                    ) {
                         $(RDR.group.post_selector).each( function(){
@@ -1999,7 +1999,7 @@ console.dir(urls);
                         url: url,
                         canonical_url: (url == canonical) ? "same" : canonical,
                         title: title
-                    }
+                    };
                     
                     if ( typeof page.url == "string" && typeof page.group_id == "number" && typeof page.canonical_url == "string" && typeof page.title == "string" ) {
                         sendData.pages.push( page );
@@ -2056,7 +2056,7 @@ console.dir(sendData);
                                     widgetSummarySettings.jqFunc = "append";
                                 }
                                 
-                                if ( ($('div.rdr-summary').length==0) || ( $('div.rdr-summary').length < $(RDR.group.post_selector).length ) ) {
+                                if ( ($('div.rdr-summary').length===0) || ( $('div.rdr-summary').length < $(RDR.group.post_selector).length ) ) {
                                     widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
                                 }
                             }
@@ -2311,19 +2311,24 @@ console.dir(sendData);
                 //     return hashes;
                 // }
 
+                var page_id, sendable_hashes, $hashable_node, sendData;
+
                 for (var i in hashes) {
-                    var page_id = i;
-                    var sendable_hashes = hashes[i];
-
-
+                    page_id = i;
+                    sendable_hashes = hashes[i];
+                
                     if ( !page_id || typeof sendable_hashes != "object" ) {
-                        return;
+                        return; //TODO: This will return for the entire sendHashes function, not just this for loop iteration - is that what is intended?
                     }
                     
                     for ( var j in sendable_hashes ) {
                         if ( typeof sendable_hashes[j] == "string" ) {
-                            if ( sendable_hashes[j] ) var $hashable_node = $('.rdr-' + sendable_hashes[j]);
-                            if ( $hashable_node && $hashable_node.length == 1 ) $hashable_node.addClass('rdr-hashed');
+                            if ( sendable_hashes[j] ) {
+                                $hashable_node = $('.rdr-' + sendable_hashes[j]);
+                                if ( $hashable_node && $hashable_node.length == 1 ) {
+                                    $hashable_node.addClass('rdr-hashed');
+                                }
+                            }
                         }
                         // } else {
                         //     delete sendable_hashes[j];
@@ -2331,7 +2336,7 @@ console.dir(sendData);
                     }
 
                     //build the sendData with the hashes from above
-    				var sendData = {
+    				sendData = {
     					short_name : RDR.group.short_name,
     					pageID: page_id,
     					hashes: sendable_hashes
@@ -3143,10 +3148,15 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         ////RDR.actions.interactions.tag.customSendData:
                         //temp tie-over    
 
-                        if (args.kind && args.kind == "page") {
-                            var hash = args.hash,
-                                tag = args.tag,
-                                kind = "page";
+                        var hash = args.hash,
+                            summary = RDR.summaries[hash],
+                            kind,
+                            tag,
+                            sendData;
+
+                        if (args.kind && args.kind == "page") {    
+                            kind = "page";
+                            tag = args.tag;
 
                             content_node_data = {
                                 'container': hash,
@@ -3155,7 +3165,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 'hash':hash
                             };
 
-                            var sendData = {
+                            sendData = {
                                 //interaction level attrs
                                 "tag" : tag,
                                 "node": null,
@@ -3169,15 +3179,14 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             };
                         } else  {
 
-                            var hash = args.hash,
-                                summary = RDR.summaries[hash],
-                                kind = summary.kind;
+                            kind = summary.kind;
                           
                             var $container = $('.rdr-'+hash);
 
                             var rindow = args.rindow,
                                 tag_li = args.tag;
-                            var tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag;
+                            
+                            tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag;
 
                             var content_node_data = {};
                             //If readmode, we will have a content_node.  If not, use content_node_data, and build a new content_node on success.
@@ -3218,7 +3227,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 }
                             }
 
-                            var sendData = {
+                            sendData = {
                                 //interaction level attrs
                                 "tag" : tag,
                                 "node": content_node,                        //null if writemode
@@ -3245,13 +3254,13 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 $summary_box = $('.rdr-page-container.rdr-'+args.hash+' div.rdr-summary');
                                 $span = $summary_box.find('a.rdr_tag_' + args.tag.id + ' span');
 
-                                if ( $span.length == 0 && $summary_box.find('a.rdr_tag_' + args.tag.id).length == 0 ) { // it's a custom tag
+                                if ( $span.length === 0 && $summary_box.find('a.rdr_tag_' + args.tag.id).length === 0 ) { // it's a custom tag
                                     $summary_box.find('a.rdr_custom_tag').html( args.tag.body );
                                     $summary_box.find('a.rdr_custom_tag').append( '<span class="rdr_tag_count">1</span>' );
                                     $('#rdr-tooltip-summary-tag-custom').remove();
                                 }
 
-                                var tagCount = ( $span.text() == "" ) ? 0 : parseInt( $span.text() );
+                                var tagCount = ( $span.text() === "" ) ? 0 : parseInt( $span.text() );
                                 tagCount++;
 
                                 $span.text( tagCount );
@@ -3459,7 +3468,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     onFail: function(args){
                         if (args.kind && args.kind == "page") {
                             var $message = "";
-                            if ( args.response.data && args.response.data.existing && args.response.data.existing == true ) {
+                            if ( args.response.data && args.response.data.existing && args.response.data.existing === true ) {
                                 $message = $('<em>You have already given that reaction.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon: <img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr" style="background:url({{ STATIC_URL }}widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>');
                             } else if ( args.response.message.indexOf("Temporary user interaction limit reached") != -1 ) {
                                 $message = $('<em>To continue adding reactions, please <a href="javascript:void(0);" style="color:#008be4;" onclick="RDR.session.showLoginPanel();">Connect with Facebook</a>.</em><br><br><strong>Why:</strong> To encourage <strong style="color:#008be4;">high-quality participation from the community</strong>, <ins>we ask that you log in with Facebook. You\'ll also have a profile where you can revisit your reactions, bookmarks, and comments made using <strong style="color:#008be4;">ReadrBoard</strong>!</ins>');
