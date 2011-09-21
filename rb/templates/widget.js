@@ -2123,10 +2123,11 @@ console.dir(sendData);
 
                 // todo: this is a pretty wide hackey net - rethink later.
                 $('embed, video, object, iframe, img').live('mouseenter', function(){
-                    var hasBeenHashed = $(this).hasClass('rdr-hashed');
                     var $this = $(this);
+                    var hasBeenHashed = $this.hasClass('rdr-hashed'),
+                        isBlacklisted = $this.closest('.rdr, .no-rdr').length;
 
-                    if(!hasBeenHashed){
+                    if(!hasBeenHashed && !isBlacklisted){
                         $this.addClass('rdr_live_hover');
                         var hash = RDR.actions.hashNodes( $(this) );
                         if(hash){
