@@ -1941,10 +1941,20 @@ function readrBoard($R){
                 // make one call for the page unless post_selector, post_href_selector, summary_widget_selector are all set to not-an-empty-string AND are present on page
 
                 // defaults for just one page / main page
+                
+                /*
                 var urls = [];
                 var canonicals = [];
                 var titles = [];
                 var key = 0; // we use this to know which container to point to in the success call
+                */
+                var pagesArr = [],
+                    urlsArr = [],
+                    thisPage,
+                    key,
+                    url,
+                    canonical,
+                    title;
 
                 // if multiple posts, add additional "pages"
                 if ( 
@@ -1955,57 +1965,67 @@ function readrBoard($R){
                             var $post = $(this);
                             var $post_href = $post.find(RDR.group.post_href_selector);
                             var $summary_widget = $post.find(RDR.group.summary_widget_selector);
+                            
                             if ( $post_href.attr('href') ) {
-                                urls.push( $post_href.attr('href') );
-                                canonicals.push( $post_href.attr('href') );
-                                titles.push( $post_href.text() );
+                                url = $post_href.attr('href');
+                                urlsArr.push(url);
+
+                                thisPage = {
+                                    group_id: parseInt(RDR.groupPermData.group_id),
+                                    url: url,
+                                    canonical: 'same',
+                                    title: $post_href.text()
+                                }
+                                pagesArr.push(thisPage);
+                                key = pagesArr.length-1;
+
                                 if ( !$post.hasClass('rdr-page-container') ) {
                                     $post.addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
                                 }
                                 $summary_widget.addClass('rdr-page-widget-key-'+key);
-                                key++;
                             }
                         });
                 }
 
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
+                var pageUrl = window.location.href;
+                if ( $.inArray(pageUrl, urlsArr) == -1 ) {
+                    canonical = $('link[rel="canonical"]').length > 0 ?
+                                $('link[rel="canonical"]').attr('href') : "";
+                    title = $('meta[property="og:title"]').attr('content') ? 
+                            $('meta[property="og:title"]').attr('content') : 
+                                $('title').text() ? 
+                                $('title').text() : "";
 
-                if ( $.inArray(window.location.href, urls) == -1 ) {
-                    urls.push( window.location.href ); // + window.location.hash;
-                    canonicals.push( ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href') : "" );
-                    titles.push( ( $('meta[property="og:title"]').attr('content') ) ? $('meta[property="og:title"]').attr('content') : ( $('title').text() ) ? $('title').text():"" );
+                    thisPage = {
+                        group_id: parseInt(RDR.groupPermData.group_id),
+                        url: pageUrl,
+                        canonical: (pageUrl == canonical) ? "same" : canonical,
+                        title: title
+                    }
+    
+                    pagesArr.push(thisPage);
+                    key = pagesArr.length-1;
+
                     if ( !$( 'body' ).hasClass('rdr-page-container') ) {
                         $( 'body' ).addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
+                        
                         if ( $('#rdr-page-summary').length == 1 ) {
                             $('#rdr-page-summary').addClass('rdr-page-widget-key-'+key);
                         } else {
                             var $widget_key_last = $( 'body' ).find(RDR.group.summary_widget_selector).eq(0);
                             // this seems unnecessary, but, on a blogroll, we don't want to have two widget keys on the first post's summary box
-                            if ( !$widget_key_last.hasClass('rdr-page-widget-key-0') ) $widget_key_last.addClass('rdr-page-widget-key-'+key);
+                            if ( !$widget_key_last.hasClass('rdr-page-widget-key-0') ) {
+                                $widget_key_last.addClass('rdr-page-widget-key-'+key);
+                            }
                         }
                     }
                 }
 
-    			var sendData = {};
-                sendData.pages = [];
-console.dir(urls);
-                for ( var i in urls ) {
-                    var url = urls[i];
-                    var canonical = canonicals[i];
-                    var title = titles[i];
-
-                    var page = {
-                        group_id: parseInt(RDR.groupPermData.group_id),
-                        url: url,
-                        canonical_url: (url == canonical) ? "same" : canonical,
-                        title: title
-                    };
-                    
-                    if ( typeof page.url == "string" && typeof page.group_id == "number" && typeof page.canonical_url == "string" && typeof page.title == "string" ) {
-                        sendData.pages.push( page );
-                    }
-                }
-console.dir(sendData);
+    			var sendData = {
+                    pages: pagesArr
+                };
+                 
                 //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
 				//might not want to send canonical, or, send it separately if/only if it's different than URL
 				$.ajax({
