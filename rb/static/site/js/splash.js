@@ -62,8 +62,7 @@
 		            $('#promoGallery').data('direction', 'right')
 		        }
 		    }
-		});
-		    
+		}); 
 		$(".promoPlay").hide(); //starts off with pause shown and play hidden
 
 		$(".promoPlayPause").click(function (e) {
@@ -76,6 +75,8 @@
 		$("#promoControls a").click(function(e) {
 		    $(this).blur();
 		});
+		$("#promoControls").fadeIn();
+		
 		/*chrome was FOUCing this without this hack - hidden initially*/
 		$('#promoGallery iframe').show();
 		/*slideshow code end*/

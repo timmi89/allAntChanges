@@ -27,7 +27,7 @@
 	<h2 class="no-rdr">How are readers reacting to your content?</h2>
 	<div id="promoDiv" class="animationDiv">
 		<div id="promoGallery">
-			<div class="promoGalleryBody startSlide">
+			<div class="promoGalleryBody startSlide no-rdr">
 				<div class="rindow-img">
 					<img src="{{STATIC_URL}}site/images/rindow-for-splashpage.png" />
 				</div>
@@ -60,7 +60,8 @@
 				<iframe style="display:none;" width="450" height="280" frameborder="0" allowfullscreen="" src="http://www.youtube.com/embed/eD1i6IpU56o" class="rdr_video"></iframe>
 			</div>
 		</div>
-		<div id="promoControls" class="no-rdr">
+		<!-- show on slideshow init to avoid FOUC -->
+		<div id="promoControls" class="no-rdr" style="display:none;">
 			<div id="promoControlsInnerWrap">
 				<div class="promoPrev">
 					<a href="#">
