@@ -58,7 +58,7 @@ section.introBlurb{
 	position:relative;
 }
 #splashAnnounce h2, #splashAnnounce h3{
-	padding:40px 0;
+	padding:30px 0 40px 0;
     color: white;
     font-family: ReadrLeague,Arial;
     font-weight: normal;
@@ -68,10 +68,10 @@ section.introBlurb{
     font-size:62px;
 }
 #splashAnnounce h3{
-    font-size:40px;
+    font-size:50px;
 }
-#splashAnnounce .rindow-img{
-	
+#splashAnnounce .rindow-img img{
+	width:250px;
 }
 
 #splashBlurbs .blurbsInner, #splashBlurbs .partnerLogoSection{
@@ -214,22 +214,23 @@ section.introBlurb{
 	list-style:none;
 }
 #splashBlurbs ul.partnerLogos li img{
-	width:100px;
+	width:80px;
 	float:left;
 	padding:0 10px 0 0;
 }
 #splashBlurbs ul.partnerLogos li img.wideImg{
     position: relative;
-    width: 150px;
+    width: 120px;
 }
 #splashBlurbs .partnerLogoSection .moreLogos{
     float: left;
     margin-left: 15px;
     position: relative;
-    top: 40px;
+    top: 32px;
+    font-size:14px;
 }
 #splashBlurbs .partnerLogoSection h3{
-	font-size:24px;
+	font-size:18px;
 	padding-left:5px;
 }
 #footer{
@@ -271,7 +272,7 @@ section.introBlurb{
 	width:960px;
 	position:relative;
 	margin:auto;
-	height:320px;
+	height:350px;
 
 }
 #promoGallery{
@@ -323,11 +324,22 @@ section.introBlurb{
     width:30px;
 }
 #promoGallery .textSlide{
+	position: relative;
+	top: 20px;
+	width: 570px;
 	background:white;
-	padding:20px;
+	padding:20px 20px 30px 20px;
     margin: auto;
-    padding: 20px;
-    width: 670px;
+    margin-top:10px;
+	opacity: 0.75;
+    color:#222;
+
+    -moz-opacity: 0.75;
+    -khtml-opacity: 0.75;
+    filter: alpha(opacity=75);
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
 }
 #promoGallery .textSlide blockquote{
 	border:none;
@@ -344,4 +356,35 @@ section.introBlurb{
 }
 #promoGallery h4{
 	color:#666;
+}
+#markerAnnotationLearnMore{
+	position:absolute;
+	top:0;
+	left:0;
+}
+#markerAnnotationLearnMore img{
+	left: 750px;
+	position: relative;
+	top: 390px;
+	width: 160px;
+}
+#promoGallery .promoGalleryBody .markerAnnotation{
+	position:absolute;
+	top:0;
+	left:0;	
+    -moz-opacity: 0.75;
+    -khtml-opacity: 0.75;
+    filter: alpha(opacity=75);
+}
+#promoGallery .promoGalleryBody .markerAnnotation img{
+	width:180px;
+}
+#promoGallery .promoGalleryBody.slideImage .markerAnnotation{
+	left:120px;
+}
+#promoGallery .promoGalleryBody.slideText .markerAnnotation{
+	left:40px;
+}
+#promoGallery .promoGalleryBody.slideVideo .markerAnnotation{
+	left:100px;
 }

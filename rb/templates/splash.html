@@ -32,32 +32,56 @@
 					<img src="{{STATIC_URL}}site/images/rindow-for-splashpage.png" />
 				</div>
 			</div>
-			<div class="promoGalleryBody">
+			<div class="promoGalleryBody slideImage">
+				<!--
 				<img src="{{ STATIC_URL }}/demo/readrboard-demo/puppy.png" alt="" width="250" class="contentImg" />
-			</div>
-			<div class="promoGalleryBody">
-				<div class="textSlide">
-					<blockquote>
-						"If you ask 20 different readers why they read, they will all be right." <span class="author">-Teresa Nielsen Hayden</span>
-					</blockquote>
-					<!--
-					<blockquote>
-						"I'll never make that mistake again, reading the experts' opinions." <span class="author">-Richard Feynman</span>
-					</blockquote>
-					-->
-					<blockquote>
-						"It was impossible to get a conversation going, everybody was talking too much." <span class="author">-Yogi Berra</span>
-					</blockquote>
-					<blockquote>
-						"Write a wise saying and your name will live forever." <span class="author">-Anonymous</span>
-					</blockquote>
-					<p>
-					</p>
+				-->
+				<img src="{{ STATIC_URL }}/site/images/old-man-tricycle.jpg" alt="" width="400" class="contentImg" />
+				<div class="no-rdr markerAnnotation">
+					<img src="{{ STATIC_URL }}site/images/marker-annotation-image.png" alt="hover over that image" />
 				</div>
 			</div>
-			<div class="promoGalleryBody">
+			<div class="promoGalleryBody slideText">
+				<div class="textSlide">
+					<div>
+						<blockquote>
+							"If you ask 20 different readers why they read, they will all be right."
+						</blockquote>
+						<span class="author no-rdr">-Teresa Nielsen Hayden</span>
+					</div>
+					<!--
+					<p>
+						<blockquote>
+							"I'll never make that mistake again, reading the experts' opinions."
+						</blockquote>
+						<span class="author no-rdr">-Richard Feynman</span>
+					</p>
+					-->
+					<div>
+						<blockquote>
+							"Write a wise saying and your name will live forever."
+						</blockquote>
+						<span class="author no-rdr">-Anonymous</span>
+					</div>
+					<!--
+					<div>
+						<blockquote>
+							"It was impossible to get a conversation going, everybody was talking too much."
+						</blockquote>
+						<span class="author no-rdr">-Yogi Berra</span>
+					</div>
+					-->
+				</div>
+				<div class="no-rdr markerAnnotation">
+					<img src="{{ STATIC_URL }}site/images/marker-annotation-text.png" alt="select that text" />
+				</div>
+			</div>
+			<div class="promoGalleryBody slideVideo">
 				<!--chrome was FOUCing this without this hack - hide here, show with js-->
 				<iframe style="display:none;" width="450" height="280" frameborder="0" allowfullscreen="" src="http://www.youtube.com/embed/eD1i6IpU56o" class="rdr_video"></iframe>
+				<div class="no-rdr markerAnnotation">
+					<img src="{{ STATIC_URL }}site/images/marker-annotation-video.png" alt="hover over that video" />
+				</div>
 			</div>
 		</div>
 		<!-- show on slideshow init to avoid FOUC -->
@@ -65,23 +89,26 @@
 			<div id="promoControlsInnerWrap">
 				<div class="promoPrev">
 					<a href="#">
-						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/controls-prev.png" alt="prev" />
+						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/left.png" alt="prev" />
 					</a>
 				</div>
 				<div class="promoPlayPause">
 					<a href="#" class="promoPlay" >
-						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/controls-play.png" alt="play" />
+						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/play2.png" alt="play" />
 					</a>
 					<a href="#" class="promoPause">
-						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/controls-pause.png" alt="pause" />
+						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/pause2.png" alt="pause" />
 					</a>
 				</div>
 				<div class="promoNext">
 					<a href="#">
-						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/controls-next.png" alt="next" />
+						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/right.png" alt="next" />
 					</a>
 				</div>
 			</div>
+		</div>
+		<div id="markerAnnotationLearnMore" class="no-rdr" style="display:none;">
+			<img src="{{ STATIC_URL }}site/images/learn-more-arrow.png" alt="learn more" />
 		</div>
 	</div>
 
@@ -140,11 +167,11 @@
 							<span>Profile your community's tastes, sentiments, and interests.</span>
 						</li>
 						<li>
-							<h3>Analytics</h3>
+							<h3>Get Analytics</h3>
 							<span>Deeply understand how your content drives engagement.</span>
 						</li>
 						<li>
-							<h3>Engagement</h3>
+							<h3>Get Engagement</h3>
 							<span>Boost your metrics through:</span>
 							<div class="test">
 								<ul class="sub-bullets">
@@ -161,8 +188,10 @@
 							</div>
 						</li>
 						<li>
+							<!--
 							<h3>...And it's free, interested?</h3>
-							<span><a href="mailto:info@readrboard.com">Of course you are - drop us a line!</a></span>
+							-->
+							<span><a href="mailto:info@readrboard.com">It's free! Ask us about joining.</a></span>
 						</li>
 					</ul>
 				</div>	
@@ -245,13 +274,13 @@
 	<div class="footerLinks">
 		<ul class="footerLinksLeft">
 			<li>
+				<a href="/">discover</a>
+			</li>
+			<li>
 				<a href="/about/" >about us</a>
 			</li>
 			<li>
 				<a href="{{STATIC_URL}}demo/index.html" >demo</a>
-			</li>
-			<li>
-				<a href="/" >readr-stream &#153;</a>
 			</li>
 		</ul>
 		<ul class="footerLinksRight">
