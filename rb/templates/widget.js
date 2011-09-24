@@ -2277,37 +2277,33 @@ function readrBoard($R){
                     var hashText = "rdr-"+kind+"-"+body; //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
                     var hash = RDR.util.md5.hex_md5( hashText );
 
-                    // if ( !RDR ) {
+                    // add an object with the text and hash to the RDR.containers dictionary
+                    //todo: consider putting this info directly onto the DOM node data object
+                    RDR.actions.containers.save({
+                        body:body,
+                        kind:kind,
+                        hash:hash,
+                        HTMLkind:HTMLkind,
+                        $this: $this
+                    });
 
-                    // } else {
+                    // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
+                    // this makes it easy to find on the page later
+                    
+                    //don't do this here - do it on success of callback from server
+                    // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
+                    $this.addClass( 'rdr-' + hash );//.addClass('rdr-hashed');
 
-                        // add an object with the text and hash to the RDR.containers dictionary
-                        //todo: consider putting this info directly onto the DOM node data object
-                        RDR.actions.containers.save({
-                            body:body,
-                            kind:kind,
-                            hash:hash,
-                            HTMLkind:HTMLkind,
-                            $this: $this
-                        });
+                    summary = RDR.actions.summaries.init(hash);
+                    RDR.actions.summaries.save(summary);
 
-                        // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
-                        // this makes it easy to find on the page later
-                        
-                        //don't do this here - do it on success of callback from server
-                        // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
-                        $this.addClass( 'rdr-' + hash );//.addClass('rdr-hashed');
-
-                        summary = RDR.actions.summaries.init(hash);
-                        RDR.actions.summaries.save(summary);
-
-                        
-                        var page_id = RDR.util.getPageProperty('id', hash );
-                        if ( !hashList[ page_id ] ) hashList[ page_id ] = [];
-                        
-                        hashList[ page_id ].push(hash);
-                        $this.data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
-                    // }
+                    
+                    var page_id = RDR.util.getPageProperty('id', hash );
+                    if ( !hashList[ page_id ] ) hashList[ page_id ] = [];
+                    
+                    hashList[ page_id ].push(hash);
+                    $this.data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
+                    
                 });
 
                 RDR.actions.containers.setup(hashList);
