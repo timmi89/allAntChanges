@@ -1221,8 +1221,7 @@ function readrBoard($R){
             },
             getPageProperty : function( prop, hash ) {
                 if (!prop) prop = "id";
-                if (!hash) return 11; // TODO no.
-                
+                if (!hash) return false;                
                 // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
                 var page_id = ( $('.rdr-'+hash).data('page_id') ) ? $('.rdr-'+hash).data('page_id') : $('.rdr-'+hash).closest('.rdr-page-container').data('page_id');
                 
@@ -2258,7 +2257,10 @@ function readrBoard($R){
 
                 });
 
+
                 // TODO when would this do anything?
+                // (eric) wow - I really can't figure out why this is here - I guess it's checking to see if everything is blank, but that's weird.
+                            // I guess we can take it out if you didn't want it here either.
                 if( !$allNodes.data('body') ) return false;
                 //else
 
@@ -2339,7 +2341,7 @@ function readrBoard($R){
                     sendable_hashes = hashes[i];
                 
                     if ( !page_id || typeof sendable_hashes != "object" ) {
-                        return; //TODO: This will return for the entire sendHashes function, not just this for loop iteration - is that what is intended?
+                        break;
                     }
                     
                     for ( var j in sendable_hashes ) {
@@ -5565,7 +5567,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         var source = '&t=' + args.reaction +' ... from ' + RDR.group.name;
                         switch ( args.content_node_info.kind) {
                             case "txt":
-                            default:
                                 window.open('http://www.tumblr.com/share?v=3&type=quote&u='+encodeURIComponent(args.short_url)+'&t='+encodeURI(RDR.group.name)+'&s='+encodeURI(content.substr(0, content_length) ),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
                             break;
 
