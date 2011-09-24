@@ -6420,7 +6420,7 @@ function $RFunctions($R){
 
                     }
 
-                    for ( var i in RDR.group.blessed_tags ) {
+                    for ( var i = 0; i < RDR.group.blessed_tags.length; i++) {
                         writeTag( RDR.group.blessed_tags[i] );
                     }
 
