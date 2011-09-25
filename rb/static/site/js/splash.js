@@ -43,7 +43,7 @@
 		$('#sns_buttons').cycle({
 			fx: 'scrollDown',
 		    speed:   600,
-		    timeout: 4000,
+		    timeout: 4000
 		});
 			
 	 	/*slideshow code start*/
