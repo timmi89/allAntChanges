@@ -1052,6 +1052,7 @@ div.rdr_indicator span.rdr_count,
 #rdr_sandbox div.rdr_sentimentBox span.rdr_count { 
     position:relative !important;
     margin-left:16px !important;
+    font-size: 12px !important;
 }
 /*dont use this*/
 /*
