@@ -45,10 +45,16 @@
 		    direction: 'left',
 		    speed:   600,
 		    timeout: 4000,
-		    next:   '.promoNext',
-		    prev:   '.promoPrev',
 		    pause:   0, /*enable pause on hover*/
-		    random: 0, /*change to 1 if we want it to be randomized*/
+		    pager: "#promoControlsInnerWrap",
+	        pagerAnchorBuilder: function(idx, slide) {
+	        	var typeArr = ["Image", "Text", "Video"];
+	        	var $pager = $('<div />').addClass('pagerDiv'),
+	        		$a = $('<a href="#" />').addClass('pager'+typeArr[idx]).appendTo($pager),
+	        		$img = $('<img src="/static/site/images/blank.png" alt="Show '+typeArr[idx]+' Example" />').appendTo($a);
+	       
+				return $pager;
+			},
 		    before: function(){
 		    	var $mediaContainer = $(this).find('img.rdr-hashed, iframe.rdr-hashed'),
 		    		hash;
@@ -68,22 +74,20 @@
 		    },
 			onPrevNextEvent: function (isNext) {
 		        $('#promoGallery').cycle('pause');
-		        $(".promoPlay").show();
-		        $(".promoPause").hide();
-
+		        
 		        //hack to allow prev and next to have different transitions
+		        /*
 		        if (isNext) {
 		            $('#promoGallery').data('direction', 'left')
 		        }else{
 		            $('#promoGallery').data('direction', 'right')
 		        }
+		        */
 		    }
 		});
 		$('#promoGallery').hover(
 			function(){
 				$(this).cycle('pause');
-		        $(".promoPlay").show();
-		        $(".promoPause").hide();
 			},
 			function(){
 				//don't do this -prob annoying anyway, but especially dont do it because the widget steals the hover
@@ -95,15 +99,6 @@
 			}
 		);
 
-		$(".promoPlay").hide(); //starts off with pause shown and play hidden
-
-		$(".promoPlayPause").click(function (e) {
-		    $('#promoGallery').cycle('toggle');
-
-		    $(".promoPlay").toggle();
-		    $(".promoPause").toggle();
-		    return false;
-		});
 		$("#promoControls a").click(function(e) {
 		    $(this).blur();
 		});

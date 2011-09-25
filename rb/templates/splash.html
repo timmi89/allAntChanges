@@ -92,24 +92,24 @@
 						<!-- show on slideshow init to avoid FOUC -->
 						<div id="promoControls" class="no-rdr" style="display:none;">
 							<div id="promoControlsInnerWrap">
-								<div class="promoPrev">
-									<a href="#">
-										<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/left.png" alt="prev" />
+							<!-- to be filled in with the pager control of the cycle plugin -->
+							<!--
+								<div class="pagerDiv">
+									<a href="#" class="pagerImage">
+										<img src="{{ STATIC_URL }}site/images/blank.png" alt="show image example" />
 									</a>
 								</div>
-								<div class="promoPlayPause">
-									<a href="#" class="promoPlay" >
-										<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/play2.png" alt="play" />
-									</a>
-									<a href="#" class="promoPause">
-										<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/pause2.png" alt="pause" />
+								<div class="pagerDiv">
+									<a href="#" class="pagerText">
+										<img src="{{ STATIC_URL }}site/images/blank.png" alt="show text example" />
 									</a>
 								</div>
-								<div class="promoNext">
-									<a href="#">
-										<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/right.png" alt="next" />
+								<div class="pagerDiv">
+									<a href="#" class="pagerVideo">
+										<img src="{{ STATIC_URL }}site/images/blank.png" alt="show video example" />
 									</a>
 								</div>
+								-->
 							</div>
 						</div>
 						<div class="clearDiv"></div>
@@ -294,6 +294,7 @@
 
 {% block pageJS %}
 <script type="text/javascript" src="{{ STATIC_URL }}site/js/jquery.cycle/jquery.cycle.all.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}site/js/jquery.easing.1.3.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}site/js/splash.js"></script>
 <script src="/widget/readrboard_splash/" type="text/javascript"></script>
 {% endblock %}
