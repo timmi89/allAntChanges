@@ -42,7 +42,8 @@
 
 		$('#sns_buttons').cycle({
 			fx: 'scrollDown',
-		    speed:   600,
+			easing: 'swing',
+		    speed:   400,
 		    timeout: 4000
 		});
 			
@@ -53,6 +54,7 @@
 		    fx: 'myUncover',
 		    */
 		    fx: 'scrollLeft',
+		    easing: 'swing',
 		    direction: 'left',
 		    speed:   600,
 		    timeout: 4000,
