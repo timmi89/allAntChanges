@@ -29,7 +29,7 @@
 					<div id="promoDiv" class="animationDiv">
 						<div id="promoGallery">
 							<div class="promoGalleryBody startSlide">
-								<img src="{{ STATIC_URL }}site/images/old-man-tricycle.jpg" alt="" width="400" class="contentImg" />
+								<img src="{{ STATIC_URL }}site/images/old-man-tricycle2.jpg" alt="ReadrBoard sample image" width="380" class="contentImg" />
 								<div class="no-rdr markerAnnotation">
 									<img src="{{ STATIC_URL }}site/images/marker-annotation-image.png" alt="hover over that image" />
 								</div>
@@ -55,7 +55,7 @@
 							</div>
 							<div class="promoGalleryBody slideVideo">
 								<!--chrome was FOUCing this without this hack - hide here, show with js-->
-								<iframe style="display:none;" width="450" height="280" frameborder="0" allowfullscreen="" src="http://www.youtube.com/embed/eD1i6IpU56o" class="rdr_video"></iframe>
+								<iframe style="display:none;" width="480" height="300" frameborder="0" allowfullscreen="" src="http://www.youtube.com/embed/eD1i6IpU56o?wmode=transparent" class="rdr_video"></iframe>
 								<div class="no-rdr markerAnnotation">
 									<img src="{{ STATIC_URL }}site/images/marker-annotation-video.png" alt="hover over that video" />
 								</div>
@@ -64,26 +64,27 @@
 						<!-- show on slideshow init to avoid FOUC -->
 						<div id="promoControls" class="no-rdr" style="display:none;">
 							<div id="promoControlsInnerWrap">
-								<div class="promoPrev">
-									<a href="#">
-										<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/left.png" alt="prev" />
+							<!-- to be filled in with the pager control of the cycle plugin -->
+							<!--
+								<div class="pagerDiv">
+									<a href="#" class="pagerImage">
+										<img src="{{ STATIC_URL }}site/images/blank.png" alt="show image example" />
 									</a>
 								</div>
-								<div class="promoPlayPause">
-									<a href="#" class="promoPlay" >
-										<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/play2.png" alt="play" />
-									</a>
-									<a href="#" class="promoPause">
-										<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/pause2.png" alt="pause" />
+								<div class="pagerDiv">
+									<a href="#" class="pagerText">
+										<img src="{{ STATIC_URL }}site/images/blank.png" alt="show text example" />
 									</a>
 								</div>
-								<div class="promoNext">
-									<a href="#">
-										<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/right.png" alt="next" />
+								<div class="pagerDiv">
+									<a href="#" class="pagerVideo">
+										<img src="{{ STATIC_URL }}site/images/blank.png" alt="show video example" />
 									</a>
 								</div>
+								-->
 							</div>
 						</div>
+						<div class="clearDiv"></div>
 					</div>
 
 				</div>
@@ -250,6 +251,7 @@
 
 {% block pageJS %}
 <script type="text/javascript" src="{{ STATIC_URL }}site/js/jquery.cycle/jquery.cycle.all.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}site/js/jquery.easing.1.3.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}site/js/splash.js"></script>
 <script src="/widget/readrboard_splash/" type="text/javascript"></script>
 {% endblock %}
