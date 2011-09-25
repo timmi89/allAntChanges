@@ -80,21 +80,26 @@ section.introBlurb{
 	display:inline-block;
 	position:relative;
 	width:85px;
-	height:45px;
+	height:52px;
+	bottom:-3px;
+	/*the following are for ie 6 and 7 to work with inline-block*/
 	zoom:1; 
 	*display:inline;
-	_height:45px;
+	_height:50px;
+}
+#splashAnnounce #sns_buttons > div{
 }
 #splashAnnounce #sns_buttons img{
 	position:absolute;
 	left:0;
-	top:0;
+	top:5px;
 }
 #splashAnnounce #sns_buttons img#sns_google{
 	left:3px;
-	top:-5px;
+	top:2px;
 }
 #splashAnnounce #sns_buttons img#sns_twitter{
+	top:7px;
 }
 #splashAnnounce .rindow-img img{
 	width:250px;
