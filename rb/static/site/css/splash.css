@@ -381,6 +381,6 @@ section.introBlurb{
 .markerAnnotation.page {
 	position: absolute;
     right: -65px;
-    top: 0;
+    top: 65px;
     width: 250px;
 }

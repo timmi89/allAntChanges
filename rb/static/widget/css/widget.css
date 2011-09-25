@@ -683,6 +683,8 @@ div.rdr.rdr-summary {
     margin-bottom:10px !important;
     overflow:auto !important;
     clear:both !important;
+    margin-left:5px !important;
+    margin-right:5px !important;
 }
 
 /*blunt attack for now*/
