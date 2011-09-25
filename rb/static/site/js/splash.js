@@ -5,7 +5,6 @@
 	 		$(this).addClass('selected').siblings().removeClass('selected');
 	 		
 	 		var order = $(this).index();
-	 		console.log(order);
 
 	 		var $thisMenuBody = $('#blurbBody').children().eq(order);
 	 		$thisMenuBody.siblings().fadeOut( 100, function(){
@@ -51,7 +50,6 @@
 		    pause:   0, /*enable pause on hover*/
 		    random: 0, /*change to 1 if we want it to be randomized*/
 		    before: function(){
-		    	console.log('before');
 		    	var $mediaContainer = $(this).find('img.rdr-hashed, iframe.rdr-hashed'),
 		    		hash;
 
@@ -64,15 +62,11 @@
 		    	/*
 		    	hash = $mediaContainer.data('hash')
 		    		hash = 
-				console.log($mediaContainer);
 				*/
 		    },
 			after: function(){
-			    console.log('after');
-		    	//console.log(this);	
 		    },
 			onPrevNextEvent: function (isNext) {
-		    	console.log('test');
 		        $('#promoGallery').cycle('pause');
 		        $(".promoPlay").show();
 		        $(".promoPause").hide();

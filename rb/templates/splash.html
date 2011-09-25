@@ -20,122 +20,111 @@
 </section>
 -->
 <div id="splashAnnounce">
-	<!--
-	<h2>Is your content listening to your readers?</h2>
-	<h2>A quick new way to interact with content</h2>
-	-->
-	<h2 class="no-rdr">How are readers reacting to your content?</h2>
-	<div id="promoDiv" class="animationDiv">
-		<div id="promoGallery">
-			<div class="promoGalleryBody startSlide no-rdr">
-				<div class="rindow-img">
-					<img src="{{STATIC_URL}}site/images/rindow-for-splashpage.png" />
-				</div>
-			</div>
-			<div class="promoGalleryBody slideImage">
-				<!--
-				<img src="{{ STATIC_URL }}/demo/readrboard-demo/puppy.png" alt="" width="250" class="contentImg" />
-				-->
-				<img src="{{ STATIC_URL }}/site/images/old-man-tricycle.jpg" alt="" width="400" class="contentImg" />
-				<div class="no-rdr markerAnnotation">
-					<img src="{{ STATIC_URL }}site/images/marker-annotation-image.png" alt="hover over that image" />
-				</div>
-			</div>
-			<div class="promoGalleryBody slideText">
-				<div class="textSlide">
-					<div>
-						<blockquote>
-							"If you ask 20 different readers why they read, they will all be right."
-						</blockquote>
-						<span class="author no-rdr">-Teresa Nielsen Hayden</span>
-					</div>
-					<!--
-					<p>
-						<blockquote>
-							"I'll never make that mistake again, reading the experts' opinions."
-						</blockquote>
-						<span class="author no-rdr">-Richard Feynman</span>
-					</p>
-					-->
-					<div>
-						<blockquote>
-							"Write a wise saying and your name will live forever."
-						</blockquote>
-						<span class="author no-rdr">-Anonymous</span>
-					</div>
-					<!--
-					<div>
-						<blockquote>
-							"It was impossible to get a conversation going, everybody was talking too much."
-						</blockquote>
-						<span class="author no-rdr">-Yogi Berra</span>
-					</div>
-					-->
-				</div>
-				<div class="no-rdr markerAnnotation">
-					<img src="{{ STATIC_URL }}site/images/marker-annotation-text.png" alt="select that text" />
-				</div>
-			</div>
-			<div class="promoGalleryBody slideVideo">
-				<!--chrome was FOUCing this without this hack - hide here, show with js-->
-				<iframe style="display:none;" width="450" height="280" frameborder="0" allowfullscreen="" src="http://www.youtube.com/embed/eD1i6IpU56o" class="rdr_video"></iframe>
-				<div class="no-rdr markerAnnotation">
-					<img src="{{ STATIC_URL }}site/images/marker-annotation-video.png" alt="hover over that video" />
-				</div>
-			</div>
-		</div>
-		<!-- show on slideshow init to avoid FOUC -->
-		<div id="promoControls" class="no-rdr" style="display:none;">
-			<div id="promoControlsInnerWrap">
-				<div class="promoPrev">
-					<a href="#">
-						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/left.png" alt="prev" />
-					</a>
-				</div>
-				<div class="promoPlayPause">
-					<a href="#" class="promoPlay" >
-						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/play2.png" alt="play" />
-					</a>
-					<a href="#" class="promoPause">
-						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/pause2.png" alt="pause" />
-					</a>
-				</div>
-				<div class="promoNext">
-					<a href="#">
-						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/right.png" alt="next" />
-					</a>
-				</div>
-			</div>
-		</div>
-		<div id="markerAnnotationLearnMore" class="no-rdr" style="display:none;">
-			<img src="{{ STATIC_URL }}site/images/learn-more-arrow.png" alt="learn more" />
-		</div>
-	</div>
-
-	<!--
-	<h3>Get instant reactions about anything on your page.</h3>
-	-->
-	<h3 class="no-rdr">Let them tell you in a single click.</h3>
+	<h2 class="no-rdr">""I <img src="{{STATIC_URL}}site/images/like_button.png" alt="Like" class="no-rdr" /> you, but that isn't enough anymore.""</h2>
+	<h3 class="no-rdr"><span>ReadrBoard</span> is the fastest way to <span>say exactly what you think</span><br/>about any phrase, picture, video, or article on the web.
+	</h3>
 </div>
 <div id="splashBlurbs" class="no-rdr">
 	<div class="blurbsInner">
-		<div id="blurbMenu">
-			<ul>
-				<li id="blurbMenu-0" class="readers selected">
-					<div>For Readers</div>
-				</li>
-				<li id="blurbMenu-1" class="publishers blurbMenu-1">
-					<div>For Publishers</div>
-				</li>
-			</ul>
-		</div>
 		<div id="blurbBody">
 			<div class="blurb blurb-for-readers selected">
+				<div class="tryit">
+					<h3 class="sectionHeader">Try It</h3>
+					<div id="promoDiv" class="animationDiv">
+						<div id="promoGallery">
+							<!-- <div class="promoGalleryBody startSlide no-rdr">
+								<div class="rindow-img">
+									<img src="{{STATIC_URL}}site/images/rindow-for-splashpage.png" />
+								</div>
+							</div> -->
+							<div class="promoGalleryBody startSlide">
+								<!--
+								<img src="{{ STATIC_URL }}/demo/readrboard-demo/puppy.png" alt="" width="250" class="contentImg" />
+								-->
+								<img src="{{ STATIC_URL }}/site/images/old-man-tricycle.jpg" alt="" width="400" class="contentImg" />
+								<div class="no-rdr markerAnnotation">
+									<img src="{{ STATIC_URL }}site/images/marker-annotation-image.png" alt="hover over that image" />
+								</div>
+							</div>
+							<div class="promoGalleryBody slideText">
+								<div class="textSlide">
+									<div>
+										<blockquote>
+											"If you ask 20 different readers why they read, they will all be right."
+										</blockquote>
+										<span class="author no-rdr">-Teresa Nielsen Hayden</span>
+									</div>
+									<!--
+									<p>
+										<blockquote>
+											"I'll never make that mistake again, reading the experts' opinions."
+										</blockquote>
+										<span class="author no-rdr">-Richard Feynman</span>
+									</p>
+									-->
+									<div>
+										<blockquote>
+											"Write a wise saying and your name will live forever."
+										</blockquote>
+										<span class="author no-rdr">-Anonymous</span>
+									</div>
+									<!--
+									<div>
+										<blockquote>
+											"It was impossible to get a conversation going, everybody was talking too much."
+										</blockquote>
+										<span class="author no-rdr">-Yogi Berra</span>
+									</div>
+									-->
+								</div>
+								<div class="no-rdr markerAnnotation">
+									<img src="{{ STATIC_URL }}site/images/marker-annotation-text.png" alt="select that text" />
+								</div>
+							</div>
+							<div class="promoGalleryBody slideVideo">
+								<!--chrome was FOUCing this without this hack - hide here, show with js-->
+								<iframe style="display:none;" width="450" height="280" frameborder="0" allowfullscreen="" src="http://www.youtube.com/embed/eD1i6IpU56o" class="rdr_video"></iframe>
+								<div class="no-rdr markerAnnotation">
+									<img src="{{ STATIC_URL }}site/images/marker-annotation-video.png" alt="hover over that video" />
+								</div>
+							</div>
+						</div>
+						<!-- show on slideshow init to avoid FOUC -->
+						<div id="promoControls" class="no-rdr" style="display:none;">
+							<div id="promoControlsInnerWrap">
+								<div class="promoPrev">
+									<a href="#">
+										<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/left.png" alt="prev" />
+									</a>
+								</div>
+								<div class="promoPlayPause">
+									<a href="#" class="promoPlay" >
+										<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/play2.png" alt="play" />
+									</a>
+									<a href="#" class="promoPause">
+										<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/pause2.png" alt="pause" />
+									</a>
+								</div>
+								<div class="promoNext">
+									<a href="#">
+										<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/right.png" alt="next" />
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
 				<div class="bullets">
+					<h3 class="sectionHeader">Awesome Features</h3>
 					<ul class="bullet-points">
 						<li>
 							<h3>React</h3>
 							<span>Quickly react to any phrase, image, or video.</span>
+						</li>
+						<li>
+							<h3>Discover</h3>
+							<span>Discover reactions from readers who share your interests.</span>
 						</li>
 						<li>
 							<h3>Bookmark</h3>
@@ -145,57 +134,53 @@
 							<h3>Share</h3>
 							<span>Easily share your reaction to specific parts of a page.</span>
 						</li>
-						<li>
-							<h3>Discover</h3>
-							<span>Discover reactions from readers who share your interests.</span>
-						</li>
 					</ul>
-				</div>	
-				<div class="media">
-					<div class="video-wrap">
-						<iframe class="rdr_video" src="http://player.vimeo.com/video/21956758?title=0&amp;byline=0&amp;portrait=0" width="480" height="300" frameborder="0" style="border:8px solid #ddd;">
-						</iframe>
-					</div>
 				</div>
 				<div class="clearDiv"></div>
 			</div>
+			<h4>Stuff For Publishers</h4>
 			<div class="blurb blurb-for-publishers">
 				<div class="bullets">
 					<ul class="bullet-points">
 						<li>
-							<h3>Know your Readers</h3>
-							<span>Profile your community's tastes, sentiments, and interests.</span>
+							<h3>Add to any page on your site</h3>
+							<span>Add just one line of Javascript to your site to enable all-new levels of engagement with your content.</span>
 						</li>
 						<li>
-							<h3>Get Analytics</h3>
-							<span>Deeply understand how your content drives engagement.</span>
-						</li>
-						<li>
-							<h3>Get Engagement</h3>
-							<span>Boost your metrics through:</span>
+							<h3>Increase Engagement 100%</h3>
+							<span>Readers use ReadrBoard <strong>at least as much as comments</strong>.  This means:</span>
 							<div class="test">
 								<ul class="sub-bullets">
 									<li>
-										<span>increased shared links</span>
+										<span>Better quality interactions with your content</span>
 									</li>
 									<li>
-										<span>longer site visits</span>
+										<span>Increased shared links</span>
 									</li>
 									<li>
-										<span>better quality interactions with your content</span>
+										<span>Longer site visits</span>
 									</li>
 								</ul>
 							</div>
 						</li>
 						<li>
-							<!--
-							<h3>...And it's free, interested?</h3>
-							-->
-							<span><a href="mailto:info@readrboard.com">It's free! Ask us about joining.</a></span>
+							<h3>Know your readers</h3>
+							<span>Better understand your community's tastes, sentiments, and interests.</span>
+						</li>
+						<li>
+							<h3>All-New analytics</h3>
+							<span>Deeply understand why certain content drives interest &amp; and engagement.</span>
+						</li>
+						<li>
+							<h3>Simple Moderation</h3>
+							<span>Should something inappropriate show up, you can block it in one click.</span>
+						</li>
+						<li>
+							<span><a href="mailto:info@readrboard.com">It's free! Ask us about joining the beta.</a></span>
 						</li>
 					</ul>
 				</div>	
-				<div class="media">
+				<div class="tryit">
 					<a target="_blank" href="{{STATIC_URL}}site/images/demo-analytics-mockup.jpg" title="Demo Publisher Analytics for Readrboard" >
 						<img src="{{STATIC_URL}}site/images/demo-analytics-mockup-sm.jpg" alt="Demo Publisher Analytics"/>
 					</a>
@@ -206,7 +191,7 @@
 	</div>
 	<div class="no-rdr partnerLogoSection">
 		<h3>Try ReadrBoard live on our Partners' websites</h3>
-		<div class="partnerLogoSection">
+		<div>
 			<ul class="partnerLogos">
 				<li>
 					<a href="http://hypervocal.com/" target="_blank">
