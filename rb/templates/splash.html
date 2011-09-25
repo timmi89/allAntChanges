@@ -8,21 +8,14 @@
 {% block bodyClass %}wide{% endblock %}
 
 {% block mainContent %}
-
-<style>
-
-</style>
-<!--
-<section role="analytics header">
-	<section role="controls">
-		About Readrboard
-	</section>
-</section>
--->
 <div id="splashAnnounce">
-	<h2 class="no-rdr">""I want to <img src="{{STATIC_URL}}site/images/like_button.png" alt="Like" class="no-rdr" /> that, but it's complicated.""</h2>
-	<h3 class="no-rdr"><span>ReadrBoard</span> is the fastest way to <span>say exactly what you think</span><br/>about any phrase, picture, video, or article on the web.
-	</h3>
+	<h2 class="no-rdr">""I want to 
+		<div id="sns_buttons">
+			<div><img src="{{STATIC_URL}}site/images/like_button.png" alt="Like" id="sns_fb" class="no-rdr" /></div>
+			<div style="display:none;"><img src="{{STATIC_URL}}site/images/plus_one_button.png" alt="+1" id="sns_google" class="no-rdr"/></div>
+			<div style="display:none;"><img src="{{STATIC_URL}}site/images/tweet_button.png" alt="Tweet" id="sns_twitter" class="no-rdr"/></div>
+		</div> that, but it's complicated...""</h2>
+	<h3 class="no-rdr"><span>ReadrBoard</span> is the fastest way to <span>say exactly what you think</span><br/>about any phrase, picture, video, or article on the web.</h3>
 </div>
 <div id="splashBlurbs" class="no-rdr">
 	<div class="blurbsInner">
@@ -32,11 +25,6 @@
 					<h3 class="sectionHeader">Try It</h3>
 					<div id="promoDiv" class="animationDiv">
 						<div id="promoGallery">
-							<!-- <div class="promoGalleryBody startSlide no-rdr">
-								<div class="rindow-img">
-									<img src="{{STATIC_URL}}site/images/rindow-for-splashpage.png" />
-								</div>
-							</div> -->
 							<div class="promoGalleryBody startSlide">
 								<!--
 								<img src="{{ STATIC_URL }}/demo/readrboard-demo/puppy.png" alt="" width="250" class="contentImg" />
@@ -54,28 +42,12 @@
 										</blockquote>
 										<span class="author no-rdr">-Teresa Nielsen Hayden</span>
 									</div>
-									<!--
-									<p>
-										<blockquote>
-											"I'll never make that mistake again, reading the experts' opinions."
-										</blockquote>
-										<span class="author no-rdr">-Richard Feynman</span>
-									</p>
-									-->
 									<div>
 										<blockquote>
 											"Write a wise saying and your name will live forever."
 										</blockquote>
 										<span class="author no-rdr">-Anonymous</span>
 									</div>
-									<!--
-									<div>
-										<blockquote>
-											"It was impossible to get a conversation going, everybody was talking too much."
-										</blockquote>
-										<span class="author no-rdr">-Yogi Berra</span>
-									</div>
-									-->
 								</div>
 								<div class="no-rdr markerAnnotation">
 									<img src="{{ STATIC_URL }}site/images/marker-annotation-text.png" alt="select that text" />
@@ -206,7 +178,7 @@
 						<img class="colorImg wideImg" style="display:none;" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/racialicious-logo-for-splash.png" alt="racialicious logo" />
 					</a>
 				</li>
-				<!--
+				{% comment %}
 				<li>
 					<a href="http://www.fathomaway.com/" target="_blank">
 						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/fathom-logo-lg.png" alt="fathom logo" />
@@ -247,7 +219,7 @@
 						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/themark-logo-lg.png" alt="themarknews logo" />
 					</a>
 				</li>
-				-->
+				{% endcomment %}
 			</ul>
 			<div class="moreLogos">
 				More launching soon...
@@ -267,21 +239,6 @@
 			</li>
 			<li>
 				<a href="{{STATIC_URL}}demo/index.html" >demo</a>
-			</li>
-		</ul>
-		<ul class="footerLinksRight">
-			<li>
-				<!--
-				this isn't working yet... cookie_user isn't being passed in yet.
-				-->
-				<div id="user">
-					<div id="fb-logged-in" {% if not cookie_user.social_user %}style="display:none;"{% endif %}>
-						<a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/><strong>{{ cookie_user.social_user.full_name }}</strong></a>
-					</div>
-					<div id="fb-logged-out" {% if cookie_user.social_user %}style="display:none;"{% endif %}>
-						<a href="javascript:void(0);" onclick="RDRAuth.doFBLogin('site_login')"><img src="/static/site/images/fb_connect_button.png" border="0" alt="Connect with Facebook" /></a>
-					</div>
-				</div>
 			</li>
 		</ul>
 		<div class="clearDiv"></div>

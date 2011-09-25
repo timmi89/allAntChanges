@@ -6020,7 +6020,7 @@ function $RFunctions($R){
     var css = [];
 
     if ( !$R.browser.msie || ( $R.browser.msie && parseInt( $R.browser.version ) > 8 ) ) {
-        css.push( "{{ STATIC_URL }}global/css/readrleague.css" );
+        // css.push( "{{ STATIC_URL }}global/css/readrleague.css" );
     } 
     if ( $R.browser.msie ) {
         css.push( "{{ STATIC_URL }}widget/css/ie.css" );

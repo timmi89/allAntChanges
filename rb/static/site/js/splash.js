@@ -35,6 +35,17 @@
 	 		}
 	 	);	
 
+	 	/* rotate the like and +1 buttons */
+	 // 	var cycleLikes = setInterval( function() { 
+		// 	$('#sns_buttons img').fadeToggle(1000); 
+		// }, 4000 );
+
+		$('#sns_buttons').cycle({
+			fx: 'scrollDown',
+		    speed:   600,
+		    timeout: 4000
+		});
+			
 	 	/*slideshow code start*/
  	    $('#promoGallery').cycle({
 		    /*see http://jquery.malsup.com/cycle/options.html*/
