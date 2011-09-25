@@ -93,7 +93,8 @@ section.introBlurb{
 #splashAnnounce #sns_buttons img#sns_google{
 	left:3px;
 	top:-5px;
-	display:none;
+}
+#splashAnnounce #sns_buttons img#sns_twitter{
 }
 #splashAnnounce .rindow-img img{
 	width:250px;
