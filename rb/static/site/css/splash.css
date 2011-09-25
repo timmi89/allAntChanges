@@ -148,7 +148,10 @@ section.introBlurb{
 	font-size:20px;
 }
 #splashBlurbs h3.sectionHeader{
-	text-align:center;font-family:ReadrLeague,Arial;font-size:48px;
+	text-align:center;
+	font-family:ReadrLeague,Arial;
+	font-size:48px;
+	margin:30px 0;
 }
 #splashBlurbs .blurb .bullet-points{
 	list-style:none;
@@ -234,16 +237,15 @@ section.introBlurb{
 	width:480px;
 	position:relative;
 	margin:auto;
-	height:330px;
-
 }
 #promoGallery{
 	width:100%;
+	height:300px;
+    margin-bottom:50px;
 }
 .promoGalleryBody{
     width:100%;
     position: relative;
-    height:300px;
     display:none; /*to be overriden by js*/
 }
 .promoGalleryBody.startSlide{
@@ -254,7 +256,7 @@ section.introBlurb{
 #promoControls{
     position: absolute;
     left:50%;
-    bottom:0;
+    bottom:-60px;
     z-index: 8;
 }
 #promoControls #promoControlsInnerWrap{
