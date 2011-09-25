@@ -59,7 +59,7 @@ section.introBlurb{
 #splashAnnounce h2{
 	padding:180px 0;
     color: #fff;
-    font-family: ReadrLeague,Arial;
+    font-family: ReadrLeagueSite,Arial;
     font-weight: normal;
     font-size:80px;
 }
@@ -108,7 +108,7 @@ section.introBlurb{
 	overflow:auto;
 }
 #splashBlurbs .blurbsInner h4{
-	font-family:ReadrLeague, Arial;
+	font-family:ReadrLeagueSite, Arial;
 	color:#888;
 	padding:0 0 10px 6px;
 	font-size:36px;
@@ -165,7 +165,7 @@ section.introBlurb{
 	font-size:20px;
 }
 #splashBlurbs h3.sectionHeader{
-	text-align:center;font-family:ReadrLeague,Arial;font-size:48px;
+	text-align:center;font-family:ReadrLeagueSite,Arial;font-size:48px;
 }
 #splashBlurbs .blurb .bullet-points{
 	list-style:none;
