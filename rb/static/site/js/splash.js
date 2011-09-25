@@ -5,7 +5,6 @@
 	 		$(this).addClass('selected').siblings().removeClass('selected');
 	 		
 	 		var order = $(this).index();
-	 		console.log(order);
 
 	 		var $thisMenuBody = $('#blurbBody').children().eq(order);
 	 		$thisMenuBody.siblings().fadeOut( 100, function(){
@@ -48,9 +47,26 @@
 		    timeout: 4000,
 		    next:   '.promoNext',
 		    prev:   '.promoPrev',
-		    pause:   1, /*enable pause on hover*/
+		    pause:   0, /*enable pause on hover*/
 		    random: 0, /*change to 1 if we want it to be randomized*/
-		    onPrevNextEvent: function (isNext) {
+		    before: function(){
+		    	var $mediaContainer = $(this).find('img.rdr-hashed, iframe.rdr-hashed'),
+		    		hash;
+
+		    	if(!$mediaContainer.length) return;
+		    	//else
+
+				$('.rdr_indicator_details').hide();
+				$('.rdr_indicator_body').hide();
+
+		    	/*
+		    	hash = $mediaContainer.data('hash')
+		    		hash = 
+				*/
+		    },
+			after: function(){
+		    },
+			onPrevNextEvent: function (isNext) {
 		        $('#promoGallery').cycle('pause');
 		        $(".promoPlay").show();
 		        $(".promoPause").hide();
@@ -63,7 +79,22 @@
 		        }
 		    }
 		});
-		    
+		$('#promoGallery').hover(
+			function(){
+				$(this).cycle('pause');
+		        $(".promoPlay").show();
+		        $(".promoPause").hide();
+			},
+			function(){
+				//don't do this -prob annoying anyway, but especially dont do it because the widget steals the hover
+				/*
+				$(this).cycle('resume');
+		        $(".promoPlay").hide();
+		        $(".promoPause").show();
+		        */
+			}
+		);
+
 		$(".promoPlay").hide(); //starts off with pause shown and play hidden
 
 		$(".promoPlayPause").click(function (e) {
@@ -76,9 +107,14 @@
 		$("#promoControls a").click(function(e) {
 		    $(this).blur();
 		});
+		$("#promoControls").fadeIn();
+		
 		/*chrome was FOUCing this without this hack - hidden initially*/
 		$('#promoGallery iframe').show();
 		/*slideshow code end*/
+
+		//reveal after load
+		$('#markerAnnotationLearnMore').fadeIn();
 
 	});
 }(jQuery));
