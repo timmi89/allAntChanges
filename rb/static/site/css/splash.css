@@ -144,6 +144,7 @@ section.introBlurb{
 #blurbBody .tryit{
 	width:52%;
 	float:left;
+	position:relative;
 }
 #blurbBody div.tryit img, #blurbBody div.tryit iframe{
     /*-moz-box-shadow:1px 1px 10px 2px #bbb;
@@ -376,4 +377,10 @@ section.introBlurb{
 }
 #promoGallery .promoGalleryBody.slideVideo .markerAnnotation{
 
+}
+.markerAnnotation.page {
+	position: absolute;
+    right: -65px;
+    top: 0;
+    width: 250px;
 }
