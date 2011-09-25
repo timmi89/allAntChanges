@@ -310,10 +310,10 @@ section.introBlurb{
 	height:35px;
 }
 #promoControls div.pagerDiv a.pagerImage img{
-	background:url(../images/slideshow-controls-spirte.png) no-repeat 3px 0;
+	background:url(../images/slideshow-controls-spirte.png) no-repeat -32px 0;
 }
 #promoControls div.pagerDiv a.pagerText img{
-	background:url(../images/slideshow-controls-spirte.png) no-repeat -34px 0;
+	background:url(../images/slideshow-controls-spirte.png) no-repeat 3px 0;
 }
 #promoControls div.pagerDiv a.pagerVideo img{
 	background:url(../images/slideshow-controls-spirte.png) no-repeat -70px 0;
