@@ -9,13 +9,17 @@
 
 {% block mainContent %}
 <div id="splashAnnounce" class="no-rdr">
-	<h2>""I want to 
-		<div id="sns_buttons">
-			<div><img src="{{STATIC_URL}}site/images/like_button.png" alt="Like" id="sns_fb" class="no-rdr" /></div>
-			<div style="display:none;"><img src="{{STATIC_URL}}site/images/plus_one_button.png" alt="+1" id="sns_google" class="no-rdr"/></div>
-			<div style="display:none;"><img src="{{STATIC_URL}}site/images/tweet_button.png" alt="Tweet" id="sns_twitter" class="no-rdr"/></div>
-		</div> that, but it's complicated...""</h2>
-	<h3 class="no-rdr"><span>ReadrBoard</span> is the fastest way to <span>say exactly what you think</span><br/>about any phrase, picture, video, or article on the web.</h3>
+	<div id="splashAnnounceInner">
+	 	<!-- show with js -->
+		<h2 style="display:none;">""I want to 
+			<div id="sns_buttons">
+				<div><img src="{{STATIC_URL}}site/images/like_button.png" alt="Like" id="sns_fb" class="no-rdr" /></div>
+				<div style="display:none;"><img src="{{STATIC_URL}}site/images/plus_one_button.png" alt="+1" id="sns_google" class="no-rdr"/></div>
+				<div style="display:none;"><img src="{{STATIC_URL}}site/images/tweet_button.png" alt="Tweet" id="sns_twitter" class="no-rdr"/></div>
+			</div> that, but it's complicated...""
+		</h2>
+		<h3 class="no-rdr"><span>ReadrBoard</span> is the fastest way to <span>say exactly what you think</span><br/>about any phrase, picture, video, or article on the web.</h3>
+	</div>
 </div>
 <div id="splashBlurbs">
 	<div class="blurbsInner">
@@ -89,7 +93,7 @@
 
 				</div>
 				<div class="no-rdr bullets">
-					<h3 class="sectionHeader">Stuff You Can Do</h3>
+					<h3 class="sectionHeader">What You Can Do <em style="display:block;font-family:Arial;font-size:16px;font-weight:normal;color:#666;">on sites using ReadrBoard</em></h3>
 					<ul class="bullet-points">
 						<li>
 							<h3>React</h3>
@@ -97,15 +101,19 @@
 						</li>
 						<li>
 							<h3>Discover</h3>
-							<span>Discover reactions from others readers who share your interests, right on the articles you read.</span>
+							<span>Discover reactions from other readers - people interested in the same content you are - right on the articles you read.</span>
 						</li>
 						<li>
 							<h3>Bookmark</h3>
-							<span>Save favorite content in your private bookmark list.</span>
+							<span>Save favorite parts of a page in your private bookmark list.</span>
 						</li>
 						<li>
 							<h3>Share</h3>
-							<span>Easily share your reaction to specific parts of a page.</span>
+							<span>Easily share your reaction to something specific on a page.</span>
+						</li>
+						<li>
+							<h3>Manage Your Profile</h3>
+							<span>Using ReadrBoard creates a <a href="http://www.readrboard.com/user/11/" target="_blank">profile</a> to show people what you've content you've been reacting to, and you can make it private.  (Bookmarks are <strong>always</strong> private.)</span>
 						</li>
 					</ul>
 				</div>
@@ -120,7 +128,7 @@
 							<span>Add just one line of Javascript to your site to enable all-new levels of engagement with your content.</span>
 						</li>
 						<li>
-							<h3>Increase Engagement 100%</h3>
+							<h3>Increase engagement 100%</h3>
 							<span>Readers use ReadrBoard <strong>at least as much as comments</strong>.  This means:</span>
 							<div class="test">
 								<ul class="sub-bullets">
@@ -141,11 +149,11 @@
 							<span>Better understand your community's tastes, sentiments, and interests.</span>
 						</li>
 						<li>
-							<h3>All-New analytics</h3>
-							<span>Deeply understand why certain content drives interest &amp; engagement.</span>
+							<h3>All-new analytics</h3>
+							<span>Deeply understand why certain content drives interest &amp; engagement. (See the screenshot to the left.)</span>
 						</li>
 						<li>
-							<h3>Simple Moderation</h3>
+							<h3>Simple moderation</h3>
 							<span>Should something inappropriate show up, you can block it in one click.</span>
 						</li>
 						<li>
@@ -155,7 +163,7 @@
 				</div>	
 				<div class="tryit">
 					<a target="_blank" href="{{STATIC_URL}}site/images/demo-analytics-mockup.jpg" title="Demo Publisher Analytics for Readrboard" >
-						<img src="{{STATIC_URL}}site/images/demo-analytics-mockup-sm.jpg" alt="Demo Publisher Analytics"/>
+						<img src="{{STATIC_URL}}site/images/demo-analytics-mockup-sm.jpg" alt="Demo Publisher Analytics" id="analytics_screenshot"/>
 					</a>
 				</div>
 				<div class="clearDiv"></div>

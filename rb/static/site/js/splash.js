@@ -46,7 +46,9 @@
 		    speed:   400,
 		    timeout: 4000
 		});
-			
+
+		$('#splashAnnounce h2').show();
+
 	 	/*slideshow code start*/
  	    $('#promoGallery').cycle({
 		    /*see http://jquery.malsup.com/cycle/options.html*/

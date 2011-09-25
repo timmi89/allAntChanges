@@ -52,6 +52,10 @@ section.introBlurb{
 	width:100%;
 	position:relative;
 }
+#splashAnnounceInner{
+	height:600px;
+	position:relative;
+}
 #splashBlurbs{
 	background:white;
 	position:relative;
@@ -69,9 +73,12 @@ section.introBlurb{
 	font-family:Arial;
 	color:#888;
 	font-weight:bold;
-	padding:25px;
+	padding:25px 0;
 	border-bottom:1px solid #888;
 	background:#ddd;
+	bottom:0;
+	position:absolute;
+	width:100%;
 }
 #splashAnnounce h3 span{
 	color:#26465A;
@@ -153,6 +160,11 @@ section.introBlurb{
 }
 #blurbBody div.tryit img{
 	width:100%;
+}
+#blurbBody div.tryit img#analytics_screenshot{
+	box-shadow: 0 0 8px #666666;
+    margin-left: 10px;
+    width: 100%;
 }
 #splashBlurbs .blurb{
 	width:100%;
@@ -380,7 +392,7 @@ section.introBlurb{
 }
 .markerAnnotation.page {
 	position: absolute;
-    right: -65px;
+    right: -115px;
     top: 65px;
     width: 250px;
 }
