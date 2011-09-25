@@ -154,6 +154,11 @@ section.introBlurb{
 #blurbBody div.tryit img{
 	width:100%;
 }
+#blurbBody div.tryit img#analytics_screenshot{
+	box-shadow: 0 0 8px #666666;
+    margin-left: 10px;
+    width: 100%;
+}
 #splashBlurbs .blurb{
 	width:100%;
 	clear:both;
