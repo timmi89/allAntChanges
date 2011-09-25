@@ -63,9 +63,6 @@ section.introBlurb{
     font-weight: normal;
     font-size:80px;
 }
-#splashAnnounce h2 img{
-	margin-bottom:5px;
-}
 #splashAnnounce h3{
     font-size:30px;
 	text-align:center;
@@ -78,6 +75,25 @@ section.introBlurb{
 }
 #splashAnnounce h3 span{
 	color:#26465A;
+}
+#splashAnnounce #sns_buttons{
+	display:inline-block;
+	position:relative;
+	width:85px;
+	height:45px;
+	zoom:1; 
+	*display:inline;
+	_height:45px;
+}
+#splashAnnounce #sns_buttons img{
+	position:absolute;
+	left:0;
+	top:0;
+}
+#splashAnnounce #sns_buttons img#sns_google{
+	left:3px;
+	top:-5px;
+	display:none;
 }
 #splashAnnounce .rindow-img img{
 	width:250px;
