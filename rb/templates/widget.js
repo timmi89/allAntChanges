@@ -6412,10 +6412,10 @@ function $RFunctions($R){
                             }
                             
                             // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                            if ( $react.width() > $summary_widget.width() - 125 ) {
-                                $react.children().last().html('and more...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
-                                break;
-                            }
+                            // if ( $react.width() > $summary_widget.width() - 125 ) {
+                                // $react.children().last().html('and more...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
+                                // break;
+                            // }
                         }
 
                     }
