@@ -396,3 +396,9 @@ section.introBlurb{
     top: 65px;
     width: 250px;
 }
+#rdr_sandbox{
+	display:none; /*overridden in js*/
+}
+.rdr_educateUser{
+	display:none !important; /*this message doesn't make sense on this page - keep it hidden */
+}

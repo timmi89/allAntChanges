@@ -49,6 +49,9 @@
 
 		$('#splashAnnounce h2').show();
 
+
+		var sandBoxCheck = 0;
+
 	 	/*slideshow code start*/
  	    $('#promoGallery').cycle({
 		    /*see http://jquery.malsup.com/cycle/options.html*/
@@ -71,64 +74,51 @@
 				return $pager;
 			},
 		    before: function(){
-	    		/*
-		    	var $mediaContainer = $(this).find('img.rdr-hashed, iframe.rdr-hashed'),
-		    		hash;
-
-				console.log('before');
-		        console.log(this);
-		        console.log($mediaContainer);
-
-		    	if($mediaContainer.length){
-		    		
-			        console.log('$mediaContainer');
-			        console.log($mediaContainer);
-			        hash = $mediaContainer.data('hash');
-
-			        $('#rdr_actionbar_'+hash).hide();
-			        $('#rdr_container_tracker_'+hash).hide();
-			        $('#rdr_indicator_details_'+hash).hide();
-
-					$('.rdr_indicator_details').hide();
-					$('.rdr_indicator_body').hide();
-					
-					*/
-			    	/*
-			    	hash = $mediaContainer.data('hash')
-			    		hash = 
-		    	}
-					*/
+	    		//just do this everytime - it's a little 'wastefull' but so what.  It's simpler - catches the first time they init.
+				hideSandboxStuffForMedia();
 		    },
 			after: function(){
-				/*
-				var $mediaContainer = $(this).find('img.rdr-hashed, iframe.rdr-hashed'),
-		    		hash;
+				//do it again to hide shit that caught if you hovered durring the transition. 
+				//todo: this could be done nicer.  Considering putting a sub-sandbox into the slide.
+				hideSandboxStuffForMedia();
 
-		    	if($mediaContainer.length){
-		    	
-			        
-			        hash = $mediaContainer.data('hash');
+				//sandbox starts off hidden to prevent initial fouc, so look for it here, and if it's loaded, show it.
 
-					console.log('after');
-			        console.log(this);
-			        RDR.actions.indicators.utils.updateContainerTracker(hash);
+				var $sandbox = $('#rdr_sandbox');
+				if($sandbox.length){
+					sandBoxCheck = true;
+					$('#rdr_sandbox').show();
+				}
+				if(sandBoxCheck !== true) return;
+				//else
+				
+				//find the mediaContainer if it exists on this slide (the text slide won't have one)
+				var $thisMediaContainer = $(this).find('img.rdr-hashed, iframe.rdr-hashed').eq(0);
+		    	if($thisMediaContainer.length){
+			        updateSandboxStuffForMedia($thisMediaContainer);
 		    	}
-			        */
-
-		    },
-			onPrevNextEvent: function (isNext) {
-		        $('#promoGallery').cycle('pause');
-		        
-		        //hack to allow prev and next to have different transitions
-		        /*
-		        if (isNext) {
-		            $('#promoGallery').data('direction', 'left')
-		        }else{
-		            $('#promoGallery').data('direction', 'right')
-		        }
-		        */
 		    }
 		});
+
+		function hideSandboxStuffForMedia(){
+			//hide all the sandbox components for this media
+			var $mediaContainers = $('#promoGallery').find('img.rdr-hashed, iframe.rdr-hashed');
+			$mediaContainers.each(function(){
+				//we need to use the $R jquery to get the data instead of the one on this page
+				var hash = $R(this).data('hash');
+		        $('#rdr_actionbar_'+hash).hide();
+		        $('#rdr_container_tracker_'+hash).hide();
+		        $('#rdr_indicator_details_'+hash).hide();				
+			});
+		}
+		function updateSandboxStuffForMedia($thisMediaContainer){	
+			//we need to use the $R jquery to get the data instead of the one on this page
+			//todo: This won't work later because we will hide this in a closure later.
+			var hash = $R($thisMediaContainer[0]).data('hash');
+	        RDR.actions.indicators.utils.updateContainerTracker(hash);
+		}
+
+
 		$('#promoGallery').hover(
 			function(){
 				$(this).cycle('pause');
