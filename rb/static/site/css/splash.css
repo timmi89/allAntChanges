@@ -51,130 +51,120 @@ section.introBlurb{
 	text-align:center;
 	width:100%;
 	position:relative;
-	padding:50px 0;
+}
+#splashAnnounceInner{
+	height:600px;
+	position:relative;
 }
 #splashBlurbs{
 	background:white;
 	position:relative;
 }
-#splashAnnounce h2, #splashAnnounce h3{
-	padding:40px 0;
-    color: white;
-    font-family: ReadrLeague,Arial;
-    font-weight: normal;
-    /*text-shadow: 2px 2px 2px #95B6CB;*/
-}
 #splashAnnounce h2{
-    font-size:62px;
+	padding:171px 0;
+    color: #fff;
+    font-family: ReadrLeagueSite,Arial;
+    font-weight: normal;
+    font-size:80px;
 }
 #splashAnnounce h3{
-    font-size:40px;
+    font-size:30px;
+	text-align:center;
+	font-family:Arial;
+	color:#888;
+	font-weight:bold;
+	padding:25px 0;
+	border-bottom:1px solid #888;
+	background:#ddd;
+	bottom:0;
+	position:absolute;
+	width:100%;
 }
-#splashAnnounce .rindow-img{
-	
+#splashAnnounce h3 span{
+	color:#26465A;
 }
-
+#splashAnnounce #sns_buttons{
+	display:inline-block;
+	position:relative;
+	width:85px;
+	height:52px;
+	bottom:-3px;
+	/*the following are for ie 6 and 7 to work with inline-block*/
+	zoom:1; 
+	*display:inline;
+	_height:50px;
+}
+#splashAnnounce #sns_buttons > div{
+}
+#splashAnnounce #sns_buttons img{
+	position:absolute;
+	left:0;
+	top:5px;
+}
+#splashAnnounce #sns_buttons img#sns_google{
+	left:3px;
+	top:2px;
+}
+#splashAnnounce #sns_buttons img#sns_twitter{
+	top:7px;
+}
+#splashAnnounce .rindow-img img{
+	width:250px;
+}
 #splashBlurbs .blurbsInner, #splashBlurbs .partnerLogoSection{
 	width:960px;
 	margin:auto;
 }
 #splashBlurbs .blurbsInner{
-	padding-top:30px;
+	padding-top:10px;
+	overflow:auto;
+}
+#splashBlurbs .blurbsInner h4{
+	font-family:ReadrLeagueSite, Arial;
+	color:#888;
+	padding:0 0 10px 6px;
+	font-size:36px;
+	padding-top:20px;
+	border-top:1px solid #888;
+	margin-top:20px;
 }
 #splashBlurbs .partnerLogoSection{
 	padding: 10px 0;
-}
-#blurbMenu{
-	padding:20px 0;
-	position:relative;
-}
-#blurbMenu ul{
-	display:inline-block;
-}
-#blurbMenu li {
-	list-style:none;
-	float:left;
-	margin:0 20px 0 0;
-    opacity:0.5;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
-    filter:alpha(opacity=50);
-    -moz-opacity:0.5;
-    -khtml-opacity:0.5;
-}
-#blurbMenu li.hover{
-    opacity:.8;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
-    filter:alpha(opacity80);
-    -moz-opacity:0.8;
-    -khtml-opacity:0.8;
-    cursor: pointer;
-}
-#blurbMenu li.hover div{
-    color:#7997B1;
-}
-#blurbMenu li.selected div{
-    /*override above if selected*/
-    /*color:#666;*/
-    color:#26465A;
-}
-#blurbMenu li.selected{
-    opacity:1;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-    filter:alpha(opacity=100);
-    -moz-opacity:1;
-    -khtml-opacity:1;
-}
-
-#blurbMenu li div{
-    border:1px solid #CCC; 
-    
-    background-image: -webkit-gradient(
-    linear,
-    left bottom,
-    left top,
-    color-stop(0, rgb(221,221,221)),
-    color-stop(0.50, rgb(255,255,255))
-    );
-    background-image: -moz-linear-gradient(center bottom , #DDD 0%, #FFF 50%);
-
-    -moz-border-radius:5px;
-    -webkit-border-radius:5px;
-    border-radius:5px;
-
-    -moz-box-shadow:1px 1px 10px 2px #DDDDDD;
-    -webkit-box-shadow:1px 1px 10px 2px #DDDDDD;
-    box-shadow:1px 1px 10px 2px #DDDDDD;
-	
-	font-family: ReadrLeague,Arial;
-	font-size: 30px;
-	font-style: italic;
-	padding: 5px 25px 5px 22px;
+	padding-top:20px;
+	border-top:1px solid #888;
+	margin-top:20px;
+	clear:both;	
 }
 #blurbBody{
 	height:410px;
 }
 #blurbBody > div{
-	display:none;
+	
 }
 #blurbBody > div.selected{
 	display:block;
 }
 #blurbBody .bullets{
-	float:left;
-	width:46%;
-}
-#blurbBody .media{
-	width:52%;
 	float:right;
-	text-align:right;
+	width:42%;
 }
-#blurbBody div.media img, #blurbBody div.media iframe{
-    -moz-box-shadow:1px 1px 10px 2px #bbb;
+#blurbBody .tryit{
+	width:52%;
+	float:left;
+	position:relative;
+}
+#blurbBody div.tryit img, #blurbBody div.tryit iframe{
+    /*-moz-box-shadow:1px 1px 10px 2px #bbb;
     -webkit-box-shadow:1px 1px 10px 2px #bbb;
-    box-shadow:1px 1px 10px 2px #bbb;
+    box-shadow:1px 1px 10px 2px #bbb;*/
 }
-#blurbBody div.media img{
+#blurbBody div.tryit img{
 	width:100%;
+}
+#blurbBody div.tryit img#analytics_screenshot{
+	box-shadow: 0 0 8px #666666;
+    margin-left: 10px;
+    width: 100%;
 }
 #splashBlurbs .blurb{
 	width:100%;
@@ -187,6 +177,16 @@ section.introBlurb{
 	margin:0;
 	clear:both;
 	font-size:30px;
+	font-weight:bold;
+}
+#splashBlurbs h3{
+	font-size:20px;
+}
+#splashBlurbs h3.sectionHeader{
+	text-align:center;
+	font-family:ReadrLeagueSite,Arial;
+	font-size:48px;
+	margin:30px 0;
 }
 #splashBlurbs .blurb .bullet-points{
 	list-style:none;
@@ -214,22 +214,23 @@ section.introBlurb{
 	list-style:none;
 }
 #splashBlurbs ul.partnerLogos li img{
-	width:100px;
+	width:80px;
 	float:left;
 	padding:0 10px 0 0;
 }
 #splashBlurbs ul.partnerLogos li img.wideImg{
     position: relative;
-    width: 150px;
+    width: 120px;
 }
 #splashBlurbs .partnerLogoSection .moreLogos{
     float: left;
     margin-left: 15px;
     position: relative;
-    top: 40px;
+    top: 32px;
+    font-size:14px;
 }
 #splashBlurbs .partnerLogoSection h3{
-	font-size:24px;
+	font-size:18px;
 	padding-left:5px;
 }
 #footer{
@@ -268,19 +269,18 @@ section.introBlurb{
 
 /*for slideshow*/
 #promoDiv{
-	width:960px;
+	width:480px;
 	position:relative;
 	margin:auto;
-	height:320px;
-
 }
 #promoGallery{
 	width:100%;
+	height:300px;
+    margin-bottom:50px;
 }
 .promoGalleryBody{
     width:100%;
     position: relative;
-    height:300px;
     display:none; /*to be overriden by js*/
 }
 .promoGalleryBody.startSlide{
@@ -291,15 +291,15 @@ section.introBlurb{
 #promoControls{
     position: absolute;
     left:50%;
-    bottom:0;
-    z-index: 100;
+    bottom:-60px;
+    z-index: 8;
 }
 #promoControls #promoControlsInnerWrap{
 	position:relative;
 	left:-50%;
 }
-#promoControls #promoControlsInnerWrap > div{
-    float:left;
+#promoControls div.pagerDiv{
+	float:left;
 }
 #promoControls a{
     opacity: 0.5;
@@ -319,15 +319,39 @@ section.introBlurb{
     -khtml-opacity: 1.0;
     filter: alpha(opacity=100);
 }
-#promoControls img{
-    width:30px;
+#promoControls div.pagerDiv a{
+	padding:0 18px;
+	float:left;
+}
+#promoControls div.pagerDiv a img{
+	width:35px;
+	height:35px;
+}
+#promoControls div.pagerDiv a.pagerImage img{
+	background:url(../images/slideshow-controls-spirte.png) no-repeat -32px 0;
+}
+#promoControls div.pagerDiv a.pagerText img{
+	background:url(../images/slideshow-controls-spirte.png) no-repeat 3px 0;
+}
+#promoControls div.pagerDiv a.pagerVideo img{
+	background:url(../images/slideshow-controls-spirte.png) no-repeat -70px 0;
 }
 #promoGallery .textSlide{
-	background:white;
-	padding:20px;
+	position: relative;
+	top: 20px;
+	background:#abbcc7;
+	padding:20px 20px 30px 20px;
     margin: auto;
-    padding: 20px;
-    width: 670px;
+    margin-top:10px;
+	opacity: 0.75;
+    color:#222;
+
+    -moz-opacity: 0.75;
+    -khtml-opacity: 0.75;
+    filter: alpha(opacity=75);
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
 }
 #promoGallery .textSlide blockquote{
 	border:none;
@@ -344,4 +368,31 @@ section.introBlurb{
 }
 #promoGallery h4{
 	color:#666;
+}
+#promoGallery .promoGalleryBody .markerAnnotation{
+	position:absolute;
+	top:0;
+	left:0;	
+    -moz-opacity: 0.75;
+    -khtml-opacity: 0.75;
+    filter: alpha(opacity=75);
+}
+#promoGallery .promoGalleryBody .markerAnnotation img{
+	width:180px;
+}
+#promoGallery .promoGalleryBody.slideImage .markerAnnotation{
+	left:120px;
+}
+#promoGallery .promoGalleryBody.slideText .markerAnnotation{
+	top:180px;
+	left:40px;
+}
+#promoGallery .promoGalleryBody.slideVideo .markerAnnotation{
+
+}
+.markerAnnotation.page {
+	position: absolute;
+    right: -115px;
+    top: 65px;
+    width: 250px;
 }

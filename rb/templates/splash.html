@@ -8,166 +8,161 @@
 {% block bodyClass %}wide{% endblock %}
 
 {% block mainContent %}
-
-<style>
-
-</style>
-<!--
-<section role="analytics header">
-	<section role="controls">
-		About Readrboard
-	</section>
-</section>
--->
-<div id="splashAnnounce">
-	<!--
-	<h2>Is your content listening to your readers?</h2>
-	<h2>A quick new way to interact with content</h2>
-	-->
-	<h2 class="no-rdr">How are readers reacting to your content?</h2>
-	<div id="promoDiv" class="animationDiv">
-		<div id="promoGallery">
-			<div class="promoGalleryBody startSlide">
-				<div class="rindow-img">
-					<img src="{{STATIC_URL}}site/images/rindow-for-splashpage.png" />
-				</div>
-			</div>
-			<div class="promoGalleryBody">
-				<img src="{{ STATIC_URL }}/demo/readrboard-demo/puppy.png" alt="" width="250" class="contentImg" />
-			</div>
-			<div class="promoGalleryBody">
-				<div class="textSlide">
-					<blockquote>
-						"If you ask 20 different readers why they read, they will all be right." <span class="author">-Teresa Nielsen Hayden</span>
-					</blockquote>
-					<!--
-					<blockquote>
-						"I'll never make that mistake again, reading the experts' opinions." <span class="author">-Richard Feynman</span>
-					</blockquote>
-					-->
-					<blockquote>
-						"It was impossible to get a conversation going, everybody was talking too much." <span class="author">-Yogi Berra</span>
-					</blockquote>
-					<blockquote>
-						"Write a wise saying and your name will live forever." <span class="author">-Anonymous</span>
-					</blockquote>
-					<p>
-					</p>
-				</div>
-			</div>
-			<div class="promoGalleryBody">
-				<!--chrome was FOUCing this without this hack - hide here, show with js-->
-				<iframe style="display:none;" width="450" height="280" frameborder="0" allowfullscreen="" src="http://www.youtube.com/embed/eD1i6IpU56o" class="rdr_video"></iframe>
-			</div>
-		</div>
-		<div id="promoControls" class="no-rdr">
-			<div id="promoControlsInnerWrap">
-				<div class="promoPrev">
-					<a href="#">
-						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/controls-prev.png" alt="prev" />
-					</a>
-				</div>
-				<div class="promoPlayPause">
-					<a href="#" class="promoPlay" >
-						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/controls-play.png" alt="play" />
-					</a>
-					<a href="#" class="promoPause">
-						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/controls-pause.png" alt="pause" />
-					</a>
-				</div>
-				<div class="promoNext">
-					<a href="#">
-						<img src="{{ STATIC_URL }}site/js/jquery.cycle/images/controls-next.png" alt="next" />
-					</a>
-				</div>
-			</div>
-		</div>
+<div id="splashAnnounce" class="no-rdr">
+	<div id="splashAnnounceInner">
+	 	<!-- show with js -->
+		<h2 style="display:none;">""I want to 
+			<div id="sns_buttons">
+				<div><img src="{{STATIC_URL}}site/images/like_button.png" alt="Like" id="sns_fb" class="no-rdr" /></div>
+				<div style="display:none;"><img src="{{STATIC_URL}}site/images/plus_one_button.png" alt="+1" id="sns_google" class="no-rdr"/></div>
+				<div style="display:none;"><img src="{{STATIC_URL}}site/images/tweet_button.png" alt="Tweet" id="sns_twitter" class="no-rdr"/></div>
+			</div> that, but it's complicated...""
+		</h2>
+		<h3 class="no-rdr"><span>ReadrBoard</span> is the fastest way to <span>say exactly what you think</span><br/>about any phrase, picture, video, or article on the web.</h3>
 	</div>
-
-	<!--
-	<h3>Get instant reactions about anything on your page.</h3>
-	-->
-	<h3 class="no-rdr">Let them tell you in a single click.</h3>
 </div>
-<div id="splashBlurbs" class="no-rdr">
+<div id="splashBlurbs">
 	<div class="blurbsInner">
-		<div id="blurbMenu">
-			<ul>
-				<li id="blurbMenu-0" class="readers selected">
-					<div>For Readers</div>
-				</li>
-				<li id="blurbMenu-1" class="publishers blurbMenu-1">
-					<div>For Publishers</div>
-				</li>
-			</ul>
-		</div>
 		<div id="blurbBody">
 			<div class="blurb blurb-for-readers selected">
-				<div class="bullets">
+				<div class="tryit">
+					<h3 class="no-rdr sectionHeader">Try It</h3>
+					<div class="no-rdr markerAnnotation page">
+						<img src="{{ STATIC_URL }}site/images/marker-annotation-page.png" alt="React to the whole page" width="200"/>
+					</div>
+					<div id="promoDiv" class="animationDiv">
+						<div id="promoGallery">
+							<div class="promoGalleryBody startSlide">
+								<img src="{{ STATIC_URL }}site/images/old-man-tricycle2.jpg" alt="ReadrBoard sample image" width="380" class="contentImg" />
+								<div class="no-rdr markerAnnotation">
+									<img src="{{ STATIC_URL }}site/images/marker-annotation-image.png" alt="hover over that image" />
+								</div>
+							</div>
+							<div class="promoGalleryBody slideText">
+								<div class="textSlide">
+									<div>
+										<blockquote>
+											"If you ask 20 different readers why they read, they will all be right."
+										</blockquote>
+										<span class="author">- Teresa Nielsen Hayden</span>
+									</div>
+									<div>
+										<blockquote>
+											"Write a wise saying and your name will live forever."
+										</blockquote>
+										<span class="author">- Anonymous</span>
+									</div>
+								</div>
+								<div class="no-rdr markerAnnotation">
+									<img src="{{ STATIC_URL }}site/images/marker-annotation-text.png" alt="select that text" />
+								</div>
+							</div>
+							<div class="promoGalleryBody slideVideo">
+								<!--chrome was FOUCing this without this hack - hide here, show with js-->
+								<iframe style="display:none;" width="480" height="300" frameborder="0" allowfullscreen="" src="http://www.youtube.com/embed/eD1i6IpU56o?wmode=transparent" class="rdr_video"></iframe>
+								<div class="no-rdr markerAnnotation">
+									<img src="{{ STATIC_URL }}site/images/marker-annotation-video.png" alt="hover over that video" />
+								</div>
+							</div>
+						</div>
+						<!-- show on slideshow init to avoid FOUC -->
+						<div id="promoControls" class="no-rdr" style="display:none;">
+							<div id="promoControlsInnerWrap">
+							<!-- to be filled in with the pager control of the cycle plugin -->
+							<!--
+								<div class="pagerDiv">
+									<a href="#" class="pagerImage">
+										<img src="{{ STATIC_URL }}site/images/blank.png" alt="show image example" />
+									</a>
+								</div>
+								<div class="pagerDiv">
+									<a href="#" class="pagerText">
+										<img src="{{ STATIC_URL }}site/images/blank.png" alt="show text example" />
+									</a>
+								</div>
+								<div class="pagerDiv">
+									<a href="#" class="pagerVideo">
+										<img src="{{ STATIC_URL }}site/images/blank.png" alt="show video example" />
+									</a>
+								</div>
+								-->
+							</div>
+						</div>
+						<div class="clearDiv"></div>
+					</div>
+				</div>
+				<div class="no-rdr bullets">
+					<h3 class="sectionHeader">What You Can Do <em style="display:block;font-family:Arial;font-size:16px;font-weight:normal;color:#666;">on sites using ReadrBoard</em></h3>
 					<ul class="bullet-points">
 						<li>
 							<h3>React</h3>
-							<span>Quickly react to any phrase, image, or video.</span>
-						</li>
-						<li>
-							<h3>Bookmark</h3>
-							<span>Save favorite content in your private bookmark list.</span>
-						</li>
-						<li>
-							<h3>Share</h3>
-							<span>Easily share your reaction to specific parts of a page.</span>
+							<span>Quickly react to any phrase, image, or video - or, a whole page - while you read. </span>
 						</li>
 						<li>
 							<h3>Discover</h3>
-							<span>Discover reactions from readers who share your interests.</span>
+							<span>Discover reactions from other readers - people interested in the same content you are - right on the articles you read.</span>
+						</li>
+						<li>
+							<h3>Bookmark</h3>
+							<span>Save favorite parts of a page in your private bookmark list.</span>
+						</li>
+						<li>
+							<h3>Share</h3>
+							<span>Easily share your reaction to something specific on a page.</span>
+						</li>
+						<li>
+							<h3>Manage Your Profile</h3>
+							<span>Using ReadrBoard creates a <a href="http://www.readrboard.com/user/11/" target="_blank">profile</a> to show people what you've content you've been reacting to, and you can make it private.  (Bookmarks are <strong>always</strong> private.)</span>
 						</li>
 					</ul>
-				</div>	
-				<div class="media">
-					<div class="video-wrap">
-						<iframe class="rdr_video" src="http://player.vimeo.com/video/21956758?title=0&amp;byline=0&amp;portrait=0" width="480" height="300" frameborder="0" style="border:8px solid #ddd;">
-						</iframe>
-					</div>
 				</div>
 				<div class="clearDiv"></div>
 			</div>
-			<div class="blurb blurb-for-publishers">
+			<h4 class="no-rdr">Stuff For Publishers</h4>
+			<div class="no-rdr blurb blurb-for-publishers">
 				<div class="bullets">
 					<ul class="bullet-points">
 						<li>
-							<h3>Know your Readers</h3>
-							<span>Profile your community's tastes, sentiments, and interests.</span>
+							<h3>Add to any page on your site</h3>
+							<span>Add just one line of Javascript to your site to enable all-new levels of engagement with your content.</span>
 						</li>
 						<li>
-							<h3>Analytics</h3>
-							<span>Deeply understand how your content drives engagement.</span>
-						</li>
-						<li>
-							<h3>Engagement</h3>
-							<span>Boost your metrics through:</span>
+							<h3>Increase engagement 100%</h3>
+							<span>Readers use ReadrBoard <strong>at least as much as comments</strong>.  This means:</span>
 							<div class="test">
 								<ul class="sub-bullets">
 									<li>
-										<span>increased shared links</span>
+										<span>Better quality interactions with your content</span>
 									</li>
 									<li>
-										<span>longer site visits</span>
+										<span>Increased shared links</span>
 									</li>
 									<li>
-										<span>better quality interactions with your content</span>
+										<span>Longer site visits</span>
 									</li>
 								</ul>
 							</div>
 						</li>
 						<li>
-							<h3>...And it's free, interested?</h3>
-							<span><a href="mailto:info@readrboard.com">Of course you are - drop us a line!</a></span>
+							<h3>Know your readers</h3>
+							<span>Better understand your community's tastes, sentiments, and interests.</span>
+						</li>
+						<li>
+							<h3>All-new analytics</h3>
+							<span>Deeply understand why certain content drives interest &amp; engagement. (See the screenshot to the left.)</span>
+						</li>
+						<li>
+							<h3>Simple moderation</h3>
+							<span>Should something inappropriate show up, you can block it in one click.</span>
+						</li>
+						<li>
+							<span><a href="mailto:info@readrboard.com">It's free! Ask us about joining the beta.</a></span>
 						</li>
 					</ul>
 				</div>	
-				<div class="media">
+				<div class="tryit">
 					<a target="_blank" href="{{STATIC_URL}}site/images/demo-analytics-mockup.jpg" title="Demo Publisher Analytics for Readrboard" >
-						<img src="{{STATIC_URL}}site/images/demo-analytics-mockup-sm.jpg" alt="Demo Publisher Analytics"/>
+						<img src="{{STATIC_URL}}site/images/demo-analytics-mockup-sm.jpg" alt="Demo Publisher Analytics" id="analytics_screenshot"/>
 					</a>
 				</div>
 				<div class="clearDiv"></div>
@@ -176,7 +171,7 @@
 	</div>
 	<div class="no-rdr partnerLogoSection">
 		<h3>Try ReadrBoard live on our Partners' websites</h3>
-		<div class="partnerLogoSection">
+		<div>
 			<ul class="partnerLogos">
 				<li>
 					<a href="http://hypervocal.com/" target="_blank">
@@ -190,7 +185,7 @@
 						<img class="colorImg wideImg" style="display:none;" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/racialicious-logo-for-splash.png" alt="racialicious logo" />
 					</a>
 				</li>
-				<!--
+				{% comment %}
 				<li>
 					<a href="http://www.fathomaway.com/" target="_blank">
 						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/fathom-logo-lg.png" alt="fathom logo" />
@@ -231,7 +226,7 @@
 						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/themark-logo-lg.png" alt="themarknews logo" />
 					</a>
 				</li>
-				-->
+				{% endcomment %}
 			</ul>
 			<div class="moreLogos">
 				More launching soon...
@@ -244,28 +239,13 @@
 	<div class="footerLinks">
 		<ul class="footerLinksLeft">
 			<li>
+				<a href="/">discover</a>
+			</li>
+			<li>
 				<a href="/about/" >about us</a>
 			</li>
 			<li>
 				<a href="{{STATIC_URL}}demo/index.html" >demo</a>
-			</li>
-			<li>
-				<a href="/" >readr-stream &#153;</a>
-			</li>
-		</ul>
-		<ul class="footerLinksRight">
-			<li>
-				<!--
-				this isn't working yet... cookie_user isn't being passed in yet.
-				-->
-				<div id="user">
-					<div id="fb-logged-in" {% if not cookie_user.social_user %}style="display:none;"{% endif %}>
-						<a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/><strong>{{ cookie_user.social_user.full_name }}</strong></a>
-					</div>
-					<div id="fb-logged-out" {% if cookie_user.social_user %}style="display:none;"{% endif %}>
-						<a href="javascript:void(0);" onclick="RDRAuth.doFBLogin('site_login')"><img src="/static/site/images/fb_connect_button.png" border="0" alt="Connect with Facebook" /></a>
-					</div>
-				</div>
 			</li>
 		</ul>
 		<div class="clearDiv"></div>

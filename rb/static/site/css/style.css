@@ -122,7 +122,7 @@ body {
 /* HEADINGS */
 
 h1, 
-h2 { font-family:ReadrLeague, Arial; font-weight:bold; }
+h2 { font-family:ReadrLeagueSite, Arial; font-weight:bold; }
 
 h1 { 
 font-size:3em; /* 48 / 16 = 3 */
@@ -545,7 +545,7 @@ section[role="main"] .card thead .column1 img  {margin-top:3px }
 section[role="main"] .card thead .column2      {margin:0; padding:5px 5px 5px 15px; background:url(../images/shaded_arrow.png) center left no-repeat #fff; font:italic bold 14px Arial; color:#6b6b6b;}
  
 section[role="main"] .card tbody .column1      {background:#eaf0f3; vertical-align:top; border-right:1px solid #d2dee4;}
-section[role="main"] .card tbody .column1 .reaction    {font-family:ReadrLeague, Arial; font-size:18px; color:#6b6b6b; font-size:24px; margin:10px 0px 5px 0px; }
+section[role="main"] .card tbody .column1 .reaction    {font-family:ReadrLeagueSite, Arial; font-size:18px; color:#6b6b6b; font-size:24px; margin:10px 0px 5px 0px; }
 section[role="main"] .card tbody .column1 .count       {font-size:12px; margin-bottom:15px;}
 
 section[role="main"] .card tbody .column2      {background:#ffffff; padding:15px;}
@@ -563,7 +563,7 @@ section[role="main"] .card tbody .column2 .comment_container .header .avatar    
 section[role="main"] .card tbody .column2 .comment_container .header .avatar img {height:20px; width:20px;}
 section[role="main"] .card tbody .column2 .comment_container .header .who        {float:left; margin-left:5px; padding-top:4px; height:16px; font:italic bold 12px Arial; vertical-align:middle; }
 
-section[role="main"] .card tbody .column2 .comment_container .comment   {overflow:hidden; color:#666; clear:both; position:relative; padding:5px 25px; font:normal 24px ReadrLeague;}
+section[role="main"] .card tbody .column2 .comment_container .comment   {overflow:hidden; color:#666; clear:both; position:relative; padding:5px 25px; font:normal 24px ReadrLeagueSite;}
 section[role="main"] .card tbody .column2 .comment_container .comment .count  {font:normal 12px Arial; }
 section[role="main"] .card tbody .column2 .comment_container .comment .quote.open  { background:url(../images/quote_open.png) top left no-repeat; top:8px;left:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
 section[role="main"] .card tbody .column2 .comment_container .comment .quote.close { background:url(../images/quote_close.png) top left no-repeat; bottom:20px;right:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
@@ -667,11 +667,11 @@ section[role="panels"] 					{ float:left; overflow:auto; padding:10px; }
 
 section[role="wide panels"] 			{ float:left; padding:0 10px 10px; width: 740px; }
 section[role="wide panels"] section		{ margin-bottom:20px; }
-section[role="wide panels"] h3 			{ font-family:'ReadrLeague'; font-size:30px; margin:0; border-top:1px solid #aaa; padding:7px 0; }
-section[role="wide panels"] h4 			{ font-family:'ReadrLeague'; font-size:24px; margin:0; }
+section[role="wide panels"] h3 			{ font-family:'ReadrLeagueSite'; font-size:30px; margin:0; border-top:1px solid #aaa; padding:7px 0; }
+section[role="wide panels"] h4 			{ font-family:'ReadrLeagueSite'; font-size:24px; margin:0; }
 
 section[role="interaction frequency"] 				{ overflow:auto; text-align:center; }
-section[role="interaction frequency"] h1			{ font-family:'ReadrLeague'; font-size:80px; text-shadow: 1px 2px 1px #fff; padding:25px 0 0; margin:0; color:#638296; background:none;}
+section[role="interaction frequency"] h1			{ font-family:'ReadrLeagueSite'; font-size:80px; text-shadow: 1px 2px 1px #fff; padding:25px 0 0; margin:0; color:#638296; background:none;}
 div[role="total interactions"]						{ width:130px; float:left; overflow:auto; }
 div[role="frequency chart"]							{ width:610px; margin-left:130px; color:#ddd; box-shadow:0px -10px 9px -9px #454545 inset; min-height:100px; }
 
@@ -682,7 +682,7 @@ section[role="most popular tags"] ol li.medium		{ font-size:16px; }
 section[role="most popular tags"] ol li.small		{ font-size:12px; }
 
 section[role="thin panels"] 			{ float:left; padding:0 10px 10px; width:320px; font-size:12px; }
-section[role="thin panels"] h3 			{ font-family:'ReadrLeague'; font-size:24px; margin-bottom:0; border-top:1px solid #aaa; padding:7px 0; }
+section[role="thin panels"] h3 			{ font-family:'ReadrLeagueSite'; font-size:24px; margin-bottom:0; border-top:1px solid #aaa; padding:7px 0; }
 
 table[role="active content table"] thead td,
 table[role="active pages table"] thead td						{ font-weight:bold;}

@@ -5,7 +5,6 @@
 	 		$(this).addClass('selected').siblings().removeClass('selected');
 	 		
 	 		var order = $(this).index();
-	 		console.log(order);
 
 	 		var $thisMenuBody = $('#blurbBody').children().eq(order);
 	 		$thisMenuBody.siblings().fadeOut( 100, function(){
@@ -36,6 +35,20 @@
 	 		}
 	 	);	
 
+	 	/* rotate the like and +1 buttons */
+	 // 	var cycleLikes = setInterval( function() { 
+		// 	$('#sns_buttons img').fadeToggle(1000); 
+		// }, 4000 );
+
+		$('#sns_buttons').cycle({
+			fx: 'scrollDown',
+			easing: 'swing',
+		    speed:   400,
+		    timeout: 4000
+		});
+
+		$('#splashAnnounce h2').show();
+
 	 	/*slideshow code start*/
  	    $('#promoGallery').cycle({
 		    /*see http://jquery.malsup.com/cycle/options.html*/
@@ -43,42 +56,104 @@
 		    fx: 'myUncover',
 		    */
 		    fx: 'scrollLeft',
+		    easing: 'swing',
 		    direction: 'left',
 		    speed:   600,
 		    timeout: 4000,
-		    next:   '.promoNext',
-		    prev:   '.promoPrev',
-		    pause:   1, /*enable pause on hover*/
-		    random: 0, /*change to 1 if we want it to be randomized*/
-		    onPrevNextEvent: function (isNext) {
-		        $('#promoGallery').cycle('pause');
-		        $(".promoPlay").show();
-		        $(".promoPause").hide();
+		    pause:   0, /*enable pause on hover*/
+		    pager: "#promoControlsInnerWrap",
+	        pagerAnchorBuilder: function(idx, slide) {
+	        	var typeArr = ["Image", "Text", "Video"];
+	        	var $pager = $('<div />').addClass('pagerDiv'),
+	        		$a = $('<a href="#" />').addClass('pager'+typeArr[idx]).appendTo($pager),
+	        		$img = $('<img src="/static/site/images/blank.png" alt="Show '+typeArr[idx]+' Example" />').appendTo($a);
+	       
+				return $pager;
+			},
+		    before: function(){
+	    		/*
+		    	var $mediaContainer = $(this).find('img.rdr-hashed, iframe.rdr-hashed'),
+		    		hash;
 
+				console.log('before');
+		        console.log(this);
+		        console.log($mediaContainer);
+
+		    	if($mediaContainer.length){
+		    		
+			        console.log('$mediaContainer');
+			        console.log($mediaContainer);
+			        hash = $mediaContainer.data('hash');
+
+			        $('#rdr_actionbar_'+hash).hide();
+			        $('#rdr_container_tracker_'+hash).hide();
+			        $('#rdr_indicator_details_'+hash).hide();
+
+					$('.rdr_indicator_details').hide();
+					$('.rdr_indicator_body').hide();
+					
+					*/
+			    	/*
+			    	hash = $mediaContainer.data('hash')
+			    		hash = 
+		    	}
+					*/
+		    },
+			after: function(){
+				/*
+				var $mediaContainer = $(this).find('img.rdr-hashed, iframe.rdr-hashed'),
+		    		hash;
+
+		    	if($mediaContainer.length){
+		    	
+			        
+			        hash = $mediaContainer.data('hash');
+
+					console.log('after');
+			        console.log(this);
+			        RDR.actions.indicators.utils.updateContainerTracker(hash);
+		    	}
+			        */
+
+		    },
+			onPrevNextEvent: function (isNext) {
+		        $('#promoGallery').cycle('pause');
+		        
 		        //hack to allow prev and next to have different transitions
+		        /*
 		        if (isNext) {
 		            $('#promoGallery').data('direction', 'left')
 		        }else{
 		            $('#promoGallery').data('direction', 'right')
 		        }
+		        */
 		    }
 		});
-		    
-		$(".promoPlay").hide(); //starts off with pause shown and play hidden
+		$('#promoGallery').hover(
+			function(){
+				$(this).cycle('pause');
+			},
+			function(){
+				//don't do this -prob annoying anyway, but especially dont do it because the widget steals the hover
+				/*
+				$(this).cycle('resume');
+		        $(".promoPlay").hide();
+		        $(".promoPause").show();
+		        */
+			}
+		);
 
-		$(".promoPlayPause").click(function (e) {
-		    $('#promoGallery').cycle('toggle');
-
-		    $(".promoPlay").toggle();
-		    $(".promoPause").toggle();
-		    return false;
-		});
 		$("#promoControls a").click(function(e) {
 		    $(this).blur();
 		});
+		$("#promoControls").fadeIn();
+		
 		/*chrome was FOUCing this without this hack - hidden initially*/
 		$('#promoGallery iframe').show();
 		/*slideshow code end*/
+
+		//reveal after load
+		$('#markerAnnotationLearnMore').fadeIn();
 
 	});
 }(jQuery));

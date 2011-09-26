@@ -9,6 +9,9 @@ body{
     padding:0;
     color:#666;
 }
+.rdr img {
+    width:auto !important;
+}
 #rdr_sandbox{
     /*temp reset*/
     position:absolute;
@@ -671,7 +674,7 @@ div.rdr.rdr-summary div.rdr_note ins    { text-decoration:none !important; }
 /* summary widget */
 #rdr-page-summary {position:relative;}
 
-.rdr-summary {
+div.rdr.rdr-summary {
     -moz-box-shadow:0 0 6px 0 #aaa !important;
     -webkit-box-shadow:0 0 6px 0 #aaa !important;
     box-shadow:0 0 6px 0 #aaa !important;
@@ -680,39 +683,41 @@ div.rdr.rdr-summary div.rdr_note ins    { text-decoration:none !important; }
     margin-bottom:10px !important;
     overflow:auto !important;
     clear:both !important;
+    margin-left:5px !important;
+    margin-right:5px !important;
 }
 
 /*blunt attack for now*/
-.rdr-summary * {
+div.rdr.rdr-summary * {
     font:normal 12px Arial, sans-serif !important;
 }
 
-.rdr-summary div.rdr-sum-headline {
+div.rdr.rdr-summary div.rdr-sum-headline {
     background:url(../images/readr_icons.png) -160px 8px no-repeat !important;
     padding:8px 5px 7px 40px !important;
     float:left !important;
     color:#787878 !important;
 }
-.rdr-summary div.rdr-top-tags {
+div.rdr.rdr-summary div.rdr-top-tags {
     padding:8px 5px 0px 8px !important;
     float:left !important;
 }
-.rdr-summary div.rdr-top-tags span {
+div.rdr.rdr-summary div.rdr-top-tags span {
     white-space:nowrap !important;
     font-weight:bold !important;
     color:#666 !important;
 }
-.rdr-summary div.rdr-top-tags span em {
+div.rdr.rdr-summary div.rdr-top-tags span em {
     font-style:normal !important;
     color:#aaa !important;
 }
-.rdr-summary div.rdr-top-users {
+div.rdr.rdr-summary div.rdr-top-users {
     padding:7px !important;
     overflow:hidden !important;
-    height:16px !important;
+    height:26px !important;
     float:left !important;
 }
-.rdr-summary div.rdr-top-users img {
+div.rdr.rdr-summary div.rdr-top-users img {
     width:20px !important;
     height:20px !important;
     margin:0 3px 0 0 !important;
@@ -1047,6 +1052,7 @@ div.rdr_indicator span.rdr_count,
 #rdr_sandbox div.rdr_sentimentBox span.rdr_count { 
     position:relative !important;
     margin-left:16px !important;
+    font-size: 12px !important;
 }
 /*dont use this*/
 /*
