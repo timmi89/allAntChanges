@@ -71,21 +71,50 @@
 				return $pager;
 			},
 		    before: function(){
+	    		/*
 		    	var $mediaContainer = $(this).find('img.rdr-hashed, iframe.rdr-hashed'),
 		    		hash;
 
-		    	if(!$mediaContainer.length) return;
-		    	//else
+				console.log('before');
+		        console.log(this);
+		        console.log($mediaContainer);
 
-				$('.rdr_indicator_details').hide();
-				$('.rdr_indicator_body').hide();
+		    	if($mediaContainer.length){
+		    		
+			        console.log('$mediaContainer');
+			        console.log($mediaContainer);
+			        hash = $mediaContainer.data('hash');
 
-		    	/*
-		    	hash = $mediaContainer.data('hash')
-		    		hash = 
-				*/
+			        $('#rdr_actionbar_'+hash).hide();
+			        $('#rdr_container_tracker_'+hash).hide();
+			        $('#rdr_indicator_details_'+hash).hide();
+
+					$('.rdr_indicator_details').hide();
+					$('.rdr_indicator_body').hide();
+					
+					*/
+			    	/*
+			    	hash = $mediaContainer.data('hash')
+			    		hash = 
+		    	}
+					*/
 		    },
 			after: function(){
+				/*
+				var $mediaContainer = $(this).find('img.rdr-hashed, iframe.rdr-hashed'),
+		    		hash;
+
+		    	if($mediaContainer.length){
+		    	
+			        
+			        hash = $mediaContainer.data('hash');
+
+					console.log('after');
+			        console.log(this);
+			        RDR.actions.indicators.utils.updateContainerTracker(hash);
+		    	}
+			        */
+
 		    },
 			onPrevNextEvent: function (isNext) {
 		        $('#promoGallery').cycle('pause');
