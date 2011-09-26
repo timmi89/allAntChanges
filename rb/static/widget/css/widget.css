@@ -581,11 +581,12 @@ div.rdr.rdr-summary a.rdr_tag     {
     border-radius: 3px 3px 3px 3px;
     box-shadow: 0 -5px 9px -5px #ccc inset;
     cursor: pointer;
-    margin-left: 2px;
-    margin-right: 10px;
+    margin:-3px 12px 7px -2px;
     padding: 4px 5px;
     text-decoration: none;
     z-index: 100001;
+    display:inline-block;
+    white-space:nowrap;
 }
 
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    { 
@@ -596,7 +597,7 @@ div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
     font-size: 11px !important;
     background:#eee !important;
     margin-right:-5px;
-    padding:5px 5px 4px 5px;
+    padding:6px 5px 4px 5px;
     margin-left:4px;
     color: #666; !important;
     cursor:default;
@@ -664,7 +665,7 @@ div.rdr.rdr-summary div.rdr_note ins    { text-decoration:none !important; }
     padding: 0 0 0 8px;
 }
 #rdr_sandbox div.rdr ul.shareLinks li        {padding:0px 2px; display:inline-block; list-style:none;}
-#rdr_sandbox div.rdr ul.shareLinks img       {width:18px; margin:0 !important;}
+#rdr_sandbox div.rdr ul.shareLinks img       {width:18px !important; margin:0 !important;}
 
 /* forms */
 #rdr_sandbox div.rdr textarea,
