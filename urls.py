@@ -22,7 +22,8 @@ urlpatterns = patterns('',
   url(r'^s/(?P<short>[0-9a-zA-Z])+/$', 'rb.views.expander'),
   
   # For main website
-  url(r'^$', 'rb.views.main', kwargs={"view":"index"}),
+  url(r'^$','rb.views.splash'),
+  url(r'^stream/$', 'rb.views.main', kwargs={"view":"index"}),
   url(r'^tags/$', 'rb.views.main', kwargs={"view":"tags"}),
   url(r'^comments/$', 'rb.views.main', kwargs={"view":"comments"}),
   url(r'^shares/$', 'rb.views.main', kwargs={"view":"shares"}),
