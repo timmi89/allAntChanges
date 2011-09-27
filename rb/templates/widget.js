@@ -1554,7 +1554,7 @@ function readrBoard($R){
                     case "Social Auth does not exist for user": // call fb login
                     case "Data to create token is missing": // call fb login
                         // the token is out of sync.  could be a mistake or a hack.
-                        // RDR.session.receiveMessage( args, callback );
+                        RDR.session.receiveMessage( args, callback );
                         // RDR.session.showLoginPanel( args, callback );
                         $.postMessage(
                             "reauthUser",
@@ -1611,7 +1611,11 @@ function readrBoard($R){
                                     callbackFunction = null;
                                 }
                             } else if ( message.status == "fb_user_needs_to_login" ) {
-                                RDR.session.showLoginPanel( args );
+                                if ( callbackFunction && args ) {
+                                    RDR.session.showLoginPanel( args, callbackFunction );
+                                } else {
+                                    RDR.session.showLoginPanel( args );
+                                }
                             } else if ( message.status == "already had user" ) {
                                 // todo: when is this used?
                                 $('#rdr_loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
@@ -6386,7 +6390,7 @@ function $RFunctions($R){
                         if ( page.summary[i].kind == "tag" ) total_interactions = page.summary[i].count;
                     }
 
-                    var $react = $('<div class="rdr-sum-headline">React: </div>');
+                    var $react = $('<div class="rdr-sum-headline"></div>');
                     $summary_widget.append( $react );
 
                     // if ( total_interactions > 0 ) {
@@ -6476,7 +6480,7 @@ function $RFunctions($R){
                                 $tooltip = $('#rdr-tooltip-summary-tag-custom'),
                                 aOffsets = $a_custom.offset();
 
-                            var tooltip_top = ( aOffsets.top - 45 ),
+                            var tooltip_top = ( aOffsets.top - 55 ),
                                 tooltip_left = ( aOffsets.left + ( $a_custom.width() / 2 ) - 125 );
 
                             $tooltip.css('top', tooltip_top + "px" );
@@ -6498,14 +6502,15 @@ function $RFunctions($R){
                             var this_user = page.topusers[i];
                         
                             if ( this_user ) {
-                                var $userLink = $('<a href="'+RDR_rootPath+'/user/'+this_user.user+'" class="no-rdr" target="_blank" />'),
+                                var $userLink = $('<a href="'+RDR_rootPath+'/user/'+this_user.user+'" class="no-rdr rdr-top-user" target="_blank" />'),
                                     userPic = '<img src="'+this_user.img_url+'" class="no-rdr" alt="'+this_user.full_name+'" title="'+this_user.full_name+'" />';
-                                $topusers.append( $userLink.append(userPic) );
+                                // $topusers.append( $userLink.append(userPic) );
+                                $react.append( $userLink.append(userPic) );
                             }
                         }
 
                         //hacked in html('') to clear it so that i can re-use this later to update the thingy.  todo: make it pretty.
-                        $summary_widget.append( $topusers );
+                        // $react.append( $topusers );
 
                     }
 
