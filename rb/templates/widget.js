@@ -6385,7 +6385,7 @@ function $RFunctions($R){
                         if ( page.summary[i].kind == "tag" ) total_interactions = page.summary[i].count;
                     }
 
-                    var $react = $('<div class="rdr-sum-headline">React: </div>');
+                    var $react = $('<div class="rdr-sum-headline"></div>');
                     $summary_widget.append( $react );
 
                     // if ( total_interactions > 0 ) {
@@ -6497,14 +6497,15 @@ function $RFunctions($R){
                             var this_user = page.topusers[i];
                         
                             if ( this_user ) {
-                                var $userLink = $('<a href="'+RDR_rootPath+'/user/'+this_user.user+'" class="no-rdr" target="_blank" />'),
+                                var $userLink = $('<a href="'+RDR_rootPath+'/user/'+this_user.user+'" class="no-rdr rdr-top-user" target="_blank" />'),
                                     userPic = '<img src="'+this_user.img_url+'" class="no-rdr" alt="'+this_user.full_name+'" title="'+this_user.full_name+'" />';
-                                $topusers.append( $userLink.append(userPic) );
+                                // $topusers.append( $userLink.append(userPic) );
+                                $react.append( $userLink.append(userPic) );
                             }
                         }
 
                         //hacked in html('') to clear it so that i can re-use this later to update the thingy.  todo: make it pretty.
-                        $summary_widget.append( $topusers );
+                        // $react.append( $topusers );
 
                     }
 
