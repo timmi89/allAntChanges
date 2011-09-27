@@ -6475,7 +6475,7 @@ function $RFunctions($R){
                                 $tooltip = $('#rdr-tooltip-summary-tag-custom'),
                                 aOffsets = $a_custom.offset();
 
-                            var tooltip_top = ( aOffsets.top - 45 ),
+                            var tooltip_top = ( aOffsets.top - 55 ),
                                 tooltip_left = ( aOffsets.left + ( $a_custom.width() / 2 ) - 125 );
 
                             $tooltip.css('top', tooltip_top + "px" );
