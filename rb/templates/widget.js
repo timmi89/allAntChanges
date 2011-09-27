@@ -6346,7 +6346,8 @@ function $RFunctions($R){
                         
                         settings.parentContainer = this;
                         _makeSummaryWidget(settings);
-                        _insertImgIcons(settings);
+                        //todo: verify that we're not using this and remove it.
+                        //_insertImgIcons(settings);
 
                         //do init stuff
 
@@ -6578,6 +6579,8 @@ function $RFunctions($R){
                 }
 
             }
+            //commenting this out because I don't think we're using it.
+            /*
             function _insertImgIcons(response){
                 var page = response;
                 var tempd = $.extend( {}, response );
@@ -6588,6 +6591,7 @@ function $RFunctions($R){
 
                 }
             }
+            */
 
         };
         //end function plugin_jquery_rdrWidgetSummary
