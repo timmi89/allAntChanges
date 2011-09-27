@@ -1972,7 +1972,7 @@ function readrBoard($R){
                                 thisPage = {
                                     group_id: parseInt(RDR.groupPermData.group_id),
                                     url: url,
-                                    canonical: 'same',
+                                    canonical: '',  //todo: verify this is how we want to handle this
                                     title: $post_href.text()
                                 }
                                 pagesArr.push(thisPage);
