@@ -1554,7 +1554,7 @@ function readrBoard($R){
                     case "Social Auth does not exist for user": // call fb login
                     case "Data to create token is missing": // call fb login
                         // the token is out of sync.  could be a mistake or a hack.
-                        // RDR.session.receiveMessage( args, callback );
+                        RDR.session.receiveMessage( args, callback );
                         // RDR.session.showLoginPanel( args, callback );
                         $.postMessage(
                             "reauthUser",
@@ -1611,7 +1611,11 @@ function readrBoard($R){
                                     callbackFunction = null;
                                 }
                             } else if ( message.status == "fb_user_needs_to_login" ) {
-                                RDR.session.showLoginPanel( args );
+                                if ( callbackFunction && args ) {
+                                    RDR.session.showLoginPanel( args, callbackFunction );
+                                } else {
+                                    RDR.session.showLoginPanel( args );
+                                }
                             } else if ( message.status == "already had user" ) {
                                 // todo: when is this used?
                                 $('#rdr_loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
