@@ -3291,8 +3291,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 $span.show(200).css('visibility','visible');
 
                                 $summary_box.find('div.rdr_note').html( $('<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon: <img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr" style="background:url({{ STATIC_URL }}widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>') );
-                                $summary_box.find('div.rdr_note').show(400);
-
+                                $summary_box.find('div.rdr_note').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
                             } else {
                                 //todo: fix the way we use args here
                                 var checkMaxIntActsArgs = args.response.data;
@@ -3504,7 +3503,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             if ( typeof $message == "object" ) {
                                 $summary_box = $('.rdr-page-container.rdr-'+args.hash+' div.rdr-summary');
                                 $summary_box.find('div.rdr_note').html( $message );
-                                $summary_box.find('div.rdr_note').show(400);
+                                $summary_box.find('div.rdr_note').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
                             }
                         } else {
                             //RDR.actions.interactions.tag.onFail:
@@ -4185,7 +4184,15 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             RDR.actions.content_nodes.utils.initHiliteStates( $(this), relevant_content_nodes );
                         });
                     },
+                    updateContainerTrackers: function(){
+                        $.each( RDR.containers, function(idx, container) {
+                            if ( container.kind && ( container.kind == "img" || container.kind == "media" ) ) {
+                                RDR.actions.indicators.utils.updateContainerTracker( container.hash );
+                            }
+                        });
+                    },
                     updateContainerTracker: function(hash){
+                        console.log(hash);
                         //RDR.actions.indicators.utils.updateContainerTracker:
                         var summary = RDR.summaries[hash],
                             $container = summary.$container,
