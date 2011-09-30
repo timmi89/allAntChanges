@@ -3300,7 +3300,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 var hitMax = RDR.session.checkForMaxInteractions(checkMaxIntActsArgs);
                                 if(hitMax){
                                     // don't continue with the rest of this function
-                                    return;
+                                    // return;
                                 }
                                 
                                 var uiMode = args.uiMode || 'write';

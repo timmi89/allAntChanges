@@ -682,7 +682,7 @@ div.rdr.rdr-summary {
     background:#f7f7f7 !important;
     padding-bottom:2px !important;
     margin-bottom:10px !important;
-    max-height: 67px;
+    /*max-height: 67px;*/
     overflow: hidden !important;
     clear:both !important;
     margin-left:5px !important;
