@@ -42,8 +42,6 @@
 			timeout: 4000
 		});
 
-		$('#splashAnnounce h2').show();
-
 
 		var sandBoxCheck = 0;
 
@@ -94,7 +92,7 @@
 				}
 			}
 		});
-
+		
 		function hideSandboxStuffForMedia(){
 			//hide all the sandbox components for this media
 			var $mediaContainers = $('#promoGallery').find('img.rdr-hashed, iframe.rdr-hashed');
@@ -131,14 +129,13 @@
 		$("#promoControls a").click(function(e) {
 			$(this).blur();
 		});
-		$("#promoControls").fadeIn();
 		
+		$("#promoControls").fadeIn();
 		/*chrome was FOUCing this without this hack - hidden initially*/
 		$('#promoGallery iframe').show();
 		/*slideshow code end*/
-
 		//reveal after load
-		$('#markerAnnotationLearnMore').fadeIn();
+		$('#splashAnnounce h2').fadeIn();
 
 	});
 }(jQuery));
