@@ -4192,7 +4192,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         });
                     },
                     updateContainerTracker: function(hash){
-                        console.log(hash);
                         //RDR.actions.indicators.utils.updateContainerTracker:
                         var summary = RDR.summaries[hash],
                             $container = summary.$container,
