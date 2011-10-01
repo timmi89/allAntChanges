@@ -1657,7 +1657,7 @@ function readrBoard($R){
             },
 			showLoginPanel: function(args, callback) {
              // RDR.session.showLoginPanel
-
+console.dir(args);
                 $('.rdr_rewritable').removeClass('rdr_rewritable');
                 
                 if ( $('#rdr_loginPanel').length < 1 ) {
@@ -1666,15 +1666,15 @@ function readrBoard($R){
     				//porter says: the action bar used to just animate larger and get populated as a window
                     //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
                     
-                    // var caller = args.rindow;
-                    // var coords = caller.offset();
-                    // coords.left = coords.left ? (coords.left-34) : 100;
-                    // coords.top = coords.top ? (coords.top+50) : 100;
+                    var caller = args.rindow;
+                    var coords = caller.offset();
+                    coords.left = coords.left ? (coords.left-34) : 100;
+                    coords.top = coords.top ? (coords.top-25) : 100;
 
-                    var coords = [];
-                    coords.left = ( $(window).width() / 2 ) - 200;
+                    // var coords = [];
+                    // coords.left = ( $(window).width() / 2 ) - 200;
                     // coords.top =  ( $(window).height() / 2 ) - 100 ;
-                    coords.top = 150;
+                    // coords.top = 150;
 
                     var rindow = RDR.rindow.draw({
                         coords:coords,
@@ -1694,7 +1694,8 @@ function readrBoard($R){
     				iframeUrl = RDR.session.iframeHost + "/fblogin/",
     				parentUrl = window.location.href,
                     parentHost = window.location.protocol + "//" + window.location.host;
-    				$loginHtml.append( '<h1>Log In</h1><div class="rdr_body" />');
+                    var h1_text = ( args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard";
+    				$loginHtml.append( '<h1>'+h1_text+'</h1><div class="rdr_body" />');
     				$loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&group_name='+RDR.group.name+'&cachebust='+RDR.cachebuster+'" width="360" height="190" frameborder="0" style="overflow:hidden;" />' );
     				
     				// rindow.animate({
@@ -1705,12 +1706,12 @@ function readrBoard($R){
         //             });
     				rindow.find('div.rdr_contentSpace').append( $loginHtml );
 
-                    var $overlay = $( '<div id="rdr_overlay" />' ).css('height', $(window).height()).css('width', $(window).width() );
-                    $overlay.click ( function() {
-                        $(this).remove();
-                        $('#rdr_loginPanel').remove();
-                    });
-                    rindow.after( $overlay );
+                    // var $overlay = $( '<div id="rdr_overlay" />' ).css('height', $(window).height()).css('width', $(window).width() );
+                    // $overlay.click ( function() {
+                    //     $(this).remove();
+                    //     $('#rdr_loginPanel').remove();
+                    // });
+                    // rindow.after( $overlay );
                 }
 			},
 			killUser: function() {

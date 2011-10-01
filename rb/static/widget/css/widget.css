@@ -1102,7 +1102,7 @@ div.rdr_indicator span.rdr_count{
 }
 
 #rdr_sandbox div#rdr_loginPanel {
-    position:fixed;
+    /*position:fixed;*/
     z-index: 12101;
 }
 
