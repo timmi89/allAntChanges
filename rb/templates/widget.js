@@ -1634,30 +1634,36 @@ function readrBoard($R){
                 );
             },
 			login: function() {},
-            checkForMaxInteractions: function(args){
+            checkForMaxInteractions: function(args, callback){
                 //later get rid of args if we don't need it for showLoginPanel - if we can use rindow instead.
-                var num_interactions = args.num_interactions;
                 
-                if ( num_interactions ) {
-                    if ( num_interactions < RDR.group.temp_interact ){
+                if ( RDR.user.num_interactions && RDR.user.img_url != "" ) {
+                    if ( RDR.user.num_interactions < RDR.group.temp_interact ) {
+                        
+                    // }
+                // }
 
-                        var usrMsgArgs = {      
-                            msgType: "tempUser",
-                            rindow:args.rindow,
-                            num_interactions: num_interactions
-                        };
 
-                        RDR.session.rindowUserMessage.show( usrMsgArgs );
-                    }
-                    else {
-                        RDR.session.showLoginPanel( args );
-                        return true;
+                // var num_interactions = args.num_interactions;
+                
+                // if ( num_interactions ) {
+                    // if ( num_interactions < RDR.group.temp_interact ){
+
+                        // var usrMsgArgs = {      
+                        //     msgType: "tempUser",
+                        //     rindow:args.rindow,
+                        //     num_interactions: num_interactions
+                        // };
+
+                        // RDR.session.rindowUserMessage.show( usrMsgArgs );
+                        return false;
                     }
                 }
+                return true;
             },
 			showLoginPanel: function(args, callback) {
              // RDR.session.showLoginPanel
-console.dir(args);
+
                 $('.rdr_rewritable').removeClass('rdr_rewritable');
                 
                 if ( $('#rdr_loginPanel').length < 1 ) {
@@ -1666,15 +1672,18 @@ console.dir(args);
     				//porter says: the action bar used to just animate larger and get populated as a window
                     //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
                     
-                    var caller = args.rindow;
-                    var coords = caller.offset();
-                    coords.left = coords.left ? (coords.left-34) : 100;
-                    coords.top = coords.top ? (coords.top-25) : 100;
+                    if ( args && args.rindow ) {
+                        var caller = args.rindow;
+                        var coords = caller.offset();
+                        coords.left = coords.left ? (coords.left-34) : 100;
+                        coords.top = coords.top ? (coords.top-25) : 100;
+                    } else {
+                        var coords = [];
+                        coords.left = ( $(window).width() / 2 ) - 200;
+                        coords.top =  ( $(window).height() / 2 ) - 100 ;
+                        coords.top = 150;
+                    }
 
-                    // var coords = [];
-                    // coords.left = ( $(window).width() / 2 ) - 200;
-                    // coords.top =  ( $(window).height() / 2 ) - 100 ;
-                    // coords.top = 150;
 
                     var rindow = RDR.rindow.draw({
                         coords:coords,
@@ -1694,7 +1703,7 @@ console.dir(args);
     				iframeUrl = RDR.session.iframeHost + "/fblogin/",
     				parentUrl = window.location.href,
                     parentHost = window.location.protocol + "//" + window.location.host;
-                    var h1_text = ( args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard";
+                    var h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard";
     				$loginHtml.append( '<h1>'+h1_text+'</h1><div class="rdr_body" />');
     				$loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&group_name='+RDR.group.name+'&cachebust='+RDR.cachebuster+'" width="360" height="190" frameborder="0" style="overflow:hidden;" />' );
     				
@@ -2954,54 +2963,61 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     //todo: consider making a generic url router
                     var url = RDR_rootPath+"/api/" +int_type+ "/"+action_type+"/";
 
-                    // send the data!
-                    $.ajax({
-                        url: url,
-                        type: "get",
-                        contentType: "application/json",
-                        dataType: "jsonp",
-                        data: { json: $.toJSON(sendData) },
-                        success: function(response) {
-                            args.response = response;
-                            if ( response.status == "success" ) {
-                                //[cleanlogz](action_type);
-                                
-                                var existing = args.response.data.existing;
-                                if(existing){
-                                    args.response.message = "existing interaction";
-                                    RDR.actions.interactions[int_type].onFail(args);
-                                    return;
-                                }
-                                //else
-                                if(args.response.data.deleted_interaction){
-                                    args.deleted_interaction = args.response.data.deleted_interaction;
-                                }
+                    var hitMax = RDR.session.checkForMaxInteractions(args);
 
-                                RDR.actions.interactions[int_type].onSuccess[action_type](args);
-                            }else{
-                                if ( int_type == "tag" ) RDR.actions.interactions[int_type].onFail(args);
-                                else {
-                                    if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                        //[cleanlogz]('uh oh better login, tempy 1');
-                                        RDR.session.showLoginPanel( args );
-                                    } if ( response.message == "existing interaction" ) {
-                                        //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
-                                        //showTempUserMsg should be adapted to be rindowUserMessage:{show:..., hide:...}
-                                            //with a message param.
-                                            //and a close 'x' button.
-                                            args.msgType = "existingInteraction";
-                                            RDR.session.rindowUserMessage.show( args );
+                    if (hitMax) {
+                        // send the data!
+                        $.ajax({
+                            url: url,
+                            type: "get",
+                            contentType: "application/json",
+                            dataType: "jsonp",
+                            data: { json: $.toJSON(sendData) },
+                            success: function(response) {
+                                args.response = response;
+                                if ( response.data && response.data.num_interactions ) RDR.user.num_interactions = response.data.num_interactions;
+                                if ( response.status == "success" ) {
+                                    //[cleanlogz](action_type);
+                                    
+                                    var existing = args.response.data.existing;
+                                    if(existing){
+                                        args.response.message = "existing interaction";
+                                        RDR.actions.interactions[int_type].onFail(args);
+                                        return;
                                     }
+                                    //else
+                                    if(args.response.data.deleted_interaction){
+                                        args.deleted_interaction = args.response.data.deleted_interaction;
+                                    }
+
+                                    RDR.actions.interactions[int_type].onSuccess[action_type](args);
+                                }else{
+                                    if ( int_type == "tag" ) RDR.actions.interactions[int_type].onFail(args);
                                     else {
-                                        // if it failed, see if we can fix it, and if so, try this function one more time
-                                        RDR.session.handleGetUserFail( args, function() {
-                                            RDR.actions.interactions.ajax( args, 'tag', 'create' );
-                                        });
+                                        if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
+                                            //[cleanlogz]('uh oh better login, tempy 1');
+                                            RDR.session.showLoginPanel( args );
+                                        } if ( response.message == "existing interaction" ) {
+                                            //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
+                                            //showTempUserMsg should be adapted to be rindowUserMessage:{show:..., hide:...}
+                                                //with a message param.
+                                                //and a close 'x' button.
+                                                args.msgType = "existingInteraction";
+                                                RDR.session.rindowUserMessage.show( args );
+                                        }
+                                        else {
+                                            // if it failed, see if we can fix it, and if so, try this function one more time
+                                            RDR.session.handleGetUserFail( args, function() {
+                                                RDR.actions.interactions.ajax( args, int_type, 'create' );
+                                            });
+                                        }
                                     }
                                 }
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        RDR.session.showLoginPanel( args, function() { RDR.actions.interactions.ajax( args, int_type, 'create' ); } );
+                    }
                 },
                 defaultSendData: function(args){
                     //RDR.actions.interactions.defaultSendData:
@@ -3294,14 +3310,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 $summary_box.find('div.rdr_note').html( $('<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon: <img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr" style="background:url({{ STATIC_URL }}widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>') );
                                 $summary_box.find('div.rdr_note').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
                             } else {
-                                //todo: fix the way we use args here
-                                var checkMaxIntActsArgs = args.response.data;
-                                checkMaxIntActsArgs.rindow = args.rindow;
-                                var hitMax = RDR.session.checkForMaxInteractions(checkMaxIntActsArgs);
-                                if(hitMax){
-                                    // don't continue with the rest of this function
-                                    // return;
-                                }
                                 
                                 var uiMode = args.uiMode || 'write';
 
@@ -3525,7 +3533,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             tag_li.find('div.rdr_leftBox').find('.rdr_not_loader').show();
                             
                             if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                //[cleanlogz]('uh oh better login, tempy 1');
+                                RDR.session.receiveMessage( args, function() { RDR.actions.interactions.ajax( args, 'tag', 'create' ); } );
                                 RDR.session.showLoginPanel( args );
                             } if ( response.message == "existing interaction" ) {
                                 //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
@@ -3640,15 +3648,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     onSuccess: {
                         //RDR.actions.interactions.bookmark.onSuccess:
                         create: function(args){
-
-                            //todo: fix the way we use args here
-                            var checkMaxIntActsArgs = args.response.data;
-                            checkMaxIntActsArgs.rindow = args.rindow;
-                            var hitMax = RDR.session.checkForMaxInteractions(checkMaxIntActsArgs);
-                            if(hitMax){
-                                // don't continue with the rest of this function
-                                return;
-                            }
 
                             var response = args.response;
                             var sendData = args.sendData;
@@ -5535,16 +5534,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                         });
                                     }
                                 } else {
-                            
-                                    //todo: fix the way we use args here
-                                    var checkMaxIntActsArgs = response.data;
-                                    checkMaxIntActsArgs.rindow = args.rindow;
-                                    var hitMax = RDR.session.checkForMaxInteractions(checkMaxIntActsArgs);
-                                    if(hitMax){
-                                        // don't continue with the rest of this function
-                                        return;
-                                    }
-
                                     //successfully got a short URL
                                     RDR.actions.shareContent({ sns:params.sns, content_node_info:content_node_info, short_url:response.data.short_url, reaction:tag.body });
                                 }

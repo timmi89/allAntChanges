@@ -763,6 +763,42 @@ table[role="popular bookmarks"] td[role="content"]			{ font-size:14px;}
 table[role="popular bookmarks"] td[role="via"],
 table[role="popular bookmarks"] td[role="reactions"]	{ padding:0 0 10px 23px; }
 
+footer{
+	padding:15px 0;
+	background:#333;
+	z-index:1000;
+}
+footer div.footerLinks{
+	width:960px;
+	margin:auto;
+	position:relative;
+}
+footer div.footerLinks ul{
+	list-style:none;
+}
+footer div.footerLinks ul li{
+	float:left;
+	padding:10px;
+	margin-right:40px;
+}
+footer div.footerLinks ul.footerLinksRight{
+	position:absolute;
+	right:0;	
+}
+footer div.footerLinks ul.footerLinksRight li{
+	float:right;
+	margin-left:40px;
+	margin-right:0;
+}
+footer div.footerLinks a{
+	font-style:none;
+	text-decoration:none;
+	color:#fff;
+}
+footer div.footerLinks a:hover{
+	color:#7997B1;
+}
+
 /* HEADINGS */
 /* TYPOGRAPHY */
 /* LINKS */

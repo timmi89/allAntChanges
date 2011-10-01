@@ -29,6 +29,14 @@
 				<p>To use ReadrBoard, a website adds it to their pages, and you can use it.  Nothing is installed onto your computer.  Every website will offer a few reactions you can simply click on, as shown on the image to the right, or you can type in your own.</p>
 			</li>
 			<li>
+				<strong>Do I have to register to use ReadrBoard?</strong>
+				<p>You can react, comment, and share on a website using ReadrBoard five times before we require you to register.  We think you should try something out before you're asked to tell us about yourself.</p>
+			</li>
+			<li>
+				<strong>Why must I log in with Facebook to use ReadrBoard?</strong>
+				<p>We used Facebook Connect because it's easy, and because we think that reactions and comments are higher in quality when people are forthcoming about who they are.  There is a time and place for anonymity, and we're working on a solution to that -- but most of time, we think, it's good to know who is saying something.</p>
+			</li>
+			<li>
 				<strong>What else can I do with ReadrBoard?</strong>
 				<p>You can also bookmark content that is interesting to you.  Your bookmarks are private to you, and available on your ReadrBoard profile.  Every time you bookmark something, you tag it, so it's easy to search and sort your bookmarks later.</p>
 				<p>And, ReadrBoard.com will soon be a great way to find content online that people are really reacting to -- you'll see what content is interesting to people, and why they found it interesting (because it's funny, or controversial, or interesting, or heartwarming, or... you get the idea).  You'll soon be able to follow other ReadrBoard users, to stay on top of whatever content they are reacting to online.
@@ -61,16 +69,8 @@
 				</ul>
 			</li>
 			<li>
-				<strong>Do I have to register to use ReadrBoard?</strong>
-				<p>You can react, comment, and share on a website using ReadrBoard a few times before we require you to register.  We think you should try something out before you're asked to tell us about yourself.</p>
-			</li>
-			<li>
 				<strong>If I use ReadrBoard on a website, does that website get my email address or other personal information?</strong>
 				<p>No.  We don't share your information with other websites, except for rare occasions where we specifically ask you and you specifically give permission.</p>
-			</li>
-			<li>
-				<strong>Why must I log in with Facebook to use ReadrBoard?</strong>
-				<p>We used Facebook Connect because it's easy, and because we think that reactions and comments are higher in quality when people are forthcoming about who they are.  There is a time and place for anonymity, and we're working on a solution to that -- but most of time, we think, it's good to know who is saying something.</p>
 			</li>
 			<li>
 				<strong>If I log in to ReadrBoard, am I also logging into the website I'm on while using ReadrBoard?</strong>
@@ -115,4 +115,24 @@
 
 {% endblock mainContent %}
 
-
+{% block footer %}
+<footer class="no-rdr">
+	<div class="footerLinks">
+		<ul class="footerLinksLeft">
+			<li>
+				<a href="/stream/">discover</a>
+			</li>
+			<li>
+				<a href="/about/" >about us</a>
+			</li>
+			<li>
+				<a href="/faq/" >frequently asked questions</a>
+			</li>
+			<li>
+				<a href="{{STATIC_URL}}demo/index.html" >demo</a>
+			</li>
+		</ul>
+		<div class="clearDiv"></div>
+	</div>
+</footer>
+{% endblock %}

@@ -233,37 +233,39 @@ section.introBlurb{
 	font-size:18px;
 	padding-left:5px;
 }
-#footer{
+footer{
 	padding:15px 0;
-	background:#333;	
+	background:#333;
+	z-index:1000;
 }
-#footer div.footerLinks{
+footer div.footerLinks{
 	width:960px;
 	margin:auto;
 	position:relative;
 }
-#footer div.footerLinks ul{
+footer div.footerLinks ul{
 	list-style:none;
 }
-#footer div.footerLinks ul li{
+footer div.footerLinks ul li{
 	float:left;
 	padding:10px;
 	margin-right:40px;
 }
-#footer div.footerLinks ul.footerLinksRight{
+footer div.footerLinks ul.footerLinksRight{
 	position:absolute;
 	right:0;	
 }
-#footer div.footerLinks ul.footerLinksRight li{
+footer div.footerLinks ul.footerLinksRight li{
 	float:right;
 	margin-left:40px;
 	margin-right:0;
 }
-#footer div.footerLinks a{
+footer div.footerLinks a{
 	font-style:none;
 	text-decoration:none;
+	color:#fff;
 }
-#footer div.footerLinks a:hover{
+footer div.footerLinks a:hover{
 	color:#7997B1;
 }
 
