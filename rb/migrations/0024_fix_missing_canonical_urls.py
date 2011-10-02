@@ -17,7 +17,7 @@ class Migration(DataMigration):
                 orm.Interaction.objects.filter(
                     page__in=pages_to_delete
                 ).update(page=page_to_keep)
-                print "--> deleting", len(pags_to_delete), "pages"
+                print "--> deleting", len(pages_to_delete), "pages"
                 #pages_to_delete.delete()
                
         print "Done deleting dupes"
