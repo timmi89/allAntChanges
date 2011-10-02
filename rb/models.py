@@ -231,6 +231,9 @@ class Page(models.Model):
         
     def top_tags(self):
         pass
+        
+    class Meta:
+        unique_together = ('url', 'canonical_url')
 
     def __unicode__(self):
         return unicode(self.id)
