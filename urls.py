@@ -67,6 +67,7 @@ urlpatterns = patterns('',
   
   # Main Site Supporting Pages
   url(r'^about/$', 'rb.views.about'),
+  url(r'^faq/$', 'rb.views.faq'),
   url(r'^splash/$', 'rb.views.splash'),
   url(r'^login/$', 'rb.views.login'),
   
