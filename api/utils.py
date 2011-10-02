@@ -123,7 +123,7 @@ def stripQueryString(url):
         url = url[:url.index(qs)-1]
     return url
 
-def getPage(host, page_request, page_id=None):
+def getPage(host, page_request):
     canonical = page_request.get('canonical_url', None)
     url = page_request.get('url', None)
     title = page_request.get('title', None)
@@ -138,16 +138,17 @@ def getPage(host, page_request, page_id=None):
     if '#' in url and '!' not in url:
         url = url[:url.index('#')]
 
-    if page_id:
-        return Page.objects.get(id=page_id)
-    elif canonical:
-        if canonical == "same": canonical = url
+    if canonical:
+        if canonical == "same":
+            canonical = url
         page = Page.objects.get_or_create(
             canonical_url=canonical,
             defaults={'url':url, 'site':site, 'title':title}
         )
     else:
-        page = Page.objects.get_or_create(url=url, canonical_url="",
+        page = Page.objects.get_or_create(
+            url=url,
+            canonical_url="",
             defaults={'site': site, 'title':title}
         )
         

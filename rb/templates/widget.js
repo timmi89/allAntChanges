@@ -1554,7 +1554,7 @@ function readrBoard($R){
                     case "Social Auth does not exist for user": // call fb login
                     case "Data to create token is missing": // call fb login
                         // the token is out of sync.  could be a mistake or a hack.
-                        // RDR.session.receiveMessage( args, callback );
+                        RDR.session.receiveMessage( args, callback );
                         // RDR.session.showLoginPanel( args, callback );
                         $.postMessage(
                             "reauthUser",
@@ -1611,7 +1611,11 @@ function readrBoard($R){
                                     callbackFunction = null;
                                 }
                             } else if ( message.status == "fb_user_needs_to_login" ) {
-                                RDR.session.showLoginPanel( args );
+                                if ( callbackFunction && args ) {
+                                    RDR.session.showLoginPanel( args, callbackFunction );
+                                } else {
+                                    RDR.session.showLoginPanel( args );
+                                }
                             } else if ( message.status == "already had user" ) {
                                 // todo: when is this used?
                                 $('#rdr_loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
@@ -1630,26 +1634,32 @@ function readrBoard($R){
                 );
             },
 			login: function() {},
-            checkForMaxInteractions: function(args){
+            checkForMaxInteractions: function(args, callback){
                 //later get rid of args if we don't need it for showLoginPanel - if we can use rindow instead.
-                var num_interactions = args.num_interactions;
                 
-                if ( num_interactions ) {
-                    if ( num_interactions < RDR.group.temp_interact ){
+                if ( RDR.user.num_interactions && RDR.user.img_url != "" ) {
+                    if ( RDR.user.num_interactions < RDR.group.temp_interact ) {
+                        
+                    // }
+                // }
 
-                        var usrMsgArgs = {      
-                            msgType: "tempUser",
-                            rindow:args.rindow,
-                            num_interactions: num_interactions
-                        };
 
-                        RDR.session.rindowUserMessage.show( usrMsgArgs );
-                    }
-                    else {
-                        RDR.session.showLoginPanel( args );
-                        return true;
+                // var num_interactions = args.num_interactions;
+                
+                // if ( num_interactions ) {
+                    // if ( num_interactions < RDR.group.temp_interact ){
+
+                        // var usrMsgArgs = {      
+                        //     msgType: "tempUser",
+                        //     rindow:args.rindow,
+                        //     num_interactions: num_interactions
+                        // };
+
+                        // RDR.session.rindowUserMessage.show( usrMsgArgs );
+                        return false;
                     }
                 }
+                return true;
             },
 			showLoginPanel: function(args, callback) {
              // RDR.session.showLoginPanel
@@ -1662,15 +1672,18 @@ function readrBoard($R){
     				//porter says: the action bar used to just animate larger and get populated as a window
                     //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
                     
-                    // var caller = args.rindow;
-                    // var coords = caller.offset();
-                    // coords.left = coords.left ? (coords.left-34) : 100;
-                    // coords.top = coords.top ? (coords.top+50) : 100;
+                    if ( args && args.rindow ) {
+                        var caller = args.rindow;
+                        var coords = caller.offset();
+                        coords.left = coords.left ? (coords.left-34) : 100;
+                        coords.top = coords.top ? (coords.top-25) : 100;
+                    } else {
+                        var coords = [];
+                        coords.left = ( $(window).width() / 2 ) - 200;
+                        coords.top =  ( $(window).height() / 2 ) - 100 ;
+                        coords.top = 150;
+                    }
 
-                    var coords = [];
-                    coords.left = ( $(window).width() / 2 ) - 200;
-                    // coords.top =  ( $(window).height() / 2 ) - 100 ;
-                    coords.top = 150;
 
                     var rindow = RDR.rindow.draw({
                         coords:coords,
@@ -1690,7 +1703,8 @@ function readrBoard($R){
     				iframeUrl = RDR.session.iframeHost + "/fblogin/",
     				parentUrl = window.location.href,
                     parentHost = window.location.protocol + "//" + window.location.host;
-    				$loginHtml.append( '<h1>Log In</h1><div class="rdr_body" />');
+                    var h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard";
+    				$loginHtml.append( '<h1>'+h1_text+'</h1><div class="rdr_body" />');
     				$loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&group_name='+RDR.group.name+'&cachebust='+RDR.cachebuster+'" width="360" height="190" frameborder="0" style="overflow:hidden;" />' );
     				
     				// rindow.animate({
@@ -1701,12 +1715,12 @@ function readrBoard($R){
         //             });
     				rindow.find('div.rdr_contentSpace').append( $loginHtml );
 
-                    var $overlay = $( '<div id="rdr_overlay" />' ).css('height', $(window).height()).css('width', $(window).width() );
-                    $overlay.click ( function() {
-                        $(this).remove();
-                        $('#rdr_loginPanel').remove();
-                    });
-                    rindow.after( $overlay );
+                    // var $overlay = $( '<div id="rdr_overlay" />' ).css('height', $(window).height()).css('width', $(window).width() );
+                    // $overlay.click ( function() {
+                    //     $(this).remove();
+                    //     $('#rdr_loginPanel').remove();
+                    // });
+                    // rindow.after( $overlay );
                 }
 			},
 			killUser: function() {
@@ -1952,7 +1966,7 @@ function readrBoard($R){
                     thisPage,
                     key,
                     url,
-                    canonical,
+                    canonical_url,
                     title;
 
                 // if multiple posts, add additional "pages"
@@ -1972,7 +1986,7 @@ function readrBoard($R){
                                 thisPage = {
                                     group_id: parseInt(RDR.groupPermData.group_id),
                                     url: url,
-                                    canonical: 'same',
+                                    canonical_url: 'same',
                                     title: $post_href.text()
                                 }
                                 pagesArr.push(thisPage);
@@ -1989,7 +2003,7 @@ function readrBoard($R){
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
                 var pageUrl = window.location.href;
                 if ( $.inArray(pageUrl, urlsArr) == -1 ) {
-                    canonical = $('link[rel="canonical"]').length > 0 ?
+                    canonical_url = $('link[rel="canonical"]').length > 0 ?
                                 $('link[rel="canonical"]').attr('href') : "";
                     title = $('meta[property="og:title"]').attr('content') ? 
                             $('meta[property="og:title"]').attr('content') : 
@@ -1999,7 +2013,7 @@ function readrBoard($R){
                     thisPage = {
                         group_id: parseInt(RDR.groupPermData.group_id),
                         url: pageUrl,
-                        canonical: (pageUrl == canonical) ? "same" : canonical,
+                        canonical_url: (pageUrl == canonical_url) ? "same" : canonical_url,
                         title: title
                     }
     
@@ -2949,54 +2963,61 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     //todo: consider making a generic url router
                     var url = RDR_rootPath+"/api/" +int_type+ "/"+action_type+"/";
 
-                    // send the data!
-                    $.ajax({
-                        url: url,
-                        type: "get",
-                        contentType: "application/json",
-                        dataType: "jsonp",
-                        data: { json: $.toJSON(sendData) },
-                        success: function(response) {
-                            args.response = response;
-                            if ( response.status == "success" ) {
-                                //[cleanlogz](action_type);
-                                
-                                var existing = args.response.data.existing;
-                                if(existing){
-                                    args.response.message = "existing interaction";
-                                    RDR.actions.interactions[int_type].onFail(args);
-                                    return;
-                                }
-                                //else
-                                if(args.response.data.deleted_interaction){
-                                    args.deleted_interaction = args.response.data.deleted_interaction;
-                                }
+                    var hitMax = RDR.session.checkForMaxInteractions(args);
 
-                                RDR.actions.interactions[int_type].onSuccess[action_type](args);
-                            }else{
-                                if ( int_type == "tag" ) RDR.actions.interactions[int_type].onFail(args);
-                                else {
-                                    if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                        //[cleanlogz]('uh oh better login, tempy 1');
-                                        RDR.session.showLoginPanel( args );
-                                    } if ( response.message == "existing interaction" ) {
-                                        //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
-                                        //showTempUserMsg should be adapted to be rindowUserMessage:{show:..., hide:...}
-                                            //with a message param.
-                                            //and a close 'x' button.
-                                            args.msgType = "existingInteraction";
-                                            RDR.session.rindowUserMessage.show( args );
+                    if (hitMax) {
+                        // send the data!
+                        $.ajax({
+                            url: url,
+                            type: "get",
+                            contentType: "application/json",
+                            dataType: "jsonp",
+                            data: { json: $.toJSON(sendData) },
+                            success: function(response) {
+                                args.response = response;
+                                if ( response.data && response.data.num_interactions ) RDR.user.num_interactions = response.data.num_interactions;
+                                if ( response.status == "success" ) {
+                                    //[cleanlogz](action_type);
+                                    
+                                    var existing = args.response.data.existing;
+                                    if(existing){
+                                        args.response.message = "existing interaction";
+                                        RDR.actions.interactions[int_type].onFail(args);
+                                        return;
                                     }
+                                    //else
+                                    if(args.response.data.deleted_interaction){
+                                        args.deleted_interaction = args.response.data.deleted_interaction;
+                                    }
+
+                                    RDR.actions.interactions[int_type].onSuccess[action_type](args);
+                                }else{
+                                    if ( int_type == "tag" ) RDR.actions.interactions[int_type].onFail(args);
                                     else {
-                                        // if it failed, see if we can fix it, and if so, try this function one more time
-                                        RDR.session.handleGetUserFail( args, function() {
-                                            RDR.actions.interactions.ajax( args, 'tag', 'create' );
-                                        });
+                                        if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
+                                            //[cleanlogz]('uh oh better login, tempy 1');
+                                            RDR.session.showLoginPanel( args );
+                                        } if ( response.message == "existing interaction" ) {
+                                            //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
+                                            //showTempUserMsg should be adapted to be rindowUserMessage:{show:..., hide:...}
+                                                //with a message param.
+                                                //and a close 'x' button.
+                                                args.msgType = "existingInteraction";
+                                                RDR.session.rindowUserMessage.show( args );
+                                        }
+                                        else {
+                                            // if it failed, see if we can fix it, and if so, try this function one more time
+                                            RDR.session.handleGetUserFail( args, function() {
+                                                RDR.actions.interactions.ajax( args, int_type, 'create' );
+                                            });
+                                        }
                                     }
                                 }
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        RDR.session.showLoginPanel( args, function() { RDR.actions.interactions.ajax( args, int_type, 'create' ); } );
+                    }
                 },
                 defaultSendData: function(args){
                     //RDR.actions.interactions.defaultSendData:
@@ -3287,17 +3308,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 $span.show(200).css('visibility','visible');
 
                                 $summary_box.find('div.rdr_note').html( $('<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon: <img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr" style="background:url({{ STATIC_URL }}widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>') );
-                                $summary_box.find('div.rdr_note').show(400);
-
+                                $summary_box.find('div.rdr_note').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
                             } else {
-                                //todo: fix the way we use args here
-                                var checkMaxIntActsArgs = args.response.data;
-                                checkMaxIntActsArgs.rindow = args.rindow;
-                                var hitMax = RDR.session.checkForMaxInteractions(checkMaxIntActsArgs);
-                                if(hitMax){
-                                    // don't continue with the rest of this function
-                                    return;
-                                }
                                 
                                 var uiMode = args.uiMode || 'write';
 
@@ -3500,7 +3512,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             if ( typeof $message == "object" ) {
                                 $summary_box = $('.rdr-page-container.rdr-'+args.hash+' div.rdr-summary');
                                 $summary_box.find('div.rdr_note').html( $message );
-                                $summary_box.find('div.rdr_note').show(400);
+                                $summary_box.find('div.rdr_note').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
                             }
                         } else {
                             //RDR.actions.interactions.tag.onFail:
@@ -3521,7 +3533,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             tag_li.find('div.rdr_leftBox').find('.rdr_not_loader').show();
                             
                             if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                //[cleanlogz]('uh oh better login, tempy 1');
+                                RDR.session.receiveMessage( args, function() { RDR.actions.interactions.ajax( args, 'tag', 'create' ); } );
                                 RDR.session.showLoginPanel( args );
                             } if ( response.message == "existing interaction" ) {
                                 //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
@@ -3636,15 +3648,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     onSuccess: {
                         //RDR.actions.interactions.bookmark.onSuccess:
                         create: function(args){
-
-                            //todo: fix the way we use args here
-                            var checkMaxIntActsArgs = args.response.data;
-                            checkMaxIntActsArgs.rindow = args.rindow;
-                            var hitMax = RDR.session.checkForMaxInteractions(checkMaxIntActsArgs);
-                            if(hitMax){
-                                // don't continue with the rest of this function
-                                return;
-                            }
 
                             var response = args.response;
                             var sendData = args.sendData;
@@ -4179,6 +4182,13 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             var tag_id = $(this).data('id');
                             var relevant_content_nodes = invertedDict[tag_id];
                             RDR.actions.content_nodes.utils.initHiliteStates( $(this), relevant_content_nodes );
+                        });
+                    },
+                    updateContainerTrackers: function(){
+                        $.each( RDR.containers, function(idx, container) {
+                            if ( container.kind && ( container.kind == "img" || container.kind == "media" ) ) {
+                                RDR.actions.indicators.utils.updateContainerTracker( container.hash );
+                            }
                         });
                     },
                     updateContainerTracker: function(hash){
@@ -5524,16 +5534,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                         });
                                     }
                                 } else {
-                            
-                                    //todo: fix the way we use args here
-                                    var checkMaxIntActsArgs = response.data;
-                                    checkMaxIntActsArgs.rindow = args.rindow;
-                                    var hitMax = RDR.session.checkForMaxInteractions(checkMaxIntActsArgs);
-                                    if(hitMax){
-                                        // don't continue with the rest of this function
-                                        return;
-                                    }
-
                                     //successfully got a short URL
                                     RDR.actions.shareContent({ sns:params.sns, content_node_info:content_node_info, short_url:response.data.short_url, reaction:tag.body });
                                 }
@@ -5567,7 +5567,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             break;
 
                             case "img":
-                                var canonical = ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href'):window.location.href;
+                                var canonical_url = ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href'):window.location.href;
                                 window.open('http://www.tumblr.com/share/photo?clickthru='+encodeURIComponent(args.short_url)+'&source='+encodeURIComponent(args.content_node_info.body)+'&caption='+encodeURIComponent(args.reaction),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
                             break;
 
