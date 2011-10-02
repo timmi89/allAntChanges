@@ -1966,7 +1966,7 @@ function readrBoard($R){
                     thisPage,
                     key,
                     url,
-                    canonical,
+                    canonical_url,
                     title;
 
                 // if multiple posts, add additional "pages"
@@ -1986,7 +1986,7 @@ function readrBoard($R){
                                 thisPage = {
                                     group_id: parseInt(RDR.groupPermData.group_id),
                                     url: url,
-                                    canonical: 'same',
+                                    canonical_url: 'same',
                                     title: $post_href.text()
                                 }
                                 pagesArr.push(thisPage);
@@ -2003,7 +2003,7 @@ function readrBoard($R){
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
                 var pageUrl = window.location.href;
                 if ( $.inArray(pageUrl, urlsArr) == -1 ) {
-                    canonical = $('link[rel="canonical"]').length > 0 ?
+                    canonical_url = $('link[rel="canonical"]').length > 0 ?
                                 $('link[rel="canonical"]').attr('href') : "";
                     title = $('meta[property="og:title"]').attr('content') ? 
                             $('meta[property="og:title"]').attr('content') : 
@@ -2013,7 +2013,7 @@ function readrBoard($R){
                     thisPage = {
                         group_id: parseInt(RDR.groupPermData.group_id),
                         url: pageUrl,
-                        canonical: (pageUrl == canonical) ? "same" : canonical,
+                        canonical_url: (pageUrl == canonical_url) ? "same" : canonical_url,
                         title: title
                     }
     
@@ -5567,7 +5567,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             break;
 
                             case "img":
-                                var canonical = ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href'):window.location.href;
+                                var canonical_url = ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href'):window.location.href;
                                 window.open('http://www.tumblr.com/share/photo?clickthru='+encodeURIComponent(args.short_url)+'&source='+encodeURIComponent(args.content_node_info.body)+'&caption='+encodeURIComponent(args.reaction),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
                             break;
 
