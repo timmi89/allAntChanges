@@ -19,7 +19,7 @@ urlpatterns = patterns('',
   url(r'^xdm_status/$', 'rb.views.xdm_status'),
   
   # For short URL expander
-  url(r'^s/(?P<short>[0-9a-zA-Z])+/$', 'rb.views.expander'),
+  url(r'^s/?P<short>([0-9a-zA-Z])+/$', 'rb.views.expander'),
   
   # For main website
   url(r'^$','rb.views.splash'),
