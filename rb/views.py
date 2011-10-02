@@ -311,7 +311,7 @@ def admin_request(request, short_name=None):
 
 def expander(request, short):
     link_id = base62_decode(short)
-    print 'short'
+    print 'short=', short
     print 'link_id = ', link_id
     # Retrieve Link object
     try:
