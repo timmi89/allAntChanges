@@ -40,7 +40,7 @@ if DEBUG:
           'USER':     '',
           'PASSWORD': '',
           'HOST':     '', 
-          'PORT':     '', 
+          'PORT':     '',
         }
     }
 
@@ -59,7 +59,10 @@ else:
         'PASSWORD': 'gubnah',
         'HOST':     '10.215.10.164',
         'PORT':     '3306',
+        'OPTIONS': {
+            "init_command": "SET storage_engine=INNODB",
         }
+      }
     }
 
     CACHES = {
