@@ -76,12 +76,14 @@ class SiteAdmin(admin.ModelAdmin):
     )
 
 class PageAdmin(admin.ModelAdmin):
-   list_display = (
+    list_display = (
         'id',
         'site',
+        'title',
         'url',
         'canonical_url'
     )
+    search_fields = ('title',)
 
 class ContainerAdmin(admin.ModelAdmin):
     list_display = ('id',
