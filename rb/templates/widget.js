@@ -2004,7 +2004,7 @@ function readrBoard($R){
                 var pageUrl = window.location.href;
                 if ( $.inArray(pageUrl, urlsArr) == -1 ) {
                     canonical_url = $('link[rel="canonical"]').length > 0 ?
-                                $('link[rel="canonical"]').attr('href') : "";
+                                $('link[rel="canonical"]').attr('href') : pageUrl;
                     title = $('meta[property="og:title"]').attr('content') ? 
                             $('meta[property="og:title"]').attr('content') : 
                                 $('title').text() ? 
