@@ -76,7 +76,7 @@ function readrBoard($R){
                     left:100,
                     top:100
                 },
-                pnlWidth:200,
+                pnlWidth:170,
                 animTime:100,
                 columns: false,
                 defaultHeight:260,
@@ -91,7 +91,7 @@ function readrBoard($R){
                 $rindow.find('div.rdr_body').each( function() {
                     if( !$(this).hasClass('jspScrollable') ){
                         // IE.  for some reason, THIS fires the scrollstop event.  WTF:
-                        $(this).jScrollPane({ contentWidth:200, showArrows:true });
+                        $(this).jScrollPane({ contentWidth:170, showArrows:true });
                     }else{
                         var API = $(this).data('jsp');
                         API.reinitialise();
@@ -207,7 +207,7 @@ function readrBoard($R){
                         }
                         var rindow = RDR.rindow.draw({
                             coords: coords,
-                            pnlWidth:200,
+                            pnlWidth:170,
                             columns:true,
                             noHeader:true,
                             container: hash,
@@ -219,7 +219,7 @@ function readrBoard($R){
                         // TODO this is used to constrain the initial width of this rindow
                         // and then it animates larger when we slide the whyPanel out.
                         // is there a cleaner way?
-                        rindow.css({width:'200px'});
+                        rindow.css({width:'170px'});
                         
                         rindow.addClass('rdr_writemode');
                         //add a reference for the rindow in the container summary
@@ -262,9 +262,9 @@ function readrBoard($R){
                                         body:val.body
                                     }
                                 }),
-                                $leftBox = '<div class="rdr_leftBox" ><span class="rdr_not_loader" /></div>',
+                                $leftBox = '<div class="rdr_tag_count" ><span class="rdr_not_loader" /></div>',
                                 $tagText = '<div class="rdr_tagText">'+val.body+'</div>',
-                                $rightBox = '<div class="rdr_rightBox" />';
+                                $rightBox = '<div class="rdr_details" />';
 
                                 $li.append($leftBox,$tagText,$rightBox);
                                 $li.hover(
@@ -294,7 +294,7 @@ function readrBoard($R){
                             if ( $this.hasClass('rdr_tagged') ) {
                                 
                                 //clears the loader
-                                $this.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
+                                $this.find('div.rdr_tag_count').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
 
                                 $this.addClass('rdr_selected');
                                 $this.siblings().removeClass('rdr_selected');
@@ -349,13 +349,13 @@ function readrBoard($R){
                             animate:false
                         });
 
-                        var newCoords = RDR.util.stayInWindow({coords:coords, width:200, height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
+                        var newCoords = RDR.util.stayInWindow({coords:coords, width:170, height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
 
                         rindow.css('left', newCoords.left + 'px');
                         rindow.css('top', newCoords.top + 'px');
 
                         rindow.width(0).height(0).animate({
-                            width:200,
+                            width:170,
                             height: rindowHeight
                         }, 200, 'swing', function(){
                             RDR.rindow.jspUpdate( rindow );
@@ -402,7 +402,7 @@ function readrBoard($R){
                     
                         var rindow = RDR.rindow.draw({
                             coords:coords,
-                            pnlWidth:200,
+                            pnlWidth:170,
                             noHeader:true,
                             selector:selector
                         });
@@ -413,7 +413,7 @@ function readrBoard($R){
 
                         rindow.find('div.rdr_contentSpace').empty();  // empty this out in case it's just repositioning the rindow.
 
-                        rindow.css({width:'200px'});
+                        rindow.css({width:'170px'});
 
                         //todo: use the sentimentBox function instead..  Our Li events are gettign messed up with this duplication
 
@@ -470,10 +470,9 @@ function readrBoard($R){
                                 },
                                 'hash':hash
                             }),
-                            // $leftBox = '<div class="rdr_leftBox"><span>'+percentage+'%</span></div>',
-                            $leftBox = '<div class="rdr_leftBox"><span class="rdr_not_loader" >'+RDR.util.prettyNumber( tag.count )+'</span></div>',
+                            $leftBox = '<div class="rdr_tag_count"><span class="rdr_not_loader" >'+RDR.util.prettyNumber( tag.count )+'</span></div>',
                             $tagText = '<div class="rdr_tagText">'+tag.body+'</div>',
-                            $rightBox = '<div class="rdr_rightBox" />';
+                            $rightBox = '<div class="rdr_details" />';
 
                             $li.append($leftBox,$tagText,$rightBox);
                             
@@ -499,7 +498,7 @@ function readrBoard($R){
                                     }
                                 }
                             }
-                            if ( commentsHere > 0 ) $li.find('div.rdr_rightBox').append('<span>' + RDR.util.prettyNumber( commentsHere ) + '</span>');
+                            if ( commentsHere > 0 ) $li.find('div.rdr_details').append('<span>' + RDR.util.prettyNumber( commentsHere ) + '</span>');
                             $tagBox.children('ul.rdr_tags').append($li);
                         
                         });
@@ -618,13 +617,13 @@ function readrBoard($R){
                             animate:false
                         });
 
-                        var newCoords = RDR.util.stayInWindow({coords:coords, width:200, height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
+                        var newCoords = RDR.util.stayInWindow({coords:coords, width:170, height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
 
                         rindow.css('left', newCoords.left );
                         rindow.css('top', newCoords.top );
 
                         rindow.width(0).height(0).animate({
-                            width:200,
+                            width:170,
                             height: rindowHeight
                         }, 200, 'swing', function(){
                             RDR.rindow.jspUpdate( rindow );
@@ -3113,7 +3112,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             if( ! $tagLi.jquery ){
                                 $tagLi = rindow.find('.rdr_tag_'+args.tag.id);
                             }
-                            $tagLi.find('div.rdr_leftBox').html('');
+                            $tagLi.find('div.rdr_tag_count').html('');
 
                             //do updates
                             var hash = sendData.hash;
@@ -3180,8 +3179,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             }
                             //Do UI stuff particular to write mode
                             var $loader = $('<span class="rdr_loader" />').append('<img src="{{ STATIC_URL }}widget/images/loader.gif" />');
-                            $tagLi.find('div.rdr_leftBox').addClass('rdr_kill_bg').find('span').addClass('rdr_not_loader').hide();
-                            $tagLi.find('div.rdr_leftBox').append($loader);
+                            $tagLi.find('div.rdr_tag_count').addClass('rdr_kill_bg').find('span').addClass('rdr_not_loader').hide();
+                            $tagLi.find('div.rdr_tag_count').append($loader);
                         }
                     },
                     customSendData: function(args){
@@ -3343,7 +3342,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 if ( typeof tag_li.find != "function" ) {
                                     tag_li = rindow.find('li.rdr_tag_' + args.tag.id);
                                 }
-                                tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
+                                tag_li.find('div.rdr_tag_count').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
 
                                 //[cleanlogz]('tag successssssssssssss');
                                 var $this = tag_li;
@@ -3355,8 +3354,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 content_node_data = args.content_node || RDR.actions.content_nodes.make(content_node_data);
 
                                 if ( tag_li.length == 1 ) {
-                                    tag_li.find('div.rdr_leftBox').unbind();
-                                    tag_li.find('div.rdr_leftBox').click( function(e) {
+                                    tag_li.find('div.rdr_tag_count').unbind();
+                                    tag_li.find('div.rdr_tag_count').click( function(e) {
                                         e.preventDefault();
                                                             
                                         var newArgs = {    
@@ -3404,7 +3403,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 if( uiMode === "read" ){
                                     rindow.dequeue('userMessage');
                                     //hackity hack number incrementer
-                                    var $number = tag_li.find('div.rdr_leftBox').find('.rdr_not_loader');
+                                    var $number = tag_li.find('div.rdr_tag_count').find('.rdr_not_loader');
                                     $number.show();
                                     $number.html( RDR.util.prettyNumber( parseInt($number.text())+1 ) );
 
@@ -3456,7 +3455,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             if( ! $tagLi.jquery ){
                                 $tagLi = rindow.find('.rdr_tag_'+args.tag.id);
                             }
-                            $tagLi.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
+                            $tagLi.find('div.rdr_tag_count').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
 
                             //do updates
                             var hash = sendData.hash;
@@ -3529,8 +3528,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             if ( typeof tag_li.find != "function" ) {
                                 tag_li = rindow.find('li.rdr_tag_' + args.tag.id);
                             }
-                            tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
-                            tag_li.find('div.rdr_leftBox').find('.rdr_not_loader').show();
+                            tag_li.find('div.rdr_tag_count').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
+                            tag_li.find('div.rdr_tag_count').find('.rdr_not_loader').show();
                             
                             if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
                                 RDR.session.receiveMessage( args, function() { RDR.actions.interactions.ajax( args, 'tag', 'create' ); } );
@@ -3568,7 +3567,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             // optional loader.
                             if ( typeof args.tag.find == "function" ){
                                 var $loader = $('<span class="rdr_loader" />').append('<img src="{{ STATIC_URL }}widget/images/loader.gif" />');
-                                args.tag.find('div.rdr_leftBox').addClass('rdr_kill_bg').find('span').hide().append($loader);
+                                args.tag.find('div.rdr_tag_count').addClass('rdr_kill_bg').find('span').hide().append($loader);
                             }
 
                         }else{
@@ -3663,7 +3662,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             var hash = content_node_data.hash;
 
                             //clears the loader                          
-                            tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
+                            tag_li.find('div.rdr_tag_count').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
 
                             //[cleanlogz]('bookmark successssssssssssss');
 
@@ -3675,8 +3674,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             var content_node = args.content_node || RDR.actions.content_nodes.make(content_node_data);
 
                             if ( tag_li.length == 1 ) {
-                                tag_li.find('div.rdr_leftBox').unbind();
-                                tag_li.find('div.rdr_leftBox').click( function(e) {
+                                tag_li.find('div.rdr_tag_count').unbind();
+                                tag_li.find('div.rdr_tag_count').click( function(e) {
                                     e.preventDefault();
                                     
                                     var newArgs = {    
@@ -3818,7 +3817,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         var response = args.response;
 
                         //clear the loader                  
-                        tag_li.find('div.rdr_leftBox').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
+                        tag_li.find('div.rdr_tag_count').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
 
 
                         if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
@@ -5068,7 +5067,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                     switch (panel) {
                         case "contentPanel":
-                            width = 200 + contentPanelWidth;
+                            width = 170 + contentPanelWidth;
 
                             // corner logic
                             $thisPanel.removeClass('rdr_brtl').removeClass('rdr_brbl');
@@ -5084,8 +5083,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             // rindow.find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').removeClass('rdr_brbr rdr_brtr');
                             
                             // old, from when whyPanel was next to, not over, the contentPanel:
-                            // width = (num_columns == 3) ? 200 + contentPanelWidth + 250 : 200 + 250;
-                            width = 200 + contentPanelWidth; // any time we're expanding the contentPanel, the rindow is gonna be 400px wide
+                            // width = (num_columns == 3) ? 170 + contentPanelWidth + 250 : 170 + 250;
+                            width = 170 + contentPanelWidth; // any time we're expanding the contentPanel, the rindow is gonna be 400px wide
                             gotoHeight = 300; //quick hack to make it look a bit nicer
 
                             rindow.queue('panels', function(){
@@ -5156,7 +5155,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         maxHeight:maxHeight
                     });
                     
-                    width = 200;
+                    width = 170;
 
                     switch (panel) {
                         case "contentPanel":
@@ -5176,7 +5175,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             rindow.find('div.rdr_reactionPanel div.rdr_body').attr('style','');
 
                             if( isReadMode ){
-                                width = 500;
+                                width = 470;
 
                                 rindow.queue('panels', function(){
                                     $thisPanel.animate( {right:-300 }, rindow.settings.animTime, function(){
@@ -5254,7 +5253,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         var $header = $('<div class="rdr_contentHeader" />'),
                             $content = $('<div class="rdr_content"></div>'),
                             $tagInfo = $('<div class="rdr_tag_info" />'),
-                            $rightBox = $('<div class="rdr_rightBox" />');
+                            $rightBox = $('<div class="rdr_details" />');
                     
                          /*                     
                          
@@ -5311,7 +5310,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 if ( content_node.top_interactions.coms[i].tag_id == tag.id ) num_comments++;
                             }
                             if ( num_comments > 0 ) {
-                                $header.find('div.rdr_rightBox').append('<span>' + RDR.util.prettyNumber( num_comments ) + '</span>');
+                                $header.find('div.rdr_details').append('<span>' + RDR.util.prettyNumber( num_comments ) + '</span>');
                                 $header.addClass('rdr_has_comment');
                             }
                         }
@@ -5381,7 +5380,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     var rindow = args.rindow,
                         settings = args.settings,
                         $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
-                        $customTagBox = $('<li class="rdr_customTagBox"><div class="rdr_rightBox"></div><div class="rdr_leftBox"><span></span></div></li>'),
+                        $customTagBox = $('<li class="rdr_customTagBox"><div class="rdr_details"></div><div class="rdr_tag_count"><span></span></div></li>'),
                         $freeformTagDiv = $('<div class="rdr_tagText"><input type="text" class="freeformTagInput" name="unknown-tags" /></div>'),
                         $freeformTagInput = $freeformTagDiv.find('input');
 
@@ -5635,7 +5634,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         var this_count = ( $this.data('tag').id == tag.id ) ? count : $this.data('tag').count;
                         var percentage = Math.round( ( this_count / total_reactions) * 100);
                         // this should update all of the counts
-                        $this.find(' div.rdr_leftBox span').text( percentage+'%' );
+                        $this.find(' div.rdr_tag_count span').text( percentage+'%' );
                     });
 
                     //I'm doing this somewhere else
