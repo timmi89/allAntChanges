@@ -6467,7 +6467,7 @@ function $RFunctions($R){
                     $a_custom_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-custom' );
                     $('#rdr_sandbox').append( $a_custom_tooltip );
                     
-                    $react.append( $a_custom );
+                    $react.append( $a_custom, " " );
 
                     $a_custom.hover(
                         function() {
@@ -6548,7 +6548,7 @@ function $RFunctions($R){
                         $a_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-'+tag.id );
                         $('#rdr_sandbox').append( $a_tooltip );
                         
-                        $react.append( $a );
+                        $react.append( $a, " " );
 
                         $a.hover(
                             function() {
