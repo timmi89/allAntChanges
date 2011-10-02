@@ -16,10 +16,10 @@ class Migration(DataMigration):
                 interactions = orm.Interaction.objects.filter(page=bad_page)
                 # if that page had interactions, link them to existing page
                 for interaction in interactions:
+                    interaction.page = existing_page
                     try:
-                        interaction.page = existing_page
                         interaction.save()
-                    except IntegrityError:
+                    except django.db.IntegrityError:
                         interaction.delete()
                         
                 # delete the duplicate page
