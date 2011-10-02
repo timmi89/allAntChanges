@@ -25,7 +25,8 @@ class Migration(DataMigration):
                     page__in=pages_to_delete
                 ).update(page=page_to_keep)
                 print "--> deleting", len(pages_to_delete), "pages"
-                pages_to_delete.delete()
+                for p in pages_to_delete:
+                    p.delete()
         print "#dupes", dupes
         print "Done deleting dupes"
         """
