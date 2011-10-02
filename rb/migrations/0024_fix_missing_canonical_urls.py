@@ -7,10 +7,13 @@ from django.db import models, IntegrityError
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        for combo in orm.Page.objects.values('url','canonical_url').distinct():
+        combos = orm.Page.objects.values('url','canonical_url').distinct()
+        print "distinct pages length", len(combos)
+        for combo in combos:
+            print "processing", combo['title']
             pages = orm.Page.objects.filter(url=combo['url'], canonical_url=combo['canonical_url'])
             if len(pages) > 1:
-                print len(pages), "duplicate pages for:", pages[0].title
+                print len(pages), "-> duplicate pages for:", pages[0].title
                 ordered_pages = pages.order_by('id')
                 page_to_keep = ordered_pages[0]
                 pages_to_delete = list(ordered_pages[1:])
