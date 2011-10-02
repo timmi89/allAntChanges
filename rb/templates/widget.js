@@ -2004,7 +2004,7 @@ function readrBoard($R){
                 var pageUrl = window.location.href;
                 if ( $.inArray(pageUrl, urlsArr) == -1 ) {
                     canonical_url = $('link[rel="canonical"]').length > 0 ?
-                                $('link[rel="canonical"]').attr('href') : "";
+                                $('link[rel="canonical"]').attr('href') : pageUrl;
                     title = $('meta[property="og:title"]').attr('content') ? 
                             $('meta[property="og:title"]').attr('content') : 
                                 $('title').text() ? 
@@ -6468,7 +6468,7 @@ function $RFunctions($R){
                     $a_custom_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-custom' );
                     $('#rdr_sandbox').append( $a_custom_tooltip );
                     
-                    $react.append( $a_custom );
+                    $react.append( $a_custom, " " );
 
                     $a_custom.hover(
                         function() {
@@ -6549,7 +6549,7 @@ function $RFunctions($R){
                         $a_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-'+tag.id );
                         $('#rdr_sandbox').append( $a_tooltip );
                         
-                        $react.append( $a );
+                        $react.append( $a, " " );
 
                         $a.hover(
                             function() {

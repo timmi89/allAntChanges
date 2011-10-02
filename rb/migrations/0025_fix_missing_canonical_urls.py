@@ -7,29 +7,6 @@ from django.db import models, IntegrityError
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        combos = orm.Page.objects.values('url','canonical_url').distinct()
-        print "distinct pages length", len(combos)
-        count = 0
-        dupes = 0
-        for combo in combos:
-            #print "[" + str(count) + "]", "processing", combo['url']
-            count += 1
-            pages = orm.Page.objects.filter(url=combo['url'], canonical_url=combo['canonical_url'])
-            if len(pages) > 1:
-                dupes += 1
-                print len(pages), "-> duplicate pages for:", pages[0].title
-                ordered_pages = pages.order_by('id')
-                page_to_keep = ordered_pages[0]
-                pages_to_delete = list(ordered_pages[1:])
-                orm.Interaction.objects.filter(
-                    page__in=pages_to_delete
-                ).update(page=page_to_keep)
-                print "--> deleting", len(pages_to_delete), "pages"
-                for p in pages_to_delete:
-                    p.delete()
-        print "#dupes", dupes
-        print "Done deleting dupes"
-        """
         for bad_page in orm.Page.objects.filter(canonical_url = ""):
             try:
                 existing_page = orm.Page.objects.get(
@@ -51,8 +28,7 @@ class Migration(DataMigration):
             # if the page did not exist, set canonical to url (make good)
             except orm.Page.DoesNotExist:
                 bad_page.canonical_url = bad_page.url
-                bad_page.save()
-        """ 
+                bad_page.save() 
 
     def backwards(self, orm):
         # raise RuntimeError("Cannot reverse this migration.")
