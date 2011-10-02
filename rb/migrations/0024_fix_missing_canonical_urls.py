@@ -13,7 +13,7 @@ class Migration(DataMigration):
                 print len(pages), "duplicate pages for:", pages[0].title
                 ordered_pages = pages.order_by('id')
                 page_to_keep = ordered_pages[0]
-                pages_to_delete = ordered_pages[1:]
+                pages_to_delete = list(ordered_pages[1:])
                 orm.Interaction.objects.filter(
                     page__in=pages_to_delete.values('id')
                 ).update(page=page_to_keep)
