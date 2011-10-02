@@ -15,7 +15,13 @@ class Migration(DataMigration):
                 )
                 interactions = orm.Interaction.objects.filter(page=bad_page)
                 # if that page had interactions, link them to existing page
-                if interactions: interactions.update(page=existing_page)
+                for interaction in interactions:
+                    try:
+                        interaction.page = existing_page
+                        interaction.save()
+                    except IntegrityError:
+                        interaction.delete()
+                        
                 # delete the duplicate page
                 bad_page.delete()
             # if the page did not exist, set canonical to url (make good)
