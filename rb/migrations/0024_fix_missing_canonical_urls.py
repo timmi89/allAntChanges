@@ -10,7 +10,7 @@ class Migration(DataMigration):
         combos = orm.Page.objects.values('url','canonical_url').distinct()
         print "distinct pages length", len(combos)
         for combo in combos:
-            print "processing", combo['title']
+            print "processing", combo['url']
             pages = orm.Page.objects.filter(url=combo['url'], canonical_url=combo['canonical_url'])
             if len(pages) > 1:
                 print len(pages), "-> duplicate pages for:", pages[0].title
