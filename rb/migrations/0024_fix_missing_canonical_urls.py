@@ -15,13 +15,13 @@ class Migration(DataMigration):
                 page_to_keep = ordered_pages[0]
                 pages_to_delete = list(ordered_pages[1:])
                 orm.Interaction.objects.filter(
-                    page__in=pages_to_delete.values('id')
+                    page__in=pages_to_delete
                 ).update(page=page_to_keep)
                 print "--> deleting", len(pags_to_delete), "pages"
-                pages_to_delete.delete()
-                
+                #pages_to_delete.delete()
+               
         print "Done deleting dupes"
-        
+        """
         for bad_page in orm.Page.objects.filter(canonical_url = ""):
             try:
                 existing_page = orm.Page.objects.get(
@@ -44,7 +44,7 @@ class Migration(DataMigration):
             except orm.Page.DoesNotExist:
                 bad_page.canonical_url = bad_page.url
                 bad_page.save()
-
+        """ 
 
     def backwards(self, orm):
         # raise RuntimeError("Cannot reverse this migration.")
