@@ -2,7 +2,7 @@
 import datetime
 from south.db import db
 from south.v2 import DataMigration
-from django.db import models
+from django.db import models, IntegrityError
 
 class Migration(DataMigration):
 
@@ -19,7 +19,8 @@ class Migration(DataMigration):
                     interaction.page = existing_page
                     try:
                         interaction.save()
-                    except django.db.IntegrityError:
+                    except IntegrityError:
+                        print "Found duplication interaction:", interaction
                         interaction.delete()
                         
                 # delete the duplicate page
