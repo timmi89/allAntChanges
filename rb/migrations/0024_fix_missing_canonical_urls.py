@@ -12,7 +12,7 @@ class Migration(DataMigration):
         count = 0
         dupes = 0
         for combo in combos:
-            print "[" + str(count) + "]", "processing", combo['url']
+            #print "[" + str(count) + "]", "processing", combo['url']
             count += 1
             pages = orm.Page.objects.filter(url=combo['url'], canonical_url=combo['canonical_url'])
             if len(pages) > 1:
@@ -26,7 +26,7 @@ class Migration(DataMigration):
                 ).update(page=page_to_keep)
                 print "--> deleting", len(pages_to_delete), "pages"
                 #pages_to_delete.delete()
-               
+        print "#dupes", dupes
         print "Done deleting dupes"
         """
         for bad_page in orm.Page.objects.filter(canonical_url = ""):
