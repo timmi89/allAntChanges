@@ -25,7 +25,8 @@ class Migration(DataMigration):
 
 
     def backwards(self, orm):
-        raise RuntimeError("Cannot reverse this migration.")
+        # raise RuntimeError("Cannot reverse this migration.")
+        pass
 
     models = {
         'auth.group': {
