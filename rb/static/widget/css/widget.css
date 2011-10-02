@@ -574,19 +574,19 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_rightBox {background: none !importan
 
 /* summary box tags */
 div.rdr.rdr-summary a.rdr_tag     { 
-    background: #fff;
-    border: 1px solid #ddd;
-    -moz-border-radius: 3px 3px 3px 3px;
-    -webkit-border-radius: 3px 3px 3px 3px;
-    border-radius: 3px 3px 3px 3px;
-    box-shadow: 0 -5px 9px -5px #ccc inset;
-    cursor: pointer;
-    margin:0px 12px 7px -2px;
-    padding: 4px 5px;
-    text-decoration: none;
+    background: #fff !important;
+    border: 1px solid #ddd !important;
+    -moz-border-radius: 3px 3px 3px 3px !important;
+    -webkit-border-radius: 3px 3px 3px 3px !important;
+    border-radius: 3px 3px 3px 3px !important;
+    box-shadow: 0 -5px 9px -5px #ccc inset !important;
+    cursor: pointer !important;
+    margin:0px 5px 0px -2px !important;
+    padding: 4px 5px !important;
+    text-decoration: none !important;
     z-index: 100001;
-    display:inline-block;
-    white-space:nowrap;
+    display:inline !important;
+    white-space:nowrap !important;
 }
 
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    { 
@@ -597,7 +597,7 @@ div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
     font-size: 11px !important;
     background:#eee !important;
     margin-right:-5px;
-    padding:6px 5px 4px 5px;
+    padding:5px 5px 4px 5px;
     margin-left:4px;
     color: #666; !important;
     cursor:default;
@@ -699,6 +699,7 @@ div.rdr.rdr-summary div.rdr-sum-headline {
     padding:6px 5px 0px 40px !important;
     display:inline-block !important;
     color:#787878 !important;
+    line-height: 32px !important;
 }
 div.rdr.rdr-summary div.rdr-top-tags {
     padding:8px 5px 0px 8px !important;
@@ -712,6 +713,11 @@ div.rdr.rdr-summary div.rdr-top-tags span {
 div.rdr.rdr-summary div.rdr-top-tags span em {
     font-style:normal !important;
     color:#aaa !important;
+}
+div.rdr.rdr-summary a.rdr-top-user {
+    display:inline !important;
+    margin:0 12px 0 -6px !important;
+    padding: 4px 5px !important;
 }
 div.rdr.rdr-summary a.rdr-top-user img {
     width:20px !important;
