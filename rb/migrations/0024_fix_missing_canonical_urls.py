@@ -7,6 +7,20 @@ from django.db import models, IntegrityError
 class Migration(DataMigration):
 
     def forwards(self, orm):
+        for combo in orm.Page.objects.values('url','canonical_url').distinct():
+            pages = orm.Page.objects.filter(url=combo['url'], canonical_url=combo['canonical_url'])
+            if len(pages) > 1:
+                print len(pages), "duplicate pages for:", pages[0].title
+                ordered_pages = pages.order_by('id')
+                page_to_keep = ordered_pages[0]
+                pages_to_delete = ordered_pages[1:]
+                orm.Interaction.objects.filter(
+                    page__in=pages_to_delete.values('id')
+                ).update(page=page_to_keep)
+                pages_to_delete.delete()
+                
+        print "Done deleting dupes"
+        
         for bad_page in orm.Page.objects.filter(canonical_url = ""):
             try:
                 existing_page = orm.Page.objects.get(
