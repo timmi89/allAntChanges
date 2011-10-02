@@ -11,7 +11,7 @@ class Migration(DataMigration):
         print "distinct pages length", len(combos)
         count = 0
         for combo in combos:
-            print "[" + count + "]","processing", combo['url']
+            print "[" + str(count) + "]", "processing", combo['url']
             count += 1
             pages = orm.Page.objects.filter(url=combo['url'], canonical_url=combo['canonical_url'])
             if len(pages) > 1:
