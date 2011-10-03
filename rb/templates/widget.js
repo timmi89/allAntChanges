@@ -6475,8 +6475,8 @@ function $RFunctions($R){
                                 $tooltip = $('#rdr-tooltip-summary-tag-custom'),
                                 aOffsets = $a_custom.offset();
 
-                            var tooltip_top = ( aOffsets.top - 55 ),
-                                tooltip_left = ( aOffsets.left + ( $a_custom.width() / 2 ) - 125 );
+                            var tooltip_top = ( aOffsets.top - 42 ),
+                                tooltip_left = ( aOffsets.left + ( $a_custom.width() / 2 ) - 110 );
 
                             $tooltip.css('top', tooltip_top + "px" );
                             $tooltip.css('left', tooltip_left + "px" );
@@ -6555,10 +6555,9 @@ function $RFunctions($R){
                                 var $a = $(this),
                                     $tooltip = $('#rdr-tooltip-summary-tag-' + $(this).data('tag_id') ),
                                     aOffsets = $a.offset();
-console.dir(aOffsets);
-console.log($a.width());
-                                var tooltip_top = ( aOffsets.top - 45 ),
-                                    tooltip_left = ( aOffsets.right - $a.width() );
+
+                                var tooltip_top = ( aOffsets.top - 42 ),
+                                    tooltip_left = ( aOffsets.left + ( $a_custom.width() / 2 ) - 110 );
 
                                 $tooltip.css('top', tooltip_top + "px" );
                                 $tooltip.css('left', tooltip_left + "px" );

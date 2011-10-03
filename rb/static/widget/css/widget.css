@@ -598,6 +598,7 @@ div.rdr.rdr-summary a.rdr_tag     {
     display:inline !important;
     white-space:nowrap !important;
     color:#666 !important;
+    cursor:default !important;
 }
 
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    { 
