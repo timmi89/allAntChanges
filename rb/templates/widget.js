@@ -507,43 +507,43 @@ function readrBoard($R){
 
                         //this is the read_mode only
                         // enable the "click on a blessed tag to choose it" functionality.  just css class based.
-                        rindow.find('ul.rdr_preselected li').bind('click', function() {
-                            var $this = $(this);
-                            // see how many CONTENT_NODES have this TAG, to know if we should skip straight to the whyPanel on click
-                            var nodes_with_this_tag = 0,
-                                content_node;
+                        // rindow.find('ul.rdr_preselected li').bind('click', function() {
+                        //     var $this = $(this);
+                        //     // see how many CONTENT_NODES have this TAG, to know if we should skip straight to the whyPanel on click
+                        //     var nodes_with_this_tag = 0,
+                        //         content_node;
 
-                            for ( var i in summary.content_nodes ) {
-                                if ( summary.content_nodes[i].top_interactions && summary.content_nodes[i].top_interactions.tags[ $this.data('tag').id ] ) {
-                                    nodes_with_this_tag++;
-                                    content_node = summary.content_nodes[i];
-                                }
-                            }
+                        //     for ( var i in summary.content_nodes ) {
+                        //         if ( summary.content_nodes[i].top_interactions && summary.content_nodes[i].top_interactions.tags[ $this.data('tag').id ] ) {
+                        //             nodes_with_this_tag++;
+                        //             content_node = summary.content_nodes[i];
+                        //         }
+                        //     }
 
-                            // i.e. it's an image / media
-                            if ( !content_node ) {
-                                content_node = RDR.content_nodes[ $this.data('hash') ];
-                            }
+                        //     // i.e. it's an image / media
+                        //     if ( !content_node ) {
+                        //         content_node = RDR.content_nodes[ $this.data('hash') ];
+                        //     }
 
-                            if ( !$this.hasClass('rdr_customTagBox') ) {
-                                $this.addClass('rdr_selected');
-                                $this.siblings().removeClass('rdr_selected');
-                                $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+                        //     if ( !$this.hasClass('rdr_customTagBox') ) {
+                        //         $this.addClass('rdr_selected');
+                        //         $this.siblings().removeClass('rdr_selected');
+                        //         $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
 
-                                if ( ( nodes_with_this_tag == 1 ) || kind == "img" || kind == "media" ) {
+                        //         if ( ( nodes_with_this_tag == 1 ) || kind == "img" || kind == "media" ) {
 
-                                    var hash = $this.data('hash');
+                        //             var hash = $this.data('hash');
 
-                                    //try to add selState to content_node - there should only be one
-                                    var selState = $this.data('selStates')[0];
-                                    content_node.selState = selState;
-                                    RDR.actions.viewCommentContent( {tag:$this.data('tag'), hash:hash, rindow:rindow, kind:kind, content_node:content_node, view_all_state:"hide" });
-                                } else {
-                                    RDR.actions.viewReactionContent( $this.data('tag'), $this.data('hash'), rindow );
-                                }
-                            }
-                            return false; //so click on <a>img</a> gets overridden
-                        });
+                        //             //try to add selState to content_node - there should only be one
+                        //             var selState = $this.data('selStates')[0];
+                        //             content_node.selState = selState;
+                        //             RDR.actions.viewCommentContent( {tag:$this.data('tag'), hash:hash, rindow:rindow, kind:kind, content_node:content_node, view_all_state:"hide" });
+                        //         } else {
+                        //             RDR.actions.viewReactionContent( $this.data('tag'), $this.data('hash'), rindow );
+                        //         }
+                        //     }
+                        //     return false; //so click on <a>img</a> gets overridden
+                        // });
 
         /*
                         //todo: helper function - move somewhere else:
@@ -554,6 +554,63 @@ function readrBoard($R){
 
                         rindow.find('ul.rdr_preselected li').each(function(){
                             var $this = $(this);
+
+                            var tag = $this.data('tag');
+                            $this.find('div.rdr_tag_count').bind('click', function() {
+                            console.log(tag);
+                                // if only one text-item, upvote it
+
+                                /*
+
+
+
+
+                                LOOP THROUGH CONTENT NODES
+                                SEE IF THIS TAG IS ON THAT CONTENT NODE
+                                IF SO, VOTE
+
+                                IF NOT, MAKE BUTTON BLUE AND THE CLICK EVENT SHOULD SLIDE OPEN THE CONTENT PANEL
+
+
+
+
+                                */
+
+                                var content_node_count = 0;
+                                var content_node = {};
+                                $.each( summary.content_nodes, function(idx, cnode) {
+                                    content_node_count++;
+                                    content_node = cnode;
+                                    console.log(content_node_count);
+                                    console.dir(content_node);
+                                });
+                                if ( content_node_count == 1 ) {
+console.dir(content_node);
+                                    // content_node_data = {
+                                    //     'container': rindow.data('container'),
+                                    //     'body': content_node.body,
+                                    //     'location': content_node.location,
+                                    //     'kind':kind
+                                    // }
+
+                                    var content_node = {
+                                        body:"",
+                                        location:""
+                                    };
+                                    args = { tag:tag, rindow:rindow, hash:hash, uiMode:'read'};
+                                    console.dir(args);
+                                    RDR.actions.interactions.ajax( args, 'tag', 'create' );
+
+                                    // prevent the click from bubbling up the DOM
+                                    return false;
+                                // else, slide open the content panel
+                                } else {
+                                    
+                                }
+                            });
+
+
+                            // START: WHAT DOES ALL OF THIS DO?
                             $this.data('selStates',[]);
 
                             var tag_id = $this.data('tag').id;
@@ -567,6 +624,7 @@ function readrBoard($R){
                                 //else                            
                                 $this.data('selStates').push(node.selState);  
                             });
+                            // END: WHAT DOES ALL OF THIS DO?
                             
                         })//chain
                         .hover( 
@@ -4822,20 +4880,21 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         $h4 = $('<h4>'+reaction_body+'</h4>').prepend($reactionCount),
                         $infoSummary = $('<div class="rdr_info_summary" />').append($h4);
 
-                    $tooltip = RDR.tooltip.draw({ "item":"vote_up","tipText":"Vote reaction up" }).addClass('rdr_top').hide();
-                    $infoSummary.append( $tooltip );
+                    // $tooltip = RDR.tooltip.draw({ "item":"vote_up","tipText":"Vote reaction up" }).addClass('rdr_top').hide();
+                    // $infoSummary.append( $tooltip );
 
-                    $infoSummary.click( function() {
-                        // click
-                        args = { tag:tag, rindow:rindow, hash:hash, content_node:content_node, uiMode:'read'};
-                        RDR.actions.interactions.ajax( args, 'tag', 'create' );
-                    }).hover( function() {
-                        // hover
-                        $(this).find('div.rdr_tooltip').show();
-                    }, function() {
-                        // hover out
-                        $(this).find('div.rdr_tooltip').hide();
-                    });
+                    // $infoSummary.click( function() {
+                    //     // click
+                    //     args = { tag:tag, rindow:rindow, hash:hash, content_node:content_node, uiMode:'read'};
+                    //     RDR.actions.interactions.ajax( args, 'tag', 'create' );
+                    // });
+                    // .hover( function() {
+                    //     // hover
+                    //     $(this).find('div.rdr_tooltip').show();
+                    // }, function() {
+                    //     // hover out
+                    //     $(this).find('div.rdr_tooltip').hide();
+                    // });
 
                     var $infoBox = $('<div />');
                     $infoBox.append( $infoSummary, $socialBox );
