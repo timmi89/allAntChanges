@@ -607,7 +607,14 @@ console.dir(content_node);
                                 } else {
                                     
                                 }
-                            });
+                            }).hover(
+                                function() {
+                                    $(this).text('+');
+                                },
+                                function() {
+                                    $(this).text(tag.count);
+                                }
+                            );
 
 
                             // START: WHAT DOES ALL OF THIS DO?
@@ -6612,7 +6619,7 @@ function $RFunctions($R){
                         $a.hover(
                             function() {
                                 var $a = $(this),
-                                    $tooltip = $('#rdr-tooltip-summary-tag-' + $(this).data('tag_id') ),
+                                    $tooltip = $('#rdr-tooltip-summary-tag-' + $a.data('tag_id') ),
                                     aOffsets = $a.offset();
 
                                 var tooltip_top = ( aOffsets.top - 42 ),
@@ -6621,13 +6628,16 @@ function $RFunctions($R){
                                 $tooltip.css('top', tooltip_top + "px" );
                                 $tooltip.css('left', tooltip_left + "px" );
                                 $tooltip.show();
+
+                                $a.find('span').text( '+' );
                             },
                             function() {
-                                $('#rdr-tooltip-summary-tag-' + $(this).data('tag_id') ).hide();
-                            }
-                        );
+                                var $a = $(this);
+                                $('#rdr-tooltip-summary-tag-' + $a.data('tag_id') ).hide();
+                                $a.find('span').text( tagCount );
 
-                        $a.find('span').click( function() {
+                            }
+                        ).click( function() {
                             var hash = $(this).closest('.rdr-page-container').data('hash');
                             args = { tag:tag, hash:hash, uiMode:'write', kind:"page"};
                             RDR.actions.interactions.ajax( args, 'tag', 'create');
