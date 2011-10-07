@@ -464,8 +464,8 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_details {background: none !important
 
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged div.rdr_tag_count          {background:url(../images/widget_icons.png) 1px -8px no-repeat; }
 
-#rdr_sandbox div.rdr div.rdr_sentimentBox  ul.rdr_tags li div.rdr_details:hover,
-#rdr_sandbox div.rdr div.rdr_sentimentBox  ul.rdr_tags li div.rdr_tagText:hover~div.rdr_details           {background:url(../images/widget_icons.png) -211px -8px no-repeat;}
+#rdr_sandbox div.rdr.rdr_readmode div.rdr_sentimentBox  ul.rdr_tags li div.rdr_details:hover,
+#rdr_sandbox div.rdr.rdr_readmode div.rdr_sentimentBox  ul.rdr_tags li div.rdr_tagText:hover~div.rdr_details           {background:url(../images/widget_icons.png) -211px -8px no-repeat;}
 
 #rdr_sandbox div.rdr div.rdr_sentimentBox  ul.rdr_tags li.rdr_tagged .rdr_details span,
 #rdr_sandbox div.rdr div.rdr_sentimentBox  ul.rdr_tags li.rdr_selected .rdr_details span,
@@ -508,7 +508,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_details {background: none !important
 
 #rdr_sandbox div.rdr li.rdr_customTagBox input.freeformTagInput     {font-size:12px !important; font-family:Arial, sans-serif !important; margin:0; text-align:left; border:none; background:none; -moz-box-shadow:none; -webkit-box-shadow:none; box-shadow:none; z-index:100; padding-left: 5px !important; outline:none !important; }
 
-#rdr_sandbox div.rdr li.rdr_customTagBox div.rdr_help                {width:auto; z-index:90; left: 9px; top: 6px;}
+#rdr_sandbox div.rdr li.rdr_customTagBox div.rdr_help                {width:auto; z-index:90; left: 30px; top: 6px;}
 #rdr_sandbox div.rdr li.rdr_customTagBox div.rdr_details                {display:none;}
 #rdr_sandbox div.rdr li.rdr_customTagBox.rdr_selected div.rdr_details   {display:block;}
 

@@ -508,41 +508,7 @@ function readrBoard($R){
                         //this is the read_mode only
                         // enable the "click on a blessed tag to choose it" functionality.  just css class based.
                         // rindow.find('ul.rdr_preselected li').bind('click', function() {
-                        //     var $this = $(this);
-                        //     // see how many CONTENT_NODES have this TAG, to know if we should skip straight to the whyPanel on click
-                        //     var nodes_with_this_tag = 0,
-                        //         content_node;
-
-                        //     for ( var i in summary.content_nodes ) {
-                        //         if ( summary.content_nodes[i].top_interactions && summary.content_nodes[i].top_interactions.tags[ $this.data('tag').id ] ) {
-                        //             nodes_with_this_tag++;
-                        //             content_node = summary.content_nodes[i];
-                        //         }
-                        //     }
-
-                        //     // i.e. it's an image / media
-                        //     if ( !content_node ) {
-                        //         content_node = RDR.content_nodes[ $this.data('hash') ];
-                        //     }
-
-                        //     if ( !$this.hasClass('rdr_customTagBox') ) {
-                        //         $this.addClass('rdr_selected');
-                        //         $this.siblings().removeClass('rdr_selected');
-                        //         $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-
-                        //         if ( ( nodes_with_this_tag == 1 ) || kind == "img" || kind == "media" ) {
-
-                        //             var hash = $this.data('hash');
-
-                        //             //try to add selState to content_node - there should only be one
-                        //             var selState = $this.data('selStates')[0];
-                        //             content_node.selState = selState;
-                        //             RDR.actions.viewCommentContent( {tag:$this.data('tag'), hash:hash, rindow:rindow, kind:kind, content_node:content_node, view_all_state:"hide" });
-                        //         } else {
-                        //             RDR.actions.viewReactionContent( $this.data('tag'), $this.data('hash'), rindow );
-                        //         }
-                        //     }
-                        //     return false; //so click on <a>img</a> gets overridden
+                        
                         // });
 
         /*
@@ -556,6 +522,7 @@ function readrBoard($R){
                             var $this = $(this);
 
                             var tag = $this.data('tag');
+
                             $this.find('div.rdr_tag_count').bind('click', function() {
                             console.log(tag);
                                 // if only one text-item, upvote it
@@ -563,6 +530,9 @@ function readrBoard($R){
                                 /*
 
 
+
+
+                                --- ACTUALLY, just the hover should change, and the click should only do something if there is only one item.
 
 
                                 LOOP THROUGH CONTENT NODES
@@ -616,6 +586,43 @@ console.dir(content_node);
                                 }
                             );
 
+                            $this.click( function() {
+                                var $this = $(this);
+                                // see how many CONTENT_NODES have this TAG, to know if we should skip straight to the whyPanel on click
+                                var nodes_with_this_tag = 0,
+                                    content_node;
+
+                                for ( var i in summary.content_nodes ) {
+                                    if ( summary.content_nodes[i].top_interactions && summary.content_nodes[i].top_interactions.tags[ $this.data('tag').id ] ) {
+                                        nodes_with_this_tag++;
+                                        content_node = summary.content_nodes[i];
+                                    }
+                                }
+
+                                // i.e. it's an image / media
+                                if ( !content_node ) {
+                                    content_node = RDR.content_nodes[ $this.data('hash') ];
+                                }
+
+                                if ( !$this.hasClass('rdr_customTagBox') ) {
+                                    $this.addClass('rdr_selected');
+                                    $this.siblings().removeClass('rdr_selected');
+                                    $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+
+                                    if ( ( nodes_with_this_tag == 1 ) || kind == "img" || kind == "media" ) {
+
+                                        var hash = $this.data('hash');
+
+                                        //try to add selState to content_node - there should only be one
+                                        var selState = $this.data('selStates')[0];
+                                        content_node.selState = selState;
+                                        RDR.actions.viewCommentContent( {tag:$this.data('tag'), hash:hash, rindow:rindow, kind:kind, content_node:content_node, view_all_state:"hide" });
+                                    } else {
+                                        RDR.actions.viewReactionContent( $this.data('tag'), $this.data('hash'), rindow );
+                                    }
+                                }
+                                return false; //so click on <a>img</a> gets overridden
+                            });
 
                             // START: WHAT DOES ALL OF THIS DO?
                             $this.data('selStates',[]);
