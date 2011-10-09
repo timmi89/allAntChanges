@@ -416,7 +416,8 @@ div.rdr strong {font-weight:bold !important;}
 }
 
 /* rdr_hover is a safari/chrome kludge -- :hover isn't working here */
-#rdr_sandbox div.rdr ul.rdr_tags li.rdr_hover  {color:#008be4 !important; display:block !important; box-shadow: 10px -5px 12px -4px #ccc inset !important; }
+#rdr_sandbox div.rdr ul.rdr_tags li.rdr_hover div.li div.rdr_details,
+#rdr_sandbox div.rdr ul.rdr_tags li.rdr_hover div.li div.rdr_tagText  {display:block !important; box-shadow: 10px -5px 12px -4px #ccc inset !important; }
 
 #rdr_sandbox div.rdr_window ul.rdr_tags li.rdr_hover,
 #rdr_sandbox div.rdr_window div.rdr_contentSet.rdr_hover {}
@@ -432,7 +433,7 @@ div.rdr strong {font-weight:bold !important;}
     padding:5px 0 3px 2px !important;
     background:#eee !important;
 }
-#rdr_sandbox div.rdr_window ul.rdr_tags li.rdr_hover div.rdr_tag_count {
+#rdr_sandbox div.rdr_window ul.rdr_tags li div.rdr_tag_count:hover {
     cursor:pointer !important;
     box-shadow: 0 -5px 9px -5px #5494DF inset;
 }

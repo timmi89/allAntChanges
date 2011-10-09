@@ -524,7 +524,8 @@ function readrBoard($R){
                             var tag = $this.data('tag');
 
                             $this.find('div.rdr_tag_count').bind('click', function() {
-                            console.log(tag);
+                                console.log('one-upping the score');
+                                console.log(tag);
                                 // if only one text-item, upvote it
 
                                 /*
@@ -571,12 +572,12 @@ console.dir(content_node);
                                     console.dir(args);
                                     RDR.actions.interactions.ajax( args, 'tag', 'create' );
 
-                                    // prevent the click from bubbling up the DOM
-                                    return false;
                                 // else, slide open the content panel
                                 } else {
                                     
                                 }
+                                // prevent the click from bubbling up the DOM
+                                return false;
                             }).hover(
                                 function() {
                                     $(this).text('+');
