@@ -80,11 +80,9 @@ def createSocialUser(django_user, profile):
     # Print out the result
     social_user = social[0]
     if social[1]:
-        send_mail(
+        mail_admins(
             'New ReadrBoard User',
-            social_user.full_name + ' just joined RB!',
-            'server@readrboard.com',
-            ['tyler@readrboard.com'],
+            social_user.full_name + ' just joined ReadrBoard!',
             fail_silently=True
         )
     result = ("Created new" if social[1] else "Retreived existing")
