@@ -233,7 +233,7 @@ class Page(models.Model):
         pass
         
     class Meta:
-        unique_together = ('url', 'canonical_url')
+        unique_together = ('site','url', 'canonical_url')
 
     def __unicode__(self):
         return unicode(self.id)
