@@ -2,7 +2,7 @@ from readrboard.rb.models import *
 from datetime import datetime, timedelta
 import base64
 import uuid
-from django.core.mail import send_mail
+from django.core.mail import send_mail, mail_admins
 
 def convertUser(temp_user, existing_user):
     existing = Interaction.objects.filter(user=existing_user)

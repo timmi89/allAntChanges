@@ -23,8 +23,7 @@ AWS_HEADERS = {
 FACEBOOK_APP_ID = '163759626987948'
 FACEBOOK_APP_SECRET = 'f14061a2ed9d7ae8ed1c3b231a8148c9'
 
-ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),    
+ADMINS = ( 
     ('Tyler Brock', 'tyler@readrboard.com'),
     ('Porter Bayne', 'porter@readrboard.com'),
     ('Eric Chaves', 'eric@readrboard.com'),
