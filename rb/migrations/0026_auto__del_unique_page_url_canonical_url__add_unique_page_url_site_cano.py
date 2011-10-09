@@ -1,37 +1,27 @@
 # encoding: utf-8
 import datetime
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
 
-class Migration(DataMigration):
+class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        for interaction in orm.Interaction.objects.filter(
-            page__site__domain__regex=r'^www'
-        ):
-            good_page = None
-            try:
-                good_page = orm.Page.objects.get(
-                    canonical_url = interaction.page.canonical_url,
-                    site__domain__regex=r'^(\?!www).\+'
-                )
-            except orm.Page.DoesNotExist:
-                site = orm.Site.objects.get(domain=".".join(interaction.page.site.domain.split('.')[1:]))
-                good_page = orm.Page.objects.create(
-                    url = interaction.page.canonical_url,
-                    canonical_url = interaction.page.canonical_url,
-                    site = site
-                )
-            
-            if good_page:
-                bad_page = interaction.page
-                interaction.page = good_page
-                interaction.save()
-                bad_page.delete()
+        
+        # Removing unique constraint on 'Page', fields ['url', 'canonical_url']
+        db.delete_unique('rb_page', ['url', 'canonical_url'])
+
+        # Adding unique constraint on 'Page', fields ['url', 'site', 'canonical_url']
+        db.create_unique('rb_page', ['url', 'site_id', 'canonical_url'])
+
 
     def backwards(self, orm):
-        "Write your backwards methods here."
+        
+        # Removing unique constraint on 'Page', fields ['url', 'site', 'canonical_url']
+        db.delete_unique('rb_page', ['url', 'site_id', 'canonical_url'])
+
+        # Adding unique constraint on 'Page', fields ['url', 'canonical_url']
+        db.create_unique('rb_page', ['url', 'canonical_url'])
 
 
     models = {
@@ -173,7 +163,7 @@ class Migration(DataMigration):
             'value': ('django.db.models.fields.IntegerField', [], {'default': '0'})
         },
         'rb.page': {
-            'Meta': {'unique_together': "(('url', 'canonical_url'),)", 'object_name': 'Page'},
+            'Meta': {'unique_together': "(('site', 'url', 'canonical_url'),)", 'object_name': 'Page'},
             'canonical_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.Site']"}),
