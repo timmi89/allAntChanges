@@ -10,6 +10,7 @@ class Migration(DataMigration):
         for interaction in orm.Interaction.objects.filter(
             page__site__domain__regex=r'^www'
         ):
+            good_page = None
             try:
                 good_page = orm.Page.objects.get(
                     canonical_url = interaction.page.canonical_url,
