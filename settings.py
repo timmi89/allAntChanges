@@ -4,6 +4,9 @@ from os import uname
 if uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
 
+# Server e-mail account
+SERVER_EMAIL = "server@readrboard.com"
+
 # For Amazon web services
 AWS_ACCESS_KEY_ID = 'AKIAINM2FE35X6K77P2A'
 AWS_SECRET_ACCESS_KEY = '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'
