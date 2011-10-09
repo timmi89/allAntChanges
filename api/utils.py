@@ -114,7 +114,7 @@ def getHost(request):
     url = request.META.get('HTTP_REFERER', None)
     if not url: url = request.GET
     
-    split_host = urlsplit(referer).netloc.split('.')
+    split_host = urlsplit(url).netloc.split('.')
     if 'www' in split_host[0]: split_host = split_host[1:]
     host = '.'.join(split_host)
         
