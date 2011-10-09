@@ -19,7 +19,7 @@ class Migration(DataMigration):
                 interaction.page = good_page
                 interaction.save()
                 bad_page.delete()
-            except Page.DoesNotExist:
+            except orm.Page.DoesNotExist:
                 print "cannonical_url", interaction.page.canonical_url
 
     def backwards(self, orm):
