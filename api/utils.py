@@ -120,7 +120,6 @@ def getHost(request):
         
     return host
     
-
 def stripQueryString(url):
     qs = urlsplit(url).query
     if qs:
