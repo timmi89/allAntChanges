@@ -12,7 +12,7 @@ class Migration(DataMigration):
         ):
             good_page = orm.Page.objects.get(
                 canonical_url = interaction.page.canonical_url,
-                site__domain__regex=r'^(?!www).+'
+                site__domain__regex=r'^(?!www).\+'
             )
             bad_page = interaction.page
             interaction.page = good_page
