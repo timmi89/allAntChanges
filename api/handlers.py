@@ -350,7 +350,7 @@ class PageDataHandler(AnonymousBaseHandler):
                 interaction__kind='tag',
                 interaction__page=current_page
             )
-            ordered_tags = tags.order_by('body','content__kind')
+            ordered_tags = tags.order_by('body')
             tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
             toptags = tagcounts.order_by('-tag_count')[:10].values('id','tag_count','body')
           
