@@ -262,7 +262,7 @@ function readrBoard($R){
                                         body:val.body
                                     }
                                 }),
-                                $leftBox = '<div class="rdr_tag_count" >+<span class="rdr_not_loader" /></div>',
+                                $leftBox = '<div class="rdr_tag_count" ><span class="rdr_not_loader">+</span></div>',
                                 $tagText = '<div class="rdr_tagText">'+val.body+'</div>',
                                 $rightBox = '<div class="rdr_details" />';
 
@@ -373,7 +373,6 @@ function readrBoard($R){
                     //RDR.rindow._rindowTypes.readMode:
                     make: function(settings){
                         //RDR.rindow._rindowTypes.readMode.make:
-
                         var hash = settings.hash;
                         var summary = RDR.summaries[hash],
                         kind = summary.kind;
@@ -505,87 +504,53 @@ function readrBoard($R){
                         
                         rindow.find('div.rdr_contentSpace').html( $sentimentBox );
 
-                        //this is the read_mode only
-                        // enable the "click on a blessed tag to choose it" functionality.  just css class based.
-                        // rindow.find('ul.rdr_preselected li').bind('click', function() {
-                        
-                        // });
-
-        /*
-                        //todo: helper function - move somewhere else:
-                        function(){
-                                                
-                        }
-        */  
-
-                        rindow.find('ul.rdr_preselected li').each(function(){
+                        rindow.find('ul.rdr_preselected li').each( function(){
                             var $this = $(this);
 
                             var tag = $this.data('tag');
 
-                            $this.find('div.rdr_tag_count').bind('click', function() {
-                                console.log('one-upping the score');
-                                console.log(tag);
-                                // if only one text-item, upvote it
-
-                                /*
-
-
-
-
-                                --- ACTUALLY, just the hover should change, and the click should only do something if there is only one item.
-
-
-                                LOOP THROUGH CONTENT NODES
-                                SEE IF THIS TAG IS ON THAT CONTENT NODE
-                                IF SO, VOTE
-
-                                IF NOT, MAKE BUTTON BLUE AND THE CLICK EVENT SHOULD SLIDE OPEN THE CONTENT PANEL
-
-
-
-
-                                */
-
+                            $this.find('div.rdr_tag_count').each( function() {
+                                var $thisDetails = $(this);
                                 var content_node_count = 0;
                                 var content_node = {};
-                                $.each( summary.content_nodes, function(idx, cnode) {
-                                    content_node_count++;
-                                    content_node = cnode;
-                                    console.log(content_node_count);
-                                    console.dir(content_node);
-                                });
+                                // how many content nodes are tagged with this particular tag?
+                                // TODO: make this loop a RDR.util function, bet we use it or similar in many places.
+                                if ( kind == "text" ) {
+                                    $.each( summary.content_nodes, function(idx, cnode) {
+                                        if ( cnode.top_interactions.tags && cnode.top_interactions.tags[ tag.id ] ) {
+                                            content_node_count++;
+                                            content_node = cnode;
+                                        }
+                                    });
+                                } else {
+                                    if ( summary.top_interactions.tags && summary.top_interactions.tags[ tag.id ] ) {
+                                        content_node_count++;
+                                        content_node = summary;
+                                    }
+                                }
+
+                                // if just one content_node with this tag in this hash, then +1 that tag.
                                 if ( content_node_count == 1 ) {
-console.dir(content_node);
-                                    // content_node_data = {
-                                    //     'container': rindow.data('container'),
-                                    //     'body': content_node.body,
-                                    //     'location': content_node.location,
-                                    //     'kind':kind
-                                    // }
-
-                                    var content_node = {
-                                        body:"",
-                                        location:""
-                                    };
-                                    args = { tag:tag, rindow:rindow, hash:hash, uiMode:'read'};
-                                    console.dir(args);
-                                    RDR.actions.interactions.ajax( args, 'tag', 'create' );
-
+                                    $thisDetails.bind('click', function() {
+                                        args = { tag:tag, rindow:rindow, hash:hash, content_node:content_node, uiMode:'read'};
+                                        RDR.actions.interactions.ajax( args, 'tag', 'create' );
+                                    });
+                                    // return false;
                                 // else, slide open the content panel
                                 } else {
                                     
                                 }
-                                // prevent the click from bubbling up the DOM
-                                return false;
-                            }).hover(
-                                function() {
-                                    $(this).text('+');
-                                },
-                                function() {
-                                    $(this).text(tag.count);
-                                }
-                            );
+
+                                $thisDetails.hover(
+                                    function() {
+                                        var hoverText = (content_node_count==1) ? "+":"?";
+                                        $(this).find('span').text(hoverText);
+                                    },
+                                    function() {
+                                        $(this).find('span').text(tag.count);
+                                    }
+                                );
+                            });
 
                             $this.click( function() {
                                 var $this = $(this);
@@ -3111,15 +3076,16 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         //RDR.actions.interactions.comment.onSuccess:
                         create: function(args){
                             //RDR.actions.interactions.comment.onSuccess.create:
-
                             var rindow = args.rindow,
                                 hash = args.hash,
-                                response = args.response;
+                                response = args.response,
+                                tag = args.tag;
 
                             var interaction = response.data.interaction;
 
-                            rindow.find('div.rdr_commentBox').find('div.rdr_commentComplete').html('Thank you for your comment. You and others can now read this by clicking on the (pin) icon next to the content you commented upon.').show();
+                            rindow.find('div.rdr_commentBox').find('div.rdr_commentComplete').html('Thank you for your comment. <br><br><strong>Reload the page to see your comment.</strong>').show();
                             rindow.find('div.rdr_commentBox').find('div.rdr_tagFeedback, div.rdr_comment').hide();
+                            // RDR.actions.summaries.hack.updateCommentSet( args );
 
                             //todo: consider adding these fields to the summary
                             // update the comments for this hash
@@ -3148,7 +3114,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             var diff = {   
                                 coms: {}
                             };
-                            diff.coms[ intHelper.id ] = intHelper;
+                            diff.coms[ tag.id ] = intHelper;
                             RDR.actions.summaries.update(hash, diff);
 
                             var usrMsgArgs = {      
@@ -3306,7 +3272,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                             //[cleanlogz](content_node_data);
                             if(kind == 'img' || kind == 'media'){
-                                
                                 var body = $container[0].src;
 
                                 content_node_data = {
@@ -3391,7 +3356,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 
                                 var sendData = args.sendData;
                                 var rindow = args.rindow,
-                                    tag_li = args.tag,
+                                    $tag_li = args.tag,
                                     tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
                                     int_id = response.data.interaction.id;
 
@@ -3412,48 +3377,69 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 content_node_data.kind = sendData.kind;
 
                                 //clear the loader        
-                                if ( typeof tag_li.find != "function" ) {
-                                    tag_li = rindow.find('li.rdr_tag_' + args.tag.id);
+                                if ( typeof $tag_li.find != "function" ) {
+                                    $tag_li = rindow.find('li.rdr_tag_' + args.tag.id);
                                 }
-                                tag_li.find('div.rdr_tag_count').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
+                                $tag_li.find('div.rdr_tag_count').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
 
-                                //[cleanlogz]('tag successssssssssssss');
-                                var $this = tag_li;
-                                $this.addClass('rdr_selected');
-                                $this.siblings().removeClass('rdr_selected');
-                                $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
+                                // var $this = $tag_li; // not sure why we are doing this.
+                                $tag_li.addClass('rdr_selected');
+                                $tag_li.siblings().removeClass('rdr_selected');
+                                $tag_li.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
                                 
                                 //reset this var for now
                                 content_node_data = args.content_node || RDR.actions.content_nodes.make(content_node_data);
 
-                                if ( tag_li.length == 1 ) {
-                                    tag_li.find('div.rdr_tag_count').unbind();
-                                    tag_li.find('div.rdr_tag_count').click( function(e) {
+                                if ( $tag_li.length == 1 ) {
+                                    var $tagCount = $tag_li.find('div.rdr_tag_count');
+                                    $tagCount.unbind();
+
+                                    //temp quick fix to show msg for vote up in 3rd panel
+
+                                        rindow.dequeue('userMessage');
+                                        //hackity hack number incrementer
+                                        var $number = $tagCount.find('.rdr_not_loader');
+                                        var tagCount = ( isNaN( parseInt($number.text()) ) ) ? parseInt("1"):parseInt( $number.text() );
+                                        $number.text( RDR.util.prettyNumber( tagCount ) );
+                                        $number.show();
+
+                                        //this one's even more hacky - doesn't really matter, but fix this soon.
+                                        var $number2 = rindow.find('.rdr_info_summary').find('.rdr_reaction_count');
+                                        if($number2.length){
+                                            var theNumber = RDR.util.prettyNumber( $number2.data('count')+1 );
+                                            $number2.find('span').text( '(' +theNumber+ ') ');
+                                        }
+                                        //hack complete.
+                                        
+
+                                    /* let's remove the "undo" functionality from the tag count for now. [pb]
+                                    $tagCount.click( function(e) {
                                         e.preventDefault();
                                                             
                                         var newArgs = {    
                                             content_node_data: args.content_node_data,
                                             hash: hash,
                                             int_id: int_id,
-                                            tag:tag_li,
+                                            tag:$tag_li,
                                             rindow: args.rindow
                                         };
                                         // RDR.actions.unrateSend(args);
                                         RDR.actions.interactions.ajax( newArgs, 'tag', 'remove' );
                                         return false; // prevent the tag call applied to the parent <li> from firing
                                     });
+                                    */
 
-                                    tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+int_id);
-                                    tag_li.data('interaction_id', int_id);
+                                    $tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+int_id);
+                                    $tag_li.data('interaction_id', int_id);
 
                                     // if it was a custom tag, do a few things
-                                    if ( tag_li.hasClass('rdr_customTagBox') ) {
-                                        tag_li.removeClass('rdr_customTagBox');
-                                        tag_li.siblings().removeClass('rdr_selected');
-                                        tag_li.addClass('rdr_selected');
-                                        tag_li.find('input').remove();
-                                        tag_li.find('div.rdr_help').remove();
-                                        tag_li.find('.rdr_tagText').html(tag.body);
+                                    if ( $tag_li.hasClass('rdr_customTagBox') ) {
+                                        $tag_li.removeClass('rdr_customTagBox');
+                                        $tag_li.siblings().removeClass('rdr_selected');
+                                        $tag_li.addClass('rdr_selected');
+                                        $tag_li.find('input').remove();
+                                        $tag_li.find('div.rdr_help').remove();
+                                        $tag_li.find('.rdr_tagText').html(tag.body);
                                         RDR.actions.sentimentPanel.addCustomTagBox({hash:hash, rindow:rindow, settings:args.settings, actionType:'react'});
                                     }
                                 }
@@ -3471,24 +3457,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 rindow.queue('userMessage', function(){
                                     RDR.session.rindowUserMessage.show( usrMsgArgs );
                                 });
-
-                                //temp quick fix to show msg for vote up in 3rd panel
-                                if( uiMode === "read" ){
-                                    rindow.dequeue('userMessage');
-                                    //hackity hack number incrementer
-                                    var $number = tag_li.find('div.rdr_tag_count').find('.rdr_not_loader');
-                                    $number.show();
-                                    $number.html( RDR.util.prettyNumber( parseInt($number.text())+1 ) );
-
-                                    //this one's even more hacky - doesn't really matter, but fix this soon.
-                                    var $number2 = rindow.find('.rdr_info_summary').find('.rdr_reaction_count');
-                                    if($number2.length){
-                                        var theNumber = RDR.util.prettyNumber( $number2.data('count')+1 );
-                                        $number2.html( '(' +theNumber+ ') ');
-                                    }
-                                    //hack complete.
-
-                                }
 
                                 if( uiMode !== "read" ){
                                     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_data:content_node_data, hash:hash});
@@ -4428,6 +4396,67 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 }//end RDR.actions.indicators.utils
             },
             summaries:{
+                hack: {
+                    updateCommentSet: function(args) {
+                        var rindow = args.rindow,
+                            tag = args.tag,
+                            hash = args.hash
+                            user = args.user;
+
+                        var $whyPanel = rindow.find('div.rdr_whyPanel'),
+                            $whyPanel_body = $whyPanel.find('div.rdr_body'),
+                            $whyPanel_body_jsp = $whyPanel_body.find('.jspPane'),
+                            $whyPanel_panelCard = $whyPanel_body_jsp.find('div.rdr_panelCard');
+
+                        var $otherComments = ( rindow.find('div.rdr_otherCommentsBox').length == 1 ) ? rindow.find('div.rdr_otherCommentsBox') : $('<div class="rdr_otherCommentsBox rdr_sntPnl_padder"></div>').hide().html(
+                        '<div><h4>(<span>0</span>) Comment:</h4></div>').appendTo($whyPanel_panelCard);
+
+                        $otherComments.show();
+                        $otherComments.find('h4 span').text( parseInt( $otherComments.find('h4 span').text() ) + 1 );
+                            
+                        var $commentSet = $('<div class="rdr_commentSet" />'),
+                            $commentBy = $('<div class="rdr_commentBy" />'),
+                            $comment = $('<div class="rdr_comment" />'),
+                            $commentReplies = $('<div class="rdr_commentReplies" />'),
+                            $commentReply = $('<div class="rdr_commentReply" />'),
+                            $commentReply_link = $('<a href="javascript:void(0);">Reply</a>');
+                        var user_image_url = ( user.img_url ) ? user.img_url: '{{ STATIC_URL }}widget/images/anonymousplode.png';
+                        var user_name = "You";
+                        $commentBy.html( '<img src="'+user_image_url+'" class="no-rdr" /> ' + user_name );
+                        $comment.html( '<div class="rdr_comment_body">"'+args.comment+'"</div>' );
+
+                        $commentSet.append( $commentBy, $comment ); // , $commentReplies, $commentReply 
+                        $otherComments.append( $commentSet );
+
+                        var comment = {
+                            body:args.comment,
+                            // content_id:
+                            id:args.response.data.interaction.id,
+                            social_user : {
+                                full_name:"You",
+                                img_url:user_image_url,
+                                user: {
+                                    first_name:"You",
+                                    id:user.user_id,
+                                    last_name:""
+                                }
+                            },
+                            tag_id:tag.id,
+                            user: {
+                                first_name:"You",
+                                id:user.user_id,
+                                last_name:""
+                            }
+                        }
+
+                        if ( typeof RDR.summaries[hash].top_interactions.coms[tag.id] == "undefined" ) {
+                            RDR.summaries[hash].top_interactions.coms[tag.id] = [];
+                            // RDR.summaries[hash].top_interactions.coms[tag.id].count = 0;
+                        }
+                        RDR.summaries[hash].top_interactions.coms[tag.id].push( comment );
+
+                    }
+                },
                 init: function(hash){
                     //RDR.actions.summaries.init:
 
@@ -4890,8 +4919,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         reaction_count = tag.count;
                         reaction_body = tag.body;
                     }
+
                     var peoples = (reaction_count>1) ? "people" : "person",
-                        $reactionCount = $('<div class="rdr_reaction_count">'+reaction_count+' '+peoples+' reacted </div>').data('count', reaction_count),
+                        $reactionCount = $('<div class="rdr_reaction_count"><span>'+reaction_count+'</span> '+peoples+' reacted </div>').data('count', reaction_count),
                         $h4 = $('<h4>'+reaction_body+'</h4>').prepend($reactionCount),
                         $infoSummary = $('<div class="rdr_info_summary" />').append($h4);
 
@@ -5006,7 +5036,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                     // ok, get the content associated with this tag!
                     var $otherComments = $('<div class="rdr_otherCommentsBox rdr_sntPnl_padder"></div>').hide().html(
-                        '<div><h4>(' + node_comments + ') Comments:</h4></div>'
+                        '<div><h4>(<span>' + node_comments + '</span>) Comments:</h4></div>'
                     ).appendTo($whyPanel_panelCard);
 
                     for ( var i in comments ) {
@@ -5706,10 +5736,10 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                     rindow.find('div.rdr_reactionPanel ul.rdr_tags li').each( function() {
                         var $this = $(this);
-                        var this_count = ( $this.data('tag').id == tag.id ) ? count : $this.data('tag').count;
-                        var percentage = Math.round( ( this_count / total_reactions) * 100);
+                        // var this_count = ( $this.data('tag').id == tag.id ) ? count : $this.data('tag').count;
+                        // var percentage = Math.round( ( this_count / total_reactions) * 100);
                         // this should update all of the counts
-                        $this.find(' div.rdr_tag_count span').text( percentage+'%' );
+                        // $this.find(' div.rdr_tag_count span').text( percentage+'%' );
                     });
 
                     //I'm doing this somewhere else
@@ -6623,6 +6653,7 @@ function $RFunctions($R){
                         $('#rdr_sandbox').append( $a_tooltip );
                         
                         $react.append( $a, " " );
+                        $span.css('width', $span.width() + 'px' );
 
                         $a.hover(
                             function() {
@@ -6637,12 +6668,13 @@ function $RFunctions($R){
                                 $tooltip.css('left', tooltip_left + "px" );
                                 $tooltip.show();
 
+                                $a.data('tagCount', $a.find('span').text() );
                                 $a.find('span').text( '+' );
                             },
                             function() {
                                 var $a = $(this);
                                 $('#rdr-tooltip-summary-tag-' + $a.data('tag_id') ).hide();
-                                $a.find('span').text( tagCount );
+                                $a.find('span').text( $a.data('tagCount') );
 
                             }
                         ).click( function() {
