@@ -17,7 +17,7 @@ class Migration(DataMigration):
                     site__domain__regex=r'^(\?!www).\+'
                 )
             except orm.Page.DoesNotExist:
-                print "Domain", interaction.page.site.domain 
+                print "Domain", interaction.page.site.domain.split('.')[1:]
                 site = orm.Site.objects.get(domain=interaction.page.site.domain.split('.')[1:])
                 good_page = orm.Page.objects.create(
                     url = interaction.page.canonical_url,
