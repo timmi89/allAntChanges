@@ -10,16 +10,17 @@ class Migration(DataMigration):
         for interaction in orm.Interaction.objects.filter(
             page__site__domain__regex=r'^www'
         ):
-            good_page = orm.Page.objects.get(
-                canonical_url = interaction.page.canonical_url,
-                site__domain__regex=r'^(\?!www).\+'
-            )
-            bad_page = interaction.page
-            interaction.page = good_page
-            interaction.save()
-            bad_page.delete()
-            
-
+            try:
+                good_page = orm.Page.objects.get(
+                    canonical_url = interaction.page.canonical_url,
+                    site__domain__regex=r'^(\?!www).\+'
+                )
+                bad_page = interaction.page
+                interaction.page = good_page
+                interaction.save()
+                bad_page.delete()
+            except Page.DoesNotExist:
+                print "cannonical_url", interaction.page.canonical_url
 
     def backwards(self, orm):
         "Write your backwards methods here."
