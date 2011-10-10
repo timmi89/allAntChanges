@@ -144,16 +144,13 @@ def getPage(host, page_request):
     if canonical:
         if canonical == "same":
             canonical = url
-        page = Page.objects.get_or_create(
-            canonical_url=canonical,
-            defaults={'url':url, 'site':site, 'title':title}
-        )
     else:
-        page = Page.objects.get_or_create(
-            url=url,
-            canonical_url="",
-            defaults={'site': site, 'title':title}
-        )
+        canonical = ""
+    page = Page.objects.get_or_create(
+        url = url,
+        canonical_url = canonical,
+        defaults = {'site': site, 'title':title}
+    )
         
     return page[0]
     
