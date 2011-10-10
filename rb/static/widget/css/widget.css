@@ -608,6 +608,8 @@ div.rdr.rdr-summary a.rdr_tag     {
     color:#666 !important;
     cursor:pointer !important;
     font-size:11px !important;
+    max-width: 110px !important;
+    overflow-x: hidden !important;
 }
 
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    { 

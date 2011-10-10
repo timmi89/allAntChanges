@@ -6087,19 +6087,22 @@ function rdr_loadScript(sScriptSrc,callbackfunction) {
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
 RDR_scriptPaths.jquery = RDR_offline ?
-    "{{ STATIC_URL }}global/js/jquery-1.6.2.min.js" :
+    "{{ BASE_URL }}{{ STATIC_URL }}global/js/jquery-1.6.2.min.js" :
     "http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js";
 RDR_scriptPaths.jqueryUI = RDR_offline ?
-    "{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom.min.js" :
+    "{{ BASE_URL }}{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom.min.js" :
     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js";
 RDR_scriptPaths.jqueryUI_CSS = RDR_offline ?
-    "{{ STATIC_URL }}global/css/jquery-ui-1.8.14.base.css" :
+    "{{ BASE_URL }}{{ STATIC_URL }}global/css/jquery-ui-1.8.14.base.css" :
     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/themes/base/jquery-ui.css";
 
 rdr_loadScript( RDR_scriptPaths.jquery, function(){
     //callback
-    if ( $.browser.msie  && parseInt($.browser.version) < 7 ) {
+    if ( $.browser.msie  && parseInt($.browser.version) < 8 ) {
         return false;
+    }
+    if ( $.browser.msie  && parseInt($.browser.version) == 8 ) {
+        $('body').addClass('rdr_ie');
     }
     
     rdr_loadScript( RDR_scriptPaths.jqueryUI, function(){
@@ -6119,7 +6122,6 @@ rdr_loadScript( RDR_scriptPaths.jquery, function(){
 function $RFunctions($R){
     //called after our version of jQuery ($R) is loaded
 
-
     //load CSS
     var css = [];
 
@@ -6127,14 +6129,14 @@ function $RFunctions($R){
         css.push( "{{ STATIC_URL }}global/css/readrleague.css" );
     } 
     if ( $R.browser.msie ) {
-        css.push( "{{ STATIC_URL }}widget/css/ie.css" );
+        css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/ie.css" );
         //todo: make sure that if this css file doens't exist, it won't bork.  Otherwise as soon as IE10 comes out, this will kill it.
-        css.push( "{{ STATIC_URL }}widget/css/ie"+parseInt( $R.browser.version) +".css" );
+        css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/ie"+parseInt( $R.browser.version) +".css" );
     }
 
-    css.push( "{{ STATIC_URL }}widget/css/widget.css" );
+    css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/widget.css" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
-    css.push( "{{ STATIC_URL }}widget/css/jquery.jscrollpane.css" );
+    css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/jquery.jscrollpane.css" );
     
     loadCSS(css);
 
