@@ -32,7 +32,7 @@ ADMINS = (
 if DEBUG:
     
     BASE_URL = 'http://local.readrboard.com:8080'
-    STATIC_URL = '/static/'
+    STATIC_URL = 'http://local.readrboard.com:8080/static/'
     STATIC_ROOT = 'rb/static/'
 
     DATABASES = {
