@@ -19,7 +19,7 @@ class Migration(DataMigration):
                 )
             except orm.Page.DoesNotExist:
                 site = orm.Site.objects.get(domain=".".join(interaction.page.site.domain.split('.')[1:]))
-                good_page = orm.Page.objects.create(
+                good_page = orm.Page(
                     url = interaction.page.canonical_url,
                     canonical_url = interaction.page.canonical_url,
                     site = site
