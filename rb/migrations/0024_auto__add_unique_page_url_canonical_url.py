@@ -1,39 +1,22 @@
 # encoding: utf-8
 import datetime
 from south.db import db
-from south.v2 import DataMigration
-from django.db import models, IntegrityError
+from south.v2 import SchemaMigration
+from django.db import models
 
-class Migration(DataMigration):
+class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        for bad_page in orm.Page.objects.filter(canonical_url = ""):
-            try:
-                existing_page = orm.Page.objects.get(
-                    canonical_url = bad_page.url,
-                    url= bad_page.url
-                )
-                interactions = orm.Interaction.objects.filter(page=bad_page)
-                # if that page had interactions, link them to existing page
-                for interaction in interactions:
-                    interaction.page = existing_page
-                    try:
-                        interaction.save()
-                    except IntegrityError:
-                        print "Found duplication interaction:", interaction
-                        interaction.delete()
-                        
-                # delete the duplicate page
-                bad_page.delete()
-            # if the page did not exist, set canonical to url (make good)
-            except orm.Page.DoesNotExist:
-                bad_page.canonical_url = bad_page.url
-                bad_page.save()
+        
+        # Adding unique constraint on 'Page', fields ['url', 'canonical_url']
+        db.create_unique('rb_page', ['url', 'canonical_url'])
 
 
     def backwards(self, orm):
-        # raise RuntimeError("Cannot reverse this migration.")
-        pass
+        
+        # Removing unique constraint on 'Page', fields ['url', 'canonical_url']
+        db.delete_unique('rb_page', ['url', 'canonical_url'])
+
 
     models = {
         'auth.group': {
@@ -174,7 +157,7 @@ class Migration(DataMigration):
             'value': ('django.db.models.fields.IntegerField', [], {'default': '0'})
         },
         'rb.page': {
-            'Meta': {'object_name': 'Page'},
+            'Meta': {'unique_together': "(('url', 'canonical_url'),)", 'object_name': 'Page'},
             'canonical_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.Site']"}),

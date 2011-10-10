@@ -59,9 +59,6 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 <link rel=”shortcut icon” href=”{{ STATIC_URL }}site/images/favicon.ico” type=”image/x-icon”>
 <link rel=”icon” href=”{{ STATIC_URL }}site/images/favicon.ico” type=”image/x-icon”>
 
-<!-- http://t.co/y1jPVnT -->
-<link rel="canonical" href="/">
-
 <!-- extendedHeader -->
 {% block extendedHead %}
 {% endblock %}
@@ -96,7 +93,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
         </div>
       </div>
     <div id="site_search">
-      <form method="get" id="searchform" action="/">
+      <form method="get" id="searchform" action="/stream/">
         <fieldset>
           <label>Search</label>
           <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />

@@ -35,9 +35,9 @@ function readrBoard($R){
         },
         group: {}, //to be set by RDR.actions.initGroupData
         user: {
-            img_url:        "", 
-            readr_token: 	"",
-            user_id:        ""
+            img_url: "", 
+            readr_token: "",
+            user_id: ""
         },
         errors: {
             actionbar: {
@@ -46,12 +46,6 @@ function readrBoard($R){
             }
         },
         styles: {
-        /*
-		page: 	"<style type='text/css'>"+
-				"body 		{background:#fff;}" +
-				"body p		{}" +
-				"</style>"
-		*/
 		},
 		rindow: {
             stack:{
@@ -258,7 +252,7 @@ function readrBoard($R){
                                 
                                 var $li = $('<li class="rdr_tag_'+val.id+'" />').data({
                                     'tag':{
-                                        id:parseInt( val.id ),
+                                        id:parseInt( val.id, 10 ),
                                         body:val.body
                                     }
                                 }),
@@ -463,7 +457,7 @@ function readrBoard($R){
                             var percentage = Math.round( ( tag.count/totalTags ) * 100);                
                             var $li = $('<li class="rdr_tag_'+tagOrder.id+'" />').data({
                                 'tag':{
-                                    id:parseInt( tagOrder.id ),
+                                    id:parseInt( tagOrder.id, 10),
                                     body:tag.body,
                                     count:tag.count
                                 },
@@ -1310,6 +1304,7 @@ function readrBoard($R){
 				md5_ii: function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(c^(b|(~d)),a,b,x,s,t);},
 				safe_add: function(x,y){var lsw=(x&0xFFFF)+(y&0xFFFF);var msw=(x>>16)+(y>>16)+(lsw>>16);return(msw<<16)|(lsw&0xFFFF);},
 				bit_rol: function(num,cnt){return(num<<cnt)|(num>>>(32-cnt));},
+                //the line below is called out by jsLint because it uses Array() instead of [].  We can ignore, or I'm sure we could change it if we wanted to.
 				str2binl: function(str){var bin=Array();var mask=(1<<RDR.util.md5.chrsz)-1;for(var i=0;i<str.length*RDR.util.md5.chrsz;i+=RDR.util.md5.chrsz){bin[i>>5]|=(str.charCodeAt(i/RDR.util.md5.chrsz)&mask)<<(i%32);}return bin;},
 				binl2hex: function(binarray){var hex_tab=RDR.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";var str="";for(var i=0;i<binarray.length*4;i++){str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);} return str;}
 			},
@@ -1320,7 +1315,7 @@ function readrBoard($R){
                 }
             },
             prettyNumber: function(int){
-                var parsedInt = parseInt(int); //convert if we can.
+                var parsedInt = parseInt(int, 10); //convert if we can.
                 if( isNaN(parsedInt) || parsedInt<0 ) return false;
                 //else
 
@@ -1362,8 +1357,8 @@ function readrBoard($R){
                     //for example - the stay-in-window function doesn't compensate for the body border, but it doens't matter for a small border anyway.
 
                 var $body = $('body'),
-                    borderTop = parseInt( $body.css('border-top-width') ),
-                    borderLeft = parseInt( $body.css('border-left-width') ),
+                    borderTop = parseInt( $body.css('border-top-width'), 10 ),
+                    borderLeft = parseInt( $body.css('border-left-width'), 10 ),
                     $sandbox = $('#rdr_sandbox');
                 
                 if( !borderTop && !borderLeft ) return;
@@ -1635,7 +1630,7 @@ function readrBoard($R){
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
 
                                 for ( var i in message.data ) {
-                                    RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i]):message.data[i];
+                                    RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i],10):message.data[i];
                                 }
 
                                 if ( callbackFunction && args ) {
@@ -1661,7 +1656,7 @@ function readrBoard($R){
                             } else if ( message.status.indexOf('sharedLink') != -1 ) {
                                 var sharedLink = message.status.split('|');
                                 if ( sharedLink[5] ) {
-                                    RDR.session.referring_int_id = parseInt( sharedLink[5] );
+                                    RDR.session.referring_int_id = parseInt( sharedLink[5], 10 );
                                 }
                                 RDR.session.getSharedLinkInfo( { container_hash:sharedLink[1], location:sharedLink[2], reaction:sharedLink[3], content:sharedLink[4] } );
                             }
@@ -1674,7 +1669,7 @@ function readrBoard($R){
             checkForMaxInteractions: function(args, callback){
                 //later get rid of args if we don't need it for showLoginPanel - if we can use rindow instead.
                 
-                if ( RDR.user.num_interactions && RDR.user.img_url != "" ) {
+                if ( RDR.user.num_interactions && RDR.user.img_url !== "" ) {
                     if ( RDR.user.num_interactions < RDR.group.temp_interact ) {
                         
                     // }
@@ -1706,16 +1701,18 @@ function readrBoard($R){
                 if ( $('#rdr_loginPanel').length < 1 ) {
                     // $('#rdr_loginPanel').remove();
                     //todo: weird, why did commenting this line out not do anything?...look into it
-    				//porter says: the action bar used to just animate larger and get populated as a window
+                    //porter says: the action bar used to just animate larger and get populated as a window
                     //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
                     
+                    var coords;
+
                     if ( args && args.rindow ) {
                         var caller = args.rindow;
-                        var coords = caller.offset();
+                        coords = caller.offset();
                         coords.left = coords.left ? (coords.left-34) : 100;
                         coords.top = coords.top ? (coords.top-25) : 100;
                     } else {
-                        var coords = [];
+                        coords = [];
                         coords.left = ( $(window).width() / 2 ) - 200;
                         coords.top =  ( $(window).height() / 2 ) - 100 ;
                         coords.top = 150;
@@ -1736,21 +1733,22 @@ function readrBoard($R){
                     if ( callback ) rindow.data( 'callback', callback );
 
                     // create the iframe containing the login panel
-    				var $loginHtml = $('<div class="rdr_login" />'),
-    				iframeUrl = RDR.session.iframeHost + "/fblogin/",
-    				parentUrl = window.location.href,
+                    var $loginHtml = $('<div class="rdr_login" />'),
+                    iframeUrl = RDR.session.iframeHost + "/fblogin/",
+                    parentUrl = window.location.href,
                     parentHost = window.location.protocol + "//" + window.location.host;
                     var h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard";
-    				$loginHtml.append( '<h1>'+h1_text+'</h1><div class="rdr_body" />');
-    				$loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&group_name='+RDR.group.name+'&cachebust='+RDR.cachebuster+'" width="360" height="190" frameborder="0" style="overflow:hidden;" />' );
-    				
-    				// rindow.animate({
+                    $loginHtml.append( '<h1>'+h1_text+'</h1><div class="rdr_body" />');
+                    $loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&group_name='+RDR.group.name+'&cachebust='+RDR.cachebuster+'" width="360" height="190" frameborder="0" style="overflow:hidden;" />' );
+
+
+                    // rindow.animate({
         //                 width:'500px',
         //                 minHeight:'125px'
         //             }, 300, function() {
         //                 rindow.append( $loginHtml );
         //             });
-    				rindow.find('div.rdr_contentSpace').append( $loginHtml );
+                    rindow.find('div.rdr_contentSpace').append( $loginHtml );
 
                     // var $overlay = $( '<div id="rdr_overlay" />' ).css('height', $(window).height()).css('width', $(window).width() );
                     // $overlay.click ( function() {
@@ -1797,7 +1795,7 @@ function readrBoard($R){
 
                             case "tempUser":
                                 //for now, just ignore this
-                                var num_interactions_left = RDR.group.temp_interact - parseInt( args.num_interactions ),
+                                var num_interactions_left = RDR.group.temp_interact - parseInt( args.num_interactions, 10 ),
                                     $loginLink = $('<a href="javascript:void(0);">Connect with Facebook</a>.');
                                 
                                 $loginLink.click( function() {
@@ -2021,11 +2019,11 @@ function readrBoard($R){
                                 urlsArr.push(url);
 
                                 thisPage = {
-                                    group_id: parseInt(RDR.groupPermData.group_id),
+                                    group_id: parseInt(RDR.groupPermData.group_id, 10),
                                     url: url,
                                     canonical_url: 'same',
                                     title: $post_href.text()
-                                }
+                                };
                                 pagesArr.push(thisPage);
                                 key = pagesArr.length-1;
 
@@ -2048,11 +2046,11 @@ function readrBoard($R){
                                 $('title').text() : "";
 
                     thisPage = {
-                        group_id: parseInt(RDR.groupPermData.group_id),
+                        group_id: parseInt(RDR.groupPermData.group_id, 10),
                         url: pageUrl,
                         canonical_url: (pageUrl == canonical_url) ? "same" : canonical_url,
                         title: title
-                    }
+                    };
     
                     pagesArr.push(thisPage);
                     key = pagesArr.length-1;
@@ -2072,7 +2070,7 @@ function readrBoard($R){
                     }
                 }
 
-    			var sendData = {
+                var sendData = {
                     pages: pagesArr
                 };
                  
@@ -2406,11 +2404,11 @@ function readrBoard($R){
                     }
 
                     //build the sendData with the hashes from above
-    				sendData = {
-    					short_name : RDR.group.short_name,
-    					pageID: page_id,
-    					hashes: sendable_hashes
-    				};
+                    sendData = {
+	                   short_name : RDR.group.short_name,
+	                   pageID: page_id,
+	                   hashes: sendable_hashes
+                    };
 
                     // send the data!
                     $.ajax({
@@ -2419,7 +2417,7 @@ function readrBoard($R){
                         contentType: "application/json",
                         dataType: "jsonp",
                         data: {
-                        	json: $.toJSON(sendData)
+                            json: $.toJSON(sendData)
                         },
                         success: function(response) {
                             var summaries = {};
@@ -2468,8 +2466,6 @@ function readrBoard($R){
                                     onSuccessCallback();
                                 }      
                             }
-                            
-                            
                         }
                     });
                 }
@@ -3337,7 +3333,11 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                     $('#rdr-tooltip-summary-tag-custom').remove();
                                 }
 
-                                var tagCount = ( $span.text() === "+" ) ? 0 : parseInt( $span.text() );
+// <<<<<<< HEAD
+                                var tagCount = ( $span.text() === "+" ) ? 0 : parseInt( $span.text(), 10 );
+// =======
+//                                 var tagCount = ( $span.text() === "" ) ? 0 : parseInt( $span.text(), 10 );
+// >>>>>>> master
                                 tagCount++;
 
                                 $span.text( tagCount );
@@ -3458,6 +3458,27 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                     RDR.session.rindowUserMessage.show( usrMsgArgs );
                                 });
 
+// <<<<<<< HEAD
+// =======
+//                                 //temp quick fix to show msg for vote up in 3rd panel
+//                                 if( uiMode === "read" ){
+//                                     rindow.dequeue('userMessage');
+//                                     //hackity hack number incrementer
+//                                     var $number = tag_li.find('div.rdr_leftBox').find('.rdr_not_loader');
+//                                     $number.show();
+//                                     $number.html( RDR.util.prettyNumber( parseInt( $number.text(), 10 )+1 ) );
+
+//                                     //this one's even more hacky - doesn't really matter, but fix this soon.
+//                                     var $number2 = rindow.find('.rdr_info_summary').find('.rdr_reaction_count');
+//                                     if($number2.length){
+//                                         var theNumber = RDR.util.prettyNumber( $number2.data('count')+1 );
+//                                         $number2.html( '(' +theNumber+ ') ');
+//                                     }
+//                                     //hack complete.
+
+//                                 }
+
+// >>>>>>> master
                                 if( uiMode !== "read" ){
                                     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_data:content_node_data, hash:hash});
                                 }
@@ -4238,16 +4259,16 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $container_tracker = $('#rdr_container_tracker_'+hash);
                         
                         var padding = {
-                            top: parseInt( $container.css('padding-top') ),
-                            right: parseInt( $container.css('padding-right') ),
-                            bottom: parseInt( $container.css('padding-bottom') ),
-                            left: parseInt( $container.css('padding-left') )
+                            top: parseInt( $container.css('padding-top'), 10 ),
+                            right: parseInt( $container.css('padding-right'), 10 ),
+                            bottom: parseInt( $container.css('padding-bottom'), 10 ),
+                            left: parseInt( $container.css('padding-left'), 10 )
                         };
 
-                        var hasBorder = parseInt( $container.css('border-top-width') ) + 
-                            parseInt( $container.css('border-bottom-width') ) + 
-                            parseInt( $container.css('border-left-width') ) + 
-                            parseInt( $container.css('border-right-width') );
+                        var hasBorder = parseInt( $container.css('border-top-width'), 10 ) + 
+                            parseInt( $container.css('border-bottom-width'), 10 ) + 
+                            parseInt( $container.css('border-left-width'), 10 ) + 
+                            parseInt( $container.css('border-right-width'), 10 );
 
                         var paddingOffset = {};
                         paddingOffset.top = !hasBorder ? padding.top : 0;
@@ -4275,10 +4296,10 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             //todo: consolodate this with the other case of it
                             var containerWidth, containerHeight;
                             //this will calc to 0 if there is no border. 
-                            var hasBorder = parseInt( $container.css('border-top-width') ) + 
-                                parseInt( $container.css('border-bottom-width') ) + 
-                                parseInt( $container.css('border-left-width') ) + 
-                                parseInt( $container.css('border-right-width') );
+                            var hasBorder = parseInt( $container.css('border-top-width'), 10 ) + 
+                                parseInt( $container.css('border-bottom-width'), 10 ) + 
+                                parseInt( $container.css('border-left-width'), 10 ) + 
+                                parseInt( $container.css('border-right-width'), 10 );
 
                             if(hasBorder){
                                 containerWidth = $container.outerWidth();
@@ -4289,10 +4310,10 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             }
                             
                             var padding = {
-                                top: parseInt( $container.css('padding-top') ),
-                                right: parseInt( $container.css('padding-right') ),
-                                bottom: parseInt( $container.css('padding-bottom') ),
-                                left: parseInt( $container.css('padding-left') )
+                                top: parseInt( $container.css('padding-top'), 10 ),
+                                right: parseInt( $container.css('padding-right'), 10 ),
+                                bottom: parseInt( $container.css('padding-bottom'), 10 ),
+                                left: parseInt( $container.css('padding-left'), 10 )
                             };
 
                             var cornerPadding = 8,
@@ -4347,10 +4368,10 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         var containerWidth, containerHeight;
 
                         //this will calc to 0 if there is no border. 
-                        var hasBorder = parseInt( $container.css('border-top-width') ) +
-                            parseInt( $container.css('border-right-width') ) +
-                            parseInt( $container.css('border-bottom-width') ) +
-                            parseInt( $container.css('border-left-width') );
+                        var hasBorder = parseInt( $container.css('border-top-width'), 10 ) +
+                            parseInt( $container.css('border-right-width'), 10 ) +
+                            parseInt( $container.css('border-bottom-width'), 10 ) +
+                            parseInt( $container.css('border-left-width'), 10 );
 
                         if(hasBorder){
                             containerWidth = $container.outerWidth();
@@ -5708,9 +5729,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         range = args.range;
 
                     if ( args.element ) {
-                        var element_text = args.element.parent().text(); 
-                        count = parseInt( element_text.substr(1, element_text.indexOf(')')+1) ) + 1;
-
+                        var element_text = args.element.parent().text();
+                        count = parseInt( element_text.substr(1, element_text.indexOf(')')-1), 10 ) + 1;
                         tag_text = element_text.substr(element_text.indexOf(')')+2);
                         args.element.text( '('+count+')' );
                         args.element.addClass('rdr_tagged');
@@ -5731,7 +5751,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     }*/
 
                     var total_reactions = rindow.find('div.rdr_reactionPanel h1 span').text();
-                    total_reactions = parseInt( total_reactions.substr(1, total_reactions.length-1) ) + 1;
+                    total_reactions = parseInt( total_reactions.substr(1, total_reactions.length-1), 10 ) + 1;
                     rindow.find('div.rdr_reactionPanel h1 span').text('('+total_reactions+')');
 
                     rindow.find('div.rdr_reactionPanel ul.rdr_tags li').each( function() {
@@ -6022,8 +6042,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                     RDR.actionbar.draw({
                         coords:{
-                            top:parseInt(e.pageY),
-                            left:parseInt(e.pageX)
+                            top:parseInt(e.pageY, 10),
+                            left:parseInt(e.pageX, 10)
                         },
                         kind:"text",
                         content:selected.textClean,
@@ -6098,7 +6118,11 @@ RDR_scriptPaths.jqueryUI_CSS = RDR_offline ?
 
 rdr_loadScript( RDR_scriptPaths.jquery, function(){
     //callback
-    if ( $.browser.msie  && parseInt($.browser.version) < 8 ) {
+// <<<<<<< HEAD
+    if ( $.browser.msie  && parseInt($.browser.version, 10) < 8 ) {
+// =======
+    // if ( $.browser.msie  && parseInt($.browser.version, 10) < 7 ) {
+// >>>>>>> master
         return false;
     }
     if ( $.browser.msie  && parseInt($.browser.version) == 8 ) {
@@ -6125,13 +6149,17 @@ function $RFunctions($R){
     //load CSS
     var css = [];
 
-    if ( !$R.browser.msie || ( $R.browser.msie && parseInt( $R.browser.version ) > 8 ) ) {
+    if ( !$R.browser.msie || ( $R.browser.msie && parseInt( $R.browser.version, 10 ) > 8 ) ) {
         css.push( "{{ STATIC_URL }}global/css/readrleague.css" );
     } 
     if ( $R.browser.msie ) {
         css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/ie.css" );
         //todo: make sure that if this css file doens't exist, it won't bork.  Otherwise as soon as IE10 comes out, this will kill it.
-        css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/ie"+parseInt( $R.browser.version) +".css" );
+// <<<<<<< HEAD
+        css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
+// =======
+        // css.push( "{{ STATIC_URL }}widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
+// >>>>>>> master
     }
 
     css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/widget.css" );
@@ -6225,7 +6253,7 @@ function $RFunctions($R){
                 var logArgs = arguments || this;
                 $.log(logArgs);
                 return this;
-            } 
+            };
 
 
             //alias console.log to global log
@@ -6235,7 +6263,7 @@ function $RFunctions($R){
                     $.each(arguments, function(idx, val){    
                         $.log(val);
                     });
-                }   
+                };
             }
 
             //add in alias temporaily to client $ so we can use regular $ instead of $R if we want
@@ -6244,7 +6272,7 @@ function $RFunctions($R){
                 jQuery.fn.log = $.fn.log;
             }
 
-        };
+        }
         //end function plugin_jquery_log
 
         function plugin_jquery_json($){
@@ -6364,7 +6392,7 @@ function $RFunctions($R){
                 '"':'\\"',
                 '\\':'\\\\'
             };
-        };
+        }
         //end function plugin_jquery_json
         
         function plugin_jquery_postMessage($){
@@ -6377,7 +6405,7 @@ function $RFunctions($R){
              * http://benalman.com/about/license/
              */
             var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h]&&!$.browser.opera;$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
-        };
+        }
         //end function plugin_jquery_postMessage
 
         function plugin_jquery_enhancedOffset($){
@@ -6414,7 +6442,7 @@ function $RFunctions($R){
                                                      right: right
                                                      });
             };
-        };
+        }
         //end function plugin_jquery_enhancedOffset
 
         function plugin_jquery_rdrWidgetSummary($){
@@ -6452,7 +6480,8 @@ function $RFunctions($R){
                         
                         settings.parentContainer = this;
                         _makeSummaryWidget(settings);
-                        _insertImgIcons(settings);
+                        //todo: verify that we're not using this and remove it.
+                        //_insertImgIcons(settings);
 
                         //do init stuff
 
@@ -6540,7 +6569,7 @@ function $RFunctions($R){
                         }
                     }).blur( function() {
                         var $input = $(this);
-                        if ( $input.val() == "" ) {
+                        if ( $input.val() === "" ) {
                             $input.val('Add yours...');
                         }
                         if ( $input.val() == "Add yours..." ) {
@@ -6641,12 +6670,23 @@ function $RFunctions($R){
 
 
                 function writeTag(tag) {
+// <<<<<<< HEAD
 
-                    if ( $react.find('a.rdr_tag_'+tag.id).length == 0 && $react.find('a.rdr_tag').length < 4 ) {
-                        var tagCount = ( tag.tag_count ) ? tag.tag_count:"+",
-                            peoples = ( tagCount == 1 ) ? "person":"people";
-                        var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'">'+tag.body+'</a>').data('tag_id',tag.id)
-                            $span = $('<span class="rdr_tag_count">'+tagCount+'</span>');
+//                     if ( $react.find('a.rdr_tag_'+tag.id).length == 0 && $react.find('a.rdr_tag').length < 4 ) {
+//                         var tagCount = ( tag.tag_count ) ? tag.tag_count:"+",
+//                             peoples = ( tagCount == 1 ) ? "person":"people";
+//                         var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'">'+tag.body+'</a>').data('tag_id',tag.id)
+//                             $span = $('<span class="rdr_tag_count">'+tagCount+'</span>');
+// =======
+                    var tagCount, $span;
+                    if ( $react.find('a.rdr_tag_'+tag.id).length === 0 && $react.find('a.rdr_tag').length < 4 ) {
+                        tagCount = ( tag.tag_count ) ? tag.tag_count:"+";
+                        
+                        var peoples = ( tagCount == 1 ) ? "person":"people";
+                        var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'">'+tag.body+'</a>').data('tag_id',tag.id);
+                        
+                        $span = $('<span class="rdr_tag_count">'+tagCount+'</span>');
+// >>>>>>> master
 
                         $a.append( $span );
 
@@ -6685,11 +6725,14 @@ function $RFunctions($R){
                             RDR.actions.interactions.ajax( args, 'tag', 'create');
                         });
                     }
-
-                    if ( tagCount == "" ) $span.hide();
+                    if ( tagCount === "" ) {
+                        $span.hide();
+                    }
                 }
 
             }
+            //commenting this out because I don't think we're using it.
+            /*
             function _insertImgIcons(response){
                 var page = response;
                 var tempd = $.extend( {}, response );
@@ -6700,8 +6743,9 @@ function $RFunctions($R){
 
                 }
             }
+            */
 
-        };
+        }
         //end function plugin_jquery_rdrWidgetSummary
 
         function plugin_jquery_selectionographer($, rangy){
@@ -6755,13 +6799,13 @@ function $RFunctions($R){
                     // it will use the current selection to build the selState.  If nothing is selected it returns false;
                     var $this = this,
                     selStateStack = _selStateStack,
-                    selStateOrPartial = selStateOrPartial || {},
+                    state = selStateOrPartial || {},
                     selState;
 
                     //only take the first container for now
                     //todo: solution for multiple $objects?
-                    selStateOrPartial.container = selStateOrPartial.container || $this[0] || document;
-                    selState = _makeSelState( selStateOrPartial );
+                    state.container = state.container || $this[0] || document;
+                    selState = _makeSelState( state );
                     //make sure selState didn't fail (i.e. if it was an empty range)
                     if(!selState) return false;
 
@@ -6801,18 +6845,19 @@ function $RFunctions($R){
                     newSettings = {
                         range:newRange,
                         container:iniSelState.container
-                    }
+                    };
                     newSelState = methods.save( newSettings );
-                    return newSelState
+                    return newSelState;
                 },
-                hilite: function(idxOrSelState, switchOnOffToggle){
+                hilite: function(idxOrSelState, switchOnOffToggleParam){
                     // switchOnOffToggle is optional.  Expects a string 'on', 'off', or 'toggle', or defaults to 'on'
                     // check if idxOrSelState is omited
+                    var switchOnOffToggle = switchOnOffToggleParam;
                     if( typeof idxOrSelState === 'string' && isNaN( idxOrSelState ) ){
                         switchOnOffToggle = idxOrSelState;
                         idxOrSelState = undefined;
                     }
-                    var switchOnOffToggle = switchOnOffToggle || 'on';
+                    switchOnOffToggle = switchOnOffToggle || 'on';
 
                     //todo:checkout why first range is picking up new selState range (not a big deal)
                     var selState = _fetchselState(idxOrSelState);
@@ -6822,7 +6867,7 @@ function $RFunctions($R){
                     }
                     
                     //extra protection against hiliting a ndoe with an invalid serialRange - flagged as false (not just undefined)
-                    if( typeof selState.serialRange !== "undefined" && selState.serialRange == false ){
+                    if( typeof selState.serialRange !== "undefined" && selState.serialRange === false ){
                         // console.warn('invalid serialRange, refusing to run hiliter');
                         return false;
                     }
@@ -6839,7 +6884,7 @@ function $RFunctions($R){
 
                     //switch the hilite state
                     _hiliteSwitch(selState, switchOnOffToggle);
-                    return selState
+                    return selState;
                 },
                 helpers: function(helperPack){
                     var func = _helperPacks[helperPack];
@@ -6863,7 +6908,7 @@ function $RFunctions($R){
                     //http://simonwillison.net/2006/Jan/20/escape/
                     RegExp.escape = function(text) {
                         return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-                    }
+                    };
 
                     /*
                     //if a single string, make it an array.
@@ -6953,7 +6998,7 @@ function $RFunctions($R){
                     var commonAncestorContainer = range.commonAncestorContainer;
                     var $indicator = $(commonAncestorContainer).find('.rdr_indicator');
                     if($indicator.length){
-                        var inTheRange = range.containsNode($indicator[0], true) //2nd param is 'partial': (rangy docs for containsNode)
+                        var inTheRange = range.containsNode($indicator[0], true); //2nd param is 'partial': (rangy docs for containsNode)
                         if(inTheRange){
                             range.setEndBefore( $indicator[0] );
                         }
@@ -6999,7 +7044,7 @@ function $RFunctions($R){
                     //create a helper object to find the word boundary
                     var hlpr = {
                         range: rangy.createRange() //rangy function createRange
-                    }
+                    };
                     hlpr.range.setStart(textnode, 0);
                     hlpr.range.setEnd(textnode, startOffset);
                     hlpr.str0 = (hlpr.range.toString());
@@ -7028,7 +7073,7 @@ function $RFunctions($R){
                     //create a tester object to find the word boundary
                     var hlpr = {
                         range: rangy.createRange() //rangy function createRange
-                    }
+                    };
                     hlpr.range.setStart(textnode, endOffset);
                     hlpr.range.setEnd(textnode, textnode.length);
                     hlpr.str0 = (hlpr.range.toString());
@@ -7057,7 +7102,7 @@ function $RFunctions($R){
                 var scope = this,
                 selStateStack = _selStateStack,
                 range, serialRange,
-                settings = settings || {},
+                theSettings = settings || {},
                 defaults = {
                     styleName: 'rdr_hilite',
                     container: document,        // likely passed in by save()
@@ -7072,7 +7117,7 @@ function $RFunctions($R){
                     revisionParent: null,       // set below
                     text: ""                    // set below
                 },
-                selState = $.extend({}, defaults, settings, overrides);
+                selState = $.extend({}, defaults, theSettings, overrides);
 
                 //set properties that depend on the others already being initiated
 
@@ -7094,8 +7139,8 @@ function $RFunctions($R){
                     range = selState.range;
                     try{
                         serialRange = rangy.serializeRange(range, true, selState.container ); //see rangy function serializeRange
-                    } catch(e) {
-                        // console.warn(e);
+                        //using the name e2 because jslint says use a new name here: http://stackoverflow.com/questions/6100230/javascript-catch-parameter-already-defined
+                    } catch(e2) {
                         serialRange = false;
                     }
                 }
@@ -7211,14 +7256,14 @@ function $RFunctions($R){
                 
                 return selState;
             }
-            function _rangeOffSet(range, opts){ 
+            function _rangeOffSet(range, optsParam){ 
                 // returns a range or false, which should trigger the caller to fail gracefully.
                 var defaults = {
                     start: true, //start or end offset?
                     offset: undefined, // absolute offset should be a positive or negative number to add to the offset
                     relOffset: undefined // (relative offset) is ignored if offset is set
                 },
-                opts = $.extend({}, defaults, opts),
+                opts = $.extend({}, defaults, optsParam),
                 iniOffset = (opts.start) ? range.startOffset : range.endOffset; //rangy range properties startOffset, endOffset
                 if(typeof opts.offset === "undefined" ){
                     if(typeof opts.relOffset === "undefined" ){
@@ -7253,7 +7298,7 @@ function $RFunctions($R){
                 doFilters = {};  //will be {filter:paramList}
 
                 //if filters not specifed, call all filters
-                if ( typeof filterList === "undefined" || filterList == null ){
+                if ( typeof filterList === "undefined" || filterList === null ){
                     $.each(filters, function(funcName, func){
                         doFilters[funcName] = [];
                     });
@@ -7292,7 +7337,7 @@ function $RFunctions($R){
                 //make $tempButtons output
                 //hide for now
                 var $tempButtons = $('<div id="rdr_selectionographer_tester" class="no-rdr"/>').hide(),
-                buttonInfo= [
+                buttonInfo = [
                     //note, remember to use $R instead of $ if calling in firebug
                     {
                         name:'save',
@@ -7324,13 +7369,13 @@ function $RFunctions($R){
                         func:'find',
                         attr:undefined
                     }
-                ]
+                ];
                 $.each(buttonInfo,function(idx, val){
                     var $button = $('<div class="rdr_tempButton rdr_tempButton_'+this.name+'"><a href=\"javascript:void(0);\">'+this.name+'</a><input class="input1" /></div>');
                     
                     $button.find('a').click(function(){
-                        var result,
-                        input = $(this).parent().find('input').eq(0).val();
+                        var result, selState,
+                        input = $(this).parent().find('input').eq(0).val(),
                         contextStr = $context.find('input').val();
                         val.attr= (input === "" ) ? undefined : input;
                         if(val.name == "find"){
@@ -7338,10 +7383,10 @@ function $RFunctions($R){
                         }
                         if(val.name == "hilite"){
                             input2 = $(this).parent().find('input').eq(1).val();
-                            var selState = $(contextStr).selog(val.func, val.attr, input2);
+                            selState = $(contextStr).selog(val.func, val.attr, input2);
                         }
                         else{
-                            var selState = $(contextStr).selog(val.func, val.attr);
+                            selState = $(contextStr).selog(val.func, val.attr);
                         }
                     });
                     $tempButtons.append($button);
@@ -7366,7 +7411,7 @@ function $RFunctions($R){
             //init selog on window.
             $(document).selog();
 
-        };
+        }
         //end function plugin_jquery_selectionographer
 
         function plugin_jquery_textnodes($){
@@ -7401,21 +7446,21 @@ function $RFunctions($R){
                 //param: a parent node, returns: an array of textnodes
                 function _mineParentForText(parent){
                     return $.map( parent.childNodes, function(child){
-                        if ( child.nodeType === 8) return    // comment node leaf, ignore.
+                        if ( child.nodeType === 8) return;    // comment node leaf, ignore.
                         //else
                         if ( child.nodeType !== 3 )          // if not textnode, look deeper
                             return _mineParentForText(child);
                         //else
                         if ( child.nodeType === 3 )          // eureka. A textnode leaf.
-                            return child
+                            return child;
                     });                
                 }
 
                 return $this.map(function(){
                     return _mineParentForText(this);
                 });
-            }
-        };
+            };
+        }
         //end function plugin_jquery_textnodes
         
 
@@ -7431,7 +7476,7 @@ function $RFunctions($R){
 
             $.fn.superRange = function(options){
                 var $this = this,
-                options = options || {};
+                settings = options || {};
 
                 return $this.each(function(idx, val){
                     var contextNode = this,
@@ -7444,7 +7489,7 @@ function $RFunctions($R){
                         endRange: null,     //set below
                         text: "",           //set below
                         hash: null          //set below
-                    }, options);
+                    }, settings);
 
                     //complete superRange
                     superRange = superRange._parse();
@@ -7456,36 +7501,34 @@ function $RFunctions($R){
                     });
                     superRange.hash = "make hash here.."; //todo: make hash                
                 });
-            }
+            };
 
             //private functions
-            function _parse(superRange){
+            function _parse(superRangeParam){
                 // if given an explicit startRange and endRange, use those and calculate the start and end.
                 // else do the inverse,
 
                 var stepIdx = 0,
-                superRange = (typeof superRange !== "undefined") ? superRange : this;
+                superRange = (typeof superRangeParam !== "undefined") ? superRangeParam : this,
                 missingSuperOffsets = ( superRange.start === null || superRange.end === null ),
                 missingRanges =  ( superRange.startRange === null || superRange.endRange === null );
 
-                if ( missingSuperOffsets && missingRanges )
-                    return false;
-                if ( !missingSuperOffsets && !missingRanges )
-                    return superRange;
-                if ( missingSuperOffsets && !missingRanges )
+                if ( missingSuperOffsets && missingRanges ) return false;
+                if ( !missingSuperOffsets && !missingRanges ) return superRange;
+                if ( missingSuperOffsets && !missingRanges ){
                     //get start and end
                     $.each(superRange.textnodes, function(idx, textnode){
                         if( textnode == superRange.startRange.node ){
-                            superRange.start = stepIdx + superRange.startRange.offset
+                            superRange.start = stepIdx + superRange.startRange.offset;
                         }
                         if( textnode == superRange.endRange.node ){
                             superRange.end = stepIdx + superRange.endRange.offset;
                         }
                         stepIdx += textnode.length;
                     });
-                    return superRange
-
-                if ( !missingSuperOffsets && missingRanges )
+                    return superRange;
+                }
+                if ( !missingSuperOffsets && missingRanges ){
                     //get startRange and endRange
                     $.each(superRange.textnodes, function(idx, textnode){
                         var a = stepIdx,
@@ -7498,22 +7541,23 @@ function $RFunctions($R){
                                 node: textnode,
                                 //nodeIndex: idx,
                                 offset: stepIdx - start   //lookbehind to get rel start index for this textnode
-                            }
+                            };
                         }
                         if( a > end && end < b ){
                             superRange.endRange = {
                                 node: textnode,
                                 //nodeIndex: idx,
                                 offset: stepIdx - end     //lookbehind to get rel end index for this textnode
-                            }
+                            };
                         }
                         stepIdx = b;
                     });
-                    return superRange
+                    return superRange;
+                }
                 //else impossible
             }
             
-        };
+        }
         //end function plugin_jquery_superRange
 
         function plugin_jquery_improvedCSS($){
@@ -7553,8 +7597,8 @@ function $RFunctions($R){
                     val = (typeof val === "undefined") ? 'auto' :  val;
                 }
                 return obj;
-            }
-        };
+            };
+        }
         //end function plugin_jquery_improvedCSS
 
         //todo: I don't think we're using this any more - remove it?
@@ -7579,7 +7623,7 @@ function $RFunctions($R){
                     position:   'absolute',
                     top:        -10000,
                     left:       -10000,
-                    width:      $(this).width() - parseInt($this.css('paddingLeft')) - parseInt($this.css('paddingRight')),
+                    width:      $(this).width() - parseInt($this.css('paddingLeft'), 10) - parseInt($this.css('paddingRight'), 10),
                     fontSize:   $this.css('fontSize'),
                     fontFamily: $this.css('fontFamily'),
                     lineHeight: $this.css('fontSize'), // used to be 'lineHeight' but that made the textarea too tall
@@ -7603,7 +7647,7 @@ function $RFunctions($R){
                     shadow.html(val);
                     //rinh $(this).css('height', Math.max(shadow.height()-10, minHeight));
                     RDR.rindow.jspUpdate( $this.closest('div.rdr.rdr_window') );
-                }
+                };
 
                 $(this).change(update).keyup(update).keydown(update);
                 // $(this).keydown(update);
@@ -7612,8 +7656,8 @@ function $RFunctions($R){
 
                 // });
                 return this;
-            }
-        };
+            };
+        }
         //end function plugin_jquery_autogrow
         
         function plugin_jquery_mousewheel($){
@@ -7636,7 +7680,7 @@ function $RFunctions($R){
             if(orgEvent.wheelDeltaY!==undefined){deltaY=orgEvent.wheelDeltaY/120;}
             if(orgEvent.wheelDeltaX!==undefined){deltaX=-1*orgEvent.wheelDeltaX/120;}
             args.unshift(event,delta,deltaX,deltaY);return $.event.handle.apply(this,args);}
-        };
+        }
         //end function plugin_jquery_mousewheel
 
         function plugin_jquery_mousewheelIntent($){
@@ -7648,7 +7692,7 @@ function $RFunctions($R){
             var mwheelI={pos:[-260,-260]},minDif=3,doc=document,root=doc.documentElement,body=doc.body,longDelay,shortDelay;function unsetPos(){if(this===mwheelI.elem){mwheelI.pos=[-260,-260];mwheelI.elem=false;minDif=3;}}
             $.event.special.mwheelIntent={setup:function(){var jElm=$(this).bind('mousewheel',$.event.special.mwheelIntent.handler);if(this!==doc&&this!==root&&this!==body){jElm.bind('mouseleave',unsetPos);}
             jElm=null;return true;},teardown:function(){$(this).unbind('mousewheel',$.event.special.mwheelIntent.handler).unbind('mouseleave',unsetPos);return true;},handler:function(e,d){var pos=[e.clientX,e.clientY];if(this===mwheelI.elem||Math.abs(mwheelI.pos[0]-pos[0])>minDif||Math.abs(mwheelI.pos[1]-pos[1])>minDif){mwheelI.elem=this;mwheelI.pos=pos;minDif=250;clearTimeout(shortDelay);shortDelay=setTimeout(function(){minDif=10;},200);clearTimeout(longDelay);longDelay=setTimeout(function(){minDif=3;},1500);e=$.extend({},e,{type:'mwheelIntent'});return $.event.handle.apply(this,arguments);}}};$.fn.extend({mwheelIntent:function(fn){return fn?this.bind("mwheelIntent",fn):this.trigger("mwheelIntent");},unmwheelIntent:function(fn){return this.unbind("mwheelIntent",fn);}});$(function(){body=doc.body;$(doc).bind('mwheelIntent.mwheelIntentDefault',$.noop);});
-        };
+        }
         //end function plugin_jquery_mousewheelIntent
 
         function plugin_jquery_scrollStartAndStop(jQuery){
@@ -7660,7 +7704,7 @@ function $RFunctions($R){
             // (function(){
                 var a=jQuery.event.special,b="D"+ +(new Date),c="D"+(+(new Date)+1);a.scrollstart={setup:function(){var c,d=function(b){var d=this,e=arguments;if(c){clearTimeout(c)}else{b.type="scrollstart";jQuery.event.handle.apply(d,e)}c=setTimeout(function(){c=null},a.scrollstop.latency)};jQuery(this).bind("scroll",d).data(b,d)},teardown:function(){jQuery(this).unbind("scroll",jQuery(this).data(b))}};a.scrollstop={latency:300,setup:function(){var b,d=function(c){var d=this,e=arguments;if(b){clearTimeout(b)}b=setTimeout(function(){b=null;c.type="scrollstop";jQuery.event.handle.apply(d,e)},a.scrollstop.latency)};jQuery(this).bind("scroll",d).data(c,d)},teardown:function(){jQuery(this).unbind("scroll",jQuery(this).data(c))}}
             // })
-        };
+        }
         //end function plugin_jquery_mousewheelIntent
 
         function plugin_jquery_jScrollPane($){
@@ -7681,7 +7725,7 @@ function $RFunctions($R){
             if(az.arrowScrollOnHover){ay.bind("mouseover.jsp",aE(-1,0,ay));x.bind("mouseover.jsp",aE(1,0,x))}al(G,az.horizontalArrowPositions,ay,x)}h.hover(function(){h.addClass("jspHover")},function(){h.removeClass("jspHover")}).bind("mousedown.jsp",function(aJ){b("html").bind("dragstart.jsp selectstart.jsp",aC);h.addClass("jspActive");var s=aJ.pageX-h.position().left;b("html").bind("mousemove.jsp",function(aK){W(aK.pageX-s,false)}).bind("mouseup.jsp mouseleave.jsp",ax);return false});l=am.innerWidth();ah()}}function ah(){am.find(">.jspHorizontalBar>.jspCap:visible,>.jspHorizontalBar>.jspArrow").each(function(){l-=b(this).outerWidth()});G.width(l+"px");aa=0}function F(){if(aF&&aA){var aJ=G.outerHeight(),s=aq.outerWidth();t-=aJ;b(an).find(">.jspCap:visible,>.jspArrow").each(function(){l+=b(this).outerWidth()});l-=s;v-=s;ak-=aJ;G.parent().append(b('<div class="jspCorner" />').css("width",aJ+"px"));o();ah()}if(aF){Y.width((am.outerWidth()-f)+"px")}Z=Y.outerHeight();q=Z/v;if(aF){au=Math.ceil(1/y*l);if(au>az.horizontalDragMaxWidth){au=az.horizontalDragMaxWidth}else{if(au<az.horizontalDragMinWidth){au=az.horizontalDragMinWidth}}h.width(au+"px");j=l-au;ae(aa)}if(aA){A=Math.ceil(1/q*t);if(A>az.verticalDragMaxHeight){A=az.verticalDragMaxHeight}else{if(A<az.verticalDragMinHeight){A=az.verticalDragMinHeight}}av.height(A+"px");i=t-A;ad(I)}}function al(aK,aM,aJ,s){var aO="before",aL="after",aN;if(aM=="os"){aM=/Mac/.test(navigator.platform)?"after":"split"}if(aM==aO){aL=aM}else{if(aM==aL){aO=aM;aN=aJ;aJ=s;s=aN}}aK[aO](aJ)[aL](s)}function aE(aJ,s,aK){return function(){H(aJ,s,this,aK);this.blur();return false}}function H(aM,aL,aP,aO){aP=b(aP).addClass("jspActive");var aN,aK,aJ=true,s=function(){if(aM!==0){Q.scrollByX(aM*az.arrowButtonSpeed)}if(aL!==0){Q.scrollByY(aL*az.arrowButtonSpeed)}aK=setTimeout(s,aJ?az.initialDelay:az.arrowRepeatFreq);aJ=false};s();aN=aO?"mouseout.jsp":"mouseup.jsp";aO=aO||b("html");aO.bind(aN,function(){aP.removeClass("jspActive");aK&&clearTimeout(aK);aK=null;aO.unbind(aN)})}function p(){w();if(aA){aq.bind("mousedown.jsp",function(aO){if(aO.originalTarget===c||aO.originalTarget==aO.currentTarget){var aM=b(this),aP=aM.offset(),aN=aO.pageY-aP.top-I,aK,aJ=true,s=function(){var aS=aM.offset(),aT=aO.pageY-aS.top-A/2,aQ=v*az.scrollPagePercent,aR=i*aQ/(Z-v);if(aN<0){if(I-aR>aT){Q.scrollByY(-aQ)}else{V(aT)}}else{if(aN>0){if(I+aR<aT){Q.scrollByY(aQ)}else{V(aT)}}else{aL();return}}aK=setTimeout(s,aJ?az.initialDelay:az.trackClickRepeatFreq);aJ=false},aL=function(){aK&&clearTimeout(aK);aK=null;b(document).unbind("mouseup.jsp",aL)};s();b(document).bind("mouseup.jsp",aL);return false}})}if(aF){G.bind("mousedown.jsp",function(aO){if(aO.originalTarget===c||aO.originalTarget==aO.currentTarget){var aM=b(this),aP=aM.offset(),aN=aO.pageX-aP.left-aa,aK,aJ=true,s=function(){var aS=aM.offset(),aT=aO.pageX-aS.left-au/2,aQ=ak*az.scrollPagePercent,aR=j*aQ/(T-ak);if(aN<0){if(aa-aR>aT){Q.scrollByX(-aQ)}else{W(aT)}}else{if(aN>0){if(aa+aR<aT){Q.scrollByX(aQ)}else{W(aT)}}else{aL();return}}aK=setTimeout(s,aJ?az.initialDelay:az.trackClickRepeatFreq);aJ=false},aL=function(){aK&&clearTimeout(aK);aK=null;b(document).unbind("mouseup.jsp",aL)};s();b(document).bind("mouseup.jsp",aL);return false}})}}function w(){if(G){G.unbind("mousedown.jsp")}if(aq){aq.unbind("mousedown.jsp")}}function ax(){b("html").unbind("dragstart.jsp selectstart.jsp mousemove.jsp mouseup.jsp mouseleave.jsp");if(av){av.removeClass("jspActive")}if(h){h.removeClass("jspActive")}}function V(s,aJ){if(!aA){return}if(s<0){s=0}else{if(s>i){s=i}}if(aJ===c){aJ=az.animateScroll}if(aJ){Q.animate(av,"top",s,ad)}else{av.css("top",s);ad(s)}}function ad(aJ){if(aJ===c){aJ=av.position().top}am.scrollTop(0);I=aJ;var aM=I===0,aK=I==i,aL=aJ/i,s=-aL*(Z-v);if(aj!=aM||aH!=aK){aj=aM;aH=aK;D.trigger("jsp-arrow-change",[aj,aH,P,k])}u(aM,aK);Y.css("top",s);D.trigger("jsp-scroll-y",[-s,aM,aK]).trigger("scroll")}function W(aJ,s){if(!aF){return}if(aJ<0){aJ=0}else{if(aJ>j){aJ=j}}if(s===c){s=az.animateScroll}if(s){Q.animate(h,"left",aJ,ae)
             }else{h.css("left",aJ);ae(aJ)}}function ae(aJ){if(aJ===c){aJ=h.position().left}am.scrollTop(0);aa=aJ;var aM=aa===0,aL=aa==j,aK=aJ/j,s=-aK*(T-ak);if(P!=aM||k!=aL){P=aM;k=aL;D.trigger("jsp-arrow-change",[aj,aH,P,k])}r(aM,aL);Y.css("left",s);D.trigger("jsp-scroll-x",[-s,aM,aL]).trigger("scroll")}function u(aJ,s){if(az.showArrows){ar[aJ?"addClass":"removeClass"]("jspDisabled");af[s?"addClass":"removeClass"]("jspDisabled")}}function r(aJ,s){if(az.showArrows){ay[aJ?"addClass":"removeClass"]("jspDisabled");x[s?"addClass":"removeClass"]("jspDisabled")}}function M(s,aJ){var aK=s/(Z-v);V(aK*i,aJ)}function N(aJ,s){var aK=aJ/(T-ak);W(aK*j,s)}function ab(aW,aR,aK){var aO,aL,aM,s=0,aV=0,aJ,aQ,aP,aT,aS,aU;try{aO=b(aW)}catch(aN){return}aL=aO.outerHeight();aM=aO.outerWidth();am.scrollTop(0);am.scrollLeft(0);while(!aO.is(".jspPane")){s+=aO.position().top;aV+=aO.position().left;aO=aO.offsetParent();if(/^body|html$/i.test(aO[0].nodeName)){return}}aJ=aB();aP=aJ+v;if(s<aJ||aR){aS=s-az.verticalGutter}else{if(s+aL>aP){aS=s-v+aL+az.verticalGutter}}if(aS){M(aS,aK)}aQ=aD();aT=aQ+ak;if(aV<aQ||aR){aU=aV-az.horizontalGutter}else{if(aV+aM>aT){aU=aV-ak+aM+az.horizontalGutter}}if(aU){N(aU,aK)}}function aD(){return -Y.position().left}function aB(){return -Y.position().top}function K(){var s=Z-v;return(s>20)&&(s-aB()<10)}function B(){var s=T-ak;return(s>20)&&(s-aD()<10)}function ag(){am.unbind(ac).bind(ac,function(aM,aN,aL,aJ){var aK=aa,s=I;Q.scrollBy(aL*az.mouseWheelSpeed,-aJ*az.mouseWheelSpeed,false);return aK==aa&&s==I})}function n(){am.unbind(ac)}function aC(){return false}function J(){Y.find(":input,a").unbind("focus.jsp").bind("focus.jsp",function(s){ab(s.target,false)})}function E(){Y.find(":input,a").unbind("focus.jsp")}function S(){var s,aJ,aL=[];aF&&aL.push(an[0]);aA&&aL.push(U[0]);Y.focus(function(){D.focus()});D.attr("tabindex",0).unbind("keydown.jsp keypress.jsp").bind("keydown.jsp",function(aO){if(aO.target!==this&&!(aL.length&&b(aO.target).closest(aL).length)){return}var aN=aa,aM=I;switch(aO.keyCode){case 40:case 38:case 34:case 32:case 33:case 39:case 37:s=aO.keyCode;aK();break;case 35:M(Z-v);s=null;break;case 36:M(0);s=null;break}aJ=aO.keyCode==s&&aN!=aa||aM!=I;return !aJ}).bind("keypress.jsp",function(aM){if(aM.keyCode==s){aK()}return !aJ});if(az.hideFocus){D.css("outline","none");if("hideFocus" in am[0]){D.attr("hideFocus",true)}}else{D.css("outline","");if("hideFocus" in am[0]){D.attr("hideFocus",false)}}function aK(){var aN=aa,aM=I;switch(s){case 40:Q.scrollByY(az.keyboardSpeed,false);break;case 38:Q.scrollByY(-az.keyboardSpeed,false);break;case 34:case 32:Q.scrollByY(v*az.scrollPagePercent,false);break;case 33:Q.scrollByY(-v*az.scrollPagePercent,false);break;case 39:Q.scrollByX(az.keyboardSpeed,false);break;case 37:Q.scrollByX(-az.keyboardSpeed,false);break}aJ=aN!=aa||aM!=I;return aJ}}function R(){D.attr("tabindex","-1").removeAttr("tabindex").unbind("keydown.jsp keypress.jsp")}function C(){if(location.hash&&location.hash.length>1){var aK,aJ;try{aK=b(location.hash)}catch(s){return}if(aK.length&&Y.find(location.hash)){if(am.scrollTop()===0){aJ=setInterval(function(){if(am.scrollTop()>0){ab(location.hash,true);b(document).scrollTop(am.position().top);clearInterval(aJ)}},50)}else{ab(location.hash,true);b(document).scrollTop(am.position().top)}}}}function ai(){b("a.jspHijack").unbind("click.jsp-hijack").removeClass("jspHijack")}function m(){ai();b("a[href^=#]").addClass("jspHijack").bind("click.jsp-hijack",function(){var s=this.href.split("#"),aJ;if(s.length>1){aJ=s[1];if(aJ.length>0&&Y.find("#"+aJ).length>0){ab("#"+aJ,true);return false}}})}function ao(){var aK,aJ,aM,aL,aN,s=false;am.unbind("touchstart.jsp touchmove.jsp touchend.jsp click.jsp-touchclick").bind("touchstart.jsp",function(aO){var aP=aO.originalEvent.touches[0];aK=aD();aJ=aB();aM=aP.pageX;aL=aP.pageY;aN=false;s=true}).bind("touchmove.jsp",function(aR){if(!s){return}var aQ=aR.originalEvent.touches[0],aP=aa,aO=I;Q.scrollTo(aK+aM-aQ.pageX,aJ+aL-aQ.pageY);aN=aN||Math.abs(aM-aQ.pageX)>5||Math.abs(aL-aQ.pageY)>5;
             return aP==aa&&aO==I}).bind("touchend.jsp",function(aO){s=false}).bind("click.jsp-touchclick",function(aO){if(aN){aN=false;return false}})}function g(){var s=aB(),aJ=aD();D.removeClass("jspScrollable").unbind(".jsp");D.replaceWith(ap.append(Y.children()));ap.scrollTop(s);ap.scrollLeft(aJ)}b.extend(Q,{reinitialise:function(aJ){aJ=b.extend({},az,aJ);at(aJ)},scrollToElement:function(aK,aJ,s){ab(aK,aJ,s)},scrollTo:function(aK,s,aJ){N(aK,aJ);M(s,aJ)},scrollToX:function(aJ,s){N(aJ,s)},scrollToY:function(s,aJ){M(s,aJ)},scrollToPercentX:function(aJ,s){N(aJ*(T-ak),s)},scrollToPercentY:function(aJ,s){M(aJ*(Z-v),s)},scrollBy:function(aJ,s,aK){Q.scrollByX(aJ,aK);Q.scrollByY(s,aK)},scrollByX:function(s,aK){s=(s>=0)?Math.max(s,1):Math.min(s,-1);var aJ=aD()+s,aL=aJ/(T-ak);W(aL*j,aK)},scrollByY:function(s,aK){s=(s>=0)?Math.max(s,1):Math.min(s,-1);var aJ=aB()+s,aL=aJ/(Z-v);V(aL*i,aK)},positionDragX:function(s,aJ){W(s,aJ)},positionDragY:function(aJ,s){V(aJ,s)},animate:function(aJ,aM,s,aL){var aK={};aK[aM]=s;aJ.animate(aK,{duration:az.animateDuration,ease:az.animateEase,queue:false,step:aL})},getContentPositionX:function(){return aD()},getContentPositionY:function(){return aB()},getContentWidth:function(){return T},getContentHeight:function(){return Z},getPercentScrolledX:function(){return aD()/(T-ak)},getPercentScrolledY:function(){return aB()/(Z-v)},getIsScrollableH:function(){return aF},getIsScrollableV:function(){return aA},getContentPane:function(){return Y},scrollToBottom:function(s){V(i,s)},hijackInternalLinks:function(){m()},destroy:function(){g()}});at(O)}e=b.extend({},b.fn.jScrollPane.defaults,e);b.each(["mouseWheelSpeed","arrowButtonSpeed","trackClickSpeed","keyboardSpeed"],function(){e[this]=e[this]||e.speed});return this.each(function(){var f=b(this),g=f.data("jsp");if(g){g.reinitialise(e)}else{g=new d(f,e);f.data("jsp",g)}})};b.fn.jScrollPane.defaults={showArrows:false,maintainPosition:true,stickToBottom:false,stickToRight:false,clickOnTrack:true,autoReinitialise:false,autoReinitialiseDelay:500,verticalDragMinHeight:0,verticalDragMaxHeight:99999,horizontalDragMinWidth:0,horizontalDragMaxWidth:99999,contentWidth:c,animateScroll:false,animateDuration:300,animateEase:"linear",hijackInternalLinks:false,verticalGutter:4,horizontalGutter:4,mouseWheelSpeed:0,arrowButtonSpeed:0,arrowRepeatFreq:50,arrowScrollOnHover:false,trackClickSpeed:0,trackClickRepeatFreq:70,verticalArrowPositions:"split",horizontalArrowPositions:"split",enableKeyboardNavigation:true,hideFocus:false,keyboardSpeed:0,initialDelay:300,speed:30,scrollPagePercent:0.8}
-        };
+        }
         //end function plugin_jquery_jScrollPane
 
                 
@@ -7871,7 +7915,7 @@ function $RFunctions($R){
             //keep this return here - this is how we pass the rangy object to the rest of the code.
             //Rangy assumes it to be global, but it's better to keep the pub's namespace clean.   
             return rangy;
-        };
+        }
         //end function plugin_rangy()
 
         /** end plugin functions **/        
