@@ -7,11 +7,13 @@ from django.db import models
 class Migration(DataMigration):
 
     def forwards(self, orm):
+        bad_pages = []
+        
         for interaction in orm.Interaction.objects.filter(
             page__site__domain__regex=r'^www'
         ):
             good_page = None
-            bad_page = interaction.page
+            bad_pages.append(interaction.page)
             try:
                 print "Found good page"
                 good_page = orm.Page.objects.get(
@@ -30,7 +32,9 @@ class Migration(DataMigration):
             interaction.page = good_page
             print "Saving interaction"
             interaction.save()
-            print "Deleting the bad page"
+
+        print "Deleting bad pages"
+        for bad_page in bad_pages:
             bad_page.delete()
 
     def backwards(self, orm):
