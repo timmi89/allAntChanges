@@ -3333,11 +3333,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                     $('#rdr-tooltip-summary-tag-custom').remove();
                                 }
 
-// <<<<<<< HEAD
                                 var tagCount = ( $span.text() === "+" ) ? 0 : parseInt( $span.text(), 10 );
-// =======
-//                                 var tagCount = ( $span.text() === "" ) ? 0 : parseInt( $span.text(), 10 );
-// >>>>>>> master
                                 tagCount++;
 
                                 $span.text( tagCount );
@@ -3458,27 +3454,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                     RDR.session.rindowUserMessage.show( usrMsgArgs );
                                 });
 
-// <<<<<<< HEAD
-// =======
-//                                 //temp quick fix to show msg for vote up in 3rd panel
-//                                 if( uiMode === "read" ){
-//                                     rindow.dequeue('userMessage');
-//                                     //hackity hack number incrementer
-//                                     var $number = tag_li.find('div.rdr_leftBox').find('.rdr_not_loader');
-//                                     $number.show();
-//                                     $number.html( RDR.util.prettyNumber( parseInt( $number.text(), 10 )+1 ) );
-
-//                                     //this one's even more hacky - doesn't really matter, but fix this soon.
-//                                     var $number2 = rindow.find('.rdr_info_summary').find('.rdr_reaction_count');
-//                                     if($number2.length){
-//                                         var theNumber = RDR.util.prettyNumber( $number2.data('count')+1 );
-//                                         $number2.html( '(' +theNumber+ ') ');
-//                                     }
-//                                     //hack complete.
-
-//                                 }
-
-// >>>>>>> master
                                 if( uiMode !== "read" ){
                                     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_data:content_node_data, hash:hash});
                                 }
@@ -6118,11 +6093,7 @@ RDR_scriptPaths.jqueryUI_CSS = RDR_offline ?
 
 rdr_loadScript( RDR_scriptPaths.jquery, function(){
     //callback
-// <<<<<<< HEAD
     if ( $.browser.msie  && parseInt($.browser.version, 10) < 8 ) {
-// =======
-    // if ( $.browser.msie  && parseInt($.browser.version, 10) < 7 ) {
-// >>>>>>> master
         return false;
     }
     if ( $.browser.msie  && parseInt($.browser.version) == 8 ) {
@@ -6155,11 +6126,7 @@ function $RFunctions($R){
     if ( $R.browser.msie ) {
         css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/ie.css" );
         //todo: make sure that if this css file doens't exist, it won't bork.  Otherwise as soon as IE10 comes out, this will kill it.
-// <<<<<<< HEAD
         css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
-// =======
-        // css.push( "{{ STATIC_URL }}widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
-// >>>>>>> master
     }
 
     css.push( "{{ BASE_URL }}{{ STATIC_URL }}widget/css/widget.css" );
@@ -6670,14 +6637,6 @@ function $RFunctions($R){
 
 
                 function writeTag(tag) {
-// <<<<<<< HEAD
-
-//                     if ( $react.find('a.rdr_tag_'+tag.id).length == 0 && $react.find('a.rdr_tag').length < 4 ) {
-//                         var tagCount = ( tag.tag_count ) ? tag.tag_count:"+",
-//                             peoples = ( tagCount == 1 ) ? "person":"people";
-//                         var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'">'+tag.body+'</a>').data('tag_id',tag.id)
-//                             $span = $('<span class="rdr_tag_count">'+tagCount+'</span>');
-// =======
                     var tagCount, $span;
                     if ( $react.find('a.rdr_tag_'+tag.id).length === 0 && $react.find('a.rdr_tag').length < 4 ) {
                         tagCount = ( tag.tag_count ) ? tag.tag_count:"+";
@@ -6686,7 +6645,6 @@ function $RFunctions($R){
                         var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'">'+tag.body+'</a>').data('tag_id',tag.id);
                         
                         $span = $('<span class="rdr_tag_count">'+tagCount+'</span>');
-// >>>>>>> master
 
                         $a.append( $span );
 
