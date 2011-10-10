@@ -5152,7 +5152,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     $thisPanel = $(rindow).find('.rdr_'+panel);
                     var num_columns = rindow.find('div.rdr_sntPnl').length;
                     rindow.addClass('rdr_columns'+num_columns);
-                    var width, minHeight, maxHeight, gotoHeight = null;
+                    var width, minHeight, maxHeight, targetHeight, gotoHeight = null;
 
                     var isReadMode = rindow.hasClass('rdr_readmode');
 
@@ -5186,7 +5186,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             // old, from when whyPanel was next to, not over, the contentPanel:
                             // width = (num_columns == 3) ? 170 + contentPanelWidth + 250 : 170 + 250;
                             width = 170 + contentPanelWidth; // any time we're expanding the contentPanel, the rindow is gonna be 400px wide
-                            gotoHeight = 225; //quick hack to make it look a bit nicer
+                            targetHeight = 225; //quick hack to make it look a bit nicer
 
                             rindow.queue('panels', function(){
                                 $thisPanel.animate( {right:0 }, rindow.settings.animTime, function(){
@@ -5205,7 +5205,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     else{
 
                         gotoHeight = RDR.rindow.setHeight(rindow, {
-                            targetHeight: gotoHeight
+                            targetHeight: targetHeight
                         });
                                             
                         var coords = rindow.offset();
@@ -5237,8 +5237,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     rindow.find('div.rdr_whyPanel .rdr_header h1').empty();
 
                     var panel = _panel || "whyPanel",
-                        $thisPanel = $(rindow).find('.rdr_'+panel),
-                        $tagBox = $(rindow).find('div.rdr_tagBox');
+                        $thisPanel = rindow.find('.rdr_'+panel),
+                        $sizeToContent = ( $thisPanel.find('div.jspPane').length == 1 ) ?$thisPanel.find('div.jspPane'):rindow.find('div.rdr_tagBox');
                     
                     var isReadMode = rindow.hasClass('rdr_readmode');
 
@@ -5249,7 +5249,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                     minHeight = RDR.rindow.defaults.minHeight; //100
                     maxHeight = RDR.rindow.defaults.maxHeight; //350
-                    targetHeight = $tagBox.height() + 35 + 10; //+ header height + extra padding;
+                    targetHeight = $sizeToContent.height() + 35 + 10; //+ header height + extra padding;
 
                     rindow.resizable('option', {
                         minHeight:minHeight,
@@ -5274,6 +5274,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $thisPanel.find('div.rdr_header').addClass('rdr_brtl').addClass('rdr_brbl');
                             rindow.find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').addClass('rdr_brtr');
                             rindow.find('div.rdr_reactionPanel div.rdr_body').attr('style','');
+                            gotoHeight = 225;
 
                             if( isReadMode ){
                                 width = 470;
