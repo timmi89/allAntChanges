@@ -19,12 +19,11 @@ class Migration(DataMigration):
                 )
             except orm.Page.DoesNotExist:
                 site = orm.Site.objects.get(domain=".".join(interaction.page.site.domain.split('.')[1:]))
-                print "awesome"
-            
-            if good_page:
-                interaction.page = good_page
-                interaction.save()
-                bad_page.delete()
+                good_page = orm.Page.objects.create(
+                    url = interaction.page.canonical_url,
+                    canonical_url = interaction.page.canonical_url,
+                    site = site
+                )
 
     def backwards(self, orm):
         "Write your backwards methods here."
