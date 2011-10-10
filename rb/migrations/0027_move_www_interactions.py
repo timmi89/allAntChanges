@@ -24,7 +24,7 @@ class Migration(DataMigration):
                     canonical_url = interaction.page.canonical_url,
                     site = site
                 )
-            #interaction.page = good_page
+            interaction.page = good_page
             #interaction.save()
             #bad_page.delete()
 
