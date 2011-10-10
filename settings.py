@@ -24,9 +24,9 @@ FACEBOOK_APP_ID = '163759626987948'
 FACEBOOK_APP_SECRET = 'f14061a2ed9d7ae8ed1c3b231a8148c9'
 
 ADMINS = ( 
-    ('Tyler Brock', 'tyler@readrboard.com'),
-    ('Porter Bayne', 'porter@readrboard.com'),
-    ('Eric Chaves', 'eric@readrboard.com'),
+    #('Tyler Brock', 'tyler@readrboard.com'),
+    #('Porter Bayne', 'porter@readrboard.com'),
+    #('Eric Chaves', 'eric@readrboard.com'),
 )
 
 if DEBUG:
@@ -231,11 +231,6 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-    'mail_admins': {
-            #'level': 'ERROR',
-            'level': 'CRITICAL',
-            'class': 'django.utils.log.AdminEmailHandler'
-    }
     },
     'loggers': {
     'django.request': {
