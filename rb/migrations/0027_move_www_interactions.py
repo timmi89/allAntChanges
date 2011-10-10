@@ -11,21 +11,26 @@ class Migration(DataMigration):
             page__site__domain__regex=r'^www'
         ):
             good_page = None
-            bad_page = orm.Page.objects.get(id=interaction.page.id)
+            bad_page = interaction.page
             try:
+                print "Found good page"
                 good_page = orm.Page.objects.get(
                     canonical_url = interaction.page.canonical_url,
                     site__domain__regex=r'^(\?!www).\+'
                 )
             except orm.Page.DoesNotExist:
+                print "Creating good page"
                 site = orm.Site.objects.get(domain=".".join(interaction.page.site.domain.split('.')[1:]))
                 good_page = orm.Page(
                     url = interaction.page.canonical_url,
                     canonical_url = interaction.page.canonical_url,
                     site = site
                 )
+            print "Setting interaction.page to good page"
             interaction.page = good_page
+            print "Saving interaction"
             interaction.save()
+            print "Deleting the bad page"
             bad_page.delete()
 
     def backwards(self, orm):
