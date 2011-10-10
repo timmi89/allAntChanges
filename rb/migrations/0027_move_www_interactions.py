@@ -11,7 +11,7 @@ class Migration(DataMigration):
             page__site__domain__regex=r'^www'
         ):
             good_page = None
-            bad_page = interaction.page
+            bad_page = orm.Page.objects.get(id=interaction.page.id)
             try:
                 good_page = orm.Page.objects.get(
                     canonical_url = interaction.page.canonical_url,
@@ -25,8 +25,8 @@ class Migration(DataMigration):
                     site = site
                 )
             interaction.page = good_page
-            #interaction.save()
-            #bad_page.delete()
+            interaction.save()
+            bad_page.delete()
 
     def backwards(self, orm):
         "Write your backwards methods here."
