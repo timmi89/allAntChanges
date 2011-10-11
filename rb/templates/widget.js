@@ -1922,6 +1922,11 @@ function readrBoard($R){
                         RDR.group.no_readr = RDR.group.no_readr || "";
                         RDR.group.img_blacklist = RDR.group.img_blacklist || "";
 
+                        //todo: also just for testing, but this should be ommited for false, or
+                            //a boolean: true or (false, or  or anything falsy)
+                            //or an object like this example showing the defaults{ jqSelector:<"this">, jqFunc:<"after"> }
+                        RDR.group.inline_indicators = { jqSelector:'embed, video, object, iframe, img', jqFunc:'after' };
+
                         $(RDR.group.no_readr).each( function() { 
                             $(this).addClass('no-rdr'); 
                             $(this).find('img').addClass('no-rdr');
@@ -2091,9 +2096,9 @@ function readrBoard($R){
                                     widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
                                 }
                             }
-                            $RDR.dequeue('initAjax');
                         }
-
+                        //todo: moved this out of the loop - it should not have been in there getting called more than once. -check up on this
+                        $RDR.dequeue('initAjax');
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
@@ -2266,6 +2271,12 @@ function readrBoard($R){
                         $(this).data('kind', group.kind);
                     });
                     $allNodes = $allNodes.add($group);
+
+                    //flag exceptions for inline_indicators
+                    var $inlineMediaSet = $allNodes.filter(RDR.group.inline_indicators.jqSelector);
+                    $inlineMediaSet.each(function(){
+                        $(this).data('inlineIndicator', true);
+                    });
 
                 });
 
@@ -2495,7 +2506,6 @@ function readrBoard($R){
                                         left: $container.offset().right
                                     };
 
-
                                     $container.addClass('rdr_engage_media');
 
                                     //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
@@ -2508,15 +2518,23 @@ function readrBoard($R){
                                     var $rivals = $('div.rdr_actionbar').not($actionbar);
                                     RDR.actionbar.close( $rivals );
 
+                                    //this looks bad because it's adding a hover event on every container hover event, but we need to because
+                                    //the actionbar is being recreated every time.  We if the actionbar hasn't faded out yet though it will be the
+                                    //same one, so check for that to avoid excessive events (not that would really hurt anything)
+                                    if ( $actionbar.data('hasHoverEvent') ) return;
+                                    //else
                                     $actionbar.hover(
                                         function() {
                                             $(this).data('hover',true);
+                                            
                                         },
                                         function() {
                                             $(this).data('hover',false);
                                             RDR.actionbar.closeSuggest(hash);
                                         }
                                     );
+                                    $actionbar.data('hasHoverEvent', true);
+
                                 },
                                 function(){
                                     var actionbar_id = "rdr_actionbar_"+hash;
@@ -3897,18 +3915,42 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         indicatorDetailsId = 'rdr_indicator_details_'+hash;
 
                     // don't insert floating pins for page-level interactions
-                    if ( !$container.hasClass('rdr-page-container') ) {
-                        //check for and remove any existing indicator and indicator_details and remove for now.
-                        //this shouldn't happen though.
-                        //todo: solve for duplicate content that will have the same hash.
-                        $('#'+indicatorId, '#'+indicatorDetailsId).each(function(){
-                            $(this).remove();
-                        });
+                    if ( $container.hasClass('rdr-page-container') ) return;
+                    //else
 
-                        var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId);
-                        //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
-                        $indicator.css('visibility','hidden');
+                    //check for and remove any existing indicator and indicator_details and remove for now.
+                    //this shouldn't happen though.
+                    //todo: solve for duplicate content that will have the same hash.
+                    $('#'+indicatorId, '#'+indicatorDetailsId).each(function(){
+                        $(this).remove();
+                    });
 
+                    var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId);
+                    //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
+                    $indicator.css('visibility','hidden');
+
+                    log('$container');
+                    log($container);
+
+                    var has_inline_indicator = $container.data('inlineIndicator'); //boolean
+                    
+                    if(has_inline_indicator){
+                        _setupInlineIndicators();
+                    }else{
+                        _setupAbsoluteIndicators();
+                    }
+                    
+                    //run setup specific to this type
+                    scope.utils.kindSpecificSetup[kind]( hash );
+                    log('updated here in indicators init');
+                    RDR.actions.indicators.update(hash);
+
+                    //todo: combine this with the kindSpecificSetup above right?
+                    if (kind == 'text'){
+                        _setupTriggerToFetchContentNodes();
+                    }
+                    
+                    function _setupAbsoluteIndicators(){
                         //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
                         var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body" />').attr('id',indicatorBodyId)//chain
                         .appendTo($indicator)//chain
@@ -3918,7 +3960,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         )//chain
                         .data( {'which':hash} );
 
-                        //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the body.
+                        //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the sandbox.
                         //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
                         var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
                         .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar')//chain
@@ -3939,7 +3981,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 });
                             },
                             function() {
-                                $indicator_details.data( 'freshlyKilled', false);
+                                $indicator_details.data( 'freshlyKilled', false)
+                                $indicator_details.show();
                             }
                         );
 
@@ -3966,32 +4009,54 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 $(this).data('timeout', timeout);
                             }
                         );
+                    }
+                    function _setupInlineIndicators(){
+                        //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
+                        var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body" />').attr('id',indicatorBodyId)//chain
+                        .appendTo($indicator)//chain
+                        .append(
+                            '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
+                            '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
+                        )//chain
+                        .data( {'which':hash} );
 
+                        //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the sandbox.
+                        //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
+                        var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
+                        .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar')//chain
+                        .appendTo('#rdr_indicator_details_wrapper');
 
-                        //run setup specific to this type
-                        
-                        scope.utils.kindSpecificSetup[kind]( hash );
+                        var offsetTop = $indicator.offset().top;
+                        var offsetLeft = $indicator.offset().left;
 
+                        $indicator_details.css({
+                            top:offsetTop,
+                            left: offsetLeft
+                        }).show()//chain
+                        .click( function() {
+                            //store it's offset in data(), because offset doesn't work if the node is hidden.  It was giving me problems before
+                            $indicator_details.data( 'top', $indicator_details.offset().top );
+                            $indicator_details.data( 'left', $indicator_details.offset().left );
+                            var selStates = $(this).data('selStates');
 
-                        RDR.actions.indicators.update(hash);
-
-                        //Note that the text indicators still don't have content_node info.
-                        //The content_nodes will only be populated and shown after hitting the server for details triggered by $indicator mouseover.
-                        //on the offchance that this server call fails and the user hilite
-
-                        if (kind == 'text'){
-                            //Setup callback for a successful fetch of the content_nodes for this container
-                            var onSuccessCallback = function(){
-                                $indicator.unbind('mouseover.contentNodeInit');
-                                RDR.actions.indicators.utils.setupContentNodeHilites(hash);
-                            };
-                            //bind the hover event that will only be run once.  It gets removed on the success callback above.
-                            $indicator.bind('mouseover.contentNodeInit', function(){
-                                RDR.actions.content_nodes.init(hash, onSuccessCallback);
-                            });
-                        }
+                            RDR.rindow.make( "readMode", {hash:hash} );
+                        });
+                        $indicator.css('visibility','visible');
                     }
 
+                    function _setupTriggerToFetchContentNodes(){
+                        //Note that the text indicators still don't have content_node info.
+                        //The content_nodes will only be populated and shown after hitting the server for details triggered by $indicator mouseover.
+                        //Setup callback for a successful fetch of the content_nodes for this container
+                        var onSuccessCallback = function(){
+                            $indicator.unbind('mouseover.contentNodeInit');
+                            RDR.actions.indicators.utils.setupContentNodeHilites(hash);
+                        };
+                        //bind the hover event that will only be run once.  It gets removed on the success callback above.
+                        $indicator.bind('mouseover.contentNodeInit', function(){
+                            RDR.actions.content_nodes.init(hash, onSuccessCallback);
+                        });
+                    }
                 },
                 update: function(hash){
                     //RDR.actions.indicators.update:
@@ -4028,6 +4093,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     var kind = summary.kind;
                     
                     $indicator_details.css({ 'visiblity':'visible' }).hide();
+                    //note that rdr_indicator_for_media_inline have an !important in the css so they won't get hidden.
                               
                 },
                 utils:{
@@ -4042,44 +4108,69 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 $container_tracker_wrap = $('#rdr_container_tracker_wrap'),
                                 $container_tracker = $('<div class="rdr_container_tracker" />');
 
+                            var has_inline_indicator = $container.data('inlineIndicator'); //boolean
+    
                             $container_tracker.attr('id', 'rdr_container_tracker_'+hash).appendTo($container_tracker_wrap);
-                            
                             //position the containerTracker at the top left of the image or videos.  We'll position the indicator and hiliteborder relative to this.
+                            
+                            if(has_inline_indicator){
+                                fakePlugin.call($container[0]);
+                            }
+                            else{
+                                _standardSetup();
+                            }
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
-                            
-                            $indicator.appendTo($container_tracker);
-                            $indicator.addClass('rdr_indicator_for_media');
-                            
-                            $indicator.hover(
-                                function() {
-                                    $indicator_details.css({
-                                        'width': 'auto'
-                                    });                     
-                                    
-                                    var indDetailsWidth = $indicator_details.width(),
-                                    indDetailsLeftOffset = $indicator_body.offset().left + $indicator_body.width() - indDetailsWidth - 3; //account for 3px padding 
+                            function fakePlugin(){
+                                $indicator.appendTo($container_tracker);
+                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline'); 
 
-                                    $indicator_details.css({
-                                        'width': 10
-                                    });
-                                    $indicator_details.stop().animate({
-                                        'left': indDetailsLeftOffset,
-                                        'width': indDetailsWidth
-                                    },200);
+                                $indicator.hover(
+                                    function(){
+                                        $(this).addClass('rdr_engage_media');
+                                    },function(){
+                                        $(this).removeClass('rdr_engage_media');
+                                    }
+                                );
 
-                                },
-                                function() {
-                                }
-                            );
+                                $indicator_details.addClass('rdr_indicator_details_for_media rdr_indicator_details_for_media_inline');
+                            }
 
-                            $indicator_details.addClass('rdr_indicator_details_for_media').hover(
-                                function() {
-                                    $(this).data('hover', true);
-                                },
-                                function() {
-                                    $(this).data('hover', false);
-                                }
-                            );
+                            function _standardSetup(){
+                                log('standard');
+                                $indicator.appendTo($container_tracker);
+                                $indicator.addClass('rdr_indicator_for_media');
+                                
+                                $indicator.hover(
+                                    function() {
+                                        $indicator_details.css({
+                                            'width': 'auto'
+                                        });                     
+                                        
+                                        var indDetailsWidth = $indicator_details.width(),
+                                        indDetailsLeftOffset = $indicator_body.offset().left + $indicator_body.width() - indDetailsWidth - 3; //account for 3px padding 
+
+                                        $indicator_details.css({
+                                            'width': 10
+                                        });
+                                        $indicator_details.stop().animate({
+                                            'left': indDetailsLeftOffset,
+                                            'width': indDetailsWidth
+                                        },200);
+
+                                    },
+                                    function() {
+                                    }
+                                );
+
+                                $indicator_details.addClass('rdr_indicator_details_for_media').hover(
+                                    function() {
+                                        $(this).data('hover', true);
+                                    },
+                                    function() {
+                                        $(this).data('hover', false);
+                                    }
+                                );
+                            }
                         },
                         media: function( hash ){
                             //for now just treat it like an img
@@ -4102,6 +4193,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         }
                     },
                     makeDetailsContent: function( hash ){
+                        //RDR.actions.indicators.utils.makeDetailsContent:
                         var scope = this;
                         var summary = RDR.summaries[hash],
                             $container = summary.$container,
@@ -4126,13 +4218,24 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         //but we need the function to register the nodes in the DOM in order to calc width.
                     },
                     makeTagsList: function( hash ){
-                        var tagsListMaxWidth = 300,
-                            buffer = 120, //for prefix and the "more..." span
-                            count = 0; //used as a break statement below
                         var summary = RDR.summaries[hash],
                             $indicator_details = summary.$indicator_details,
+                            $container = summary.$container,
                             $tagsList = $indicator_details.find('.rdr_tags_list');
 
+                        var has_inline_indicator = $container.data('inlineIndicator'), //boolean
+                            tagsListMaxWidth,
+                            buffer = 120, //for prefix and the "more..." span
+                            count = 0; //used as a break statement below
+                        
+                        if(has_inline_indicator){
+                            tagsListMaxWidth = $indicator_details.width();
+                        }else{
+                            tagsListMaxWidth = 300;
+                        }
+                        log(tagsListMaxWidth);
+                    
+                        
                         $.each( summary.interaction_order.tags, function( idx, tagOrder ){
                             var tag = summary.top_interactions.tags[ tagOrder.id ];
 
@@ -4217,6 +4320,30 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         
                         this.updateMediaTracker(hash);
                         this.updateMediaBorderHilites(hash);
+
+                        var has_inline_indicator = $container.data('inlineIndicator'); //boolean
+                    
+                        if(has_inline_indicator){
+                            RDR.actions.indicators.utils.updateInlineIndicator(hash);
+                        }else{
+                            
+                        }
+                        
+                    },
+                    updateInlineIndicator: function(hash){
+                        //RDR.actions.indicators.utils.updateInlineIndicator:
+                        var summary = RDR.summaries[hash],
+                            $container = summary.$container,
+                            $indicator = summary.$indicator,
+                            $indicator_body = summary.$indicator_body,
+                            $indicator_details = summary.$indicator_details,
+                            $container_tracker = $('#rdr_container_tracker_'+hash);
+
+                        $indicator_details.css({
+                           top: $container.offset().bottom,
+                           left: $container.offset().left,
+                           width:$container.width()-8 //subtract extra for the padding
+                        });
                     },
                     updateMediaTracker: function(hash){
                         //RDR.actions.indicators.utils.updateMediaTracker:

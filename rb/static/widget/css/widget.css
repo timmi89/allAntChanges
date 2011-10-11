@@ -997,10 +997,24 @@ div.rdr_indicator_for_media.rdr_engage_media {
     -moz-opacity:0.9 !important;
     -khtml-opacity:0.9 !important;
 }
-
 #rdr_sandbox div.rdr_indicator_details_for_media {
     overflow:hidden; /*for the animate out to work nicely*/
     margin:0 0 0 2px; /*don't need the -5px 0 0 -4px margin here.  Kick it left a tiny bit */
+}
+div.rdr_indicator_for_media_inline {
+}
+div.rdr_indicator_for_media_inline div.rdr_indicator_body { 
+    display:none !important;
+}
+#rdr_sandbox .rdr_indicator_details_for_media_inline{
+    display:block !important;
+    margin:0 !important;
+    -moz-border-radius:0 !important;
+    -webkit-border-radius:0 !important;
+    border-radius:0 !important;
+    box-shadow:  none;
+    -moz-box-shadow:  none;
+    -webkit-box-shadow:  none;
 }
 #rdr_sandbox div.rdr_container_tracker{
     position:absolute !important;
