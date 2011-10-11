@@ -4111,13 +4111,14 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             //position the containerTracker at the top left of the image or videos.  We'll position the indicator and hiliteborder relative to this.
                             
                             if(has_inline_indicator){
-                                fakePlugin.call($container[0]);
+                                //todo: consider using a plugin pattern for this later if we want the publisher to be able to customize this in detail.
+                                _inlineIndicatorSetup.call($container[0]);
                             }
                             else{
                                 _standardSetup();
                             }
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
-                            function fakePlugin(){
+                            function _inlineIndicatorSetup(){
                                 $indicator.appendTo($container_tracker);
                                 $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline'); 
 
