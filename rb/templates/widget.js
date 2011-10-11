@@ -3929,9 +3929,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
                     $indicator.css('visibility','hidden');
 
-                    log('$container');
-                    log($container);
-
+                    
                     var has_inline_indicator = $container.data('inlineIndicator'); //boolean
                     
                     if(has_inline_indicator){
@@ -3942,7 +3940,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     
                     //run setup specific to this type
                     scope.utils.kindSpecificSetup[kind]( hash );
-                    log('updated here in indicators init');
                     RDR.actions.indicators.update(hash);
 
                     //todo: combine this with the kindSpecificSetup above right?
@@ -4136,7 +4133,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             }
 
                             function _standardSetup(){
-                                log('standard');
                                 $indicator.appendTo($container_tracker);
                                 $indicator.addClass('rdr_indicator_for_media');
                                 
@@ -4233,8 +4229,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         }else{
                             tagsListMaxWidth = 300;
                         }
-                        log(tagsListMaxWidth);
-                    
                         
                         $.each( summary.interaction_order.tags, function( idx, tagOrder ){
                             var tag = summary.top_interactions.tags[ tagOrder.id ];
@@ -5710,11 +5704,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 var summary = RDR.summaries[hash],
                     $rindow_readmode = summary.$rindow_readmode,
                     $rindow_writemode = summary.$rindow_writemode;
-                    /*
-                    log(summary);
-                    log($rindow_readmode);
-                    log($rindow_writemode);
-                    */
+                    
             },
             updateData: function(args) {
                 var tag_text;
