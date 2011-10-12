@@ -415,6 +415,12 @@ div.rdr strong {font-weight:bold !important;}
     white-space:nowrap;
 }
 
+#rdr_sandbox div.rdr ul.rdr_tags li,
+#rdr_sandbox div.rdr ul.rdr_tags li div,
+#rdr_sandbox div.rdr ul.rdr_tags li div span {
+    overflow:hidden !important;
+}
+
 /* rdr_hover is a safari/chrome kludge -- :hover isn't working here */
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_hover div.rdr_details,
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_hover div.rdr_tagText  {
