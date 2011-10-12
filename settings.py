@@ -229,21 +229,7 @@ DEBUG_TOOLBAR_CONFIG = {
 
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-    'mail_admins': {
-            #'level': 'ERROR',
-            'level': 'CRITICAL',
-            'class': 'django.utils.log.AdminEmailHandler'
-    }
-    },
-    'loggers': {
-    'django.request': {
-            'handlers': ['null'],
-            'level': 'ERROR',
-            'propagate': True,
-    },
-    }
+    'disable_existing_loggers': True
 }
 
 DEVSERVER_MODULES = (
