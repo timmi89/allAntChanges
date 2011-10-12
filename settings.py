@@ -4,6 +4,9 @@ from os import uname
 if uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
 
+# Server e-mail account
+SERVER_EMAIL = "server@readrboard.com"
+
 # For Amazon web services
 AWS_ACCESS_KEY_ID = 'AKIAINM2FE35X6K77P2A'
 AWS_SECRET_ACCESS_KEY = '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'
@@ -20,17 +23,16 @@ AWS_HEADERS = {
 FACEBOOK_APP_ID = '163759626987948'
 FACEBOOK_APP_SECRET = 'f14061a2ed9d7ae8ed1c3b231a8148c9'
 
-ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),    
-    ('Tyler Brock', 'tyler@readrboard.com'),
-    ('Porter Bayne', 'porter@readrboard.com'),
-    ('Eric Chaves', 'eric@readrboard.com'),
+ADMINS = ( 
+    #('Tyler Brock', 'tyler@readrboard.com'),
+    #('Porter Bayne', 'porter@readrboard.com'),
+    #('Eric Chaves', 'eric@readrboard.com'),
 )
 
 if DEBUG:
     
     BASE_URL = 'http://local.readrboard.com:8080'
-    STATIC_URL = '/static/'
+    STATIC_URL = 'http://local.readrboard.com:8080/static/'
     STATIC_ROOT = 'rb/static/'
 
     DATABASES = {
@@ -229,14 +231,10 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-    'mail_admins': {
-            'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler'
-    }
     },
     'loggers': {
     'django.request': {
-            'handlers': ['mail_admins'],
+            'handlers': ['null'],
             'level': 'ERROR',
             'propagate': True,
     },
@@ -246,7 +244,7 @@ LOGGING = {
 DEVSERVER_MODULES = (
     'devserver.modules.sql.SQLRealTimeModule',
     'devserver.modules.sql.SQLSummaryModule',
-    'devserver.modules.profile.ProfileSummaryModule',
+    #'devserver.modules.profile.ProfileSummaryModule',
 
     # Modules not enabled by default
     #'devserver.modules.ajax.AjaxDumpModule',
