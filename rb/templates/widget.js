@@ -1913,6 +1913,15 @@ function readrBoard($R){
                         //todo: is this line supposed to save the group_id ?
 						//RDR.group.group_id
 
+                        var inline_indicators_defaults = {
+                            jqSelector:'embed, video, object, iframe, img',
+                            jqFunc:'after'
+                        };
+                        //swap out which of these 2 is commented out for testing.
+                        RDR.group.inline_indicators = {};
+                        //RDR.group.inline_indicators = { jqSelector:'', jqFunc:'' };
+                        
+
                         //todo:just for testing for now: - add defaults:
                         RDR.group.img_selector = RDR.group.img_selector || "img";
                         RDR.group.anno_whitelist = RDR.group.anno_whitelist || "body p";
@@ -1920,12 +1929,8 @@ function readrBoard($R){
                         RDR.group.comment_length = RDR.group.comment_length || 300;
                         RDR.group.initial_pin_limit = RDR.group.initial_pin_limit || 30;
                         RDR.group.no_readr = RDR.group.no_readr || "";
-                        RDR.group.img_blacklist = RDR.group.img_blacklist || "";
-
-                        //todo: also just for testing, but this should be ommited for false, or
-                            //a boolean: true or (false, or  or anything falsy)
-                            //or an object like this example showing the defaults{ jqSelector:<"this">, jqFunc:<"after"> }
-                        RDR.group.inline_indicators = { jqSelector:'embed, video, object, iframe, img', jqFunc:'after' };
+                        RDR.group.img_blacklist = RDR.group.img_blacklist || "";                        
+                        RDR.group.inline_indicators = $.extend( {}, inline_indicators_defaults, RDR.group.inline_indicators );
 
                         $(RDR.group.no_readr).each( function() { 
                             $(this).addClass('no-rdr'); 
