@@ -4243,7 +4243,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             if(count === null) return; //a helper incrementer, set to 'null' below to mimic a 'break' out of the 'each' loop 
                             if( !tag || tag.count < 0) return; //this shouldn't happen, should be taken care of in summaries.update.  But just in case.
 
-                            var $prefix = count ? $('<span>, </span>') : $(), //don't include the first time
+                            var $prefix = count ? $('<span>, </span>') : $(), //check for count to omit the comma prefix on the first case.
                                 $tag = $('<strong/>').append(tag.body),
                                 $count = $('<em/>').append( ' ('+tag.count+')' ),
                                 $span = $('<span />').addClass('rdr_tags_list_tag');
