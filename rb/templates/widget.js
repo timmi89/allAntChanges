@@ -378,11 +378,16 @@ function readrBoard($R){
                         $indicatorDetails = $('#rdr_indicator_details_'+ hash),
                         $container = $('.rdr-'+hash);
 
-                        var tempOffsets = {
+                        var has_inline_indicator = $container.data('inlineIndicator'); //boolean
+                        var tempOffsets = has_inline_indicator ? {
+                            top: 25,
+                            left: 1
+                        } : {
                             top: -5,
                             left: 1
                         };
-                        var coords = (kind == "img" || kind == "media" ) ?
+                        //todo: make this nicer
+                        var coords = ( (kind == "img" || kind == "media") && !has_inline_indicator ) ?
                         {
                             top: $container.offset().top,
                             left: $container.offset().left + $container.width()
@@ -392,7 +397,7 @@ function readrBoard($R){
                             top: $indicatorDetails.data('top') + tempOffsets.top,
                             left: $indicatorDetails.data('left') + tempOffsets.left 
                         };
-                    
+                        
                         var rindow = RDR.rindow.draw({
                             coords:coords,
                             pnlWidth:170,
@@ -1955,8 +1960,8 @@ function readrBoard($R){
                             jqFunc:'after'
                         };
                         //swap out which of these 2 is commented out for testing.
-                        //RDR.group.inline_indicators = {};
-                        RDR.group.inline_indicators = { jqSelector:'', jqFunc:'' };
+                        RDR.group.inline_indicators = {};
+                        //RDR.group.inline_indicators = { jqSelector:'', jqFunc:'' };
                         
 
                         //todo:just for testing for now: - add defaults:
@@ -4067,18 +4072,16 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
                         .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar')//chain
                         .appendTo('#rdr_indicator_details_wrapper');
+                        
+                        var $container = summary.$container;
 
-                        var offsetTop = $indicator.offset().top;
-                        var offsetLeft = $indicator.offset().left;
-
-                        $indicator_details.css({
-                            top:offsetTop,
-                            left: offsetLeft
-                        }).show()//chain
+                        //used for the rindow draw
+                        //store it's offset in data(), because offset doesn't work if the node is hidden.  It was giving me problems before
+                        $indicator_details.data( 'top', $container.offset().bottom );
+                        $indicator_details.data( 'left', $container.offset().left );
+                                                
+                        $indicator_details.show()//chain
                         .click( function() {
-                            //store it's offset in data(), because offset doesn't work if the node is hidden.  It was giving me problems before
-                            $indicator_details.data( 'top', $indicator_details.offset().top );
-                            $indicator_details.data( 'left', $indicator_details.offset().left );
                             var selStates = $(this).data('selStates');
 
                             RDR.rindow.make( "readMode", {hash:hash} );
@@ -4377,10 +4380,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         //RDR.actions.indicators.utils.updateInlineIndicator:
                         var summary = RDR.summaries[hash],
                             $container = summary.$container,
-                            $indicator = summary.$indicator,
-                            $indicator_body = summary.$indicator_body,
-                            $indicator_details = summary.$indicator_details,
-                            $container_tracker = $('#rdr_container_tracker_'+hash);
+                            $indicator_details = summary.$indicator_details
 
                         $indicator_details.css({
                            top: $container.offset().bottom,
