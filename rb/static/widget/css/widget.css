@@ -1042,6 +1042,12 @@ div.rdr_indicator_for_media_inline div.rdr_indicator_body {
     box-shadow:  none;
     -moz-box-shadow:  none;
     -webkit-box-shadow:  none;
+    
+    /*use this for now - later don't use padding so we won't need this*/
+    -webkit-box-sizing : border-box;
+    -moz-box-sizing : border-box;
+    -o-box-sizing : border-box;
+    box-sizing : border-box; 
 }
 #rdr_sandbox div.rdr_container_tracker{
     position:absolute !important;

@@ -4382,7 +4382,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         $indicator_details.css({
                            top: $container.offset().bottom,
                            left: $container.offset().left,
-                           width:$container.width()-8 //subtract extra for the padding
+                           width:$container.width()
                         });
                     },
                     updateMediaTracker: function(hash){
