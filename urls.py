@@ -95,6 +95,6 @@ urlpatterns = patterns('',
   #url(r'^demo/', settings.STATIC_URL)
 )
 
-if settings.DEBUG:
-  urlpatterns += staticfiles_urlpatterns()
-  urlpatterns += patterns('', url(r'^media/(?P<path>.*)$', 'django.views.static.serve', { 'document_root': settings.MEDIA_ROOT }),)
+urlpatterns += patterns('django.contrib.staticfiles.views',
+        url(r'^static/(?P<path>.*)$', 'serve'),
+    )

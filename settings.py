@@ -24,16 +24,17 @@ FACEBOOK_APP_ID = '163759626987948'
 FACEBOOK_APP_SECRET = 'f14061a2ed9d7ae8ed1c3b231a8148c9'
 
 ADMINS = ( 
-    #('Tyler Brock', 'tyler@readrboard.com'),
-    #('Porter Bayne', 'porter@readrboard.com'),
-    #('Eric Chaves', 'eric@readrboard.com'),
+    ('Tyler Brock', 'tyler@readrboard.com'),
+    ('Porter Bayne', 'porter@readrboard.com'),
+    ('Eric Chaves', 'eric@readrboard.com'),
 )
+
+STATIC_ROOT = 'rb/static/'
 
 if DEBUG:
     
     BASE_URL = 'http://local.readrboard.com:8080'
     STATIC_URL = 'http://local.readrboard.com:8080/static/'
-    STATIC_ROOT = 'rb/static/'
 
     DATABASES = {
       'default': {
@@ -229,16 +230,7 @@ DEBUG_TOOLBAR_CONFIG = {
 
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-    },
-    'loggers': {
-    'django.request': {
-            'handlers': ['null'],
-            'level': 'ERROR',
-            'propagate': True,
-    },
-    }
+    'disable_existing_loggers': True
 }
 
 DEVSERVER_MODULES = (
