@@ -34,21 +34,21 @@ def widgetCss(request):
 def about(request):
     return render_to_response(
       "about.html",
-      {'fb_client_id': FACEBOOK_APP_ID, 'BASE_URL': BASE_URL, 'STATIC_URL': "/static/"},
+      {'fb_client_id': FACEBOOK_APP_ID},
       context_instance=RequestContext(request)
     )
 
 def faq(request):
     return render_to_response(
       "faq.html",
-      {'fb_client_id': FACEBOOK_APP_ID, 'BASE_URL': BASE_URL, 'STATIC_URL': "/static/"},
+      {'fb_client_id': FACEBOOK_APP_ID},
       context_instance=RequestContext(request)
     )
 
 def splash(request):
     return render_to_response(
       "splash.html",
-      {'fb_client_id': FACEBOOK_APP_ID, 'BASE_URL': BASE_URL, 'STATIC_URL': "/static/"},
+      {'fb_client_id': FACEBOOK_APP_ID},
       context_instance=RequestContext(request)
     )
 
@@ -311,6 +311,7 @@ def admin_request(request, short_name=None):
 
 def expander(request, short):
     link_id = base62_decode(short)
+    print 'short=', short
     print 'link_id = ', link_id
     # Retrieve Link object
     try:

@@ -1,18 +1,36 @@
-@font-face {
-    font-family:'ReadrLeague';
-    /* IE */
-    src:url( '../../static/global/css/LeagueGothic.eot' );
-    /*src:url('mhtml:http://www.readrboard.com/static/widget/css/ie.css!ReadrLeagueEncoded');*/
-}
-
-div.rdr_indicator_for_media {
+body.rdr_ie div.rdr_indicator_for_media {
 	display:inline !important;
 	top:10px !important;
 }
 
-#rdr_sandbox .rdr_widget,
-div.rdr_alert_box,
-#rdr-summary.rdr
+body.rdr_ie #rdr_sandbox .rdr_widget,
+body.rdr_ie div.rdr_alert_box,
+body.rdr_ie #rdr-summary.rdr
 {
 	border:1px solid #aaa !important;
+}
+
+body.rdr_ie #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap {
+	padding-bottom:6px !important;
+}
+
+body.rdr_ie #rdr_sandbox div.rdr.rdr_widget h1,
+body.rdr_ie #rdr_sandbox div.rdr.rdr_widget h1 span.rdr_contentNode_text,
+body.rdr_ie #rdr_sandbox div.rdr.rdr_alert_box h1,
+body.rdr_ie #rdr_sandbox div.rdr.rdr_alert_box h1 span,
+body.rdr_ie #rdr_sandbox div.rdr.rdr_widget h2 {font-size:14px !important; font-weight:bold !important;}
+
+body.rdr_ie #rdr_sandbox div.rdr.rdr_widget.rdr_writemode h1 {font-size:12px !important;}
+
+body.rdr_ie #rdr_sandbox div.rdr.rdr_widget div.rdr_header h1,
+body.rdr_ie #rdr_sandbox div.rdr.rdr_widget div.rdr_header h2 { margin-top:-3px !important; }
+
+body.rdr_ie #rdr_sandbox div.rdr ul.rdr_tags li,
+body.rdr_ie #rdr_sandbox div.rdr ul.rdr_tags li div,
+body.rdr_ie #rdr_sandbox div.rdr ul.rdr_tags li div span {
+	overflow:hidden !important;
+}
+
+body.rdr_ie #rdr_sandbox div#rdr_overlay {
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
 }

@@ -19,7 +19,7 @@ urlpatterns = patterns('',
   url(r'^xdm_status/$', 'rb.views.xdm_status'),
   
   # For short URL expander
-  url(r'^s/(?P<short>[0-9a-zA-Z])+/$', 'rb.views.expander'),
+  url(r'^s/(?P<short>[0-9a-zA-Z]+)/$', 'rb.views.expander'),
   
   # For main website
   url(r'^$','rb.views.splash'),
@@ -95,6 +95,6 @@ urlpatterns = patterns('',
   #url(r'^demo/', settings.STATIC_URL)
 )
 
-if settings.DEBUG:
-  urlpatterns += staticfiles_urlpatterns()
-  urlpatterns += patterns('', url(r'^media/(?P<path>.*)$', 'django.views.static.serve', { 'document_root': settings.MEDIA_ROOT }),)
+urlpatterns += patterns('django.contrib.staticfiles.views',
+        url(r'^static/(?P<path>.*)$', 'serve'),
+    )
