@@ -1955,8 +1955,8 @@ function readrBoard($R){
                             jqFunc:'after'
                         };
                         //swap out which of these 2 is commented out for testing.
-                        RDR.group.inline_indicators = {};
-                        //RDR.group.inline_indicators = { jqSelector:'', jqFunc:'' };
+                        //RDR.group.inline_indicators = {};
+                        RDR.group.inline_indicators = { jqSelector:'', jqFunc:'' };
                         
 
                         //todo:just for testing for now: - add defaults:
@@ -4024,7 +4024,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             },
                             function() {
                                 $indicator_details.data( 'freshlyKilled', false)
-                                $indicator_details.show();
+                                //$indicator_details.show(); //[eric] commenting this out: I don't think this makes sense here.
                             }
                         );
 
@@ -4189,7 +4189,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                         });                     
                                         
                                         var indDetailsWidth = $indicator_details.width(),
-                                        indDetailsLeftOffset = $indicator_body.offset().left + $indicator_body.width() - indDetailsWidth - 3; //account for 3px padding 
+                                        indDetailsLeftOffset = $indicator_body.offset().left + $indicator_body.width() - indDetailsWidth + 8; //account for padding and border 
 
                                         $indicator_details.css({
                                             'width': 10
@@ -4245,6 +4245,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $actionbar = $('rdr_actionbar_'+hash);
 
                         var $indicator_details_body = $('<div class="rdr rdr_indicator_details_body" />'),
+                            $indicator_details_innerWrap = $('<div class="rdr rdr_indicator_details_innerWrap" />'),
                             categoryTitleText = (summary.counts.tags == 1) ? "&nbsp;reaction:&nbsp;" : "&nbsp;reactions:&nbsp;",
                             categoryTitle = '<span class="rdr_indicator_categoryTitle">' +categoryTitleText+ '</span>',
                             $tagsList = $('<div class="rdr_tags_list" />');
@@ -4252,7 +4253,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         
                         $indicator_details_body.html( $indicator_body.html() );
 
-                        $indicator_details.empty().append( $indicator_details_body, categoryTitle, $tagsList );
+                        //use an innerWrap so that we can move padding to that and measuring the width of the indicator_details will be consistent
+                        $indicator_details.empty().append( $indicator_details_innerWrap );
+                        $indicator_details_innerWrap.append( $indicator_details_body, categoryTitle, $tagsList );
 
                         //builds out the $tagsList contents
                         scope.makeTagsList( hash );

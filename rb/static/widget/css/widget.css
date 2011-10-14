@@ -911,7 +911,6 @@ div.rdr_indicator_for_text{
     background:#fff;
     color: #666666;
     font: 12px Arial,sans-serif;
-    padding:4px 3px 3px 3px !important;
     border:1px solid #c9c9c9; 
     
     background-image: -webkit-gradient(
@@ -930,7 +929,17 @@ div.rdr_indicator_for_text{
     -moz-user-select: none !important;
     -o-user-select: none !important;
     user-select: none !important;
+
+    /*for consistent measuing of width and positioning*/
+    -webkit-box-sizing : border-box;
+    -moz-box-sizing : border-box;
+    -o-box-sizing : border-box;
+    box-sizing : border-box; 
 }
+#rdr_sandbox div.rdr_indicator_details_innerWrap{
+    padding:4px 3px 3px 3px !important;
+}
+
 #rdr_sandbox div.rdr_indicator_details .rdr_see_more {
     padding: 0 3px;
 }
@@ -1026,7 +1035,7 @@ div.rdr_indicator_for_media.rdr_engage_media {
 }
 #rdr_sandbox div.rdr_indicator_details_for_media {
     overflow:hidden; /*for the animate out to work nicely*/
-    margin:0 0 0 2px; /*don't need the -5px 0 0 -4px margin here.  Kick it left a tiny bit */
+    margin:0; /*don't need the -5px 0 0 -4px margin here.  Kick it left though*/
 }
 div.rdr_indicator_for_media_inline {
 }
@@ -1042,12 +1051,6 @@ div.rdr_indicator_for_media_inline div.rdr_indicator_body {
     box-shadow:  none;
     -moz-box-shadow:  none;
     -webkit-box-shadow:  none;
-    
-    /*use this for now - later don't use padding so we won't need this*/
-    -webkit-box-sizing : border-box;
-    -moz-box-sizing : border-box;
-    -o-box-sizing : border-box;
-    box-sizing : border-box; 
 }
 #rdr_sandbox div.rdr_container_tracker{
     position:absolute !important;
