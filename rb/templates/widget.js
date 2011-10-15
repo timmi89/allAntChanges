@@ -39,6 +39,9 @@ function readrBoard($R){
             readr_token: "",
             user_id: ""
         },
+        known_users: {
+            
+        },
         errors: {
             actionbar: {
                 rating:"",
@@ -1913,6 +1916,7 @@ function readrBoard($R){
             }
 		},
         actions: {
+            //RDR.actions:
             aboutReadrBoard: function() {
             },
             init: function(){
@@ -2098,52 +2102,63 @@ function readrBoard($R){
                     dataType: "jsonp",
                     data: { json: $.toJSON(sendData) },
 					success: function(response) {
-                        for ( var key in response.data ) {
-                            var page = response.data[key];
-                            var $container = ( $(RDR.group.post_selector + '.rdr-page-key-'+key).length > 0 ) ? $(RDR.group.post_selector + '.rdr-page-key-'+key) : $('body.rdr-page-key-'+key);
+                        $.each( response.data, function(key,page){
+                            page.key = key;
+                            RDR.actions.pages.save(page.id, page);
 
-                            if ( $container.length == 1 ) {
-                                
-                                $container.removeClass( 'rdr-page-key-' + key );
+                            var $container = $(RDR.group.post_selector + '.rdr-page-key-'+key);
+                            if ( $container.length !== 1 ) return;
+                            //else
 
-                                var hash = RDR.util.md5.hex_md5( String(page.id) );
-                                var tagName = $container.get(0).nodeName.toLowerCase();
+                            //[eric] not a big deal, but why did we add this class and then remove it?
+                            $container.removeClass( 'rdr-page-key-' + key );
 
-                                if ( !RDR.containers[hash] ) {
-                                    RDR.containers[hash] = {};
-                                    RDR.containers[hash].id = String(page.id);
-                                    RDR.containers[hash].kind = "page";
-                                    $container.data( 'page_id', String(page.id) ); // the page ID
+                            //todo: [eric] this can't be right - we shouldn't just hash a single number like '1'.
+                            var hash = RDR.util.md5.hex_md5( String(page.id) );
+                            var tagName = $container.get(0).nodeName.toLowerCase();  //todo: looks like we're not using this for pages?
+
+                            //[eric] using our containers.save method to ensure out model is consistent througout.
+                            RDR.actions.containers.save({ 
+                                id: String(page.id),
+                                kind: "page",
+                                hash: hash,
+                                HTMLkind: null
+                            });
+
+                            $container.data( 'page_id', String(page.id) ); // the page ID
+
+                            //todo: I don't think this is doing anything... the hash doesn't make sense and containers seems to always be empty.
+                            
+                            // hash the "page" descendant nodes
+                            // RDR.actions.hashNodes( $container, "nomedia" );
+                            RDR.actions.hashNodes( $container );
+
+                            if ( page.containers.length > 0 ) {
+                                var hashes = [];
+                                hashes[ page.id ] = [];
+                                for ( var i in page.containers ) {
+                                    hashes[ page.id ].push( page.containers[i].hash );
                                 }
-
-                                // hash the "page" descendant nodes
-                                // RDR.actions.hashNodes( $container, "nomedia" );
-                                RDR.actions.hashNodes( $container );
-
-                                if ( page.containers.length > 0 ) {
-                                    var hashes = [];
-                                    hashes[ page.id ] = [];
-                                    for ( var i in page.containers ) {
-                                        hashes[ page.id ].push( page.containers[i].hash );
-                                    }
-                                    RDR.actions.sendHashes( hashes );
-                                }
-
-                                //init the widgetSummary
-                                var widgetSummarySettings = page;
-                                if ( $container.find( RDR.group.summary_widget_selector + '.rdr-page-widget-key-' + key).length == 1 ) {
-                                    widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector + '.rdr-page-widget-key-'+key);
-                                    widgetSummarySettings.jqFunc = "after";
-                                } else {
-                                    widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
-                                    widgetSummarySettings.jqFunc = "append";
-                                }
-                                
-                                if ( ($('div.rdr-summary').length===0) || ( $('div.rdr-summary').length < $(RDR.group.post_selector).length ) ) {
-                                    widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
-                                }
+                                RDR.actions.sendHashes( hashes );
                             }
-                        }
+
+                            //init the widgetSummary
+                            var widgetSummarySettings = page;
+                            
+                            widgetSummarySettings.key = key;
+                            if ( $container.find( RDR.group.summary_widget_selector + '.rdr-page-widget-key-' + key).length == 1 ) {
+                                widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector + '.rdr-page-widget-key-'+key);
+                                widgetSummarySettings.jqFunc = "after";
+                            } else {
+                                widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
+                                widgetSummarySettings.jqFunc = "append";
+                            }
+                            
+                            if ( ($('div.rdr-summary').length===0) || ( $('div.rdr-summary').length < $(RDR.group.post_selector).length ) ) {
+                                widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
+                            }
+                        });
+
                         //todo: moved this out of the loop - it should not have been in there getting called more than once. -check up on this
                         $RDR.dequeue('initAjax');
                     },
@@ -2499,12 +2514,15 @@ function readrBoard($R){
                     //expects settings with body, kind, and hash.
                     if( RDR.containers.hasOwnProperty(settings.hash) ) return RDR.containers[settings.hash];
                     //else
+                    var pageId = ( typeof settings.id === 'undefined' || settings.id === null ) ? null : settings.id;
+
                     var container = {
-                        'body': settings.body,
+                        'id': pageId,
+                        'body': settings.body || null,
                         'kind': settings.kind,
                         'hash': settings.hash,
-                        'HTMLkind': settings.HTMLkind,
-                        '$this': settings.$this
+                        'HTMLkind': settings.HTMLkind || null,
+                        '$this': settings.$this || null
                     };
                     RDR.containers[settings.hash] = container;
                     return container;
@@ -4699,6 +4717,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             diffNode.int_type = interaction_node_type;
                             //now update rindow
                             RDR.rindow.update(hash, diffNode);
+
                         });
 
                     });
@@ -4724,6 +4743,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         //RDR.actions.summaries.update( 'pageSummary' );
                     }
 
+                     //update the page summaries:
+                    //$(document).rdrWidgetSummary('update');
 
                 },
                 sortInteractions: function(hash) {
@@ -6179,7 +6200,21 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 }
 
 
-            }//end RDR.actions.startSelect
+            },//end RDR.actions.startSelect
+            pages: {
+                //RDR.actions.pages:
+                save: function(id, page){
+                    //RDR.actions.pages.save:
+                    RDR.pages[page.id] = page;
+                }
+            },
+            users: {
+                //RDR.actions.users:
+                save: function(id, settings){
+                    //RDR.actions.users.save:
+
+                }
+            }
         }//end RDR.actions
     };
 
@@ -6564,28 +6599,27 @@ function $RFunctions($R){
 
             var methods = {
                 init: function( options ) {
-                    var $this = this.length ? this : $(document),
-                    settings;
+                    var $this = ( this[0] === document ) ? $('.rdr-summary') : this,
+                        settings;
                     
                     return $this.each(function(){
 
                         // merge default and user parameters
                         settings = options ? $.extend(defaults, options) : defaults;
-                        
+                        log(settings);
                         settings.parentContainer = this;
                         _makeSummaryWidget(settings);
-                        //todo: verify that we're not using this and remove it.
-                        //_insertImgIcons(settings);
-
-                        //do init stuff
-
+                        
                     });
                 },
-                otherMethod: function(param){
-                    var $this = this;
-
+                update: function(param){
+                    //todo check this
+                    var $this = ( this[0] === document ) ? $('.rdr-summary') : this;
                     return $this.each(function(index){
-                        //do stuff
+                        console.log(this);
+                        console.log(param);
+
+                        console.log('updating summarybar');
                     });
                 }
 
@@ -6598,16 +6632,21 @@ function $RFunctions($R){
             }
 
             //helper function for ajax above
-            function _makeSummaryWidget(response){
+            function _makeSummaryWidget(settings){
 
-                    var page = response;
+                    var page = settings;
 
-                    var $summary_widget_parent = $(response.parentContainer),
-                        $summary_widget = $('<div class="rdr rdr-summary" />');
+                    var widgetClass = 'rdr-summary-key-'+page.key;
 
-                    //response.jqFunc would be something like 'append' or 'after',
+                    //first kill any existing instances; we're going to recreate them.
+                    $('.'+widgetClass).remove();
+
+                    var $summary_widget_parent = $(page.parentContainer),
+                        $summary_widget = $('<div class="rdr rdr-summary" />').addClass(widgetClass);
+
+                    //page.jqFunc would be something like 'append' or 'after',
                     //so this would read $summary_widget_parent.append($summary_widget);
-                    $summary_widget_parent[response.jqFunc]($summary_widget);
+                    $summary_widget_parent[page.jqFunc]($summary_widget);
                     
                     var total_interactions = 0;
                     for ( var i in page.summary ) {
@@ -6816,19 +6855,6 @@ function $RFunctions($R){
                 }
 
             }
-            //commenting this out because I don't think we're using it.
-            /*
-            function _insertImgIcons(response){
-                var page = response;
-                var tempd = $.extend( {}, response );
-                for ( var i in page.imagedata ){
-                    //todo: combine this with the other indicator code and make the imagedata give us a hash from the db
-                    var hash = RDR.util.md5.hex_md5(i);
-                    page.imagedata[i].hash = hash; //todo: list these by hash in the first place.
-
-                }
-            }
-            */
 
         }
         //end function plugin_jquery_rdrWidgetSummary
