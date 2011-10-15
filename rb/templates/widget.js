@@ -33,7 +33,16 @@ function readrBoard($R){
             group_id : "{{ group_id }}",  //make group_id a string partly to make my IDE happy - getting sent as ajax anyway
             short_name : "{{ short_name }}"
         },
-        group: {}, //to be set by RDR.actions.initGroupData
+        group: {
+            //RDR.group:
+            //details to be set by RDR.actions.initGroupData which extends defaults
+            defaults: {
+                inline_indicators: {
+                    jqSelector:'embed, video, object, iframe, img',
+                    jqFunc:'after'
+                }
+            }
+        },
         user: {
             img_url: "", 
             readr_token: "",
@@ -1954,29 +1963,24 @@ function readrBoard($R){
                         host_name : window.location.hostname
                     },
                     success: function(response, textStatus, XHR) {
-                        RDR.group = response.data;
 
-                        //todo: is this line supposed to save the group_id ?
-						//RDR.group.group_id
+                        var group_settings = response.data;
 
-                        var inline_indicators_defaults = {
-                            jqSelector:'embed, video, object, iframe, img',
-                            jqFunc:'after'
-                        };
-                        //swap out which of these 2 is commented out for testing.
-                        RDR.group.inline_indicators = {};
-                        //RDR.group.inline_indicators = { jqSelector:'', jqFunc:'' };
+                        //TODO TEMP settigns normaly passed in by  out which of these 2 is commented out for testing.
+                        //group_settings.inline_indicators = {};
+                        group_settings.inline_indicators = { jqSelector:'', jqFunc:'' };
                         
 
                         //todo:just for testing for now: - add defaults:
-                        RDR.group.img_selector = RDR.group.img_selector || "img";
-                        RDR.group.anno_whitelist = RDR.group.anno_whitelist || "body p";
-                        RDR.group.media_selector = RDR.group.media_selector || "embed, video, object, iframe";
-                        RDR.group.comment_length = RDR.group.comment_length || 300;
-                        RDR.group.initial_pin_limit = RDR.group.initial_pin_limit || 30;
-                        RDR.group.no_readr = RDR.group.no_readr || "";
-                        RDR.group.img_blacklist = RDR.group.img_blacklist || "";                        
-                        RDR.group.inline_indicators = $.extend( {}, inline_indicators_defaults, RDR.group.inline_indicators );
+                        RDR.group.img_selector = group_settings.img_selector || "img";
+                        RDR.group.anno_whitelist = group_settings.anno_whitelist || "body p";
+                        RDR.group.media_selector = group_settings.media_selector || "embed, video, object, iframe";
+                        RDR.group.comment_length = group_settings.comment_length || 300;
+                        RDR.group.initial_pin_limit = group_settings.initial_pin_limit || 30;
+                        RDR.group.no_readr = group_settings.no_readr || "";
+                        RDR.group.img_blacklist = group_settings.img_blacklist || "";                        
+                        RDR.group.custom_css = group_settings.custom_css || "";                        
+                        RDR.group.inline_indicators = $.extend( {}, RDR.group.defaults.inline_indicators, group_settings.inline_indicators );
 
                         $(RDR.group.no_readr).each( function() { 
                             $(this).addClass('no-rdr'); 
@@ -1985,10 +1989,10 @@ function readrBoard($R){
 
                         // it's not a CSS URL, but rather custom CSS rules.  We should change the name in the model...
                         // this embeds custom CSS.
-                        if ( RDR.group.custom_css && RDR.group.custom_css !== "" ) {
+                        if ( RDR.group.custom_css !== "" ) {
                             $('head').append( $('<style type="text/css">' + RDR.group.custom_css + '</style>') );
                         }
-
+                        
                         $RDR.dequeue('initAjax');
                     },
                     error: function(response) {
@@ -2108,7 +2112,7 @@ function readrBoard($R){
                             RDR.actions.pages.save(page.id, page);
                             RDR.actions.pages.initPageContainers(page.id);
                         });
-                        
+
                         $RDR.dequeue('initAjax');
                     },
                     error: function(response) {
@@ -4132,7 +4136,21 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             else{
                                 _standardSetup();
                             }
+                            _commonSetup();
+
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
+
+                            function _commonSetup(){
+                                $indicator_details.addClass('rdr_indicator_details_for_media').hover(
+                                    function() {
+                                        $(this).data('hover', true).addClass('rdr_hover');
+                                    },
+                                    function() {
+                                        $(this).data('hover', false).removeClass('rdr_hover');
+                                    }
+                                );
+                            }
+
                             function _inlineIndicatorSetup(){
                                 $indicator.appendTo($container_tracker);
                                 $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline'); 
@@ -4145,7 +4163,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                     }
                                 );
 
-                                $indicator_details.addClass('rdr_indicator_details_for_media rdr_indicator_details_for_media_inline');
+                                $indicator_details.addClass('rdr_indicator_details_for_media_inline');
                             }
 
                             function _standardSetup(){
@@ -4171,15 +4189,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                                     },
                                     function() {
-                                    }
-                                );
-
-                                $indicator_details.addClass('rdr_indicator_details_for_media').hover(
-                                    function() {
-                                        $(this).data('hover', true);
-                                    },
-                                    function() {
-                                        $(this).data('hover', false);
                                     }
                                 );
                             }
@@ -4244,7 +4253,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             count = 0; //used as a break statement below
                         
                         if(has_inline_indicator){
-                            tagsListMaxWidth = $indicator_details.width();
+                            tagsListMaxWidth = $indicator_details.outerWidth();
                         }else{
                             tagsListMaxWidth = 300;
                         }
@@ -4352,7 +4361,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         $indicator_details.css({
                            top: $container.offset().bottom,
                            left: $container.offset().left,
-                           width:$container.width()
+                           width:$container.outerWidth()
                         });
                     },
                     updateMediaTracker: function(hash){
