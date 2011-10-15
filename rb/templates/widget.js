@@ -2103,63 +2103,12 @@ function readrBoard($R){
                     data: { json: $.toJSON(sendData) },
 					success: function(response) {
                         $.each( response.data, function(key,page){
+                            //todo: it seems like we should use the page.id as the unique identifier instead of introducting 'key' which is just a counter
                             page.key = key;
                             RDR.actions.pages.save(page.id, page);
-
-                            var $container = $(RDR.group.post_selector + '.rdr-page-key-'+key);
-                            if ( $container.length !== 1 ) return;
-                            //else
-
-                            //[eric] not a big deal, but why did we add this class and then remove it?
-                            $container.removeClass( 'rdr-page-key-' + key );
-
-                            //todo: [eric] this can't be right - we shouldn't just hash a single number like '1'.
-                            var hash = RDR.util.md5.hex_md5( String(page.id) );
-                            var tagName = $container.get(0).nodeName.toLowerCase();  //todo: looks like we're not using this for pages?
-
-                            //[eric] using our containers.save method to ensure out model is consistent througout.
-                            RDR.actions.containers.save({ 
-                                id: String(page.id),
-                                kind: "page",
-                                hash: hash,
-                                HTMLkind: null
-                            });
-
-                            $container.data( 'page_id', String(page.id) ); // the page ID
-
-                            //todo: I don't think this is doing anything... the hash doesn't make sense and containers seems to always be empty.
-                            
-                            // hash the "page" descendant nodes
-                            // RDR.actions.hashNodes( $container, "nomedia" );
-                            RDR.actions.hashNodes( $container );
-
-                            if ( page.containers.length > 0 ) {
-                                var hashes = [];
-                                hashes[ page.id ] = [];
-                                for ( var i in page.containers ) {
-                                    hashes[ page.id ].push( page.containers[i].hash );
-                                }
-                                RDR.actions.sendHashes( hashes );
-                            }
-
-                            //init the widgetSummary
-                            var widgetSummarySettings = page;
-                            
-                            widgetSummarySettings.key = key;
-                            if ( $container.find( RDR.group.summary_widget_selector + '.rdr-page-widget-key-' + key).length == 1 ) {
-                                widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector + '.rdr-page-widget-key-'+key);
-                                widgetSummarySettings.jqFunc = "after";
-                            } else {
-                                widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
-                                widgetSummarySettings.jqFunc = "append";
-                            }
-                            
-                            if ( ($('div.rdr-summary').length===0) || ( $('div.rdr-summary').length < $(RDR.group.post_selector).length ) ) {
-                                widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
-                            }
+                            RDR.actions.pages.initPageContainers(page.id);
                         });
-
-                        //todo: moved this out of the loop - it should not have been in there getting called more than once. -check up on this
+                        
                         $RDR.dequeue('initAjax');
                     },
                     error: function(response) {
@@ -6206,6 +6155,65 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 save: function(id, page){
                     //RDR.actions.pages.save:
                     RDR.pages[page.id] = page;
+                },
+                initPageContainers: function(pageId){
+                    var page = RDR.pages[pageId],
+                        key = page.key; //todo: consider phasing out - use id instead
+
+                    var $container = $(RDR.group.post_selector + '.rdr-page-key-'+key);
+                    if ( $container.length !== 1 ) return;
+                    //else
+
+                    //[eric] not a big deal, but why did we add this class and then remove it?
+                    $container.removeClass( 'rdr-page-key-' + key );
+
+                    //todo: [eric] this can't be right - we shouldn't just hash a single number like '1'.
+                    var hash = RDR.util.md5.hex_md5( String(page.id) );
+                    var tagName = $container.get(0).nodeName.toLowerCase();  //todo: looks like we're not using this for pages?
+
+                    //[eric] using our containers.save method to ensure out model is consistent througout.
+                    RDR.actions.containers.save({ 
+                        id: String(page.id),
+                        kind: "page",
+                        hash: hash,
+                        HTMLkind: null
+                    });
+
+                    $container.data( 'page_id', String(page.id) ); // the page ID
+
+                    //todo: I don't think this is doing anything... the hash doesn't make sense and containers seems to always be empty.
+                    
+                    // hash the "page" descendant nodes
+                    // RDR.actions.hashNodes( $container, "nomedia" );
+                    RDR.actions.hashNodes( $container );
+
+                    if ( page.containers.length > 0 ) {
+                        var hashes = [];
+                        hashes[ page.id ] = [];
+                        for ( var i in page.containers ) {
+                            hashes[ page.id ].push( page.containers[i].hash );
+                        }
+                        RDR.actions.sendHashes( hashes );
+                    }
+
+                    //todo: everythign below here should be a separate function.  What is it doing?
+                    //todo: [eric] let the widget plugin handle this stuff.  Porter lets talk
+                                            
+                    //init the widgetSummary
+                    var widgetSummarySettings = page;
+                    
+                    widgetSummarySettings.key = key;
+                    if ( $container.find( RDR.group.summary_widget_selector + '.rdr-page-widget-key-' + key).length == 1 ) {
+                        widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector + '.rdr-page-widget-key-'+key);
+                        widgetSummarySettings.jqFunc = "after";
+                    } else {
+                        widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
+                        widgetSummarySettings.jqFunc = "append";
+                    }
+                    
+                    if ( ($('div.rdr-summary').length===0) || ( $('div.rdr-summary').length < $(RDR.group.post_selector).length ) ) {
+                        widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
+                    }
                 }
             },
             users: {
