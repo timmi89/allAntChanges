@@ -811,7 +811,7 @@ function readrBoard($R){
 					if ( settings.noHeader ) $new_rindow.find('h1').remove();
 					
                     $new_rindow.draggable({
-                        handle:'.rdr_header .rdr_header_overlay', //todo: move the header_overlay inside the header so we don't need this hack
+                        handle:'.rdr_header, .rdr_header_overlay', //todo: move the header_overlay inside the header so we don't need this hack
                         containment:'document',
                         stack:'.RDR.window',
                         start:function() {
