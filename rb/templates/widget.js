@@ -1391,10 +1391,14 @@ function readrBoard($R){
                         $msg2 = $('<div>Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.</div>');
                     }
                     if( whichAlert == "fromShareLink"){
-                        //put a better message here
                         $msg1 = $('<h1>Shared with <span>ReadrBoard</span></h1>');
-                        $msg2 = $('<strong>' + data.reaction + ':</strong> <em>' + data.content.substr(0,140) + '...</em> <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>');
 
+                        if ( $('img.rdr-'+data.container_hash).length == 1 ) {
+                            $msg2 = $('<strong style="display:block;">' + data.reaction + ':</strong> <img src="' + data.content + '" style="max-width:100px !important;max-height:70px !important;margin:5px 0 !important;display:block !important;" /> <strong style="display:block;"><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>');
+                        } else {
+                            //put a better message here
+                            $msg2 = $('<strong>' + data.reaction + ':</strong> <em>' + data.content.substr(0,140) + '...</em> <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>');
+                        }
                         $msg2.find('a.rdr_showSelection').click( function() {
                             //show the alertBar sliding closed for just a second before scrolling down..
                             // RDR.session.alertBar.close();
