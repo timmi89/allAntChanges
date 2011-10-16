@@ -122,8 +122,8 @@ class Group(models.Model):
     word_blacklist = models.TextField(blank=True)
     
     # Jquery settings
-    inline_selector = models.CharField(max_length=100, default='')
-    inline_func = models.CharField(max_length=25, default='')
+    inline_selector = models.CharField(max_length=100, default='', blank=True)
+    inline_func = models.CharField(max_length=25, default='', blank=True)
     
     # Many to many relations
     admins = models.ManyToManyField(SocialUser, through='GroupAdmin')
