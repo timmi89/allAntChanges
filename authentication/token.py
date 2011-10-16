@@ -19,22 +19,35 @@ def checkToken(data):
     If request is good and token matches return User object
     Returns None if failure
     """
-    user_id = data.get('user_id')
+    try:
+        user_id = data.get('user_id')
+    except KeyError:
+        raise JSONException("No user id supplied")
         
     # Get user objects from database
-    user = User.objects.get(id=user_id)
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist, User.MultipleObjectsReturned:
+        return None
     
     social_user = SocialUser.objects.filter(user=user_id)
     
     # Check and set auth_token for registered social user
     if len(social_user) == 1:
         print "Checking token for registered user"
-        social_auth = SocialAuth.objects.get(social_user__user=data['user_id'])
+        try:
+            social_auth = SocialAuth.objects.get(social_user__user=data['user_id'])
+        except SocialAuth.DoesNotExist:
+            return None
 
         # Check with facebook to see if token is still valid
         # Note: this is slow -- look for a way to improve
-        graph = GraphAPI(social_auth.auth_token)
-        graph.get_object("me")
+        try:
+            graph = GraphAPI(social_auth.auth_token)
+            graph.get_object("me")
+        except GraphAPIError as GAE:
+            print GAE.message
+            return None 
             
         # If facebook approves, check if expired -- could be redundant
         now = datetime.now()

@@ -116,7 +116,7 @@ class InteractionHandler(AnonymousBaseHandler):
         else:
             # check to see if user's token is valid
             user = checkToken(data)
-            #if not user: raise JSONException(u"Token was invalid")
+            if not user: raise JSONException(u"Token was invalid")
 
             # do create action - varies per interaction
             if action == 'create':
