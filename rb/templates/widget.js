@@ -33,11 +33,36 @@ function readrBoard($R){
             group_id : "{{ group_id }}",  //make group_id a string partly to make my IDE happy - getting sent as ajax anyway
             short_name : "{{ short_name }}"
         },
-        group: {}, //to be set by RDR.actions.initGroupData
+        group: {
+            //RDR.group:
+            //details to be set by RDR.actions.initGroupData which extends defaults
+            defaults: {
+                img_selector: "img",
+                anno_whitelist: "body p",
+                media_selector: "embed, video, object, iframe",
+                comment_length: 300,
+                initial_pin_limit: 30,
+                no_readr: "",
+                img_blacklist: "",
+                custom_css: "",
+                inline_indicators: {
+                    jqSelector: "",
+                    jqFunc: ""
+                },
+                //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
+                inline_indicators: {
+                    jqSelector:'embed, video, object, iframe, img',
+                    jqFunc:'after'
+                }
+            }
+        },
         user: {
             img_url: "", 
             readr_token: "",
             user_id: ""
+        },
+        known_users: {
+            
         },
         errors: {
             actionbar: {
@@ -103,15 +128,11 @@ function readrBoard($R){
                 var settings = $.extend({}, this.defaults, options);
                 
                 //
-                // log($tagBox.height());
-
+                
                 // var minHeight, maxHeight,
                 // height = rindow.height(),
                 // gotoHeight = $tagBox.height() + 35 + 10, //+ header height + extra padding;
                 // minHeight = gotoHeight;
-
-                // log('rindow height');
-                // log(height);
 
                 // gotoHeight = gotoHeight ? gotoHeight : ( height < minHeight ) ? minHeight : (height > maxHeight) ? maxHeight : null;
                 // if( gotoHeight ){
@@ -378,11 +399,24 @@ function readrBoard($R){
                         $indicatorDetails = $('#rdr_indicator_details_'+ hash),
                         $container = $('.rdr-'+hash);
 
-                        var tempOffsets = {
+                        var has_inline_indicator = $container.data('inlineIndicator'); //boolean
+                        var tempOffsets = has_inline_indicator ? {
+                            top: 0,
+                            left: 0
+                        } : {
                             top: -5,
                             left: 1
                         };
-                        var coords = (kind == "img" || kind == "media" ) ?
+
+                        //toggled back in RDR.rindow.close:
+                        if(has_inline_indicator){
+                            $indicatorDetails.find('.rdr_indicator_details_innerWrap').css({
+                               'visibility':'hidden'
+                            });
+                        }
+
+                        //todo: make this nicer
+                        var coords = ( (kind == "img" || kind == "media") && !has_inline_indicator ) ?
                         {
                             top: $container.offset().top,
                             left: $container.offset().left + $container.width()
@@ -392,7 +426,7 @@ function readrBoard($R){
                             top: $indicatorDetails.data('top') + tempOffsets.top,
                             left: $indicatorDetails.data('left') + tempOffsets.left 
                         };
-                    
+                        
                         var rindow = RDR.rindow.draw({
                             coords:coords,
                             pnlWidth:170,
@@ -783,7 +817,7 @@ function readrBoard($R){
 					if ( settings.noHeader ) $new_rindow.find('h1').remove();
 					
                     $new_rindow.draggable({
-                        handle:'.rdr_header .rdr_header_overlay', //todo: move the header_overlay inside the header so we don't need this hack
+                        handle:'.rdr_header, .rdr_header_overlay', //todo: move the header_overlay inside the header so we don't need this hack
                         containment:'document',
                         stack:'.RDR.window',
                         start:function() {
@@ -859,9 +893,16 @@ function readrBoard($R){
                 return $new_rindow;
 			},
             close: function( $rindows ) {
+                //RDR.rindow.close:
                 RDR.rindow.clearHilites( $rindows );
                 $rindows.each(function(idx,rindow){
                     $(rindow).remove();
+                });
+
+                //todo: move this - this is a temp shotgun spray approach.
+                //toggled to hidden in RDR.rindow._rindowTypes.readMode.make:
+                $('#rdr_indicator_details_wrapper').find('.rdr_indicator_details_innerWrap').css({
+                   'visibility':'visible'
                 });
             },
             closeAll: function() {
@@ -1174,7 +1215,7 @@ function readrBoard($R){
                     $indicator.removeClass('rdr_engage_media');
                     $actionbar.remove();
                 }
-
+       
 			},
             closeSuggest: function(hashes) {
                 //hashes can be a single hash or a list of hashes
@@ -1898,6 +1939,7 @@ function readrBoard($R){
             }
 		},
         actions: {
+            //RDR.actions:
             aboutReadrBoard: function() {
             },
             init: function(){
@@ -1935,20 +1977,12 @@ function readrBoard($R){
                         host_name : window.location.hostname
                     },
                     success: function(response, textStatus, XHR) {
-                        RDR.group = response.data;
 
-                        //todo: is this line supposed to save the group_id ?
-						//RDR.group.group_id
+                        var group_settings = response.data;
 
-                        //todo:just for testing for now: - add defaults:
-                        RDR.group.img_selector = RDR.group.img_selector || "img";
-                        RDR.group.anno_whitelist = RDR.group.anno_whitelist || "body p";
-                        RDR.group.media_selector = RDR.group.media_selector || "embed, video, object, iframe";
-                        RDR.group.comment_length = RDR.group.comment_length || 300;
-                        RDR.group.initial_pin_limit = RDR.group.initial_pin_limit || 30;
-                        RDR.group.no_readr = RDR.group.no_readr || "";
-                        RDR.group.img_blacklist = RDR.group.img_blacklist || "";
-
+                        //true triggers a deep (recursive) merge
+                        RDR.group = $.extend( true, {}, RDR.group.defaults, group_settings );
+                        
                         $(RDR.group.no_readr).each( function() { 
                             $(this).addClass('no-rdr'); 
                             $(this).find('img').addClass('no-rdr');
@@ -1956,10 +1990,10 @@ function readrBoard($R){
 
                         // it's not a CSS URL, but rather custom CSS rules.  We should change the name in the model...
                         // this embeds custom CSS.
-                        if ( RDR.group.custom_css && RDR.group.custom_css !== "" ) {
+                        if ( RDR.group.custom_css !== "" ) {
                             $('head').append( $('<style type="text/css">' + RDR.group.custom_css + '</style>') );
                         }
-
+                        
                         $RDR.dequeue('initAjax');
                     },
                     error: function(response) {
@@ -2073,54 +2107,14 @@ function readrBoard($R){
                     dataType: "jsonp",
                     data: { json: $.toJSON(sendData) },
 					success: function(response) {
-                        for ( var key in response.data ) {
-                            var page = response.data[key];
-                            var $container = ( $(RDR.group.post_selector + '.rdr-page-key-'+key).length > 0 ) ? $(RDR.group.post_selector + '.rdr-page-key-'+key) : $('body.rdr-page-key-'+key);
+                        $.each( response.data, function(key,page){
+                            //todo: it seems like we should use the page.id as the unique identifier instead of introducting 'key' which is just a counter
+                            page.key = key;
+                            RDR.actions.pages.save(page.id, page);
+                            RDR.actions.pages.initPageContainers(page.id);
+                        });
 
-                            if ( $container.length == 1 ) {
-                                
-                                $container.removeClass( 'rdr-page-key-' + key );
-
-                                var hash = RDR.util.md5.hex_md5( String(page.id) );
-                                var tagName = $container.get(0).nodeName.toLowerCase();
-
-                                if ( !RDR.containers[hash] ) {
-                                    RDR.containers[hash] = {};
-                                    RDR.containers[hash].id = String(page.id);
-                                    RDR.containers[hash].kind = "page";
-                                    $container.data( 'page_id', String(page.id) ); // the page ID
-                                }
-
-                                // hash the "page" descendant nodes
-                                // RDR.actions.hashNodes( $container, "nomedia" );
-                                RDR.actions.hashNodes( $container );
-
-                                if ( page.containers.length > 0 ) {
-                                    var hashes = [];
-                                    hashes[ page.id ] = [];
-                                    for ( var i in page.containers ) {
-                                        hashes[ page.id ].push( page.containers[i].hash );
-                                    }
-                                    RDR.actions.sendHashes( hashes );
-                                }
-
-                                //init the widgetSummary
-                                var widgetSummarySettings = page;
-                                if ( $container.find( RDR.group.summary_widget_selector + '.rdr-page-widget-key-' + key).length == 1 ) {
-                                    widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector + '.rdr-page-widget-key-'+key);
-                                    widgetSummarySettings.jqFunc = "after";
-                                } else {
-                                    widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
-                                    widgetSummarySettings.jqFunc = "append";
-                                }
-                                
-                                if ( ($('div.rdr-summary').length===0) || ( $('div.rdr-summary').length < $(RDR.group.post_selector).length ) ) {
-                                    widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
-                                }
-                            }
-                            $RDR.dequeue('initAjax');
-                        }
-
+                        $RDR.dequeue('initAjax');
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
@@ -2293,6 +2287,12 @@ function readrBoard($R){
                         $(this).data('kind', group.kind);
                     });
                     $allNodes = $allNodes.add($group);
+
+                    //flag exceptions for inline_indicators
+                    var $inlineMediaSet = $allNodes.filter(RDR.group.inline_indicators.jqSelector);
+                    $inlineMediaSet.each(function(){
+                        $(this).data('inlineIndicator', true);
+                    });
 
                 });
 
@@ -2468,12 +2468,15 @@ function readrBoard($R){
                     //expects settings with body, kind, and hash.
                     if( RDR.containers.hasOwnProperty(settings.hash) ) return RDR.containers[settings.hash];
                     //else
+                    var pageId = ( typeof settings.id === 'undefined' || settings.id === null ) ? null : settings.id;
+
                     var container = {
-                        'body': settings.body,
+                        'id': pageId,
+                        'body': settings.body || null,
                         'kind': settings.kind,
                         'hash': settings.hash,
-                        'HTMLkind': settings.HTMLkind,
-                        '$this': settings.$this
+                        'HTMLkind': settings.HTMLkind || null,
+                        '$this': settings.$this || null
                     };
                     RDR.containers[settings.hash] = container;
                     return container;
@@ -2522,7 +2525,6 @@ function readrBoard($R){
                                         left: $container.offset().right
                                     };
 
-
                                     $container.addClass('rdr_engage_media');
 
                                     //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
@@ -2535,15 +2537,23 @@ function readrBoard($R){
                                     var $rivals = $('div.rdr_actionbar').not($actionbar);
                                     RDR.actionbar.close( $rivals );
 
+                                    //this looks bad because it's adding a hover event on every container hover event, but we need to because
+                                    //the actionbar is being recreated every time.  We if the actionbar hasn't faded out yet though it will be the
+                                    //same one, so check for that to avoid excessive events (not that would really hurt anything)
+                                    if ( $actionbar.data('hasHoverEvent') ) return;
+                                    //else
                                     $actionbar.hover(
                                         function() {
                                             $(this).data('hover',true);
+                                            
                                         },
                                         function() {
                                             $(this).data('hover',false);
                                             RDR.actionbar.closeSuggest(hash);
                                         }
                                     );
+                                    $actionbar.data('hasHoverEvent', true);
+
                                 },
                                 function(){
                                     var actionbar_id = "rdr_actionbar_"+hash;
@@ -3385,7 +3395,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                         rindow.dequeue('userMessage');
                                         //hackity hack number incrementer
                                         var $number = $tagCount.find('.rdr_not_loader');
-                                        var tagCount = ( isNaN( parseInt($number.text()) ) ) ? parseInt("1"):parseInt( $number.text() );
+                                        var tagCount = ( isNaN( parseInt($number.text(), 10) ) ) ? parseInt("1", 10):parseInt( $number.text(), 10 );
                                         $number.text( RDR.util.prettyNumber( tagCount ) );
                                         $number.show();
 
@@ -3927,18 +3937,39 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         indicatorDetailsId = 'rdr_indicator_details_'+hash;
 
                     // don't insert floating pins for page-level interactions
-                    if ( !$container.hasClass('rdr-page-container') ) {
-                        //check for and remove any existing indicator and indicator_details and remove for now.
-                        //this shouldn't happen though.
-                        //todo: solve for duplicate content that will have the same hash.
-                        $('#'+indicatorId, '#'+indicatorDetailsId).each(function(){
-                            $(this).remove();
-                        });
+                    if ( $container.hasClass('rdr-page-container') ) return;
+                    //else
 
-                        var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId);
-                        //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
-                        $indicator.css('visibility','hidden');
+                    //check for and remove any existing indicator and indicator_details and remove for now.
+                    //this shouldn't happen though.
+                    //todo: solve for duplicate content that will have the same hash.
+                    $('#'+indicatorId, '#'+indicatorDetailsId).each(function(){
+                        $(this).remove();
+                    });
 
+                    var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId);
+                    //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
+                    $indicator.css('visibility','hidden');
+
+                    
+                    var has_inline_indicator = $container.data('inlineIndicator'); //boolean
+                    
+                    if(has_inline_indicator){
+                        _setupInlineIndicators();
+                    }else{
+                        _setupAbsoluteIndicators();
+                    }
+                    
+                    //run setup specific to this type
+                    scope.utils.kindSpecificSetup[kind]( hash );
+                    RDR.actions.indicators.update(hash);
+
+                    //todo: combine this with the kindSpecificSetup above right?
+                    if (kind == 'text'){
+                        _setupTriggerToFetchContentNodes();
+                    }
+                    
+                    function _setupAbsoluteIndicators(){
                         //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
                         var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body" />').attr('id',indicatorBodyId)//chain
                         .appendTo($indicator)//chain
@@ -3948,7 +3979,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         )//chain
                         .data( {'which':hash} );
 
-                        //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the body.
+                        //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the sandbox.
                         //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
                         var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
                         .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar')//chain
@@ -3970,6 +4001,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             },
                             function() {
                                 $indicator_details.data( 'freshlyKilled', false);
+                                //$indicator_details.show(); //[eric] commenting this out: I don't think this makes sense here.
                             }
                         );
 
@@ -3996,32 +4028,52 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 $(this).data('timeout', timeout);
                             }
                         );
+                    }
+                    function _setupInlineIndicators(){
+                        //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
+                        var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body" />').attr('id',indicatorBodyId)//chain
+                        .appendTo($indicator)//chain
+                        .append(
+                            '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
+                            '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
+                        )//chain
+                        .data( {'which':hash} );
 
-
-                        //run setup specific to this type
+                        //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the sandbox.
+                        //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
+                        var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
+                        .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar')//chain
+                        .appendTo('#rdr_indicator_details_wrapper');
                         
-                        scope.utils.kindSpecificSetup[kind]( hash );
+                        var $container = summary.$container;
 
+                        //used for the rindow draw
+                        //store it's offset in data(), because offset doesn't work if the node is hidden.  It was giving me problems before
+                        $indicator_details.data( 'top', $container.offset().bottom );
+                        $indicator_details.data( 'left', $container.offset().left );
+                                                
+                        $indicator_details.show()//chain
+                        .click( function() {
+                            var selStates = $(this).data('selStates');
 
-                        RDR.actions.indicators.update(hash);
-
-                        //Note that the text indicators still don't have content_node info.
-                        //The content_nodes will only be populated and shown after hitting the server for details triggered by $indicator mouseover.
-                        //on the offchance that this server call fails and the user hilite
-
-                        if (kind == 'text'){
-                            //Setup callback for a successful fetch of the content_nodes for this container
-                            var onSuccessCallback = function(){
-                                $indicator.unbind('mouseover.contentNodeInit');
-                                RDR.actions.indicators.utils.setupContentNodeHilites(hash);
-                            };
-                            //bind the hover event that will only be run once.  It gets removed on the success callback above.
-                            $indicator.bind('mouseover.contentNodeInit', function(){
-                                RDR.actions.content_nodes.init(hash, onSuccessCallback);
-                            });
-                        }
+                            RDR.rindow.make( "readMode", {hash:hash} );
+                        });
+                        $indicator.css('visibility','visible');
                     }
 
+                    function _setupTriggerToFetchContentNodes(){
+                        //Note that the text indicators still don't have content_node info.
+                        //The content_nodes will only be populated and shown after hitting the server for details triggered by $indicator mouseover.
+                        //Setup callback for a successful fetch of the content_nodes for this container
+                        var onSuccessCallback = function(){
+                            $indicator.unbind('mouseover.contentNodeInit');
+                            RDR.actions.indicators.utils.setupContentNodeHilites(hash);
+                        };
+                        //bind the hover event that will only be run once.  It gets removed on the success callback above.
+                        $indicator.bind('mouseover.contentNodeInit', function(){
+                            RDR.actions.content_nodes.init(hash, onSuccessCallback);
+                        });
+                    }
                 },
                 update: function(hash){
                     //RDR.actions.indicators.update:
@@ -4058,6 +4110,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     var kind = summary.kind;
                     
                     $indicator_details.css({ 'visiblity':'visible' }).hide();
+                    //note that rdr_indicator_for_media_inline have an !important in the css so they won't get hidden.
                               
                 },
                 utils:{
@@ -4072,44 +4125,74 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 $container_tracker_wrap = $('#rdr_container_tracker_wrap'),
                                 $container_tracker = $('<div class="rdr_container_tracker" />');
 
+                            var has_inline_indicator = $container.data('inlineIndicator'); //boolean
+    
                             $container_tracker.attr('id', 'rdr_container_tracker_'+hash).appendTo($container_tracker_wrap);
-                            
                             //position the containerTracker at the top left of the image or videos.  We'll position the indicator and hiliteborder relative to this.
+                            
+                            if(has_inline_indicator){
+                                //todo: consider using a plugin pattern for this later if we want the publisher to be able to customize this in detail.
+                                _inlineIndicatorSetup.call($container[0]);
+                            }
+                            else{
+                                _standardSetup();
+                            }
+                            _commonSetup();
+
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
-                            
-                            $indicator.appendTo($container_tracker);
-                            $indicator.addClass('rdr_indicator_for_media');
-                            
-                            $indicator.hover(
-                                function() {
-                                    $indicator_details.css({
-                                        'width': 'auto'
-                                    });                     
-                                    
-                                    var indDetailsWidth = $indicator_details.width(),
-                                    indDetailsLeftOffset = $indicator_body.offset().left + $indicator_body.width() - indDetailsWidth - 3; //account for 3px padding 
 
-                                    $indicator_details.css({
-                                        'width': 10
-                                    });
-                                    $indicator_details.stop().animate({
-                                        'left': indDetailsLeftOffset,
-                                        'width': indDetailsWidth
-                                    },200);
+                            function _commonSetup(){
+                                $indicator_details.addClass('rdr_indicator_details_for_media').hover(
+                                    function() {
+                                        $(this).data('hover', true).addClass('rdr_hover');
+                                    },
+                                    function() {
+                                        $(this).data('hover', false).removeClass('rdr_hover');
+                                    }
+                                );
+                            }
 
-                                },
-                                function() {
-                                }
-                            );
+                            function _inlineIndicatorSetup(){
+                                $indicator.appendTo($container_tracker);
+                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline'); 
 
-                            $indicator_details.addClass('rdr_indicator_details_for_media').hover(
-                                function() {
-                                    $(this).data('hover', true);
-                                },
-                                function() {
-                                    $(this).data('hover', false);
-                                }
-                            );
+                                $indicator.hover(
+                                    function(){
+                                        $(this).addClass('rdr_engage_media');
+                                    },function(){
+                                        $(this).removeClass('rdr_engage_media');
+                                    }
+                                );
+
+                                $indicator_details.addClass('rdr_indicator_details_for_media_inline');
+                            }
+
+                            function _standardSetup(){
+                                $indicator.appendTo($container_tracker);
+                                $indicator.addClass('rdr_indicator_for_media');
+                                
+                                $indicator.hover(
+                                    function() {
+                                        $indicator_details.css({
+                                            'width': 'auto'
+                                        });                     
+                                        
+                                        var indDetailsWidth = $indicator_details.width(),
+                                        indDetailsLeftOffset = $indicator_body.offset().left + $indicator_body.width() - indDetailsWidth + 8; //account for padding and border 
+
+                                        $indicator_details.css({
+                                            'width': 10
+                                        });
+                                        $indicator_details.stop().animate({
+                                            'left': indDetailsLeftOffset,
+                                            'width': indDetailsWidth
+                                        },200);
+
+                                    },
+                                    function() {
+                                    }
+                                );
+                            }
                         },
                         media: function( hash ){
                             //for now just treat it like an img
@@ -4132,6 +4215,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         }
                     },
                     makeDetailsContent: function( hash ){
+                        //RDR.actions.indicators.utils.makeDetailsContent:
                         var scope = this;
                         var summary = RDR.summaries[hash],
                             $container = summary.$container,
@@ -4141,6 +4225,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $actionbar = $('rdr_actionbar_'+hash);
 
                         var $indicator_details_body = $('<div class="rdr rdr_indicator_details_body" />'),
+                            $indicator_details_innerWrap = $('<div class="rdr rdr_indicator_details_innerWrap" />'),
                             categoryTitleText = (summary.counts.tags == 1) ? "&nbsp;reaction:&nbsp;" : "&nbsp;reactions:&nbsp;",
                             categoryTitle = '<span class="rdr_indicator_categoryTitle">' +categoryTitleText+ '</span>',
                             $tagsList = $('<div class="rdr_tags_list" />');
@@ -4148,7 +4233,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         
                         $indicator_details_body.html( $indicator_body.html() );
 
-                        $indicator_details.empty().append( $indicator_details_body, categoryTitle, $tagsList );
+                        //use an innerWrap so that we can move padding to that and measuring the width of the indicator_details will be consistent
+                        $indicator_details.empty().append( $indicator_details_innerWrap );
+                        $indicator_details_innerWrap.append( $indicator_details_body, categoryTitle, $tagsList );
 
                         //builds out the $tagsList contents
                         scope.makeTagsList( hash );
@@ -4156,13 +4243,22 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         //but we need the function to register the nodes in the DOM in order to calc width.
                     },
                     makeTagsList: function( hash ){
-                        var tagsListMaxWidth = 300,
-                            buffer = 120, //for prefix and the "more..." span
-                            count = 0; //used as a break statement below
                         var summary = RDR.summaries[hash],
                             $indicator_details = summary.$indicator_details,
+                            $container = summary.$container,
                             $tagsList = $indicator_details.find('.rdr_tags_list');
 
+                        var has_inline_indicator = $container.data('inlineIndicator'), //boolean
+                            tagsListMaxWidth,
+                            buffer = 120, //for prefix and the "more..." span
+                            count = 0; //used as a break statement below
+                        
+                        if(has_inline_indicator){
+                            tagsListMaxWidth = $indicator_details.outerWidth();
+                        }else{
+                            tagsListMaxWidth = 300;
+                        }
+                        
                         $.each( summary.interaction_order.tags, function( idx, tagOrder ){
                             var tag = summary.top_interactions.tags[ tagOrder.id ];
 
@@ -4170,7 +4266,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             if(count === null) return; //a helper incrementer, set to 'null' below to mimic a 'break' out of the 'each' loop 
                             if( !tag || tag.count < 0) return; //this shouldn't happen, should be taken care of in summaries.update.  But just in case.
 
-                            var $prefix = count ? $('<span>, </span>') : $(), //don't include the first time
+                            var $prefix = count ? $('<span>, </span>') : $(), //check for count to omit the comma prefix on the first case.
                                 $tag = $('<strong/>').append(tag.body),
                                 $count = $('<em/>').append( ' ('+tag.count+')' ),
                                 $span = $('<span />').addClass('rdr_tags_list_tag');
@@ -4246,7 +4342,20 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         });
                         
                         this.updateMediaTracker(hash);
-                        this.updateMediaBorderHilites(hash);
+                        this.borderHilites.update(hash);
+                        
+                    },
+                    updateInlineIndicator: function(hash){
+                        //RDR.actions.indicators.utils.updateInlineIndicator:
+                        var summary = RDR.summaries[hash],
+                            $container = summary.$container,
+                            $indicator_details = summary.$indicator_details;
+
+                        $indicator_details.css({
+                           top: $container.offset().bottom,
+                           left: $container.offset().left,
+                           width:$container.outerWidth()
+                        });
                     },
                     updateMediaTracker: function(hash){
                         //RDR.actions.indicators.utils.updateMediaTracker:
@@ -4293,91 +4402,156 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 top: cornerPadding,
                                 right: cornerPadding
                             });
-                        }
-                        
+
+                            var has_inline_indicator = $container.data('inlineIndicator'); //boolean                        
+                            if(has_inline_indicator){
+                                RDR.actions.indicators.utils.updateInlineIndicator(hash);
+                            }else{
+                                
+                            }
+                        }  
                     },
-                    updateMediaBorderHilites: function(hash){
-                        //RDR.actions.indicators.utils.updateMediaBorderHilites:
-                        var $indicator = $('#rdr_indicator_'+hash),
-                            $container = $('.rdr-'+hash),
-                            $container_tracker = $('#rdr_container_tracker_'+hash);
-                        
-                        var $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
-                        if( !$mediaBorderWrap.length ){
-                            $mediaBorderWrap = $('<div class="rdr_media_border_wrap" />').appendTo($container_tracker);
-                        }
-                        var $topHilite = $container_tracker.find('.rdr_mediaHilite_top');
-                        if( !$topHilite.length ){
-                            $topHilite = $('<div class="rdr_mediaHilite_top" />').appendTo($mediaBorderWrap);
-                        }
-                        var $rightHilite = $container_tracker.find('.rdr_mediaHilite_right');
-                        if( !$rightHilite.length ){
-                            $rightHilite = $('<div class="rdr_mediaHilite_right" />').appendTo($mediaBorderWrap);
-                        }
-                        var $bottomHilite = $container_tracker.find('.rdr_mediaHilite_bottom');
-                        if( !$bottomHilite.length ){
-                            $bottomHilite = $('<div class="rdr_mediaHilite_bottom" />').appendTo($mediaBorderWrap);
-                        }
-                        var $leftHilite = $container_tracker.find('.rdr_mediaHilite_left');
-                        if( !$leftHilite.length ){
-                            $leftHilite = $('<div class="rdr_mediaHilite_left" />').appendTo($mediaBorderWrap);
-                        }
+                    borderHilites: {
+                        makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
+                        make: function(hash){
+                            //RDR.actions.indicators.utils.borderHilites.make:
+                            var $indicator = $('#rdr_indicator_'+hash),
+                                $container = $('.rdr-'+hash),
+                                $container_tracker = $('#rdr_container_tracker_'+hash),
+                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap'); //probably null, will make it below.
+                            
+                            if( !$mediaBorderWrap.length ){
+                                $mediaBorderWrap = $('<div class="rdr_media_border_wrap" />').appendTo($container_tracker);
+                            }
+                            $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
 
-                        $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
-                        var hiliteThickness = 2;
+                            var borders = {
+                                'top': {
+                                    $side: null,
+                                    css: {}
+                                },
+                                'right': {
+                                    $side: null,
+                                    css: {}
+                                },
+                                'bottom': {
+                                    $side: null,
+                                    css: {}
+                                },
+                                'left': {
+                                    $side: null,
+                                    css: {}
+                                }
+                            };
 
-                        //check if it has a border.
-                        //If so we'll use outerWidth and outerHeight to take it into account.
-                        //If not, we use just the regular height and width so we'll ignore padding which would make the borderHilite look crappy.
+                            $mediaBorderWrap.data('borders',borders);
+                            RDR.actions.indicators.utils.borderHilites.update(hash);
 
-                        var containerWidth, containerHeight;
+                        },
+                        update: function(hash){
+                            //RDR.actions.indicators.utils.borderHilites.update:
+                            var $indicator = $('#rdr_indicator_'+hash),
+                                $container = $('.rdr-'+hash),
+                                $container_tracker = $('#rdr_container_tracker_'+hash),
+                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
+                            
+                            if( !$mediaBorderWrap.length ){
+                                //failsafe that shouldnt be needed.
+                                if( this.makeAttempt > 1 ) return;
+                                this.makeAttempt ++;
+                                RDR.actions.indicators.utils.borderHilites.make(hash);
+                                //just return here.  the make function will call this update function again and this will be bypassed.
+                                return;
+                            }
+                            //else
+                            this.makeAttempt = 0;
 
-                        //this will calc to 0 if there is no border. 
-                        var hasBorder = parseInt( $container.css('border-top-width'), 10 ) +
-                            parseInt( $container.css('border-right-width'), 10 ) +
-                            parseInt( $container.css('border-bottom-width'), 10 ) +
-                            parseInt( $container.css('border-left-width'), 10 );
+                            $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
 
-                        if(hasBorder){
-                            containerWidth = $container.outerWidth();
-                            containerHeight = $container.outerHeight();
-                        }else{
-                            containerWidth = $container.width();
-                            containerHeight = $container.height();
-                        }
+                            var borders = {
+                                'top': {
+                                    $side: null,
+                                    css: {}
+                                },
+                                'right': {
+                                    $side: null,
+                                    css: {}
+                                },
+                                'bottom': {
+                                    $side: null,
+                                    css: {}
+                                },
+                                'left': {
+                                    $side: null,
+                                    css: {}
+                                }
+                            };
+                            
+                            var hiliteThickness = 2,
+                                containerWidth,
+                                containerHeight;
 
-                        var hiliteCss = {
-                            t: {
+                            var hasBorder = false;
+                            //for checking if it has a border.
+                            //If so we'll use outerWidth and outerHeight to take it into account.
+                            //If not, we use just the regular height and width so we'll ignore padding which would make the borderHilite look crappy.
+
+                            $.each( borders, function(side, data){
+                                //set the value in the object using the key's string as a helper
+                                var hiliteClass = 'rdr_mediaHilite_'+side; //i.e. rdr_mediaHilite_top
+                                
+                                data.$side = $mediaBorderWrap.find('.'+hiliteClass);
+                                if( !data.$side.length ){
+                                    data.$side = $('<div />').addClass(hiliteClass).appendTo($mediaBorderWrap);
+                                }
+
+                                //if any side has a border - set hasBorder to true
+                                if( parseInt( $container.css('border-'+side+'-width'), 10 ) ){
+                                    hasBorder = true;
+                                }
+
+                            });
+                            
+                            //figure out dims
+                            if(hasBorder){
+                                containerWidth = $container.outerWidth();
+                                containerHeight = $container.outerHeight();
+                            }else{
+                                containerWidth = $container.width();
+                                containerHeight = $container.height();
+                            }
+
+                            //use dims to make the css rules for each border side
+                            borders.top.css = {
                                 width: containerWidth,
                                 height: 0,
                                 top: -hiliteThickness,
                                 left: -hiliteThickness
-                            },
-                            r: {
+                            };
+                            borders.right.css = {
                                 width:0,
                                 height: containerHeight,
                                 top: 0,
                                 left: containerWidth
-                            },
-                            b: {
+                            };
+                            borders.bottom.css = {
                                 width: containerWidth,
                                 height: 0,
                                 top: containerHeight,
                                 left: -hiliteThickness
-                            },
-                            l: {
+                            };
+                            borders.left.css = {
                                 width: 0,
                                 height: containerHeight,
                                 top: 0,
                                 left: -hiliteThickness
-                            }
-                        };
+                            };
 
-                        RDR.util.cssSuperImportant($topHilite, hiliteCss.t);
-                        RDR.util.cssSuperImportant($rightHilite, hiliteCss.r);
-                        RDR.util.cssSuperImportant($bottomHilite, hiliteCss.b);
-                        RDR.util.cssSuperImportant($leftHilite, hiliteCss.l);
-                       
+                            $.each( borders, function( side, data ){
+                                RDR.util.cssSuperImportant( data.$side, data.css );
+                            });                       
+                    
+                        }
                     }
                 }//end RDR.actions.indicators.utils
             },
@@ -4386,7 +4560,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     updateCommentSet: function(args) {
                         var rindow = args.rindow,
                             tag = args.tag,
-                            hash = args.hash
+                            hash = args.hash,
                             user = args.user;
 
                         var $whyPanel = rindow.find('div.rdr_whyPanel'),
@@ -4433,7 +4607,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 id:user.user_id,
                                 last_name:""
                             }
-                        }
+                        };
 
                         if ( typeof RDR.summaries[hash].top_interactions.coms[tag.id] == "undefined" ) {
                             RDR.summaries[hash].top_interactions.coms[tag.id] = [];
@@ -4559,6 +4733,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             diffNode.int_type = interaction_node_type;
                             //now update rindow
                             RDR.rindow.update(hash, diffNode);
+
                         });
 
                     });
@@ -4584,6 +4759,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         //RDR.actions.summaries.update( 'pageSummary' );
                     }
 
+                     //update the page summaries:
+                    //$(document).rdrWidgetSummary('update');
 
                 },
                 sortInteractions: function(hash) {
@@ -5672,7 +5849,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     case "linkedin":
                     break;
                 }
-                if ( share_url != "" ) {
+                if ( share_url !== "" ) {
                     if ( RDR.shareWindow ) {
                         RDR.shareWindow.location = share_url;
                     }
@@ -5684,11 +5861,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 var summary = RDR.summaries[hash],
                     $rindow_readmode = summary.$rindow_readmode,
                     $rindow_writemode = summary.$rindow_writemode;
-                    /*
-                    log(summary);
-                    log($rindow_readmode);
-                    log($rindow_writemode);
-                    */
+                    
             },
             updateData: function(args) {
                 var tag_text;
@@ -6050,7 +6223,80 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 }
 
 
-            }//end RDR.actions.startSelect
+            },//end RDR.actions.startSelect
+            pages: {
+                //RDR.actions.pages:
+                save: function(id, page){
+                    //RDR.actions.pages.save:
+                    RDR.pages[page.id] = page;
+                },
+                initPageContainers: function(pageId){
+                    var page = RDR.pages[pageId],
+                        key = page.key; //todo: consider phasing out - use id instead
+
+                    var $container = $(RDR.group.post_selector + '.rdr-page-key-'+key);
+                    if ( $container.length !== 1 ) return;
+                    //else
+
+                    //[eric] not a big deal, but why did we add this class and then remove it?
+                    $container.removeClass( 'rdr-page-key-' + key );
+
+                    //todo: [eric] this can't be right - we shouldn't just hash a single number like '1'.
+                    var hash = RDR.util.md5.hex_md5( String(page.id) );
+                    var tagName = $container.get(0).nodeName.toLowerCase();  //todo: looks like we're not using this for pages?
+
+                    //[eric] using our containers.save method to ensure out model is consistent througout.
+                    RDR.actions.containers.save({ 
+                        id: String(page.id),
+                        kind: "page",
+                        hash: hash,
+                        HTMLkind: null
+                    });
+
+                    $container.data( 'page_id', String(page.id) ); // the page ID
+
+                    //todo: I don't think this is doing anything... the hash doesn't make sense and containers seems to always be empty.
+                    
+                    // hash the "page" descendant nodes
+                    // RDR.actions.hashNodes( $container, "nomedia" );
+                    RDR.actions.hashNodes( $container );
+
+                    if ( page.containers.length > 0 ) {
+                        var hashes = [];
+                        hashes[ page.id ] = [];
+                        for ( var i in page.containers ) {
+                            hashes[ page.id ].push( page.containers[i].hash );
+                        }
+                        RDR.actions.sendHashes( hashes );
+                    }
+
+                    //todo: everythign below here should be a separate function.  What is it doing?
+                    //todo: [eric] let the widget plugin handle this stuff.  Porter lets talk
+                                            
+                    //init the widgetSummary
+                    var widgetSummarySettings = page;
+                    
+                    widgetSummarySettings.key = key;
+                    if ( $container.find( RDR.group.summary_widget_selector + '.rdr-page-widget-key-' + key).length == 1 ) {
+                        widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector + '.rdr-page-widget-key-'+key);
+                        widgetSummarySettings.jqFunc = "after";
+                    } else {
+                        widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
+                        widgetSummarySettings.jqFunc = "append";
+                    }
+                    
+                    if ( ($('div.rdr-summary').length===0) || ( $('div.rdr-summary').length < $(RDR.group.post_selector).length ) ) {
+                        widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
+                    }
+                }
+            },
+            users: {
+                //RDR.actions.users:
+                save: function(id, settings){
+                    //RDR.actions.users.save:
+
+                }
+            }
         }//end RDR.actions
     };
 
@@ -6094,7 +6340,7 @@ rdr_loadScript( RDR_scriptPaths.jquery, function(){
     if ( $.browser.msie  && parseInt($.browser.version, 10) < 8 ) {
         return false;
     }
-    if ( $.browser.msie  && parseInt($.browser.version) == 8 ) {
+    if ( $.browser.msie  && parseInt($.browser.version, 10) == 8 ) {
         $('body').addClass('rdr_ie');
     }
     
@@ -6435,8 +6681,8 @@ function $RFunctions($R){
 
             var methods = {
                 init: function( options ) {
-                    var $this = this.length ? this : $(document),
-                    settings;
+                    var $this = ( this[0] === document ) ? $('.rdr-summary') : this,
+                        settings;
                     
                     return $this.each(function(){
 
@@ -6445,18 +6691,17 @@ function $RFunctions($R){
                         
                         settings.parentContainer = this;
                         _makeSummaryWidget(settings);
-                        //todo: verify that we're not using this and remove it.
-                        //_insertImgIcons(settings);
-
-                        //do init stuff
-
+                        
                     });
                 },
-                otherMethod: function(param){
-                    var $this = this;
-
+                update: function(param){
+                    //todo check this
+                    var $this = ( this[0] === document ) ? $('.rdr-summary') : this;
                     return $this.each(function(index){
-                        //do stuff
+                        console.log(this);
+                        console.log(param);
+
+                        console.log('updating summarybar');
                     });
                 }
 
@@ -6469,16 +6714,21 @@ function $RFunctions($R){
             }
 
             //helper function for ajax above
-            function _makeSummaryWidget(response){
+            function _makeSummaryWidget(settings){
 
-                    var page = response;
+                    var page = settings;
 
-                    var $summary_widget_parent = $(response.parentContainer),
-                        $summary_widget = $('<div class="rdr rdr-summary" />');
+                    var widgetClass = 'rdr-summary-key-'+page.key;
 
-                    //response.jqFunc would be something like 'append' or 'after',
+                    //first kill any existing instances; we're going to recreate them.
+                    $('.'+widgetClass).remove();
+
+                    var $summary_widget_parent = $(page.parentContainer),
+                        $summary_widget = $('<div class="rdr rdr-summary" />').addClass(widgetClass);
+
+                    //page.jqFunc would be something like 'append' or 'after',
                     //so this would read $summary_widget_parent.append($summary_widget);
-                    $summary_widget_parent[response.jqFunc]($summary_widget);
+                    $summary_widget_parent[page.jqFunc]($summary_widget);
                     
                     var total_interactions = 0;
                     for ( var i in page.summary ) {
@@ -6687,19 +6937,6 @@ function $RFunctions($R){
                 }
 
             }
-            //commenting this out because I don't think we're using it.
-            /*
-            function _insertImgIcons(response){
-                var page = response;
-                var tempd = $.extend( {}, response );
-                for ( var i in page.imagedata ){
-                    //todo: combine this with the other indicator code and make the imagedata give us a hash from the db
-                    var hash = RDR.util.md5.hex_md5(i);
-                    page.imagedata[i].hash = hash; //todo: list these by hash in the first place.
-
-                }
-            }
-            */
 
         }
         //end function plugin_jquery_rdrWidgetSummary
