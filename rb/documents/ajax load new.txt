@@ -1,0 +1,297 @@
+Objects:
+sent: 
+GET http://local.readrboard.com:8080/api/settings/22...9&host_name=local.readrboard.com&_=1317393836969
+	<group>
+	{
+        "img_whitelist": "", 
+        "custom_css": "", 
+        "img_blacklist": "", 
+        "short_name": "racialicious", 
+        "language": "en", 
+        "temp_interact": 5, 
+        "post_href_selector": ".entry-title a", 
+        "anno_whitelist": "p,img", 
+        "no_readr": "", 
+        "post_selector": "div.post", 
+        "demo_group": true, 
+        "summary_widget_selector": "div.metabar", 
+        "id": 22, 
+        "blessed_tags": [], 
+        "name": "Racialicious"
+	}
+
+http://local.readrboard.com:8080/api/page/?
+	pages: [
+		{
+            "topshares": [?], 
+            "toptags": [ <{tag}>... ], 
+            "summary": [ ? ], //what is this? {count:1, kind:tag}
+            "topusers": [ <{user}>... ],
+            "id": 28, 
+            "containers": [ <container>,<container> ]
+        }
+	        
+	]
+	containers: {
+        "known": {
+            "fe8eaab0f3cf33b3606873bbc56b6162": {
+                "id": 17, 
+                "kind": "img", 
+                "counts": {
+                    "coms": 0, 
+                    "tags": 1, 
+                    "interactions": 1
+                }, 
+                "top_interactions": {
+                    "coms": [], 
+                    "tags": { <id:tag> }
+                }
+            }
+
+        }, 
+        "unknown": []
+    }
+
+
+/****************  ON HOVER: *****************/
+
+//hover over text indicator
+http://local.readrboard.com:8080/api/summary/container/content/?
+	content_nodes: {
+		id: {
+			body
+			counts
+			id
+			kind
+			location
+			top_interactions
+			<selState>(added on call success)
+		}
+	}
+
+- When we hover over an image or video or hilite text that is not blacklisted:
+	we call http://local.readrboard.com:8080/api/summary/containers/
+	and we get back: 
+	jQuery16207673360780798286_1317566863937({
+	    "status": "success", 
+	    "data": {
+	        "known": {}, 
+	        "unknown": [
+	            "aec071fa19e8d16c48be19270e18fde1"
+	        ]
+	    }
+	})
+
+
+/****************  ON Interaction: *****************/
+
+
+
+
+
+/*****************************************************************************************************************************/
+/*****************************************************************************************************************************/
+
+
+/******** Questions: ********/
+- RDR.date?
+- RDR.errors?
+- RDR.groupPermData - dupplicate of stuff in RDR.group?
+- RDR.text_container_popularity - this is probably right - but maybe it doesn't need to be a separate object on the root...
+- verify that we never recieve unknown containers
+- are we using this anymore? /api/containers/create/  (gets called via RDR.actions.containers.send, which it doesn't look like we're using)
+
+- content_nodes for text are being passed back with /api/summary/container/content/, they aren't being save in RDR.content_nodes though along with images.
+	And they have a key of id instead of hash unlike images.  Consolodate these models
+- The way we're using RDR.actions.content_nodes.make is weird how we seem to just be doing resets resaving them.  We need to sort that out.
+
+- remove "nomedia" param for RDR.actions.hashNodes
+- in RDR.actions.containers.setup: - is the summaries parameter always passed in as an array of arrays sorted by page_id?
+-  RDR.actions.containers.send: not being used anymore? - delete it along with the _ajaxSend helper?
+
+
+/******** TODO: ********/
+Add text nodes to RDR.containers
+
+
+/******** Our RDR stack: ********/
+groups:
+pages:
+tags:
+coms:
+users:
+containers: {
+	idOrHash: {
+		id
+        kind
+        counts: {
+        }, 
+        top_interactions: {
+        }
+	}...
+}
+
+
+/*****************************************************************************************************************************/
+/*****************************************************************************************************************************/
+
+/******** Detailed Page Calls: ********/
+GET http://local.readrboard.com:8080/api/settings/22...9&host_name=local.readrboard.com&_=1317393836969
+
+	jQuery16208937058639921232_1317393836549({
+	    "status": "success", 
+	    "data": {
+	        "img_whitelist": "", 
+	        "custom_css": "", 
+	        "img_blacklist": "", 
+	        "short_name": "racialicious", 
+	        "language": "en", 
+	        "temp_interact": 5, 
+	        "post_href_selector": ".entry-title a", 
+	        "anno_whitelist": "p,img", 
+	        "no_readr": "", 
+	        "post_selector": "div.post", 
+	        "demo_group": true, 
+	        "summary_widget_selector": "div.metabar", 
+	        "id": 22, 
+	        "blessed_tags": [
+	            {
+	                "body": "For Real?", 
+	                "id": 3
+	            }
+	        ], 
+	        "name": "Racialicious"
+	    }
+	})
+
+http://local.readrboard.com:8080/api/page/
+	
+	jQuery16208937058639921232_1317393836550({
+	    "status": "success", 
+	    "data": [
+	        {
+	            "topshares": [], 
+	            "toptags": [
+	                {
+	                    "body": "For Real?", 
+	                    "id": 3, 
+	                    "tag_count": 1
+	                }
+	            ], 
+	            "summary": [
+	                {
+	                    "count": 1, 
+	                    "kind": "tag"
+	                }
+	            ], 
+	            "topusers": [
+	                {
+	                    "img_url": "http://graph.facebook.com/502092/picture", 
+	                    "user": 12, 
+	                    "full_name": "Eric Chaves", 
+	                    "interactions": 1
+	                }
+	            ], 
+	            "id": 28, 
+	            "containers": [
+	                {
+	                    "hash": "2a6ed60f37201edc6c1c3f1386410da7", 
+	                    "id": 41
+	                }
+	            ]
+	        }, 
+	        {
+	            "topshares": [], 
+	            "toptags": [
+	                {
+	                    "body": "For Real?", 
+	                    "id": 3, 
+	                    "tag_count": 1
+	                }
+	            ], 
+	            "summary": [
+	                {
+	                    "count": 1, 
+	                    "kind": "tag"
+	                }
+	            ], 
+	            "topusers": [
+	                {
+	                    "img_url": "http://graph.facebook.com/502092/picture", 
+	                    "user": 12, 
+	                    "full_name": "Eric Chaves", 
+	                    "interactions": 1
+	                }
+	            ], 
+	            "id": 29, 
+	            "containers": [
+	                {
+	                    "hash": "7601f8410d1ce812c1d35100cd663f8b", 
+	                    "id": 18
+	                }
+	            ]
+	        }, 
+	        {
+	            "topshares": [], 
+	            "toptags": [], 
+	            "summary": [], 
+	            "topusers": [], 
+	            "id": 30, 
+	            "containers": []
+	        }...
+	    ]
+	})
+
+GET http://local.readrboard.com:8080/api/summary/con...7201edc6c1c3f1386410da7%22%5D%7D&_=1317393838588	
+GET http://local.readrboard.com:8080/api/summary/con...942aa753ee3c45a4efb29e8%22%5D%7D&_=1317393838877
+...
+GET http://local.readrboard.com:8080/api/summary/con...3cf33b3606873bbc56b6162%22%5D%7D&_=1317393116010
+	
+	jQuery16204279832368735369_1317393114340({
+	    "status": "success", 
+	    "data": {
+	        "known": {
+	            "9d5123d190b2d82bb5f6b60b9672b9d0": {
+	                "id": 16, 
+	                "kind": "text", 
+	                "counts": {
+	                    "coms": 0, 
+	                    "tags": 30, 
+	                    "interactions": 30
+	                }, 
+	                "top_interactions": {
+	                    "coms": [], 
+	                    "tags": {
+	                        "1": {
+	                            "count": 5, 
+	                            "body": "Great Idea"
+	                        }, 
+	                        "2": {
+	                            "count": 5, 
+	                            "body": "Not Sure"
+	                        }...
+	                    }
+	                }
+	            },
+	            "fe8eaab0f3cf33b3606873bbc56b6162": {
+	                "id": 17, 
+	                "kind": "img", 
+	                "counts": {
+	                    "coms": 0, 
+	                    "tags": 1, 
+	                    "interactions": 1
+	                }, 
+	                "top_interactions": {
+	                    "coms": [], 
+	                    "tags": {
+	                        "8": {
+	                            "count": 1, 
+	                            "body": "sad"
+	                        }
+	                    }
+	                }...
+	            }
+	        }, 
+	        "unknown": []
+	    }
+	})
