@@ -45,15 +45,8 @@ function readrBoard($R){
                 no_readr: "",
                 img_blacklist: "",
                 custom_css: "",
-                inline_indicators: {
-                    jqSelector: "",
-                    jqFunc: ""
-                },
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
-                inline_indicators: {
-                    jqSelector:'embed, video, object, iframe, img',
-                    jqFunc:'after'
-                }
+                inline_selector: 'img, embed, video, object, iframe'
             }
         },
         user: {
@@ -1981,11 +1974,8 @@ function readrBoard($R){
 
                         var group_settings = response.data;
                         
-                        _settingsAdaptor(group_settings);
-                        log(group_settings);
-                        //true triggers a deep (recursive) merge
-                        RDR.group = $.extend( true, {}, RDR.group.defaults, group_settings );
-                        
+                        RDR.group = $.extend({}, RDR.group.defaults, group_settings );
+                        log(RDR.group);
                         $(RDR.group.no_readr).each( function() { 
                             $(this).addClass('no-rdr'); 
                             $(this).find('img').addClass('no-rdr');
@@ -1999,13 +1989,6 @@ function readrBoard($R){
                         
                         $RDR.dequeue('initAjax');
 
-                        function _settingsAdaptor(group_settings){
-                            //takes flattened settings and builds the approprate json
-                            group_settings.inline_indicators = {
-                                jqSelector: group_settings.inline_selector,
-                                jqFunc: group_settings.inline_func
-                            };
-                        }
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
@@ -2300,7 +2283,9 @@ function readrBoard($R){
                     $allNodes = $allNodes.add($group);
 
                     //flag exceptions for inline_indicators
-                    var $inlineMediaSet = $allNodes.filter(RDR.group.inline_indicators.jqSelector);
+                    var $inlineMediaSet = $allNodes.filter(RDR.group.inline_selector);
+                    log('$inlineMediaSet');
+                    log($inlineMediaSet);
                     $inlineMediaSet.each(function(){
                         $(this).data('inlineIndicator', true);
                     });
