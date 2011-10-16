@@ -4343,14 +4343,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         
                         this.updateMediaTracker(hash);
                         this.borderHilites.update(hash);
-
-                        var has_inline_indicator = $container.data('inlineIndicator'); //boolean
-                    
-                        if(has_inline_indicator){
-                            RDR.actions.indicators.utils.updateInlineIndicator(hash);
-                        }else{
-                            
-                        }
                         
                     },
                     updateInlineIndicator: function(hash){
@@ -4410,8 +4402,14 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 top: cornerPadding,
                                 right: cornerPadding
                             });
-                        }
-                        
+
+                            var has_inline_indicator = $container.data('inlineIndicator'); //boolean                        
+                            if(has_inline_indicator){
+                                RDR.actions.indicators.utils.updateInlineIndicator(hash);
+                            }else{
+                                
+                            }
+                        }  
                     },
                     borderHilites: {
                         makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
