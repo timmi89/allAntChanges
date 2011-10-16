@@ -121,6 +121,10 @@ class Group(models.Model):
     demo_group = models.BooleanField(default=False)
     word_blacklist = models.TextField(blank=True)
     
+    # Jquery settings
+    inline_selector = models.CharField(max_length=100, default='')
+    inline_func = models.CharField(max_length=25, default='')
+    
     # Many to many relations
     admins = models.ManyToManyField(SocialUser, through='GroupAdmin')
     blessed_tags = models.ManyToManyField(InteractionNode, through='GroupBlessedTag')
