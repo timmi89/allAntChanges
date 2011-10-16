@@ -45,6 +45,9 @@ class RBGroupAdmin(admin.ModelAdmin):
         }),
         ('Selectors', {
             'fields': ('post_selector', 'post_href_selector', 'summary_widget_selector')
+        }),
+        ('JQuery', {
+            'fields': ('inline_selector', 'inline_func')
         })
      )
 
