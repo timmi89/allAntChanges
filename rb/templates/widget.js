@@ -1391,10 +1391,14 @@ function readrBoard($R){
                         $msg2 = $('<div>Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.</div>');
                     }
                     if( whichAlert == "fromShareLink"){
-                        //put a better message here
                         $msg1 = $('<h1>Shared with <span>ReadrBoard</span></h1>');
-                        $msg2 = $('<strong>' + data.reaction + ':</strong> <em>' + data.content.substr(0,140) + '...</em> <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>');
 
+                        if ( $('img.rdr-'+data.container_hash).length == 1 ) {
+                            $msg2 = $('<strong style="display:block;">' + data.reaction + ':</strong> <img src="' + data.content + '" style="max-width:100px !important;max-height:70px !important;margin:5px 0 !important;display:block !important;" /> <strong style="display:block;"><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>');
+                        } else {
+                            //put a better message here
+                            $msg2 = $('<strong>' + data.reaction + ':</strong> <em>' + data.content.substr(0,140) + '...</em> <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>');
+                        }
                         $msg2.find('a.rdr_showSelection').click( function() {
                             //show the alertBar sliding closed for just a second before scrolling down..
                             // RDR.session.alertBar.close();
@@ -1741,21 +1745,7 @@ function readrBoard($R){
                     $loginHtml.append( '<h1>'+h1_text+'</h1><div class="rdr_body" />');
                     $loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&group_name='+RDR.group.name+'&cachebust='+RDR.cachebuster+'" width="360" height="190" frameborder="0" style="overflow:hidden;" />' );
 
-
-                    // rindow.animate({
-        //                 width:'500px',
-        //                 minHeight:'125px'
-        //             }, 300, function() {
-        //                 rindow.append( $loginHtml );
-        //             });
                     rindow.find('div.rdr_contentSpace').append( $loginHtml );
-
-                    // var $overlay = $( '<div id="rdr_overlay" />' ).css('height', $(window).height()).css('width', $(window).width() );
-                    // $overlay.click ( function() {
-                    //     $(this).remove();
-                    //     $('#rdr_loginPanel').remove();
-                    // });
-                    // rindow.after( $overlay );
                 }
 			},
 			killUser: function() {
@@ -3477,9 +3467,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                     RDR.session.rindowUserMessage.show( usrMsgArgs );
                                 });
 
-                                if( uiMode !== "read" ){
+                                // if( uiMode !== "read" ){
                                     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_data:content_node_data, hash:hash});
-                                }
+                                // }
 
                                 //do updates
                                 var intNodeHelper = {
@@ -5028,6 +5018,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                         $shareLinks.find('li:last').click( function() {
                             // var real_content_node = ( RDR.content_nodes[hash] ) ? RDR.content_nodes[hash] : RDR.summaries[hash].content;
+                            RDR.shareWindow = window.open('{{ STATIC_URL }}share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
                             RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
                             return false;
                         });
@@ -5773,40 +5764,45 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 });
             },
             shareContent: function(args) {
-
-                var content = args.content_node_info.content;
+                var content = args.content_node_info.content,
+                    share_url = "";
                 switch (args.sns) {
                     case "facebook":
-                        window.open('http://www.facebook.com/sharer.php?s=100&p[title]='+encodeURI(content.substr(0, content_length) )+'&p[summary]='+encodeURI(args.reaction)+'&p[url]='+args.short_url,"readr_share_facebook","menubar=1,resizable=1,width=626,height=436");
+                        share_url = 'http://www.facebook.com/sharer.php?s=100&p[title]='+encodeURI(content.substr(0, content_length) )+'&p[summary]='+encodeURI(args.reaction)+'&p[url]='+args.short_url;
                     //&p[images][0]=<?php echo $image;?>', 'sharer',
                     break;
 
                     case "twitter":
                         var content_length = ( 90 - args.reaction.length );
                         var twitter_acct = ( RDR.group.twitter ) ? '&via='+RDR.group.twitter : '';
-                        window.open('http://twitter.com/intent/tweet?url='+args.short_url+twitter_acct+'&text='+encodeURI(args.reaction)+':+"'+encodeURI(content.substr(0, content_length) )+'"',"readr_share_twitter","menubar=1,resizable=1,width=626,height=436");
+                        share_url = 'http://twitter.com/intent/tweet?url='+args.short_url+twitter_acct+'&text='+encodeURI(args.reaction)+':+"'+encodeURI(content.substr(0, content_length) );
                     break;
 
                     case "tumblr":
                         var source = '&t=' + args.reaction +' ... from ' + RDR.group.name;
                         switch ( args.content_node_info.kind) {
                             case "txt":
-                                window.open('http://www.tumblr.com/share?v=3&type=quote&u='+encodeURIComponent(args.short_url)+'&t='+encodeURI(RDR.group.name)+'&s='+encodeURI(content.substr(0, content_length) ),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
+                                share_url = 'http://www.tumblr.com/share?v=3&type=quote&u='+encodeURIComponent(args.short_url)+'&t='+encodeURI(RDR.group.name)+'&s='+encodeURI(content.substr(0, content_length) );
                             break;
 
                             case "img":
                                 var canonical_url = ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href'):window.location.href;
-                                window.open('http://www.tumblr.com/share/photo?clickthru='+encodeURIComponent(args.short_url)+'&source='+encodeURIComponent(args.content_node_info.body)+'&caption='+encodeURIComponent(args.reaction),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
+                                share_url = 'http://www.tumblr.com/share/photo?clickthru='+encodeURIComponent(args.short_url)+'&source='+encodeURIComponent(args.content_node_info.body)+'&caption='+encodeURIComponent(args.reaction);
                             break;
 
                             case "media":
-                                window.open('http://www.tumblr.com/share/video?u='+encodeURIComponent(args.short_url)+'&embed='+encodeURIComponent(args.content_node_info.body)+'&caption='+encodeURIComponent(args.reaction),"readr_share_tumblr","menubar=1,resizable=1,width=626,height=436");
+                                share_url = 'http://www.tumblr.com/share/video?u='+encodeURIComponent(args.short_url)+'&embed='+encodeURIComponent(args.content_node_info.body)+'&caption='+encodeURIComponent(args.reaction);
                             break;
                         }
                     break;
 
                     case "linkedin":
                     break;
+                }
+                if ( share_url != "" ) {
+                    if ( RDR.shareWindow ) {
+                        RDR.shareWindow.location = share_url;
+                    }
                 }
             },
             newUpdateData: function(hash){
@@ -6025,6 +6021,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 $.each(socialNetworks, function(idx, val){
                     $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                     $shareLinks.find('li:last').click( function() {
+                        RDR.shareWindow = window.open('{{ STATIC_URL }}share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
                         RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
                         return false;
                     });
@@ -6944,13 +6941,11 @@ function $RFunctions($R){
                     //todo:checkout why first range is picking up new selState range (not a big deal)
                     var selState = _fetchselState(idxOrSelState);
                     if(!selState){
-                        // console.warn('selState not found')
                         return false;
                     }
                     
                     //extra protection against hiliting a ndoe with an invalid serialRange - flagged as false (not just undefined)
                     if( typeof selState.serialRange !== "undefined" && selState.serialRange === false ){
-                        // console.warn('invalid serialRange, refusing to run hiliter');
                         return false;
                     }
                     
@@ -7231,7 +7226,6 @@ function $RFunctions($R){
                     range = rangy.deserializeRange(serialRange, selState.container ); //see rangy function deserializeRange
                 }
                 else{
-                    // console.warn('should not have fallen all the way through decision tree @ _makeSelState');
                 }
                 selState.serialRange = serialRange;
                 //todo: low: could think more about when to cloneRange to make it a tiny bit more efficient.
@@ -7332,7 +7326,6 @@ function $RFunctions($R){
                         hiliter.undoToRange(range);
                     }
                     else{
-                        // console.warn('error ' + range)
                     }
                 }
                 
@@ -7404,7 +7397,6 @@ function $RFunctions($R){
                 }
                 $.each(doFilters, function(funcName, params){
                     var filterFunc = filters[ funcName ] || function(){
-                        // console.error('bad filter name passed in param');return false
                     };
                     //finally, run em'.
                     range = filterFunc(range, params);
