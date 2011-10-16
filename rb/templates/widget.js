@@ -407,6 +407,14 @@ function readrBoard($R){
                             top: -5,
                             left: 1
                         };
+
+                        //toggled back in RDR.rindow.close:
+                        if(has_inline_indicator){
+                            $indicatorDetails.find('.rdr_indicator_details_innerWrap').css({
+                               'visibility':'hidden'
+                            });
+                        }
+
                         //todo: make this nicer
                         var coords = ( (kind == "img" || kind == "media") && !has_inline_indicator ) ?
                         {
@@ -885,9 +893,16 @@ function readrBoard($R){
                 return $new_rindow;
 			},
             close: function( $rindows ) {
+                //RDR.rindow.close:
                 RDR.rindow.clearHilites( $rindows );
                 $rindows.each(function(idx,rindow){
                     $(rindow).remove();
+                });
+
+                //todo: move this - this is a temp shotgun spray approach.
+                //toggled to hidden in RDR.rindow._rindowTypes.readMode.make:
+                $('#rdr_indicator_details_wrapper').find('.rdr_indicator_details_innerWrap').css({
+                   'visibility':'visible'
                 });
             },
             closeAll: function() {
@@ -1200,7 +1215,7 @@ function readrBoard($R){
                     $indicator.removeClass('rdr_engage_media');
                     $actionbar.remove();
                 }
-
+       
 			},
             closeSuggest: function(hashes) {
                 //hashes can be a single hash or a list of hashes
