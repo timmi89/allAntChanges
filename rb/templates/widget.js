@@ -4410,89 +4410,147 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         }
                         
                     },
-                    updateMediaBorderHilites: function(hash){
-                        //RDR.actions.indicators.utils.updateMediaBorderHilites:
-                        var $indicator = $('#rdr_indicator_'+hash),
-                            $container = $('.rdr-'+hash),
-                            $container_tracker = $('#rdr_container_tracker_'+hash);
-                        
-                        var $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
-                        if( !$mediaBorderWrap.length ){
-                            $mediaBorderWrap = $('<div class="rdr_media_border_wrap" />').appendTo($container_tracker);
-                        }
-                        var $topHilite = $container_tracker.find('.rdr_mediaHilite_top');
-                        if( !$topHilite.length ){
-                            $topHilite = $('<div class="rdr_mediaHilite_top" />').appendTo($mediaBorderWrap);
-                        }
-                        var $rightHilite = $container_tracker.find('.rdr_mediaHilite_right');
-                        if( !$rightHilite.length ){
-                            $rightHilite = $('<div class="rdr_mediaHilite_right" />').appendTo($mediaBorderWrap);
-                        }
-                        var $bottomHilite = $container_tracker.find('.rdr_mediaHilite_bottom');
-                        if( !$bottomHilite.length ){
-                            $bottomHilite = $('<div class="rdr_mediaHilite_bottom" />').appendTo($mediaBorderWrap);
-                        }
-                        var $leftHilite = $container_tracker.find('.rdr_mediaHilite_left');
-                        if( !$leftHilite.length ){
-                            $leftHilite = $('<div class="rdr_mediaHilite_left" />').appendTo($mediaBorderWrap);
-                        }
+                    borderHilites: {
+                        makeSuccess: false, //this isn't really needed, just an extra failsave agianst infinite loops.
+                        make: function(hash){
+                            //RDR.actions.indicators.utils.borderHilites.make:
+                            var $indicator = $('#rdr_indicator_'+hash),
+                                $container = $('.rdr-'+hash),
+                                $container_tracker = $('#rdr_container_tracker_'+hash),
+                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap'); //probably null, will make it below.
+                            
+                            if( !$mediaBorderWrap.length ){
+                                $mediaBorderWrap = $('<div class="rdr_media_border_wrap" />').appendTo($container_tracker);
+                            }
+                            $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
 
-                        $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
-                        var hiliteThickness = 2;
+                            var borders = {
+                                'top': {
+                                    $side: null,
+                                    css: {}
+                                },
+                                'right': {
+                                    $side: null,
+                                    css: {}
+                                },
+                                'bottom': {
+                                    $side: null,
+                                    css: {}
+                                },
+                                'left': {
+                                    $side: null,
+                                    css: {}
+                                }
+                            };
 
-                        //check if it has a border.
-                        //If so we'll use outerWidth and outerHeight to take it into account.
-                        //If not, we use just the regular height and width so we'll ignore padding which would make the borderHilite look crappy.
+                            $mediaBorderWrap.data('borders',borders);
+                            RDR.actions.indicators.utils.borderHilites.update(hash);
 
-                        var containerWidth, containerHeight;
+                        },
+                        update: function(hash){
+                            //RDR.actions.indicators.utils.borderHilites.update:
+                            var $indicator = $('#rdr_indicator_'+hash),
+                                $container = $('.rdr-'+hash),
+                                $container_tracker = $('#rdr_container_tracker_'+hash),
+                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
+                            
+                            if( !$mediaBorderWrap.length ){
+                                if(!this.makeSuccess){
+                                    RDR.actions.indicators.utils.borderHilites.make(hash);
+                                }
+                                //just return here.  the make function will call this update function again and this will be bypassed.
+                                return;
+                            }
+                            //else
 
-                        //this will calc to 0 if there is no border. 
-                        var hasBorder = parseInt( $container.css('border-top-width'), 10 ) +
-                            parseInt( $container.css('border-right-width'), 10 ) +
-                            parseInt( $container.css('border-bottom-width'), 10 ) +
-                            parseInt( $container.css('border-left-width'), 10 );
+                            $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
 
-                        if(hasBorder){
-                            containerWidth = $container.outerWidth();
-                            containerHeight = $container.outerHeight();
-                        }else{
-                            containerWidth = $container.width();
-                            containerHeight = $container.height();
-                        }
+                            var borders = {
+                                'top': {
+                                    $side: null,
+                                    css: {}
+                                },
+                                'right': {
+                                    $side: null,
+                                    css: {}
+                                },
+                                'bottom': {
+                                    $side: null,
+                                    css: {}
+                                },
+                                'left': {
+                                    $side: null,
+                                    css: {}
+                                }
+                            };
+                            
+                            var hiliteThickness = 2,
+                                containerWidth,
+                                containerHeight;
 
-                        var hiliteCss = {
-                            t: {
+                            var hasBorder = false;
+                            //for checking if it has a border.
+                            //If so we'll use outerWidth and outerHeight to take it into account.
+                            //If not, we use just the regular height and width so we'll ignore padding which would make the borderHilite look crappy.
+
+                            $.each( borders, function(side, data){
+                                //set the value in the object using the key's string as a helper
+                                var hiliteClass = 'rdr_mediaHilite_'+side; //i.e. rdr_mediaHilite_top
+                                
+                                data.$side = $mediaBorderWrap.find('.'+hiliteClass);
+                                if( !data.$side.length ){
+                                    data.$side = $('<div />').addClass(hiliteClass).appendTo($mediaBorderWrap);
+                                }
+
+                                //if any side has a border - set hasBorder to true
+                                if( parseInt( $container.css('border-'+side+'-width'), 10 ) ){
+                                    hasBorder = true;
+                                }
+
+                            });
+                            
+                            //figure out dims
+                            if(hasBorder){
+                                containerWidth = $container.outerWidth();
+                                containerHeight = $container.outerHeight();
+                            }else{
+                                containerWidth = $container.width();
+                                containerHeight = $container.height();
+                            }
+
+                            //use dims to make the css rules for each border side
+                            borders.top.css = {
                                 width: containerWidth,
                                 height: 0,
                                 top: -hiliteThickness,
                                 left: -hiliteThickness
-                            },
-                            r: {
+                            };
+                            borders.right.css = {
                                 width:0,
                                 height: containerHeight,
                                 top: 0,
                                 left: containerWidth
-                            },
-                            b: {
+                            };
+                            borders.bottom.css = {
                                 width: containerWidth,
                                 height: 0,
                                 top: containerHeight,
                                 left: -hiliteThickness
-                            },
-                            l: {
+                            };
+                            borders.left.css = {
                                 width: 0,
                                 height: containerHeight,
                                 top: 0,
                                 left: -hiliteThickness
-                            }
-                        };
+                            };
 
-                        RDR.util.cssSuperImportant($topHilite, hiliteCss.t);
-                        RDR.util.cssSuperImportant($rightHilite, hiliteCss.r);
-                        RDR.util.cssSuperImportant($bottomHilite, hiliteCss.b);
-                        RDR.util.cssSuperImportant($leftHilite, hiliteCss.l);
-                       
+                            $.each( borders, function( side, data ){
+                                RDR.util.cssSuperImportant( data.$side, data.css );
+                            });                       
+                    
+                        }
                     }
+                    updateMediaBorderHilites: function(hash){}
                 }//end RDR.actions.indicators.utils
             },
             summaries:{
