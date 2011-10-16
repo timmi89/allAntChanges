@@ -1982,7 +1982,7 @@ function readrBoard($R){
                         var group_settings = response.data;
                         
                         _settingsAdaptor(group_settings);
-
+                        log(group_settings);
                         //true triggers a deep (recursive) merge
                         RDR.group = $.extend( true, {}, RDR.group.defaults, group_settings );
                         
@@ -2001,6 +2001,10 @@ function readrBoard($R){
 
                         function _settingsAdaptor(group_settings){
                             //takes flattened settings and builds the approprate json
+                            group_settings.inline_indicators = {
+                                jqSelector: group_settings.inline_selector,
+                                jqFunc: group_settings.inline_func
+                            };
                         }
                     },
                     error: function(response) {
