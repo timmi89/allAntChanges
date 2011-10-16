@@ -4339,7 +4339,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         });
                         
                         this.updateMediaTracker(hash);
-                        this.updateMediaBorderHilites(hash);
+                        this.borderHilites.update(hash);
 
                         var has_inline_indicator = $container.data('inlineIndicator'); //boolean
                     
@@ -4411,8 +4411,10 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         
                     },
                     borderHilites: {
-                        makeSuccess: false, //this isn't really needed, just an extra failsave agianst infinite loops.
+                        makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
                         make: function(hash){
+                            log('make')
+                            log(hash)
                             //RDR.actions.indicators.utils.borderHilites.make:
                             var $indicator = $('#rdr_indicator_'+hash),
                                 $container = $('.rdr-'+hash),
@@ -4448,6 +4450,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                         },
                         update: function(hash){
+                            log('update')
+                            log(hash)
                             //RDR.actions.indicators.utils.borderHilites.update:
                             var $indicator = $('#rdr_indicator_'+hash),
                                 $container = $('.rdr-'+hash),
@@ -4455,13 +4459,15 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
                             
                             if( !$mediaBorderWrap.length ){
-                                if(!this.makeSuccess){
-                                    RDR.actions.indicators.utils.borderHilites.make(hash);
-                                }
+                                //failsafe that shouldnt be needed.
+                                if( this.makeAttempt > 1 ) return;
+                                this.makeAttempt ++;
+                                RDR.actions.indicators.utils.borderHilites.make(hash);
                                 //just return here.  the make function will call this update function again and this will be bypassed.
                                 return;
                             }
                             //else
+                            this.makeAttempt = 0;
 
                             $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
 
@@ -4550,7 +4556,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     
                         }
                     }
-                    updateMediaBorderHilites: function(hash){}
                 }//end RDR.actions.indicators.utils
             },
             summaries:{
