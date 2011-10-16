@@ -43,12 +43,12 @@ def checkToken(data):
 
         # Check with facebook to see if token is still valid
         # Note: this is slow -- look for a way to improve
-        #try:
-        #    graph = GraphAPI(social_auth.auth_token)
-        #    graph.get_object("me")
-        #except GraphAPIError as GAE:
-        #    print GAE.message
-        #    return None 
+        try:
+            graph = GraphAPI(social_auth.auth_token)
+            graph.get_object("me")
+        except GraphAPIError as GAE:
+            print GAE.message
+            return None 
             
         # If facebook approves, check if expired -- could be redundant
         now = datetime.now()
