@@ -48,14 +48,12 @@ function readrBoard($R){
                 inline_indicators: {
                     jqSelector: "",
                     jqFunc: ""
-                }
+                },
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
-                /*
                 inline_indicators: {
                     jqSelector:'embed, video, object, iframe, img',
                     jqFunc:'after'
                 }
-                */
             }
         },
         user: {
@@ -403,8 +401,8 @@ function readrBoard($R){
 
                         var has_inline_indicator = $container.data('inlineIndicator'); //boolean
                         var tempOffsets = has_inline_indicator ? {
-                            top: 25,
-                            left: 1
+                            top: 0,
+                            left: 0
                         } : {
                             top: -5,
                             left: 1

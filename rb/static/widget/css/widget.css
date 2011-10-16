@@ -1048,9 +1048,10 @@ div.rdr_indicator_for_media_inline div.rdr_indicator_body {
     -moz-border-radius:0 !important;
     -webkit-border-radius:0 !important;
     border-radius:0 !important;
-    box-shadow:  none;
-    -moz-box-shadow:  none;
-    -webkit-box-shadow:  none;
+    box-shadow:  none !important;
+    -moz-box-shadow:  none !important;
+    -webkit-box-shadow:  none !important;
+    background:#f7f7f7 !important;
 
     opacity:0.8 !important;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=60)"!important;
