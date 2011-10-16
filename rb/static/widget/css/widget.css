@@ -811,7 +811,7 @@ div.rdr.rdr-summary a.rdr-top-user img {
 
 
 /* user education bar */
-#rdr_sandbox div.rdr_alert_box        { position:fixed; bottom:-400px; left:10px; width:100%; background:#f0f0f0; width:300px; padding:0px; z-index:12000; overflow:hidden; -moz-box-shadow:0 0 10px 1px #aaa  !important; -webkit-box-shadow:0 0 10px 1px #aaa  !important; box-shadow:0 0 10px 1px #aaa !important; }
+#rdr_sandbox div.rdr_alert_box        { position:fixed; bottom:-400px; left:10px; background:#f0f0f0; min-width:200px; max-width:300px; padding:0px; z-index:12000; overflow:hidden; -moz-box-shadow:0 0 10px 1px #aaa  !important; -webkit-box-shadow:0 0 10px 1px #aaa  !important; box-shadow:0 0 10px 1px #aaa !important; }
 #rdr_sandbox div.rdr_alert_box a      { color:#008be4 !important; }
 #rdr_sandbox div.rdr_alert_box_1      { background: #fff !important; height:30px !important; }
 #rdr_sandbox div.rdr_alert_box_1 h1   { padding:6px 0 0 20px !important; cursor:text !important; clear:none !important;}
