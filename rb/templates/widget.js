@@ -3382,7 +3382,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                         rindow.dequeue('userMessage');
                                         //hackity hack number incrementer
                                         var $number = $tagCount.find('.rdr_not_loader');
-                                        var tagCount = ( isNaN( parseInt($number.text()) ) ) ? parseInt("1"):parseInt( $number.text() );
+                                        var tagCount = ( isNaN( parseInt($number.text(), 10) ) ) ? parseInt("1", 10):parseInt( $number.text(), 10 );
                                         $number.text( RDR.util.prettyNumber( tagCount ) );
                                         $number.show();
 
@@ -3987,7 +3987,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 });
                             },
                             function() {
-                                $indicator_details.data( 'freshlyKilled', false)
+                                $indicator_details.data( 'freshlyKilled', false);
                                 //$indicator_details.show(); //[eric] commenting this out: I don't think this makes sense here.
                             }
                         );
@@ -4344,7 +4344,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         //RDR.actions.indicators.utils.updateInlineIndicator:
                         var summary = RDR.summaries[hash],
                             $container = summary.$container,
-                            $indicator_details = summary.$indicator_details
+                            $indicator_details = summary.$indicator_details;
 
                         $indicator_details.css({
                            top: $container.offset().bottom,
@@ -4403,8 +4403,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     borderHilites: {
                         makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
                         make: function(hash){
-                            log('make')
-                            log(hash)
                             //RDR.actions.indicators.utils.borderHilites.make:
                             var $indicator = $('#rdr_indicator_'+hash),
                                 $container = $('.rdr-'+hash),
@@ -4440,8 +4438,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                         },
                         update: function(hash){
-                            log('update')
-                            log(hash)
                             //RDR.actions.indicators.utils.borderHilites.update:
                             var $indicator = $('#rdr_indicator_'+hash),
                                 $container = $('.rdr-'+hash),
@@ -4553,7 +4549,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     updateCommentSet: function(args) {
                         var rindow = args.rindow,
                             tag = args.tag,
-                            hash = args.hash
+                            hash = args.hash,
                             user = args.user;
 
                         var $whyPanel = rindow.find('div.rdr_whyPanel'),
@@ -4600,7 +4596,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 id:user.user_id,
                                 last_name:""
                             }
-                        }
+                        };
 
                         if ( typeof RDR.summaries[hash].top_interactions.coms[tag.id] == "undefined" ) {
                             RDR.summaries[hash].top_interactions.coms[tag.id] = [];
@@ -5842,7 +5838,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     case "linkedin":
                     break;
                 }
-                if ( share_url != "" ) {
+                if ( share_url !== "" ) {
                     if ( RDR.shareWindow ) {
                         RDR.shareWindow.location = share_url;
                     }
@@ -6333,7 +6329,7 @@ rdr_loadScript( RDR_scriptPaths.jquery, function(){
     if ( $.browser.msie  && parseInt($.browser.version, 10) < 8 ) {
         return false;
     }
-    if ( $.browser.msie  && parseInt($.browser.version) == 8 ) {
+    if ( $.browser.msie  && parseInt($.browser.version, 10) == 8 ) {
         $('body').addClass('rdr_ie');
     }
     
