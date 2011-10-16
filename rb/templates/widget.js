@@ -1510,6 +1510,7 @@ function readrBoard($R){
                     var $containerTracker = $('#rdr_container_tracker_'+hash),
                         $mediaBorderWrap = $containerTracker.find('.rdr_media_border_wrap');
                     //make sure it's still positioned right, though page load should have set it.
+                    //todo: reconsider this method of liberally updating everything
                     RDR.actions.indicators.utils.updateContainerTracker(hash);
                     $mediaBorderWrap.show();
 
@@ -1979,6 +1980,8 @@ function readrBoard($R){
                     success: function(response, textStatus, XHR) {
 
                         var group_settings = response.data;
+                        
+                        _settingsAdaptor(group_settings);
 
                         //true triggers a deep (recursive) merge
                         RDR.group = $.extend( true, {}, RDR.group.defaults, group_settings );
@@ -1995,6 +1998,10 @@ function readrBoard($R){
                         }
                         
                         $RDR.dequeue('initAjax');
+
+                        function _settingsAdaptor(group_settings){
+                            //takes flattened settings and builds the approprate json
+                        }
                     },
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
@@ -3341,6 +3348,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 $span.show(200).css('visibility','visible');
 
                                 $summary_box.find('div.rdr_note').html( $('<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon: <img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr" style="background:url({{ STATIC_URL }}widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>') );
+                                //todo: reconsider this method of liberally updating everything with updateContainerTrackers
                                 $summary_box.find('div.rdr_note').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
                             } else {
                                 
@@ -3548,6 +3556,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             if ( typeof $message == "object" ) {
                                 $summary_box = $('.rdr-page-container.rdr-'+args.hash+' div.rdr-summary');
                                 $summary_box.find('div.rdr_note').html( $message );
+                                //todo: reconsider this method of liberally updating everything
                                 $summary_box.find('div.rdr_note').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
                             }
                         } else {
