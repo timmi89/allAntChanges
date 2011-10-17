@@ -5,8 +5,6 @@ RDR_scriptPaths = {},
 RDR_rootPath = "{{ BASE_URL }}", //todo: when we get our hosting up change to readrboard.com or our CDN.
 RDR_offline = RDR_rootPath.indexOf('local') != -1;
 
-// message to porter: the goblins are eating your soup.
-
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
 //This function gets called by the function $RFunctions() via the function rdr_loadScript().
 function readrBoard($R){
@@ -1977,7 +1975,7 @@ function readrBoard($R){
                         var group_settings = response.data;
                         
                         RDR.group = $.extend({}, RDR.group.defaults, group_settings );
-                        log(RDR.group);
+                        
                         $(RDR.group.no_readr).each( function() { 
                             $(this).addClass('no-rdr'); 
                             $(this).find('img').addClass('no-rdr');
@@ -2286,8 +2284,7 @@ function readrBoard($R){
 
                     //flag exceptions for inline_indicators
                     var $inlineMediaSet = $allNodes.filter(RDR.group.inline_selector);
-                    log('$inlineMediaSet');
-                    log($inlineMediaSet);
+                    
                     $inlineMediaSet.each(function(){
                         $(this).data('inlineIndicator', true);
                     });
