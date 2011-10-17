@@ -2456,68 +2456,13 @@ function readrBoard($R){
                 }
             },
             containers: {
-                save: function(settings){
-                    //RDR.actions.containers.save:
+                media: {
+                    //RDR.actions.containers.media:
+                    //actions for the special cases of media containers
+                    onEngage: function(hash){
+                        //RDR.actions.containers.media.onEngage:
+                        // action to be run when media container is engaged - typically with a hover over the container
 
-                    //makes a new one or returns existing one
-                    //expects settings with body, kind, and hash.
-                    if( RDR.containers.hasOwnProperty(settings.hash) ) return RDR.containers[settings.hash];
-                    //else
-                    var pageId = ( typeof settings.id === 'undefined' || settings.id === null ) ? null : settings.id;
-
-                    var container = {
-                        'id': pageId,
-                        'body': settings.body || null,
-                        'kind': settings.kind,
-                        'hash': settings.hash,
-                        'HTMLkind': settings.HTMLkind || null,
-                        '$this': settings.$this || null
-                    };
-                    RDR.containers[settings.hash] = container;
-                    return container;
-                },
-                setup: function(summaries){
-                    //RDR.actions.containers.setup:
-                    //then define type-specific setup functions and run them
-
-                    var _setupFuncs = {
-                        img: function(hash, summary){
-                            var containerInfo = RDR.containers[hash];
-                            var $container = containerInfo.$this;
-
-                            //generate the content_node for this image container.  (the content_node is just the image itself)
-                            //todo: I'm pretty sure it'd be more efficient and safe to run on image hover, or image indicator click.
-                            var body = $container[0].src;
-
-                            var content_node_data = {
-                                'body': body,
-                                'kind':summary.kind,
-                                'container': hash, //todo: Should we use this or hash? 
-                                'hash':hash
-                            };
-
-                            RDR.content_nodes[hash] = content_node_data;
-
-                            $container.hover(
-                                function(){
-                                    _mediaEngage(hash);
-                                },
-                                function(){
-                                    _mediaDisengage(hash);
-                                }
-                            );
-                        },
-                        media: function(hash, summary){
-                            //for now, just pass through to img.
-                            this.img(hash, summary);
-                        },
-                        text: function(hash, summary){
-                            
-                        }
-                    };
-
-                    function _mediaEngage(hash){
-            
                         var containerInfo = RDR.containers[hash];
                         var $container = containerInfo.$this;
 
@@ -2569,10 +2514,13 @@ function readrBoard($R){
                             }
                         );
                         $actionbar.data('hasHoverEvent', true);
-                    }
-
-                    function _mediaDisengage(hash){
                     
+                        
+                    },
+                    onDisengage: function(hash){
+                        //RDR.actions.containers.media.onDisengage:
+                        //actions to be run when media container is disengaged - typically with a hover off of the container
+
                         var containerInfo = RDR.containers[hash];
                         var $container = containerInfo.$this;
 
@@ -2581,6 +2529,66 @@ function readrBoard($R){
                         $container.data('hover',false);
                         RDR.actionbar.closeSuggest(hash);
                     }
+                },
+                save: function(settings){
+                    //RDR.actions.containers.save:
+
+                    //makes a new one or returns existing one
+                    //expects settings with body, kind, and hash.
+                    if( RDR.containers.hasOwnProperty(settings.hash) ) return RDR.containers[settings.hash];
+                    //else
+                    var pageId = ( typeof settings.id === 'undefined' || settings.id === null ) ? null : settings.id;
+
+                    var container = {
+                        'id': pageId,
+                        'body': settings.body || null,
+                        'kind': settings.kind,
+                        'hash': settings.hash,
+                        'HTMLkind': settings.HTMLkind || null,
+                        '$this': settings.$this || null
+                    };
+                    RDR.containers[settings.hash] = container;
+                    return container;
+                },
+                setup: function(summaries){
+                    //RDR.actions.containers.setup:
+                    //then define type-specific setup functions and run them
+
+                    var _setupFuncs = {
+                        img: function(hash, summary){
+                            var containerInfo = RDR.containers[hash];
+                            var $container = containerInfo.$this;
+
+                            //generate the content_node for this image container.  (the content_node is just the image itself)
+                            //todo: I'm pretty sure it'd be more efficient and safe to run on image hover, or image indicator click.
+                            var body = $container[0].src;
+
+                            var content_node_data = {
+                                'body': body,
+                                'kind':summary.kind,
+                                'container': hash, //todo: Should we use this or hash? 
+                                'hash':hash
+                            };
+
+                            RDR.content_nodes[hash] = content_node_data;
+
+                            $container.hover(
+                                function(){
+                                    RDR.actions.containers.media.onEngage(hash);
+                                },
+                                function(){
+                                    RDR.actions.containers.media.onDisengage(hash);
+                                }
+                            );
+                        },
+                        media: function(hash, summary){
+                            //for now, just pass through to img.
+                            this.img(hash, summary);
+                        },
+                        text: function(hash, summary){
+                            
+                        }
+                    };
 
                     //todo: what does this do?  break this out into a function with a descriptive name.
                     var hashesToShow = []; //filled below
@@ -4150,7 +4158,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             
                             if(has_inline_indicator){
                                 //todo: consider using a plugin pattern for this later if we want the publisher to be able to customize this in detail.
-                                _inlineIndicatorSetup.call($container[0]);
+                                _inlineIndicatorSetup();
                             }
                             else{
                                 _standardSetup();
