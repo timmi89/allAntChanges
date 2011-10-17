@@ -46,7 +46,9 @@ function readrBoard($R){
                 img_blacklist: "",
                 custom_css: "",
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
-                inline_selector: 'img, embed, video, object, iframe'
+                inline_selector: 'img, embed, video, object, iframe',
+                slideshow_trigger: '#module-flipbook-wrap',
+                slideshow_img_selector: '#module-flipbook div.slideImg img'
             }
         },
         user: {
@@ -2189,6 +2191,8 @@ function readrBoard($R){
                 }).live('mouseleave', function(){
                     $(this).removeClass('rdr_live_hover');
                 });
+
+                RDR.actions.slideshows.setup();
                 
                 //hashNodes without any arguments will fetch the default set from the server.
                 // var hashes = this.hashNodes();
@@ -2454,6 +2458,43 @@ function readrBoard($R){
                     });
                 }
             },
+            slideshows: {
+                setup: function() {
+                    // RDR.actions.slideshows.setup
+                    if ( RDR.group.slideshow_trigger ) {
+                        var $slideshows = $(RDR.group.slideshow_trigger);
+                        $.each( $slideshows, function( idx, slideshow ) {
+                            var $slideshow = $(slideshow);
+                            $slideshow.hover(
+                                function(){
+                                    RDR.actions.containers.media.onEngage( RDR.actions.slideshows.findActiveHash() );
+                                },
+                                function(){
+                                    RDR.actions.containers.media.onDisengage( RDR.actions.slideshows.findActiveHash() );
+                                }
+                            );
+                        });
+                    }
+                },
+                findActiveHash: function() {
+                    // RDR.actions.slideshows.findActiveHash
+                    if ( RDR.group.slideshow_trigger && RDR.group.slideshow_img_selector ) {
+                        var $slideshow_images = $(RDR.group.slideshow_img_selector),
+                            hash = "";
+
+                        $.each( $slideshow_images, function( idx, img ) {
+                            var $img = $(img);
+                            if ( $img.is(':visible') && $img.parents(':hidden').length == 0 && $img.data('hash') ) {
+                                hash = $img.data('hash');
+                                return false;
+                            }
+                        });
+                        return hash;
+                    } else {
+                        return "";
+                    }
+                }
+            },
             containers: {
                 media: {
                     //RDR.actions.containers.media:
@@ -2463,70 +2504,72 @@ function readrBoard($R){
                         // action to be run when media container is engaged - typically with a hover over the container
 
                         var containerInfo = RDR.containers[hash];
-                        var $container = containerInfo.$this;
+                        if ( containerInfo ) {
+                            var $container = containerInfo.$this;
 
-                        $container.data('hover',true);
+                            $container.data('hover',true);
 
-                        var $indicator = $('#rdr_indicator_'+hash),
-                            $containerTracker = $('#rdr_container_tracker_'+hash),
-                            $mediaBorderWrap = $containerTracker.find('.rdr_media_border_wrap');
-                        
-                        $indicator.addClass('rdr_engage_media');
+                            var $indicator = $('#rdr_indicator_'+hash),
+                                $containerTracker = $('#rdr_container_tracker_'+hash),
+                                $mediaBorderWrap = $containerTracker.find('.rdr_media_border_wrap');
+                            
+                            $indicator.addClass('rdr_engage_media');
 
-                        //update here just to make sure at least a mouse hover always resets any unexpected weirdness
-                        RDR.actions.indicators.utils.updateContainerTracker(hash);
-                        $mediaBorderWrap.show();
+                            //update here just to make sure at least a mouse hover always resets any unexpected weirdness
+                            RDR.actions.indicators.utils.updateContainerTracker(hash);
+                            $mediaBorderWrap.show();
 
-                        var src = $container.attr('src'),
-                        src_with_path = this.src;
+                            var src = $container.attr('src'),
+                            src_with_path = this.src;
 
-                        var coords = {
-                            top: $container.offset().top,
-                            left: $container.offset().right
-                        };
+                            var coords = {
+                                top: $container.offset().top,
+                                left: $container.offset().right
+                            };
 
-                        $container.addClass('rdr_engage_media');
+                            $container.addClass('rdr_engage_media');
 
-                        //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
-                        // builds a new actionbar or just returns the existing $actionbar if it exists.
+                            //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
+                            // builds a new actionbar or just returns the existing $actionbar if it exists.
 
-                        //use the image container info as the content, because the img itself is the content_node.
-                        var $actionbar = RDR.actionbar.draw({ hash:hash, kind:containerInfo.kind, coords:coords, content:containerInfo.body, src_with_path:containerInfo.body, ignoreWindowEdges:"tb" });
+                            //use the image container info as the content, because the img itself is the content_node.
+                            var $actionbar = RDR.actionbar.draw({ hash:hash, kind:containerInfo.kind, coords:coords, content:containerInfo.body, src_with_path:containerInfo.body, ignoreWindowEdges:"tb" });
 
-                        //kill all rivals!!
-                        var $rivals = $('div.rdr_actionbar').not($actionbar);
-                        RDR.actionbar.close( $rivals );
+                            //kill all rivals!!
+                            var $rivals = $('div.rdr_actionbar').not($actionbar);
+                            RDR.actionbar.close( $rivals );
 
-                        //this looks bad because it's adding a hover event on every container hover event, but we need to because
-                        //the actionbar is being recreated every time.  We if the actionbar hasn't faded out yet though it will be the
-                        //same one, so check for that to avoid excessive events (not that would really hurt anything)
-                        if ( $actionbar.data('hasHoverEvent') ) return;
-                        //else
-                        $actionbar.hover(
-                            function() {
-                                $(this).data('hover',true);
-                                
-                            },
-                            function() {
-                                $(this).data('hover',false);
-                                RDR.actionbar.closeSuggest(hash);
-                            }
-                        );
-                        $actionbar.data('hasHoverEvent', true);
-                    
-                        
+                            //this looks bad because it's adding a hover event on every container hover event, but we need to because
+                            //the actionbar is being recreated every time.  We if the actionbar hasn't faded out yet though it will be the
+                            //same one, so check for that to avoid excessive events (not that would really hurt anything)
+                            if ( $actionbar.data('hasHoverEvent') ) return;
+                            //else
+                            $actionbar.hover(
+                                function() {
+                                    $(this).data('hover',true);
+                                    
+                                },
+                                function() {
+                                    $(this).data('hover',false);
+                                    RDR.actionbar.closeSuggest(hash);
+                                }
+                            );
+                            $actionbar.data('hasHoverEvent', true);
+                        }
                     },
                     onDisengage: function(hash){
                         //RDR.actions.containers.media.onDisengage:
                         //actions to be run when media container is disengaged - typically with a hover off of the container
 
                         var containerInfo = RDR.containers[hash];
-                        var $container = containerInfo.$this;
+                        if ( containerInfo ) {
+                            var $container = containerInfo.$this;
 
-                        var actionbar_id = "rdr_actionbar_"+hash;
-                        var $actionbar = $('#'+actionbar_id);
-                        $container.data('hover',false);
-                        RDR.actionbar.closeSuggest(hash);
+                            var actionbar_id = "rdr_actionbar_"+hash;
+                            var $actionbar = $('#'+actionbar_id);
+                            $container.data('hover',false);
+                            RDR.actionbar.closeSuggest(hash);
+                        }
                     }
                 },
                 save: function(settings){

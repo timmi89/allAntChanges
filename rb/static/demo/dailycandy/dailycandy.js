@@ -3185,9 +3185,6 @@ DAILYCANDY = {
                 startingSlide: startingSlide,
                 cleartype: 1,
                 nowrap: 1,
-                onPagerEvent: function(){
-                	console.log('pager event');
-                },
                 after: function(curr, next, opts){
                     if ( args.startingSlide > 0 ) DAILYCANDY.omniture.delay = true;
                     
