@@ -2489,7 +2489,7 @@ function readrBoard($R){
                             //todo: I'm pretty sure it'd be more efficient and safe to run on image hover, or image indicator click.
                             var body = $container[0].src;
 
-                            content_node_data = {
+                            var content_node_data = {
                                 'body': body,
                                 'kind':summary.kind,
                                 'container': hash, //todo: Should we use this or hash? 
@@ -2500,61 +2500,10 @@ function readrBoard($R){
 
                             $container.hover(
                                 function(){
-                                    $(this).data('hover',true);
-
-                                    var $indicator = $('#rdr_indicator_'+hash),
-                                        $containerTracker = $('#rdr_container_tracker_'+hash),
-                                        $mediaBorderWrap = $containerTracker.find('.rdr_media_border_wrap');
-                                    
-                                    $indicator.addClass('rdr_engage_media');
-
-                                    //update here just to make sure at least a mouse hover always resets any unexpected weirdness
-                                    RDR.actions.indicators.utils.updateContainerTracker(hash);
-                                    $mediaBorderWrap.show();
-
-                                    var src = $container.attr('src'),
-                                    src_with_path = this.src;
-
-                                    var coords = {
-                                        top: $container.offset().top,
-                                        left: $container.offset().right
-                                    };
-
-                                    $container.addClass('rdr_engage_media');
-
-                                    //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
-                                    // builds a new actionbar or just returns the existing $actionbar if it exists.
-
-                                    //use the image container info as the content, because the img itself is the content_node.
-                                    var $actionbar = RDR.actionbar.draw({ hash:hash, kind:containerInfo.kind, coords:coords, content:containerInfo.body, src_with_path:containerInfo.body, ignoreWindowEdges:"tb" });
-
-                                    //kill all rivals!!
-                                    var $rivals = $('div.rdr_actionbar').not($actionbar);
-                                    RDR.actionbar.close( $rivals );
-
-                                    //this looks bad because it's adding a hover event on every container hover event, but we need to because
-                                    //the actionbar is being recreated every time.  We if the actionbar hasn't faded out yet though it will be the
-                                    //same one, so check for that to avoid excessive events (not that would really hurt anything)
-                                    if ( $actionbar.data('hasHoverEvent') ) return;
-                                    //else
-                                    $actionbar.hover(
-                                        function() {
-                                            $(this).data('hover',true);
-                                            
-                                        },
-                                        function() {
-                                            $(this).data('hover',false);
-                                            RDR.actionbar.closeSuggest(hash);
-                                        }
-                                    );
-                                    $actionbar.data('hasHoverEvent', true);
-
+                                    _mediaEngage(hash);
                                 },
                                 function(){
-                                    var actionbar_id = "rdr_actionbar_"+hash;
-                                    var $actionbar = $('#'+actionbar_id);
-                                    $(this).data('hover',false);
-                                    RDR.actionbar.closeSuggest(hash);
+                                    _mediaDisengage(hash);
                                 }
                             );
                         },
@@ -2567,7 +2516,73 @@ function readrBoard($R){
                         }
                     };
 
+                    function _mediaEngage(hash){
+            
+                        var containerInfo = RDR.containers[hash];
+                        var $container = containerInfo.$this;
+
+                        $container.data('hover',true);
+
+                        var $indicator = $('#rdr_indicator_'+hash),
+                            $containerTracker = $('#rdr_container_tracker_'+hash),
+                            $mediaBorderWrap = $containerTracker.find('.rdr_media_border_wrap');
+                        
+                        $indicator.addClass('rdr_engage_media');
+
+                        //update here just to make sure at least a mouse hover always resets any unexpected weirdness
+                        RDR.actions.indicators.utils.updateContainerTracker(hash);
+                        $mediaBorderWrap.show();
+
+                        var src = $container.attr('src'),
+                        src_with_path = this.src;
+
+                        var coords = {
+                            top: $container.offset().top,
+                            left: $container.offset().right
+                        };
+
+                        $container.addClass('rdr_engage_media');
+
+                        //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
+                        // builds a new actionbar or just returns the existing $actionbar if it exists.
+
+                        //use the image container info as the content, because the img itself is the content_node.
+                        var $actionbar = RDR.actionbar.draw({ hash:hash, kind:containerInfo.kind, coords:coords, content:containerInfo.body, src_with_path:containerInfo.body, ignoreWindowEdges:"tb" });
+
+                        //kill all rivals!!
+                        var $rivals = $('div.rdr_actionbar').not($actionbar);
+                        RDR.actionbar.close( $rivals );
+
+                        //this looks bad because it's adding a hover event on every container hover event, but we need to because
+                        //the actionbar is being recreated every time.  We if the actionbar hasn't faded out yet though it will be the
+                        //same one, so check for that to avoid excessive events (not that would really hurt anything)
+                        if ( $actionbar.data('hasHoverEvent') ) return;
+                        //else
+                        $actionbar.hover(
+                            function() {
+                                $(this).data('hover',true);
+                                
+                            },
+                            function() {
+                                $(this).data('hover',false);
+                                RDR.actionbar.closeSuggest(hash);
+                            }
+                        );
+                        $actionbar.data('hasHoverEvent', true);
+                    }
+
+                    function _mediaDisengage(hash){
                     
+                        var containerInfo = RDR.containers[hash];
+                        var $container = containerInfo.$this;
+
+                        var actionbar_id = "rdr_actionbar_"+hash;
+                        var $actionbar = $('#'+actionbar_id);
+                        $container.data('hover',false);
+                        RDR.actionbar.closeSuggest(hash);
+                    }
+
+                    //todo: what does this do?  break this out into a function with a descriptive name.
                     var hashesToShow = []; //filled below
 
                     for ( var i in summaries ) {
@@ -4049,6 +4064,12 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         $indicator_details.data( 'top', $container.offset().bottom );
                         $indicator_details.data( 'left', $container.offset().left );
                                                 
+
+                        //todo: DC: Temp hack for DC slideshow
+                        $container.find('.slideCredit').css({
+                            'margin-top':'25'
+                        });
+
                         $indicator_details.show()//chain
                         .click( function() {
                             var selStates = $(this).data('selStates');
