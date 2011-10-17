@@ -2486,6 +2486,7 @@ function readrBoard($R){
                             var $img = $(img);
                             if ( $img.is(':visible') && $img.parents(':hidden').length == 0 && $img.data('hash') ) {
                                 hash = $img.data('hash');
+                                console.log(hash);
                                 return false;
                             }
                         });
