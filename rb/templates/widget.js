@@ -2470,9 +2470,14 @@ function readrBoard($R){
                             $slideshow.hover(
                                 function(){
                                     RDR.actions.containers.media.onEngage( RDR.actions.slideshows.findActiveHash() );
+                                    $(window).hashchange( function() {
+                                        console.log('HASH CHANGE!!');
+                                        RDR.actions.containers.media.onEngage( RDR.actions.slideshows.findActiveHash() );
+                                    });
                                 },
                                 function(){
                                     RDR.actions.containers.media.onDisengage( RDR.actions.slideshows.findActiveHash() );
+                                    $(window).unbind( 'hashchange' );
                                 }
                             );
                         });
@@ -2488,7 +2493,6 @@ function readrBoard($R){
                             var $img = $(img);
                             if ( $img.is(':visible') && $img.parents(':hidden').length == 0 && $img.data('hash') ) {
                                 hash = $img.data('hash');
-                                console.log(hash);
                                 return false;
                             }
                         });
