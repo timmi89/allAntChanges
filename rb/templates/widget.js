@@ -1975,7 +1975,7 @@ function readrBoard($R){
                         var group_settings = response.data;
                         
                         RDR.group = $.extend({}, RDR.group.defaults, group_settings );
-                        
+
                         $(RDR.group.no_readr).each( function() { 
                             $(this).addClass('no-rdr'); 
                             $(this).find('img').addClass('no-rdr');
@@ -2055,7 +2055,7 @@ function readrBoard($R){
 
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
                 var pageUrl = window.location.href;
-                if ( $.inArray(pageUrl, urlsArr) == -1 ) {
+                if ( $.inArray(pageUrl, urlsArr) == -1 || urlsArr.length == 0 ) {
                     canonical_url = $('link[rel="canonical"]').length > 0 ?
                                 $('link[rel="canonical"]').attr('href') : pageUrl;
                     title = $('meta[property="og:title"]').attr('content') ? 
@@ -2284,7 +2284,7 @@ function readrBoard($R){
 
                     //flag exceptions for inline_indicators
                     var $inlineMediaSet = $allNodes.filter(RDR.group.inline_selector);
-                    
+
                     $inlineMediaSet.each(function(){
                         $(this).data('inlineIndicator', true);
                     });
@@ -2344,7 +2344,6 @@ function readrBoard($R){
                 return hashList;
             },
             sendHashes: function( hashes, onSuccessCallback ) {
-
                 // if ( hashes.length == 1 ) {
                 //     var hash = hashes[0];
                 //     var page_id = RDR.util.getPageProperty( 'id', hash );
@@ -6260,7 +6259,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     var page = RDR.pages[pageId],
                         key = page.key; //todo: consider phasing out - use id instead
 
-                    var $container = $(RDR.group.post_selector + '.rdr-page-key-'+key);
+                    var $container = ( $(RDR.group.post_selector + '.rdr-page-key-'+key).length == 1 ) ? $(RDR.group.post_selector + '.rdr-page-key-'+key):$('body.rdr-page-key-'+key);
+
                     if ( $container.length !== 1 ) return;
                     //else
 
@@ -6724,10 +6724,6 @@ function $RFunctions($R){
                     //todo check this
                     var $this = ( this[0] === document ) ? $('.rdr-summary') : this;
                     return $this.each(function(index){
-                        console.log(this);
-                        console.log(param);
-
-                        console.log('updating summarybar');
                     });
                 }
 
