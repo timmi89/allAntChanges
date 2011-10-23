@@ -216,6 +216,7 @@ RB.analytics = {
 
 					$('table[role="active pages table"] tbody').html( pageHtml );
 				} else if ( type == "content" ) {
+					console.dir(response);
 					var contentHtml = "";
 					for ( var i in response) {
 						contentHtml += '<tr>'; // TODO add back in:  <td role="via"><div><a href="'+response[i].content.canonical_url+'" target="_blank">'+response[i].content.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
