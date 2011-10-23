@@ -399,8 +399,8 @@ function readrBoard($R){
                             top: 0,
                             left: 0
                         } : {
-                            top: -5,
-                            left: 1
+                            top: -10,
+                            left: -3
                         };
 
                         //toggled back in RDR.rindow.close:
@@ -688,7 +688,14 @@ function readrBoard($R){
                             height: rindowHeight
                         }, 200, 'swing', function(){
                             RDR.rindow.jspUpdate( rindow );
-                        });            
+                        });
+
+                        rindow.bind( 'mouseleave', function() {
+                            var $this = $(this);
+                            if ( $this.hasClass('rdr_rewritable') ) {
+                                $this.remove();
+                            }
+                        })
                         
                     },
                     customOptions: {
