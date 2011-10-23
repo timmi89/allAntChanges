@@ -388,7 +388,7 @@ class SettingsHandler(AnonymousBaseHandler):
     def read(self, request, group_id=None):
         if not group_id:
             # Get hostname, stripping www if present
-            host = 'local.readrboard.com:8080'
+            host = getHost(request)
             
             # Get site object
             try:
