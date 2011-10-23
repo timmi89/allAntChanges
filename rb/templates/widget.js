@@ -2466,20 +2466,25 @@ function readrBoard($R){
                 setup: function() {
                     // RDR.actions.slideshows.setup
                     if ( RDR.group.slideshow_trigger ) {
+                        $(window).hashchange( function() {
+                            var hash = RDR.actions.slideshows.findActiveHash();
+                            
+                            console.log('HASH CHANGE: '+hash);
+                            console.log($('#rdr_indicator_details_'+hash).length);
+                            
+                            $('#rdr_indicator_details_'+hash).show().siblings().hide();
+                            RDR.actions.containers.media.onEngage( hash );
+                        });
+                        
                         var $slideshows = $(RDR.group.slideshow_trigger);
                         $.each( $slideshows, function( idx, slideshow ) {
                             var $slideshow = $(slideshow);
                             $slideshow.hover(
                                 function(){
                                     RDR.actions.containers.media.onEngage( RDR.actions.slideshows.findActiveHash() );
-                                    $(window).hashchange( function() {
-                                        console.log('HASH CHANGE!!');
-                                        RDR.actions.containers.media.onEngage( RDR.actions.slideshows.findActiveHash() );
-                                    });
                                 },
                                 function(){
                                     RDR.actions.containers.media.onDisengage( RDR.actions.slideshows.findActiveHash() );
-                                    $(window).unbind( 'hashchange' );
                                 }
                             );
                         });
