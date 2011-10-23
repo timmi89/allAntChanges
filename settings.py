@@ -175,7 +175,8 @@ INSTALLED_APPS = [
     'rb',
     'piston',
     'south',
-    'storages'
+    'storages',
+    'gunicorn'
     #'treebeard',
     #'debug_toolbar',
     #'autofixture',

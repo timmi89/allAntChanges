@@ -200,7 +200,7 @@ class NodeValue(models.Model):
 
 class Site(models.Model):
     name = models.CharField(max_length=100)
-    domain = models.CharField(max_length=50)
+    domain = models.CharField(max_length=100, unique=True)
     group = models.ForeignKey(Group)
     include_selectors = models.CharField(max_length=255, blank=True)
     no_rdr_selectors = models.CharField(max_length=255, blank=True)
