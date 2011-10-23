@@ -421,7 +421,7 @@ function readrBoard($R){
                             top: $indicatorDetails.data('top') + tempOffsets.top,
                             left: $indicatorDetails.data('left') + tempOffsets.left 
                         };
-                        
+
                         var rindow = RDR.rindow.draw({
                             coords:coords,
                             pnlWidth:170,
@@ -4014,11 +4014,19 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 //else
                                 if ( $indicator_details.data('freshlyKilled')) return false;
                                 //else
+                                var indicatorOffsets = $indicator_body.offset();
+
+                                // if ( indicatorOffsets.top == 0 )
+                                // rdr_indicator_631eb4d994595a8a3ec836f71a1d88a3
                                 $indicator_details.css({
-                                    'display':'block',
-                                    'top': $indicator_body.offset().top,
-                                    'left': $indicator_body.offset().left
+                                    'top': indicatorOffsets.top,
+                                    'left': indicatorOffsets.left
                                 });
+
+                                $indicator_details.data( 'top', indicatorOffsets.top );
+                                $indicator_details.data( 'left', indicatorOffsets.left );
+
+                                if ( kind != "text" ) $indicator_details.show();
                             },
                             function() {
                                 $indicator_details.data( 'freshlyKilled', false);
@@ -4028,8 +4036,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                         $indicator_details.click( function() {
                             //store it's offset in data(), because offset doesn't work if the node is hidden.  It was giving me problems before
-                            $indicator_details.data( 'top', $indicator_details.offset().top );
-                            $indicator_details.data( 'left', $indicator_details.offset().left );
+                            // $indicator_details.data( 'top', $indicator_details.offset().top );
+                            // $indicator_details.data( 'left', $indicator_details.offset().left );
                             $indicator_details.data( 'freshlyKilled', true);
                             var selStates = $(this).data('selStates');
 
@@ -4095,6 +4103,13 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         var onSuccessCallback = function(){
                             $indicator.unbind('mouseover.contentNodeInit');
                             RDR.actions.indicators.utils.setupContentNodeHilites(hash);
+
+                            $indicator.bind('mouseover.showRindow', function(){
+                                var selStates = $(this).data('selStates');
+
+                                RDR.rindow.make( "readMode", {hash:hash} );
+                            });
+                            $indicator.triggerHandler('mouseover.showRindow');
                         };
                         //bind the hover event that will only be run once.  It gets removed on the success callback above.
                         $indicator.bind('mouseover.contentNodeInit', function(){
