@@ -2207,6 +2207,7 @@ function readrBoard($R){
             },
             hashNodes: function( $node, nomedia ) {
                 //RDR.actions.hashNodes:
+                console.log('RDR.actions.hashNodes');
                 
                 // [porter]: needs a node or nodes
                 if ( typeof $node==="undefined" ) return;
@@ -2350,6 +2351,9 @@ function readrBoard($R){
                 return hashList;
             },
             sendHashes: function( hashes, onSuccessCallback ) {
+                // RDR.actions.sendHashes
+                console.log('RDR.actions.sendHashes');
+                console.dir(hashes);
                 // if ( hashes.length == 1 ) {
                 //     var hash = hashes[0];
                 //     var page_id = RDR.util.getPageProperty( 'id', hash );
@@ -2485,6 +2489,7 @@ function readrBoard($R){
                 },
                 findActiveHash: function() {
                     // RDR.actions.slideshows.findActiveHash
+                    console.log('RDR.actions.slideshows.findActiveHash');
                     if ( RDR.group.slideshow_trigger && RDR.group.slideshow_img_selector ) {
                         var $slideshow_images = $(RDR.group.slideshow_img_selector),
                             hash = "";
@@ -2496,6 +2501,7 @@ function readrBoard($R){
                                 return false;
                             }
                         });
+                        console.log(hash);
                         return hash;
                     } else {
                         return "";
@@ -2508,6 +2514,7 @@ function readrBoard($R){
                     //actions for the special cases of media containers
                     onEngage: function(hash){
                         //RDR.actions.containers.media.onEngage:
+                        console.log('RDR.actions.containers.media.onEngage');
                         // action to be run when media container is engaged - typically with a hover over the container
 
                         var containerInfo = RDR.containers[hash];
