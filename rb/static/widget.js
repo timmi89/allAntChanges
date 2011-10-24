@@ -1,11 +1,13 @@
-var RDR, //our global RDR object
+var RDR = {}, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
 $R = {}, //init var: our clone of jQuery
 RDR_scriptPaths = {},
-RDR_rootPath = "{{ BASE_URL }}", //todo: when we get our hosting up change to readrboard.com or our CDN.
-RDR_offline = RDR_rootPath.indexOf('local') != -1;
+RDR_baseUrl = ( typeof RDR_offline != "undefined" ) ? "http://www.readrboard.com":"http://local.readrboard.com:8080";
+RDR_staticUrl = ( typeof RDR_offline != "undefined" ) ? "http://s3.amazonaws.com/readrboard/":"http://local.readrboard.com:8080/static/";
 
 //test
+
+//testing flipbook_changes branch
 
 //Our Readrboard function that builds the RDR object which gets returned into the global scope.
 //This function gets called by the function $RFunctions() via the function rdr_loadScript().
@@ -31,10 +33,6 @@ function readrBoard($R){
         },
         containers:{},
         pages:{},
-        groupPermData: {
-            group_id : "{{ group_id }}",  //make group_id a string partly to make my IDE happy - getting sent as ajax anyway
-            short_name : "{{ short_name }}"
-        },
         group: {
             //RDR.group:
             //details to be set by RDR.actions.initGroupData which extends defaults
@@ -48,7 +46,9 @@ function readrBoard($R){
                 img_blacklist: "",
                 custom_css: "",
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
-                inline_selector: 'img, embed, video, object, iframe'
+                inline_selector: 'img, embed, video, object, iframe',
+                slideshow_trigger: '#module-flipbook-wrap',
+                slideshow_img_selector: '#module-flipbook div.slideImg img'
             }
         },
         user: {
@@ -1453,14 +1453,14 @@ function readrBoard($R){
                     if( whichAlert == "showMorePins"){
                         //put a better message here
                         $msg1 = $('<h1>See <span>more reactions</span> on this page.</h1>');
-                        $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="rdr_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" /> icons.</div>');
+                        $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="rdr_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" /> icons.</div>');
 
                         $msg2.find('a.rdr_show_more_pins').click( function() {
                             RDR.actions.summaries.showLessPopularIndicators();
                             $(this).closest('div.rdr_alert_box').find('div.rdr_alert_box_x').click();
                         });
                     }
-                    $pinIcon = $('<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />');
+                    $pinIcon = $('<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />');
 
                     var $alertContent = $('<div class="rdr_alert_box rdr rdr_brtl rdr_brtr rdr_' + whichAlert + '" />');
 
@@ -1496,7 +1496,7 @@ function readrBoard($R){
                     // set a cookie in the iframe saying not to show this anymore
                     $.postMessage(
                         "close "+whichAlert,
-                        RDR.session.iframeHost + "/xdm_status/",
+                        RDR_baseUrl + "/xdm_status/",
                         window.frames['rdr-xdm-hidden']
                     );
                 }
@@ -1595,7 +1595,6 @@ function readrBoard($R){
                 RDR.session.alertBar.make('fromShareLink', data);
                 return true; //could return something more useful if we need it.
             },
-			iframeHost : "{{ BASE_URL }}", // TODO put this in a template var
             getUser: function(args, callback) {
                 if ( callback && args ) {
                     RDR.session.receiveMessage( args, callback );
@@ -1604,7 +1603,7 @@ function readrBoard($R){
                 }
                 $.postMessage(
                     "getUser",
-                    RDR.session.iframeHost + "/xdm_status/",
+                    RDR_baseUrl + "/xdm_status/",
                     window.frames['rdr-xdm-hidden']
                 );
             },
@@ -1639,7 +1638,7 @@ function readrBoard($R){
                         $.postMessage(
                             "reauthUser",
                             // "killUser",
-                            RDR.session.iframeHost + "/xdm_status/",
+                            RDR_baseUrl + "/xdm_status/",
                             window.frames['rdr-xdm-hidden']
                         );
 
@@ -1652,10 +1651,10 @@ function readrBoard($R){
 
                 RDR.session.receiveMessage();
 
-                var iframeUrl = RDR.session.iframeHost + "/xdm_status/",
+                var iframeUrl = RDR_baseUrl + "/xdm_status/",
                 parentUrl = window.location.href,
                 parentHost = window.location.protocol + "//" + window.location.host,
-                $xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&group_name='+encodeURIComponent(RDR.group.name)+'&cachebust='+RDR.cachebuster+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
+                $xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+encodeURIComponent(RDR.group.name)+'&cachebust='+RDR.cachebuster+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
                 );
                 $('#rdr_sandbox').append( $xdmIframe );
 
@@ -1710,7 +1709,7 @@ function readrBoard($R){
                             }
                         }
                     },
-                    RDR.session.iframeHost
+                    RDR_baseUrl
                 );
             },
 			login: function() {},
@@ -1782,12 +1781,12 @@ function readrBoard($R){
 
                     // create the iframe containing the login panel
                     var $loginHtml = $('<div class="rdr_login" />'),
-                    iframeUrl = RDR.session.iframeHost + "/fblogin/",
+                    iframeUrl = RDR_baseUrl + "/fblogin/",
                     parentUrl = window.location.href,
                     parentHost = window.location.protocol + "//" + window.location.host;
                     var h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard";
                     $loginHtml.append( '<h1>'+h1_text+'</h1><div class="rdr_body" />');
-                    $loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.groupPermData.group_id+'&group_name='+RDR.group.name+'&cachebust='+RDR.cachebuster+'" width="360" height="190" frameborder="0" style="overflow:hidden;" />' );
+                    $loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'&cachebust='+RDR.cachebuster+'" width="360" height="190" frameborder="0" style="overflow:hidden;" />' );
 
                     rindow.find('div.rdr_contentSpace').append( $loginHtml );
                 }
@@ -1796,7 +1795,7 @@ function readrBoard($R){
                 RDR.user = {};
                 $.postMessage(
                     "killUser",
-                    RDR.session.iframeHost + "/xdm_status/",
+                    RDR_baseUrl + "/xdm_status/",
                     window.frames['rdr-xdm-hidden']
                 );
             },
@@ -1861,13 +1860,13 @@ function readrBoard($R){
                                     (interactionInfo.type == 'comment') ?
                                         "You have left your comment." :
                                         ""; //this default shouldn't happen
-                                    userMsg += " See your "+interactionInfo.type+"s on this page, and at <strong><a href='"+RDR_rootPath+"' target='_blank'>readrboard.com</a></strong>";
+                                    userMsg += " See your "+interactionInfo.type+"s on this page, and at <strong><a href='"+RDR_baseUrl+"' target='_blank'>readrboard.com</a></strong>";
                                 }
 
                                 var click_args = args;
                                 if ( $rindow.find('div.rdr_rindow_message_tempUserMsg').text().length > 0 ) {
                                     $inlineTempMsg = $('<div />');
-                                    $inlineTempMsg.html( '<h4 style="font-size:17px;">You can react '+ $rindow.find('div.rdr_rindow_message_tempUserMsg strong').text() +'.</h4><br/><p><a style="font-weight:bold;color:#008be4;" href="javascript:void(0);">Connect with Facebook</a> to react as much as you want &amp; show other readers here what you think.</p><br/><p>Plus, you can share and comment in-line!</p><br/><a href="javascript:void(0);"><img src="{{ STATIC_URL }}widget/images/fb-login_to_readrboard.png" alt="Connect with Facebook" /></a>');
+                                    $inlineTempMsg.html( '<h4 style="font-size:17px;">You can react '+ $rindow.find('div.rdr_rindow_message_tempUserMsg strong').text() +'.</h4><br/><p><a style="font-weight:bold;color:#008be4;" href="javascript:void(0);">Connect with Facebook</a> to react as much as you want &amp; show other readers here what you think.</p><br/><p>Plus, you can share and comment in-line!</p><br/><a href="javascript:void(0);"><img src="'+RDR_staticUrl+'widget/images/fb-login_to_readrboard.png" alt="Connect with Facebook" /></a>');
                                     $inlineTempMsg.find('a').click( function() {
                                         RDR.session.showLoginPanel( click_args );
                                     });
@@ -1949,7 +1948,7 @@ function readrBoard($R){
                 var that = this;
                 $RDR = $(RDR);
                 $RDR.queue('initAjax', function(next){
-                    that.initGroupData(RDR.groupPermData.short_name);
+                    that.initGroupData(RDR.group.short_name);
                     //next fired on ajax success
                 });
                 $RDR.queue('initAjax', function(next){
@@ -1972,7 +1971,7 @@ function readrBoard($R){
                 // request the RBGroup Data
 
                 $.ajax({
-                    url: RDR_rootPath+"/api/settings/"+RDR.groupPermData.group_id+"/",
+                    url: RDR_baseUrl+"/api/settings/",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
@@ -2046,7 +2045,7 @@ function readrBoard($R){
                                 urlsArr.push(url);
 
                                 thisPage = {
-                                    group_id: parseInt(RDR.groupPermData.group_id, 10),
+                                    group_id: parseInt(RDR.group.id, 10),
                                     url: url,
                                     canonical_url: 'same',
                                     title: $post_href.text()
@@ -2073,7 +2072,7 @@ function readrBoard($R){
                                 $('title').text() : "";
 
                     thisPage = {
-                        group_id: parseInt(RDR.groupPermData.group_id, 10),
+                        group_id: parseInt(RDR.group.id, 10),
                         url: pageUrl,
                         canonical_url: (pageUrl == canonical_url) ? "same" : canonical_url,
                         title: title
@@ -2104,7 +2103,7 @@ function readrBoard($R){
                 //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
 				//might not want to send canonical, or, send it separately if/only if it's different than URL
 				$.ajax({
-                    url: RDR_rootPath+"/api/page/",
+                    url: RDR_baseUrl+"/api/page/",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
@@ -2198,6 +2197,8 @@ function readrBoard($R){
                 }).live('mouseleave', function(){
                     $(this).removeClass('rdr_live_hover');
                 });
+
+                RDR.actions.slideshows.setup();
                 
                 //hashNodes without any arguments will fetch the default set from the server.
                 // var hashes = this.hashNodes();
@@ -2353,6 +2354,8 @@ function readrBoard($R){
                 return hashList;
             },
             sendHashes: function( hashes, onSuccessCallback ) {
+                // RDR.actions.sendHashes
+
                 // if ( hashes.length == 1 ) {
                 //     var hash = hashes[0];
                 //     var page_id = RDR.util.getPageProperty( 'id', hash );
@@ -2405,7 +2408,7 @@ function readrBoard($R){
 
                     // send the data!
                     $.ajax({
-                        url: RDR_rootPath+"/api/summary/containers/",
+                        url: RDR_baseUrl+"/api/summary/containers/",
                         type: "get",
                         contentType: "application/json",
                         dataType: "jsonp",
@@ -2463,6 +2466,55 @@ function readrBoard($R){
                     });
                 }
             },
+            slideshows: {
+                setup: function() {
+                    // RDR.actions.slideshows.setup
+                    if ( RDR.group.slideshow_trigger ) {
+                        $(window).hashchange( function() {
+                            var hash = RDR.actions.slideshows.findActiveHash();
+
+                            // TODO: DC demo...  this forces the indicator for a slide to rebuild 
+                            $('div.rdr_indicator_details_for_media_inline').remove();
+                            RDR.actions.indicators.init(hash);
+                        });
+                        
+                        var $slideshows = $(RDR.group.slideshow_trigger);
+                        $.each( $slideshows, function( idx, slideshow ) {
+                            var $slideshow = $(slideshow);
+                            $slideshow.hover(
+                                function(){
+                                    var hash = RDR.actions.slideshows.findActiveHash();
+                                    // TODO: DC demo...  this forces the indicator for a slide to rebuild 
+                                    $('div.rdr_indicator_details_for_media_inline').remove();
+                                    RDR.actions.indicators.init(hash);
+                                    RDR.actions.containers.media.onEngage( hash );
+                                },
+                                function(){
+                                    RDR.actions.containers.media.onDisengage( RDR.actions.slideshows.findActiveHash() );
+                                }
+                            );
+                        });
+                    }
+                },
+                findActiveHash: function() {
+                    // RDR.actions.slideshows.findActiveHash
+                    if ( RDR.group.slideshow_trigger && RDR.group.slideshow_img_selector ) {
+                        var $slideshow_images = $(RDR.group.slideshow_img_selector),
+                            hash = "";
+
+                        $.each( $slideshow_images, function( idx, img ) {
+                            var $img = $(img);
+                            if ( $img.is(':visible') && $img.parents(':hidden').length == 0 && $img.data('hash') ) {
+                                hash = $img.data('hash');
+                                return false;
+                            }
+                        });
+                        return hash;
+                    } else {
+                        return "";
+                    }
+                }
+            },
             containers: {
                 media: {
                     //RDR.actions.containers.media:
@@ -2471,71 +2523,97 @@ function readrBoard($R){
                         //RDR.actions.containers.media.onEngage:
                         // action to be run when media container is engaged - typically with a hover over the container
 
-                        var containerInfo = RDR.containers[hash];
-                        var $container = containerInfo.$this;
 
-                        $container.data('hover',true);
 
-                        var $indicator = $('#rdr_indicator_'+hash),
-                            $containerTracker = $('#rdr_container_tracker_'+hash),
-                            $mediaBorderWrap = $containerTracker.find('.rdr_media_border_wrap');
-                        
-                        $indicator.addClass('rdr_engage_media');
+                        var $this = $R('img.rdr-'+hash+', iframe.rdr-'+hash+',embed.rdr-'+hash+',video.rdr-'+hash+',object.rdr-'+hash+'').eq(0);
+                        var hasBeenHashed = $this.hasClass('rdr-hashed'),
+                            isBlacklisted = $this.closest('.rdr, .no-rdr').length;
 
-                        //update here just to make sure at least a mouse hover always resets any unexpected weirdness
-                        RDR.actions.indicators.utils.updateContainerTracker(hash);
-                        $mediaBorderWrap.show();
-
-                        var src = $container.attr('src'),
-                        src_with_path = this.src;
-
-                        var coords = {
-                            top: $container.offset().top,
-                            left: $container.offset().right
-                        };
-
-                        $container.addClass('rdr_engage_media');
-
-                        //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
-                        // builds a new actionbar or just returns the existing $actionbar if it exists.
-
-                        //use the image container info as the content, because the img itself is the content_node.
-                        var $actionbar = RDR.actionbar.draw({ hash:hash, kind:containerInfo.kind, coords:coords, content:containerInfo.body, src_with_path:containerInfo.body, ignoreWindowEdges:"tb" });
-
-                        //kill all rivals!!
-                        var $rivals = $('div.rdr_actionbar').not($actionbar);
-                        RDR.actionbar.close( $rivals );
-
-                        //this looks bad because it's adding a hover event on every container hover event, but we need to because
-                        //the actionbar is being recreated every time.  We if the actionbar hasn't faded out yet though it will be the
-                        //same one, so check for that to avoid excessive events (not that would really hurt anything)
-                        if ( $actionbar.data('hasHoverEvent') ) return;
-                        //else
-                        $actionbar.hover(
-                            function() {
-                                $(this).data('hover',true);
-                                
-                            },
-                            function() {
-                                $(this).data('hover',false);
-                                RDR.actionbar.closeSuggest(hash);
+                        if(!hasBeenHashed && !isBlacklisted){
+                            $this.addClass('rdr_live_hover');
+                            var hash = RDR.actions.hashNodes( $this );
+                            if(hash){
+                                RDR.actions.sendHashes( hash, function(){
+                                    if( $this.hasClass('rdr_live_hover') ){
+                                        $this.mouseenter();
+                                    }
+                                });
                             }
-                        );
-                        $actionbar.data('hasHoverEvent', true);
-                    
-                        
+                        } else {
+                            $this.addClass('rdr_live_hover');
+                        }
+
+
+
+
+                        var containerInfo = RDR.containers[hash];
+                        if ( containerInfo ) {
+
+                            var $container = containerInfo.$this;
+
+                            $container.data('hover',true);
+
+                            var $indicator = $('#rdr_indicator_'+hash),
+                                $containerTracker = $('#rdr_container_tracker_'+hash),
+                                $mediaBorderWrap = $containerTracker.find('.rdr_media_border_wrap');
+                            
+                            $indicator.addClass('rdr_engage_media');
+
+                            //update here just to make sure at least a mouse hover always resets any unexpected weirdness
+                            RDR.actions.indicators.utils.updateContainerTracker(hash);
+                            $mediaBorderWrap.show();
+
+                            var src = $container.attr('src'),
+                            src_with_path = this.src;
+
+                            var coords = {
+                                top: $container.offset().top,
+                                left: $container.offset().right
+                            };
+
+                            $container.addClass('rdr_engage_media');
+
+                            //todo: make this more efficient by making actionbars persistent instead of recreating them each time. 
+                            // builds a new actionbar or just returns the existing $actionbar if it exists.
+
+                            //use the image container info as the content, because the img itself is the content_node.
+                            var $actionbar = RDR.actionbar.draw({ hash:hash, kind:containerInfo.kind, coords:coords, content:containerInfo.body, src_with_path:containerInfo.body, ignoreWindowEdges:"tb" });
+
+                            //kill all rivals!!
+                            var $rivals = $('div.rdr_actionbar').not($actionbar);
+                            RDR.actionbar.close( $rivals );
+
+                            //this looks bad because it's adding a hover event on every container hover event, but we need to because
+                            //the actionbar is being recreated every time.  We if the actionbar hasn't faded out yet though it will be the
+                            //same one, so check for that to avoid excessive events (not that would really hurt anything)
+                            if ( $actionbar.data('hasHoverEvent') ) return;
+                            //else
+                            $actionbar.hover(
+                                function() {
+                                    $(this).data('hover',true);
+                                    
+                                },
+                                function() {
+                                    $(this).data('hover',false);
+                                    RDR.actionbar.closeSuggest(hash);
+                                }
+                            );
+                            $actionbar.data('hasHoverEvent', true);
+                        }
                     },
                     onDisengage: function(hash){
                         //RDR.actions.containers.media.onDisengage:
                         //actions to be run when media container is disengaged - typically with a hover off of the container
 
                         var containerInfo = RDR.containers[hash];
-                        var $container = containerInfo.$this;
+                        if ( containerInfo ) {
+                            var $container = containerInfo.$this;
 
-                        var actionbar_id = "rdr_actionbar_"+hash;
-                        var $actionbar = $('#'+actionbar_id);
-                        $container.data('hover',false);
-                        RDR.actionbar.closeSuggest(hash);
+                            var actionbar_id = "rdr_actionbar_"+hash;
+                            var $actionbar = $('#'+actionbar_id);
+                            $container.data('hover',false);
+                            RDR.actionbar.closeSuggest(hash);
+                        }
                     }
                 },
                 save: function(settings){
@@ -2773,7 +2851,7 @@ function readrBoard($R){
 
                     // TODO do we even need this anymore?
                     $.ajax({
-                        url: RDR_rootPath+"/api/containers/create/",
+                        url: RDR_baseUrl+"/api/containers/create/",
                         type: "get",
                         contentType: "application/json",
                         dataType: "jsonp",
@@ -2854,7 +2932,7 @@ function readrBoard($R){
                     };
 
                     $.ajax({
-                        url: RDR_rootPath+"/api/summary/container/content/",
+                        url: RDR_baseUrl+"/api/summary/container/content/",
                         type: "get",
                         contentType: "application/json",
                         dataType: "jsonp",
@@ -3020,7 +3098,7 @@ if ( RDR.summaries[sendData.hash] ) sendData.container_kind = RDR.summaries[send
 if (sendData.content_node_data && sendData.content_node_data.container ) delete sendData.content_node_data.container;
 
                     //todo: consider making a generic url router
-                    var url = RDR_rootPath+"/api/" +int_type+ "/"+action_type+"/";
+                    var url = RDR_baseUrl+"/api/" +int_type+ "/"+action_type+"/";
 
                     var hitMax = RDR.session.checkForMaxInteractions(args);
 
@@ -3082,7 +3160,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     //RDR.actions.interactions.defaultSendData:
                     args.user_id = RDR.user.user_id;
                     args.readr_token = RDR.user.readr_token;
-                    args.group_id = RDR.groupPermData.group_id;
+                    args.group_id = RDR.group.id;
                     args.page_id = RDR.util.getPageProperty('id', args.hash);
                     return args;
 
@@ -3239,7 +3317,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 $tagLi.data('html', $tagLi.html() );
                             }
                             //Do UI stuff particular to write mode
-                            var $loader = $('<span class="rdr_loader" />').append('<img src="{{ STATIC_URL }}widget/images/loader.gif" />');
+                            var $loader = $('<span class="rdr_loader" />').append('<img src="'+RDR_staticUrl+'widget/images/loader.gif" />');
                             $tagLi.find('div.rdr_tag_count').addClass('rdr_kill_bg').find('span').addClass('rdr_not_loader').hide();
                             $tagLi.find('div.rdr_tag_count').append($loader);
                         }
@@ -3274,7 +3352,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 //page level attrs
                                 "user_id" : RDR.user.user_id,
                                 "readr_token" : RDR.user.readr_token,
-                                "group_id" : RDR.groupPermData.group_id,
+                                "group_id" : RDR.group.id,
                                 "page_id" : RDR.util.getPageProperty('id', hash)
                             };
                         } else  {
@@ -3335,7 +3413,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 //page level attrs
                                 "user_id" : RDR.user.user_id,
                                 "readr_token" : RDR.user.readr_token,
-                                "group_id" : RDR.groupPermData.group_id,
+                                "group_id" : RDR.group.id,
                                 "page_id" : RDR.util.getPageProperty('id', hash),
                                 "int_id" : args.int_id
                             };
@@ -3366,7 +3444,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                                 $span.show(200).css('visibility','visible');
 
-                                $summary_box.find('div.rdr_note').html( $('<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon: <img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr" style="background:url({{ STATIC_URL }}widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>') );
+                                $summary_box.find('div.rdr_note').html( $('<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>') );
                                 //todo: reconsider this method of liberally updating everything with updateContainerTrackers
                                 $summary_box.find('div.rdr_note').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
                             } else {
@@ -3563,7 +3641,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         if (args.kind && args.kind == "page") {
                             var $message = "";
                             if ( args.response.data && args.response.data.existing && args.response.data.existing === true ) {
-                                $message = $('<em>You have already given that reaction.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon: <img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr" style="background:url({{ STATIC_URL }}widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>');
+                                $message = $('<em>You have already given that reaction.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>');
                             } else if ( args.response.message.indexOf("Temporary user interaction limit reached") != -1 ) {
                                 $message = $('<em>To continue adding reactions, please <a href="javascript:void(0);" style="color:#008be4;" onclick="RDR.session.showLoginPanel();">Connect with Facebook</a>.</em><br><br><strong>Why:</strong> To encourage <strong style="color:#008be4;">high-quality participation from the community</strong>, <ins>we ask that you log in with Facebook. You\'ll also have a profile where you can revisit your reactions, bookmarks, and comments made using <strong style="color:#008be4;">ReadrBoard</strong>!</ins>');
                             } else {
@@ -3631,7 +3709,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                             // optional loader.
                             if ( typeof args.tag.find == "function" ){
-                                var $loader = $('<span class="rdr_loader" />').append('<img src="{{ STATIC_URL }}widget/images/loader.gif" />');
+                                var $loader = $('<span class="rdr_loader" />').append('<img src="'+RDR_staticUrl+'widget/images/loader.gif" />');
                                 args.tag.find('div.rdr_tag_count').addClass('rdr_kill_bg').find('span').hide().append($loader);
                             }
 
@@ -3703,7 +3781,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             //page level attrs
                             "user_id" : RDR.user.user_id,
                             "readr_token" : RDR.user.readr_token,
-                            "group_id" : RDR.groupPermData.group_id,
+                            "group_id" : RDR.group.id,
                             "page_id" : RDR.util.getPageProperty('id', hash),
                             "int_id" : args.int_id
                         };
@@ -3815,7 +3893,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             });
 
                             // TODO make this link to the user profile work
-                            var $seeTags = $('<div class="rdr_sntPnl_padder"><div>Your bookmarks are private - only you can see them.</div><br/ ><strong>To view your bookmarks, visit your <a href="'+RDR_rootPath+'/user/'+RDR.user.user_id+'" target="_blank">ReadrBoard profile</a>.</strong></div>');
+                            var $seeTags = $('<div class="rdr_sntPnl_padder"><div>Your bookmarks are private - only you can see them.</div><br/ ><strong>To view your bookmarks, visit your <a href="'+RDR_baseUrl+'/user/'+RDR.user.user_id+'" target="_blank">ReadrBoard profile</a>.</strong></div>');
                             
                             $whyPanel_panelCard.append(
                                 $tagFeedback.append($undoLink),
@@ -4002,7 +4080,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body" />').attr('id',indicatorBodyId)//chain
                         .appendTo($indicator)//chain
                         .append(
-                            '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
+                            '<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />',
                             '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
                         )//chain
                         .data( {'which':hash} );
@@ -4070,7 +4148,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body" />').attr('id',indicatorBodyId)//chain
                         .appendTo($indicator)//chain
                         .append(
-                            '<img src="{{ STATIC_URL }}widget/images/blank.png" class="no-rdr rdr_pin" />',
+                            '<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />',
                             '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
                         )//chain
                         .data( {'which':hash} );
@@ -4629,7 +4707,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $commentReplies = $('<div class="rdr_commentReplies" />'),
                             $commentReply = $('<div class="rdr_commentReply" />'),
                             $commentReply_link = $('<a href="javascript:void(0);">Reply</a>');
-                        var user_image_url = ( user.img_url ) ? user.img_url: '{{ STATIC_URL }}widget/images/anonymousplode.png';
+                        var user_image_url = ( user.img_url ) ? user.img_url: ''+RDR_staticUrl+'widget/images/anonymousplode.png';
                         var user_name = "You";
                         $commentBy.html( '<img src="'+user_image_url+'" class="no-rdr" /> ' + user_name );
                         $comment.html( '<div class="rdr_comment_body">"'+args.comment+'"</div>' );
@@ -5114,10 +5192,10 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     var shareHash = hash;
                     //quick mockup version of this code
                     $.each(socialNetworks, function(idx, val){
-                        $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                        $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                         $shareLinks.find('li:last').click( function() {
                             // var real_content_node = ( RDR.content_nodes[hash] ) ? RDR.content_nodes[hash] : RDR.summaries[hash].content;
-                            RDR.shareWindow = window.open('{{ STATIC_URL }}share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
+                            RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
                             RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
                             return false;
                         });
@@ -5264,7 +5342,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 $commentReplies = $('<div class="rdr_commentReplies" />'),
                                 $commentReply = $('<div class="rdr_commentReply" />'),
                                 $commentReply_link = $('<a href="javascript:void(0);">Reply</a>');
-                            var user_image_url = ( this_comment.social_user.img_url ) ? this_comment.social_user.img_url: '{{ STATIC_URL }}widget/images/anonymousplode.png';
+                            var user_image_url = ( this_comment.social_user.img_url ) ? this_comment.social_user.img_url: RDR_staticUrl+'widget/images/anonymousplode.png';
                             var user_name = ( this_comment.user.first_name === "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
                             $commentBy.html( '<img src="'+user_image_url+'" class="no-rdr" /> ' + user_name );
                             $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
@@ -5821,7 +5899,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         "content_node_data" : content_node_data,
                         "user_id" : RDR.user.user_id,
                         "readr_token" : RDR.user.readr_token,
-                        "group_id" : RDR.groupPermData.group_id,
+                        "group_id" : RDR.group.id,
                         "page_id" : RDR.util.getPageProperty('id', hash),
                         "referring_int_id" : RDR.session.referring_int_id,
                         "container_kind" : RDR.summaries[hash].kind
@@ -5830,7 +5908,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     // if ( !tag_li.hasClass('rdr_tagged') ) {
                         // send the data!
                         $.ajax({
-                            url: RDR_rootPath+"/api/share/",
+                            url: RDR_baseUrl+"/api/share/",
                             type: "get",
                             contentType: "application/json",
                             dataType: "jsonp",
@@ -6118,9 +6196,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 // embed icons/links for diff SNS
                 var shareHash = hash;
                 $.each(socialNetworks, function(idx, val){
-                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="{{ STATIC_URL }}widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                     $shareLinks.find('li:last').click( function() {
-                        RDR.shareWindow = window.open('{{ STATIC_URL }}share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
+                        RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
                         RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
                         return false;
                     });
@@ -6375,14 +6453,14 @@ function rdr_loadScript(sScriptSrc,callbackfunction) {
 }
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
-RDR_scriptPaths.jquery = RDR_offline ?
-    "{{ STATIC_URL }}global/js/jquery-1.6.2.min.js" :
+RDR_scriptPaths.jquery = RDR.offline ?
+    RDR_staticUrl+"global/js/jquery-1.6.2.min.js" :
     "http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js";
-RDR_scriptPaths.jqueryUI = RDR_offline ?
-    "{{ STATIC_URL }}global/js/jquery-ui-1.8.14.custom.min.js" :
+RDR_scriptPaths.jqueryUI = RDR.offline ?
+    RDR_staticUrl+"global/js/jquery-ui-1.8.14.custom.min.js" :
     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js";
-RDR_scriptPaths.jqueryUI_CSS = RDR_offline ?
-    "{{ STATIC_URL }}global/css/jquery-ui-1.8.14.base.css" :
+RDR_scriptPaths.jqueryUI_CSS = RDR.offline ?
+    RDR_staticUrl+"global/css/jquery-ui-1.8.14.base.css" :
     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/themes/base/jquery-ui.css";
 
 rdr_loadScript( RDR_scriptPaths.jquery, function(){
@@ -6415,17 +6493,17 @@ function $RFunctions($R){
     var css = [];
 
     if ( !$R.browser.msie || ( $R.browser.msie && parseInt( $R.browser.version, 10 ) > 8 ) ) {
-        css.push( "{{ STATIC_URL }}global/css/readrleague.css" );
+        css.push( RDR_staticUrl+"global/css/readrleague.css" );
     } 
     if ( $R.browser.msie ) {
-        css.push( "{{ STATIC_URL }}widget/css/ie.css" );
+        css.push( RDR_staticUrl+"widget/css/ie.css" );
         //todo: make sure that if this css file doens't exist, it won't bork.  Otherwise as soon as IE10 comes out, this will kill it.
-        css.push( "{{ STATIC_URL }}widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
+        css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( "{{ STATIC_URL }}widget/css/widget.css" );
+    css.push( RDR_staticUrl+"widget/css/widget.css" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
-    css.push( "{{ STATIC_URL }}widget/css/jquery.jscrollpane.css" );
+    css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
     
     loadCSS(css);
 
@@ -6469,6 +6547,7 @@ function $RFunctions($R){
         // plugin_jquery_textnodes($R);                     //not needed now
         // plugin_jquery_superRange($R);                    //not needed now
         // plugin_jquery_improvedCSS($R);                   //not needed now
+        plugin_jquery_hashChange($R);
         plugin_jquery_autogrow($R);
         plugin_jquery_mousewheel($R);
         plugin_jquery_mousewheelIntent($R);
@@ -6893,7 +6972,7 @@ function $RFunctions($R){
                             var this_user = page.topusers[i];
                         
                             if ( this_user ) {
-                                var $userLink = $('<a href="'+RDR_rootPath+'/user/'+this_user.user+'" class="no-rdr rdr-top-user" target="_blank" />'),
+                                var $userLink = $('<a href="'+RDR_baseUrl+'/user/'+this_user.user+'" class="no-rdr rdr-top-user" target="_blank" />'),
                                     userPic = '<img src="'+this_user.img_url+'" class="no-rdr" alt="'+this_user.full_name+'" title="'+this_user.full_name+'" />';
                                 // $topusers.append( $userLink.append(userPic) );
                                 $react.append( $userLink.append(userPic) );
@@ -7836,6 +7915,23 @@ function $RFunctions($R){
         //end function plugin_jquery_improvedCSS
 
         //todo: I don't think we're using this any more - remove it?
+        function plugin_jquery_hashChange($){
+            /*
+             * jQuery hashchange event - v1.3 - 7/21/2010
+             * http://benalman.com/projects/jquery-hashchange-plugin/
+             * 
+             * Copyright (c) 2010 "Cowboy" Ben Alman
+             * Dual licensed under the MIT and GPL licenses.
+             * http://benalman.com/about/license/
+             */
+            
+            // args passed into minified function
+            var e = window,
+                b = undefined;
+
+            var c="hashchange",h=document,f,g=$.event.special,i=h.documentMode,d="on"+c in e&&(i===b||i>7);function a(j){j=j||location.href;return"#"+j.replace(/^[^#]*#?(.*)$/,"$1")}$.fn[c]=function(j){return j?this.bind(c,j):this.trigger(c)};$.fn[c].delay=50;g[c]=$.extend(g[c],{setup:function(){if(d){return false}$(f.start)},teardown:function(){if(d){return false}$(f.stop)}});f=(function(){var j={},p,m=a(),k=function(q){return q},l=k,o=k;j.start=function(){p||n()};j.stop=function(){p&&clearTimeout(p);p=b};function n(){var r=a(),q=o(m);if(r!==m){l(m=r,q);$(e).trigger(c)}else{if(q!==m){location.href=location.href.replace(/#.*/,"")+q}}p=setTimeout(n,$.fn[c].delay)}$.browser.msie&&!d&&(function(){var q,r;j.start=function(){if(!q){r=$.fn[c].src;r=r&&r+a();q=$('<iframe tabindex="-1" title="empty"/>').hide().one("load",function(){r||l(a());n()}).attr("src",r||"javascript:0").insertAfter("body")[0].contentWindow;h.onpropertychange=function(){try{if(event.propertyName==="title"){q.document.title=h.title}}catch(s){}}}};j.stop=k;o=function(){return a(q.location.href)};l=function(v,s){var u=q.document,t=$.fn[c].domain;if(v!==s){u.title=h.title;u.open();t&&u.write('<script>document.domain="'+t+'"<\/script>');u.close();q.location.hash=v}}})();return j})();
+        }
+
         function plugin_jquery_autogrow($){
             /*
              * modified by PB from...

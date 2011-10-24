@@ -102,17 +102,24 @@ RB = {
         },
         setHashValue: function( key, value ) {
             var hash = window.location.hash;
-            var newHash = "";
+            var newHash = "",
+                foundKey = false;
 
             if ( hash.length > 0 ) {
                 var pairs = hash.split('#');
                 for ( var i in pairs ) {
                     if ( key == pairs[i].split('=')[0] ) {
                     	newHash += "#" + key + "=" + value;
+                        foundKey = true;
                     } else if (pairs[i].length > 0 ) {
                     	newHash += "#" + pairs[i];
                     }
                 }
+
+                if ( !foundKey ) {
+                    newHash += "#" + key + "=" +value;
+                }
+
                 window.location.hash = newHash;
             } else {
             	newHash = "#" + key + "=" + value;

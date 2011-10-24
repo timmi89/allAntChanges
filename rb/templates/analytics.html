@@ -131,8 +131,8 @@ RB.analytics = {
 		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
 
 		var querystring = "?" +
-			"start="+start
-			"&end="+end
+			"start="+start +
+			"&end="+end +
 			"&max_count="+max_count;
 
 		$.ajax({
@@ -191,8 +191,8 @@ RB.analytics = {
 		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
 
 		var querystring = "?" +
-			"start="+start
-			"&end="+end
+			"start="+start +
+			"&end="+end +
 			"&max_count="+max_count;
 
 		$.ajax({
@@ -216,6 +216,7 @@ RB.analytics = {
 
 					$('table[role="active pages table"] tbody').html( pageHtml );
 				} else if ( type == "content" ) {
+					console.dir(response);
 					var contentHtml = "";
 					for ( var i in response) {
 						contentHtml += '<tr>'; // TODO add back in:  <td role="via"><div><a href="'+response[i].content.canonical_url+'" target="_blank">'+response[i].content.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
@@ -256,8 +257,8 @@ RB.analytics = {
 		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
 
 		var querystring = "?" +
-			"start="+start
-			"&end="+end
+			"start="+start +
+			"&end="+end +
 			"&max_count="+max_count;
 
 		$.ajax({
@@ -266,7 +267,6 @@ RB.analytics = {
 			contentType: "application/json",
 			dataType: "jsonp",
 			success: function(response){
-console.dir(response);
 				var recentHtml = "";
 				for (var i in response) {
 					// recentHtml += '<tr><td><strong>'+response[0].title+'</strong></td></tr><tr>';
@@ -285,8 +285,8 @@ console.dir(response);
 		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
 
 		var querystring = "?" +
-			"start="+start
-			"&end="+end
+			"start="+start +
+			"&end="+end +
 			"&max_count="+max_count;
 
 		$.ajax({

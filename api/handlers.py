@@ -6,7 +6,7 @@ from exceptions import JSONException
 from utils import *
 from userutils import *
 from authentication.token import *
-from settings import BASE_URL
+from settings import BASE_URL, STATIC_URL
 from django.forms.models import model_to_dict
 
 class SocialUserHandler(AnonymousBaseHandler):
@@ -385,28 +385,28 @@ class SettingsHandler(AnonymousBaseHandler):
     Returns the settings for a group
     """
     @status_response
-    def read(self, request, group=None):
-        # Get hostname, stripping www if present
-        host = getHost(request)
-        
-        # If no group has been provided, set to default
-        group_id = int(group) if group else 1
-        
-        # Get the group object out of the database
-        try:
-            group_object = Group.objects.get(id=group_id)
-        except Group.DoesNotExist:
-            return HttpResponse("RB Group does not exist!")
+    def read(self, request, group_id=None):
+        if not group_id:
+            # Get hostname, stripping www if present
+            host = getHost(request)
             
-        if group_object.approved == False:
+            # Get site object
+            try:
+                site = Site.objects.get(domain=host)
+            except Site.DoesNotExist:
+                return HttpResponse("Readrboard not available for this site")
+
+            # Get Group
+            group = Group.objects.get(id=site.group.id)
+        
+        else:
+            group = Group.objects.get(id=group_id)
+            
+        if group.approved == False:
             return HttpResponse("Group not approved")
         
-        blessed_tags = InteractionNode.objects.filter(
-            groupblessedtag__group=group_object
-        ).order_by('groupblessedtag__order')
-        
-        group_dict = model_to_dict(
-            group_object,
+        settings_dict = model_to_dict(
+            group,
             exclude=[
                 'admins',
                 'word_blacklist',
@@ -423,21 +423,10 @@ class SettingsHandler(AnonymousBaseHandler):
                 'twitter']
         )
         
-        group_dict['blessed_tags'] = blessed_tags
+        blessed_tags = InteractionNode.objects.filter(
+            groupblessedtag__group=group.id
+        ).order_by('groupblessedtag__order')
         
-        # Get the domains for that particular group from site objects  
-        sites = Site.objects.filter(group=group_object)
-        domains = sites.values_list('domain', flat=True)
+        settings_dict['blessed_tags'] = blessed_tags
         
-        # If site is known, return group settings
-        # If not known create site for default group and return settings
-        # If site is not registered for group settings request, raise error
-        if host in domains:
-            return group_dict
-        elif group_id == 1:
-            Site.objects.get_or_create(name=host,domain=host,group_id=1)
-            return group_dict
-        else:
-            raise JSONException(
-                "Group (" + str(group) + ") settings request invalid for this domain (" + host + ")" + str(domains)
-            )
+        return settings_dict
