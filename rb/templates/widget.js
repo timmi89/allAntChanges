@@ -2468,12 +2468,10 @@ function readrBoard($R){
                     if ( RDR.group.slideshow_trigger ) {
                         $(window).hashchange( function() {
                             var hash = RDR.actions.slideshows.findActiveHash();
-                            
-                            console.log('HASH CHANGE: '+hash);
-                            console.log($('#rdr_indicator_details_'+hash).length);
-                            
-                            $('#rdr_indicator_details_'+hash).show().siblings().hide();
-                            RDR.actions.containers.media.onEngage( hash );
+
+                            // TODO: DC demo...  this forces the indicator for a slide to rebuild 
+                            $('div.rdr_indicator_details_for_media_inline').remove();
+                            RDR.actions.indicators.init(hash);
                         });
                         
                         var $slideshows = $(RDR.group.slideshow_trigger);
@@ -2481,7 +2479,11 @@ function readrBoard($R){
                             var $slideshow = $(slideshow);
                             $slideshow.hover(
                                 function(){
-                                    RDR.actions.containers.media.onEngage( RDR.actions.slideshows.findActiveHash() );
+                                    var hash = RDR.actions.slideshows.findActiveHash();
+                                    // TODO: DC demo...  this forces the indicator for a slide to rebuild 
+                                    $('div.rdr_indicator_details_for_media_inline').remove();
+                                    RDR.actions.indicators.init(hash);
+                                    RDR.actions.containers.media.onEngage( hash );
                                 },
                                 function(){
                                     RDR.actions.containers.media.onDisengage( RDR.actions.slideshows.findActiveHash() );
@@ -2542,6 +2544,7 @@ function readrBoard($R){
 
                         var containerInfo = RDR.containers[hash];
                         if ( containerInfo ) {
+
                             var $container = containerInfo.$this;
 
                             $container.data('hover',true);
