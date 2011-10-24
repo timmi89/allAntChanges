@@ -112,12 +112,14 @@ def interactionNodeCounts(interactions, kinds=[], content=None):
 def getHost(request):
     # Using referer for now, could be url as well
     url = request.META.get('HTTP_REFERER', None)
-    if not url: url = request.GET
     
-    split_host = urlsplit(url).netloc.split('.')
-    if 'www' in split_host[0]: split_host = split_host[1:]
-    host = '.'.join(split_host)
-        
+    if url:
+        split_host = urlsplit(url).netloc.split('.')
+        if 'www' in split_host[0]: split_host = split_host[1:]
+        host = '.'.join(split_host)
+    else:
+        host = request.META['HTTP_HOST']
+    
     return host
     
 def stripQueryString(url):

@@ -9,3 +9,4 @@ readrdb.db
 *.sublime-project.*
 *.orig
 settings.py
+logs/

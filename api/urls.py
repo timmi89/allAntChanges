@@ -21,6 +21,7 @@ Moderate = Resource(handler=ModerationHandler)
 Privacy = Resource(handler=PrivacyHandler)
 
 urlpatterns = patterns('',
+    url(r'^settings/$', Settings),
     url(r'^settings/(\d+)/$', Settings),
     # Page level
     #url(r'^page/(?P<page_id>\d+)/$', Interactions),
