@@ -2487,8 +2487,8 @@ function readrBoard($R){
                     // RDR.actions.slideshows.setup
                     if ( RDR.group.slideshow_trigger ) {
                         $(window).hashchange( function() {
+                            RDR.rindow.closeAll();
                             var hash = RDR.actions.slideshows.findActiveHash();
-
                             // TODO: DC demo...  this forces the indicator for a slide to rebuild 
                             $('div.rdr_indicator_details_for_media_inline').remove();
                             RDR.actions.indicators.init(hash);
