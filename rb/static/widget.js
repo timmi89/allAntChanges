@@ -1577,6 +1577,13 @@ function readrBoard($R){
                 scrollTarget = targetOffset-windowPadding || 0;
 
                 $('html,body').animate({scrollTop: scrollTarget}, 1000);
+
+                if ( data.page_hash && data.page_hash.length > 1 ) {
+                    // TODO SHARE HACK REMOVE THIS DAILYCANDY ONLY
+                    var p = data.page_hash;
+                    var slide = parseInt( p.substr( p.indexOf('=')+1 ) ) - 1;
+                    DAILYCANDYCYCLE( slide );
+                }
             },
             getSharedLinkInfo: function( data ){
                 //some condition
@@ -1705,7 +1712,8 @@ function readrBoard($R){
                                 if ( sharedLink[5] ) {
                                     RDR.session.referring_int_id = parseInt( sharedLink[5], 10 );
                                 }
-                                RDR.session.getSharedLinkInfo( { container_hash:sharedLink[1], location:sharedLink[2], reaction:sharedLink[3], content:sharedLink[4] } );
+                                // TODO sharedLink[6] is SHARE HACK REMOVE THIS DAILYCANDY ONLY
+                                RDR.session.getSharedLinkInfo( { container_hash:sharedLink[1], location:sharedLink[2], reaction:sharedLink[3], content:sharedLink[4], page_hash:sharedLink[6] } );
                             }
                         }
                     },
@@ -5893,6 +5901,15 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                     var content_node = RDR.actions.content_nodes.make(content_node_data);
 
+                    // TODO SHARE HACK REMOVE THIS DAILYCANDY ONLY
+                    // if ( window.location.hash.length > 1 ) {
+                        $.postMessage(
+                            "page_hash|"+window.location.hash,
+                            RDR_baseUrl + "/xdm_status/",
+                            window.frames['rdr-xdm-hidden']
+                        );
+                    // }
+
                     var sendData = {
                         "tag" : tag,
                         "hash": content_node_info.hash,
@@ -8254,3 +8271,7 @@ function $RFunctions($R){
 
 }
 //end $RFunctions()
+
+function DAILYCANDYCYCLE(slide) {
+    if ( jQuery('#module-flipbook').length == 1 ) jQuery('#module-flipbook').cycle( slide );
+}

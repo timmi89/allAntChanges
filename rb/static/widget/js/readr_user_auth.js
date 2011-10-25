@@ -10,23 +10,19 @@ for ( var i in qs ) {
 if ( typeof $.receiveMessage == "function") {
 	$.receiveMessage(
 		function(e){
-		    switch( e.data ) {
-		    	case "getUser":
-		    		RDRAuth.getUser();
-		    		break;
-		    	case "reauthUser":
-		    		RDRAuth.reauthUser();
-		    		break;
-		    	case "returnUser":
-		    		RDRAuth.returnUser();
-		    		break;
-		    	case "killUser":
-		    		RDRAuth.killUser();
-		    		break;
-		    	case "close educateUser":
-		    		$.cookie('educatedUser', true);
-		    		break;
-		    }
+		    if( e.data == "getUser" ) {
+	    		RDRAuth.getUser();
+	    	} else if ( e.data == "reauthUser" ) {
+		    	RDRAuth.reauthUser();
+		    } else if ( e.data == "returnUser" ) {
+	    		RDRAuth.returnUser();
+		    } else if ( e.data == "killUser" ) {
+	    		RDRAuth.killUser();
+	    	} else if ( e.data == "close educateUser" ) {
+	    		$.cookie('educatedUser', true);
+	    	} else if ( e.data.indexOf("page_hash") != -1 ) {
+	    		$.cookie('page_hash', e.data.split('|')[1], { expires: 365, path: '/' } );
+	    	}
 		},
 		qs_args.parentHost
 	);
