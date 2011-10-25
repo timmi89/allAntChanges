@@ -1040,7 +1040,7 @@ function readrBoard($R){
                     kind = settings.kind,
                     content = settings.content,
                     src_with_path = settings.src_with_path || undefined; //used for media only
-                
+
                 var actionbar_id = "rdr_actionbar_"+hash;
                 var $actionbars = $('div.rdr_actionbar');
                 
