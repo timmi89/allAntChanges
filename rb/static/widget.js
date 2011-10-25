@@ -96,7 +96,8 @@ function readrBoard($R){
                 defaultHeight:260,
                 minHeight: 100,
                 maxHeight: 350,
-                forceHeight: false
+                forceHeight: false,
+                rewritable: true
             },
             jspUpdate: function( $rindow ) {
                 //RDR.rindow.jspUpdate:
@@ -385,7 +386,8 @@ function readrBoard($R){
                         //RDR.rindow._rindowTypes.readMode.make:
                         var hash = settings.hash;
                         var summary = RDR.summaries[hash],
-                        kind = summary.kind;
+                        kind = summary.kind,
+                        rewritable = (settings.rewritable == false) ? false:true;
 
                         var selector = ".rdr-" + hash;
 
@@ -426,7 +428,8 @@ function readrBoard($R){
                             coords:coords,
                             pnlWidth:170,
                             noHeader:true,
-                            selector:selector
+                            selector:selector,
+                            rewritable:rewritable
                         });
 
                         rindow.addClass('rdr_readmode');
@@ -775,9 +778,9 @@ function readrBoard($R){
                 var maxHeight = settings.maxHeight;
 
 
-				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
+				var $new_rindow = $('div.rdr.rdr_window'); // jquery obj of the rewritable window
 				if ( $new_rindow.length === 0 ) { // there's no rewritable window available, so make one
-					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget"></div>');
+					$new_rindow = $('<div class="rdr rdr_window rdr_widget"></div>');
                     if ( settings.id ) {
                         $('#'+settings.id).remove(); // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
                                                      // reason I'm adding this: want a login panel with an ID and data attached to it, so after a user
@@ -800,6 +803,10 @@ function readrBoard($R){
                     }
                     */
 				}
+
+                if ( settings.rewritable != false ) {
+                    $new_rindow.addClass('rdr_rewritable');
+                }
 
                 $new_rindow.data(settings);// jquery obj of the rewritable window
 
@@ -4184,7 +4191,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         .click( function() {
                             var selStates = $(this).data('selStates');
 
-                            RDR.rindow.make( "readMode", {hash:hash} );
+                            RDR.rindow.make( "readMode", {hash:hash, rewritable:false} );
                         });
                         $indicator.css('visibility','visible');
                     }
