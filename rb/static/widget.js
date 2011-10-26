@@ -778,10 +778,9 @@ function readrBoard($R){
                 var minHeight = settings.minHeight;
                 var maxHeight = settings.maxHeight;
 
-
-				var $new_rindow = $('div.rdr.rdr_window'); // jquery obj of the rewritable window
+				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
 				if ( $new_rindow.length === 0 ) { // there's no rewritable window available, so make one
-					$new_rindow = $('<div class="rdr rdr_window rdr_widget"></div>');
+					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget"></div>');
                     if ( settings.id ) {
                         $('#'+settings.id).remove(); // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
                                                      // reason I'm adding this: want a login panel with an ID and data attached to it, so after a user
@@ -804,9 +803,8 @@ function readrBoard($R){
                     }
                     */
 				}
-
-                if ( settings.rewritable != false ) {
-                    $new_rindow.addClass('rdr_rewritable');
+                if ( settings.rewritable != true ) {
+                    $new_rindow.removeClass('rdr_rewritable');
                 }
 
                 $new_rindow.data(settings);// jquery obj of the rewritable window
@@ -1628,7 +1626,6 @@ function readrBoard($R){
                     case "Error getting user!":
                         // kill the user object and cookie
                         RDR.session.killUser();
-
                         // TODO tell the user something failed and ask them to try again
                         // pass callback into the login panel
                     break;
@@ -1684,17 +1681,13 @@ function readrBoard($R){
                 $.receiveMessage(
                     function(e){
                         var message = $.evalJSON( e.data );
-
                         if ( message.status ) {
                             if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
-
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
-
                                 for ( var i in message.data ) {
                                     RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i],10):message.data[i];
                                 }
-
                                 if ( callbackFunction && args ) {
                                     args.user = RDR.user;
                                     callbackFunction(args);
@@ -3674,13 +3667,11 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             }
                         } else {
                             //RDR.actions.interactions.tag.onFail:
-
                             //todo: we prob want to move most of this to a general onFail for all interactions.
                             // So this function would look like: doSpecificOnFailStuff....; RDR.actions.interactions.genericOnFail();
 
                             var rindow = args.rindow,
                                 tag_li = args.tag;
-
                             var response = args.response;
 
                             //clear the loader                  
@@ -3693,15 +3684,14 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
                                 RDR.session.receiveMessage( args, function() { RDR.actions.interactions.ajax( args, 'tag', 'create' ); } );
                                 RDR.session.showLoginPanel( args );
-                            } if ( response.message == "existing interaction" ) {
+                            } else if ( response.message == "existing interaction" ) {
                                 //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
                                 //showTempUserMsg should be adapted to be rindowUserMessage:{show:..., hide:...}
                                     //with a message param.
                                     //and a close 'x' button.
                                     args.msgType = "existingInteraction";
                                     RDR.session.rindowUserMessage.show( args );
-                            }
-                            else {
+                            } else {
                                 // if it failed, see if we can fix it, and if so, try this function one more time
                                 RDR.session.handleGetUserFail( args, function() {
                                     RDR.actions.interactions.ajax( args, 'tag', 'create' );
