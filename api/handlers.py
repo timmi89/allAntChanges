@@ -278,8 +278,12 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
     def read(self, request, data):
         known = {}
         hashes = data['hashes']
-        page = data['pageID']
         
+        try:
+            page = data['pageID']
+        except KeyError:
+            raise JSONException("Couldn't get pageID")
+            
         # Guard against undefined page string being passed in
         if not isinstance(page, int): raise JSONException("Bad Page ID")
 
