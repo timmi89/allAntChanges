@@ -279,6 +279,9 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         known = {}
         hashes = data['hashes']
         page = data['pageID']
+        
+        # Guard against undefined page string being passed in
+        if not isinstance(page, int): raise JSONException("Bad Page ID")
 
         # Force evaluation by making lists
         containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash','kind'))
