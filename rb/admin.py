@@ -48,6 +48,9 @@ class RBGroupAdmin(admin.ModelAdmin):
         }),
         ('JQuery', {
             'fields': ('inline_selector', 'inline_func')
+        }),
+        ('Customization', {
+            'fields': ('call_to_action')
         })
      )
 

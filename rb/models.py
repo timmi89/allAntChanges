@@ -121,6 +121,9 @@ class Group(models.Model):
     demo_group = models.BooleanField(default=False)
     word_blacklist = models.TextField(blank=True)
     
+    # Customization
+    call_to_action = models.CharField(max_length=255, default='', blank=True)
+    
     # Jquery settings
     inline_selector = models.CharField(max_length=100, default='', blank=True)
     inline_func = models.CharField(max_length=25, default='', blank=True)
