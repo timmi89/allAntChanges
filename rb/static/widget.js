@@ -1790,7 +1790,7 @@ function readrBoard($R){
 
                     // create the iframe containing the login panel
                     var $loginHtml = $('<div class="rdr_login" />'),
-                    iframeUrl = RDR_baseUrl + "/fblogin/",
+                    iframeUrl = RDR_staticUrl + "fblogin.html",
                     parentUrl = window.location.href,
                     parentHost = window.location.protocol + "//" + window.location.host;
                     var h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard";
