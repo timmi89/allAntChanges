@@ -110,5 +110,6 @@ class GroupForm(forms.ModelForm):
             'custom_css',
             'post_selector',
             'post_href_selector',
-            'summary_widget_selector'
+            'summary_widget_selector',
+            'call_to_action'
         )
