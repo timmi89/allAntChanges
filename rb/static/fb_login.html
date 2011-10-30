@@ -12,9 +12,9 @@
 		// TODO use the following line.  it creates a cachebuster that represents the current day/week/month
 		// var cachebuster = String( parseInt( date.getDate() / 7 )+1 )+String(date.getMonth()) + String(date.getYear());
 		// var cachebuster = date.getTime();
-		document.write( unescape( '%3Cscript src="/static/widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
-		document.write( unescape( '%3Cscript src="/static/widget/js/jquery.json-2.2.min.js" type="text/javascript"%3E%3C/script%3E' ) );
-		document.write( unescape( '%3Cscript src="/static/widget/js/jquery.cookie.js" type="text/javascript"%3E%3C/script%3E' ) );
+		document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
+		document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.json-2.2.min.js" type="text/javascript"%3E%3C/script%3E' ) );
+		document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.cookie.js" type="text/javascript"%3E%3C/script%3E' ) );
 		document.write( unescape( '%3Cscript src="/static/widget/js/readr_user.js" type="text/javascript"%3E%3C/script%3E' ) );
    		</script>
 	<style type="text/css">
