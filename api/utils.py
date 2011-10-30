@@ -135,7 +135,7 @@ def getPage(host, page_request):
     group_id = page_request.get('group_id', 1)
     try:
         site = Site.objects.get(domain=host, group=int(group_id))
-    except Site.DoesNotExist():
+    except Site.DoesNotExist:
         raise JSONException("Site doesn't exist")
 
     # Remove querystring if it doesn't determine content
