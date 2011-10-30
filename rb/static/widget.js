@@ -2411,7 +2411,7 @@ function readrBoard($R){
                     //build the sendData with the hashes from above
                     sendData = {
 	                   short_name : RDR.group.short_name,
-	                   pageID: page_id,
+	                   pageID: parseInt( page_id ),
 	                   hashes: sendable_hashes
                     };
 
