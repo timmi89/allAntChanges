@@ -132,11 +132,15 @@ def getPage(host, page_request):
     canonical = page_request.get('canonical_url', None)
     url = page_request.get('url', None)
     title = page_request.get('title', None)
-    group_id = page_request.get('group_id', 1)
+    try:
+        group_id = page_request.get('group_id', 1)
+    except ValueError:
+        raise JSONException("Bad Group ID!")
+        
     try:
         site = Site.objects.get(domain=host, group=int(group_id))
     except Site.DoesNotExist:
-        raise JSONException("Site doesn't exist")
+        raise JSONException("Site doesn't exist!")
 
     # Remove querystring if it doesn't determine content
     if not site.querystring_content:
