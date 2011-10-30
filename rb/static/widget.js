@@ -2194,11 +2194,11 @@ function readrBoard($R){
                         $this.addClass('rdr_live_hover');
                         var hash = RDR.actions.hashNodes( $(this) );
                         if(hash){
-                            // RDR.actions.sendHashes( hash, function(){
-                            // });
+                            RDR.actions.sendHashes( hash, function(){
                                 if( $this.hasClass('rdr_live_hover') ){
                                     $this.mouseenter();
                                 }
+                            });
                         }
                     } else {
                         $this.addClass('rdr_live_hover');
@@ -2364,7 +2364,7 @@ function readrBoard($R){
             },
             sendHashes: function( hashes, onSuccessCallback ) {
                 // RDR.actions.sendHashes
-                console.log('RDR.actions.sendHashes');
+                // console.log('RDR.actions.sendHashes');
 
                 // if ( hashes.length == 1 ) {
                 //     var hash = hashes[0];
@@ -2543,11 +2543,11 @@ function readrBoard($R){
                             $this.addClass('rdr_live_hover');
                             var hash = RDR.actions.hashNodes( $this );
                             if(hash){
-                                // RDR.actions.sendHashes( hash, function(){
-                                // });
+                                RDR.actions.sendHashes( hash, function(){
                                     if( $this.hasClass('rdr_live_hover') ){
                                         $this.mouseenter();
                                     }
+                                });
                             }
                         } else {
                             $this.addClass('rdr_live_hover');
@@ -6295,9 +6295,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     //note: hashes in this case will just be a single hash. That's cool.
                     var hash = RDR.actions.hashNodes( $blockParent );
                     if(hash){
+                        RDR.actions.sendHashes( hash, function(){
                             _drawActionBar($blockParent);
-                        // RDR.actions.sendHashes( hash, function(){
-                        // });
+                        });
                     }
                 }
 
