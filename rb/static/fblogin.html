@@ -53,7 +53,7 @@
 		FB.init({ 
 			appId:'163759626987948', cookie:true, status:true, xfbml:true, oauth:true
 		});
-		$('#groupname').text( qs_args.group_name );
+		$('#groupname').text( decodeURI(qs_args.group_name) );
 		</script>
    </body>
 </html>
