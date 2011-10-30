@@ -277,7 +277,7 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, data):
         known = {}
-        hashes = data['hashes']
+        hashes = data.get('hashes', [])
         
         try:
             page = data['pageID']
