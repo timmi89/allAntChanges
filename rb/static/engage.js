@@ -1502,7 +1502,7 @@ function readrBoard($R){
                     // set a cookie in the iframe saying not to show this anymore
                     $.postMessage(
                         "close "+whichAlert,
-                        RDR_baseUrl + "/static/xdm_status.html",
+                        RDR_baseUrl + "/static/xdm.html",
                         window.frames['rdr-xdm-hidden']
                     );
                 }
@@ -1616,7 +1616,7 @@ function readrBoard($R){
                 }
                 $.postMessage(
                     "getUser",
-                    RDR_baseUrl + "/static/xdm_status.html",
+                    RDR_baseUrl + "/static/xdm.html",
                     window.frames['rdr-xdm-hidden']
                 );
             },
@@ -1650,7 +1650,7 @@ function readrBoard($R){
                         $.postMessage(
                             "reauthUser",
                             // "killUser",
-                            RDR_baseUrl + "/static/xdm_status.html",
+                            RDR_baseUrl + "/static/xdm.html",
                             window.frames['rdr-xdm-hidden']
                         );
 
@@ -1663,7 +1663,7 @@ function readrBoard($R){
 
                 RDR.session.receiveMessage();
 
-                var iframeUrl = RDR_baseUrl + "/static/xdm_status.html",
+                var iframeUrl = RDR_baseUrl + "/static/xdm.html",
                 parentUrl = window.location.href,
                 parentHost = window.location.protocol + "//" + window.location.host,
                 $xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+encodeURIComponent(RDR.group.name)+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
@@ -1790,12 +1790,12 @@ function readrBoard($R){
 
                     // create the iframe containing the login panel
                     var $loginHtml = $('<div class="rdr_login" />'),
-                    iframeUrl = RDR_baseUrl + "/static/fblogin.html",
+                    iframeUrl = RDR_baseUrl + "/static/fb_login.html",
                     parentUrl = window.location.href,
                     parentHost = window.location.protocol + "//" + window.location.host;
                     var h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard";
                     $loginHtml.append( '<h1>'+h1_text+'</h1><div class="rdr_body" />');
-                    $loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'&cachebust='+RDR.cachebuster+'" width="360" height="190" frameborder="0" style="overflow:hidden;" />' );
+                    $loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="360" height="190" frameborder="0" style="overflow:hidden;" />' );
 
                     rindow.find('div.rdr_contentSpace').append( $loginHtml );
                 }
@@ -1804,7 +1804,7 @@ function readrBoard($R){
                 RDR.user = {};
                 $.postMessage(
                     "killUser",
-                    RDR_baseUrl + "/static/xdm_status.html",
+                    RDR_baseUrl + "/static/xdm.html",
                     window.frames['rdr-xdm-hidden']
                 );
             },
@@ -2211,10 +2211,6 @@ function readrBoard($R){
                 
                 //hashNodes without any arguments will fetch the default set from the server.
                 // var hashes = this.hashNodes();
-
-                // if(hashes){
-                //     RDR.actions.sendHashes( hashes );    
-                // }
                 
 				$RDR.dequeue('initAjax');
             },
@@ -2364,7 +2360,6 @@ function readrBoard($R){
             },
             sendHashes: function( hashes, onSuccessCallback ) {
                 // RDR.actions.sendHashes
-                // console.log('RDR.actions.sendHashes');
 
                 // if ( hashes.length == 1 ) {
                 //     var hash = hashes[0];
@@ -5904,7 +5899,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     // if ( window.location.hash.length > 1 ) {
                         $.postMessage(
                             "page_hash|"+window.location.hash,
-                            RDR_baseUrl + "/static/xdm_status.html",
+                            RDR_baseUrl + "/static/xdm.html",
                             window.frames['rdr-xdm-hidden']
                         );
                     // }
@@ -6224,29 +6219,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 $shareDialogueBox.append( $socialBox );
 
                 RDR.actions.panel.expand("whyPanel", rindow);
-
-                /*
-                TUMBLR SHARING URLs
-                http://www.tumblr.com/share?v=3&u=http%3A%2F%2Fjsbeautifier.org%2F&t=Online%20javascript%20beautifier&s=
-                -- QUOTE --
-                http://www.tumblr.com/share?v=3&
-                type=quote&
-                u=http%3A%2F%2Finstalyrics.com%2Fartists%2F121-u2%2Flyrics%2F682239-zooropa&
-                t=Zooropa%20-%20on%20InstaLyrics&
-                s=Zooropa%2C%20a%20bluer%20kind%20of%20white
-
-
-                -- IMAGE --
-                http://www.tumblr.com/share?v=3&type=photo&u=http%3A%2F%2Fwww.wired.com%2Fimages_blogs%2Fdangerroom%2F2011%2F01%2F28858.jpg&t=t%20value&s=s%20value
-                */
-
-                // TODO: removing character counter for moment.  not sure we'll have a textarea for sharing anymore.
-                /*
-                $('.rdr_share_count').text( $('.rdr_share textarea').val().length + " characters");
-                $('.rdr_share textarea').keyup( function() {
-                    $('.rdr_share_count').text( $('.rdr_share textarea').val().length + " characters");
-                });
-                */
             },
             startSelect: function(e) {
                 //RDR.actions.startSelect:
@@ -6539,11 +6511,6 @@ function $RFunctions($R){
     //initiate our RDR object
     RDR = readrBoard($R);
     
-    RDR.date = new Date();
-    // TODO use the following line.  it creates a cachebuster that represents the current day/week/month
-    // RDR.cachebuster = String( parseInt( RDR.date.getDate() / 7 )+1 )+String(RDR.date.getMonth()) + String(RDR.date.getYear()),
-    RDR.cachebuster = RDR.date.getTime();
-
     //run init functions
     RDR.actions.init();
 

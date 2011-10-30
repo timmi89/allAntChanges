@@ -152,7 +152,7 @@ RDRAuth = {
 			FB.getLoginStatus(function(response) {
 		  		if (response && response.status == "connected") {
 					RDRAuth.killUser( function(response) {
-						RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
+						RDRAuth.getReadrToken(response); // function exists in readr_user.js
 					}, response);
 		  		} else {
 		  			RDRAuth.notifyParent({}, "fb_user_needs_to_login");
@@ -160,7 +160,7 @@ RDRAuth = {
 		  	});
 		} else {
 			RDRAuth.killUser( function(response) {
-				RDRAuth.getReadrToken(response); // function exists in readr_user_auth.js
+				RDRAuth.getReadrToken(response); // function exists in readr_user.js
 			});
 			// RDRAuth.getReadrToken( FB.getAuthResponse() );
 		}
