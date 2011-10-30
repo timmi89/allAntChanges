@@ -193,9 +193,9 @@ DEVSERVER_MODULES = (
 
     # Modules not enabled by default
     'devserver.modules.ajax.AjaxDumpModule',
-    'devserver.modules.profile.MemoryUseModule',
+    #'devserver.modules.profile.MemoryUseModule',
     'devserver.modules.cache.CacheSummaryModule',
-    'devserver.modules.profile.LineProfilerModule',
+    #'devserver.modules.profile.LineProfilerModule',
 )
 
 DEVSERVER_IGNORED_PREFIXES = ['/media', '/uploads']
@@ -237,13 +237,13 @@ LOGGING = {
 DEVSERVER_MODULES = (
     'devserver.modules.sql.SQLRealTimeModule',
     'devserver.modules.sql.SQLSummaryModule',
-    #'devserver.modules.profile.ProfileSummaryModule',
+    'devserver.modules.profile.ProfileSummaryModule',
 
     # Modules not enabled by default
-    #'devserver.modules.ajax.AjaxDumpModule',
-    #'devserver.modules.profile.MemoryUseModule',
-    #'devserver.modules.cache.CacheSummaryModule',
-    #'devserver.modules.profile.LineProfilerModule',
+    'devserver.modules.ajax.AjaxDumpModule',
+    'devserver.modules.profile.MemoryUseModule',
+    'devserver.modules.cache.CacheSummaryModule',
+    'devserver.modules.profile.LineProfilerModule',
 )
 
 DEVSERVER_IGNORED_PREFIXES = ['/media', '/uploads']
