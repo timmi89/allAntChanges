@@ -1310,7 +1310,7 @@ function readrBoard($R){
                     $('.rdr-'+hash).data('page_id', page_id);
                 }
 
-                return page_id;
+                return parseInt( page_id );
             },
             stayInWindow: function(settings) {
                 
@@ -1502,7 +1502,7 @@ function readrBoard($R){
                     // set a cookie in the iframe saying not to show this anymore
                     $.postMessage(
                         "close "+whichAlert,
-                        RDR_baseUrl + "/xdm_status/",
+                        RDR_staticUrl + "xdm_status.html",
                         window.frames['rdr-xdm-hidden']
                     );
                 }
@@ -1616,7 +1616,7 @@ function readrBoard($R){
                 }
                 $.postMessage(
                     "getUser",
-                    RDR_baseUrl + "/xdm_status/",
+                    RDR_staticUrl + "xdm_status.html",
                     window.frames['rdr-xdm-hidden']
                 );
             },
@@ -1650,7 +1650,7 @@ function readrBoard($R){
                         $.postMessage(
                             "reauthUser",
                             // "killUser",
-                            RDR_baseUrl + "/xdm_status/",
+                            RDR_staticUrl + "xdm_status.html",
                             window.frames['rdr-xdm-hidden']
                         );
 
@@ -1663,10 +1663,10 @@ function readrBoard($R){
 
                 RDR.session.receiveMessage();
 
-                var iframeUrl = RDR_baseUrl + "/xdm_status/",
+                var iframeUrl = RDR_staticUrl + "xdm_status.html",
                 parentUrl = window.location.href,
                 parentHost = window.location.protocol + "//" + window.location.host,
-                $xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+encodeURIComponent(RDR.group.name)+'&cachebust='+RDR.cachebuster+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
+                $xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+encodeURIComponent(RDR.group.name)+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
                 );
                 $('#rdr_sandbox').append( $xdmIframe );
 
@@ -1804,7 +1804,7 @@ function readrBoard($R){
                 RDR.user = {};
                 $.postMessage(
                     "killUser",
-                    RDR_baseUrl + "/xdm_status/",
+                    RDR_staticUrl + "xdm_status.html",
                     window.frames['rdr-xdm-hidden']
                 );
             },
@@ -2194,11 +2194,11 @@ function readrBoard($R){
                         $this.addClass('rdr_live_hover');
                         var hash = RDR.actions.hashNodes( $(this) );
                         if(hash){
-                            RDR.actions.sendHashes( hash, function(){
+                            // RDR.actions.sendHashes( hash, function(){
+                            // });
                                 if( $this.hasClass('rdr_live_hover') ){
                                     $this.mouseenter();
                                 }
-                            });
                         }
                     } else {
                         $this.addClass('rdr_live_hover');
@@ -2364,6 +2364,7 @@ function readrBoard($R){
             },
             sendHashes: function( hashes, onSuccessCallback ) {
                 // RDR.actions.sendHashes
+                console.log('RDR.actions.sendHashes');
 
                 // if ( hashes.length == 1 ) {
                 //     var hash = hashes[0];
@@ -2542,11 +2543,11 @@ function readrBoard($R){
                             $this.addClass('rdr_live_hover');
                             var hash = RDR.actions.hashNodes( $this );
                             if(hash){
-                                RDR.actions.sendHashes( hash, function(){
+                                // RDR.actions.sendHashes( hash, function(){
+                                // });
                                     if( $this.hasClass('rdr_live_hover') ){
                                         $this.mouseenter();
                                     }
-                                });
                             }
                         } else {
                             $this.addClass('rdr_live_hover');
@@ -5903,7 +5904,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     // if ( window.location.hash.length > 1 ) {
                         $.postMessage(
                             "page_hash|"+window.location.hash,
-                            RDR_baseUrl + "/xdm_status/",
+                            RDR_staticUrl + "xdm_status.html",
                             window.frames['rdr-xdm-hidden']
                         );
                     // }
@@ -6294,9 +6295,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     //note: hashes in this case will just be a single hash. That's cool.
                     var hash = RDR.actions.hashNodes( $blockParent );
                     if(hash){
-                        RDR.actions.sendHashes( hash, function(){
                             _drawActionBar($blockParent);
-                        });
+                        // RDR.actions.sendHashes( hash, function(){
+                        // });
                     }
                 }
 
