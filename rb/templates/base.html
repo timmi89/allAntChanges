@@ -132,12 +132,8 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     });
   </script>
   <script type="text/javascript">
-    var date = new Date();
-    // TODO use the following line.  it creates a cachebuster that represents the current day/week/month
-    // var cachebuster = String( parseInt( date.getDate() / 7 )+1 )+String(date.getMonth()) + String(date.getYear());
-    var cachebuster = date.getTime();
     document.write(
-      unescape( '%3Cscript src="{{ STATIC_URL }}widget/js/readr_user_auth.js?' + cachebuster + '" type="text/javascript"%3E%3C/script%3E' )
+      unescape( '%3Cscript src="{{ STATIC_URL }}widget/js/readr_user.js" type="text/javascript"%3E%3C/script%3E' )
     );
 
   </script>
