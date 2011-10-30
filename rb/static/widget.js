@@ -1502,7 +1502,7 @@ function readrBoard($R){
                     // set a cookie in the iframe saying not to show this anymore
                     $.postMessage(
                         "close "+whichAlert,
-                        RDR_staticUrl + "xdm_status.html",
+                        RDR_baseUrl + "/static/xdm_status.html",
                         window.frames['rdr-xdm-hidden']
                     );
                 }
@@ -1616,7 +1616,7 @@ function readrBoard($R){
                 }
                 $.postMessage(
                     "getUser",
-                    RDR_staticUrl + "xdm_status.html",
+                    RDR_baseUrl + "/static/xdm_status.html",
                     window.frames['rdr-xdm-hidden']
                 );
             },
@@ -1650,7 +1650,7 @@ function readrBoard($R){
                         $.postMessage(
                             "reauthUser",
                             // "killUser",
-                            RDR_staticUrl + "xdm_status.html",
+                            RDR_baseUrl + "/static/xdm_status.html",
                             window.frames['rdr-xdm-hidden']
                         );
 
@@ -1663,7 +1663,7 @@ function readrBoard($R){
 
                 RDR.session.receiveMessage();
 
-                var iframeUrl = RDR_staticUrl + "xdm_status.html",
+                var iframeUrl = RDR_baseUrl + "/static/xdm_status.html",
                 parentUrl = window.location.href,
                 parentHost = window.location.protocol + "//" + window.location.host,
                 $xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+encodeURIComponent(RDR.group.name)+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
@@ -1790,7 +1790,7 @@ function readrBoard($R){
 
                     // create the iframe containing the login panel
                     var $loginHtml = $('<div class="rdr_login" />'),
-                    iframeUrl = RDR_staticUrl + "fblogin.html",
+                    iframeUrl = RDR_baseUrl + "/static/fblogin.html",
                     parentUrl = window.location.href,
                     parentHost = window.location.protocol + "//" + window.location.host;
                     var h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard";
@@ -1804,7 +1804,7 @@ function readrBoard($R){
                 RDR.user = {};
                 $.postMessage(
                     "killUser",
-                    RDR_staticUrl + "xdm_status.html",
+                    RDR_baseUrl + "/static/xdm_status.html",
                     window.frames['rdr-xdm-hidden']
                 );
             },
@@ -5904,7 +5904,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     // if ( window.location.hash.length > 1 ) {
                         $.postMessage(
                             "page_hash|"+window.location.hash,
-                            RDR_staticUrl + "xdm_status.html",
+                            RDR_baseUrl + "/static/xdm_status.html",
                             window.frames['rdr-xdm-hidden']
                         );
                     // }
