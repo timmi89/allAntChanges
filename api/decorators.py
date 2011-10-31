@@ -20,6 +20,8 @@ def json_data(func):
             data = json.loads(request.GET['json'])
         except KeyError:
             raise JSONException("No data dude! -- data must be passed in a json object")
+        except ValueError:
+            raise JSONException("Could not parse JSON")
         else:
             return func(self, request, data, *args, **kwargs)
     return wrapper
