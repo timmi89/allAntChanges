@@ -2426,8 +2426,8 @@ function readrBoard($R){
                             
                             // TODO this is a hack.  we should change how we receive known and unknown to make them the same format.
                             // this shouldn't be doing ANYTHING AT ALL (b/c we don't receive back unknown containers):
+                            // [pb: 10/30]: don't think we need the following at all anymore, b/c we don't do "unknown_hashes"
                             for ( var i in response.data.unknown ) {
-                                
                                 var hash = response.data.unknown[i];
                                 if (typeof hash == "string") {
                                     // get the kind
@@ -6604,8 +6604,9 @@ function $RFunctions($R){
             $.toJSON=function(o)
 
             {
-                if(typeof(JSON)=='object'&&JSON.stringify)
+                if(typeof(JSON)=='object'&&JSON.stringify) {
                     return JSON.stringify(o);
+                }
                 var type=typeof(o);
                 if(o===null)
                     return"null";
@@ -6844,6 +6845,9 @@ function $RFunctions($R){
                     }
 
                     var $react = $('<div class="rdr-sum-headline"></div>');
+                    if ( RDR.group && RDR.group.call_to_action && RDR.group.call_to_action != "" ) {
+                        $react.append('<div class="rdr-call-to-action">'+RDR.group.call_to_action+'</div>');
+                    }
                     $summary_widget.append( $react );
 
                     // if ( total_interactions > 0 ) {
