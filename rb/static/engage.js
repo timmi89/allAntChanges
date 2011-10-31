@@ -6844,6 +6844,9 @@ function $RFunctions($R){
                     }
 
                     var $react = $('<div class="rdr-sum-headline"></div>');
+                    if ( RDR.group && RDR.group.call_to_action && RDR.group.call_to_action != "" ) {
+                        $react.append('<div class="rdr-call-to-action">'+RDR.group.call_to_action+'</div>');
+                    }
                     $summary_widget.append( $react );
 
                     // if ( total_interactions > 0 ) {

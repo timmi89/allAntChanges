@@ -718,7 +718,9 @@ div.rdr.rdr-summary {
 
 /*blunt attack for now*/
 div.rdr.rdr-summary * {
-    font:normal 12px Arial, sans-serif !important;
+    font-size:12px !important; 
+    font-family:Arial, sans-serif !important;
+    line-height:13px !important;
 }
 
 div.rdr.rdr-summary div.rdr-sum-headline {
@@ -727,6 +729,10 @@ div.rdr.rdr-summary div.rdr-sum-headline {
     display:inline-block !important;
     color:#787878 !important;
     line-height: 32px !important;
+}
+div.rdr.rdr-summary div.rdr-sum-headline div.rdr-call-to-action {
+    display: block !important;
+    margin: 8px 0pt 0px !important;
 }
 div.rdr.rdr-summary div.rdr-top-tags {
     padding:8px 5px 0px 8px !important;

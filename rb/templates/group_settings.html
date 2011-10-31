@@ -55,8 +55,8 @@
 		</div>
 		<h3>Moderation</h3>
 		<div>
-			<label for="id_requires_approval">Requires Approval? <span>explanation</span></label>
 			{{ form.requires_approval }}{{ form.requires_approval.errors }}
+			<label for="id_requires_approval">Requires Approval? <span>If you want comments and reactions to be approved before they are visible for others to see, check this box.</span></label>
 		</div>
 		<div>
 			<label for="id_word_blacklist">Word Blacklist <span>Words that are automatically censored.</span></label>
@@ -67,7 +67,7 @@
 			{{ form.custom_css }}
 		</div>
 		<div>
-			<label for="call_to_action">Call To Action <span>A call to action for your users.</span></label>
+			<label for="call_to_action">Call To Action <span>A call to action for your users.  HTML is A-okay.</span></label>
 			{{ form.call_to_action }}
 		</div>
 	</section>
