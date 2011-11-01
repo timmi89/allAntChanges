@@ -24,6 +24,6 @@ def json_data(func):
             raise JSONException("Could not parse JSON")
         except:
             raise JSONException("Shit went down trying to get that JSON bro")
-        else:
-            return func(self, request, data, *args, **kwargs)
+        
+        return func(self, request, data, *args, **kwargs)
     return wrapper
