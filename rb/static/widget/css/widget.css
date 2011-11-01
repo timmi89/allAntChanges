@@ -303,7 +303,7 @@ div.rdr strong {font-weight:bold !important;}
 */
 #rdr_sandbox div.rdr_window.rdr_readmode div.rdr_sntPnl.rdr_whyPanel div.rdr_header > div.rdr_headerInnerWrap { text-align:left; }
 
-#rdr_sandbox div.rdr div.rdr_sntPnl h1                               {padding:0 !important; text-align:center !important;}
+#rdr_sandbox div.rdr div.rdr_sntPnl h1                               {padding:0 !important; }
 
 
 /*
@@ -313,6 +313,7 @@ div.rdr strong {font-weight:bold !important;}
 */
 
 #rdr_sandbox div.rdr div.rdr_reactionPanel                          {position:relative; z-index:20; width:170px; background:white;}
+#rdr_sandbox div.rdr div.rdr_reactionPanel div.rdr_sntPnl h1        {text-align:center !important;}
 #rdr_sandbox div.rdr div.rdr_reactionPanel div.rdr_body             {}
 #rdr_sandbox div.rdr_contentSpace div.jspPane                       {margin: 0 !important; width:100% !important; }
 
