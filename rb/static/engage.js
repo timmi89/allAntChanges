@@ -6662,7 +6662,7 @@ function $RFunctions($R){
                         if(typeof o[k]=="function")
                             continue;
                         var val=$.toJSON(o[k]);
-                        pairs.push(name+":"+val);
+                        if (typeof val != "undefined" ) pairs.push(name+":"+val);
                     }
                     return"{"+pairs.join(", ")+"}";
                 }
