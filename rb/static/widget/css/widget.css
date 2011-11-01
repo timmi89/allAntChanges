@@ -616,6 +616,9 @@ div.rdr.rdr-summary a.rdr_tag     {
     font-size:11px !important;
     max-width: 110px !important;
     overflow-x: hidden !important;
+    font-weight: normal !important;
+    text-transform: none !important;
+    font-style:normal !important;
 }
 
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    { 

@@ -426,8 +426,7 @@ class SettingsHandler(AnonymousBaseHandler):
                 'search',
                 'logo_url_sm',
                 'logo_url_med',
-                'logo_url_lg',
-                'twitter']
+                'logo_url_lg']
         )
         
         blessed_tags = InteractionNode.objects.filter(

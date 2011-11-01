@@ -18,8 +18,8 @@ if ( typeof $.receiveMessage == "function") {
 	    		RDRAuth.returnUser();
 		    } else if ( e.data == "killUser" ) {
 	    		RDRAuth.killUser();
-	    	} else if ( e.data == "close educateUser" ) {
-	    		$.cookie('educatedUser', true);
+	    	// } else if ( e.data == "close educateUser" ) {
+	    	// 	$.cookie('educatedUser', true);
 	    	} else if ( e.data.indexOf("page_hash") != -1 ) {
 	    		$.cookie('page_hash', e.data.split('|')[1], { expires: 365, path: '/' } );
 	    	}

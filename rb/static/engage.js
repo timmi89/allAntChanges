@@ -1309,7 +1309,6 @@ function readrBoard($R){
                 if ( $('.rdr-'+hash).hasClass('rdr-page-container') && !$('.rdr-'+hash).data('page_id') ) {
                     $('.rdr-'+hash).data('page_id', page_id);
                 }
-
                 return parseInt( page_id );
             },
             stayInWindow: function(settings) {
@@ -1435,10 +1434,10 @@ function readrBoard($R){
 
                     //todo: finish making these changes here:, but i didnt' want to do it before the DC demo.
                     var $msg1, $msg2, $pinIcon;
-                    if( whichAlert == "educateUser"){
-                        $msg1 = $('<h1>Rate &amp; discuss <span>anything</span> on this page!</h1>');
-                        $msg2 = $('<div>Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.</div>');
-                    }
+                    // if( whichAlert == "educateUser"){
+                    //     $msg1 = $('<h1>Rate &amp; discuss <span>anything</span> on this page!</h1>');
+                    //     $msg2 = $('<div>Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.</div>');
+                    // }
                     if( whichAlert == "fromShareLink"){
                         $msg1 = $('<h1>Shared with <span>ReadrBoard</span></h1>');
 
@@ -1706,8 +1705,8 @@ function readrBoard($R){
                             } else if ( message.status == "already had user" ) {
                                 // todo: when is this used?
                                 $('#rdr_loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
-                            } else if ( message.status == "educate user" ) {
-                                RDR.session.alertBar.make('educateUser');
+                            // } else if ( message.status == "educate user" ) {
+                                // RDR.session.alertBar.make('educateUser');
                             } else if ( message.status.indexOf('sharedLink') != -1 ) {
                                 var sharedLink = message.status.split('|');
                                 if ( sharedLink[5] ) {
@@ -1985,7 +1984,7 @@ function readrBoard($R){
                     contentType: "application/json",
                     dataType: "jsonp",
                     data: {
-                        host_name : window.location.hostname
+                        json: $.toJSON( {host_name : window.location.hostname} )
                     },
                     success: function(response, textStatus, XHR) {
 
@@ -2031,6 +2030,7 @@ function readrBoard($R){
                 var titles = [];
                 var key = 0; // we use this to know which container to point to in the success call
                 */
+
                 var pagesArr = [],
                     urlsArr = [],
                     thisPage,
@@ -2045,6 +2045,7 @@ function readrBoard($R){
                     ( $(RDR.group.post_selector).length > 0 ) 
                    ) {
                         $(RDR.group.post_selector).each( function(){
+                            var key = pagesArr.length;
                             var $post = $(this);
                             var $post_href = $post.find(RDR.group.post_href_selector);
                             var $summary_widget = $post.find(RDR.group.summary_widget_selector);
@@ -2060,7 +2061,6 @@ function readrBoard($R){
                                     title: $post_href.text()
                                 };
                                 pagesArr.push(thisPage);
-                                key = pagesArr.length-1;
 
                                 if ( !$post.hasClass('rdr-page-container') ) {
                                     $post.addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
@@ -6604,9 +6604,10 @@ function $RFunctions($R){
             $.toJSON=function(o)
 
             {
-                if(typeof(JSON)=='object'&&JSON.stringify) {
-                    return JSON.stringify(o);
-                }
+                // TODO: reassess?  we're ignoring the native JSON obj because some people think their frameworks should be allowed to modify the global Array and/or JSON objects:
+                // if(typeof(JSON)=='object'&&JSON.stringify) {
+                //     return JSON.stringify(o);
+                // }
                 var type=typeof(o);
                 if(o===null)
                     return"null";
@@ -6619,8 +6620,9 @@ function $RFunctions($R){
                 if(type=='object')
 
                 {
-                    if(typeof o.toJSON=="function")
-                        return $.toJSON(o.toJSON());
+                    // TODO: reassess?  we're ignoring the native JSON obj because some people think their frameworks should be allowed to modify the global Array and/or JSON objects:
+                    // if(typeof o.toJSON=="function")
+                    //     return $.toJSON(o.toJSON());
                     if(o.constructor===Date)
 
                     {
@@ -6660,7 +6662,7 @@ function $RFunctions($R){
                         if(typeof o[k]=="function")
                             continue;
                         var val=$.toJSON(o[k]);
-                        pairs.push(name+":"+val);
+                        if (typeof val != "undefined" ) pairs.push(name+":"+val);
                     }
                     return"{"+pairs.join(", ")+"}";
                 }
@@ -6669,16 +6671,18 @@ function $RFunctions($R){
             $.evalJSON=function(src)
 
             {
-                if(typeof(JSON)=='object'&&JSON.parse)
-                    return JSON.parse(src);
+                // TODO: reassess?  we're ignoring the native JSON obj because some people think their frameworks should be allowed to modify the global Array and/or JSON objects:
+                // if(typeof(JSON)=='object'&&JSON.parse)
+                //     return JSON.parse(src);
                 return eval("("+src+")");
             };
 
             $.secureEvalJSON=function(src)
 
             {
-                if(typeof(JSON)=='object'&&JSON.parse)
-                    return JSON.parse(src);
+                // TODO: reassess?  we're ignoring the native JSON obj because some people think their frameworks should be allowed to modify the global Array and/or JSON objects:
+                // if(typeof(JSON)=='object'&&JSON.parse)
+                //     return JSON.parse(src);
                 var filtered=src;
                 filtered=filtered.replace(/\\["\\\/bfnrtu]/g,'@');
                 filtered=filtered.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']');
