@@ -51,8 +51,8 @@ class InteractionInstanceHandler(AnonymousBaseHandler):
     fields = ('id', 'interaction_node')
 
 class PrivacyHandler(AnonymousBaseHandler):
-    @json_data
     @status_response
+    @json_data
     def read(self, request, data):
         # Check if current user's token has permission
         user = checkToken(data)
@@ -69,8 +69,8 @@ class PrivacyHandler(AnonymousBaseHandler):
         su.save()
 
 class ModerationHandler(AnonymousBaseHandler):
-    @json_data
     @status_response
+    @json_data
     def read(self, request, data):
         #data['group_id'] = 1
         
@@ -98,8 +98,8 @@ class ModerationHandler(AnonymousBaseHandler):
             raise JSONException(u'Admin not approved for this group!')
 
 class InteractionHandler(AnonymousBaseHandler):
-    @json_data
     @status_response
+    @json_data
     def read(self, request, data, **kwargs):
         # retrieve action flag
         action = kwargs.get('action')
@@ -273,8 +273,8 @@ class CreateContainerHandler(AnonymousBaseHandler):
         return result
 
 class ContainerSummaryHandler(AnonymousBaseHandler):
-    @json_data
     @status_response
+    @json_data
     def read(self, request, data):
         known = {}
         hashes = data.get('hashes', [])
@@ -302,8 +302,8 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         return dict(known=known, unknown=unknown)
 
 class ContentSummaryHandler(AnonymousBaseHandler):
-    @json_data
     @status_response
+    @json_data
     def read(self, request, data):
         known = {}
 
@@ -325,8 +325,8 @@ class ContentSummaryHandler(AnonymousBaseHandler):
         return content_summaries
 
 class PageDataHandler(AnonymousBaseHandler):
-    @json_data
     @status_response
+    @json_data
     def read(self, request, data, pageid=None):
         requested_pages = data['pages']
         host = getHost(request)
