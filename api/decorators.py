@@ -6,9 +6,9 @@ def status_response(func):
         res = {"status": 'success'}
         try:
             dataout = func(*args, **kwargs)
-        except JSONException as error:
-            res['status'] =  'fail';
-            res['message'] = error.msg;
+        except JSONException, OperationalError as error:
+            res['status'] =  'fail'
+            res['message'] = error.msg
         else:
             res['data'] = dataout
         return res
