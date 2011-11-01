@@ -1434,10 +1434,10 @@ function readrBoard($R){
 
                     //todo: finish making these changes here:, but i didnt' want to do it before the DC demo.
                     var $msg1, $msg2, $pinIcon;
-                    if( whichAlert == "educateUser"){
-                        $msg1 = $('<h1>Rate &amp; discuss <span>anything</span> on this page!</h1>');
-                        $msg2 = $('<div>Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.</div>');
-                    }
+                    // if( whichAlert == "educateUser"){
+                    //     $msg1 = $('<h1>Rate &amp; discuss <span>anything</span> on this page!</h1>');
+                    //     $msg2 = $('<div>Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.</div>');
+                    // }
                     if( whichAlert == "fromShareLink"){
                         $msg1 = $('<h1>Shared with <span>ReadrBoard</span></h1>');
 
@@ -1705,8 +1705,8 @@ function readrBoard($R){
                             } else if ( message.status == "already had user" ) {
                                 // todo: when is this used?
                                 $('#rdr_loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
-                            } else if ( message.status == "educate user" ) {
-                                RDR.session.alertBar.make('educateUser');
+                            // } else if ( message.status == "educate user" ) {
+                                // RDR.session.alertBar.make('educateUser');
                             } else if ( message.status.indexOf('sharedLink') != -1 ) {
                                 var sharedLink = message.status.split('|');
                                 if ( sharedLink[5] ) {
