@@ -601,7 +601,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_details {background: none !important
 
 /* summary box tags */
 div.rdr.rdr-summary a.rdr_tag     { 
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f7f7f7', endColorstr='#e0e0e0');
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff7f7f7', endColorstr='#ffe0e0e0');
     background: -webkit-gradient(linear, center top, center bottom, from(#ffffff), to(#e8e8e8)); 
     background: -moz-linear-gradient(center top , #ffffff, #e8e8e8) repeat scroll 0 0 transparent;
 
@@ -628,7 +628,7 @@ div.rdr.rdr-summary a.rdr_tag:hover     {
     background: -moz-linear-gradient(center top , #f7f7f7, #d0d0d0) repeat scroll 0 0 transparent;
 }
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    { 
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ddedff', endColorstr='#add1f9');
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
     background: -webkit-gradient(linear, center top, center bottom, from(#ddedff), to(#add1f9)); 
     background: -moz-linear-gradient(center top , #ddedff, #add1f9) repeat scroll 0 0 transparent;
     -moz-border-radius: 0 7px 7px 0 !important;
