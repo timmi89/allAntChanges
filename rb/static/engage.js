@@ -69,23 +69,6 @@ function readrBoard($R){
         styles: {
 		},
 		rindow: {
-            stack:{
-                /*
-
-                hash: {
-                    settings:{},
-                    panels: [
-                        {
-                            panelCards: { 
-                            }
-                        }
-                    ]
-                    ]
-                }
-                
-                */
-              
-            },
             defaults:{
                 coords:{
                     left:100,
@@ -93,10 +76,8 @@ function readrBoard($R){
                 },
                 pnlWidth:170,
                 animTime:100,
-                columns: false,
                 defaultHeight:260,
-                minHeight: 100,
-                maxHeight: 350,
+                maxHeight: 500,
                 forceHeight: false,
                 rewritable: true
             },
@@ -217,11 +198,9 @@ function readrBoard($R){
                             }
 
                         }
-                        var rindow = RDR.rindow.draw({
+                        var rindow = RDR.rindow.drawNew({
                             coords: coords,
                             pnlWidth:170,
-                            columns:true,
-                            noHeader:true,
                             container: hash,
                             content: settings.content,
                             kind: kind,
@@ -238,7 +217,8 @@ function readrBoard($R){
                         summary.$rindow_writemode = rindow;
 
                         // build the ratePanel
-
+/*
+PILLSTODO
                         var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new" />'),
                             $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />'),
                             $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
@@ -292,13 +272,15 @@ function readrBoard($R){
                             });
                         }
 
-
                         $(this).css('width','auto');
+*/
                         // rindow.append($sentimentBox);
-                        rindow.find('div.rdr_contentSpace').append($sentimentBox);
+                        rindow.find('div.rdr_contentSpace').append('<div class="rdr_body">hi</div>');
+                        // rindow.find('div.rdr_body').append('hello <br/>hello <br/>hello <br/>hello <br/>hello <br/>hello <br/>hello <br/>');
                         RDR.actions.sentimentPanel.addCustomTagBox({hash:hash, rindow:rindow, settings:settings, actionType:actionType});
                         
-
+/*
+PILLSTODO
                         rindow.find('ul.rdr_preselected').delegate('li', 'click', function() {
                             var $this = $(this);
 
@@ -329,11 +311,6 @@ function readrBoard($R){
 
                                 //expand the panel if it isn't already expanded
                                 RDR.actions.panel.expand("whyPanel", rindow);
-                                /*
-                                RDR.session.rindowUserMessage.hide({
-                                    rindow:rindow
-                                });
-                                */
                                 //return false to prevent the rest of the interaction
                                 return false;
                             }
@@ -355,7 +332,7 @@ function readrBoard($R){
                                 }
                             }
                         });
-
+*/
                         var rindowHeight = RDR.rindow.setHeight(rindow, {
                             targetHeight: $tagBox.height() + 35 + 10, //+ header height + extra padding;
                             animate:false
@@ -380,7 +357,8 @@ function readrBoard($R){
                     setup: function(){
                         
                     }
-                },
+                }
+                /*
                 readMode: {
                     //RDR.rindow._rindowTypes.readMode:
                     make: function(settings){
@@ -425,7 +403,7 @@ function readrBoard($R){
                             left: $indicatorDetails.data('left') + tempOffsets.left 
                         };
 
-                        var rindow = RDR.rindow.draw({
+                        var rindow = RDR.rindow.drawNew({
                             coords:coords,
                             pnlWidth:170,
                             noHeader:true,
@@ -648,12 +626,6 @@ function readrBoard($R){
                                 if (lastSelState){
                                     $().selog('hilite', lastSelState, 'on');
                                 }
-                            
-                                /*
-                                $.each( selStates, function(idx, selState){
-                                    $().selog('hilite', selState, 'on');
-                                });
-                                */
                             },
                             function() {
 
@@ -669,11 +641,6 @@ function readrBoard($R){
                                 if (lastSelState){
                                     $().selog('hilite', lastSelState, 'off');
                                 }
-                                /*
-                                $.each( selStates, function(idx, selState){
-                                    $().selog('hilite', selState, 'off');
-                                });
-                                */
                             }
                         );
 
@@ -709,6 +676,7 @@ function readrBoard($R){
                         
                     }
                 }
+                */
             },
             make: function(rindowType, options){
                 //RDR.rindow.make:
@@ -731,7 +699,6 @@ function readrBoard($R){
                 if ( !RDR.rindow._rindowTypes.hasOwnProperty(rindowType) ) return;
                 //else
 
-                //[cleanlogz]('user');
                 var defaultOptions = RDR.rindow.defaults,
                     customOptions = RDR.rindow._rindowTypes[rindowType].customOptions,
                     settings = $.extend( {}, defaultOptions, customOptions, options );
@@ -762,7 +729,6 @@ function readrBoard($R){
                     pnls:1,
                     height:225,
                     animTime:100,
-                    minHeight: 100,
                     maxHeight: 350
                 }
                 */
@@ -775,7 +741,6 @@ function readrBoard($R){
 
                 var settings = $.extend({}, this.defaults, options);
 
-                var minHeight = settings.minHeight;
                 var maxHeight = settings.maxHeight;
 
 				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
@@ -813,12 +778,11 @@ function readrBoard($R){
 
 				if ( $new_rindow.find('h1').length === 0 ) {
                     $new_rindow.html('');
-                    if ( !options.noCloseButton ) $new_rindow.append( '<div class="rdr_close">x</div>');
-                    $new_rindow.append( '<h1></h1><div class="rdr rdr_contentSpace"></div>' );
+                    $new_rindow.append( '<div class="rdr rdr_header"></div><div class="rdr rdr_contentSpace"></div><div class="rdr rdr_footer"></div>' );
+                    if ( !options.noCloseButton ) $new_rindow.find('div.rdr_header').append( '<div class="rdr_close">x</div>');
                     $new_rindow.find('div.rdr_close').click( function() {
                         //needed to change this to add triggers
                         RDR.rindow.close( $(this).parents('div.rdr.rdr_window') );
-                        $('#rdr_overlay').remove();
                         return false; //make sure rindow for <a><img /></a> doesn't activate link
                     });
 					
@@ -852,7 +816,6 @@ function readrBoard($R){
                 $new_rindow.resizable({
                     grid: [100000, null], /*this is my own hack for locking the movement to the y axis, but I think it works well*/
                     handles:'s',
-                    minHeight:minHeight,
                     maxHeight:maxHeight
                 });
 
@@ -900,6 +863,159 @@ function readrBoard($R){
 
                 return $new_rindow;
 			},
+            drawNew: function(options) {
+                //RDR.rindow.draw:
+                
+                /*
+                //options are:
+                { 
+                    coords:{
+                        left:100,
+                        top:100
+                    },
+                    pnlWidth:200,
+                    noHeader:true,
+                    container: hash,
+                    content: settings.content,
+                    kind: kind,
+                    selState: newSel,
+                    selector:selector,
+                    id: "rdr_loginPanel",
+                    pnls:1,
+                    height:225,
+                    animTime:100,
+                    maxHeight: 350
+                }
+                */
+
+                if ( options.selector && !options.container ) {
+                    options.container = options.selector.substr(5);
+                }
+                // for now, any window closes all tooltips
+                //merge options and defaults
+
+                var settings = $.extend({}, this.defaults, options);
+
+                var maxHeight = settings.maxHeight;
+
+                var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
+                if ( $new_rindow.length === 0 ) { // there's no rewritable window available, so make one
+                    $new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget"></div>');
+                    if ( settings.id ) {
+                        $('#'+settings.id).remove(); // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
+                                                     // reason I'm adding this: want a login panel with an ID and data attached to it, so after a user
+                                                     // logs in, the login rindow knows what function to then call
+                        $new_rindow.attr('id',settings.id);
+                    }
+
+                    // may not need selector.  was a test to see if we can embed the rindow within a document, optionally.
+                    //todo: do we still want this feature that uses .selector ?
+                    //for now don't do this.  I don't know what it does.
+                    
+                    //this is instead of the if / else below
+                    $('#rdr_sandbox').append( $new_rindow );
+                    
+                    /*
+                    if (options.selector) {
+                        $(options.selector).after( $new_rindow );
+                    } else {
+                        $('#rdr_sandbox').append( $new_rindow );
+                    }
+                    */
+                }
+                if ( settings.rewritable != true ) {
+                    $new_rindow.removeClass('rdr_rewritable');
+                }
+
+                $new_rindow.data(settings);// jquery obj of the rewritable window
+
+                // PILLSTODO i commented this out:
+                //if ( options.columns === true ) $new_rindow.addClass('rdr_columns');
+
+                
+                if ( $new_rindow.find('div.rdr_header').length === 0 ) {  // not sure why this conditional is here
+                    $new_rindow.html('');
+                    $new_rindow.append( '<div class="rdr rdr_header"></div><div class="rdr rdr_contentSpace"></div><div class="rdr rdr_footer"></div>' );
+                    
+                    // PILLSTODO i commented this out:
+                    /*
+                    if ( !options.noCloseButton ) $new_rindow.find('div.rdr_header').append( '<div class="rdr_close">x</div>');
+                    $new_rindow.find('div.rdr_close').click( function() {
+                        //needed to change this to add triggers
+                        RDR.rindow.close( $(this).parents('div.rdr.rdr_window') );
+                        return false; //make sure rindow for <a><img /></a> doesn't activate link
+                    });
+                    */
+                    
+                    if ( settings.noHeader ) $new_rindow.find('div.rdr_header').remove();
+                    
+                    $new_rindow.draggable({
+                        handle:'.rdr_header, .rdr_header_overlay', //todo: move the header_overlay inside the header so we don't need this hack
+                        containment:'document',
+                        stack:'.RDR.window',
+                        start:function() {
+                            $(this).removeClass('rdr_rewritable');
+                        }
+                    });
+
+                }
+                
+                var coords = settings.coords;
+                               
+                $new_rindow.css('left', coords.left + 'px');
+                $new_rindow.css('top', coords.top + 'px');
+                if(settings.height){
+                    $new_rindow.height(settings.height);
+                }
+               
+                RDR.rindow.jspUpdate( $new_rindow );
+
+                RDR.actionbar.closeAll();
+
+                $new_rindow.settings = settings;
+
+                $new_rindow.resizable({
+                    grid: [100000, null], /*this is my own hack for locking the movement to the y axis, but I think it works well*/
+                    handles:'s',
+                    maxHeight:maxHeight
+                });
+
+                var $dragHandle = $new_rindow.find('.ui-resizable-s');
+                $dragHandle.addClass('rdr_window_dragHandle');
+                $dragHandle.hover(
+                    function(){
+                        $(this).addClass('rdr_hover');
+                    },
+                    function(){
+                        $(this).removeClass('rdr_hover');
+                    }
+                );
+
+                $new_rindow.append( $dragHandle );
+                
+                // PILLSTODO put back in user messages?
+                // var $rindowMsgDiv = $('<div class="rdr_rindow_message" />'),
+                //     $rindowMsgDivInnerwrap = $('<div class="rdr_rindow_message_innerwrap"><span class="rdr_userMsg" /><strong /><div style="clear:both;"/></div>'),
+                //     $tmpUserMsg = $('<div class="rdr_rindow_message_tempUserMsg" />'),
+                //     $closeButton = $('<div class="rdr_close">x</div>');
+
+                // $closeButton.click(function(){
+                //     RDR.session.rindowUserMessage.hide( $new_rindow );
+                // });
+
+                // $rindowMsgDivInnerwrap.append( $tmpUserMsg );
+                // $rindowMsgDivInnerwrap.append( $closeButton );
+
+                // $rindowMsgDiv.append($rindowMsgDivInnerwrap).hide();
+                // $new_rindow.append( $rindowMsgDiv );
+                // END PILLS TODO
+    
+                $new_rindow.bind( "resizestop", function(event, ui) {
+                    RDR.rindow.jspUpdate( $(this) );
+                });
+
+                return $new_rindow;
+            },
             close: function( $rindows ) {
                 //RDR.rindow.close:
                 RDR.rindow.clearHilites( $rindows );
@@ -917,7 +1033,6 @@ function readrBoard($R){
                 var $allRindows = $('div.rdr.rdr_window');
 				RDR.rindow.close( $allRindows );
                 $('.rdr_shared').removeClass('rdr_shared');
-                $('#rdr_overlay').remove();
 			},
             clearHilites: function( $rindows ){
                 var selStates = [];
@@ -1554,7 +1669,6 @@ function readrBoard($R){
                     */
 
                     var selState = $container.selog('save', {'serialRange':serialRange} );
-                    //[cleanlogz](selState)
                     $().selog('hilite', selState, 'on');
 
                     /**********/
@@ -1634,8 +1748,6 @@ function readrBoard($R){
                         RDR.session.showLoginPanel( args, callback );
                     break;
                     case "Container specified does not exist":
-                        //[cleanlogz]('caught error: Container specified does not exist and implementing temp fix');
-                        //[cleanlogz](response);
                     break;
 
                     case "Token was invalid":
@@ -1654,7 +1766,6 @@ function readrBoard($R){
                         );
 
                         // // init a new receiveMessage handler to fire this callback if it's successful
-                        // //[cleanlogz]('starting receivemessage')
                     break;
                 }
             },
@@ -1774,7 +1885,7 @@ function readrBoard($R){
                     }
 
 
-                    var rindow = RDR.rindow.draw({
+                    var rindow = RDR.rindow.drawNew({
                         coords:coords,
                         id: "rdr_loginPanel",
                         pnlWidth:360,
@@ -2780,9 +2891,6 @@ function readrBoard($R){
                         tempEncode = encodeURIComponent ( $.toJSON(sendContainer) );
 
                         thisLen = tempEncode.length;
-                        
-                        //[cleanlogz]('container');
-                        //[cleanlogz](container);
 
                         //todo: solve for this.  We don't expect to see this though.
                         if(thisLen > charLimit){
@@ -2864,7 +2972,6 @@ function readrBoard($R){
                             json: $.toJSON(sendData)
                         },
                         success: function(response) {
-                            //[cleanlogz]('response for containers create');
                             var savedHashes = response.data;
                             //savedHashes is in the form {hash:id}
 
@@ -3119,7 +3226,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 args.response = response;
                                 if ( response.data && response.data.num_interactions ) RDR.user.num_interactions = response.data.num_interactions;
                                 if ( response.status == "success" ) {
-                                    //[cleanlogz](action_type);
                                     
                                     var existing = args.response.data.existing;
                                     if(existing){
@@ -3137,7 +3243,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                     if ( int_type == "tag" ) RDR.actions.interactions[int_type].onFail(args);
                                     else {
                                         if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                            //[cleanlogz]('uh oh better login, tempy 1');
                                             RDR.session.showLoginPanel( args );
                                         } if ( response.message == "existing interaction" ) {
                                             //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
@@ -3375,7 +3480,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             //If readmode, we will have a content_node.  If not, use content_node_data, and build a new content_node on success.
                             var content_node = args.content_node || null;
 
-                            //[cleanlogz](content_node_data);
                             if(kind == 'img' || kind == 'media'){
                                 var body = $container[0].src;
 
@@ -3740,7 +3844,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         //If readmode, we will have a content_node.  If not, use content_node_data, and build a new content_node on success.
                         var content_node = args.content_node || null;
 
-                        //[cleanlogz](content_node_data);
                         if(kind == 'img' || kind == 'media'){
 
                             var body = $container[0].src;
@@ -3808,8 +3911,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                             //clears the loader                          
                             tag_li.find('div.rdr_tag_count').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
-
-                            //[cleanlogz]('bookmark successssssssssssss');
 
                             var $this = args.tag;
                             $this.addClass('rdr_selected');
@@ -3966,7 +4067,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
 
                         if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                            //[cleanlogz]('uh oh better login, tempy 1');
                             RDR.session.showLoginPanel( args );
                         } else {
                             // if it failed, see if we can fix it, and if so, try this function one more time
@@ -5930,9 +6030,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 args.response = response;
 
                                 if ( response.status == "fail" ) {
-                                    //[cleanlogz]('failllllllllll');
                                     if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                        //[cleanlogz]('uh oh better login, tempy 3');
                                         RDR.session.showLoginPanel( args );
                                     } else {
                                         // if it failed, see if we can fix it, and if so, try this function one more time
@@ -7584,7 +7682,6 @@ function $RFunctions($R){
                     }
                     return range;
                 }catch(e){
-                    //[cleanlogz](e); //range out of bounds
                     return false;
                 }
             }

@@ -37,23 +37,10 @@ body{
     overflow:hidden;
 }
 
-/*we shouldn't need this anymore*/
-/*
-#rdr_sandbox div.rdr.rdr_window.rdr_columns {
-    background:url(../images/rindow_bg_column.png);
-}
-*/
-
 /* the action bar */
 #rdr_sandbox div.rdr_actionbar {
     border:1px solid #c9c9c9; 
-    background-image: -webkit-gradient(
-    linear,
-    left bottom,
-    left top,
-    color-stop(0, rgb(236,236,236)),
-    color-stop(0.39, rgb(255,255,255))
-    );
+    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, rgb(236,236,236)), color-stop(0.39, rgb(255,255,255)) );
     background-image: -moz-linear-gradient(center bottom , #ECECEC 0%, #fff 39%);
 
     padding:0;
@@ -218,13 +205,14 @@ div.rdr strong {font-weight:bold !important;}
 
 /* the widget */
 #rdr_sandbox div.rdr_window h1,
-#rdr_sandbox div.rdr_window h2  {color:#666 !important; font-size:19px !important; letter-spacing:0.25px !important;}
+#rdr_sandbox div.rdr_window h2  {color:#666 !important; font-size:17px !important; letter-spacing:0.25px !important;}
 
 #rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap{
     text-align:left !important;
     position:relative;
 }
 
+/*
 #rdr_sandbox div.rdr_window.rdr_readmode div.rdr_contentPanel div.rdr_headerInnerWrap h1,
 #rdr_sandbox div.rdr_window.rdr_readmode div.rdr_whyPanel div.rdr_headerInnerWrap h1{
     float: left !important;
@@ -234,7 +222,6 @@ div.rdr strong {font-weight:bold !important;}
     color:#008BE4 !important;
     width:200px !important;
 }
-
 #rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap h1 span.rdr_contentNode_text ,
 #rdr_sandbox div.rdr_window div.rdr_whyPanel div.rdr_headerInnerWrap h1 span.rdr_contentNode_text {
     color:#787878;
@@ -244,13 +231,19 @@ div.rdr strong {font-weight:bold !important;}
     position: absolute;
     width:100%;
 }
+*/
 
+/*
 #rdr_sandbox div.rdr_window div.rdr_contentPanel div.rdr_headerInnerWrap h2{
     float: left;
     margin-left: 8px;
     position: relative;
     font-weight:normal;
 }
+*/
+
+/*
+PILLSTODO
 #rdr_sandbox div.rdr div.rdr_sentimentBox {
     height:100%;
 }
@@ -265,6 +258,7 @@ div.rdr strong {font-weight:bold !important;}
 }
 #rdr_sandbox div.rdr_header_overlay {
 }
+*/
 #rdr_sandbox div.rdr_header_overlay div.rdr_indicator_stats{
     position:absolute;
     margin:10px 0 0 3px;
@@ -288,34 +282,21 @@ div.rdr strong {font-weight:bold !important;}
 
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_body                     {width:100%; z-index:4; overflow-x:hidden; overflow-y:hidden; padding:0; position:absolute; outline:none; top:0; bottom:0; height:auto;}
 
-#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header                   { background:#fff; position:relative; height:30px; /*var rdr_headerHeight*/ width:100%; z-index:5; cursor:move !important;}
+#rdr_sandbox div.rdr div.rdr_header                   { background:#fff; position:relative; height:24px; z-index:5; cursor:move !important; border-bottom:1px solid #ddd !important;;}
+#rdr_sandbox div.rdr div.rdr_contentSpace             { background:#f6f6f6 !important;; position:relative !important;; padding:6px !important; }
+#rdr_sandbox div.rdr div.rdr_footer                   { background:#f6f6f6 !important;; position:relative !important;; }
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("../images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header  { background:url(../images/header_arrow.png) 0px -4px no-repeat #fff; }
 
 #rdr_sandbox div.rdr_window.rdr_readmode div.rdr_sntPnl.rdr_whyPanel div.rdr_header      { background: none transparent; }
 
-#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap {background:none; border-bottom:1px solid #bababa; bottom:0; padding-bottom:2px;
+#rdr_sandbox div.rdr div.rdr_header > div.rdr_headerInnerWrap {background:none; border-bottom:1px solid #bababa; bottom:0; padding-bottom:2px;
  text-align:center; width:100%; position:absolute; }
 
-/* this wasn't on purpose to make the write mode header for the whyPanel left aligned was it? */
-/*
-#rdr_sandbox div.rdr div.rdr_sntPnl.rdr_whyPanel div.rdr_header > div.rdr_headerInnerWrap { text-align:left; }
-*/
-#rdr_sandbox div.rdr_window.rdr_readmode div.rdr_sntPnl.rdr_whyPanel div.rdr_header > div.rdr_headerInnerWrap { text-align:left; }
 
-#rdr_sandbox div.rdr div.rdr_sntPnl h1                               {padding:0 !important; }
-#rdr_sandbox div.rdr div.rdr_reactionPanel.rdr_sntPnl h1             {text-align:center !important; }
-
-
-/*
-#rdr_sandbox div.rdr div.rdr_selectedTextPanel div.rdr_body div.rdr_selected     {font-family:Georgia; font-size:14px; padding:7px; background:#f2cfcf; display:block; position:relative; }
-#rdr_sandbox div.rdr div.rdr_selectedTextPanel               {position:relative; z-index:30;}
-#rdr_sandbox div.rdr div.rdr_selectedTextPanel div.rdr_body  {background:#f0f0f0; -moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
-*/
+#rdr_sandbox div.rdr div.rdr_sntPnl h1                               {padding:0 !important; margin-left:25px !important; }
 
 #rdr_sandbox div.rdr div.rdr_reactionPanel                          {position:relative; z-index:20; width:170px; background:white;}
-#rdr_sandbox div.rdr div.rdr_reactionPanel div.rdr_sntPnl h1        {text-align:center !important;}
-#rdr_sandbox div.rdr div.rdr_reactionPanel div.rdr_body             {}
 #rdr_sandbox div.rdr_contentSpace div.jspPane                       {margin: 0 !important; width:100% !important; }
 
 
@@ -363,7 +344,7 @@ div.rdr strong {font-weight:bold !important;}
 
 #rdr_sandbox div.rdr_window_dragHandle{
     /*override the jquery ui hadle css*/
-    height:8px;
+    height:6px;
     bottom:0 !important; /*overrides jquery css*/
 
     opacity:0.1;
@@ -1181,17 +1162,4 @@ div.rdr_indicator span.rdr_count{
 #rdr_sandbox div#rdr_loginPanel {
     /*position:fixed;*/
     z-index: 12101;
-}
-
-#rdr_sandbox div#rdr_overlay {
-    background-color: #3B4B5E;
-    cursor: pointer;
-    display: block;
-    opacity: 0.7;
-    left: 0;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 12100;
 }
