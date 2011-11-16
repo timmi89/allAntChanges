@@ -35,6 +35,7 @@ body{
     left:100px;
     background:#fff;
     overflow:hidden;
+    min-width:100px;
 }
 
 /* the action bar */
@@ -264,11 +265,14 @@ PILLSTODO
     margin:10px 0 0 3px;
     cursor: move !important;
 }
-#rdr_sandbox div.rdr div.rdr_sntPnl                                  {float:left; position:relative; display:block; height:100%; overflow:hidden; /*width is reset with js - rindow.settings.pnlWidth */ }
-
+/*
+PILLSTODO
+#rdr_sandbox div.rdr div.rdr_sntPnl                                  {float:left; position:relative; display:block; height:100%; overflow:hidden; }
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_body_wrap               {
     position:absolute; top:30px; bottom:10px; width:100%; z-index:3;
 }
+*/
+/*
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_body_wrap {
     background:url(../images/rindow_bg_column.png) repeat-y top left #fff;
 }
@@ -277,16 +281,35 @@ PILLSTODO
     top:30px;
 }
 #rdr_sandbox div.rdr_window.rdr_readmode div.rdr_sntPnl.rdr_whyPanel div.rdr_body{
-    /*top:16px;*/ /*done in js instead just for panels that have the viewAll bar*/
+    /*top:16px;*/ /*done in js instead just for panels that have the viewAll bar
 }
+*/
 
-#rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_body                     {width:100%; z-index:4; overflow-x:hidden; overflow-y:hidden; padding:0; position:absolute; outline:none; top:0; bottom:0; height:auto;}
+#rdr_sandbox div.rdr div.rdr_header                     { background:#fff !important; position:relative !important; height:18px !important; padding:5px 0 !important; z-index:5; cursor:move !important; border-bottom:1px solid #ddd !important;;}
+#rdr_sandbox div.rdr div.rdr_contentSpace               { background:#f6f6f6 !important;; position:relative !important;; padding:6px !important; }
+#rdr_sandbox div.rdr div.rdr_contentSpace div.rdr_body  { width:100%; z-index:4; overflow-x:hidden; overflow-y:hidden; padding:0; }
+#rdr_sandbox div.rdr div.rdr_contentSpace div.rdr_body {
+    bottom: 0;
+    height: auto;
+    outline: medium none;
+    overflow: hidden;
+    padding: 0;
+    /*position: absolute;*/
+    top: 0;
+    max-height:300px;
+    /*width: 100%;*/
+    /*z-index: 4;*/
+}
+#rdr_sandbox div.rdr div.rdr_contentSpace div.rdr_body_wrap {
+    max-height:300px;
+}
+#rdr_sandbox div.rdr div.rdr_footer                     { background:#f6f6f6 !important;; position:relative !important;; }
 
-#rdr_sandbox div.rdr div.rdr_header                   { background:#fff; position:relative; height:24px; z-index:5; cursor:move !important; border-bottom:1px solid #ddd !important;;}
-#rdr_sandbox div.rdr div.rdr_contentSpace             { background:#f6f6f6 !important;; position:relative !important;; padding:6px !important; }
-#rdr_sandbox div.rdr div.rdr_footer                   { background:#f6f6f6 !important;; position:relative !important;; }
+/*
+PILLSTODO
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("../images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header  { background:url(../images/header_arrow.png) 0px -4px no-repeat #fff; }
+*/
 
 #rdr_sandbox div.rdr_window.rdr_readmode div.rdr_sntPnl.rdr_whyPanel div.rdr_header      { background: none transparent; }
 
@@ -300,19 +323,13 @@ PILLSTODO
 #rdr_sandbox div.rdr_contentSpace div.jspPane                       {margin: 0 !important; width:100% !important; }
 
 
-#rdr_sandbox div.rdr div.rdr_new div.rdr_reactionPanel div.rdr_body  {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
-
+/*
+PILLSTODO
 #rdr_sandbox div.rdr div.rdr_contentPanel                            {position:absolute; z-index:15; left:170px; background:#eeeeee; width:300px;}
-#rdr_sandbox div.rdr div.rdr_contentPanel div.rdr_body               {}
-
 #rdr_sandbox div.rdr div.rdr_whyPanel                                {position:absolute; z-index:16; right:-300px; width:300px; background:#f2f2f2; visibility:hidden;}
-
 #rdr_sandbox div.rdr_window.rdr_readmode div.rdr_whyPanel                               {background:none;}
 #rdr_sandbox div.rdr_window.rdr_readmode div.rdr_whyPanel div.rdr_body_wrap             {background:#f2f2f2;}
 
-#rdr_sandbox div.rdr div.rdr_whyPanel.rdr_whyShowing                  {z-index:16;}
-/*#rdr_sandbox div.rdr.rdr_columns3 div.rdr_whyPanel                   {width:300px;}*/
-#rdr_sandbox div.rdr div.rdr_whyPanel div.rdr_body                   {}
 #rdr_sandbox div.rdr div.rdr_whyPanel hr                             {background: #ddd; border: none; clear: both; color: #ddd; float: none; height: 1px; margin: 10px 0; }
 
 #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_subHeader        {text-align:center; padding-top:5px;}
@@ -323,6 +340,7 @@ PILLSTODO
     margin: 8px 0 0;
     position: relative;
 }
+*/
 #rdr_sandbox div.rdr div.rdr_sntPnl textarea,
 #rdr_sandbox div.rdr div.rdr_sntPnl input[type="text"]   { width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
 #rdr_sandbox div.rdr div.rdr_sntPnl button {

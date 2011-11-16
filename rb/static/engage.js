@@ -74,22 +74,29 @@ function readrBoard($R){
                     left:100,
                     top:100
                 },
-                pnlWidth:170,
+                // pnlWidth:170,
                 animTime:100,
                 defaultHeight:260,
-                maxHeight: 500,
+                minHeight: 10,
+                maxHeight: 300,
                 forceHeight: false,
                 rewritable: true
             },
             jspUpdate: function( $rindow ) {
+
                 //RDR.rindow.jspUpdate:
                 //updates or inits all $rindow bodies into jScrollPanes
 
                 $rindow.find('div.rdr_body').each( function() {
-                    if( !$(this).hasClass('jspScrollable') ){
+                    var $this = $(this);
+                    console.log('oooooooooooh: '+$this.width() );
+                    if( !$this.hasClass('jspScrollable') ){
+                        console.log('init jsp scrollpane');
                         // IE.  for some reason, THIS fires the scrollstop event.  WTF:
-                        $(this).jScrollPane({ contentWidth:170, showArrows:true });
+                        // $(this).jScrollPane({ showArrows:true });
+                        $(this).jScrollPane({ contentWidth:$this.width(), showArrows:true });
                     }else{
+                        console.log('UPDATE jsp scrollpane');
                         var API = $(this).data('jsp');
                         API.reinitialise();
                     }
@@ -102,6 +109,7 @@ function readrBoard($R){
                 }, $rindow.settings.animTime, callback );
             },
             setHeight: function( $rindow, options ) {
+
                 //RDR.rindow.setHeight:
                 var settings = $.extend({}, this.defaults, options);
                 
@@ -141,7 +149,7 @@ function readrBoard($R){
                     }, settings.animTime)
                 }
                 */
-
+console.log('setHeight: '+gotoHeight);
                 return gotoHeight;
             },
             _rindowTypes: {
@@ -200,7 +208,6 @@ function readrBoard($R){
                         }
                         var rindow = RDR.rindow.drawNew({
                             coords: coords,
-                            pnlWidth:170,
                             container: hash,
                             content: settings.content,
                             kind: kind,
@@ -210,7 +217,7 @@ function readrBoard($R){
                         // TODO this is used to constrain the initial width of this rindow
                         // and then it animates larger when we slide the whyPanel out.
                         // is there a cleaner way?
-                        rindow.css({width:'170px'});
+                        // rindow.css({width:'170px'});
                         
                         rindow.addClass('rdr_writemode');
                         //add a reference for the rindow in the container summary
@@ -219,31 +226,42 @@ function readrBoard($R){
                         // build the ratePanel
 /*
 PILLSTODO
-                        var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new" />'),
-                            $reactionPanel = $('<div class="rdr_reactionPanel rdr_sntPnl rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />'),
-                            $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
-                            $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
-                            $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />');
+*/
+
+                        var $sentimentBoxWrap = $('<div class="rdr_body_wrap" />'),
+                            $sentimentBox = $('<div class="rdr_body" />');
+
+                        $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
+                        $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
+                        $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
+                        $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
+                        $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
+                        $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
+                        $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
+
+                            // $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
+                            // $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
+                            // $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />');
 
                         var firstPanelHeader = (actionType == "react") ? "What's your reaction?":"Bookmark this";
-                        var headers = [firstPanelHeader, "Say More"];
-                        $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
-                        $sentimentBox.children().each(function(idx){
-                            var $header = $('<div class="rdr_header rdr_brtl rdr_brtr" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap" />'),
-                            $body = $('<div class="rdr_body "/>'),
-                            $bodyWrap = $('<div class="rdr_body_wrap"/>').append($body),
-                            $panelOverlay = $('<div class="rdr_panelOverlay" />'); //for visual effects that need to sit on top of everything - borderline and shadow
-                            $header.find('div.rdr_headerInnerWrap').append( '<h1>'+ headers[idx] +'</h1>' );
+                        // var headers = [firstPanelHeader, "Say More"];
+                        // $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
+                        // $sentimentBox.children().each(function(idx){
+                        //     var $header = $('<div class="rdr_header rdr_brtl rdr_brtr" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap" />'),
+                        //     $body = $('<div class="rdr_body "/>'),
+                        //     $bodyWrap = $('<div class="rdr_body_wrap"/>').append($body),
+                        //     $panelOverlay = $('<div class="rdr_panelOverlay" />'); //for visual effects that need to sit on top of everything - borderline and shadow
+                        //     $header.find('div.rdr_headerInnerWrap').append( '<h1>'+ headers[idx] +'</h1>' );
 
-                            var clearDiv = '<div style="clear:both;"></div>';
-                            $(this).append($header, $bodyWrap, clearDiv, $panelOverlay);
+                        //     var clearDiv = '<div style="clear:both;"></div>';
+                        //     $(this).append($header, $bodyWrap, clearDiv, $panelOverlay);
 
-                        });
-                        RDR.actions.panel.setup("whyPanel", rindow);
+                        // });
+                        // RDR.actions.panel.setup("whyPanel", rindow);
 
                         //populate reactionPanel
-                        $reactionPanel.find('div.rdr_body').append($tagBox);
-
+                        // $reactionPanel.find('div.rdr_body').append($tagBox);
+/*
                         ////populate blesed_tags
                         if (actionType == "react") {
                             $.each(RDR.group.blessed_tags, function(idx, val){
@@ -273,11 +291,20 @@ PILLSTODO
                         }
 
                         $(this).css('width','auto');
+
 */
-                        // rindow.append($sentimentBox);
-                        rindow.find('div.rdr_contentSpace').append('<div class="rdr_body">hi</div>');
+                        $sentimentBoxWrap.append( $sentimentBox );
+                        rindow.find('div.rdr_contentSpace').append($sentimentBoxWrap);
+
+                        // rindow.find('div.rdr_contentSpace').append('<div class="rdr_body">hi</div>');
                         // rindow.find('div.rdr_body').append('hello <br/>hello <br/>hello <br/>hello <br/>hello <br/>hello <br/>hello <br/>');
-                        RDR.actions.sentimentPanel.addCustomTagBox({hash:hash, rindow:rindow, settings:settings, actionType:actionType});
+                        
+
+                        // RDR.actions.sentimentPanel.addCustomTagBox({hash:hash, rindow:rindow, settings:settings, actionType:actionType});
+
+
+
+
                         
 /*
 PILLSTODO
@@ -333,12 +360,14 @@ PILLSTODO
                             }
                         });
 */
+console.log(rindow.find('div.rdr_body').height());
                         var rindowHeight = RDR.rindow.setHeight(rindow, {
-                            targetHeight: $tagBox.height() + 35 + 10, //+ header height + extra padding;
+                            targetHeight: rindow.find('div.rdr_body_wrap').height() + 35 + 10, //+ header height + extra padding;
                             animate:false
                         });
+console.log(rindowHeight);
+                        var newCoords = RDR.util.stayInWindow({coords:coords, width:rindow.find('div.rdr_body').width(), height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
 
-                        var newCoords = RDR.util.stayInWindow({coords:coords, width:170, height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
 
                         rindow.css('left', newCoords.left + 'px');
                         rindow.css('top', newCoords.top + 'px');
@@ -349,7 +378,6 @@ PILLSTODO
                         }, 200, 'swing', function(){
                             RDR.rindow.jspUpdate( rindow );
                         });
-
                     },
                     customOptions: {
                         
@@ -708,6 +736,7 @@ PILLSTODO
 
             },
 			draw: function(options) {
+             console.log('draw');
                 //RDR.rindow.draw:
                 
                 /*
@@ -729,7 +758,8 @@ PILLSTODO
                     pnls:1,
                     height:225,
                     animTime:100,
-                    maxHeight: 350
+                    minHeight: 100,
+                    maxHeight: 500
                 }
                 */
 
@@ -741,7 +771,8 @@ PILLSTODO
 
                 var settings = $.extend({}, this.defaults, options);
 
-                var maxHeight = settings.maxHeight;
+                var minHeight = settings.minHeight,
+                    maxHeight = settings.maxHeight;
 
 				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
 				if ( $new_rindow.length === 0 ) { // there's no rewritable window available, so make one
@@ -778,7 +809,7 @@ PILLSTODO
 
 				if ( $new_rindow.find('h1').length === 0 ) {
                     $new_rindow.html('');
-                    $new_rindow.append( '<div class="rdr rdr_header"></div><div class="rdr rdr_contentSpace"></div><div class="rdr rdr_footer"></div>' );
+                    $new_rindow.append( '<div class="rdr rdr_header rdr_brtl rdr_brtr"></div><div class="rdr rdr_contentSpace"></div><div class="rdr rdr_footer rdr_brbl rdr_brbr"></div>' );
                     if ( !options.noCloseButton ) $new_rindow.find('div.rdr_header').append( '<div class="rdr_close">x</div>');
                     $new_rindow.find('div.rdr_close').click( function() {
                         //needed to change this to add triggers
@@ -864,6 +895,7 @@ PILLSTODO
                 return $new_rindow;
 			},
             drawNew: function(options) {
+                console.log('drawNew');
                 //RDR.rindow.draw:
                 
                 /*
@@ -896,7 +928,8 @@ PILLSTODO
 
                 var settings = $.extend({}, this.defaults, options);
 
-                var maxHeight = settings.maxHeight;
+                var minHeight = settings.minHeight,
+                    maxHeight = settings.maxHeight;
 
                 var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
                 if ( $new_rindow.length === 0 ) { // there's no rewritable window available, so make one
@@ -950,7 +983,7 @@ PILLSTODO
                     if ( settings.noHeader ) $new_rindow.find('div.rdr_header').remove();
                     
                     $new_rindow.draggable({
-                        handle:'.rdr_header, .rdr_header_overlay', //todo: move the header_overlay inside the header so we don't need this hack
+                        handle:'.rdr_header', //todo: move the header_overlay inside the header so we don't need this hack
                         containment:'document',
                         stack:'.RDR.window',
                         start:function() {
@@ -977,6 +1010,7 @@ PILLSTODO
                 $new_rindow.resizable({
                     grid: [100000, null], /*this is my own hack for locking the movement to the y axis, but I think it works well*/
                     handles:'s',
+                    minHeight:minHeight,
                     maxHeight:maxHeight
                 });
 
@@ -1888,7 +1922,7 @@ PILLSTODO
                     var rindow = RDR.rindow.drawNew({
                         coords:coords,
                         id: "rdr_loginPanel",
-                        pnlWidth:360,
+                        // pnlWidth:360,
                         pnls:1,
                         height:225,
                         ignoreWindowEdges:"bt"
@@ -5486,6 +5520,11 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
             },
 			panel: {
                 draw: function(_panel, rindow, interaction_id) {
+                    // PILLSTODO:
+                    return $('<div class="rdr_'+panel+' rdr_sntPnl rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />');;
+
+
+                    
                     //RDR.actions.panel.draw:
                     var panel = _panel || "whyPanel";
                     
@@ -5530,12 +5569,17 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     return $thisPanel;
                 },
                 setup: function(_panel, rindow){
+                    // PILLSTODO:
+                    return;
+
+
+
                     //RDR.actions.panel.setup:
                     var panel = _panel || "whyPanel";
                     
                     //note: it appears this isn't doing anything anymore
                     $(rindow).find('.rdr_'+panel).find('.rdr_header, .rdr_body').css({
-                        'width': rindow.settings.pnlWidth +'px',
+                        // 'width': rindow.settings.pnlWidth +'px',
                         'right':'0',
                         'position':'absolute'
                     });
