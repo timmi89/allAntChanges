@@ -213,7 +213,7 @@ PILLSTODO
                         var $sentimentBoxWrap = $('<div class="rdr_body_wrap" />'),
                             $sentimentBox = $('<div class="rdr_body" />');
 
-                        // $sentimentBox.append( $('<table><tr><td style="white-space:nowrap;" width="100">why hello there</td><td width="100" style="white-space:nowrap;">it is me, your friend</td></tr></table>') );
+                        $sentimentBox.append( $('<table><tr><td style="white-space:nowrap;" width="100">why hello there</td><td width="100" style="white-space:nowrap;">it is me, your friend</td></tr></table>') );
                         $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
                         $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
                         $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
@@ -342,7 +342,7 @@ PILLSTODO
                             }
                         });
 */
-                        var rindowWidth = rindow.find('div.rdr_body_wrap').width(),
+                        var rindowWidth = rindow.find('div.rdr_body_wrap').width() + 12,
                             rindowHeight = RDR.rindow.getHeight(rindow, {
                             targetHeight: rindow.find('div.rdr_body_wrap').height() + 20, //+ header height + extra padding;
                             animate:false
