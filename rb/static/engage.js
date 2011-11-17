@@ -89,7 +89,6 @@ function readrBoard($R){
 
                 $rindow.find('div.rdr_body').each( function() {
                     var $this = $(this);
-                    console.log('oooooooooooh: '+$this.width() );
                     if( !$this.hasClass('jspScrollable') ){
                         console.log('init jsp scrollpane');
                         // IE.  for some reason, THIS fires the scrollstop event.  WTF:
@@ -108,26 +107,10 @@ function readrBoard($R){
                     width: width
                 }, $rindow.settings.animTime, callback );
             },
-            setHeight: function( $rindow, options ) {
+            getHeight: function( $rindow, options ) {
 
-                //RDR.rindow.setHeight:
+                //RDR.rindow.getHeight:
                 var settings = $.extend({}, this.defaults, options);
-                
-                //
-                
-                // var minHeight, maxHeight,
-                // height = rindow.height(),
-                // gotoHeight = $tagBox.height() + 35 + 10, //+ header height + extra padding;
-                // minHeight = gotoHeight;
-
-                // gotoHeight = gotoHeight ? gotoHeight : ( height < minHeight ) ? minHeight : (height > maxHeight) ? maxHeight : null;
-                // if( gotoHeight ){
-                //     rindow.animate({
-                //         height:gotoHeight
-                //     }, rindow.settings.animTime, function(){
-                //         RDR.rindow.jspUpdate( rindow );
-                //     });
-                // }   
 
                 var height = $rindow.height(),
                     gotoHeight = settings.targetHeight ? settings.targetHeight : settings.defaultHeight;
@@ -149,7 +132,6 @@ function readrBoard($R){
                     }, settings.animTime)
                 }
                 */
-console.log('setHeight: '+gotoHeight);
                 return gotoHeight;
             },
             _rindowTypes: {
@@ -231,7 +213,7 @@ PILLSTODO
                         var $sentimentBoxWrap = $('<div class="rdr_body_wrap" />'),
                             $sentimentBox = $('<div class="rdr_body" />');
 
-                        $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
+                        // $sentimentBox.append( $('<table><tr><td style="white-space:nowrap;" width="100">why hello there</td><td width="100" style="white-space:nowrap;">it is me, your friend</td></tr></table>') );
                         $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
                         $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
                         $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
@@ -360,20 +342,20 @@ PILLSTODO
                             }
                         });
 */
-console.log(rindow.find('div.rdr_body').height());
-                        var rindowHeight = RDR.rindow.setHeight(rindow, {
-                            targetHeight: rindow.find('div.rdr_body_wrap').height() + 35 + 10, //+ header height + extra padding;
+                        var rindowWidth = rindow.find('div.rdr_body_wrap').width(),
+                            rindowHeight = RDR.rindow.getHeight(rindow, {
+                            targetHeight: rindow.find('div.rdr_body_wrap').height() + 20, //+ header height + extra padding;
                             animate:false
                         });
-console.log(rindowHeight);
-                        var newCoords = RDR.util.stayInWindow({coords:coords, width:rindow.find('div.rdr_body').width(), height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
+
+                        var newCoords = RDR.util.stayInWindow({coords:coords, width:rindow.find('div.rdr_body_wrap').width(), height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
 
 
                         rindow.css('left', newCoords.left + 'px');
                         rindow.css('top', newCoords.top + 'px');
 
                         rindow.width(0).height(0).animate({
-                            width:170,
+                            width:rindowWidth,
                             height: rindowHeight
                         }, 200, 'swing', function(){
                             RDR.rindow.jspUpdate( rindow );
@@ -672,7 +654,7 @@ console.log(rindowHeight);
                             }
                         );
 
-                        var rindowHeight = RDR.rindow.setHeight(rindow, {
+                        var rindowHeight = RDR.rindow.getHeight(rindow, {
                             targetHeight: $tagBox.height() + 35 + 10, //+ header height + extra padding;
                             animate:false
                         });
@@ -5645,7 +5627,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     }
                     else{
 
-                        gotoHeight = RDR.rindow.setHeight(rindow, {
+                        gotoHeight = RDR.rindow.getHeight(rindow, {
                             targetHeight: targetHeight
                         });
                                             
@@ -5746,7 +5728,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     }
                     else{
 
-                        gotoHeight = RDR.rindow.setHeight(rindow, {
+                        gotoHeight = RDR.rindow.getHeight(rindow, {
                             targetHeight: targetHeight
                         });
                         rindow.queue('panels', function(){

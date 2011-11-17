@@ -286,8 +286,7 @@ PILLSTODO
 */
 
 #rdr_sandbox div.rdr div.rdr_header                     { background:#fff !important; position:relative !important; height:18px !important; padding:5px 0 !important; z-index:5; cursor:move !important; border-bottom:1px solid #ddd !important;;}
-#rdr_sandbox div.rdr div.rdr_contentSpace               { background:#f6f6f6 !important;; position:relative !important;; padding:6px !important; }
-#rdr_sandbox div.rdr div.rdr_contentSpace div.rdr_body  { width:100%; z-index:4; overflow-x:hidden; overflow-y:hidden; padding:0; }
+#rdr_sandbox div.rdr div.rdr_contentSpace               { background:#f6f6f6 !important;; position:relative !important; }
 #rdr_sandbox div.rdr div.rdr_contentSpace div.rdr_body {
     bottom: 0;
     height: auto;
@@ -301,7 +300,8 @@ PILLSTODO
     /*z-index: 4;*/
 }
 #rdr_sandbox div.rdr div.rdr_contentSpace div.rdr_body_wrap {
-    max-height:300px;
+    /*max-height:300px;*/
+    position:relative;
 }
 #rdr_sandbox div.rdr div.rdr_footer                     { background:#f6f6f6 !important;; position:relative !important;; }
 
@@ -320,7 +320,7 @@ PILLSTODO
 #rdr_sandbox div.rdr div.rdr_sntPnl h1                               {padding:0 !important; margin-left:25px !important; }
 
 #rdr_sandbox div.rdr div.rdr_reactionPanel                          {position:relative; z-index:20; width:170px; background:white;}
-#rdr_sandbox div.rdr_contentSpace div.jspPane                       {margin: 0 !important; width:100% !important; }
+#rdr_sandbox div.rdr_contentSpace div.jspPane                       {margin: 0 !important; width:100% !important; padding:6px !important; }
 
 
 /*
