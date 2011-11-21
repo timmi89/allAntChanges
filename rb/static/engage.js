@@ -79,20 +79,30 @@ function readrBoard($R){
                 defaultHeight:260,
                 minHeight: 10,
                 maxHeight: 300,
+                minWidth: 100,
+                maxWidth: 600,
                 forceHeight: false,
                 rewritable: true
             },
             updateHeader : function( $rindow, content ) {
+                //RDR.rindow.updateHeader:
                 var $header = $rindow.find('div.rdr_header');
                 
             },
             updateFooter : function( $rindow, content ) {
+                //RDR.rindow.updateFooter:
                 var $footer = $rindow.find('div.rdr_footer');
                 $footer.show(0);
-                $footer.html( content );
+                if ( content ) $footer.html( content );
+                RDR.rindow.updateSizes( $rindow );
+            },
+            hideFooter : function( $rindow ) {
+                //RDR.rindow.hideFooter:
+                $rindow.find('div.rdr_footer').hide(0);
                 RDR.rindow.updateSizes( $rindow );
             },
             updateSizes : function($rindow) {
+                //RDR.rindow.updateSizes:
                 if ( $rindow.find('div.rdr_footer').css('display') != "none" ) {
                     $rindow.css('padding-bottom','20px');
                 } else {
@@ -101,8 +111,8 @@ function readrBoard($R){
                 RDR.rindow.jspUpdate( $rindow );
             },
             jspUpdate: function( $rindow ) {
-
                 //RDR.rindow.jspUpdate:
+
                 //updates or inits all $rindow bodies into jScrollPanes
                 $rindow.find('div.rdr_body').each( function() {
                     var $this = $(this);
@@ -374,7 +384,7 @@ console.log( rindow.find('div.rdr_contentSpace').height(), rindowHeight );
                             width:rindowWidth,
                             height: rindowHeight
                         }, 200, 'swing', function(){
-                            RDR.rindow.jspUpdate( rindow );
+                            RDR.rindow.updateSizes( rindow );
                         });
                     },
                     customOptions: {
@@ -925,9 +935,12 @@ console.log( rindow.find('div.rdr_contentSpace').height(), rindowHeight );
                 //merge options and defaults
 
                 var settings = $.extend({}, this.defaults, options);
-
+console.log('settings:----');
+console.dir(settings);
                 var minHeight = (settings.minHeight<60)?60:settings.minHeight,
                     maxHeight = settings.maxHeight;
+                    minWidth = settings.minWidth,
+                    maxWidth = settings.maxWidth;
 
                 var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
                 if ( $new_rindow.length === 0 ) { // there's no rewritable window available, so make one
@@ -999,7 +1012,7 @@ console.log( rindow.find('div.rdr_contentSpace').height(), rindowHeight );
                     $new_rindow.height(settings.height);
                 }
                
-                RDR.rindow.jspUpdate( $new_rindow );
+                RDR.rindow.updateSizes( $new_rindow );
 
                 RDR.actionbar.closeAll();
 
@@ -1009,7 +1022,9 @@ console.log( rindow.find('div.rdr_contentSpace').height(), rindowHeight );
                     grid: [100000, null], /*this is my own hack for locking the movement to the y axis, but I think it works well*/
                     handles:'s',
                     minHeight:minHeight,
-                    maxHeight:maxHeight
+                    maxHeight:maxHeight,
+                    minWidth:minWidth,
+                    maxWidth:maxWidth
                 });
 
                 var $dragHandle = $new_rindow.find('.ui-resizable-s');
@@ -5622,7 +5637,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     
                     //temp hack
                     if( $thisPanel.data('expanded') ){
-                        RDR.rindow.jspUpdate( rindow );
+                        RDR.rindow.updateSizes( rindow );
                         rindow.dequeue('userMessage');
                     }
                     else{
@@ -5642,7 +5657,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 height: gotoHeight,
                                 top: coords.top
                             }, rindow.settings.animTime, function() {
-                                RDR.rindow.jspUpdate( rindow );
+                                RDR.rindow.updateSizes( rindow );
                                 rindow.dequeue('panels');
                                 rindow.dequeue('userMessage');
                             });
@@ -5736,7 +5751,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 width: width,
                                 height: gotoHeight
                             }, rindow.settings.animTime, function() {
-                                RDR.rindow.jspUpdate( rindow );
+                                RDR.rindow.updateSizes( rindow );
                                 rindow.dequeue('panels');
                                 rindow.dequeue('userMessage');
                             });
@@ -5967,7 +5982,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     });
 
                     rindow.find('ul.rdr_tags').append( $customTagBox );
-                    RDR.rindow.jspUpdate( rindow );
+                    RDR.rindow.updateSizes( rindow );
                 }
             },
             rateSend: function(args) {
@@ -8090,7 +8105,7 @@ function $RFunctions($R){
                     
                     shadow.html(val);
                     //rinh $(this).css('height', Math.max(shadow.height()-10, minHeight));
-                    RDR.rindow.jspUpdate( $this.closest('div.rdr.rdr_window') );
+                    RDR.rindow.updateSizes( $this.closest('div.rdr.rdr_window') );
                 };
 
                 $(this).change(update).keyup(update).keydown(update);
