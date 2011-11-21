@@ -30,12 +30,12 @@ body{
 #rdr_sandbox div.rdr.rdr_window {
     padding:0px;
     position:absolute;
-    z-index:12000;
+    z-index:12000 !important;
     top:100px;
     left:100px;
-    background:#fff;
+    background:#f6f6f6;
     overflow:hidden;
-    min-width:100px;
+    min-width:200px;
 }
 
 /* the action bar */
@@ -197,7 +197,7 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
 /* global tag defs */
 #rdr_sandbox div.rdr h1, 
 #rdr_sandbox div.rdr h2  {font-family:'ReadrLeague',Arial,Helvetica,sans-serif !important; color:#666; margin:0; line-height:1.1em !important;}
-#rdr_sandbox div.rdr h1  {font-size:21px; cursor:move; padding:3px 9px; font-weight:100;}
+#rdr_sandbox div.rdr h1  {font-size:21px; cursor:move; padding:1px 9px; font-weight:100;}
 #rdr_sandbox div.rdr h1 span.rdr_contentNode_text {font-size:18px; color:#008be4;}
 
 #rdr_sandbox div.rdr li {background:none; padding:0;}
@@ -285,17 +285,20 @@ PILLSTODO
 }
 */
 
-#rdr_sandbox div.rdr div.rdr_header                     { background:#fff !important; position:relative !important; height:18px !important; padding:5px 0 !important; z-index:5; cursor:move !important; border-bottom:1px solid #ddd !important;;}
-#rdr_sandbox div.rdr div.rdr_contentSpace               { background:#f6f6f6 !important;; position:relative !important; }
-#rdr_sandbox div.rdr div.rdr_contentSpace div.rdr_body {
-    bottom:0;
+#rdr_sandbox div.rdr.rdr_window {  }
+#rdr_sandbox div.rdr.rdr_window div.rdr_header                     { background:#fff !important; position:relative !important; height:18px !important; padding:5px 0 !important; z-index:5; cursor:move !important; border-bottom:1px solid #ddd !important;;}
+#rdr_sandbox div.rdr.rdr_window div.rdr_footer                     { background:#f6f6f6 !important; position:absolute !important; height:18px; padding:3px 6px 0; bottom:6px; width:95%; display:none;}
+#rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace               { background:#f6f6f6 !important; position:relative !important; margin-bottom:6px; overflow:hidden;}
+#rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace div.rdr_body {
+    max-height:266px;
+    /*bottom:0;
     height:auto;
     outline:medium none;
     overflow:hidden;
-    padding:0px;
+    padding:0px;*/
     /*position: absolute;*/
-    top:0;
-    max-height:300px;
+    /*top:0;
+    */
     /*width: 100%;*/
     /*z-index: 4;*/
 }
@@ -304,17 +307,16 @@ PILLSTODO
     position:relative;
     padding:6px;
 }
-#rdr_sandbox div.rdr_contentSpace div.jspPane   {margin:0 !important; width:100% !important; padding:0px !important; }
+/*#rdr_sandbox div.rdr_contentSpace div.jspPane   {margin:0 !important; width:100% !important; padding:0px !important; }*/
 
-#rdr_sandbox div.rdr div.rdr_footer                     { background:#f6f6f6 !important;; position:relative !important;; }
 
 /*
 PILLSTODO
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_reactionPanel div.rdr_header > div.rdr_icon    {background: url("../images/readr_icons.png") repeat scroll 0 0 transparent;float: left; height: 16px; margin: 8px 0 0 5px; width: 16px;}
 #rdr_sandbox div.rdr div.rdr_sntPnl.rdr_contentPanel div.rdr_header  { background:url(../images/header_arrow.png) 0px -4px no-repeat #fff; }
-*/
 
 #rdr_sandbox div.rdr_window.rdr_readmode div.rdr_sntPnl.rdr_whyPanel div.rdr_header      { background: none transparent; }
+*/
 
 #rdr_sandbox div.rdr div.rdr_header > div.rdr_headerInnerWrap {background:none; border-bottom:1px solid #bababa; bottom:0; padding-bottom:2px;
  text-align:center; width:100%; position:absolute; }

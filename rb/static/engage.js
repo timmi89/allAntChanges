@@ -82,15 +82,23 @@ function readrBoard($R){
                 forceHeight: false,
                 rewritable: true
             },
+            updateHeader : function( $rindow, content ) {
+                var $header = $rindow.find('div.rdr_header');
+                
+            },
+            updateSizes : function($rindow) {
+                RDR.rindow.jspUpdate( $rindow );
+                if ( $rindow.find('div.rdr_footer').css('display') != "none" ) {
+                    $rindow.find('div.jspContainer').css('margin-bottom','30px');
+                }
+            },
             jspUpdate: function( $rindow ) {
 
                 //RDR.rindow.jspUpdate:
                 //updates or inits all $rindow bodies into jScrollPanes
-
                 $rindow.find('div.rdr_body').each( function() {
                     var $this = $(this);
                     if( !$this.hasClass('jspScrollable') ){
-                        console.log('init jsp scrollpane');
                         // IE.  for some reason, THIS fires the scrollstop event.  WTF:
                         // $(this).jScrollPane({ showArrows:true });
                         $(this).jScrollPane({ contentWidth:$this.width(), showArrows:true });
@@ -213,7 +221,7 @@ PILLSTODO
                         var $sentimentBoxWrap = $('<div class="rdr_body_wrap" />'),
                             $sentimentBox = $('<div class="rdr_body" />');
 
-                        $sentimentBox.append( $('<table><tr><td style="white-space:nowrap;" width="100">why hello there</td><td width="100" style="white-space:nowrap;">it is me, your friend</td></tr></table>') );
+                        $sentimentBox.append( $('<table><tr><td style="white-space:nowrap;" width="200">why hello there why hello there why hello there why hello there why hello there why hello there why hello there why hello there why hello there why hello there</td><td width="200" style="white-space:nowrap;">why hello there why hello there why hello there</td></tr></table>') );
                         $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
                         $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
                         $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
@@ -344,10 +352,10 @@ PILLSTODO
 */
                         var rindowWidth = rindow.find('div.rdr_body_wrap').width() + 12,
                             rindowHeight = RDR.rindow.getHeight(rindow, {
-                            targetHeight: rindow.find('div.rdr_body_wrap').height() + 20, //+ header height + extra padding;
+                            targetHeight: rindow.find('div.rdr_contentSpace').height()+40, //+ header height + extra padding;
                             animate:false
                         });
-
+console.log( rindow.find('div.rdr_contentSpace').height(), rindowHeight );
                         var newCoords = RDR.util.stayInWindow({coords:coords, width:rindow.find('div.rdr_body_wrap').width(), height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
 
 
@@ -718,147 +726,147 @@ PILLSTODO
 
             },
 			draw: function(options) {
-             console.log('draw');
-                //RDR.rindow.draw:
+    //          console.log('draw');
+    //             //RDR.rindow.draw:
                 
-                /*
-                //options are:
-                { 
-                    coords:{
-                        left:100,
-                        top:100
-                    },
-                    pnlWidth:200,
-                    columns:true,
-                    noHeader:true,
-                    container: hash,
-                    content: settings.content,
-                    kind: kind,
-                    selState: newSel,
-                    selector:selector,
-                    id: "rdr_loginPanel",
-                    pnls:1,
-                    height:225,
-                    animTime:100,
-                    minHeight: 100,
-                    maxHeight: 500
-                }
-                */
+    //             /*
+    //             //options are:
+    //             { 
+    //                 coords:{
+    //                     left:100,
+    //                     top:100
+    //                 },
+    //                 pnlWidth:200,
+    //                 columns:true,
+    //                 noHeader:true,
+    //                 container: hash,
+    //                 content: settings.content,
+    //                 kind: kind,
+    //                 selState: newSel,
+    //                 selector:selector,
+    //                 id: "rdr_loginPanel",
+    //                 pnls:1,
+    //                 height:225,
+    //                 animTime:100,
+    //                 minHeight: 100,
+    //                 maxHeight: 500
+    //             }
+    //             */
 
-                if ( options.selector && !options.container ) {
-                    options.container = options.selector.substr(5);
-                }
-				// for now, any window closes all tooltips
-                //merge options and defaults
+    //             if ( options.selector && !options.container ) {
+    //                 options.container = options.selector.substr(5);
+    //             }
+				// // for now, any window closes all tooltips
+    //             //merge options and defaults
 
-                var settings = $.extend({}, this.defaults, options);
+    //             var settings = $.extend({}, this.defaults, options);
 
-                var minHeight = settings.minHeight,
-                    maxHeight = settings.maxHeight;
+    //             var minHeight = settings.minHeight,
+    //                 maxHeight = settings.maxHeight;
 
-				var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
-				if ( $new_rindow.length === 0 ) { // there's no rewritable window available, so make one
-					$new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget"></div>');
-                    if ( settings.id ) {
-                        $('#'+settings.id).remove(); // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
-                                                     // reason I'm adding this: want a login panel with an ID and data attached to it, so after a user
-                                                     // logs in, the login rindow knows what function to then call
-                        $new_rindow.attr('id',settings.id);
-                    }
+				// var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
+				// if ( $new_rindow.length === 0 ) { // there's no rewritable window available, so make one
+				// 	$new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget"></div>');
+    //                 if ( settings.id ) {
+    //                     $('#'+settings.id).remove(); // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
+    //                                                  // reason I'm adding this: want a login panel with an ID and data attached to it, so after a user
+    //                                                  // logs in, the login rindow knows what function to then call
+    //                     $new_rindow.attr('id',settings.id);
+    //                 }
 
-                    // may not need selector.  was a test to see if we can embed the rindow within a document, optionally.
-                    //todo: do we still want this feature that uses .selector ?
-                    //for now don't do this.  I don't know what it does.
+    //                 // may not need selector.  was a test to see if we can embed the rindow within a document, optionally.
+    //                 //todo: do we still want this feature that uses .selector ?
+    //                 //for now don't do this.  I don't know what it does.
                     
-                    //this is instead of the if / else below
-                    $('#rdr_sandbox').append( $new_rindow );
+    //                 //this is instead of the if / else below
+    //                 $('#rdr_sandbox').append( $new_rindow );
                     
-                    /*
-					if (options.selector) {
-                        $(options.selector).after( $new_rindow );
-                    } else {
-                        $('#rdr_sandbox').append( $new_rindow );
-                    }
-                    */
-				}
-                if ( settings.rewritable != true ) {
-                    $new_rindow.removeClass('rdr_rewritable');
-                }
+    //                 /*
+				// 	if (options.selector) {
+    //                     $(options.selector).after( $new_rindow );
+    //                 } else {
+    //                     $('#rdr_sandbox').append( $new_rindow );
+    //                 }
+    //                 */
+				// }
+    //             if ( settings.rewritable != true ) {
+    //                 $new_rindow.removeClass('rdr_rewritable');
+    //             }
 
-                $new_rindow.data(settings);// jquery obj of the rewritable window
+    //             $new_rindow.data(settings);// jquery obj of the rewritable window
 
-                if ( options.columns === true ) $new_rindow.addClass('rdr_columns');
+    //             if ( options.columns === true ) $new_rindow.addClass('rdr_columns');
 
-				if ( $new_rindow.find('h1').length === 0 ) {
-                    $new_rindow.html('');
-                    $new_rindow.append( '<div class="rdr rdr_header rdr_brtl rdr_brtr"></div><div class="rdr rdr_contentSpace"></div><div class="rdr rdr_footer rdr_brbl rdr_brbr"></div>' );
-                    if ( !options.noCloseButton ) $new_rindow.find('div.rdr_header').append( '<div class="rdr_close">x</div>');
-                    $new_rindow.find('div.rdr_close').click( function() {
-                        //needed to change this to add triggers
-                        RDR.rindow.close( $(this).parents('div.rdr.rdr_window') );
-                        return false; //make sure rindow for <a><img /></a> doesn't activate link
-                    });
+				// if ( $new_rindow.find('h1').length === 0 ) {
+    //                 $new_rindow.html('');
+    //                 $new_rindow.append( '<div class="rdr rdr_header rdr_brtl rdr_brtr"></div><div class="rdr rdr_contentSpace"></div><div class="rdr rdr_footer rdr_brbl rdr_brbr"></div>' );
+    //                 if ( !options.noCloseButton ) $new_rindow.find('div.rdr_header').append( '<div class="rdr_close">x</div>');
+    //                 $new_rindow.find('div.rdr_close').click( function() {
+    //                     //needed to change this to add triggers
+    //                     RDR.rindow.close( $(this).parents('div.rdr.rdr_window') );
+    //                     return false; //make sure rindow for <a><img /></a> doesn't activate link
+    //                 });
 					
-					if ( settings.noHeader ) $new_rindow.find('h1').remove();
+				// 	if ( settings.noHeader ) $new_rindow.find('h1').remove();
 					
-                    $new_rindow.draggable({
-                        handle:'.rdr_header, .rdr_header_overlay', //todo: move the header_overlay inside the header so we don't need this hack
-                        containment:'document',
-                        stack:'.RDR.window',
-                        start:function() {
-                            $(this).removeClass('rdr_rewritable');
-                        }
-                    });
+    //                 $new_rindow.draggable({
+    //                     handle:'.rdr_header, .rdr_header_overlay', //todo: move the header_overlay inside the header so we don't need this hack
+    //                     containment:'document',
+    //                     stack:'.rdr.rdr_window',
+    //                     start:function() {
+    //                         $(this).removeClass('rdr_rewritable');
+    //                     }
+    //                 });
 
-                }
+    //             }
                 
-                var coords = settings.coords;
+    //             var coords = settings.coords;
                                
-                $new_rindow.css('left', coords.left + 'px');
-                $new_rindow.css('top', coords.top + 'px');
-                if(settings.height){
-                    $new_rindow.height(settings.height);
-                }
+    //             $new_rindow.css('left', coords.left + 'px');
+    //             $new_rindow.css('top', coords.top + 'px');
+    //             if(settings.height){
+    //                 $new_rindow.height(settings.height);
+    //             }
                
-                RDR.rindow.jspUpdate( $new_rindow );
+    //             RDR.rindow.jspUpdate( $new_rindow );
 
-                RDR.actionbar.closeAll();
+    //             RDR.actionbar.closeAll();
 
-                $new_rindow.settings = settings;
+    //             $new_rindow.settings = settings;
 
-                $new_rindow.resizable({
-                    grid: [100000, null], /*this is my own hack for locking the movement to the y axis, but I think it works well*/
-                    handles:'s',
-                    maxHeight:maxHeight
-                });
+    //             $new_rindow.resizable({
+    //                 grid: [100000, null], /*this is my own hack for locking the movement to the y axis, but I think it works well*/
+    //                 handles:'s',
+    //                 maxHeight:maxHeight
+    //             });
 
-                var $dragHandle = $new_rindow.find('.ui-resizable-s');
-                $dragHandle.addClass('rdr_window_dragHandle');
-                $dragHandle.hover(
-                    function(){
-                        $(this).addClass('rdr_hover');
-                    },
-                    function(){
-                        $(this).removeClass('rdr_hover');
-                    }
-                );
+    //             var $dragHandle = $new_rindow.find('.ui-resizable-s');
+    //             $dragHandle.addClass('rdr_window_dragHandle');
+    //             $dragHandle.hover(
+    //                 function(){
+    //                     $(this).addClass('rdr_hover');
+    //                 },
+    //                 function(){
+    //                     $(this).removeClass('rdr_hover');
+    //                 }
+    //             );
 
-                $new_rindow.append( $dragHandle );
+    //             $new_rindow.append( $dragHandle );
                 
-                var $rindowMsgDiv = $('<div class="rdr_rindow_message" />'),
-                    $rindowMsgDivInnerwrap = $('<div class="rdr_rindow_message_innerwrap"><span class="rdr_userMsg" /><strong /><div style="clear:both;"/></div>'),
-                    $tmpUserMsg = $('<div class="rdr_rindow_message_tempUserMsg" />'),
-                    $closeButton = $('<div class="rdr_close">x</div>');
+    //             var $rindowMsgDiv = $('<div class="rdr_rindow_message" />'),
+    //                 $rindowMsgDivInnerwrap = $('<div class="rdr_rindow_message_innerwrap"><span class="rdr_userMsg" /><strong /><div style="clear:both;"/></div>'),
+    //                 $tmpUserMsg = $('<div class="rdr_rindow_message_tempUserMsg" />'),
+    //                 $closeButton = $('<div class="rdr_close">x</div>');
 
-                $closeButton.click(function(){
-                    RDR.session.rindowUserMessage.hide( $new_rindow );
-                });
+    //             $closeButton.click(function(){
+    //                 RDR.session.rindowUserMessage.hide( $new_rindow );
+    //             });
 
-                $rindowMsgDivInnerwrap.append( $tmpUserMsg );
-                $rindowMsgDivInnerwrap.append( $closeButton );
+    //             $rindowMsgDivInnerwrap.append( $tmpUserMsg );
+    //             $rindowMsgDivInnerwrap.append( $closeButton );
 
-                $rindowMsgDiv.append($rindowMsgDivInnerwrap).hide();
-                $new_rindow.append( $rindowMsgDiv );
+    //             $rindowMsgDiv.append($rindowMsgDivInnerwrap).hide();
+    //             $new_rindow.append( $rindowMsgDiv );
                 
                 
                 //now add a watcher to reinitialize these scrollpanes when the rindow is resizing                
@@ -870,11 +878,11 @@ PILLSTODO
                     APIs.reinitialise();
                 });
                 */
-                $new_rindow.bind( "resizestop", function(event, ui) {
-                    RDR.rindow.jspUpdate( $(this) );
-                });
+                // $new_rindow.bind( "resizestop", function(event, ui) {
+                //     RDR.rindow.jspUpdate( $(this) );
+                // });
 
-                return $new_rindow;
+                // return $new_rindow;
 			},
             drawNew: function(options) {
                 console.log('drawNew');
@@ -910,7 +918,7 @@ PILLSTODO
 
                 var settings = $.extend({}, this.defaults, options);
 
-                var minHeight = settings.minHeight,
+                var minHeight = (settings.minHeight<60)?60:settings.minHeight,
                     maxHeight = settings.maxHeight;
 
                 var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
@@ -967,7 +975,7 @@ PILLSTODO
                     $new_rindow.draggable({
                         handle:'.rdr_header', //todo: move the header_overlay inside the header so we don't need this hack
                         containment:'document',
-                        stack:'.RDR.window',
+                        stack:'.rdr_window',
                         start:function() {
                             $(this).removeClass('rdr_rewritable');
                         }
@@ -988,8 +996,8 @@ PILLSTODO
                 RDR.actionbar.closeAll();
 
                 $new_rindow.settings = settings;
-
                 $new_rindow.resizable({
+                    alsoResize: '.jspTrack,.jspContainer',
                     grid: [100000, null], /*this is my own hack for locking the movement to the y axis, but I think it works well*/
                     handles:'s',
                     minHeight:minHeight,
@@ -1008,26 +1016,10 @@ PILLSTODO
                 );
 
                 $new_rindow.append( $dragHandle );
-                
-                // PILLSTODO put back in user messages?
-                // var $rindowMsgDiv = $('<div class="rdr_rindow_message" />'),
-                //     $rindowMsgDivInnerwrap = $('<div class="rdr_rindow_message_innerwrap"><span class="rdr_userMsg" /><strong /><div style="clear:both;"/></div>'),
-                //     $tmpUserMsg = $('<div class="rdr_rindow_message_tempUserMsg" />'),
-                //     $closeButton = $('<div class="rdr_close">x</div>');
-
-                // $closeButton.click(function(){
-                //     RDR.session.rindowUserMessage.hide( $new_rindow );
-                // });
-
-                // $rindowMsgDivInnerwrap.append( $tmpUserMsg );
-                // $rindowMsgDivInnerwrap.append( $closeButton );
-
-                // $rindowMsgDiv.append($rindowMsgDivInnerwrap).hide();
-                // $new_rindow.append( $rindowMsgDiv );
-                // END PILLS TODO
     
                 $new_rindow.bind( "resizestop", function(event, ui) {
-                    RDR.rindow.jspUpdate( $(this) );
+                    var $this = $(this);
+                    RDR.rindow.updateSizes( $this );
                 });
 
                 return $new_rindow;
@@ -6563,7 +6555,7 @@ function rdr_loadScript(sScriptSrc,callbackfunction) {
         oHead.appendChild(oScript);
     }
 }
-
+RDR.offline = true;
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
 RDR_scriptPaths.jquery = RDR.offline ?
     RDR_staticUrl+"global/js/jquery-1.6.2.min.js" :
