@@ -86,11 +86,19 @@ function readrBoard($R){
                 var $header = $rindow.find('div.rdr_header');
                 
             },
+            updateFooter : function( $rindow, content ) {
+                var $footer = $rindow.find('div.rdr_footer');
+                $footer.show(0);
+                $footer.html( content );
+                RDR.rindow.updateSizes( $rindow );
+            },
             updateSizes : function($rindow) {
-                RDR.rindow.jspUpdate( $rindow );
                 if ( $rindow.find('div.rdr_footer').css('display') != "none" ) {
-                    $rindow.find('div.jspContainer').css('margin-bottom','30px');
+                    $rindow.css('padding-bottom','20px');
+                } else {
+                    $rindow.css('padding-bottom','0px');
                 }
+                RDR.rindow.jspUpdate( $rindow );
             },
             jspUpdate: function( $rindow ) {
 
