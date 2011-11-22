@@ -260,9 +260,9 @@ PILLSTODO
 #rdr_sandbox div.rdr_header_overlay {
 }
 */
-#rdr_sandbox div.rdr_header_overlay div.rdr_indicator_stats{
+#rdr_sandbox div.rdr_header div.rdr_indicator_stats{
     position:absolute;
-    margin:10px 0 0 3px;
+    margin:3px 0 0 5px;
     cursor: move !important;
 }
 /*
@@ -291,6 +291,8 @@ PILLSTODO
 #rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace                { background:#f6f6f6 !important; position:relative !important; margin-bottom:6px; overflow:hidden;}
 #rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace div.rdr_body   { max-height:266px; margin:2px 0 0 4px; }
 #rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace div.rdr_body div.jspPane   { margin:0 !important; }
+
+#rdr_sandbox div.rdr.rdr_window div.rdr_header h1                   { margin-left:14px !important; }
 
 /*
 #rdr_sandbox div.rdr div.rdr_contentSpace div.rdr_body_wrap {
@@ -337,9 +339,9 @@ PILLSTODO
     position: relative;
 }
 */
-#rdr_sandbox div.rdr div.rdr_sntPnl textarea,
-#rdr_sandbox div.rdr div.rdr_sntPnl input[type="text"]   { width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
-#rdr_sandbox div.rdr div.rdr_sntPnl button {
+#rdr_sandbox div.rdr textarea,
+#rdr_sandbox div.rdr input[type="text"]   { width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
+#rdr_sandbox div.rdr button {
     border:1px solid #aaa; 
     -moz-border-radius:3px 3px 3px 3px; 
     -webkit-border-radius:3px 3px 3px 3px; 
@@ -347,6 +349,8 @@ PILLSTODO
     -moz-box-shadow:0 -6px 11px -6px #ccc inset; -webkit-box-shadow:0 -6px 11px -6px #ccc inset; box-shadow:0 -6px 11px -6px #ccc inset; color:#454545; font-family:Arial; font-size:12px; padding:2px 5px; width:auto; cursor:pointer; float:right;margin-right:6px;margin-bottom:10px;
 }
 
+/*
+PILLSTODO
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_submitTag           {width:100%; text-align:right;}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_submitTag button    {}
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_commentButton       {width:100%;}
@@ -355,6 +359,7 @@ PILLSTODO
 #rdr_sandbox div.rdr div.rdr_sntPnl .rdr_tagFeedback strong  {font-weight:bold; display:block;}
 
 #rdr_sandbox .rdr_tagBox  {}
+*/
 
 #rdr_sandbox div.rdr_window_dragHandle{
     /*override the jquery ui hadle css*/
@@ -388,6 +393,8 @@ PILLSTODO
     -khtml-opacity:0.3;
 }
 
+/* 
+PILLSTODO
 #rdr_sandbox div.rdr div.rdr_rindow_message                     {position:absolute; z-index:50; bottom:0px; border-top:1px solid #aaa;background:#fff; -moz-box-shadow:0px -45px 48px -50px #53aed9 inset; -webkit-box-shadow:0px -45px 48px -50px #53aed9 inset; box-shadow:0px -45px 48px -50px #53aed9 inset; width:100%; font-size: 11px !important;}
 
 #rdr_sandbox div.rdr div.rdr_rindow_message .rdr_rindow_message_innerwrap {
@@ -412,13 +419,14 @@ PILLSTODO
     white-space:nowrap;
 }
 
+
 #rdr_sandbox div.rdr ul.rdr_tags li,
 #rdr_sandbox div.rdr ul.rdr_tags li div,
 #rdr_sandbox div.rdr ul.rdr_tags li div span {
     overflow:hidden !important;
 }
 
-/* rdr_hover is a safari/chrome kludge -- :hover isn't working here */
+/* rdr_hover is a safari/chrome kludge -- :hover isn't working here 
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_hover div.rdr_details,
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_hover div.rdr_tagText  {
     display:block !important; 
@@ -462,7 +470,7 @@ PILLSTODO
     cursor:pointer !important;
 }
 
-/*overwrite for image readmode version*/
+/*overwrite for image readmode version
 div.rdr .rdr_image_reactions .rdr_read .rdr_details {background: none !important;}
 
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_has_comment .rdr_details       {background:url(../images/widget_icons.png) -158px -8px no-repeat;}
@@ -473,7 +481,6 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_details {background: none !important
     margin-right: 18px; 
     text-align: right;
 }
-
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged div.rdr_tag_count          {background:url(../images/widget_icons.png) 1px -8px no-repeat; }
 
 #rdr_sandbox div.rdr.rdr_readmode div.rdr_sentimentBox  ul.rdr_tags li div.rdr_details:hover,
@@ -488,11 +495,10 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_details {background: none !important
 #rdr_sandbox div.rdr ul.rdr_tags li.rdr_tagged .rdr_tag_count:hover       {background-position:-110px -8px;}
 #rdr_sandbox div.rdr div.rdr_new ul.rdr_tags li.rdr_selected            {-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
 
-
-#rdr_sandbox div.rdr div.rdr_panelOverlay { z-index: 6; position:absolute;}
 #rdr_sandbox div.rdr .rdr_reactionPanel div.rdr_panelOverlay { 
     clear:both; height:100%; left:38px; position:absolute; width:1px; z-index:20;
 }
+#rdr_sandbox div.rdr div.rdr_panelOverlay { z-index: 6; position:absolute;}
 
 #rdr_sandbox div.rdr .rdr_contentPanel div.rdr_panelOverlay,
 #rdr_sandbox div.rdr .rdr_whyPanel div.rdr_panelOverlay { 
@@ -525,7 +531,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_details {background: none !important
 #rdr_sandbox div.rdr li.rdr_customTagBox.rdr_selected div.rdr_details   {display:block;}
 
 
-/* contentSet */
+
 #rdr_sandbox div.rdr div.rdr_contentSet {
     border-top: 1px solid #f4f4f4;
     cursor:pointer;
@@ -580,6 +586,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_details {background: none !important
 
 #rdr_sandbox div.rdr div.rdr_contentSet.rdr_selected div.rdr_contentHeader           {background:#d0dee6;}
 #rdr_sandbox div.rdr div.rdr_contentSet.rdr_selected div.rdr_contentHeader div.rdr_has_comment             {background-position: -46px -12px; text-indent: -9999px;}
+*/
 
 /* commentSet */
 #rdr_sandbox div.rdr div.rdr_commentSet                     {margin:5px 10px; padding-bottom:5px; overflow:auto; border-bottom:1px solid #ddd;}

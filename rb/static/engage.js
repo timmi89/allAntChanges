@@ -86,8 +86,12 @@ function readrBoard($R){
             },
             updateHeader : function( $rindow, content ) {
                 //RDR.rindow.updateHeader:
+                console.log('RDR.rindow.updateHeader');
                 var $header = $rindow.find('div.rdr_header');
-                
+                if ( content ) {
+                    $header.html( content );
+                    RDR.rindow.updateSizes( $rindow );
+                }
             },
             updateFooter : function( $rindow, content ) {
                 //RDR.rindow.updateFooter:
@@ -222,6 +226,12 @@ function readrBoard($R){
                             selState: newSel
                         });
 
+                        var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
+                                            '<h1>What\'s your reaction?</h1>';
+                        RDR.rindow.updateHeader( rindow, headerContent );
+
+
+
                         // TODO this is used to constrain the initial width of this rindow
                         // and then it animates larger when we slide the whyPanel out.
                         // is there a cleaner way?
@@ -231,45 +241,8 @@ function readrBoard($R){
                         //add a reference for the rindow in the container summary
                         summary.$rindow_writemode = rindow;
 
-                        // build the ratePanel
-/*
-PILLSTODO
-*/
+                        var $sentimentBox = $('<div class="rdr_body" />');
 
-                        var $sentimentBoxWrap = $('<div class="rdr_body_wrap" />'),
-                            $sentimentBox = $('<div class="rdr_body" />');
-
-                        $sentimentBox.append( $('<table><tr><td style="white-space:nowrap;" width="200">why hello there why hello there why hello there why hello there why hello there why hello there why hello there why hello there why hello there why hello there</td><td width="200" style="white-space:nowrap;">why hello there why hello there why hello there</td></tr></table>') );
-                        $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
-                        $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
-                        $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
-                        $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
-                        $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
-                        $sentimentBox.append( $('<div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div><div>this is just a test</div>') );
-
-                            // $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
-                            // $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
-                            // $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />');
-
-                        var firstPanelHeader = (actionType == "react") ? "What's your reaction?":"Bookmark this";
-                        // var headers = [firstPanelHeader, "Say More"];
-                        // $sentimentBox.append($reactionPanel, $whyPanel); //$selectedTextPanel, 
-                        // $sentimentBox.children().each(function(idx){
-                        //     var $header = $('<div class="rdr_header rdr_brtl rdr_brtr" />').append('<div class="rdr_icon"></div><div class="rdr_headerInnerWrap" />'),
-                        //     $body = $('<div class="rdr_body "/>'),
-                        //     $bodyWrap = $('<div class="rdr_body_wrap"/>').append($body),
-                        //     $panelOverlay = $('<div class="rdr_panelOverlay" />'); //for visual effects that need to sit on top of everything - borderline and shadow
-                        //     $header.find('div.rdr_headerInnerWrap').append( '<h1>'+ headers[idx] +'</h1>' );
-
-                        //     var clearDiv = '<div style="clear:both;"></div>';
-                        //     $(this).append($header, $bodyWrap, clearDiv, $panelOverlay);
-
-                        // });
-                        // RDR.actions.panel.setup("whyPanel", rindow);
-
-                        //populate reactionPanel
-                        // $reactionPanel.find('div.rdr_body').append($tagBox);
-/*
                         ////populate blesed_tags
                         if (actionType == "react") {
                             $.each(RDR.group.blessed_tags, function(idx, val){
@@ -301,8 +274,8 @@ PILLSTODO
                         $(this).css('width','auto');
 
 */
-                        $sentimentBoxWrap.append( $sentimentBox );
-                        rindow.find('div.rdr_contentSpace').append($sentimentBoxWrap);
+
+                        rindow.find('div.rdr_contentSpace').append($sentimentBox);
 
                         // rindow.find('div.rdr_contentSpace').append('<div class="rdr_body">hi</div>');
                         // rindow.find('div.rdr_body').append('hello <br/>hello <br/>hello <br/>hello <br/>hello <br/>hello <br/>hello <br/>');
@@ -819,7 +792,7 @@ console.log( rindow.find('div.rdr_contentSpace').height(), rindowHeight );
                 
                 if ( $new_rindow.find('div.rdr_header').length === 0 ) {  // not sure why this conditional is here
                     $new_rindow.html('');
-                    $new_rindow.append( '<div class="rdr rdr_header"></div><div class="rdr rdr_contentSpace"></div><div class="rdr rdr_footer"></div>' );
+                    $new_rindow.append( '<div class="rdr rdr_header"></div><div class="rdr rdr_contentSpace"><div class="rdr rdr_body_wrap"></div></div><div class="rdr rdr_footer"></div>' );
                     
                     // PILLSTODO i commented this out:
                     /*
