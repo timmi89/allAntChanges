@@ -86,7 +86,6 @@ function readrBoard($R){
             },
             updateHeader : function( $rindow, content ) {
                 //RDR.rindow.updateHeader:
-                console.log('RDR.rindow.updateHeader');
                 var $header = $rindow.find('div.rdr_header');
                 if ( content ) {
                     $header.html( content );
@@ -163,6 +162,59 @@ function readrBoard($R){
                 }
                 */
                 return gotoHeight;
+            },
+            writeTag: function(tag, $container) {
+                var tagCount, $span;
+                if ( $container.find('a.rdr_tag_'+tag.id).length === 0 && $container.find('a.rdr_tag').length < 4 ) {
+                    tagCount = ( tag.tag_count ) ? tag.tag_count:"+";
+                    
+                    var peoples = ( tagCount == 1 ) ? "person":"people";
+                    var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'">'+tag.body+'</a> ').data('tag_id',tag.id);
+                    
+                    $span = $('<span class="rdr_tag_count">'+tagCount+'</span>');
+
+                    $a.append( $span );
+
+                    var $a_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"Add this reaction to this page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
+                    $a_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-'+tag.id );
+                    $('#rdr_sandbox').append( $a_tooltip );
+                    
+                    $container.append( $a, " " );
+                    $span.css('width', $span.width() + 'px' );
+
+                    /*
+                    $a.hover(
+                        function() {
+                            var $a = $(this),
+                                $tooltip = $('#rdr-tooltip-summary-tag-' + $a.data('tag_id') ),
+                                aOffsets = $a.offset();
+
+                            var tooltip_top = ( aOffsets.top - 42 ),
+                                tooltip_left = ( aOffsets.left + ( $a_custom.width() / 2 ) - 110 );
+
+                            $tooltip.css('top', tooltip_top + "px" );
+                            $tooltip.css('left', tooltip_left + "px" );
+                            $tooltip.show();
+
+                            $a.data('tagCount', $a.find('span').text() );
+                            $a.find('span').text( '+' );
+                        },
+                        function() {
+                            var $a = $(this);
+                            $('#rdr-tooltip-summary-tag-' + $a.data('tag_id') ).hide();
+                            $a.find('span').text( $a.data('tagCount') );
+
+                        }
+                    ).click( function() {
+                        var hash = $(this).closest('.rdr-page-container').data('hash');
+                        args = { tag:tag, hash:hash, uiMode:'write', kind:"page"};
+                        RDR.actions.interactions.ajax( args, 'tag', 'create');
+                    });
+                    */
+                }
+                if ( tagCount === "" ) {
+                    $span.hide();
+                }
             },
             _rindowTypes: {
                 //RDR.rindow._rindowTypes:
@@ -245,15 +297,20 @@ function readrBoard($R){
 
                         ////populate blesed_tags
                         if (actionType == "react") {
-                            $.each(RDR.group.blessed_tags, function(idx, val){
+                            $.each(RDR.group.blessed_tags, function(idx, tag){
                                 
-                                var $li = $('<li class="rdr_tag_'+val.id+'" />').data({
+                                // <a class="rdr_tag rdr_tag_1">Great Idea<span class="rdr_tag_count" style="width: 6px;">6</span></a>
+
+                                RDR.rindow.writeTag( tag, $sentimentBox );
+
+                                /*
+                                var $a = $('<a class="rdr_tag rdr_tag_'+val.id+'" />').data({
                                     'tag':{
                                         id:parseInt( val.id, 10 ),
                                         body:val.body
                                     }
                                 }),
-                                $leftBox = '<div class="rdr_tag_count" ><span class="rdr_not_loader">+</span></div>',
+                                $tagCount = '<span class="rdr_tag_count" ><span class="rdr_not_loader">+</span></div>',
                                 $tagText = '<div class="rdr_tagText">'+val.body+'</div>',
                                 $rightBox = '<div class="rdr_details" />';
 
@@ -267,15 +324,23 @@ function readrBoard($R){
                                     }
                                 );
                                 $tagBox.children('ul.rdr_tags').append($li);
+                                */
 
                             });
                         }
 
-                        $(this).css('width','auto');
+                        // $(this).css('width','auto');
 
-*/
+                        var table = '<table cellpadding="4" cellspacing="0" border="0">';
+                            table += '<tr><td><a class="rdr_tag rdr_tag_1">Great Idea<span class="rdr_tag_count" style="width: 0px;">+</span></a></td>';
+                            table += '<td><a class="rdr_tag rdr_tag_2">Not Sure<span class="rdr_tag_count" style="width: 0px;">+</span></a></td></tr>';
+                            table += '<tr><td><a class="rdr_tag rdr_tag_3">For Real?<span class="rdr_tag_count" style="width: 0px;">+</span></a></td>';
+                            table += '<td><a class="rdr_tag rdr_tag_4">Cupcakes!<span class="rdr_tag_count" style="width: 0px;">+</span></a></td></tr>';
+                            table += '</table>';
 
-                        rindow.find('div.rdr_contentSpace').append($sentimentBox);
+                            $sentimentBox.html( table );
+
+                        rindow.find('div.rdr_body_wrap').append($sentimentBox);
 
                         // rindow.find('div.rdr_contentSpace').append('<div class="rdr_body">hi</div>');
                         // rindow.find('div.rdr_body').append('hello <br/>hello <br/>hello <br/>hello <br/>hello <br/>hello <br/>hello <br/>');

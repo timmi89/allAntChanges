@@ -602,7 +602,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_details {background: none !important
 #rdr_sandbox div.rdr div.rdr_commentSet a.rdr_tag:hover div.rdr_tag_share    {margin-left:3px;}
 
 /* summary box tags */
-div.rdr.rdr-summary a.rdr_tag     { 
+div.rdr a.rdr_tag     { 
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff7f7f7', endColorstr='#ffe0e0e0');
     background: -webkit-gradient(linear, center top, center bottom, from(#ffffff), to(#e8e8e8)); 
     background: -moz-linear-gradient(center top , #ffffff, #e8e8e8) repeat scroll 0 0 transparent;
@@ -626,10 +626,10 @@ div.rdr.rdr-summary a.rdr_tag     {
     white-space: nowrap !important;
     z-index: 100001;
 }
-div.rdr.rdr-summary a.rdr_tag:hover     { 
+div.rdr a.rdr_tag:hover     { 
     background: -moz-linear-gradient(center top , #f7f7f7, #d0d0d0) repeat scroll 0 0 transparent;
 }
-div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    { 
+div.rdr a.rdr_tag span.rdr_tag_count    { 
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
     background: -webkit-gradient(linear, center top, center bottom, from(#ddedff), to(#add1f9)); 
     background: -moz-linear-gradient(center top , #ddedff, #add1f9) repeat scroll 0 0 transparent;
@@ -646,14 +646,14 @@ div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
     text-align: center !important;
 }
 
-div.rdr.rdr-summary a.rdr_tag.rdr_custom_tag input {
+div.rdr a.rdr_tag.rdr_custom_tag input {
     background: transparent !important;
     border: 0 !important;
     color: #aaa !important;
     padding: 0 !important;
     width: 75px !important;
 }
-div.rdr.rdr-summary a.rdr_tag.rdr_custom_tag input.rdr_default {
+div.rdr a.rdr_tag.rdr_custom_tag input.rdr_default {
     font-style: italic !important;
     font-size:11px !important;
 }
@@ -664,8 +664,8 @@ div.rdr.rdr-summary a.rdr_tag:hover span.rdr_tag_count,
 div.rdr.rdr-summary a.rdr_tag.rdr_hover { box-shadow: 0 -5px 9px -5px #008be4 inset; }
 */
 
-div.rdr.rdr-summary a.rdr_tag.rdr_custom_tag:hover,
-div.rdr.rdr-summary a.rdr_tag.rdr_custom_tag.rdr_hover { color:#008be4; background:#fff; box-shadow:0px 0px 4px #aaa; }
+div.rdr a.rdr_tag.rdr_custom_tag:hover,
+div.rdr a.rdr_tag.rdr_custom_tag.rdr_hover { color:#008be4; background:#fff; box-shadow:0px 0px 4px #aaa; }
 
 /*
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count:hover,
