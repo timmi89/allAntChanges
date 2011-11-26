@@ -35,7 +35,7 @@ body{
     left:100px;
     background:#f6f6f6;
     overflow:hidden;
-    min-width:200px;
+    min-width:160px;
 }
 
 /* the action bar */
@@ -601,7 +601,10 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_details {background: none !important
 #rdr_sandbox div.rdr div.rdr_commentSet a.rdr_tag div.rdr_tag_share          {margin-left:-12px;}
 #rdr_sandbox div.rdr div.rdr_commentSet a.rdr_tag:hover div.rdr_tag_share    {margin-left:3px;}
 
-/* summary box tags */
+/* tag pills and such */
+div.rdr.rdr_window table.rdr_tags {
+    margin-top:3px !important;
+}
 div.rdr a.rdr_tag     { 
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff7f7f7', endColorstr='#ffe0e0e0');
     background: -webkit-gradient(linear, center top, center bottom, from(#ffffff), to(#e8e8e8)); 
@@ -626,8 +629,25 @@ div.rdr a.rdr_tag     {
     white-space: nowrap !important;
     z-index: 100001;
 }
+div.rdr.rdr_window a.rdr_tag     {
+    display:block !important;
+    padding: 0px 5px !important;
+    margin: 0 5px 5px 2px !important;
+}
+div.rdr.rdr_window a.rdr_tag span.rdr_tag_name {
+    display:block !important;
+    float:left !important;
+    margin-top:4px !important;
+    min-width:66px;
+}
+div.rdr.rdr_window a.rdr_tag span.rdr_tag_count {
+    min-width:5px !important;
+    display:block !important;
+    float:right !important;
+    margin-left:-15px !important; /* feels kludgey.  prevents wrapping in the pill in a small rindow */
+}
 div.rdr a.rdr_tag:hover     { 
-    background: -moz-linear-gradient(center top , #f7f7f7, #d0d0d0) repeat scroll 0 0 transparent;
+    /*background: -moz-linear-gradient(center top , #f7f7f7, #d0d0d0) repeat scroll 0 0 transparent;*/
 }
 div.rdr a.rdr_tag span.rdr_tag_count    { 
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
@@ -644,6 +664,18 @@ div.rdr a.rdr_tag span.rdr_tag_count    {
     margin-right: -5px !important;
     padding: 4px 5px !important;
     text-align: center !important;
+}
+
+div.rdr.rdr_window table a.rdr_tag span.rdr_tag_count    { 
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
+    background: -webkit-gradient(linear, center top, center bottom, from(#ddedff), to(#add1f9)); 
+    background: -moz-linear-gradient(center top , #f0f0f0, #d0d0d0) repeat scroll 0 0 transparent;
+}
+
+div.rdr.rdr_window table a.rdr_tag:hover span.rdr_tag_count    { 
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
+    background: -webkit-gradient(linear, center top, center bottom, from(#ddedff), to(#add1f9)); 
+    background: -moz-linear-gradient(center top , #ddedff, #add1f9) repeat scroll 0 0 transparent;
 }
 
 div.rdr a.rdr_tag.rdr_custom_tag input {

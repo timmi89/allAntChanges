@@ -331,11 +331,11 @@ function readrBoard($R){
 
                         // $(this).css('width','auto');
 
-                        var table = '<table cellpadding="4" cellspacing="0" border="0">';
-                            table += '<tr><td><a class="rdr_tag rdr_tag_1">Great Idea<span class="rdr_tag_count" style="width: 0px;">+</span></a></td>';
-                            table += '<td><a class="rdr_tag rdr_tag_2">Not Sure<span class="rdr_tag_count" style="width: 0px;">+</span></a></td></tr>';
-                            table += '<tr><td><a class="rdr_tag rdr_tag_3">For Real?<span class="rdr_tag_count" style="width: 0px;">+</span></a></td>';
-                            table += '<td><a class="rdr_tag rdr_tag_4">Cupcakes!<span class="rdr_tag_count" style="width: 0px;">+</span></a></td></tr>';
+                        var table = '<table cellpadding="0" cellspacing="0" border="0" class="rdr_tags">';
+                            table += '<tr><td><a class="rdr_tag rdr_tag_1"><span class="rdr_tag_count">+</span><span class="rdr_tag_name">Great Idea</span></a></td>';
+                            table += '<td><a class="rdr_tag rdr_tag_2"><span class="rdr_tag_count">+</span><span class="rdr_tag_name">Not Sure</span></a></td></tr>';
+                            table += '<tr><td><a class="rdr_tag rdr_tag_3"><span class="rdr_tag_count">+</span><span class="rdr_tag_name">For Real?</span></a></td>';
+                            table += '<td><a class="rdr_tag rdr_tag_4"><span class="rdr_tag_count">+</span><span class="rdr_tag_name">Cupcakes!</span></a></td></tr>';
                             table += '</table>';
 
                             $sentimentBox.html( table );
@@ -406,12 +406,12 @@ PILLSTODO
                             }
                         });
 */
-                        var rindowWidth = rindow.find('div.rdr_body_wrap').width() + 12,
+                        var rindowWidth = rindow.find('div.rdr_contentSpace').width(),
                             rindowHeight = RDR.rindow.getHeight(rindow, {
                             targetHeight: rindow.find('div.rdr_contentSpace').height()+40, //+ header height + extra padding;
                             animate:false
                         });
-console.log( rindow.find('div.rdr_contentSpace').height(), rindowHeight );
+console.log( rindow.find('div.rdr_contentSpace').width(), rindowWidth );
                         var newCoords = RDR.util.stayInWindow({coords:coords, width:rindow.find('div.rdr_body_wrap').width(), height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
 
 
@@ -857,7 +857,7 @@ console.log( rindow.find('div.rdr_contentSpace').height(), rindowHeight );
                 
                 if ( $new_rindow.find('div.rdr_header').length === 0 ) {  // not sure why this conditional is here
                     $new_rindow.html('');
-                    $new_rindow.append( '<div class="rdr rdr_header"></div><div class="rdr rdr_contentSpace"><div class="rdr rdr_body_wrap"></div></div><div class="rdr rdr_footer"></div>' );
+                    $new_rindow.append( '<div class="rdr rdr_header rdr_brtr rdr_brtl"></div><div class="rdr rdr_contentSpace"><div class="rdr rdr_body_wrap"></div></div><div class="rdr rdr_footer rdr_brbr rdr_brbl"></div>' );
                     
                     // PILLSTODO i commented this out:
                     /*
