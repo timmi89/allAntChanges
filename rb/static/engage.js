@@ -165,22 +165,19 @@ function readrBoard($R){
             },
             writeTag: function(tag, $container) {
                 var tagCount, $span;
-                if ( $container.find('a.rdr_tag_'+tag.id).length === 0 && $container.find('a.rdr_tag').length < 4 ) {
+                // if ( $container.find('a.rdr_tag_'+tag.id).length === 0 && $container.find('a.rdr_tag').length < 4 ) {
                     tagCount = ( tag.tag_count ) ? tag.tag_count:"+";
                     
-                    var peoples = ( tagCount == 1 ) ? "person":"people";
-                    var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'">'+tag.body+'</a> ').data('tag_id',tag.id);
+                    var peoples = ( tagCount == 1 ) ? "person":"people",
+                        $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id);
                     
-                    $span = $('<span class="rdr_tag_count">'+tagCount+'</span>');
-
-                    $a.append( $span );
-
                     var $a_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"Add this reaction to this page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
                     $a_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-'+tag.id );
                     $('#rdr_sandbox').append( $a_tooltip );
                     
-                    $container.append( $a, " " );
-                    $span.css('width', $span.width() + 'px' );
+                    if ( $container ) $container.append( $a, " " );
+                    else return $a;
+                    // $span.css('width', $span.width() + 'px' );
 
                     /*
                     $a.hover(
@@ -211,7 +208,7 @@ function readrBoard($R){
                         RDR.actions.interactions.ajax( args, 'tag', 'create');
                     });
                     */
-                }
+                // }
                 if ( tagCount === "" ) {
                     $span.hide();
                 }
@@ -294,62 +291,26 @@ function readrBoard($R){
                         summary.$rindow_writemode = rindow;
 
                         var $sentimentBox = $('<div class="rdr_body" />');
+                            $tag_table = $('<table cellpadding="0" cellspacing="0" border="0" class="rdr_tags" />');
 
                         ////populate blesed_tags
                         if (actionType == "react") {
+                            var count = 0;
                             $.each(RDR.group.blessed_tags, function(idx, tag){
-                                
-                                // <a class="rdr_tag rdr_tag_1">Great Idea<span class="rdr_tag_count" style="width: 6px;">6</span></a>
+                                if ( idx % 2 == 0 ) {
+                                    $tag_table.append('<tr/>');
+                                    $tag_table.find('tr').eq(-1).append('<td/>');
+                                } else {
+                                    $tag_table.find('tr').eq(-1).append('<td/>');
+                                }
 
-                                RDR.rindow.writeTag( tag, $sentimentBox );
-
-                                /*
-                                var $a = $('<a class="rdr_tag rdr_tag_'+val.id+'" />').data({
-                                    'tag':{
-                                        id:parseInt( val.id, 10 ),
-                                        body:val.body
-                                    }
-                                }),
-                                $tagCount = '<span class="rdr_tag_count" ><span class="rdr_not_loader">+</span></div>',
-                                $tagText = '<div class="rdr_tagText">'+val.body+'</div>',
-                                $rightBox = '<div class="rdr_details" />';
-
-                                $li.append($leftBox,$tagText,$rightBox);
-                                $li.hover(
-                                    function() {
-                                        $(this).addClass('rdr_hover'); // safari/chrome kludge -- :hover isn't working here
-                                    },
-                                    function() {
-                                        $(this).removeClass('rdr_hover'); // safari/chrome kludge -- :hover isn't working here
-                                    }
-                                );
-                                $tagBox.children('ul.rdr_tags').append($li);
-                                */
-
+                                RDR.rindow.writeTag( tag, $tag_table.find('td').eq(-1) );
                             });
                         }
 
-                        // $(this).css('width','auto');
-
-                        var table = '<table cellpadding="0" cellspacing="0" border="0" class="rdr_tags">';
-                            table += '<tr><td><a class="rdr_tag rdr_tag_1"><span class="rdr_tag_count">+</span><span class="rdr_tag_name">Great Idea</span></a></td>';
-                            table += '<td><a class="rdr_tag rdr_tag_2"><span class="rdr_tag_count">+</span><span class="rdr_tag_name">Not Sure</span></a></td></tr>';
-                            table += '<tr><td><a class="rdr_tag rdr_tag_3"><span class="rdr_tag_count">+</span><span class="rdr_tag_name">For Real?</span></a></td>';
-                            table += '<td><a class="rdr_tag rdr_tag_4"><span class="rdr_tag_count">+</span><span class="rdr_tag_name">Cupcakes!</span></a></td></tr>';
-                            table += '</table>';
-
-                            $sentimentBox.html( table );
+                        $sentimentBox.html( $tag_table );
 
                         rindow.find('div.rdr_body_wrap').append($sentimentBox);
-
-                        // rindow.find('div.rdr_contentSpace').append('<div class="rdr_body">hi</div>');
-                        // rindow.find('div.rdr_body').append('hello <br/>hello <br/>hello <br/>hello <br/>hello <br/>hello <br/>hello <br/>');
-                        
-
-                        // RDR.actions.sentimentPanel.addCustomTagBox({hash:hash, rindow:rindow, settings:settings, actionType:actionType});
-
-
-
 
                         
 /*
