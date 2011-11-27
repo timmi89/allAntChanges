@@ -124,7 +124,6 @@ function readrBoard($R){
                         // $(this).jScrollPane({ showArrows:true });
                         $(this).jScrollPane({ contentWidth:$this.width(), showArrows:true });
                     }else{
-                        console.log('UPDATE jsp scrollpane');
                         var API = $(this).data('jsp');
                         API.reinitialise();
                     }
@@ -165,18 +164,18 @@ function readrBoard($R){
             },
             writeTag: function(tag, $container) {
                 var tagCount, $span;
-                // if ( $container.find('a.rdr_tag_'+tag.id).length === 0 && $container.find('a.rdr_tag').length < 4 ) {
-                    tagCount = ( tag.tag_count ) ? tag.tag_count:"+";
-                    
-                    var peoples = ( tagCount == 1 ) ? "person":"people",
-                        $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id);
-                    
-                    var $a_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"Add this reaction to this page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
-                    $a_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-'+tag.id );
-                    $('#rdr_sandbox').append( $a_tooltip );
-                    
-                    if ( $container ) $container.append( $a, " " );
-                    else return $a;
+
+                tagCount = ( tag.tag_count ) ? tag.tag_count:"+";
+                
+                var peoples = ( tagCount == 1 ) ? "person":"people",
+                    $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id);
+                
+                var $a_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"Add this reaction to this page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
+                $a_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-'+tag.id );
+                $('#rdr_sandbox').append( $a_tooltip );
+                
+                if ( $container ) $container.append( $a, " " );
+                else return $a;
                     // $span.css('width', $span.width() + 'px' );
 
                     /*
@@ -208,7 +207,7 @@ function readrBoard($R){
                         RDR.actions.interactions.ajax( args, 'tag', 'create');
                     });
                     */
-                // }
+
                 if ( tagCount === "" ) {
                     $span.hide();
                 }
@@ -372,7 +371,7 @@ PILLSTODO
                             targetHeight: rindow.find('div.rdr_contentSpace').height()+40, //+ header height + extra padding;
                             animate:false
                         });
-console.log( rindow.find('div.rdr_contentSpace').width(), rindowWidth );
+
                         var newCoords = RDR.util.stayInWindow({coords:coords, width:rindow.find('div.rdr_body_wrap').width(), height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
 
 
@@ -743,7 +742,6 @@ console.log( rindow.find('div.rdr_contentSpace').width(), rindowWidth );
 
             },
             draw: function(options) {
-                console.log('draw');
                 //RDR.rindow.draw:
                 
                 /*
