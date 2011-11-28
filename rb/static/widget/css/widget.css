@@ -9,6 +9,7 @@ body{
     padding:0;
     color:#666;
 }
+.rdr_blue {color:#008be4;}
 .rdr img {
     width:auto !important;
 }
@@ -604,6 +605,43 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_details {background: none !important
 /* tag pills and such */
 div.rdr.rdr_window table.rdr_tags {
     margin-top:3px !important;
+    margin-right:3px !important;
+}
+
+div.rdr.rdr_window table.rdr_tags td.rdr_activePill {
+    background:#def;
+}
+
+div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps {
+    background:#def;
+    font-size:10.5px;
+    
+}
+
+div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps div {
+    margin:4px 0 !important;
+}
+div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps hr {
+    height:1px !important;
+    background:#a9d7f4 !important;
+    border: none !important;
+    width: 98% !important;
+}
+div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps a {
+    font-style:normal !important;
+    text-decoration:underline !important;
+    color:#008be4 !important;
+}
+div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps input[type="text"] {
+    width:90% !important;
+    color:#aaa !important;
+    font-size:10.5px !important;
+    padding:2px !important;
+    margin:2px 0 !important;
+}
+
+div.rdr.rdr_window table.rdr_tags td {
+    padding:3px 0 0 2px;
 }
 div.rdr a.rdr_tag     { 
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff7f7f7', endColorstr='#ffe0e0e0');
@@ -666,13 +704,13 @@ div.rdr a.rdr_tag span.rdr_tag_count    {
     text-align: center !important;
 }
 
-div.rdr.rdr_window table a.rdr_tag span.rdr_tag_count    { 
+div.rdr.rdr_window table.rdr_tags a.rdr_tag span.rdr_tag_count    { 
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
     background: -webkit-gradient(linear, center top, center bottom, from(#ddedff), to(#add1f9)); 
     background: -moz-linear-gradient(center top , #f0f0f0, #d0d0d0) repeat scroll 0 0 transparent;
 }
 
-div.rdr.rdr_window table a.rdr_tag:hover span.rdr_tag_count    { 
+div.rdr.rdr_window table.rdr_tags a.rdr_tag:hover span.rdr_tag_count    { 
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
     background: -webkit-gradient(linear, center top, center bottom, from(#ddedff), to(#add1f9)); 
     background: -moz-linear-gradient(center top , #ddedff, #add1f9) repeat scroll 0 0 transparent;

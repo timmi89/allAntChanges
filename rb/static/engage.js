@@ -106,10 +106,20 @@ function readrBoard($R){
             },
             updateSizes : function($rindow) {
                 //RDR.rindow.updateSizes:
+                var rindowHeight = $rindow.height(),
+                    heightAdjustment = 36;
                 if ( $rindow.find('div.rdr_footer').css('display') != "none" ) {
                     $rindow.css('padding-bottom','20px');
+                    heightAdjustment += 20;
                 } else {
                     $rindow.css('padding-bottom','0px');
+                }
+                var jspPaneHeight = $rindow.find('div.jspPane').height();
+                if ( jspPaneHeight > 260 ) jspPaneHeight = 260; // is this right?
+                
+                if ( jspPaneHeight > ( rindowHeight - heightAdjustment ) ) {
+                    $rindow.find('div.jspContainer').height( jspPaneHeight );
+                    $rindow.animate({ height:(jspPaneHeight + heightAdjustment)},333);
                 }
                 RDR.rindow.jspUpdate( $rindow );
             },
@@ -162,7 +172,7 @@ function readrBoard($R){
                 */
                 return gotoHeight;
             },
-            writeTag: function(tag, $container) {
+            writeTag: function(tag, $container, $rindow) {
                 var tagCount, $span;
 
                 tagCount = ( tag.tag_count ) ? tag.tag_count:"+";
@@ -170,9 +180,14 @@ function readrBoard($R){
                 var peoples = ( tagCount == 1 ) ? "person":"people",
                     $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id);
                 
-                var $a_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"Add this reaction to this page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
-                $a_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-'+tag.id );
-                $('#rdr_sandbox').append( $a_tooltip );
+                $a.click( function() {
+                    var hash = $rindow.data('container');
+                    args = { tag:tag, hash:hash, uiMode:'write', kind:$rindow.data('kind'), rindow:$rindow};
+                    RDR.actions.interactions.ajax( args, 'tag', 'create');
+                });
+                // var $a_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"Add this reaction to this page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
+                // $a_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-'+tag.id );
+                // $('#rdr_sandbox').append( $a_tooltip );
                 
                 if ( $container ) $container.append( $a, " " );
                 else return $a;
@@ -266,7 +281,7 @@ function readrBoard($R){
                             }
 
                         }
-                        var rindow = RDR.rindow.draw({
+                        var $rindow = RDR.rindow.draw({
                             coords: coords,
                             container: hash,
                             content: settings.content,
@@ -276,7 +291,7 @@ function readrBoard($R){
 
                         var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
                                             '<h1>What\'s your reaction?</h1>';
-                        RDR.rindow.updateHeader( rindow, headerContent );
+                        RDR.rindow.updateHeader( $rindow, headerContent );
 
 
 
@@ -285,9 +300,9 @@ function readrBoard($R){
                         // is there a cleaner way?
                         // rindow.css({width:'170px'});
                         
-                        rindow.addClass('rdr_writemode');
+                        $rindow.addClass('rdr_writemode');
                         //add a reference for the rindow in the container summary
-                        summary.$rindow_writemode = rindow;
+                        summary.$rindow_writemode = $rindow;
 
                         var $sentimentBox = $('<div class="rdr_body" />');
                             $tag_table = $('<table cellpadding="0" cellspacing="0" border="0" class="rdr_tags" />');
@@ -303,13 +318,13 @@ function readrBoard($R){
                                     $tag_table.find('tr').eq(-1).append('<td/>');
                                 }
 
-                                RDR.rindow.writeTag( tag, $tag_table.find('td').eq(-1) );
+                                RDR.rindow.writeTag( tag, $tag_table.find('td').eq(-1), $rindow );
                             });
                         }
 
                         $sentimentBox.html( $tag_table );
 
-                        rindow.find('div.rdr_body_wrap').append($sentimentBox);
+                        $rindow.find('div.rdr_body_wrap').append($sentimentBox);
 
                         
 /*
@@ -366,23 +381,23 @@ PILLSTODO
                             }
                         });
 */
-                        var rindowWidth = rindow.find('div.rdr_contentSpace').width(),
-                            rindowHeight = RDR.rindow.getHeight(rindow, {
-                            targetHeight: rindow.find('div.rdr_contentSpace').height()+40, //+ header height + extra padding;
+                        var rindowWidth = $rindow.find('div.rdr_contentSpace').width(),
+                            rindowHeight = RDR.rindow.getHeight($rindow, {
+                            targetHeight: $rindow.find('div.rdr_contentSpace').height()+40, //+ header height + extra padding;
                             animate:false
                         });
 
-                        var newCoords = RDR.util.stayInWindow({coords:coords, width:rindow.find('div.rdr_body_wrap').width(), height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
+                        var newCoords = RDR.util.stayInWindow({coords:coords, width:$rindow.find('div.rdr_body_wrap').width(), height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
 
 
-                        rindow.css('left', newCoords.left + 'px');
-                        rindow.css('top', newCoords.top + 'px');
+                        $rindow.css('left', newCoords.left + 'px');
+                        $rindow.css('top', newCoords.top + 'px');
 
-                        rindow.width(0).height(0).animate({
+                        $rindow.width(0).height(0).animate({
                             width:rindowWidth,
                             height: rindowHeight
                         }, 200, 'swing', function(){
-                            RDR.rindow.updateSizes( rindow );
+                            RDR.rindow.updateSizes( $rindow );
                         });
                     },
                     customOptions: {
@@ -3281,6 +3296,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             //Split by readMode or writeMode
                             
                             //expand args to make it clear what's going on.
+/*
+PILLSTODO
                             var $tagLi = args.tag,
                             settings = args.settings;
 
@@ -3298,6 +3315,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             var $loader = $('<span class="rdr_loader" />').append('<img src="'+RDR_staticUrl+'widget/images/loader.gif" />');
                             $tagLi.find('div.rdr_tag_count').addClass('rdr_kill_bg').find('span').addClass('rdr_not_loader').hide();
                             $tagLi.find('div.rdr_tag_count').append($loader);
+*/
                         }
                     },
                     customSendData: function(args){
@@ -3425,19 +3443,39 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 //todo: reconsider this method of liberally updating everything with updateContainerTrackers
                                 $summary_box.find('div.rdr_note').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
                             } else {
-                                
+                                console.log('tag success');
+                                console.dir(args);
+
                                 var uiMode = args.uiMode || 'write';
 
                                 var response = args.response,
                                     interaction = args.response.interaction,
                                     interaction_node = response.data.interaction.interaction_node;
-                                
-                                var sendData = args.sendData;
-                                var rindow = args.rindow,
-                                    $tag_li = args.tag,
-                                    tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
-                                    int_id = response.data.interaction.id;
 
+                                var sendData = args.sendData,
+                                    $rindow = args.rindow,
+                                    tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
+                                    int_id = response.data.interaction.id,
+                                    $pill = $rindow.find('a.rdr_tag_'+tag.id),
+                                    $td = $pill.parent(),
+                                    $tr = $td.parent();
+
+                                $rindow.find('tr.rdr_nextSteps').remove();
+                                $rindow.find('td.rdr_activePill').removeClass('rdr_activePill');
+                                
+                                $td.addClass('rdr_activePill');
+
+                                var $nextTr = $('<tr class="rdr_nextSteps"><td colspan="100"><div /></td></tr>'),
+                                    $nextSteps = $nextTr.find('div');
+                                $nextSteps.append( '<div>You reacted: <strong>'+tag.body+'</strong>. <a href="#">Undo?</a></div>' );
+                                $nextSteps.append( '<hr/>' );
+                                $nextSteps.append( '<div>Share this reaction: [fb] [tw] [tb]</div>' );
+                                $nextSteps.append( '<hr/>' );
+                                $nextSteps.append( '<div><input type="text" value="Add a comment"/></div>' );
+
+                                $tr.after( $nextTr );
+                                
+                                RDR.rindow.updateSizes( $rindow );
                                 //temp tie-over    
                                 var hash = args.hash,
                                     summary = RDR.summaries[hash],
@@ -3454,6 +3492,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 content_node_data.hash = content_node_data.container;
                                 content_node_data.kind = sendData.kind;
 
+/*
+PILLSTODO
                                 //clear the loader        
                                 if ( typeof $tag_li.find != "function" ) {
                                     $tag_li = rindow.find('li.rdr_tag_' + args.tag.id);
@@ -3465,8 +3505,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 $tag_li.siblings().removeClass('rdr_selected');
                                 $tag_li.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
                                 
-                                //reset this var for now
-                                content_node_data = args.content_node || RDR.actions.content_nodes.make(content_node_data);
 
                                 if ( $tag_li.length == 1 ) {
                                     var $tagCount = $tag_li.find('div.rdr_tag_count');
@@ -3488,24 +3526,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                             $number2.find('span').text( '(' +theNumber+ ') ');
                                         }
                                         //hack complete.
-                                        
-
-                                    /* let's remove the "undo" functionality from the tag count for now. [pb]
-                                    $tagCount.click( function(e) {
-                                        e.preventDefault();
-                                                            
-                                        var newArgs = {    
-                                            content_node_data: args.content_node_data,
-                                            hash: hash,
-                                            int_id: int_id,
-                                            tag:$tag_li,
-                                            rindow: args.rindow
-                                        };
-                                        // RDR.actions.unrateSend(args);
-                                        RDR.actions.interactions.ajax( newArgs, 'tag', 'remove' );
-                                        return false; // prevent the tag call applied to the parent <li> from firing
-                                    });
-                                    */
 
                                     $tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+int_id);
                                     $tag_li.data('interaction_id', int_id);
@@ -3539,6 +3559,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 // if( uiMode !== "read" ){
                                     RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_data:content_node_data, hash:hash});
                                 // }
+*/
+                                //reset this var for now
+                                content_node_data = args.content_node || RDR.actions.content_nodes.make(content_node_data);
 
                                 //do updates
                                 var intNodeHelper = {
