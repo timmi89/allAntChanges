@@ -106,10 +106,20 @@ function readrBoard($R){
             },
             updateSizes : function($rindow) {
                 //RDR.rindow.updateSizes:
+                var rindowHeight = $rindow.height(),
+                    heightAdjustment = 36;
                 if ( $rindow.find('div.rdr_footer').css('display') != "none" ) {
                     $rindow.css('padding-bottom','20px');
+                    heightAdjustment += 20;
                 } else {
                     $rindow.css('padding-bottom','0px');
+                }
+                var jspPaneHeight = $rindow.find('div.jspPane').height();
+                if ( jspPaneHeight > 260 ) jspPaneHeight = 260; // is this right?
+                
+                if ( jspPaneHeight > ( rindowHeight - heightAdjustment ) ) {
+                    $rindow.find('div.jspContainer').height( jspPaneHeight );
+                    $rindow.animate({ height:(jspPaneHeight + heightAdjustment)},333);
                 }
                 RDR.rindow.jspUpdate( $rindow );
             },
