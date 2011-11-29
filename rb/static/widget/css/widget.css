@@ -611,6 +611,16 @@ div.rdr.rdr_window table.rdr_tags {
 div.rdr.rdr_window table.rdr_tags td.rdr_activePill {
     background:#def;
 }
+div.rdr.rdr_window table.rdr_tags td.rdr_activePill a.rdr_tag {
+    background: -moz-linear-gradient(center top , #e8e8e8, #fff) repeat scroll 0 0 transparent;
+    border-top: 1px solid #ccc;
+    box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7), 0 -1px 1px rgba(128, 128, 128, 0.4) inset;
+}
+
+div.rdr.rdr_window table.rdr_tags td.rdr_activePill a.rdr_tag span.rdr_tag_count {
+    background: -moz-linear-gradient(center top , #d0d0d0, #f0f0f0) repeat scroll 0 0 transparent;
+    box-shadow: -1px -1px 1px rgba(128, 128, 128, 0.4) inset;
+}
 
 div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps {
     background:#def;
