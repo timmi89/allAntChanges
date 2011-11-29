@@ -609,7 +609,7 @@ div.rdr.rdr_window table.rdr_tags {
 }
 
 div.rdr.rdr_window table.rdr_tags td.rdr_activePill {
-    background:#def;
+    background:#cde;
 }
 div.rdr.rdr_window table.rdr_tags td.rdr_activePill a.rdr_tag {
     background: -moz-linear-gradient(center top , #e8e8e8, #fff) repeat scroll 0 0 transparent;
@@ -623,7 +623,7 @@ div.rdr.rdr_window table.rdr_tags td.rdr_activePill a.rdr_tag span.rdr_tag_count
 }
 
 div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps {
-    background:#def;
+    background:-moz-linear-gradient(center top , #cde, #def) repeat scroll 0 0 transparent;
     font-size:10.5px;
     
 }
@@ -633,7 +633,7 @@ div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps div {
 }
 div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps hr {
     height:1px !important;
-    background:#a9d7f4 !important;
+    background:#bcd !important;
     border: none !important;
     width: 98% !important;
 }
