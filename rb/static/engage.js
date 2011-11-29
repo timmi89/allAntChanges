@@ -106,26 +106,11 @@ function readrBoard($R){
             },
             updateSizes : function($rindow) {
                 //RDR.rindow.updateSizes:
-                var rindowHeight = $rindow.height(),
-                    heightAdjustment = 42;
                 if ( $rindow.find('div.rdr_footer').css('display') != "none" ) {
                     $rindow.css('padding-bottom','20px');
-                    heightAdjustment += 20;
                 } else {
                     $rindow.css('padding-bottom','0px');
                 }
-                // var jspPaneHeight = ($rindow.find('div.jspPane').length==1) ? $rindow.find('div.jspPane').height():$rindow.find('div.rdr_body').height();
-                // var contentHeight = $rindow.find('div.contentSpace')
-                // console.log('jspPaneHeight: '+jspPaneHeight);
-                // if ( jspPaneHeight > 260 ) jspPaneHeight = 260; // is this right?
-                
-                // console.log('updateSizes 1');
-                // if ( jspPaneHeight ) {
-                //     $rindow.find('div.jspContainer').height( jspPaneHeight );
-                //     $rindow.animate({ height:(jspPaneHeight + heightAdjustment)},333);
-                //     console.log(jspPaneHeight + heightAdjustment);
-                // }
-                // console.log('updateSizes 2');
                 RDR.rindow.jspUpdate( $rindow );
             },
             updateMessage: function(args) {
