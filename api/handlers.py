@@ -308,6 +308,14 @@ class ContentSummaryHandler(AnonymousBaseHandler):
         known = {}
 
         container_id = data['container_id']
+        if not container_id: 
+            container_id = data['hash']
+            # Get the container.  HACK.  Porter.  Likeocracy.
+            container = Container.objects.get_or_create(
+                hash = data['hash'],
+                defaults = {'kind': "text",}
+            )[0]
+            container_id = container.id
         page_id = data['page_id']
         tag_ids = data['top_tags']
 

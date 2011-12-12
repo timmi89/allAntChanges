@@ -1718,8 +1718,7 @@ function readrBoard($R){
                     } else {
                         coords = [];
                         coords.left = ( $(window).width() / 2 ) - 200;
-                        coords.top =  ( $(window).height() / 2 ) - 100 ;
-                        coords.top = 150;
+                        coords.top = 150 + $(window).scrollTop();
                     }
 
 
@@ -3389,10 +3388,10 @@ PILLSTODO
                                     $('#rdr-tooltip-summary-tag-custom').remove();
                                 }
 
-                                var tagCount = ( $span.text() === "+" ) ? 0 : parseInt( $span.text(), 10 );
-                                tagCount++;
+                                var tagCount = ( isNaN(args.tag.tag_count) ) ? 1 : args.tag.tag_count + 1;;
 
                                 $span.text( tagCount );
+                                $span.parent().data('tagCount', tagCount );  // update the stored tag count.
 
                                 $span.show(200).css('visibility','visible');
 
@@ -3586,7 +3585,10 @@ PILLSTODO
                             if ( args.response.data && args.response.data.existing && args.response.data.existing === true ) {
                                 $message = $('<em>You have already given that reaction.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>');
                             } else if ( args.response.message.indexOf("Temporary user interaction limit reached") != -1 ) {
-                                $message = $('<em>To continue adding reactions, please <a href="javascript:void(0);" style="color:#008be4;" onclick="RDR.session.showLoginPanel();">Connect with Facebook</a>.</em><br><br><strong>Why:</strong> To encourage <strong style="color:#008be4;">high-quality participation from the community</strong>, <ins>we ask that you log in with Facebook. You\'ll also have a profile where you can revisit your reactions, bookmarks, and comments made using <strong style="color:#008be4;">ReadrBoard</strong>!</ins>');
+                                $message = $('<em>To continue adding reactions, please <a href="javascript:void(0);" style="color:#008be4;">Connect with Facebook</a>.</em><br><br><strong>Why:</strong> To encourage <strong style="color:#008be4;">high-quality participation from the community</strong>, <ins>we ask that you log in with Facebook. You\'ll also have a profile where you can revisit your reactions, bookmarks, and comments made using <strong style="color:#008be4;">ReadrBoard</strong>!</ins>');
+                                $message.find('a').click( function() {
+                                    RDR.session.showLoginPanel(args);
+                                });
                             } else {
                                 RDR.session.handleGetUserFail( args, function() {
                                     RDR.actions.interactions.ajax( args, 'tag', 'create' );
