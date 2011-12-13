@@ -290,7 +290,7 @@ PILLSTODO
 #rdr_sandbox div.rdr.rdr_window div.rdr_header                      { background:#fff !important; position:relative !important; height:18px !important; padding:5px 0 !important; z-index:5; cursor:move !important; border-bottom:1px solid #ddd !important;}
 #rdr_sandbox div.rdr.rdr_window div.rdr_footer                      { background:#f6f6f6 !important; position:absolute !important; height:18px; padding:3px 6px 6px; bottom:0; width:95%; display:none;}
 #rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace                { background:#f6f6f6 !important; position:relative !important; margin-bottom:6px; overflow:hidden;}
-#rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace div.rdr_body   { max-height:266px; margin:2px 0 0 4px; }
+#rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace div.rdr_body   { max-height:266px; margin:0px 0 0 4px; }
 #rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace div.rdr_body div.jspPane   { margin:0 !important; }
 
 #rdr_sandbox div.rdr.rdr_window div.rdr_header h1                   { margin-left:14px !important; }

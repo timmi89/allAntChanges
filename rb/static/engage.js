@@ -115,16 +115,21 @@ function readrBoard($R){
                     $rindow.css('padding-bottom','0px');
                 }
                 var jspPaneHeight = $rindow.find('div.jspPane').height();
-                if ( jspPaneHeight > 260 ) jspPaneHeight = 260; // is this right?
                 
-                if ( jspPaneHeight > ( rindowHeight - heightAdjustment ) ) {
-                    $rindow.find('div.jspContainer').height( jspPaneHeight );
-                    $rindow.animate({ height:(jspPaneHeight + heightAdjustment)},333);
+                if ( jspPaneHeight ) {
+                    if ( jspPaneHeight > 260 ) jspPaneHeight = 260; // is this right?
+                    
+                    if ( jspPaneHeight > ( rindowHeight - heightAdjustment ) ) {
+                        $rindow.find('div.jspContainer').height( jspPaneHeight );
+                        $rindow.animate({ height:(jspPaneHeight + heightAdjustment)},333);
+                    }
                 }
                 RDR.rindow.jspUpdate( $rindow );
             },
-            updateMessage: function(args) {
-                console.log('updateMessage');
+            updateTagMessage: function(args) {
+                //RDR.rindow.updateTagMessage
+                // used for updating the message in the rindow that follows a reaction
+                console.log('updateTagMessage');
                 console.dir(args);
                 if ( args.scenario && args.rindow ) {
                     var $rindow = args.rindow,
@@ -306,6 +311,7 @@ function readrBoard($R){
 
                         var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
                                             '<h1>What\'s your reaction?</h1>';
+
                         RDR.rindow.updateHeader( $rindow, headerContent );
                         
                         $rindow.addClass('rdr_writemode');
@@ -348,12 +354,13 @@ function readrBoard($R){
                         $rindow.css('left', newCoords.left + 'px');
                         $rindow.css('top', newCoords.top + 'px');
 
-                        $rindow.width(0).height(0).animate({
+                        $rindow.animate({
                             width:rindowWidth,
-                            height: rindowHeight
-                        }, 200, 'swing', function(){
+                            height:rindowHeight
+                        }, 333, 'swing', function(){
                             RDR.rindow.updateSizes( $rindow );
                         });
+                        //RDR.rindow.updateSizes( $rindow );
                     },
                     customOptions: {
                         
@@ -808,7 +815,6 @@ function readrBoard($R){
                             $(this).removeClass('rdr_rewritable');
                         }
                     });
-
                 }
                 
                 var coords = settings.coords;
@@ -3066,7 +3072,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                     var existing = args.response.data.existing;
                                     if(existing){
                                         // this should go in the onSuccess.  sorry. [pb]
-                                        RDR.rindow.updateMessage( {rindow:args.rindow, tag:args.tag, scenario:"tagExists", args:args} );
+                                        RDR.rindow.updateTagMessage( {rindow:args.rindow, tag:args.tag, scenario:"tagExists", args:args} );
                                         // args.response.message = "existing interaction";
                                         // RDR.actions.interactions[int_type].onFail(args);
                                         return;
@@ -3414,7 +3420,7 @@ PILLSTODO
                                     int_id = response.data.interaction.id;
 
                                 args = $.extend(args, {scenario:"tagSuccess"});
-                                RDR.rindow.updateMessage( args );
+                                RDR.rindow.updateTagMessage( args );
                                     
                                 //temp tie-over    
                                 var hash = args.hash,
@@ -3533,7 +3539,7 @@ PILLSTODO
                                 tag = args.tag,
                                 int_id = args.int_id;
 
-                            RDR.rindow.updateMessage( {rindow:args.rindow, tag:args.tag, scenario:"tagDeleted", args:args} );
+                            RDR.rindow.updateTagMessage( {rindow:args.rindow, tag:args.tag, scenario:"tagDeleted", args:args} );
 
                             //todo: quick hack -- fix later
                             if( ! $tagLi.jquery ){
@@ -4040,7 +4046,6 @@ PILLSTODO
                                 var indicatorOffsets = $indicator_body.offset();
 
                                 // if ( indicatorOffsets.top == 0 )
-                                // rdr_indicator_631eb4d994595a8a3ec836f71a1d88a3
                                 $indicator_details.css({
                                     'top': indicatorOffsets.top,
                                     'left': indicatorOffsets.left
