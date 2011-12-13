@@ -134,7 +134,7 @@ function readrBoard($R){
                 if ( args.scenario && args.rindow ) {
                     var $rindow = args.rindow,
                         tag = args.tag,
-                        $pill = $rindow.find('a.rdr_tag_'+tag.id),
+                        $pill = ($rindow.find('a.rdr_tag_'+tag.id).length) ? $rindow.find('a.rdr_tag_'+tag.id):$rindow.find('a.rdr_custom_tag'),
                         $td = $pill.parent(),
                         $tr = $td.parent();
 
@@ -247,6 +247,50 @@ function readrBoard($R){
                     $span.hide();
                 }
             },
+            writeCustomTag: function( $container, $rindow ) {
+                // add custom tag
+                var $a_custom = $('<a class="rdr_tag rdr_custom_tag"><input type="text" value="Add yours..." class="rdr_default"/></a>');
+                $a_custom.find('input').focus( function() {
+                    var $input = $(this);
+                    $input.removeClass('rdr_default');
+                    if ( $input.val() == "Add yours..." ) {
+                        $input.val('');
+                    }
+                }).blur( function() {
+                    var $input = $(this);
+                    if ( $input.val() === "" ) {
+                        $input.val('Add yours...');
+                    }
+                    if ( $input.val() == "Add yours..." ) {
+                        $input.addClass('rdr_default');
+                    }
+                }).keyup( function(event) {
+                    var $input = $(this),
+                        tag = {},
+                        hash = $rindow.data('container');
+
+                    if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
+                        // $whyPanel.find('div.rdr_body').empty();
+
+                        tag.body = $input.val();
+
+                        // args = { tag:tag, hash:hash, kind:"page" };
+                        args = { tag:tag, hash:hash, uiMode:'write', kind:$rindow.data('kind'), rindow:$rindow};
+                        RDR.actions.interactions.ajax( args, 'tag', 'create' );
+                        $input.blur();
+                    }
+                    else if (event.keyCode == '27') { //esc
+                        //return false;
+                        $input.blur();
+                    } else if ( $input.val().length > 20 ) {
+                        var customTag = $input.val();
+                        $input.val( customTag.substr(0, 20) );
+                    }
+                });
+                
+                if ( $container ) $container.append( $a_custom, " " );
+                else return $a_custom;
+            },
             _rindowTypes: {
                 //RDR.rindow._rindowTypes:
                 writeMode: {
@@ -331,12 +375,20 @@ function readrBoard($R){
                                 } else {
                                     $tag_table.find('tr').eq(-1).append('<td/>');
                                 }
-
+                                count++;
                                 RDR.rindow.writeTag( tag, $tag_table.find('td').eq(-1), $rindow );
                             });
                         }
-
+                        
+                        console.log('count: '+count);
+                        if ( count % 2 == 0 ) {
+                            $tag_table.append('<tr/>');
+                            $tag_table.find('tr').eq(-1).append('<td/>');
+                        } else {
+                            $tag_table.find('tr').eq(-1).append('<td/>');
+                        }
                         // ADD CUSTOM TAG BOX
+                        RDR.rindow.writeCustomTag( $tag_table.find('td').eq(-1), $rindow );
 
                         $sentimentBox.html( $tag_table );
 

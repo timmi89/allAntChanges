@@ -623,7 +623,7 @@ div.rdr.rdr_window table.rdr_tags td.rdr_activePill a.rdr_tag span.rdr_tag_count
 }
 
 div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps {
-    background:##daeafa;
+    background:#daeafa;
     font-size:10.5px;
     
 }
@@ -682,6 +682,9 @@ div.rdr.rdr_window a.rdr_tag     {
     padding: 0px 5px !important;
     margin: 0 5px 5px 2px !important;
 }
+div.rdr.rdr_window a.rdr_tag.rdr_custom_tag     {
+    padding:4px 5px !important;
+}
 div.rdr.rdr_window a.rdr_tag span.rdr_tag_name {
     display:block !important;
     float:left !important;
@@ -729,7 +732,11 @@ div.rdr.rdr_window table.rdr_tags a.rdr_tag:hover span.rdr_tag_count    {
 div.rdr a.rdr_tag.rdr_custom_tag input {
     background: transparent !important;
     border: 0 !important;
+    -webkit-box-shadow:none !important;
+    -moz-box-shadow:none !important;
+    box-shadow:none !important;
     color: #aaa !important;
+    font-size:11px !important;
     padding: 0 !important;
     width: 75px !important;
 }
