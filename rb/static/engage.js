@@ -118,11 +118,8 @@ function readrBoard($R){
                 
                 if ( jspPaneHeight ) {
                     if ( jspPaneHeight > 260 ) jspPaneHeight = 260; // is this right?
-                    
-                    if ( jspPaneHeight > ( rindowHeight - heightAdjustment ) ) {
-                        $rindow.find('div.jspContainer').height( jspPaneHeight );
-                        $rindow.animate({ height:(jspPaneHeight + heightAdjustment)},333);
-                    }
+                    $rindow.find('div.jspContainer').height( jspPaneHeight );
+                    $rindow.animate({ height:(jspPaneHeight + heightAdjustment)},333);
                 }
                 RDR.rindow.jspUpdate( $rindow );
             },
@@ -398,7 +395,6 @@ function readrBoard($R){
                             });
                         }
                         
-                        console.log('count: '+count);
                         if ( count % 2 == 0 ) {
                             $tag_table.append('<tr/>');
                             $tag_table.find('tr').eq(-1).append('<td/>');
@@ -3604,18 +3600,9 @@ PILLSTODO
                             //RDR.actions.interactions.tag.onSuccess.remove:
                             var sendData = args.sendData;
                             var interaction_node = args.response.data.deleted_interaction.interaction_node;
-                            var rindow = args.rindow,
-                                $tagLi = args.tag,
+                            var $rindow = args.rindow,
                                 tag = args.tag,
                                 int_id = args.int_id;
-
-                            RDR.rindow.updateTagMessage( {rindow:args.rindow, tag:args.tag, scenario:"tagDeleted", args:args} );
-
-                            //todo: quick hack -- fix later
-                            if( ! $tagLi.jquery ){
-                                $tagLi = rindow.find('.rdr_tag_'+args.tag.id);
-                            }
-                            $tagLi.find('div.rdr_tag_count').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
 
                             //do updates
                             var hash = sendData.hash;
@@ -3643,16 +3630,14 @@ PILLSTODO
                                     body: interaction_node.body,
                                     remove: true
                                 },
-                                rindow:rindow
+                                rindow:$rindow
                             };
                             //queued up to be released in the sharestart function after the animation finishes    
-                            rindow.queue('userMessage', function(){
+                            $rindow.queue('userMessage', function(){
                                 RDR.session.rindowUserMessage.show( usrMsgArgs );
                             });
-                            RDR.actions.panel.collapse("whyPanel", rindow);
 
-                            var $thisTagButton = rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id);
-                            $thisTagButton.removeClass('rdr_selected').removeClass('rdr_tagged').removeClass('rdr_int_node_'+int_id);
+                            RDR.rindow.updateTagMessage( {rindow:$rindow, tag:args.tag, scenario:"tagDeleted", args:args} );
                         }
                     },
                     onFail: function(args){
