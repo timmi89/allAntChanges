@@ -143,7 +143,7 @@ function readrBoard($R){
 
                     if ( args.scenario != "tagDeleted" ) {
                         $td.addClass('rdr_activePill');
-                        var $nextTr = $('<tr class="rdr_nextSteps"><td colspan="100"><div /></td></tr>'),
+                        var $nextTr = $('<tr class="rdr_nextSteps"><td colspan="100"><div class="rdr_nextSteps_container"/></td></tr>'),
                             $nextSteps = $nextTr.find('div');
                     
                         if ( args.scenario == "tagSuccess" || args.scenario == "tagExists" ) {
@@ -166,7 +166,25 @@ function readrBoard($R){
                                 $nextSteps.append( '<div>You have already given that reaction.</div>' );
                             }
                             $nextSteps.append( '<hr/>' );
-                            $nextSteps.append( '<div>Share It: [fb] [tw] [tb]</div>' );
+                            
+
+                            $nextSteps.append( '<div class="rdr_share_social"><strong>Share It:</strong></div>' );
+                            $shareLinks = $('<ul class="shareLinks"></ul>'),
+                            // sns sharing links
+                            socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
+
+                            // embed icons/links for diff SNS
+                            var shareHash = args.hash;
+                            $.each(socialNetworks, function(idx, val){
+                                $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                                $shareLinks.find('li:last').click( function() {
+                                    RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
+                                    RDR.actions.share_getLink({ hash:args.hash, kind:args.kind, sns:val, rindow:$rindow, tag:tag, content_node:args.sendData.content_node_data }); // ugh, lots of weird data nesting
+                                    return false;
+                                });
+                            });
+                            $nextSteps.find('div.rdr_share_social').append( $shareLinks );
+
                             $nextSteps.append( '<hr/>' );
                             $nextSteps.append( '<div><input type="text" value="Add a comment"/></div>' );
                         }
