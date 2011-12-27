@@ -6,7 +6,6 @@ for ( var i in qs ) {
 	var this_arg = qs[i].split('=');
 	qs_args[this_arg[0]] = this_arg[1];
 }
-
 if ( typeof $.receiveMessage == "function") {
 	$.receiveMessage(
 		function(e){
