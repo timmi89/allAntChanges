@@ -291,14 +291,14 @@ function readrBoard($R){
                 */
                 return gotoHeight;
             },
-            writeTag: function(tag, $container, $rindow) {
+            writeTag: function(tag, $container, $rindow, content_node_id) {
                 var tagCount, $span;
-console.log('rindow.writeTag');
-console.dir(tag);
                 tagCount = ( tag.count ) ? tag.count:"+";
                 
                 var peoples = ( tagCount == 1 ) ? "person":"people",
                     $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id);
+
+                if ( content_node_id ) $a.data('content_node_id',content_node_id);
 
                 $a.click( function() {
                     var hash = $rindow.data('container');
@@ -503,24 +503,9 @@ console.dir(tag);
                                     RDR.rindow.writeTag( tag, $tag_table.find('td').eq(-1), $rindow );
                                 });
                             } else {
-                                console.log('readmode tag pill create');
-                                var topTags = summary.top_interactions.tags,
-                                topTagsOrder = summary.interaction_order.tags,
-                                topComs = summary.top_interactions.coms,
-                                totalTags = summary.counts.tags,
-                                totalComs = summary.counts.coms;
-
-                                $.each( topTagsOrder, function( idx, tagOrder ){
-                                    var tag = topTags[ tagOrder.id ];
-                                    tag.id = tagOrder.id;
-                                    // var $li = $('<li class="rdr_tag_'+tagOrder.id+'" />').data({
-                                    //     'tag':{
-                                    //         id:parseInt( tagOrder.id, 10),
-                                    //         body:tag.body,
-                                    //         count:tag.count
-                                    //     },
-                                    //     'hash':hash
-                                    // });
+                                RDR.actions.summaries.sortInteractions(hash);
+                                
+                                $.each( summary.interaction_order, function( idx, interaction ){
                                     count++;
                                     if ( idx % 2 == 0 ) {
                                         $tag_table.append('<tr/>');
@@ -528,39 +513,12 @@ console.dir(tag);
                                     } else {
                                         $tag_table.find('tr').eq(-1).append('<td/>');
                                     }
-
-                                    RDR.rindow.writeTag( tag, $tag_table.find('td').eq(-1), $rindow );
-
-
-                                    // todo: [porter] i'm looping to see if there is a comment for this TAG.  can we just send this down from server?
-                                    /*
-                                    var commentsHere = 0;
-                                    for ( var i in topComs ) {
-                                        if ( (topComs[i].tag_id == tagOrder.id) || ( i == tagOrder.id ) ) {  // first is for text, second option is for images/media
-                                            $li.addClass('rdr_has_comment');
-
-                                            // loop to see how many content_nodes' comments are under this tag
-                                            if ( kind == "text" ) {
-                                                for ( var j in summary.content_nodes ) {
-                                                    for ( var k in summary.content_nodes[j].top_interactions.coms ) {
-                                                        if ( summary.content_nodes[j].top_interactions.coms[k].tag_id == topComs[i].tag_id ) {
-                                                            commentsHere++; 
-                                                        }
-                                                    }
-                                                }
-                                            } else {
-                                                for ( var l in summary.top_interactions.coms[i] ) {
-                                                        commentsHere++; 
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if ( commentsHere > 0 ) $li.find('div.rdr_details').append('<span>' + RDR.util.prettyNumber( commentsHere ) + '</span>');
-                                    */
+                                    var tag = { id:interaction.tag_id, count:interaction.tag_count, body:interaction.tag_body };
+                                    RDR.rindow.writeTag( tag, $tag_table.find('td').eq(-1), $rindow, interaction.content_node_id );
                                 });
                             }
 
-                            // mode-specific addition functionality
+                            // mode-specific addition functionality that needs to precede writing the $rindow to the DOM
                             if ( settings.mode == "writeMode" ) {
                                 if ( count % 2 == 0 ) {
                                     $tag_table.append('<tr/>');
@@ -571,17 +529,42 @@ console.dir(tag);
                                 RDR.rindow.writeCustomTag( $tag_table.find('td').eq(-1), $rindow );
                                 $rindow.removeClass('rdr_rewritable');
                             } else {
+                            }
+
+                            $sentimentBox.html( $tag_table );
+                            $rindow.find('div.rdr_body_wrap').append($sentimentBox);
+
+                            // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
+                            if ( settings.mode == "writeMode" ) {
+                            } else {
                                 $rindow.bind( 'mouseleave', function() {
                                     var $this = $(this);
                                     if ( $this.hasClass('rdr_rewritable') ) {
                                         $this.remove();
                                     }
-                                })
+                                });
+
+                                $rindow.find('a.rdr_tag').each( function() {
+                                    $(this).hover(
+                                        function() {
+                                            var $this = $(this);
+                                            //don't do this for windows that are resizing
+                                            if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
+                                            if( $(this).closest('.rdr_window.ui-draggable-dragging').length) return;
+
+                                            $().selog('hilite', summary.content_nodes[$this.data('content_node_id')].selState, 'on');
+                                        },
+                                        function() {
+                                            var $this = $(this);
+                                            //don't do this for windows that are resizing
+                                            if( $this.closest('.rdr_window.ui-resizable-resizing').length) return;
+                                            if( $this.closest('.rdr_window.ui-draggable-dragging').length) return;
+
+                                            $().selog('hilite', summary.content_nodes[$this.data('content_node_id')].selState, 'off');
+                                        }
+                                    );
+                                });
                             }
-
-                            $sentimentBox.html( $tag_table );
-
-                            $rindow.find('div.rdr_body_wrap').append($sentimentBox);
                         }
                         /* END create the tag pills.  read / write mode matters. */
 
@@ -1492,10 +1475,6 @@ console.dir(tag);
                 summary[hash].top_interactions.coms = {};
                 summary[hash].top_interactions.tags = {};
                 summary[hash].top_interactions.shr = {};
-
-                summary[hash].interaction_order = {};
-                summary[hash].interaction_order.coms = {};
-                summary[hash].interaction_order.tags = {};
 
                 summary[hash].counts = {};
                 summary[hash].counts.tags = 0;
@@ -3127,8 +3106,8 @@ console.dir(tag);
 
                     var sendData = {
                         "page_id" : RDR.util.getPageProperty('id', hash),
-                        "container_id":summary.id,
-                        "top_tags":summary.top_interactions.tags
+                        "container_id":summary.id
+                        // "top_tags":summary.top_interactions.tags // [porter] removing this on 12/28/2011, don't see why it's needed here.  removed from handlers, too
                     };
 
                     $.ajax({
@@ -4563,37 +4542,37 @@ PILLSTODO
                             tagsListMaxWidth = 300;
                         }
                         
-                        $.each( summary.interaction_order.tags, function( idx, tagOrder ){
-                            var tag = summary.top_interactions.tags[ tagOrder.id ];
+                        // $.each( summary.interaction_order.tags, function( idx, tagOrder ){
+                        //     var tag = summary.top_interactions.tags[ tagOrder.id ];
 
                             
-                            if(count === null) return; //a helper incrementer, set to 'null' below to mimic a 'break' out of the 'each' loop 
-                            if( !tag || tag.count < 0) return; //this shouldn't happen, should be taken care of in summaries.update.  But just in case.
+                        //     if(count === null) return; //a helper incrementer, set to 'null' below to mimic a 'break' out of the 'each' loop 
+                        //     if( !tag || tag.count < 0) return; //this shouldn't happen, should be taken care of in summaries.update.  But just in case.
 
-                            var $prefix = count ? $('<span>, </span>') : $(), //check for count to omit the comma prefix on the first case.
-                                $tag = $('<strong/>').append(tag.body),
-                                $count = $('<em/>').append( ' ('+tag.count+')' ),
-                                $span = $('<span />').addClass('rdr_tags_list_tag');
+                        //     var $prefix = count ? $('<span>, </span>') : $(), //check for count to omit the comma prefix on the first case.
+                        //         $tag = $('<strong/>').append(tag.body),
+                        //         $count = $('<em/>').append( ' ('+tag.count+')' ),
+                        //         $span = $('<span />').addClass('rdr_tags_list_tag');
 
-                            $span.append( $tag, $count).data('id',tagOrder.id).data('selStates',[]);
+                        //     $span.append( $tag, $count).data('id',tagOrder.id).data('selStates',[]);
 
 
-                            $tagsList.append( $prefix, $span );
+                        //     $tagsList.append( $prefix, $span );
 
-                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                            if ( $tagsList.width() > ( tagsListMaxWidth - buffer ) ) {
-                                //the tag pushed the length over the limit, so kill it, and replace with ...
-                                $span.remove();
-                                $prefix.remove();
-                                var $moreText = $('<span>...</span>').addClass('rdr_see_more');
-                                $tagsList.append($moreText);
-                                //signal the rest of the each loop to just return;
-                                count = null;
-                                return;
-                            }
-                            count++;
+                        //     // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
+                        //     if ( $tagsList.width() > ( tagsListMaxWidth - buffer ) ) {
+                        //         //the tag pushed the length over the limit, so kill it, and replace with ...
+                        //         $span.remove();
+                        //         $prefix.remove();
+                        //         var $moreText = $('<span>...</span>').addClass('rdr_see_more');
+                        //         $tagsList.append($moreText);
+                        //         //signal the rest of the each loop to just return;
+                        //         count = null;
+                        //         return;
+                        //     }
+                        //     count++;
                             
-                        });
+                        // });
                     },
                     setupContentNodeHilites: function( hash ){
                         //RDR.actions.indicators.utils.setupContentNodeHilites:
@@ -4960,7 +4939,7 @@ PILLSTODO
                     RDR.summaries[hash] = summary;
                     summary.$container = $('.rdr-'+hash);
 
-                    RDR.actions.summaries.sortInteractions(hash);
+                    // RDR.actions.summaries.sortInteractions(hash);
                                 
                 },
                 update: function(hash, diff){
@@ -5042,7 +5021,7 @@ PILLSTODO
 
                     });
 
-                    RDR.actions.summaries.sortInteractions(hash);
+                    // RDR.actions.summaries.sortInteractions(hash);
 
                     if( hash == "pageSummary" ){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
@@ -5069,29 +5048,55 @@ PILLSTODO
                 },
                 sortInteractions: function(hash) {
                     // RDR.actions.summaries.sortInteractions
-                    function SortByCount(a,b) { return b.count - a.count; }
+                    
+                    function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
 
                     var summary = RDR.summaries[hash];
-                    summary.interaction_order = { coms:[], tags:[] };
+                    summary.interaction_order = [];
 
-                    var topTags = summary.top_interactions.tags,
-                    topComs = summary.top_interactions.coms;
-
-                    // tags
-                    if ( !$.isEmptyObject( summary.top_interactions.tags ) ) {
-                        $.each( topTags, function( tagID, tag ){
-                            summary.interaction_order.tags.push( { id:tagID, count:tag.count } );
+                    if ( !$.isEmptyObject( summary.content_nodes ) ) {
+                        $.each( summary.content_nodes, function( node_id, node_data ) {
+                            $.each( node_data.top_interactions.tags, function( tag_id, tag_data ) {
+                                summary.interaction_order.push( { tag_count:tag_data.count, tag_id:tag_id, tag_body:tag_data.body, content_node_id:node_id } );
+                            });
                         });
                     }
-                    summary.interaction_order.tags.sort( SortByCount );
+                    
+                    summary.interaction_order.sort( SortByTagCount );
+                    
+                    /* PILLSTODO remove this
+                    // interaction_order = {
+                    //     id = {
+                    //         tag_count
+                    //         tag_id
+                    //         body
+                    //         content_node_id
+                    //                          com_count
+                    //     }
+                    // }
 
-                    // comments
-                    if ( !$.isEmptyObject( summary.top_interactions.coms ) ) {
-                        $.each( topComs, function( comID, com ){
-                            summary.interaction_order.coms.push( { id:comID, count:com.count } );
-                        });
-                    }
-                    summary.interaction_order.coms.sort( SortByCount );
+                    // summary.interaction_order = {coms:[],tags:[]};
+                    // var topTags = summary.top_interactions.tags,
+                    // topComs = summary.top_interactions.coms;
+
+                    // // tags
+                    // if ( !$.isEmptyObject( summary.top_interactions.tags ) ) {
+                    //     $.each( topTags, function( tagID, tag ){
+                    //         summary.interaction_order.tags.push( { id:tagID, count:tag.count } );
+                    //     });
+                    // }
+                    // summary.interaction_order.tags.sort( SortByCount );
+
+                    // // comments
+                    // if ( !$.isEmptyObject( summary.top_interactions.coms ) ) {
+                    //     $.each( topComs, function( comID, com ){
+                    //         summary.interaction_order.coms.push( { id:comID, count:com.count } );
+                    //     });
+                    // }
+                    // summary.interaction_order.coms.sort( SortByCount );
+
+                    end PILLSTODO
+                    */
 
                 },
                 sortPopularTextContainers: function() {

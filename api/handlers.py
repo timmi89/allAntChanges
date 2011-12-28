@@ -317,7 +317,7 @@ class ContentSummaryHandler(AnonymousBaseHandler):
             )[0]
             container_id = container.id
         page_id = data['page_id']
-        tag_ids = data['top_tags']
+        # tag_ids = data['top_tags'] # [porter] removing this on 12/28/2011, don't see why it's needed here.
 
         # Force queryset evaluation by making lists - reduces interaction queries to 1
         interactions = list(Interaction.objects.filter(
