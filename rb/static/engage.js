@@ -246,7 +246,7 @@ function readrBoard($R){
                 //RDR.rindow.jspUpdate:
 
                 //updates or inits all $rindow bodies into jScrollPanes
-                $rindow.find('div.rdr_body').each( function() {
+                $rindow.find('div.rdr_body').eq(0).each( function() {
                     var $this = $(this);
                     if( !$this.hasClass('jspScrollable') ){
                         // IE.  for some reason, THIS fires the scrollstop event.  WTF:
@@ -295,7 +295,7 @@ function readrBoard($R){
                 var tagCount = ( tag.count ) ? tag.count:"+",
                     hash = $rindow.data('container'),
                     summary = RDR.summaries[hash],
-                    content_node = summary.content_nodes[ content_node_id ],
+                    content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"",
                     $span;
 
                 
@@ -312,7 +312,7 @@ function readrBoard($R){
 
                 if ( $container ) {
                     $container.append( $a, " " );
-                    if ( !$.isEmptyObject( content_node.top_interactions.coms ) ) {
+                    if ( !$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions.coms ) ) {
                         $a.append('<span class="rdr_has_comment"></span>');
                     }
                     if ( tagCount === "" ) {
@@ -494,8 +494,8 @@ function readrBoard($R){
                         /* START create the tag pills.  read / write mode matters. */
                         if (actionType == "react") {
                             var count = 0; // used for counting how many tags are created, to know where to put the custom tag pill
-
-                            var $sentimentBox = $('<div class="rdr_body" />');
+$rindow.addClass('rdr_reactions');
+                            var $sentimentBox = ( $rindow.find('div.rdr_body').length ) ? $rindow.find('div.rdr_body') : $('<div class="rdr_body" />');
                                 $tag_table = $('<table cellpadding="0" cellspacing="0" border="0" class="rdr_tags" />');
                             
                             if ( settings.mode == "writeMode" ) {
