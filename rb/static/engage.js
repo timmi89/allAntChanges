@@ -292,8 +292,12 @@ function readrBoard($R){
                 return gotoHeight;
             },
             writeTag: function(tag, $container, $rindow, content_node_id) {
-                var tagCount, $span;
-                tagCount = ( tag.count ) ? tag.count:"+";
+                var tagCount = ( tag.count ) ? tag.count:"+",
+                    hash = $rindow.data('container'),
+                    summary = RDR.summaries[hash],
+                    content_node = summary.content_nodes[ content_node_id ],
+                    $span;
+
                 
                 var peoples = ( tagCount == 1 ) ? "person":"people",
                     $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id);
@@ -306,12 +310,16 @@ function readrBoard($R){
                     RDR.actions.interactions.ajax( args, 'tag', 'create');
                 });
 
-                if ( $container ) $container.append( $a, " " );
-                else return $a;
+                if ( $container ) {
+                    $container.append( $a, " " );
+                    if ( !$.isEmptyObject( content_node.top_interactions.coms ) ) {
+                        $a.append('<span class="rdr_has_comment"></span>');
+                    }
+                    if ( tagCount === "" ) {
+                        $span.hide();
+                    }
+                } else return $a;
 
-                if ( tagCount === "" ) {
-                    $span.hide();
-                }
             },
             writeCustomTag: function( $container, $rindow ) {
                 // add custom tag

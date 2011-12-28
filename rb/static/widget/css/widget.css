@@ -664,14 +664,16 @@ div.rdr a.rdr_tag     {
     font-size: 11px !important;
     font-style: normal !important;
     font-weight: normal !important;
+    height: 21px !important;
     margin: 0 5px 0 -2px !important;
-    overflow-x: hidden !important;
+    /*overflow-x: hidden !important;*/
     padding: 4px 5px !important;
+    position: relative !important;
     text-decoration: none !important;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
     text-transform: none !important;
     white-space: nowrap !important;
-    z-index: 100001;
+    z-index: 10001;
 }
 div.rdr.rdr_window a.rdr_tag     {
     display:block !important;
@@ -695,6 +697,15 @@ div.rdr.rdr_window a.rdr_tag span.rdr_tag_count {
     display:block !important;
     float:right !important;
     margin-left:-15px !important; /* feels kludgey.  prevents wrapping in the pill in a small rindow */
+}
+div.rdr.rdr_window span.rdr_has_comment {
+    display:block !important;
+    position:absolute;
+    background:url("../images/widget_icons.png") no-repeat scroll -182px -14px transparent !important;
+    right:-5px;
+    top:-5px;
+    width:10px;
+    height:10px;
 }
 div.rdr a.rdr_tag:hover     { 
     /*background: -moz-linear-gradient(center top , #f7f7f7, #d0d0d0) repeat scroll 0 0 transparent;*/
