@@ -305,6 +305,7 @@ function readrBoard($R){
                 if ( content_node_id ) $a.data('content_node_id',content_node_id);
 
                 $a.click( function() {
+                    $rindow.removeClass('rdr_rewritable');
                     var hash = $rindow.data('container');
                     args = { tag:tag, hash:hash, uiMode:'write', kind:$rindow.data('kind'), rindow:$rindow};
                     RDR.actions.interactions.ajax( args, 'tag', 'create');
