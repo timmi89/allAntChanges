@@ -545,6 +545,7 @@ function readrBoard($R){
                             $tag_table.find('tr').each( function() {
                                 $(this).find('td:last-child').addClass('rdr-last-child');
                             });
+                            if ( $tag_table.find('td').length == 1 ) $tag_table.addClass('rdr-one-column');
                             $sentimentBox.html( $tag_table );
                             $rindow.find('div.rdr_body_wrap').append($sentimentBox);
 
