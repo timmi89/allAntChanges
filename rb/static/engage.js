@@ -132,7 +132,8 @@ function readrBoard($R){
                     var $rindow = args.rindow,
                         tag = args.tag,
                         $pill = ($rindow.find('a.rdr_tag_'+tag.id).length) ? $rindow.find('a.rdr_tag_'+tag.id):$rindow.find('a.rdr_custom_tag'),
-                        $td = $pill.parent(),
+                        $wrapperDiv = $pill.parent(),
+                        $td = $wrapperDiv.parent(),
                         $tr = $td.parent();
 
                     $rindow.find('tr.rdr_nextSteps').remove();
@@ -242,10 +243,9 @@ function readrBoard($R){
                 }
             },
             jspUpdate: function( $rindow ) {
-                console.log('jspUpdate');
                 //RDR.rindow.jspUpdate:
 
-                //updates or inits all $rindow bodies into jScrollPanes
+                //updates or inits first (and should be only) $rindow rdr_body into jScrollPanes
                 $rindow.find('div.rdr_body').eq(0).each( function() {
                     var $this = $(this);
                     if( !$this.hasClass('jspScrollable') ){
@@ -314,6 +314,7 @@ function readrBoard($R){
                     $container.append( $a, " " );
                     if ( !$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions.coms ) ) {
                         $a.append('<span class="rdr_has_comment"></span>');
+                        $a.after('<span class="rdr_comment_hover"><span class="rdr_icon"></span> '+content_node.top_interactions.coms.length+'</span>');
                     }
                     if ( tagCount === "" ) {
                         $span.hide();
@@ -493,9 +494,10 @@ function readrBoard($R){
 
                         /* START create the tag pills.  read / write mode matters. */
                         if (actionType == "react") {
-                            var count = 0; // used for counting how many tags are created, to know where to put the custom tag pill
-$rindow.addClass('rdr_reactions');
-                            var $sentimentBox = ( $rindow.find('div.rdr_body').length ) ? $rindow.find('div.rdr_body') : $('<div class="rdr_body" />');
+                            $rindow.addClass('rdr_reactions');
+                            
+                            var count = 0, // used for counting how many tags are created, to know where to put the custom tag pill
+                                $sentimentBox = ( $rindow.find('div.rdr_body').length ) ? $rindow.find('div.rdr_body') : $('<div class="rdr_body" />'),
                                 $tag_table = $('<table cellpadding="0" cellspacing="0" border="0" class="rdr_tags" />');
                             
                             if ( settings.mode == "writeMode" ) {
@@ -503,12 +505,12 @@ $rindow.addClass('rdr_reactions');
                                 $.each(RDR.group.blessed_tags, function(idx, tag){
                                     if ( idx % 2 == 0 ) {
                                         $tag_table.append('<tr/>');
-                                        $tag_table.find('tr').eq(-1).append('<td/>');
+                                        $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
                                     } else {
-                                        $tag_table.find('tr').eq(-1).append('<td/>');
+                                        $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
                                     }
                                     count++;
-                                    RDR.rindow.writeTag( tag, $tag_table.find('td').eq(-1), $rindow );
+                                    RDR.rindow.writeTag( tag, $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper'), $rindow );
                                 });
                             } else {
                                 RDR.actions.summaries.sortInteractions(hash);
@@ -517,12 +519,12 @@ $rindow.addClass('rdr_reactions');
                                     count++;
                                     if ( idx % 2 == 0 ) {
                                         $tag_table.append('<tr/>');
-                                        $tag_table.find('tr').eq(-1).append('<td/>');
+                                        $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
                                     } else {
-                                        $tag_table.find('tr').eq(-1).append('<td/>');
+                                        $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
                                     }
                                     var tag = { id:interaction.tag_id, count:interaction.tag_count, body:interaction.tag_body };
-                                    RDR.rindow.writeTag( tag, $tag_table.find('td').eq(-1), $rindow, interaction.content_node_id );
+                                    RDR.rindow.writeTag( tag, $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper'), $rindow, interaction.content_node_id );
                                 });
                             }
 
@@ -530,15 +532,18 @@ $rindow.addClass('rdr_reactions');
                             if ( settings.mode == "writeMode" ) {
                                 if ( count % 2 == 0 ) {
                                     $tag_table.append('<tr/>');
-                                    $tag_table.find('tr').eq(-1).append('<td/>');
+                                    $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
                                 } else {
-                                    $tag_table.find('tr').eq(-1).append('<td/>');
+                                    $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
                                 }
-                                RDR.rindow.writeCustomTag( $tag_table.find('td').eq(-1), $rindow );
+                                RDR.rindow.writeCustomTag( $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper'), $rindow );
                                 $rindow.removeClass('rdr_rewritable');
                             } else {
                             }
 
+                            $tag_table.find('tr').each( function() {
+                                $(this).find('td:last-child').addClass('rdr-last-child');
+                            });
                             $sentimentBox.html( $tag_table );
                             $rindow.find('div.rdr_body_wrap').append($sentimentBox);
 
@@ -552,7 +557,8 @@ $rindow.addClass('rdr_reactions');
                                     }
                                 });
 
-                                $rindow.find('a.rdr_tag').each( function() {
+                                // $rindow.find('a.rdr_tag').each( function() {
+                                $rindow.find('div.rdr_cell_wrapper').each( function() {
                                     $(this).hover(
                                         function() {
                                             var $this = $(this);
@@ -560,7 +566,7 @@ $rindow.addClass('rdr_reactions');
                                             if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
                                             if( $(this).closest('.rdr_window.ui-draggable-dragging').length) return;
 
-                                            $().selog('hilite', summary.content_nodes[$this.data('content_node_id')].selState, 'on');
+                                            $().selog('hilite', summary.content_nodes[$this.find('a.rdr_tag').data('content_node_id')].selState, 'on');
                                         },
                                         function() {
                                             var $this = $(this);
@@ -568,7 +574,7 @@ $rindow.addClass('rdr_reactions');
                                             if( $this.closest('.rdr_window.ui-resizable-resizing').length) return;
                                             if( $this.closest('.rdr_window.ui-draggable-dragging').length) return;
 
-                                            $().selog('hilite', summary.content_nodes[$this.data('content_node_id')].selState, 'off');
+                                            $().selog('hilite', summary.content_nodes[$this.find('a.rdr_tag').data('content_node_id')].selState, 'off');
                                         }
                                     );
                                 });
@@ -951,7 +957,6 @@ $rindow.addClass('rdr_reactions');
                     settings = $.extend( {}, defaultOptions, customOptions, options, {mode:rindowType} );
                     
                 //call make function for appropriate type
-                console.dir(settings);
                 RDR.rindow._rindowTypes.tagMode.make(settings);
 
             },
@@ -3517,7 +3522,8 @@ PILLSTODO
                     customSendData: function(args){
                         ////RDR.actions.interactions.tag.customSendData:
                         //temp tie-over    
-
+console.log('---- customSendData args ----');
+console.dir(args);
                         var hash = args.hash,
                             summary = RDR.summaries[hash],
                             kind,
@@ -3584,8 +3590,9 @@ PILLSTODO
                                         'kind':kind
                                     };
                                 }else{
-                                    var selState = rindow.data('selState');
-                                    
+                                    var content_node_id = rindow.find('a.rdr_tag_'+tag.id).data('content_node_id'),
+                                        selState = ( content_node_id ) ? summary.content_nodes[ content_node_id ].selState : rindow.data('selState');
+
                                     content_node_data = {
                                         'container': rindow.data('container'),
                                         'body': selState.text,
