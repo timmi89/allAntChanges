@@ -104,6 +104,47 @@ function readrBoard($R){
                 $rindow.find('div.rdr_footer').hide(0);
                 RDR.rindow.updateSizes( $rindow );
             },
+            panelCreate : function( $rindow, className ) {
+                // create a new panel for the rindow
+                if ( !$rindow ) return;
+
+                var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
+                    $rdr_bodyFirst = $rdr_body_wrap.find('div.rdr_body').eq(0),
+                    rdr_bodyFirst_width = $rdr_bodyFirst.width();
+
+                if ( !$rdr_body_wrap.find('div.'+className).length ) {
+                    var $newPanel = $('<div class="rdr_body '+className+'"/>').width( rdr_bodyFirst_width ),
+                        column_count = ( $rdr_body_wrap.find('div.rdr_body').length ) + 1;
+                    $rdr_body_wrap.width( ( rdr_bodyFirst_width * column_count ) + ( 8 * column_count ) ).append( $newPanel );
+                }
+            },
+            panelPopulate : function( $rindow, className, $content, bindings ) {
+                if ( !$rindow ) return;
+                
+                var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
+                    $panel = $rdr_body_wrap.find('div.'+className);
+
+                $panel.html( $content );
+
+                if ( bindings ) {
+                    // apply some events to the content of panelTwo
+                    /*
+                    bindings = [
+                        [ selector, event, function ]
+                    ];
+                    */
+                }
+            },
+            panelShow : function( $rindow, className ) {
+                var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
+                    $rdr_bodyFirst = $rdr_body_wrap.find('div.rdr_body').eq(0),
+                    $showPanel = $rdr_body_wrap.next('div.'+className),
+                    rdr_bodyFirst_width = $rdr_bodyFirst.width();
+                
+                $rdr_bodyFirst.animate({marginLeft:-(rdr_bodyFirst_width/2)},500);
+            },
+            panelHide : function( $rindow ) {
+            },
             updateSizes : function($rindow) {
                 //RDR.rindow.updateSizes:
                 var rindowHeight = $rindow.height(),
@@ -246,7 +287,7 @@ function readrBoard($R){
                 //RDR.rindow.jspUpdate:
 
                 //updates or inits first (and should be only) $rindow rdr_body into jScrollPanes
-                $rindow.find('div.rdr_body').eq(0).each( function() {
+                $rindow.find('div.rdr_body').each( function() {
                     var $this = $(this);
                     if( !$this.hasClass('jspScrollable') ){
                         // IE.  for some reason, THIS fires the scrollstop event.  WTF:
