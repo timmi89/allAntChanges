@@ -84,19 +84,19 @@ function readrBoard($R){
                 forceHeight: false,
                 rewritable: true
             },
-            updateHeader : function( $rindow, content ) {
+            updateHeader : function( $rindow, $content ) {
                 //RDR.rindow.updateHeader:
                 var $header = $rindow.find('div.rdr_header');
-                if ( content ) {
-                    $header.html( content );
+                if ( $content ) {
+                    $header.html( $content );
                     RDR.rindow.updateSizes( $rindow );
                 }
             },
-            updateFooter : function( $rindow, content ) {
+            updateFooter : function( $rindow, $content ) {
                 //RDR.rindow.updateFooter:
                 var $footer = $rindow.find('div.rdr_footer');
                 $footer.show(0);
-                if ( content ) $footer.html( content );
+                if ( $content ) $footer.html( $content );
                 RDR.rindow.updateSizes( $rindow );
             },
             hideFooter : function( $rindow ) {
@@ -373,8 +373,13 @@ function readrBoard($R){
                 if ( $container ) {
                     $container.append( $a, " " );
                     if ( !$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions.coms ) ) {
+                        var $commentHover = $('<span class="rdr_comment_hover"><span class="rdr_icon"></span> '+content_node.top_interactions.coms.length+'</span>');
+                        $commentHover.click( function() {
+                            RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:$rindow, content_node:content_node, selState:content_node.selState});
+                        });
+                        
                         $a.append('<span class="rdr_has_comment"></span>');
-                        $a.after('<span class="rdr_comment_hover"><span class="rdr_icon"></span> '+content_node.top_interactions.coms.length+'</span>');
+                        $a.after( $commentHover );
                     }
                     if ( tagCount === "" ) {
                         $span.hide();
@@ -5279,9 +5284,11 @@ PILLSTODO
                 RDR.actions.panel.expand("contentPanel", rindow);
             },
             viewCommentContent: function(args){
-
+console.log('viewCommentContent');
+console.dir(args);
+//RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:$rindow, content_node:content_node, selState:content_node.selState});
                 var tag = args.tag, 
-                    rindow = args.rindow,
+                    $rindow = args.rindow,
                     content_node = args.content_node;
                 
                 
@@ -5293,7 +5300,9 @@ PILLSTODO
                 if ( args.selState ) var selState = args.selState;
                 var view_all_state = (args.view_all_state) ? args.view_all_state:"show";
 
-                var $whyPanel = rindow.find('div.rdr_whyPanel'),
+                /*
+                PILLSTODO remove:
+                var $whyPanel = $rindow.find('div.rdr_whyPanel'),
                     $whyPanel_body = $whyPanel.find('div.rdr_body'),
                     $whyPanel_body_jsp = $whyPanel_body.find('.jspPane');
                 
@@ -5315,22 +5324,12 @@ PILLSTODO
                 $whyPanel_body.css({
                      top:0
                 });
+                */
                 
-                if ( view_all_state != "hide" ) {
-                    var $backToQuotes = $('<div class="rdr_view_all rdr_'+view_all_state+'">&lt;&lt; View All</div>');
-                    $whyPanel.find('.rdr_body_wrap').append( $backToQuotes );
-                    $whyPanel_body.css({
-                         top:16
-                    });
-                    $backToQuotes.click( function() {
-                        // $whyPanel.removeClass('rdr_whyShowing');
-                        //rindow.find('div.rdr_contentPanel div.rdr_header h1 span').remove();
-                        RDR.actions.panel.collapse("whyPanel", rindow, kind );
-                    });
-                }
+                
 
-                //$whyPanel_body.empty();
-
+                /*
+                PILLSTODO remove:
                 if($whyPanel_body_jsp.length){
                     if ( view_all_state != "hide" ) {
                         //$whyPanel_body_jsp.before( $backToQuotes );
@@ -5344,8 +5343,30 @@ PILLSTODO
                 }
                 $whyPanel_panelCard.siblings('.rdr_panelCard').hide();
                 $whyPanel_panelCard.append( _makeInfoBox(content_node) );
+                */
 
-                _makeHeaders();
+                var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
+                                    '<h1>' + tag.body + '</h1>';
+                
+                RDR.rindow.updateHeader( $rindow, headerContent );
+
+
+return;
+
+if ( view_all_state != "hide" ) {
+    var $backToQuotes = $('<div class="rdr_view_all rdr_'+view_all_state+'">&lt;&lt; View All</div>');
+    $whyPanel.find('.rdr_body_wrap').append( $backToQuotes );
+    $whyPanel_body.css({
+         top:16
+    });
+    $backToQuotes.click( function() {
+        // $whyPanel.removeClass('rdr_whyShowing');
+        //$rindow.find('div.rdr_contentPanel div.rdr_header h1 span').remove();
+        RDR.actions.panel.collapse("whyPanel", $rindow, kind );
+    });
+}
+
+
                 _makeOtherReactions();
                 _makeOtherComments();
 
@@ -5353,30 +5374,6 @@ PILLSTODO
 
 
                 //helper functions 
-                function _makeHeaders(){
-                    var maxHeaderLen = 35,
-                        headerFullText,
-                        abrvBodyText,
-                        $headerBody;
-
-                    //note: tag.body length should never be the full width
-                    if ( kind != "img" && kind != "media" ) {
-                        headerFullText = ""+tag.body + content_node.body;
-                        abrvBodyText = content_node.body;
-                        if( ( headerFullText.length ) > maxHeaderLen ){
-                            abrvBodyText = content_node.body.slice(0, (maxHeaderLen - tag.body.length) ) +  "...";
-                        }
-                        $headerBody = $("<span class='rdr_tag_text'>"+tag.body+"</span> : <span class='rdr_contentNode_text'>" + abrvBodyText +"</span>");
-                    } else {
-                        $headerBody = "<span class='rdr_tag_text'>"+tag.body+"</span>";
-                    }
-                    
-                    //trying this out:  I'm going to copy the same header into the whypanel, and then do some tricky hiding
-                    // to make it look like the header slides in.
-                    rindow.find('div.rdr_contentPanel div.rdr_header h1').html(tag.body);
-                    rindow.find('div.rdr_whyPanel div.rdr_header h1').empty().append($headerBody);
-                    rindow.find('div.rdr_whyPanel div.rdr_header span.rdr_tag_text').css('visibility','hidden');                    
-                }
                 function _makeOtherReactions(){
                     
                     function SortByCount(a,b) { return b.count - a.count; }
@@ -5399,7 +5396,7 @@ PILLSTODO
 
                     if ( other_tags.length > 0 ) {
                         other_tags.sort( SortByCount );
-                        // we set this div far down, then animate it up, because position:fixed doesn't stay within a rindow, it stays within the browser viewport
+                        // we set this div far down, then animate it up, because position:fixed doesn't stay within a $rindow, it stays within the browser viewport
                         var $otherTagsWrap = $('<div class="rdr_otherTagsWrap" />'),
                             $otherTags = $('<div class="rdr_otherTags" ><strong>Other Reactions:</strong>&nbsp;</div>');
                         $otherTags.appendTo($otherTagsWrap);
@@ -5454,7 +5451,7 @@ PILLSTODO
                         $shareLinks.find('li:last').click( function() {
                             // var real_content_node = ( RDR.content_nodes[hash] ) ? RDR.content_nodes[hash] : RDR.summaries[hash].content;
                             RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
-                            RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
+                            RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node });
                             return false;
                         });
                     });
@@ -5479,7 +5476,7 @@ PILLSTODO
 
                     // $infoSummary.click( function() {
                     //     // click
-                    //     args = { tag:tag, rindow:rindow, hash:hash, content_node:content_node, uiMode:'read'};
+                    //     args = { tag:tag, rindow:$rindow, hash:hash, content_node:content_node, uiMode:'read'};
                     //     RDR.actions.interactions.ajax( args, 'tag', 'create' );
                     // });
                     // .hover( function() {
@@ -5548,7 +5545,7 @@ PILLSTODO
                             //quick fix
                             content_node.kind = summary.kind;
                             
-                            var args = {  hash:hash, content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:rindow, selState:selState};
+                            var args = {  hash:hash, content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow, selState:selState};
                             //leave parent_id undefined for now - backend will find it.
                             RDR.actions.interactions.ajax( args, 'comment', 'create');
 
@@ -5581,7 +5578,7 @@ PILLSTODO
                     if(!hasComments) return;
                     //else
 
-                    // rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
+                    // $rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
 
                     // ok, get the content associated with this tag!
                     var $otherComments = $('<div class="rdr_otherCommentsBox rdr_sntPnl_padder"></div>').hide().html(
@@ -5618,7 +5615,7 @@ PILLSTODO
                             // });
                             
                             // var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
-                            //     RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:rindow, content:content_node.body, which:which });
+                            //     RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:$rindow, content:content_node.body, which:which });
                             // });
 
                             $commentSet.append( $commentBy, $comment ); // , $commentReplies, $commentReply 
@@ -5631,7 +5628,7 @@ PILLSTODO
                 } //end makeOtherComments
 
                 // if ( kind == "img" || kind == "media" )  {
-                //     rindow.find('div.rdr_contentPanel').remove();
+                //     $rindow.find('div.rdr_contentPanel').remove();
                 // }
 
                 //expand comment section for readmode
