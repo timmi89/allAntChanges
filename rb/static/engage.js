@@ -135,15 +135,26 @@ function readrBoard($R){
                     */
                 }
             },
-            panelShow : function( $rindow, className ) {
+            panelShow : function( $rindow, className, callback ) {
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
                     $rdr_bodyFirst = $rdr_body_wrap.find('div.rdr_body').eq(0),
                     $showPanel = $rdr_body_wrap.next('div.'+className),
                     rdr_bodyFirst_width = $rdr_bodyFirst.width();
-                
-                $rdr_bodyFirst.animate({marginLeft:-(rdr_bodyFirst_width/2)},500);
+
+                $showPanel.show();
+                $rdr_bodyFirst.animate({marginLeft:-(rdr_bodyFirst_width + 12)},500, function() {
+                    if (callback) callback();
+                });
             },
-            panelHide : function( $rindow ) {
+            panelHide : function( $rindow, className, callback ) {
+                var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
+                    $rdr_bodyFirst = $rdr_body_wrap.find('div.rdr_body').eq(0),
+                    $showPanel = $rdr_body_wrap.next('div.'+className),
+                    rdr_bodyFirst_width = $rdr_bodyFirst.width();
+
+                $rdr_bodyFirst.animate({marginLeft:4},500, function() {
+                    if (callback) callback();
+                });
             },
             updateSizes : function($rindow) {
                 //RDR.rindow.updateSizes:
