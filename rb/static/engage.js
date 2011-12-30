@@ -105,6 +105,10 @@ function readrBoard($R){
                 RDR.rindow.updateSizes( $rindow );
             },
             panelCreate : function( $rindow, className ) {
+                //RDR.rindow.panelCreate
+                // later, I want to add the ability for this to create an absolutely-positioned panel
+                // that will slide OVER, not next to, current content... like a login panel sliding over the content.
+
                 // create a new panel for the rindow
                 if ( !$rindow ) return;
 
@@ -119,6 +123,7 @@ function readrBoard($R){
                 }
             },
             panelPopulate : function( $rindow, className, $content, bindings ) {
+                //RDR.rindow.panelPopulate
                 if ( !$rindow ) return;
                 
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
@@ -127,7 +132,7 @@ function readrBoard($R){
                 $panel.html( $content );
 
                 if ( bindings ) {
-                    // apply some events to the content of panelTwo
+                    // apply some events to the content of the new $panel?
                     /*
                     bindings = [
                         [ selector, event, function ]
@@ -136,6 +141,7 @@ function readrBoard($R){
                 }
             },
             panelShow : function( $rindow, className, callback ) {
+                //RDR.rindow.panelShow
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
                     $rdr_bodyFirst = $rdr_body_wrap.find('div.rdr_body').eq(0),
                     $showPanel = $rdr_body_wrap.next('div.'+className),
@@ -147,6 +153,7 @@ function readrBoard($R){
                 });
             },
             panelHide : function( $rindow, className, callback ) {
+                //RDR.rindow.panelHide
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
                     $rdr_bodyFirst = $rdr_body_wrap.find('div.rdr_body').eq(0),
                     $showPanel = $rdr_body_wrap.next('div.'+className),
