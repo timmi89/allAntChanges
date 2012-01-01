@@ -351,13 +351,14 @@ function readrBoard($R){
                 return gotoHeight;
             },
             writeTag: function(tag, $container, $rindow, content_node_id) {
+                //RDR.rindow.writeTag
+                console.log('RDR.rindow.writeTag');
                 var tagCount = ( tag.count ) ? tag.count:"+",
                     hash = $rindow.data('container'),
                     summary = RDR.summaries[hash],
                     content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"",
                     $span;
 
-                
                 var peoples = ( tagCount == 1 ) ? "person":"people",
                     $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id);
 
@@ -434,7 +435,8 @@ function readrBoard($R){
             _rindowTypes: {
                 //RDR.rindow._rindowTypes:
                 tagMode: {
-                    //RDR.rindow._rindowTypes.writeMode:
+                    //RDR.rindow._rindowTypes.tagMode.make(settings);
+                    // [porter] we should change the name of this function.  no need to nest under _rindowTypes anymore, right?
                     make: function(settings){
                         //RDR.rindow._rindowTypes.writeMode.make:
                         //as the underscore suggests, this should not be called directly.  Instead, use RDR.rindow.make(rindowType [,options])
@@ -5342,7 +5344,6 @@ console.dir(args);
                     $whyPanel_panelCard.appendTo($whyPanel_body);
                 }
                 $whyPanel_panelCard.siblings('.rdr_panelCard').hide();
-                $whyPanel_panelCard.append( _makeInfoBox(content_node) );
                 */
 
                 var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
@@ -5350,30 +5351,16 @@ console.dir(args);
                 
                 RDR.rindow.updateHeader( $rindow, headerContent );
 
-
-return;
-
-if ( view_all_state != "hide" ) {
-    var $backToQuotes = $('<div class="rdr_view_all rdr_'+view_all_state+'">&lt;&lt; View All</div>');
-    $whyPanel.find('.rdr_body_wrap').append( $backToQuotes );
-    $whyPanel_body.css({
-         top:16
-    });
-    $backToQuotes.click( function() {
-        // $whyPanel.removeClass('rdr_whyShowing');
-        //$rindow.find('div.rdr_contentPanel div.rdr_header h1 span').remove();
-        RDR.actions.panel.collapse("whyPanel", $rindow, kind );
-    });
-}
-
-
-                _makeOtherReactions();
                 _makeOtherComments();
+                _makeCommentBox();
 
-                $whyPanel_panelCard.append( _makeCommentBox() );
+                // $whyPanel_panelCard.append( _makeCommentBox() );
 
 
                 //helper functions 
+                /*
+                PILLSTODO
+                this is a useful function that we'll want to bring back, just not sure where in the new UI
                 function _makeOtherReactions(){
                     
                     function SortByCount(a,b) { return b.count - a.count; }
@@ -5437,63 +5424,9 @@ if ( view_all_state != "hide" ) {
                         });
                     }
                 }
+                */
 
-                function _makeInfoBox(content_node){
-
-                    var $socialBox = $('<div class="rdr_shareBox"><strong>Share It:</strong><div class="rdr_share_social" /></div>'), 
-                    $shareLinks = $('<ul class="shareLinks"></ul>'),
-                    socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
-
-                    var shareHash = hash;
-                    //quick mockup version of this code
-                    $.each(socialNetworks, function(idx, val){
-                        $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
-                        $shareLinks.find('li:last').click( function() {
-                            // var real_content_node = ( RDR.content_nodes[hash] ) ? RDR.content_nodes[hash] : RDR.summaries[hash].content;
-                            RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
-                            RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node });
-                            return false;
-                        });
-                    });
-                    $socialBox.append($shareLinks, '<div style="clear:both;" />');
-
-                    var reaction_count, reaction_body;
-                    if ( kind == "text" ) {
-                        reaction_count = content_node.top_interactions.tags[ tag.id ].count;
-                        reaction_body = content_node.top_interactions.tags[ tag.id ].body;
-                    } else {
-                        reaction_count = tag.count;
-                        reaction_body = tag.body;
-                    }
-
-                    var peoples = (reaction_count>1) ? "people" : "person",
-                        $reactionCount = $('<div class="rdr_reaction_count"><span>'+reaction_count+'</span> '+peoples+' reacted </div>').data('count', reaction_count),
-                        $h4 = $('<h4>'+reaction_body+'</h4>').prepend($reactionCount),
-                        $infoSummary = $('<div class="rdr_info_summary" />').append($h4);
-
-                    // $tooltip = RDR.tooltip.draw({ "item":"vote_up","tipText":"Vote reaction up" }).addClass('rdr_top').hide();
-                    // $infoSummary.append( $tooltip );
-
-                    // $infoSummary.click( function() {
-                    //     // click
-                    //     args = { tag:tag, rindow:$rindow, hash:hash, content_node:content_node, uiMode:'read'};
-                    //     RDR.actions.interactions.ajax( args, 'tag', 'create' );
-                    // });
-                    // .hover( function() {
-                    //     // hover
-                    //     $(this).find('div.rdr_tooltip').show();
-                    // }, function() {
-                    //     // hover out
-                    //     $(this).find('div.rdr_tooltip').hide();
-                    // });
-
-                    var $infoBox = $('<div />');
-                    $infoBox.append( $infoSummary, $socialBox );
-                    
-                    return $infoBox;
-                }
-
-                function _makeCommentBox(){
+                function _makeCommentBox() {
 
                     //todo: combine this with the tooltip for the tags
                     // var $commentDiv =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+tag.id+'">Comment</button></div>');
