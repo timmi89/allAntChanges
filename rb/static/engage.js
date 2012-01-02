@@ -209,7 +209,7 @@ function readrBoard($R){
 
                 if ( visiblePaneHeight > 0 ) {
                     if ( visiblePaneHeight > 260 ) visiblePaneHeight = 260; // is this right?
-                    $rindow.find('div.jspContainer').height( visiblePaneHeight );
+                    $rindow.find('div.jspContainer').height( visiblePaneHeight+4 );
                     
                     if ( !setWidth ) setWidth = visiblePane.$elm.width()+8;
                     $rindow.animate({ width: setWidth, height:(visiblePaneHeight + heightAdjustment) }, { duration:333, queue:false } );
@@ -5559,6 +5559,9 @@ console.dir(args);
                     ); //.appendTo($whyPanel_panelCard);
 
                     $otherComments.find('div.rdr_back').click( function() {
+                        var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
+                                            '<h1>Reactions</h1>';
+                        RDR.rindow.updateHeader( $rindow, headerContent );
                         RDR.rindow.panelHide( $rindow, 'rdr_comments' );
                     });
 
