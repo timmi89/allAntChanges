@@ -89,7 +89,7 @@ function readrBoard($R){
                 var $header = $rindow.find('div.rdr_header');
                 if ( $content ) {
                     $header.html( $content );
-                    RDR.rindow.updateSizes( $rindow );
+                    // RDR.rindow.updateSizes( $rindow );
                 }
             },
             updateFooter : function( $rindow, $content ) {
@@ -145,13 +145,12 @@ function readrBoard($R){
                 //RDR.rindow.panelShow
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
                     $rdr_bodyFirst = $rdr_body_wrap.find('div.rdr_body').eq(0),
-                    $showPanel = $rdr_body_wrap.next('div.'+className),
+                    $showPanel = $rdr_body_wrap.find('div.'+className),
                     rdr_bodyFirst_width = $rdr_bodyFirst.width();
 
                 $showPanel.show();
                 $rdr_bodyFirst.animate({marginLeft:-(rdr_bodyFirst_width + 12)},500, function() {
                     if (callback) callback();
-                    console.log($rindow);
                     RDR.rindow.updateSizes( $rindow );
                 });
             },
@@ -159,18 +158,20 @@ function readrBoard($R){
                 //RDR.rindow.panelHide
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
                     $rdr_bodyFirst = $rdr_body_wrap.find('div.rdr_body').eq(0),
-                    $showPanel = $rdr_body_wrap.next('div.'+className),
+                    $showPanel = $rdr_body_wrap.find('div.'+className),
                     rdr_bodyFirst_width = $rdr_bodyFirst.width();
 
                 $rdr_bodyFirst.animate({marginLeft:4},500, function() {
                     if (callback) callback();
+                    $showPanel.remove();
+                    RDR.rindow.updateSizes( $rindow );
                 });
             },
             updateSizes : function($rindow, setHeight, setWidth) {
                 //RDR.rindow.updateSizes:
-console.log('-- RDR.rindow.updateSizes --');
 
-
+                // feels like we should not need this, but behavior is more consistent if we have it.  ugh.
+                RDR.rindow.jspUpdate( $rindow );
 
                 var rindowHeight = $rindow.height(),
                     heightAdjustment = 36;
@@ -180,46 +181,43 @@ console.log('-- RDR.rindow.updateSizes --');
                 } else {
                     $rindow.css('padding-bottom','0px');
                 }
-
-
-                /*
-                var visiblePaneHeight = $rindow.find('div.jspPane').height();
-                if ( setHeight ) visiblePaneHeight = setHeight;
                 
-                if ( visiblePaneHeight && visiblePaneHeight != -1 ) {
-                    RDR.rindow.jspUpdate( $rindow );
-                    if ( visiblePaneHeight > 260 ) visiblePaneHeight = 260; // is this right?
-                    $rindow.find('div.jspContainer').height( visiblePaneHeight );
-                    $rindow.animate({ height:(visiblePaneHeight + heightAdjustment)},333);
-                }
-                */
+                // use rLeft to determine which pane is visible.  
+                // if offset of the pane is slightly greater (4px) than the rindow, than its in-view.
                 var rLeft = $rindow.offset().left;
                 if ( $rindow.find('div.rdr_body').length ) {
-                console.log('------- rLeft ----------- : ' + $rindow.find('div.rdr_body').length );
                     
-                var visiblePaneHeight = 0;
+                // find the visible pane and resize the rindow accordingly.
+                // it isn't perfect yet.  requires set widths and heights rather than being adaptive.
+                var visiblePaneHeight = 0,
+                    visiblePane = {};
                     $rindow.find('div.rdr_body').each( function() {
                         var $this = $(this);
-                        console.log($this.find('div.jspPane').length);
-                        console.log($this.find('div.jspPane').height());
-                        console.log($this.height());
                         if ( rLeft < $this.offset().left ) {
-                            visiblePaneHeight = ($this.find('div.jspPane').length==1) ? $this.find('div.jspPane').height() : $this.height();
+                            if ($this.find('div.jspPane').length==1) {
+                                visiblePaneHeight = $this.find('div.jspPane').height();
+                                visiblePane.which = "hasJspPane";
+                            } else {
+                                visiblePaneHeight = $this.height();
+                                visiblePane.which = "rdr_body";
+                            }
+                            visiblePane.$elm = $this;
                             if ( setHeight ) visiblePaneHeight = setHeight;
                         }
                     });
-
                 }
 
                 if ( visiblePaneHeight > 0 ) {
-                    RDR.rindow.jspUpdate( $rindow );
                     if ( visiblePaneHeight > 260 ) visiblePaneHeight = 260; // is this right?
                     $rindow.find('div.jspContainer').height( visiblePaneHeight );
-                    $rindow.animate({ height:(visiblePaneHeight + heightAdjustment)},333);
+                    
+                    if ( !setWidth ) setWidth = visiblePane.$elm.width()+8;
+                    $rindow.animate({ width: setWidth, height:(visiblePaneHeight + heightAdjustment) }, { duration:333, queue:false } );
+                    visiblePane.$elm.css('width', setWidth );
+                    if ( visiblePane.which == "hasJspPane" ) {
+                        visiblePane.$elm.find('div.jspContainer, div.jspPane').animate({ width: (setWidth-8) }, { duration:333, queue:false } );
+                    }
                 }
-
-                if ( setWidth ) $rindow.animate({ width: setWidth }, 333 );
-
                 RDR.rindow.jspUpdate( $rindow );
             },
             updateTagMessage: function(args) {
@@ -701,9 +699,8 @@ console.log('-- RDR.rindow.updateSizes --');
                             width:rindowWidth,
                             height:rindowHeight
                         }, 333, 'swing', function(){
-                            RDR.rindow.updateSizes( $rindow );
+                            // RDR.rindow.updateSizes( $rindow );
                         });
-                        //RDR.rindow.updateSizes( $rindow );
                         /* END modify the rindow size */
                     },
                     customOptions: {
@@ -1169,7 +1166,7 @@ console.log('-- RDR.rindow.updateSizes --');
                     $new_rindow.height(settings.height);
                 }
                
-                RDR.rindow.updateSizes( $new_rindow );
+                // RDR.rindow.updateSizes( $new_rindow );
 
                 RDR.actionbar.closeAll();
 
@@ -5393,8 +5390,7 @@ console.dir(args);
                 
                 RDR.rindow.panelShow( $rindow, 'rdr_comments' );
                 
-                // RDR.rindow.updateSizes( $rindow );
-                RDR.rindow.updateSizes( $rindow, 200 );
+                RDR.rindow.updateSizes( $rindow, 200, 300 );
 
 
                 // $whyPanel_panelCard.append( _makeCommentBox() );
@@ -5503,8 +5499,6 @@ console.dir(args);
                         }
                         $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
                     });
-
-                    // $commentDiv.find('textarea').autogrow();
                                         
                     $submitButton.click(function(e) {
                         var commentText = $commentTextarea.val();
@@ -5560,8 +5554,13 @@ console.dir(args);
 
                     // ok, get the content associated with this tag!
                     var $otherComments = $('<div class="rdr_otherCommentsBox rdr_sntPnl_padder"></div>').hide().html(
+                        '<div class="rdr_back">&lt;&lt; Back</div>'+
                         '<div><h4>(<span>' + node_comments + '</span>) Comments:</h4></div>'
                     ); //.appendTo($whyPanel_panelCard);
+
+                    $otherComments.find('div.rdr_back').click( function() {
+                        RDR.rindow.panelHide( $rindow, 'rdr_comments' );
+                    });
 
                     for ( var i in comments ) {
                         var this_comment = comments[i];
@@ -5674,6 +5673,7 @@ console.dir(args);
                 },
                 expand: function(_panel, rindow, interaction_id){
                     //RDR.actions.panel.expand:
+                    // PILLSTODO remove all of this?
                     var panel = _panel || "whyPanel";
                     // hack.  chrome and safari don't like rounded corners if the whyPanel is showing since it is wider than panel1
                     rindow.find('div.rdr_whyPanel').css('visibility','visible');
@@ -5728,8 +5728,8 @@ console.dir(args);
                     
                     //temp hack
                     if( $thisPanel.data('expanded') ){
-                        RDR.rindow.updateSizes( rindow );
-                        rindow.dequeue('userMessage');
+                        // RDR.rindow.updateSizes( rindow );
+                        // rindow.dequeue('userMessage');
                     }
                     else{
 
@@ -5759,6 +5759,7 @@ console.dir(args);
                 },
                 collapse: function(_panel, rindow){
                     //RDR.actions.panel.collapse:
+                    // PILLSTODO remove all of this?
 
                     //note: I'm commenting this out because I think it helps to see the why panel slide back
                     //rindow.find('div.rdr_whyPanel').css('visibility','hidden');
@@ -6399,8 +6400,6 @@ console.dir(args);
                     }
                     $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
                 });
-
-                // $commentDiv.find('textarea').autogrow();
                                     
                 $submitButton.click(function(e) {
                     var commentText = $commentTextarea.val();
@@ -6757,11 +6756,7 @@ function $RFunctions($R){
         plugin_jquery_json($R);
         plugin_jquery_postMessage($R);
         plugin_jquery_enhancedOffset($R);
-        // plugin_jquery_textnodes($R);                     //not needed now
-        // plugin_jquery_superRange($R);                    //not needed now
-        // plugin_jquery_improvedCSS($R);                   //not needed now
         plugin_jquery_hashChange($R);
-        plugin_jquery_autogrow($R);
         plugin_jquery_mousewheel($R);
         plugin_jquery_mousewheelIntent($R);
         plugin_jquery_scrollStartAndStop($R);
@@ -8151,64 +8146,6 @@ function $RFunctions($R){
 
             var c="hashchange",h=document,f,g=$.event.special,i=h.documentMode,d="on"+c in e&&(i===b||i>7);function a(j){j=j||location.href;return"#"+j.replace(/^[^#]*#?(.*)$/,"$1")}$.fn[c]=function(j){return j?this.bind(c,j):this.trigger(c)};$.fn[c].delay=50;g[c]=$.extend(g[c],{setup:function(){if(d){return false}$(f.start)},teardown:function(){if(d){return false}$(f.stop)}});f=(function(){var j={},p,m=a(),k=function(q){return q},l=k,o=k;j.start=function(){p||n()};j.stop=function(){p&&clearTimeout(p);p=b};function n(){var r=a(),q=o(m);if(r!==m){l(m=r,q);$(e).trigger(c)}else{if(q!==m){location.href=location.href.replace(/#.*/,"")+q}}p=setTimeout(n,$.fn[c].delay)}$.browser.msie&&!d&&(function(){var q,r;j.start=function(){if(!q){r=$.fn[c].src;r=r&&r+a();q=$('<iframe tabindex="-1" title="empty"/>').hide().one("load",function(){r||l(a());n()}).attr("src",r||"javascript:0").insertAfter("body")[0].contentWindow;h.onpropertychange=function(){try{if(event.propertyName==="title"){q.document.title=h.title}}catch(s){}}}};j.stop=k;o=function(){return a(q.location.href)};l=function(v,s){var u=q.document,t=$.fn[c].domain;if(v!==s){u.title=h.title;u.open();t&&u.write('<script>document.domain="'+t+'"<\/script>');u.close();q.location.hash=v}}})();return j})();
         }
-
-        function plugin_jquery_autogrow($){
-            /*
-             * modified by PB from...
-             * jQuery autoResize (textarea auto-resizer)
-             * @copyright James Padolsey http://james.padolsey.com
-             * @version 1.04
-             */
-
-            // a.fn.autogrow=function(j){var b=a.extend({onResize:function(){},animate:true,animateDuration:150,animateCallback:function(){},extraSpace:20,limit:1000},j);this.filter('textarea').each(function(){var c=a(this).css({resize:'none','overflow-y':'hidden'}),k=c.height(),f=(function(){var l=['height','width','lineHeight','textDecoration','letterSpacing'],h={};a.each(l,function(d,e){h[e]=c.css(e)});return c.clone().removeAttr('id').removeAttr('name').css({position:'absolute',top:0,left:-9999}).css(h).attr('tabIndex','-1').insertBefore(c)})(),i=null,g=function(){f.height(0).val(a(this).val()).scrollTop(10000);var d=Math.max(f.scrollTop(),k)+b.extraSpace,e=a(this).add(f);if(i===d){return}i=d;if(d>=b.limit){a(this).css('overflow-y','');return}b.onResize.call(this);b.animate&&c.css('display')==='block'?e.stop().animate({height:d},b.animateDuration,b.animateCallback):e.height(d)};c.unbind('.dynSiz').bind('keyup.dynSiz',g).bind('keydown.dynSiz',g).bind('change.dynSiz',g)});return this};
-            $.fn.autogrow = function() {
-                // this.filter('textarea').each(function() {
-                $('#rdr_shadow').remove();
-
-                var $this       = $(this),
-                    minHeight   = 67,
-                    lineHeight  = $this.css('fontSize'); // used to be 'lineHeight' but that made the textarea too tall
-
-                var shadow = $('<div id="rdr_shadow"></div>').css({
-                    position:   'absolute',
-                    top:        -10000,
-                    left:       -10000,
-                    width:      $(this).width() - parseInt($this.css('paddingLeft'), 10) - parseInt($this.css('paddingRight'), 10),
-                    fontSize:   $this.css('fontSize'),
-                    fontFamily: $this.css('fontFamily'),
-                    lineHeight: $this.css('fontSize'), // used to be 'lineHeight' but that made the textarea too tall
-                    resize:     'none'
-                }).appendTo(document.body);
-
-                var update = function() {
-
-                    var times = function(string, number) {
-                        for (var i = 0, r = ''; i < number; i ++) r += string;
-                        return r;
-                    };
-                    
-                    var val = this.value.replace(/</g, '&lt;')
-                                        .replace(/>/g, '&gt;')
-                                        .replace(/&/g, '&amp;')
-                                        .replace(/\n$/, '<br/>&nbsp;')
-                                        .replace(/\n/g, '<br/>')
-                                        .replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ' });
-                    
-                    shadow.html(val);
-                    //rinh $(this).css('height', Math.max(shadow.height()-10, minHeight));
-                    RDR.rindow.updateSizes( $this.closest('div.rdr.rdr_window') );
-                };
-
-                $(this).change(update).keyup(update).keydown(update);
-                // $(this).keydown(update);
-
-                    // update.apply(this);
-
-                // });
-                return this;
-            };
-        }
-        //end function plugin_jquery_autogrow
         
         function plugin_jquery_mousewheel($){
             /*

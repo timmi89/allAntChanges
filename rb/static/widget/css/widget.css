@@ -287,6 +287,7 @@ PILLSTODO
 #rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace                { background:#f0f0f0 !important; position:relative !important; margin-bottom:6px; overflow:hidden;}
 #rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace div.rdr_body   { max-height:266px; margin:0 4px; float:left !important; display:block !important;}
 #rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace div.rdr_body div.jspPane   { margin:0 !important; }
+#rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace div.rdr_body div.jspHorizontalBar   { display:none !important; }
 
 #rdr_sandbox div.rdr.rdr_window div.rdr_header h1                   { margin-left:14px !important; }
 
@@ -585,6 +586,7 @@ div.rdr .rdr_image_reactions .rdr_read .rdr_details {background: none !important
 */
 
 /* commentSet */
+#rdr_sandbox div.rdr div.rdr_comments                       {width:292px;}
 #rdr_sandbox div.rdr div.rdr_commentSet                     {margin:5px 10px; padding-bottom:5px; overflow:auto; border-bottom:1px solid #ddd;}
 #rdr_sandbox div.rdr div.rdr_commentSet:last-child,
 #rdr_sandbox div.rdr div.rdr_commentSet.rdr_lastchild       {border:none;} /*not the end of the world if this fails in IE, but compensate later*/
@@ -854,8 +856,8 @@ div.rdr.rdr-summary div.rdr_note ins img    { margin:0 !important; padding:0 !im
 #rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  div.rdr_info_summary h4:hover          { float: left; top: 2px; font-size:11px; background:#ddd;}
 #rdr_sandbox div.rdr_whyPanel div.rdr_panelCard  div.rdr_info_summary div.rdr_tooltip   { left: 0; top: 32px; }
 
-#rdr_sandbox div.rdr_whyPanel div.rdr_view_all { float: left; position:relative; z-index:1; width:300px; background:#aaa; font-size:9px; text-transform:uppercase; color:#fff; cursor:pointer; padding: 2px 12px;}
-#rdr_sandbox div.rdr_whyPanel div.rdr_view_all.rdr_hide { margin-top:-10px; }
+#rdr_sandbox div.rdr_window div.rdr_back { float: left; position:relative; z-index:1; width:300px; background:#aaa; font-size:9px; text-transform:uppercase; color:#fff; cursor:pointer; padding: 2px 12px;}
+#rdr_sandbox div.rdr_window div.rdr_back.rdr_hide { margin-top:-10px; }
 
 #rdr_sandbox div.rdr div.rdr_comment textarea    { margin:5px 0; resize:none; padding:5px; width:100%; max-width:94% !important; font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;background:#fff;}
 #rdr_sandbox div.rdr div.rdr_comment div.rdr_charCount          {font-size:10px; font-style:italic; color:#999; float:left;}
