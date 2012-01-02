@@ -122,14 +122,15 @@ function readrBoard($R){
                     $rdr_body_wrap.width( ( rdr_bodyFirst_width * column_count ) + ( 8 * column_count ) ).append( $newPanel );
                 }
             },
-            panelPopulate : function( $rindow, className, $content, bindings ) {
-                //RDR.rindow.panelPopulate
+            panelUpdate : function( $rindow, className, $content, replaceOrAppend, bindings ) {
+                //RDR.rindow.panelUpdate
                 if ( !$rindow ) return;
                 
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
                     $panel = $rdr_body_wrap.find('div.'+className);
 
-                $panel.html( $content );
+                if ( !replaceOrAppend || replaceOrAppend == "replace" ) $panel.html( $content );
+                else $panel.append( $content );
 
                 if ( bindings ) {
                     // apply some events to the content of the new $panel?
@@ -150,6 +151,8 @@ function readrBoard($R){
                 $showPanel.show();
                 $rdr_bodyFirst.animate({marginLeft:-(rdr_bodyFirst_width + 12)},500, function() {
                     if (callback) callback();
+                    console.log($rindow);
+                    RDR.rindow.updateSizes( $rindow );
                 });
             },
             panelHide : function( $rindow, className, callback ) {
@@ -163,8 +166,12 @@ function readrBoard($R){
                     if (callback) callback();
                 });
             },
-            updateSizes : function($rindow) {
+            updateSizes : function($rindow, setHeight, setWidth) {
                 //RDR.rindow.updateSizes:
+console.log('-- RDR.rindow.updateSizes --');
+
+
+
                 var rindowHeight = $rindow.height(),
                     heightAdjustment = 36;
                 if ( $rindow.find('div.rdr_footer').css('display') != "none" ) {
@@ -173,13 +180,46 @@ function readrBoard($R){
                 } else {
                     $rindow.css('padding-bottom','0px');
                 }
-                var jspPaneHeight = $rindow.find('div.jspPane').height();
+
+
+                /*
+                var visiblePaneHeight = $rindow.find('div.jspPane').height();
+                if ( setHeight ) visiblePaneHeight = setHeight;
                 
-                if ( jspPaneHeight ) {
-                    if ( jspPaneHeight > 260 ) jspPaneHeight = 260; // is this right?
-                    $rindow.find('div.jspContainer').height( jspPaneHeight );
-                    $rindow.animate({ height:(jspPaneHeight + heightAdjustment)},333);
+                if ( visiblePaneHeight && visiblePaneHeight != -1 ) {
+                    RDR.rindow.jspUpdate( $rindow );
+                    if ( visiblePaneHeight > 260 ) visiblePaneHeight = 260; // is this right?
+                    $rindow.find('div.jspContainer').height( visiblePaneHeight );
+                    $rindow.animate({ height:(visiblePaneHeight + heightAdjustment)},333);
                 }
+                */
+                var rLeft = $rindow.offset().left;
+                if ( $rindow.find('div.rdr_body').length ) {
+                console.log('------- rLeft ----------- : ' + $rindow.find('div.rdr_body').length );
+                    
+                var visiblePaneHeight = 0;
+                    $rindow.find('div.rdr_body').each( function() {
+                        var $this = $(this);
+                        console.log($this.find('div.jspPane').length);
+                        console.log($this.find('div.jspPane').height());
+                        console.log($this.height());
+                        if ( rLeft < $this.offset().left ) {
+                            visiblePaneHeight = ($this.find('div.jspPane').length==1) ? $this.find('div.jspPane').height() : $this.height();
+                            if ( setHeight ) visiblePaneHeight = setHeight;
+                        }
+                    });
+
+                }
+
+                if ( visiblePaneHeight > 0 ) {
+                    RDR.rindow.jspUpdate( $rindow );
+                    if ( visiblePaneHeight > 260 ) visiblePaneHeight = 260; // is this right?
+                    $rindow.find('div.jspContainer').height( visiblePaneHeight );
+                    $rindow.animate({ height:(visiblePaneHeight + heightAdjustment)},333);
+                }
+
+                if ( setWidth ) $rindow.animate({ width: setWidth }, 333 );
+
                 RDR.rindow.jspUpdate( $rindow );
             },
             updateTagMessage: function(args) {
@@ -318,11 +358,6 @@ function readrBoard($R){
                 });
                 //$rindow.find('div.rdr_otherTags').animate( {'top':( $rindow.height()-58 ) }, 200 );
             },
-            setWidth: function( $rindow, width, callback ) {
-                $rindow.animate({
-                    width: width
-                }, $rindow.settings.animTime, callback );
-            },
             getHeight: function( $rindow, options ) {
 
                 //RDR.rindow.getHeight:
@@ -352,7 +387,6 @@ function readrBoard($R){
             },
             writeTag: function(tag, $container, $rindow, content_node_id) {
                 //RDR.rindow.writeTag
-                console.log('RDR.rindow.writeTag');
                 var tagCount = ( tag.count ) ? tag.count:"+",
                     hash = $rindow.data('container'),
                     summary = RDR.summaries[hash],
@@ -1165,7 +1199,7 @@ function readrBoard($R){
     
                 $new_rindow.bind( "resizestop", function(event, ui) {
                     var $this = $(this);
-                    RDR.rindow.updateSizes( $this );
+                    RDR.rindow.updateSizes( $this, -1 );
                 });
 
                 return $new_rindow;
@@ -5294,6 +5328,7 @@ console.dir(args);
                     content_node = args.content_node;
                 
                 
+                $rindow.removeClass('rdr_rewritable');
                 //temp tie-over    
                 var hash = args.hash,
                     summary = RDR.summaries[hash],
@@ -5351,8 +5386,16 @@ console.dir(args);
                 
                 RDR.rindow.updateHeader( $rindow, headerContent );
 
+                RDR.rindow.panelCreate( $rindow, 'rdr_comments' );
+
                 _makeOtherComments();
                 _makeCommentBox();
+                
+                RDR.rindow.panelShow( $rindow, 'rdr_comments' );
+                
+                // RDR.rindow.updateSizes( $rindow );
+                RDR.rindow.updateSizes( $rindow, 200 );
+
 
                 // $whyPanel_panelCard.append( _makeCommentBox() );
 
@@ -5438,7 +5481,7 @@ console.dir(args);
                         $commentDiv =  $('<div class="rdr_comment">'),
                         $commentTextarea = $('<textarea class="commentTextArea">' +helpText+ '</textarea>'),
                         $rdr_charCount =  $('<div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div>'),
-                        $submitButton =  $('<button id="rdr_comment_on_'+int_id.id+'">Comment</button>');
+                        $submitButton =  $('<button id="rdr_comment_on_'+''+'">Comment</button>'); // TODO once I have interaction ID from Tyler.
                     
                     $commentDiv.append( $commentTextarea, $rdr_charCount, $submitButton );
                     
@@ -5488,7 +5531,9 @@ console.dir(args);
                         return false; //so the page won't reload
                     });
 
-                    return $commentBox.append( $commentDiv );
+                    // return $commentBox.append( $commentDiv );
+                    $commentBox.append( $commentDiv )
+                    RDR.rindow.panelUpdate( $rindow, 'rdr_comments', $commentBox, 'update' );
                 }
 
                 function _makeOtherComments(){
@@ -5516,7 +5561,7 @@ console.dir(args);
                     // ok, get the content associated with this tag!
                     var $otherComments = $('<div class="rdr_otherCommentsBox rdr_sntPnl_padder"></div>').hide().html(
                         '<div><h4>(<span>' + node_comments + '</span>) Comments:</h4></div>'
-                    ).appendTo($whyPanel_panelCard);
+                    ); //.appendTo($whyPanel_panelCard);
 
                     for ( var i in comments ) {
                         var this_comment = comments[i];
@@ -5534,27 +5579,17 @@ console.dir(args);
                             var user_name = ( this_comment.user.first_name === "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
                             $commentBy.html( '<img src="'+user_image_url+'" class="no-rdr" /> ' + user_name );
                             $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
-                            /*
-                            $commentReply_link.bind( 'click.rdr', function() {
-                            });
-                            */
-
-                            // $commentReply.append( $commentReply_link );
-
-
-                            // var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);">'+thisTag.body+'</a>');
-                            
-                            // var $tagShareButton = $('<span class="rdr_tag_share"></span>').click(function() {
-                            // });
-                            
-                            // var $tagCountButton = $('<span class="rdr_tag_count">('+thisTag.count+')</span>').click( function() {
-                            //     RDR.actions.rateSendLite({ element:$(this), tag:thisTag, rindow:$rindow, content:content_node.body, which:which });
-                            // });
 
                             $commentSet.append( $commentBy, $comment ); // , $commentReplies, $commentReply 
                             $otherComments.append( $commentSet );
+                            $otherComments.append( '<div class="rdr_commentSet"><div class="rdr_commentBy"><img class="no-rdr" src="http://local.readrboard.com:8080/static/widget/images/anonymousplode.png"> Anonymous</div><div class="rdr_comment"><div class="rdr_comment_body">"Yeah it\'s non-real."</div></div></div>' );
+                            $otherComments.append( '<div class="rdr_commentSet"><div class="rdr_commentBy"><img class="no-rdr" src="http://local.readrboard.com:8080/static/widget/images/anonymousplode.png"> Anonymous</div><div class="rdr_comment"><div class="rdr_comment_body">"Yeah it\'s non-real."</div></div></div>' );
+                            $otherComments.append( '<div class="rdr_commentSet"><div class="rdr_commentBy"><img class="no-rdr" src="http://local.readrboard.com:8080/static/widget/images/anonymousplode.png"> Anonymous</div><div class="rdr_comment"><div class="rdr_comment_body">"Yeah it\'s non-real."</div></div></div>' );
+                            $otherComments.append( '<div class="rdr_commentSet"><div class="rdr_commentBy"><img class="no-rdr" src="http://local.readrboard.com:8080/static/widget/images/anonymousplode.png"> Anonymous</div><div class="rdr_comment"><div class="rdr_comment_body">"Yeah it\'s non-real."</div></div></div>' );
                         }
                     }
+                    RDR.rindow.panelUpdate( $rindow, 'rdr_comments', $otherComments );
+                    
                     //do later for IE maybe
                     //$otherComments.find('.rdr_commentSet:last-child').addClass('rdr_lastchild');
 
@@ -5564,8 +5599,9 @@ console.dir(args);
                 //     $rindow.find('div.rdr_contentPanel').remove();
                 // }
 
+                // PILLSTODO
                 //expand comment section for readmode
-                RDR.actions.panel.expand("whyPanel", rindow, kind );
+                // RDR.actions.panel.expand("whyPanel", rindow, kind );
             },
 			sentimentBox: function(settings) {
                 //Note: No longer used --> moved to RDR.rindow.make('writeMode', options)

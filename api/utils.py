@@ -29,6 +29,7 @@ def getSummary(interactions, container=None, content=None, page=None, data=None)
     if container:
         data['kind'] = container[2]
     if content:
+        data['id'] = content[0]
         data['body'] = content[1]
         data['kind'] = content[2]
         data['location'] = content[3]

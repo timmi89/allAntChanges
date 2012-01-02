@@ -839,7 +839,7 @@ div.rdr.rdr-summary div.rdr_note ins img    { margin:0 !important; padding:0 !im
 #rdr_sandbox div.rdr div.rdr_shareBox                       { background:#edf6ff; border:1px solid #b6d3ee !important; border-radius:8px !important; margin:0 0 0 10px; text-align: center; width: 120px; display:inline-block; padding:3px 0;}
 #rdr_sandbox div.rdr div.rdr_share_social                   { overflow:auto !important; }
 #rdr_sandbox div.rdr div.rdr_share_social strong            { display:block !important; float:left !important; margin:5px 5px 0 24px !important; }
-#rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; }
+#rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; border-top: 1px solid #d0d0d0; padding-top:5px; }
 #rdr_sandbox div.rdr_whyPanel div.rdr_panelCard             { padding: 6px 12px 0; position:relative; }
 
 /*#rdr_sandbox div.rdr_whyPanel div.rdr_panelCard.rdr_viewAll_hide      { padding-top: 0px; xmin-height:256px; }*/ /*pretty sure this is phased out*/
@@ -857,7 +857,7 @@ div.rdr.rdr-summary div.rdr_note ins img    { margin:0 !important; padding:0 !im
 #rdr_sandbox div.rdr_whyPanel div.rdr_view_all { float: left; position:relative; z-index:1; width:300px; background:#aaa; font-size:9px; text-transform:uppercase; color:#fff; cursor:pointer; padding: 2px 12px;}
 #rdr_sandbox div.rdr_whyPanel div.rdr_view_all.rdr_hide { margin-top:-10px; }
 
-#rdr_sandbox div.rdr div.rdr_comment textarea    { width:100%; font-size:14px; margin:5px 0; resize:none; padding:5px;}
+#rdr_sandbox div.rdr div.rdr_comment textarea    { margin:5px 0; resize:none; padding:5px; width:100%; max-width:94% !important; font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;background:#fff;}
 #rdr_sandbox div.rdr div.rdr_comment div.rdr_charCount          {font-size:10px; font-style:italic; color:#999; float:left;}
 #rdr_sandbox div.rdr div.rdr_share_count     { color:#999999; font-style:italic; margin:-3px 0 5px; }
 
@@ -872,7 +872,7 @@ div.rdr.rdr-summary div.rdr_note ins img    { margin:0 !important; padding:0 !im
 /* forms */
 #rdr_sandbox div.rdr textarea,
 #rdr_sandbox div.rdr input[type="text"]  {font-size:14px; color:#666; -moz-box-shadow:inset 0px 0px 5px #ddd;-webkit-box-shadow:inset 0px 0px 5px #ddd; box-shadow:inset 0px 0px 5px #ddd; border:1px solid #ddd; height:auto; width:auto;}
-#rdr_sandbox div.rdr button              {font-size:14px; }
+#rdr_sandbox div.rdr button              {font-size:11px; }
 
 /* summary widget */
 #rdr-page-summary {position:relative;}
