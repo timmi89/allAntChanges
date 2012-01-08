@@ -465,8 +465,6 @@ function readrBoard($R){
                         hash = $rindow.data('container');
 
                     if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
-                        // $whyPanel.find('div.rdr_body').empty();
-
                         tag.body = $input.val();
 
                         // args = { tag:tag, hash:hash, kind:"page" };
@@ -731,325 +729,6 @@ function readrBoard($R){
                         
                     }
                 }
-                /*
-                readMode: {
-                    //RDR.rindow._rindowTypes.readMode:
-                    make: function(settings){
-                        //RDR.rindow._rindowTypes.readMode.make:
-                        var hash = settings.hash;
-                        var summary = RDR.summaries[hash],
-                        kind = summary.kind,
-                        rewritable = (settings.rewritable == false) ? false:true;
-
-                        var selector = ".rdr-" + hash;
-
-                        var $indicator = $('#rdr_indicator_'+hash),
-                        $indicator_body = $('#rdr_indicator_body_'+ hash),
-                        $indicatorDetails = $('#rdr_indicator_details_'+ hash),
-                        $container = $('.rdr-'+hash);
-
-                        var has_inline_indicator = $container.data('inlineIndicator'); //boolean
-                        var tempOffsets = has_inline_indicator ? {
-                            top: 0,
-                            left: 0
-                        } : {
-                            top: -10,
-                            left: -3
-                        };
-
-                        //toggled back in RDR.rindow.close:
-                        if(has_inline_indicator){
-                            $indicatorDetails.find('.rdr_indicator_details_innerWrap').css({
-                               'visibility':'hidden'
-                            });
-                        }
-
-                        //todo: make this nicer
-                        var coords = ( (kind == "img" || kind == "media") && !has_inline_indicator ) ?
-                        {
-                            top: $container.offset().top,
-                            left: $container.offset().left + $container.width()
-                        } :
-                        {
-                            //used data instead of offset because offset doesn't work if the node is hidden.  It was giving me problems before.
-                            top: $indicatorDetails.data('top') + tempOffsets.top,
-                            left: $indicatorDetails.data('left') + tempOffsets.left 
-                        };
-
-                        var rindow = RDR.rindow.draw({
-                            coords:coords,
-                            pnlWidth:170,
-                            noHeader:true,
-                            selector:selector,
-                            rewritable:rewritable
-                        });
-
-                        rindow.addClass('rdr_readmode');
-                        summary.$rindow_readmode = rindow;
-                        $indicatorDetails.hide();
-
-                        rindow.find('div.rdr_contentSpace').empty();  // empty this out in case it's just repositioning the rindow.
-
-                        rindow.css({width:'170px'});
-
-                        //todo: use the sentimentBox function instead..  Our Li events are gettign messed up with this duplication
-
-
-                        var $sentimentBox = $('<div class="rdr_sentimentBox rdr_new" />'),
-
-                            $reactionPanel = $('<div class="rdr_reactionPanel rdr_read rdr_sntPnl rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />'),
-                            $contentPanel = RDR.actions.panel.draw( "contentPanel", rindow ),
-                            $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
-                            $tagBox = $('<div class="rdr_tagBox" />').append('<ul class="rdr_tags rdr_preselected" />'),
-                            $indicator_stats = $('<div class="rdr_indicator_stats" />'),
-                            $headerOverlay = $('<div class="rdr_header_overlay" />').append($indicator_stats);
-                        
-
-                        var headers = ["Reactions", "", ""];  // removing comment count for now +info.com_count
-                        $sentimentBox.append($reactionPanel, $contentPanel, $whyPanel); //$selectedTextPanel, 
-                        $sentimentBox.children().each(function(idx){
-                            var $header = $('<div class="rdr_header rdr_brtl rdr_brtr" />'),
-                            $rdr_headerInnerWrap = $('<div class="rdr_headerInnerWrap"><h1>'+ headers[idx] +'</h1></div>').appendTo($header),
-                            $body = $('<div class="rdr_body "/>'),
-                            $bodyWrap = $('<div class="rdr_body_wrap"/>').append($body),
-                            $panelOverlay = $('<div class="rdr_panelOverlay" />'); //for visual effects that need to sit on top of everything - borderline and shadow
-
-                            var clearDiv = '<div style="clear:both;"></div>';
-                            $(this).append($header, $bodyWrap, clearDiv, $panelOverlay);
-
-                        });
-                        $sentimentBox.prepend($headerOverlay);
-            
-                        //populate the $indicator_stats.  This will also be updated as needed from summaries.update
-                        $indicator_stats.html( $indicator_body.html() );
-
-                        RDR.actions.panel.setup("contentPanel", rindow);
-
-                        //populate reactionPanel
-                        $reactionPanel.find('div.rdr_body').append($tagBox);
-
-
-                        var topTags = summary.top_interactions.tags,
-                        topTagsOrder = summary.interaction_order.tags,
-                        topComs = summary.top_interactions.coms,
-                        totalTags = summary.counts.tags,
-                        totalComs = summary.counts.coms;
-
-                        ////populate blesed_tags
-                        $.each( topTagsOrder, function( idx, tagOrder ){
-                            var tag = topTags[ tagOrder.id ];
-                            var percentage = Math.round( ( tag.count/totalTags ) * 100);                
-                            var $li = $('<li class="rdr_tag_'+tagOrder.id+'" />').data({
-                                'tag':{
-                                    id:parseInt( tagOrder.id, 10),
-                                    body:tag.body,
-                                    count:tag.count
-                                },
-                                'hash':hash
-                            }),
-                            $leftBox = '<div class="rdr_tag_count"><span class="rdr_not_loader" >'+RDR.util.prettyNumber( tag.count )+'</span></div>',
-                            $tagText = '<div class="rdr_tagText">'+tag.body+'</div>',
-                            $rightBox = '<div class="rdr_details" />';
-
-                            $li.append($leftBox,$tagText,$rightBox);
-                            
-                            // todo: [porter] i'm looping to see if there is a comment for this TAG.  can we just send this down from server?
-                            var commentsHere = 0;
-                            for ( var i in topComs ) {
-                                if ( (topComs[i].tag_id == tagOrder.id) || ( i == tagOrder.id ) ) {  // first is for text, second option is for images/media
-                                    $li.addClass('rdr_has_comment');
-
-                                    // loop to see how many content_nodes' comments are under this tag
-                                    if ( kind == "text" ) {
-                                        for ( var j in summary.content_nodes ) {
-                                            for ( var k in summary.content_nodes[j].top_interactions.coms ) {
-                                                if ( summary.content_nodes[j].top_interactions.coms[k].tag_id == topComs[i].tag_id ) {
-                                                    commentsHere++; 
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        for ( var l in summary.top_interactions.coms[i] ) {
-                                                commentsHere++; 
-                                        }
-                                    }
-                                }
-                            }
-                            if ( commentsHere > 0 ) $li.find('div.rdr_details').append('<span>' + RDR.util.prettyNumber( commentsHere ) + '</span>');
-                            $tagBox.children('ul.rdr_tags').append($li);
-                        
-                        });
-                        
-                        rindow.find('div.rdr_contentSpace').html( $sentimentBox );
-
-                        rindow.find('ul.rdr_preselected li').each( function(){
-                            var $this = $(this);
-
-                            var tag = $this.data('tag');
-
-                            $this.find('div.rdr_tag_count').each( function() {
-                                var $thisDetails = $(this);
-                                var content_node_count = 0;
-                                var content_node = {};
-                                // how many content nodes are tagged with this particular tag?
-                                // TODO: make this loop a RDR.util function, bet we use it or similar in many places.
-                                if ( kind == "text" ) {
-                                    $.each( summary.content_nodes, function(idx, cnode) {
-                                        if ( cnode.top_interactions.tags && cnode.top_interactions.tags[ tag.id ] ) {
-                                            content_node_count++;
-                                            content_node = cnode;
-                                        }
-                                    });
-                                } else {
-                                    if ( summary.top_interactions.tags && summary.top_interactions.tags[ tag.id ] ) {
-                                        content_node_count++;
-                                        content_node = summary;
-                                    }
-                                }
-
-                                // if just one content_node with this tag in this hash, then +1 that tag.
-                                if ( content_node_count == 1 ) {
-                                    $thisDetails.bind('click', function() {
-                                        args = { tag:tag, rindow:rindow, hash:hash, content_node:content_node, uiMode:'read'};
-                                        RDR.actions.interactions.ajax( args, 'tag', 'create' );
-                                    });
-                                    // return false;
-                                // else, slide open the content panel
-                                } else {
-                                    
-                                }
-
-                                $thisDetails.hover(
-                                    function() {
-                                        var hoverText = (content_node_count==1) ? "+":"?";
-                                        $(this).find('span').text(hoverText);
-                                    },
-                                    function() {
-                                        $(this).find('span').text(tag.count);
-                                    }
-                                );
-                            });
-
-                            $this.click( function() {
-                                var $this = $(this);
-                                // see how many CONTENT_NODES have this TAG, to know if we should skip straight to the whyPanel on click
-                                var nodes_with_this_tag = 0,
-                                    content_node;
-
-                                for ( var i in summary.content_nodes ) {
-                                    if ( summary.content_nodes[i].top_interactions && summary.content_nodes[i].top_interactions.tags[ $this.data('tag').id ] ) {
-                                        nodes_with_this_tag++;
-                                        content_node = summary.content_nodes[i];
-                                    }
-                                }
-
-                                // i.e. it's an image / media
-                                if ( !content_node ) {
-                                    content_node = RDR.content_nodes[ $this.data('hash') ];
-                                }
-
-                                if ( !$this.hasClass('rdr_customTagBox') ) {
-                                    $this.addClass('rdr_selected');
-                                    $this.siblings().removeClass('rdr_selected');
-                                    $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-
-                                    if ( ( nodes_with_this_tag == 1 ) || kind == "img" || kind == "media" ) {
-
-                                        var hash = $this.data('hash');
-
-                                        //try to add selState to content_node - there should only be one
-                                        var selState = $this.data('selStates')[0];
-                                        content_node.selState = selState;
-                                        RDR.actions.viewCommentContent( {tag:$this.data('tag'), hash:hash, rindow:rindow, kind:kind, content_node:content_node, view_all_state:"hide" });
-                                    } else {
-                                        RDR.actions.viewReactionContent( $this.data('tag'), $this.data('hash'), rindow );
-                                    }
-                                }
-                                return false; //so click on <a>img</a> gets overridden
-                            });
-
-                            // START: WHAT DOES ALL OF THIS DO?
-                            $this.data('selStates',[]);
-
-                            var tag_id = $this.data('tag').id;
-                            
-                            var nodes = summary.content_nodes || [];
-
-                            $.each(nodes, function(id, node){
-                                var nodeTags = node.top_interactions.tags;
-                                var thisTag = nodeTags[ tag_id ];
-                                if(typeof thisTag === "undefined") return;
-                                //else                            
-                                $this.data('selStates').push(node.selState);  
-                            });
-                            // END: WHAT DOES ALL OF THIS DO?
-                            
-                        })//chain
-                        .hover( 
-                            function() {
-                                //don't do this for windows that are resizing
-                                if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
-                                if( $(this).closest('.rdr_window.ui-draggable-dragging').length) return;
-
-                                $(this).addClass('rdr_hover'); // safari/chrome kludge -- :hover isn't working here
-                                var selStates = $(this).data('selStates');
-
-                                //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
-                                var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
-                                if (lastSelState){
-                                    $().selog('hilite', lastSelState, 'on');
-                                }
-                            },
-                            function() {
-
-                                //don't do this for windows that are resizing
-                                if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
-                                if( $(this).closest('.rdr_window.ui-draggable-dragging').length) return;
-
-                                $(this).removeClass('rdr_hover');  // safari/chrome kludge -- :hover isn't working here
-                                var selStates = $(this).data('selStates');
-
-                                //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
-                                var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
-                                if (lastSelState){
-                                    $().selog('hilite', lastSelState, 'off');
-                                }
-                            }
-                        );
-
-                        var rindowHeight = RDR.rindow.getHeight(rindow, {
-                            targetHeight: $tagBox.height() + 35 + 10, //+ header height + extra padding;
-                            animate:false
-                        });
-
-                        var newCoords = RDR.util.stayInWindow({coords:coords, width:170, height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
-
-                        rindow.css('left', newCoords.left );
-                        rindow.css('top', newCoords.top );
-
-                        rindow.width(0).height(0).animate({
-                            width:170,
-                            height: rindowHeight
-                        }, 200, 'swing', function(){
-                            RDR.rindow.jspUpdate( rindow );
-                        });
-
-                        rindow.bind( 'mouseleave', function() {
-                            var $this = $(this);
-                            if ( $this.hasClass('rdr_rewritable') ) {
-                                $this.remove();
-                            }
-                        })
-                        
-                    },
-                    customOptions: {
-                        
-                    },
-                    setup: function(){
-                        
-                    }
-                }
-                */
             },
             make: function(rindowType, options){
                 //RDR.rindow.make:
@@ -1134,39 +813,17 @@ function readrBoard($R){
                     
                     //this is instead of the if / else below
                     $('#rdr_sandbox').append( $new_rindow );
-                    
-                    /*
-                    if (options.selector) {
-                        $(options.selector).after( $new_rindow );
-                    } else {
-                        $('#rdr_sandbox').append( $new_rindow );
-                    }
-                    */
                 }
                 if ( settings.rewritable != true ) {
                     $new_rindow.removeClass('rdr_rewritable');
                 }
 
                 $new_rindow.data(settings);// jquery obj of the rewritable window
-
-                // PILLSTODO i commented this out:
-                //if ( options.columns === true ) $new_rindow.addClass('rdr_columns');
-
                 
                 if ( $new_rindow.find('div.rdr_header').length === 0 ) {  // not sure why this conditional is here
                     $new_rindow.html('');
                     $new_rindow.append( '<div class="rdr rdr_header rdr_brtr rdr_brtl"></div><div class="rdr rdr_contentSpace"><div class="rdr rdr_body_wrap"></div></div><div class="rdr rdr_footer rdr_brbr rdr_brbl"></div>' );
-                    
-                    // PILLSTODO i commented this out:
-                    /*
-                    if ( !options.noCloseButton ) $new_rindow.find('div.rdr_header').append( '<div class="rdr_close">x</div>');
-                    $new_rindow.find('div.rdr_close').click( function() {
-                        //needed to change this to add triggers
-                        RDR.rindow.close( $(this).parents('div.rdr.rdr_window') );
-                        return false; //make sure rindow for <a><img /></a> doesn't activate link
-                    });
-                    */
-                    
+                                        
                     if ( settings.noHeader ) $new_rindow.find('div.rdr_header').remove();
                     
                     $new_rindow.draggable({
@@ -1186,8 +843,6 @@ function readrBoard($R){
                 if(settings.height){
                     $new_rindow.height(settings.height);
                 }
-               
-                // RDR.rindow.updateSizes( $new_rindow );
 
                 RDR.actionbar.closeAll();
 
@@ -1310,56 +965,7 @@ function readrBoard($R){
                     
                     // todo: add case where diff is -1 and there is only 1 com- remove the comment
                     $tag.addClass('rdr_has_comment');
-
-                    //now do the rdr_contentSet
-                    
-                    //RDR.actions.content_panel.make(node, tagClone, hash, $rindow);
-                    
-                    /*
-                    var $contentSets = $rindow.find('#rdr_contentPanel .rdr_contentSet');
-                    $contentSets.each(function(){
-                        var parent_interaction_node = $(this).data('tag');
-                        if( parent_interaction_node.id == diffNode.parent_interaction_node.id ){
-                            var $header = $(this).find('.rdr_contentHeader');
-                            var $comLink = $header.find('div.rdr_comment_link');
-                            if( $comLink.hasClass('rdr_can_comment') ){
-                                    $comLink.removeClass('rdr_can_comment');
-                                    $comLink.addClass('rdr_has_comment');
-                            }else{
-                                
-                            }
-                            
-
-                        }
-                    });
-                    */
-
                 }
-
-                //now update the rindow's indicator copy
-                //PILLSTODO removed this
-                /*
-                if( $rindow_readmode){
-                
-                    var $indicator = summary.$indicator,
-                        $indicator_body = summary.$indicator_body,
-                        $indicator_stats = $rindow_readmode.find('.rdr_indicator_stats');
-
-                    $indicator_stats.fadeOut(100, function(){
-                        $indicator_stats.html( $indicator_body.html() );
-                        $indicator_stats.fadeIn(300);
-                    });
-                    
-                }
-                */
-
-
-
-                //this is really a rindow update function and should be moved somewhere here, 
-                //but I'm drawing from the existing update function, so leave it there for the time being
-                /*
-                RDR.actions.newUpdateData(hash);
-                */
             }//end RDR.rindow.update
 		},
 		actionbar: {
@@ -1410,31 +1016,31 @@ function readrBoard($R){
                 .append('<ul/>');
 
                 var items = [
-                        {
-                            "item":"reaction",
-                            "tipText":"React to this",
-                            "onclick":function(){
-                                RDR.rindow.make( 'writeMode', {
-                                    "hash": hash,
-                                    "kind": kind,
-                                    "content": content,
-                                    "src_with_path":src_with_path
-                                });
-                            }
-                        },
-                        {
-                            "item":"bookmark",
-                            "tipText":"Bookmark this",
-                            "onclick":function(){
-                                RDR.rindow.make( 'writeMode', {
-                                    "hash": hash,
-                                    "kind": kind,
-                                    "content": content,
-                                    "src_with_path":src_with_path,
-                                    "actionType":"bookmark"
-                                });
-                            }
+                    {
+                        "item":"reaction",
+                        "tipText":"React to this",
+                        "onclick":function(){
+                            RDR.rindow.make( 'writeMode', {
+                                "hash": hash,
+                                "kind": kind,
+                                "content": content,
+                                "src_with_path":src_with_path
+                            });
                         }
+                    },
+                    {
+                        "item":"bookmark",
+                        "tipText":"Bookmark this",
+                        "onclick":function(){
+                            RDR.rindow.make( 'writeMode', {
+                                "hash": hash,
+                                "kind": kind,
+                                "content": content,
+                                "src_with_path":src_with_path,
+                                "actionType":"bookmark"
+                            });
+                        }
+                    }
                 ];
 
                 $.each( items, function(idx, val){
@@ -1453,9 +1059,6 @@ function readrBoard($R){
                     }
                 });
 
-                //todo: [eric] I added a shareStart function that shows up after the rate-this dialogue,
-                //but we're not sure yet if it's going to be the same function as this shareStart () above..
-
                 $('#rdr_sandbox').append( $new_actionbar );
                 $new_actionbar.find('li').hover(
                     function() {
@@ -1471,21 +1074,6 @@ function readrBoard($R){
                     $new_actionbar.append('<div style="clear:both;" />').removeClass('rdr_widget rdr_widget_bar');
 
                     //for now, just move the actionbar here overridding the positioning from above:
-
-
-
-                    /*                    
-                    $indicator_details = $('#rdr_indicator_details_'+containerHash).removeClass('rdr_widget rdr_widget_bar');
-                    var indicatorDetailsOffset = {
-                        'top': $new_actionbar.offset().top,
-                        'left': $new_actionbar.offset().left + $new_actionbar.width()
-                    }
-                    $indicator_details.appendTo($new_actionbar)//chain
-                    .css({
-                        'display':'block',
-                        'position':'relative'
-                    });
-                    */
                 }
 
                 function _getMediaCoords(coords){
@@ -1757,10 +1345,6 @@ function readrBoard($R){
 
                     //todo: finish making these changes here:, but i didnt' want to do it before the DC demo.
                     var $msg1, $msg2, $pinIcon;
-                    // if( whichAlert == "educateUser"){
-                    //     $msg1 = $('<h1>Rate &amp; discuss <span>anything</span> on this page!</h1>');
-                    //     $msg2 = $('<div>Just select text or slide your mouse over an image or video, and look for the <span>pin</span> icon.</div>');
-                    // }
                     if( whichAlert == "fromShareLink"){
                         $msg1 = $('<h1>Shared with <span>ReadrBoard</span></h1>');
 
@@ -1804,20 +1388,7 @@ function readrBoard($R){
                     });
 
                     // TODO put this back in 
-                $('div.rdr_alert_box.rdr_'+whichAlert).animate({bottom:0},1000);
-
-                    // OLD -- positioning/animation from when this was a bar
-                    // RDR.group.educateUserLocation = "top";
-                    // if ( RDR.group.educateUserLocation && RDR.group.educateUserLocation=="bottom" ) {
-                    //     $alertContent.css('top','auto');
-                    //     $alertContent.css('bottom','-40px');
-                    //     $('#rdr_alert_box').animate({bottom:0});
-                    // } else {
-                    //     var bodyPaddingTop = parseInt( $('body').css('padding-top') );
-                    //     $('body').animate({ paddingTop: (bodyPaddingTop+35)+"px" });
-                    //     $('#rdr_alert_box').animate({top:0});
-                    // }
-                    // END OLD
+                    $('div.rdr_alert_box.rdr_'+whichAlert).animate({bottom:0},1000);
                 },
                 close: function( whichAlert ) {
                     $('div.rdr_alert_box.rdr_'+whichAlert).remove();
@@ -2044,23 +1615,6 @@ function readrBoard($R){
                 
                 if ( RDR.user.num_interactions && RDR.user.img_url !== "" ) {
                     if ( RDR.user.num_interactions < RDR.group.temp_interact ) {
-                        
-                    // }
-                // }
-
-
-                // var num_interactions = args.num_interactions;
-                
-                // if ( num_interactions ) {
-                    // if ( num_interactions < RDR.group.temp_interact ){
-
-                        // var usrMsgArgs = {      
-                        //     msgType: "tempUser",
-                        //     rindow:args.rindow,
-                        //     num_interactions: num_interactions
-                        // };
-
-                        // RDR.session.rindowUserMessage.show( usrMsgArgs );
                         return false;
                     }
                 }
@@ -2341,13 +1895,7 @@ function readrBoard($R){
                 // make one call for the page unless post_selector, post_href_selector, summary_widget_selector are all set to not-an-empty-string AND are present on page
 
                 // defaults for just one page / main page
-                
-                /*
-                var urls = [];
-                var canonicals = [];
-                var titles = [];
-                var key = 0; // we use this to know which container to point to in the success call
-                */
+
 
                 var pagesArr = [],
                     urlsArr = [],
@@ -2679,25 +2227,6 @@ function readrBoard($R){
             sendHashes: function( hashes, onSuccessCallback ) {
                 // RDR.actions.sendHashes
 
-                // if ( hashes.length == 1 ) {
-                //     var hash = hashes[0];
-                //     var page_id = RDR.util.getPageProperty( 'id', hash );
-                //     hashes = [];
-                //     hashes[ page_id ] = hash;
-                // }
-
-                // if( !hashes || !hashes.length ){ 
-                //     hashes = getAllHashes();
-                // }
-        
-                // function getAllHashes(){
-                //     var hashes = [];
-                //     for (var hashKey in RDR.containers ) {
-                //         if ( RDR.containers[hashkey].kind != "page" ) hashes.push( hashKey );
-                //     }
-                //     return hashes;
-                // }
-
                 var page_id, sendable_hashes, $hashable_node, sendData;
 
                 for (var i in hashes) {
@@ -2717,9 +2246,6 @@ function readrBoard($R){
                                 }
                             }
                         }
-                        // } else {
-                        //     delete sendable_hashes[j];
-                        // }
                     }
 
                     //build the sendData with the hashes from above
@@ -3247,7 +2773,6 @@ function readrBoard($R){
                     var sendData = {
                         "page_id" : RDR.util.getPageProperty('id', hash),
                         "container_id":summary.id
-                        // "top_tags":summary.top_interactions.tags // [porter] removing this on 12/28/2011, don't see why it's needed here.  removed from handlers, too
                     };
 
                     $.ajax({
@@ -3511,7 +3036,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $rindow.find('div.rdr_commentBox').html('Thank you for your comment. <br><br><strong>Reload the page to see your comment.</strong>').show();
                             RDR.rindow.updateSizes( $rindow );
                             // $rindow.find('div.rdr_commentBox').find('div.rdr_tagFeedback, div.rdr_comment').hide();
-                            // RDR.actions.summaries.hack.updateCommentSet( args );
 
                             //todo: consider adding these fields to the summary
                             // update the comments for this hash
@@ -3550,51 +3074,10 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 },
                                 rindow:$rindow
                             };
-                            //queued up to be released in the sharestart function after the animation finishes    
-                            // rindow.queue('userMessage', function(){
-                            //     RDR.session.rindowUserMessage.show( usrMsgArgs );
-                            // });
-                            //the comment doesn't rely on any panel movement, so just dequeue now
-                            // rindow.dequeue('userMessage');
 
                         },
                         remove: function(args){
                             //RDR.actions.interactions.comment.onSuccess.remove:
-
-/*
-                            var sendData = args.sendData;
-                            var interaction_node = args.response.data.deleted_interaction.interaction_node;
-                            var rindow = args.rindow,
-                                $tagLi = args.tag,
-                                tag = args.tag,
-                                int_id = args.int_id;
-
-                            RDR.actions.panel.collapse("whyPanel", rindow);
-                            var $thisTagButton = rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id);
-                            $thisTagButton.removeClass('rdr_tagged').removeClass('rdr_int_node_'+int_id);
-
-                            //todo: quick hack -- fix later
-                            if( ! $tagLi.jquery ){
-                                $tagLi = rindow.find('.rdr_tag_'+args.tag.id);
-                            }
-                            $tagLi.find('div.rdr_tag_count').html('');
-
-                            //do updates
-                            var hash = sendData.hash;
-                            var intNodeHelper = {
-                                id: interaction_node.id,
-                                body: interaction_node.body,
-                                delta: -1
-                            };
-
-                            var diff = {   
-                                tags: {}
-                            };
-                            diff.tags[ intNodeHelper.id ] = intNodeHelper;
-
-                            RDR.actions.summaries.update(hash, diff);
-                        */
-
                         }
                     
                     },
@@ -3788,74 +3271,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 content_node_data.hash = content_node_data.container;
                                 content_node_data.kind = sendData.kind;
 
-/*
-PILLSTODO
-                                //clear the loader        
-                                if ( typeof $tag_li.find != "function" ) {
-                                    $tag_li = rindow.find('li.rdr_tag_' + args.tag.id);
-                                }
-                                $tag_li.find('div.rdr_tag_count').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
-
-                                // var $this = $tag_li; // not sure why we are doing this.
-                                $tag_li.addClass('rdr_selected');
-                                $tag_li.siblings().removeClass('rdr_selected');
-                                $tag_li.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-                                
-
-                                if ( $tag_li.length == 1 ) {
-                                    var $tagCount = $tag_li.find('div.rdr_tag_count');
-                                    $tagCount.unbind();
-
-                                    //temp quick fix to show msg for vote up in 3rd panel
-
-                                        rindow.dequeue('userMessage');
-                                        //hackity hack number incrementer
-                                        var $number = $tagCount.find('.rdr_not_loader');
-                                        var tagCount = ( isNaN( parseInt($number.text(), 10) ) ) ? parseInt("1", 10):parseInt( $number.text(), 10 );
-                                        $number.text( RDR.util.prettyNumber( tagCount ) );
-                                        $number.show();
-
-                                        //this one's even more hacky - doesn't really matter, but fix this soon.
-                                        var $number2 = rindow.find('.rdr_info_summary').find('.rdr_reaction_count');
-                                        if($number2.length){
-                                            var theNumber = RDR.util.prettyNumber( $number2.data('count')+1 );
-                                            $number2.find('span').text( '(' +theNumber+ ') ');
-                                        }
-                                        //hack complete.
-
-                                    $tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+int_id);
-                                    $tag_li.data('interaction_id', int_id);
-
-                                    // if it was a custom tag, do a few things
-                                    if ( $tag_li.hasClass('rdr_customTagBox') ) {
-                                        $tag_li.removeClass('rdr_customTagBox');
-                                        $tag_li.siblings().removeClass('rdr_selected');
-                                        $tag_li.addClass('rdr_selected');
-                                        $tag_li.find('input').remove();
-                                        $tag_li.find('div.rdr_help').remove();
-                                        $tag_li.find('.rdr_tagText').html(tag.body);
-                                        RDR.actions.sentimentPanel.addCustomTagBox({hash:hash, rindow:rindow, settings:args.settings, actionType:'react'});
-                                    }
-                                }
-
-                                var usrMsgArgs = {      
-                                    msgType: "interactionSuccess",
-                                    interactionInfo: {
-                                        type: 'tag',
-                                        body: tag.body
-                                    },
-                                    rindow:rindow
-                                };
-
-                                //queued up to be released in the sharestart function after the animation finishes    
-                                rindow.queue('userMessage', function(){
-                                    RDR.session.rindowUserMessage.show( usrMsgArgs );
-                                });
-
-                                // if( uiMode !== "read" ){
-                                    RDR.actions.shareStart( {rindow:rindow, tag:tag, int_id:int_id, content_node_data:content_node_data, hash:hash});
-                                // }
-*/
                                 //reset this var for now
                                 content_node_data = args.content_node || RDR.actions.content_nodes.make(content_node_data);
 
@@ -3917,6 +3332,7 @@ PILLSTODO
                                 rindow:$rindow
                             };
                             //queued up to be released in the sharestart function after the animation finishes    
+                            // NOT TRUE ANYMORE?
                             $rindow.queue('userMessage', function(){
                                 RDR.session.rindowUserMessage.show( usrMsgArgs );
                             });
@@ -3986,75 +3402,6 @@ PILLSTODO
                     },
                     customSendData: function(args){
                         //RDR.actions.interactions.bookmark.customSendData:
-                      
-                       /*
-                       PILLSTODO
-                       before
-                       var hash = args.hash,
-                            summary = RDR.summaries[hash],
-                            kind = summary.kind;
-                      
-                                            
-                        var $container = $('.rdr-'+hash);
-
-                        var rindow = args.rindow,
-                            tag_li = args.tag;
-                        var $tag = args.tag,
-                            tag = $tag.data('tag');
-
-
-                        var content_node_data = {};
-                        //If readmode, we will have a content_node.  If not, use content_node_data, and build a new content_node on success.
-                        var content_node = args.content_node || null;
-
-                        if(kind == 'img' || kind == 'media'){
-
-                            var body = $container[0].src;
-
-                            content_node_data = {
-                                'container': rindow.data('container'),
-                                'body': body,
-                                'kind':kind,
-                                'hash':hash
-                            };
-
-                        }else{
-                            //is text
-                            
-                            //todo: fix this temp hackery
-                            if(content_node){
-                                content_node_data = {
-                                    'container': rindow.data('container'),
-                                    'body': content_node.body,
-                                    'location': content_node.location,
-                                    'kind':kind
-                                };
-                            }else{
-                                var selState = rindow.data('selState');
-                                content_node_data = {
-                                    'container': rindow.data('container'),
-                                    'body': selState.text,
-                                    'location': selState.serialRange,
-                                    'kind': kind
-                                };
-                            }
-                        }
-
-                        var sendData = {
-                            //interaction level attrs
-                            "tag":tag,
-                            "node": content_node,                        //null if writemode
-                            "content_node_data":content_node_data,
-                            "hash": content_node_data.container,
-                            //page level attrs
-                            "user_id" : RDR.user.user_id,
-                            "readr_token" : RDR.user.readr_token,
-                            "group_id" : RDR.group.id,
-                            "page_id" : RDR.util.getPageProperty('id', hash),
-                            "int_id" : args.int_id
-                        };
-                        return sendData;
-                        */
                         var hash = args.hash,
                             summary = RDR.summaries[hash],
                             kind,
@@ -4139,169 +3486,21 @@ PILLSTODO
                                 int_id = response.data.interaction.id;
 
                             // add a new, empty custom tag pill to the rindow
-                                var $tag_table = $rindow.find('table.rdr_tags'),
-                                    $last_tr = $tag_table.find('tr:not(.rdr_nextSteps)').eq(-1),
-                                    td_count = $last_tr.find('td').length;
-                        
-                                if ( td_count % 2 == 0 ) {
-                                    $tag_table.append('<tr/>');
-                                    $tag_table.find('tr:not(.rdr_nextSteps)').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
-                                } else {
-                                    $tag_table.find('tr:not(.rdr_nextSteps)').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
-                                }
-                                RDR.rindow.writeCustomTag( $rindow.find('table.rdr_tags').find('td').eq(-1).find('div.rdr_cell_wrapper'), $rindow, 'bookmark' );
-
-                                
-                                args = $.extend(args, {scenario:"bookmarkSuccess"});
-                                RDR.rindow.updateTagMessage( args );
-
-
-                                //temp tie-over    
-                                // var hash = args.hash,
-                                //     summary = RDR.summaries[hash],
-                                //     kind = summary.kind;
-
-
-                                //more freaking tie-overs
-                                // args.settings = args.sendData.content_node_data;
-
-                                //todo: untangle these argument translations.
-                                // var content_node_data = args.content_node || RDR.actions.content_nodes.make(content_node_data);
-
-                                /* PILLSTODO
-                                //temp tie over
-                                content_node_data.hash = content_node_data.container;
-                                content_node_data.kind = sendData.kind;
-
-                                //reset this var for now
-                                content_node_data = args.content_node || RDR.actions.content_nodes.make(content_node_data);
-                                */
-
-                            
-                            /* PILLSTODO
-
-                            var content_node_data = sendData.content_node_data;
-                            var int_id = response.data.interaction.id;
-
-                            //temp tie over
-                            content_node_data.hash = content_node_data.container;
-                            var hash = content_node_data.hash;
-
-                            //clears the loader                          
-                            tag_li.find('div.rdr_tag_count').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
-
-                            var $this = args.tag;
-                            $this.addClass('rdr_selected');
-                            $this.siblings().removeClass('rdr_selected');
-                            $this.parents('div.rdr.rdr_window').removeClass('rdr_rewritable');
-                            
-                            var content_node = args.content_node || RDR.actions.content_nodes.make(content_node_data);
-
-                            if ( tag_li.length == 1 ) {
-                                tag_li.find('div.rdr_tag_count').unbind();
-                                tag_li.find('div.rdr_tag_count').click( function(e) {
-                                    e.preventDefault();
-                                    
-                                    var newArgs = {    
-                                        content_node_data: args.content_node_data,
-                                        hash: hash,
-                                        int_id: int_id,
-                                        tag:tag_li,
-                                        rindow: args.rindow
-                                    };
-
-                                    RDR.actions.interactions.ajax( newArgs, 'bookmark', 'remove' );
-                                    return false; // prevent the tag call applied to the parent <li> from firing
-                                });
-
-
-                                tag_li.addClass('rdr_tagged').addClass('rdr_int_node_'+int_id);
-                                tag_li.data('interaction_id', int_id);
-
-                                // if it was a custom tag, do a few things
-                                if ( tag_li.hasClass('rdr_customTagBox') ) {
-                                    tag_li.removeClass('rdr_customTagBox');
-                                    tag_li.siblings().removeClass('rdr_selected');
-                                    tag_li.addClass('rdr_selected');
-                                    tag_li.find('input').remove();
-                                    tag_li.find('div.rdr_help').remove();
-                                    tag_li.append( '<div class="rdr_tagText">'+tag.body+'</div>' );
-                                    RDR.actions.sentimentPanel.addCustomTagBox({hash:hash, rindow:rindow, settings:args.settings, actionType:'bookmark'});
-                                }
+                            var $tag_table = $rindow.find('table.rdr_tags'),
+                                $last_tr = $tag_table.find('tr:not(.rdr_nextSteps)').eq(-1),
+                                td_count = $last_tr.find('td').length;
+                    
+                            if ( td_count % 2 == 0 ) {
+                                $tag_table.append('<tr/>');
+                                $tag_table.find('tr:not(.rdr_nextSteps)').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
+                            } else {
+                                $tag_table.find('tr:not(.rdr_nextSteps)').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
                             }
+                            RDR.rindow.writeCustomTag( $rindow.find('table.rdr_tags').find('td').eq(-1).find('div.rdr_cell_wrapper'), $rindow, 'bookmark' );
 
-
-                            var $whyPanel = rindow.find('div.rdr_whyPanel div.rdr_body');
-                            var $whyPanel_body = rindow.find('div.rdr_whyPanel div.rdr_body');
-                            var $whyPanel_body_jsp = $whyPanel_body.find('.jspPane');
                             
-                            var $whyPanel_panelCard = $('<div />').addClass('rdr_panelCard rdr_panelCard'+int_id);
-                            $whyPanel_panelCard.data({
-                                'tagID':tag.id,
-                                'intactID':int_id
-                            });
-
-
-                            //$whyPanel_body.empty();
-                        
-                            //add to the $whyPanel_body and hide any sibling panels that have been made;
-                            if($whyPanel_body_jsp.length){
-                                $whyPanel_panelCard.appendTo($whyPanel_body_jsp);
-                            }else{
-                                $whyPanel_panelCard.appendTo($whyPanel_body);
-                            }
-                            $whyPanel_panelCard.siblings('.rdr_panelCard').hide();
-
-
-                            $whyPanel.find('h1').text('Bookmark Saved');
-                            
-                            //build $whyPanel_panelCard
-                            var $tagFeedback = $('<div class="rdr_tagFeedback">You bookmarked this and tagged it: <strong>'+tag.body+'</strong></div>');
-                            var $undoLink = $('<a style="text-decoration:underline;" href="javascript:void(0);">Undo</a>')//chain
-                            .bind('click.rdr', {args:args, int_id:int_id}, function(event){
-                                // RDR.actions.unrateSend(args); 
-                                var args = event.data.args;
-                                
-                                var newArgs = {    
-                                    content_node_data: args.content_node_data,
-                                    hash: hash,
-                                    int_id: event.data.int_id,
-                                    tag: args.tag,
-                                    rindow: args.rindow
-                                };
-                                RDR.actions.interactions.ajax( newArgs, 'bookmark', 'remove' );
-                                
-                            });
-
-                            // TODO make this link to the user profile work
-                            var $seeTags = $('<div><div>Your bookmarks are private - only you can see them.</div><br/ ><strong>To view your bookmarks, visit your <a href="'+RDR_baseUrl+'/user/'+RDR.user.user_id+'" target="_blank">ReadrBoard profile</a>.</strong></div>');
-                            
-                            $whyPanel_panelCard.append(
-                                $tagFeedback.append($undoLink),
-                                $seeTags
-                            );
-                            
-
-                            var usrMsgArgs = {      
-                                msgType: "interactionSuccess",
-                                interactionInfo: {
-                                    type: 'bookmark',
-                                    body: tag.body
-                                },
-                                rindow:rindow
-                            };
-
-                            //queued up to be released in the sharestart function after the animation finishes    
-                            rindow.queue('userMessage', function(){
-                                RDR.session.rindowUserMessage.show( usrMsgArgs );
-                            });
-
-
-
-                            //(tag success expand the comment section)                            
-                            RDR.actions.panel.expand("whyPanel", rindow);
-                            */
-                            
+                            args = $.extend(args, {scenario:"bookmarkSuccess"});
+                            RDR.rindow.updateTagMessage( args );                            
                         },
                         remove: function(args){
                             //RDR.actions.interactions.bookmark.onSuccess.remove:
@@ -4321,13 +3520,10 @@ PILLSTODO
                                 rindow:rindow
                             };
                             //queued up to be released in the sharestart function after the animation finishes    
+                            // NOT TRUE ANYMORE?
                             rindow.queue('userMessage', function(){
                                 RDR.session.rindowUserMessage.show( usrMsgArgs );
                             });
-
-                            RDR.actions.panel.collapse("whyPanel", rindow);
-                            var $thisTagButton = rindow.find('div.rdr_reactionPanel ul.rdr_tags li.rdr_int_node_'+int_id);
-                            $thisTagButton.remove();
                         }
                     },
                     onFail: function(args){
@@ -4763,38 +3959,6 @@ PILLSTODO
                         }else{
                             tagsListMaxWidth = 300;
                         }
-                        
-                        // $.each( summary.interaction_order.tags, function( idx, tagOrder ){
-                        //     var tag = summary.top_interactions.tags[ tagOrder.id ];
-
-                            
-                        //     if(count === null) return; //a helper incrementer, set to 'null' below to mimic a 'break' out of the 'each' loop 
-                        //     if( !tag || tag.count < 0) return; //this shouldn't happen, should be taken care of in summaries.update.  But just in case.
-
-                        //     var $prefix = count ? $('<span>, </span>') : $(), //check for count to omit the comma prefix on the first case.
-                        //         $tag = $('<strong/>').append(tag.body),
-                        //         $count = $('<em/>').append( ' ('+tag.count+')' ),
-                        //         $span = $('<span />').addClass('rdr_tags_list_tag');
-
-                        //     $span.append( $tag, $count).data('id',tagOrder.id).data('selStates',[]);
-
-
-                        //     $tagsList.append( $prefix, $span );
-
-                        //     // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                        //     if ( $tagsList.width() > ( tagsListMaxWidth - buffer ) ) {
-                        //         //the tag pushed the length over the limit, so kill it, and replace with ...
-                        //         $span.remove();
-                        //         $prefix.remove();
-                        //         var $moreText = $('<span>...</span>').addClass('rdr_see_more');
-                        //         $tagsList.append($moreText);
-                        //         //signal the rest of the each loop to just return;
-                        //         count = null;
-                        //         return;
-                        //     }
-                        //     count++;
-                            
-                        // });
                     },
                     setupContentNodeHilites: function( hash ){
                         //RDR.actions.indicators.utils.setupContentNodeHilites:
@@ -5061,67 +4225,6 @@ PILLSTODO
                 }//end RDR.actions.indicators.utils
             },
             summaries:{
-                hack: {
-                    updateCommentSet: function(args) {
-                        var rindow = args.rindow,
-                            tag = args.tag,
-                            hash = args.hash,
-                            user = args.user;
-
-                        var $whyPanel = rindow.find('div.rdr_whyPanel'),
-                            $whyPanel_body = $whyPanel.find('div.rdr_body'),
-                            $whyPanel_body_jsp = $whyPanel_body.find('.jspPane'),
-                            $whyPanel_panelCard = $whyPanel_body_jsp.find('div.rdr_panelCard');
-
-                        var $otherComments = ( rindow.find('div.rdr_otherCommentsBox').length == 1 ) ? rindow.find('div.rdr_otherCommentsBox') : $('<div class="rdr_otherCommentsBox"></div>').hide().html(
-                        '<div><h4>(<span>0</span>) Comment:</h4></div>').appendTo($whyPanel_panelCard);
-
-                        $otherComments.show();
-                        $otherComments.find('h4 span').text( parseInt( $otherComments.find('h4 span').text() ) + 1 );
-                            
-                        var $commentSet = $('<div class="rdr_commentSet" />'),
-                            $commentBy = $('<div class="rdr_commentBy" />'),
-                            $comment = $('<div class="rdr_comment" />'),
-                            $commentReplies = $('<div class="rdr_commentReplies" />'),
-                            $commentReply = $('<div class="rdr_commentReply" />'),
-                            $commentReply_link = $('<a href="javascript:void(0);">Reply</a>');
-                        var user_image_url = ( user.img_url ) ? user.img_url: ''+RDR_staticUrl+'widget/images/anonymousplode.png';
-                        var user_name = "You";
-                        $commentBy.html( '<img src="'+user_image_url+'" class="no-rdr" /> ' + user_name );
-                        $comment.html( '<div class="rdr_comment_body">"'+args.comment+'"</div>' );
-
-                        $commentSet.append( $commentBy, $comment ); // , $commentReplies, $commentReply 
-                        $otherComments.append( $commentSet );
-
-                        var comment = {
-                            body:args.comment,
-                            // content_id:
-                            id:args.response.data.interaction.id,
-                            social_user : {
-                                full_name:"You",
-                                img_url:user_image_url,
-                                user: {
-                                    first_name:"You",
-                                    id:user.user_id,
-                                    last_name:""
-                                }
-                            },
-                            tag_id:tag.id,
-                            user: {
-                                first_name:"You",
-                                id:user.user_id,
-                                last_name:""
-                            }
-                        };
-
-                        if ( typeof RDR.summaries[hash].top_interactions.coms[tag.id] == "undefined" ) {
-                            RDR.summaries[hash].top_interactions.coms[tag.id] = [];
-                            // RDR.summaries[hash].top_interactions.coms[tag.id].count = 0;
-                        }
-                        RDR.summaries[hash].top_interactions.coms[tag.id].push( comment );
-
-                    }
-                },
                 init: function(hash){
                     //RDR.actions.summaries.init:
 
@@ -5285,41 +4388,6 @@ PILLSTODO
                     }
                     
                     summary.interaction_order.sort( SortByTagCount );
-                    
-                    /* PILLSTODO remove this
-                    // interaction_order = {
-                    //     id = {
-                    //         tag_count
-                    //         tag_id
-                    //         body
-                    //         content_node_id
-                    //                          com_count
-                    //     }
-                    // }
-
-                    // summary.interaction_order = {coms:[],tags:[]};
-                    // var topTags = summary.top_interactions.tags,
-                    // topComs = summary.top_interactions.coms;
-
-                    // // tags
-                    // if ( !$.isEmptyObject( summary.top_interactions.tags ) ) {
-                    //     $.each( topTags, function( tagID, tag ){
-                    //         summary.interaction_order.tags.push( { id:tagID, count:tag.count } );
-                    //     });
-                    // }
-                    // summary.interaction_order.tags.sort( SortByCount );
-
-                    // // comments
-                    // if ( !$.isEmptyObject( summary.top_interactions.coms ) ) {
-                    //     $.each( topComs, function( comID, com ){
-                    //         summary.interaction_order.coms.push( { id:comID, count:com.count } );
-                    //     });
-                    // }
-                    // summary.interaction_order.coms.sort( SortByCount );
-
-                    end PILLSTODO
-                    */
-
                 },
                 sortPopularTextContainers: function() {
                     // RDR.actions.summaries.sortPopularTextContainers
@@ -5364,66 +4432,6 @@ PILLSTODO
             viewContainerReactions: function( hash ) {
                 //Note: No longer used --> moved to RDR.rindow.make('readMode', options)
             },
-            viewReactionContent: function(tag, hash, rindow){
-                //temp reconnecting:
-                var container = RDR.containers[hash];
-                var summary = RDR.summaries[hash];
-                
-                var $reactionPanel = rindow.find('div.rdr_reactionPanel'),
-                    $contentPanel = rindow.find('div.rdr_contentPanel'),
-                    $whyPanel = rindow.find('div.rdr_whyPanel');
-
-                // DONTNEED: $whyPanel.removeClass('rdr_whyShowing');
-
-
-                /*
-                var content = [];
-                for ( var i in tag.body ) {
-                    content.push( {idx:parseInt(i), tag_idx:tag.body[i].tag_idx, count:tag.id[i].count } );
-                }
-                */
-
-                //todo: temp stuff
-                var content = [];
-                var content_nodes = summary.hasOwnProperty('content_nodes') ? summary.content_nodes : {}; //fail gracefully if content_node ajax fails.
-                $.each( content_nodes, function(key, val){
-                    content.push(val);
-                });
-                function SortByTagCount(a,b) { return b.counts.tags - a.counts.tags; }
-                content.sort(SortByTagCount);
-
-                //todo: consolodate truncate functions
-                var maxHeaderLen = 20;
-                var tagBody = tag.body.length > maxHeaderLen ? tag.body.slice(0, maxHeaderLen)+"..." : tag.body;
-
-                $contentPanel.find('div.rdr_header h1').html(tagBody);
-
-                // zero out the content in the whyPanel, since they just selected a new tag and the comments would not reflect the now-selected tag.
-                // DONTNEED: if animating in whypanel:
-                // DONTNEED: $whyPanel.find('div.rdr_header h1').html(tagBody + ": ");
-                // DONTNEED: $whyPanel.find('div.rdr_body').html('<div class="rdr_commentSet rdr_panelCard rdr_panelCard_default ">Select something in the column to the left to leave a comment on it.</div>');
-
-                //todo: this is for testing style for now, we need to swap it out when we click on the different sections
-                //$contentPanel.find('div.rdr_header h1').after('<h2><span> : </span>todo: quote here ...</h2>');
-                
-                //todo: just a test - delete
-                //$contentPanel.find('div.rdr_headerInnerWrap').append('<h2>test</h2>');
-                
-                if ( rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp') ) rindow.find('div.rdr_contentPanel div.rdr_body').data('jsp').destroy();
-                rindow.find('div.rdr_contentPanel div.rdr_body').empty();
-
-                // tag.id = tag.id; // kludge
-                var tagClone = $.extend({}, tag),
-                    hashClone = hash;
-
-                // ok, get the content associated with this tag!
-                $.each(content, function(idx, node){
-                    RDR.actions.content_panel.make(node, tagClone, hash, rindow);
-                });
-
-                RDR.actions.panel.collapse("whyPanel", rindow  );
-                RDR.actions.panel.expand("contentPanel", rindow);
-            },
             viewCommentContent: function(args){
                 //RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:$rindow, content_node:content_node, selState:content_node.selState});
                 var tag = args.tag, 
@@ -5440,50 +4448,6 @@ PILLSTODO
                 if ( args.selState ) var selState = args.selState;
                 var view_all_state = (args.view_all_state) ? args.view_all_state:"show";
 
-                /*
-                PILLSTODO remove:
-                var $whyPanel = $rindow.find('div.rdr_whyPanel'),
-                    $whyPanel_body = $whyPanel.find('div.rdr_body'),
-                    $whyPanel_body_jsp = $whyPanel_body.find('.jspPane');
-                
-                // DONTNEED: $whyPanel.addClass('rdr_whyShowing');
-                var int_id = "null"; //don't worry about this for now - we don't need it
-
-                var $whyPanel_panelCard = $('<div />').addClass('rdr_panelCard rdr_panelCard'+int_id).addClass('rdr_viewAll_'+view_all_state);
-                $whyPanel_panelCard.data({
-                    'tagID':tag.id,
-                    'intactID':int_id,
-                    'content_node':content_node
-                });
-                //note: hover event on the whyPanel to hilite the content is done on the whole panel instead of just the panelCard,
-                // because there is always only one panelCard showing, and it is not always the whole height.
-
-                $whyPanel.find('div.rdr_view_all').remove();
-
-                //I don't think we need this anymore
-                $whyPanel_body.css({
-                     top:0
-                });
-                */
-                
-                
-
-                /*
-                PILLSTODO remove:
-                if($whyPanel_body_jsp.length){
-                    if ( view_all_state != "hide" ) {
-                        //$whyPanel_body_jsp.before( $backToQuotes );
-                    }
-                    $whyPanel_panelCard.appendTo( $whyPanel_body_jsp );
-                }else{
-                    if ( view_all_state != "hide" ) {
-                        //$whyPanel_panelCard.before( $backToQuotes );
-                    }
-                    $whyPanel_panelCard.appendTo($whyPanel_body);
-                }
-                $whyPanel_panelCard.siblings('.rdr_panelCard').hide();
-                */
-
                 var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
                                     '<h1>' + tag.body + '</h1>';
                 
@@ -5498,79 +4462,7 @@ PILLSTODO
                 
                 RDR.rindow.updateSizes( $rindow, 200, 300 );
 
-
-                // $whyPanel_panelCard.append( _makeCommentBox() );
-
-
                 //helper functions 
-                /*
-                PILLSTODO
-                this is a useful function that we'll want to bring back, just not sure where in the new UI
-                function _makeOtherReactions(){
-                    
-                    function SortByCount(a,b) { return b.count - a.count; }
-
-                    $whyPanel.find('div.rdr_otherTagsWrap').remove();
-                    $whyPanel.find('.rdr_body').css({
-                        bottom:0
-                    });
-
-                    var other_tags = [];
-                    if ( kind == "text" ) {
-                        for ( var i in content_node.top_interactions.tags ) {
-                            if ( i != tag.id ) other_tags.push({ tag_id:i, count:content_node.top_interactions.tags[i].count, body:content_node.top_interactions.tags[i].body });
-                        }
-                    } else {
-                        for ( var j in summary.top_interactions.tags ) {
-                            if ( j != tag.id ) other_tags.push({ tag_id:j, count:summary.top_interactions.tags[j].count, body:summary.top_interactions.tags[j].body });
-                        }
-                    }
-
-                    if ( other_tags.length > 0 ) {
-                        other_tags.sort( SortByCount );
-                        // we set this div far down, then animate it up, because position:fixed doesn't stay within a $rindow, it stays within the browser viewport
-                        var $otherTagsWrap = $('<div class="rdr_otherTagsWrap" />'),
-                            $otherTags = $('<div class="rdr_otherTags" ><strong>Other Reactions:</strong>&nbsp;</div>');
-                        $otherTags.appendTo($otherTagsWrap);
-
-                        $whyPanel.find('.rdr_body_wrap').append( $otherTagsWrap );
-                        $whyPanel.find('.rdr_body').css({
-                            bottom:14
-                        });
-
-                        //todo: consolodate with other truncate functions
-                        var count = 0, //a helper incrementer, set to 'null' below to mimic a 'break' out of each for loop 
-                            tagsListMaxWidth = 300,
-                            buffer = 20; //for the "other reactions" label and stuff
-                        $.each( other_tags, function(key, tag){
-
-                            if(count === null) return;
-                            
-                            var prefix = count ? ", " : "", //don't include the first time
-                                $tag = $('<span/>').append(tag.body),
-                                $count = $('<span/>').append( ' ('+tag.count+')' ),
-                                $wrap = $('<span />').addClass('rdr_tags_list_tag');
-                            $wrap.append( prefix, $tag, $count);
-                            $otherTags.append( $wrap );
-
-                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                            
-                            if ( $otherTags.width() > ( tagsListMaxWidth - buffer ) ) {
-                                //the tag pushed the length over the limit, so kill it, and replace with ...
-                                $wrap.remove();
-                                var $moreText = $('<span> ...</span>').addClass('rdr_see_more');
-                                $otherTags.append($moreText);
-                                //signal the rest of the each loop to just return;
-                                count = null;
-                                return;
-                            }
-                            count++;
-                            
-                        });
-                    }
-                }
-                */
-
                 function _makeCommentBox() {
 
                     //todo: combine this with the tooltip for the tags
@@ -5656,13 +4548,11 @@ PILLSTODO
                     if(!hasComments) return;
                     //else
 
-                    // $rindow.find('div.rdr_whyPanel div.rdr_header h1').html('Comments');
-
                     // ok, get the content associated with this tag!
                     var $otherComments = $('<div class="rdr_otherCommentsBox"></div>').hide().html(
                         '<div class="rdr_back">&lt;&lt; Back</div>'+
                         '<div><h4>(<span>' + node_comments + '</span>) Comments:</h4></div>'
-                    ); //.appendTo($whyPanel_panelCard);
+                    );
 
                     $otherComments.find('div.rdr_back').click( function() {
                         var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
@@ -5698,495 +4588,6 @@ PILLSTODO
                     //$otherComments.find('.rdr_commentSet:last-child').addClass('rdr_lastchild');
 
                 } //end makeOtherComments
-
-                // if ( kind == "img" || kind == "media" )  {
-                //     $rindow.find('div.rdr_contentPanel').remove();
-                // }
-
-                // PILLSTODO
-                //expand comment section for readmode
-                // RDR.actions.panel.expand("whyPanel", rindow, kind );
-            },
-			sentimentBox: function(settings) {
-                //Note: No longer used --> moved to RDR.rindow.make('writeMode', options)
-            },
-			panel: {
-                draw: function(_panel, rindow, interaction_id) {
-                    // PILLSTODO:
-                    return $('<div class="rdr_'+panel+' rdr_sntPnl rdr_brtl rdr_brtr rdr_brbr rdr_brbl" />');;
-
-
-                    
-                    //RDR.actions.panel.draw:
-                    var panel = _panel || "whyPanel";
-                    
-                    var isReadmode = rindow.hasClass('rdr_readmode');
-                    var $thisPanel = $('<div class="rdr_'+panel+' rdr_sntPnl rdr_brtl rdr_brtr rdr_brbr rdr_brbl" id="rdr_'+panel+'" />');
-                    if ( panel == "whyPanel" ) {
-                        
-                        $thisPanel.removeClass('rdr_brtl');
-                        //this is just a little bit hacky
-                        if(isReadmode){
-                            $thisPanel.hover(
-                                function() {
-                                    //don't do this for windows that are resizing
-                                    if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
-                                    if( $(this).closest('.rdr_window.ui-draggable-dragging').length) return;
-                                    //else
-                                    var $activePanelCard = $(this).find('.rdr_panelCard:visible');
-                        
-                                    var content_node = $activePanelCard.data('content_node');
-                                    $activePanelCard.addClass('rdr_hover');
-                                    if(content_node.selState){
-                                        $().selog('hilite', content_node.selState, 'on');
-                                    }
-                                },
-                                function() {
-                                    //don't do this for windows that are resizing
-                                    if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
-                                    if( $(this).closest('.rdr_window.ui-draggable-dragging').length) return;
-                                    //else
-                                    var $activePanelCard = $(this).find('.rdr_panelCard:visible');
-                                    var content_node = $activePanelCard.data('content_node');
-
-                                    $activePanelCard.removeClass('rdr_hover');
-                                    if(content_node && content_node.selState){
-                                        $().selog('hilite', content_node.selState, 'off');
-                                    }
-                                }
-                            );
-                        }
-
-                    }
-                    return $thisPanel;
-                },
-                setup: function(_panel, rindow){
-                    // PILLSTODO:
-                    return;
-
-
-
-                    //RDR.actions.panel.setup:
-                    var panel = _panel || "whyPanel";
-                    
-                    //note: it appears this isn't doing anything anymore
-                    $(rindow).find('.rdr_'+panel).find('.rdr_header, .rdr_body').css({
-                        // 'width': rindow.settings.pnlWidth +'px',
-                        'right':'0',
-                        'position':'absolute'
-                    });
-                },
-                expand: function(_panel, rindow, interaction_id){
-                    //RDR.actions.panel.expand:
-                    // PILLSTODO remove all of this?
-                    var panel = _panel || "whyPanel";
-                    // hack.  chrome and safari don't like rounded corners if the whyPanel is showing since it is wider than panel1
-                    rindow.find('div.rdr_whyPanel').css('visibility','visible');
-
-                    $thisPanel = $(rindow).find('.rdr_'+panel);
-                    var num_columns = rindow.find('div.rdr_sntPnl').length;
-                    rindow.addClass('rdr_columns'+num_columns);
-                    var width, minHeight, maxHeight, targetHeight, gotoHeight = null;
-
-                    var isReadMode = rindow.hasClass('rdr_readmode');
-
-                    minHeight = RDR.rindow.defaults.minHeight; //100
-                    maxHeight = RDR.rindow.defaults.maxHeight; //350
-                    contentPanelWidth = 300; //temp var - Later will be a property of a panel object
-                    whyPanelWidth = 300; //temp var - Later will be a property of a panel object
-
-                    rindow.resizable('option', {
-                        minHeight:minHeight,
-                        maxHeight:maxHeight
-                    });
-
-                    switch (panel) {
-                        case "contentPanel":
-                            width = 170 + contentPanelWidth;
-
-                            // corner logic
-                            $thisPanel.removeClass('rdr_brtl').removeClass('rdr_brbl');
-                            $thisPanel.find('div.rdr_header').removeClass('rdr_brtl').removeClass('rdr_brbl');
-
-                            break;
-
-                        case "whyPanel":
-
-                            // corner logic
-                            $thisPanel.removeClass('rdr_brtl rdr_brbl');
-                            $thisPanel.find('div.rdr_header').removeClass('rdr_brtl rdr_brbl');
-                            // rindow.find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').removeClass('rdr_brbr rdr_brtr');
-                            
-                            // old, from when whyPanel was next to, not over, the contentPanel:
-                            // width = (num_columns == 3) ? 170 + contentPanelWidth + 250 : 170 + 250;
-                            width = 170 + contentPanelWidth; // any time we're expanding the contentPanel, the rindow is gonna be 400px wide
-                            targetHeight = 225; //quick hack to make it look a bit nicer
-
-                            rindow.queue('panels', function(){
-                                $thisPanel.animate( {right:0 }, rindow.settings.animTime, function(){
-                                    rindow.dequeue('panels');
-                                });
-                            });
-                            
-                            break;
-                    }
-                    
-                    //temp hack
-                    if( $thisPanel.data('expanded') ){
-                        // RDR.rindow.updateSizes( rindow );
-                        // rindow.dequeue('userMessage');
-                    }
-                    else{
-
-                        gotoHeight = RDR.rindow.getHeight(rindow, {
-                            targetHeight: targetHeight
-                        });
-                                            
-                        var coords = rindow.offset();
-                        coords = RDR.util.stayInWindow({coords:coords, width:width, height:gotoHeight });
-
-                        rindow.queue('panels', function(){
-
-                            rindow.animate({
-                                width: width,
-                                left: coords.left,
-                                height: gotoHeight,
-                                top: coords.top
-                            }, rindow.settings.animTime, function() {
-                                RDR.rindow.updateSizes( rindow );
-                                rindow.dequeue('panels');
-                                rindow.dequeue('userMessage');
-                            });
-                        });
-                        rindow.dequeue('panels');
-                    }
-                    $thisPanel.data('expanded', true);
-                },
-                collapse: function(_panel, rindow){
-                    //RDR.actions.panel.collapse:
-                    // PILLSTODO remove all of this?
-
-                    //note: I'm commenting this out because I think it helps to see the why panel slide back
-                    //rindow.find('div.rdr_whyPanel').css('visibility','hidden');
-                    //but I don't like seeing the header slide out, becuase the contentPanel header switches immediately
-                    rindow.find('div.rdr_whyPanel .rdr_header h1').empty();
-
-                    var panel = _panel || "whyPanel",
-                        $thisPanel = rindow.find('.rdr_'+panel),
-                        $sizeToContent = ( $thisPanel.find('div.jspPane').length == 1 ) ?$thisPanel.find('div.jspPane'):rindow.find('div.rdr_tagBox');
-                    
-                    var isReadMode = rindow.hasClass('rdr_readmode');
-
-                    var num_columns = rindow.find('div.rdr_sntPnl').length;
-                    rindow.addClass('rdr_columns'+num_columns);
-                    
-                    var width, minHeight, maxHeight, gotoHeight, targetHeight;
-
-                    minHeight = RDR.rindow.defaults.minHeight; //100
-                    maxHeight = RDR.rindow.defaults.maxHeight; //350
-                    targetHeight = $sizeToContent.height() + 35 + 10; //+ header height + extra padding;
-
-                    rindow.resizable('option', {
-                        minHeight:minHeight,
-                        maxHeight:maxHeight
-                    });
-                    
-                    width = 170;
-
-                    switch (panel) {
-                        case "contentPanel":
-                            
-                            // corner logic
-                            $thisPanel.addClass('rdr_brtl').addClass('rdr_brbl');
-                            $thisPanel.find('div.rdr_header').addClass('rdr_brtl').addClass('rdr_brbl');
-
-                            break;
-
-                        case "whyPanel":
-                            
-                            // corner logic
-                            $thisPanel.addClass('rdr_brtl').addClass('rdr_brbl');
-                            $thisPanel.find('div.rdr_header').addClass('rdr_brtl').addClass('rdr_brbl');
-                            rindow.find('div.rdr_contentPanel, div.rdr_contentPanel div.rdr_header').addClass('rdr_brtr');
-                            rindow.find('div.rdr_reactionPanel div.rdr_body').attr('style','');
-                            gotoHeight = 225;
-
-                            if( isReadMode ){
-                                width = 470;
-
-                                rindow.queue('panels', function(){
-                                    $thisPanel.animate( {right:-300 }, rindow.settings.animTime, function(){
-                                        rindow.find('div.rdr_contentPanel .rdr_contentSet').removeClass('rdr_selected');
-                                        rindow.dequeue('panels');
-                                    });
-                                });
-                            }
-
-                            break;
-                    }
-                    
-                    if ( rindow.find('div.rdr_rindow_message').length > 0 ) {
-                        //rinh rindow.height( rindow.height()-103 );
-                        /*
-                        RDR.session.rindowUserMessage.hide({
-                            rindow:rindow
-                        });
-                        */
-                    }
-                    //temp hack
-                    if( !$thisPanel.data('expanded') ){
-                        
-                        rindow.dequeue('userMessage');
-                    }
-                    else{
-
-                        gotoHeight = RDR.rindow.getHeight(rindow, {
-                            targetHeight: targetHeight
-                        });
-                        rindow.queue('panels', function(){
-                            rindow.animate({
-                                width: width,
-                                height: gotoHeight
-                            }, rindow.settings.animTime, function() {
-                                RDR.rindow.updateSizes( rindow );
-                                rindow.dequeue('panels');
-                                rindow.dequeue('userMessage');
-                            });
-                        });
-                        rindow.dequeue('panels');
-                    }
-                    
-                    $thisPanel.data('expanded', false);
-                },
-                //todo, fix naming
-                subBoxes: [],
-                newSubBox: function(){
-                },
-                update:{
-                    
-                }              
-			},
-            comment_panel: {
-                //RDR.actions.comment_panel:
-                make: function(hash, rindow, tag ){
-                    //todo: add this and break out duplicate comment panel stuff
-                }
-            },
-            content_panel: {
-                //RDR.actions.content_panel:
-                make: function(content_node, tag, hash, rindow){
-                    //RDR.actions.content_panel.make:
-                    
-                    var summary = RDR.summaries[hash];
-
-                    var $contentSet;
-                    if ( content_node.top_interactions.tags[ tag.id ] ) {
-
-                        var content_node_key = hash+"-"+content_node.location;
-
-                        //todo: pass everything through the content_node object- no need to expand all the attrs here in the params.
-                        $contentSet = $('<div />').addClass('rdr_contentSet').data({node:content_node, content_node_key:content_node_key, hash:hash, location:content_node.location, tag:tag, content:content_node.body});
-
-                        var $header = $('<div class="rdr_contentHeader" />'),
-                            $content = $('<div class="rdr_content"></div>'),
-                            $tagInfo = $('<div class="rdr_tag_info" />'),
-                            $rightBox = $('<div class="rdr_details" />');
-                    
-                         /*                     
-                         
-                        var $tagButton = $header.find('a.rdr_tag');
-                        $tagButton.data( 'tag', tag );
-      
-                        TODO: return the abillity to +1 a tag
-                        $header.find('span.rdr_tag_count').click( function() {
-                            var $interactionButton = $(this).closest('.rdr_tag');
-                            var args = { tag:$interactionButton, rindow:rindow, content:content_node.body, hash:hash, uiMode:'read', content_node:content_node, thumbsUp:true};
-                            RDR.actions.interactions.ajax( args, 'react', 'create' );
-                        });
-                        */
-
-                        var container = $('.rdr-'+hash);
-                        var location = $contentSet.data('location');
-
-                        $contentSet.hover(
-                            function() {
-                                //don't do this for windows that are resizing
-                                if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
-                                if( $(this).closest('.rdr_window.ui-draggable-dragging').length) return;
-                                $(this).addClass('rdr_hover');
-                                if(content_node.selState){
-                                    $().selog('hilite', content_node.selState, 'on');
-                                }
-                            },
-                            function() {
-                                //don't do this for windows that are resizing
-                                if( $(this).closest('.rdr_window.ui-resizable-resizing').length) return;
-                                if( $(this).closest('.rdr_window.ui-draggable-dragging').length) return;
-                                $(this).removeClass('rdr_hover');
-                                if(content_node.selState){
-                                    $().selog('hilite', content_node.selState, 'off');
-                                }
-                            }
-                        ).click( function() {
-                            var $this = $(this);
-                            $this.closest('.rdr_contentSet').addClass('rdr_selected').siblings().removeClass('rdr_selected');
-                            RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:rindow, content_node:content_node, selState:content_node.selState});
-                        });
-
-
-                        var tagCount = RDR.util.prettyNumber( content_node.top_interactions.tags[tag.id].count ),
-                            tagCountNode = '<span class="rdr_tag_count">'+ '('+tagCount+')' +'</span>',
-                            label = ( tagCount == 1 ) ? 'Reaction' : 'Reactions';
-                        
-                        $tagInfo.html( tagCountNode + '&nbsp;&nbsp;<span class="rdr_tag_rep">'+tag.body+'</span>&nbsp;&nbsp;'+label + ' for:');
-
-                        $header.append( $tagInfo, $rightBox );
-                        if ( !$.isEmptyObject( content_node.top_interactions.coms ) ) {
-                            var num_comments = 0;
-                            for ( var i in content_node.top_interactions.coms ) {
-                                if ( content_node.top_interactions.coms[i].tag_id == tag.id ) num_comments++;
-                            }
-                            if ( num_comments > 0 ) {
-                                $header.find('div.rdr_details').append('<span>' + RDR.util.prettyNumber( num_comments ) + '</span>');
-                                $header.addClass('rdr_has_comment');
-                            }
-                        }
-
-                        //todo: consolodate truncate functions
-                        var content_node_body = content_node.body,
-                            maxLen = 60,
-                            content_node_body_trunc;
-                            
-                        content_node_body_trunc = (content_node_body.length > maxLen) ? RDR.util.trimToLastWord( content_node_body.slice(0, maxLen) )+"..." : content_node_body;
-
-                        $content.html( '<p>'+content_node_body_trunc+'</p>');
-                        
-                        //this code isn't used here anymore, but we will still need something like it in the new 3rd panel
-                        /* 
-                        $content.find('div.rdr_otherTags').before( '"' + content_node.body + '"' );
-                        var otherTags = content_node.top_interactions.tags;
-                        if( !$.isEmptyObject(otherTags) ){
-                            for ( var j in otherTags ) {
-                                var thisTag = otherTags[j];
-                                thisTag.id = parseInt(j);
-                                if ( thisTag.body != tag.body ) {
-                                    if ( $content.find('div.rdr_otherTags em').length === 0 ) $content.find('div.rdr_otherTags').append( '<em>Other Reactions</em>' );
-                                    
-
-                                    // todo should be able to remove the netx 2 lines
-                                    // $this_tag.find('span.rdr_tag_count').click( function() {
-
-                                    var $this_tag = $('<a class="rdr_tag hover" href="javascript:void(0);"></a>');
-                                    var $tagShareButton = $('<div class="rdr_tag_share" />');
-                                    $tagShareButton.click(function() {
-                                        // get short uRL call
-                                        var content_node_key = $(this).closest('div.rdr_contentSet').data('content_node_key');
-                                        
-                
-                                    });
-                                    var $tagCountButton = $('<span class="rdr_tag_count">('+RDR.util.prettyNumber(thisTag.count)+')</span>');
-                                    $tagCountButton.click( function() {
-                                        var $interactionButton = $(this).closest('.rdr_tag');
-                                        var newArgs = { tag:$interactionButton, rindow:rindow, content:content_node.body, hash:hash, uiMode:'read', content_node:content_node, thumbsUp:true};
-                                        RDR.actions.interactions.ajax( newArgs, 'react', 'create' );
-                                    });
-                                    
-                                    $this_tag.append($tagShareButton, $tagCountButton, thisTag.body);
-                                    $this_tag.data('tag', thisTag);
-                                    $content.find('div.rdr_otherTags').append( $this_tag );
-
-                                }
-                            }
-                        }
-                        */
-
-                        $contentSet.append( $header, $content );
-
-                        rindow.find('div.rdr_contentPanel div.rdr_body').append( $contentSet );
-                    }
-
-                    return $contentSet;
-                }//end RDR.actions.content_panel.make
-            },
-            // sentimentBox can be merged with / nested under this as sentimentPanel.draw at a later time mayhaps
-            sentimentPanel: {
-                addCustomTagBox: function(args) {
-
-                    var hash = args.hash;
-
-                    var rindow = args.rindow,
-                        settings = args.settings,
-                        $whyPanel = RDR.actions.panel.draw( "whyPanel", rindow ),
-                        $customTagBox = $('<li class="rdr_customTagBox"><div class="rdr_tag_count">&nbsp;<span></span></div></li>'),
-                        $freeformTagDiv = $('<div class="rdr_tagText"><input type="text" class="freeformTagInput" name="unknown-tags" /></div><div class="rdr_details"></div>'),
-                        $freeformTagInput = $freeformTagDiv.find('input');
-
-                    $freeformTagInput.blur(function(){
-                        if($('input.freeformTagInput').val() === "" ){
-                            $('div.rdr_help').show();   
-                        }
-                    }).focus(function(){
-                       $tagTooltip.hide();
-                    }).keyup( {args: args}, function(event) {
-                        var args = event.data.args;
-                        var $tag = $(this).closest('li.rdr_customTagBox'),
-                            $tagInput = $tag.find('input.freeformTagInput');
-                        if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
-                            $whyPanel.find('div.rdr_body').empty();
-                            $tag.data({
-                            'tag':{
-                                body:$tagInput.val()
-                            }});
-
-                            if ( args.actionType == "react") {
-                                args = { tag:$tag, rindow:rindow, settings:settings, hash:hash };                            
-                                RDR.actions.interactions.ajax( args, 'react', 'create' );
-                            } else if ( args.actionType == "bookmark" ) {
-                                args = { tag:$tag, rindow:rindow, settings:settings, hash:hash };                            
-                                RDR.actions.interactions.ajax( args, 'bookmark', 'create' );
-                                // RDR.actions.bookmarkSend({ tag:tag, rindow:rindow, settings:settings, callback: function() {
-                                //         // todo: at this point, cast the tag, THEN call this in the tag success function:
-                                //         //RDR.actions.panel.expand("whyPanel", rindow);
-                                //     }//end function
-                                // });
-                            }
-                        }
-                        else if (event.keyCode == '27') { //esc
-                            //return false;
-                        // TODO make tag length configurable?
-                        } else if ( $tagInput.val().length > 20 ) {
-                            var customTag = $tagInput.val();
-                            $tagInput.val( customTag.substr(0, 20) );
-                        }
-                    });
-
-                    var $tagTooltip = (args.actionType == "react") ? $('<div class="rdr_help">Add your own</div>') : $('<div class="rdr_help">Add a tag</div>');
-                    $freeformTagDiv.append($tagTooltip);
-                    $customTagBox.append($freeformTagDiv);
-
-                    $customTagBox.hover(
-                        function() {
-                            $(this).addClass('rdr_hover'); // safari/chrome kludge -- :hover isn't working here
-                        },
-                        function() {
-                            $(this).removeClass('rdr_hover'); // safari/chrome kludge -- :hover isn't working here
-                        }
-                    );
-
-                    $customTagBox.click(function(){
-                        $(this).find('div.rdr_help').hide();
-                        $freeformTagInput.focus();
-                    });
-
-                    rindow.find('ul.rdr_tags').append( $customTagBox );
-                    RDR.rindow.updateSizes( rindow );
-                }
-            },
-            rateSend: function(args) {
-                //nothing to see here - this has been moved to RDR.actions.interactions.ajax()
-            },
-            bookmarkSend: function(args) {
-                //nothing to see here - this has been moved to RDR.actions.interactions.ajax()
             },
             share_getLink: function(args) {
 
@@ -6335,7 +4736,6 @@ PILLSTODO
                 var summary = RDR.summaries[hash],
                     $rindow_readmode = summary.$rindow_readmode,
                     $rindow_writemode = summary.$rindow_writemode;
-                    
             },
             updateData: function(args) {
                 var tag_text;
@@ -6356,38 +4756,6 @@ PILLSTODO
                     } else {
                         
                     }
-
-                    
-                    //no count in headers anymore
-                    /*
-                    var headline_tag = rindow.find('div.rdr_contentPanel h1').text();
-                    headline_tag = headline_tag.substr(0, headline_tag.lastIndexOf('(')-1);
-                    // make sure that the tag just clicked matches the tag of the column we're in before incrementing the count in the column header
-                    if ( headline_tag == tag_text ) {
-                        var total_count = rindow.find('div.rdr_contentPanel h1 span').text();
-                        total_count = parseInt( total_count.substr(1, total_count.length-1) ) + 1;
-                        rindow.find('div.rdr_contentPanel h1 span').text('('+total_count+')');
-                    }*/
-
-                    var total_reactions = rindow.find('div.rdr_reactionPanel h1 span').text();
-                    total_reactions = parseInt( total_reactions.substr(1, total_reactions.length-1), 10 ) + 1;
-                    rindow.find('div.rdr_reactionPanel h1 span').text('('+total_reactions+')');
-
-                    rindow.find('div.rdr_reactionPanel ul.rdr_tags li').each( function() {
-                        var $this = $(this);
-                        // var this_count = ( $this.data('tag').id == tag.id ) ? count : $this.data('tag').count;
-                        // var percentage = Math.round( ( this_count / total_reactions) * 100);
-                        // this should update all of the counts
-                        // $this.find(' div.rdr_tag_count span').text( percentage+'%' );
-                    });
-
-                    //I'm doing this somewhere else
-                    /*
-                    $('div.rdr_indicator').each( function() {
-                        $this = $(this);
-                        if ( $this.data('hash') == hash ) $this.find('span.rdr_count').text(total_reactions);
-                    });
-                    */
                     
                     // update the data objects too
                     for ( var i in RDR.content_nodes[hash].info.content ) {
@@ -6412,147 +4780,6 @@ PILLSTODO
                     }
 
                 }
-            },
-            shareStart: function(args) {
-                var rindow = args.rindow, 
-                    tag = args.tag,
-                    int_id = args.int_id,
-                    content_node = args.content_node_data;
-                
-                //temp tie-over    
-                var hash = args.hash,
-                    summary = RDR.summaries[hash],
-                    kind = args.kind;
-
-
-                //todo: temp hack
-                if( !content_node ){
-                    //content_node_info;
-                }
-
-                var $whyPanel_body = rindow.find('div.rdr_whyPanel div.rdr_body');
-                var $whyPanel_body_jsp = $whyPanel_body.find('.jspPane');
-            
-                var $whyPanel_panelCard = $('<div />').addClass('rdr_panelCard rdr_panelCard'+int_id);
-                $whyPanel_panelCard.data({
-                    'tagID':tag.id,
-                    'intactID':int_id
-                });
-                
-                //$whyPanel_body.empty();
-            
-                //add to the $whyPanel_body and hide any sibling panels that have been made;
-                if($whyPanel_body_jsp.length){
-                    $whyPanel_panelCard.appendTo($whyPanel_body_jsp);
-                }else{
-                    $whyPanel_panelCard.appendTo($whyPanel_body);
-                }
-                
-                $whyPanel_panelCard.siblings('.rdr_panelCard').hide();
-
-                
-                //build $whyPanel_panelCard
-                var $tagFeedback = $('<div class="rdr_tagFeedback">Your reaction: <strong>'+tag.body+'</strong></div>');
-                var $shareDialogueBox = $('<div class="rdr_shareBox"><strong>Share It:</strong></div>');
-                var $commentBox = $('<div class="rdr_commentBox"></div>').html(
-                    '<div><h4>Leave a comment:</h4></div> <div class="rdr_commentComplete"></div>'
-                );
-                var $undoLink = $('<a class="rdr_undo_link" href="javascript:void(0);">Undo</a>')//chain
-                .bind('click.rdr', { args:args }, function(event){
-                    // RDR.actions.unrateSend(args);
-                    var args = event.data.args;
-                    
-                    var newArgs = {    
-                        content_node_data: args.content_node_data,
-                        hash: hash,
-                        int_id: args.int_id,
-                        tag: args.tag,
-                        rindow: args.rindow
-                    };
-                    RDR.actions.interactions.ajax( newArgs, 'react', 'remove' );
-                });
-
-                $whyPanel_panelCard.append(
-                    $tagFeedback.append($undoLink),
-                    $shareDialogueBox,
-                    $commentBox
-                );
-
-               //todo: combine this with the other make comments code
-                var helpText = "because...",
-                    $commentDiv =  $('<div class="rdr_comment">'),
-                    $commentTextarea = $('<textarea class="commentTextArea">' +helpText+ '</textarea>'),
-                    $rdr_charCount =  $('<div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div>'),
-                    $submitButton =  $('<button id="rdr_comment_on_'+int_id.id+'">Comment</button>');
-                
-                $commentDiv.append( $commentTextarea, $rdr_charCount, $submitButton );
-                
-                $commentTextarea.focus(function(){
-                    if( $(this).val() == helpText ){
-                        $(this).val('');
-                    }
-                }).blur(function(){
-                    if( $(this).val() === "" ){
-                        $(this).val( helpText );
-                    }
-                }).keyup(function(event) {
-                    var commentText = $commentTextarea.val();
-                    if (event.keyCode == '27') { //esc
-                        //return false;
-                    } else if ( commentText.length > RDR.group.comment_length ) {
-                        commentText = commentText.substr(0, RDR.group.comment_length);
-                        $commentTextarea.val( commentText );
-                    }
-                    $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
-                });
-                                    
-                $submitButton.click(function(e) {
-                    var commentText = $commentTextarea.val();
-
-                    //keyup doesn't guarentee this, so check again (they could paste in for example);
-                    if ( commentText.length > RDR.group.comment_length ) {
-                        commentText = commentText.substr(0, RDR.group.comment_length);
-                        $commentTextarea.val( commentText );
-                        $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
-                    }
-                    
-                    if ( commentText != helpText ) {
-                        //temp translations..
-                        //quick fix
-                        content_node.kind = summary.kind;
-
-                        var args = { hash:hash, kind:summary.kind, content_node_data:content_node, comment:commentText, int_id:int_id, rindow:rindow, selState:content_node.selState, tag:tag};                            
-                        //leave parent_id undefined for now - backend will find it.
-                        RDR.actions.interactions.ajax( args, 'comment', 'create');
-
-                    } else{
-                        $commentTextarea.focus();
-                    }
-                    return false; //so the page won't reload
-                });
-                //end comment.make section - to be merged later with other duplicated code
-
-                $commentBox.append( $commentDiv );
-
-                var $socialBox = $('<div class="rdr_share_social" />'),
-                $shareLinks = $('<ul class="shareLinks"></ul>'),
-                socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
-
-                // embed icons/links for diff SNS
-                var shareHash = hash;
-                $.each(socialNetworks, function(idx, val){
-                    $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
-                    $shareLinks.find('li:last').click( function() {
-                        RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
-                        RDR.actions.share_getLink({ hash:shareHash, kind:kind, sns:val, rindow:rindow, tag:tag, content_node:content_node });
-                        return false;
-                    });
-                });
-                $socialBox.append($shareLinks, '<div style="clear:both;" />');
-
-                $shareDialogueBox.append( $socialBox );
-
-                RDR.actions.panel.expand("whyPanel", rindow);
             },
             startSelect: function(e) {
                 //RDR.actions.startSelect:
@@ -7184,15 +5411,6 @@ function $RFunctions($R){
                     }
                     $summary_widget.append( $react );
 
-                    // if ( total_interactions > 0 ) {
-                    //     var people = ( page.topusers.length > 1 ) ? page.topusers.length + " people" : "1 person";
-                    //     // racialicious:
-                    //     // $summary_widget.append('<div class="rdr-sum-headline">'+total_interactions+' reactions from '+people+'</div>');
-                    //     $summary_widget.append('<div class="rdr-sum-headline">'+total_interactions+' reactions:</div>');
-                    // } else {
-
-                    // }
-
                     // summary widget: specific tag totals
                     if ( page.toptags.length > 0 ){
                         // var $toptags = $('<div class="rdr-top-tags" />');
@@ -7242,7 +5460,6 @@ function $RFunctions($R){
                             hash = $input.closest('.rdr-page-container').data('hash');
 
                         if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
-                            // $whyPanel.find('div.rdr_body').empty();
 
                             tag.body = $input.val();
 
@@ -7283,9 +5500,6 @@ function $RFunctions($R){
                         }
                     );
 
-
-
-
                     if ( page.topusers.length > 0 ){
                         var $topusers = $('<div class="rdr-top-users" />');
 
@@ -7306,29 +5520,6 @@ function $RFunctions($R){
                     }
 
                     $summary_widget.append( $('<div class="rdr_note" />') );
-                    
-
-                    // instructional tooltip summary box tooltip
-                    // var $tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"<strong style='font-weight:bold;'>Tell us what you think!</strong><br>React by selecting any text, or roll your mouse over images and video, and look for the pin icon."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
-                    // $tooltip.attr( 'id', 'rdr-tooltip-'+page.id );
-                    // $('#rdr_sandbox').append( $tooltip );
-
-                    // var summaryOffsets = $summary_widget.offset();
-                    // var tooltip_top = ( summaryOffsets.top - $(window).scrollTop() - 82 ),
-                    //     tooltip_left = ( summaryOffsets.left + ( $summary_widget.width() / 2 ) - 125 );
-
-                    // $tooltip.css('top', tooltip_top + "px" );
-                    // $tooltip.css('left', tooltip_left + "px" );
-
-                    // $summary_widget.hover(
-                    //     function() {
-                    //         $('#rdr-tooltip-' + page.id).show();
-                    //     },
-                    //     function() {
-                    //         $('#rdr-tooltip-' + page.id).hide();
-                    //     }
-                    // );
-
 
                 function writeTag(tag) {
                     var tagCount, $span;
@@ -8293,9 +6484,7 @@ function $RFunctions($R){
             * @author james padolsey
             * @version ??
             */
-            // (function(){
-                var a=jQuery.event.special,b="D"+ +(new Date),c="D"+(+(new Date)+1);a.scrollstart={setup:function(){var c,d=function(b){var d=this,e=arguments;if(c){clearTimeout(c)}else{b.type="scrollstart";jQuery.event.handle.apply(d,e)}c=setTimeout(function(){c=null},a.scrollstop.latency)};jQuery(this).bind("scroll",d).data(b,d)},teardown:function(){jQuery(this).unbind("scroll",jQuery(this).data(b))}};a.scrollstop={latency:300,setup:function(){var b,d=function(c){var d=this,e=arguments;if(b){clearTimeout(b)}b=setTimeout(function(){b=null;c.type="scrollstop";jQuery.event.handle.apply(d,e)},a.scrollstop.latency)};jQuery(this).bind("scroll",d).data(c,d)},teardown:function(){jQuery(this).unbind("scroll",jQuery(this).data(c))}}
-            // })
+            var a=jQuery.event.special,b="D"+ +(new Date),c="D"+(+(new Date)+1);a.scrollstart={setup:function(){var c,d=function(b){var d=this,e=arguments;if(c){clearTimeout(c)}else{b.type="scrollstart";jQuery.event.handle.apply(d,e)}c=setTimeout(function(){c=null},a.scrollstop.latency)};jQuery(this).bind("scroll",d).data(b,d)},teardown:function(){jQuery(this).unbind("scroll",jQuery(this).data(b))}};a.scrollstop={latency:300,setup:function(){var b,d=function(c){var d=this,e=arguments;if(b){clearTimeout(b)}b=setTimeout(function(){b=null;c.type="scrollstop";jQuery.event.handle.apply(d,e)},a.scrollstop.latency)};jQuery(this).bind("scroll",d).data(c,d)},teardown:function(){jQuery(this).unbind("scroll",jQuery(this).data(c))}}
         }
         //end function plugin_jquery_mousewheelIntent
 
@@ -8517,6 +6706,7 @@ function $RFunctions($R){
 }
 //end $RFunctions()
 
+// DEMO remove!!
 function DAILYCANDYCYCLE(slide) {
     if ( jQuery('#module-flipbook').length == 1 ) jQuery('#module-flipbook').cycle( slide );
 }
