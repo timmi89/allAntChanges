@@ -552,7 +552,7 @@ function readrBoard($R){
                             $indicatorDetails = $('#rdr_indicator_details_'+ hash),
                             $container = $('.rdr-'+hash);
 
-                            var has_inline_indicator = true, //$container.data('inlineIndicator'); //boolean
+                            var has_inline_indicator = (summary.kind=="text") ? false:true, //$container.data('inlineIndicator'); //boolean
                                 tempOffsets = has_inline_indicator ? {
                                 top: 0,
                                 left: 0
@@ -3635,7 +3635,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     $indicator.css('visibility','hidden');
 
                     
-                    var has_inline_indicator = true; //$container.data('inlineIndicator'); //boolean
+                    var has_inline_indicator = (summary.kind=="text") ? false:true; //$container.data('inlineIndicator'); //boolean
                     
                     if(has_inline_indicator){
                         _setupInlineIndicators();
@@ -3927,7 +3927,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                         var $indicator_details_body = $('<div class="rdr rdr_indicator_details_body" />'),
                             $indicator_details_innerWrap = $('<div class="rdr rdr_indicator_details_innerWrap" />'),
-                            categoryTitleText = ((summary.counts.tags == 1) ? "&nbsp;reaction.&nbsp;" : "&nbsp;reactions.&nbsp;") + "Roll over to view.",
+                            categoryTitleText = (summary.counts.tags == 1) ? "&nbsp;reaction.&nbsp;" : "&nbsp;reactions.&nbsp;",
                             categoryTitle = '<span class="rdr_indicator_categoryTitle">' +categoryTitleText+ '</span>',
                             $tagsList = $('<div class="rdr_tags_list" />'),
                             $tag_table = $('<table cellpadding="0" cellspacing="0" border="0" class="rdr_tags" />');
@@ -3951,8 +3951,10 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $container = summary.$container,
                             $tagsList = $indicator_details.find('.rdr_tags_list'),
                             $tag_table = $tagsList.find('table.rdr_tags');
+
+// RDR.actions.summaries.sortInteractions(hash);
 if ( summary.kind == "img" ) console.dir(summary);
-                        var has_inline_indicator = true, //$container.data('inlineIndicator'), //boolean
+                        var has_inline_indicator = (summary.kind=="text") ? false:true, //$container.data('inlineIndicator'), //boolean
                             tagsListMaxWidth,
                             buffer = 120, //for prefix and the "more..." span
                             count = 0; //used as a break statement below
@@ -3963,21 +3965,21 @@ if ( summary.kind == "img" ) console.dir(summary);
                             tagsListMaxWidth = 300;
                         }
 if ( summary.kind == "img" ) console.log('tagsListMaxWidth: '+tagsListMaxWidth);
-
+/*
                         $.each( summary.top_interactions.tags, function( idx, tagOrder ){
                             var tag = summary.top_interactions.tags[ tagOrder.id ];
 
-                            // $tag_table;
+                            $tag_table;
                         
-                            // $.each(RDR.group.blessed_tags, function(idx, tag){
-                            if ( idx % 2 == 0 ) {
-                                $tag_table.append('<tr/>');
-                                $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
-                            } else {
-                                $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
-                            }
-                                // count++;
-                            // });
+                            $.each(RDR.group.blessed_tags, function(idx, tag){
+                                if ( idx % 2 == 0 ) {
+                                    $tag_table.append('<tr/>');
+                                    $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
+                                } else {
+                                    $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
+                                }
+                                count++;
+                            });
 
                             RDR.rindow.writeTag( tag, $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper'), $rindow );
 
@@ -4009,7 +4011,7 @@ if ( summary.kind == "img" ) console.log('tagsListMaxWidth: '+tagsListMaxWidth);
                             count++;
                             
                         });
-
+*/
                     },
                     setupContentNodeHilites: function( hash ){
                         //RDR.actions.indicators.utils.setupContentNodeHilites:
@@ -4123,7 +4125,7 @@ if ( summary.kind == "img" ) console.log('tagsListMaxWidth: '+tagsListMaxWidth);
                                 right: cornerPadding
                             });
 
-                            var has_inline_indicator = true; //$container.data('inlineIndicator'); //boolean                        
+                            var has_inline_indicator = (summary.kind=="text") ? false:true; //$container.data('inlineIndicator'); //boolean                        
                             if(has_inline_indicator){
                                 RDR.actions.indicators.utils.updateInlineIndicator(hash);
                             }else{
