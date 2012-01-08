@@ -849,13 +849,13 @@ div.rdr_indicator_for_media_inline div.rdr_indicator_body {
 #rdr_sandbox .rdr_indicator_details_for_media_inline{
     display:block !important;
     margin:0 !important;
-    -moz-border-radius:0 !important;
-    -webkit-border-radius:0 !important;
-    border-radius:0 !important;
-    box-shadow:  none !important;
-    -moz-box-shadow:  none !important;
-    -webkit-box-shadow:  none !important;
-    background:#f7f7f7 !important;
+    -moz-border-radius:0px 0px 8px 8px !important;
+    -webkit-border-radius:0px 0px 8px 8px !important;
+    border-radius:0px 0px 8px 8px !important;
+    box-shadow:  0px 4px 6px -2px #ccc !important;
+    -moz-box-shadow:  0px 4px 6px -2px #ccc !important;
+    -webkit-box-shadow:  0px 4px 6px -2px #ccc !important;
+    background:#f0f0f0 !important;
 }
 #rdr_sandbox .rdr_indicator_details_for_media_inline.rdr_hover{
 }

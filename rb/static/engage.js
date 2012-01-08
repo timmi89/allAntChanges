@@ -552,8 +552,8 @@ function readrBoard($R){
                             $indicatorDetails = $('#rdr_indicator_details_'+ hash),
                             $container = $('.rdr-'+hash);
 
-                            var has_inline_indicator = $container.data('inlineIndicator'); //boolean
-                            var tempOffsets = has_inline_indicator ? {
+                            var has_inline_indicator = true, //$container.data('inlineIndicator'); //boolean
+                                tempOffsets = has_inline_indicator ? {
                                 top: 0,
                                 left: 0
                             } : {
@@ -3635,7 +3635,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     $indicator.css('visibility','hidden');
 
                     
-                    var has_inline_indicator = $container.data('inlineIndicator'); //boolean
+                    var has_inline_indicator = true; //$container.data('inlineIndicator'); //boolean
                     
                     if(has_inline_indicator){
                         _setupInlineIndicators();
@@ -3826,7 +3826,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 $container_tracker_wrap = $('#rdr_container_tracker_wrap'),
                                 $container_tracker = $('<div class="rdr_container_tracker" />');
 
-                            var has_inline_indicator = $container.data('inlineIndicator'); //boolean
+                            var has_inline_indicator = true; //$container.data('inlineIndicator'); //boolean
     
                             $container_tracker.attr('id', 'rdr_container_tracker_'+hash).appendTo($container_tracker_wrap);
                             //position the containerTracker at the top left of the image or videos.  We'll position the indicator and hiliteborder relative to this.
@@ -3927,10 +3927,12 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                         var $indicator_details_body = $('<div class="rdr rdr_indicator_details_body" />'),
                             $indicator_details_innerWrap = $('<div class="rdr rdr_indicator_details_innerWrap" />'),
-                            categoryTitleText = (summary.counts.tags == 1) ? "&nbsp;reaction:&nbsp;" : "&nbsp;reactions:&nbsp;",
+                            categoryTitleText = ((summary.counts.tags == 1) ? "&nbsp;reaction.&nbsp;" : "&nbsp;reactions.&nbsp;") + "Roll over to view.",
                             categoryTitle = '<span class="rdr_indicator_categoryTitle">' +categoryTitleText+ '</span>',
-                            $tagsList = $('<div class="rdr_tags_list" />');
-
+                            $tagsList = $('<div class="rdr_tags_list" />'),
+                            $tag_table = $('<table cellpadding="0" cellspacing="0" border="0" class="rdr_tags" />');
+                        
+                        $tagsList.append( $tag_table );
                         
                         $indicator_details_body.html( $indicator_body.html() );
 
@@ -3947,9 +3949,10 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         var summary = RDR.summaries[hash],
                             $indicator_details = summary.$indicator_details,
                             $container = summary.$container,
-                            $tagsList = $indicator_details.find('.rdr_tags_list');
-
-                        var has_inline_indicator = $container.data('inlineIndicator'), //boolean
+                            $tagsList = $indicator_details.find('.rdr_tags_list'),
+                            $tag_table = $tagsList.find('table.rdr_tags');
+if ( summary.kind == "img" ) console.dir(summary);
+                        var has_inline_indicator = true, //$container.data('inlineIndicator'), //boolean
                             tagsListMaxWidth,
                             buffer = 120, //for prefix and the "more..." span
                             count = 0; //used as a break statement below
@@ -3959,6 +3962,54 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         }else{
                             tagsListMaxWidth = 300;
                         }
+if ( summary.kind == "img" ) console.log('tagsListMaxWidth: '+tagsListMaxWidth);
+
+                        $.each( summary.top_interactions.tags, function( idx, tagOrder ){
+                            var tag = summary.top_interactions.tags[ tagOrder.id ];
+
+                            // $tag_table;
+                        
+                            // $.each(RDR.group.blessed_tags, function(idx, tag){
+                            if ( idx % 2 == 0 ) {
+                                $tag_table.append('<tr/>');
+                                $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
+                            } else {
+                                $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
+                            }
+                                // count++;
+                            // });
+
+                            RDR.rindow.writeTag( tag, $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper'), $rindow );
+
+                            
+                            if(count === null) return; //a helper incrementer, set to 'null' below to mimic a 'break' out of the 'each' loop 
+                            if( !tag || tag.count < 0) return; //this shouldn't happen, should be taken care of in summaries.update.  But just in case.
+
+                            var $prefix = count ? $('<span>, </span>') : $(), //check for count to omit the comma prefix on the first case.
+                                $tag = $('<strong/>').append(tag.body),
+                                $count = $('<em/>').append( ' ('+tag.count+')' ),
+                                $span = $('<span />').addClass('rdr_tags_list_tag');
+
+                            $span.append( $tag, $count).data('id',tagOrder.id).data('selStates',[]);
+
+
+                            $tagsList.append( $prefix, $span );
+
+                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
+                            if ( $tagsList.width() > ( tagsListMaxWidth - buffer ) ) {
+                                //the tag pushed the length over the limit, so kill it, and replace with ...
+                                $span.remove();
+                                $prefix.remove();
+                                var $moreText = $('<span>...</span>').addClass('rdr_see_more');
+                                $tagsList.append($moreText);
+                                //signal the rest of the each loop to just return;
+                                count = null;
+                                return;
+                            }
+                            count++;
+                            
+                        });
+
                     },
                     setupContentNodeHilites: function( hash ){
                         //RDR.actions.indicators.utils.setupContentNodeHilites:
@@ -4072,7 +4123,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 right: cornerPadding
                             });
 
-                            var has_inline_indicator = $container.data('inlineIndicator'); //boolean                        
+                            var has_inline_indicator = true; //$container.data('inlineIndicator'); //boolean                        
                             if(has_inline_indicator){
                                 RDR.actions.indicators.utils.updateInlineIndicator(hash);
                             }else{
