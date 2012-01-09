@@ -3750,11 +3750,12 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         });
 
                         $indicator_details.show()//chain
-                        .click( function() {
-                            var selStates = $(this).data('selStates');
+                        // .click( function() {
+                        //     var selStates = $(this).data('selStates');
 
-                            RDR.rindow.make( "readMode", {hash:hash, rewritable:false} );
-                        });
+                        //     RDR.rindow.make( "readMode", {hash:hash, rewritable:false} );
+                        // })
+                        ;
                         $indicator.css('visibility','visible');
                     }
 
@@ -3962,12 +3963,10 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             count = 0; //used as a break statement below
                         
                         if(has_inline_indicator){
-                            tagsListMaxWidth = $indicator_details.outerWidth()-80;
+                            tagsListMaxWidth = $indicator_details.outerWidth()-30;
                         }else{
                             tagsListMaxWidth = 300;
                         }
-console.dir(summary);
-console.log('tagsListMaxWidth: '+tagsListMaxWidth);
 
                         if ( summary.top_interactions && summary.top_interactions.tags ) {
                             $.each( summary.top_interactions.tags, function( tag_id, tag ){
@@ -3993,34 +3992,6 @@ console.log('tagsListMaxWidth: '+tagsListMaxWidth);
                                 }
                                 
                                 $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper').append( $pill );
-
-                                
-                                // if(count === null) return; //a helper incrementer, set to 'null' below to mimic a 'break' out of the 'each' loop 
-                                // if( !tag || tag.count < 0) return; //this shouldn't happen, should be taken care of in summaries.update.  But just in case.
-
-                                // var $prefix = count ? $('<span>, </span>') : $(), //check for count to omit the comma prefix on the first case.
-                                //     $tag = $('<strong/>').append(tag.body),
-                                //     $count = $('<em/>').append( ' ('+tag.count+')' ),
-                                //     $span = $('<span />').addClass('rdr_tags_list_tag');
-
-                                // $span.append( $tag, $count).data('id',tagOrder.id).data('selStates',[]);
-
-
-                                // $tagsList.append( $prefix, $span );
-
-                                // // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                                // if ( $tagsList.width() > ( tagsListMaxWidth - buffer ) ) {
-                                //     //the tag pushed the length over the limit, so kill it, and replace with ...
-                                //     $span.remove();
-                                //     $prefix.remove();
-                                //     var $moreText = $('<span>...</span>').addClass('rdr_see_more');
-                                //     $tagsList.append($moreText);
-                                //     //signal the rest of the each loop to just return;
-                                //     count = null;
-                                //     return;
-                                // }
-                                // count++;
-                                
                             });
                         }
 

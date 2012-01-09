@@ -872,7 +872,8 @@ div.rdr_indicator_for_media.rdr_engage_media {
 }
 #rdr_sandbox div.rdr_indicator_details_for_media.rdr_hover,
 #rdr_sandbox div.rdr_indicator_details_for_media:hover {
-    max-height:none;
+    max-height:150px;
+    overflow-y:auto;
 }
 div.rdr_indicator_for_media_inline {
 }
@@ -957,7 +958,7 @@ div.rdr_indicator span.rdr_count,
 
 #rdr_sandbox div.rdr_tags_list { 
     width:auto !important;
-    display:inline !important;
+    display:inline-block !important;
     white-space:nowrap !important;
     text-decoration:none !important;
 }
