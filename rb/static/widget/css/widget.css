@@ -261,6 +261,7 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr div.rdr_commentSet a.rdr_tag:hover div.rdr_tag_share    {margin-left:3px;}
 
 /* tag pills and such */
+div.rdr.rdr_indicator_details table.rdr_tags,
 div.rdr.rdr_window table.rdr_tags {
     /*margin-top:3px !important;
     margin-right:3px !important;*/
@@ -270,13 +271,18 @@ div.rdr.rdr_window table.rdr_tags {
     margin-left:auto;
     float:left !important;
 }
+div.rdr.rdr_indicator_details table.rdr_tags {
+    margin-top: -4px !important;
+}
 
+div.rdr.rdr_indicator_details table.rdr_tags td.rdr_activePill a.rdr_tag,
 div.rdr.rdr_window table.rdr_tags td.rdr_activePill a.rdr_tag {
     background: -moz-linear-gradient(center top , #e8e8e8, #fff) repeat scroll 0 0 transparent;
     border-top: 1px solid #ccc;
     box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7), 0 -1px 1px rgba(128, 128, 128, 0.4) inset;
 }
 
+div.rdr.rdr_indicator_details table.rdr_tags td.rdr_activePill a.rdr_tag span.rdr_tag_count,
 div.rdr.rdr_window table.rdr_tags td.rdr_activePill a.rdr_tag span.rdr_tag_count {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffadd1f9', endColorstr='#ffddedff');
     background: -webkit-gradient(linear, center top, center bottom, from(#add1f9), to(#ddedff)); 
@@ -284,31 +290,38 @@ div.rdr.rdr_window table.rdr_tags td.rdr_activePill a.rdr_tag span.rdr_tag_count
     box-shadow: -1px -1px 1px rgba(128, 128, 128, 0.4) inset;
 }
 
+div.rdr.rdr_indicator_details table.rdr_tags td.rdr_activePill,
 div.rdr.rdr_window table.rdr_tags td.rdr_activePill {
     background:#fff;
 }
+div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps,
 div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps {
     background:#fff;
     font-size:10.5px;
     
 }
+div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps div,
 div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps div {
     margin:4px 0 !important;
 }
+div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps div.rdr_nextSteps_container,
 div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps div.rdr_nextSteps_container {
     padding:0 2px !important;
 }
+div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps hr,
 div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps hr {
     height:1px !important;
     background:#d0d0d0 !important;
     border: none !important;
     width: 98% !important;
 }
+div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps a,
 div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps a {
     font-style:normal !important;
     text-decoration:underline !important;
     color:#008be4 !important;
 }
+div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps input[type="text"],
 div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps input[type="text"] {
     width:90% !important;
     color:#aaa !important;
@@ -317,6 +330,7 @@ div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps input[type="text"] {
     margin:2px 0 !important;
 }
 
+div.rdr.rdr_indicator_details table.rdr_tags td,
 div.rdr.rdr_window table.rdr_tags td {
     padding:3px 0 0 2px;
 }
@@ -345,11 +359,13 @@ div.rdr a.rdr_tag     {
     white-space: nowrap !important;
     z-index: 10001;
 }
+div.rdr.rdr_indicator_details a.rdr_tag,
 div.rdr.rdr_window a.rdr_tag     {
     display:block !important;
     padding: 0px 5px !important;
     margin: 0 5px 5px 2px !important;
 }
+div.rdr.rdr_indicator_details td a.rdr_tag,
 div.rdr.rdr_window td a.rdr_tag     {
     max-width: 110px !important;
 }
@@ -395,10 +411,12 @@ div.rdr.rdr_window td div.rdr_cell_wrapper span.rdr_comment_hover:hover {
 div.rdr.rdr_window td div.rdr_cell_wrapper span.rdr_comment_hover:hover span.rdr_icon {
     background-position:-482px -14px !important;
 }
+div.rdr.rdr_indicator_details a.rdr_tag.rdr_custom_tag,
 div.rdr.rdr_window a.rdr_tag.rdr_custom_tag     {
     height: 17px !important;
     padding: 4px 5px 0 !important;
 }
+div.rdr.rdr_indicator_details a.rdr_tag span.rdr_tag_name,
 div.rdr.rdr_window a.rdr_tag span.rdr_tag_name {
     display:block !important;
     float:left !important;
@@ -407,6 +425,7 @@ div.rdr.rdr_window a.rdr_tag span.rdr_tag_name {
     width:84%;
     overflow-x:hidden;
 }
+div.rdr.rdr_indicator_details a.rdr_tag span.rdr_tag_count,
 div.rdr.rdr_window a.rdr_tag span.rdr_tag_count {
     min-width:5px !important;
     display:block !important;
@@ -442,12 +461,15 @@ div.rdr a.rdr_tag span.rdr_tag_count    {
     text-align: center !important;
 }
 
+div.rdr.rdr_indicator_details table.rdr_tags a.rdr_tag span.rdr_tag_count,
 div.rdr.rdr_window table.rdr_tags a.rdr_tag span.rdr_tag_count    { 
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
     background: -webkit-gradient(linear, center top, center bottom, from(#ddedff), to(#add1f9)); 
     background: -moz-linear-gradient(center top , #f0f0f0, #d0d0d0) repeat scroll 0 0 transparent;
 }
 
+div.rdr.rdr_indicator_details table.rdr_tags a.rdr_tag.rdr_hover span.rdr_tag_count,
+div.rdr.rdr_indicator_details table.rdr_tags a.rdr_tag:hover span.rdr_tag_count,
 div.rdr.rdr_window table.rdr_tags a.rdr_tag.rdr_hover span.rdr_tag_count,
 div.rdr.rdr_window table.rdr_tags a.rdr_tag:hover span.rdr_tag_count    { 
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
@@ -815,10 +837,16 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
 }
 
 
-#rdr_sandbox div.rdr_indicator_details_body{
+#rdr_sandbox div.rdr_indicator_details_body {
     width:auto !important;
     display:inline !important;
     white-space:nowrap !important;
+}
+
+#rdr_sandbox div.rdr_indicator_details_for_media div.rdr_indicator_details_body {
+    display: inline-block !important;
+    float: left;
+    margin-top: 4px;
 }
 
 /*now override styles for the image containers*/
