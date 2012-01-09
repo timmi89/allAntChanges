@@ -868,6 +868,11 @@ div.rdr_indicator_for_media.rdr_engage_media {
 #rdr_sandbox div.rdr_indicator_details_for_media {
     overflow:hidden; /*for the animate out to work nicely*/
     margin:0; /*don't need the -5px 0 0 -4px margin here.  Kick it left though*/
+    max-height:30px;
+}
+#rdr_sandbox div.rdr_indicator_details_for_media.rdr_hover,
+#rdr_sandbox div.rdr_indicator_details_for_media:hover {
+    max-height:none;
 }
 div.rdr_indicator_for_media_inline {
 }

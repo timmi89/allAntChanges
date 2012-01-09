@@ -422,21 +422,22 @@ function readrBoard($R){
                     RDR.actions.interactions.ajax( args, 'react', 'create');
                 });
 
-                if ( $container ) {
-                    $container.append( $a, " " );
-                    if ( !$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions.coms ) ) {
-                        var $commentHover = $('<span class="rdr_comment_hover"><span class="rdr_icon"></span> '+content_node.top_interactions.coms.length+'</span>');
-                        $commentHover.click( function() {
-                            RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:$rindow, content_node:content_node, selState:content_node.selState});
-                        });
-                        
-                        $a.append('<span class="rdr_has_comment"></span>');
-                        $a.after( $commentHover );
-                    }
-                    if ( tagCount === "" ) {
-                        $span.hide();
-                    }
-                } else return $a;
+                if ( $container ) $container.append( $a, " " );
+
+                if ( !$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions.coms ) ) {
+                    var $commentHover = $('<span class="rdr_comment_hover"><span class="rdr_icon"></span> '+content_node.top_interactions.coms.length+'</span>');
+                    $commentHover.click( function() {
+                        RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:$rindow, content_node:content_node, selState:content_node.selState});
+                    });
+                    
+                    $a.append('<span class="rdr_has_comment"></span>');
+                    $a.after( $commentHover );
+                }
+                if ( tagCount === "" ) {
+                    $span.hide();
+                }
+
+                if ( !$container )  return $a;
 
             },
             writeCustomTag: function( $container, $rindow, actionType ) {
@@ -3931,7 +3932,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             // categoryTitleText = (summary.counts.tags == 1) ? "&nbsp;reaction.&nbsp;" : "&nbsp;reactions.&nbsp;",
                             // categoryTitle = '<span class="rdr_indicator_categoryTitle">' +categoryTitleText+ '</span>',
                             $tagsList = $('<div class="rdr_tags_list" />'),
-                            $tag_table = $('<table cellpadding="0" cellspacing="0" border="0" class="rdr_tags" />');
+                            $tag_table = $('<table cellpadding="0" cellspacing="0" border="0" class="rdr_tags"><tr/></table>');
                         
                         $tagsList.append( $tag_table );
                         
@@ -3961,7 +3962,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             count = 0; //used as a break statement below
                         
                         if(has_inline_indicator){
-                            tagsListMaxWidth = $indicator_details.outerWidth();
+                            tagsListMaxWidth = $indicator_details.outerWidth()-80;
                         }else{
                             tagsListMaxWidth = 300;
                         }
@@ -3969,24 +3970,29 @@ console.dir(summary);
 console.log('tagsListMaxWidth: '+tagsListMaxWidth);
 
                         if ( summary.top_interactions && summary.top_interactions.tags ) {
-                            var count = 0;
                             $.each( summary.top_interactions.tags, function( tag_id, tag ){
                                 // var tag = summary.top_interactions.tags[ tagOrder.id ];
                                 tag.id = tag_id;
 
-                                // $tag_table;
-                            
-                                // $.each(RDR.group.blessed_tags, function(idx, tag){
-                                if ( count % 2 == 0 ) {
+                                var $pill = RDR.rindow.writeTag( tag, false, $indicator );
+
+                                // append to the sandbox to get its width, then we'll remove it.  is there a better way?
+                                $('#rdr_sandbox').append( $pill );
+                                var pill_width = $pill.width();
+                                $('#rdr_sandbox').find( $pill ).remove();
+
+                                var $first_row = $tag_table.find('tr').eq(0),
+                                    $last_row = $tag_table.find('tr').eq(-1);
+
+                                if ( ( $first_row.width() + pill_width > tagsListMaxWidth && $tag_table.find('tr').length == 1 )
+                                    || ( $last_row.find('td').length == $first_row.find('td').length && $tag_table.find('tr').length > 1 ) ) {
                                     $tag_table.append('<tr/>');
                                     $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
                                 } else {
-                                    $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
+                                    $last_row.append('<td><div class="rdr_cell_wrapper"/></td>');
                                 }
-                                count++;
-                                // });
-
-                                RDR.rindow.writeTag( tag, $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper'), $indicator );
+                                
+                                $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper').append( $pill );
 
                                 
                                 // if(count === null) return; //a helper incrementer, set to 'null' below to mimic a 'break' out of the 'each' loop 
