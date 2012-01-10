@@ -441,9 +441,7 @@ div.rdr.rdr_window span.rdr_has_comment {
     width:10px;
     height:10px;
 }
-div.rdr a.rdr_tag:hover     { 
-    /*background: -moz-linear-gradient(center top , #f7f7f7, #d0d0d0) repeat scroll 0 0 transparent;*/
-}
+
 div.rdr a.rdr_tag span.rdr_tag_count    { 
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
     background: -webkit-gradient(linear, center top, center bottom, from(#ddedff), to(#add1f9)); 
@@ -762,7 +760,7 @@ div.rdr_indicator_for_text{
     -o-box-sizing : border-box;
     box-sizing : border-box; 
 }
-#rdr_sandbox div.rdr_indicator_details_innerWrap{
+#rdr_sandbox div.rdr_indicator_details div.rdr_body_wrap{
     padding:4px 3px 3px 3px !important;
 }
 
@@ -868,11 +866,11 @@ div.rdr_indicator_for_media.rdr_engage_media {
 #rdr_sandbox div.rdr_indicator_details_for_media {
     overflow:hidden; /*for the animate out to work nicely*/
     margin:0; /*don't need the -5px 0 0 -4px margin here.  Kick it left though*/
-    max-height:30px;
+    height:31px;
 }
-#rdr_sandbox div.rdr_indicator_details_for_media.rdr_hover,
-#rdr_sandbox div.rdr_indicator_details_for_media:hover {
-    max-height:150px;
+#rdr_sandbox div.rdr_indicator_details_for_media.rdr_hover {
+/*#rdr_sandbox div.rdr_indicator_details_for_media:hover {*/
+    /*max-height:150px;*/
     overflow-y:auto;
 }
 div.rdr_indicator_for_media_inline {
