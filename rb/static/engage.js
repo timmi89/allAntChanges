@@ -470,6 +470,7 @@ function readrBoard($R){
 
             },
             writeCustomTag: function( $container, $rindow, actionType ) {
+                //RDR.rindow.writeCustomTag
                 var actionType = ( actionType ) ? actionType : "react",
                     helpText =  ( actionType=="react" ) ? "Add yours..." : "Add tag...";
 
@@ -3986,7 +3987,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $tagsList = $indicator_details.find('.rdr_tags_list'),
                             $tag_table = $tagsList.find('table.rdr_tags');
 
-// RDR.actions.summaries.sortInteractions(hash);
                         var has_inline_indicator = (summary.kind=="text") ? false:true, //$container.data('inlineIndicator'), //boolean
                             tagsListMaxWidth,
                             buffer = 120, //for prefix and the "more..." span
@@ -4023,6 +4023,32 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 
                                 $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper').append( $pill );
                             });
+                        
+                            var $first_row = $tag_table.find('tr').eq(0),
+                                $last_row = $tag_table.find('tr').eq(-1);
+                            
+                            if ( ( $first_row.width() + 90 > tagsListMaxWidth && $tag_table.find('tr').length == 1 )
+                                || ( $last_row.find('td').length == $first_row.find('td').length && $tag_table.find('tr').length > 1 ) ) {
+                                $tag_table.append('<tr/>');
+                                $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
+                            } else {
+                                $last_row.append('<td><div class="rdr_cell_wrapper"/></td>');
+                            }
+                            RDR.rindow.writeCustomTag( $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper'), $indicator, 'react' );
+
+                            //check and see if the custom pill caused the $indicator to get too wide.  if so, make some modifications.
+                            if ( ( $first_row.width() + 90 > tagsListMaxWidth ) ) {
+                                if ( $tag_table.find('tr').length == 1 ) {
+                                    $tag_table.find('a.rdr_custom_tag').parent().remove();
+                                    $tag_table.append('<tr/>');
+                                    $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
+                                    RDR.rindow.writeCustomTag( $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper'), $indicator, 'react' );
+                                } else if ( $last_row.find('td').length < $first_row.find('td').length ) {
+                                    $last_row.find('td').eq(-1).attr('colspan','2');
+                                }
+
+                            }
+
                         }
 
                     },

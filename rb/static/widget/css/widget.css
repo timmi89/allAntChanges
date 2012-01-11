@@ -415,6 +415,7 @@ div.rdr.rdr_indicator_details a.rdr_tag.rdr_custom_tag,
 div.rdr.rdr_window a.rdr_tag.rdr_custom_tag     {
     height: 17px !important;
     padding: 4px 5px 0 !important;
+    max-width: 70px !important;
 }
 div.rdr.rdr_indicator_details a.rdr_tag span.rdr_tag_name,
 div.rdr.rdr_window a.rdr_tag span.rdr_tag_name {
@@ -484,7 +485,7 @@ div.rdr a.rdr_tag.rdr_custom_tag input {
     color: #aaa !important;
     font-size:11px !important;
     padding: 0 !important;
-    width: 75px !important;
+    max-width: 65px !important;
 }
 div.rdr a.rdr_tag.rdr_custom_tag input.rdr_default {
     font-style: italic !important;
