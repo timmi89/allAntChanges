@@ -253,13 +253,15 @@ function readrBoard($R){
                 //RDR.rindow.updateTagMessage
                 // used for updating the message in the rindow that follows a reaction
                 if ( args.scenario && args.rindow ) {
-                    var args = args,
+                    var args = args, 
+                        hash = (args.args) ? args.args.hash:args.hash, // ugly as hell.  rewrite time.
                         $rindow = args.rindow,
                         tag = args.tag,
                         $pill = ($rindow.find('a.rdr_tag_'+tag.id).length) ? $rindow.find('a.rdr_tag_'+tag.id):$rindow.find('a.rdr_custom_tag').eq(-2), // get the second-to-last custom tag, since we added the new, empty custom tag before getting here
                         $wrapperDiv = $pill.parent(),
                         $td = $wrapperDiv.parent(),
-                        $tr = $td.parent();
+                        $tr = $td.parent(),
+                        $tag_table = $tr.closest('table.rdr_tags'),
                         content_node = (args.sendData)?args.sendData.content_node_data:{};
 
                     $rindow.find('tr.rdr_nextSteps').remove();
@@ -268,11 +270,11 @@ function readrBoard($R){
                     if ( args.scenario != "tagDeleted" ) {
                         $td.addClass('rdr_activePill');
                         var $nextTr = $('<tr class="rdr_nextSteps"><td colspan="100"><div class="rdr_nextSteps_container"/></td></tr>'),
-                            $nextSteps = $nextTr.find('div');
+                            $nextSteps = $nextTr.find('div').css('max-width', ($tag_table.width()-6) + "px");
                     
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
                             if ( args.scenario == "reactionSuccess" ) {
-                                $nextSteps.append( '<div>You reacted: <strong>'+tag.body+'</strong>. <a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></div>' );
+                                $nextSteps.append( '<div class="rdr_reactionMessage">You reacted: <strong>'+tag.body+'</strong>. <a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></div>' );
                                 $nextSteps.find('a.rdr_undo_link').bind('click.rdr', {args:args}, function(event){
                                     var args = event.data.args;
                         
@@ -286,9 +288,9 @@ function readrBoard($R){
                                     
                                 });
                             } else if ( args.scenario == "reactionExists" ) {
-                                $nextSteps.append( '<div>You have already given that reaction.</div>' );
+                                $nextSteps.append( '<div class="rdr_reactionMessage">You have already given that reaction.</div>' );
                             }
-                            $nextSteps.append( '<hr/>' );
+                            $nextSteps.append( '<hr class="rdr_first"/>' );
                             
 
                             $nextSteps.append( '<div class="rdr_share_social"><strong>Share It:</strong></div>' );
@@ -297,7 +299,7 @@ function readrBoard($R){
                             socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
 
                             // embed icons/links for diff SNS
-                            var shareHash = args.hash;
+                            var shareHash = hash;
                             $.each(socialNetworks, function(idx, val){
                                 $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                                 $shareLinks.find('li:last').click( function() {
@@ -308,7 +310,7 @@ function readrBoard($R){
                             });
                             $nextSteps.find('div.rdr_share_social').append( $shareLinks );
 
-                            $nextSteps.append( '<hr/>' );
+                            $nextSteps.append( '<hr class="rdr_second"/>' );
                             $nextSteps.append( '<div class="rdr_commentBox"><input type="text" class="rdr_add_comment" value="Add a comment"/></div>' );
 
                             // comment functionality
@@ -382,6 +384,9 @@ function readrBoard($R){
                             $nextSteps.append( '<div>Bookmarks are visible only to you.<br/><a href="'+RDR_baseUrl+'/user/'+RDR.user.user_id+'" target="_blank">Go to your ReadrBoard profile</a> to see them.</div>' );
                         }
                         $tr.after( $nextTr );
+                        if ( $nextSteps.width() > 310 ) $nextTr.addClass('rdr_wide');
+
+                        RDR.rindow.mediaRindowShow( hash );
                     }
                     
                     RDR.rindow.updateSizes( $rindow );
@@ -431,7 +436,7 @@ function readrBoard($R){
                 */
                 return gotoHeight;
             },
-            writeTag: function(tag, $container, $rindow, content_node_id) {
+            writeTag: function( tag, $container, $rindow, content_node_id ) {
                 //RDR.rindow.writeTag
                 var tagCount = ( tag.count ) ? tag.count:"+",
                     hash = $rindow.data('container'),
@@ -611,7 +616,7 @@ function readrBoard($R){
                                 left: $indicatorDetails.data('left') + tempOffsets.left 
                             };
 
-                            $indicatorDetails.hide();
+                            // $indicatorDetails.hide();
                         }
 
                         var $rindow = RDR.rindow.draw({
@@ -3135,6 +3140,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     customSendData: function(args){
                         ////RDR.actions.interactions.react.customSendData:
                         //temp tie-over    
+
                         var hash = args.hash,
                             summary = RDR.summaries[hash],
                             kind,
@@ -3733,7 +3739,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $indicator_details.data( 'freshlyKilled', true);
                             var selStates = $(this).data('selStates');
 
-                            $indicator_details.hide();
+                            // $indicator_details.hide();
                             RDR.rindow.make( "readMode", {hash:hash} );
                         }).hover(
                             function() {
@@ -3838,12 +3844,12 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     $count.html( RDR.util.prettyNumber( summary.counts.tags ) );
 
                     //build tags in $tagsList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
-                    $indicator_details.css({ 'visiblity':'hidden' }).show();
+                    $indicator_details.css({ 'visibility':'hidden' }).show();
                     scope.utils.makeDetailsContent( hash );
 
                     var kind = summary.kind;
                     
-                    $indicator_details.css({ 'visiblity':'visible' }).hide();
+                    $indicator_details.css({ 'visibility':'visible' }); //.hide();
                     //note that rdr_indicator_for_media_inline have an !important in the css so they won't get hidden.
                               
                 },
@@ -3876,6 +3882,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
 
                             function _commonSetup(){
+                                $indicator_details.data('container',hash);
+                                $indicator_details.data('summary',summary);
+
                                 $indicator_details.addClass('rdr_indicator_details_for_media').hover(
                                     function(e) {
                                         $indicator_details.addClass('rdr_live_hover');
@@ -3993,7 +4002,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             count = 0; //used as a break statement below
                         
                         if(has_inline_indicator){
-                            tagsListMaxWidth = $indicator_details.outerWidth()-30;
+                            tagsListMaxWidth = $indicator_details.outerWidth()-45;
                         }else{
                             tagsListMaxWidth = 300;
                         }
@@ -4003,17 +4012,19 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 // var tag = summary.top_interactions.tags[ tagOrder.id ];
                                 tag.id = tag_id;
 
-                                var $pill = RDR.rindow.writeTag( tag, false, $indicator );
+                                var $pill = RDR.rindow.writeTag( tag, false, $indicator, false, true );
 
                                 // append to the sandbox to get its width, then we'll remove it.  is there a better way?
                                 $('#rdr_sandbox').append( $pill );
                                 var pill_width = $pill.width();
                                 $('#rdr_sandbox').find( $pill ).remove();
+                                delete $pill;
 
                                 var $first_row = $tag_table.find('tr').eq(0),
                                     $last_row = $tag_table.find('tr').eq(-1);
 
-                                if ( ( $first_row.width() + pill_width > tagsListMaxWidth && $tag_table.find('tr').length == 1 )
+                                var firstRowWidth = $first_row.width() + pill_width + $first_row.find('td').length*7;
+                                if ( ( firstRowWidth > tagsListMaxWidth && $tag_table.find('tr').length == 1 )
                                     || ( $last_row.find('td').length == $first_row.find('td').length && $tag_table.find('tr').length > 1 ) ) {
                                     $tag_table.append('<tr/>');
                                     $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
@@ -4021,13 +4032,15 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                     $last_row.append('<td><div class="rdr_cell_wrapper"/></td>');
                                 }
                                 
+                                var $pill = RDR.rindow.writeTag( tag, false, $indicator, false, true );
                                 $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper').append( $pill );
                             });
                         
                             var $first_row = $tag_table.find('tr').eq(0),
                                 $last_row = $tag_table.find('tr').eq(-1);
                             
-                            if ( ( $first_row.width() + 90 > tagsListMaxWidth && $tag_table.find('tr').length == 1 )
+                            var firstRowWidth = $first_row.width();
+                            if ( ( firstRowWidth + 90 > tagsListMaxWidth && $tag_table.find('tr').length == 1 )
                                 || ( $last_row.find('td').length == $first_row.find('td').length && $tag_table.find('tr').length > 1 ) ) {
                                 $tag_table.append('<tr/>');
                                 $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
@@ -4035,7 +4048,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 $last_row.append('<td><div class="rdr_cell_wrapper"/></td>');
                             }
                             RDR.rindow.writeCustomTag( $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper'), $indicator, 'react' );
-
                             //check and see if the custom pill caused the $indicator to get too wide.  if so, make some modifications.
                             if ( ( $first_row.width() + 90 > tagsListMaxWidth ) ) {
                                 if ( $tag_table.find('tr').length == 1 ) {
@@ -4048,7 +4060,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 }
 
                             }
-
                         }
 
                     },

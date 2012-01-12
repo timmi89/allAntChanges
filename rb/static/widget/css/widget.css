@@ -303,6 +303,19 @@ div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps {
 div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps div,
 div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps div {
     margin:4px 0 !important;
+    white-space:normal !important;
+    text-align:center !important;
+}
+div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps.rdr_wide div,
+div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps.rdr_wide div {
+    display: block !important;
+    float: left;
+    margin: 0 0 !important;
+}
+div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps.rdr_wide div.rdr_reactionMessage,
+div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps.rdr_wide div.rdr_reactionMessage {
+    padding:4px 10px 2px 0 !important;
+    border-right:1px solid #d0d0d0;
 }
 div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps div.rdr_nextSteps_container,
 div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps div.rdr_nextSteps_container {
@@ -314,6 +327,16 @@ div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps hr {
     background:#d0d0d0 !important;
     border: none !important;
     width: 98% !important;
+}
+div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps.rdr_wide hr.rdr_first,
+div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps.rdr_wide hr.rdr_first {
+    display:none;
+}
+div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps.rdr_wide hr.rdr_second,
+div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps.rdr_wide hr.rdr_second {
+    clear:both !important;
+    margin-top:25px !important; /*assumes this is a second row... */
+    display:none !important;
 }
 div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps a,
 div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps a {
@@ -509,8 +532,10 @@ div.rdr.rdr-summary div.rdr_note ins img    { margin:0 !important; padding:0 !im
 #rdr_sandbox div.rdr div.rdr_shareBox                       { background:#edf6ff; border:1px solid #b6d3ee !important; border-radius:8px !important; margin:0 0 0 10px; text-align: center; width: 120px; display:inline-block; padding:3px 0;}
 #rdr_sandbox div.rdr div.rdr_share_social                   { overflow:auto !important; }
 #rdr_sandbox div.rdr div.rdr_share_social strong            { display:block !important; float:left !important; margin:5px 5px 0 24px !important; }
+#rdr_sandbox div.rdr tr.rdr_wide div.rdr_share_social strong            { margin:3px 5px 0 10px !important; }
 #rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; border-top: 1px solid #d0d0d0; padding-top:5px; }
 #rdr_sandbox div.rdr div.rdr_nextSteps_container div.rdr_commentBox                     { border:none; }
+#rdr_sandbox div.rdr tr.rdr_wide div.rdr_nextSteps_container div.rdr_commentBox         { clear:both !important; float:none !important;  }
 
 #rdr_sandbox div.rdr_window div.rdr_back { float: left; position:relative; z-index:1; width:300px; background:#aaa; font-size:9px; text-transform:uppercase; color:#fff; cursor:pointer; padding: 2px 12px; margin-bottom:4px;}
 #rdr_sandbox div.rdr_window div.rdr_back.rdr_hide { margin-top:-10px; }
@@ -519,6 +544,7 @@ div.rdr.rdr-summary div.rdr_note ins img    { margin:0 !important; padding:0 !im
 #rdr_sandbox div.rdr div.rdr_comment div.rdr_charCount          {font-size:10px; font-style:italic; color:#999; float:left;}
 
 #rdr_sandbox div.rdr ul.shareLinks { display: block; margin: 2px 0 0; top: 0; padding: 0; float:left; }
+#rdr_sandbox div.rdr tr.rdr_wide ul.shareLinks { margin: 0 0; }
 #rdr_sandbox div.rdr ul.shareLinks li        {padding:0px 2px; display:inline-block; list-style:none;}
 #rdr_sandbox div.rdr ul.shareLinks img       {width:18px !important; margin:0 !important;}
 
@@ -529,6 +555,7 @@ div.rdr.rdr-summary div.rdr_note ins img    { margin:0 !important; padding:0 !im
 /* forms */
 #rdr_sandbox div.rdr textarea,
 #rdr_sandbox div.rdr input[type="text"]  {font-size:14px; color:#666; -moz-box-shadow:inset 0px 0px 5px #ddd;-webkit-box-shadow:inset 0px 0px 5px #ddd; box-shadow:inset 0px 0px 5px #ddd; border:1px solid #ddd; height:auto; width:auto;}
+#rdr_sandbox div.rdr tr.rdr_wide div.rdr_commentBox input[type="text"]  { width:100% !important; margin-bottom:5px !important; }
 #rdr_sandbox div.rdr button              {font-size:11px; }
 
 /* summary widget */
@@ -776,7 +803,6 @@ div.rdr_indicator,
     /*keep the same for both indicator and details so that they overlap nicely*/
     color: #666666 !important;
     font: 12px Arial,sans-serif !important;
-    cursor: pointer !important;
     white-space: nowrap;
 }
 
@@ -958,8 +984,11 @@ div.rdr_indicator span.rdr_count,
 #rdr_sandbox div.rdr_tags_list { 
     width:auto !important;
     display:inline-block !important;
-    white-space:nowrap !important;
     text-decoration:none !important;
+    margin-left:2px;
+}
+#rdr_sandbox div.rdr_tags_list a.rdr_tag {
+    white-space:nowrap !important;
 }
 
 #rdr_sandbox span.rdr_tags_list_tag {
