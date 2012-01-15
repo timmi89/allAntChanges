@@ -141,7 +141,7 @@ function readrBoard($R){
                     */
                 }
             },
-            panelShow : function( $rindow, className, callback ) {
+            panelShow : function( $rindow, className, width, height, callback ) {
                 //RDR.rindow.panelShow
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
                     $rdr_bodyFirst = $rdr_body_wrap.find('div.rdr_body').eq(0),
@@ -151,10 +151,10 @@ function readrBoard($R){
                 $showPanel.show();
                 $rdr_bodyFirst.animate({marginLeft:-(rdr_bodyFirst_width + 12)},500, function() {
                     if (callback) callback();
-                    RDR.rindow.updateSizes( $rindow );
+                    RDR.rindow.updateSizes( $rindow, width, height );
                 });
             },
-            panelHide : function( $rindow, className, callback ) {
+            panelHide : function( $rindow, className, width, height, callback ) {
                 //RDR.rindow.panelHide
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
                     $rdr_bodyFirst = $rdr_body_wrap.find('div.rdr_body').eq(0),
@@ -164,7 +164,7 @@ function readrBoard($R){
                 $rdr_bodyFirst.animate({marginLeft:4},500, function() {
                     if (callback) callback();
                     $showPanel.remove();
-                    RDR.rindow.updateSizes( $rindow );
+                    RDR.rindow.updateSizes( $rindow, width, height );
                 });
             },
             mediaRindowShow : function ( hash, callback ) {
@@ -188,7 +188,7 @@ function readrBoard($R){
 
                 clearTimeout(timeoutCloseEvt);
                 timeoutCloseEvt = setTimeout(function(){
-                    if ( !$rindow.hasClass('rdr_live_hover') && !$this.hasClass('rdr_live_hover') ) {
+                    if ( !$rindow.hasClass('rdr_live_hover') && !$rindow.hasClass('rdr_viewing_comments') && !$this.hasClass('rdr_live_hover') ) {
                         $rindow.data('hover', false).animate( {'height':'31px' }, 333, 'swing', function() {
                             if (callback) callback();
                         });
@@ -196,7 +196,7 @@ function readrBoard($R){
                 },300);
                 $this.data('timeoutCloseEvt', timeoutCloseEvt);
             },
-            updateSizes : function($rindow, setHeight, setWidth) {
+            updateSizes : function($rindow, setWidth, setHeight, kind) {
                 //RDR.rindow.updateSizes:
 
                 // feels like we should not need this, but behavior is more consistent if we have it.  ugh.
@@ -216,10 +216,11 @@ function readrBoard($R){
                 var rLeft = $rindow.offset().left;
                 if ( $rindow.find('div.rdr_body').length ) {
                     
-                // find the visible pane and resize the rindow accordingly.
-                // it isn't perfect yet.  requires set widths and heights rather than being adaptive.
-                var visiblePaneHeight = 0,
-                    visiblePane = {};
+                    // find the visible pane and resize the rindow accordingly.
+                    // it isn't perfect yet.  requires set widths and heights rather than being adaptive.
+                    var visiblePaneHeight = 0,
+                        visiblePane = {};
+
                     $rindow.find('div.rdr_body').each( function() {
                         var $this = $(this);
                         if ( rLeft < $this.offset().left ) {
@@ -464,7 +465,7 @@ function readrBoard($R){
                 if ( !$.isEmptyObject( comments ) ) {
                     var $commentHover = $('<span class="rdr_comment_hover"><span class="rdr_icon"></span> '+comments.length+'</span>');
                     $commentHover.click( function() {
-                        RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:$rindow, content_node:content_node, selState:content_node.selState});
+                        RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:$rindow, content_node:content_node, selState:content_node.selState, summary:summary});
                     });
 
                     $a.append('<span class="rdr_has_comment"></span>');
@@ -3975,7 +3976,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $indicator_details_innerWrap = $('<div class="rdr rdr_body_wrap" />'),
                             // categoryTitleText = (summary.counts.tags == 1) ? "&nbsp;reaction.&nbsp;" : "&nbsp;reactions.&nbsp;",
                             // categoryTitle = '<span class="rdr_indicator_categoryTitle">' +categoryTitleText+ '</span>',
-                            $tagsList = $('<div class="rdr_tags_list" />'),
+                            $tagsList = $('<div class="rdr_body rdr_tags_list" />'),
                             $tag_table = $('<table cellpadding="0" cellspacing="0" border="0" class="rdr_tags"><tr/></table>');
                         
                         $tagsList.append( $tag_table );
@@ -4036,8 +4037,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 }
                                 
                                 var $pill = RDR.rindow.writeTag( tag, $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper'), $indicator, false );
-                                // writeTag: function( tag, $container, $rindow, content_node_id )
-                                // $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper').append( $pill );
                             });
                         
                             var $first_row = $tag_table.find('tr').eq(0),
@@ -4064,6 +4063,10 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 }
 
                             }
+
+                            $tag_table.find('tr').each( function() {
+                                $(this).find('td:last-child:not(:first-child)').addClass('rdr-last-child');
+                            });
                         }
 
                     },
@@ -4545,8 +4548,11 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     $rindow = args.rindow,
                     content_node = args.content_node;
                 
-                
-                $rindow.removeClass('rdr_rewritable');
+                console.log('viewCommentContent');
+                console.dir(args);
+                console.log($rindow.width());
+
+                $rindow.removeClass('rdr_rewritable').addClass('rdr_viewing_comments');
                 //temp tie-over    
                 var hash = args.hash,
                     summary = RDR.summaries[hash],
@@ -4565,9 +4571,12 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 _makeOtherComments();
                 _makeCommentBox();
                 
-                RDR.rindow.panelShow( $rindow, 'rdr_comments' );
+                $rindow.find('div.rdr_indicator_details_body').hide();  // image specific.
                 
-                RDR.rindow.updateSizes( $rindow, 200, 300 );
+                var commentRindowWidth = (summary.kind=="img") ? $rindow.width():300,
+                    commentRindowHeight = (summary.kind=="img") ? $rindow.width():300;
+                RDR.rindow.panelShow( $rindow, 'rdr_comments', commentRindowWidth, commentRindowHeight );
+                RDR.rindow.updateSizes( $rindow, commentRindowWidth, commentRindowWidth, summary.kind );
 
                 //helper functions 
                 function _makeCommentBox() {
@@ -4665,7 +4674,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
                                             '<h1>Reactions</h1>';
                         RDR.rindow.updateHeader( $rindow, headerContent );
-                        RDR.rindow.panelHide( $rindow, 'rdr_comments' );
+                        $rindow.removeClass('rdr_viewing_comments').find('div.rdr_indicator_details_body').show();  // image specific.
+                        RDR.rindow.panelHide( $rindow, 'rdr_comments', commentRindowWidth, commentRindowHeight );
                     });
 
                     for ( var i in comments ) {

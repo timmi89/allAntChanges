@@ -208,9 +208,9 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr.rdr_window div.rdr_header                      { background:#fff !important; position:relative !important; height:18px !important; padding:5px 0 !important; z-index:5; cursor:move !important; border-bottom:1px solid #ddd !important;}
 #rdr_sandbox div.rdr.rdr_window div.rdr_footer                      { background:#f0f0f0 !important; position:absolute !important; height:18px; padding:3px 6px 6px; bottom:0; width:95%; display:none;}
 #rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace                { background:#f0f0f0 !important; position:relative !important; margin-bottom:6px; overflow:hidden;}
-#rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace div.rdr_body   { max-height:266px; margin:0 4px; float:left !important; display:block !important;}
-#rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace div.rdr_body div.jspPane   { margin:0 !important; }
-#rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace div.rdr_body div.jspHorizontalBar   { display:none !important; }
+#rdr_sandbox div.rdr div.rdr_body   { max-height:266px; margin:0 4px; float:left !important; display:block !important;}
+#rdr_sandbox div.rdr div.rdr_body div.jspPane   { margin:0 !important; }
+#rdr_sandbox div.rdr div.rdr_body div.jspHorizontalBar   { display:none !important; }
 
 #rdr_sandbox div.rdr.rdr_window div.rdr_header h1                   { margin-left:14px !important; }
 
@@ -547,8 +547,8 @@ div.rdr.rdr-summary div.rdr_note ins img    { margin:0 !important; padding:0 !im
 #rdr_sandbox div.rdr div.rdr_nextSteps_container div.rdr_commentBox                     { border:none; }
 #rdr_sandbox div.rdr tr.rdr_wide div.rdr_nextSteps_container div.rdr_commentBox         { clear:both !important; float:none !important;  }
 
-#rdr_sandbox div.rdr_window div.rdr_back { float: left; position:relative; z-index:1; width:300px; background:#aaa; font-size:9px; text-transform:uppercase; color:#fff; cursor:pointer; padding: 2px 12px; margin-bottom:4px;}
-#rdr_sandbox div.rdr_window div.rdr_back.rdr_hide { margin-top:-10px; }
+#rdr_sandbox div.rdr div.rdr_back { float: left; position:relative; z-index:1; width:300px; background:#aaa; font-size:9px; text-transform:uppercase; color:#fff; cursor:pointer; padding: 2px 12px; margin-bottom:4px;}
+#rdr_sandbox div.rdr div.rdr_back.rdr_hide { margin-top:-10px; }
 
 #rdr_sandbox div.rdr div.rdr_comment textarea    { margin:5px 0; resize:none; padding:5px; width:100%; max-width:94% !important; font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;background:#fff;}
 #rdr_sandbox div.rdr div.rdr_comment div.rdr_charCount          {font-size:10px; font-style:italic; color:#999; float:left;}
@@ -874,12 +874,12 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
 
 #rdr_sandbox div.rdr_indicator_details_body {
     width:auto !important;
-    display:inline !important;
+    display:inline;
     white-space:nowrap !important;
 }
 
 #rdr_sandbox div.rdr_indicator_details_for_media div.rdr_indicator_details_body {
-    display: inline-block !important;
+    display: inline-block;
     float: left;
     margin-top: 4px;
 }
