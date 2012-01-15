@@ -458,20 +458,23 @@ function readrBoard($R){
 
                 if ( $container ) $container.append( $a, " " );
 
-                if ( !$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions.coms ) ) {
-                    var $commentHover = $('<span class="rdr_comment_hover"><span class="rdr_icon"></span> '+content_node.top_interactions.coms.length+'</span>');
+                var comments = ((!$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions.coms ))) ? content_node.top_interactions.coms:{};
+                if ($.isEmptyObject(comments) && summary.kind=="img" && !$.isEmptyObject(summary.top_interactions) && !$.isEmptyObject(summary.top_interactions.coms)) comments = summary.top_interactions.coms[tag.id];
+
+                if ( !$.isEmptyObject( comments ) ) {
+                    var $commentHover = $('<span class="rdr_comment_hover"><span class="rdr_icon"></span> '+comments.length+'</span>');
                     $commentHover.click( function() {
                         RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:$rindow, content_node:content_node, selState:content_node.selState});
                     });
-                    
+
                     $a.append('<span class="rdr_has_comment"></span>');
-                    $a.after( $commentHover );
+                    if ( $container ) $a.after( $commentHover );
                 }
                 if ( tagCount === "" ) {
                     $span.hide();
                 }
 
-                if ( !$container )  return $a;
+                if ( !$container ) return $a;
 
             },
             writeCustomTag: function( $container, $rindow, actionType ) {
@@ -4012,7 +4015,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 // var tag = summary.top_interactions.tags[ tagOrder.id ];
                                 tag.id = tag_id;
 
-                                var $pill = RDR.rindow.writeTag( tag, false, $indicator, false, true );
+                                var $pill = RDR.rindow.writeTag( tag, false, $indicator, false );
 
                                 // append to the sandbox to get its width, then we'll remove it.  is there a better way?
                                 $('#rdr_sandbox').append( $pill );
@@ -4032,8 +4035,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                     $last_row.append('<td><div class="rdr_cell_wrapper"/></td>');
                                 }
                                 
-                                var $pill = RDR.rindow.writeTag( tag, false, $indicator, false, true );
-                                $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper').append( $pill );
+                                var $pill = RDR.rindow.writeTag( tag, $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper'), $indicator, false );
+                                // writeTag: function( tag, $container, $rindow, content_node_id )
+                                // $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper').append( $pill );
                             });
                         
                             var $first_row = $tag_table.find('tr').eq(0),

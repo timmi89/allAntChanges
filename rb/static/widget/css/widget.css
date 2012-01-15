@@ -392,11 +392,13 @@ div.rdr.rdr_indicator_details td a.rdr_tag,
 div.rdr.rdr_window td a.rdr_tag     {
     max-width: 110px !important;
 }
+div.rdr.rdr_indicator_details td div.rdr_cell_wrapper,
 div.rdr.rdr_window td div.rdr_cell_wrapper {
     width:100% !important;
     height:25px !important;
     position:relative !important;
 }
+div.rdr.rdr_indicator_details td div.rdr_cell_wrapper span.rdr_comment_hover,
 div.rdr.rdr_window td div.rdr_cell_wrapper span.rdr_comment_hover {
     height:19px !important;
     position:absolute !important;
@@ -409,28 +411,35 @@ div.rdr.rdr_window td div.rdr_cell_wrapper span.rdr_comment_hover {
     white-space:nowrap !important;
     cursor:pointer !important;
 }
+div.rdr.rdr_indicator_details td div.rdr_cell_wrapper span.rdr_comment_hover span.rdr_icon,
 div.rdr.rdr_window td div.rdr_cell_wrapper span.rdr_comment_hover span.rdr_icon {
     display:inline-block !important;
     background:url("../images/widget_icons.png") no-repeat scroll -182px -14px transparent !important;
     width:10px;
     height:10px;
 }
+div.rdr.rdr_indicator_details td.rdr-last-child div.rdr_cell_wrapper span.rdr_comment_hover,
 div.rdr.rdr_window td.rdr-last-child div.rdr_cell_wrapper span.rdr_comment_hover {
     right:100% !important;
     left:auto !important;
 }
+div.rdr.rdr_indicator_details td:hover,
 div.rdr.rdr_window td:hover {
     background:#fff !important;
 }
+div.rdr.rdr_indicator_details td:hover div.rdr_cell_wrapper span.rdr_comment_hover,
 div.rdr.rdr_window td:hover div.rdr_cell_wrapper span.rdr_comment_hover {
     display:block !important;
 }
+div.rdr.rdr_indicator_details td:hover div.rdr_cell_wrapper span.rdr_has_comment,
 div.rdr.rdr_window td:hover div.rdr_cell_wrapper span.rdr_has_comment {
     display:none !important;
 }
+div.rdr.rdr_indicator_details td div.rdr_cell_wrapper span.rdr_comment_hover:hover,
 div.rdr.rdr_window td div.rdr_cell_wrapper span.rdr_comment_hover:hover {
     color:#008be4 !important;
 }
+div.rdr.rdr_indicator_details td div.rdr_cell_wrapper span.rdr_comment_hover:hover span.rdr_icon,
 div.rdr.rdr_window td div.rdr_cell_wrapper span.rdr_comment_hover:hover span.rdr_icon {
     background-position:-482px -14px !important;
 }
@@ -456,6 +465,7 @@ div.rdr.rdr_window a.rdr_tag span.rdr_tag_count {
     float:right !important;
     margin-left:-15px !important; /* feels kludgey.  prevents wrapping in the pill in a small rindow */
 }
+div.rdr.rdr_indicator_details span.rdr_has_comment,
 div.rdr.rdr_window span.rdr_has_comment {
     display:block !important;
     position:absolute;
