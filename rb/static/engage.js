@@ -588,32 +588,16 @@ function readrBoard($R){
                             $indicatorDetails = $('#rdr_indicator_details_'+ hash),
                             $container = $('.rdr-'+hash);
 
-                            var has_inline_indicator = (summary.kind=="text") ? false:true, //$container.data('inlineIndicator'); //boolean
-                                tempOffsets = has_inline_indicator ? {
-                                top: 0,
-                                left: 0
-                            } : {
-                                top: -10,
-                                left: -3
-                            };
-
-                            //toggled back in RDR.rindow.close:
-                            if(has_inline_indicator){
-                                $indicatorDetails.find('div.rdr_body_wrap').css({
-                                   'visibility':'hidden'
-                                });
-                            }
-
                             //todo: make this nicer
-                            var coords = ( (kind == "img" || kind == "media") && !has_inline_indicator ) ?
+                            var coords = ( kind == "img" || kind == "media") ?
                             {
                                 top: $container.offset().top,
                                 left: $container.offset().left + $container.width()
                             } :
                             {
                                 //used data instead of offset because offset doesn't work if the node is hidden.  It was giving me problems before.
-                                top: $indicatorDetails.data('top') + tempOffsets.top,
-                                left: $indicatorDetails.data('left') + tempOffsets.left 
+                                top: $indicator_body.data('top'),
+                                left: $indicator_body.data('left')
                             };
 
                             // $indicatorDetails.hide();
@@ -3669,15 +3653,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId);
                     //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
                     $indicator.css('visibility','hidden');
-
                     
-                    var has_inline_indicator = (summary.kind=="text") ? false:true; //$container.data('inlineIndicator'); //boolean
-                    
-                    if(has_inline_indicator){
-                        _setupInlineIndicators();
-                    }else{
-                        _setupAbsoluteIndicators();
-                    }
+                    _setupIndicators();
                     
                     //run setup specific to this type
                     scope.utils.kindSpecificSetup[kind]( hash );
@@ -3689,73 +3666,65 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     }
                     
                     function _setupAbsoluteIndicators(){
-                        //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
-                        var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body" />').attr('id',indicatorBodyId)//chain
-                        .appendTo($indicator)//chain
-                        .append(
-                            '<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />',
-                            '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
-                        )//chain
-                        .data( {'which':hash} );
 
-                        //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the sandbox.
-                        //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
+                    //     //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
+                    //     var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body" />').attr('id',indicatorBodyId)//chain
+                    //     .appendTo($indicator)//chain
+                    //     .append(
+                    //         '<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />',
+                    //         '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
+                    //     )//chain
+                    //     .data( {'which':hash} );
+
+                    //     //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the sandbox.
+                    //     //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
                         
 
-                        var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
-                        .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar')//chain
-                        .appendTo('#rdr_indicator_details_wrapper');
+                    //     var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
+                    //     .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar')//chain
+                    //     .appendTo('#rdr_indicator_details_wrapper');
 
-                        $indicator.hover(
-                            function() {
-                                //shouldn't need this if anymore - make sure visibility:hidden consistently disables hover event.
-                                if( !$indicator_details.children().length ) return;
-                                //else
-                                if ( $indicator_details.data('freshlyKilled')) return false;
-                                //else
-                                var indicatorOffsets = $indicator_body.offset();
+                    //     $indicator.hover(
+                    //         function() {
+                    //             //shouldn't need this if anymore - make sure visibility:hidden consistently disables hover event.
+                    //             if( !$indicator_details.children().length ) return;
+                    //             //else
+                    //             if ( $indicator_details.data('freshlyKilled')) return false;
+                    //             //else
+                    //             var indicatorOffsets = $indicator_body.offset();
 
-                                // if ( indicatorOffsets.top == 0 )
-                                $indicator_details.css({
-                                    'top': indicatorOffsets.top,
-                                    'left': indicatorOffsets.left
-                                });
+                    //             // if ( indicatorOffsets.top == 0 )
+                    //             $indicator_details.css({
+                    //                 'top': indicatorOffsets.top,
+                    //                 'left': indicatorOffsets.left
+                    //             });
 
-                                $indicator_details.data( 'top', indicatorOffsets.top );
-                                $indicator_details.data( 'left', indicatorOffsets.left );
+                    //             $indicator_body.data( 'top', indicatorOffsets.top );
+                    //             $indicator_body.data( 'left', indicatorOffsets.left );
 
-                                if ( kind != "text" ) $indicator_details.show();
-                            },
-                            function() {
-                                $indicator_details.data( 'freshlyKilled', false);
-                                //$indicator_details.show(); //[eric] commenting this out: I don't think this makes sense here.
-                            }
-                        );
+                    //             if ( kind != "text" ) $indicator_details.show();
+                    //         },
+                    //         function() {
+                    //             $indicator_details.data( 'freshlyKilled', false);
+                    //             //$indicator_details.show(); //[eric] commenting this out: I don't think this makes sense here.
+                    //         }
+                    //     );
 
-                        $indicator_details.click( function() {
-                            //store it's offset in data(), because offset doesn't work if the node is hidden.  It was giving me problems before
-                            // $indicator_details.data( 'top', $indicator_details.offset().top );
-                            // $indicator_details.data( 'left', $indicator_details.offset().left );
-                            $indicator_details.data( 'freshlyKilled', true);
-                            var selStates = $(this).data('selStates');
-
-                            // $indicator_details.hide();
-                            RDR.rindow.make( "readMode", {hash:hash} );
-                        }).hover(
-                            function() {
-                                var timeout = $(this).data('timeout');
-                                clearTimeout(timeout);
-                            },
-                            function() {
-                                var $this = $(this);
-                                var timeout = setTimeout(function(){
-                                    $this.fadeOut(300);
-                                },500);
-                                $(this).data('timeout', timeout);
-                            }
-                        );
+                    //     $indicator_details.hover(
+                    //         function() {
+                    //             var timeout = $(this).data('timeout');
+                    //             clearTimeout(timeout);
+                    //         },
+                    //         function() {
+                    //             var $this = $(this);
+                    //             var timeout = setTimeout(function(){
+                    //                 $this.fadeOut(300);
+                    //             },500);
+                    //             $(this).data('timeout', timeout);
+                    //         }
+                    //     );
                     }
-                    function _setupInlineIndicators(){
+                    function _setupIndicators(){
                         //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
                         var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body" />').attr('id',indicatorBodyId)//chain
                         .appendTo($indicator)//chain
@@ -3765,32 +3734,15 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         )//chain
                         .data( {'which':hash} );
 
-                        //Setup the indicator_details and append them to the #rdr_indicator_details div attached to the sandbox.
-                        //These details are shown and positiond upon hover over the indicator which lives inline appended to the container.
-                        var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
-                        .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar')//chain
-                        .appendTo('#rdr_indicator_details_wrapper');
                         
                         var $container = summary.$container;
 
-                        //used for the rindow draw
-                        //store it's offset in data(), because offset doesn't work if the node is hidden.  It was giving me problems before
-                        $indicator_details.data( 'top', $container.offset().bottom );
-                        $indicator_details.data( 'left', $container.offset().left );
-                                                
 
                         //todo: DC: Temp hack for DC slideshow
                         $container.find('.slideCredit').css({
                             'margin-top':'25'
                         });
 
-                        $indicator_details.show()//chain
-                        // .click( function() {
-                        //     var selStates = $(this).data('selStates');
-
-                        //     RDR.rindow.make( "readMode", {hash:hash, rewritable:false} );
-                        // })
-                        ;
                         $indicator.css('visibility','visible');
                     }
 
@@ -3843,14 +3795,13 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     var $count = $indicator_body.find('.rdr_count');
                     $count.html( RDR.util.prettyNumber( summary.counts.tags ) );
 
-                    //build tags in $tagsList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
-                    $indicator_details.css({ 'visibility':'hidden' }).show();
-                    scope.utils.makeDetailsContent( hash );
-
-                    var kind = summary.kind;
-                    
-                    $indicator_details.css({ 'visibility':'visible' }); //.hide();
-                    //note that rdr_indicator_for_media_inline have an !important in the css so they won't get hidden.
+                    if(summary.kind !== 'text'){
+                        //build tags in $tagsList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
+                        $indicator_details.css({ 'visibility':'hidden' }).show();
+                        scope.utils.makeDetailsContent( hash );
+                        $indicator_details.css({ 'visibility':'visible' }); //.hide();
+                     
+                    }
                               
                 },
                 utils:{
@@ -3863,25 +3814,22 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 $indicator_body = summary.$indicator_body,
                                 $indicator_details = summary.$indicator_details,
                                 $container_tracker_wrap = $('#rdr_container_tracker_wrap'),
-                                $container_tracker = $('<div class="rdr_container_tracker" />');
+                                $container_tracker = $('<div class="rdr_container_tracker" />'),
+                                indicatorDetailsId = 'rdr_indicator_details_'+hash;
 
-                            var has_inline_indicator = true; //$container.data('inlineIndicator'); //boolean
-    
                             $container_tracker.attr('id', 'rdr_container_tracker_'+hash).appendTo($container_tracker_wrap);
                             //position the containerTracker at the top left of the image or videos.  We'll position the indicator and hiliteborder relative to this.
                             
-                            if(has_inline_indicator){
-                                //todo: consider using a plugin pattern for this later if we want the publisher to be able to customize this in detail.
-                                _inlineIndicatorSetup();
-                            }
-                            else{
-                                _standardSetup();
-                            }
                             _commonSetup();
 
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
 
                             function _commonSetup(){
+
+                                var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
+                                .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar')//chain
+                                .appendTo('#rdr_indicator_details_wrapper');
+                                
                                 $indicator_details.data('container',hash);
                                 $indicator_details.data('summary',summary);
 
@@ -3895,9 +3843,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                         RDR.rindow.mediaRindowHide( hash );
                                     }
                                 );
-                            }
 
-                            function _inlineIndicatorSetup(){
                                 $indicator.appendTo($container_tracker);
                                 $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline'); 
 
@@ -3908,36 +3854,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                         $(this).removeClass('rdr_engage_media');
                                     }
                                 );
-
-                                $indicator_details.addClass('rdr_indicator_details_for_media_inline');
                             }
 
-                            function _standardSetup(){
-                                $indicator.appendTo($container_tracker);
-                                $indicator.addClass('rdr_indicator_for_media');
-                                
-                                $indicator.hover(
-                                    function() {
-                                        $indicator_details.css({
-                                            'width': 'auto'
-                                        });                     
-                                        
-                                        var indDetailsWidth = $indicator_details.width(),
-                                        indDetailsLeftOffset = $indicator_body.offset().left + $indicator_body.width() - indDetailsWidth + 8; //account for padding and border 
-
-                                        $indicator_details.css({
-                                            'width': 10
-                                        });
-                                        $indicator_details.stop().animate({
-                                            'left': indDetailsLeftOffset,
-                                            'width': indDetailsWidth
-                                        },200);
-
-                                    },
-                                    function() {
-                                    }
-                                );
-                            }
                         },
                         media: function( hash ){
                             //for now just treat it like an img
@@ -3948,11 +3866,10 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 $container = summary.$container,
                                 $indicator = summary.$indicator,
                                 $indicator_body = summary.$indicator_body,
-                                $indicator_details = summary.$indicator_details,
                                 $actionbar = $('rdr_actionbar_'+hash);
 
                             $indicator.addClass('rdr_indicator_for_text').addClass('rdr_dont_show');
-                            $indicator_details.addClass('rdr_indicator_details_for_text');
+                            
 
                             $indicator.appendTo($container);
 
@@ -3984,9 +3901,10 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         $indicator_details_innerWrap.append( $indicator_details_body, $tagsList );
 
                         //builds out the $tagsList contents
-                        if (summary.kind!="text") scope.makeTagsList( hash );
-                        //I ususally prefer the format: "$tagsList = _makeTagsList()" where the function returns the $() object,
-                        //but we need the function to register the nodes in the DOM in order to calc width.
+                        if (summary.kind!=="text"){
+                            scope.makeTagsList( hash );
+                        }
+                        
                     },
                     makeTagsList: function( hash ){
                         var summary = RDR.summaries[hash],
