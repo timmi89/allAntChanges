@@ -4424,7 +4424,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 
                 $rindow.find('div.rdr_indicator_details_body').hide();  // image specific.
                 
-                var commentRindowWidth = (summary.kind=="img") ? $rindow.width():300,
+                var commentRindowWidth = (summary.kind=="img") ? $rindow.width()+2:300,
                     commentRindowHeight = (summary.kind=="img") ? 180:296;
                 
                 RDR.rindow.panelShow( $rindow, 'rdr_comments', commentRindowWidth, commentRindowHeight );
