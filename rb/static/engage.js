@@ -201,6 +201,7 @@ function readrBoard($R){
 
                 // feels like we should not need this, but behavior is more consistent if we have it.  ugh.
                 RDR.rindow.jspUpdate( $rindow );
+
                 var rindowHeight = $rindow.height(),
                     heightAdjustment = 36;
                 if ( $rindow.find('div.rdr_footer').length && $rindow.find('div.rdr_footer').css('display') != "none" ) {
@@ -243,14 +244,16 @@ function readrBoard($R){
                     }
                     $rindow.find('div.jspContainer').height( visiblePaneHeight+4 );
                     if ( !setWidth ) setWidth = visiblePane.$elm.width()+8;
-
                     $rindow.animate({ width: setWidth, height:(visiblePaneHeight + heightAdjustment) }, { duration:333, queue:false } );
                     visiblePane.$elm.css('width', setWidth );
                     if ( visiblePane.which == "hasJspPane" ) {
                         visiblePane.$elm.find('div.jspContainer, div.jspPane').animate({ width: (setWidth-8) }, { duration:333, queue:false } );
                     }
+console.log('setWidth: '+setWidth);
+console.log('visiblePane.$elm.width(): '+visiblePane.$elm.width());
+console.log('visiblePane.$elm.className: '+visiblePane.$elm[0].className );
                 }
-                RDR.rindow.jspUpdate( $rindow );
+                RDR.rindow.jspUpdate( $rindow, setWidth );
             },
             updateTagMessage: function(args) {
                 //RDR.rindow.updateTagMessage
@@ -395,17 +398,22 @@ function readrBoard($R){
                     RDR.rindow.updateSizes( $rindow );
                 }
             },
-            jspUpdate: function( $rindow ) {
+            jspUpdate: function( $rindow, width ) {
                 //RDR.rindow.jspUpdate:
 
                 //updates or inits first (and should be only) $rindow rdr_body into jScrollPanes
                 $rindow.find('div.rdr_body').each( function() {
                     var $this = $(this);
-                    console.log('$this.width(): ',$this.width());
+                    if ( $this.width() == 292 ) {
+                        //console.log('$this.width(): ',$this.width());
+                        console.log( this.className );
+                    }
+                    if ( width ) $this.width(setWidth);
+                    var setWidth = (width) ? width:$this.width();
                     if( !$this.hasClass('jspScrollable') ){
                         // IE.  for some reason, THIS fires the scrollstop event.  WTF:
                         // $(this).jScrollPane({ showArrows:true });
-                        $(this).jScrollPane({ contentWidth:$this.width(), showArrows:true });
+                        $(this).jScrollPane({ contentWidth:setWidth, showArrows:true });
                     }else{
                         var API = $(this).data('jsp');
                         API.reinitialise();
@@ -4426,10 +4434,11 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 
                 var commentRindowWidth = (summary.kind=="img") ? $rindow.width()+2:300,
                     commentRindowHeight = (summary.kind=="img") ? 180:296;
-                
+                console.log('commentRindowWidth: '+commentRindowWidth);
+
                 RDR.rindow.panelShow( $rindow, 'rdr_comments', commentRindowWidth, commentRindowHeight );
                 RDR.rindow.updateSizes( $rindow, commentRindowWidth, commentRindowHeight, summary.kind );
-
+console.log('post update $rindow.width(): '+ $rindow.width() );
                 //helper functions 
                 function _makeCommentBox() {
 
