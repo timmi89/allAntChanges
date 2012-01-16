@@ -245,7 +245,7 @@ function readrBoard($R){
                     $rindow.find('div.jspContainer').height( visiblePaneHeight+4 );
                     if ( !setWidth ) setWidth = visiblePane.$elm.width()+8;
                     $rindow.animate({ width: setWidth, height:(visiblePaneHeight + heightAdjustment) }, { duration:333, queue:false } );
-                    visiblePane.$elm.css('width', setWidth );
+                    // visiblePane.$elm.css('width', setWidth );
                     if ( visiblePane.which == "hasJspPane" ) {
                         visiblePane.$elm.find('div.jspContainer, div.jspPane').animate({ width: (setWidth-8) }, { duration:333, queue:false } );
                     }
