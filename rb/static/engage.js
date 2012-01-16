@@ -113,13 +113,12 @@ function readrBoard($R){
                 if ( !$rindow ) return;
 
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
-                    $rdr_bodyFirst = $rdr_body_wrap.find('div.rdr_body').eq(0),
-                    rdr_bodyFirst_width = $rdr_bodyFirst.width();
+                    $rdr_bodyFirst = $rdr_body_wrap.find('div.rdr_body').eq(0);
 
                 if ( !$rdr_body_wrap.find('div.'+className).length ) {
-                    var $newPanel = $('<div class="rdr_body '+className+'"/>'),  //.width( rdr_bodyFirst_width ),
+                    var $newPanel = $('<div class="rdr_body '+className+'"/>'),
                         column_count = ( $rdr_body_wrap.find('div.rdr_body').length ) + 1;
-                    $rdr_body_wrap.width( ( rdr_bodyFirst_width * column_count ) + ( 8 * column_count ) ).append( $newPanel );
+                    $rdr_body_wrap.append( $newPanel ).width(10000); // we don't care about horizontal width.  just needs to be wide enough to hold all columns next to each other.
                 }
             },
             panelUpdate : function( $rindow, className, $content, replaceOrAppend, bindings ) {
@@ -148,7 +147,7 @@ function readrBoard($R){
                     $showPanel = $rdr_body_wrap.find('div.'+className),
                     rdr_bodyFirst_width = $rdr_bodyFirst.width();
 
-                $showPanel.show();
+                $showPanel.show().addClass('rdr-visible');
                 $rdr_bodyFirst.animate({marginLeft:-(rdr_bodyFirst_width + 12)},500, function() {
                     if (callback) callback();
                     RDR.rindow.updateSizes( $rindow, width, height );
@@ -161,6 +160,7 @@ function readrBoard($R){
                     $showPanel = $rdr_body_wrap.find('div.'+className),
                     rdr_bodyFirst_width = $rdr_bodyFirst.width();
 
+                $showPanel.removeClass('rdr-visible');
                 $rdr_bodyFirst.animate({marginLeft:4},500, function() {
                     if (callback) callback();
                     $showPanel.remove();
@@ -211,30 +211,18 @@ function readrBoard($R){
                     $rindow.css('padding-bottom','0px');
                 }
 
-                // use rLeft to determine which pane is visible.  
-                // if offset of the pane is slightly greater (4px) than the rindow, than its in-view.
-                var rLeft = $rindow.offset().left;
-                if ( $rindow.find('div.rdr_body').length ) {
-                    
-                    // find the visible pane and resize the rindow accordingly.
-                    // it isn't perfect yet.  requires set widths and heights rather than being adaptive.
-                    var visiblePaneHeight = 0,
-                        visiblePane = {};
-
-                    $rindow.find('div.rdr_body').each( function() {
-                        var $this = $(this);
-                        if ( rLeft < $this.offset().left ) {
-                            if ($this.find('div.jspPane').length==1) {
-                                visiblePaneHeight = $this.find('div.jspPane').height();
-                                visiblePane.which = "hasJspPane";
-                            } else {
-                                visiblePaneHeight = $this.height();
-                                visiblePane.which = "rdr_body";
-                            }
-                            visiblePane.$elm = $this;
-                        }
-                    });
+                var visiblePaneHeight = 0,
+                    visiblePane = {};
+                
+                visiblePane.$elm = ( $rindow.find('div.rdr-visible').length ) ? $rindow.find('div.rdr-visible').eq(0) : $rindow.find('div.rdr_body').eq(0);
+                if (visiblePane.$elm.find('div.jspPane').length==1) {
+                    visiblePaneHeight = visiblePane.$elm.find('div.jspPane').height();
+                    visiblePane.which = "hasJspPane";
+                } else {
+                    visiblePaneHeight = visiblePane.$elm.height();
+                    visiblePane.which = "rdr_body";
                 }
+
 
                 if ( visiblePaneHeight > 0 ) {
                     if ( visiblePaneHeight > 260 ) visiblePaneHeight = 260; // is this right?
@@ -244,10 +232,16 @@ function readrBoard($R){
                     }
                     $rindow.find('div.jspContainer').height( visiblePaneHeight+4 );
                     if ( !setWidth ) setWidth = visiblePane.$elm.width()+8;
+                    else {
+                        console.log('has a setWidth');
+                        visiblePane.$elm.css('width', (setWidth)+'px' );
+                    }
                     $rindow.animate({ width: setWidth, height:(visiblePaneHeight + heightAdjustment) }, { duration:333, queue:false } );
-                    // visiblePane.$elm.css('width', setWidth );
+
                     if ( visiblePane.which == "hasJspPane" ) {
-                        visiblePane.$elm.find('div.jspContainer, div.jspPane').animate({ width: (setWidth-8) }, { duration:333, queue:false } );
+                        console.log("hasJspPane");
+                        // visiblePane.$elm.css('width', (setWidth)+'px' );
+                        visiblePane.$elm.find('div.jspContainer, div.jspPane').animate({ width: (setWidth-12) }, { duration:333, queue:false } );
                     }
 console.log('setWidth: '+setWidth);
 console.log('visiblePane.$elm.width(): '+visiblePane.$elm.width());
@@ -404,16 +398,13 @@ console.log('visiblePane.$elm.className: '+visiblePane.$elm[0].className );
                 //updates or inits first (and should be only) $rindow rdr_body into jScrollPanes
                 $rindow.find('div.rdr_body').each( function() {
                     var $this = $(this);
-                    if ( $this.width() == 292 ) {
-                        //console.log('$this.width(): ',$this.width());
-                        console.log( this.className );
-                    }
+
                     if ( width ) $this.width(setWidth);
                     var setWidth = (width) ? width:$this.width();
                     if( !$this.hasClass('jspScrollable') ){
                         // IE.  for some reason, THIS fires the scrollstop event.  WTF:
-                        // $(this).jScrollPane({ showArrows:true });
-                        $(this).jScrollPane({ contentWidth:setWidth, showArrows:true });
+                        $(this).jScrollPane({ showArrows:true });
+                        // $(this).jScrollPane({ contentWidth:setWidth, showArrows:true });
                     }else{
                         var API = $(this).data('jsp');
                         API.reinitialise();
@@ -4432,14 +4423,13 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 
                 $rindow.find('div.rdr_indicator_details_body').hide();  // image specific.
                 
-                var commentRindowWidth = (summary.kind=="img") ? $rindow.width()+2:300,
+                var commentRindowWidth = (summary.kind=="img") ? $rindow.width():300,
                     commentRindowHeight = (summary.kind=="img") ? 180:296;
 
-                // console.log('commentRindowWidth: '+commentRindowWidth);
+                console.log('commentRindowWidth: '+commentRindowWidth);
 
                 RDR.rindow.panelShow( $rindow, 'rdr_comments', commentRindowWidth, commentRindowHeight );
-                RDR.rindow.updateSizes( $rindow, commentRindowWidth, commentRindowHeight, summary.kind );
-console.log('post update $rindow.width(): '+ $rindow.width() );
+                // RDR.rindow.updateSizes( $rindow, commentRindowWidth, commentRindowHeight, summary.kind );
 
                 //helper functions 
                 function _makeCommentBox() {
@@ -4563,9 +4553,6 @@ console.log('post update $rindow.width(): '+ $rindow.width() );
                         }
                     }
                     RDR.rindow.panelUpdate( $rindow, 'rdr_comments', $otherComments );
-                    
-                    //do later for IE maybe
-                    //$otherComments.find('.rdr_commentSet:last-child').addClass('rdr_lastchild');
 
                 } //end makeOtherComments
             },

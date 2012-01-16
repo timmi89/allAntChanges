@@ -223,7 +223,18 @@ div.rdr strong {font-weight:bold !important;}
     -moz-border-radius:3px 3px 3px 3px; 
     -webkit-border-radius:3px 3px 3px 3px; 
     border-radius:3px 3px 3px 3px; 
-    -moz-box-shadow:0 -6px 11px -6px #ccc inset; -webkit-box-shadow:0 -6px 11px -6px #ccc inset; box-shadow:0 -6px 11px -6px #ccc inset; color:#454545; font-family:Arial; font-size:12px; padding:2px 5px; width:auto; cursor:pointer; float:right;margin-right:6px;margin-bottom:10px;
+    -moz-box-shadow:0 -6px 11px -6px #ccc inset; 
+    -webkit-box-shadow:0 -6px 11px -6px #ccc inset; 
+    box-shadow:0 -6px 11px -6px #ccc inset; 
+    color:#454545; 
+    font-family:Arial; 
+    font-size:12px; 
+    padding:2px 5px; 
+    width:auto; 
+    cursor:pointer; 
+    float:right;
+    margin-right:6px;
+    margin-bottom:20px;
 }
 
 #rdr_sandbox div.rdr_window_dragHandle{
@@ -249,18 +260,15 @@ div.rdr strong {font-weight:bold !important;}
 }
 
 /* commentSet */
-#rdr_sandbox div.rdr div.rdr_comments                       {/*width:292px;*/}
+#rdr_sandbox div.rdr div.rdr_comments                       {}
 #rdr_sandbox div.rdr div.rdr_commentSet                     {margin:5px 10px; padding-bottom:5px; overflow:auto; border-bottom:1px solid #ddd;}
 #rdr_sandbox div.rdr div.rdr_commentSet:last-child,
 #rdr_sandbox div.rdr div.rdr_commentSet.rdr_lastchild       {border:none;} /*not the end of the world if this fails in IE, but compensate later*/
 
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentBy          {font: bold 11px Arial; color:#666; overflow:auto; padding-top:8px;}
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentBy img      {width:24px; height:24px; float:left; margin:-8px 5px 0 0 !important; border:1px solid #d0dee6;}
-#rdr_sandbox div.rdr div.rdr_commentSet div.rdr_comment            {font: italic 14px Georgia; color:#999;padding:3px; }
+#rdr_sandbox div.rdr div.rdr_commentSet div.rdr_comment            {font: italic 14px Georgia; color:#999;padding:3px; overflow-x:hidden;}
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentReply       {font-weight:normal; margin-right:5px; text-transform:uppercase; font-size:9px; float:right;}
-#rdr_sandbox div.rdr div.rdr_commentSet a.rdr_tag                            {margin-top:3px;}
-#rdr_sandbox div.rdr div.rdr_commentSet a.rdr_tag div.rdr_tag_share          {margin-left:-12px;}
-#rdr_sandbox div.rdr div.rdr_commentSet a.rdr_tag:hover div.rdr_tag_share    {margin-left:3px;}
 
 /* tag pills and such */
 table.rdr_tags {
@@ -536,7 +544,7 @@ div.rdr.rdr-summary div.rdr_note ins img    { margin:0 !important; padding:0 !im
 #rdr_sandbox div.rdr div.rdr_share_social                   { overflow:auto !important; }
 #rdr_sandbox div.rdr div.rdr_share_social strong            { display:block !important; float:left !important; margin:5px 5px 0 24px !important; }
 #rdr_sandbox div.rdr tr.rdr_wide div.rdr_share_social strong            { margin:3px 5px 0 10px !important; }
-#rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; border-top: 1px solid #d0d0d0; padding-top:5px; }
+#rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; border-top: 1px solid #d0d0d0; padding-top:5px; max-width:97%; }
 #rdr_sandbox div.rdr div.rdr_nextSteps_container div.rdr_commentBox                     { border:none; }
 #rdr_sandbox div.rdr tr.rdr_wide div.rdr_nextSteps_container div.rdr_commentBox         { clear:both !important; float:none !important;  }
 
