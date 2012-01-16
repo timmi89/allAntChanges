@@ -210,6 +210,8 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace                { background:#f0f0f0 !important; position:relative !important; margin-bottom:6px; overflow:hidden;}
 #rdr_sandbox div.rdr div.rdr_body   { max-height:266px; margin:0 4px; float:left !important; display:block !important;}
 #rdr_sandbox div.rdr div.rdr_body div.jspPane   { margin:0 !important; }
+#rdr_sandbox div.rdr div.jspScrollable   { outline:none!important; }
+
 #rdr_sandbox div.rdr div.rdr_body div.jspHorizontalBar   { display:none !important; }
 
 #rdr_sandbox div.rdr.rdr_window div.rdr_header h1                   { margin-left:14px !important; }
