@@ -249,7 +249,7 @@ div.rdr strong {font-weight:bold !important;}
 }
 
 /* commentSet */
-#rdr_sandbox div.rdr div.rdr_comments                       {width:292px;}
+#rdr_sandbox div.rdr div.rdr_comments                       {/*width:292px;*/}
 #rdr_sandbox div.rdr div.rdr_commentSet                     {margin:5px 10px; padding-bottom:5px; overflow:auto; border-bottom:1px solid #ddd;}
 #rdr_sandbox div.rdr div.rdr_commentSet:last-child,
 #rdr_sandbox div.rdr div.rdr_commentSet.rdr_lastchild       {border:none;} /*not the end of the world if this fails in IE, but compensate later*/

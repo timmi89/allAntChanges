@@ -4438,7 +4438,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 // console.log('commentRindowWidth: '+commentRindowWidth);
 
                 RDR.rindow.panelShow( $rindow, 'rdr_comments', commentRindowWidth, commentRindowHeight );
-                // RDR.rindow.updateSizes( $rindow, commentRindowWidth, commentRindowHeight, summary.kind );
+                RDR.rindow.updateSizes( $rindow, commentRindowWidth, commentRindowHeight, summary.kind );
 console.log('post update $rindow.width(): '+ $rindow.width() );
 
                 //helper functions 
