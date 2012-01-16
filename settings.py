@@ -1,8 +1,9 @@
 # Django settings for readrboard project.
 from os import uname
 
-if uname()[0] == "Linux": DEBUG = False
-else: DEBUG = True
+#if uname()[0] == "Linux": DEBUG = False
+#else: DEBUG = True
+DEBUG=True
 
 # Server e-mail account
 SERVER_EMAIL = "server@readrboard.com"

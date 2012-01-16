@@ -50,7 +50,7 @@ class RBGroupAdmin(admin.ModelAdmin):
             'fields': ('inline_selector', 'inline_func')
         }),
         ('Customization', {
-            'fields': ('call_to_action',)
+            'fields': ('call_to_action','media_display_pref')
         }),
      )
 
