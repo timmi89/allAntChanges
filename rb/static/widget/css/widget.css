@@ -263,8 +263,7 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr div.rdr_commentSet a.rdr_tag:hover div.rdr_tag_share    {margin-left:3px;}
 
 /* tag pills and such */
-div.rdr.rdr_indicator_details table.rdr_tags,
-div.rdr.rdr_window table.rdr_tags {
+table.rdr_tags {
     /*margin-top:3px !important;
     margin-right:3px !important;*/
     margin-top:3px !important;
@@ -273,81 +272,68 @@ div.rdr.rdr_window table.rdr_tags {
     margin-left:auto;
     float:left !important;
 }
-div.rdr.rdr_indicator_details table.rdr_tags {
-    margin-top: -4px !important;
-}
 
-div.rdr.rdr_indicator_details table.rdr_tags td.rdr_activePill a.rdr_tag,
-div.rdr.rdr_window table.rdr_tags td.rdr_activePill a.rdr_tag {
-    background: -moz-linear-gradient(center top , #e8e8e8, #fff) repeat scroll 0 0 transparent;
+table.rdr_tags td.rdr_activePill a.rdr_tag {
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e8e8e8', endColorstr='#ffffff') !important;
+    background: -webkit-gradient(linear, center top, center bottom, from(#e8e8e8), to(#fff)) !important;
+    background: -moz-linear-gradient(center top , #e8e8e8, #ffffff) repeat scroll 0 0 transparent !important;
+
     border-top: 1px solid #ccc;
     box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7), 0 -1px 1px rgba(128, 128, 128, 0.4) inset;
 }
 
-div.rdr.rdr_indicator_details table.rdr_tags td.rdr_activePill a.rdr_tag span.rdr_tag_count,
-div.rdr.rdr_window table.rdr_tags td.rdr_activePill a.rdr_tag span.rdr_tag_count {
+table.rdr_tags td.rdr_activePill a.rdr_tag span.rdr_tag_count {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffadd1f9', endColorstr='#ffddedff');
     background: -webkit-gradient(linear, center top, center bottom, from(#add1f9), to(#ddedff)); 
     background: -moz-linear-gradient(center top , #add1f9, #ddedff) repeat scroll 0 0 transparent;
     box-shadow: -1px -1px 1px rgba(128, 128, 128, 0.4) inset;
 }
 
-div.rdr.rdr_indicator_details table.rdr_tags td.rdr_activePill,
-div.rdr.rdr_window table.rdr_tags td.rdr_activePill {
+table.rdr_tags td.rdr_activePill {
     background:#fff;
 }
-div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps,
-div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps {
+table.rdr_tags tr.rdr_nextSteps{
     background:#fff;
     font-size:10.5px;
     
 }
-div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps div,
-div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps div {
+table.rdr_tags tr.rdr_nextSteps div {
     margin:4px 0 !important;
     white-space:normal !important;
     text-align:center !important;
 }
-div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps.rdr_wide div,
-div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps.rdr_wide div {
+table.rdr_tags tr.rdr_nextSteps.rdr_wide div {
     display: block !important;
     float: left;
     margin: 0 0 !important;
 }
-div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps.rdr_wide div.rdr_reactionMessage,
-div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps.rdr_wide div.rdr_reactionMessage {
+table.rdr_tags tr.rdr_nextSteps.rdr_wide div.rdr_reactionMessage {
     padding:4px 10px 2px 0 !important;
     border-right:1px solid #d0d0d0;
 }
-div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps div.rdr_nextSteps_container,
-div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps div.rdr_nextSteps_container {
+table.rdr_tags tr.rdr_nextSteps div.rdr_nextSteps_container {
     padding:0 2px !important;
 }
-div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps hr,
-div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps hr {
+table.rdr_tags tr.rdr_nextSteps hr{
     height:1px !important;
     background:#d0d0d0 !important;
     border: none !important;
     width: 98% !important;
 }
-div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps.rdr_wide hr.rdr_first,
-div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps.rdr_wide hr.rdr_first {
+table.rdr_tags tr.rdr_nextSteps.rdr_wide hr.rdr_first{
     display:none;
 }
-div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps.rdr_wide hr.rdr_second,
-div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps.rdr_wide hr.rdr_second {
+table.rdr_tags tr.rdr_nextSteps.rdr_wide hr.rdr_second{
     clear:both !important;
     margin-top:25px !important; /*assumes this is a second row... */
     display:none !important;
 }
-div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps a,
-div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps a {
+table.rdr_tags tr.rdr_nextSteps a{
     font-style:normal !important;
     text-decoration:underline !important;
     color:#008be4 !important;
 }
-div.rdr.rdr_indicator_details table.rdr_tags tr.rdr_nextSteps input[type="text"],
-div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps input[type="text"] {
+table.rdr_tags tr.rdr_nextSteps input[type="text"]{
     width:90% !important;
     color:#aaa !important;
     font-size:10.5px !important;
@@ -355,8 +341,7 @@ div.rdr.rdr_window table.rdr_tags tr.rdr_nextSteps input[type="text"] {
     margin:2px 0 !important;
 }
 
-div.rdr.rdr_indicator_details table.rdr_tags td,
-div.rdr.rdr_window table.rdr_tags td {
+table.rdr_tags td{
     padding:3px 0 0 2px;
 }
 div.rdr a.rdr_tag     { 
@@ -399,6 +384,15 @@ div.rdr.rdr_window td div.rdr_cell_wrapper {
     width:100% !important;
     height:25px !important;
     position:relative !important;
+    
+}
+div.rdr.rdr_indicator_details td div.rdr_cell_wrapper:hover,
+div.rdr.rdr_window td div.rdr_cell_wrapper:hover{
+    
+}
+div.rdr.rdr_indicator_details td div.rdr_cell_wrapper:hover a.rdr_tag,
+div.rdr.rdr_window td div.rdr_cell_wrapper:hover a.rdr_tag{ 
+    background: -moz-linear-gradient(center top , #ffffff, #f3f3f3) repeat scroll 0 0 transparent;
 }
 div.rdr.rdr_indicator_details td div.rdr_cell_wrapper span.rdr_comment_hover,
 div.rdr.rdr_window td div.rdr_cell_wrapper span.rdr_comment_hover {
@@ -427,7 +421,7 @@ div.rdr.rdr_window td.rdr-last-child div.rdr_cell_wrapper span.rdr_comment_hover
 }
 div.rdr.rdr_indicator_details td:hover,
 div.rdr.rdr_window td:hover {
-    background:#fff !important;
+    
 }
 div.rdr.rdr_indicator_details td:hover div.rdr_cell_wrapper span.rdr_comment_hover,
 div.rdr.rdr_window td:hover div.rdr_cell_wrapper span.rdr_comment_hover {
@@ -495,17 +489,14 @@ div.rdr a.rdr_tag span.rdr_tag_count    {
     text-align: center !important;
 }
 
-div.rdr.rdr_indicator_details table.rdr_tags a.rdr_tag span.rdr_tag_count,
-div.rdr.rdr_window table.rdr_tags a.rdr_tag span.rdr_tag_count    { 
+table.rdr_tags a.rdr_tag span.rdr_tag_count{ 
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
     background: -webkit-gradient(linear, center top, center bottom, from(#ddedff), to(#add1f9)); 
     background: -moz-linear-gradient(center top , #f0f0f0, #d0d0d0) repeat scroll 0 0 transparent;
 }
 
-div.rdr.rdr_indicator_details table.rdr_tags a.rdr_tag.rdr_hover span.rdr_tag_count,
-div.rdr.rdr_indicator_details table.rdr_tags a.rdr_tag:hover span.rdr_tag_count,
-div.rdr.rdr_window table.rdr_tags a.rdr_tag.rdr_hover span.rdr_tag_count,
-div.rdr.rdr_window table.rdr_tags a.rdr_tag:hover span.rdr_tag_count    { 
+table.rdr_tags a.rdr_tag.rdr_hover span.rdr_tag_count,
+table.rdr_tags a.rdr_tag:hover span.rdr_tag_count{ 
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
     background: -webkit-gradient(linear, center top, center bottom, from(#ddedff), to(#add1f9)); 
     background: -moz-linear-gradient(center top , #ddedff, #add1f9) repeat scroll 0 0 transparent;
@@ -1001,8 +992,11 @@ div.rdr_indicator span.rdr_count,
 #rdr_sandbox span.rdr_tags_list_tag {
     padding:2px !important;
 }
+
+/*no more rdr_tags_list_tag I'm pretty sure*/
+/*
 #rdr_sandbox div.rdr_indicator_details_for_text span.rdr_tags_list_tag:hover {
-    background:#fe7 !important;
+    background: none;
     background-image: -webkit-gradient(
     linear,
     left bottom,
@@ -1012,6 +1006,7 @@ div.rdr_indicator span.rdr_count,
     )!important;
     background-image: -moz-linear-gradient(center bottom , #D9D35F 0%, #FCF59A 39%) !important;
 }
+*/
 
 #rdr_sandbox div#rdr_loginPanel {
     /*position:fixed;*/
