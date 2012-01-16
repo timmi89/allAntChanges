@@ -894,20 +894,7 @@ div.rdr_indicator_for_media.rdr_engage_media {
 }
 #rdr_sandbox div.rdr_indicator_details_for_media {
     overflow:hidden; /*for the animate out to work nicely*/
-    margin:0; /*don't need the -5px 0 0 -4px margin here.  Kick it left though*/
     height:31px;
-}
-#rdr_sandbox div.rdr_indicator_details_for_media.rdr_hover {
-/*#rdr_sandbox div.rdr_indicator_details_for_media:hover {*/
-    /*max-height:150px;*/
-    overflow-y:auto;
-}
-div.rdr_indicator_for_media_inline {
-}
-div.rdr_indicator_for_media_inline div.rdr_indicator_body { 
-    display:none !important;
-}
-#rdr_sandbox .rdr_indicator_details_for_media_inline{
     display:block !important;
     margin:0 !important;
     -moz-border-radius:0px 0px 8px 8px !important;
@@ -918,8 +905,16 @@ div.rdr_indicator_for_media_inline div.rdr_indicator_body {
     -webkit-box-shadow:  0px 4px 6px -2px #ccc !important;
     background:#f0f0f0 !important;
 }
-#rdr_sandbox .rdr_indicator_details_for_media_inline.rdr_hover{
+#rdr_sandbox div.rdr_indicator_details_for_media.rdr_hover {
+/*#rdr_sandbox div.rdr_indicator_details_for_media:hover {*/
+    /*max-height:150px;*/
+    overflow-y:auto;
 }
+
+div.rdr_indicator_for_media_inline div.rdr_indicator_body { 
+    display:none !important;
+}
+
 #rdr_sandbox div.rdr_container_tracker{
     position:absolute !important;
 }
