@@ -201,16 +201,15 @@ function readrBoard($R){
 
                 // feels like we should not need this, but behavior is more consistent if we have it.  ugh.
                 RDR.rindow.jspUpdate( $rindow );
-
                 var rindowHeight = $rindow.height(),
                     heightAdjustment = 36;
-                if ( $rindow.find('div.rdr_footer').css('display') != "none" ) {
+                if ( $rindow.find('div.rdr_footer').length && $rindow.find('div.rdr_footer').css('display') != "none" ) {
                     $rindow.css('padding-bottom','20px');
                     heightAdjustment += 20;
                 } else {
                     $rindow.css('padding-bottom','0px');
                 }
-                
+
                 // use rLeft to determine which pane is visible.  
                 // if offset of the pane is slightly greater (4px) than the rindow, than its in-view.
                 var rLeft = $rindow.offset().left;
@@ -232,16 +231,19 @@ function readrBoard($R){
                                 visiblePane.which = "rdr_body";
                             }
                             visiblePane.$elm = $this;
-                            if ( setHeight ) visiblePaneHeight = setHeight;
                         }
                     });
                 }
 
                 if ( visiblePaneHeight > 0 ) {
                     if ( visiblePaneHeight > 260 ) visiblePaneHeight = 260; // is this right?
+                    if ( setHeight ) { // override if height is passed in
+                        visiblePaneHeight = setHeight,
+                        heightAdjustment = 0;
+                    }
                     $rindow.find('div.jspContainer').height( visiblePaneHeight+4 );
-                    
                     if ( !setWidth ) setWidth = visiblePane.$elm.width()+8;
+
                     $rindow.animate({ width: setWidth, height:(visiblePaneHeight + heightAdjustment) }, { duration:333, queue:false } );
                     visiblePane.$elm.css('width', setWidth );
                     if ( visiblePane.which == "hasJspPane" ) {
@@ -399,6 +401,7 @@ function readrBoard($R){
                 //updates or inits first (and should be only) $rindow rdr_body into jScrollPanes
                 $rindow.find('div.rdr_body').each( function() {
                     var $this = $(this);
+                    console.log('$this.width(): ',$this.width());
                     if( !$this.hasClass('jspScrollable') ){
                         // IE.  for some reason, THIS fires the scrollstop event.  WTF:
                         // $(this).jScrollPane({ showArrows:true });
@@ -4548,9 +4551,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     $rindow = args.rindow,
                     content_node = args.content_node;
                 
-                console.log('viewCommentContent');
-                console.dir(args);
-                console.log($rindow.width());
+                $rindow.data( 'returnWidth', $rindow.width()).data( 'returnHeight', $rindow.height() );
 
                 $rindow.removeClass('rdr_rewritable').addClass('rdr_viewing_comments');
                 //temp tie-over    
@@ -4574,9 +4575,10 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 $rindow.find('div.rdr_indicator_details_body').hide();  // image specific.
                 
                 var commentRindowWidth = (summary.kind=="img") ? $rindow.width():300,
-                    commentRindowHeight = (summary.kind=="img") ? $rindow.width():300;
+                    commentRindowHeight = (summary.kind=="img") ? 180:296;
+                
                 RDR.rindow.panelShow( $rindow, 'rdr_comments', commentRindowWidth, commentRindowHeight );
-                RDR.rindow.updateSizes( $rindow, commentRindowWidth, commentRindowWidth, summary.kind );
+                RDR.rindow.updateSizes( $rindow, commentRindowWidth, commentRindowHeight, summary.kind );
 
                 //helper functions 
                 function _makeCommentBox() {
@@ -4667,7 +4669,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     // ok, get the content associated with this tag!
                     var $otherComments = $('<div class="rdr_otherCommentsBox"></div>').hide().html(
                         '<div class="rdr_back">&lt;&lt; Back</div>'+
-                        '<div><h4>(<span>' + node_comments + '</span>) Comments:</h4></div>'
+                        '<div class="rdr_comment_header"><h4>(<span>' + node_comments + '</span>) Comments:</h4></div>'
                     );
 
                     $otherComments.find('div.rdr_back').click( function() {
@@ -4675,7 +4677,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                             '<h1>Reactions</h1>';
                         RDR.rindow.updateHeader( $rindow, headerContent );
                         $rindow.removeClass('rdr_viewing_comments').find('div.rdr_indicator_details_body').show();  // image specific.
-                        RDR.rindow.panelHide( $rindow, 'rdr_comments', commentRindowWidth, commentRindowHeight );
+                        RDR.rindow.panelHide( $rindow, 'rdr_comments', $rindow.data('returnWidth'), $rindow.data('returnHeight') );
                     });
 
                     for ( var i in comments ) {
