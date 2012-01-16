@@ -123,6 +123,7 @@ class Group(models.Model):
     
     # Customization
     call_to_action = models.CharField(max_length=255, default='', blank=True)
+    media_display_pref = models.CharField(max_length=25, default='', blank=True)
     
     # Jquery settings
     inline_selector = models.CharField(max_length=100, default='', blank=True)

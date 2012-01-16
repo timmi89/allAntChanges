@@ -10,5 +10,6 @@ readrdb.db
 *.orig
 *.project
 *.pydevproject
+.settings/
 settings.py
 logs/
