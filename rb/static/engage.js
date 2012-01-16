@@ -117,7 +117,7 @@ function readrBoard($R){
                     rdr_bodyFirst_width = $rdr_bodyFirst.width();
 
                 if ( !$rdr_body_wrap.find('div.'+className).length ) {
-                    var $newPanel = $('<div class="rdr_body '+className+'"/>').width( rdr_bodyFirst_width ),
+                    var $newPanel = $('<div class="rdr_body '+className+'"/>'),  //.width( rdr_bodyFirst_width ),
                         column_count = ( $rdr_body_wrap.find('div.rdr_body').length ) + 1;
                     $rdr_body_wrap.width( ( rdr_bodyFirst_width * column_count ) + ( 8 * column_count ) ).append( $newPanel );
                 }
@@ -253,7 +253,7 @@ console.log('setWidth: '+setWidth);
 console.log('visiblePane.$elm.width(): '+visiblePane.$elm.width());
 console.log('visiblePane.$elm.className: '+visiblePane.$elm[0].className );
                 }
-                RDR.rindow.jspUpdate( $rindow, setWidth );
+                RDR.rindow.jspUpdate( $rindow );
             },
             updateTagMessage: function(args) {
                 //RDR.rindow.updateTagMessage
@@ -4434,11 +4434,13 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 
                 var commentRindowWidth = (summary.kind=="img") ? $rindow.width()+2:300,
                     commentRindowHeight = (summary.kind=="img") ? 180:296;
-                console.log('commentRindowWidth: '+commentRindowWidth);
+
+                // console.log('commentRindowWidth: '+commentRindowWidth);
 
                 RDR.rindow.panelShow( $rindow, 'rdr_comments', commentRindowWidth, commentRindowHeight );
-                RDR.rindow.updateSizes( $rindow, commentRindowWidth, commentRindowHeight, summary.kind );
+                // RDR.rindow.updateSizes( $rindow, commentRindowWidth, commentRindowHeight, summary.kind );
 console.log('post update $rindow.width(): '+ $rindow.width() );
+
                 //helper functions 
                 function _makeCommentBox() {
 
