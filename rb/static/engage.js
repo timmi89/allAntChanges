@@ -211,7 +211,7 @@ function readrBoard($R){
                     $rindow.css('padding-bottom','0px');
                 }
 
-                var visiblePane = {},
+                var visiblePane = {};
                     visiblePane.height = 0;
                 
                 visiblePane.$elm = ( $rindow.find('div.rdr-visible').length ) ? $rindow.find('div.rdr-visible').eq(0) : $rindow.find('div.rdr_body').eq(0);
@@ -225,7 +225,7 @@ function readrBoard($R){
 
 
                 if ( visiblePane.height > 0 ) {
-                    if ( visiblePane.height > 260 ) visiblePane.height = 260; // is this right?
+                    if ( visiblePane.height > 260 ) visiblePane.height = 260; // an effective max-height.  is this right?
                     if ( setHeight ) { // override if height is passed in
                         visiblePane.height = setHeight,
                         heightAdjustment = 0;
@@ -4383,8 +4383,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                 RDR.rindow.panelCreate( $rindow, 'rdr_comments' );
 
-                _makeOtherComments();
-                _makeCommentBox();
                 
                 $rindow.find('div.rdr_indicator_details_body').hide();  // image specific.
                 
@@ -4395,6 +4393,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                 RDR.rindow.panelShow( $rindow, 'rdr_comments', commentRindowWidth, commentRindowHeight );
                 // RDR.rindow.updateSizes( $rindow, commentRindowWidth, commentRindowHeight, summary.kind );
+                _makeOtherComments();
+                _makeCommentBox();
 
                 //helper functions 
                 function _makeCommentBox() {
