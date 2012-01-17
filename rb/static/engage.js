@@ -501,6 +501,8 @@ console.log('visiblePane.$elm.className: '+visiblePane.$elm[0].className );
                         RDR.actions.interactions.ajax( args, 'react', 'create');
                     });
 
+                    $container.append( $a, " " );
+                    
                     var comments = ((!$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions.coms ))) ? content_node.top_interactions.coms:{};
                     if ($.isEmptyObject(comments) && summary.kind=="img" && !$.isEmptyObject(summary.top_interactions) && !$.isEmptyObject(summary.top_interactions.coms)) comments = summary.top_interactions.coms[tag.id];
 
@@ -514,7 +516,6 @@ console.log('visiblePane.$elm.className: '+visiblePane.$elm[0].className );
                         if ( $container ) $a.after( $commentHover );
                     }
 
-                    $container.append( $a, " " );
                     return $a;
                 }
             },
