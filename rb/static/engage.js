@@ -631,7 +631,7 @@ console.log('visiblePane.$elm.className: '+visiblePane.$elm[0].className );
 
                             var $indicator = $('#rdr_indicator_'+hash),
                             $indicator_body = $('#rdr_indicator_body_'+ hash),
-                            $indicatorDetails = $('#rdr_indicator_details_'+ hash),
+                            // $indicatorDetails = $('#rdr_indicator_details_'+ hash),
                             $container = $('.rdr-'+hash);
 
                             coords = {
@@ -673,6 +673,7 @@ console.log('visiblePane.$elm.className: '+visiblePane.$elm[0].className );
                         /* START create the tag pills.  read / write mode matters. (??) */
                         $rindow.addClass('rdr_reactions');
 
+                        if ( $rindow.find('table.rdr_tags').length ) return;
                         var count = 0, // used for counting how many tags are created, to know where to put the custom tag pill
                             $sentimentBox = ( $rindow.find('div.rdr_body').length ) ? $rindow.find('div.rdr_body') : $('<div class="rdr_body" />').appendTo( $rindow.find('div.rdr_body_wrap') ),
                             $tag_table = RDR.rindow.pillTable.make( $sentimentBox );
@@ -3716,7 +3717,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                             $indicator.bind('mouseover.showRindow', function(){
                                 var selStates = $(this).data('selStates');
-
                                 RDR.rindow.make( "readMode", {hash:hash} );
                             });
                             $indicator.triggerHandler('mouseover.showRindow');
