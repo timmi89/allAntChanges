@@ -4385,8 +4385,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 _makeOtherComments();
                 _makeCommentBox();
                 
-                $rindow.find('div.rdr_indicator_details_body').hide();  // image specific.
-                
                 var commentRindowWidth = (summary.kind=="img") ? $rindow.width():300,
                     commentRindowHeight = (summary.kind=="img") ? 180:296;
 
