@@ -4379,10 +4379,11 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
                                     '<h1>' + tag.body + '</h1>';
                 
+                // do stuff, populate the rindow.
                 RDR.rindow.updateHeader( $rindow, headerContent );
-
                 RDR.rindow.panelCreate( $rindow, 'rdr_comments' );
-
+                _makeOtherComments();
+                _makeCommentBox();
                 
                 $rindow.find('div.rdr_indicator_details_body').hide();  // image specific.
                 
@@ -4392,9 +4393,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 console.log('commentRindowWidth: '+commentRindowWidth);
 
                 RDR.rindow.panelShow( $rindow, 'rdr_comments', commentRindowWidth, commentRindowHeight );
-                // RDR.rindow.updateSizes( $rindow, commentRindowWidth, commentRindowHeight, summary.kind );
-                _makeOtherComments();
-                _makeCommentBox();
+                RDR.rindow.updateSizes( $rindow, commentRindowWidth, commentRindowHeight, summary.kind );
 
                 //helper functions 
                 function _makeCommentBox() {
