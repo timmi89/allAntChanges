@@ -241,7 +241,7 @@ function readrBoard($R){
                     if ( visiblePane.which == "hasJspPane" ) {
                         console.log("hasJspPane");
                         // visiblePane.$elm.css('width', (setWidth)+'px' );
-                        visiblePane.$elm.find('div.jspContainer, div.jspPane').animate({ width: (setWidth-12) }, { duration:333, queue:false } );
+                        visiblePane.$elm.find('div.jspContainer, div.jspPane').animate({ width: (setWidth-7) }, { duration:333, queue:false } );
                     }
 console.log('setWidth: '+setWidth);
 console.log('visiblePane.$elm.width(): '+visiblePane.$elm.width());
@@ -461,7 +461,9 @@ console.log('visiblePane.$elm.className: '+visiblePane.$elm[0].className );
                         $last_row.append('<td><div class="rdr_cell_wrapper"/></td>');
                     }
 
-                    return $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper');
+                    var $last_cell_wrapper = $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper');
+                    $last_cell_wrapper.css('z-index', ( 1000 - $tag_table.find('td').length ) );
+                    return $last_cell_wrapper;
                 }
             },
             pill: {
