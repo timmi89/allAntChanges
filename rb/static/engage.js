@@ -3988,17 +3988,15 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 left: parseInt( $container.css('padding-left'), 10 )
                             };
 
-                            var cornerPadding = 8,
+                            var cornerPadding = 0,
                                 indicatorBodyWidth = $indicator_body.width();
                             
-                            $indicator.css({
-                                top: 0,
-                                left: containerWidth
-                            });
+                            console.log($indicator);
+                            console.log( $container.height() );
 
-                            RDR.util.cssSuperImportant($indicator_body, {
-                                top: cornerPadding,
-                                right: cornerPadding
+                            $indicator.css({
+                                left: 0,
+                                top: $container.height()
                             });
 
                             var has_inline_indicator = (summary.kind=="text") ? false:true; //$container.data('inlineIndicator'); //boolean                        
