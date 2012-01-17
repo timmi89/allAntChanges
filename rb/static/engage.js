@@ -502,7 +502,7 @@ console.log('visiblePane.$elm.className: '+visiblePane.$elm[0].className );
                     });
 
                     $container.append( $a, " " );
-                    
+
                     var comments = ((!$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions.coms ))) ? content_node.top_interactions.coms:{};
                     if ($.isEmptyObject(comments) && summary.kind=="img" && !$.isEmptyObject(summary.top_interactions) && !$.isEmptyObject(summary.top_interactions.coms)) comments = summary.top_interactions.coms[tag.id];
 
@@ -915,7 +915,7 @@ console.log('visiblePane.$elm.className: '+visiblePane.$elm[0].className );
     
                 $new_rindow.bind( "resizestop", function(event, ui) {
                     var $this = $(this);
-                    RDR.rindow.updateSizes( $this, -1 );
+                    RDR.rindow.updateSizes( $this );
                 });
 
                 return $new_rindow;

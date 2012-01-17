@@ -212,7 +212,8 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr div.rdr_body div.jspPane   { margin:0 !important; }
 #rdr_sandbox div.rdr div.jspScrollable   { outline:none!important; }
 
-#rdr_sandbox div.rdr div.rdr_body div.jspHorizontalBar   { display:none !important; }
+#rdr_sandbox div.rdr div.rdr_body div.jspHorizontalBar  { display:none !important; }
+#rdr_sandbox div.rdr div.rdr_body div.jspVerticalBar    { z-index:10001; }
 
 #rdr_sandbox div.rdr.rdr_window div.rdr_header h1                   { margin-left:14px !important; }
 
