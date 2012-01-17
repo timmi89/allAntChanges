@@ -850,8 +850,6 @@ div.rdr_indicator_for_text div.rdr_indicator_body{
     /*top: -15px !important;*/
 }
 div.rdr_indicator_for_media div.rdr_indicator_body{
-    left:auto !important;
-    right:0 !important;
     background:white !important;
     border: 1px solid #bbb !important;
     height: auto !important;
@@ -922,7 +920,8 @@ div.rdr_indicator_for_media.rdr_engage_media {
 }
 
 div.rdr_indicator_for_media_inline div.rdr_indicator_body { 
-    display:none !important;
+    left:0;
+    top:-23px !important;    
 }
 
 #rdr_sandbox div.rdr_container_tracker{
