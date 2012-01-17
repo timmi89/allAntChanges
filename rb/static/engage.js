@@ -211,32 +211,32 @@ function readrBoard($R){
                     $rindow.css('padding-bottom','0px');
                 }
 
-                var visiblePaneHeight = 0,
-                    visiblePane = {};
+                var visiblePane = {},
+                    visiblePane.height = 0;
                 
                 visiblePane.$elm = ( $rindow.find('div.rdr-visible').length ) ? $rindow.find('div.rdr-visible').eq(0) : $rindow.find('div.rdr_body').eq(0);
                 if (visiblePane.$elm.find('div.jspPane').length==1) {
-                    visiblePaneHeight = visiblePane.$elm.find('div.jspPane').height();
+                    visiblePane.height = visiblePane.$elm.find('div.jspPane').height();
                     visiblePane.which = "hasJspPane";
                 } else {
-                    visiblePaneHeight = visiblePane.$elm.height();
+                    visiblePane.height = visiblePane.$elm.height();
                     visiblePane.which = "rdr_body";
                 }
 
 
-                if ( visiblePaneHeight > 0 ) {
-                    if ( visiblePaneHeight > 260 ) visiblePaneHeight = 260; // is this right?
+                if ( visiblePane.height > 0 ) {
+                    if ( visiblePane.height > 260 ) visiblePane.height = 260; // is this right?
                     if ( setHeight ) { // override if height is passed in
-                        visiblePaneHeight = setHeight,
+                        visiblePane.height = setHeight,
                         heightAdjustment = 0;
                     }
-                    $rindow.find('div.jspContainer').height( visiblePaneHeight+4 );
+                    $rindow.find('div.jspContainer').height( visiblePane.height+4 );
                     if ( !setWidth ) setWidth = visiblePane.$elm.width()+8;
                     else {
                         console.log('has a setWidth');
                         visiblePane.$elm.css('width', (setWidth)+'px' );
                     }
-                    $rindow.animate({ width: setWidth, height:(visiblePaneHeight + heightAdjustment) }, { duration:333, queue:false } );
+                    $rindow.animate({ width: setWidth, height:(visiblePane.height + heightAdjustment) }, { duration:333, queue:false } );
 
                     if ( visiblePane.which == "hasJspPane" ) {
                         console.log("hasJspPane");
