@@ -3844,8 +3844,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $indicator_details = summary.$indicator_details,
                             $actionbar = $('rdr_actionbar_'+hash);
 
-                        var $indicator_details_body = $('<div class="rdr rdr_indicator_details_body" />'),
-                            $indicator_details_innerWrap = $('<div class="rdr rdr_body_wrap" />'),
+                        // var $indicator_details_body = $('<div class="rdr rdr_indicator_details_body" />'),
+                        var $indicator_details_innerWrap = $('<div class="rdr rdr_body_wrap" />'),
                             // categoryTitleText = (summary.counts.tags == 1) ? "&nbsp;reaction.&nbsp;" : "&nbsp;reactions.&nbsp;",
                             // categoryTitle = '<span class="rdr_indicator_categoryTitle">' +categoryTitleText+ '</span>',
                             $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />');
@@ -3853,11 +3853,11 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         
                         // $tagsList.append( $tag_table );
                         
-                        $indicator_details_body.html( $indicator_body.html() );
+                        // $indicator_details_body.html( $indicator_body.html() );
 
                         //use an innerWrap so that we can move padding to that and measuring the width of the indicator_details will be consistent
                         $indicator_details.empty().append( $indicator_details_innerWrap );
-                        $indicator_details_innerWrap.append( $indicator_details_body, $tagsListContainer );
+                        $indicator_details_innerWrap.append( $tagsListContainer );
 
                         //builds out the $tagsList contents
                         if (summary.kind!=="text"){
@@ -3877,7 +3877,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             tagsListMaxWidth;
                         
                         if(has_inline_indicator){
-                            tagsListMaxWidth = $indicator_details.outerWidth()-45;
+                            tagsListMaxWidth = $indicator_details.outerWidth()-8;
                         }else{
                             // tagsListMaxWidth = 300;
                         }
