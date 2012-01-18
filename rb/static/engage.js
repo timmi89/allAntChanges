@@ -672,7 +672,7 @@ function readrBoard($R){
                             var headerText = (actionType=="react") ? 'What\'s your reaction?':'Bookmark This';
                         } else {
                             // readMode
-                            var headerText = 'Reactions';
+                            var headerText = ((summary.counts && summary.counts.tags) ? summary.counts.tags+" ":"")+'Reactions';
                         }
                         var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
                                             '<h1>' + headerText + '</h1>';
