@@ -439,9 +439,9 @@ table.rdr_tags td.rdr_has_comment.rdr-last-child div.rdr_cell_wrapper span.rdr_c
     border-left:1px solid #aaa;
     border-right:none;
 }
-table.rdr_tags td.rdr_has_comment.rdr-last-child div.rdr_cell_wrapper {
-    border-right:1px solid #f0f0f0;
-    border-left:none;
+table.rdr_tags td.rdr_has_comment.rdr-last-child.rdr_hover div.rdr_cell_wrapper,
+table.rdr_tags td.rdr_has_comment.rdr-last-child:hover div.rdr_cell_wrapper {
+    border-right:1px solid #aaa;
     border-radius:0 4px 4px 0;
 }
 
