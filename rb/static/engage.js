@@ -442,9 +442,9 @@ function readrBoard($R){
                 return gotoHeight;
             },
             pillTable: {
-                make: function( $container ) {
+                make: function( $container, maxWidth ) {
                     //RDR.rindow.pillTable.make
-                    $tag_table = $('<table cellpadding="0" cellspacing="0" border="0" class="rdr_tags"><tr/></table>').appendTo( $container );
+                    $tag_table = $('<table cellpadding="0" cellspacing="0" border="0" class="rdr_tags" style="max-width:'+maxWidth+'px;"><tr/></table>').appendTo( $container );
                     return $tag_table;
                 },
                 getNextCell: function( tag, $tag_table, maxWidth ) {
@@ -3822,16 +3822,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $indicator_details = summary.$indicator_details,
                             $container = summary.$container,
                             $tagsListContainer = $indicator_details.find('div.rdr_tags_list'),
-                            $tag_table = RDR.rindow.pillTable.make( $tagsListContainer );
-
-                        var has_inline_indicator = (summary.kind=="text") ? false:true, //$container.data('inlineIndicator'), //boolean //really, only media should get here.  not text.
-                            tagsListMaxWidth;
-                        
-                        if(has_inline_indicator){
-                            tagsListMaxWidth = $indicator_details.outerWidth()-8;
-                        }else{
-                            // tagsListMaxWidth = 300;
-                        }
+                            tagsListMaxWidth = $indicator_details.outerWidth()-10,
+                            $tag_table = RDR.rindow.pillTable.make( $tagsListContainer, tagsListMaxWidth );
 
                         if ( summary.top_interactions && summary.top_interactions.tags ) {
                             $.each( summary.top_interactions.tags, function( tag_id, tag ){
