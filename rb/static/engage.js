@@ -490,7 +490,7 @@ console.log('visiblePane.$elm.className: '+visiblePane.$elm[0].className );
 
                     // abstract this when we abstract the same thing in the previous function.
                     var peoples = ( tagCount == 1 ) ? "person":"people",
-                        $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id);
+                        $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id).data('tag_count',tagCount);
 
                     if ( content_node_id ) {
                         $a.data('content_node_id',content_node_id);
@@ -501,6 +501,10 @@ console.log('visiblePane.$elm.className: '+visiblePane.$elm[0].className );
                         var hash = $rindow.data('container');
                         args = { tag:tag, hash:hash, uiMode:'write', kind:$rindow.data('kind'), rindow:$rindow};
                         RDR.actions.interactions.ajax( args, 'react', 'create');
+                    }).hover(function() {
+                        $(this).find('span.rdr_tag_count').text('+');
+                    }, function() {
+                        $(this).find('span.rdr_tag_count').text( $(this).data('tag_count') );
                     });
 
                     $container.append( $a, " " );
