@@ -223,7 +223,6 @@ function readrBoard($R){
                     visiblePane.which = "rdr_body";
                 }
 
-
                 if ( visiblePane.height > 0 ) {
                     if ( visiblePane.height > 260 ) visiblePane.height = 260; // an effective max-height.  is this right?
                     if ( setHeight ) { // override if height is passed in
@@ -233,19 +232,15 @@ function readrBoard($R){
                     $rindow.find('div.jspContainer').height( visiblePane.height+4 );
                     if ( !setWidth ) setWidth = visiblePane.$elm.width()+8;
                     else {
-                        console.log('has a setWidth');
+                        console.log('has a setWidth: '+setWidth);
                         visiblePane.$elm.css('width', (setWidth)+'px' );
                     }
                     $rindow.animate({ width: setWidth, height:(visiblePane.height + heightAdjustment) }, { duration:333, queue:false } );
 
                     if ( visiblePane.which == "hasJspPane" ) {
-                        console.log("hasJspPane");
-                        // visiblePane.$elm.css('width', (setWidth)+'px' );
-                        visiblePane.$elm.find('div.jspContainer, div.jspPane').animate({ width: (setWidth-7) }, { duration:333, queue:false } );
+                        visiblePane.$elm.find('div.jspContainer').width(setWidth);
+                        visiblePane.$elm.find('div.jspPane').width(setWidth-8);
                     }
-console.log('setWidth: '+setWidth);
-console.log('visiblePane.$elm.width(): '+visiblePane.$elm.width());
-console.log('visiblePane.$elm.className: '+visiblePane.$elm[0].className );
                 }
                 RDR.rindow.jspUpdate( $rindow );
             },
@@ -399,8 +394,6 @@ console.log('visiblePane.$elm.className: '+visiblePane.$elm[0].className );
                 $rindow.find('div.rdr_body').each( function() {
                     var $this = $(this);
 
-                    if ( width ) $this.width(setWidth);
-                    var setWidth = (width) ? width:$this.width();
                     if( !$this.hasClass('jspScrollable') ){
                         // IE.  for some reason, THIS fires the scrollstop event.  WTF:
                         $(this).jScrollPane({ showArrows:true });
@@ -410,7 +403,12 @@ console.log('visiblePane.$elm.className: '+visiblePane.$elm[0].className );
                         API.reinitialise();
                     }
                 });
-                //$rindow.find('div.rdr_otherTags').animate( {'top':( $rindow.height()-58 ) }, 200 );
+
+                // TODO this is a firefox/mac hack.  chrome didn't need it, but it doesn't impact chrome.  weird.  
+                // so, check and see if commenting these two lines out negatively impacts the width of the rindow
+                // in readmode, for text, after viewing comments then returning to the reaction list.
+                var $visiblePane = $rindow.find('div.rdr_body').eq(0);
+                if ( !$visiblePane.hasClass('rdr-visible') ) $visiblePane.find('div.jspPane').width($visiblePane.width()-8);
             },
             getHeight: function( $rindow, options ) {
 
@@ -3993,9 +3991,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                             var cornerPadding = 0,
                                 indicatorBodyWidth = $indicator_body.width();
-                            
-                            console.log($indicator);
-                            console.log( $container.height() );
 
                             $indicator.css({
                                 left: 0,
