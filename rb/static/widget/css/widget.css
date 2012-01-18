@@ -856,7 +856,7 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
     height: auto !important;
     color: #666666 !important;
     font: 12px Arial,sans-serif !important;
-    padding:4px 3px 3px 3px !important;
+    padding:4px 3px 1px !important;
     left:10px !important;
 }
 
@@ -910,7 +910,7 @@ div.rdr_indicator_for_media.rdr_engage_media {
 
 div.rdr_indicator_for_media_inline div.rdr_indicator_body { 
     left:0;
-    top:-21px !important;    
+    top:-18px !important;    
 }
 
 #rdr_sandbox div.rdr_container_tracker{
