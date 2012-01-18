@@ -187,7 +187,6 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
 /* global tag defs */
 #rdr_sandbox div.rdr h1, 
 #rdr_sandbox div.rdr h2  {font-family:'ReadrLeague',Arial,Helvetica,sans-serif !important; color:#666; margin:0; line-height:1.1em !important;}
-#rdr_sandbox div.rdr h1  {font-size:21px; cursor:move; padding:1px 9px; font-weight:100;}
 #rdr_sandbox div.rdr h1 span.rdr_contentNode_text {font-size:18px; color:#008be4;}
 
 #rdr_sandbox div.rdr li {background:none; padding:0;}
@@ -195,18 +194,16 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
 div.rdr strong {font-weight:bold !important;}
 
 /* the widget */
-#rdr_sandbox div.rdr_window h1,
-#rdr_sandbox div.rdr_window h2  {color:#666 !important; font-size:19px !important; letter-spacing:0.25px !important;}
+#rdr_sandbox div.rdr h1,
+#rdr_sandbox div.rdr h2  {color:#666 !important; font-size:19px !important; letter-spacing:0.25px !important; padding:1px 9px; font-weight:100 !important;}
 
-#rdr_sandbox div.rdr_header div.rdr_indicator_stats{
-    position:absolute;
-    margin:3px 0 0 5px;
-    cursor: move !important;
-}
+#rdr_sandbox div.rdr_header div.rdr_indicator_stats         { position:absolute; margin:3px 0 0 5px; cursor: move !important; }
 
-#rdr_sandbox div.rdr.rdr_window { max-width:600px; }
-#rdr_sandbox div.rdr.rdr_window div.rdr_header                      { background:#fff !important; position:relative !important; height:18px !important; padding:5px 0 !important; z-index:5; cursor:move !important; border-bottom:1px solid #ddd !important;}
-#rdr_sandbox div.rdr.rdr_window div.rdr_footer                      { background:#f0f0f0 !important; position:absolute !important; height:18px; padding:3px 6px 6px; bottom:0; width:95%; display:none;}
+#rdr_sandbox div.rdr.rdr_window                             { max-width:600px; }
+#rdr_sandbox div.rdr div.rdr_header                         { background:#fff !important; position:relative !important; height:18px !important; z-index:5; border-bottom:1px solid #ddd !important;}
+#rdr_sandbox div.rdr.rdr_window div.rdr_header              { cursor:move; padding:5px 0 !important; }
+#rdr_sandbox div.rdr.rdr_indicator_details div.rdr_header   { padding:3px 0; }
+#rdr_sandbox div.rdr div.rdr_footer                         { background:#f0f0f0 !important; position:absolute !important; height:18px; padding:3px 6px 6px; bottom:0; width:95%; display:none;}
 #rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace                { background:#f0f0f0 !important; position:relative !important; margin-bottom:6px; overflow:hidden;}
 #rdr_sandbox div.rdr div.rdr_body   { max-height:266px; margin:0 4px; float:left !important; display:block !important;}
 #rdr_sandbox div.rdr div.rdr_body div.jspPane   { margin:0 !important; }
@@ -215,7 +212,7 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr div.rdr_body div.jspHorizontalBar  { display:none !important; }
 #rdr_sandbox div.rdr div.rdr_body div.jspVerticalBar    { z-index:10001; right:4px; }
 
-#rdr_sandbox div.rdr.rdr_window div.rdr_header h1                   { margin-left:14px !important; }
+#rdr_sandbox div.rdr div.rdr_header h1                   { margin-left:14px !important; }
 
 #rdr_sandbox div.rdr textarea,
 #rdr_sandbox div.rdr input[type="text"]   { width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
@@ -273,9 +270,6 @@ div.rdr strong {font-weight:bold !important;}
 
 /* tag pills and such */
 table.rdr_tags {
-    /*margin-top:3px !important;
-    margin-right:3px !important;*/
-    margin-top:3px !important;
     margin-right:auto !important;
     margin-bottom:0 !important;
     margin-left:auto;
@@ -859,7 +853,6 @@ div.rdr_indicator_for_text div.rdr_indicator_body{
 }
 div.rdr_indicator_for_media div.rdr_indicator_body{
     background:white !important;
- 
     height: auto !important;
     color: #666666 !important;
     font: 12px Arial,sans-serif !important;
@@ -898,7 +891,7 @@ div.rdr_indicator_for_media.rdr_engage_media {
 }
 #rdr_sandbox div.rdr_indicator_details_for_media {
     overflow:hidden; /*for the animate out to work nicely*/
-    height:31px;
+    height:0;
     display:block !important;
     margin:0 !important;
     -moz-border-radius:0px 0px 6px 6px !important;
@@ -917,7 +910,7 @@ div.rdr_indicator_for_media.rdr_engage_media {
 
 div.rdr_indicator_for_media_inline div.rdr_indicator_body { 
     left:0;
-    top:-23px !important;    
+    top:-21px !important;    
 }
 
 #rdr_sandbox div.rdr_container_tracker{

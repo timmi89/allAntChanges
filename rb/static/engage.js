@@ -173,10 +173,14 @@ function readrBoard($R){
                     $this = $('img.rdr-'+hash+', iframe.rdr-'+hash+',embed.rdr-'+hash+',video.rdr-'+hash+',object.rdr-'+hash+'').eq(0);
 
                 if ( $rindow.hasClass('rdr_live_hover') || $this.hasClass('rdr_live_hover') ) {
-                    var animHeight = $rindow.find('div.rdr_tags_list').height() + 12;
+                    var animHeight = $rindow.find('div.rdr_tags_list').height() + 35;
                     $rindow.data('hover', true).animate( {'height':animHeight+'px' }, 333, 'swing', function() {
                         if (callback) callback();
                     });
+
+                    var $indicator = $('#rdr_indicator_'+hash),
+                        indicator_top = parseInt( $indicator.css('top') );
+                    $indicator.animate({ 'top':(indicator_top+30) }, 333);
                 }
             },
             mediaRindowHide : function ( hash, callback ) {
@@ -189,9 +193,13 @@ function readrBoard($R){
                 clearTimeout(timeoutCloseEvt);
                 timeoutCloseEvt = setTimeout(function(){
                     if ( !$rindow.hasClass('rdr_live_hover') && !$rindow.hasClass('rdr_viewing_comments') && !$this.hasClass('rdr_live_hover') ) {
-                        $rindow.data('hover', false).animate( {'height':'31px' }, 333, 'swing', function() {
+                        $rindow.data('hover', false).animate( {'height':'0px' }, 333, 'swing', function() {
                             if (callback) callback();
                         });
+
+                        var $indicator = $('#rdr_indicator_'+hash),
+                            indicator_top = parseInt( $indicator.css('top') );
+                        $indicator.animate({ 'top':(indicator_top-30) }, 333);
                     }
                 },300);
                 $this.data('timeoutCloseEvt', timeoutCloseEvt);
@@ -3847,19 +3855,17 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $indicator_details = summary.$indicator_details,
                             $actionbar = $('rdr_actionbar_'+hash);
 
-                        // var $indicator_details_body = $('<div class="rdr rdr_indicator_details_body" />'),
                         var $indicator_details_innerWrap = $('<div class="rdr rdr_body_wrap" />'),
-                            // categoryTitleText = (summary.counts.tags == 1) ? "&nbsp;reaction.&nbsp;" : "&nbsp;reactions.&nbsp;",
-                            // categoryTitle = '<span class="rdr_indicator_categoryTitle">' +categoryTitleText+ '</span>',
+                            $detailsHeader = $('<div class="rdr rdr_header"/>'),
+                            $headerContent = $('<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
+                                            '<h1>Reactions</h1>'),
                             $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />');
-                            
-                        
-                        // $tagsList.append( $tag_table );
-                        
-                        // $indicator_details_body.html( $indicator_body.html() );
+
+                        $detailsHeader.html( $headerContent );
+                        if ( summary.counts && summary.counts.tags ) $detailsHeader.find('h1').text( summary.counts.tags + " Reactions" );
 
                         //use an innerWrap so that we can move padding to that and measuring the width of the indicator_details will be consistent
-                        $indicator_details.empty().append( $indicator_details_innerWrap );
+                        $indicator_details.empty().append( $detailsHeader, $indicator_details_innerWrap );
                         $indicator_details_innerWrap.append( $tagsListContainer );
 
                         //builds out the $tagsList contents
