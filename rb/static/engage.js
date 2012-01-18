@@ -514,8 +514,9 @@ console.log('visiblePane.$elm.className: '+visiblePane.$elm[0].className );
                             RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:$rindow, content_node:content_node, selState:content_node.selState, summary:summary});
                         });
 
-                        $a.append('<span class="rdr_has_comment"></span>');
-                        if ( $container ) $a.after( $commentHover );
+                        $a.append('<span class="rdr_comment_indicator"></span>');
+                        $a.after( $commentHover );
+                        $a.closest('td').addClass('rdr_has_comment');
                     }
 
                     return $a;
@@ -1004,13 +1005,11 @@ console.log('visiblePane.$elm.className: '+visiblePane.$elm[0].className );
                     var $tags, $tag;
                     
                     $tags = $rindow.find('.rdr_tags');
-                    
-                    //$tags.find('li').removeClass('rdr_has_comment');
 
                     $tag = $tags.find('.rdr_tag_'+diffNode.parent_interaction_node.id);
                     
                     // todo: add case where diff is -1 and there is only 1 com- remove the comment
-                    $tag.addClass('rdr_has_comment');
+                    $tag.addClass('rdr_comment_indicator');
                 }
             }//end RDR.rindow.update
 		},

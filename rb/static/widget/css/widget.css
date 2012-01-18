@@ -397,12 +397,14 @@ table.rdr_tags div.rdr_cell_wrapper {
     padding-left:1px;
     border:1px solid #f0f0f0;
     border-radius:4px 0 0 4px;
+    z-index:900;
 }
 
-table.rdr_tags td.rdr_hover div.rdr_cell_wrapper,
-table.rdr_tags td:hover div.rdr_cell_wrapper {
+table.rdr_tags td.rdr_has_comment.rdr_hover div.rdr_cell_wrapper,
+table.rdr_tags td.rdr_has_comment:hover div.rdr_cell_wrapper {
     background:#fff;
     border-color:#aaa #f0f0f0 #aaa #aaa;
+    z-index:10001 !important;
 }
 table.rdr_tags td.rdr_hover div.rdr_cell_wrapper a.rdr_tag,
 table.rdr_tags td:hover div.rdr_cell_wrapper a.rdr_tag { 
@@ -430,17 +432,26 @@ table.rdr_tags span.rdr_comment_hover span.rdr_icon {
     width:10px;
     height:10px;
 }
-table.rdr_tags td.rdr-last-child div.rdr_cell_wrapper span.rdr_comment_hover {
+table.rdr_tags td.rdr_has_comment.rdr-last-child div.rdr_cell_wrapper span.rdr_comment_hover {
     right:100% !important;
     left:auto !important;
+    border-radius:4px 0 0 4px;
+    border-left:1px solid #aaa;
+    border-right:none;
+}
+table.rdr_tags td.rdr_has_comment.rdr-last-child div.rdr_cell_wrapper {
+    border-right:1px solid #f0f0f0;
+    border-left:none;
+    border-radius:0 4px 4px 0;
 }
 
-table.rdr_tags td.rdr_hover div.rdr_cell_wrapper span.rdr_comment_hover,
-table.rdr_tags td:hover div.rdr_cell_wrapper span.rdr_comment_hover {
+table.rdr_tags td.rdr_has_comment.rdr_hover div.rdr_cell_wrapper span.rdr_comment_hover,
+table.rdr_tags td.rdr_has_comment:hover div.rdr_cell_wrapper span.rdr_comment_hover {
     display:block !important;
+    z-index:10002 !important;
 }
-table.rdr_tags td.rdr_hover div.rdr_cell_wrapper span.rdr_has_comment,
-table.rdr_tags td:hover div.rdr_cell_wrapper span.rdr_has_comment {
+table.rdr_tags td.rdr_hover div.rdr_cell_wrapper span.rdr_comment_indicator,
+table.rdr_tags td:hover div.rdr_cell_wrapper span.rdr_comment_indicator {
     display:none !important;
 }
 table.rdr_tags span.rdr_comment_hover:hover {
@@ -468,7 +479,7 @@ table.rdr_tags a.rdr_tag span.rdr_tag_count {
     float:right !important;
     margin-left:-15px !important; /* feels kludgey.  prevents wrapping in the pill in a small rindow */
 }
-table.rdr_tags span.rdr_has_comment {
+table.rdr_tags span.rdr_comment_indicator {
     display:block !important;
     position:absolute;
     background:url("../images/widget_icons.png") no-repeat scroll -182px -14px transparent !important;
