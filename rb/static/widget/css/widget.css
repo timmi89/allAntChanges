@@ -467,7 +467,6 @@ table.rdr_tags a.rdr_tag span.rdr_tag_name {
     /*float:left !important;*/
     margin-top:4px !important;
     min-width:66px;
-    width:84%;
     overflow-x:hidden;
 }
 table.rdr_tags a.rdr_tag span.rdr_tag_count {
@@ -497,7 +496,6 @@ div.rdr a.rdr_tag span.rdr_tag_count    {
     cursor: pointer !important;
     display: inline-block !important;
     font-size: 11px !important;
-    margin-left: 4px !important;
     margin-right: -5px !important;
     padding: 4px 5px !important;
     text-align: center !important;

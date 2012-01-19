@@ -463,7 +463,7 @@ function readrBoard($R){
 
                         // add a new row
                         $tag_table.append('<tr/>');
-                        $tag_table.find('tr').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
+                        $tag_table.find('tr').eq(-1).append('<td style="width:'+pill_width+'px;"><div class="rdr_cell_wrapper"/></td>');
                     } else {
                         $last_row.append('<td><div class="rdr_cell_wrapper"/></td>');
                     }
@@ -664,6 +664,7 @@ function readrBoard($R){
                             selState: newSel,
                             rewritable:rewritable
                         });
+
                         /* END create rindow based on write vs. read mode */
                         
                         /* START do some utility stuff */
@@ -4317,7 +4318,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 var commentRindowWidth = (summary.kind=="img") ? $rindow.data('initialWidth'):300,
                     commentRindowHeight = (summary.kind=="img") ? 180:296;
 
-                RDR.rindow.panelShow( $rindow, 'rdr_comments', commentRindowWidth, commentRindowHeight );
+                RDR.rindow.panelShow( $rindow, 'rdr_comments', commentRindowWidth );
                 RDR.rindow.updateSizes( $rindow, commentRindowWidth, commentRindowHeight, summary.kind );
 
                 //helper functions 
