@@ -210,6 +210,10 @@ div.rdr strong {font-weight:bold !important;}
 
 #rdr_sandbox div.rdr div.rdr_body div.jspHorizontalBar  { display:none !important; }
 #rdr_sandbox div.rdr div.rdr_body div.jspVerticalBar    { z-index:10001; right:4px; }
+#rdr_sandbox div.rdr_indicator_details_for_media div.rdr_body div.jspVerticalBar {
+    margin-left:-17px !important;
+    right:11px !important;
+}
 
 #rdr_sandbox div.rdr div.rdr_header h1                   { margin-left:14px !important; }
 
@@ -551,6 +555,7 @@ div.rdr.rdr-summary div.rdr_note ins img    { margin:0 !important; padding:0 !im
 #rdr_sandbox div.rdr tr.rdr_wide div.rdr_nextSteps_container div.rdr_commentBox         { clear:both !important; float:none !important;  }
 
 #rdr_sandbox div.rdr div.rdr_back { position:relative; z-index:1; background:#aaa; font-size:9px; text-transform:uppercase; color:#fff; cursor:pointer; padding: 2px 12px; margin-bottom:4px;}
+#rdr_sandbox div.rdr_indicator_details_for_media div.rdr_body div.rdr_back { margin-right:10px; }
 #rdr_sandbox div.rdr div.rdr_back.rdr_hide { margin-top:-10px; }
 #rdr_sandbox div.rdr div.rdr_comment_header { display:block; }
 #rdr_sandbox div.rdr div.rdr_comment textarea    { margin:5px 0; resize:none; padding:5px; width:100%; max-width:94% !important; font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;background:#fff;}
@@ -1001,3 +1006,4 @@ div.rdr_indicator span.rdr_count,
     /*position:fixed;*/
     z-index: 12101;
 }
+

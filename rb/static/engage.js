@@ -204,7 +204,6 @@ function readrBoard($R){
                 //RDR.rindow.updateSizes:
                 // feels like we should not need this, but behavior is more consistent if we have it.  ugh.
                 // RDR.rindow.jspUpdate( $rindow );
-
                 var rindowHeight = $rindow.height(),
                     heightAdjustment = 36;
                 if ( $rindow.find('div.rdr_footer').length && $rindow.find('div.rdr_footer').css('display') != "none" ) {
@@ -235,8 +234,9 @@ function readrBoard($R){
                     $rindow.find('div.jspContainer').height( visiblePane.height+4 );
                     if ( !setWidth ) setWidth = visiblePane.$elm.width()+8;
                     else {
-                        visiblePane.$elm.css('width', (setWidth)+'px' );
+                        visiblePane.$elm.css('width', setWidth+'px' );
                     }
+
                     $rindow.animate({ width: setWidth, height:(visiblePane.height + heightAdjustment) }, { duration:333, queue:false } );
 
                     if ( visiblePane.which == "hasJspPane" ) {
@@ -244,7 +244,7 @@ function readrBoard($R){
                         visiblePane.$elm.find('div.jspPane').width(setWidth-8);
                     }
                 }
-                RDR.rindow.jspUpdate( $rindow );
+                RDR.rindow.jspUpdate( $rindow, setWidth, kind );
             },
             updateTagMessage: function(args) {
                 //RDR.rindow.updateTagMessage
@@ -390,7 +390,7 @@ function readrBoard($R){
                     RDR.rindow.updateSizes( $rindow );
                 }
             },
-            jspUpdate: function( $rindow, width ) {
+            jspUpdate: function( $rindow, setWidth, kind ) {
                 //RDR.rindow.jspUpdate:
 
                 //updates or inits first (and should be only) $rindow rdr_body into jScrollPanes
@@ -410,8 +410,9 @@ function readrBoard($R){
                 // TODO this is a firefox/mac hack.  chrome didn't need it, but it doesn't impact chrome.  weird.  
                 // so, check and see if commenting these two lines out negatively impacts the width of the rindow
                 // in readmode, for text, after viewing comments then returning to the reaction list.
-                var $visiblePane = $rindow.find('div.rdr_body').eq(0);
-                if ( !$visiblePane.hasClass('rdr-visible') ) $visiblePane.find('div.jspPane').width($visiblePane.width()-8);
+                var $firstPane = $rindow.find('div.rdr_body').eq(0);
+                if ( !$firstPane.hasClass('rdr-visible') ) $firstPane.find('div.jspPane').width($firstPane.width()-8);
+
             },
             getHeight: function( $rindow, options ) {
 
