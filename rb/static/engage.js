@@ -181,7 +181,8 @@ function readrBoard($R){
 
                     var $indicator = $('#rdr_indicator_'+hash),
                         indicator_top = parseInt( $indicator.css('top') );
-                    $indicator.animate({ 'top':(indicator_top+30) }, 333);
+
+                    if ( indicator_top == $indicator.data('top') ) $indicator.animate({ 'top':(indicator_top+30) }, 333);
                 }
             },
             mediaRindowHide : function ( $mediaItem, callback ) {
@@ -195,7 +196,8 @@ function readrBoard($R){
                     });
                     var $indicator = $('#rdr_indicator_'+hash),
                         indicator_top = parseInt( $indicator.css('top') );
-                    $indicator.animate({ 'top':(indicator_top-30) }, 333);
+
+                    if ( indicator_top > $indicator.data('top') ) $indicator.animate({ 'top':$indicator.data('top') }, 333);
                 }
             },
             updateSizes : function($rindow, setWidth, setHeight, kind) {
@@ -1175,7 +1177,6 @@ function readrBoard($R){
                         $mediaBorderWrap.hide();
                                             
                         var $indicator = $('#rdr_indicator_'+hash);
-                        $indicator.removeClass('rdr_engage_media');
                     }
                 });
 
@@ -1190,7 +1191,6 @@ function readrBoard($R){
                         $indicator = $('#rdr_indicator_'+hash);
 
                     $container.removeClass('rdr_engage_media');
-                    $indicator.removeClass('rdr_engage_media');
                     $actionbar.remove();
                 }
        
@@ -3630,9 +3630,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                     var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId).data('hash',hash);
                     //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
-                    $indicator.css('visibility','hidden')//chain
-                    .bind('mouseover', function() { $(this).addClass('rdr_live_hover'); RDR.actions.containers.media.onEngage( hash ); })
-                    .bind('mouseout', function() { $(this).removeClass('rdr_live_hover'); RDR.actions.containers.media.onDisengage( hash ); });
+                    $indicator.css('visibility','hidden');
                     
                     _setupIndicators();
                     
@@ -3733,6 +3731,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             
                             _commonSetup();
 
+                            $indicator.bind('mouseover', function() { $(this).addClass('rdr_live_hover'); RDR.actions.containers.media.onEngage( hash ); })//chain
+                            .bind('mouseout', function() { $(this).removeClass('rdr_live_hover'); RDR.actions.containers.media.onDisengage( hash ); });
+
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
 
                             function _commonSetup(){
@@ -3757,14 +3758,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                                 $indicator.appendTo($container_tracker);
                                 $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline'); 
-
-                                $indicator.hover(
-                                    function(){
-                                        $(this).addClass('rdr_engage_media');
-                                    },function(){
-                                        $(this).removeClass('rdr_engage_media');
-                                    }
-                                );
                             }
 
                         },
@@ -3879,7 +3872,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         });
                         
                         this.updateMediaTracker(hash);
-                        this.borderHilites.update(hash);
+                        // this.borderHilites.update(hash);
                         
                     },
                     updateInlineIndicator: function(hash){
@@ -3933,7 +3926,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $indicator.css({
                                 left: 0,
                                 top: $container.height()
-                            });
+                            })//chain
+                            .data('top', parseInt( $indicator.css('top') ));
 
                             var has_inline_indicator = (summary.kind=="text") ? false:true; //$container.data('inlineIndicator'); //boolean                        
                             if(has_inline_indicator){
