@@ -500,6 +500,9 @@ div.rdr a.rdr_tag span.rdr_tag_count    {
     padding: 4px 5px !important;
     text-align: center !important;
 }
+div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
+    margin-left: 4px !important;
+}
 
 table.rdr_tags a.rdr_tag span.rdr_tag_count{ 
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
