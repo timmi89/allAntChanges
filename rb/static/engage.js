@@ -3811,7 +3811,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                         //builds out the $tagsList contents
                         if (summary.kind!=="text"){
-                            console.log('ok go make tags for '+hash);
                             $indicator_details.data( 'initialWidth', $indicator_details.width()+2 );
                             scope.makeTagsList( hash );
                         }
@@ -3834,6 +3833,13 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                     $pill = RDR.rindow.pill.make( tag, $pill_container, $indicator, false );
                             });
 
+                            $.each( RDR.group.blessed_tags, function( idx, tag ){
+                                if ( !$tag_table.find('a.rdr_tag_'+tag.id).length ) {
+                                    var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, tagsListMaxWidth ),
+                                        $pill = RDR.rindow.pill.make( tag, $pill_container, $indicator, false );
+                                }
+                            });
+
                             // add a custom tag pill
                             var custom_tag = {count:0, id:"custom", body:"Add yours..."},
                                 $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth ),
@@ -3847,8 +3853,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             // this lets us have the table flow to full width... without having had to loop through
                             // table cells in getNextCell to recalculate the width throughout
                             $tag_table.css('max-width','none').width(tagsListMaxWidth);
-                        } else {
-                            console.log('no tags yet');
                         }
 
                     },
