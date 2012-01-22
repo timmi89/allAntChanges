@@ -88,7 +88,6 @@
 
 /*override the above if it's an actionbar for images*/
 #rdr_sandbox div.rdr_actionbar_for_media { 
-    /*match rdr_engage_media hilite*/
     -moz-border-radius:0 5px 5px 0;
     -webkit-border-radius:0 5px 5px 0;
     border-radius:0 5px 5px 0;
@@ -187,7 +186,6 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
 /* global tag defs */
 #rdr_sandbox div.rdr h1, 
 #rdr_sandbox div.rdr h2  {font-family:'ReadrLeague',Arial,Helvetica,sans-serif !important; color:#666; margin:0; line-height:1.1em !important;}
-#rdr_sandbox div.rdr h1  {font-size:21px; cursor:move; padding:1px 9px; font-weight:100;}
 #rdr_sandbox div.rdr h1 span.rdr_contentNode_text {font-size:18px; color:#008be4;}
 
 #rdr_sandbox div.rdr li {background:none; padding:0;}
@@ -195,26 +193,29 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
 div.rdr strong {font-weight:bold !important;}
 
 /* the widget */
-#rdr_sandbox div.rdr_window h1,
-#rdr_sandbox div.rdr_window h2  {color:#666 !important; font-size:19px !important; letter-spacing:0.25px !important;}
+#rdr_sandbox div.rdr h1,
+#rdr_sandbox div.rdr h2  {color:#666 !important; font-size:19px !important; letter-spacing:0.25px !important; padding:1px 9px; font-weight:100 !important;}
 
-#rdr_sandbox div.rdr_header div.rdr_indicator_stats{
-    position:absolute;
-    margin:3px 0 0 5px;
-    cursor: move !important;
-}
+#rdr_sandbox div.rdr_header div.rdr_indicator_stats         { position:absolute; margin:3px 0 0 5px; cursor: move !important; }
 
-#rdr_sandbox div.rdr.rdr_window { max-width:600px; }
-#rdr_sandbox div.rdr.rdr_window div.rdr_header                      { background:#fff !important; position:relative !important; height:18px !important; padding:5px 0 !important; z-index:5; cursor:move !important; border-bottom:1px solid #ddd !important;}
-#rdr_sandbox div.rdr.rdr_window div.rdr_footer                      { background:#f0f0f0 !important; position:absolute !important; height:18px; padding:3px 6px 6px; bottom:0; width:95%; display:none;}
+#rdr_sandbox div.rdr.rdr_window                             { max-width:600px; }
+#rdr_sandbox div.rdr div.rdr_header                         { background:#fff !important; position:relative !important; height:18px !important; z-index:5; border-bottom:1px solid #ddd !important;}
+#rdr_sandbox div.rdr.rdr_window div.rdr_header              { cursor:move; padding:5px 0 !important; }
+#rdr_sandbox div.rdr.rdr_indicator_details div.rdr_header   { padding:3px 0; }
+#rdr_sandbox div.rdr div.rdr_footer                         { background:#f0f0f0 !important; position:absolute !important; height:18px; padding:3px 6px 6px; bottom:0; width:95%; display:none;}
 #rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace                { background:#f0f0f0 !important; position:relative !important; margin-bottom:6px; overflow:hidden;}
 #rdr_sandbox div.rdr div.rdr_body   { max-height:266px; margin:0 4px; float:left !important; display:block !important;}
 #rdr_sandbox div.rdr div.rdr_body div.jspPane   { margin:0 !important; }
 #rdr_sandbox div.rdr div.jspScrollable   { outline:none!important; }
 
-#rdr_sandbox div.rdr div.rdr_body div.jspHorizontalBar   { display:none !important; }
+#rdr_sandbox div.rdr div.rdr_body div.jspHorizontalBar  { display:none !important; }
+#rdr_sandbox div.rdr div.rdr_body div.jspVerticalBar    { z-index:10001; right:4px; }
+#rdr_sandbox div.rdr_indicator_details_for_media div.rdr_body div.jspVerticalBar {
+    margin-left:-17px !important;
+    right:11px !important;
+}
 
-#rdr_sandbox div.rdr.rdr_window div.rdr_header h1                   { margin-left:14px !important; }
+#rdr_sandbox div.rdr div.rdr_header h1                   { margin-left:14px !important; }
 
 #rdr_sandbox div.rdr textarea,
 #rdr_sandbox div.rdr input[type="text"]   { width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
@@ -223,7 +224,18 @@ div.rdr strong {font-weight:bold !important;}
     -moz-border-radius:3px 3px 3px 3px; 
     -webkit-border-radius:3px 3px 3px 3px; 
     border-radius:3px 3px 3px 3px; 
-    -moz-box-shadow:0 -6px 11px -6px #ccc inset; -webkit-box-shadow:0 -6px 11px -6px #ccc inset; box-shadow:0 -6px 11px -6px #ccc inset; color:#454545; font-family:Arial; font-size:12px; padding:2px 5px; width:auto; cursor:pointer; float:right;margin-right:6px;margin-bottom:10px;
+    -moz-box-shadow:0 -6px 11px -6px #ccc inset; 
+    -webkit-box-shadow:0 -6px 11px -6px #ccc inset; 
+    box-shadow:0 -6px 11px -6px #ccc inset; 
+    color:#454545; 
+    font-family:Arial; 
+    font-size:12px; 
+    padding:2px 5px; 
+    width:auto; 
+    cursor:pointer; 
+    float:right;
+    margin-right:6px;
+    margin-bottom:20px;
 }
 
 #rdr_sandbox div.rdr_window_dragHandle{
@@ -249,24 +261,18 @@ div.rdr strong {font-weight:bold !important;}
 }
 
 /* commentSet */
-#rdr_sandbox div.rdr div.rdr_comments                       {/*width:292px;*/}
+#rdr_sandbox div.rdr div.rdr_comments                       {}
 #rdr_sandbox div.rdr div.rdr_commentSet                     {margin:5px 10px; padding-bottom:5px; overflow:auto; border-bottom:1px solid #ddd;}
 #rdr_sandbox div.rdr div.rdr_commentSet:last-child,
 #rdr_sandbox div.rdr div.rdr_commentSet.rdr_lastchild       {border:none;} /*not the end of the world if this fails in IE, but compensate later*/
 
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentBy          {font: bold 11px Arial; color:#666; overflow:auto; padding-top:8px;}
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentBy img      {width:24px; height:24px; float:left; margin:-8px 5px 0 0 !important; border:1px solid #d0dee6;}
-#rdr_sandbox div.rdr div.rdr_commentSet div.rdr_comment            {font: italic 14px Georgia; color:#999;padding:3px; }
+#rdr_sandbox div.rdr div.rdr_commentSet div.rdr_comment            {font: italic 14px Georgia; color:#999;padding:3px; overflow-x:hidden;}
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentReply       {font-weight:normal; margin-right:5px; text-transform:uppercase; font-size:9px; float:right;}
-#rdr_sandbox div.rdr div.rdr_commentSet a.rdr_tag                            {margin-top:3px;}
-#rdr_sandbox div.rdr div.rdr_commentSet a.rdr_tag div.rdr_tag_share          {margin-left:-12px;}
-#rdr_sandbox div.rdr div.rdr_commentSet a.rdr_tag:hover div.rdr_tag_share    {margin-left:3px;}
 
 /* tag pills and such */
 table.rdr_tags {
-    /*margin-top:3px !important;
-    margin-right:3px !important;*/
-    margin-top:3px !important;
     margin-right:auto !important;
     margin-bottom:0 !important;
     margin-left:auto;
@@ -342,11 +348,11 @@ table.rdr_tags tr.rdr_nextSteps input[type="text"]{
 }
 
 table.rdr_tags td{
-    padding:3px 0 0 2px;
+    /*padding:3px 0 0 2px;*/
 }
 div.rdr a.rdr_tag     { 
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff7f7f7', endColorstr='#ffe0e0e0');
-    background: -webkit-gradient(linear, center top, center bottom, from(#ffffff), to(#e8e8e8)); 
+    background: -webkit-gradient(linear, center top, center bottom, from(#ffffff), to(#e8e8e8));
     background: -moz-linear-gradient(center top , #ffffff, #e8e8e8) repeat scroll 0 0 transparent;
 
     border-radius: 7px 7px 7px 7px;
@@ -369,100 +375,107 @@ div.rdr a.rdr_tag     {
     white-space: nowrap !important;
     z-index: 10001;
 }
-div.rdr.rdr_indicator_details a.rdr_tag,
-div.rdr.rdr_window a.rdr_tag     {
+
+table.rdr_tags a.rdr_tag     {
     display:block !important;
     padding: 0px 5px !important;
-    margin: 0 5px 5px 2px !important;
+    margin: 0 3px 5px 2px !important;
 }
-div.rdr.rdr_indicator_details td a.rdr_tag,
-div.rdr.rdr_window td a.rdr_tag     {
+
+table.rdr_tags td a.rdr_tag     {
     max-width: 110px !important;
 }
-div.rdr.rdr_indicator_details td div.rdr_cell_wrapper,
-div.rdr.rdr_window td div.rdr_cell_wrapper {
+
+table.rdr_tags div.rdr_cell_wrapper {
     width:100% !important;
-    height:25px !important;
+    height:27px !important;
     position:relative !important;
-    
+    padding:3px 0 0;
+    border:1px solid #f0f0f0;
+    border-radius:4px 0 0 4px;
+    z-index:900;
 }
-div.rdr.rdr_indicator_details td div.rdr_cell_wrapper:hover,
-div.rdr.rdr_window td div.rdr_cell_wrapper:hover{
-    
+
+table.rdr_tags td.rdr_has_comment.rdr_hover div.rdr_cell_wrapper,
+table.rdr_tags td.rdr_has_comment:hover div.rdr_cell_wrapper {
+    background:#fff;
+    border-color:#aaa #f0f0f0 #aaa #aaa;
+    z-index:10001 !important;
 }
-div.rdr.rdr_indicator_details td div.rdr_cell_wrapper:hover a.rdr_tag,
-div.rdr.rdr_window td div.rdr_cell_wrapper:hover a.rdr_tag{ 
+table.rdr_tags td.rdr_hover div.rdr_cell_wrapper a.rdr_tag,
+table.rdr_tags td:hover div.rdr_cell_wrapper a.rdr_tag { 
+    background: -webkit-gradient(linear, center top, center bottom, from(#ffffff), to(#f3f3f3));
     background: -moz-linear-gradient(center top , #ffffff, #f3f3f3) repeat scroll 0 0 transparent;
 }
-div.rdr.rdr_indicator_details td div.rdr_cell_wrapper span.rdr_comment_hover,
-div.rdr.rdr_window td div.rdr_cell_wrapper span.rdr_comment_hover {
+table.rdr_tags div.rdr_cell_wrapper span.rdr_comment_hover {
     height:19px !important;
     position:absolute !important;
     left:100% !important;
-    top:-3px !important;
-    padding:7px 2px 2px !important;
+    padding:9px 3px 2px !important;
+    top:-1px !important;
     z-index:11000 !important;
     background:#fff !important;
     display:none !important;
     white-space:nowrap !important;
     cursor:pointer !important;
+    border-radius:0 4px 4px 0;
+    border:1px solid #aaa;
+    border-left:none;
 }
-div.rdr.rdr_indicator_details td div.rdr_cell_wrapper span.rdr_comment_hover span.rdr_icon,
-div.rdr.rdr_window td div.rdr_cell_wrapper span.rdr_comment_hover span.rdr_icon {
+
+table.rdr_tags span.rdr_comment_hover span.rdr_icon {
     display:inline-block !important;
     background:url("../images/widget_icons.png") no-repeat scroll -182px -14px transparent !important;
     width:10px;
     height:10px;
 }
-div.rdr.rdr_indicator_details td.rdr-last-child div.rdr_cell_wrapper span.rdr_comment_hover,
-div.rdr.rdr_window td.rdr-last-child div.rdr_cell_wrapper span.rdr_comment_hover {
+table.rdr_tags td.rdr_has_comment.rdr-last-child div.rdr_cell_wrapper span.rdr_comment_hover {
     right:100% !important;
     left:auto !important;
+    border-radius:4px 0 0 4px;
+    border-left:1px solid #aaa;
+    border-right:none;
 }
-div.rdr.rdr_indicator_details td:hover,
-div.rdr.rdr_window td:hover {
-    
+table.rdr_tags td.rdr_has_comment.rdr-last-child.rdr_hover div.rdr_cell_wrapper,
+table.rdr_tags td.rdr_has_comment.rdr-last-child:hover div.rdr_cell_wrapper {
+    border-right:1px solid #aaa;
+    border-radius:0 4px 4px 0;
 }
-div.rdr.rdr_indicator_details td:hover div.rdr_cell_wrapper span.rdr_comment_hover,
-div.rdr.rdr_window td:hover div.rdr_cell_wrapper span.rdr_comment_hover {
+
+table.rdr_tags td.rdr_has_comment.rdr_hover div.rdr_cell_wrapper span.rdr_comment_hover,
+table.rdr_tags td.rdr_has_comment:hover div.rdr_cell_wrapper span.rdr_comment_hover {
     display:block !important;
+    z-index:10002 !important;
 }
-div.rdr.rdr_indicator_details td:hover div.rdr_cell_wrapper span.rdr_has_comment,
-div.rdr.rdr_window td:hover div.rdr_cell_wrapper span.rdr_has_comment {
+table.rdr_tags td.rdr_hover div.rdr_cell_wrapper span.rdr_comment_indicator,
+table.rdr_tags td:hover div.rdr_cell_wrapper span.rdr_comment_indicator {
     display:none !important;
 }
-div.rdr.rdr_indicator_details td div.rdr_cell_wrapper span.rdr_comment_hover:hover,
-div.rdr.rdr_window td div.rdr_cell_wrapper span.rdr_comment_hover:hover {
+table.rdr_tags span.rdr_comment_hover:hover {
     color:#008be4 !important;
 }
-div.rdr.rdr_indicator_details td div.rdr_cell_wrapper span.rdr_comment_hover:hover span.rdr_icon,
-div.rdr.rdr_window td div.rdr_cell_wrapper span.rdr_comment_hover:hover span.rdr_icon {
+table.rdr_tags span.rdr_comment_hover:hover span.rdr_icon {
     background-position:-482px -14px !important;
 }
-div.rdr.rdr_indicator_details a.rdr_tag.rdr_custom_tag,
-div.rdr.rdr_window a.rdr_tag.rdr_custom_tag     {
+table.rdr_tags a.rdr_tag.rdr_custom_tag     {
     height: 17px !important;
     padding: 4px 5px 0 !important;
     max-width: 70px !important;
 }
-div.rdr.rdr_indicator_details a.rdr_tag span.rdr_tag_name,
-div.rdr.rdr_window a.rdr_tag span.rdr_tag_name {
-    display:block !important;
-    float:left !important;
+table.rdr_tags a.rdr_tag span.rdr_tag_name {
+    display:inline-block !important;
+    /*float:left !important;*/
     margin-top:4px !important;
     min-width:66px;
-    width:84%;
     overflow-x:hidden;
 }
-div.rdr.rdr_indicator_details a.rdr_tag span.rdr_tag_count,
-div.rdr.rdr_window a.rdr_tag span.rdr_tag_count {
+table.rdr_tags a.rdr_tag span.rdr_tag_count {
     min-width:5px !important;
     display:block !important;
     float:right !important;
     margin-left:-15px !important; /* feels kludgey.  prevents wrapping in the pill in a small rindow */
 }
-div.rdr.rdr_indicator_details span.rdr_has_comment,
-div.rdr.rdr_window span.rdr_has_comment {
+table.rdr_tags span.rdr_comment_indicator {
     display:block !important;
     position:absolute;
     background:url("../images/widget_icons.png") no-repeat scroll -182px -14px transparent !important;
@@ -483,15 +496,17 @@ div.rdr a.rdr_tag span.rdr_tag_count    {
     cursor: pointer !important;
     display: inline-block !important;
     font-size: 11px !important;
-    margin-left: 4px !important;
     margin-right: -5px !important;
     padding: 4px 5px !important;
     text-align: center !important;
 }
+div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
+    margin-left: 4px !important;
+}
 
 table.rdr_tags a.rdr_tag span.rdr_tag_count{ 
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
-    background: -webkit-gradient(linear, center top, center bottom, from(#ddedff), to(#add1f9)); 
+    background: -webkit-gradient(linear, center top, center bottom, from(#f0f0f0), to(#d0d0d0)); 
     background: -moz-linear-gradient(center top , #f0f0f0, #d0d0d0) repeat scroll 0 0 transparent;
 }
 
@@ -532,15 +547,16 @@ div.rdr.rdr-summary div.rdr_note ins img    { margin:0 !important; padding:0 !im
 #rdr_sandbox div.rdr div.rdr_instruct    {color:#666; margin:5px 0;}
 #rdr_sandbox div.rdr div.rdr_help        {font:italic 11px Arial;color:#767676; position:absolute; top:12px; margin:0 !important; cursor:text; }
 
-#rdr_sandbox div.rdr div.rdr_shareBox                       { background:#edf6ff; border:1px solid #b6d3ee !important; border-radius:8px !important; margin:0 0 0 10px; text-align: center; width: 120px; display:inline-block; padding:3px 0;}
+#rdr_sandbox div.rdr div.rdr_shareBox                       { background:#edf6ff; border:1px solid #b6d3ee !important; border-radius:6px !important; margin:0 0 0 10px; text-align: center; width: 120px; display:inline-block; padding:3px 0;}
 #rdr_sandbox div.rdr div.rdr_share_social                   { overflow:auto !important; }
 #rdr_sandbox div.rdr div.rdr_share_social strong            { display:block !important; float:left !important; margin:5px 5px 0 24px !important; }
 #rdr_sandbox div.rdr tr.rdr_wide div.rdr_share_social strong            { margin:3px 5px 0 10px !important; }
-#rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; border-top: 1px solid #d0d0d0; padding-top:5px; }
+#rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; border-top: 1px solid #d0d0d0; padding-top:5px; max-width:97%; }
 #rdr_sandbox div.rdr div.rdr_nextSteps_container div.rdr_commentBox                     { border:none; }
 #rdr_sandbox div.rdr tr.rdr_wide div.rdr_nextSteps_container div.rdr_commentBox         { clear:both !important; float:none !important;  }
 
 #rdr_sandbox div.rdr div.rdr_back { position:relative; z-index:1; background:#aaa; font-size:9px; text-transform:uppercase; color:#fff; cursor:pointer; padding: 2px 12px; margin-bottom:4px;}
+#rdr_sandbox div.rdr_indicator_details_for_media div.rdr_body div.rdr_back { margin-right:10px; }
 #rdr_sandbox div.rdr div.rdr_back.rdr_hide { margin-top:-10px; }
 #rdr_sandbox div.rdr div.rdr_comment_header { display:block; }
 #rdr_sandbox div.rdr div.rdr_comment textarea    { margin:5px 0; resize:none; padding:5px; width:100%; max-width:94% !important; font-family:"lucida grande",tahoma,verdana,arial,sans-serif;font-size:11px;background:#fff;}
@@ -646,9 +662,9 @@ div.rdr.rdr-summary a.rdr-top-user img {
     -webkit-box-shadow:0 0 10px 1px #aaa !important;
     box-shadow:0 0 10px 1px #aaa !important;
 
-    -moz-border-radius:8px !important;
-    -webkit-border-radius:8px !important;
-    border-radius:8px !important;
+    -moz-border-radius:6px !important;
+    -webkit-border-radius:6px !important;
+    border-radius:6px !important;
 }
 /*rdr_widget_bar overrides rdr_widget*/
 #rdr_sandbox .rdr_widget_bar{
@@ -663,16 +679,16 @@ div.rdr_reactions {
 
 /* round those corners */
 .rdr.rdr_brtl,
-.rdr .rdr_brtl   { -moz-border-radius-topleft:8px !important; -webkit-border-top-left-radius:8px !important; border-top-left-radius:8px !important; }
+.rdr .rdr_brtl   { -moz-border-radius-topleft:6px !important; -webkit-border-top-left-radius:6px !important; border-top-left-radius:6px !important; }
 
 .rdr.rdr_brtr,
-.rdr .rdr_brtr   { -moz-border-radius-topright:8px !important; -webkit-border-top-right-radius:8px !important; border-top-right-radius:8px !important; }
+.rdr .rdr_brtr   { -moz-border-radius-topright:6px !important; -webkit-border-top-right-radius:6px !important; border-top-right-radius:6px !important; }
 
 .rdr.rdr_brbr,
-.rdr .rdr_brbr   { -moz-border-radius-bottomright:8px !important; -webkit-border-bottom-right-radius:8px !important; border-bottom-right-radius:8px!important; }
+.rdr .rdr_brbr   { -moz-border-radius-bottomright:6px !important; -webkit-border-bottom-right-radius:6px !important; border-bottom-right-radius:6px!important; }
 
 .rdr.rdr_brbl,
-.rdr .rdr_brbl   { -moz-border-radius-bottomleft:8px !important; -webkit-border-bottom-left-radius:8px !important; border-bottom-left-radius:8px !important; }
+.rdr .rdr_brbl   { -moz-border-radius-bottomleft:6px !important; -webkit-border-bottom-left-radius:6px !important; border-bottom-left-radius:6px !important; }
 
 
 /* user education bar */
@@ -841,27 +857,12 @@ div.rdr_indicator_for_text div.rdr_indicator_body{
     /*top: -15px !important;*/
 }
 div.rdr_indicator_for_media div.rdr_indicator_body{
-    left:auto !important;
-    right:0 !important;
     background:white !important;
-    border: 1px solid #bbb !important;
     height: auto !important;
     color: #666666 !important;
     font: 12px Arial,sans-serif !important;
-    padding:4px 3px 3px 3px !important;
-    border:1px solid #c9c9c9; !important;
-    
-    -moz-border-radius:5px !important;
-    -webkit-border-radius:5px !important;
-    border-radius:5px !important;
-    background-image: -webkit-gradient(
-    linear,
-    left bottom,
-    left top,
-    color-stop(0, rgb(236,236,236)),
-    color-stop(0.39, rgb(255,255,255))
-    )!important;
-    background-image: -moz-linear-gradient(center bottom , #eee 0%, #fff 39%) !important;
+    padding:4px 3px 1px !important;
+    left:10px !important;
 }
 
 
@@ -882,25 +883,18 @@ div.rdr_indicator_for_media {
     display:absolute !important;
     opacity:0.6 !important;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=60)"!important;
-    filter:alpha(opacity=60)!important;
-    -moz-opacity:0.6 !important;
-    -khtml-opacity:0.6 !important;
-}
-div.rdr_indicator_for_media.rdr_engage_media {
-    opacity:0.9 !important;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=90)"!important;
-    filter:alpha(opacity=90)!important;
-    -moz-opacity:0.9 !important;
-    -khtml-opacity:0.9 !important;
+    filter:alpha(opacity=70)!important;
+    -moz-opacity:0.7 !important;
+    -khtml-opacity:0.7 !important;
 }
 #rdr_sandbox div.rdr_indicator_details_for_media {
     overflow:hidden; /*for the animate out to work nicely*/
-    height:31px;
+    height:0;
     display:block !important;
     margin:0 !important;
-    -moz-border-radius:0px 0px 8px 8px !important;
-    -webkit-border-radius:0px 0px 8px 8px !important;
-    border-radius:0px 0px 8px 8px !important;
+    -moz-border-radius:0px 0px 6px 6px !important;
+    -webkit-border-radius:0px 0px 6px 6px !important;
+    border-radius:0px 0px 6px 6px !important;
     box-shadow:  0px 4px 6px -2px #ccc !important;
     -moz-box-shadow:  0px 4px 6px -2px #ccc !important;
     -webkit-box-shadow:  0px 4px 6px -2px #ccc !important;
@@ -913,7 +907,8 @@ div.rdr_indicator_for_media.rdr_engage_media {
 }
 
 div.rdr_indicator_for_media_inline div.rdr_indicator_body { 
-    display:none !important;
+    left:0;
+    top:-18px !important;    
 }
 
 #rdr_sandbox div.rdr_container_tracker{
@@ -1012,3 +1007,4 @@ div.rdr_indicator span.rdr_count,
     /*position:fixed;*/
     z-index: 12101;
 }
+
