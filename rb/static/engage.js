@@ -450,20 +450,22 @@ function readrBoard($R){
                 getNextCell: function( tag, $tag_table, maxWidth ) {
                     //RDR.rindow.pillTable.getNextCell
                     var pill_width = RDR.rindow.pill.getWidth( tag ),
-                        $first_row = $tag_table.find('tr').eq(0),
-                        $last_row = $tag_table.find('tr').eq(-1);
+                        $rows = $tag_table.find('tr'),
+                        row_count = $rows.length,
+                        $first_row = $rows.eq(0),
+                        $last_row = $rows.eq(-1);
 
-                    var firstRowWidth = $first_row.width() + pill_width + $first_row.find('td').length * 7;
+                    var firstRowWidth = $first_row.width() + pill_width + $first_row.find('td').length * 7; // 7px of padding on the pill, its containers, etc.
+                    if ( ( firstRowWidth > maxWidth && row_count == 1 )
+                        || ( $last_row.find('td').length == $first_row.find('td').length && row_count > 1 ) ) {
 
-                    if ( ( firstRowWidth > maxWidth && $tag_table.find('tr').length == 1 )
-                        || ( $last_row.find('td').length == $first_row.find('td').length && $tag_table.find('tr').length > 1 ) ) {
-                        
                         // on the last row, add "rdr-last-child" to the last td.
-                        $tag_table.find('tr').eq(-1).find('td').eq(-1).addClass('rdr-last-child');
+                        $rows.eq(-1).find('td').eq(-1).addClass('rdr-last-child');
 
                         // add a new row
-                        $tag_table.append('<tr/>');
-                        $tag_table.find('tr').eq(-1).append('<td style="width:'+pill_width+'px;"><div class="rdr_cell_wrapper"/></td>');
+                        var $new_row = $('<tr><td style="xwidth:'+pill_width+'px;"><div class="rdr_cell_wrapper"/></td></tr>');
+                        $tag_table.append( $new_row );
+                        
                     } else {
                         $last_row.append('<td><div class="rdr_cell_wrapper"/></td>');
                     }
@@ -726,6 +728,12 @@ function readrBoard($R){
                             $(this).find('td:last-child:not(:first-child)').addClass('rdr-last-child');
                         });
                         if ( $tag_table.find('td').length == 1 ) $tag_table.addClass('rdr-one-column');
+
+                        // now that we've created the first row, unset the max-width and set the table width.  
+                        // this lets us have the table flow to full width... without having had to loop through
+                        // table cells in getNextCell to recalculate the width throughout
+                        var tableTableWidth = ( $tag_table.find('td').length == 1 ) ? ( $rindow.width()-10 ) : 180;
+                        $tag_table.css('max-width','none').width(tableTableWidth);
 
                         // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
                         if ( settings.mode == "writeMode" ) {
@@ -3835,6 +3843,11 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $tag_table.find('tr').each( function() {
                                 $(this).find('td:last-child:not(:first-child)').addClass('rdr-last-child');
                             });
+
+                            // now that we've created the first row, unset the max-width and set the table width.  
+                            // this lets us have the table flow to full width... without having had to loop through
+                            // table cells in getNextCell to recalculate the width throughout
+                            $tag_table.css('max-width','none').width(tagsListMaxWidth);
                         }
 
                     },
