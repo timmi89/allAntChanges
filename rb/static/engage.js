@@ -2116,7 +2116,8 @@ function readrBoard($R){
                 });
 
                 // todo: this is a pretty wide hackey net - rethink later.
-                $('embed, video, object, iframe, img').live('mouseenter', function(){
+                var imgBlackList = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? 'not('+RDR.group.img_blacklist+')':'';
+                $('body').on('mouseenter', 'embed, video, object, iframe, img'+imgBlackList, function(){
                     var $this = $(this);
                     var hasBeenHashed = $this.hasClass('rdr-hashed'),
                         isBlacklisted = $this.closest('.rdr, .no-rdr').length;
@@ -2135,13 +2136,17 @@ function readrBoard($R){
                         $this.addClass('rdr_live_hover');
                         RDR.actions.containers.media.onEngage( $this.data('hash') );
                     }
-                }).live('mouseleave', function(){
+                }).on('mouseleave', 'embed, video, object, iframe, img'+imgBlackList, function(){
                     var $this = $(this);
                     $this.removeClass('rdr_live_hover');
                     RDR.actions.containers.media.onDisengage( $this.data('hash') );
                 });
 
                 RDR.actions.slideshows.setup();
+                
+                $(RDR.group.img_whitelist).each( function() {
+                    $(this).trigger('mouseenter');
+                }); //trigger('mouseenter');
                 
                 //hashNodes without any arguments will fetch the default set from the server.
                 // var hashes = this.hashNodes();
@@ -4872,15 +4877,15 @@ function rdr_loadScript(sScriptSrc,callbackfunction) {
 }
 RDR.offline = true;
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
-RDR_scriptPaths.jquery = RDR.offline ?
-    RDR_staticUrl+"global/js/jquery-1.6.2.min.js" :
-    "http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js";
-RDR_scriptPaths.jqueryUI = RDR.offline ?
+RDR_scriptPaths.jquery = RDR_offline ?
+    RDR_staticUrl+"global/js/jquery-1.7.1.min.js" :
+    "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
+RDR_scriptPaths.jqueryUI = RDR_offline ?
     RDR_staticUrl+"global/js/jquery-ui-1.8.14.custom.min.js" :
-    "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js";
-RDR_scriptPaths.jqueryUI_CSS = RDR.offline ?
+    "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js";
+RDR_scriptPaths.jqueryUI_CSS = RDR_offline ?
     RDR_staticUrl+"global/css/jquery-ui-1.8.14.base.css" :
-    "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/themes/base/jquery-ui.css";
+    "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/themes/base/jquery-ui.css";
 
 rdr_loadScript( RDR_scriptPaths.jquery, function(){
     //callback
