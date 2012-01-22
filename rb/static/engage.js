@@ -3694,31 +3694,24 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 },
                 update: function(hash){
                     //RDR.actions.indicators.update:
-                    
                     var scope = this;
 
                     var summary = RDR.summaries[hash];
+
                     //check if $indicator does not exist and run scope.init if needed. 
                     if( !summary.hasOwnProperty('$indicator') ){
                         //init will add an $indicator object to summary and then re-call update.  This failsafe isn't really needed..
                         summary.$indicator = "infinte loop failsafe.  This will get overritten immediately by the indicators.init function.";
                         RDR.actions.indicators.init(hash);
                     }
-
                     var $container = summary.$container,
                         $indicator = summary.$indicator,
                         $indicator_body = summary.$indicator_body,
                         $indicator_details = summary.$indicator_details;
-
-                    
-
-                    //check if the total is 0.  If so, just return here.
-                    if(summary.counts.interactions <= 0) return;
-                    //else
                                         
                     //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
                     var $count = $indicator_body.find('.rdr_count');
-                    $count.html( RDR.util.prettyNumber( summary.counts.tags ) );
+                    if ( summary.counts.tags > 0 ) $count.html( RDR.util.prettyNumber( summary.counts.tags ) );
 
                     if(summary.kind !== 'text'){
                         //build tags in $tagsList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
@@ -3746,13 +3739,12 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             
                             _commonSetup();
 
-                            $indicator.bind('mouseover', function() { $(this).addClass('rdr_live_hover'); RDR.actions.containers.media.onEngage( hash ); })//chain
-                            .bind('mouseout', function() { $(this).removeClass('rdr_live_hover'); RDR.actions.containers.media.onDisengage( hash ); });
+                            $indicator.on('mouseover', function() { $(this).addClass('rdr_live_hover'); RDR.actions.containers.media.onEngage( hash ); })//chain
+                            .on('mouseout', function() { $(this).removeClass('rdr_live_hover'); RDR.actions.containers.media.onDisengage( hash ); });
 
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
 
                             function _commonSetup(){
-
                                 var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
                                 .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar')//chain
                                 .appendTo('#rdr_indicator_details_wrapper');
@@ -3806,8 +3798,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                         var $indicator_details_innerWrap = $('<div class="rdr rdr_body_wrap" />'),
                             $detailsHeader = $('<div class="rdr rdr_header"/>'),
+                            headerText = (summary.counts.tags>0) ? "Reactions":"What's your reaction?",
                             $headerContent = $('<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
-                                            '<h1>Reactions</h1>'),
+                                            '<h1>'+headerText+'</h1>'),
                             $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />');
 
                         $detailsHeader.html( $headerContent );
@@ -3818,6 +3811,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                         //builds out the $tagsList contents
                         if (summary.kind!=="text"){
+                            console.log('ok go make tags for '+hash);
                             $indicator_details.data( 'initialWidth', $indicator_details.width()+2 );
                             scope.makeTagsList( hash );
                         }
@@ -3853,6 +3847,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             // this lets us have the table flow to full width... without having had to loop through
                             // table cells in getNextCell to recalculate the width throughout
                             $tag_table.css('max-width','none').width(tagsListMaxWidth);
+                        } else {
+                            console.log('no tags yet');
                         }
 
                     },
@@ -3892,7 +3888,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         });
                         
                         this.updateMediaTracker(hash);
-                        // this.borderHilites.update(hash);
                         
                     },
                     updateInlineIndicator: function(hash){
@@ -3956,148 +3951,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 
                             }
                         }  
-                    },
-                    borderHilites: {
-                        makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
-                        make: function(hash){
-                            //RDR.actions.indicators.utils.borderHilites.make:
-                            var $indicator = $('#rdr_indicator_'+hash),
-                                $container = $('.rdr-'+hash),
-                                $container_tracker = $('#rdr_container_tracker_'+hash),
-                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap'); //probably null, will make it below.
-                            
-                            if( !$mediaBorderWrap.length ){
-                                $mediaBorderWrap = $('<div class="rdr_media_border_wrap" />').appendTo($container_tracker);
-                            }
-                            $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
-
-                            var borders = {
-                                'top': {
-                                    $side: null,
-                                    css: {}
-                                },
-                                'right': {
-                                    $side: null,
-                                    css: {}
-                                },
-                                'bottom': {
-                                    $side: null,
-                                    css: {}
-                                },
-                                'left': {
-                                    $side: null,
-                                    css: {}
-                                }
-                            };
-
-                            $mediaBorderWrap.data('borders',borders);
-                            RDR.actions.indicators.utils.borderHilites.update(hash);
-
-                        },
-                        update: function(hash){
-                            //RDR.actions.indicators.utils.borderHilites.update:
-                            var $indicator = $('#rdr_indicator_'+hash),
-                                $container = $('.rdr-'+hash),
-                                $container_tracker = $('#rdr_container_tracker_'+hash),
-                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
-                            
-                            if( !$mediaBorderWrap.length ){
-                                //failsafe that shouldnt be needed.
-                                if( this.makeAttempt > 1 ) return;
-                                this.makeAttempt ++;
-                                RDR.actions.indicators.utils.borderHilites.make(hash);
-                                //just return here.  the make function will call this update function again and this will be bypassed.
-                                return;
-                            }
-                            //else
-                            this.makeAttempt = 0;
-
-                            $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
-
-                            var borders = {
-                                'top': {
-                                    $side: null,
-                                    css: {}
-                                },
-                                'right': {
-                                    $side: null,
-                                    css: {}
-                                },
-                                'bottom': {
-                                    $side: null,
-                                    css: {}
-                                },
-                                'left': {
-                                    $side: null,
-                                    css: {}
-                                }
-                            };
-                            
-                            var hiliteThickness = 2,
-                                containerWidth,
-                                containerHeight;
-
-                            var hasBorder = false;
-                            //for checking if it has a border.
-                            //If so we'll use outerWidth and outerHeight to take it into account.
-                            //If not, we use just the regular height and width so we'll ignore padding which would make the borderHilite look crappy.
-
-                            $.each( borders, function(side, data){
-                                //set the value in the object using the key's string as a helper
-                                var hiliteClass = 'rdr_mediaHilite_'+side; //i.e. rdr_mediaHilite_top
-                                
-                                data.$side = $mediaBorderWrap.find('.'+hiliteClass);
-                                if( !data.$side.length ){
-                                    data.$side = $('<div />').addClass(hiliteClass).appendTo($mediaBorderWrap);
-                                }
-
-                                //if any side has a border - set hasBorder to true
-                                if( parseInt( $container.css('border-'+side+'-width'), 10 ) ){
-                                    hasBorder = true;
-                                }
-
-                            });
-                            
-                            //figure out dims
-                            if(hasBorder){
-                                containerWidth = $container.outerWidth();
-                                containerHeight = $container.outerHeight();
-                            }else{
-                                containerWidth = $container.width();
-                                containerHeight = $container.height();
-                            }
-
-                            //use dims to make the css rules for each border side
-                            borders.top.css = {
-                                width: containerWidth,
-                                height: 0,
-                                top: -hiliteThickness,
-                                left: -hiliteThickness
-                            };
-                            borders.right.css = {
-                                width:0,
-                                height: containerHeight,
-                                top: 0,
-                                left: containerWidth
-                            };
-                            borders.bottom.css = {
-                                width: containerWidth,
-                                height: 0,
-                                top: containerHeight,
-                                left: -hiliteThickness
-                            };
-                            borders.left.css = {
-                                width: 0,
-                                height: containerHeight,
-                                top: 0,
-                                left: -hiliteThickness
-                            };
-
-                            $.each( borders, function( side, data ){
-                                RDR.util.cssSuperImportant( data.$side, data.css );
-                            });                       
-                    
-                        }
                     }
                 }//end RDR.actions.indicators.utils
             },
