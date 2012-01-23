@@ -91,6 +91,8 @@ urlpatterns = patterns('',
   url(r'^admin_approve/$', 'rb.views.admin_approve'),
   url(r'^admin_approve/(?P<request_id>\d+)/$', 'rb.views.admin_approve'),
   
+  # User creation and registration
+  url(r'^user_create/$', 'rb.views.create_rb_user'),
   # For demos
   #url(r'^demo/', settings.STATIC_URL)
 )

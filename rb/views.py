@@ -16,6 +16,7 @@ from django.utils.encoding import smart_str, smart_unicode
 from django.template import RequestContext
 from django.db.models import Q
 from forms import *
+from django.contrib.auth.forms import UserCreationForm
 
 def widget(request, sn):
     # Widget code is retreived from the server using RBGroup shortname
@@ -229,6 +230,34 @@ def create_group(request):
         context_instance=RequestContext(request)
     )
 
+def create_rb_user(request):
+    context = {}
+    cookie_user = checkCookieToken(request)
+    #what to do with a cookied user???
+    #are they already registered?
+    #
+    user = None
+    
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            user = form.save(True)
+            context['requested'] = True
+    else:
+        form = CreateUserForm()
+        
+    context['form'] = form
+    response =  render_to_response(
+        "user_create.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+    if user is not None:
+        response.set_cookie("user_id", value = user.id)
+        response.set_cookie("readr_token", value = "")
+    return response
+
+            
 @requires_admin
 def settings(request, **kwargs):
     context = {}

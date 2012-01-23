@@ -2,6 +2,65 @@ from django import forms
 from rb.models import *
 import re
 
+from django.contrib.auth.forms import UserCreationForm
+from django.utils.translation import ugettext_lazy as _
+
+
+class CreateUserForm(forms.ModelForm):
+    """
+    A form that creates a user, with no privileges, from the given username and password.
+    Extended version of UserCreationForm from django.contrib.auth.forms
+    """
+    username = forms.RegexField(label=_("Username"), max_length=30, regex=r'^[\w.@+-]+$',
+        help_text = _("Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only."),
+        error_messages = {'invalid': _("This value may contain only letters, numbers and @/./+/-/_ characters.")})
+    password1 = forms.CharField(label=_("Password"), widget=forms.PasswordInput)
+    password2 = forms.CharField(label=_("Password confirmation"), widget=forms.PasswordInput,
+        help_text = _("Enter the same password as above, for verification."))
+
+    email = forms.EmailField(max_length=75, error_messages={'required': 'Please enter your email address', 'invalid':'Please enter a valid email address'})
+
+    class Meta:
+        model = User
+        fields = ("username", "email",)
+
+    def clean_username(self):
+        username = self.cleaned_data["username"]
+        try:
+            User.objects.get(username=username)
+        except User.DoesNotExist:
+            return username
+        raise forms.ValidationError(_("A user with that username already exists."))
+
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1", "")
+        password2 = self.cleaned_data["password2"]
+        if password1 != password2:
+            raise forms.ValidationError(_("The two password fields didn't match."))
+        return password2
+
+    def clean_email(self):
+        email_addr = self.cleaned_data['email']
+        
+        if len(User.objects.filter(email=email_addr.lower())) > 0:
+            raise forms.ValidationError(_("Requested Email address already registered."))
+        return email_addr
+    
+    def is_valid(self):
+        valid = super(CreateUserForm, self).is_valid()
+            
+        return valid
+    
+    def save(self, commit=True):
+        user = super(CreateUserForm, self).save(commit=False)
+        user.set_password(self.cleaned_data["password1"])
+        user.email = self.cleaned_data['email']
+        if commit:
+            user.save()
+        return user
+    
+           
+
 class CreateGroupForm(forms.Form):
     name = forms.CharField(label='Company Name')
     short_name = forms.CharField(label='Short Name')

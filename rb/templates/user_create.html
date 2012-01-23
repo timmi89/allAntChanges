@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block sidebarContent %}
+<div id="sidebar">
+</div>
+{% endblock sidebarContent %}
+
+{% block mainContent %}
+  <h1>ReadrBoard Beta Signup</h1>
+  {% if requested %}
+    <h3>Thanks!</h3>
+    <a href = "/">Home</a>
+  {% else %}
+    <form action="/create_user/" enctype="multipart/form-data" method="post" class="in-page">
+    {% csrf_token %}
+  
+    {{ form.non_field_errors }}
+
+  	<div>
+  		<label for="id_username">User Name </label>
+  		{{ form.username }}{{ form.username.errors }}
+  	</div>
+  	<div>
+    	<label for="id_email">Email </label>
+    	{{ form.email }}{{ form.email.errors }}
+  	</div>
+  	<div>
+  	  <label for="id_password1">Password</label>
+  	  {{ form.password1 }}{{ form.password1.errors }}
+  	</div>
+  	<div>
+      <label for="id_password2">Password Again</label>
+      {{ form.password2 }}{{ form.password2.errors }}
+    </div>
+
+    <button type="submit">Submit</button>
+    </form>
+  {% endif %}
+{% endblock mainContent %}
+
+{% block pageJS %}
+{% endblock %}
