@@ -247,14 +247,27 @@ function readrBoard($R){
                 RDR.rindow.jspUpdate( $rindow, setWidth, kind );
             },
             updateTagMessage: function(args) {
-                //RDR.rindow.updateTagMessage
+                // RDR.rindow.updateTagMessage
                 // used for updating the message in the rindow that follows a reaction
+
                 if ( args.scenario && args.rindow ) {
-                    var args = args, 
-                        hash = (args.args) ? args.args.hash:args.hash, // ugly as hell.  rewrite time.
+                    // ugly as hell.  rewrite time.
+                    if ( args.args ) {
+                        $.each( args.args, function( key, copyThisArg ) {
+                            if (typeof copyThisArg == "object" ) {
+                                args[key] = $.extend( true, {}, copyThisArg );
+                            } else {
+                                args[key] = copyThisArg;
+                            }
+                            // $.extend( args, copyThisArg );
+                        });
+                    }
+console.dir(args);
+                    var hash = args.hash,
                         $rindow = args.rindow,
+                        // $rindow = $('div#rdr_indicator_details_'+hash),
                         tag = args.tag,
-                        $pill = ($rindow.find('a.rdr_tag_'+tag.id).length) ? $rindow.find('a.rdr_tag_'+tag.id):$rindow.find('a.rdr_custom_tag').eq(-2), // get the second-to-last custom tag, since we added the new, empty custom tag before getting here
+                        $pill = ( $rindow.find('a.rdr_tag_'+tag.id).length ) ? $rindow.find('a.rdr_tag_'+tag.id):$rindow.find('a.rdr_custom_tag').eq(-2), // get the second-to-last custom tag, since we added the new, empty custom tag before getting here
                         $wrapperDiv = $pill.parent(),
                         $td = $wrapperDiv.parent(),
                         $tr = $td.parent(),
@@ -268,9 +281,10 @@ function readrBoard($R){
                         $td.addClass('rdr_activePill');
                         var $nextTr = $('<tr class="rdr_nextSteps"><td colspan="100"><div class="rdr_nextSteps_container"/></td></tr>'),
                             $nextSteps = $nextTr.find('div').css('max-width', $tag_table.width() + "px");
-                    
+
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
                             if ( args.scenario == "reactionSuccess" ) {
+                                // console.log('reactionSuccess');
                                 $nextSteps.append( '<div class="rdr_reactionMessage">You reacted: <strong>'+tag.body+'</strong>. <a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></div>' );
                                 $nextSteps.find('a.rdr_undo_link').bind('click.rdr', {args:args}, function(event){
                                     var args = event.data.args;
@@ -284,6 +298,7 @@ function readrBoard($R){
                                     RDR.actions.interactions.ajax( newArgs, 'react', 'remove' );
                                     
                                 });
+                                // console.log( $nextSteps.html() );
                             } else if ( args.scenario == "reactionExists" ) {
                                 $nextSteps.append( '<div class="rdr_reactionMessage">You have already given that reaction.</div>' );
                             }
@@ -383,7 +398,6 @@ function readrBoard($R){
                         $tr.after( $nextTr );
                         if ( $nextSteps.width() > 310 ) $nextTr.addClass('rdr_wide');
 
-                        // RDR.rindow.mediaRindowShow( hash );
                         RDR.actions.containers.media.onEngage( hash );
                     }
                     
@@ -1816,8 +1830,8 @@ function readrBoard($R){
                                     });
                                     
                                     // PILLSTODO remove these?
-                                    $rindow.find('div.rdr_shareBox').html( $inlineTempMsg );
-                                    $rindow.find('div.rdr_commentBox').hide();
+                                    // $rindow.find('div.rdr_shareBox').html( $inlineTempMsg );
+                                    // $rindow.find('div.rdr_commentBox').hide();
                                 }
 
                                 break;
@@ -2977,19 +2991,11 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 args.response = response;
                                 if ( response.data && response.data.num_interactions ) RDR.user.num_interactions = response.data.num_interactions;
                                 if ( response.status == "success" ) {
-                                    var existing = args.response.data.existing;
-                                    if(existing){
-                                        // this should go in the onSuccess.  sorry. [pb]
-                                        RDR.rindow.updateTagMessage( {rindow:args.rindow, tag:args.tag, scenario:"reactionExists", args:args} );
-                                        // args.response.message = "existing interaction";
-                                        // RDR.actions.interactions[int_type].onFail(args);
-                                        return;
-                                    }
-                                    //else
                                     if(args.response.data.deleted_interaction){
                                         args.deleted_interaction = args.response.data.deleted_interaction;
                                     }
 
+                                    args.scenario = ( args.response.data.existing ) ? "reactionExists":"reactionSuccess";
                                     RDR.actions.interactions[int_type].onSuccess[action_type](args);
                                 }else{
                                     if ( int_type == "react" ) {
@@ -3241,6 +3247,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 //todo: reconsider this method of liberally updating everything with updateContainerTrackers
                                 $summary_box.find('div.rdr_note').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
                             } else {
+                                
+
                                 // init vars
                                 var uiMode = args.uiMode || 'write',
                                     response = args.response,
@@ -3264,8 +3272,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 }
                                 RDR.rindow.writeCustomTag( $rindow.find('table.rdr_tags').find('td').eq(-1).find('div.rdr_cell_wrapper'), $rindow );
 
-                                
-                                args = $.extend(args, {scenario:"reactionSuccess"});
+                                // update the rindow to reflect success
                                 RDR.rindow.updateTagMessage( args );
 
                                 //temp tie-over    
@@ -3304,7 +3311,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 };
                                 diff.tags[ intNodeHelper.id ] = intNodeHelper;
 
-                                RDR.actions.summaries.update(hash, diff);
+                                if ( args.scenario != "reactionExists" ) { 
+                                    RDR.actions.summaries.update(hash, diff);
+                                }
                             }
 
                         },
@@ -3710,8 +3719,12 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         $indicator_details = summary.$indicator_details;
                                         
                     //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
-                    var $count = $indicator_body.find('.rdr_count');
-                    if ( summary.counts.tags > 0 ) $count.html( RDR.util.prettyNumber( summary.counts.tags ) );
+                    var $count = $indicator_body.find('.rdr_count'),
+                        $details_header_count = ($indicator_details) ? $indicator_details.find('div.rdr_header h1'):false;
+                    if ( summary.counts.tags > 0 ) {
+                        $count.html( RDR.util.prettyNumber( summary.counts.tags ) );
+                        if ($details_header_count) $details_header_count.html( RDR.util.prettyNumber( summary.counts.tags ) + " Reactions" );
+                    }
 
                     if(summary.kind !== 'text'){
                         //build tags in $tagsList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
@@ -3796,23 +3809,25 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $indicator_details = summary.$indicator_details,
                             $actionbar = $('rdr_actionbar_'+hash);
 
-                        var $indicator_details_innerWrap = $('<div class="rdr rdr_body_wrap" />'),
-                            $detailsHeader = $('<div class="rdr rdr_header"/>'),
-                            headerText = (summary.counts.tags>0) ? "Reactions":"What's your reaction?",
-                            $headerContent = $('<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
-                                            '<h1>'+headerText+'</h1>'),
-                            $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />');
+                        if ( !$indicator_details.find('div.rdr_body_wrap').length ) {
+                            var $indicator_details_innerWrap = $('<div class="rdr rdr_body_wrap" />'),
+                                $detailsHeader = $('<div class="rdr rdr_header"/>'),
+                                headerText = (summary.counts.tags>0) ? "Reactions":"What's your reaction?",
+                                $headerContent = $('<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
+                                                '<h1>'+headerText+'</h1>'),
+                                $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />');
 
-                        $detailsHeader.html( $headerContent );
-                        if ( summary.counts && summary.counts.tags ) $detailsHeader.find('h1').text( summary.counts.tags + " Reactions" );
-                        //use an innerWrap so that we can move padding to that and measuring the width of the indicator_details will be consistent
-                        $indicator_details.empty().append( $detailsHeader, $indicator_details_innerWrap );
-                        $indicator_details_innerWrap.append( $tagsListContainer );
-
-                        //builds out the $tagsList contents
-                        if (summary.kind!=="text"){
-                            $indicator_details.data( 'initialWidth', $indicator_details.width()+2 );
-                            scope.makeTagsList( hash );
+                            $detailsHeader.html( $headerContent );
+                            if ( summary.counts && summary.counts.tags ) $detailsHeader.find('h1').text( summary.counts.tags + " Reactions" );
+                            //use an innerWrap so that we can move padding to that and measuring the width of the indicator_details will be consistent
+                            $indicator_details.empty().append( $detailsHeader, $indicator_details_innerWrap );
+                            $indicator_details_innerWrap.append( $tagsListContainer );
+                            
+                            //builds out the $tagsList contents
+                            if (summary.kind!=="text"){
+                                $indicator_details.data( 'initialWidth', $indicator_details.width()+2 );
+                                scope.makeTagsList( hash );
+                            }
                         }
                         
                     },
