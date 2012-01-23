@@ -247,7 +247,7 @@ function readrBoard($R){
                 RDR.rindow.jspUpdate( $rindow, setWidth, kind );
             },
             updateTagMessage: function(args) {
-                // RDR.rindow.updateTagMessage
+                //RDR.rindow.updateTagMessage
                 // used for updating the message in the rindow that follows a reaction
 
                 if ( args.scenario && args.rindow ) {
@@ -262,7 +262,7 @@ function readrBoard($R){
                             // $.extend( args, copyThisArg );
                         });
                     }
-console.dir(args);
+
                     var hash = args.hash,
                         $rindow = args.rindow,
                         // $rindow = $('div#rdr_indicator_details_'+hash),
@@ -280,7 +280,7 @@ console.dir(args);
                     if ( args.scenario != "tagDeleted" ) {
                         $td.addClass('rdr_activePill');
                         var $nextTr = $('<tr class="rdr_nextSteps"><td colspan="100"><div class="rdr_nextSteps_container"/></td></tr>'),
-                            $nextSteps = $nextTr.find('div').css('max-width', $tag_table.width() + "px");
+                            $nextSteps = $nextTr.find('div.rdr_nextSteps_container').css('max-width', $tag_table.width() + "px");
 
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
                             if ( args.scenario == "reactionSuccess" ) {
@@ -397,6 +397,12 @@ console.dir(args);
                         }
                         $tr.after( $nextTr );
                         if ( $nextSteps.width() > 310 ) $nextTr.addClass('rdr_wide');
+
+                        // make the next steps stuff centered in the table.  only way I could think of.
+                        // this gets the width of the nextSteps div, the width of its parent, subtracts them, divides that number by 2,
+                        // and sets the left margin to be that value.  using 'cssText' b/c that is how to set an inline style to !important
+                        // and thus override existing !important declarations in our classes.
+                        $nextSteps.css('cssText', 'margin-left:' + ( ($nextSteps.parent().width()-$nextSteps.width() )/2) + 'px !important');                        
 
                         RDR.actions.containers.media.onEngage( hash );
                     }
@@ -522,7 +528,7 @@ console.dir(args);
                     $a.click( function() {
                         $rindow.removeClass('rdr_rewritable');
                         var hash = $rindow.data('container');
-                        args = { tag:tag, hash:hash, uiMode:'write', kind:$rindow.data('kind'), rindow:$rindow};
+                        args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow};
                         RDR.actions.interactions.ajax( args, 'react', 'create');
                     }).hover(function() {
                         $(this).find('span.rdr_tag_count').text('+');
@@ -551,50 +557,52 @@ console.dir(args);
             },
             writeCustomTag: function( $container, $rindow, actionType ) {
                 //RDR.rindow.writeCustomTag
-                var actionType = ( actionType ) ? actionType : "react",
-                    helpText =  ( actionType=="react" ) ? "Add yours..." : "Add tag...";
+                if ( !$rindow.find('a.rdr_custom_tag').not('td.rdr_activePill a.rdr_custom_tag').length ) {
+                    var actionType = ( actionType ) ? actionType : "react",
+                        helpText =  ( actionType=="react" ) ? "Add yours..." : "Add tag...";
 
-                // add custom tag
-                var $a_custom = $('<a class="rdr_tag rdr_custom_tag"><input type="text" value="'+helpText+'" class="rdr_default"/></a>');
-                $a_custom.find('input').focus( function() {
-                    var $input = $(this);
-                    $input.removeClass('rdr_default');
-                    if ( $input.val() == helpText ) {
-                        $input.val('');
-                    }
-                }).blur( function() {
-                    var $input = $(this);
-                    if ( $input.val() === "" ) {
-                        $input.val( helpText );
-                    }
-                    if ( $input.val() == helpText ) {
-                        $input.addClass('rdr_default');
-                    }
-                }).keyup( function(event) {
-                    var $input = $(this),
-                        tag = {},
-                        hash = $rindow.data('container');
+                    // add custom tag
+                    var $a_custom = $('<a class="rdr_tag rdr_custom_tag"><input type="text" value="'+helpText+'" class="rdr_default"/></a>');
+                    $a_custom.find('input').focus( function() {
+                        var $input = $(this);
+                        $input.removeClass('rdr_default');
+                        if ( $input.val() == helpText ) {
+                            $input.val('');
+                        }
+                    }).blur( function() {
+                        var $input = $(this);
+                        if ( $input.val() === "" ) {
+                            $input.val( helpText );
+                        }
+                        if ( $input.val() == helpText ) {
+                            $input.addClass('rdr_default');
+                        }
+                    }).keyup( function(event) {
+                        var $input = $(this),
+                            tag = {},
+                            hash = $rindow.data('container');
 
-                    if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
-                        tag.body = $input.val();
+                        if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
+                            tag.body = $input.val();
 
-                        // args = { tag:tag, hash:hash, kind:"page" };
-                        args = { tag:tag, hash:hash, uiMode:'write', kind:$rindow.data('kind'), rindow:$rindow};
-                        RDR.actions.interactions.ajax( args, actionType, 'create' );
-                        $input.blur();
-                    }
-                    else if (event.keyCode == '27') { //esc
-                        //return false;
-                        $input.blur();
-                    } else if ( $input.val().length > 20 ) {
-                        var customTag = $input.val();
-                        $input.val( customTag.substr(0, 20) );
-                    }
-                });
-                
-                // if ( $container ) $container.append( $a_custom, " " );
-                // else return $a_custom;
-                $container.append( $a_custom, " " );
+                            // args = { tag:tag, hash:hash, kind:"page" };
+                            args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow};
+                            RDR.actions.interactions.ajax( args, actionType, 'create' );
+                            $input.blur();
+                        }
+                        else if (event.keyCode == '27') { //esc
+                            //return false;
+                            $input.blur();
+                        } else if ( $input.val().length > 20 ) {
+                            var customTag = $input.val();
+                            $input.val( customTag.substr(0, 20) );
+                        }
+                    });
+                    
+                    // if ( $container ) $container.append( $a_custom, " " );
+                    // else return $a_custom;
+                    $container.append( $a_custom, " " );
+                }
             },
             _rindowTypes: {
                 //RDR.rindow._rindowTypes:
@@ -678,7 +686,8 @@ console.dir(args);
                             content: settings.content,
                             kind: kind,
                             selState: newSel,
-                            rewritable:rewritable
+                            rewritable:rewritable,
+                            mode:settings.mode
                         });
 
                         /* END create rindow based on write vs. read mode */
@@ -3247,15 +3256,14 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 //todo: reconsider this method of liberally updating everything with updateContainerTrackers
                                 $summary_box.find('div.rdr_note').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
                             } else {
-                                
 
                                 // init vars
-                                var uiMode = args.uiMode || 'write',
+                                var $rindow = args.rindow,
+                                    uiMode = $rindow.data('mode') || 'writeMode',
                                     response = args.response,
                                     interaction = response.interaction,
                                     interaction_node = response.data.interaction.interaction_node,
                                     sendData = args.sendData,
-                                    $rindow = args.rindow,
                                     tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
                                     int_id = response.data.interaction.id;
 
@@ -3270,7 +3278,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 } else {
                                     $tag_table.find('tr:not(.rdr_nextSteps)').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
                                 }
-                                RDR.rindow.writeCustomTag( $rindow.find('table.rdr_tags').find('td').eq(-1).find('div.rdr_cell_wrapper'), $rindow );
+                                if ( uiMode =="writeMode" ) {
+                                    RDR.rindow.writeCustomTag( $rindow.find('table.rdr_tags').find('td').eq(-1).find('div.rdr_cell_wrapper'), $rindow );
+                                }
 
                                 // update the rindow to reflect success
                                 RDR.rindow.updateTagMessage( args );
@@ -3498,12 +3508,12 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         create: function(args){
 
                             // init vars
-                            var uiMode = args.uiMode || 'write',
+                            var $rindow = args.rindow,
+                                uiMode = $rindow.data('mode') || 'writeMode',
                                 response = args.response,
                                 interaction = response.interaction,
                                 interaction_node = response.data.interaction.interaction_node,
                                 sendData = args.sendData,
-                                $rindow = args.rindow,
                                 tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag, // janky!
                                 int_id = response.data.interaction.id;
 
@@ -5311,7 +5321,7 @@ function $RFunctions($R){
                             }
                         ).click( function() {
                             var hash = $(this).closest('.rdr-page-container').data('hash');
-                            args = { tag:tag, hash:hash, uiMode:'write', kind:"page"};
+                            args = { tag:tag, hash:hash, uiMode:'writeMode', kind:"page"};
                             RDR.actions.interactions.ajax( args, 'react', 'create');
                         });
                     }
