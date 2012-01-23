@@ -232,8 +232,14 @@ function readrBoard($R){
                         heightAdjustment = 0;
                     }
                     $rindow.find('div.jspContainer').height( visiblePane.height+4 );
-                    if ( !setWidth ) setWidth = visiblePane.$elm.width()+8;
-                    else {
+                    
+
+                    // this section sets width.  I know, it's goofy.
+                    if ( !setWidth ) {
+                        var rindow_width = $rindow.width();
+                            visible_pane_width = $rindow.find('div.rdr_body_wrap').width();
+                        setWidth = ( visible_pane_width >= rindow_width ) ? rindow_width:visible_pane_width+8;
+                    } else {
                         visiblePane.$elm.css('width', setWidth+'px' );
                     }
 
@@ -807,9 +813,7 @@ function readrBoard($R){
 
                         var newCoords = RDR.util.stayInWindow({coords:coords, width:rindowWidth, height:rindowHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
 
-
-                        $rindow.css('left', newCoords.left + 'px');
-                        $rindow.css('top', newCoords.top + 'px');
+                        $rindow.css('left', newCoords.left + 'px').css('top', newCoords.top + 'px');
 
                         $rindow.animate({
                             width:rindowWidth,
@@ -2318,7 +2322,7 @@ function readrBoard($R){
                     if ( !hashList[ page_id ] ) hashList[ page_id ] = [];
                     
                     hashList[ page_id ].push(hash);
-                    $this.data('hash', hash); //todo: consolodate this with the RDR.containers object.  We only need one or the other.
+                    $this.data('hash', hash); //todo: consolidate this with the RDR.containers object.  We only need one or the other.
                     
                 });
 
