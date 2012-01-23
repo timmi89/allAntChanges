@@ -267,7 +267,7 @@ function readrBoard($R){
                         $rindow = args.rindow,
                         // $rindow = $('div#rdr_indicator_details_'+hash),
                         tag = args.tag,
-                        $pill = ( $rindow.find('a.rdr_tag_'+tag.id).length ) ? $rindow.find('a.rdr_tag_'+tag.id):$rindow.find('a.rdr_custom_tag').eq(-2), // get the second-to-last custom tag, since we added the new, empty custom tag before getting here
+                        $pill = ( $rindow.find('a.rdr_tag_'+tag.id).length ) ? $rindow.find('a.rdr_tag_'+tag.id):$rindow.find('a.rdr_custom_tag.rdr_tagged').eq(-1), // get the second-to-last custom tag, since we added the new, empty custom tag before getting here
                         $wrapperDiv = $pill.parent(),
                         $td = $wrapperDiv.parent(),
                         $tr = $td.parent(),
@@ -284,7 +284,6 @@ function readrBoard($R){
 
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
                             if ( args.scenario == "reactionSuccess" ) {
-                                // console.log('reactionSuccess');
                                 $nextSteps.append( '<div class="rdr_reactionMessage">You reacted: <strong>'+tag.body+'</strong>. <a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></div>' );
                                 $nextSteps.find('a.rdr_undo_link').bind('click.rdr', {args:args}, function(event){
                                     var args = event.data.args;
@@ -298,7 +297,6 @@ function readrBoard($R){
                                     RDR.actions.interactions.ajax( newArgs, 'react', 'remove' );
                                     
                                 });
-                                // console.log( $nextSteps.html() );
                             } else if ( args.scenario == "reactionExists" ) {
                                 $nextSteps.append( '<div class="rdr_reactionMessage">You have already given that reaction.</div>' );
                             }
@@ -473,9 +471,14 @@ function readrBoard($R){
                         $rows = $tag_table.find('tr'),
                         row_count = $rows.length,
                         $first_row = $rows.eq(0),
-                        $last_row = $rows.eq(-1);
+                        $last_row = $rows.not('tr.rdr_nextSteps').eq(-1);
 
-                    var firstRowWidth = $first_row.width() + pill_width + $first_row.find('td').length * 7; // 7px of padding on the pill, its containers, etc.
+                    var firstRowWidth = 0;
+                    $.each( $first_row.find('td'), function(idx, cell) {
+                        firstRowWidth += $(cell).width();
+                    });
+                    firstRowWidth += pill_width;
+
                     if ( ( firstRowWidth > maxWidth && row_count == 1 )
                         || ( $last_row.find('td').length == $first_row.find('td').length && row_count > 1 ) ) {
 
@@ -483,7 +486,7 @@ function readrBoard($R){
                         $rows.eq(-1).find('td').eq(-1).addClass('rdr-last-child');
 
                         // add a new row
-                        var $new_row = $('<tr><td style="xwidth:'+pill_width+'px;"><div class="rdr_cell_wrapper"/></td></tr>');
+                        var $new_row = $('<tr><td><div class="rdr_cell_wrapper"/></td></tr>');
                         $tag_table.append( $new_row );
                         
                     } else {
@@ -557,7 +560,7 @@ function readrBoard($R){
             },
             writeCustomTag: function( $container, $rindow, actionType ) {
                 //RDR.rindow.writeCustomTag
-                if ( !$rindow.find('a.rdr_custom_tag').not('td.rdr_activePill a.rdr_custom_tag').length ) {
+                if ( $rindow.find('a.rdr_custom_tag').not('a.rdr_custom_tag.rdr_tagged').length == 0) {
                     var actionType = ( actionType ) ? actionType : "react",
                         helpText =  ( actionType=="react" ) ? "Add yours..." : "Add tag...";
 
@@ -584,6 +587,7 @@ function readrBoard($R){
 
                         if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
                             tag.body = $input.val();
+                            $input.parent().addClass('rdr_tagged');
 
                             // args = { tag:tag, hash:hash, kind:"page" };
                             args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow};
@@ -755,6 +759,7 @@ function readrBoard($R){
                         // now that we've created the first row, unset the max-width and set the table width.  
                         // this lets us have the table flow to full width... without having had to loop through
                         // table cells in getNextCell to recalculate the width throughout
+                        // [UPDATE] 1/23/2012 -- can probably remove this.
                         var tableTableWidth = ( $tag_table.find('td').length == 1 ) ? ( $rindow.width()-10 ) : 180;
                         $tag_table.css('max-width','none').width(tableTableWidth);
 
@@ -3267,19 +3272,12 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                     tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
                                     int_id = response.data.interaction.id;
 
-                                // add a new, empty custom tag pill to the rindow
-                                var $tag_table = $rindow.find('table.rdr_tags'),
-                                    $last_tr = $tag_table.find('tr:not(.rdr_nextSteps)').eq(-1),
-                                    td_count = $last_tr.find('td').length;
-                        
-                                if ( td_count % 2 == 0 ) {
-                                    $tag_table.append('<tr/>');
-                                    $tag_table.find('tr:not(.rdr_nextSteps)').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
-                                } else {
-                                    $tag_table.find('tr:not(.rdr_nextSteps)').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
-                                }
                                 if ( uiMode =="writeMode" ) {
-                                    RDR.rindow.writeCustomTag( $rindow.find('table.rdr_tags').find('td').eq(-1).find('div.rdr_cell_wrapper'), $rindow );
+                                    var tagsListMaxWidth = $rindow.width()+2, // really.
+                                        custom_tag = {count:0, id:"custom", body:"Add yours..."};
+
+                                    var $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth ),
+                                        $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow, 'react' );
                                 }
 
                                 // update the rindow to reflect success
@@ -3519,16 +3517,12 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                             // add a new, empty custom tag pill to the rindow
                             var $tag_table = $rindow.find('table.rdr_tags'),
-                                $last_tr = $tag_table.find('tr:not(.rdr_nextSteps)').eq(-1),
-                                td_count = $last_tr.find('td').length;
-                    
-                            if ( td_count % 2 == 0 ) {
-                                $tag_table.append('<tr/>');
-                                $tag_table.find('tr:not(.rdr_nextSteps)').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
-                            } else {
-                                $tag_table.find('tr:not(.rdr_nextSteps)').eq(-1).append('<td><div class="rdr_cell_wrapper"/></td>');
-                            }
-                            RDR.rindow.writeCustomTag( $rindow.find('table.rdr_tags').find('td').eq(-1).find('div.rdr_cell_wrapper'), $rindow, 'bookmark' );
+                                tagsListMaxWidth = $rindow.width()+2, // really.
+                                custom_tag = {count:0, id:"custom", body:"Add yours..."};
+
+                            var $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth ),
+                                $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow, 'react' );
+                            //RDR.rindow.writeCustomTag( $rindow.find('table.rdr_tags').find('td').eq(-1).find('div.rdr_cell_wrapper'), $rindow, 'bookmark' );
 
                             
                             args = $.extend(args, {scenario:"bookmarkSuccess"});
@@ -3877,6 +3871,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             // now that we've created the first row, unset the max-width and set the table width.  
                             // this lets us have the table flow to full width... without having had to loop through
                             // table cells in getNextCell to recalculate the width throughout
+                            // [UPDATE] 1/23/2012 -- can probably remove this.
                             $tag_table.css('max-width','none').width(tagsListMaxWidth);
                         }
 
@@ -4412,7 +4407,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         "container_kind" : RDR.summaries[hash].kind
                     };
 
-                    // if ( !tag_li.hasClass('rdr_tagged') ) {
                         // send the data!
                         $.ajax({
                             url: RDR_baseUrl+"/api/share/",
