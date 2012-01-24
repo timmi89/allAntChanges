@@ -494,11 +494,11 @@ function readrBoard($R){
 
                     var firstRowWidth = 0;
                     $.each( $first_row.find('td'), function(idx, cell) {
-                        firstRowWidth += $(cell).width();
+                        firstRowWidth += $(cell).width()+7; // 7px of padding, borders, etc on the sides
                     });
                     firstRowWidth += pill_width;
 
-                    if ( ( firstRowWidth > maxWidth && row_count == 1 )
+                    if ( ( firstRowWidth > maxWidth && row_count == 1 ) 
                         || ( $last_row.find('td').length == $first_row.find('td').length && row_count > 1 ) ) {
 
                         // on the last row, add "rdr-last-child" to the last td.
@@ -2181,22 +2181,24 @@ function readrBoard($R){
                 var imgBlackList = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? 'not('+RDR.group.img_blacklist+')':'';
                 $('body').on('mouseenter', 'embed, video, object, iframe, img'+imgBlackList, function(){
                     var $this = $(this);
-                    var hasBeenHashed = $this.hasClass('rdr-hashed'),
-                        isBlacklisted = $this.closest('.rdr, .no-rdr').length;
+                    if ( $this.width() >= 100 ) {
+                        var hasBeenHashed = $this.hasClass('rdr-hashed'),
+                            isBlacklisted = $this.closest('.rdr, .no-rdr').length;
 
-                    $this.addClass('rdr_live_hover');
-                    if(!hasBeenHashed && !isBlacklisted){
-                        var hash = RDR.actions.hashNodes( $(this) );
-                        if(hash){
-                            RDR.actions.sendHashes( hash, function(){
-                                if( $this.hasClass('rdr_live_hover') ){
-                                    RDR.actions.containers.media.onEngage( hash );
-                                }
-                            });
-                        }
-                    } else {
                         $this.addClass('rdr_live_hover');
-                        RDR.actions.containers.media.onEngage( $this.data('hash') );
+                        if(!hasBeenHashed && !isBlacklisted){
+                            var hash = RDR.actions.hashNodes( $(this) );
+                            if(hash){
+                                RDR.actions.sendHashes( hash, function(){
+                                    if( $this.hasClass('rdr_live_hover') ){
+                                        RDR.actions.containers.media.onEngage( hash );
+                                    }
+                                });
+                            }
+                        } else {
+                            $this.addClass('rdr_live_hover');
+                            RDR.actions.containers.media.onEngage( $this.data('hash') );
+                        }
                     }
                 }).on('mouseleave', 'embed, video, object, iframe, img'+imgBlackList, function(){
                     var $this = $(this);
@@ -3851,7 +3853,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         if ( !$indicator_details.find('div.rdr_body_wrap').length ) {
                             var $indicator_details_innerWrap = $('<div class="rdr rdr_body_wrap" />'),
                                 $detailsHeader = $('<div class="rdr rdr_header"/>'),
-                                headerText = (summary.counts.tags>0) ? "Reactions":"What's your reaction?",
+                                headerText = (summary.counts.tags>0) ? "Reactions": ($indicator_details.width()>=175) ? "What's your reaction?":"React:",
                                 $headerContent = $('<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
                                                 '<h1>'+headerText+'</h1>'),
                                 $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />');
