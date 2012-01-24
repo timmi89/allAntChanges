@@ -4275,7 +4275,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 //Note: No longer used --> moved to RDR.rindow.make('readMode', options)
             },
             viewCommentContent: function(args){
-                //RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:$rindow, content_node:content_node, selState:content_node.selState});
+                //RDR.actions.viewCommentContent
                 var tag = args.tag, 
                     $rindow = args.rindow,
                     content_node = args.content_node;
@@ -4352,10 +4352,17 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         
                         if ( commentText != helpText ) {
                             //temp translations..
-                            //quick fix
-                            content_node.kind = summary.kind;
-                            
+                            //quick fix.  images don't get the data all passed through to here correctly.
+                            //could try to really fix, but hey.  we're rewriting soon, so using this hack for now.
+                            if ($.isEmptyObject(content_node) && summary.kind=="img") {
+                                content_node = {
+                                    "body":$('img.rdr-'+summary.hash).get(0).src, 
+                                    "kind":summary.kind, 
+                                    "hash":summary.hash
+                                };
+                            }
                             var args = {  hash:hash, content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow, selState:selState};
+
                             //leave parent_id undefined for now - backend will find it.
                             RDR.actions.interactions.ajax( args, 'comment', 'create');
 
