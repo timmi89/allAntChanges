@@ -164,6 +164,7 @@ function readrBoard($R){
                 $rdr_bodyFirst.animate({marginLeft:4},500, function() {
                     if (callback) callback();
                     $showPanel.remove();
+                    $rdr_body_wrap.width('auto'); 
                     RDR.rindow.updateSizes( $rindow, width, height );
                 });
             },
@@ -236,15 +237,16 @@ function readrBoard($R){
                     
 
                     // this section sets width.  I know, it's goofy.
+                    var rindow_width = $rindow.width();
                     if ( !setWidth ) {
-                        var rindow_width = $rindow.width();
-                            visible_pane_width = $rindow.find('div.rdr_body_wrap').width();
+                        var visible_pane_width = $rindow.find('div.rdr_body_wrap').width();
                         setWidth = ( visible_pane_width >= rindow_width ) ? rindow_width:visible_pane_width+8;
                     } else {
                         visiblePane.$elm.css('width', setWidth+'px' );
                     }
 
-                    $rindow.animate({ width: setWidth, height:(visiblePane.height + heightAdjustment) }, { duration:333, queue:false } );
+                    if ( Math.abs( setWidth - rindow_width ) > 2  ) $rindow.animate({ width: setWidth, height:(visiblePane.height + heightAdjustment) }, { duration:333, queue:false } );
+                    else $rindow.animate({ height:(visiblePane.height + heightAdjustment) }, { duration:333, queue:false } );
 
                     if ( visiblePane.which == "hasJspPane" ) {
                         visiblePane.$elm.find('div.jspContainer').width(setWidth);
