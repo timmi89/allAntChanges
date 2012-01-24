@@ -297,14 +297,15 @@ function readrBoard($R){
                     if ( args.scenario != "tagDeleted" ) {
                         $td.addClass('rdr_activePill');
                         var $nextTr = $('<tr class="rdr_nextSteps"><td colspan="100"><div class="rdr_nextSteps_container"/></td></tr>'),
-                            $nextSteps = $nextTr.find('div.rdr_nextSteps_container').css('max-width', $tag_table.width() + "px"),
-                            existingTagCount = parseInt( $pill.data('tag_count') ),
-                            newTagCount = ( isNaN(existingTagCount) ) ? 1:existingTagCount+1;
-
-                        $pill.data('tag_count',newTagCount).find('span.rdr_tag_count').text(newTagCount).unbind('hover');
+                            $nextSteps = $nextTr.find('div.rdr_nextSteps_container').css('max-width', $tag_table.width() + "px");
 
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
                             if ( args.scenario == "reactionSuccess" ) {
+                                var existingTagCount = parseInt( $pill.data('tag_count') ),
+                                    newTagCount = ( isNaN(existingTagCount) ) ? 1:existingTagCount+1;
+
+                                $pill.data('tag_count',newTagCount).find('span.rdr_tag_count').text(newTagCount).unbind('hover');
+
                                 $nextSteps.append( '<div class="rdr_reactionMessage">You reacted: <strong>'+tag.body+'</strong>. <a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></div>' );
                                 $nextSteps.find('a.rdr_undo_link').bind('click.rdr', {args:args}, function(event){
                                     var args = event.data.args;
@@ -563,7 +564,7 @@ function readrBoard($R){
                         args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
                         RDR.actions.interactions.ajax( args, 'react', 'create');
                     }).hover(function() {
-                        if ( !$(this).hasClass('rdr_tagged').length ) $(this).find('span.rdr_tag_count').text('+');
+                        if ( !$(this).hasClass('rdr_tagged') ) $(this).find('span.rdr_tag_count').text('+');
                     }, function() {
                         $(this).find('span.rdr_tag_count').text( $(this).data('tag_count') );
                     });
