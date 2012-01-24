@@ -274,11 +274,22 @@ function readrBoard($R){
                         // $rindow = $('div#rdr_indicator_details_'+hash),
                         tag = args.tag,
                         $pill = ( $rindow.find('a.rdr_tag_'+tag.id).length ) ? $rindow.find('a.rdr_tag_'+tag.id):$rindow.find('a.rdr_custom_tag.rdr_tagged').eq(-1), // get the second-to-last custom tag, since we added the new, empty custom tag before getting here
-                        $wrapperDiv = $pill.parent(),
+                        content_node = (args.sendData)?args.sendData.content_node_data:{};
+
+                    if ( $pill.length > 1 ) {
+                        $.each( $pill, function(index, pill) {
+                            var $thisPill = $(pill);
+                            if ( $thisPill.hasClass('rdr_content_node_'+content_node.id) ) {
+                                $pill = $thisPill;
+                                return false;
+                            }
+                        });
+                    }
+
+                    var $wrapperDiv = $pill.parent(),
                         $td = $wrapperDiv.parent(),
                         $tr = $td.parent(),
-                        $tag_table = $tr.closest('table.rdr_tags'),
-                        content_node = (args.sendData)?args.sendData.content_node_data:{};
+                        $tag_table = $tr.closest('table.rdr_tags');
 
                     $rindow.find('tr.rdr_nextSteps').remove();
                     $rindow.find('td.rdr_activePill').removeClass('rdr_activePill');
@@ -533,13 +544,14 @@ function readrBoard($R){
                         $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id).data('tag_count',tagCount);
 
                     if ( content_node_id ) {
-                        $a.data('content_node_id',content_node_id);
+                        $a.data('content_node_id',content_node_id).addClass('rdr_content_node_'+content_node_id);
+                        content_node.id = content_node_id;
                     }
 
                     $a.click( function() {
                         $rindow.removeClass('rdr_rewritable');
                         var hash = $rindow.data('container');
-                        args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow};
+                        args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
                         RDR.actions.interactions.ajax( args, 'react', 'create');
                     }).hover(function() {
                         $(this).find('span.rdr_tag_count').text('+');
@@ -548,12 +560,23 @@ function readrBoard($R){
                     });
 
                     $container.append( $a, " " );
+                    
+                    // figure out if we should add a comment indicator + comment hover
+                    var comments = {},
+                        num_comments = 0;
 
-                    var comments = ((!$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions.coms ))) ? content_node.top_interactions.coms:{};
-                    if ($.isEmptyObject(comments) && summary.kind=="img" && !$.isEmptyObject(summary.top_interactions) && !$.isEmptyObject(summary.top_interactions.coms)) comments = summary.top_interactions.coms[tag.id];
+                    if ( !$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions.coms ) ) {
+                        $.each( content_node.top_interactions.coms, function(idx, comment) {
+                            if ( comment.tag_id == tag.id ) {
+                                num_comments++;
+                                if ( $.isEmptyObject( comments ) ) comments = content_node.top_interactions.coms;
+                            }
+                        });
+                    }
 
+                    // add the comment indicator + comment hover... if we should!
                     if ( !$.isEmptyObject( comments ) ) {
-                        var $commentHover = $('<span class="rdr_comment_hover"><span class="rdr_icon"></span> '+comments.length+'</span>');
+                        var $commentHover = $('<span class="rdr_comment_hover"><span class="rdr_icon"></span> '+num_comments+'</span>');
                         $commentHover.click( function() {
                             RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:$rindow, content_node:content_node, selState:content_node.selState, summary:summary});
                         });
@@ -3208,7 +3231,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                         'container': rindow.data('container'),
                                         'body': content_node.body,
                                         'location': content_node.location,
-                                        'kind':kind
+                                        'kind':kind,
+                                        'id':content_node.id
                                     };
                                 }else{
                                     var content_node_id = rindow.find('a.rdr_tag_'+tag.id).data('content_node_id'),
