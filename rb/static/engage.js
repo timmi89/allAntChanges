@@ -245,6 +245,7 @@ function readrBoard($R){
                         visiblePane.$elm.css('width', setWidth+'px' );
                     }
 
+                    // sitll goofy, i know.
                     if ( Math.abs( setWidth - rindow_width ) > 2  ) $rindow.animate({ width: setWidth, height:(visiblePane.height + heightAdjustment) }, { duration:333, queue:false } );
                     else $rindow.animate({ height:(visiblePane.height + heightAdjustment) }, { duration:333, queue:false } );
 
