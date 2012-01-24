@@ -365,7 +365,7 @@ function readrBoard($R){
                                     if ( commentText != "Add a comment" ) {
                                         //temp translations..
                                         //quick fix
-                                        // content_node.kind = summary.kind;
+                                        content_node.kind = summary.kind;
                                         var newArgs = {  hash:hash, page_id:page_id,content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow}; // , selState:selState
                                         //leave parent_id undefined for now - backend will find it.
                                         RDR.actions.interactions.ajax( newArgs, 'comment', 'create');
