@@ -2181,7 +2181,7 @@ function readrBoard($R){
                 var imgBlackList = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? 'not('+RDR.group.img_blacklist+')':'';
                 $('body').on('mouseenter', 'embed, video, object, iframe, img'+imgBlackList, function(){
                     var $this = $(this);
-                    if ( $this.width() >= 100 ) {
+                    if ( $this.width() >= 180 ) {
                         var hasBeenHashed = $this.hasClass('rdr-hashed'),
                             isBlacklisted = $this.closest('.rdr, .no-rdr').length;
 
