@@ -282,9 +282,7 @@ function readrBoard($R){
 
                     $rindow.find('tr.rdr_nextSteps').remove();
                     $rindow.find('td.rdr_activePill').removeClass('rdr_activePill');
-// console.clear();
-console.log('updateTagMessage scenario: ' + args.scenario );
-// console.dir(args);
+
                     if ( args.scenario != "tagDeleted" ) {
                         $td.addClass('rdr_activePill');
                         var $nextTr = $('<tr class="rdr_nextSteps"><td colspan="100"><div class="rdr_nextSteps_container"/></td></tr>'),
@@ -3016,8 +3014,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                     if(args.response.data.deleted_interaction){
                                         args.deleted_interaction = args.response.data.deleted_interaction;
                                     }
-console.dir(args);
-                                    // args.scenario = ( args.response.data.existing ) ? "reactionExists":() ? :"reactionSuccess";
+
                                     args.scenario = ( args.response.data.existing ) ? "reactionExists": ( args.response.data.deleted_interaction ) ? "tagDeleted":"reactionSuccess";
                                     RDR.actions.interactions[int_type].onSuccess[action_type](args);
                                 }else{
