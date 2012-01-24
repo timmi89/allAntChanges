@@ -88,7 +88,8 @@ function readrBoard($R){
                 //RDR.rindow.updateHeader:
                 var $header = $rindow.find('div.rdr_header');
                 if ( $content ) {
-                    $header.html( $content );
+                    $header.html('<div class="rdr_loader" />');
+                    $header.find('div.rdr_loader').after( $content );
                 }
             },
             updateFooter : function( $rindow, $content ) {
@@ -963,7 +964,7 @@ function readrBoard($R){
                 
                 if ( $new_rindow.find('div.rdr_header').length === 0 ) {  // not sure why this conditional is here
                     $new_rindow.html('');
-                    $new_rindow.append( '<div class="rdr rdr_header rdr_brtr rdr_brtl"></div><div class="rdr rdr_contentSpace"><div class="rdr rdr_body_wrap"></div></div><div class="rdr rdr_footer rdr_brbr rdr_brbl"></div>' );
+                    $new_rindow.append( '<div class="rdr rdr_header rdr_brtr rdr_brtl"><div class="rdr_loader"/></div><div class="rdr rdr_contentSpace"><div class="rdr rdr_body_wrap"></div></div><div class="rdr rdr_footer rdr_brbr rdr_brbl"></div>' );
                                         
                     if ( settings.noHeader ) $new_rindow.find('div.rdr_header').remove();
                     
@@ -3095,8 +3096,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                 },
                 comment: {
-                    preAjax: function(){
-                        
+                    preAjax: function(args){
+                        var $rindow = args.rindow;
+                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','visible');
                     },
                     customSendData: function(args){
                         //RDR.actions.interactions.comment.customSendData:
@@ -3109,6 +3111,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 hash = args.hash,
                                 response = args.response,
                                 tag = args.tag;
+
+                            //clear loader
+                            if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
                             var interaction = response.data.interaction;
 
@@ -3157,29 +3162,42 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         },
                         remove: function(args){
                             //RDR.actions.interactions.comment.onSuccess.remove:
+
+                            //clear loader
+                            var $rindow = args.rindow;
+                            if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
                         }
                     
                     },
-                    onFail: function(){
-                        
+                    onFail: function(args){
+                        //clear loader
+                        var $rindow = args.rindow;
+                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
                     }
                 },
                 share: {
                     preAjax: function(){
-                        
+                        var $rindow = args.rindow;
+                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','visible');
                     },
                     customSendData: function(){
                         return {};
                     },
-                    onSuccess: function(){
-                        
+                    onSuccess: function(args){
+                        //clear loader
+                        var $rindow = args.rindow;
+                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
                     },
-                    onFail: function(){
-                        
+                    onFail: function(args){
+                        //clear loader
+                        var $rindow = args.rindow;
+                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');  
                     }
                 },
                 react: {
                     preAjax: function(args, action_type){
+                        var $rindow = args.rindow;
+                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','visible');
                     },
                     customSendData: function(args){
                         ////RDR.actions.interactions.react.customSendData:
@@ -3319,6 +3337,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                     tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
                                     int_id = response.data.interaction.id;
 
+                                //clear loader
+                                if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+
                                 if ( uiMode =="writeMode" ) {
                                     var tagsListMaxWidth = $rindow.width()+2, // really.
                                         custom_tag = {count:0, id:"custom", body:"Add yours..."};
@@ -3379,6 +3400,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             var $rindow = args.rindow,
                                 tag = args.tag,
                                 int_id = args.int_id;
+
+                            //clear loader
+                            if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
                             //do updates
                             var hash = sendData.hash;
@@ -3444,6 +3468,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             //todo: we prob want to move most of this to a general onFail for all interactions.
                             // So this function would look like: doSpecificOnFailStuff....; RDR.actions.interactions.genericOnFail();
 
+                            // PILLSTODO this is doing nothing
+                            /*
                             var rindow = args.rindow,
                                 tag_li = args.tag;
                             var response = args.response;
@@ -3454,7 +3480,12 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             }
                             tag_li.find('div.rdr_tag_count').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
                             tag_li.find('div.rdr_tag_count').find('.rdr_not_loader').show();
+                            */
                             
+                            //clear loader
+                            var $rindow = args.rindow;
+                            if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+
                             if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
                                 RDR.session.receiveMessage( args, function() { RDR.actions.interactions.ajax( args, 'react', 'create' ); } );
                                 RDR.session.showLoginPanel( args );
@@ -3476,6 +3507,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                 },
                 bookmark: {
                     preAjax: function(args){
+                        var $rindow = args.rindow;
+                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','visible');
                     },
                     customSendData: function(args){
                         //RDR.actions.interactions.bookmark.customSendData:
@@ -3562,6 +3595,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag, // janky!
                                 int_id = response.data.interaction.id;
 
+                            //clear loader
+                            if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+
                             // add a new, empty custom tag pill to the rindow
                             var $tag_table = $rindow.find('table.rdr_tags'),
                                 tagsListMaxWidth = $rindow.width()+2, // really.
@@ -3578,10 +3614,13 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         remove: function(args){
                             //RDR.actions.interactions.bookmark.onSuccess.remove:
                             
-                            var rindow = args.rindow,
+                            var $rindow = args.rindow,
                                 tag = args.tag,
                                 int_id = args.int_id,
                                 deleted_interaction_node = args.deleted_interaction.interaction_node;
+
+                            //clear loader
+                            if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
                             var usrMsgArgs = {      
                                 msgType: "interactionSuccess",
@@ -3590,11 +3629,11 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                     body: deleted_interaction_node.body,
                                     remove: true
                                 },
-                                rindow:rindow
+                                rindow:$rindow
                             };
                             //queued up to be released in the sharestart function after the animation finishes    
                             // NOT TRUE ANYMORE?
-                            rindow.queue('userMessage', function(){
+                            $rindow.queue('userMessage', function(){
                                 RDR.session.rindowUserMessage.show( usrMsgArgs );
                             });
                         }
@@ -3605,14 +3644,13 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         //todo: we prob want to move most of this to a general onFail for all interactions.
                         // So this function would look like: doSpecificOnFailStuff....; RDR.actions.interactions.genericOnFail();
 
-                        var rindow = args.rindow,
+                        var $rindow = args.rindow,
                             tag_li = args.tag;
 
                         var response = args.response;
 
                         //clear the loader                  
-                        tag_li.find('div.rdr_tag_count').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
-
+                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
                         if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
                             RDR.session.showLoginPanel( args );
@@ -3862,13 +3900,13 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                         if ( !$indicator_details.find('div.rdr_body_wrap').length ) {
                             var $indicator_details_innerWrap = $('<div class="rdr rdr_body_wrap" />'),
-                                $detailsHeader = $('<div class="rdr rdr_header"/>'),
+                                $detailsHeader = $('<div class="rdr rdr_header"><div class="rdr_loader"/></div>'),
                                 headerText = (summary.counts.tags>0) ? "Reactions": ($indicator_details.width()>=175) ? "What's your reaction?":"React:",
                                 $headerContent = $('<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
                                                 '<h1>'+headerText+'</h1>'),
                                 $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />');
 
-                            $detailsHeader.html( $headerContent );
+                            $detailsHeader.find('div.rdr_loader').after( $headerContent );
                             if ( summary.counts && summary.counts.tags ) $detailsHeader.find('h1').text( summary.counts.tags + " Reactions" );
                             //use an innerWrap so that we can move padding to that and measuring the width of the indicator_details will be consistent
                             $indicator_details.empty().append( $detailsHeader, $indicator_details_innerWrap );
