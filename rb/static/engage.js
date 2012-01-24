@@ -574,6 +574,11 @@ function readrBoard($R){
                         });
                     }
 
+                    if ($.isEmptyObject(comments) && summary.kind=="img" && !$.isEmptyObject(summary.top_interactions) && !$.isEmptyObject(summary.top_interactions.coms)) {
+                        comments = summary.top_interactions.coms[tag.id];
+                        if ( !$.isEmptyObject( comments ) ) num_comments = comments.length;
+                    }
+
                     // add the comment indicator + comment hover... if we should!
                     if ( !$.isEmptyObject( comments ) ) {
                         var $commentHover = $('<span class="rdr_comment_hover"><span class="rdr_icon"></span> '+num_comments+'</span>');
