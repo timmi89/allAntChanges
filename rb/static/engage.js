@@ -297,7 +297,11 @@ function readrBoard($R){
                     if ( args.scenario != "tagDeleted" ) {
                         $td.addClass('rdr_activePill');
                         var $nextTr = $('<tr class="rdr_nextSteps"><td colspan="100"><div class="rdr_nextSteps_container"/></td></tr>'),
-                            $nextSteps = $nextTr.find('div.rdr_nextSteps_container').css('max-width', $tag_table.width() + "px");
+                            $nextSteps = $nextTr.find('div.rdr_nextSteps_container').css('max-width', $tag_table.width() + "px"),
+                            existingTagCount = parseInt( $pill.data('tag_count') ),
+                            newTagCount = ( isNaN(existingTagCount) ) ? 1:existingTagCount+1;
+
+                        $pill.data('tag_count',newTagCount).find('span.rdr_tag_count').text(newTagCount).unbind('hover');
 
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
                             if ( args.scenario == "reactionSuccess" ) {
@@ -393,7 +397,7 @@ function readrBoard($R){
                                 //$commentInput.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
                             });
                         } else if ( args.scenario == "bookmarkSuccess" ) {
-                            $nextSteps.append( '<div>You tagged this: <strong>'+tag.body+'</strong>. <a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></div>' );
+                            $nextSteps.append( '<div>You bookmarked this: <strong>'+tag.body+'</strong>. <a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></div>' );
                             $nextSteps.find('a.rdr_undo_link').bind('click.rdr', {args:args}, function(event){
                                 var args = event.data.args;
                     
@@ -421,6 +425,10 @@ function readrBoard($R){
 
                         RDR.actions.containers.media.onEngage( hash );
                     } else {
+                        var existingTagCount = parseInt( $pill.data('tag_count') ),
+                            newTagCount = ( existingTagCount==1 ) ? "+":existingTagCount-1;
+
+                        $pill.data('tag_count',newTagCount).find('span.rdr_tag_count').text(newTagCount).removeClass('rdr_tagged');
                         $rindow.find('tr.rdr_nextSteps').remove().find('td.rdr_activePill').removeClass('rdr_activePill');
                     }
                     
@@ -549,12 +557,13 @@ function readrBoard($R){
                     }
 
                     $a.click( function() {
+                        $(this).addClass('rdr_tagged');
                         $rindow.removeClass('rdr_rewritable');
                         var hash = $rindow.data('container');
                         args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
                         RDR.actions.interactions.ajax( args, 'react', 'create');
                     }).hover(function() {
-                        $(this).find('span.rdr_tag_count').text('+');
+                        if ( !$(this).hasClass('rdr_tagged').length ) $(this).find('span.rdr_tag_count').text('+');
                     }, function() {
                         $(this).find('span.rdr_tag_count').text( $(this).data('tag_count') );
                     });
@@ -781,7 +790,7 @@ function readrBoard($R){
                             // the custom_tag is used for simulating the creation of a custom pill, to get the right width
                             var custom_tag = {count:0, id:"custom", body:"Add yours..."},
                                 $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, 180 ),
-                                $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow, 'react' );
+                                $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow, actionType );
 
                                 $rindow.removeClass('rdr_rewritable');
                         } else {
