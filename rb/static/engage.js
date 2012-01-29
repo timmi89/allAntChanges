@@ -508,6 +508,7 @@ function readrBoard($R){
 
                     var firstRowWidth = 0,
                         $cell;
+                    
                     $.each( $first_row.find('td'), function(idx, cell) {
                         $cell = $(cell);
                         if ( !$cell.hasClass('rdr_gutter') ) firstRowWidth += $cell.width()+7; // 7px of padding, borders, etc on the sides
@@ -515,7 +516,7 @@ function readrBoard($R){
                     firstRowWidth += pill_width;
 
                     if ( ( firstRowWidth > maxWidth && row_count == 1 ) 
-                        || ( $last_row.find('td').length == $first_row.find('td').length && row_count > 1 ) ) {
+                        || ( $last_row.find('td:not(.rdr_gutter)').length == $first_row.find('td:not(.rdr_gutter)').length && row_count > 1 ) ) {
 
                         // if there is still a gutter, remove it.
                         $last_row.find('td.rdr_gutter').remove();
@@ -531,15 +532,17 @@ function readrBoard($R){
                         $last_row.append('<td><div class="rdr_cell_wrapper"/></td>');
                     }
 
-                    if ( useGutter && row_count == 1 ) {
-                        var gutter_width = maxWidth - firstRowWidth;
-                        $last_row.find('td.rdr_gutter').remove();
-                        $last_row.append('<td class="rdr_gutter" style="width:'+gutter_width+'px;"/>');
+                    if ( useGutter ) {
+                        $tag_table.find('td.rdr_gutter').remove();
+                        if ( row_count == 1 ) {
+                            var gutter_width = maxWidth - firstRowWidth;
+                            $first_row.append('<td class="rdr_gutter" style="width:'+gutter_width+'px;"/>');
+                        }
                     }
 
                     var $last_cell = $tag_table.find('td:not(.rdr_gutter)').eq(-1),
                         $last_cell_wrapper = $last_cell.find('div.rdr_cell_wrapper');
-                    // $last_cell.width(pill_width);
+
                     $last_cell_wrapper.css('z-index', ( 1000 - $tag_table.find('td').length ) );
                     return $last_cell_wrapper;
                 }
@@ -1748,6 +1751,8 @@ function readrBoard($R){
                                 } else {
                                     RDR.session.showLoginPanel( args );
                                 }
+                            } else if ( message.status == "close login panel" ) {
+                                $('#rdr_loginPanel').remove(); // little brute force, maybe should go elsewhere?
                             } else if ( message.status == "already had user" ) {
                                 // todo: when is this used?
                                 $('#rdr_loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
@@ -1821,13 +1826,10 @@ function readrBoard($R){
                         parentUrl = window.location.href,
                         parentHost = window.location.protocol + "//" + window.location.host,
                         h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard",
-                    // $loginHtml.append( '<h1>'+h1_text+'</h1><div class="rdr_body" />');
+
                         $loginIframe = $('<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="360" height="190" frameborder="0" style="overflow:hidden;" />' );
                     RDR.rindow.updateHeader( $rindow, '<h1>'+h1_text+'</h1>' );
                     $rindow.find('div.rdr_body_wrap').append('<div class="rdr_body" />').append( $loginIframe );
-                    // RDR.rindow.panelUpdate( $rindow, 'rdr_login', $loginIframe );
-
-                    // $rindow.find('div.rdr_contentSpace').append( $loginHtml );
                 }
 			},
 			killUser: function() {
@@ -3363,7 +3365,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 //clear loader
                                 if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
-                                if ( uiMode =="writeMode" ) {
+                                if ( uiMode =="writeMode" && $rindow.find('a.rdr_custom_tag').length == $rindow.find('a.rdr_custom_tag.rdr_tagged').length ) {
                                     var tagsListMaxWidth = $rindow.width()+2, // really.
                                         custom_tag = {count:0, id:"custom", body:"Add yours..."};
 
