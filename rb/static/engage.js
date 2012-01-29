@@ -1802,7 +1802,7 @@ function readrBoard($R){
                     }
 
 
-                    var rindow = RDR.rindow.draw({
+                    var $rindow = RDR.rindow.draw({
                         coords:coords,
                         id: "rdr_loginPanel",
                         // pnlWidth:360,
@@ -1812,19 +1812,22 @@ function readrBoard($R){
                     });
 
                     // store the arguments and callback function that were in progress when this Login panel was called
-                    if ( args ) rindow.data( 'args', args );
-                    if ( callback ) rindow.data( 'callback', callback );
+                    if ( args ) $rindow.data( 'args', args );
+                    if ( callback ) $rindow.data( 'callback', callback );
 
                     // create the iframe containing the login panel
-                    var $loginHtml = $('<div class="rdr_login" />'),
-                    iframeUrl = RDR_baseUrl + "/static/fb_login.html",
-                    parentUrl = window.location.href,
-                    parentHost = window.location.protocol + "//" + window.location.host;
-                    var h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard";
-                    $loginHtml.append( '<h1>'+h1_text+'</h1><div class="rdr_body" />');
-                    $loginHtml.find('div.rdr_body').append( '<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="360" height="190" frameborder="0" style="overflow:hidden;" />' );
+                    // var $loginHtml = $('<div class="rdr_login" />'),
+                    var iframeUrl = RDR_baseUrl + "/static/fb_login.html",
+                        parentUrl = window.location.href,
+                        parentHost = window.location.protocol + "//" + window.location.host,
+                        h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard",
+                    // $loginHtml.append( '<h1>'+h1_text+'</h1><div class="rdr_body" />');
+                        $loginIframe = $('<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="360" height="190" frameborder="0" style="overflow:hidden;" />' );
+                    RDR.rindow.updateHeader( $rindow, '<h1>'+h1_text+'</h1>' );
+                    $rindow.find('div.rdr_body_wrap').append('<div class="rdr_body" />').append( $loginIframe );
+                    // RDR.rindow.panelUpdate( $rindow, 'rdr_login', $loginIframe );
 
-                    rindow.find('div.rdr_contentSpace').append( $loginHtml );
+                    // $rindow.find('div.rdr_contentSpace').append( $loginHtml );
                 }
 			},
 			killUser: function() {
@@ -3501,9 +3504,10 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             tag_li.find('div.rdr_tag_count').removeClass('rdr_kill_bg').find('.rdr_loader').remove();
                             tag_li.find('div.rdr_tag_count').find('.rdr_not_loader').show();
                             */
-                            
+
                             //clear loader
-                            var $rindow = args.rindow;
+                            var $rindow = args.rindow,
+                                response = args.response;
                             if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
                             if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {

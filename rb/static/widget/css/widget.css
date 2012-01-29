@@ -224,6 +224,7 @@ div.rdr strong {font-weight:bold !important;}
 }
 
 #rdr_sandbox div.rdr div.rdr_header h1                   { margin-left:14px !important; }
+#rdr_sandbox div#rdr_loginPanel.rdr div.rdr_header h1                   { margin-left:0px !important; }
 
 #rdr_sandbox div.rdr textarea,
 #rdr_sandbox div.rdr input[type="text"]   { width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
