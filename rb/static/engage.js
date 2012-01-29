@@ -495,25 +495,30 @@ function readrBoard($R){
             pillTable: {
                 make: function( $container, maxWidth ) {
                     //RDR.rindow.pillTable.make
-                    $tag_table = $('<table cellpadding="0" cellspacing="0" border="0" class="rdr_tags" style="max-width:'+maxWidth+'px;"><tr/></table>').appendTo( $container );
+                    var $tag_table = $('<table cellpadding="0" cellspacing="0" border="0" class="rdr_tags" style="max-width:'+maxWidth+'px;"><tr/></table>').appendTo( $container );
                     return $tag_table;
                 },
-                getNextCell: function( tag, $tag_table, maxWidth ) {
+                getNextCell: function( tag, $tag_table, maxWidth, useGutter ) {
                     //RDR.rindow.pillTable.getNextCell
                     var pill_width = RDR.rindow.pill.getWidth( tag ),
                         $rows = $tag_table.find('tr'),
-                        row_count = $rows.length,
+                        row_count = $rows.not('.rdr_nextSteps').length,
                         $first_row = $rows.eq(0),
                         $last_row = $rows.not('tr.rdr_nextSteps').eq(-1);
 
-                    var firstRowWidth = 0;
+                    var firstRowWidth = 0,
+                        $cell;
                     $.each( $first_row.find('td'), function(idx, cell) {
-                        firstRowWidth += $(cell).width()+7; // 7px of padding, borders, etc on the sides
+                        $cell = $(cell);
+                        if ( !$cell.hasClass('rdr_gutter') ) firstRowWidth += $cell.width()+7; // 7px of padding, borders, etc on the sides
                     });
                     firstRowWidth += pill_width;
 
                     if ( ( firstRowWidth > maxWidth && row_count == 1 ) 
                         || ( $last_row.find('td').length == $first_row.find('td').length && row_count > 1 ) ) {
+
+                        // if there is still a gutter, remove it.
+                        $last_row.find('td.rdr_gutter').remove();
 
                         // on the last row, add "rdr-last-child" to the last td.
                         $rows.eq(-1).find('td').eq(-1).addClass('rdr-last-child');
@@ -526,7 +531,15 @@ function readrBoard($R){
                         $last_row.append('<td><div class="rdr_cell_wrapper"/></td>');
                     }
 
-                    var $last_cell_wrapper = $tag_table.find('td').eq(-1).find('div.rdr_cell_wrapper');
+                    if ( useGutter && row_count == 1 ) {
+                        var gutter_width = maxWidth - firstRowWidth;
+                        $last_row.find('td.rdr_gutter').remove();
+                        $last_row.append('<td class="rdr_gutter" style="width:'+gutter_width+'px;"/>');
+                    }
+
+                    var $last_cell = $tag_table.find('td:not(.rdr_gutter)').eq(-1),
+                        $last_cell_wrapper = $last_cell.find('div.rdr_cell_wrapper');
+                    // $last_cell.width(pill_width);
                     $last_cell_wrapper.css('z-index', ( 1000 - $tag_table.find('td').length ) );
                     return $last_cell_wrapper;
                 }
@@ -3335,6 +3348,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                                 // init vars
                                 var $rindow = args.rindow,
+                                    $tag_table = $rindow.find('table.rdr_tags'),
                                     uiMode = $rindow.data('mode') || 'writeMode',
                                     response = args.response,
                                     interaction = response.interaction,
@@ -3350,7 +3364,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                     var tagsListMaxWidth = $rindow.width()+2, // really.
                                         custom_tag = {count:0, id:"custom", body:"Add yours..."};
 
-                                    var $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth ),
+                                    var $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true ),
                                         $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow, 'react' );
                                 }
 
@@ -3937,20 +3951,20 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             // add existing tag pills for this media item
                             $.each( summary.top_interactions.tags, function( tag_id, tag ){
                                 tag.id = tag_id;
-                                var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, tagsListMaxWidth ),
+                                var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, tagsListMaxWidth, true ),
                                     $pill = RDR.rindow.pill.make( tag, $pill_container, $indicator, false );
                             });
 
                             $.each( RDR.group.blessed_tags, function( idx, tag ){
                                 if ( !$tag_table.find('a.rdr_tag_'+tag.id).length ) {
-                                    var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, tagsListMaxWidth ),
+                                    var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, tagsListMaxWidth, true ),
                                         $pill = RDR.rindow.pill.make( tag, $pill_container, $indicator, false );
                                 }
                             });
 
                             // add a custom tag pill
                             var custom_tag = {count:0, id:"custom", body:"Add yours..."},
-                                $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth ),
+                                $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true ),
                                 $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $indicator, 'react' );
 
                             $tag_table.find('tr').each( function() {
@@ -5271,12 +5285,6 @@ function $RFunctions($R){
 
                                 // $toptags.append(' <span>'+ this_tag.body +' <em>('+this_tag.tag_count+')</em></span>&nbsp;&nbsp;&nbsp;');
                             }
-                            
-                            // the tag list will NOT line wrap.  if its width exceeds the with of the image, show the "click to see more" indicator
-                            // if ( $react.width() > $summary_widget.width() - 125 ) {
-                                // $react.children().last().html('and more...').addClass('rdr_see_more').removeClass('rdr_tags_list_tag');
-                                // break;
-                            // }
                         }
 
                     }
