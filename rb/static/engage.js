@@ -402,7 +402,7 @@ function readrBoard($R){
                                 //$commentInput.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
                             });
                         } else if ( args.scenario == "bookmarkSuccess" ) {
-                            $nextSteps.append( '<div>You bookmarked this: <strong>'+tag.body+'</strong>. <a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></div>' );
+                            $nextSteps.append( '<div>You tagged this note: <strong>'+tag.body+'</strong>. <a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></div>' );
                             $nextSteps.find('a.rdr_undo_link').bind('click.rdr', {args:args}, function(event){
                                 var args = event.data.args;
                     
@@ -417,7 +417,8 @@ function readrBoard($R){
                             });
 
                             $nextSteps.append( '<hr/>' );
-                            $nextSteps.append( '<div>Bookmarks are visible only to you.<br/><a href="'+RDR_baseUrl+'/user/'+RDR.user.user_id+'" target="_blank">Go to your ReadrBoard profile</a> to see them.</div>' );
+                            $nextSteps.append( '<div>Notes are visible only to you.<br/><a href="'+RDR_baseUrl+'/user/'+RDR.user.user_id+'" target="_blank">Go to your ReadrBoard profile</a> to see them.</div>' );
+                            $tag_table.find('tr.rdr_note_instruction').remove();
                         }
                         $tr.after( $nextTr );
                         if ( $nextSteps.width() > 310 ) $nextTr.addClass('rdr_wide');
@@ -754,7 +755,7 @@ function readrBoard($R){
                         /* START populate the header */
                         if ( settings.mode == "writeMode" ) {
                             // writeMode
-                            var headerText = (actionType=="react") ? 'What\'s your reaction?':'Bookmark This';
+                            var headerText = (actionType=="react") ? 'What\'s your reaction?':'Save Note';
                         } else {
                             // readMode
                             var headerText = ((summary.counts && summary.counts.tags) ? summary.counts.tags+" ":"")+'Reactions';
@@ -813,9 +814,11 @@ function readrBoard($R){
                         var tableTableWidth = ( $tag_table.find('td').length == 1 ) ? ( $rindow.width()-10 ) : 180;
                         $tag_table.css('max-width','none').width(tableTableWidth);
 
+                        if (actionType=="bookmark") {
+                            $tag_table.append('<tr class="rdr_note_instruction"><td colspan="100"><div class="rdr_info"><em>Notes are private.  Only you can see them.</em></div></td></tr>');
+                        }
                         // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
-                        if ( settings.mode == "writeMode" ) {
-                        } else {
+                        if ( settings.mode != "writeMode" ) {
                             $rindow.bind( 'mouseleave', function() {
                                 var $this = $(this);
                                 if ( $this.hasClass('rdr_rewritable') ) {
@@ -1173,7 +1176,7 @@ function readrBoard($R){
                     },
                     {
                         "item":"bookmark",
-                        "tipText":"Bookmark this",
+                        "tipText":"Remember this",
                         "onclick":function(){
                             RDR.rindow.make( 'writeMode', {
                                 "hash": hash,
@@ -1876,7 +1879,7 @@ function readrBoard($R){
                                     userMsg = (interactionInfo.type == 'tag') ?
                                         "You have tagged this <em>"+interactionInfo.body+"</em>." :
                                     (interactionInfo.type == 'bookmark') ?
-                                        "You have bookmarked this <em>"+interactionInfo.body+"</em>." :
+                                        "You have stored this <em>"+interactionInfo.body+"</em>." :
                                     (interactionInfo.type == 'comment') ?
                                         "You have left your comment." :
                                         ""; //this default shouldn't happen
@@ -3325,9 +3328,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                                 $span.show(200).css('visibility','visible');
 
-                                $summary_box.find('div.rdr_note').html( $('<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>') );
+                                $summary_box.find('div.rdr_info').html( $('<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>') );
                                 //todo: reconsider this method of liberally updating everything with updateContainerTrackers
-                                $summary_box.find('div.rdr_note').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
+                                $summary_box.find('div.rdr_info').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
                             } else {
 
                                 // init vars
@@ -3450,7 +3453,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             if ( args.response.data && args.response.data.existing && args.response.data.existing === true ) {
                                 $message = $('<em>You have already given that reaction.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>');
                             } else if ( args.response.message.indexOf("Temporary user interaction limit reached") != -1 ) {
-                                $message = $('<em>To continue adding reactions, please <a href="javascript:void(0);" style="color:#008be4;">Connect with Facebook</a>.</em><br><br><strong>Why:</strong> To encourage <strong style="color:#008be4;">high-quality participation from the community</strong>, <ins>we ask that you log in with Facebook. You\'ll also have a profile where you can revisit your reactions, bookmarks, and comments made using <strong style="color:#008be4;">ReadrBoard</strong>!</ins>');
+                                $message = $('<em>To continue adding reactions, please <a href="javascript:void(0);" style="color:#008be4;">Connect with Facebook</a>.</em><br><br><strong>Why:</strong> To encourage <strong style="color:#008be4;">high-quality participation from the community</strong>, <ins>we ask that you log in with Facebook. You\'ll also have a profile where you can revisit your reactions, notes, and comments made using <strong style="color:#008be4;">ReadrBoard</strong>!</ins>');
                                 $message.find('a').click( function() {
                                     RDR.session.showLoginPanel(args);
                                 });
@@ -3462,9 +3465,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                             if ( typeof $message == "object" ) {
                                 $summary_box = $('.rdr-page-container.rdr-'+args.hash+' div.rdr-summary');
-                                $summary_box.find('div.rdr_note').html( $message );
+                                $summary_box.find('div.rdr_info').html( $message );
                                 //todo: reconsider this method of liberally updating everything
-                                $summary_box.find('div.rdr_note').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
+                                $summary_box.find('div.rdr_info').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
                             }
                         } else {
                             //RDR.actions.interactions.react.onFail:
@@ -3608,8 +3611,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                             var $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth ),
                                 $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow, 'react' );
-                            //RDR.rindow.writeCustomTag( $rindow.find('table.rdr_tags').find('td').eq(-1).find('div.rdr_cell_wrapper'), $rindow, 'bookmark' );
-
                             
                             args = $.extend(args, {scenario:"bookmarkSuccess"});
                             RDR.rindow.updateTagMessage( args );                            
@@ -5365,7 +5366,7 @@ function $RFunctions($R){
 
                     }
 
-                    $summary_widget.append( $('<div class="rdr_note" />') );
+                    $summary_widget.append( $('<div class="rdr_info" />') );
 
                 function writeTag(tag) {
                     var tagCount, $span;
