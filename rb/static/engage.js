@@ -3943,10 +3943,20 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             }
                             
                             $indicator_details.on('click', 'div.rdr_remember_image a', function() {
-                                RDR.rindow.updateHeader( $indicator_details, '<div class="rdr_indicator_stats"><img src="http://local.readrboard.com:8080/static/widget/images/blank.png" class="no-rdr rdr_pin"><span class="rdr_count"></span></div><h1>Save This</h1>' );
+                                RDR.rindow.updateHeader( $indicator_details, '<div class="rdr_indicator_stats"><img src="'+RDR_staticUrl+'/widget/images/blank.png" class="no-rdr rdr_pin"><span class="rdr_count"></span></div><h1>Save This</h1>' );
                                 RDR.rindow.panelCreate( $indicator_details, 'rdr_bookmark_media' );
                                 
                                 var $noteBox = $indicator_details.find('div.rdr_bookmark_media').addClass('rdr_tags_list');
+
+                                // ok, get the content associated with this tag!
+                                var $backToReactions = $('<div class="rdr_back">&lt;&lt; Back</div>');
+
+                                $backToReactions.click( function() {
+                                    RDR.rindow.updateHeader( $indicator_details, $headerContent );
+                                    RDR.rindow.panelHide( $indicator_details, 'rdr_bookmark_media', $indicator_details.data('initialWidth') );
+                                });
+                                $noteBox.append( $backToReactions );
+
                                 scope.makeTagsListForMedia( hash, 'bookmark' );
                                 RDR.rindow.panelShow( $indicator_details, 'rdr_bookmark_media', $indicator_details.data('initialWidth') );
                             });

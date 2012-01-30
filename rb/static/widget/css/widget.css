@@ -117,12 +117,14 @@
 #rdr_sandbox div.rdr_actionbar span.rdr_icon_divider         { width:1px; background:#BBB; height:70%; position:absolute; top:15%; right:0; display:none;/*show dynamically*/}
 
 div.rdr_loader {
-    background: url(../images/loader.gif) 0px 0px no-repeat;
+    background: url(../images/loader.gif) 0px 0px no-repeat #fff;
     float: right;
     height: 20px;
     margin-right: 5px;
     width: 20px;
     visibility:hidden;
+    position:relative;
+    z-index:1;
 }
 /* the tooltip */
 div.rdr.rdr_tooltip {
@@ -205,7 +207,7 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr h2  {color:#666 !important; font-size:19px !important; letter-spacing:0.25px !important; padding:1px 9px; font-weight:100 !important;}
 
 #rdr_sandbox div.rdr_header div.rdr_indicator_stats         { position:absolute; margin:3px 0 0 5px; cursor: move !important; }
-#rdr_sandbox div.rdr_header div.rdr_remember_image          { position:absolute; right:3px; }
+#rdr_sandbox div.rdr_header div.rdr_remember_image          { position:absolute; right:3px; z-index:0;}
 #rdr_sandbox div.rdr_header div.rdr_remember_image a        { display: inline-block; padding-top: 3px; }
 #rdr_sandbox div.rdr_header div.rdr_remember_image a span   { background:url("../images/actionbar_icons.png") no-repeat -59px -9px transparent; display:inline-block; height:22px; width:22px; }
 
