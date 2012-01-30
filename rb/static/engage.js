@@ -502,17 +502,18 @@ function readrBoard($R){
                     //RDR.rindow.pillTable.getNextCell
                     var pill_width = RDR.rindow.pill.getWidth( tag ),
                         $rows = $tag_table.find('tr'),
-                        row_count = $rows.not('.rdr_nextSteps').length,
+                        row_count = $rows.not('tr.rdr_nextSteps').length,
                         $first_row = $rows.eq(0),
                         $last_row = $rows.not('tr.rdr_nextSteps').eq(-1);
 
                     var firstRowWidth = 0,
                         $cell;
-                    
+
                     $.each( $first_row.find('td'), function(idx, cell) {
                         $cell = $(cell);
                         if ( !$cell.hasClass('rdr_gutter') ) firstRowWidth += $cell.width()+7; // 7px of padding, borders, etc on the sides
                     });
+
                     firstRowWidth += pill_width;
 
                     if ( ( firstRowWidth > maxWidth && row_count == 1 ) 
@@ -539,11 +540,10 @@ function readrBoard($R){
                             $first_row.append('<td class="rdr_gutter" style="width:'+gutter_width+'px;"/>');
                         }
                     }
-
-                    var $last_cell = $tag_table.find('td:not(.rdr_gutter)').eq(-1),
+                    var $last_cell = $tag_table.find('tr:not(.rdr_nextSteps)').eq(-1).find('td:not(.rdr_gutter)').eq(-1),
                         $last_cell_wrapper = $last_cell.find('div.rdr_cell_wrapper');
-
                     $last_cell_wrapper.css('z-index', ( 1000 - $tag_table.find('td').length ) );
+
                     return $last_cell_wrapper;
                 }
             },
@@ -627,7 +627,7 @@ function readrBoard($R){
             },
             writeCustomTag: function( $container, $rindow, actionType ) {
                 //RDR.rindow.writeCustomTag
-                if ( $rindow.find('a.rdr_custom_tag').not('a.rdr_custom_tag.rdr_tagged').length == 0) {
+                if ( $container.find('a.rdr_custom_tag').not('a.rdr_custom_tag.rdr_tagged').length == 0) {
                     var actionType = ( actionType ) ? actionType : "react",
                         helpText =  ( actionType=="react" ) ? "Add yours..." : "Add tag...";
 
@@ -669,7 +669,6 @@ function readrBoard($R){
                             $input.val( customTag.substr(0, 20) );
                         }
                     });
-                    
                     // if ( $container ) $container.append( $a_custom, " " );
                     // else return $a_custom;
                     $container.append( $a_custom, " " );
@@ -3624,15 +3623,16 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             //clear loader
                             if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
+                            args = $.extend(args, {scenario:"bookmarkSuccess"});
+
                             // add a new, empty custom tag pill to the rindow
-                            var $tag_table = $rindow.find('table.rdr_tags'),
+                            var $tag_table = ( $rindow.find('div.rdr_bookmark_media').length ) ? $rindow.find('div.rdr_bookmark_media').find('table.rdr_tags') : $rindow.find('table.rdr_tags'),
                                 tagsListMaxWidth = $rindow.width()+2, // really.
                                 custom_tag = {count:0, id:"custom", body:"Add yours..."};
 
-                            var $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth ),
-                                $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow, 'react' );
+                            var $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true );
+                                $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow, 'bookmark' );
                             
-                            args = $.extend(args, {scenario:"bookmarkSuccess"});
                             RDR.rindow.updateTagMessage( args );                            
                         },
                         remove: function(args){
@@ -3936,65 +3936,54 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $indicator_details.empty().append( $detailsHeader, $indicator_details_innerWrap );
                             $indicator_details_innerWrap.append( $tagsListContainer );
                             
-                            
-                            $indicator_details.on('click', 'div.rdr_remember_image a', function() {
-                                RDR.rindow.updateHeader( $indicator_details, '<div class="rdr_indicator_stats"><img src="http://local.readrboard.com:8080/static/widget/images/blank.png" class="no-rdr rdr_pin"><span class="rdr_count"></span></div><h1>Save This</h1>' );
-                                RDR.rindow.panelCreate( $indicator_details, 'rdr_bookmark_image' );
-
-                                var $noteBox = $('<div><a href="javascript:void(0);">HEY BOOKMARK THIS</a></div>');
-                                var custom_tag = {count:0, id:"custom", body:"Add yours..."},
-                                $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true ),
-                                $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $indicator, 'react' );
-                                
-                                $tagsListContainer = $indicator_details.find('div.rdr_tags_list'),
-                                tagsListMaxWidth = $indicator_details.outerWidth()-10,
-                                $tag_table = RDR.rindow.pillTable.make( $tagsListContainer, tagsListMaxWidth );
-
-                                $noteBox.find('a').click( function() {
-                                    RDR.rindow.updateHeader( $indicator_details, $headerContent );
-                                    RDR.rindow.panelHide( $indicator_details, 'rdr_bookmark_image', $indicator_details.data('initialWidth') );
-                                });
-
-                                RDR.rindow.panelUpdate( $indicator_details, 'rdr_bookmark_image', $noteBox, 'update' );
-
-                                RDR.rindow.panelShow( $indicator_details, 'rdr_bookmark_image', $indicator_details.data('initialWidth') );
-                            });
                             //builds out the $tagsList contents
                             if (summary.kind!=="text"){
                                 $indicator_details.data( 'initialWidth', $indicator_details.width()+2 );
-                                scope.makeTagsList( hash );
+                                scope.makeTagsListForMedia( hash );
                             }
+                            
+                            $indicator_details.on('click', 'div.rdr_remember_image a', function() {
+                                RDR.rindow.updateHeader( $indicator_details, '<div class="rdr_indicator_stats"><img src="http://local.readrboard.com:8080/static/widget/images/blank.png" class="no-rdr rdr_pin"><span class="rdr_count"></span></div><h1>Save This</h1>' );
+                                RDR.rindow.panelCreate( $indicator_details, 'rdr_bookmark_media' );
+                                
+                                var $noteBox = $indicator_details.find('div.rdr_bookmark_media').addClass('rdr_tags_list');
+                                scope.makeTagsListForMedia( hash, 'bookmark' );
+                                RDR.rindow.panelShow( $indicator_details, 'rdr_bookmark_media', $indicator_details.data('initialWidth') );
+                            });
                         }
                         
                     },
-                    makeTagsList: function( hash ){
+                    makeTagsListForMedia: function( hash, actionType ){
                         var summary = RDR.summaries[hash],
+                            actionType = actionType || "react",
                             $indicator = $('div#rdr_indicator_details_'+hash),
                             $indicator_details = summary.$indicator_details,
-                            $container = summary.$container,
-                            $tagsListContainer = $indicator_details.find('div.rdr_tags_list'),
+                            $tagsListContainer = (actionType=='bookmark') ? $indicator_details.find('div.rdr_bookmark_media.rdr_tags_list'):$indicator_details.find('div.rdr_tags_list').eq(0),
                             tagsListMaxWidth = $indicator_details.outerWidth()-10,
                             $tag_table = RDR.rindow.pillTable.make( $tagsListContainer, tagsListMaxWidth );
 
-                        if ( summary.top_interactions && summary.top_interactions.tags ) {
-                            // add existing tag pills for this media item
-                            $.each( summary.top_interactions.tags, function( tag_id, tag ){
-                                tag.id = tag_id;
-                                var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, tagsListMaxWidth, true ),
-                                    $pill = RDR.rindow.pill.make( tag, $pill_container, $indicator, false );
-                            });
-
-                            $.each( RDR.group.blessed_tags, function( idx, tag ){
-                                if ( !$tag_table.find('a.rdr_tag_'+tag.id).length ) {
+                        if ( (summary.top_interactions && summary.top_interactions.tags) || (actionType=="bookmark") ) {
+                            
+                            if ( actionType == 'react') {
+                                // add existing tag pills for this media item
+                                $.each( summary.top_interactions.tags, function( tag_id, tag ){
+                                    tag.id = tag_id;
                                     var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, tagsListMaxWidth, true ),
                                         $pill = RDR.rindow.pill.make( tag, $pill_container, $indicator, false );
-                                }
-                            });
+                                });
+
+                                $.each( RDR.group.blessed_tags, function( idx, tag ){
+                                    if ( !$tag_table.find('a.rdr_tag_'+tag.id).length ) {
+                                        var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, tagsListMaxWidth, true ),
+                                            $pill = RDR.rindow.pill.make( tag, $pill_container, $indicator, false );
+                                    }
+                                });
+                            }
 
                             // add a custom tag pill
                             var custom_tag = {count:0, id:"custom", body:"Add yours..."},
                                 $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true ),
-                                $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $indicator, 'react' );
+                                $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $indicator, actionType );
 
                             $tag_table.find('tr').each( function() {
                                 $(this).find('td:last-child:not(:first-child)').addClass('rdr-last-child');
@@ -4003,7 +3992,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             // now that we've created the first row, unset the max-width and set the table width.  
                             // this lets us have the table flow to full width... without having had to loop through
                             // table cells in getNextCell to recalculate the width throughout
-                            // [UPDATE] 1/23/2012 -- can probably remove this.
+                            // [UPDATE] 1/23/2012 -- might be able to remove this.
                             $tag_table.css('max-width','none').width(tagsListMaxWidth);
                         }
 
