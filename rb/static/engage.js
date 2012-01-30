@@ -2226,7 +2226,7 @@ function readrBoard($R){
 
                 // todo: this is a pretty wide hackey net - rethink later.
                 var imgBlackList = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? 'not('+RDR.group.img_blacklist+')':'';
-                $('body').on('mouseenter', 'embed, video, object, iframe, img'+imgBlackList, function(){
+                $('body').delegate( 'embed, video, object, iframe, img'+imgBlackList, 'mouseenter', function(){
                     var $this = $(this);
                     if ( $this.width() >= 180 ) {
                         var hasBeenHashed = $this.hasClass('rdr-hashed'),
@@ -2247,7 +2247,7 @@ function readrBoard($R){
                             RDR.actions.containers.media.onEngage( $this.data('hash') );
                         }
                     }
-                }).on('mouseleave', 'embed, video, object, iframe, img'+imgBlackList, function(){
+                }).delegate('embed, video, object, iframe, img'+imgBlackList, 'mouseleave', function(){
                     var $this = $(this);
                     $this.removeClass('rdr_live_hover');
                     RDR.actions.containers.media.onDisengage( $this.data('hash') );
@@ -3878,8 +3878,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             
                             _commonSetup();
 
-                            $indicator.on('mouseover', function() { $(this).addClass('rdr_live_hover'); RDR.actions.containers.media.onEngage( hash ); })//chain
-                            .on('mouseout', function() { $(this).removeClass('rdr_live_hover'); RDR.actions.containers.media.onDisengage( hash ); });
+                            $indicator.bind('mouseover', function() { $(this).addClass('rdr_live_hover'); RDR.actions.containers.media.onEngage( hash ); })//chain
+                            .bind('mouseout', function() { $(this).removeClass('rdr_live_hover'); RDR.actions.containers.media.onDisengage( hash ); });
 
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
 
@@ -3955,7 +3955,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 scope.makeTagsListForMedia( hash );
                             }
                             
-                            $indicator_details.on('click', 'div.rdr_remember_image a', function() {
+                            $indicator_details.delegate('div.rdr_remember_image a', 'click', function() {
                                 RDR.rindow.updateHeader( $indicator_details, '<div class="rdr_indicator_stats"><img src="'+RDR_staticUrl+'/widget/images/blank.png" class="no-rdr rdr_pin"><span class="rdr_count"></span></div><h1>Save This</h1>' );
                                 RDR.rindow.panelCreate( $indicator_details, 'rdr_bookmark_media' );
                                 
@@ -4416,6 +4416,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                     "kind":summary.kind, 
                                     "hash":summary.hash
                                 };
+                            } else {
+                                // more kludginess.  how did this sometimes get set to "txt" and sometimes "text"
+                                content_node.kind = "text";
                             }
                             var args = {  hash:hash, content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow, selState:selState};
 
@@ -4907,8 +4910,8 @@ function rdr_loadScript(sScriptSrc,callbackfunction) {
 RDR.offline = true;
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
 RDR_scriptPaths.jquery = RDR_offline ?
-    RDR_staticUrl+"global/js/jquery-1.7.1.min.js" :
-    "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
+    RDR_staticUrl+"global/js/jquery-1.6.2.min.js" :
+    "http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js";
 RDR_scriptPaths.jqueryUI = RDR_offline ?
     RDR_staticUrl+"global/js/jquery-ui-1.8.14.custom.min.js" :
     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js";
