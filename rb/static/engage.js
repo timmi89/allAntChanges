@@ -162,10 +162,10 @@ function readrBoard($R){
 
                 $showPanel.removeClass('rdr-visible');
                 $rdr_bodyFirst.animate({marginLeft:4},500, function() {
-                    if (callback) callback();
                     $showPanel.remove();
                     $rdr_body_wrap.width('auto'); 
                     RDR.rindow.updateSizes( $rindow, width, height );
+                    if (callback) callback();
                 });
             },
             mediaRindowShow : function ( $mediaItem, callback ) {
@@ -824,16 +824,14 @@ function readrBoard($R){
                         if ( $tag_table.find('tr:eq(0)').find('td').length == 1 ) {
                             $tag_table.addClass('rdr-one-column');
                             
-                            $tag_table.find('td').bind('mouseenter', function() {
+                            $tag_table.find('td').bind('mouseenter, mousemove', function() {
                                 var $rindow = $(this).closest('div.rdr_window');
-                                thisWidth = $rindow.width();
+                                thisWidth = $rindow.data('initialWidth');
                                 RDR.rindow.updateSizes($rindow, thisWidth+26);
-                                // $rindow.data('initialWidth', thisWidth+16)
                             }).bind('mouseleave', function() {
                                 var $rindow = $(this).closest('div.rdr_window');
                                 thisWidth = $rindow.width();
                                 RDR.rindow.updateSizes($rindow, thisWidth-26);
-                                // $rindow.data('initialWidth', thisWidth-16)
                             });
                         }
 
@@ -4466,7 +4464,9 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                             '<h1>Reactions</h1>';
                         RDR.rindow.updateHeader( $rindow, headerContent );
                         $rindow.removeClass('rdr_viewing_comments').find('div.rdr_indicator_details_body').show();  // image specific.
-                        RDR.rindow.panelHide( $rindow, 'rdr_comments', $rindow.data('initialWidth') );
+                        RDR.rindow.panelHide( $rindow, 'rdr_comments', $rindow.data('initialWidth'), null, function() {
+                            $rindow.find('table.rdr-one-column td').triggerHandler('mousemove');
+                        });
                     });
 
                     for ( var i in comments ) {
