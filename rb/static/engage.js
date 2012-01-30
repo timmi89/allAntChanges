@@ -3926,7 +3926,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             var $indicator_details_innerWrap = $('<div class="rdr rdr_body_wrap" />'),
                                 $detailsHeader = $('<div class="rdr rdr_header"><div class="rdr_loader"/></div>'),
                                 headerText = (summary.counts.tags>0) ? "Reactions": ($indicator_details.width()>=175) ? "What's your reaction?":"React:",
-                                $headerContent = $('<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
+                                $headerContent = $('<div class="rdr_remember_image"><a href="javascript:void(0);"><span>&nbsp;</span></a></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
                                                 '<h1>'+headerText+'</h1>'),
                                 $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />');
 
@@ -3936,6 +3936,29 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $indicator_details.empty().append( $detailsHeader, $indicator_details_innerWrap );
                             $indicator_details_innerWrap.append( $tagsListContainer );
                             
+                            
+                            $indicator_details.on('click', 'div.rdr_remember_image a', function() {
+                                RDR.rindow.updateHeader( $indicator_details, '<div class="rdr_indicator_stats"><img src="http://local.readrboard.com:8080/static/widget/images/blank.png" class="no-rdr rdr_pin"><span class="rdr_count"></span></div><h1>Save This</h1>' );
+                                RDR.rindow.panelCreate( $indicator_details, 'rdr_bookmark_image' );
+
+                                var $noteBox = $('<div><a href="javascript:void(0);">HEY BOOKMARK THIS</a></div>');
+                                var custom_tag = {count:0, id:"custom", body:"Add yours..."},
+                                $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true ),
+                                $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $indicator, 'react' );
+                                
+                                $tagsListContainer = $indicator_details.find('div.rdr_tags_list'),
+                                tagsListMaxWidth = $indicator_details.outerWidth()-10,
+                                $tag_table = RDR.rindow.pillTable.make( $tagsListContainer, tagsListMaxWidth );
+
+                                $noteBox.find('a').click( function() {
+                                    RDR.rindow.updateHeader( $indicator_details, $headerContent );
+                                    RDR.rindow.panelHide( $indicator_details, 'rdr_bookmark_image', $indicator_details.data('initialWidth') );
+                                });
+
+                                RDR.rindow.panelUpdate( $indicator_details, 'rdr_bookmark_image', $noteBox, 'update' );
+
+                                RDR.rindow.panelShow( $indicator_details, 'rdr_bookmark_image', $indicator_details.data('initialWidth') );
+                            });
                             //builds out the $tagsList contents
                             if (summary.kind!=="text"){
                                 $indicator_details.data( 'initialWidth', $indicator_details.width()+2 );
