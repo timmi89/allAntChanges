@@ -902,7 +902,7 @@ div.rdr_indicator_for_media {
 #rdr_sandbox div.rdr_indicator_details_for_media {
     overflow:hidden; /*for the animate out to work nicely*/
     height:0;
-    height:200px !important;
+    /*height:200px !important;*/
     display:block !important;
     margin:0 !important;
     -moz-border-radius:0px 0px 6px 6px !important;
