@@ -820,7 +820,22 @@ function readrBoard($R){
                         $tag_table.find('tr').each( function() {
                             $(this).find('td:last-child:not(:first-child)').addClass('rdr-last-child');
                         });
-                        if ( $tag_table.find('td').length == 1 ) $tag_table.addClass('rdr-one-column');
+                        
+                        if ( $tag_table.find('tr:eq(0)').find('td').length == 1 ) {
+                            $tag_table.addClass('rdr-one-column');
+                            
+                            $tag_table.find('td').bind('mouseenter', function() {
+                                var $rindow = $(this).closest('div.rdr_window');
+                                thisWidth = $rindow.width();
+                                RDR.rindow.updateSizes($rindow, thisWidth+26);
+                                // $rindow.data('initialWidth', thisWidth+16)
+                            }).bind('mouseleave', function() {
+                                var $rindow = $(this).closest('div.rdr_window');
+                                thisWidth = $rindow.width();
+                                RDR.rindow.updateSizes($rindow, thisWidth-26);
+                                // $rindow.data('initialWidth', thisWidth-16)
+                            });
+                        }
 
                         // now that we've created the first row, unset the max-width and set the table width.  
                         // this lets us have the table flow to full width... without having had to loop through
