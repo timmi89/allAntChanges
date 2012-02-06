@@ -161,7 +161,7 @@ function readrBoard($R){
                     rdr_bodyFirst_width = $rdr_bodyFirst.width();
 
                 $showPanel.removeClass('rdr-visible');
-                $rdr_bodyFirst.animate({marginLeft:4},500, function() {
+                $rdr_bodyFirst.animate({marginLeft:0},500, function() {
                     $showPanel.remove();
                     $rdr_body_wrap.width('auto'); 
                     RDR.rindow.updateSizes( $rindow, width, height );
@@ -824,7 +824,7 @@ function readrBoard($R){
                         if ( $tag_table.find('tr:eq(0)').find('td').length == 1 ) {
                             $tag_table.addClass('rdr-one-column');
                             
-                            $tag_table.find('td').bind('mouseenter, mousemove', function() {
+                            $tag_table.find('td.rdr_has_comment').bind('mouseenter, mousemove', function() {
                                 var $rindow = $(this).closest('div.rdr_window');
                                 thisWidth = $rindow.data('initialWidth');
                                 RDR.rindow.updateSizes($rindow, thisWidth+26);
@@ -3358,7 +3358,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 
                                 $span.show(200).css('visibility','visible');
 
-                                $summary_box.find('div.rdr_info').html( $('<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>') );
+                                $summary_box.find('div.rdr_info').html( $('<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>') );
                                 //todo: reconsider this method of liberally updating everything with updateContainerTrackers
                                 $summary_box.find('div.rdr_info').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
                             } else {
@@ -3482,7 +3482,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                         if (args.kind && args.kind == "page") {
                             var $message = "";
                             if ( args.response.data && args.response.data.existing && args.response.data.existing === true ) {
-                                $message = $('<em>You have already given that reaction.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for the pin icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>');
+                                $message = $('<em>You have already given that reaction.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>');
                             } else if ( args.response.message.indexOf("Temporary user interaction limit reached") != -1 ) {
                                 $message = $('<em>To continue adding reactions, please <a href="javascript:void(0);" style="color:#008be4;">Connect with Facebook</a>.</em><br><br><strong>Why:</strong> To encourage <strong style="color:#008be4;">high-quality participation from the community</strong>, <ins>we ask that you log in with Facebook. You\'ll also have a profile where you can revisit your reactions, notes, and comments made using <strong style="color:#008be4;">ReadrBoard</strong>!</ins>');
                                 $message.find('a').click( function() {
