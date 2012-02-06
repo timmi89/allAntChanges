@@ -34,3 +34,5 @@ body.rdr_ie #rdr_sandbox div.rdr ul.rdr_tags li div span {
 body.rdr_ie #rdr_sandbox div#rdr_overlay {
 	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
 }
+
+body.rdr_ie #rdr_sandbox div.rdr div.rdr_commentBox {border:none;}

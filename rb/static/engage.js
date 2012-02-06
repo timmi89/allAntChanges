@@ -4493,6 +4493,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $otherComments.append( $commentSet );
                         }
                     }
+                    $otherComments.find('div.rdr_commentSet:last-child').addClass('rdr_lastchild');
                     RDR.rindow.panelUpdate( $rindow, 'rdr_comments', $otherComments );
 
                 } //end makeOtherComments
