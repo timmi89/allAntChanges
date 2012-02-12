@@ -522,7 +522,7 @@ function readrBoard($R){
                         $last_row.find('td.rdr_gutter').remove();
 
                         // on the last row, add "rdr-last-child" to the last td.
-                        $rows.eq(-1).find('td').eq(-1).addClass('rdr-last-child');
+                        $rows.eq(-1).find('td:last-child:not(:first-child)').addClass('rdr-last-child');
 
                         // add a new row
                         var $new_row = $('<tr><td><div class="rdr_cell_wrapper"/></td></tr>');
@@ -533,9 +533,10 @@ function readrBoard($R){
                         $last_row.append('<td><div class="rdr_cell_wrapper"/></td>');
                     }
 
+                    // [pb] is this being used???
                     if ( useGutter ) {
-                        $tag_table.find('td.rdr_gutter').remove();
                         if ( row_count == 1 ) {
+                            $tag_table.find('td.rdr_gutter').remove();
                             var gutter_width = maxWidth - firstRowWidth;
                             $first_row.append('<td class="rdr_gutter" style="width:'+gutter_width+'px;"/>');
                         }
@@ -550,7 +551,7 @@ function readrBoard($R){
                             setWidth = $first_row.find('td').eq(parentIndex).find('div.rdr_cell_wrapper').width(),
                             firstSetWidth = $first_row.find('td').eq(0).find('div.rdr_cell_wrapper').width();
 
-                        $last_cell_wrapper.data( 'max-width', (setWidth-18)+'px' );
+                        $last_cell_wrapper.data( 'max-width', setWidth-18 );
                     }
 
                     return $last_cell_wrapper;
@@ -576,14 +577,16 @@ function readrBoard($R){
                     var tagCount = ( tag.count ) ? tag.count:"+",
                         hash = $rindow.data('container'),
                         summary = RDR.summaries[hash],
-                        content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"";
+                        content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"",
+                        pill_width = RDR.rindow.pill.getWidth( tag ),
+                        max_width = $container.data('max-width');
 
                     // abstract this when we abstract the same thing in the previous function.
                     var peoples = ( tagCount == 1 ) ? "person":"people",
                         $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id).data('tag_count',tagCount);
 
-                    if ( $container.data('max-width') ) {
-                        $a.find('span.rdr_tag_name').css( 'max-width', $container.data('max-width') );
+                    if ( max_width ) {
+                        $a.find('span.rdr_tag_name').css( 'max-width', max_width+"px" );
                     }
                     if ( content_node_id ) {
                         $a.data('content_node_id',content_node_id).addClass('rdr_content_node_'+content_node_id);
@@ -597,9 +600,15 @@ function readrBoard($R){
                         args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
                         RDR.actions.interactions.ajax( args, 'react', 'create');
                     }).hover(function() {
-                        if ( !$(this).hasClass('rdr_tagged') ) $(this).find('span.rdr_tag_count').text('+');
+                        var $this = $(this);
+                        if ( !$this.hasClass('rdr_tagged') ) $this.find('span.rdr_tag_count').text('+');
+                        // $this.find('span.rdr_tag_name').css('max-width','none');
                     }, function() {
-                        $(this).find('span.rdr_tag_count').text( $(this).data('tag_count') );
+                        var $this = $(this),
+                            rdr_tag_name_max_width = $this.find('div.rdr_cell_wrapper').data('max-width');
+
+                        $this.find('span.rdr_tag_count').text( $this.data('tag_count') );
+                        // if (rdr_tag_name_max_width) $this.find('span.rdr_tag_name').css('max-width', rdr_tag_name_max_width+'px');
                     });
 
                     $container.append( $a, " " );
@@ -623,15 +632,24 @@ function readrBoard($R){
                     }
 
                     // add the comment indicator + comment hover... if we should!
-                    if ( !$.isEmptyObject( comments ) ) {
-                        var $commentHover = $('<span class="rdr_comment_hover"><span class="rdr_icon"></span> '+num_comments+'</span>');
-                        $commentHover.click( function() {
-                            RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:$rindow, content_node:content_node, selState:content_node.selState, summary:summary});
-                        });
+                    if ( !$.isEmptyObject( comments ) || (pill_width > (max_width+18)) ) {
+                        var $commentHover = $('<span class="rdr_comment_hover"/>');
+                        
+                        if ( !$.isEmptyObject( comments ) ) {
+                            $commentHover.append( '<span class="rdr_icon"></span> '+num_comments );
+                            $commentHover.click( function() {
+                                RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:$rindow, content_node:content_node, selState:content_node.selState, summary:summary});
+                            });
+                            
+                            $a.append('<span class="rdr_comment_indicator"></span>');
+                        }
 
-                        $a.append('<span class="rdr_comment_indicator"></span>');
                         $a.after( $commentHover );
-                        $a.closest('td').addClass('rdr_has_comment');
+                        $a.closest('td').addClass('rdr_has_pillHover');
+                        
+                        if (pill_width > (max_width+18)) {
+                            $a.closest('td').addClass('rdr_truncated_pill');   
+                        }
                     }
 
                     return $a;
@@ -836,12 +854,15 @@ function readrBoard($R){
                         if ( $tag_table.find('tr:eq(0)').find('td').length == 1 ) {
                             $tag_table.addClass('rdr-one-column');
                             
-                            $tag_table.find('td.rdr_has_comment').bind('mouseenter, mousemove', function() {
-                                var $rindow = $(this).closest('div.rdr_window');
+                            $tag_table.find('td.rdr_has_pillHover').bind('mouseenter, mousemove', function() {
+                                var $this = $(this),
+                                    $rindow = $this.closest('div.rdr_window');
+                                
                                 thisWidth = $rindow.data('initialWidth');
                                 RDR.rindow.updateSizes($rindow, thisWidth+26);
                             }).bind('mouseleave', function() {
-                                var $rindow = $(this).closest('div.rdr_window');
+                                var $this = $(this),
+                                    $rindow = $this.closest('div.rdr_window');
                                 thisWidth = $rindow.width();
                                 RDR.rindow.updateSizes($rindow, thisWidth-26);
                             });
@@ -893,7 +914,7 @@ function readrBoard($R){
                         /* START modify the rindow size */
                         var rindowWidth = $rindow.find('div.rdr_contentSpace').width(),
                             rindowHeight = RDR.rindow.getHeight($rindow, {
-                            targetHeight: $rindow.find('div.rdr_contentSpace').height()+40, //+ header height + extra padding;
+                            targetHeight: $rindow.find('div.rdr_contentSpace').height()+31, //+ header height + extra padding;
                             animate:false
                         });
 
@@ -1034,15 +1055,15 @@ function readrBoard($R){
                 RDR.actionbar.closeAll();
 
                 $new_rindow.settings = settings;
-                $new_rindow.resizable({
-                    alsoResize: '.jspTrack,.jspContainer',
-                    grid: [100000, null], /*this is my own hack for locking the movement to the y axis, but I think it works well*/
-                    handles:'s',
-                    minHeight:minHeight,
-                    maxHeight:maxHeight,
-                    minWidth:minWidth,
-                    maxWidth:maxWidth
-                });
+                // $new_rindow.resizable({
+                //     alsoResize: '.jspTrack,.jspContainer',
+                //     grid: [100000, null], /*this is my own hack for locking the movement to the y axis, but I think it works well*/
+                //     handles:'s',
+                //     minHeight:minHeight,
+                //     maxHeight:maxHeight,
+                //     minWidth:minWidth,
+                //     maxWidth:maxWidth
+                // });
 
                 var $dragHandle = $new_rindow.find('.ui-resizable-s');
                 $dragHandle.addClass('rdr_window_dragHandle');
@@ -4023,6 +4044,10 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             $tag_table.find('tr').each( function() {
                                 $(this).find('td:last-child:not(:first-child)').addClass('rdr-last-child');
                             });
+
+                            if ( $tag_table.find('tr:eq(0)').find('td').length == 1 ) {
+                                $tag_table.addClass('rdr-one-column');
+                            }
 
                             // now that we've created the first row, unset the max-width and set the table width.  
                             // this lets us have the table flow to full width... without having had to loop through

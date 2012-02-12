@@ -216,7 +216,7 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr.rdr_window div.rdr_header              { cursor:move; padding:5px 0 !important; }
 #rdr_sandbox div.rdr.rdr_indicator_details div.rdr_header   { padding:3px 0; }
 #rdr_sandbox div.rdr div.rdr_footer                         { background:#f0f0f0 !important; position:absolute !important; height:18px; padding:3px 6px 6px; bottom:0; width:95%; display:none;}
-#rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace                { background:#f0f0f0 !important; position:relative !important; margin-bottom:6px; overflow:hidden;}
+#rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace                { background:#f0f0f0 !important; position:relative !important; overflow:hidden;}
 #rdr_sandbox div.rdr div.rdr_body   { max-height:266px; margin:0 4px; float:left !important; display:block !important;}
 #rdr_sandbox div.rdr div.rdr_body div.jspPane   { margin:0 !important; }
 #rdr_sandbox div.rdr div.jspScrollable   { outline:none!important; }
@@ -256,6 +256,7 @@ div.rdr strong {font-weight:bold !important;}
     /*override the jquery ui hadle css*/
     height:6px;
     bottom:0 !important; /*overrides jquery css*/
+    display:none !important;  /* [pb] for now.  we don't use it. 2/11/2012 */
 
     opacity:0.1;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
@@ -411,16 +412,30 @@ table.rdr_tags div.rdr_cell_wrapper {
     z-index:900;
 }
 
-table.rdr_tags td.rdr_has_comment.rdr_hover div.rdr_cell_wrapper,
-table.rdr_tags td.rdr_has_comment:hover div.rdr_cell_wrapper {
+table.rdr_tags td.rdr_has_pillHover.rdr_hover div.rdr_cell_wrapper,
+table.rdr_tags td.rdr_has_pillHover:hover div.rdr_cell_wrapper {
     background:#fff;
     border-color:#aaa #f0f0f0 #aaa #aaa;
+    max-width:130px;
     z-index:10001 !important;
 }
 table.rdr_tags td.rdr_hover div.rdr_cell_wrapper a.rdr_tag,
 table.rdr_tags td:hover div.rdr_cell_wrapper a.rdr_tag { 
     background: -webkit-gradient(linear, center top, center bottom, from(#ffffff), to(#f3f3f3));
     background: -moz-linear-gradient(center top , #ffffff, #f3f3f3) repeat scroll 0 0 transparent;
+}
+table.rdr_tags td.rdr_has_pillHover.rdr_truncated_pill.rdr_hover div.rdr_cell_wrapper a.rdr_tag,
+table.rdr_tags td.rdr_has_pillHover.rdr_truncated_pill:hover div.rdr_cell_wrapper a.rdr_tag  {
+    position: absolute !important;
+}
+table.rdr_tags td.rdr_has_pillHover.rdr_truncated_pill.rdr_hover div.rdr_cell_wrapper a.rdr_tag span.rdr_tag_name,
+table.rdr_tags td.rdr_has_pillHover.rdr_truncated_pill:hover div.rdr_cell_wrapper a.rdr_tag span.rdr_tag_name {
+    max-width:none !important;
+    width:110px;
+}
+table.rdr_tags td.rdr_has_pillHover.rdr_truncated_pill.rdr_hover div.rdr_cell_wrapper span.rdr_comment_hover,
+table.rdr_tags td.rdr_has_pillHover.rdr_truncated_pill:hover div.rdr_cell_wrapper span.rdr_comment_hover {
+    min-width:20px;
 }
 table.rdr_tags div.rdr_cell_wrapper span.rdr_comment_hover {
     height:19px !important;
@@ -444,23 +459,23 @@ table.rdr_tags span.rdr_comment_hover span.rdr_icon {
     width:10px;
     height:10px;
 }
-table.rdr_tags td.rdr_has_comment.rdr-last-child div.rdr_cell_wrapper span.rdr_comment_hover {
+table.rdr_tags td.rdr_has_pillHover.rdr-last-child div.rdr_cell_wrapper span.rdr_comment_hover {
     right:100% !important;
     left:auto !important;
     border-radius:4px 0 0 4px;
     border-left:1px solid #aaa;
     border-right:none;
 }
-table.rdr_tags td.rdr_has_comment.rdr-last-child.rdr_hover div.rdr_cell_wrapper,
-table.rdr_tags td.rdr_has_comment.rdr-last-child:hover div.rdr_cell_wrapper {
+table.rdr_tags td.rdr_has_pillHover.rdr-last-child.rdr_hover div.rdr_cell_wrapper,
+table.rdr_tags td.rdr_has_pillHover.rdr-last-child:hover div.rdr_cell_wrapper {
     border-right:1px solid #aaa;
     border-radius:0 4px 4px 0;
 }
 
-table.rdr_tags td.rdr_has_comment.rdr_hover div.rdr_cell_wrapper span.rdr_comment_hover,
-table.rdr_tags td.rdr_has_comment:hover div.rdr_cell_wrapper span.rdr_comment_hover {
+table.rdr_tags td.rdr_has_pillHover.rdr_hover div.rdr_cell_wrapper span.rdr_comment_hover,
+table.rdr_tags td.rdr_has_pillHover:hover div.rdr_cell_wrapper span.rdr_comment_hover {
     display:block !important;
-    z-index:10002 !important;
+    z-index:1 !important;
 }
 table.rdr_tags td.rdr_hover div.rdr_cell_wrapper span.rdr_comment_indicator,
 table.rdr_tags td:hover div.rdr_cell_wrapper span.rdr_comment_indicator {
