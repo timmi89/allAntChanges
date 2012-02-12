@@ -464,6 +464,10 @@ function readrBoard($R){
                 var $firstPane = $rindow.find('div.rdr_body').eq(0);
                 if ( !$firstPane.hasClass('rdr-visible') ) $firstPane.find('div.jspPane').width($firstPane.width()-8);
 
+                // if ( kind == "img" ) {
+                //     $rindow.find('div.rdr_comments').find('div.jspPane').width( $rindow.find('div.rdr_comments').find('div.jspPane').width()-5 );
+                // }
+
             },
             getHeight: function( $rindow, options ) {
 
@@ -649,6 +653,7 @@ function readrBoard($R){
                         
                         if (pill_width > (max_width+18)) {
                             $a.closest('td').addClass('rdr_truncated_pill');   
+                            $a.find('span.rdr_tag_name').append('<span class="rdr_truncated" />');
                         }
                     }
 

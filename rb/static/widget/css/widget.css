@@ -428,6 +428,16 @@ table.rdr_tags td.rdr_has_pillHover.rdr_truncated_pill.rdr_hover div.rdr_cell_wr
 table.rdr_tags td.rdr_has_pillHover.rdr_truncated_pill:hover div.rdr_cell_wrapper a.rdr_tag  {
     position: absolute !important;
 }
+table.rdr_tags td.rdr_has_pillHover.rdr_truncated_pill div.rdr_cell_wrapper a.rdr_tag span.rdr_truncated {
+    background:url(../images/truncated.png) right center no-repeat;
+    display:block;
+    height:100%;
+    position:absolute;
+    right:-8px;
+    top:0;
+    width:15px;
+    z-index:10000;
+}
 table.rdr_tags td.rdr_has_pillHover.rdr_truncated_pill.rdr_hover div.rdr_cell_wrapper a.rdr_tag span.rdr_tag_name,
 table.rdr_tags td.rdr_has_pillHover.rdr_truncated_pill:hover div.rdr_cell_wrapper a.rdr_tag span.rdr_tag_name {
     max-width:none !important;
@@ -586,7 +596,7 @@ div.rdr.rdr-summary div.rdr_info ins img    { margin:0 !important; padding:0 !im
 #rdr_sandbox div.rdr div.rdr_share_social                   { overflow:auto !important; }
 #rdr_sandbox div.rdr div.rdr_share_social strong            { display:block !important; float:left !important; margin:5px 5px 0 24px !important; }
 #rdr_sandbox div.rdr tr.rdr_wide div.rdr_share_social strong            { margin:3px 5px 0 10px !important; }
-#rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; border-top: 1px solid #d0d0d0; padding-top:5px; max-width:97%; }
+#rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; border-top: 1px solid #d0d0d0; padding-top:5px; max-width:92%; }
 #rdr_sandbox div.rdr div.rdr_nextSteps_container div.rdr_commentBox                     { border:none; }
 #rdr_sandbox div.rdr tr.rdr_wide div.rdr_nextSteps_container div.rdr_commentBox         { clear:both !important; float:none !important;  }
 
