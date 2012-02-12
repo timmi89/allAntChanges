@@ -515,10 +515,9 @@ function readrBoard($R){
                     });
 
                     firstRowWidth += pill_width;
-
                     if ( ( firstRowWidth > maxWidth && row_count == 1 ) 
                         || ( $last_row.find('td:not(.rdr_gutter)').length == $first_row.find('td:not(.rdr_gutter)').length && row_count > 1 ) ) {
-
+                        
                         // if there is still a gutter, remove it.
                         $last_row.find('td.rdr_gutter').remove();
 
@@ -528,6 +527,7 @@ function readrBoard($R){
                         // add a new row
                         var $new_row = $('<tr><td><div class="rdr_cell_wrapper"/></td></tr>');
                         $tag_table.append( $new_row );
+                        if (row_count == 1) row_count++;
                         
                     } else {
                         $last_row.append('<td><div class="rdr_cell_wrapper"/></td>');
@@ -542,7 +542,20 @@ function readrBoard($R){
                     }
                     var $last_cell = $tag_table.find('tr:not(.rdr_nextSteps)').eq(-1).find('td:not(.rdr_gutter)').eq(-1),
                         $last_cell_wrapper = $last_cell.find('div.rdr_cell_wrapper');
+                    
                     $last_cell_wrapper.css('z-index', ( 1000 - $tag_table.find('td').length ) );
+                    
+                    if ( row_count > 1 ) {
+                        var parentIndex = $last_cell_wrapper.parent().index(),
+                            setWidth = $first_row.find('td').eq(parentIndex).find('div.rdr_cell_wrapper').width(),
+                            firstSetWidth = $first_row.find('td').eq(0).find('div.rdr_cell_wrapper').width();
+                        
+                        if ( !$('#wtf').length ) $first_row.find('td').eq(0).find('div.rdr_cell_wrapper').attr('id','wtf');
+                        
+                        console.log( $('#wtf').width(), $first_row.find('td').eq(0).find('div.rdr_cell_wrapper').width(), firstSetWidth, setWidth);
+                        
+                        $last_cell_wrapper.css( 'max-width', setWidth+'px' );
+                    }
 
                     return $last_cell_wrapper;
                 }
@@ -3996,6 +4009,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 });
 
                                 $.each( RDR.group.blessed_tags, function( idx, tag ){
+                                    // don't write an empty blessed tag pill 
                                     if ( !$tag_table.find('a.rdr_tag_'+tag.id).length ) {
                                         var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, tagsListMaxWidth, true ),
                                             $pill = RDR.rindow.pill.make( tag, $pill_container, $indicator, false );

@@ -478,10 +478,12 @@ table.rdr_tags a.rdr_tag.rdr_custom_tag     {
 }
 table.rdr_tags a.rdr_tag span.rdr_tag_name {
     display:inline-block !important;
-    /*float:left !important;*/
+    float:left !important;
     margin-top:4px !important;
     min-width:66px;
     overflow-x:hidden;
+    position:relative;
+    z-index:1;
 }
 table.rdr_tags a.rdr_tag span.rdr_tag_count {
     min-width:5px !important;
@@ -497,6 +499,7 @@ table.rdr_tags span.rdr_comment_indicator {
     top:-4px;
     width:10px;
     height:10px;
+    z-index:3;
 }
 
 div.rdr a.rdr_tag span.rdr_tag_count    { 
@@ -513,6 +516,8 @@ div.rdr a.rdr_tag span.rdr_tag_count    {
     margin-right: -5px !important;
     padding: 4px 5px !important;
     text-align: center !important;
+    position:relative;
+    z-index:2;
 }
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
     margin-left: 4px !important;
