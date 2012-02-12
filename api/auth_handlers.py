@@ -88,7 +88,7 @@ class RBHandler(BaseHandler):
     @status_response
     def read(self, request, admin_req=False):
         data = json.loads(request.GET['json'])
-        group_id = data['group_id']
+        group_id = None#data['group_id']
         user_id = data.get('user_id', None)
 
         #MUST CREATE profile that matches fb_profile object from graph
@@ -97,17 +97,17 @@ class RBHandler(BaseHandler):
         
         faux_fb_session = {'accessToken':'R3dRB0aRdR0X', 'expiresIn':60}
         try:
-            django_user = findDjangoUserByUsername(data['username']);
+            django_user = findDjangoUserByUsername(request.GET['username']);
         except User.DoesNotExist:
             authenticated = False
         
-        authenticated = django_user.check_password(data['password'])
+        authenticated = django_user.check_password(request.GET['password'])
             
         if not authenticated:
             return dict(message="Username or password did not match.", status='fail')
         
-        confirmed = django_user.has_perms('rb.change_socialuser')
-        
+        confirmed = django_user.has_perm('rb.change_socialuser')
+        print django_user.is_active, confirmed
         if not confirmed:
             return dict(message="Please confirm email address", status='fail')
          
