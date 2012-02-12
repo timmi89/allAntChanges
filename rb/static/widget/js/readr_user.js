@@ -87,6 +87,7 @@ RDRAuth = {
 					} else {
 						RDRAuth.setUser(response);
 						RDRAuth.returnUser();
+						RDRAuth.notifyParent({}, "close login panel");
 						if (callback) callback();
 					}
 				},

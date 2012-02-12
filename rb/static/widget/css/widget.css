@@ -116,6 +116,16 @@
 
 #rdr_sandbox div.rdr_actionbar span.rdr_icon_divider         { width:1px; background:#BBB; height:70%; position:absolute; top:15%; right:0; display:none;/*show dynamically*/}
 
+div.rdr_loader {
+    background: url(../images/loader.gif) 0px 0px no-repeat #fff;
+    float: right;
+    height: 20px;
+    margin-right: 5px;
+    width: 20px;
+    visibility:hidden;
+    position:relative;
+    z-index:1;
+}
 /* the tooltip */
 div.rdr.rdr_tooltip {
     -moz-border-radius:5px;
@@ -197,13 +207,16 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr h2  {color:#666 !important; font-size:19px !important; letter-spacing:0.25px !important; padding:1px 9px; font-weight:100 !important;}
 
 #rdr_sandbox div.rdr_header div.rdr_indicator_stats         { position:absolute; margin:3px 0 0 5px; cursor: move !important; }
+#rdr_sandbox div.rdr_header div.rdr_remember_image          { position:absolute; right:3px; z-index:0;}
+#rdr_sandbox div.rdr_header div.rdr_remember_image a        { display: inline-block; padding-top: 3px; }
+#rdr_sandbox div.rdr_header div.rdr_remember_image a span   { background:url("../images/actionbar_icons.png") no-repeat -59px -9px transparent; display:inline-block; height:22px; width:22px; }
 
 #rdr_sandbox div.rdr.rdr_window                             { max-width:600px; }
 #rdr_sandbox div.rdr div.rdr_header                         { background:#fff !important; position:relative !important; height:18px !important; z-index:5; border-bottom:1px solid #ddd !important;}
 #rdr_sandbox div.rdr.rdr_window div.rdr_header              { cursor:move; padding:5px 0 !important; }
 #rdr_sandbox div.rdr.rdr_indicator_details div.rdr_header   { padding:3px 0; }
 #rdr_sandbox div.rdr div.rdr_footer                         { background:#f0f0f0 !important; position:absolute !important; height:18px; padding:3px 6px 6px; bottom:0; width:95%; display:none;}
-#rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace                { background:#f0f0f0 !important; position:relative !important; margin-bottom:6px; overflow:hidden;}
+#rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace                { background:#f0f0f0 !important; position:relative !important; overflow:hidden;}
 #rdr_sandbox div.rdr div.rdr_body   { max-height:266px; margin:0 4px; float:left !important; display:block !important;}
 #rdr_sandbox div.rdr div.rdr_body div.jspPane   { margin:0 !important; }
 #rdr_sandbox div.rdr div.jspScrollable   { outline:none!important; }
@@ -216,6 +229,7 @@ div.rdr strong {font-weight:bold !important;}
 }
 
 #rdr_sandbox div.rdr div.rdr_header h1                   { margin-left:14px !important; }
+#rdr_sandbox div#rdr_loginPanel.rdr div.rdr_header h1                   { margin-left:0px !important; }
 
 #rdr_sandbox div.rdr textarea,
 #rdr_sandbox div.rdr input[type="text"]   { width:92%; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
@@ -242,6 +256,7 @@ div.rdr strong {font-weight:bold !important;}
     /*override the jquery ui hadle css*/
     height:6px;
     bottom:0 !important; /*overrides jquery css*/
+    display:none !important;  /* [pb] for now.  we don't use it. 2/11/2012 */
 
     opacity:0.1;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
@@ -264,7 +279,7 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr div.rdr_comments                       {}
 #rdr_sandbox div.rdr div.rdr_commentSet                     {margin:5px 10px; padding-bottom:5px; overflow:auto; border-bottom:1px solid #ddd;}
 #rdr_sandbox div.rdr div.rdr_commentSet:last-child,
-#rdr_sandbox div.rdr div.rdr_commentSet.rdr_lastchild       {border:none;} /*not the end of the world if this fails in IE, but compensate later*/
+#rdr_sandbox div.rdr div.rdr_commentSet.rdr_lastchild       {border:none !important;} /*not the end of the world if this fails in IE, but compensate later*/
 
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentBy          {font: bold 11px Arial; color:#666; overflow:auto; padding-top:8px;}
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentBy img      {width:24px; height:24px; float:left; margin:-8px 5px 0 0 !important; border:1px solid #d0dee6;}
@@ -380,6 +395,7 @@ table.rdr_tags a.rdr_tag     {
     display:block !important;
     padding: 0px 5px !important;
     margin: 0 3px 5px 2px !important;
+    /*margin: 0 0px 5px 0px !important;*/
 }
 
 table.rdr_tags td a.rdr_tag     {
@@ -396,16 +412,40 @@ table.rdr_tags div.rdr_cell_wrapper {
     z-index:900;
 }
 
-table.rdr_tags td.rdr_has_comment.rdr_hover div.rdr_cell_wrapper,
-table.rdr_tags td.rdr_has_comment:hover div.rdr_cell_wrapper {
+table.rdr_tags td.rdr_has_pillHover.rdr_hover div.rdr_cell_wrapper,
+table.rdr_tags td.rdr_has_pillHover:hover div.rdr_cell_wrapper {
     background:#fff;
     border-color:#aaa #f0f0f0 #aaa #aaa;
+    max-width:130px;
     z-index:10001 !important;
 }
 table.rdr_tags td.rdr_hover div.rdr_cell_wrapper a.rdr_tag,
 table.rdr_tags td:hover div.rdr_cell_wrapper a.rdr_tag { 
     background: -webkit-gradient(linear, center top, center bottom, from(#ffffff), to(#f3f3f3));
     background: -moz-linear-gradient(center top , #ffffff, #f3f3f3) repeat scroll 0 0 transparent;
+}
+table.rdr_tags td.rdr_has_pillHover.rdr_truncated_pill.rdr_hover div.rdr_cell_wrapper a.rdr_tag,
+table.rdr_tags td.rdr_has_pillHover.rdr_truncated_pill:hover div.rdr_cell_wrapper a.rdr_tag  {
+    position: absolute !important;
+}
+table.rdr_tags td.rdr_has_pillHover.rdr_truncated_pill div.rdr_cell_wrapper a.rdr_tag span.rdr_truncated {
+    background:url(../images/truncated.png) right center no-repeat;
+    display:block;
+    height:100%;
+    position:absolute;
+    right:-8px;
+    top:0;
+    width:15px;
+    z-index:10000;
+}
+table.rdr_tags td.rdr_has_pillHover.rdr_truncated_pill.rdr_hover div.rdr_cell_wrapper a.rdr_tag span.rdr_tag_name,
+table.rdr_tags td.rdr_has_pillHover.rdr_truncated_pill:hover div.rdr_cell_wrapper a.rdr_tag span.rdr_tag_name {
+    max-width:none !important;
+    width:110px;
+}
+table.rdr_tags td.rdr_has_pillHover.rdr_truncated_pill.rdr_hover div.rdr_cell_wrapper span.rdr_comment_hover,
+table.rdr_tags td.rdr_has_pillHover.rdr_truncated_pill:hover div.rdr_cell_wrapper span.rdr_comment_hover {
+    min-width:20px;
 }
 table.rdr_tags div.rdr_cell_wrapper span.rdr_comment_hover {
     height:19px !important;
@@ -429,23 +469,23 @@ table.rdr_tags span.rdr_comment_hover span.rdr_icon {
     width:10px;
     height:10px;
 }
-table.rdr_tags td.rdr_has_comment.rdr-last-child div.rdr_cell_wrapper span.rdr_comment_hover {
+table.rdr_tags td.rdr_has_pillHover.rdr-last-child div.rdr_cell_wrapper span.rdr_comment_hover {
     right:100% !important;
     left:auto !important;
     border-radius:4px 0 0 4px;
     border-left:1px solid #aaa;
     border-right:none;
 }
-table.rdr_tags td.rdr_has_comment.rdr-last-child.rdr_hover div.rdr_cell_wrapper,
-table.rdr_tags td.rdr_has_comment.rdr-last-child:hover div.rdr_cell_wrapper {
+table.rdr_tags td.rdr_has_pillHover.rdr-last-child.rdr_hover div.rdr_cell_wrapper,
+table.rdr_tags td.rdr_has_pillHover.rdr-last-child:hover div.rdr_cell_wrapper {
     border-right:1px solid #aaa;
     border-radius:0 4px 4px 0;
 }
 
-table.rdr_tags td.rdr_has_comment.rdr_hover div.rdr_cell_wrapper span.rdr_comment_hover,
-table.rdr_tags td.rdr_has_comment:hover div.rdr_cell_wrapper span.rdr_comment_hover {
+table.rdr_tags td.rdr_has_pillHover.rdr_hover div.rdr_cell_wrapper span.rdr_comment_hover,
+table.rdr_tags td.rdr_has_pillHover:hover div.rdr_cell_wrapper span.rdr_comment_hover {
     display:block !important;
-    z-index:10002 !important;
+    z-index:1 !important;
 }
 table.rdr_tags td.rdr_hover div.rdr_cell_wrapper span.rdr_comment_indicator,
 table.rdr_tags td:hover div.rdr_cell_wrapper span.rdr_comment_indicator {
@@ -464,10 +504,12 @@ table.rdr_tags a.rdr_tag.rdr_custom_tag     {
 }
 table.rdr_tags a.rdr_tag span.rdr_tag_name {
     display:inline-block !important;
-    /*float:left !important;*/
+    float:left !important;
     margin-top:4px !important;
     min-width:66px;
     overflow-x:hidden;
+    position:relative;
+    z-index:1;
 }
 table.rdr_tags a.rdr_tag span.rdr_tag_count {
     min-width:5px !important;
@@ -483,6 +525,7 @@ table.rdr_tags span.rdr_comment_indicator {
     top:-4px;
     width:10px;
     height:10px;
+    z-index:3;
 }
 
 div.rdr a.rdr_tag span.rdr_tag_count    { 
@@ -499,6 +542,8 @@ div.rdr a.rdr_tag span.rdr_tag_count    {
     margin-right: -5px !important;
     padding: 4px 5px !important;
     text-align: center !important;
+    position:relative;
+    z-index:2;
 }
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
     margin-left: 4px !important;
@@ -536,22 +581,22 @@ div.rdr a.rdr_tag.rdr_custom_tag input.rdr_default {
 div.rdr a.rdr_tag.rdr_custom_tag:hover,
 div.rdr a.rdr_tag.rdr_custom_tag.rdr_hover { color:#008be4; background:#fff; box-shadow:0px 0px 4px #aaa; }
 
-div.rdr.rdr-summary div.rdr_note            { clear: both; margin: 5px; padding: 5px; border: 1px solid #008be4; background:#fff; display:none; }
-div.rdr.rdr-summary div.rdr_note em         { font-style:italic !important; }
-div.rdr.rdr-summary div.rdr_note ins        { text-decoration:none !important; }
-div.rdr.rdr-summary div.rdr_note ins img    { margin:0 !important; padding:0 !important; border:0 !important;}
+div.rdr.rdr-summary div.rdr_info            { clear: both; margin: 5px; padding: 5px; border: 1px solid #008be4; background:#fff; display:none; }
+div.rdr.rdr-summary div.rdr_info em         { font-style:italic !important; }
+div.rdr.rdr-summary div.rdr_info ins        { text-decoration:none !important; }
+div.rdr.rdr-summary div.rdr_info ins img    { margin:0 !important; padding:0 !important; border:0 !important;}
 
 
 #rdr_sandbox div.rdr div.rdr_close       {position:absolute;top:8px;right:7px;color:#999;cursor:pointer;font-size:14px;z-index:150;}
 
 #rdr_sandbox div.rdr div.rdr_instruct    {color:#666; margin:5px 0;}
-#rdr_sandbox div.rdr div.rdr_help        {font:italic 11px Arial;color:#767676; position:absolute; top:12px; margin:0 !important; cursor:text; }
+#rdr_sandbox div.rdr div.rdr_info        {font:italic 11px Arial;color:#767676; margin:0 !important; cursor:text; }
 
 #rdr_sandbox div.rdr div.rdr_shareBox                       { background:#edf6ff; border:1px solid #b6d3ee !important; border-radius:6px !important; margin:0 0 0 10px; text-align: center; width: 120px; display:inline-block; padding:3px 0;}
 #rdr_sandbox div.rdr div.rdr_share_social                   { overflow:auto !important; }
 #rdr_sandbox div.rdr div.rdr_share_social strong            { display:block !important; float:left !important; margin:5px 5px 0 24px !important; }
 #rdr_sandbox div.rdr tr.rdr_wide div.rdr_share_social strong            { margin:3px 5px 0 10px !important; }
-#rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; border-top: 1px solid #d0d0d0; padding-top:5px; max-width:97%; }
+#rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both; display:block; border-top: 1px solid #d0d0d0; padding-top:5px; max-width:92%; }
 #rdr_sandbox div.rdr div.rdr_nextSteps_container div.rdr_commentBox                     { border:none; }
 #rdr_sandbox div.rdr tr.rdr_wide div.rdr_nextSteps_container div.rdr_commentBox         { clear:both !important; float:none !important;  }
 
@@ -890,6 +935,7 @@ div.rdr_indicator_for_media {
 #rdr_sandbox div.rdr_indicator_details_for_media {
     overflow:hidden; /*for the animate out to work nicely*/
     height:0;
+    /*height:200px !important;*/
     display:block !important;
     margin:0 !important;
     -moz-border-radius:0px 0px 6px 6px !important;
