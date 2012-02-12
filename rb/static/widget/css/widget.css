@@ -394,10 +394,11 @@ table.rdr_tags a.rdr_tag     {
     display:block !important;
     padding: 0px 5px !important;
     margin: 0 3px 5px 2px !important;
+    /*margin: 0 0px 5px 0px !important;*/
 }
 
 table.rdr_tags td a.rdr_tag     {
-    max-width: 110px !important;
+    max-width: 110px;
 }
 
 table.rdr_tags div.rdr_cell_wrapper {
@@ -909,7 +910,7 @@ div.rdr_indicator_for_media {
 #rdr_sandbox div.rdr_indicator_details_for_media {
     overflow:hidden; /*for the animate out to work nicely*/
     height:0;
-    /*height:200px !important;*/
+    height:200px !important;
     display:block !important;
     margin:0 !important;
     -moz-border-radius:0px 0px 6px 6px !important;

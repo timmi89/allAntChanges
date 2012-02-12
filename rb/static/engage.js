@@ -552,9 +552,10 @@ function readrBoard($R){
                         
                         if ( !$('#wtf').length ) $first_row.find('td').eq(0).find('div.rdr_cell_wrapper').attr('id','wtf');
                         
-                        console.log( $('#wtf').width(), $first_row.find('td').eq(0).find('div.rdr_cell_wrapper').width(), firstSetWidth, setWidth);
-                        
-                        $last_cell_wrapper.css( 'max-width', setWidth+'px' );
+                        if ( $tag_table.closest('#rdr_indicator_details_504e6e16db152b503519a6531dc48f33').length ) {
+                            console.log( $('#wtf').width(), $first_row.find('td').eq(0).find('div.rdr_cell_wrapper').width(), firstSetWidth, setWidth);
+                        }
+                        $last_cell_wrapper.data( 'max-width', (setWidth+0)+'px' );
                     }
 
                     return $last_cell_wrapper;
@@ -586,6 +587,9 @@ function readrBoard($R){
                     var peoples = ( tagCount == 1 ) ? "person":"people",
                         $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id).data('tag_count',tagCount);
 
+                    if ( $container.data('max-width') ) {
+                        $a.find('span.rdr_tag_name').css( 'max-width', $container.data('max-width') );
+                    }
                     if ( content_node_id ) {
                         $a.data('content_node_id',content_node_id).addClass('rdr_content_node_'+content_node_id);
                         content_node.id = content_node_id;
