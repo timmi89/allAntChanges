@@ -511,7 +511,7 @@ function readrBoard($R){
 
                     $.each( $first_row.find('td'), function(idx, cell) {
                         $cell = $(cell);
-                        if ( !$cell.hasClass('rdr_gutter') ) firstRowWidth += $cell.width()+7; // 7px of padding, borders, etc on the sides
+                        if ( !$cell.hasClass('rdr_gutter') ) firstRowWidth += $cell.width()+7; // 7px of margin + borders on the sides
                     });
 
                     firstRowWidth += pill_width;
@@ -549,13 +549,8 @@ function readrBoard($R){
                         var parentIndex = $last_cell_wrapper.parent().index(),
                             setWidth = $first_row.find('td').eq(parentIndex).find('div.rdr_cell_wrapper').width(),
                             firstSetWidth = $first_row.find('td').eq(0).find('div.rdr_cell_wrapper').width();
-                        
-                        if ( !$('#wtf').length ) $first_row.find('td').eq(0).find('div.rdr_cell_wrapper').attr('id','wtf');
-                        
-                        if ( $tag_table.closest('#rdr_indicator_details_504e6e16db152b503519a6531dc48f33').length ) {
-                            console.log( $('#wtf').width(), $first_row.find('td').eq(0).find('div.rdr_cell_wrapper').width(), firstSetWidth, setWidth);
-                        }
-                        $last_cell_wrapper.data( 'max-width', (setWidth+0)+'px' );
+
+                        $last_cell_wrapper.data( 'max-width', (setWidth-18)+'px' );
                     }
 
                     return $last_cell_wrapper;
@@ -855,7 +850,6 @@ function readrBoard($R){
                         // now that we've created the first row, unset the max-width and set the table width.  
                         // this lets us have the table flow to full width... without having had to loop through
                         // table cells in getNextCell to recalculate the width throughout
-                        // [UPDATE] 1/23/2012 -- can probably remove this.
                         var tableTableWidth = ( $tag_table.find('td').length == 1 ) ? ( $rindow.width()-10 ) : 180;
                         $tag_table.css('max-width','none').width(tableTableWidth);
 
@@ -4033,7 +4027,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             // now that we've created the first row, unset the max-width and set the table width.  
                             // this lets us have the table flow to full width... without having had to loop through
                             // table cells in getNextCell to recalculate the width throughout
-                            // [UPDATE] 1/23/2012 -- might be able to remove this.
                             $tag_table.css('max-width','none').width(tagsListMaxWidth);
                         }
 
