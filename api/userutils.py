@@ -3,6 +3,9 @@ from datetime import datetime, timedelta
 import base64
 import uuid
 from django.core.mail import send_mail, mail_admins
+from django.utils.hashcompat import sha_constructor
+from django.contrib.auth.models import Permission
+
 
 def convertUser(temp_user, existing_user):
     existing = Interaction.objects.filter(user=existing_user)
@@ -55,9 +58,10 @@ def createSocialAuth(social_user, django_user, group_id, fb_session):
 
     return social_auth
 
-def createSocialUser(django_user, profile):
-    base = 'http://graph.facebook.com'
-    profile['img_url'] = '%s/%s/picture' % (base, profile['id'])
+def createSocialUser(django_user, profile, base = 'http://graph.facebook.com', provider = 'Facebook'):
+    
+    if provider == 'Facebook':
+        profile['img_url'] = '%s/%s/picture' % (base, profile['id'])
 
     # Make Gender key look like our model
     if 'gender' in profile.keys():
@@ -66,7 +70,7 @@ def createSocialUser(django_user, profile):
     # Create social user object for user
     social = SocialUser.objects.get_or_create(
         user = django_user,
-        provider = 'Facebook',
+        provider = provider, 
         uid = profile['id'],
         defaults = {
             "full_name": profile['name'],
@@ -115,3 +119,62 @@ def createDjangoUser(profile):
     )
 
     return django_user
+
+def findDjangoUserByUsername(username):
+    user = User.objects.get(
+        username=username   
+    )
+    
+    return user
+    
+
+def findDjangoUserById(user_id):
+    user = User.objects.get(
+        id=user_id   
+    )
+    return user
+
+def findSocialUser(django_user):
+    return SocialUser.objects.get(user = django_user)  
+    
+def populateUserProfile(django_user):
+    profile = {}
+    profile['id'] = django_user.id
+    profile['name'] = django_user.username
+    profile['username'] = django_user.username
+    return profile
+
+
+def confirmUser(user_id, confirmation):
+    if confirmation is None:
+        return False
+    print "finding user"
+    django_user = findDjangoUserById(user_id)
+    print "confirming user"
+    if confirmation == generateConfirmation(django_user):
+        # add something to user model for confirmation status
+        django_user.user_permissions.add(Permission.objects.get(codename="change_socialuser"))        
+        print "adding permission"
+        profile = populateUserProfile(django_user)
+        print "creating social user"
+        social_user = createSocialUser(django_user, profile, base=None, provider='Readrboard')
+        print "returning true from confirmUser"
+        return True
+    else:
+        return False
+    
+def generateConfirmation(user):
+    try:
+        token = sha_constructor(
+            unicode(user.email) +
+            unicode("4rc4n37h1ng")
+        ).hexdigest()[::2]
+        print "Created token", token
+        return token
+    except User.DoesNotExist:
+        return None
+
+
+def generateConfirmationEmail(user):
+    message = 'http://local.readrboard.com:8080/api/confirmemail?uid=%s&confirmation=%s Click here to confirm your email.' % (user.id, generateConfirmation(user))
+    return message      

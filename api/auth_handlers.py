@@ -82,3 +82,65 @@ class FBHandler(BaseHandler):
             img_url=social_user.img_url,
             readr_token=readr_token
         )
+        
+        
+class RBHandler(BaseHandler):
+    @status_response
+    def read(self, request, admin_req=False):
+        data = json.loads(request.GET['json'])
+        group_id = data['group_id']
+        user_id = data.get('user_id', None)
+
+        #MUST CREATE profile that matches fb_profile object from graph
+        
+        #MUST CREATE fb_session dict with accessToken and expiresIn fields
+        
+        faux_fb_session = {'accessToken':'R3dRB0aRdR0X', 'expiresIn':60}
+        try:
+            django_user = findDjangoUserByUsername(data['username']);
+        except User.DoesNotExist:
+            authenticated = False
+        
+        authenticated = django_user.check_password(data['password'])
+            
+        if not authenticated:
+            return dict(message="Username or password did not match.", status='fail')
+        
+        confirmed = django_user.has_perms('rb.change_socialuser')
+        
+        if not confirmed:
+            return dict(message="Please confirm email address", status='fail')
+         
+        #social_user = createSocialUser(django_user, profile, base=None, provider='Readrboard')
+        social_user = findSocialUser(django_user)
+        social_auth = createSocialAuth(
+            social_user,
+            django_user,
+            group_id,
+            faux_fb_session
+        )
+
+        # Check to see if user passed in was temporary, if yes, convert
+        # temporary user's interactions to social user interactions
+        if user_id and len(SocialUser.objects.filter(user__id=user_id)) == 0:
+            convertUser(user_id, django_user)
+
+        # Make a token for this guy
+        readr_token = createToken(django_user.id, social_auth.auth_token)
+
+        return dict(
+            user_id=django_user.id,
+            first_name=django_user.first_name,
+            full_name=social_user.full_name,
+            img_url=social_user.img_url,
+            readr_token=readr_token
+        )
+        
+class EmailConfirmation(BaseHandler):
+    @status_response
+    def read(self, request):
+        confirmation = request.GET['confirmation']
+        user_id = request.GET['uid']
+        confirmed = confirmUser(user_id, confirmation)
+        
+

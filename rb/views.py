@@ -9,6 +9,7 @@ from baseconv import base62_decode
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models import Count
 from api.utils import *
+from api.userutils import *
 from authentication.token import checkCookieToken
 from authentication.decorators import requires_admin
 from cards import Card
@@ -242,6 +243,9 @@ def create_rb_user(request):
         form = CreateUserForm(request.POST)
         if form.is_valid():
             user = form.save(True)
+            
+            user.email_user("Readrboard email confirmation", generateConfirmationEmail(user))
+            
             context['requested'] = True
     else:
         form = CreateUserForm()
@@ -252,9 +256,7 @@ def create_rb_user(request):
         context,
         context_instance=RequestContext(request)
     )
-    if user is not None:
-        response.set_cookie("user_id", value = user.id)
-        response.set_cookie("readr_token", value = "")
+    
     return response
 
             

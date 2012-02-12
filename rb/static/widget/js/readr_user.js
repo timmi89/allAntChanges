@@ -320,7 +320,17 @@ RDRAuth = {
 
 
 
-	},		
+	},
+	doRBLogin: function(requesting_action) {
+        // RDRAuth.doRBLogin
+        
+
+    },
+    doRBlogout: function() {
+         RDRAuth.killUser( function() {
+                    window.location.reload(); 
+                }); 
+    },	
 	doFBlogout: function() {
 		FB.getLoginStatus(function(response) {
 			if (response) {
