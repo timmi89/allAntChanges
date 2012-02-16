@@ -175,7 +175,7 @@ function readrBoard($R){
 
                 // check to see if the hover event has already occurred (.data('hover')
                 // and whether either of the two elements that share this same hover event are currently hovered-over
-                if ( $mediaItem.data('hover') && !$rindow.data('hover') ) {
+                if ( $mediaItem.data('hover') && !$rindow.data('hover') && !$rindow.is(':animated') ) {
                     var animHeight = $rindow.find('div.rdr_tags_list').height() + 35;
                     $rindow.data('hover',true).animate( {'height':animHeight+'px' }, 333, 'swing', function() {
                         if (callback) callback();
@@ -192,7 +192,7 @@ function readrBoard($R){
                 var hash = $mediaItem.data('hash'),
                     $rindow = $('#rdr_indicator_details_'+hash);
 
-                if ( !$mediaItem.data('hover') ) {
+                if ( !$mediaItem.data('hover') && !$rindow.is(':animated') ) {
                     $rindow.data('hover', false).animate( {'height':'0px' }, 333, 'swing', function() {
                         if (callback) callback();
                     });
@@ -245,7 +245,7 @@ function readrBoard($R){
                         visiblePane.$elm.css('width', setWidth+'px' );
                     }
 
-                    // sitll goofy, i know.
+                    // still goofy, i know.
                     if ( Math.abs( setWidth - rindow_width ) > 2  ) $rindow.animate({ width: setWidth, height:(visiblePane.height + heightAdjustment) }, { duration:333, queue:false } );
                     else $rindow.animate({ height:(visiblePane.height + heightAdjustment) }, { duration:333, queue:false } );
 
