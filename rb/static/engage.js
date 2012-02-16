@@ -4504,8 +4504,14 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     );
 
                     $otherComments.find('div.rdr_back').click( function() {
-                        var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
+                        if (kind=="text") {
+                            var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
                                             '<h1>Reactions</h1>';
+                        } else {
+                            var headerText = (summary.counts.tags>0) ? summary.counts.tags + "Reactions":"Reactions";
+                                headerContent = '<div class="rdr_remember_image"><a href="javascript:void(0);"><span>&nbsp;</span></a></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
+                                                '<h1>'+headerText+'</h1>';
+                        }
                         RDR.rindow.updateHeader( $rindow, headerContent );
                         $rindow.removeClass('rdr_viewing_comments').find('div.rdr_indicator_details_body').show();  // image specific.
                         RDR.rindow.panelHide( $rindow, 'rdr_comments', $rindow.data('initialWidth'), null, function() {
