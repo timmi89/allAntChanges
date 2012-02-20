@@ -1420,8 +1420,9 @@ function readrBoard($R){
                 return summary;
             },
             getPageProperty : function( prop, hash ) {
+            //RDR.util.getPageProperty
                 if (!prop) prop = "id";
-                if (!hash) return false;                
+                if (!hash) return false;
                 // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
                 var page_id = ( $('.rdr-'+hash).data('page_id') ) ? $('.rdr-'+hash).data('page_id') : $('.rdr-'+hash).closest('.rdr-page-container').data('page_id');
                 
@@ -3098,6 +3099,7 @@ function readrBoard($R){
                     if (sendData.node) delete sendData.node;
                     if (sendData.uiMode) delete sendData.uiMode;
                     if (sendData.sendData) delete sendData.sendData; //this was happening for delete calls.
+                    
 
 // TODO force forcing
 if ( RDR.summaries[sendData.hash] ) sendData.container_kind = RDR.summaries[sendData.hash].kind;
@@ -3108,6 +3110,15 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     // but our URLs expect /tag/, so this rewrite that.
                     var int_type_for_url = (int_type=="react") ? "tag":int_type;
 
+// TODO forcing.  react-to-page code seems to need a hash, and stores it.  IE is not hashing page correctly.
+// and not sure we want that, anyway -- since the page hash would change often.  so, forcing the hash to be "page"
+// for all page-level reactions.  the PAGE_ID is the unique part of the call, anyway.
+// also: this is stupid.
+if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page" ) {
+ sendData.hash = "page";
+ sendData.container_kind = "text";
+ delete sendData.content_node_data.hash; //this was happening for delete calls.
+}
                     //todo: consider making a generic url router
                     var url = RDR_baseUrl+"/api/" +int_type_for_url+ "/"+action_type+"/";
 
@@ -3164,7 +3175,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     args.user_id = RDR.user.user_id;
                     args.readr_token = RDR.user.readr_token;
                     args.group_id = RDR.group.id;
-                    args.page_id = RDR.util.getPageProperty('id', args.hash);
+                    args.page_id = (args.page_id) ? args.page_id : RDR.util.getPageProperty('id', args.hash);
+
                     return args;
 
                 },
@@ -3303,7 +3315,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 "user_id" : RDR.user.user_id,
                                 "readr_token" : RDR.user.readr_token,
                                 "group_id" : RDR.group.id,
-                                "page_id" : RDR.util.getPageProperty('id', hash)
+                                "page_id" : (args.page_id) ? args.page_id : RDR.util.getPageProperty('id', hash)
                             };
                         } else  {
 
@@ -3379,7 +3391,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             //RDR.actions.interactions.react.onSuccess.create:
                             //todo: clean up these args.
                             if (args.kind && args.kind == "page") {
-                                $summary_box = $('.rdr-page-container.rdr-'+args.hash+' div.rdr-summary');
+                                // either we have a hash, or we don't, and so we hope there is only one div.rdr-summary.  IE sucks.
+                                $summary_box = ( args.hash ) ? $('.rdr-page-container.rdr-'+args.hash+' div.rdr-summary') : $('div.rdr-summary');
                                 $span = $summary_box.find('a.rdr_tag_' + args.tag.id + ' span');
 
                                 if ( $span.length === 0 && $summary_box.find('a.rdr_tag_' + args.tag.id).length === 0 ) { // it's a custom tag
@@ -5515,7 +5528,8 @@ function $RFunctions($R){
                             }
                         ).click( function() {
                             var hash = $(this).closest('.rdr-page-container').data('hash');
-                            args = { tag:tag, hash:hash, uiMode:'writeMode', kind:"page"};
+                            var page_id = parseInt( $(this).closest('.rdr-page-container').data('page_id') );
+                            args = { tag:tag, page_id:page_id, uiMode:'writeMode', kind:"page", hash:hash };
                             RDR.actions.interactions.ajax( args, 'react', 'create');
                         });
                     }
