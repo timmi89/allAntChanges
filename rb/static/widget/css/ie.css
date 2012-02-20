@@ -1,8 +1,3 @@
 #rdr_sandbox div.rdr_actionbar { 
 	background:url(../images/actionbar_bg.png) no-repeat left bottom #fff !important;
 }
-
-body div.rdr_indicator_for_text div.rdr_indicator_body,
-body div.rdr_indicator_for_media div.rdr_indicator_body {
-
-}

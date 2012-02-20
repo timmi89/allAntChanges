@@ -1,6 +1,11 @@
 body.rdr_ie div.rdr_indicator_for_media {
 	display:inline !important;
-	top:10px !important;
+	zoom:1;
+	
+	/* not doing anything: */
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+    filter:alpha(opacity=50);
 }
 
 body.rdr_ie #rdr_sandbox .rdr_widget,
@@ -10,29 +15,45 @@ body.rdr_ie #rdr-summary.rdr
 	border:1px solid #aaa !important;
 }
 
-body.rdr_ie #rdr_sandbox div.rdr div.rdr_sntPnl div.rdr_header > div.rdr_headerInnerWrap {
-	padding-bottom:6px !important;
-}
-
 body.rdr_ie #rdr_sandbox div.rdr.rdr_widget h1,
 body.rdr_ie #rdr_sandbox div.rdr.rdr_widget h1 span.rdr_contentNode_text,
 body.rdr_ie #rdr_sandbox div.rdr.rdr_alert_box h1,
 body.rdr_ie #rdr_sandbox div.rdr.rdr_alert_box h1 span,
 body.rdr_ie #rdr_sandbox div.rdr.rdr_widget h2 {font-size:14px !important; font-weight:bold !important;}
 
-body.rdr_ie #rdr_sandbox div.rdr.rdr_widget.rdr_writemode h1 {font-size:12px !important;}
-
-body.rdr_ie #rdr_sandbox div.rdr.rdr_widget div.rdr_header h1,
-body.rdr_ie #rdr_sandbox div.rdr.rdr_widget div.rdr_header h2 { margin-top:-3px !important; }
-
-body.rdr_ie #rdr_sandbox div.rdr ul.rdr_tags li,
-body.rdr_ie #rdr_sandbox div.rdr ul.rdr_tags li div,
-body.rdr_ie #rdr_sandbox div.rdr ul.rdr_tags li div span {
-	overflow:hidden !important;
-}
-
-body.rdr_ie #rdr_sandbox div#rdr_overlay {
-	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
-}
-
 body.rdr_ie #rdr_sandbox div.rdr div.rdr_commentBox {border:none;}
+
+body.rdr_ie a.rdr_tag {
+	zoom:1;
+	background:#fff !important;
+    -ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffe8e8e8')" !important;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffe8e8e8') !important;
+    border:1px solid #ccc !important;
+}
+
+body.rdr_ie div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count {
+	padding-top:5px !important;
+}
+
+body.rdr_ie table.rdr_tags td.rdr_activePill a.rdr_tag span.rdr_tag_count {
+    -ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffadd1f9', endColorstr='#ffddedff')" !important;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffadd1f9', endColorstr='#ffddedff');
+}
+
+
+body.rdr_ie div.rdr a.rdr_tag span.rdr_tag_count    { 
+    -ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9')";
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
+}
+
+body.rdr_ie table.rdr_tags a.rdr_tag span.rdr_tag_count{
+    -ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9')";
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
+}
+
+body.rdr_ie table.rdr_tags a.rdr_tag.rdr_hover span.rdr_tag_count,
+body.rdr_ie table.rdr_tags a.rdr_tag:hover span.rdr_tag_count{
+    -ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9')";
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
+}
+

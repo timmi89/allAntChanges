@@ -3750,18 +3750,19 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     // var textIndicatorOpacity = ( !$.browser.msie ) ? '0.4':'1.0';
                     var textIndicatorOpacity = ( !$.browser.msie ) ? '1.0':'1.0';
 
-                    $indicators.not('.rdr_dont_show').css({
-                        'opacity':'0',
-                        'visibility':'visible'
-                    });
-                    if(boolDontFade){
+                    if ( !$.browser.msie || ( $.browser.msie && parseInt( $.browser.version, 10 ) > 8 ) ) {
                         $indicators.not('.rdr_dont_show').css({
-                            'opacity':textIndicatorOpacity
+                            'opacity':'0',
+                            'visibility':'visible'
                         });
-                        return;
-                    } else {
-                        $indicators.filter('div.rdr_indicator_for_text').not('.rdr_dont_show').stop().fadeTo(800, textIndicatorOpacity);
-                        $indicators.filter('div.rdr_indicator_for_media').not('.rdr_dont_show').stop().fadeTo(800, 0.4);
+                        if(boolDontFade){
+                            $indicators.not('.rdr_dont_show').css({
+                                'opacity':textIndicatorOpacity
+                            });
+                            return;
+                        } else {
+                            $indicators.filter('div.rdr_indicator_for_text').not('.rdr_dont_show').stop().fadeTo(800, textIndicatorOpacity);
+                        }
                     }
 
                     //use stop to ensure animations are smooth: http://api.jquery.com/fadeTo/#dsq-header-avatar-56650596
@@ -4145,11 +4146,12 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             };
 
                             var cornerPadding = 0,
-                                indicatorBodyWidth = $indicator_body.width();
+                                indicatorBodyWidth = $indicator_body.width(),
+                                modIEHeight = ( $R.browser.msie && parseInt( $R.browser.version, 10 ) < 9 ) ? 10:0;
 
                             $indicator.css({
                                 left: 0,
-                                top: $container.height()
+                                top: $container.height()+modIEHeight
                             })//chain
                             .data('top', parseInt( $indicator.css('top') ));
 
