@@ -362,14 +362,13 @@ div.rdr a.rdr_tag     {
     font-weight: normal !important;
     height: 21px !important;
     margin: 0 5px 0 -2px !important;
-    /*overflow-x: hidden !important;*/
     padding: 4px 5px !important;
     position: relative !important;
     text-decoration: none !important;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
     text-transform: none !important;
     white-space: nowrap !important;
-    z-index: 10001;
+    z-index:10001;
 }
 
 table.rdr_tags a.rdr_tag     {
@@ -497,7 +496,7 @@ table.rdr_tags a.rdr_tag span.rdr_tag_name {
     float:left !important;
     margin-top:4px !important;
     min-width:66px;
-    overflow-x:hidden;
+    overflow-x:hidden !important;
     position:relative;
     z-index:1;
 }
@@ -922,7 +921,7 @@ div.rdr_indicator_for_media {
 #rdr_sandbox div.rdr_indicator_details_for_media {
     overflow:hidden; /*for the animate out to work nicely*/
     height:0;
-    /*height:200px !important;*/
+    height:200px !important;
     display:block !important;
     margin:0 !important;
     -moz-border-radius:0px 0px 6px 6px !important;
