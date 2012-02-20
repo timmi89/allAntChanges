@@ -57,20 +57,23 @@ body.rdr_ie table.rdr_tags td.rdr_activePill a.rdr_tag span.rdr_tag_count {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffadd1f9', endColorstr='#ffddedff');
 }
 
-
 body.rdr_ie div.rdr a.rdr_tag span.rdr_tag_count    { 
     -ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9')";
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
 }
 
-body.rdr_ie table.rdr_tags a.rdr_tag span.rdr_tag_count{
-    -ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9')";
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
+
+body.rdr_ie table.rdr_tags a.rdr_tag span.rdr_tag_count{ 
+    -ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff0f0f0', endColorstr='#ffd0d0d0')" !important;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff0f0f0', endColorstr='#ffd0d0d0');
 }
 
 body.rdr_ie table.rdr_tags a.rdr_tag.rdr_hover span.rdr_tag_count,
 body.rdr_ie table.rdr_tags a.rdr_tag:hover span.rdr_tag_count{
-    -ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9')";
+    -ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9')" !important;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
 }
+
+
+
 
