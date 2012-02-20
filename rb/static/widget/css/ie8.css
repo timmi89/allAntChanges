@@ -19,7 +19,9 @@ body.rdr_ie #rdr_sandbox div.rdr.rdr_widget h1,
 body.rdr_ie #rdr_sandbox div.rdr.rdr_widget h1 span.rdr_contentNode_text,
 body.rdr_ie #rdr_sandbox div.rdr.rdr_alert_box h1,
 body.rdr_ie #rdr_sandbox div.rdr.rdr_alert_box h1 span,
-body.rdr_ie #rdr_sandbox div.rdr.rdr_widget h2 {font-size:14px !important; font-weight:bold !important;}
+body.rdr_ie #rdr_sandbox div.rdr.rdr_widget h2 {
+	font-size:14px !important; font-weight:bold !important; white-space:nowrap;
+}
 
 body.rdr_ie #rdr_sandbox div.rdr div.rdr_commentBox {border:none;}
 
