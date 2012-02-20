@@ -1070,18 +1070,18 @@ function readrBoard($R){
                 //     maxWidth:maxWidth
                 // });
 
-                var $dragHandle = $new_rindow.find('.ui-resizable-s');
-                $dragHandle.addClass('rdr_window_dragHandle');
-                $dragHandle.hover(
-                    function(){
-                        $(this).addClass('rdr_hover');
-                    },
-                    function(){
-                        $(this).removeClass('rdr_hover');
-                    }
-                );
+                // var $dragHandle = $new_rindow.find('.ui-resizable-s');
+                // $dragHandle.addClass('rdr_window_dragHandle');
+                // $dragHandle.hover(
+                //     function(){
+                //         $(this).addClass('rdr_hover');
+                //     },
+                //     function(){
+                //         $(this).removeClass('rdr_hover');
+                //     }
+                // );
 
-                $new_rindow.append( $dragHandle );
+                // $new_rindow.append( $dragHandle );
     
                 $new_rindow.bind( "resizestop", function(event, ui) {
                     var $this = $(this);
