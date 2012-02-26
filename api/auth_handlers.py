@@ -88,13 +88,9 @@ class RBHandler(BaseHandler):
     @status_response
     def read(self, request, admin_req=False):
         data = json.loads(request.GET['json'])
-        group_id = None#data['group_id']
+        group_id = None
         user_id = data.get('user_id', None)
 
-        #MUST CREATE profile that matches fb_profile object from graph
-        
-        #MUST CREATE fb_session dict with accessToken and expiresIn fields
-        
         faux_fb_session = {'accessToken':'R3dRB0aRdR0X', 'expiresIn':60}
         try:
             django_user = findDjangoUserByUsername(request.GET['username']);
@@ -110,8 +106,7 @@ class RBHandler(BaseHandler):
         print django_user.is_active, confirmed
         if not confirmed:
             return dict(message="Please confirm email address", status='fail')
-         
-        #social_user = createSocialUser(django_user, profile, base=None, provider='Readrboard')
+        
         social_user = findSocialUser(django_user)
         social_auth = createSocialAuth(
             social_user,

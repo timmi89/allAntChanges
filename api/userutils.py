@@ -1,4 +1,5 @@
 from readrboard.rb.models import *
+from readrboard import settings
 from datetime import datetime, timedelta
 import base64
 import uuid
@@ -111,7 +112,7 @@ def createDjangoUser(profile):
 
     # Print out the result
     django_user = user[0]
-    result = "Created new" if user[1] else "Retreived existing"
+    result = "Created new" if user[1] else "Retrieved existing"
     print result, "django user %s %s (%s)" % (
         django_user.first_name, 
         django_user.last_name, 
@@ -123,8 +124,7 @@ def createDjangoUser(profile):
 def findDjangoUserByUsername(username):
     user = User.objects.get(
         username=username   
-    )
-    
+    )    
     return user
     
 
@@ -148,17 +148,11 @@ def populateUserProfile(django_user):
 def confirmUser(user_id, confirmation):
     if confirmation is None:
         return False
-    print "finding user"
     django_user = findDjangoUserById(user_id)
-    print "confirming user"
     if confirmation == generateConfirmation(django_user):
-        # add something to user model for confirmation status
-        django_user.user_permissions.add(Permission.objects.get(codename="change_socialuser"))        
-        print "adding permission"
+        django_user.user_permissions.add(Permission.objects.get(codename="change_socialuser"))
         profile = populateUserProfile(django_user)
-        print "creating social user"
         social_user = createSocialUser(django_user, profile, base=None, provider='Readrboard')
-        print "returning true from confirmUser"
         return True
     else:
         return False
@@ -169,12 +163,14 @@ def generateConfirmation(user):
             unicode(user.email) +
             unicode("4rc4n37h1ng")
         ).hexdigest()[::2]
-        print "Created token", token
         return token
     except User.DoesNotExist:
         return None
 
 
 def generateConfirmationEmail(user):
-    message = 'http://local.readrboard.com:8080/api/confirmemail?uid=%s&confirmation=%s Click here to confirm your email.' % (user.id, generateConfirmation(user))
+    message = '%s/api/confirmemail?uid=%s&confirmation=%s ' % (settings.BASE_URL, user.id, generateConfirmation(user))
+    message += 'Click here to confirm your email.'
     return message      
+
+
