@@ -173,4 +173,29 @@ def generateConfirmationEmail(user):
     message += 'Click here to confirm your email.'
     return message      
 
+def generatePasswordToken(user):
+    window_datetime = datetime.datetime.now()
+    window_str = window_datetime.strftime("%Y%m%d")
+    try:
+        token = sha_constructor(
+            unicode(user.email) +
+            unicode("0bfu5c473d1n73n7") +
+            unicode(window_str)
+        ).hexdigest()[::2]
+        return token
+    except User.DoesNotExist:
+        return None
 
+def generatePasswordEmail(user):
+    message = '%s/reset_password?uid=%s&token=%s ' % (settings.BASE_URL, user.id, generatePasswordToken(user))
+    message += 'Click here to reset your password.  This link is valid until midnight GMT of the day requested.'
+    return message      
+
+
+def validatePasswordToken(user_id, token):
+    try:
+        user = findDjangoUserById(user_id)
+    except User.DoesNotExist:
+        return False
+    
+    return token == generatePasswordToken(user)

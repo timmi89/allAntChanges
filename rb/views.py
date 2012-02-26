@@ -277,6 +277,35 @@ def confirm_rb_user(request):
     )
     
     return response
+
+
+def reset_rb_password(request):
+    context = {}
+    try:
+        password_token = request.GET['token']
+        user_id = request.GET('uid')
+    except KeyError, ke:
+        context['message']  = 'There was a problem with your reset token.'
+    
+    if request.method == 'POST':
+        form = ChangePasswordForm(request.POST)
+        is_valid_token = validatePasswordToken(user_id, password_token)
+        if is_valid_token and form.is_valid():
+            user = form.save(True)            
+            context['requested'] = True
+    else:
+        form = ChangePasswordForm(initial={'password_token' : password_token})
+        
+    context['form'] = form
+    
+    response =  render_to_response(
+        "password_change.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+    
+    return response
+
             
 @requires_admin
 def settings(request, **kwargs):

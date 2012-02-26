@@ -94,6 +94,8 @@ urlpatterns = patterns('',
   # User creation and registration
   url(r'^user_create/$', 'rb.views.create_rb_user'),
   url(r'^confirmemail/$', 'rb.views.confirm_rb_user'),
+  url(r'^reset_password/$', 'rb.views.reset_rb_password'),
+  
   # For demos
   #url(r'^demo/', settings.STATIC_URL)
 )
