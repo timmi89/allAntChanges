@@ -169,7 +169,7 @@ def generateConfirmation(user):
 
 
 def generateConfirmationEmail(user):
-    message = '%s/api/confirmemail?uid=%s&confirmation=%s ' % (settings.BASE_URL, user.id, generateConfirmation(user))
+    message = '%s/confirmemail?uid=%s&confirmation=%s ' % (settings.BASE_URL, user.id, generateConfirmation(user))
     message += 'Click here to confirm your email.'
     return message      
 

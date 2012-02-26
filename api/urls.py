@@ -11,8 +11,7 @@ CreateContainers = Resource(handler=CreateContainerHandler)
 Tag = Resource(handler=TagHandler)
 Comment = Resource(handler=CommentHandler)
 FBLogin = Resource(handler=FBHandler)
-RBLogin = Resource(handler=RBHandler)
-EmailConfirm = Resource(handler=EmailConfirmation)
+RBLogin = Resource(handler=RBHandler))
 Deauthorize = Resource(handler=Deauthorize)
 TempUser = Resource(handler=TempUserHandler)
 Content = Resource(handler=ContentSummaryHandler)
@@ -45,8 +44,6 @@ urlpatterns = patterns('',
     # Auth
     url(r'^deauthorize/$', Deauthorize),
     url(r'^tempuser/$', TempUser),
-    
-    url(r'^confirmemail/$', EmailConfirm),
 
     # Widget
     url(r'^page/', PageData),

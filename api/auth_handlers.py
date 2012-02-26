@@ -135,12 +135,5 @@ class RBHandler(BaseHandler):
             img_url=social_user.img_url,
             readr_token=readr_token
         )
-        
-class EmailConfirmation(BaseHandler):
-    @status_response
-    def read(self, request):
-        confirmation = request.GET['confirmation']
-        user_id = request.GET['uid']
-        confirmed = confirmUser(user_id, confirmation)
-        
+      
 

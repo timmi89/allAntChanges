@@ -1,5 +1,4 @@
 from exceptions import JSONException
-from _mysql_exceptions import OperationalError
 import json
 
 def status_response(func):
@@ -10,7 +9,7 @@ def status_response(func):
         except JSONException as error:
             res['status'] =  'fail'
             res['message'] = error.msg
-        except OperationalError as error:
+        except Exception as error:
             res['status'] =  'fail'
             res['message'] = error.msg
         else:

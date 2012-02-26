@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block sidebarContent %}
+<div id="sidebar">
+</div>
+{% endblock sidebarContent %}
+
+{% block mainContent %}
+  <h1>ReadrBoard Beta Signup</h1>
+  {% if confirmed %}
+    <h3>Thanks!</h3>
+    <a href = "/">Home</a>
+  {% else %}
+    <h3>Bad things happen to good people.</h3>
+  {% endif %}
+{% endblock mainContent %}
+
+{% block pageJS %}
+{% endblock %}

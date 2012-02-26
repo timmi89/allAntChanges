@@ -259,6 +259,24 @@ def create_rb_user(request):
     
     return response
 
+
+def confirm_rb_user(request):
+    context = {}
+    confirmed = False
+    try:
+        confirmation = request.GET['confirmation']
+        user_id = request.GET['uid']
+        confirmed = confirmUser(user_id, confirmation)
+    except KeyError, ke:
+        context['message']  = 'There was a problem with your confirmation information.'
+    context['confirmed'] = confirmed
+    response =  render_to_response(
+        "user_confirm.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+    
+    return response
             
 @requires_admin
 def settings(request, **kwargs):
