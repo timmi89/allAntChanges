@@ -90,14 +90,19 @@ class RBHandler(BaseHandler):
         data = json.loads(request.GET['json'])
         group_id = None
         user_id = data.get('user_id', None)
-
+        try:
+            username = request.POST['username']
+            password = request.POST['password']
+        except KeyError:
+            return dict(message='Please enter username and password', status='fail')
+        
         faux_fb_session = {'accessToken':'R3dRB0aRdR0X', 'expiresIn':60}
         try:
-            django_user = findDjangoUserByUsername(request.GET['username']);
+            django_user = findDjangoUserByUsername(username);
         except User.DoesNotExist:
             authenticated = False
         
-        authenticated = django_user.check_password(request.GET['password'])
+        authenticated = django_user.check_password(password)
             
         if not authenticated:
             return dict(message="Username or password did not match.", status='fail')
