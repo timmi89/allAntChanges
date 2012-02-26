@@ -175,7 +175,7 @@ function readrBoard($R){
 
                 // check to see if the hover event has already occurred (.data('hover')
                 // and whether either of the two elements that share this same hover event are currently hovered-over
-                if ( $mediaItem.data('hover') && !$rindow.data('hover') ) {
+                if ( $mediaItem.data('hover') && !$rindow.data('hover') && !$rindow.is(':animated') ) {
                     var animHeight = $rindow.find('div.rdr_tags_list').height() + 35;
                     $rindow.data('hover',true).animate( {'height':animHeight+'px' }, 333, 'swing', function() {
                         if (callback) callback();
@@ -192,7 +192,7 @@ function readrBoard($R){
                 var hash = $mediaItem.data('hash'),
                     $rindow = $('#rdr_indicator_details_'+hash);
 
-                if ( !$mediaItem.data('hover') ) {
+                if ( !$mediaItem.data('hover') && !$rindow.is(':animated') ) {
                     $rindow.data('hover', false).animate( {'height':'0px' }, 333, 'swing', function() {
                         if (callback) callback();
                     });
@@ -245,7 +245,7 @@ function readrBoard($R){
                         visiblePane.$elm.css('width', setWidth+'px' );
                     }
 
-                    // sitll goofy, i know.
+                    // still goofy, i know.
                     if ( Math.abs( setWidth - rindow_width ) > 2  ) $rindow.animate({ width: setWidth, height:(visiblePane.height + heightAdjustment) }, { duration:333, queue:false } );
                     else $rindow.animate({ height:(visiblePane.height + heightAdjustment) }, { duration:333, queue:false } );
 
@@ -1070,18 +1070,18 @@ function readrBoard($R){
                 //     maxWidth:maxWidth
                 // });
 
-                var $dragHandle = $new_rindow.find('.ui-resizable-s');
-                $dragHandle.addClass('rdr_window_dragHandle');
-                $dragHandle.hover(
-                    function(){
-                        $(this).addClass('rdr_hover');
-                    },
-                    function(){
-                        $(this).removeClass('rdr_hover');
-                    }
-                );
+                // var $dragHandle = $new_rindow.find('.ui-resizable-s');
+                // $dragHandle.addClass('rdr_window_dragHandle');
+                // $dragHandle.hover(
+                //     function(){
+                //         $(this).addClass('rdr_hover');
+                //     },
+                //     function(){
+                //         $(this).removeClass('rdr_hover');
+                //     }
+                // );
 
-                $new_rindow.append( $dragHandle );
+                // $new_rindow.append( $dragHandle );
     
                 $new_rindow.bind( "resizestop", function(event, ui) {
                     var $this = $(this);
@@ -1420,8 +1420,9 @@ function readrBoard($R){
                 return summary;
             },
             getPageProperty : function( prop, hash ) {
+            //RDR.util.getPageProperty
                 if (!prop) prop = "id";
-                if (!hash) return false;                
+                if (!hash) return false;
                 // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
                 var page_id = ( $('.rdr-'+hash).data('page_id') ) ? $('.rdr-'+hash).data('page_id') : $('.rdr-'+hash).closest('.rdr-page-container').data('page_id');
                 
@@ -3098,6 +3099,7 @@ function readrBoard($R){
                     if (sendData.node) delete sendData.node;
                     if (sendData.uiMode) delete sendData.uiMode;
                     if (sendData.sendData) delete sendData.sendData; //this was happening for delete calls.
+                    
 
 // TODO force forcing
 if ( RDR.summaries[sendData.hash] ) sendData.container_kind = RDR.summaries[sendData.hash].kind;
@@ -3108,6 +3110,15 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     // but our URLs expect /tag/, so this rewrite that.
                     var int_type_for_url = (int_type=="react") ? "tag":int_type;
 
+// TODO forcing.  react-to-page code seems to need a hash, and stores it.  IE is not hashing page correctly.
+// and not sure we want that, anyway -- since the page hash would change often.  so, forcing the hash to be "page"
+// for all page-level reactions.  the PAGE_ID is the unique part of the call, anyway.
+// also: this is stupid.
+if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page" ) {
+ sendData.hash = "page";
+ sendData.container_kind = "text";
+ delete sendData.content_node_data.hash; //this was happening for delete calls.
+}
                     //todo: consider making a generic url router
                     var url = RDR_baseUrl+"/api/" +int_type_for_url+ "/"+action_type+"/";
 
@@ -3164,7 +3175,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     args.user_id = RDR.user.user_id;
                     args.readr_token = RDR.user.readr_token;
                     args.group_id = RDR.group.id;
-                    args.page_id = RDR.util.getPageProperty('id', args.hash);
+                    args.page_id = (args.page_id) ? args.page_id : RDR.util.getPageProperty('id', args.hash);
+
                     return args;
 
                 },
@@ -3303,7 +3315,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                                 "user_id" : RDR.user.user_id,
                                 "readr_token" : RDR.user.readr_token,
                                 "group_id" : RDR.group.id,
-                                "page_id" : RDR.util.getPageProperty('id', hash)
+                                "page_id" : (args.page_id) ? args.page_id : RDR.util.getPageProperty('id', hash)
                             };
                         } else  {
 
@@ -3379,7 +3391,8 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             //RDR.actions.interactions.react.onSuccess.create:
                             //todo: clean up these args.
                             if (args.kind && args.kind == "page") {
-                                $summary_box = $('.rdr-page-container.rdr-'+args.hash+' div.rdr-summary');
+                                // either we have a hash, or we don't, and so we hope there is only one div.rdr-summary.  IE sucks.
+                                $summary_box = ( args.hash ) ? $('.rdr-page-container.rdr-'+args.hash+' div.rdr-summary') : $('div.rdr-summary');
                                 $span = $summary_box.find('a.rdr_tag_' + args.tag.id + ' span');
 
                                 if ( $span.length === 0 && $summary_box.find('a.rdr_tag_' + args.tag.id).length === 0 ) { // it's a custom tag
@@ -3750,18 +3763,19 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     // var textIndicatorOpacity = ( !$.browser.msie ) ? '0.4':'1.0';
                     var textIndicatorOpacity = ( !$.browser.msie ) ? '1.0':'1.0';
 
-                    $indicators.not('.rdr_dont_show').css({
-                        'opacity':'0',
-                        'visibility':'visible'
-                    });
-                    if(boolDontFade){
+                    if ( !$.browser.msie || ( $.browser.msie && parseInt( $.browser.version, 10 ) > 8 ) ) {
                         $indicators.not('.rdr_dont_show').css({
-                            'opacity':textIndicatorOpacity
+                            'opacity':'0',
+                            'visibility':'visible'
                         });
-                        return;
-                    } else {
-                        $indicators.filter('div.rdr_indicator_for_text').not('.rdr_dont_show').stop().fadeTo(800, textIndicatorOpacity);
-                        $indicators.filter('div.rdr_indicator_for_media').not('.rdr_dont_show').stop().fadeTo(800, 0.4);
+                        if(boolDontFade){
+                            $indicators.not('.rdr_dont_show').css({
+                                'opacity':textIndicatorOpacity
+                            });
+                            return;
+                        } else {
+                            $indicators.filter('div.rdr_indicator_for_text').not('.rdr_dont_show').stop().fadeTo(800, textIndicatorOpacity);
+                        }
                     }
 
                     //use stop to ensure animations are smooth: http://api.jquery.com/fadeTo/#dsq-header-avatar-56650596
@@ -4145,11 +4159,12 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                             };
 
                             var cornerPadding = 0,
-                                indicatorBodyWidth = $indicator_body.width();
+                                indicatorBodyWidth = $indicator_body.width(),
+                                modIEHeight = ( $R.browser.msie && parseInt( $R.browser.version, 10 ) < 9 ) ? 10:0;
 
                             $indicator.css({
                                 left: 0,
-                                top: $container.height()
+                                top: $container.height()+modIEHeight
                             })//chain
                             .data('top', parseInt( $indicator.css('top') ));
 
@@ -4504,8 +4519,14 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     );
 
                     $otherComments.find('div.rdr_back').click( function() {
-                        var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
+                        if (kind=="text") {
+                            var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
                                             '<h1>Reactions</h1>';
+                        } else {
+                            var headerText = (summary.counts.tags>0) ? summary.counts.tags + "Reactions":"Reactions";
+                                headerContent = '<div class="rdr_remember_image"><a href="javascript:void(0);"><span>&nbsp;</span></a></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
+                                                '<h1>'+headerText+'</h1>';
+                        }
                         RDR.rindow.updateHeader( $rindow, headerContent );
                         $rindow.removeClass('rdr_viewing_comments').find('div.rdr_indicator_details_body').show();  // image specific.
                         RDR.rindow.panelHide( $rindow, 'rdr_comments', $rindow.data('initialWidth'), null, function() {
@@ -5507,7 +5528,8 @@ function $RFunctions($R){
                             }
                         ).click( function() {
                             var hash = $(this).closest('.rdr-page-container').data('hash');
-                            args = { tag:tag, hash:hash, uiMode:'writeMode', kind:"page"};
+                            var page_id = parseInt( $(this).closest('.rdr-page-container').data('page_id') );
+                            args = { tag:tag, page_id:page_id, uiMode:'writeMode', kind:"page", hash:hash };
                             RDR.actions.interactions.ajax( args, 'react', 'create');
                         });
                     }
