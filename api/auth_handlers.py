@@ -10,6 +10,9 @@ import json
 from piston.utils import Mimer
 Mimer.register(json.loads, ('application/json', 'application/json; charset=UTF-8',))
 
+Mimer.register(json.loads, ('application/x-www-form-urlencoded', 'application/x-www-form-urlencoded; charset=UTF-8',))
+
+
 class TempUserHandler(BaseHandler):
     @status_response
     def read(self, request):
