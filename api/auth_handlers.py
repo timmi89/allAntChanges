@@ -7,6 +7,8 @@ from authentication.token import *
 from utils import *
 from userutils import *
 import json
+from piston.utils import Mimer
+Mimer.register(json.loads, ('application/json', 'application/json; charset=UTF-8',))
 
 class TempUserHandler(BaseHandler):
     @status_response
@@ -87,12 +89,19 @@ class FBHandler(BaseHandler):
 class RBHandler(BaseHandler):
     @status_response
     def read(self, request, admin_req=False):
-        data = json.loads(request.GET['json'])
-        group_id = None
-        user_id = data.get('user_id', None)
+        print "read RBHandler"
+        #data = json.loads(request.GET['json'])
+        #group_id = None
+        #print 'got data'
+        try:
+            user_id = request.POST['user_id']
+        except KeyError:
+            user_id = None
+            
         try:
             username = request.POST['username']
             password = request.POST['password']
+            
         except KeyError:
             return dict(message='Please enter username and password', status='fail')
         
@@ -101,11 +110,15 @@ class RBHandler(BaseHandler):
             django_user = findDjangoUserByUsername(username);
         except User.DoesNotExist:
             authenticated = False
+            if not authenticated:
+                return dict(message="No such user.", status='fail')
+        
         
         authenticated = django_user.check_password(password)
             
         if not authenticated:
             return dict(message="Username or password did not match.", status='fail')
+        
         
         confirmed = django_user.has_perm('rb.change_socialuser')
         print django_user.is_active, confirmed

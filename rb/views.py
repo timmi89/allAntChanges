@@ -291,6 +291,28 @@ def rb_login(request):
     return response
 
 
+def request_password_reset(request):
+    context = {}
+    if request.method == 'POST':
+        username = request.POST['username']
+        (user, password_email) = generatePasswordEmail(username)
+        if user is not None:
+            user.email_user("Readrboard email confirmation", password_email)
+            context['requested'] = True
+        else:
+            context['requested'] = False
+            context['message'] = 'No such user.'
+    else:
+        context['message'] = 'Please enter your username'
+        context['requested'] = False
+        
+    response =  render_to_response(
+        "password_reset.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+    
+    return response   
 
 def reset_rb_password(request):
     context = {}
