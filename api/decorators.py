@@ -12,7 +12,7 @@ def status_response(func):
             res['message'] = error.msg
         except Exception as error:
             res['status'] =  'fail'
-            res['message'] = error.msg
+            #res['message'] = error.msg
         else:
             res['data'] = dataout
         return res

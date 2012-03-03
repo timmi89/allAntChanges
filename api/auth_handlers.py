@@ -92,7 +92,7 @@ class RBHandler(BaseHandler):
     def create(self, request, admin_req=False):
         print "read RBHandler"
         #data = json.loads(request.GET['json'])
-        #group_id = None
+        group_id = None
         #print 'got data'
         try:
             user_id = request.POST['user_id']
@@ -127,13 +127,14 @@ class RBHandler(BaseHandler):
             return dict(message="Please confirm email address", status='fail')
         
         social_user = findSocialUser(django_user)
+        print "SOCIAL: " ,social_user
         social_auth = createSocialAuth(
             social_user,
             django_user,
             group_id,
             faux_fb_session
         )
-
+        
         # Check to see if user passed in was temporary, if yes, convert
         # temporary user's interactions to social user interactions
         if user_id and len(SocialUser.objects.filter(user__id=user_id)) == 0:
