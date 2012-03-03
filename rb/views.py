@@ -279,6 +279,19 @@ def confirm_rb_user(request):
     return response
 
 
+def rb_login(request):
+    context = {}
+    
+    response =  render_to_response(
+        "rb_login.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+    
+    return response
+
+
+
 def reset_rb_password(request):
     context = {}
     try:

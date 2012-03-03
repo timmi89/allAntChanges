@@ -96,6 +96,7 @@ urlpatterns = patterns('',
   url(r'^confirmemail/$', 'rb.views.confirm_rb_user'),
   url(r'^reset_password/$', 'rb.views.reset_rb_password'),
   
+  url(r'^rb_login/$', 'rb.views.rb_login'),
   # For demos
   #url(r'^demo/', settings.STATIC_URL)
 )
