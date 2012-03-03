@@ -46,7 +46,7 @@
 		<a href="javascript:void(0);" onclick="RDRAuth.doFBlogout();">Log out of ReadrBoard</a>
 	</div>
 	<div id="direct_registration">
-	   <form type="post">
+	   <form method="post">
 	   {% csrf_token %}
 		<input type="text" name="username" />
 		<input type="password" name="password" />
