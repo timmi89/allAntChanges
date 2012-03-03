@@ -87,8 +87,9 @@ class FBHandler(BaseHandler):
         
         
 class RBHandler(BaseHandler):
+    allowed_methods = ('POST',)
     @status_response
-    def read(self, request, admin_req=False):
+    def create(self, request, admin_req=False):
         print "read RBHandler"
         #data = json.loads(request.GET['json'])
         #group_id = None
