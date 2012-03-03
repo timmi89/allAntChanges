@@ -186,11 +186,21 @@ def generatePasswordToken(user):
     except User.DoesNotExist:
         return None
 
-def generatePasswordEmail(user):
-    message = '%s/reset_password?uid=%s&token=%s ' % (settings.BASE_URL, user.id, generatePasswordToken(user))
-    message += 'Click here to reset your password.  This link is valid until midnight GMT of the day requested.'
-    return message      
+def generatePasswordEmail(username):
+    try:
+        user = findDjangoUserByUsername(username)
+    
+        message = '%s/reset_password?uid=%s&token=%s ' % (settings.BASE_URL, user.id, generatePasswordToken(user))
+        message += 'Click here to reset your password.  This link is valid until midnight GMT of the day requested.'
+        password_email = getPasswordEmailTemplate() % (settings.BASE_URL, user.id, generatePasswordToken(user))
+        print password_email
+        return (user, password_email)    
+    except User.DoesNotExist:
+        return (None, False)
 
+def getPasswordEmailTemplate():
+    password_email = open(settings.EMAIL_TEMPLATE_DIR + '/password_email.html')
+    return password_email.read()
 
 def validatePasswordToken(user_id, token):
     try:

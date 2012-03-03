@@ -161,6 +161,11 @@ TEMPLATE_DIRS = (
     # so it's compatible on all our local machines
     "readrboard/rb/templates"
 )
+
+EMAIL_TEMPLATE_DIR = "readrboard/rb/email_templates"
+
+
+
 """
 SERIALIZATION_MODULES = {
     'json': 'wadofstuff.django.serializers.json'
