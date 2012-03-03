@@ -8,10 +8,6 @@ from utils import *
 from userutils import *
 import json
 from piston.utils import Mimer
-Mimer.register(json.loads, ('application/json', 'application/json; charset=UTF-8',))
-
-Mimer.register(json.loads, ('application/x-www-form-urlencoded', 'application/x-www-form-urlencoded; charset=UTF-8',))
-
 
 class TempUserHandler(BaseHandler):
     @status_response
@@ -93,6 +89,11 @@ class RBHandler(BaseHandler):
     allowed_methods = ('POST',)
     @status_response
     def create(self, request, admin_req=False):
+        Mimer.register(json.loads, ('application/json', 'application/json; charset=UTF-8',))
+
+        Mimer.register(json.loads, ('application/x-www-form-urlencoded', 'application/x-www-form-urlencoded; charset=UTF-8',))
+
+
         print "read RBHandler"
         #data = json.loads(request.GET['json'])
         group_id = None
