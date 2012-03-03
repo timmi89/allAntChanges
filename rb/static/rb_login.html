@@ -45,8 +45,33 @@
 		<div><strong>Welcome to ReadrBoard!</strong></div>
 		<a href="javascript:void(0);" onclick="RDRAuth.doFBlogout();">Log out of ReadrBoard</a>
 	</div>
+	<div id="direct_registration">
+		<input type="text" name="username" />
+		<input type="password" name="password" />
+		<button onclick="direct_registration();">LOG IN SIR</button>
+	</div>
 	<script type="text/javascript">
 		$('#groupname').text( decodeURI(qs_args.group_name) );
+		
+		function direct_registration() {
+			var sendData = {
+				"username":$('#direct_registration').find('input[name="username"]').val(),
+				"password":$('#direct_registration').find('input[name="password"]').val()
+			};
+			$.ajax({
+				url: "/api/rb/",
+				type: "post",
+				contentType: "application/json",
+				dataType: "json",
+				data: {
+					json: JSON.stringify( sendData )
+				},
+				complete: function(response) {
+					console.dir(response);
+				}
+			});
+		}
+
 		</script>
    </body>
 </html>
