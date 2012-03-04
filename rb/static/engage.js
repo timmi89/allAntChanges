@@ -326,27 +326,7 @@ function readrBoard($R){
                             } else if ( args.scenario == "reactionExists" ) {
                                 $nextSteps.append( '<div class="rdr_reactionMessage">You have already given that reaction.</div>' );
                             }
-                            $nextSteps.append( '<hr class="rdr_first"/>' );
-                            
 
-                            $nextSteps.append( '<div class="rdr_share_social"><strong>Share It:</strong></div>' );
-                            $shareLinks = $('<ul class="shareLinks"></ul>'),
-                            // sns sharing links
-                            socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
-
-                            // embed icons/links for diff SNS
-                            var shareHash = hash;
-                            $.each(socialNetworks, function(idx, val){
-                                $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
-                                $shareLinks.find('li:last').click( function() {
-                                    RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
-                                    RDR.actions.share_getLink({ hash:args.hash, kind:args.kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node }); // ugh, lots of weird data nesting
-                                    return false;
-                                });
-                            });
-                            $nextSteps.find('div.rdr_share_social').append( $shareLinks );
-
-                            $nextSteps.append( '<hr class="rdr_second"/>' );
                             $nextSteps.append( '<div class="rdr_commentBox"><input type="text" class="rdr_add_comment" value="Add a comment"/></div>' );
 
                             // comment functionality
@@ -401,6 +381,25 @@ function readrBoard($R){
                                 // add back in.  animate in?
                                 //$commentInput.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
                             });
+                            // $nextSteps.append( '<hr class="rdr_second"/>' );
+                            $nextSteps.append( '<hr class="rdr_first"/>' );
+                            $nextSteps.append( '<div class="rdr_share_social"><strong>Share It:</strong></div>' );
+                            $shareLinks = $('<ul class="shareLinks"></ul>'),
+                            // sns sharing links
+                            socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
+
+                            // embed icons/links for diff SNS
+                            var shareHash = hash;
+                            $.each(socialNetworks, function(idx, val){
+                                $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                                $shareLinks.find('li:last').click( function() {
+                                    RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
+                                    RDR.actions.share_getLink({ hash:args.hash, kind:args.kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node }); // ugh, lots of weird data nesting
+                                    return false;
+                                });
+                            });
+                            $nextSteps.find('div.rdr_share_social').append( $shareLinks );
+
                         } else if ( args.scenario == "bookmarkSuccess" ) {
                             $nextSteps.append( '<div>You tagged this note: <strong>'+tag.body+'</strong>. <a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></div>' );
                             $nextSteps.find('a.rdr_undo_link').bind('click.rdr', {args:args}, function(event){
@@ -3989,7 +3988,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         if ( !$indicator_details.find('div.rdr_body_wrap').length ) {
                             var $indicator_details_innerWrap = $('<div class="rdr rdr_body_wrap" />'),
                                 $detailsHeader = $('<div class="rdr rdr_header"><div class="rdr_loader"/></div>'),
-                                headerText = (summary.counts.tags>0) ? "Reactions": ($indicator_details.width()>=175) ? "What's your reaction?":"React:",
+                                modForIE = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 20:0,
+                                headerText = (summary.counts.tags>0) ? "Reactions": ($indicator_details.width()>=(175+modForIE)) ? "What's your reaction?":"React:",
                                 $headerContent = $('<div class="rdr_remember_image"><a href="javascript:void(0);"><span>&nbsp;</span></a></div><div class="rdr_indicator_stats"><a href="'+RDR_baseUrl+'/" target="_blank"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"></a><span class="rdr_count"></span></div>' +
                                                 '<h1>'+headerText+'</h1>'),
                                 $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />');
