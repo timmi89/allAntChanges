@@ -5063,6 +5063,7 @@ function $RFunctions($R){
         plugin_jquery_mousewheelIntent($R);
         plugin_jquery_scrollStartAndStop($R);
         plugin_jquery_jScrollPane($R);
+        plugin_jquery_hoverIntent($R);
         plugin_jquery_rdrWidgetSummary($R);
         plugin_jquery_selectionographer($R, rangy);
 
@@ -5364,7 +5365,8 @@ function $RFunctions($R){
                     $('.'+widgetClass).remove();
 
                     var $summary_widget_parent = $(page.parentContainer),
-                        $summary_widget = $('<div class="rdr rdr-summary" />').addClass(widgetClass);
+                        $summary_widget = $('<div class="rdr rdr-summary"><table cellpadding="0" cellspacing="0" border="0"><tr/></table><div class="rdr-see-more"></div></div>').addClass(widgetClass),
+                        $summary_row = $summary_widget.find('tr');
 
                     //page.jqFunc would be something like 'append' or 'after',
                     //so this would read $summary_widget_parent.append($summary_widget);
@@ -5375,11 +5377,61 @@ function $RFunctions($R){
                         if ( page.summary[i].kind == "tag" ) total_interactions = page.summary[i].count;
                     }
 
+                    var $RB = $('<div class="rdr-this-is-readrboard"></div>');
+                    $RB.append('<a href="http://www.readrboard.com/group/'+RDR.group.short_name+'" target="_blank"><img src="'+RDR_staticUrl+'widget/images/readrboard_logo.png" class="no-rdr" /></a>');
+
+                    var $a_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"This is <strong>ReadrBoard</strong>. ReadrBoard lets you easily react to anything on this page!<br><br>Click a button to the right to react to this whole page.<br><br>Or, select any text, image, or video and react to just that part of the page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
+                        $a_tooltip.attr( 'id', 'rdr-tooltip-summary-what-is-it' );
+                        $('#rdr_sandbox').append( $a_tooltip );
+
+                    $RB.hover(
+                    function() {
+                        var $a = $(this),
+                            $tooltip = $('#rdr-tooltip-summary-what-is-it'),
+                            aOffsets = $a.offset();
+
+                        var heightAdjustment = ( navigator.userAgent.indexOf('Macintosh') == -1 ) ? -15:10;
+                        var tooltip_top = ( aOffsets.top - 160 + heightAdjustment ),
+                            tooltip_left = ( aOffsets.left - 100 );
+
+                        $tooltip.css('top', tooltip_top + "px" );
+                        $tooltip.css('left', tooltip_left + "px" );
+                        $tooltip.show();
+                    },
+                    function() {
+                        $('#rdr-tooltip-summary-what-is-it').hide();
+                    });
+
                     var $react = $('<div class="rdr-sum-headline"></div>');
                     if ( RDR.group && RDR.group.call_to_action && RDR.group.call_to_action != "" ) {
                         $react.append('<div class="rdr-call-to-action">'+RDR.group.call_to_action+'</div>');
                     }
-                    $summary_widget.append( $react );
+                    
+                    $summary_widget.hoverIntent(
+                        function() {
+                            var $this = $(this),
+                                $visibleReactions = $this.find('div.rdr-sum-headline'),
+                                $pillContainer = $visibleReactions.find('div');
+                            
+                            // if ( $pillContainer.height() > 64 && !$visibleReactions.is(':animated') ) {
+                            if ( $this.hasClass('rdr-too-many-reactions') && !$visibleReactions.is(':animated') ) {
+                                $visibleReactions.height(64).css('max-height','none').animate({ height:$pillContainer.height() });
+                            }
+                        },
+                        function() {
+                            var $this = $(this),
+                                $visibleReactions = $this.find('div.rdr-sum-headline'),
+                                $pillContainer = $visibleReactions.find('div');
+                            
+                            // if ( $visibleReactions.height() > 64 && !$visibleReactions.is(':animated') ) {
+                            if ( $this.hasClass('rdr-too-many-reactions') && !$visibleReactions.is(':animated') ) {
+                                $visibleReactions.animate({ height:64 });
+                            }
+                        }
+                    );
+
+                    $summary_row.append( $('<td valign="top"/>').append($RB), $('<td/>').append($react) );
+                    // $summary_widget.append( $react );
 
                     // summary widget: specific tag totals
                     if ( page.toptags.length > 0 ){
@@ -5504,7 +5556,7 @@ function $RFunctions($R){
                         $react.append( $a, " " );
                         $span.css('width', $span.width() + 'px' );
 
-                        $a.hover(
+                        $a.hoverIntent(
                             function() {
                                 var $a = $(this),
                                     $tooltip = $('#rdr-tooltip-summary-tag-' + $a.data('tag_id') ),
@@ -6474,7 +6526,23 @@ function $RFunctions($R){
         }
         //end function plugin_jquery_jScrollPane
 
-                
+        //function plugin_jquery_hoverIntent
+        function plugin_jquery_hoverIntent($){
+            /**
+            * hoverIntent r6 // 2011.02.26 // jQuery 1.5.1+
+            * <http://cherne.net/brian/resources/jquery.hoverIntent.html>
+            * 
+            * @param  f  onMouseOver function || An object with configuration options
+            * @param  g  onMouseOut function  || Nothing (use configuration options object)
+            * @author    Brian Cherne brian(at)cherne(dot)net
+            */
+            // (function($){
+            $.fn.hoverIntent=function(f,g){var cfg={sensitivity:7,interval:100,timeout:0};cfg=$.extend(cfg,g?{over:f,out:g}:f);var cX,cY,pX,pY;var track=function(ev){cX=ev.pageX;cY=ev.pageY};var compare=function(ev,ob){ob.hoverIntent_t=clearTimeout(ob.hoverIntent_t);if((Math.abs(pX-cX)+Math.abs(pY-cY))<cfg.sensitivity){$(ob).unbind("mousemove",track);ob.hoverIntent_s=1;return cfg.over.apply(ob,[ev])}else{pX=cX;pY=cY;ob.hoverIntent_t=setTimeout(function(){compare(ev,ob)},cfg.interval)}};var delay=function(ev,ob){ob.hoverIntent_t=clearTimeout(ob.hoverIntent_t);ob.hoverIntent_s=0;return cfg.out.apply(ob,[ev])};var handleHover=function(e){var ev=$.extend({},e);var ob=this;if(ob.hoverIntent_t){ob.hoverIntent_t=clearTimeout(ob.hoverIntent_t)}if(e.type=="mouseenter"){pX=ev.pageX;pY=ev.pageY;$(ob).bind("mousemove",track);if(ob.hoverIntent_s!=1){ob.hoverIntent_t=setTimeout(function(){compare(ev,ob)},cfg.interval)}}else{$(ob).unbind("mousemove",track);if(ob.hoverIntent_s==1){ob.hoverIntent_t=setTimeout(function(){delay(ev,ob)},cfg.timeout)}}};return this.bind('mouseenter',handleHover).bind('mouseleave',handleHover)}
+            // }
+            // )(jQuery);
+        }
+        //end function plugin_jquery_hoverIntent        
+        
         function plugin_rangy(){
 
             /***************/
