@@ -4416,7 +4416,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     commentRindowHeight = (summary.kind=="img") ? 180:296;
 
                 RDR.rindow.panelShow( $rindow, 'rdr_comments', commentRindowWidth, null, function() {
-                    $().selog('hilite', summary.content_nodes[ content_node.id ].selState, 'on');
+                    if ( kind == "text" ) $().selog('hilite', summary.content_nodes[ content_node.id ].selState, 'on');
                 } );
                 RDR.rindow.updateSizes( $rindow, commentRindowWidth, commentRindowHeight, summary.kind );
 
