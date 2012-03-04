@@ -143,7 +143,7 @@ div.rdr.rdr_tooltip {
     left:-55px; /*0.5 tooltip width*/
     top:-36px;
     width:100px;
-    z-index:10000;
+    z-index:10002;
 }
 div.rdr_actionbar_for_media div.rdr_tooltip,
 div.rdr_tooltip.rdr_tooltip_sideways {
@@ -259,6 +259,7 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr div.rdr_commentSet.rdr_lastchild       {border:none !important;} /*not the end of the world if this fails in IE, but compensate later*/
 
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentBy          {font: bold 11px Arial; color:#666; overflow:auto; padding-top:8px;}
+#rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentBy a        {font-style:italic; }
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentBy img      {width:24px; height:24px; float:left; margin:-8px 5px 0 0 !important; border:1px solid #d0dee6;}
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_comment            {font: italic 14px Georgia; color:#999;padding:3px; overflow-x:hidden;}
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentReply       {font-weight:normal; margin-right:5px; text-transform:uppercase; font-size:9px; float:right;}
