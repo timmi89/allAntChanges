@@ -620,6 +620,8 @@ div.rdr.rdr-summary {
     /*max-height: 67px;*/
     overflow: hidden !important;
     clear:both !important;
+    text-indent:0 !important;
+    position:relative;
 }
 
 /*blunt attack for now*/
@@ -628,14 +630,51 @@ div.rdr.rdr-summary * {
     font-family:Arial, sans-serif !important;
     line-height:13px !important;
 }
+div.rdr.rdr-summary div.rdr-see-more {
+    background: url("../images/readr_icons.png") repeat scroll -225px 0px transparent;
+    height:16px;
+    width:25px;
+    position:absolute;
+    left:6px;
+    bottom:10px;
+    display:none;
+}
+div.rdr.rdr-summary.rdr-too-many-reactions div.rdr-see-more {
+    display:block;
+}
+
+div.rdr.rdr-summary table { border:0 !important;padding:0 !important; margin:5px 0px 2px 5px !important; }
+div.rdr.rdr-summary table td { border:0 !important;padding:0 !important; margin:0 !important; text-align:left !important; vertical-align: top !important;}
+div.rdr.rdr-summary.rdr-combo-box table td div.rdr-fb-twitter { width:195px !important; padding: 6px 0 0 4px !important;}
+div.rdr.rdr-summary.rdr-combo-box table td div.rdr-fb-like,
+div.rdr.rdr-summary.rdr-combo-box table td div.rdr-gplus,
+div.rdr.rdr-summary.rdr-combo-box table td div.rdr-twitter { margin: 1px 0 0 4px !important; padding:0 !important; float:left !important;}
+
+div.rdr.rdr-summary div.rdr-this-is-readrboard {
+    text-align:center !important;
+    padding:8px 2px 0 !important;
+}
+div.rdr.rdr-summary div.rdr-this-is-readrboard img {
+    margin:0 !important;
+}
+div.rdr.rdr-summary div.rdr-this-is-readrboard div {
+    margin-bottom:-8px !important;
+    margin-top:3px !important;
+    cursor:help !important;
+}
 
 div.rdr.rdr-summary div.rdr-sum-headline {
-    background:url(../images/readr_icons.png) -160px 8px no-repeat !important;
-    padding:0px 5px 0px 45px !important;
+    padding:0px 5px !important;
     display:inline-block !important;
     color:#787878 !important;
     line-height: 32px !important;
+    max-height:64px;
+    overflow:hidden !important;
 }
+div.rdr.rdr-summary div.rdr-sum-headline div {
+    line-height: 32px !important;
+}
+
 div.rdr.rdr-summary div.rdr-sum-headline div.rdr-call-to-action {
     display: block !important;
     margin: 8px 0pt 0px !important;

@@ -5356,7 +5356,7 @@ function $RFunctions($R){
 
             //helper function for ajax above
             function _makeSummaryWidget(settings){
-
+                    
                     var page = settings;
 
                     var widgetClass = 'rdr-summary-key-'+page.key;
@@ -5367,6 +5367,8 @@ function $RFunctions($R){
                     var $summary_widget_parent = $(page.parentContainer),
                         $summary_widget = $('<div class="rdr rdr-summary"><table cellpadding="0" cellspacing="0" border="0"><tr/></table><div class="rdr-see-more"></div></div>').addClass(widgetClass),
                         $summary_row = $summary_widget.find('tr');
+
+                    $summary_widget.append('<div class="rdr-see-more"></div>');
 
                     //page.jqFunc would be something like 'append' or 'after',
                     //so this would read $summary_widget_parent.append($summary_widget);
@@ -5402,7 +5404,7 @@ function $RFunctions($R){
                         $('#rdr-tooltip-summary-what-is-it').hide();
                     });
 
-                    var $react = $('<div class="rdr-sum-headline"></div>');
+                    var $react = $('<div class="rdr-sum-headline"><div /></div>');
                     if ( RDR.group && RDR.group.call_to_action && RDR.group.call_to_action != "" ) {
                         $react.append('<div class="rdr-call-to-action">'+RDR.group.call_to_action+'</div>');
                     }
@@ -5431,20 +5433,17 @@ function $RFunctions($R){
                     );
 
                     $summary_row.append( $('<td valign="top"/>').append($RB), $('<td/>').append($react) );
-                    // $summary_widget.append( $react );
 
                     // summary widget: specific tag totals
                     if ( page.toptags.length > 0 ){
                         // var $toptags = $('<div class="rdr-top-tags" />');
                         // $summary_widget.append( $toptags );
 
-                        for ( var i = 0, j=4; i < j; i++ ) {
+                        for ( var i = 0, j=page.toptags.length; i < j; i++ ) {
                             var this_tag = page.toptags[i];
-
+                            
                             if ( this_tag ) {
                                 writeTag( this_tag );
-
-                                // $toptags.append(' <span>'+ this_tag.body +' <em>('+this_tag.tag_count+')</em></span>&nbsp;&nbsp;&nbsp;');
                             }
                         }
 
@@ -5496,7 +5495,8 @@ function $RFunctions($R){
                     $a_custom_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-custom' );
                     $('#rdr_sandbox').append( $a_custom_tooltip );
                     
-                    $react.append( $a_custom, " " );
+                    // $react.append( $a_custom, " " );
+                    $react.find('div').append( $a_custom, " " );
 
                     $a_custom.hover(
                         function() {
@@ -5526,20 +5526,22 @@ function $RFunctions($R){
                                 var $userLink = $('<a href="'+RDR_baseUrl+'/user/'+this_user.user+'" class="no-rdr rdr-top-user" target="_blank" />'),
                                     userPic = '<img src="'+this_user.img_url+'" class="no-rdr" alt="'+this_user.full_name+'" title="'+this_user.full_name+'" />';
                                 // $topusers.append( $userLink.append(userPic) );
-                                $react.append( $userLink.append(userPic) );
+                                $react.find('div').append( $userLink.append(userPic) );
                             }
                         }
 
-                        //hacked in html('') to clear it so that i can re-use this later to update the thingy.  todo: make it pretty.
-                        // $react.append( $topusers );
-
+                    }
+console.log($react.find('div').height());
+console.log($react.height());
+                    if ( $react.find('div').height() > 64 ) {
+                        $summary_widget.addClass('rdr-too-many-reactions');
                     }
 
                     $summary_widget.append( $('<div class="rdr_info" />') );
 
                 function writeTag(tag) {
                     var tagCount, $span;
-                    if ( $react.find('a.rdr_tag_'+tag.id).length === 0 && $react.find('a.rdr_tag').length < 4 ) {
+                    if ( $react.find('a.rdr_tag_'+tag.id).length === 0 ) { // removing tag count check for now:  && $react.find('a.rdr_tag').length < 4 
                         tagCount = ( tag.tag_count ) ? tag.tag_count:"+";
                         
                         var peoples = ( tagCount == 1 ) ? "person":"people";
@@ -5553,7 +5555,8 @@ function $RFunctions($R){
                         $a_tooltip.attr( 'id', 'rdr-tooltip-summary-tag-'+tag.id );
                         $('#rdr_sandbox').append( $a_tooltip );
                         
-                        $react.append( $a, " " );
+                        // $react.append( $a, " " );
+                        $react.find('div').append( $a, " " );
                         $span.css('width', $span.width() + 'px' );
 
                         $a.hoverIntent(
