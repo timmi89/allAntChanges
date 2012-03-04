@@ -892,7 +892,6 @@ function readrBoard($R){
                                 }
                             });
 
-                            // $rindow.find('a.rdr_tag').each( function() {
                             $rindow.find('div.rdr_cell_wrapper').each( function() {
                                 $(this).hover(
                                     function() {
@@ -4401,9 +4400,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     summary = RDR.summaries[hash],
                     kind = summary.kind; // text, img, media
 
-                if ( args.selState ) var selState = args.selState;
-                var view_all_state = (args.view_all_state) ? args.view_all_state:"show";
-
+                if ( args.selState ) {
+                    var selState = args.selState;
+                }
                 var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
                                     '<h1>' + tag.body + '</h1>';
 
@@ -4416,7 +4415,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 var commentRindowWidth = (summary.kind=="img") ? $rindow.data('initialWidth'):300,
                     commentRindowHeight = (summary.kind=="img") ? 180:296;
 
-                RDR.rindow.panelShow( $rindow, 'rdr_comments', commentRindowWidth );
+                RDR.rindow.panelShow( $rindow, 'rdr_comments', commentRindowWidth, null, function() {
+                    $().selog('hilite', summary.content_nodes[ content_node.id ].selState, 'on');
+                } );
                 RDR.rindow.updateSizes( $rindow, commentRindowWidth, commentRindowHeight, summary.kind );
 
                 //helper functions 
