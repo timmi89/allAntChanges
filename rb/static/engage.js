@@ -276,6 +276,7 @@ function readrBoard($R){
                     var hash = args.hash,
                         $rindow = args.rindow,
                         // $rindow = $('div#rdr_indicator_details_'+hash),
+                        kind = args.kind,
                         tag = args.tag,
                         $pill = ( $rindow.find('a.rdr_tag_'+tag.id).length ) ? $rindow.find('a.rdr_tag_'+tag.id):$rindow.find('a.rdr_custom_tag.rdr_tagged').eq(-1), // get the second-to-last custom tag, since we added the new, empty custom tag before getting here
                         content_node = (args.sendData)?args.sendData.content_node_data:{};
@@ -365,6 +366,7 @@ function readrBoard($R){
                                     if ( commentText != "Add a comment" ) {
                                         //temp translations..
                                         //quick fix
+                                        var summary = RDR.summaries[hash];
                                         content_node.kind = summary.kind;
                                         var newArgs = {  hash:hash, page_id:page_id,content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow}; // , selState:selState
                                         //leave parent_id undefined for now - backend will find it.
@@ -953,7 +955,7 @@ function readrBoard($R){
                 if (!summary) {
                     // setup the summary
                     // FORCING SUMMARY CREATION
-                    summary = RDR.util.makeEmptySummary(hash);
+                    var summary = RDR.util.makeEmptySummary(hash);
                     RDR.actions.containers.setup(summary);
                 }
                 // summary = RDR.summaries[hash];
@@ -2430,7 +2432,7 @@ function readrBoard($R){
                     // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
                     $this.addClass( 'rdr-' + hash );//.addClass('rdr-hashed');
 
-                    summary = RDR.actions.summaries.init(hash);
+                    var summary = RDR.actions.summaries.init(hash);
                     RDR.actions.summaries.save(summary);
 
                     
@@ -2486,7 +2488,8 @@ function readrBoard($R){
                             json: $.toJSON(sendData)
                         },
                         success: function(response) {
-                            var summaries = {};
+                            var summaries = {},
+                                unknown_summary;
                             summaries[ page_id ] = response.data.known;
                             
                             // TODO this is a hack.  we should change how we receive known and unknown to make them the same format.
