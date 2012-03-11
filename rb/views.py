@@ -18,6 +18,7 @@ from django.template import RequestContext
 from django.db.models import Q
 from forms import *
 from django.contrib.auth.forms import UserCreationForm
+from django.core.mail import EmailMessage
 
 def widget(request, sn):
     # Widget code is retreived from the server using RBGroup shortname
@@ -244,8 +245,10 @@ def create_rb_user(request):
         if form.is_valid():
             user = form.save(True)
             
-            user.email_user("Readrboard email confirmation", generateConfirmationEmail(user))
-            
+            #user.email_user("Readrboard email confirmation", generateConfirmationEmail(user))
+            msg = EmailMessage("Readrboard email confirmation", generateConfirmationEmail(user), "hello@readrboard.com", [user.email])
+            msg.content_subtype='html'
+            msg.send(False)
             context['requested'] = True
     else:
         form = CreateUserForm()
@@ -297,7 +300,10 @@ def request_password_reset(request):
         username = request.POST['username']
         (user, password_email) = generatePasswordEmail(username)
         if user is not None:
-            user.email_user("Readrboard email confirmation", password_email)
+            #user.email_user("Readrboard email confirmation", password_email)
+            msg = EmailMessage("Readrboard password reset", password_email, "hello@readrboard.com", [user.email])
+            msg.content_subtype='html'
+            msg.send(False)
             context['requested'] = True
         else:
             context['requested'] = False
@@ -316,21 +322,31 @@ def request_password_reset(request):
 
 def reset_rb_password(request):
     context = {}
-    try:
-        password_token = request.GET['token']
-        user_id = request.GET('uid')
-    except KeyError, ke:
-        context['message']  = 'There was a problem with your reset token.'
+    if request.method == 'GET':
+        
+        try:
+            password_token = request.GET['token']
+            user_id = request.GET['uid']
+        except KeyError, ke:
+            context['message']  = 'There was a problem with your reset token.'
     
-    if request.method == 'POST':
+        form = ChangePasswordForm(initial={'password_token' : password_token, 'uid' : user_id})
+        
+    elif request.method == 'POST':
+        try:
+            password_token = request.POST['password_token']
+            user_id = request.POST['uid']
+        except KeyError, ke:
+            context['message']  = 'There was a problem with your reset token. Please reopen this page from the link in your email.'
+            print 'ERROR', ke
+    
         form = ChangePasswordForm(request.POST)
         is_valid_token = validatePasswordToken(user_id, password_token)
+        print is_valid_token, form.is_valid()
         if is_valid_token and form.is_valid():
             user = form.save(True)            
             context['requested'] = True
-    else:
-        form = ChangePasswordForm(initial={'password_token' : password_token})
-        
+    
     context['form'] = form
     
     response =  render_to_response(

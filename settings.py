@@ -162,7 +162,10 @@ TEMPLATE_DIRS = (
     "readrboard/rb/templates"
 )
 
-EMAIL_TEMPLATE_DIR = "readrboard/rb/email_templates"
+import os
+
+RB_SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+EMAIL_TEMPLATE_DIR = RB_SITE_ROOT + "/rb/email_templates"
 
 
 

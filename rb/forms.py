@@ -60,13 +60,14 @@ class CreateUserForm(forms.ModelForm):
         return user
             
 class ChangePasswordForm(forms.ModelForm):
+    uid = forms.CharField(label=_('User Id'), widget=forms.HiddenInput)
     password_token = forms.CharField(label=_('Reset Token'), widget=forms.HiddenInput)
     password1 = forms.CharField(label=_("Password"), widget=forms.PasswordInput)
     password2 = forms.CharField(label=_("Password confirmation"), widget=forms.PasswordInput,
         help_text = _("Enter the same password as above, for verification."))
 
     def __init__(self, *args, **kwargs):
-        super(ChangePassword, self).__init__(*args, **kwargs)
+        super(ChangePasswordForm, self).__init__(*args, **kwargs)
         
 
     class Meta:
