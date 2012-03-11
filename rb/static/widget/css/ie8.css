@@ -74,6 +74,11 @@ body.rdr_ie table.rdr_tags a.rdr_tag:hover span.rdr_tag_count{
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
 }
 
-
+#rdr_loginPanel iframe,
+#rdr_loginPanel div.rdr_body_wrap {
+    width:300px !important;
+    height:190px !important;
+    overflow:hidden !important;
+}
 
 
