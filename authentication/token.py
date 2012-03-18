@@ -37,6 +37,8 @@ def checkToken(data):
         print "Checking token for registered user"
         try:
             social_auth = SocialAuth.objects.get(social_user__user=data['user_id'])
+            print "--------- SOCIAL AUTH -----------"
+            print social_auth
         except SocialAuth.DoesNotExist:
             return None
 

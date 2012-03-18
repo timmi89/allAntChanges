@@ -69,8 +69,11 @@
 				contentType: "application/x-www-form-urlencoded",
 				dataType: "json",
 				data: sendData,
-				complete: function(response) {
-					console.dir(response);
+				success: function(response) {
+					// console.log( response.data.full_name );
+					RDRAuth.setUser(response);
+					// console.dir( response );
+					// console.log( $.parseJSON( sendData ) );
 				}
 			});
 		}
