@@ -61,7 +61,7 @@ cursor:help; }
 
 html {
 	/*overflow-y:scroll;*/
-	background:#eaeaea;
+	background:url("../images/noise.png") repeat scroll 0 0%, -moz-linear-gradient(left center , #ECE7E3 1px, transparent 1px) no-repeat scroll 2.8em 0 #F4F1EF;
 }
 
 body { 
@@ -453,7 +453,7 @@ nav 			{  background: none repeat scroll 0 0 #ddd; border:1px solid #aaa; border
 section[role="content"]	{
 	margin:36px 0 0 0;
 	padding:0;
-	background:#f3f3f3;
+	/*background:#f3f3f3;*/
 	overflow:auto;
 	position:relative;
 }
@@ -461,9 +461,8 @@ section[role="content"]	{
 /* MAIN */
 section[role="main"] 	{ 
 	clear:both;
-	margin:0 0 0 190px;
+	margin:0 0 0 186px;
 	padding:0;
-	/*float:left;*/
 }
 
 /* Tyler's crap, remove if wanted */
@@ -483,14 +482,33 @@ section[role="main"] 	{
 /*section[role="main"] h1 	{font-family:Arial; font-size:28px; color:#6b6b6b; text-shadow:2px 2px 2px #95b6cb; font-weight:normal; padding:10px 20px; margin:0; background:#d2e5f1;}*/
 
 #cards { overflow:auto; }
-section[role="main"] div.card	{ border:1px solid #ccc; width:400px; padding:10px; float:left; margin-left:-1px; margin-top:-1px; }
+section[role="main"] div.card	{ border:1px solid #ccc; width:420px; padding:15px 0 20px; float:left; margin-left:-1px; margin-top:-1px; }
 section[role="main"] div.card:hover	{ background:#fff; }
-section[role="main"] div.card header 			{  }
-section[role="main"] div.card header h1			{ font-size:30px; font-weight:normal; color:#4d92da; padding:0 0 3px; border-bottom:1px solid #ccc; }
+section[role="main"] div.card header 			{ padding:0 20px; }
+section[role="main"] div.card header h1			{ font-size:30px; font-weight:bold; color:#427ebb; padding:0 0 3px; border-bottom:1px solid #ccc; position:relative; }
+section[role="main"] div.card header h1:before {
+    content: attr(title);
+    position:absolute;
+    /*color:rgba(0,0,0,0.1);
+    top:-1px;
+    left:-1px;*/
+    color:rgba(255,255,255,0.1);
+    top:1px;
+    left:1px;
+    
+}
+
 section[role="main"] div.card header h1	span 	{ font-size:20px; }
-section[role="main"] div.card div.text 						{ border-top: 1px solid #fff; padding-top:9px;}
+section[role="main"] div.card div.text 						{ border-top: 1px solid #fff; margin:0 20px 0; padding-top:9px;}
 section[role="main"] div.card div.text div.content_type		{ width:25px; height:47px; margin:5px 8px 0 0; background:url(../images/type_text.png) top left no-repeat; text-indent:-9999px; float:left; }
 section[role="main"] div.card div.text div.content			{ font-size:18px; }
+section[role="main"] div.card div.meta 						{ clear:both; font-size:12px; margin:15px 20px 0; overflow:auto;}
+section[role="main"] div.card div.meta div.publisher		{ float:left; margin-right:10px; }
+section[role="main"] div.card div.meta div.title			{ float:left; }
+
+section[role="main"] div.card div.image 						{ margin:0 20px 0; }
+section[role="main"] div.card div.image div.content_type		{ display:none; }
+section[role="main"] div.card div.image div.content	img			{ width:418px; margin-top:-1px; margin-left:-20px; position:relative;z-index:1;}
 
 /*
 section[role="main"] table.card {background:#d2dee4; width:100%; margin-bottom:10px; border:1px solid #becdd7; border-right:0; border-left:0;}
@@ -605,7 +623,7 @@ body.wide section[role="complementary"] {
 }
 
 /* analytics dashboard */
-section[role="group panel header"] 			{ width:100%; background:#7f7f7f; color:#eee; overflow:auto; box-shadow:0px -10px 9px -9px #454545 inset; position:fixed; bottom:0; z-index:1; }
+section[role="group panel header"] 			{ width:100%; background:#7f7f7f; color:#eee; overflow:auto; box-shadow:0px -10px 9px -9px #454545 inset; position:fixed; bottom:0; z-index:2; }
 section[role="group panel header"] h3			{ float:left; overflow:auto; padding:5px; margin:0; font-size:12px; font-weight:bold; background: none repeat scroll 0 0 #638296; box-shadow: 0 -10px 9px -9px #454545 inset; }
 
 section[role="group links"] 		{ padding:4px; font-size:12px; float:left; border-left:1px solid #ddd; text-shadow:1px 1px 2px #454545;}
