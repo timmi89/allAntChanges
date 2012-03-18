@@ -20,6 +20,7 @@ Bookmark = Resource(handler=BookmarkHandler)
 Vote = Resource(handler=VoteHandler)
 Moderate = Resource(handler=ModerationHandler)
 Privacy = Resource(handler=PrivacyHandler)
+Confirmation = Resource(handler=ConfirmUserHandler)
 
 urlpatterns = patterns('',
     url(r'^settings/$', Settings),
@@ -44,7 +45,8 @@ urlpatterns = patterns('',
     # Auth
     url(r'^deauthorize/$', Deauthorize),
     url(r'^tempuser/$', TempUser),
-
+    url(r'^confirmuser/$', Confirmation),
+    
     # Widget
     url(r'^page/', PageData),
     url(r'^containers/create/', CreateContainers),

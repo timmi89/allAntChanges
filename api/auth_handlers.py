@@ -122,7 +122,8 @@ class RBHandler(BaseHandler):
         confirmed = django_user.has_perm('rb.change_socialuser')
         print django_user.is_active, confirmed
         if not confirmed:
-            return dict(message="Please confirm email address", status='fail')
+            return dict(message="Please confirm email address", status='fail', 
+                        confirmation=generateConfirmation(django_user), user_id=django_user.id)
         
         social_user = findSocialUser(django_user)
         print "SOCIAL: " ,social_user
@@ -150,3 +151,18 @@ class RBHandler(BaseHandler):
         )
       
 
+class ConfirmUserHandler(BaseHandler):
+    allowed_methods = ('POST',)
+    @status_response
+    def create(self, request):
+        data = json.loads(request.POST['json'])
+        user_id = data['user_id']
+        user_confirmation = data['confirmation']
+        user = User.objects.get(id=int(user_id))
+        if user_confirmation == generateConfirmation(user):
+            msg = EmailMessage("Readrboard email confirmation", generateConfirmationEmail(user), "hello@readrboard.com", [user.email])
+            msg.content_subtype='html'
+            msg.send(False)
+        return dict(
+            user_id=user.id,
+        )
