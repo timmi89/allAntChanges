@@ -186,7 +186,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
 
     try: current_page = interactions_paginator.page(page_number)
     except (EmptyPage, InvalidPage): current_page = paginator.page(paginator.num_pages)
-
+      
     context['current_page'] = current_page
 
     return render_to_response("index.html", context, context_instance=RequestContext(request))
@@ -262,6 +262,41 @@ def create_rb_user(request):
     
     return response
 
+def modify_rb_social_user(request):
+    context = {}
+    cookie_user = checkCookieToken(request)
+    print "COOKIE USER: " , cookie_user
+    try:
+        social_user = SocialUser.objects.get(user=cookie_user)
+        print social_user
+        user_token = generateSocialUserToken(social_user)
+    except SocialUser.DoesNotExist:
+        social_user = None
+        context['not_logged_in'] = True
+        context['requested'] = True
+        return render_to_response(
+                    "social_user_modify.html",
+                    context,
+                    context_instance=RequestContext(request)
+                    )
+    
+    if request.method == 'POST':
+        form = ModifySocialUserForm(request.POST, request.FILES)
+        if form.is_valid():
+            social_user = form.save(True)
+            
+            context['requested'] = True
+    else:
+        form = ModifySocialUserForm(initial={'user_token' : user_token, 'uid' : social_user.id})
+        
+    context['form'] = form
+    response =  render_to_response(
+        "social_user_modify.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+    
+    return response
 
 def confirm_rb_user(request):
     context = {}

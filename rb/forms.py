@@ -1,6 +1,7 @@
 from django import forms
 from rb.models import *
 import re
+from api import userutils
 
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import ugettext_lazy as _
@@ -103,6 +104,49 @@ class ChangePasswordForm(forms.ModelForm):
         
         if commit:
             user.save()
+        return user
+
+class ModifySocialUserForm(forms.ModelForm):
+    
+    uid = forms.CharField(label=_('User Id'), widget=forms.HiddenInput)
+    user_token = forms.CharField(label=_('User Token'), widget=forms.HiddenInput)
+    username = forms.RegexField(label=_("Username"), max_length=30, regex=r'^[\w.@+-]+$',
+        help_text = _("Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only."),
+        error_messages = {'invalid': _("This value may contain only letters, numbers and @/./+/-/_ characters.")})
+    avatar = forms.ImageField(label=_("Avatar Image"), max_length=255)
+    
+    class Meta:
+        model = SocialUser
+        fields = ("username","avatar")
+
+    def clean_uid(self):
+        return self.cleaned_data['uid']
+    
+    def clean_user_token(self):
+        return self.cleaned_data['user_token']
+    
+    def clean_username(self):
+        username = self.cleaned_data["username"]
+        try:
+            SocialUser.objects.get(username=username)
+        except SocialUser.DoesNotExist:
+            return username
+        raise forms.ValidationError(_("A user with that username already exists."))
+
+    def clean_avatar(self):
+        avatar = self.cleaned_data["avatar"]
+        return avatar
+    
+    def is_valid(self):
+        valid = super(ModifySocialUserForm, self).is_valid()
+        return valid and userutils.validateSocialUserToken(self.cleaned_data['uid'],self.cleaned_data['user_token'] )
+        
+    
+    def save(self, commit=True):
+        social_user = super(ModifySocialUserForm, self).save(commit=False)
+        
+        if commit:
+            social_user.save()
         return user
 
            

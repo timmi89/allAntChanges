@@ -210,3 +210,24 @@ def validatePasswordToken(user_id, token):
         return False
     
     return token == generatePasswordToken(user)
+
+def generateSocialUserToken(social_user):
+    window_datetime = datetime.now()
+    window_str = window_datetime.strftime("%Y%m%d")
+    try:
+        token = sha_constructor(
+            unicode(social_user.id) +
+            unicode("0bfu5c473d1n73n7") +
+            unicode(window_str)
+        ).hexdigest()[::2]
+        return token
+    except SocialUser.DoesNotExist:
+        return None
+
+def validateSocialUserToken(social_user_id, token):
+    try:
+        social_user = SocialUser.obects.get(id=social_user_id)
+    except SocialUser.DoesNotExist:
+        return False
+    
+    return token == generateSocialUserToken(social_user)
