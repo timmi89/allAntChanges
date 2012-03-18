@@ -60,8 +60,8 @@ cursor:help; }
 /* ROOT */
 
 html {
-	overflow-y:scroll;
-	background:#254559;
+	/*overflow-y:scroll;*/
+	background:#eaeaea;
 }
 
 body { 
@@ -70,59 +70,11 @@ body {
 	font:100%/1.4 Arial;
 	color:#666;
 }
-#background-layer{
-	height:100%;
-	width:100%;
-	top:0;
-	left:0;
-	position: fixed;
-}
-#background-layer .background-texture{
-	height:100%;
-	width:100%;
-	top:0;
-	left:0;
-	position: absolute;
-	background: url("../images/texture-cloth.png");
-    opacity:0.1;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-    filter:alpha(opacity=10);
-    -moz-opacity:0.1;
-    -khtml-opacity:0.1;
-}
-#background-layer .background-radial-grad{
-	background: url("../images/spotlight.png") no-repeat scroll 0 0 transparent;
-	/* For WebKit (Safari, Google Chrome etc) */
-	/*background: -webkit-gradient(radial, 825px 500px, 0, 40% 40%, 60, from(#fff), to(transparent));*/
-	/* For Mozilla/Gecko (Firefox etc) */
-	/*background: -moz-radial-gradient(825px 500px, farthest-side, white, transparent);*/
-	/* For Internet Explorer */
-	/* no way */
-	height:100%;
-	width:100%;
-    top: 80px;
-    left: 400px;
-    position: absolute;
 
-	opacity:0.2;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-    filter:alpha(opacity=20);
-    -moz-opacity:0.2;
-    -khtml-opacity:0.2;
-}
-#background-layer .pin-large-icon{
-    background: url("../images/pin-icon-large.png") no-repeat scroll 0 0 transparent;
-	height:200px;
-	width:200px;
-    top: 400px;
-    left: 735px;
-    position: absolute;
-    width: 200px;
-}
 /* HEADINGS */
 
 h1, 
-h2 { font-family:ReadrLeagueSite, Arial; }
+h2 { font-family:Helvetica, Arial; }
 
 h1 { 
 font-size:3em; /* 48 / 16 = 3 */
@@ -473,49 +425,45 @@ page-break-after:avoid; }
 /*@media only screen and (min-width:768px) {*/
 
 /* HEADER */
-header[role="banner"]	{height:40px; background:url(../images/header_bg.gif) top left repeat-x; box-shadow:0px 2px 3px 0px #666;position:fixed;width:100%;z-index:10;top:0;font-size:12px;}
-header[role="banner"] h1				{text-indent:-9999px; background:url(../images/logo.png) top center no-repeat;height:40px;width:128px;margin-left:68px;float:left;}
-/*header[role="banner"] #settings			{position:absolute; right:0; top:-1px;}
-header[role="banner"] #search			{position:absolute; right:55px; top:8px; }*/
-header[role="banner"] #settings			{float:right;}
-header[role="banner"] #site_search			{float:right; padding-top:8px;}
+header[role="banner"]	{height:36px;min-width:940px;background:url(../images/header_bg.png) top left repeat-x;position:fixed;width:100%;z-index:10;top:0;font-size:12px;text-align:center;}
+header[role="banner"] h1				{ text-indent:-9999px; background:url(../images/logo_med.png) top center no-repeat;margin-top:6px; }
 
-header[role="banner"] #user				{float:right; padding:5px 8px 0 20px; min-width:120px;}
+header[role="banner"] #user				{ left:8px; position:absolute; top:2px; }
 header[role="banner"] #user	#fb-logged-in,
-header[role="banner"] #user	#fb-logged-out 	{visibility:hidden;}
-header[role="banner"] #user	#fb-logged-in img	{float:left; max-width:30px; max-height:30px;}
-header[role="banner"] #user	strong		{float:left; margin: 8px 0px 0px 5px; }
+header[role="banner"] #user	#fb-logged-out 	{ visibility:hidden;}
+header[role="banner"] #user	#fb-logged-in img	{ float:left; max-width:30px; max-height:30px; border:1px solid #424242; }
+header[role="banner"] #user	strong				{ float:left; margin: 8px 0px 0px 5px; }
+header[role="banner"] #user	a					{ color:#f2f3f7; }
 header[role="banner"] #user	#fb-logged-out 	{ margin-top:5px; }
 
-header[role="banner"] #site_search input		{border:1px solid #a4a4a4; border-radius:4px;padding:4px;}
-header[role="banner"] #site_search button	{width:24px; height:24px; background:url(../images/pin_button.png) top left no-repeat;border:none;text-indent:-9999px;cursor:pointer;}
+header[role="banner"] #site_search			{ position:absolute; right:8px; top:6px; }
+header[role="banner"] #site_search input	{ border:1px solid #424242; background:#eee;padding:4px; }
+header[role="banner"] #site_search button	{ width:26px; height:24px; background:url(../images/search_button.png) top left no-repeat;border:none;text-indent:-9999px;cursor:pointer;z-index:1; position:relative;float:right;margin-left:-26px; }
+
+header[role="banner"] #settings				{ position:absolute; right:0; top:-4px; height:39px; border-left:1px solid #393939;display:none; }
+header[role="banner"] #settings:hover nav 	{ display:block; }
 
 /* NAVIGATION */
 nav ul 		{ list-style:none; }
 nav li 		{ padding-left:5px; }
 nav li#user 	{ display:inline; padding-left:0px; padding-right:10px;}
 nav 			{  background: none repeat scroll 0 0 #ddd; border:1px solid #aaa; border-top:0; font-size: 12px; padding: 10px 15px 0 0; position: absolute; right: 5px; text-align: right; top: 41px; width: 150px; display:none; }
-header[role="banner"] #settings:hover nav {display:block;}
 
 /* CONTENT CONTAINER */
 section[role="content"]	{
-	width:748px;
-	margin:40px 0 0 25px;
+	margin:36px 0 0 0;
 	padding:0;
-	background:#ccc;
+	background:#f3f3f3;
 	overflow:auto;
 	position:relative;
-	box-shadow:0px 0 4px 2px #004b5b;
 }
 
 /* MAIN */
 section[role="main"] 	{ 
 	clear:both;
-	margin:0 0 0 210px;
+	margin:0 0 0 185px;
 	padding:0;
-	float:left;
-	background:#d2dee4;
-	width:538px;
+	/*float:left;*/
 }
 
 /* Tyler's crap, remove if wanted */
@@ -531,52 +479,59 @@ section[role="main"] 	{
 }
 /* End Tyler's Crap */
 
-section[role="main"] h1 	{font-family:Arial; font-size:28px; color:#6b6b6b; text-shadow:2px 2px 2px #95b6cb; font-weight:normal; padding:10px 20px; margin:0; background:#d2e5f1;}
+/*section[role="main"] h1 	{font-family:Arial; font-size:28px; color:#6b6b6b; text-shadow:2px 2px 2px #95b6cb; font-weight:normal; padding:10px 20px; margin:0; background:#d2e5f1;}*/
 
-section[role="main"] .card {background:#d2dee4; width:100%; margin-bottom:10px; border:1px solid #becdd7; border-right:0; border-left:0;}
-section[role="main"] .card .interaction  {margin-top:1px; border-top:1px solid #d2dee4;}
-section[role="main"] .card .block_content a 	 {font-style:italic;font-size:10px; color:#e66;}
-section[role="main"] .card .column1  {text-align:center; vertical-align:middle;}
-section[role="main"] .card .interaction .column1 .reaction {padding-left: 5px; padding-right: 5px;}
-section[role="main"] .card .column2  {text-align:left; vertical-align:middle;}
-section[role="main"] .card .interaction .column2  {text-align:left; vertical-align:top;}
-section[role="main"] .card thead .column1      {width:113px; margin:0; padding:5px 0; background:#fff; text-align:center; }
-section[role="main"] .card thead .column1 img  {margin-top:3px }
-section[role="main"] .card thead .column2      {margin:0; padding:5px 5px 5px 15px; background:url(../images/shaded_arrow.png) center left no-repeat #fff; font:italic bold 14px Arial; color:#6b6b6b;}
+
+section[role="main"] div.card	{ border:1px solid #ccc; background:white; box-shadow: 0 1px 3px 1px #ccc; width: 400px; }
+section[role="main"] div.card header 	{ }
+section[role="main"] div.card header h1	{ font-size:30px; font-weight:bold; color:#4d92da; text-shadow:none; text-align:center; padding:3px; }
+
+/*
+section[role="main"] table.card {background:#d2dee4; width:100%; margin-bottom:10px; border:1px solid #becdd7; border-right:0; border-left:0;}
+section[role="main"] table.card .interaction  {margin-top:1px; border-top:1px solid #d2dee4;}
+section[role="main"] table.card .block_content a 	 {font-style:italic;font-size:10px; color:#e66;}
+section[role="main"] table.card .column1  {text-align:center; vertical-align:middle;}
+section[role="main"] table.card .interaction .column1 .reaction {padding-left: 5px; padding-right: 5px;}
+section[role="main"] table.card .column2  {text-align:left; vertical-align:middle;}
+section[role="main"] table.card .interaction .column2  {text-align:left; vertical-align:top;}
+section[role="main"] table.card thead .column1      {width:113px; margin:0; padding:5px 0; background:#fff; text-align:center; }
+section[role="main"] table.card thead .column1 img  {margin-top:3px }
+section[role="main"] table.card thead .column2      {margin:0; padding:5px 5px 5px 15px; background:url(../images/shaded_arrow.png) center left no-repeat #fff; font:italic bold 14px Arial; color:#6b6b6b;}
  
-section[role="main"] .card tbody .column1      {background:#eaf0f3; vertical-align:top; border-right:1px solid #d2dee4;}
-section[role="main"] .card tbody .column1 .reaction    {font-family:ReadrLeagueSite, Arial; font-size:18px; color:#6b6b6b; font-size:24px; margin:10px 0px 5px 0px; }
-section[role="main"] .card tbody .column1 .count       {font-size:12px; margin-bottom:15px;}
+section[role="main"] table.card tbody .column1      {background:#eaf0f3; vertical-align:top; border-right:1px solid #d2dee4;}
+section[role="main"] table.card tbody .column1 .reaction    {font-family:Helvetica, Arial; font-size:18px; color:#6b6b6b; font-size:24px; margin:10px 0px 5px 0px; }
+section[role="main"] table.card tbody .column1 .count       {font-size:12px; margin-bottom:15px;}
 
-section[role="main"] .card tbody .column2      {background:#ffffff; padding:15px;}
-section[role="main"] .card tbody .column2 .who_action      {font:italic bold 12px Arial;}
-section[role="main"] .card tbody .column2 .content       {font:normal normal 12px Arial;}
-section[role="main"] .card tbody .column2 .content img   {max-width:100px; max-height:100px; xbox-shadow:0px 0px 4px #666; margin:5px 0;}
-section[role="main"] .card tbody .column2 h5.label.small   {font:normal normal 9px Arial; text-transform:uppercase; margin-top:10px;}
-section[role="main"] .card tbody .column2 .other_reactions 		{list-style-type:none; overflow:auto;}
-section[role="main"] .card tbody .column2 .other_reactions li	{display:block; float:left; font-size:11px; font-style:italic; margin-right:20px; padding:1px 5px; background:#ddd; border-radius:3px;}
-section[role="main"] .card tbody .column2 .comment_container    {background:#f0f0f0; border:1px solid #d3d4d4; box-shadow:0px 0px 2px #aaa; padding:5px;  }
-section[role="main"] .card tbody .column2 .comment_container .header   {overflow:hidden; color:#666; clear:both; }
-section[role="main"] .card tbody .column2 .comment_container .header .when       {float:right; font:normal 11px Arial;}
-section[role="main"] .card tbody .column2 .comment_container .header .when span  {font-size:8px; text-transform:uppercase; }
-section[role="main"] .card tbody .column2 .comment_container .header .avatar     {float:left; height:20px; width:20px;}
-section[role="main"] .card tbody .column2 .comment_container .header .avatar img {height:20px; width:20px;}
-section[role="main"] .card tbody .column2 .comment_container .header .who        {float:left; margin-left:5px; padding-top:4px; height:16px; font:italic bold 12px Arial; vertical-align:middle; }
+section[role="main"] table.card tbody .column2      {background:#ffffff; padding:15px;}
+section[role="main"] table.card tbody .column2 .who_action      {font:italic bold 12px Arial;}
+section[role="main"] table.card tbody .column2 .content       {font:normal normal 12px Arial;}
+section[role="main"] table.card tbody .column2 .content img   {max-width:100px; max-height:100px; xbox-shadow:0px 0px 4px #666; margin:5px 0;}
+section[role="main"] table.card tbody .column2 h5.label.small   {font:normal normal 9px Arial; text-transform:uppercase; margin-top:10px;}
+section[role="main"] table.card tbody .column2 .other_reactions 		{list-style-type:none; overflow:auto;}
+section[role="main"] table.card tbody .column2 .other_reactions li	{display:block; float:left; font-size:11px; font-style:italic; margin-right:20px; padding:1px 5px; background:#ddd; border-radius:3px;}
+section[role="main"] table.card tbody .column2 .comment_container    {background:#f0f0f0; border:1px solid #d3d4d4; box-shadow:0px 0px 2px #aaa; padding:5px;  }
+section[role="main"] table.card tbody .column2 .comment_container .header   {overflow:hidden; color:#666; clear:both; }
+section[role="main"] table.card tbody .column2 .comment_container .header .when       {float:right; font:normal 11px Arial;}
+section[role="main"] table.card tbody .column2 .comment_container .header .when span  {font-size:8px; text-transform:uppercase; }
+section[role="main"] table.card tbody .column2 .comment_container .header .avatar     {float:left; height:20px; width:20px;}
+section[role="main"] table.card tbody .column2 .comment_container .header .avatar img {height:20px; width:20px;}
+section[role="main"] table.card tbody .column2 .comment_container .header .who        {float:left; margin-left:5px; padding-top:4px; height:16px; font:italic bold 12px Arial; vertical-align:middle; }
 
-section[role="main"] .card tbody .column2 .comment_container .comment   {overflow:hidden; color:#666; clear:both; position:relative; padding:5px 25px; font:normal 24px ReadrLeagueSite;}
-section[role="main"] .card tbody .column2 .comment_container .comment .count  {font:normal 12px Arial; }
-section[role="main"] .card tbody .column2 .comment_container .comment .quote.open  { background:url(../images/quote_open.png) top left no-repeat; top:8px;left:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
-section[role="main"] .card tbody .column2 .comment_container .comment .quote.close { background:url(../images/quote_close.png) top left no-repeat; bottom:20px;right:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
+section[role="main"] table.card tbody .column2 .comment_container .comment   {overflow:hidden; color:#666; clear:both; position:relative; padding:5px 25px; font:normal 24px Helvetica;}
+section[role="main"] table.card tbody .column2 .comment_container .comment .count  {font:normal 12px Arial; }
+section[role="main"] table.card tbody .column2 .comment_container .comment .quote.open  { background:url(../images/quote_open.png) top left no-repeat; top:8px;left:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
+section[role="main"] table.card tbody .column2 .comment_container .comment .quote.close { background:url(../images/quote_close.png) top left no-repeat; bottom:20px;right:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
+*/
 
 /* COMPLEMENTARY */
 section[role="complementary"] { 
 	height:100%;
 	position:fixed;
-	left:25px;
-	width:210px;
+	left:0px;
+	width:185px;
 	padding:0;
-	background:#f0f0f0;
-	box-shadow:2px 0px 3px 1px #aaa;
+	background:#fff;
+	border-right:1px solid #c1c1c1;
 }
 
 section[role="complementary"] #user_data img {
@@ -670,8 +625,8 @@ section[role="panels"] 					{ float:left; overflow:auto; padding:10px; }
 
 section[role="wide panels"] 			{ float:left; padding:0 10px 10px; width: 740px; }
 section[role="wide panels"] section		{ margin-bottom:20px; }
-section[role="wide panels"] h3 			{ font-family:'ReadrLeagueSite'; font-size:30px; margin:0; border-top:1px solid #aaa; padding:7px 0; }
-section[role="wide panels"] h4 			{ font-family:'ReadrLeagueSite'; font-size:24px; margin:0; }
+section[role="wide panels"] h3 			{ font-family:'Helvetica'; font-size:30px; margin:0; border-top:1px solid #aaa; padding:7px 0; }
+section[role="wide panels"] h4 			{ font-family:'Helvetica'; font-size:24px; margin:0; }
 section[role="wide panels"] ol li			{ margin:0 0 30px 22px; }
 section[role="wide panels"] ol li strong	{ font-size:24px; }
 section[role="wide panels"] ol li p			{ font-size:14px; margin-bottom:14px; }
@@ -683,7 +638,7 @@ section[role="rb examples"] 				{ text-align:center; }
 section[role="rb examples"] h2 				{ font-size:36px; border-bottom:1px solid #ddd; margin-bottom:10px;}
 
 section[role="interaction frequency"] 				{ overflow:auto; text-align:center; }
-section[role="interaction frequency"] h1			{ font-family:'ReadrLeagueSite'; font-size:80px; text-shadow: 1px 2px 1px #fff; padding:25px 0 0; margin:0; color:#638296; background:none;}
+section[role="interaction frequency"] h1			{ font-family:'Helvetica'; font-size:80px; text-shadow: 1px 2px 1px #fff; padding:25px 0 0; margin:0; color:#638296; background:none;}
 div[role="total interactions"]						{ width:130px; float:left; overflow:auto; }
 div[role="frequency chart"]							{ width:610px; margin-left:130px; color:#ddd; box-shadow:0px -10px 9px -9px #454545 inset; min-height:100px; }
 
@@ -694,7 +649,7 @@ section[role="most popular tags"] ol li.medium		{ font-size:16px; }
 section[role="most popular tags"] ol li.small		{ font-size:12px; }
 
 section[role="thin panels"] 			{ float:left; padding:0 10px 10px; width:320px; font-size:12px; }
-section[role="thin panels"] h3 			{ font-family:'ReadrLeagueSite'; font-size:24px; margin-bottom:0; border-top:1px solid #aaa; padding:7px 0; }
+section[role="thin panels"] h3 			{ font-family:'Helvetica'; font-size:24px; margin-bottom:0; border-top:1px solid #aaa; padding:7px 0; }
 
 table[role="active content table"] thead td,
 table[role="active pages table"] thead td						{ font-weight:bold;}

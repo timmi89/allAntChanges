@@ -16,6 +16,7 @@ from django.utils.encoding import smart_str, smart_unicode
 from django.template import RequestContext
 from django.db.models import Q
 from forms import *
+from datetime import datetime
 
 def widget(request, sn):
     # Widget code is retreived from the server using RBGroup shortname
@@ -95,13 +96,15 @@ def group(request):
 
 def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **kwargs):
     cookie_user = checkCookieToken(request)
+    timestamp = datetime.now().date()
     page_num = request.GET.get('page_num', 1)
     context = {
         'fb_client_id': FACEBOOK_APP_ID,
         'user_id': user_id,
         'short_name': short_name,
         'kwargs': kwargs,
-        'page_num': page_num
+        'page_num': page_num,
+        'timestamp': timestamp
     }
 
     if cookie_user:

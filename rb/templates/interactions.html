@@ -1,6 +1,23 @@
-<div>
+<section>
+<div class="card">
+  <header>
+    <h1>Hilarious <span class="count">(32)</span></h1>
+  </header>
+  <div class="text">
+    <div class="content_type">quote</div>
+    <div class="content">
+      four score and seven years ago and something else really cool, too.
+    </div>
+  </div>
+  <div class="meta">
+    <div class="publisher"><img src="/static/images/site/logo_sm.png"/></div>
+    <div class="title"><strong><a href="#">the title of the article goes here</a></strong></div>
+  </div>
+</div>
+<!--
 {% regroup current_page.object_list by page as pi %}
 {% for page in pi %}
+{% for interaction in page.list %}
 <table class="card" border="0" cellspacing="0" cellpadding="0">
   <thead>
     <th class="column1">
@@ -14,7 +31,7 @@
     </th>
     <th class="column2"><a href="/page/{{ page.grouper.id }}/">{{ page.grouper.title }}</a></th>
   </thead>
-  {% for interaction in page.list %}
+  
   <tbody>
     <tr class="interaction">
     <td class="column1">
@@ -24,6 +41,9 @@
           {% else %}
           {{ interaction.human_kind }}:
         {% endif %}
+        <div>
+        {{ interaction.parent.id }}
+        </div>
       </div>
       {% if cookie_user and interaction.page.site.group.id in ga_ids %}
       <div class="block_content">
@@ -37,13 +57,13 @@
       </div>
       {% endif %}
 
-      <!-- <div class="count"></div> -->
+      <div class="count"></div>
     </td>
     <td class="column2">
     <style>
     section[role="main"] .card tbody .column2 .content_link { font-size:12px; padding-top:5px; }
     </style>
-      <!-- <div class="who_action">{{ tag.content.interaction.user.social_user.full_name }}'s reaction to:</div> -->
+      <div class="who_action">{{ tag.content.interaction.user.social_user.full_name }}'s reaction to:</div> 
       <div class="who_action"></div>
 
       {% if interaction.content.kind == "img" %}
@@ -85,9 +105,10 @@
     {% endif %}
     </td>
   </tbody>
-  {% endfor %}
 </table>
+  {% endfor %}
 {% endfor %}
+-->
 <div class="pagination">
   <span class="step-links">
     {% if current_page.has_previous %}
@@ -101,4 +122,4 @@
     {% endif %}
   </span>
 </div>
-</div>
+</section>

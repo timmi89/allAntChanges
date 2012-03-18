@@ -31,7 +31,8 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 <!-- For all browsers -->
 {% block css %}
   <link rel="stylesheet" href="{{ STATIC_URL }}global/css/readrleaguesite.css">
-  <link rel="stylesheet" href="{{ STATIC_URL }}site/css/style.css?v=1">
+  <link rel="stylesheet" href="{{ STATIC_URL }}site/css/style.css?v={{ timestamp|date:"U" }}
+">
 {% endblock %}
 
 {% block topjavascript %}
@@ -67,9 +68,6 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 
 <body class="clearfix {% block bodyClass %}{% endblock %}">
   <div id="background-layer">
-    <div class="background-texture"></div>
-    <div class="background-radial-grad"></div>
-    <div class="pin-large-icon"></div>
   </div>
   <header role="banner" class="no-rdr clearfix">
     <a href="/"><h1>ReadrBoard</h1></a>
@@ -86,7 +84,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     </div>
     <div id="user">
         <div id="fb-logged-in" {% if not cookie_user.social_user %}style="display:none;"{% endif %}>
-          <a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/><strong>{{ cookie_user.social_user.full_name }}</strong></a>
+          <a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/>{{ cookie_user.social_user.full_name }}</a>
         </div>
         <div id="fb-logged-out" {% if cookie_user.social_user %}style="display:none;"{% endif %}>
           <a href="javascript:void(0);" onclick="RDRAuth.doFBLogin('site_login')"><img src="{{ STATIC_URL }}site/images/fb_login.png" border="0" alt="Connect with Facebook" /></a>
@@ -95,7 +93,6 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     <div id="site_search">
       <form method="get" id="searchform" action="/stream/">
         <fieldset>
-          <label>Search</label>
           <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />
           <button>Search</button>
         </fieldset>
@@ -133,7 +130,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
   </script>
   <script type="text/javascript">
     document.write(
-      unescape( '%3Cscript src="{{ BASE_URL }}static/widget/js/readr_user.js" type="text/javascript"%3E%3C/script%3E' )
+      unescape( '%3Cscript src="/static/widget/js/readr_user.js" type="text/javascript"%3E%3C/script%3E' )
     );
 
   </script>
