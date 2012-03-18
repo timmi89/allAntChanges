@@ -1,6 +1,7 @@
 from exceptions import JSONException
 # from _mysql_exceptions import OperationalError
 import json
+from django.core.exceptions import *
 
 def status_response(func):
     def wrapper(*args, **kwargs):
@@ -10,9 +11,15 @@ def status_response(func):
         except JSONException as error:
             res['status'] =  'fail'
             res['message'] = error.msg
+        except KeyError as error:
+            res['status'] = 'fail'
+            res['message'] = error.message
+        except ObjectDoesNotExist as error:
+            res['status'] = 'fail'
+            res['message'] = error
         except Exception as error:
             res['status'] =  'fail'
-            #res['message'] = error.msg
+            res['message'] = error
         else:
             res['data'] = dataout
         return res

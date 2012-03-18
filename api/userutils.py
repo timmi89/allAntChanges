@@ -169,9 +169,8 @@ def generateConfirmation(user):
 
 
 def generateConfirmationEmail(user):
-    message = getEmailTemplate('confirmation_email.html ') % (settings.BASE_URL, user.id, generateConfirmation(user))
-    #message = '%s/confirmemail?uid=%s&confirmation=%s ' % (settings.BASE_URL, user.id, generateConfirmation(user))
-    message += 'Click here to confirm your email.'
+    message = getEmailTemplate('confirmation_email.html') % (settings.BASE_URL, user.id, generateConfirmation(user))
+    
     return message      
 
 def generatePasswordToken(user):

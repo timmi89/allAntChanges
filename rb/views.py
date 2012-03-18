@@ -268,7 +268,7 @@ def modify_rb_social_user(request):
     print "COOKIE USER: " , cookie_user
     try:
         social_user = SocialUser.objects.get(user=cookie_user)
-        print social_user
+        print "Social User:" ,social_user
         user_token = generateSocialUserToken(social_user)
     except SocialUser.DoesNotExist:
         social_user = None
