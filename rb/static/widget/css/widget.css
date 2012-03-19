@@ -60,16 +60,16 @@
 }
 
 #rdr_sandbox div.rdr_actionbar li a {
-    background:url("../images/actionbar_icons.png") no-repeat 0 0 transparent;
+    background:url("../images/readr_icons.png") no-repeat 0 0 transparent;
     display:block;
     height:22px;
-    width:22px;
+    width:23px;
     text-indent:-9999px;
     float:left;
 }
 
-#rdr_sandbox div.rdr_actionbar li.rdr_icon_reaction a        { background-position:-4px -5px; }
-#rdr_sandbox div.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-61px -4px; }
+#rdr_sandbox div.rdr_actionbar li.rdr_icon_reaction a        { background-position:3px 3px; }
+#rdr_sandbox div.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-61px -4px; display:none;}
 
 
 #rdr_sandbox div.rdr_actionbar li:hover                     { 
@@ -195,7 +195,7 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
 
 /* global tag defs */
 #rdr_sandbox div.rdr h1, 
-#rdr_sandbox div.rdr h2  {font-family:'ReadrLeague',Arial,Helvetica,sans-serif !important; color:#666; margin:0; line-height:1.1em !important;}
+#rdr_sandbox div.rdr h2  {font-family:'Helvetica',Arial,sans-serif !important; font-weight:bold !important; color:#666; margin:0; line-height:1.1em !important;}
 #rdr_sandbox div.rdr h1 span.rdr_contentNode_text {font-size:18px; color:#008be4;}
 
 #rdr_sandbox div.rdr li {background:none; padding:0;}
@@ -204,7 +204,7 @@ div.rdr strong {font-weight:bold !important;}
 
 /* the widget */
 #rdr_sandbox div.rdr h1,
-#rdr_sandbox div.rdr h2  {color:#666 !important; font-size:19px !important; letter-spacing:0.25px !important; padding:1px 9px; font-weight:100 !important;}
+#rdr_sandbox div.rdr h2  {color:#666 !important; font-size:16px !important; letter-spacing:0.25px !important; padding:2px 9px; }
 
 #rdr_sandbox div.rdr_header div.rdr_indicator_stats         { position:absolute; margin:3px 0 0 5px; cursor: move !important; }
 #rdr_sandbox div.rdr_header div.rdr_remember_image          { position:absolute; right:3px; z-index:0;}
@@ -906,6 +906,14 @@ div.rdr_indicator img.rdr_pin,
     position:absolute !important;
     margin:0 !important;
 }
+#rdr_sandbox div.rdr_sentimentBox img.rdr_pin {
+    margin-top:-1px !important;
+}
+#rdr_sandbox div.rdr_indicator.rdr_indicator_for_media img.rdr_pin { 
+    background:url("../images/readr_icons.png") no-repeat -2px -1px !important; 
+    position:absolute !important;
+    margin:0 !important;
+}
 /*indicator pin inline indicator only*/
 div.rdr_indicator img.rdr_pin{ 
     top: auto !important;
@@ -934,7 +942,7 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
     color: #666666 !important;
     font: 12px Arial,sans-serif !important;
     padding:4px 3px 1px !important;
-    left:10px !important;
+    left:8px !important;
 }
 
 
@@ -1037,6 +1045,9 @@ div.rdr_indicator span.rdr_count,
     position:relative !important;
     margin-left:16px !important;
     font-size: 12px !important;
+}
+#rdr_sandbox div.rdr_indicator.rdr_indicator_for_media span.rdr_count {
+    margin-left:13px !important;
 }
 
 #rdr_sandbox span.rdr_indicator_categoryTitle{ 
