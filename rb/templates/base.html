@@ -36,9 +36,10 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 {% endblock %}
 
 {% block topjavascript %}
-  <script src="{{ STATIC_URL }}global/js/jquery-1.6.min.js"></script>
+  <script src="{{ STATIC_URL }}global/js/jquery-1.7.1.min.js"></script>
   <script src="{{ STATIC_URL }}site/js/readr_scripts.js"></script>
   <script src="{{ STATIC_URL }}site/js/jquery.masonry.min.js"></script>
+  <script src="{{ STATIC_URL }}site/js/bootstrap-tooltip.js"></script>
   <script src="{{ STATIC_URL }}widget/js/jquery.json-2.2.min.js" type="text/javascript"></script>
   <script src="{{ STATIC_URL }}widget/js/jquery.cookie.js" type="text/javascript"></script>
   <!-- [porter] using modernizr 2, new as of 6/1, even though 320andup ships with 1.7 -->
@@ -94,8 +95,8 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     <div id="site_search">
       <form method="get" id="searchform" action="/stream/">
         <fieldset>
-          <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />
           <button>Search</button>
+          <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />
         </fieldset>
       </form>
     </div>
