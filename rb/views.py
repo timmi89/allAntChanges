@@ -346,7 +346,7 @@ def request_password_reset(request):
             context['requested'] = False
             context['message'] = 'Sorry, we don\'t have an account with that user name.'
     else:
-        context['message'] = 'Please enter your username'
+        # context['message'] = 'Please enter your username'
         context['requested'] = False
         
     response =  render_to_response(
