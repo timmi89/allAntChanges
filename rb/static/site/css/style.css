@@ -267,18 +267,19 @@ input[type="text"] {
 
 ul.errorlist {
   list-style-type:none;
-  border:1px solid #bc6464;
-  background:#f2dede;
-  margin:5px 0;
-  padding:5px 10px;
+  margin:0;
+  padding:0;
 }
+div.error,
 ul.errorlist li {
   color:#4c4c4c;
   font-family:Helvetica, Arial, sans-serif;
   font-weight:bold;
   font-size:14px;
-  margin:0;
-  padding:0;
+  border:1px solid #bc6464;
+  background:#f2dede;
+  margin:5px 0;
+  padding:5px 10px;
 }
 
 p, h1, form {border:0; margin:0; padding:0;}
