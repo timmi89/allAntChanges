@@ -9,6 +9,7 @@ from baseconv import base62_decode
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models import Count
 from api.utils import *
+from api.userutils import *
 from authentication.token import checkCookieToken
 from authentication.decorators import requires_admin
 from cards import Card
@@ -17,6 +18,8 @@ from django.template import RequestContext
 from django.db.models import Q
 from forms import *
 from datetime import datetime
+from django.contrib.auth.forms import UserCreationForm
+from django.core.mail import EmailMessage
 
 def widget(request, sn):
     # Widget code is retreived from the server using RBGroup shortname
@@ -186,7 +189,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
 
     try: current_page = interactions_paginator.page(page_number)
     except (EmptyPage, InvalidPage): current_page = paginator.page(paginator.num_pages)
-
+      
     context['current_page'] = current_page
 
     return render_to_response("index.html", context, context_instance=RequestContext(request))
@@ -232,6 +235,167 @@ def create_group(request):
         context_instance=RequestContext(request)
     )
 
+def create_rb_user(request):
+    context = {}
+    cookie_user = checkCookieToken(request)
+    #what to do with a cookied user???
+    #are they already registered?
+    #
+    user = None
+    
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            user = form.save(True)
+            
+            #user.email_user("Readrboard email confirmation", generateConfirmationEmail(user))
+            msg = EmailMessage("Readrboard email confirmation", generateConfirmationEmail(user), "hello@readrboard.com", [user.email])
+            msg.content_subtype='html'
+            msg.send(False)
+            context['requested'] = True
+    else:
+        form = CreateUserForm()
+        
+    context['form'] = form
+    response =  render_to_response(
+        "user_create.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+    
+    return response
+
+def modify_rb_social_user(request):
+    context = {}
+    cookie_user = checkCookieToken(request)
+    print "COOKIE USER: " , cookie_user
+    try:
+        social_user = SocialUser.objects.get(user=cookie_user)
+        print "Social User:" ,social_user
+        user_token = generateSocialUserToken(social_user)
+    except SocialUser.DoesNotExist:
+        social_user = None
+        context['not_logged_in'] = True
+        context['requested'] = True
+        return render_to_response(
+                    "social_user_modify.html",
+                    context,
+                    context_instance=RequestContext(request)
+                    )
+    
+    if request.method == 'POST':
+        form = ModifySocialUserForm(request.POST, request.FILES)
+        if form.is_valid():
+            social_user = form.save(True)
+            
+            context['requested'] = True
+    else:
+        form = ModifySocialUserForm(initial={'user_token' : user_token, 'uid' : social_user.id})
+        
+    context['form'] = form
+    response =  render_to_response(
+        "social_user_modify.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+    
+    return response
+
+def confirm_rb_user(request):
+    context = {}
+    confirmed = False
+    try:
+        confirmation = request.GET['confirmation']
+        user_id = request.GET['uid']
+        confirmed = confirmUser(user_id, confirmation)
+    except KeyError, ke:
+        context['message']  = 'There was a problem with your confirmation information.'
+    context['confirmed'] = confirmed
+    response =  render_to_response(
+        "user_confirm.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+    
+    return response
+
+
+def rb_login(request):
+    context = {}
+    
+    response =  render_to_response(
+        "rb_login.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+    
+    return response
+
+
+def request_password_reset(request):
+    context = {}
+    if request.method == 'POST':
+        username = request.POST['username']
+        (user, password_email) = generatePasswordEmail(username)
+        if user is not None:
+            #user.email_user("Readrboard email confirmation", password_email)
+            msg = EmailMessage("Readrboard password reset", password_email, "hello@readrboard.com", [user.email])
+            msg.content_subtype='html'
+            msg.send(False)
+            context['requested'] = True
+        else:
+            context['requested'] = False
+            context['message'] = 'No such user.'
+    else:
+        context['message'] = 'Please enter your username'
+        context['requested'] = False
+        
+    response =  render_to_response(
+        "password_reset.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+    
+    return response   
+
+def reset_rb_password(request):
+    context = {}
+    if request.method == 'GET':
+        
+        try:
+            password_token = request.GET['token']
+            user_id = request.GET['uid']
+        except KeyError, ke:
+            context['message']  = 'There was a problem with your reset token.'
+    
+        form = ChangePasswordForm(initial={'password_token' : password_token, 'uid' : user_id})
+        
+    elif request.method == 'POST':
+        try:
+            password_token = request.POST['password_token']
+            user_id = request.POST['uid']
+        except KeyError, ke:
+            context['message']  = 'There was a problem with your reset token. Please reopen this page from the link in your email.'
+            print 'ERROR', ke
+    
+        form = ChangePasswordForm(request.POST)
+        is_valid_token = validatePasswordToken(user_id, password_token)
+        print is_valid_token, form.is_valid()
+        if is_valid_token and form.is_valid():
+            user = form.save(True)            
+            context['requested'] = True
+    
+    context['form'] = form
+    
+    response =  render_to_response(
+        "password_change.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+    
+    return response
+
+            
 @requires_admin
 def settings(request, **kwargs):
     context = {}

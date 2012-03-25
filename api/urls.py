@@ -11,6 +11,7 @@ CreateContainers = Resource(handler=CreateContainerHandler)
 Tag = Resource(handler=TagHandler)
 Comment = Resource(handler=CommentHandler)
 FBLogin = Resource(handler=FBHandler)
+RBLogin = Resource(handler=RBHandler)
 Deauthorize = Resource(handler=Deauthorize)
 TempUser = Resource(handler=TempUserHandler)
 Content = Resource(handler=ContentSummaryHandler)
@@ -19,6 +20,7 @@ Bookmark = Resource(handler=BookmarkHandler)
 Vote = Resource(handler=VoteHandler)
 Moderate = Resource(handler=ModerationHandler)
 Privacy = Resource(handler=PrivacyHandler)
+Confirmation = Resource(handler=ConfirmUserHandler)
 
 urlpatterns = patterns('',
     url(r'^settings/$', Settings),
@@ -38,11 +40,13 @@ urlpatterns = patterns('',
     
     # Facebook
     url(r'^fb/$', FBLogin),
+    url(r'^rb/$', RBLogin),
     
     # Auth
     url(r'^deauthorize/$', Deauthorize),
     url(r'^tempuser/$', TempUser),
-
+    url(r'^confirmuser/$', Confirmation),
+    
     # Widget
     url(r'^page/', PageData),
     url(r'^containers/create/', CreateContainers),

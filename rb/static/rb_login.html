@@ -46,38 +46,36 @@
 		<a href="javascript:void(0);" onclick="RDRAuth.doFBlogout();">Log out of ReadrBoard</a>
 	</div>
 	<div id="direct_registration">
-	   <!-- <form method="post"> -->
-	   <!-- {% csrf_token %} -->
 		<input type="text" name="username" />
 		<input type="password" name="password" />
-		<button onclick="direct_registration();">LOG IN SIRa</button>
-		<!-- </form> -->
+		<button onclick="direct_registration();">LOG IN SIRZZ</button>
 	</div>
 	<script type="text/javascript">
 		$('#groupname').text( decodeURI(qs_args.group_name) );
 		
 		function direct_registration() {
-			var sendData = "username="+$('#direct_registration').find('input[name="username"]').val()+
-						   "&password="+$('#direct_registration').find('input[name="password"]').val();
-
+			var sendData = {
+				"username":$('#direct_registration').find('input[name="username"]').val(),
+				"password":$('#direct_registration').find('input[name="password"]').val()
+			};
 			$.ajax({
 				beforeSend: function( xhr ) {
+					// xhr.overrideMimeType( 'text/plain; charset=x-user-defined' );
 					xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
 				},
 				url: "/api/rb/",
 				type: "post",
-				contentType: "application/x-www-form-urlencoded",
+				contentType: "application/json",
 				dataType: "json",
-				data: sendData,
-				success: function(response) {
-					// console.log( response.data.full_name );
-					RDRAuth.setUser(response);
-					// console.dir( response );
-					// console.log( $.parseJSON( sendData ) );
+				data: {
+					json: JSON.stringify( sendData )
+				},
+				complete: function(response) {
+					console.dir(response);
 				}
 			});
 		}
 
-	</script>
+		</script>
    </body>
 </html>

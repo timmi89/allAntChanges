@@ -33,22 +33,25 @@ def checkToken(data):
     social_user = SocialUser.objects.filter(user=user_id)
     
     # Check and set auth_token for registered social user
-    if len(social_user) == 1:
+    if len(social_user) == 1 and social_user[0].provider == 'Facebook':
         print "Checking token for registered user"
         try:
             social_auth = SocialAuth.objects.get(social_user__user=data['user_id'])
+            print "--------- SOCIAL AUTH -----------"
+            print social_auth
         except SocialAuth.DoesNotExist:
             return None
 
         # Check with facebook to see if token is still valid
         # Note: this is slow -- look for a way to improve
-        try:
-            graph = GraphAPI(social_auth.auth_token)
-            graph.get_object("me")
-        except GraphAPIError as GAE:
-            print GAE.message
-            return None 
-            
+        if social_user[0].provider == 'Facebook':
+            try:
+                graph = GraphAPI(social_auth.auth_token)
+                graph.get_object("me")
+            except GraphAPIError as GAE:
+                print GAE.message
+                return None 
+                
         # If facebook approves, check if expired -- could be redundant
         now = datetime.now()
         if social_auth.expires > now:
@@ -58,6 +61,7 @@ def checkToken(data):
     
     # Set auth_token for temporary user
     else:
+        print "USING READRBOARD AUTH_TOKEN"
         auth_token = 'R3dRB0aRdR0X'
     
     # Create token with passed in credentials
