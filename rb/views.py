@@ -335,7 +335,8 @@ def request_password_reset(request):
     context = {}
     if request.method == 'POST':
         username = request.POST['username']
-        (user, password_email) = generatePasswordEmail(username)
+        email_addr = request.POST['email']
+        (user, password_email) = generatePasswordEmail(username, email_addr)
         if user is not None:
             #user.email_user("Readrboard email confirmation", password_email)
             msg = EmailMessage("Readrboard password reset", password_email, "hello@readrboard.com", [user.email])
