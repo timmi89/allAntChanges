@@ -1,12 +1,10 @@
 {% extends "base.html" %}
 
-{% block sidebarContent %}
-<div id="sidebar">
-</div>
-{% endblock sidebarContent %}
+{% block bodyClass %}wide{% endblock %}
 
 {% block mainContent %}
-  <h1>ReadrBoard User Modification</h1>
+  <h1>Change User Avatar</h1>
+  <div class="container">
   {% if requested %}
     <h3>Thanks!</h3>
     <a href = "/">Home</a>
@@ -32,6 +30,7 @@
 
     <button type="submit">Submit</button>
     </form>
+    </div>
   {% endif %}
 {% endblock mainContent %}
 

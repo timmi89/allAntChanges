@@ -1,12 +1,10 @@
 {% extends "base.html" %}
 
-{% block sidebarContent %}
-<div id="sidebar">
-</div>
-{% endblock sidebarContent %}
+{% block bodyClass %}wide{% endblock %}
 
 {% block mainContent %}
-  <h1>ReadrBoard User Signup</h1>
+  <h1>User Signup</h1>
+  <div class="container">
   {% if requested %}
     <h3>Thanks!</h3>
     <a href = "/">Home</a>
@@ -18,21 +16,20 @@
 
   	<div>
   		<label for="id_username">User Name </label>
-  		{{ form.username }}{{ form.username.errors }}
+  		{{ form.username.errors }}{{ form.username }}
   	</div>
   	<div>
     	<label for="id_email">Email </label>
-    	{{ form.email }}{{ form.email.errors }}
+    	{{ form.email.errors }}{{ form.email }}
   	</div>
   	<div>
   	  <label for="id_password1">Password</label>
-  	  {{ form.password1 }}{{ form.password1.errors }}
+  	  {{ form.password1.errors }}{{ form.password1 }}
   	</div>
   	<div>
       <label for="id_password2">Password Again</label>
-      {{ form.password2 }}{{ form.password2.errors }}
+      {{ form.password2.errors }}{{ form.password2 }}
     </div>
-
     <button type="submit">Submit</button>
     </form>
   {% endif %}
