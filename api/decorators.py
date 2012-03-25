@@ -17,9 +17,6 @@ def status_response(func):
         except ObjectDoesNotExist as error:
             res['status'] = 'fail'
             res['message'] = error
-        except DoesNotExist as error:
-            res['status'] = 'fail'
-            res['message'] = error
         except Exception as error:
             res['status'] =  'fail'
             res['message'] = error
