@@ -8,49 +8,6 @@ from baseconv import base62_encode
 import datetime
 
 
-from south.modelsinspector import add_introspection_rules
-add_introspection_rules([], ["^rb\.models\.CustomImageField"])
-
-from django.db.models import ImageField, signals
-"""
-CustomImageField: http://scottbarnham.com/blog/2007/07/31/uploading-images-to-a-dynamic-path-with-django/
-"""
-class CustomImageField(ImageField):
-    """Allows model instance to specify upload_to dynamically.
-
-    Model class should have a method like:
-
-        def get_upload_to(self, attname):
-            return 'path/to/%d' % self.id
-
-    Based on: http://code.djangoproject.com/wiki/CustomUploadAndFilters
-    """
-    def __init__(self, *args, **kwargs):
-        if not 'upload_to' in kwargs:
-            kwargs['upload_to'] = 'dummy'
-        self.prime_upload = kwargs.get('prime_upload', False)
-        if 'prime_upload' in kwargs:
-            del(kwargs['prime_upload'])
-        super(CustomImageField, self).__init__(*args, **kwargs)
-
-    def contribute_to_class(self, cls, name, **kwargs):
-        """Hook up events so we can access the instance."""
-        super(CustomImageField, self).contribute_to_class(cls, name)
-        if self.prime_upload:
-            signals.post_init.connect(self._get_upload_to, sender=cls)
-        signals.pre_save.connect(self._get_upload_to, sender=cls)
-
-    def _get_upload_to(self, instance=None, **kwargs):
-        """Get dynamic upload_to value from the model instance."""
-        if hasattr(instance, 'get_upload_to'):
-            self.upload_to = instance.get_upload_to(self.attname)
-
-    def db_type(self):
-        """Required by Django for ORM."""
-        return 'varchar(100)'
-
-
-
 """
 Custom Managers
 """
@@ -121,6 +78,11 @@ class Feature(models.Model):
     def __unicode__(self):
         return u'Feature(Text: {0}, Images: {1}, Flash: {2})'.format(self.text, self.images, self.flash)
 
+import os
+def get_image_path(instance, filename):
+    return os.path.join('users/', str(instance.id) +'/avatars/', filename)
+
+
 class SocialUser(models.Model):
     GENDER_CHOICES = (
         ('M', 'Male'),
@@ -143,11 +105,11 @@ class SocialUser(models.Model):
     bio = models.TextField(max_length=255, blank=True, null=True)
     img_url = models.URLField(blank=True)
     
-    avatar = CustomImageField(upload_to='users/avatars/',height_field=50, width_field=50, blank=True, null=True)
-    
+    avatar = models.ImageField(upload_to=get_image_path, blank=True, null=True)
+    """
     def get_upload_to(self, attname):
             return 'users/%d/avatars/' % self.user.id
-
+    """
     def admin_groups(self):
         ga = GroupAdmin.objects.filter(social_user=self, approved=True)
         return Group.objects.filter(id__in=ga.values('group'))

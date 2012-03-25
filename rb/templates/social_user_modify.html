@@ -6,35 +6,33 @@
 {% endblock sidebarContent %}
 
 {% block mainContent %}
-  <h1>ReadrBoard User Modify</h1>
+  <h1>ReadrBoard User Modification</h1>
   {% if requested %}
-    {% if not_logged_in %}
-        <h3>You must be logged in to  modify your profile.</h3>
-    <a href = "/">Home</a>
-    {% else %}
     <h3>Thanks!</h3>
     <a href = "/">Home</a>
-    {% endif %}
   {% else %}
     <form action="/user_modify/" enctype="multipart/form-data" method="post" class="in-page">
     {% csrf_token %}
   
     {{ form.non_field_errors }}
+    {{ form.errors }}
 
   	<div>
-  		<label for="id_username">Profile Name</label>
+  		<label for="id_username">User Name </label>
   		{{ form.username }}{{ form.username.errors }}
   	</div>
   	<div>
-    	<label for="id_avatar">Avatar Image </label>
+    	<label for="id_avatar">Avatar </label>
     	{{ form.avatar }}{{ form.avatar.errors }}
   	</div>
+  	
   	<div>
       {{ form.user_token }} {{ form.user_token.errors }}
     </div>
     <div>
-      {{ form.uid }} {{ form.uid.errors }}
+      {{ form.id }} {{ form.id.errors }}
     </div>
+
 
     <button type="submit">Submit</button>
     </form>

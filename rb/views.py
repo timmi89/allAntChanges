@@ -290,7 +290,7 @@ def modify_rb_social_user(request):
             
             context['requested'] = True
     else:
-        form = ModifySocialUserForm(initial={'user_token' : user_token, 'uid' : social_user.id})
+        form = ModifySocialUserForm(initial={'user_token' : user_token, 'id' : social_user.id})
         
     context['form'] = form
     response =  render_to_response(
