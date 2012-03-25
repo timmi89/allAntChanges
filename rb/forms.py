@@ -111,14 +111,11 @@ class ModifySocialUserForm(forms.ModelForm):
     
     id = forms.CharField(label=_('User Id'), widget=forms.HiddenInput)
     user_token = forms.CharField(label=_('User Token'), widget=forms.HiddenInput)
-    username = forms.RegexField(label=_("Username"), max_length=30, regex=r'^[\w.@+-]+$',
-        help_text = _("Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only."),
-        error_messages = {'invalid': _("This value may contain only letters, numbers and @/./+/-/_ characters.")})
     avatar = forms.ImageField(label=_("Avatar Image"), max_length=255)
     
     class Meta:
         model = SocialUser
-        fields = ("username","avatar", "id")
+        fields = ("avatar", "id")
 
     def clean_id(self):
         return self.cleaned_data['id']
@@ -126,15 +123,6 @@ class ModifySocialUserForm(forms.ModelForm):
     def clean_user_token(self):
         return self.cleaned_data['user_token']
     
-    def clean_username(self):
-        username = self.cleaned_data["username"]
-        try:
-            SocialUser.objects.get(username=username)
-            User.objects.get(username=username)
-        except SocialUser.DoesNotExist, User.DoesNotExist:
-            return username
-        raise forms.ValidationError(_("A user with that username already exists."))
-
     def clean_avatar(self):
         avatar = self.cleaned_data["avatar"]
         return avatar
@@ -148,12 +136,9 @@ class ModifySocialUserForm(forms.ModelForm):
         
         try:
             social_user = SocialUser.objects.get(id=self.clean_id())
-            user = User.objects.get(id=social_user.uid)
             social_user.avatar = self.clean_avatar()
-            social_user.username = self.clean_username()
-            user.username = self.clean_username()
             
-        except SocialUser.DoesNotExist, User.DoesNotExist:
+        except SocialUser.DoesNotExist:
             raise forms.ValidationError(_("A problem occurred while updating your profile."))
         
         if commit:
@@ -165,7 +150,7 @@ class ModifySocialUserForm(forms.ModelForm):
                 image.save(img_filename)
             except Exception, e:
                 print e
-            user.save()
+            
         return social_user
 
            

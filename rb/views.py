@@ -268,10 +268,9 @@ def create_rb_user(request):
 def modify_rb_social_user(request):
     context = {}
     cookie_user = checkCookieToken(request)
-    print "COOKIE USER: " , cookie_user
+    if not cookie_user: return HttpResponseRedirect('/rb_login/')
     try:
         social_user = SocialUser.objects.get(user=cookie_user)
-        print "Social User:" ,social_user
         user_token = generateSocialUserToken(social_user)
     except SocialUser.DoesNotExist:
         social_user = None
