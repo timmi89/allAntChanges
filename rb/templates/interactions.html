@@ -2,61 +2,11 @@
 var comments = [];
 </script>
 <section>
-<!--
-<div class="card text">
-  <header>
-    <h1 title="Hilarious">Hilarious <span class="count"></span></h1>
-  </header>
-  <div class="content">
-    <div class="content_type" rel="tooltip" title="This is reaction is to text from the article.">quote</div>
-    <div class="content_body">
-      four score and seven years ago and something else really cool, too.
-    </div>
-  </div>
-  <div class="meta">
-    <div class="publisher"><img src="/static/site/images/logo_sm.png"/></div>
-    <div class="title"><strong><a href="#">the title of the article goes here</a></strong></div>
-  </div>
-</div>
-
-<div class="card page">
-  <header>
-    <h1 title="Love It">Love It <span class="count"></span></h1>
-  </header>
-  <div class="content">
-    <div class="content_type" rel="tooltip" title="This is reaction is to a whole page.">page</div>
-    <div class="content_body">
-      ReadrBoard launches on HyperVocal
-    </div>
-  </div>
-  <div class="meta">
-    <div class="publisher"><img src="/static/site/images/logo_sm.png"/></div>
-  </div>
-</div>
-
-<div class="card media">
-  <header>
-    <h1 title="Beautiful">Beautiful <span class="count"></span></h1>
-  </header>
-  <div class="content">
-    <div class="content_type"></div>
-    <div class="content_body">
-      <img src="http://www.metrolic.com/wp-content/uploads/2011/02/6iceland.jpg" />
-    </div>
-  </div>
-  <div class="meta">
-    <div class="publisher"><img src="/static/site/images/logo_sm.png"/></div>
-    <div class="title"><strong><a href="#">the title of the article goes here</a></strong></div>
-  </div>
-</div>
--->
-
-
 {% regroup current_page.object_list by page as pi %}
 {% for page in pi %}
 {% for interaction in page.list %}
 
-{% if interaction.kind != 'com' %}
+{% if interaction.kind != 'com' and interaction.id != 27 %}
 <div class="card {{ interaction.content.kind }}" id="card_{{ interaction.id }}">
   <div class="date">
     {{ interaction.created|date:"M d, Y" }}
@@ -129,117 +79,33 @@ var comments = [];
 {% if interaction.kind == 'com' %}
 <script>
   // if parent interaction content type is txt or med or img
-  // { % if interaction.content.kind == "txt" % }
   var comment = {
-    "parent":{
-      "id":{{ interaction.parent.id }}
+    "parent" : {
+      "id"    :   {{ interaction.parent.id }},
+      "kind"  :   "{{ interaction.parent.content.kind }}",
+      "date"  :   "{{ interaction.parent.created|date:"M d, Y" }}",
+      "interaction_node_body" :   "{% if interaction.parent.kind = 'tag' or interaction.parent.kind = 'bkm' %}{{interaction.parent.interaction_node.body }}{% else %}{{ interaction.parent.human_kind }}{% endif %}",
+      "content_body"          :   "{{ interaction.content.body }}",
+      "page_title"            :   "{{ page.grouper.title }}",
+      "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url }}{% else %}{{ interaction.page.url }}{% endif %}",
+      "approved"              :   {% if interaction.approved %}false{% else %}true{% endif %},
+      "group" : {
+        "short_name"  :   "{{ page.grouper.site.group.short_name }}",
+        "id"          :   "{{ page.grouper.site.id }}",
+        "logo_url"    :   "{{ STATIC_URL }}{{ page.grouper.site.group.logo_url_sm }}",
+        "name"        :   "{{ STATIC_URL }}{{ page.grouper.site.group.name }}",
+        "title"       :   "{{ STATIC_URL }}{{ page.grouper.site.group.title }}"
+      }
     },
-    "created":"{{ interaction.created|date:"M d g:ia" }}",
-    "user_profile_link":"/user/{{interaction.user.id}}",
-    "user_avatar":"{{ interaction.user.social_user.img_url }}",
-    "user_name":"{{ interaction.user.social_user.full_name }}",
-    "comment":"{% filter force_escape %}{{ interaction.interaction_node.body }}{% endfilter %}"
+    "created"           :   "{{ interaction.created|date:"M d g:ia" }}",
+    "user_profile_link" :   "/user/{{interaction.user.id}}",
+    "user_avatar"       :   "{{ interaction.user.social_user.img_url }}",
+    "user_name"         :   "{{ interaction.user.social_user.full_name }}",
+    "comment"           :   "{% filter force_escape %}{{ interaction.interaction_node.body }}{% endfilter %}",
+    "moderator"         :   {% if cookie_user and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %}
   };
   comments.push(comment);
 
-  // if (         $('#card_{{ interaction.parent.id }}').length ) {
-  function writeComment( comment ) {
-      var $card = $('#card_'+comment.parent.id),
-          $comments = $card.find('div.comments'),
-          $comment_container = $('<div class="comment_container"/>');
-
-      $comment_container.html('<div class="header">' +
-          '<div class="when">'+comment.created+'</div>' +
-          '<a href="'+comment.user_profile_link+'">' +
-            '<div class="avatar"><img src="'+comment.user_avatar+'"></div>' +
-            '<div class="who">'+comment.user_name+'</div>' +
-          '</a>' +
-        '</div>' +
-        '<div class="comment">' +
-          '<div class="quote open">"</div>' +
-          '<div class="comment_body">'+comment.comment+'</div>' +
-          '<div class="quote close">"</div>' +
-        '</div>');
-      
-      if ( $card.length ) {
-        $comments.show();
-        if ( !$comments.find('h2').length ) $comments.append('<h2>Comments</h2>');
-        $comments.append( $comment_container );
-      } else {
-        // write the card first, then append the comment
-        /*
-        var $newCard = $('<div class="card {{ interaction.content.kind }}" id="card_{{ interaction.id }}" />');
-        
-        $newCard.append('<div class="date">{{ interaction.created|date:"M d, Y" }}</div>');
-          <header>
-            <h1 title="{% if interaction.kind = 'tag' or interaction.kind = 'bkm' %}{{ interaction.interaction_node.body }}{% else %}{{ interaction.human_kind }}:{% endif %}">
-              {% if interaction.kind = 'tag' or interaction.kind = 'bkm' %}{{ interaction.interaction_node.body }}{% else %}{{ interaction.human_kind }}:{% endif %}
-              <span class="count"></span>
-            </h1>
-          </header>
-          <div class="content">
-            {% if interaction.content.kind == "txt" %}
-            <div class="content_type" rel="tooltip" title="This reaction is to text from the article.">quote</div>
-            {% endif %}
-            {% if interaction.content.kind == "pag" %}
-            <div class="content_type" rel="tooltip" title="This is reaction is to a whole page.">page</div>
-            {% endif %}
-            <div class="content_body">
-              {% if interaction.content.kind == "img" %}
-              <img src="{{ interaction.content.body }}">
-              {% endif %}
-              {% if interaction.content.kind == "med" %}
-              <iframe width="418" frameborder="0" src="{{ interaction.content.body }}"></iframe>
-              {% endif %}
-              {% if interaction.content.kind == "txt" %}
-              {{ interaction.content.body }}
-              {% endif %}
-              {% if interaction.content.kind == "pag" %}
-              {{ page.grouper.title }}
-              {% endif %}
-            </div>
-          </div>
-          <div class="comments"></div>
-          <div class="meta">
-            <div class="publisher">
-              <a href=/group/{{ page.grouper.site.group.short_name }}>
-              {% if page.grouper.site.group.logo_url_sm %}
-                <img alt="{{ page.grouper.site.group.name }}" src="{{ STATIC_URL }}{{ page.grouper.site.group.logo_url_sm }}">
-              {% else %}
-                {{ page.grouper.site.group.name }}
-              {% endif %}
-              </a>
-            </div>
-            <div class="title">
-              <strong><a href="/page/{{ page.grouper.id }}/">{{ page.grouper.title }}</a></strong>
-              <a class="external_link" href="{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url }}{% else %}{{ interaction.page.url }}{% endif %}" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a>
-            </div>
-            {% if cookie_user and interaction.page.site.group.id in ga_ids %}
-            <div class="block_content">
-              <a href="javascript:void(0);" onclick="RB.admin.blockContent({{interaction.id}});" id="moderate_{{interaction.id}}">
-                {% if interaction.approved %}
-                  Block this
-                {% else %}
-                  Unblock
-                {% endif %}
-              </a>
-            </div>
-            {% endif %}
-          </div>
-        </div>
-*/
-
-
-
-
-
-
-
-
-      }
-
-
-  }
 </script>
 {% endif %}
 
@@ -264,6 +130,78 @@ var comments = [];
 
 
 <script>
+function writeComment( comment ) {
+      var $card = $('#card_'+comment.parent.id);
+
+      // check to see if the card for the interaction exists yet
+      if ( !$card.length ) {
+        // write the card first, then append the comment
+
+        var $card = $('<div class="card '+comment.parent.kind+'" id="card_'+comment.parent.id+'" />');
+        $card.append('<div class="date">'+comment.parent.date+'</div>');
+        var $header = $('<header/>').attr('title', comment.parent.interaction_node_body)
+             .append('<h1>'+comment.parent.interaction_node_body+'</h1>')
+             .append('<span class="count"></span>');
+
+        var $content = $('<div class="content"/>');
+        
+        if ( comment.parent.kind == "txt" ) {
+            $content.append('<div class="content_type" rel="tooltip" title="This reaction is to text from the article.">quote</div>');
+        } else if ( comment.parent.kind == "pag" ) {
+            $content.append('<div class="content_type" rel="tooltip" title="This is reaction is to a whole page.">page</div>');
+        }
+
+        if ( comment.parent.kind == "img" ) {
+          $content.append('<div class="content_body"><img src="'+comment.parent.content_body+'"></div><div class="comments"></div>');
+        } else if ( comment.parent.kind == "med" ) {
+          $content.append('<div class="content_body"><iframe width="418" frameborder="0" src="'+comment.parent.content_body+'"></iframe></div><div class="comments"></div>');
+        } else if ( comment.parent.kind == "txt" ) {
+          $content.append('<div class="content_body">'+comment.parent.content_body+'</div><div class="comments"></div>');
+        } else if ( interaction.content.kind == "pag" ) {
+          $content.append('<div class="content_body">'+comment.parent.page_title+'</div><div class="comments"></div>');
+        }
+
+        var $meta = $('<div class="meta"/>');
+        if ( comment.parent.group.logo_url != "" ) {
+          $meta.append('<div class="publisher"><a href=/group/' + comment.parent.group.short_name + '><img alt="' + comment.parent.group.name + '" src="' + comment.parent.group.logo_url + '"></a></div>');
+        } else {
+          $meta.append('<div class="publisher"><a href=/group/' + comment.parent.group.short_name + '>'+comment.parent.group.name+'</a></div>');
+        }
+        $meta.append('<div class="title">'
+                + '<strong><a href="/page/'+comment.parent.group.id+'/">'+comment.parent.group.title+'</a></strong>'
+                + '<a class="external_link" href="'+comment.external_url+'" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a>'
+                + '</div>');
+        if ( comment.moderator ) {
+            $meta.append('<div class="block_content">'
+              + '<a href="javascript:void(0);" onclick="RB.admin.blockContent('+comment.parent+');" id="moderate_'+comment.parent+'">'
+              + ( comment.parent.approved ) ? 'Block this':'Unblock'
+              + '</a></div>');
+        }
+        $card.append( $header, $content, $meta );
+        $('#cards section').append( $card );
+      }
+
+      var $comments = $card.find('div.comments'),
+          $comment_container = $('<div class="comment_container"/>');
+
+      $comment_container.html('<div class="header">' +
+          '<div class="when">'+comment.created+'</div>' +
+          '<a href="'+comment.user_profile_link+'">' +
+            '<div class="avatar"><img src="'+comment.user_avatar+'"></div>' +
+            '<div class="who">'+comment.user_name+'</div>' +
+          '</a>' +
+        '</div>' +
+        '<div class="comment">' +
+          '<div class="quote open">"</div>' +
+          '<div class="comment_body">'+comment.comment+'</div>' +
+          '<div class="quote close">"</div>' +
+        '</div>');
+      
+        $comments.show();
+        if ( !$comments.find('h2').length ) $comments.append('<h2>Comments</h2>');
+        $comments.append( $comment_container );
+  }
+
 $.each( comments, function(idx, comment) {
   writeComment( comment );
 });
