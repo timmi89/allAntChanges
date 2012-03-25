@@ -20,6 +20,8 @@ urlpatterns = patterns('',
   
   # For short URL expander
   url(r'^s/(?P<short>[0-9a-zA-Z]+)/$', 'rb.views.expander'),
+  url(r'^i/(?P<short>[0-9]+)/$', 'rb.views.interaction_redirect'),
+  
   
   # For main website
   url(r'^$','rb.views.splash'),

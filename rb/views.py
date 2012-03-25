@@ -507,3 +507,28 @@ def expander(request, short):
     redirect_response.set_cookie(key='content_type', value=smart_str(interaction.content.kind))
 
     return redirect_response
+
+
+def interaction_redirect(request, short):
+    
+    try:
+        interaction = Interaction.objects.get(id=short)
+    except Interaction.DoesNotExist:
+        return HttpResponseRedirect('/')
+
+    page = Page.objects.get(id=interaction.page.id)
+
+    # Create redirect response
+    url = page.url;
+    redirect_response = HttpResponseRedirect(unicode(url))
+    
+    # Setup cookie for redirect
+    redirect_response.set_cookie(key='container_hash', value=smart_str(interaction.container.hash))
+    redirect_response.set_cookie(key='location', value=smart_str(interaction.content.location))
+    redirect_response.set_cookie(key='content', value=smart_str(interaction.content.body))
+    redirect_response.set_cookie(key='reaction', value=smart_str(interaction.interaction_node.body))
+    redirect_response.set_cookie(key='referring_int_id', value=smart_str(interaction.id))
+    redirect_response.set_cookie(key='content_type', value=smart_str(interaction.content.kind))
+
+    return redirect_response
+
