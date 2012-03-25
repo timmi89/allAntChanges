@@ -237,7 +237,7 @@ font-style:italic; }
 caption { background-color:transparent; }
 
 /* FORMS (See css/mylibs/forms.css) */
-button {
+div.container form button {
   background: -webkit-gradient(linear, center top, center bottom, from(#ffffff), to(#e8e8e8));
   background: -moz-linear-gradient(center top , #ffffff, #e8e8e8) repeat scroll 0 0 transparent;
   -webkit-border-radius: 7px 7px 7px 7px;

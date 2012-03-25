@@ -64,7 +64,7 @@ interactions.push( interaction );
     "approved"          :   {% if interaction.approved %}true{% else %}false{% endif %},
     "created"           :   "{{ interaction.created|date:"M d g:ia" }}",
     "user_profile_link" :   "/user/{{interaction.user.id}}",
-    "user_avatar"       :   "{{ interaction.user.social_user.avatar.url }}",
+    "user_avatar"       :   "{{ interaction.user.social_user.img_url }}",
     "user_name"         :   "{{ interaction.user.social_user.full_name }}",
     "comment"           :   "{% filter force_escape %}{{ interaction.interaction_node.body }}{% endfilter %}",
     "moderator"         :   {% if cookie_user and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %}

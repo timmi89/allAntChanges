@@ -4528,7 +4528,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
                                             '<h1>Reactions</h1>';
                         } else {
-                            var headerText = (summary.counts.tags>0) ? summary.counts.tags + "Reactions":"Reactions",
+                            var headerText = (summary.counts.tags>0) ? summary.counts.tags + " Reactions":"Reactions",
                                 //<div class="rdr_remember_image"><a href="javascript:void(0);"><span>&nbsp;</span></a></div>
                                 headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
                                                 '<h1>'+headerText+'</h1>';
