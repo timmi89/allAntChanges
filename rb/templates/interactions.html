@@ -148,25 +148,94 @@ var comments = [];
           $comments = $card.find('div.comments'),
           $comment_container = $('<div class="comment_container"/>');
 
+      $comment_container.html('<div class="header">' +
+          '<div class="when">'+comment.created+'</div>' +
+          '<a href="'+comment.user_profile_link+'">' +
+            '<div class="avatar"><img src="'+comment.user_avatar+'"></div>' +
+            '<div class="who">'+comment.user_name+'</div>' +
+          '</a>' +
+        '</div>' +
+        '<div class="comment">' +
+          '<div class="quote open">"</div>' +
+          '<div class="comment_body">'+comment.comment+'</div>' +
+          '<div class="quote close">"</div>' +
+        '</div>');
+      
       if ( $card.length ) {
         $comments.show();
-
         if ( !$comments.find('h2').length ) $comments.append('<h2>Comments</h2>');
-        
-        $comment_container.html('<div class="header">' +
-            '<div class="when">'+comment.created+'</div>' +
-            '<a href="'+comment.user_profile_link+'">' +
-              '<div class="avatar"><img src="'+comment.user_avatar+'"></div>' +
-              '<div class="who">'+comment.user_name+'</div>' +
-            '</a>' +
-          '</div>' +
-          '<div class="comment">' +
-            '<div class="quote open">"</div>' +
-            '<div class="comment_body">'+comment.comment+'</div>' +
-            '<div class="quote close">"</div>' +
-          '</div>');
-
         $comments.append( $comment_container );
+      } else {
+        // write the card first, then append the comment
+        /*
+        var $newCard = $('<div class="card {{ interaction.content.kind }}" id="card_{{ interaction.id }}" />');
+        
+        $newCard.append('<div class="date">{{ interaction.created|date:"M d, Y" }}</div>');
+          <header>
+            <h1 title="{% if interaction.kind = 'tag' or interaction.kind = 'bkm' %}{{ interaction.interaction_node.body }}{% else %}{{ interaction.human_kind }}:{% endif %}">
+              {% if interaction.kind = 'tag' or interaction.kind = 'bkm' %}{{ interaction.interaction_node.body }}{% else %}{{ interaction.human_kind }}:{% endif %}
+              <span class="count"></span>
+            </h1>
+          </header>
+          <div class="content">
+            {% if interaction.content.kind == "txt" %}
+            <div class="content_type" rel="tooltip" title="This reaction is to text from the article.">quote</div>
+            {% endif %}
+            {% if interaction.content.kind == "pag" %}
+            <div class="content_type" rel="tooltip" title="This is reaction is to a whole page.">page</div>
+            {% endif %}
+            <div class="content_body">
+              {% if interaction.content.kind == "img" %}
+              <img src="{{ interaction.content.body }}">
+              {% endif %}
+              {% if interaction.content.kind == "med" %}
+              <iframe width="418" frameborder="0" src="{{ interaction.content.body }}"></iframe>
+              {% endif %}
+              {% if interaction.content.kind == "txt" %}
+              {{ interaction.content.body }}
+              {% endif %}
+              {% if interaction.content.kind == "pag" %}
+              {{ page.grouper.title }}
+              {% endif %}
+            </div>
+          </div>
+          <div class="comments"></div>
+          <div class="meta">
+            <div class="publisher">
+              <a href=/group/{{ page.grouper.site.group.short_name }}>
+              {% if page.grouper.site.group.logo_url_sm %}
+                <img alt="{{ page.grouper.site.group.name }}" src="{{ STATIC_URL }}{{ page.grouper.site.group.logo_url_sm }}">
+              {% else %}
+                {{ page.grouper.site.group.name }}
+              {% endif %}
+              </a>
+            </div>
+            <div class="title">
+              <strong><a href="/page/{{ page.grouper.id }}/">{{ page.grouper.title }}</a></strong>
+              <a class="external_link" href="{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url }}{% else %}{{ interaction.page.url }}{% endif %}" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a>
+            </div>
+            {% if cookie_user and interaction.page.site.group.id in ga_ids %}
+            <div class="block_content">
+              <a href="javascript:void(0);" onclick="RB.admin.blockContent({{interaction.id}});" id="moderate_{{interaction.id}}">
+                {% if interaction.approved %}
+                  Block this
+                {% else %}
+                  Unblock
+                {% endif %}
+              </a>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+*/
+
+
+
+
+
+
+
+
       }
 
 
@@ -204,7 +273,7 @@ $container.imagesLoaded(function(){
   $container.masonry({
       // options
       itemSelector : '.card',
-      columnWidth : 419
+      columnWidth : 439
   });
   $container.tooltip({
     selector: "div.content_type"
