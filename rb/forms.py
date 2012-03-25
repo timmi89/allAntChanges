@@ -5,6 +5,7 @@ from api import userutils
 
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import ugettext_lazy as _
+from PIL import Image
 
 
 class CreateUserForm(forms.ModelForm):
@@ -108,7 +109,7 @@ class ChangePasswordForm(forms.ModelForm):
 
 class ModifySocialUserForm(forms.ModelForm):
     
-    uid = forms.CharField(label=_('User Id'), widget=forms.HiddenInput)
+    id = forms.CharField(label=_('User Id'), widget=forms.HiddenInput)
     user_token = forms.CharField(label=_('User Token'), widget=forms.HiddenInput)
     username = forms.RegexField(label=_("Username"), max_length=30, regex=r'^[\w.@+-]+$',
         help_text = _("Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only."),
@@ -117,10 +118,10 @@ class ModifySocialUserForm(forms.ModelForm):
     
     class Meta:
         model = SocialUser
-        fields = ("username","avatar")
+        fields = ("username","avatar", "id")
 
-    def clean_uid(self):
-        return self.cleaned_data['uid']
+    def clean_id(self):
+        return self.cleaned_data['id']
     
     def clean_user_token(self):
         return self.cleaned_data['user_token']
@@ -129,7 +130,8 @@ class ModifySocialUserForm(forms.ModelForm):
         username = self.cleaned_data["username"]
         try:
             SocialUser.objects.get(username=username)
-        except SocialUser.DoesNotExist:
+            User.objects.get(username=username)
+        except SocialUser.DoesNotExist, User.DoesNotExist:
             return username
         raise forms.ValidationError(_("A user with that username already exists."))
 
@@ -139,15 +141,32 @@ class ModifySocialUserForm(forms.ModelForm):
     
     def is_valid(self):
         valid = super(ModifySocialUserForm, self).is_valid()
-        return valid and userutils.validateSocialUserToken(self.cleaned_data['uid'],self.cleaned_data['user_token'] )
+        return valid and userutils.validateSocialUserToken(self.cleaned_data['id'],self.cleaned_data['user_token'] )
         
     
     def save(self, commit=True):
-        social_user = super(ModifySocialUserForm, self).save(commit=False)
+        
+        try:
+            social_user = SocialUser.objects.get(id=self.clean_id())
+            user = User.objects.get(id=social_user.uid)
+            social_user.avatar = self.clean_avatar()
+            social_user.username = self.clean_username()
+            user.username = self.clean_username()
+            
+        except SocialUser.DoesNotExist, User.DoesNotExist:
+            raise forms.ValidationError(_("A problem occurred while updating your profile."))
         
         if commit:
             social_user.save()
-        return user
+            img_filename = social_user.avatar.path
+            try:
+                image = Image.open(img_filename)
+                image.thumbnail((50,50),Image.ANTIALIAS)
+                image.save(img_filename)
+            except Exception, e:
+                print e
+            user.save()
+        return social_user
 
            
 

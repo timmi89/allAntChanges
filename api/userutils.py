@@ -225,7 +225,7 @@ def generateSocialUserToken(social_user):
 
 def validateSocialUserToken(social_user_id, token):
     try:
-        social_user = SocialUser.obects.get(id=social_user_id)
+        social_user = SocialUser.objects.get(id=social_user_id)
     except SocialUser.DoesNotExist:
         return False
     
