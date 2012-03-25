@@ -1,12 +1,10 @@
 {% extends "base.html" %}
 
-{% block sidebarContent %}
-<div id="sidebar">
-</div>
-{% endblock sidebarContent %}
+{% block bodyClass %}wide{% endblock %}
 
 {% block mainContent %}
-  <h1>ReadrBoard User Modification</h1>
+  <h1>Change User Avatar</h1>
+  <div class="container">
   {% if requested %}
     <h3>Thanks!</h3>
     <a href = "/">Home</a>
@@ -17,10 +15,6 @@
     {{ form.non_field_errors }}
     {{ form.errors }}
 
-  	<div>
-  		<label for="id_username">User Name </label>
-  		{{ form.username }}{{ form.username.errors }}
-  	</div>
   	<div>
     	<label for="id_avatar">Avatar </label>
     	{{ form.avatar }}{{ form.avatar.errors }}
@@ -36,6 +30,7 @@
 
     <button type="submit">Submit</button>
     </form>
+    </div>
   {% endif %}
 {% endblock mainContent %}
 

@@ -237,6 +237,30 @@ font-style:italic; }
 caption { background-color:transparent; }
 
 /* FORMS (See css/mylibs/forms.css) */
+button {
+  background: -webkit-gradient(linear, center top, center bottom, from(#ffffff), to(#e8e8e8));
+  background: -moz-linear-gradient(center top , #ffffff, #e8e8e8) repeat scroll 0 0 transparent;
+  -webkit-border-radius: 7px 7px 7px 7px;
+  -moz-border-radius: 7px 7px 7px 7px;
+  border-radius: 7px 7px 7px 7px;
+  border-top: 1px solid #f8f8f8;
+  -webkit-box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7);
+  -moz-box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7);
+  box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7);
+  border:1px solid #ccc;
+  color: #787878;
+  cursor: pointer;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight:100;
+  margin-top: 6px;
+  padding-top: 4px;
+  display:block;
+}
+
+label {
+  display:block;
+}
 
 p, h1, form {border:0; margin:0; padding:0;}
 .spacer{clear:both; height:1px;}
@@ -620,43 +644,6 @@ section[role="main"] div.card div.comment_container .comment .quote.close {    d
   height: 0;
 }
 
-/*
-section[role="main"] table.card {background:#d2dee4; width:100%; margin-bottom:10px; border:1px solid #becdd7; border-right:0; border-left:0;}
-section[role="main"] table.card .interaction  {margin-top:1px; border-top:1px solid #d2dee4;}
-section[role="main"] table.card .block_content a 	 {font-style:italic;font-size:10px; color:#e66;}
-section[role="main"] table.card .column1  {text-align:center; vertical-align:middle;}
-section[role="main"] table.card .interaction .column1 .reaction {padding-left: 5px; padding-right: 5px;}
-section[role="main"] table.card .column2  {text-align:left; vertical-align:middle;}
-section[role="main"] table.card .interaction .column2  {text-align:left; vertical-align:top;}
-section[role="main"] table.card thead .column1      {width:113px; margin:0; padding:5px 0; background:#fff; text-align:center; }
-section[role="main"] table.card thead .column1 img  {margin-top:3px }
-section[role="main"] table.card thead .column2      {margin:0; padding:5px 5px 5px 15px; background:url(../images/shaded_arrow.png) center left no-repeat #fff; font:italic bold 14px Arial; color:#6b6b6b;}
- 
-section[role="main"] table.card tbody .column1      {background:#eaf0f3; vertical-align:top; border-right:1px solid #d2dee4;}
-section[role="main"] table.card tbody .column1 .reaction    {font-family:Helvetica, Arial; font-size:18px; color:#6b6b6b; font-size:24px; margin:10px 0px 5px 0px; }
-section[role="main"] table.card tbody .column1 .count       {font-size:12px; margin-bottom:15px;}
-
-section[role="main"] table.card tbody .column2      {background:#ffffff; padding:15px;}
-section[role="main"] table.card tbody .column2 .who_action      {font:italic bold 12px Arial;}
-section[role="main"] table.card tbody .column2 .content       {font:normal normal 12px Arial;}
-section[role="main"] table.card tbody .column2 .content img   {max-width:100px; max-height:100px; xbox-shadow:0px 0px 4px #666; margin:5px 0;}
-section[role="main"] table.card tbody .column2 h5.label.small   {font:normal normal 9px Arial; text-transform:uppercase; margin-top:10px;}
-section[role="main"] table.card tbody .column2 .other_reactions 		{list-style-type:none; overflow:auto;}
-section[role="main"] table.card tbody .column2 .other_reactions li	{display:block; float:left; font-size:11px; font-style:italic; margin-right:20px; padding:1px 5px; background:#ddd; border-radius:3px;}
-section[role="main"] table.card tbody .column2 .comment_container    {background:#f0f0f0; border:1px solid #d3d4d4; box-shadow:0px 0px 2px #aaa; padding:5px;  }
-section[role="main"] table.card tbody .column2 .comment_container .header   {overflow:hidden; color:#666; clear:both; }
-section[role="main"] table.card tbody .column2 .comment_container .header .when       {float:right; font:normal 11px Arial;}
-section[role="main"] table.card tbody .column2 .comment_container .header .when span  {font-size:8px; text-transform:uppercase; }
-section[role="main"] table.card tbody .column2 .comment_container .header .avatar     {float:left; height:20px; width:20px;}
-section[role="main"] table.card tbody .column2 .comment_container .header .avatar img {height:20px; width:20px;}
-section[role="main"] table.card tbody .column2 .comment_container .header .who        {float:left; margin-left:5px; padding-top:4px; height:16px; font:italic bold 12px Arial; vertical-align:middle; }
-
-section[role="main"] table.card tbody .column2 .comment_container .comment   {overflow:hidden; color:#666; clear:both; position:relative; padding:5px 25px; font:normal 24px Helvetica;}
-section[role="main"] table.card tbody .column2 .comment_container .comment .count  {font:normal 12px Arial; }
-section[role="main"] table.card tbody .column2 .comment_container .comment .quote.open  { background:url(../images/quote_open.png) top left no-repeat; top:8px;left:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
-section[role="main"] table.card tbody .column2 .comment_container .comment .quote.close { background:url(../images/quote_close.png) top left no-repeat; bottom:20px;right:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
-*/
-
 /* COMPLEMENTARY */
 section[role="complementary"] { 
 	height:100%;
@@ -710,23 +697,28 @@ section[role="complementary"] #user_data label span {
 /*************** WIDE PAGES ***************/
 /* CONTENT CONTAINER */
 body.wide section[role="content"]	{
-	width:1120px;
+	width:100%;
 	margin:40px auto 0;
 	padding:0;
-	background:#ccc;
 	overflow:auto;
 	position:relative;
 	box-shadow:none;
 }
 
 /* MAIN */
-body.wide section[role="main"] 	{ 
+body.wide section[role="main"] {
 	clear:both;
 	margin:0;
-	padding:0;
-	/*float:left;*/
-	background:#fff; /* D2DEE4 */
-	width:1120px;
+	padding:20px;
+}
+body.wide section[role="main"] h1 {
+  font-size:24px;
+}
+body.wide section[role="main"] div.container {
+	background:#fff;
+  border:1px solid #aaa;
+  padding:10px;
+  box-shadow:0px 0px 4px #ccc;
 }
 
 body.wide section[role="complementary"] { 
