@@ -351,7 +351,7 @@ RDRAuth = {
 		RDRAuth.returnUser();
 	},
 	decodeDjangoCookie : function(value) {
-		return value.replace(/"/g,'').replace(/\\054/g,",").replace(/\\073/g,";");
+		if (value) return value.replace(/"/g,'').replace(/\\054/g,",").replace(/\\073/g,";");
 	}
 }
 RDRAuth.init();

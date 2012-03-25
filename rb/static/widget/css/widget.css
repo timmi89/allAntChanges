@@ -209,9 +209,9 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr h2  {color:#666 !important; font-size:14px !important; letter-spacing:0.25px !important; padding:4px 9px 0; }
 
 #rdr_sandbox div.rdr_header div.rdr_indicator_stats         { position:absolute; margin:3px 0 0 5px; cursor: move !important; }
-#rdr_sandbox div.rdr_header div.rdr_remember_image          { position:absolute; right:3px; z-index:0;}
+/*#rdr_sandbox div.rdr_header div.rdr_remember_image          { position:absolute; right:3px; z-index:0;}
 #rdr_sandbox div.rdr_header div.rdr_remember_image a        { display: inline-block; padding-top: 3px; }
-#rdr_sandbox div.rdr_header div.rdr_remember_image a span   { background:url("../images/actionbar_icons.png") no-repeat -59px -9px transparent; display:inline-block; height:22px; width:22px; }
+#rdr_sandbox div.rdr_header div.rdr_remember_image a span   { background:url("../images/actionbar_icons.png") no-repeat -59px -9px transparent; display:inline-block; height:22px; width:22px; }*/
 
 #rdr_sandbox div.rdr.rdr_window                             { max-width:600px; }
 #rdr_sandbox div.rdr div.rdr_header                         { background:#fff !important; position:relative !important; height:18px !important; z-index:5; border-bottom:1px solid #ddd !important;}
@@ -769,10 +769,8 @@ div.rdr_reactions {
 #rdr_sandbox div.rdr_alert_box        { position:fixed; bottom:-400px; left:10px; background:#f0f0f0; min-width:200px; max-width:300px; padding:0px; z-index:12000; overflow:hidden; -moz-box-shadow:0 0 10px 1px #aaa  !important; -webkit-box-shadow:0 0 10px 1px #aaa  !important; box-shadow:0 0 10px 1px #aaa !important; }
 #rdr_sandbox div.rdr_alert_box a      { color:#008be4 !important; }
 #rdr_sandbox div.rdr_alert_box_1      { background: #fff !important; height:30px !important; }
-#rdr_sandbox div.rdr_alert_box_1 h1   { padding:6px 0 0 20px !important; cursor:text !important; clear:none !important;}
+#rdr_sandbox div.rdr_alert_box_1 h1   { padding:11px 0 0 26px !important; cursor:text !important; clear:none !important;}
 
-#rdr_sandbox div.rdr_alert_box_1 span,
-#rdr_sandbox div.rdr_alert_box_1 h1 span { font-size:21px; !important}
 #rdr_sandbox div.rdr_alert_box_2      { background: #f0f0f0; padding:10px 10px; font-size:12px; color:#666;}
 #rdr_sandbox div.rdr_alert_box_x      { position:absolute; right:10px; top:7px; font-size:14px; cursor:pointer; color:#999; }
 #rdr_sandbox div.rdr_alert_box_2 span {

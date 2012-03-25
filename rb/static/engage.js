@@ -3992,7 +3992,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 $detailsHeader = $('<div class="rdr rdr_header"><div class="rdr_loader"/></div>'),
                                 modForIE = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 20:0,
                                 headerText = (summary.counts.tags>0) ? "Reactions": ($indicator_details.width()>=(175+modForIE)) ? "What's your reaction?":"React:",
-                                $headerContent = $('<div class="rdr_remember_image"><a href="javascript:void(0);"><span>&nbsp;</span></a></div><div class="rdr_indicator_stats"><a href="'+RDR_baseUrl+'/" target="_blank"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"></a><span class="rdr_count"></span></div>' +
+                                // remember image: <div class="rdr_remember_image"><a href="javascript:void(0);"><span>&nbsp;</span></a></div>
+                                $headerContent = $('<div class="rdr_indicator_stats"><a href="'+RDR_baseUrl+'/" target="_blank"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"></a><span class="rdr_count"></span></div>' +
                                                 '<h1>'+headerText+'</h1>'),
                                 $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />');
 
@@ -4008,24 +4009,24 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 scope.makeTagsListForMedia( hash );
                             }
                             
-                            $indicator_details.delegate('div.rdr_remember_image a', 'click', function() {
-                                RDR.rindow.updateHeader( $indicator_details, '<div class="rdr_indicator_stats"><img src="'+RDR_staticUrl+'/widget/images/blank.png" class="no-rdr rdr_pin"><span class="rdr_count"></span></div><h1>Save This</h1>' );
-                                RDR.rindow.panelCreate( $indicator_details, 'rdr_bookmark_media' );
+                            // $indicator_details.delegate('div.rdr_remember_image a', 'click', function() {
+                            //     RDR.rindow.updateHeader( $indicator_details, '<div class="rdr_indicator_stats"><img src="'+RDR_staticUrl+'/widget/images/blank.png" class="no-rdr rdr_pin"><span class="rdr_count"></span></div><h1>Save This</h1>' );
+                            //     RDR.rindow.panelCreate( $indicator_details, 'rdr_bookmark_media' );
                                 
-                                var $noteBox = $indicator_details.find('div.rdr_bookmark_media').addClass('rdr_tags_list');
+                            //     var $noteBox = $indicator_details.find('div.rdr_bookmark_media').addClass('rdr_tags_list');
 
-                                // ok, get the content associated with this tag!
-                                var $backToReactions = $('<div class="rdr_back">&lt;&lt; Back</div>');
+                            //     // ok, get the content associated with this tag!
+                            //     var $backToReactions = $('<div class="rdr_back">&lt;&lt; Back</div>');
 
-                                $backToReactions.click( function() {
-                                    RDR.rindow.updateHeader( $indicator_details, $headerContent );
-                                    RDR.rindow.panelHide( $indicator_details, 'rdr_bookmark_media', $indicator_details.data('initialWidth') );
-                                });
-                                $noteBox.append( $backToReactions );
+                            //     $backToReactions.click( function() {
+                            //         RDR.rindow.updateHeader( $indicator_details, $headerContent );
+                            //         RDR.rindow.panelHide( $indicator_details, 'rdr_bookmark_media', $indicator_details.data('initialWidth') );
+                            //     });
+                            //     $noteBox.append( $backToReactions );
 
-                                scope.makeTagsListForMedia( hash, 'bookmark' );
-                                RDR.rindow.panelShow( $indicator_details, 'rdr_bookmark_media', $indicator_details.data('initialWidth') );
-                            });
+                            //     scope.makeTagsListForMedia( hash, 'bookmark' );
+                            //     RDR.rindow.panelShow( $indicator_details, 'rdr_bookmark_media', $indicator_details.data('initialWidth') );
+                            // });
                         }
                         
                     },
@@ -4527,8 +4528,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
                                             '<h1>Reactions</h1>';
                         } else {
-                            var headerText = (summary.counts.tags>0) ? summary.counts.tags + "Reactions":"Reactions";
-                                headerContent = '<div class="rdr_remember_image"><a href="javascript:void(0);"><span>&nbsp;</span></a></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
+                            var headerText = (summary.counts.tags>0) ? summary.counts.tags + "Reactions":"Reactions",
+                                //<div class="rdr_remember_image"><a href="javascript:void(0);"><span>&nbsp;</span></a></div>
+                                headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
                                                 '<h1>'+headerText+'</h1>';
                         }
                         RDR.rindow.updateHeader( $rindow, headerContent );

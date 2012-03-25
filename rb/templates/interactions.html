@@ -14,7 +14,7 @@ var interaction = {
       "interaction_node_body" :   "{% if interaction.kind = 'tag' or interaction.kind = 'bkm' %}{{interaction.interaction_node.body|escapejs }}{% else %}{{ interaction.human_kind|escapejs }}{% endif %}",
       "content_body"          :   '{{ interaction.content.body|escapejs }}',
       "page_title"            :   "{{ page.grouper.title|escapejs }}",
-      "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url }}{% else %}{{ interaction.page.url }}{% endif %}",
+      // "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url }}{% else %}{{ interaction.page.url }}{% endif %}",
       "approved"              :   {% if interaction.approved %}true{% else %}false{% endif %},
       "group" : {
         "short_name"  :   "{{ page.grouper.site.group.short_name }}",
@@ -50,7 +50,7 @@ interactions.push( interaction );
       "interaction_node_body" :   "{% if interaction.parent.kind = 'tag' or interaction.parent.kind = 'bkm' %}{{interaction.parent.interaction_node.body|escapejs }}{% else %}{{ interaction.parent.human_kind|escapejs }}{% endif %}",
       "content_body"          :   '{{ interaction.parent.content.body|escapejs }}',
       "page_title"            :   "{{ page.grouper.title|escapejs }}",
-      "external_url"          :   "{% if interaction.parent.page.canonical_url %}{{ interaction.parent.page.canonical_url }}{% else %}{{ interaction.parent.page.url }}{% endif %}",
+      // "external_url"          :   "{% if interaction.parent.page.canonical_url %}{{ interaction.parent.page.canonical_url }}{% else %}{{ interaction.parent.page.url }}{% endif %}",
       "approved"              :   {% if interaction.parent.approved %}true{% else %}false{% endif %},
       "group" : {
         "short_name"  :   "{{ page.grouper.site.group.short_name }}",
@@ -129,7 +129,7 @@ function writeCard( interaction, showBlocked ) {
     }
     $meta.append('<div class="title">'
             + '<strong><a href="/page/'+interaction.group.id+'/">'+interaction.group.title+'</a></strong>'
-            + '<a class="external_link" href="'+interaction.external_url+'" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a>'
+            + '<a class="external_link" href="{{ STATIC_URL }}i/'+interaction.id+'" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a>'
             + '</div>');
     if ( interaction.moderator ) {
         $meta.append('<div class="block_content">'
