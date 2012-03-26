@@ -1862,7 +1862,7 @@ function readrBoard($R){
                         id: "rdr_loginPanel",
                         // pnlWidth:360,
                         pnls:1,
-                        height:225,
+                        height:175,
                         ignoreWindowEdges:"bt"
                     });
 
@@ -1877,8 +1877,8 @@ function readrBoard($R){
                         parentHost = window.location.protocol + "//" + window.location.host,
                         h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard",
 
-                        $loginIframe = $('<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="360" height="190" frameborder="0" style="overflow:hidden;" />' );
-                    RDR.rindow.updateHeader( $rindow, '<h1>'+h1_text+'</h1>' );
+                        $loginIframe = $('<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="360" height="140" frameborder="0" style="overflow:hidden;" />' );
+                    RDR.rindow.updateHeader( $rindow, '<div class="rdr_indicator_stats"><a target="_blank" href="'+RDR_baseUrl+'"><img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin"></a></div><h1>'+h1_text+'</h1>' );
                     $rindow.find('div.rdr_body_wrap').append('<div class="rdr_body" />').append( $loginIframe );
                 }
 			},
