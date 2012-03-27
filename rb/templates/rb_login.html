@@ -30,10 +30,16 @@
 			<a href="/request_password/" target="_blank" style="font-size:11px;font-style:italic;">Forgot Password? &raquo;</a>
 		</div>
 	</div>
-	<button onclick="direct_registration();" tabindex="3">Log In</button>
+	<button onclick="direct_registration();" tabindex="3" id="submit_login">Log In</button>
 	<script type="text/javascript">
 		$('input[name="username"]').focus();
 		$('#groupname').text( decodeURI(qs_args.group_name) );
+
+		$('#direct_registration input').keyup( function(event) {
+            if (event.keyCode == '13') { //enter.  
+            	$('#submit_login').click();
+            }
+        });
 		
 		function direct_registration() {
 			var sendData = "username="+$('#direct_registration').find('input[name="username"]').val()+
@@ -49,11 +55,17 @@
 				dataType: "json",
 				data: sendData,
 				success: function(response) {
-					RDRAuth.setUser(response);
-					window.opener.RDRAuth.readUserCookie();
-					window.opener.RDRAuth.returnUser();
-					window.opener.RDRAuth.notifyParent({}, "close login panel");
-					self.close();
+					if ( response.data ) {
+						if ( response.data.status == "fail" ) {
+							$('#direct_registration').prepend('<div class="error">'+response.data.message+'</div>');
+						} else {
+							RDRAuth.setUser(response);
+							window.opener.RDRAuth.readUserCookie();
+							window.opener.RDRAuth.returnUser();
+							window.opener.RDRAuth.notifyParent({}, "close login panel");
+							self.close();
+						}
+					}
 				}
 			});
 		}
