@@ -1555,7 +1555,7 @@ function readrBoard($R){
 
                     //todo: finish making these changes here:, but i didnt' want to do it before the DC demo.
                     var $msg1, $msg2, $pinIcon;
-                    if( whichAlert == "fromShareLink"){
+                    if( whichAlert == "fromShareLink" && data.content != "undefined" ){
                         $msg1 = $('<h1>Shared with <span>ReadrBoard</span></h1>');
 
                         if ( $('img.rdr-'+data.container_hash).length == 1 ) {
@@ -1582,23 +1582,25 @@ function readrBoard($R){
                             $(this).closest('div.rdr_alert_box').find('div.rdr_alert_box_x').click();
                         });
                     }
-                    $pinIcon = $('<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />');
+                    if (typeof $msg1 != "undefined" ) {
+                        $pinIcon = $('<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />');
 
-                    var $alertContent = $('<div class="rdr_alert_box rdr rdr_brtl rdr_brtr rdr_' + whichAlert + '" />');
+                        var $alertContent = $('<div class="rdr_alert_box rdr rdr_brtl rdr_brtr rdr_' + whichAlert + '" />');
 
-                    $alertContent.append(
-                        $('<div class="rdr_alert_box_1 rdr_brtl rdr_brtr" />').append($pinIcon).append($msg1),
-                        $('<div class="rdr_alert_box_2" />').append($msg2),
-                        '<div class="rdr rdr_alert_box_x">x</div>'
-                    );
-                                            
-                    $('#rdr_sandbox').append( $alertContent );
-                    $('div.rdr_alert_box.rdr_'+whichAlert).find('.rdr_alert_box_x').click( function() {
-                        RDR.session.alertBar.close( whichAlert );
-                    });
+                        $alertContent.append(
+                            $('<div class="rdr_alert_box_1 rdr_brtl rdr_brtr" />').append($pinIcon).append($msg1),
+                            $('<div class="rdr_alert_box_2" />').append($msg2),
+                            '<div class="rdr rdr_alert_box_x">x</div>'
+                        );
+                                                
+                        $('#rdr_sandbox').append( $alertContent );
+                        $('div.rdr_alert_box.rdr_'+whichAlert).find('.rdr_alert_box_x').click( function() {
+                            RDR.session.alertBar.close( whichAlert );
+                        });
 
-                    // TODO put this back in 
-                    $('div.rdr_alert_box.rdr_'+whichAlert).animate({bottom:0},1000);
+                        // TODO put this back in 
+                        $('div.rdr_alert_box.rdr_'+whichAlert).animate({bottom:0},1000);
+                    }
                 },
                 close: function( whichAlert ) {
                     $('div.rdr_alert_box.rdr_'+whichAlert).remove();

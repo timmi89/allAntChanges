@@ -231,7 +231,6 @@ RDRAuth = {
 		$.cookie('rdr_session', 'true', { expires:session_expiry, path:'/' });
 	},
 	readUserCookie : function() {
-		console.log('readr user cookie');
 		// RDRAuth.rdr_user.first_name = $.cookie('first_name');
 		// RDRAuth.rdr_user.full_name = $.cookie('full_name');
 		if ( $.cookie('img_url') ) RDRAuth.rdr_user.img_url = $.cookie('img_url');
@@ -240,7 +239,6 @@ RDRAuth = {
 		if ( $.cookie('temp_user') ) RDRAuth.rdr_user.temp_user = $.cookie('temp_user');
 	},
 	returnUser : function() {
-		console.log('returnUser');
 		RDRAuth.readUserCookie();
 		if (top == self) {
 			// we're on the site
