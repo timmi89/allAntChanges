@@ -3,7 +3,7 @@
 {% block bodyClass %}wide{% endblock %}
 
 {% block mainContent %}
-  <h1>User Signup</h1>
+  <h1>Create User Account</h1>
   <div class="container">
   {% if requested %}
     <h3>Thanks!</h3>
@@ -27,7 +27,7 @@
   	  {{ form.password1.errors }}{{ form.password1 }}
   	</div>
   	<div>
-      <label for="id_password2">Password Again</label>
+      <label for="id_password2">Confirm Password</label>
       {{ form.password2.errors }}{{ form.password2 }}
     </div>
     <button type="submit">Submit</button>

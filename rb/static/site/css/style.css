@@ -237,7 +237,7 @@ font-style:italic; }
 caption { background-color:transparent; }
 
 /* FORMS (See css/mylibs/forms.css) */
-div.container form button {
+div.container button {
   background: -webkit-gradient(linear, center top, center bottom, from(#ffffff), to(#e8e8e8));
   background: -moz-linear-gradient(center top , #ffffff, #e8e8e8) repeat scroll 0 0 transparent;
   -webkit-border-radius: 7px 7px 7px 7px;
@@ -262,7 +262,7 @@ label {
   display:block;
 }
 input[type="text"] {
-  margin-bottom:20px;
+  /*margin-bottom:20px;*/
 }
 
 ul.errorlist {
@@ -444,8 +444,18 @@ page-break-after:avoid; }
 }/*/mediaquery*/
 
 /*480px __________________________________________________________________________________________________________ */
-/*@media only screen and (min-width:480px) {*/
+@media screen and (max-width:600px) {
+  header[role="banner"] #site_search      { display:none !important; }
+  
 
+  body.wide section[role="main"]    {
+    padding:10px 0 !important;
+  }
+  body.wide section[role="main"] h1 {
+    font-size:22px !important;
+    margin:0 0 10px 20px;
+  }
+}
 /* ROOT */
 /* HEADINGS */
 /* TYPOGRAPHY */
@@ -471,7 +481,7 @@ page-break-after:avoid; }
 /*@media only screen and (min-width:768px) {*/
 
 /* HEADER */
-header[role="banner"]	{height:36px;min-width:940px;background:url(../images/header_bg.png) top left repeat-x;position:fixed;width:100%;z-index:10;top:0;font-size:12px;text-align:center;}
+header[role="banner"]	{height:36px;xmin-width:940px;background:url(../images/header_bg.png) top left repeat-x;position:fixed;width:100%;z-index:10;top:0;font-size:12px;text-align:center;}
 header[role="banner"] h1				{ text-indent:-9999px; background:url(../images/logo_med.png) top center no-repeat;margin-top:6px; }
 
 header[role="banner"] #user				{ left:8px; position:absolute; top:2px; }
@@ -482,7 +492,7 @@ header[role="banner"] #user	strong				{ float:left; margin: 8px 0px 0px 5px; }
 header[role="banner"] #user	a					{ color:#f2f3f7; }
 header[role="banner"] #user	#fb-logged-out 	{ margin-top:5px; }
 
-header[role="banner"] #site_search			{ position:absolute; right:8px; top:6px; }
+header[role="banner"] #site_search			{ position:absolute; right:8px; top:6px; display:block; }
 header[role="banner"] #site_search input	{ border:1px solid #424242; background:#eee;padding:4px;height:24px;width:180px;}
 header[role="banner"] #site_search button	{ width:26px; height:24px; background:url(../images/search_button.png) top left no-repeat;border:none;text-indent:-9999px;cursor:pointer;z-index:1; position:relative;float:right;margin-left:-26px;margin-top:0;}
 
@@ -553,7 +563,7 @@ section[role="main"] div.card div.meta div.title a.external_link		{ font-size:10
 
 section[role="main"] div.card.txt div.content						{ xborder-top: 1px solid #fff; margin:0 20px 0; padding-top:9px;}
 section[role="main"] div.card.txt div.content div.content_type		{ width:25px; height:47px; margin:5px 8px 0 0; background:url(../images/type_text.png) top left no-repeat; text-indent:-9999px; float:left; }
-section[role="main"] div.card.txt div.content div.content_body		{ font-size:20px; font-family:Times New Roman, Georgia, serif;}
+section[role="main"] div.card.txt div.content div.content_body		{ font-size:24px; font-family:Times New Roman, Georgia, serif;}
 
 section[role="main"] div.card.img div.content,
 section[role="main"] div.card.med div.content							{ margin:0 20px 0; }
@@ -566,7 +576,7 @@ section[role="main"] div.card.med div.content div.content_body iframe		{ width:4
 section[role="main"] div.card.pag header 			{ /*padding:0 10px;*/ }
 section[role="main"] div.card.pag header h1			{ font-size:16px; }
 section[role="main"] div.card.pag div.content			{ xborder-top: 1px solid #fff; margin:0 20px 0; padding-top:9px;}
-section[role="main"] div.card.pag div.content_type		{ width:25px; height:47px; margin:5px 8px 0 0; background:url(../images/type_page.png) top left no-repeat; text-indent:-9999px; float:left; }
+section[role="main"] div.card.pag div.content_type		{ width:25px; height:37px; margin:5px 8px 0 0; background:url(../images/type_page.png) top left no-repeat; text-indent:-9999px; float:left; }
 section[role="main"] div.card.pag div.content_body		{ margin-top:4px; }
 
 section[role="main"] div.card div.comments    { background:#eee; border:1px solid #d3d4d4; box-shadow:0px 0px 2px #aaa; padding:5px; clear:both; margin:30px 20px; display:none; }
@@ -742,6 +752,7 @@ body.wide section[role="main"] div.container {
   box-shadow:0px 0px 4px #ccc;
   border-left:0;
   border-right:0;
+  font-size:12px;
 }
 
 body.wide section[role="complementary"] { 
