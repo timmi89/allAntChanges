@@ -31,6 +31,7 @@
 	</div>
 	<button onclick="direct_registration();" tabindex="3">Log In</button>
 	<script type="text/javascript">
+		$('input[name="username"]').focus();
 		$('#groupname').text( decodeURI(qs_args.group_name) );
 		
 		function direct_registration() {
@@ -47,19 +48,11 @@
 				dataType: "json",
 				data: sendData,
 				success: function(response) {
-					// console.log( response.data.full_name );
-					console.log(1);
 					RDRAuth.setUser(response);
-					console.log(2);
 					window.opener.RDRAuth.readUserCookie();
-					console.log(3);
 					window.opener.RDRAuth.returnUser();
-					console.log(4);
-					RDRAuth.notifyParent({}, "close login panel");
-					console.log(5);
-					// self.close();
-					// console.dir( response );
-					// console.log( $.parseJSON( sendData ) );
+					window.opener.RDRAuth.notifyParent({}, "close login panel");
+					self.close();
 				}
 			});
 		}
