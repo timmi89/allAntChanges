@@ -3413,6 +3413,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 //todo: reconsider this method of liberally updating everything with updateContainerTrackers
                                 $summary_box.find('div.rdr_info').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
                             } else {
+                                $('#rdr_loginPanel').remove()
 
                                 // init vars
                                 var $rindow = args.rindow,
