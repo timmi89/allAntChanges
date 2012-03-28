@@ -81,7 +81,8 @@ class FBHandler(BaseHandler):
             first_name=django_user.first_name,
             full_name=social_user.full_name,
             img_url=social_user.img_url,
-            readr_token=readr_token
+            readr_token=readr_token,
+            user_type="facebook"
         )
         
         
@@ -147,7 +148,8 @@ class RBHandler(BaseHandler):
             first_name=django_user.first_name,
             full_name=social_user.full_name,
             img_url=social_user.img_url,
-            readr_token=readr_token
+            readr_token=readr_token,
+            user_type="readrboard"
         )
       
 

@@ -219,12 +219,14 @@ RDRAuth = {
 		RDRAuth.rdr_user.img_url = response.data.img_url;
 		RDRAuth.rdr_user.user_id = response.data.user_id;
 		RDRAuth.rdr_user.readr_token = response.data.readr_token;
+		RDRAuth.rdr_user.user_type = response.data.user_type;
 		// $.cookie('first_name', RDRAuth.rdr_user.first_name, { expires: 365, path: '/' });
 		// $.cookie('full_name', RDRAuth.rdr_user.full_name, { expires: 365, path: '/' });
 		$.cookie('temp_user', RDRAuth.rdr_user.temp_user, { expires: 365, path: '/' });
 		$.cookie('img_url', RDRAuth.rdr_user.img_url, { expires: 365, path: '/' });
 		$.cookie('user_id', RDRAuth.rdr_user.user_id, { expires: 365, path: '/' });
 		$.cookie('readr_token', RDRAuth.rdr_user.readr_token, { expires: 365, path: '/' });
+		$.cookie('user_type', RDRAuth.rdr_user.user_type, { expires: 365, path: '/' });
 
 		var session_expiry = new Date(); 
 		session_expiry.setMinutes( session_expiry.getMinutes() + 15 );
