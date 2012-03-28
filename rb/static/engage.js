@@ -3198,6 +3198,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 response = args.response,
                                 tag = args.tag;
 
+                            log('args in onSuccess for comments')
+                            log(args)
+
+
                             //clear loader
                             if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
@@ -3220,21 +3224,28 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             //do updates
 
                             //todo: unify this with the rest of the interactions
+                            var tagId = parseInt(args.tag.id, 10);
+
                             var intHelper = {
+                                delta: 1,
                                 id: interaction.id,
                                 body: interaction.interaction_node.body,
-                                parent_id: args.parent_id,
                                 content_id: args.content_id,
-                                parent_interaction_node: args.tag,
-                                delta: 1,
+                                //doesn't seem like we're using these
+                                    // parent_id: args.parent_id,
+                                    // parent_interaction_node: args.tag,
+                                tag_id: tagId,
                                 user: args.user,
                                 social_user: args.social_user
                             };
 
                             var diff = {   
-                                coms: {}
+                                coms: {
+
+                                }
                             };
-                            diff.coms[ tag.id ] = intHelper;
+
+                            diff.coms[ tagId ] = intHelper;
                             RDR.actions.summaries.update(hash, diff);
 
                             var usrMsgArgs = {      
@@ -4230,6 +4241,22 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     //EXAMPLE: diff object.  keep commented out, but leave it here.
                     var diff = {   
                         coms: {
+                            tagIdInt:{
+                                body,
+                                content_id,
+                                id, //id is the comment id
+                                social_user: {
+                                    full_name,
+                                    img_url,
+                                    user //same as below
+                                },
+                                tag_id, //same int as the tagIdInt above
+                                user: {
+                                    first_name,
+                                    id,
+                                    last_name
+                                }
+                            }
                         },
                         tags: {
                             //this should be an obj: { 'id':{body:body, count:count, id:id} } where count should be 1 for add a new one, or -1 for remove it.
@@ -4263,10 +4290,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     $.each( diff, function(interaction_node_type, nodes){
                         // This is now scoped to node_type - so nodes, summary_nodes, and counts here only pertain to their category (tag or comment, etc.)
                         var summary_nodes = summary.top_interactions[interaction_node_type];
-
-                        //todo: i realized that coms are in an array and tags are in an object, so we have to split this way up here.  Change later.
                     
-                            //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
+                        //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
                         $.each(nodes, function(id,diffNode){
                             //coms or tags
                             if( summary_nodes.hasOwnProperty(id) && typeof summary_nodes[id] !== 'undefined' ){
@@ -4279,16 +4304,36 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 }
 
                             }else{
-                                //tag doens't exist yet:
-                                //todo: implement a diffNode.make function instead of this.
-                                summary_nodes[id] = {
-                                    body: diffNode.body,
-                                    count: diffNode.delta, //this should always be 1.
-                                    id: id,
-                                    parent_id: diffNode.parent_id,
-                                    parent_interaction_node: diffNode.parent_interaction_node
-                                };
+                                //interaction doens't exist yet:
+                                log(interaction_node_type)
+                                //split between tags and comments:
+                                if(interaction_node_type == "tags"){
+                                    //todo: implement a diffNode.make function instead of this.
+                                    summary_nodes[id] = {
+                                        count: diffNode.delta, //this should always be 1.
+                                        body: diffNode.body,
+                                        id: id,
+                                        parent_id: diffNode.parent_id,
+                                        parent_interaction_node: diffNode.parent_interaction_node
+                                    };
 
+                                }else{
+                                    console.log('updating coms')
+                                    console.log(diffNode);
+                                    var user = diffNode.user;
+
+
+                                    summary_nodes[diffNode.tag_id] = {
+                                            //I don't think it makes sense to save a count, because unlike tags, each comment should be unique
+                                            //count: diffNode.delta, //this should always be 1.
+                                        body: diffNode.body,
+                                        content_id: diffNode.content_id,
+                                        id: diffNode.id,
+                                        social_user: diffNode.social_user,
+                                        tag_id: diffNode.tag_id,
+                                        user: diffNode.user
+                                    }
+                                }
                             }
 
                             //update the summary's counts object
@@ -4979,7 +5024,7 @@ function rdr_loadScript(sScriptSrc,callbackfunction) {
 RDR.offline = true;
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
 RDR_scriptPaths.jquery = RDR_offline ?
-    RDR_staticUrl+"global/js/jquery-1.6.2.min.js" :
+    RDR_staticUrl+"global/js/jquery-1.6.js" :
     "http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js";
 RDR_scriptPaths.jqueryUI = RDR_offline ?
     RDR_staticUrl+"global/js/jquery-ui-1.8.14.custom.min.js" :
