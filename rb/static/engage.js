@@ -1782,6 +1782,7 @@ function readrBoard($R){
                     function(e){
                         var message = $.evalJSON( e.data );
                         if ( message.status ) {
+
                             if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
@@ -1805,6 +1806,7 @@ function readrBoard($R){
                                 }
                             } else if ( message.status == "close login panel" ) {
                                 $('#rdr_loginPanel').remove(); // little brute force, maybe should go elsewhere?
+                                $('div.rdr-summary div.rdr_info').html('<em>You\'re logged in!  Try your last reaction again.');
                             } else if ( message.status == "already had user" ) {
                                 // todo: when is this used?
                                 $('#rdr_loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
