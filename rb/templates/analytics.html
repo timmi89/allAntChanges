@@ -151,20 +151,20 @@ RB.analytics = {
 					}
 					$('section[role="most popular tags"] ol').html( $(tag_list) );
 				} else if (type=="bookmarks") {
-					var bookmarkHtml = "";
-					for ( var i in response ) {
-						var bookmark = response[i];
-						bookmarkHtml += '<tr><td role="content">('+bookmark[0].count+') '+bookmark[0].content__body+'</td></tr><tr><td role="reactions"><strong>Reactions:</strong>';
-						for ( var j in bookmark[1].related_reactions ) {
-							var reaction = bookmark[1].related_reactions[j];
-							bookmarkHtml += '('+reaction.count+') '+reaction.interaction_node__body;
-							if ( j < bookmark[1].related_reactions.length - 1 ) bookmarkHtml += ", ";
-						}
-						bookmarkHtml += '</td></tr>'; 
-						// bookmarkHtml += '<tr><td role="via"><em>View <a href="#" target="_blank">On your site <img src="/static/site/images/external_link_icon.gif" /></a> | <a href="#" target="_blank">Page Info</a></em></td></tr>';
-					}
+					// var bookmarkHtml = "";
+					// for ( var i in response ) {
+					// 	var bookmark = response[i];
+					// 	bookmarkHtml += '<tr><td role="content">('+bookmark[0].count+') '+bookmark[0].content__body+'</td></tr><tr><td role="reactions"><strong>Reactions:</strong>';
+					// 	for ( var j in bookmark[1].related_reactions ) {
+					// 		var reaction = bookmark[1].related_reactions[j];
+					// 		bookmarkHtml += '('+reaction.count+') '+reaction.interaction_node__body;
+					// 		if ( j < bookmark[1].related_reactions.length - 1 ) bookmarkHtml += ", ";
+					// 	}
+					// 	bookmarkHtml += '</td></tr>'; 
+					// 	// bookmarkHtml += '<tr><td role="via"><em>View <a href="#" target="_blank">On your site <img src="/static/site/images/external_link_icon.gif" /></a> | <a href="#" target="_blank">Page Info</a></em></td></tr>';
+					// }
 
-					$('table[role="popular bookmarks"] tbody').html( $(bookmarkHtml) );
+					// $('table[role="popular bookmarks"] tbody').html( $(bookmarkHtml) );
 				} else if (type=="shares") {
 
 					var shareHtml = "";
