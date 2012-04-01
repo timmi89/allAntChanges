@@ -68,6 +68,21 @@ function readrBoard($R){
         },
         styles: {
 		},
+        events: {
+            track : function( data, hash ) {
+                // RDR.events.track
+                var standardData = "";
+
+                if ( RDR.user && RDR.user.user_id ) standardData += "||uid::"+RDR.user.user_id;
+                if ( hash && RDR.util.getPageProperty('id', hash) ) standardData += "||pid::"+RDR.util.getPageProperty('id', hash);
+                if ( RDR.group && RDR.group.id ) standardData += "||gid::"+RDR.group.id;
+                
+                var eventSrc = data+standardData,
+                    $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
+console.log('eventSrc: '+eventSrc);
+                $('#rdr_event_pixels').append($event);
+            }
+        },
 		rindow: {
             defaults:{
                 coords:{
@@ -1369,6 +1384,8 @@ function readrBoard($R){
                     }
                 ];
 
+                RDR.events.track( 'show_action_bar::'+content );
+
                 $.each( items, function(idx, val){
                     var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
                     $indicatorAnchor = $('<a href="javascript:void(0);">' +val.item+ '</a>'),
@@ -1401,6 +1418,7 @@ function readrBoard($R){
 
                     //for now, just move the actionbar here overridding the positioning from above:
                 }
+
 
                 function _getMediaCoords(coords){
                     /*
@@ -1999,6 +2017,8 @@ function readrBoard($R){
                         $loginIframe = $('<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="360" height="140" frameborder="0" style="overflow:hidden;" />' );
                     RDR.rindow.updateHeader( $rindow, '<div class="rdr_indicator_stats"><a target="_blank" href="'+RDR_baseUrl+'"><img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin"></a></div><h1>'+h1_text+'</h1>' );
                     $rindow.find('div.rdr_body_wrap').append('<div class="rdr_body" />').append( $loginIframe );
+
+                    RDR.events.track( 'show_login' );
                 }
 			},
 			killUser: function() {
@@ -2315,6 +2335,7 @@ function readrBoard($R){
                     dataType: "jsonp",
                     data: { json: $.toJSON(sendData) },
 					success: function(response) {
+                       RDR.events.track( 'load' );
                         $.each( response.data, function(key,page){
                             //todo: it seems like we should use the page.id as the unique identifier instead of introducting 'key' which is just a counter
                             page.key = key;
@@ -3277,6 +3298,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 args.response = response;
                                 if ( response.data && response.data.num_interactions ) RDR.user.num_interactions = response.data.num_interactions;
                                 if ( response.status == "success" ) {
+                                    RDR.events.track( action_type+'_'+int_type_for_url+'::' + args.response.data.interaction.id);
                                     if(args.response.data.deleted_interaction){
                                         args.deleted_interaction = args.response.data.deleted_interaction;
                                     }
@@ -3288,6 +3310,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         RDR.actions.interactions[int_type].onFail(args);
                                     } else {
                                         if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
+                                            RDR.events.track( 'temp_limit_hit_r' );
                                             RDR.session.showLoginPanel( args );
                                         } if ( response.message == "existing interaction" ) {
                                             //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
@@ -3701,6 +3724,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             if ( args.response.data && args.response.data.existing && args.response.data.existing === true ) {
                                 $message = $('<em>You have already given that reaction.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>');
                             } else if ( args.response.message.indexOf("Temporary user interaction limit reached") != -1 ) {
+                                RDR.events.track( 'temp_limit_hit_s' );
                                 $message = $('<em>To continue adding reactions, please <a href="javascript:void(0);" style="color:#008be4;">log in</a>.</em><br><br><strong>Why:</strong> To encourage <strong style="color:#008be4;">high-quality participation from the community</strong>, <ins>we ask that you log in with Facebook. You\'ll also have a profile where you can revisit your reactions, notes, and comments made using <strong style="color:#008be4;">ReadrBoard</strong>!</ins>');
                                 $message.find('a').click( function() {
                                     RDR.session.showLoginPanel(args);
@@ -4035,6 +4059,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             $indicator.bind('mouseover.showRindow', function(){
                                 var selStates = $(this).data('selStates');
+                                RDR.events.track( 'view_node::'+hash, hash );
                                 RDR.rindow.make( "readMode", {hash:hash} );
                             });
                             $indicator.triggerHandler('mouseover.showRindow');
@@ -4594,7 +4619,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 var tag = args.tag, 
                     $rindow = args.rindow,
                     content_node = args.content_node;
-                
+                console.dir(content_node);
+                console.dir(tag);
                 $rindow.removeClass('rdr_rewritable').addClass('rdr_viewing_comments');
                 //temp tie-over    
                 var hash = args.hash,
@@ -4621,6 +4647,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     if ( kind == "text" ) $().selog('hilite', summary.content_nodes[ content_node.id ].selState, 'on');
                 } );
                 RDR.rindow.updateSizes( $rindow, commentRindowWidth, commentRindowHeight, summary.kind );
+
+                RDR.events.track( 'view_comment::'+content_node.id+'|'+tag.id, hash );
 
                 //helper functions 
                 function _makeCommentBox() {
@@ -5053,7 +5081,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             left:parseInt(e.pageX, 10)
                         },
                         kind:"text",
-                        content:selected.textClean,
+                        content:selected.text,
                         hash:$blockParent.data('hash')
                     });
                 }
@@ -5584,6 +5612,7 @@ function $RFunctions($R){
                         $summary_row = $summary_widget.find('tr');
 
                     $summary_widget.append('<div class="rdr-see-more"></div>');
+                    $summary_widget.data('page_id', page.id);
 
                     //page.jqFunc would be something like 'append' or 'after',
                     //so this would read $summary_widget_parent.append($summary_widget);
@@ -5630,6 +5659,7 @@ function $RFunctions($R){
                                 $visibleReactions = $this.find('div.rdr-sum-headline'),
                                 $pillContainer = $visibleReactions.find('div');
                             
+                            RDR.events.track( 'view_summary::'+$this.data('page_id') );
                             // if ( $pillContainer.height() > 64 && !$visibleReactions.is(':animated') ) {
                             if ( $this.hasClass('rdr-too-many-reactions') && !$visibleReactions.is(':animated') ) {
                                 $visibleReactions.height(64).css('max-height','none').animate({ height:$pillContainer.height() });
