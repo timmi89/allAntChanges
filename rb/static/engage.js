@@ -1670,7 +1670,7 @@ function readrBoard($R){
 
                     //todo: finish making these changes here:, but i didnt' want to do it before the DC demo.
                     var $msg1, $msg2, $pinIcon;
-                    if( whichAlert == "fromShareLink"){
+                    if( whichAlert == "fromShareLink" && data.content != "undefined" ){
                         $msg1 = $('<h1>Shared with <span>ReadrBoard</span></h1>');
 
                         if ( $('img.rdr-'+data.container_hash).length == 1 ) {
@@ -1697,23 +1697,25 @@ function readrBoard($R){
                             $(this).closest('div.rdr_alert_box').find('div.rdr_alert_box_x').click();
                         });
                     }
-                    $pinIcon = $('<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />');
+                    if (typeof $msg1 != "undefined" ) {
+                        $pinIcon = $('<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />');
 
-                    var $alertContent = $('<div class="rdr_alert_box rdr rdr_brtl rdr_brtr rdr_' + whichAlert + '" />');
+                        var $alertContent = $('<div class="rdr_alert_box rdr rdr_brtl rdr_brtr rdr_' + whichAlert + '" />');
 
-                    $alertContent.append(
-                        $('<div class="rdr_alert_box_1 rdr_brtl rdr_brtr" />').append($pinIcon).append($msg1),
-                        $('<div class="rdr_alert_box_2" />').append($msg2),
-                        '<div class="rdr rdr_alert_box_x">x</div>'
-                    );
-                                            
-                    $('#rdr_sandbox').append( $alertContent );
-                    $('div.rdr_alert_box.rdr_'+whichAlert).find('.rdr_alert_box_x').click( function() {
-                        RDR.session.alertBar.close( whichAlert );
-                    });
+                        $alertContent.append(
+                            $('<div class="rdr_alert_box_1 rdr_brtl rdr_brtr" />').append($pinIcon).append($msg1),
+                            $('<div class="rdr_alert_box_2" />').append($msg2),
+                            '<div class="rdr rdr_alert_box_x">x</div>'
+                        );
+                                                
+                        $('#rdr_sandbox').append( $alertContent );
+                        $('div.rdr_alert_box.rdr_'+whichAlert).find('.rdr_alert_box_x').click( function() {
+                            RDR.session.alertBar.close( whichAlert );
+                        });
 
-                    // TODO put this back in 
-                    $('div.rdr_alert_box.rdr_'+whichAlert).animate({bottom:0},1000);
+                        // TODO put this back in 
+                        $('div.rdr_alert_box.rdr_'+whichAlert).animate({bottom:0},1000);
+                    }
                 },
                 close: function( whichAlert ) {
                     $('div.rdr_alert_box.rdr_'+whichAlert).remove();
@@ -1895,6 +1897,7 @@ function readrBoard($R){
                     function(e){
                         var message = $.evalJSON( e.data );
                         if ( message.status ) {
+
                             if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
@@ -1918,6 +1921,7 @@ function readrBoard($R){
                                 }
                             } else if ( message.status == "close login panel" ) {
                                 $('#rdr_loginPanel').remove(); // little brute force, maybe should go elsewhere?
+                                $('div.rdr-summary div.rdr_info').html('<em>You\'re logged in!  Try your last reaction again.');
                             } else if ( message.status == "already had user" ) {
                                 // todo: when is this used?
                                 $('#rdr_loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
@@ -1977,7 +1981,7 @@ function readrBoard($R){
                         id: "rdr_loginPanel",
                         // pnlWidth:360,
                         pnls:1,
-                        height:225,
+                        height:175,
                         ignoreWindowEdges:"bt"
                     });
 
@@ -1992,8 +1996,8 @@ function readrBoard($R){
                         parentHost = window.location.protocol + "//" + window.location.host,
                         h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard",
 
-                        $loginIframe = $('<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="360" height="190" frameborder="0" style="overflow:hidden;" />' );
-                    RDR.rindow.updateHeader( $rindow, '<h1>'+h1_text+'</h1>' );
+                        $loginIframe = $('<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="360" height="140" frameborder="0" style="overflow:hidden;" />' );
+                    RDR.rindow.updateHeader( $rindow, '<div class="rdr_indicator_stats"><a target="_blank" href="'+RDR_baseUrl+'"><img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin"></a></div><h1>'+h1_text+'</h1>' );
                     $rindow.find('div.rdr_body_wrap').append('<div class="rdr_body" />').append( $loginIframe );
                 }
 			},
@@ -2337,6 +2341,9 @@ function readrBoard($R){
 
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
                 $('<div id="rdr_indicator_details_wrapper" />').appendTo($rdrSandbox);
+
+                //div to hold event pixels
+                $('<div id="rdr_event_pixels" />').appendTo($rdrSandbox);
 
 
                 $(document).bind('mouseup.rdr', function(e){
@@ -3570,6 +3577,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 //todo: reconsider this method of liberally updating everything with updateContainerTrackers
                                 $summary_box.find('div.rdr_info').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
                             } else {
+                                $('#rdr_loginPanel').remove()
 
                                 // init vars
                                 var $rindow = args.rindow,
@@ -3693,7 +3701,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             if ( args.response.data && args.response.data.existing && args.response.data.existing === true ) {
                                 $message = $('<em>You have already given that reaction.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>');
                             } else if ( args.response.message.indexOf("Temporary user interaction limit reached") != -1 ) {
-                                $message = $('<em>To continue adding reactions, please <a href="javascript:void(0);" style="color:#008be4;">Connect with Facebook</a>.</em><br><br><strong>Why:</strong> To encourage <strong style="color:#008be4;">high-quality participation from the community</strong>, <ins>we ask that you log in with Facebook. You\'ll also have a profile where you can revisit your reactions, notes, and comments made using <strong style="color:#008be4;">ReadrBoard</strong>!</ins>');
+                                $message = $('<em>To continue adding reactions, please <a href="javascript:void(0);" style="color:#008be4;">log in</a>.</em><br><br><strong>Why:</strong> To encourage <strong style="color:#008be4;">high-quality participation from the community</strong>, <ins>we ask that you log in with Facebook. You\'ll also have a profile where you can revisit your reactions, notes, and comments made using <strong style="color:#008be4;">ReadrBoard</strong>!</ins>');
                                 $message.find('a').click( function() {
                                     RDR.session.showLoginPanel(args);
                                 });
@@ -5219,7 +5227,7 @@ function $RFunctions($R){
     var css = [];
 
     if ( !$R.browser.msie || ( $R.browser.msie && parseInt( $R.browser.version, 10 ) > 8 ) ) {
-        css.push( RDR_staticUrl+"global/css/readrleague.css" );
+        css.push( RDR_staticUrl+"global/css/helvetica.css" );
     } 
     if ( $R.browser.msie ) {
         css.push( RDR_staticUrl+"widget/css/ie.css" );

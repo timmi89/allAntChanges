@@ -1,60 +1,45 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US" xmlns:x2="http://www.w3.org/2002/06/xhtml2" xmlns:fb="http://www.facebook.com/2008/fbml">
-   <head>
-     <title>Log In to ReadrBoard</title>
-    	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
-    	<script type="text/javascript">
-   		var RDR_offline = ( window.location.href.indexOf('local.readrboard.com') != -1 ) ? true:false,
-		RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com";
-		RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
+{% extends "base.html" %}
 
-		// var date = new Date();
-		// TODO use the following line.  it creates a cachebuster that represents the current day/week/month
-		// var cachebuster = String( parseInt( date.getDate() / 7 )+1 )+String(date.getMonth()) + String(date.getYear());
-		// var cachebuster = date.getTime();
-		document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
-		document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.json-2.2.min.js" type="text/javascript"%3E%3C/script%3E' ) );
-		document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.cookie.js" type="text/javascript"%3E%3C/script%3E' ) );
-		document.write( unescape( '%3Cscript src="/static/widget/js/readr_user.js" type="text/javascript"%3E%3C/script%3E' ) );
-   		</script>
-	<style type="text/css">
-	body	{color: #666666; font-family: Arial; font-size: 12px; padding: 5px 0 0 0; margin:0 8px; border-top:1px solid #ccc; }
-	img		{ border:0; }
-	ul		{ padding:0;margin:0; list-style-type:none;}
-	li		{ padding:0 0 0 16px;margin:0;background:url(/static/widget/images/checkmark.png) left top no-repeat; }
-	#fb-login-button	{margin:10px 0;}
-	</style>
-   </head>
-   <body>
-   	<div id="fb-root"></div>
-   	<div id="fb-logged-out">
-	   	<strong id="groupname"></strong> uses <strong style="color:#008be4;">ReadrBoard</strong> so you can react to content easily and safely.
-	   	<br><br>
-	   	To keep participating, just log in with your Readrboard credentials.  <a href="/faq" target="_blank">Learn more.</a>
-		<div id="fb-login-button">
-			<a href="javascript:void(0);" onclick="RDRAuth.doRBLogin('widget_login');"><img src="/static/widget/images/fb-login_to_readrboard.png" /></a>
+{% block bodyClass %}wide{% endblock %}
+
+{% block mainContent %}
+<!-- ported from fb login file -->
+<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script> -->
+	<script>
+	var RDR_offline = ( window.location.href.indexOf('local.readrboard.com') != -1 ) ? true:false,
+	RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com";
+	RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
+	document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
+	document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.json-2.2.min.js" type="text/javascript"%3E%3C/script%3E' ) );
+	document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.cookie.js" type="text/javascript"%3E%3C/script%3E' ) );
+	document.write( unescape( '%3Cscript src="/static/widget/js/readr_user.js" type="text/javascript"%3E%3C/script%3E' ) );
+	</script>
+
+  <h1>Log In</h1>
+  {% csrf_token %}
+  <div class="container">
+  	<div id="direct_registration" style="overflow:auto;">
+  		<div style="float:left;width:150px;margin-right:20px;">
+  			<label>User Name</label>
+			<input type="text" name="username" tabindex="1" />
+			<a href="javascript:void(0);" onclick="window.open(RDR_baseUrl+'/user_create/', 'readr_create_user','menubar=1,resizable=1,width=535,height=300');return false;" style="font-size:11px;font-style:italic;">Create New Account &raquo;</a>
 		</div>
-		<strong><span style="color:#008be4;">ReadrBoard</span> values your privacy.</strong>
-		<ul>
-			<li>We do not post on your wall unless you purposefully share something .</li>
-			<li>We only email you if someone comments on your reactions.</li>
-			<li>We do not give out your email address.</li>
-		</ul>
+		<div style="float:left;width:150px;">
+	  		<label>Password</label>
+			<input type="password" name="password" tabindex="2" />
+			<a href="javascript:void(0);" onclick="window.open(RDR_baseUrl+'/request_password/', 'readr_forgot_pw','menubar=1,resizable=1,width=535,height=300,scrollbars=1');return false;" style="font-size:11px;font-style:italic;">Forgot Password? &raquo;</a>
+		</div>
 	</div>
-	<div id="fb-logged-in" style="display:none;">
-		<div><strong>Welcome to ReadrBoard!</strong></div>
-		<a href="javascript:void(0);" onclick="RDRAuth.doFBlogout();">Log out of ReadrBoard</a>
-	</div>
-	<div id="direct_registration">
-	   <!-- <form method="post"> -->
-	   <!-- {% csrf_token %} -->
-		<input type="text" name="username" />
-		<input type="password" name="password" />
-		<button onclick="direct_registration();">LOG IN SIRa</button>
-		<!-- </form> -->
-	</div>
+	<button onclick="direct_registration();" tabindex="3" id="submit_login">Log In</button>
 	<script type="text/javascript">
+		$('input[name="username"]').focus();
 		$('#groupname').text( decodeURI(qs_args.group_name) );
+
+		$('#direct_registration input').keyup( function(event) {
+            if (event.keyCode == '13') { //enter.  
+            	$('#submit_login').click();
+            }
+        });
 		
 		function direct_registration() {
 			var sendData = "username="+$('#direct_registration').find('input[name="username"]').val()+
@@ -70,14 +55,25 @@
 				dataType: "json",
 				data: sendData,
 				success: function(response) {
-					// console.log( response.data.full_name );
-					RDRAuth.setUser(response);
-					// console.dir( response );
-					// console.log( $.parseJSON( sendData ) );
+					if ( response.data ) {
+						if ( response.data.status == "fail" ) {
+							$('#direct_registration').prepend('<div class="error">'+response.data.message+'</div>');
+						} else {
+							RDRAuth.setUser(response);
+							window.opener.RDRAuth.readUserCookie();
+							window.opener.RDRAuth.returnUser();
+							window.opener.RDRAuth.notifyParent({}, "close login panel");
+							self.close();
+						}
+					}
 				}
 			});
 		}
 
 	</script>
-   </body>
-</html>
+  </div>
+{% endblock mainContent %}
+
+{% block pageJS %}
+{% endblock %}
+

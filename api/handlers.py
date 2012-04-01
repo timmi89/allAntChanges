@@ -409,7 +409,7 @@ class SettingsHandler(AnonymousBaseHandler):
             try:
                 site = Site.objects.get(domain=host)
             except Site.DoesNotExist:
-                return HttpResponse("Readrboard not available for this site")
+                return HttpResponse("ReadrBoard not available for this site")
 
             # Get Group
             group = Group.objects.get(id=site.group.id)

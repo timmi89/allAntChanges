@@ -253,8 +253,8 @@ def create_rb_user(request):
         if form.is_valid():
             user = form.save(True)
             
-            #user.email_user("Readrboard email confirmation", generateConfirmationEmail(user))
-            msg = EmailMessage("Readrboard email confirmation", generateConfirmationEmail(user), "hello@readrboard.com", [user.email])
+            #user.email_user("ReadrBoard email confirmation", generateConfirmationEmail(user))
+            msg = EmailMessage("ReadrBoard email confirmation", generateConfirmationEmail(user), "hello@readrboard.com", [user.email])
             msg.content_subtype='html'
             msg.send(False)
             context['requested'] = True
@@ -344,7 +344,7 @@ def request_password_reset(request):
         (user, password_email) = generatePasswordEmail(username, email_addr)
         if user is not None:
             #user.email_user("Readrboard email confirmation", password_email)
-            msg = EmailMessage("Readrboard password reset", password_email, "hello@readrboard.com", [user.email])
+            msg = EmailMessage("ReadrBoard password reset", password_email, "hello@readrboard.com", [user.email])
             msg.content_subtype='html'
             msg.send(False)
             context['requested'] = True

@@ -46,52 +46,52 @@
 		var sandBoxCheck = 0;
 
 		/*slideshow code start*/
-		$('#promoGallery').cycle({
-			/*see http://jquery.malsup.com/cycle/options.html*/
-			/*
-			fx: 'myUncover',
-			*/
-			fx: 'scrollLeft',
-			easing: 'swing',
-			direction: 'left',
-			speed:	600,
-			timeout: 4000,
-			pause:	0, /*enable pause on hover*/
-			pager: "#promoControlsInnerWrap",
-			pagerAnchorBuilder: function(idx, slide) {
-				var typeArr = ["Image", "Text", "Video"];
-				var $pager = $('<div />').addClass('pagerDiv'),
-					$a = $('<a href="#" />').addClass('pager'+typeArr[idx]).appendTo($pager),
-					$img = $('<img src="/static/site/images/blank.png" alt="Show '+typeArr[idx]+' Example" />').appendTo($a);
+		// $('#promoGallery').cycle({
+		// 	/*see http://jquery.malsup.com/cycle/options.html*/
+		// 	/*
+		// 	fx: 'myUncover',
+		// 	*/
+		// 	fx: 'scrollLeft',
+		// 	easing: 'swing',
+		// 	direction: 'left',
+		// 	speed:	600,
+		// 	timeout: 4000,
+		// 	pause:	0, /*enable pause on hover*/
+		// 	pager: "#promoControlsInnerWrap",
+		// 	pagerAnchorBuilder: function(idx, slide) {
+		// 		var typeArr = ["Image", "Text", "Video"];
+		// 		var $pager = $('<div />').addClass('pagerDiv'),
+		// 			$a = $('<a href="#" />').addClass('pager'+typeArr[idx]).appendTo($pager),
+		// 			$img = $('<img src="/static/site/images/blank.png" alt="Show '+typeArr[idx]+' Example" />').appendTo($a);
 				
-				return $pager;
-			},
-			before: function(){
-				//just do this everytime - it's a little 'wastefull' but so what.  It's simpler - catches the first time they init.
-				hideSandboxStuffForMedia();
-			},
-			after: function(){
-				//do it again to hide shit that caught if you hovered durring the transition. 
-				//todo: this could be done nicer.  Considering putting a sub-sandbox into the slide.
-				hideSandboxStuffForMedia();
+		// 		return $pager;
+		// 	},
+		// 	before: function(){
+		// 		//just do this everytime - it's a little 'wastefull' but so what.  It's simpler - catches the first time they init.
+		// 		hideSandboxStuffForMedia();
+		// 	},
+		// 	after: function(){
+		// 		//do it again to hide shit that caught if you hovered durring the transition. 
+		// 		//todo: this could be done nicer.  Considering putting a sub-sandbox into the slide.
+		// 		hideSandboxStuffForMedia();
 
-				//sandbox starts off hidden to prevent initial fouc, so look for it here, and if it's loaded, show it.
+		// 		//sandbox starts off hidden to prevent initial fouc, so look for it here, and if it's loaded, show it.
 
-				var $sandbox = $('#rdr_sandbox');
-				if($sandbox.length){
-					sandBoxCheck = true;
-					$('#rdr_sandbox').show();
-				}
-				if(sandBoxCheck !== true) return;
-				//else
+		// 		var $sandbox = $('#rdr_sandbox');
+		// 		if($sandbox.length){
+		// 			sandBoxCheck = true;
+		// 			$('#rdr_sandbox').show();
+		// 		}
+		// 		if(sandBoxCheck !== true) return;
+		// 		//else
 				
-				//find the mediaContainer if it exists on this slide (the text slide won't have one)
-				var $thisMediaContainer = $(this).find('img.rdr-hashed, iframe.rdr-hashed').eq(0);
-				if($thisMediaContainer.length){
-					updateSandboxStuffForMedia($thisMediaContainer);
-				}
-			}
-		});
+		// 		//find the mediaContainer if it exists on this slide (the text slide won't have one)
+		// 		var $thisMediaContainer = $(this).find('img.rdr-hashed, iframe.rdr-hashed').eq(0);
+		// 		if($thisMediaContainer.length){
+		// 			updateSandboxStuffForMedia($thisMediaContainer);
+		// 		}
+		// 	}
+		// });
 		
 		function hideSandboxStuffForMedia(){
 			//hide all the sandbox components for this media
@@ -111,21 +111,6 @@
 			RDR.actions.indicators.utils.updateContainerTracker(hash);
 		}
 
-
-		$('#promoGallery').hover(
-			function(){
-				$(this).cycle('pause');
-			},
-			function(){
-				//don't do this -prob annoying anyway, but especially dont do it because the widget steals the hover
-				/*
-				$(this).cycle('resume');
-				$(".promoPlay").hide();
-				$(".promoPause").show();
-				*/
-			}
-		);
-
 		$("#promoControls a").click(function(e) {
 			$(this).blur();
 		});
@@ -135,7 +120,6 @@
 		$('#promoGallery iframe').show();
 		/*slideshow code end*/
 		//reveal after load
-		$('#splashAnnounce h2').fadeIn();
 
 	});
 }(jQuery));

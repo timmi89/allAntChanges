@@ -30,20 +30,29 @@
    	<div id="fb-logged-out">
 	   	<strong id="groupname"></strong> uses <strong style="color:#008be4;"><a href="http://www.readrboard.com/" target="_blank">ReadrBoard</a></strong> so you can react to content easily and safely.
 	   	<br><br>
-	   	To keep participating, just log in: with Facebook.  <a href="/faq/" target="_blank">Learn more.</a>
-		<div id="fb-login-button">
-			<a href="javascript:void(0);" onclick="RDRAuth.doFBLogin('widget_login');"><img src="/static/widget/images/fb-login_to_readrboard.png" /></a>
+	   	To keep participating, just log in:
+		<div style="overflow:auto;">
+			<div style="float:left;padding-right:9px;border-right:1px solid #ccc;">
+				<div id="fb-login-button">
+					<a href="javascript:void(0);" onclick="FB.login(function(response) {if (response.authResponse) {RDRAuth.getReadrToken( FB.getAuthResponse(), function() {RDRAuth.checkFBStatus();});} else {}}, {scope: 'email'});"><img src="/static/widget/images/fb-login_to_readrboard.png" /></a>
+				</div>
+			</div>
+			<div style="float:left;padding-left:6px;">
+				<a href="javascript:void(0);" onclick="window.open(RDR_baseUrl+'/rb_login/', 'readr_login','menubar=1,resizable=1,width=370,height=245');return false;"><img src="/static/widget/images/rb-login_to_readrboard.png" style="margin-top:8px;" /></a>
+			</div>
 		</div>
-		<strong><span style="color:#008be4;">ReadrBoard</span> values your privacy.</strong>
+		<strong><span style="color:#008be4;">ReadrBoard</span> values your privacy.</strong>  <a href="http://www.readrboard.com/faq/" target="_blank">Learn more</a>.
+		<!--
 		<ul>
 			<li>We do not post on your wall unless you purposefully share something .</li>
 			<li>We only email you if someone comments on your reactions.</li>
 			<li>We do not give out your email address.</li>
 		</ul>
+		-->
 	</div>
 	<div id="fb-logged-in" style="display:none;">
 		<div><strong>Welcome to ReadrBoard!</strong></div>
-		<a href="javascript:void(0);" onclick="RDRAuth.doFBlogout();">Log out of ReadrBoard</a>
+		<a href="javascript:void(0);" onclick="RDRAuth.logout();">Log out of ReadrBoard</a>
 	</div>
 	<!-- <p>
 		<a href="javascript:void(0);" onclick="RDRAuth.tempUser();">Create Temp User</a>
