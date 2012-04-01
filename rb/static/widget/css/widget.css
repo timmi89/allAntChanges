@@ -810,6 +810,7 @@ div.rdr_indicator {
     z-index:11000;
     text-decoration:none;
     border:none;
+    cursor:progress;
     -webkit-user-select: none !important;
     -khtml-user-select: none !important;
     -moz-user-select: none !important;

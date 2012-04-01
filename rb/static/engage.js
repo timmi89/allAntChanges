@@ -5026,7 +5026,7 @@ function $RFunctions($R){
     var css = [];
 
     if ( !$R.browser.msie || ( $R.browser.msie && parseInt( $R.browser.version, 10 ) > 8 ) ) {
-        css.push( RDR_staticUrl+"global/css/readrleague.css" );
+        css.push( RDR_staticUrl+"global/css/helvetica.css" );
     } 
     if ( $R.browser.msie ) {
         css.push( RDR_staticUrl+"widget/css/ie.css" );

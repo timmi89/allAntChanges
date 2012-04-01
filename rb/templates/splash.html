@@ -2,7 +2,8 @@
 
 {% block title %}ReadrBoard{%endblock%}
 {% block extendedHead %}
-<link rel="stylesheet" href="{{ STATIC_URL }}site/css/splash.css">
+<link rel="stylesheet" href="{{ STATIC_URL }}global/css/helvetica.css?v={{ timestamp|date:"U" }}">
+<link rel="stylesheet" href="{{ STATIC_URL }}site/css/splash.css?v={{ timestamp|date:"U" }}">
 <link rel="canonical" href="{% if debug %}http://local.readrboard.com:8080/{% else %}http://www.readrboard.com/{% endif %}">
 {%endblock%}
 
