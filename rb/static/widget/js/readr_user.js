@@ -147,22 +147,24 @@ RDRAuth = {
 		}
 	},
 	reauthUser : function(args) {
-		RDRAuth.readUserCookie();
-		if ( !FB.getAuthResponse() ) {
-			FB.getLoginStatus(function(response) {
-		  		if (response && response.status == "connected") {
-					RDRAuth.killUser( function(response) {
-						RDRAuth.getReadrToken(response); // function exists in readr_user.js
-					}, response);
-		  		} else {
-		  			RDRAuth.notifyParent({}, "fb_user_needs_to_login");
-		  		}
-		  	});
-		} else {
-			RDRAuth.killUser( function(response) {
-				RDRAuth.getReadrToken(response); // function exists in readr_user.js
-			});
-			// RDRAuth.getReadrToken( FB.getAuthResponse() );
+		if ( $.cookie('user_type') == "facebook" ) {
+			RDRAuth.readUserCookie();
+			if ( !FB.getAuthResponse() ) {
+				FB.getLoginStatus(function(response) {
+			  		if (response && response.status == "connected") {
+						RDRAuth.killUser( function(response) {
+							RDRAuth.getReadrToken(response); // function exists in readr_user.js
+						}, response);
+			  		} else {
+			  			RDRAuth.notifyParent({}, "fb_user_needs_to_login");
+			  		}
+			  	});
+			} else {
+				RDRAuth.killUser( function(response) {
+					RDRAuth.getReadrToken(response); // function exists in readr_user.js
+				});
+				// RDRAuth.getReadrToken( FB.getAuthResponse() );
+			}
 		}
 	},
 	checkFBStatus : function(args) {
@@ -239,6 +241,7 @@ RDRAuth = {
 		if ( $.cookie('user_id') ) RDRAuth.rdr_user.user_id = $.cookie('user_id');
 		if ( $.cookie('readr_token') ) RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
 		if ( $.cookie('temp_user') ) RDRAuth.rdr_user.temp_user = $.cookie('temp_user');
+		if ( $.cookie('user_type') ) RDRAuth.rdr_user.user_type = $.cookie('user_type');
 	},
 	returnUser : function() {
 		RDRAuth.readUserCookie();
@@ -283,6 +286,7 @@ RDRAuth = {
 					$.cookie('img_url', null, { path: '/' });
 					$.cookie('user_id', null, { path: '/' });
 					$.cookie('readr_token', null, { path: '/' });
+					$.cookie('user_type', null, { path: '/' });
 					$.cookie('rdr_session', null);
 					RDRAuth.rdr_user = {};
 					if (callback && this.callback_args) {
@@ -299,6 +303,7 @@ RDRAuth = {
 			$.cookie('readr_token', null, { path: '/' });
 			$.cookie('rdr_session', null);
 			$.cookie('temp_user', null);
+			$.cookie('user_type', null);
 			RDRAuth.rdr_user = {};
 			if (callback && callback_args) {
 				callback(callback_args);
@@ -334,20 +339,26 @@ RDRAuth = {
                     window.location.reload(); 
                 }); 
     },	
-	doFBlogout: function() {
-		FB.getLoginStatus(function(response) {
-			if (response) {
-				FB.logout(function(response) {
+	logout: function() {
+		if ( $.cookie('user_type') == "facebook" ) {
+			FB.getLoginStatus(function(response) {
+				if (response) {
+					FB.logout(function(response) {
+						RDRAuth.killUser( function() {
+							window.location.reload(); 
+						});		
+					});	
+				} else {
 					RDRAuth.killUser( function() {
 						window.location.reload(); 
-					});		
-				});	
-			} else {
-				RDRAuth.killUser( function() {
-					window.location.reload(); 
-				});	
-			}
-		});
+					});	
+				}
+			});
+		} else {
+			RDRAuth.killUser( function() {
+				window.location.reload(); 
+			});	
+		}
 	},
 	init : function() {
 		RDRAuth.returnUser();

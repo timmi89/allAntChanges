@@ -2227,6 +2227,9 @@ function readrBoard($R){
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
                 $('<div id="rdr_indicator_details_wrapper" />').appendTo($rdrSandbox);
 
+                //div to hold event pixels
+                $('<div id="rdr_event_pixels" />').appendTo($rdrSandbox);
+
 
                 $(document).bind('mouseup.rdr', function(e){
                     //temp fix for bug where a click that clears a selection still picks up the selected text:
