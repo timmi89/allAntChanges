@@ -1,23 +1,34 @@
-# encoding: utf-8
+# -*- coding: utf-8 -*-
 import datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
+
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
         # Adding field 'SocialUser.avatar'
-        db.add_column('rb_socialuser', 'avatar', self.gf('rb.models.CustomImageField')(max_length=100, null=True, blank=True), keep_default=False)
+        db.add_column('rb_socialuser', 'avatar',
+                      self.gf('django.db.models.fields.files.ImageField')(max_length=100, null=True, blank=True),
+                      keep_default=False)
 
+
+        # Changing field 'SocialUser.user'
+        db.alter_column('rb_socialuser', 'user_id', self.gf('django.db.models.fields.related.OneToOneField')(unique=True, to=orm['auth.User']))
+        # Adding unique constraint on 'SocialUser', fields ['user']
+        db.create_unique('rb_socialuser', ['user_id'])
 
     def backwards(self, orm):
-        
+        # Removing unique constraint on 'SocialUser', fields ['user']
+        db.delete_unique('rb_socialuser', ['user_id'])
+
         # Deleting field 'SocialUser.avatar'
         db.delete_column('rb_socialuser', 'avatar')
 
 
+        # Changing field 'SocialUser.user'
+        db.alter_column('rb_socialuser', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User']))
     models = {
         'auth.group': {
             'Meta': {'object_name': 'Group'},
@@ -205,7 +216,7 @@ class Migration(SchemaMigration):
         },
         'rb.socialuser': {
             'Meta': {'unique_together': "(('provider', 'uid'),)", 'object_name': 'SocialUser'},
-            'avatar': ('rb.models.CustomImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'avatar': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'bio': ('django.db.models.fields.TextField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
             'full_name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'gender': ('django.db.models.fields.CharField', [], {'max_length': '1', 'null': 'True', 'blank': 'True'}),
@@ -215,7 +226,7 @@ class Migration(SchemaMigration):
             'private_profile': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'provider': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
             'uid': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'social_user'", 'to': "orm['auth.User']"}),
+            'user': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'social_user'", 'unique': 'True', 'to': "orm['auth.User']"}),
             'username': ('django.db.models.fields.CharField', [], {'max_length': '255', 'unique': 'True', 'null': 'True', 'blank': 'True'})
         }
     }

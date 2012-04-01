@@ -79,7 +79,7 @@ def createSocialUser(django_user, profile, base = 'http://graph.facebook.com', p
             "gender": profile.get('gender', None),
             "hometown": profile['hometown']['name'] if (profile.get('hometown', None)) else None,
             "bio": profile.get('bio', None),
-            "img_url": profile.get('img_url', None)
+            "img_url": profile.get('img_url', '')
         }
     )
     # Print out the result
@@ -142,6 +142,7 @@ def populateUserProfile(django_user):
     profile['id'] = django_user.id
     profile['name'] = django_user.username
     profile['username'] = django_user.username
+    profile['img_url'] = ""
     return profile
 
 
