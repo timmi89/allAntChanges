@@ -7,21 +7,21 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+        pass
         # Removing unique constraint on 'SocialUser', fields ['user']
-        db.delete_unique('rb_socialuser', ['user_id'])
+        #db.delete_unique('rb_socialuser', ['user_id'])
 
         # Changing field 'SocialUser.user'
-        db.alter_column('rb_socialuser', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User']))
+        #db.alter_column('rb_socialuser', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User']))
 
 
     def backwards(self, orm):
-        
+        pass
         # Changing field 'SocialUser.user'
-        db.alter_column('rb_socialuser', 'user_id', self.gf('django.db.models.fields.related.OneToOneField')(unique=True, to=orm['auth.User']))
+        #db.alter_column('rb_socialuser', 'user_id', self.gf('django.db.models.fields.related.OneToOneField')(unique=True, to=orm['auth.User']))
 
         # Adding unique constraint on 'SocialUser', fields ['user']
-        db.create_unique('rb_socialuser', ['user_id'])
+        #db.create_unique('rb_socialuser', ['user_id'])
 
 
     models = {
