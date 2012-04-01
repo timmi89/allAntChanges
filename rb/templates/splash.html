@@ -2,7 +2,6 @@
 
 {% block title %}ReadrBoard{%endblock%}
 {% block extendedHead %}
-<link rel="stylesheet" href="{{ STATIC_URL }}global/css/helvetica.css?v={{ timestamp|date:"U" }}">
 <link rel="stylesheet" href="{{ STATIC_URL }}site/css/splash.css?v={{ timestamp|date:"U" }}">
 <link rel="canonical" href="{% if debug %}http://local.readrboard.com:8080/{% else %}http://www.readrboard.com/{% endif %}">
 {%endblock%}
@@ -12,36 +11,40 @@
 {% block mainContent %}
 <div id="splashAnnounce" class="no-rdr">
 	<div id="splashAnnounceInner">
-	 	<!-- show with js -->
-		<h2 style="display:none;">Imagine a better 
+	 	<div class="left">
+	 		<img src="{{ STATIC_URL }}site/images/imagine.png" title="Imagine a better Like button" id="imagine" />
 			<div id="sns_buttons">
 				<div><img src="{{ STATIC_URL }}site/images/like_button.png" alt="Like" id="sns_fb" class="no-rdr" /></div>
 				<div style="display:none;"><img src="{{ STATIC_URL }}site/images/plus_one_button.png" alt="+1" id="sns_google" class="no-rdr"/></div>
 				<div style="display:none;"><img src="{{ STATIC_URL }}site/images/tweet_button.png" alt="Tweet" id="sns_twitter" class="no-rdr"/></div>
-			</div> button
-		</h2>
-		<img src="http://content.screencast.com/users/oscarPorter/folders/Jing/media/f3854e56-0758-44a1-9d3c-cf41ad863179/00000003.png" style="zoom:1;"/>
-		<h3 class="no-rdr"><span>ReadrBoard</span> is the fastest way to <span>say exactly what you think</span><br/>about any phrase, picture, video, or article on the web.</h3>
+			</div>
+			<img src="{{ STATIC_URL }}site/images/summary_bar.png" style="zoom:1;"/>
+			<h3 class="no-rdr"><span>ReadrBoard</span> is the fastest way to <span>say exactly what you think</span><br/>about any phrase, picture, video, or article on the web.</h3>
+			<div style="overflow:auto;" id="action_links">
+				<div style="width:240px;float:left;text-align:center;"><a href="#">Watch our 30 second video</a></div>
+				<div style="width:120px;float:left;text-align:center;"><a href="#try-it">Try it</a></div>
+				<div style="width:200px;float:left;text-align:center;"><a href="mailto:info@readrboard.com?subject=ReadrBoard Beta Request&body=(Tell us what site you would like to try ReadrBoard on, and why.  Thanks!)">Get it for your website</a></div>
+			</div>
+		</div>
+		<div class="right">
+			{ video }
+		</div>
 	</div>
 </div>
 <div id="splashBlurbs">
 	<div class="blurbsInner">
 		<div id="blurbBody">
+		<a name="try-it"></a>
 			<div class="blurb blurb-for-readers selected">
 				<div class="tryit">
 					<h3 class="no-rdr sectionHeader">Try It</h3>
-					<div class="no-rdr markerAnnotation page">
+					<!-- <div class="no-rdr markerAnnotation page">
 						<img src="{{ STATIC_URL }}site/images/marker-annotation-page.png" alt="React to the whole page" width="200"/>
-					</div>
+					</div> -->
 					<div id="promoDiv" class="animationDiv">
 						<div id="promoGallery">
 							<div class="promoGalleryBody startSlide">
-								<img src="{{ STATIC_URL }}site/images/old-man-tricycle2.jpg" alt="ReadrBoard sample image" width="380" class="contentImg" />
-								<div class="no-rdr markerAnnotation">
-									<img src="{{ STATIC_URL }}site/images/marker-annotation-image.png" alt="hover over that image" />
-								</div>
-							</div>
-							<div class="promoGalleryBody slideText">
+								<h3>React to text...</h3>
 								<div class="textSlide">
 									<div>
 										<blockquote>
@@ -56,16 +59,24 @@
 										<span class="author">- Anonymous</span>
 									</div>
 								</div>
-								<div class="no-rdr markerAnnotation">
+								<!-- <div class="no-rdr markerAnnotation">
 									<img src="{{ STATIC_URL }}site/images/marker-annotation-text.png" alt="select that text" />
-								</div>
+								</div> -->
+							</div>
+							<div class="promoGalleryBody">
+								<h3>React to images...</h3>
+								<img src="{{ STATIC_URL }}site/images/old-man-tricycle2.jpg" alt="ReadrBoard sample image" width="380" class="contentImg" />
+								<!-- <div class="no-rdr markerAnnotation">
+									<img src="{{ STATIC_URL }}site/images/marker-annotation-image.png" alt="hover over that image" />
+								</div> -->
 							</div>
 							<div class="promoGalleryBody slideVideo">
+								<h3>React to video...</h3>
 								<!--chrome was FOUCing this without this hack - hide here, show with js-->
 								<iframe style="display:none;" width="480" height="300" frameborder="0" allowfullscreen="" src="http://www.youtube.com/embed/eD1i6IpU56o?wmode=transparent" class="rdr_video"></iframe>
-								<div class="no-rdr markerAnnotation">
+								<!-- <div class="no-rdr markerAnnotation">
 									<img src="{{ STATIC_URL }}site/images/marker-annotation-video.png" alt="hover over that video" />
-								</div>
+								</div> -->
 							</div>
 						</div>
 						<!-- show on slideshow init to avoid FOUC -->
@@ -105,17 +116,17 @@
 							<h3>Discover</h3>
 							<span>Discover reactions from other readers - people interested in the same content you are - right on the articles you read.</span>
 						</li>
-						<li>
+						<!-- <li>
 							<h3>Bookmark</h3>
 							<span>Save favorite parts of a page in your private bookmark list.</span>
-						</li>
+						</li> -->
 						<li>
 							<h3>Share</h3>
 							<span>Easily share your reaction to something specific on a page.</span>
 						</li>
 						<li>
 							<h3>Manage Your Profile</h3>
-							<span>Using ReadrBoard creates a <a href="http://www.readrboard.com/user/11/" target="_blank">profile</a> to show people what you've content you've been reacting to, and you can make it private.  (Bookmarks are <strong>always</strong> private.)</span>
+							<span>Using ReadrBoard creates a <a href="http://www.readrboard.com/user/11/" target="_blank">profile</a> to show people what you've content you've been reacting to, and you can make it private.  <!-- (Bookmarks are <strong>always</strong> private.) --></span>
 						</li>
 					</ul>
 				</div>

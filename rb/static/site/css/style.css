@@ -190,7 +190,7 @@ font-size:1em; /* 16 / 16 = 1 */ }
 /* LINKS */
 
 a, 
-a:visited {outline:none;color:rgb(23,119,175);text-decoration:none; }
+a:visited {outline:none;color:#4b8ac8;text-decoration:none; }
  
 a:hover { 
 outline:none;
@@ -843,7 +843,7 @@ table[role="active content table"] td[role="via"] div:hover,
 table[role="active pages table"] td[role="url"]	div:hover		{ width:auto; background:#ddd; border:1px solid #999; position:absolute; }
 
 table[role="active content table"] td[role="via"] div:hover a,
-table[role="active pages table"] td[role="url"]	div:hover a		{ text-decoration:underline; color:#1777af; }
+table[role="active pages table"] td[role="url"]	div:hover a		{ text-decoration:underline; color:#4b8ac8; }
 
 table[role="active content table"] td[role="via"] div:hover a img,
 table[role="active pages table"] td[role="url"]	div:hover a	img	{ display:inline; }
