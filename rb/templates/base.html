@@ -83,11 +83,23 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     </nav>
     </div>
     <div id="user">
-        <div id="fb-logged-in" {% if not cookie_user.social_user %}style="display:none;"{% endif %}>
+        <div id="logged-in" {% if not cookie_user.social_user %}style="display:none;"{% endif %}>
           <a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/>{{ cookie_user.social_user.full_name }}</a>
+          <div id="log-out-link"><a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a></div>
         </div>
-        <div id="fb-logged-out" {% if cookie_user.social_user %}style="display:none;"{% endif %}>
-          <a href="javascript:void(0);" onclick="RDRAuth.doFBLogin('site_login')"><img src="{{ STATIC_URL }}site/images/fb_login.png" border="0" alt="Connect with Facebook" /></a>
+        <div id="logged-out" {% if cookie_user.social_user %}style="display:none;"{% endif %}>
+          <!-- <a href="javascript:void(0);" onclick="RDRAuth.doFBLogin('site_login')"><img src="{{ STATIC_URL }}site/images/fb_login.png" border="0" alt="Connect with Facebook" /></a> -->
+          <a href="javascript:void(0);" style="margin-left:5px;">Log In</a>
+          <div id="login-options" style="overflow:auto;">
+            <div style="float:left;padding-right:9px;border-right:1px solid #ccc;">
+              <div id="fb-login-button">
+                <a href="javascript:void(0);" onclick="FB.login(function(response) {if (response.authResponse) {RDRAuth.getReadrToken( FB.getAuthResponse(), function() {RDRAuth.checkFBStatus();});} else {}}, {scope: 'email'});"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;" /></a>
+              </div>
+            </div>
+            <div style="float:left;padding-left:6px;">
+              <a href="javascript:void(0);" onclick="window.open(RDR_baseUrl+'/rb_login/', 'readr_login','menubar=1,resizable=1,width=370,height=245');return false;"><img src="/static/widget/images/rb-login_to_readrboard.png" /></a>
+            </div>
+          </div>    
         </div>
       </div>
     <div id="site_search">

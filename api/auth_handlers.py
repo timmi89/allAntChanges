@@ -162,7 +162,7 @@ class ConfirmUserHandler(BaseHandler):
         user_confirmation = data['confirmation']
         user = User.objects.get(id=int(user_id))
         if user_confirmation == generateConfirmation(user):
-            msg = EmailMessage("Readrboard email confirmation", generateConfirmationEmail(user), "hello@readrboard.com", [user.email])
+            msg = EmailMessage("ReadrBoard email confirmation", generateConfirmationEmail(user), "hello@readrboard.com", [user.email])
             msg.content_subtype='html'
             msg.send(False)
         return dict(

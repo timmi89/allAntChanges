@@ -178,8 +178,8 @@ RDRAuth = {
 						var user_id = ($.cookie('user_id')) ? $.cookie('user_id'):RDRAuth.rdr_user.user_id;
 						var img_url = ($.cookie('img_url')) ? $.cookie('img_url'):RDRAuth.rdr_user.img_url;
 
-						$('#fb-logged-in').show().css('visibility','visible');
-						$('#fb-logged-out').hide().css('visibility','hidden');
+						$('#logged-in').show().css('visibility','visible');
+						$('#logged-out').hide().css('visibility','hidden');
 						FB.api('/me', function(response) {
 		      				var $user = $('<a/>'),
 							$avatar = $('<img/>'),
@@ -191,7 +191,7 @@ RDRAuth = {
 
 							$user.append( $avatar, $name );
 
-							$('#fb-logged-in').html( $user );
+							$('#logged-in').html( $user ).append('<div id="log-out-link"><a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a></div>');
 		      			});
 					} else {
 						RDRAuth.getReadrToken( response.authResponse, function() { 
@@ -199,14 +199,14 @@ RDRAuth = {
 					}
 				} else {
 					// widget
-					$('#fb-logged-in').show().css('visibility','visible');
-					$('#fb-logged-out').hide().css('visibility','hidden');
+					$('#logged-in').show().css('visibility','visible');
+					$('#logged-out').hide().css('visibility','hidden');
 					RDRAuth.returnUser();
 				}
 			} else {
 				if (top == self) {
-					$('#fb-logged-in').hide().css('visibility','hidden');
-					$('#fb-logged-out').show().css('visibility','visible');
+					$('#logged-in').hide().css('visibility','hidden');
+					$('#logged-out').show().css('visibility','visible');
 					// RDRAuth.getReadrToken( response, true );
 				}	
 			}
@@ -217,13 +217,14 @@ RDRAuth = {
 		// if no first_name attribute is in the response, this is a temporary user.
 		if ( response.data.first_name || response.data.full_name ) RDRAuth.rdr_user.temp_user = false;
 		else RDRAuth.rdr_user.temp_user = true;
-		// RDRAuth.rdr_user.full_name = response.data.full_name;
+		RDRAuth.rdr_user.full_name = response.data.full_name;
+		RDRAuth.rdr_user.first_name = response.data.full_name;
 		RDRAuth.rdr_user.img_url = response.data.img_url;
 		RDRAuth.rdr_user.user_id = response.data.user_id;
 		RDRAuth.rdr_user.readr_token = response.data.readr_token;
 		RDRAuth.rdr_user.user_type = response.data.user_type;
-		// $.cookie('first_name', RDRAuth.rdr_user.first_name, { expires: 365, path: '/' });
-		// $.cookie('full_name', RDRAuth.rdr_user.full_name, { expires: 365, path: '/' });
+		$.cookie('first_name', RDRAuth.rdr_user.first_name, { expires: 365, path: '/' });
+		$.cookie('full_name', RDRAuth.rdr_user.full_name, { expires: 365, path: '/' });
 		$.cookie('temp_user', RDRAuth.rdr_user.temp_user, { expires: 365, path: '/' });
 		$.cookie('img_url', RDRAuth.rdr_user.img_url, { expires: 365, path: '/' });
 		$.cookie('user_id', RDRAuth.rdr_user.user_id, { expires: 365, path: '/' });
@@ -247,7 +248,27 @@ RDRAuth = {
 		RDRAuth.readUserCookie();
 		if (top == self) {
 			// we're on the site
-			RDRAuth.checkFBStatus();
+			if ( $.cookie('user_type') == "facebook" ) {
+				RDRAuth.checkFBStatus();
+			} else {
+				if ( $.cookie('user_id') && $.cookie('full_name') ) {
+					$('#logged-in').show().css('visibility','visible');
+					$('#logged-out').hide().css('visibility','hidden');
+
+	  				var $user = $('<a/>'),
+					// $avatar = $('<img/>'),
+					$name = $('<strong/>');
+
+					$user.attr('href', '/user/' + $.cookie('user_id') );
+					// $avatar.attr('src', img_url + '?type=square');
+					var username = ( $.cookie('full_name') ) ? $.cookie('full_name'):$.cookie('first_name');
+					$name.text( username );
+
+					$user.append( $name );
+
+					$('#logged-in').html( $user ).append('<div id="log-out-link"><a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a></div>');
+				}
+			}
 		} else {
 			var sendData = {
 				// arguments are nested under data for consistency with passing values up to the parent

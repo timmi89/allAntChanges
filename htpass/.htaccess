@@ -1,4 +1,4 @@
 AuthUserFile /home/django/readrboard/.htpasswd
 AuthType Basic
-AuthName "Readrboard Preview"
+AuthName "ReadrBoard Preview"
 Require valid-user

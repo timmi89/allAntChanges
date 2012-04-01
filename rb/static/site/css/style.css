@@ -485,12 +485,18 @@ header[role="banner"]	{height:36px;xmin-width:940px;background:url(../images/hea
 header[role="banner"] h1				{ text-indent:-9999px; background:url(../images/logo_med.png) top center no-repeat;margin-top:6px; }
 
 header[role="banner"] #user				{ left:8px; position:absolute; top:2px; }
-header[role="banner"] #user	#fb-logged-in,
-header[role="banner"] #user	#fb-logged-out 	{ visibility:hidden;}
-header[role="banner"] #user	#fb-logged-in img	{ float:left; max-width:30px; max-height:30px; border:1px solid #424242; }
-header[role="banner"] #user	strong				{ float:left; margin: 8px 0px 0px 5px; }
-header[role="banner"] #user	a					{ color:#f2f3f7; }
-header[role="banner"] #user	#fb-logged-out 	{ margin-top:5px; }
+header[role="banner"] #user	#logged-in      { visibility:hidden; height:37px;}
+header[role="banner"] #user	#logged-out 	  { height:37px;}
+header[role="banner"] #user	#logged-in img	{ float:left; max-width:30px; max-height:30px; border:1px solid #424242; }
+header[role="banner"] #user	strong				  { float:left; margin: 8px 0px 0px 5px; }
+header[role="banner"] #user	a					      { color:#f2f3f7; }
+header[role="banner"] #user #logged-out     { margin-top:9px; text-align:left; }
+header[role="banner"] #user #logged-out #login-options  { display:none; background:#fff; margin-top:7px; overflow:auto; padding:5px; border:1px solid #44494C; }
+header[role="banner"] #user #logged-out:hover #login-options  { display:block; }
+
+header[role="banner"] #user #logged-in #log-out-link    { display:none; background:#fff; top:33px; position:absolute; padding:5px; border:1px solid #44494c; }
+header[role="banner"] #user #logged-in #log-out-link a  { color:#454545; }
+header[role="banner"] #user	#logged-in:hover #log-out-link	{ display:block; }
 
 header[role="banner"] #site_search			{ position:absolute; right:8px; top:6px; display:block; }
 header[role="banner"] #site_search input	{ border:1px solid #424242; background:#eee;padding:4px;height:24px;width:180px;}
@@ -687,7 +693,7 @@ section[role="complementary"] {
 }
 
 section[role="complementary"] #user_data img {
-	max-width: 180px;
+	max-width: 155px;
 }
 
 #sidebar {
