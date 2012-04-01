@@ -108,12 +108,14 @@
 			</table>
 		</section> <!-- / most popular shares -->
 
+		<!-- 
 		<section role="most popular bookmarks">
 			<h3>Popular Bookmarked Content</h3>
 			<table role="popular bookmarks" cellpadding="0" cellspacing="0" border="0">
 				<tbody></tbody>
 			</table>
-		</section> <!-- / most popular bookmarks -->
+		</section>
+		/ most popular bookmarks -->
 
 	</section>
 </section>
@@ -149,20 +151,20 @@ RB.analytics = {
 					}
 					$('section[role="most popular tags"] ol').html( $(tag_list) );
 				} else if (type=="bookmarks") {
-					var bookmarkHtml = "";
-					for ( var i in response ) {
-						var bookmark = response[i];
-						bookmarkHtml += '<tr><td role="content">('+bookmark[0].count+') '+bookmark[0].content__body+'</td></tr><tr><td role="reactions"><strong>Reactions:</strong>';
-						for ( var j in bookmark[1].related_reactions ) {
-							var reaction = bookmark[1].related_reactions[j];
-							bookmarkHtml += '('+reaction.count+') '+reaction.interaction_node__body;
-							if ( j < bookmark[1].related_reactions.length - 1 ) bookmarkHtml += ", ";
-						}
-						bookmarkHtml += '</td></tr>'; 
-						// bookmarkHtml += '<tr><td role="via"><em>View <a href="#" target="_blank">On your site <img src="/static/site/images/external_link_icon.gif" /></a> | <a href="#" target="_blank">Page Info</a></em></td></tr>';
-					}
+					// var bookmarkHtml = "";
+					// for ( var i in response ) {
+					// 	var bookmark = response[i];
+					// 	bookmarkHtml += '<tr><td role="content">('+bookmark[0].count+') '+bookmark[0].content__body+'</td></tr><tr><td role="reactions"><strong>Reactions:</strong>';
+					// 	for ( var j in bookmark[1].related_reactions ) {
+					// 		var reaction = bookmark[1].related_reactions[j];
+					// 		bookmarkHtml += '('+reaction.count+') '+reaction.interaction_node__body;
+					// 		if ( j < bookmark[1].related_reactions.length - 1 ) bookmarkHtml += ", ";
+					// 	}
+					// 	bookmarkHtml += '</td></tr>'; 
+					// 	// bookmarkHtml += '<tr><td role="via"><em>View <a href="#" target="_blank">On your site <img src="/static/site/images/external_link_icon.gif" /></a> | <a href="#" target="_blank">Page Info</a></em></td></tr>';
+					// }
 
-					$('table[role="popular bookmarks"] tbody').html( $(bookmarkHtml) );
+					// $('table[role="popular bookmarks"] tbody').html( $(bookmarkHtml) );
 				} else if (type=="shares") {
 
 					var shareHtml = "";
@@ -216,7 +218,6 @@ RB.analytics = {
 
 					$('table[role="active pages table"] tbody').html( pageHtml );
 				} else if ( type == "content" ) {
-					console.dir(response);
 					var contentHtml = "";
 					for ( var i in response) {
 						contentHtml += '<tr>'; // TODO add back in:  <td role="via"><div><a href="'+response[i].content.canonical_url+'" target="_blank">'+response[i].content.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
