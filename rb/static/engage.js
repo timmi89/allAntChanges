@@ -643,7 +643,13 @@ function readrBoard($R){
                         if ( !$.isEmptyObject( comments ) ) {
                             $commentHover.append( '<span class="rdr_icon"></span> '+num_comments );
                             $commentHover.click( function() {
-                                RDR.actions.viewCommentContent( {tag:tag, hash:hash, rindow:$rindow, content_node:content_node, selState:content_node.selState, summary:summary});
+                                RDR.actions.viewCommentContent({
+                                    tag:tag,
+                                    hash:hash,
+                                    rindow:$rindow,
+                                    content_node:content_node,
+                                    selState:content_node.selState
+                                });
                             });
                             
                             $a.append('<span class="rdr_comment_indicator"></span>');
@@ -1158,13 +1164,27 @@ function readrBoard($R){
                     $rindow_writemode = summary.$rindow_writemode;
                 
                 if( diffNode.int_type == "coms" ){
-
                     if($rindow_writemode){
+
+                        //add the content_id class to the tags
+                        $tags = $rindow_writemode.find('.rdr_tags').find('.rdr_tag');
+                        $tags.addClass('rdr_content_node_'+diffNode.content_id);
+
                         _addComIndicator($rindow_writemode, diffNode);
                     }
                     if($rindow_readmode){
                         _addComIndicator($rindow_readmode, diffNode);
+                    }else{
+                        //image container.
+                        var $rindow = $('#rdr_indicator_details_'+hash);
+
+                        //add the content_id class to the tags
+                        $tags = $rindow.find('.rdr_tags').find('.rdr_tag');
+                        $tags.addClass('rdr_content_node_'+diffNode.content_id);
+
+                        _addComIndicator($rindow, diffNode);
                     }
+                    
                 }
 
                 function _addComIndicator($rindow, diffNode){
@@ -1172,14 +1192,109 @@ function readrBoard($R){
                     
                     $tags = $rindow.find('.rdr_tags');
 
-                    $tag = $tags.find('.rdr_tag_'+diffNode.parent_interaction_node.id);
+                    //todo: we also need the contentnode id to make this unique
+                    //The class looks like this: rdr_tag rdr_tag_368 rdr_content_node_518
+                    $tag = $tags
+                        .find('.rdr_tag_'+diffNode.parent_interaction_node.id)
+                        .filter(function(){
+                            return $(this).hasClass('rdr_content_node_'+diffNode.content_id);
+                        });
                     
-                    // todo: add case where diff is -1 and there is only 1 com- remove the comment
                     $tag.addClass('rdr_comment_indicator');
+                    _tempCopyOfCommentHover(diffNode, $tag, $rindow);
+                    _addLinkToViewComs(diffNode, $tag, $rindow);
+
+
                 }
+
+
+                function _tempCopyOfCommentHover(diffNode, $tag, $rindow){
+
+                    //some crazy logic here to get the nodes per tag and per comment
+                    //simplify our data structure later
+                    var contentNodes = summary.content_nodes;
+                    var contentNodesByContentId = contentNodes[diffNode.content_id];
+
+                    var comsPerContentNodeId = contentNodesByContentId.top_interactions.coms;
+                    
+                    //filter so we get only the coms per this pill (tag_id and content_id)
+                    var comsPerContentNodeAndTagId = $.map( comsPerContentNodeId, function(node){
+                        return (node.tag_id === diffNode.tag_id ? node : null);
+                    });
+
+                    var num_comments = comsPerContentNodeAndTagId.length;
+                    
+                    //just to match out copied function.
+                    var $a = $tag;
+
+                    var tag = diffNode.parent_interaction_node;
+                    var content_node = diffNode.content_node;
+                    
+
+                    //remove any existing comment shit so we can remake it
+                    $a.siblings('.rdr_comment_hover').remove();
+                    $a.find('.rdr_comment_indicator').remove();
+
+                    var $commentHover = $('<span class="rdr_comment_hover"/>');
+                    
+                
+                    $commentHover.append( '<span class="rdr_icon"></span> '+num_comments );
+                    $commentHover.click( function() {
+
+                        RDR.actions.viewCommentContent({
+                            tag:tag,
+                            hash:hash,
+                            rindow:$rindow,
+                            content_node:content_node,
+                            selState:content_node.selState
+                        });
+                    });
+                    
+                    $a.append('<span class="rdr_comment_indicator"></span>');
+                
+
+                    $a.after( $commentHover );
+                    $a.closest('td').addClass('rdr_has_pillHover');
+                    
+                    // if (pill_width > (max_width+18)) {
+                    //     $a.closest('td').addClass('rdr_truncated_pill');   
+                    //     $a.find('span.rdr_tag_name').append('<span class="rdr_truncated" />');
+                    // }
+                }
+                function _addLinkToViewComs(diffNode, $tag, $rindow){
+
+
+                    var tag = diffNode.parent_interaction_node;
+                    var content_node = diffNode.content_node;
+                    
+
+                    var $linkToComment = $('<span class="rdr_comment_hover"/>');
+                    
+                
+                    $linkToComment.append( '<span class="linkToComment">Thanks! <a href="javascript:void(0);">See your comment</a></span> ');
+
+                    $linkToComment.click( function() {
+
+                        RDR.actions.viewCommentContent({
+                            tag:tag,
+                            hash:hash,
+                            rindow:$rindow,
+                            content_node:content_node,
+                            selState:content_node.selState
+                        });
+                        return false;
+                    });
+                    
+                    $rindow.find('div.rdr_commentBox')
+                        .empty()
+                        .append($linkToComment)
+                        .show();
+                }
+
+
             }//end RDR.rindow.update
-		},
-		actionbar: {
+        },
+        actionbar: {
 			draw: function(settings) {
                 //RDR.actionbar.draw:
                 //expand to make settings explicit
@@ -2970,6 +3085,24 @@ function readrBoard($R){
 
                             //throw the content_nodes into the container summary
                             summary.content_nodes = content_nodes;
+                            if(summary.kind == "text"){
+                            }else{
+
+                                //this is weird because there is only one content_node - the img
+                                //this whole thing is gross.  Fix our data structure later.
+
+                                summary.top_interactions.coms = {};
+
+                                $.each(content_nodes, function(contentNodeId, contentNodeData){
+                                    var comsArr = contentNodeData.top_interactions.coms;
+
+                                    $.each(comsArr, function(idx, com){
+                                        summary.top_interactions.coms[ com.tag_id ] = summary.top_interactions.coms[ com.tag_id ] || [];
+                                        summary.top_interactions.coms[ com.tag_id ].push(com);
+                                    });
+
+                                });
+                            }
 
                             //finally, run the success callback function
                             if ( onSuccessCallback ) {
@@ -3198,16 +3331,17 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 response = args.response,
                                 tag = args.tag;
 
-                            log('args in onSuccess for comments')
-                            log(args)
-
 
                             //clear loader
                             if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
                             var interaction = response.data.interaction;
+                            var content_node = response.data.content_node;
+                            var content_id = content_node.id;
+                            var num_interactions = response.data.num_interactions;
 
-                            $rindow.find('div.rdr_commentBox').html('Thank you for your comment. <br><br><strong>Reload the page to see your comment.</strong>').show();
+                            // $rindow.find('div.rdr_commentBox').html('Thank you for your comment. <br><br><strong>Reload the page to see your comment.</strong>').show();
+
                             RDR.rindow.updateSizes( $rindow );
                             // $rindow.find('div.rdr_commentBox').find('div.rdr_tagFeedback, div.rdr_comment').hide();
 
@@ -3228,15 +3362,20 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             var intHelper = {
                                 delta: 1,
+                                num_interactions: num_interactions,
                                 id: interaction.id,
                                 body: interaction.interaction_node.body,
-                                content_id: args.content_id,
+                                content_node: content_node,
+                                content_id: content_id,
                                 //doesn't seem like we're using these
                                     // parent_id: args.parent_id,
                                     // parent_interaction_node: args.tag,
                                 tag_id: tagId,
                                 user: args.user,
-                                social_user: args.social_user
+                                social_user: args.social_user,
+                                parent_id: null, //todo: I don't think we're using this
+                                parent_interaction_node: args.tag,
+
                             };
 
                             var diff = {   
@@ -3246,15 +3385,22 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             };
 
                             diff.coms[ tagId ] = intHelper;
-                            RDR.actions.summaries.update(hash, diff);
 
-                            var usrMsgArgs = {      
-                                msgType: "interactionSuccess",
-                                interactionInfo: {
-                                    type: 'comment'
-                                },
-                                rindow:$rindow
-                            };
+                            //for now, just pull all the content_nodes down and
+                            //(this will automatically) update the summary object
+                            //run the rest of our comment update on the callback
+                            RDR.actions.content_nodes.init(hash, function(){
+                                RDR.actions.summaries.update(hash, diff);
+                            });
+
+                            //not using this
+                            // var usrMsgArgs = {      
+                            //     msgType: "interactionSuccess",
+                            //     interactionInfo: {
+                            //         type: 'comment'
+                            //     },
+                            //     rindow:$rindow
+                            // };
 
                         },
                         remove: function(args){
@@ -3489,6 +3635,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 if ( args.scenario != "reactionExists" ) { 
                                     RDR.actions.summaries.update(hash, diff);
                                 }
+
                             }
 
                         },
@@ -4305,7 +4452,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             }else{
                                 //interaction doens't exist yet:
-                                log(interaction_node_type)
                                 //split between tags and comments:
                                 if(interaction_node_type == "tags"){
                                     //todo: implement a diffNode.make function instead of this.
@@ -4318,8 +4464,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     };
 
                                 }else{
-                                    console.log('updating coms')
-                                    console.log(diffNode);
                                     var user = diffNode.user;
 
 
@@ -4327,11 +4471,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                             //I don't think it makes sense to save a count, because unlike tags, each comment should be unique
                                             //count: diffNode.delta, //this should always be 1.
                                         body: diffNode.body,
+                                        content_node: diffNode.content_node,
                                         content_id: diffNode.content_id,
                                         id: diffNode.id,
                                         social_user: diffNode.social_user,
                                         tag_id: diffNode.tag_id,
-                                        user: diffNode.user
+                                        user: diffNode.user,
+                                        parent_id: diffNode.parent_id,
+                                        parent_interaction_node: diffNode.parent_interaction_node
                                     }
                                 }
                             }
@@ -4455,6 +4602,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 // do stuff, populate the rindow.
                 RDR.rindow.updateHeader( $rindow, headerContent );
                 RDR.rindow.panelCreate( $rindow, 'rdr_comments' );
+                
                 _makeOtherComments();
                 _makeCommentBox();
                 
@@ -4551,13 +4699,21 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     } else {
                         comments = summary.top_interactions.coms[tag.id];
                     }
-                    
+
                     var node_comments = 0;
-                    for (var com in comments ) {
-                        if ( comments[com].tag_id == tag.id ) {
+
+                    //todo: fix nasty dirty hack
+                    if( !$.isArray(comments) ){
+                        comments = [].push(comments);
+                    }
+
+
+                    $.each(comments, function(idx, com){
+                         if ( com.tag_id == tag.id ) {
                             node_comments++;
                         }
-                    }
+                    });
+
                     var hasComments = !$.isEmptyObject(comments);
                     if(!hasComments) return;
                     //else

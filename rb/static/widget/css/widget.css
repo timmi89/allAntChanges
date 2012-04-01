@@ -266,6 +266,12 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_comment            {font: italic 14px Georgia; color:#999;padding:3px; overflow-x:hidden;}
 #rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentReply       {font-weight:normal; margin-right:5px; text-transform:uppercase; font-size:9px; float:right;}
 
+
+#rdr_sandbox .linkToComment a{
+    text-decoration: underline;
+}
+
+
 /* tag pills and such */
 table.rdr_tags {
     margin-right:auto !important;

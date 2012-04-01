@@ -264,5 +264,14 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
 
     new_interaction.save()
     
-    if tempuser: return dict(interaction=new_interaction, existing=False, num_interactions=num_interactions+1)
-    return dict(interaction=new_interaction, existing=False)
+    if tempuser: return dict(
+        interaction=new_interaction,
+        content_node=content,
+        existing=False,
+        num_interactions=num_interactions+1
+    )
+    return dict(
+        interaction=new_interaction,
+        content_node=content,
+        existing=False
+    )
