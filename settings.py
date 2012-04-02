@@ -170,8 +170,8 @@ EMAIL_TEMPLATE_DIR = RB_SITE_ROOT + "/rb/email_templates"
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'porterbayne@gmail.com'
-EMAIL_HOST_PASSWORD = 'boundaries'
+EMAIL_HOST_USER = 'accounts@readrboard.com'
+EMAIL_HOST_PASSWORD = 'readr4acc0unts'
 EMAIL_PORT = 587
 
 
