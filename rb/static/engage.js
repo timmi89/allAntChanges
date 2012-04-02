@@ -2446,6 +2446,9 @@ function readrBoard($R){
                 RDR.actions.slideshows.setup();
                 
                 $(RDR.group.img_whitelist).each( function() {
+                    if ( $(this).data('hash') ) {
+                        RDR.actions.indicators.init( $(this).data('hash') );
+                    }
                     $(this).trigger('mouseenter.rdr');
                 }); //trigger('mouseenter');
                 
