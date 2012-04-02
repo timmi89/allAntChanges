@@ -2446,8 +2446,11 @@ function readrBoard($R){
                 RDR.actions.slideshows.setup();
                 
                 $(RDR.group.img_whitelist).each( function() {
-                    if ( $(this).data('hash') ) {
-                        RDR.actions.indicators.init( $(this).data('hash') );
+                    var hash = $(this).data('hash');
+                    if ( hash ) {
+                        RDR.actions.sendHashes( hash, function(){
+                            RDR.actions.indicators.init( hash );
+                        });
                     }
                     $(this).trigger('mouseenter.rdr');
                 }); //trigger('mouseenter');
