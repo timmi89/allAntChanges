@@ -2417,9 +2417,6 @@ function readrBoard($R){
                 // todo: this is a pretty wide hackey net - rethink later.
                 var imgBlackList = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? 'not('+RDR.group.img_blacklist+')':'';
                 $('body').delegate( 'embed, video, object, iframe, img'+imgBlackList, 'mouseenter.rdr', function(){
-                    if ( typeof console != "undefined" && typeof console.log != "undefined" ) {
-                        console.log('hover image');
-                    }
                     var $this = $(this);
                     if ( $this.width() >= 180 ) {
                         var hasBeenHashed = $this.hasClass('rdr-hashed'),
