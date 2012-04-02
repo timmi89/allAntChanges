@@ -2416,7 +2416,7 @@ function readrBoard($R){
 
                 // todo: this is a pretty wide hackey net - rethink later.
                 var imgBlackList = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? 'not('+RDR.group.img_blacklist+')':'';
-                $('body').delegate( 'embed, video, object, iframe, img'+imgBlackList, 'mouseenter', function(){
+                $('body').live( 'embed, video, object, iframe, img'+imgBlackList, 'mouseenter', function(){
                     if ( typeof console != "undefined" && typeof console.log != "undefined" ) {
                         console.log('hover image');
                     }
