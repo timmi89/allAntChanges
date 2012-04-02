@@ -1,18 +1,25 @@
 {% extends "base.html" %}
 
+{% block bodyClass %}wide{% endblock %}
+
 {% block sidebarContent %}
 <div id="sidebar">
 </div>
 {% endblock sidebarContent %}
 
 {% block mainContent %}
-  <h1>ReadrBoard Beta Signup</h1>
   {% if confirmed %}
-    <h3>Thanks!</h3>
-    <a href = "/">Home</a>
-  {% else %}
-    <h3>You're not yet confirmed.  FYI.  Maybe someday we'll give you a link to resend the confirmation email.</h3>
-  {% endif %}
+  <h1>Thanks for confirming your account.</h1>
+  <div style="margin:20px;">
+        <h3>Welcome to <a href = "/">ReadrBoard</a></h3>
+    </div>
+    {% else %}
+    <h1>It looks like you still need to confirm your account.</h1>
+      <div style="margin:20px;">
+        <h3>Please see your email inbox for a confirmation link.</h3>
+    </div>
+    {% endif %}
+
 {% endblock mainContent %}
 
 {% block pageJS %}
