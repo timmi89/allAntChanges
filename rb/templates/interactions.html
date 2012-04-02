@@ -100,7 +100,7 @@ function writeCard( interaction, showBlocked ) {
     var $card = $('<div class="card '+interaction.kind+'" id="card_'+interaction.id+'" />');
     $card.append('<div class="date">'+interaction.date+'</div>');
     var $header = $('<header/>').attr('title', interaction.interaction_node_body)
-         .append('<h1>'+interaction.interaction_node_body+'</h1>')
+         .append('<h1><a href="/stream/?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></h1>')
          .append('<span class="count"></span>');
 
     var $content = $('<div class="content"/>');
