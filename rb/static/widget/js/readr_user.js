@@ -6,6 +6,7 @@ for ( var i in qs ) {
 	var this_arg = qs[i].split('=');
 	qs_args[this_arg[0]] = this_arg[1];
 }
+if ( typeof qs_args.group_id == "undefined" ) qs_args.group_id = "";
 if ( typeof $.receiveMessage == "function") {
 	$.receiveMessage(
 		function(e){
@@ -29,6 +30,21 @@ if ( typeof $.receiveMessage == "function") {
 var RDRAuth = RDRAuth ? RDRAuth : {};
 RDRAuth = {
 	rdr_user: {},
+	events : {
+		track : function( data ) {
+	        // RDRAuth.events.track
+	        // mirrors the event tracker from the widget
+	        var standardData = "";
+
+	        if ( RDRAuth.rdr_user && RDRAuth.rdr_user.user_id ) standardData += "||uid::"+RDRAuth.rdr_user.user_id;
+	        if ( (qs_args && (qs_args.group_id) ) ) standardData += "||gid::"+(qs_args.group_id);
+	        
+	        var eventSrc = data+standardData,
+	            $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
+
+	        $('#rdr_event_pixels').append($event);
+    	}
+	},
 	postMessage: function(params) {
 		if ( typeof $.postMessage == "function" ) {
 			$.postMessage(

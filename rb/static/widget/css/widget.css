@@ -46,6 +46,7 @@
     position:relative;
     z-index:11000;
     height:22px;
+    position:absolute;
 }
 
 #rdr_sandbox div.rdr_actionbar ul {
@@ -999,6 +1000,9 @@ div.rdr_indicator_for_media_inline div.rdr_indicator_body {
     top:-18px !important;    
 }
 
+#rdr_sandbox div#rdr_event_pixels {
+    position:absolute !important;
+}
 #rdr_sandbox div.rdr_container_tracker{
     position:absolute !important;
 }

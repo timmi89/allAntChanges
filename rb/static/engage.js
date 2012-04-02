@@ -79,7 +79,7 @@ function readrBoard($R){
                 
                 var eventSrc = data+standardData,
                     $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
-console.log('eventSrc: '+eventSrc);
+
                 $('#rdr_event_pixels').append($event);
             }
         },
@@ -348,6 +348,7 @@ console.log('eventSrc: '+eventSrc);
                             // comment functionality
                             var $commentInput = $nextSteps.find('input.rdr_add_comment');
                             $commentInput.focus(function(){
+                                RDR.events.track('start_comment_sm::'+args.response.data.interaction.id);
                                 if( $(this).val() == 'Add a comment' ){
                                     $(this).val('');
                                 }
@@ -691,6 +692,7 @@ console.log('eventSrc: '+eventSrc);
                     // add custom tag
                     var $a_custom = $('<a class="rdr_tag rdr_custom_tag"><input type="text" value="'+helpText+'" class="rdr_default"/></a>');
                     $a_custom.find('input').focus( function() {
+                        RDR.events.track('start_custom_reaction_rindow');
                         var $input = $(this);
                         $input.removeClass('rdr_default');
                         if ( $input.val() == helpText ) {
@@ -753,6 +755,7 @@ console.log('eventSrc: '+eventSrc);
                         /* START create rindow based on write vs. read mode */
                         if ( settings.mode == "writeMode" ) {
                             // writeMode
+                            RDR.events.track('start_react_text');
                             var newSel;
                             if ( kind == "text" ) {
                                 //Trigger the smart text selection and highlight
@@ -835,6 +838,9 @@ console.log('eventSrc: '+eventSrc);
                         var headerContent = '<div class="rdr_indicator_stats"><a href="'+RDR_baseUrl+'/" target="_blank"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"></a><span class="rdr_count"></span></div>' +
                                             '<h1>' + headerText + '</h1>';
                         RDR.rindow.updateHeader( $rindow, headerContent );
+                        $rindow.find('div.rdr_indicator_stats').find('a').click( function() {
+                            RDR.events.track('click_rb_icon_rindow');
+                        });
                         /* END populate the header */
 
                         /* START create the tag pills.  read / write mode matters. (??) */
@@ -2016,6 +2022,9 @@ console.log('eventSrc: '+eventSrc);
 
                         $loginIframe = $('<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="360" height="140" frameborder="0" style="overflow:hidden;" />' );
                     RDR.rindow.updateHeader( $rindow, '<div class="rdr_indicator_stats"><a target="_blank" href="'+RDR_baseUrl+'"><img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin"></a></div><h1>'+h1_text+'</h1>' );
+                    $rindow.find('div.rdr_indicator_stats').find('a').click( function() {
+                        RDR.events.track('click_rb_icon_rindow');
+                    });
                     $rindow.find('div.rdr_body_wrap').append('<div class="rdr_body" />').append( $loginIframe );
 
                     RDR.events.track( 'show_login' );
@@ -3298,7 +3307,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 args.response = response;
                                 if ( response.data && response.data.num_interactions ) RDR.user.num_interactions = response.data.num_interactions;
                                 if ( response.status == "success" ) {
-                                    RDR.events.track( action_type+'_'+int_type_for_url+'::' + args.response.data.interaction.id);
+                                    if ( args.response.data.interaction ) {
+                                        RDR.events.track( action_type+'_'+int_type_for_url+'::' + args.response.data.interaction.id);
+                                    } else if ( args.response.data.deleted_interaction ) {
+                                        RDR.events.track( action_type+'_'+int_type_for_url+'::' + args.response.data.deleted_interaction.interaction_node.id);
+                                    }
                                     if(args.response.data.deleted_interaction){
                                         args.deleted_interaction = args.response.data.deleted_interaction;
                                     }
@@ -4188,6 +4201,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                                 '<h1>'+headerText+'</h1>'),
                                 $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />');
 
+                            $headerContent.find('div.rdr_indicator_stats').find('a').click( function() {
+                                RDR.events.track('click_rb_icon_rindow');
+                            });
+
                             $detailsHeader.find('div.rdr_loader').after( $headerContent );
                             if ( summary.counts && summary.counts.tags ) $detailsHeader.find('h1').text( summary.counts.tags + " Reactions" );
                             //use an innerWrap so that we can move padding to that and measuring the width of the indicator_details will be consistent
@@ -4619,8 +4636,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 var tag = args.tag, 
                     $rindow = args.rindow,
                     content_node = args.content_node;
-                console.dir(content_node);
-                console.dir(tag);
+
                 $rindow.removeClass('rdr_rewritable').addClass('rdr_viewing_comments');
                 //temp tie-over    
                 var hash = args.hash,
@@ -4668,6 +4684,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     $commentDiv.append( $commentTextarea, $rdr_charCount, $submitButton );
                     
                     $commentTextarea.focus(function(){
+                        RDR.events.track('start_comment_lg::'+content_node.id+'|'+tag.id);
                         if( $(this).val() == helpText ){
                             $(this).val('');
                         }
@@ -4791,7 +4808,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 $commentReply_link = $('<a href="javascript:void(0);">Reply</a>');
                             var user_image_url = ( this_comment.social_user.img_url ) ? this_comment.social_user.img_url: RDR_staticUrl+'widget/images/anonymousplode.png';
                             var user_name = ( this_comment.user.first_name === "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
-                            $commentBy.html( '<a href="'+RDR_baseUrl+'/user/'+this_comment.user.id+'" target="_blank"><img src="'+user_image_url+'" class="no-rdr" /> ' + user_name + '</a>' );
+                            $commentBy.html( '<a href="'+RDR_baseUrl+'/user/'+this_comment.user.id+'" target="_blank"><img src="'+user_image_url+'" class="no-rdr" /> ' + user_name + '</a>' ).click( function() {
+                                RDR.events.track('click_user_profile');
+                            });
                             $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
 
                             $commentSet.append( $commentBy, $comment ); // , $commentReplies, $commentReply 
@@ -5625,6 +5644,9 @@ function $RFunctions($R){
 
                     var $RB = $('<div class="rdr-this-is-readrboard"></div>');
                     $RB.append('<a href="'+RDR_baseUrl+'/group/'+RDR.group.short_name+'" target="_blank"><img src="'+RDR_staticUrl+'widget/images/readrboard_logo.png" class="no-rdr" /></a>');
+                    $RB.click( function() {
+                        RDR.events.track('click_rb_icon_summ');
+                    });
 
                     var $a_tooltip = RDR.tooltip.draw({"item":"tooltip","tipText":"This is <strong>ReadrBoard</strong>. ReadrBoard lets you easily react to anything on this page!<br><br>Click a button to the right to react to this whole page.<br><br>Or, select any text, image, or video and react to just that part of the page."}).addClass('rdr_tooltip_top').addClass('rdr_tooltip_wide').hide();
                         $a_tooltip.attr( 'id', 'rdr-tooltip-summary-what-is-it' );
@@ -5643,6 +5665,7 @@ function $RFunctions($R){
                         $tooltip.css('top', tooltip_top + "px" );
                         $tooltip.css('left', tooltip_left + "px" );
                         $tooltip.show();
+                        RDR.events.track('show_summary_what_is_it');
                     },
                     function() {
                         $('#rdr-tooltip-summary-what-is-it').hide();
@@ -5701,6 +5724,7 @@ function $RFunctions($R){
                     // add custom tag
                     var $a_custom = $('<a class="rdr_tag rdr_custom_tag"><input type="text" value="Add yours..." class="rdr_default"/></a>');
                     $a_custom.find('input').focus( function() {
+                        RDR.events.track('start_custom_reaction_summ');
                         var $input = $(this);
                         $input.removeClass('rdr_default');
                         if ( $input.val() == "Add yours..." ) {
@@ -5771,6 +5795,7 @@ function $RFunctions($R){
                                 var $userLink = $('<a href="'+RDR_baseUrl+'/user/'+this_user.user+'" class="no-rdr rdr-top-user" target="_blank" />'),
                                     userPic = '<img src="'+this_user.img_url+'" class="no-rdr" alt="'+this_user.full_name+'" title="'+this_user.full_name+'" />';
                                 // $topusers.append( $userLink.append(userPic) );
+                                $userLink.click( function() { RDR.events.track('click_user_profile'); })
                                 $react.find('div').append( $userLink.append(userPic) );
                             }
                         }

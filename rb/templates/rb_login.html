@@ -32,6 +32,7 @@
 	</div>
 	<button onclick="direct_registration();" tabindex="3" id="submit_login">Log In</button>
 	<script type="text/javascript">
+		RDRAuth.events.track('show_login_form');
 		$('input[name="username"]').focus();
 		$('#groupname').text( decodeURI(qs_args.group_name) );
 
@@ -60,6 +61,7 @@
 							$('#direct_registration').prepend('<div class="error">'+response.data.message+'</div>');
 						} else {
 							RDRAuth.setUser(response);
+							RDRAuth.events.track('login_success');
 							window.opener.RDRAuth.readUserCookie();
 							window.opener.RDRAuth.returnUser();
 							window.opener.RDRAuth.notifyParent({}, "close login panel");
