@@ -60,9 +60,9 @@ else:
       'default': {
         'ENGINE':   'django.db.backends.mysql',
         'NAME':     'readrboard',
-        'USER':     'readrboard',
-        'PASSWORD': 'gubnah',
-        'HOST':     '10.215.10.164',
+        'USER':     'root',
+        'PASSWORD': '',
+        'HOST':     'localhost',
         'PORT':     '3306',
         'OPTIONS': {
             "init_command": "SET storage_engine=INNODB",
