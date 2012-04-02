@@ -66,7 +66,7 @@ interactions.push( interaction );
     "user_profile_link" :   "/user/{{interaction.user.id}}",
     "user_avatar"       :   "{{ interaction.user.social_user.img_url }}",
     "user_name"         :   "{{ interaction.user.social_user.full_name }}",
-    "comment"           :   "{% filter force_escape %}{{ interaction.interaction_node.body }}{% endfilter %}",
+    "comment"           :   "{% filter force_escape %}{{ interaction.interaction_node.body|linebreaksbr }}{% endfilter %}",
     "moderator"         :   {% if cookie_user and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %}
   };
   comments.push(comment);
@@ -100,7 +100,7 @@ function writeCard( interaction, showBlocked ) {
     var $card = $('<div class="card '+interaction.kind+'" id="card_'+interaction.id+'" />');
     $card.append('<div class="date">'+interaction.date+'</div>');
     var $header = $('<header/>').attr('title', interaction.interaction_node_body)
-         .append('<h1>'+interaction.interaction_node_body+'</h1>')
+         .append('<h1><a href="/stream/?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></h1>')
          .append('<span class="count"></span>');
 
     var $content = $('<div class="content"/>');

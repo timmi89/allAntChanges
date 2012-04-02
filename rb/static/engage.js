@@ -2416,7 +2416,7 @@ function readrBoard($R){
 
                 // todo: this is a pretty wide hackey net - rethink later.
                 var imgBlackList = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? 'not('+RDR.group.img_blacklist+')':'';
-                $('body').delegate( 'embed, video, object, iframe, img'+imgBlackList, 'mouseenter', function(){
+                $('body').delegate( 'embed, video, object, iframe, img'+imgBlackList, 'mouseenter.rdr', function(){
                     var $this = $(this);
                     if ( $this.width() >= 180 ) {
                         var hasBeenHashed = $this.hasClass('rdr-hashed'),
@@ -2446,7 +2446,14 @@ function readrBoard($R){
                 RDR.actions.slideshows.setup();
                 
                 $(RDR.group.img_whitelist).each( function() {
-                    $(this).trigger('mouseenter');
+                    // var hash = $(this).data('hash');
+                    // if ( hash ) {
+                    //     RDR.actions.indicators.init( hash );
+                    //     RDR.actions.sendHashes( hash, function(){
+                    //         RDR.actions.indicators.init( hash );
+                    //     });
+                    // }
+                    $(this).trigger('mouseenter.rdr');
                 }); //trigger('mouseenter');
                 
                 //hashNodes without any arguments will fetch the default set from the server.

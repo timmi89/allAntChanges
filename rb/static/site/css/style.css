@@ -481,7 +481,7 @@ page-break-after:avoid; }
 /*@media only screen and (min-width:768px) {*/
 
 /* HEADER */
-header[role="banner"]	{height:36px;xmin-width:940px;background:url(../images/header_bg.png) top left repeat-x;position:fixed;width:100%;z-index:10;top:0;font-size:12px;text-align:center;}
+header[role="banner"]	{height:36px;xmin-width:940px;background:url(../images/header_bg.png) top left repeat-x;position:fixed;width:100%;z-index:12001;top:0;font-size:12px;text-align:center;}
 header[role="banner"] h1				{ text-indent:-9999px; background:url(../images/logo_med.png) top center no-repeat;margin-top:6px; }
 
 header[role="banner"] #user				{ left:8px; position:absolute; top:2px; }
@@ -594,7 +594,7 @@ section[role="main"] div.card div.comment_container .header   {overflow:hidden; 
 section[role="main"] div.card div.comment_container .header .when       {float:right; font:normal 11px Arial; color:#aaa;}
 section[role="main"] div.card div.comment_container .header .when span  {font-size:8px; text-transform:uppercase; }
 section[role="main"] div.card div.comment_container .header .avatar     {float:left; height:20px; width:20px;}
-section[role="main"] div.card div.comment_container .header .avatar img {height:20px; width:20px;}
+section[role="main"] div.card div.comment_container .header .avatar img {height:20px; width:20px; max-width:155px; }
 section[role="main"] div.card div.comment_container .header .who        {float:left; margin-left:5px; padding-top:4px; height:16px; font:italic bold 12px Arial; color:#999; }
 section[role="main"] div.card div.comment_container .comment   {overflow:hidden; color:#666; clear:both; position:relative; padding:5px 25px; font:normal 24px Helvetica, 'HelveticaRegular';}
 section[role="main"] div.card div.comment_container .comment .count  {font:normal 12px Arial; }
