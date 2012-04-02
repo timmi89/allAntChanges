@@ -14,8 +14,8 @@ var interaction = {
       "interaction_node_body" :   "{% if interaction.kind = 'tag' or interaction.kind = 'bkm' %}{{interaction.interaction_node.body|escapejs }}{% else %}{{ interaction.human_kind|escapejs }}{% endif %}",
       "content_body"          :   '{{ interaction.content.body|escapejs }}',
       "page_title"            :   "{{ page.grouper.title|escapejs }}",
-      // "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url }}{% else %}{{ interaction.page.url }}{% endif %}",
-      "approved"              :   {% if interaction.approved %}true{% else %}false{% endif %},
+      "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url|escapejs }}{% else %}{{ interaction.page.url|escapejs }}{% endif %}",
+    "approved"              :   {% if interaction.approved %}true{% else %}false{% endif %},
       "group" : {
         "short_name"  :   "{{ page.grouper.site.group.short_name }}",
         "id"          :   "{{ page.grouper.site.id }}",
@@ -24,7 +24,8 @@ var interaction = {
         "title"       :   "{{ page.grouper.site.group.title|escapejs }}"
       },
       "created"           :   "{{ interaction.created|date:"M d g:ia" }}",
-      "moderator"         :   {% if cookie_user and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %}
+      "moderator"         :   {% if cookie_user and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %},
+      "page" : {{interaction.page}}
 };
 interactions.push( interaction );
 /*
@@ -50,7 +51,7 @@ interactions.push( interaction );
       "interaction_node_body" :   "{% if interaction.parent.kind = 'tag' or interaction.parent.kind = 'bkm' %}{{interaction.parent.interaction_node.body|escapejs }}{% else %}{{ interaction.parent.human_kind|escapejs }}{% endif %}",
       "content_body"          :   '{{ interaction.parent.content.body|escapejs }}',
       "page_title"            :   "{{ page.grouper.title|escapejs }}",
-      // "external_url"          :   "{% if interaction.parent.page.canonical_url %}{{ interaction.parent.page.canonical_url }}{% else %}{{ interaction.parent.page.url }}{% endif %}",
+      "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url|escapejs }}{% else %}{{ interaction.page.url|escapejs }}{% endif %}",
       "approved"              :   {% if interaction.parent.approved %}true{% else %}false{% endif %},
       "group" : {
         "short_name"  :   "{{ page.grouper.site.group.short_name }}",
@@ -128,7 +129,7 @@ function writeCard( interaction, showBlocked ) {
       $meta.append('<div class="publisher"><a href=/group/' + interaction.group.short_name + '>'+interaction.group.name+'</a></div>');
     }
     $meta.append('<div class="title">'
-            + '<strong><a href="/page/'+interaction.group.id+'/">'+interaction.page_title+'</a></strong>'
+            + '<strong><a href="'+interaction.external_url+'">'+interaction.page_title+'</a></strong>'
             + '<a class="external_link" href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a>'
             + '</div>');
     if ( interaction.moderator ) {
