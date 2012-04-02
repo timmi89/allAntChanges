@@ -54,20 +54,32 @@ section.introBlurb{
 	margin-top:35px;
 }
 #splashAnnounceInner{
-	height:350px;
+	height:270px;
 	position:relative;
 	overflow:auto;
 	margin:0 auto;
 	width:960px;
+	padding-top:50px;
+}
+div.splashQuote {
+	position:relative;
+	overflow:auto;
+	margin:20px auto;
+	width:960px;	
+	border-top:1px dashed #ccc;
+	padding:20px 20px 0 20px;
+	text-align:left;
 }
 #splashAnnounceInner .left {
 	float:left;
-	width:580px;
-	margin-right:20px;
+	/*width:580px;
+	margin-right:20px;*/
+	width:960px;
 }
 #splashAnnounceInner .right {
 	float:left;
 	width:260px;
+	display:none;
 }
 #splashBlurbs{
 	background:white;
@@ -75,7 +87,9 @@ section.introBlurb{
 }
 #splashAnnounce #imagine {
 	position:absolute;
-	left:0;
+	top:0;
+	left:180px;
+	/*left:0;*/
 }
 #splashAnnounce h3{
     border-top:1px dashed #ccc;
@@ -91,16 +105,12 @@ section.introBlurb{
 	color:#26465A;
 }
 #splashAnnounce #sns_buttons{
-	display:inline-block;
-	position:relative;
+	display:block;
+	position:absolute;
 	width:85px;
 	height:52px;
-	bottom:3px;
-	left:104px;
-	/*the following are for ie 6 and 7 to work with inline-block*/
-	zoom:1; 
-	*display:inline;
-	_height:50px;
+	left:530px;
+	top:-2px;
 }
 #action_links {
 	overflow:auto;
