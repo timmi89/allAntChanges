@@ -170,7 +170,7 @@ def generateConfirmation(user):
 
 
 def generateConfirmationEmail(user):
-    message = getEmailTemplate('confirmation_email.html') % (settings.BASE_URL, user.id, generateConfirmation(user))
+    message = getEmailTemplate('confirmation_email.html') % (user.username, settings.BASE_URL, user.id, generateConfirmation(user))
     
     return message      
 
