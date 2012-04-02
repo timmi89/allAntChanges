@@ -15,11 +15,12 @@ var interaction = {
       "content_body"          :   '{{ interaction.content.body|escapejs }}',
       "page_title"            :   "{{ page.grouper.title|escapejs }}",
       "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url|escapejs }}{% else %}{{ interaction.page.url|escapejs }}{% endif %}",
-    "approved"              :   {% if interaction.approved %}true{% else %}false{% endif %},
+      "approved"              :   {% if interaction.approved %}true{% else %}false{% endif %},
       "group" : {
         "short_name"  :   "{{ page.grouper.site.group.short_name }}",
         "id"          :   "{{ page.grouper.site.id }}",
         "logo_url"    :   "{{ STATIC_URL }}{{ page.grouper.site.group.logo_url_sm }}",
+        "logo_url_lg" :   "{{ STATIC_URL }}{{ page.grouper.site.group.logo_url_lg }}",
         "name"        :   "{{ page.grouper.site.group.name|escapejs }}",
         "title"       :   "{{ page.grouper.site.group.title|escapejs }}"
       },
@@ -96,6 +97,21 @@ interactions.push( interaction );
 
 <script>
 function writeCard( interaction, showBlocked ) {
+
+  if ( window.location.href.indexOf('/page/') != -1 ) {
+    // this should really be done by the back-end.
+    if ( !$('#sidebar div#avatar').length ) {
+      var $avatar = $('<div id="avatar"><a href="/group/'+interaction.group.short_name+'"><img alt="'+interaction.group.name+'" src="'+interaction.group.logo_url_lg+'"></a></div>')
+      $('#sidebar').prepend( $avatar );
+    }
+
+    if ( !$('#sidebar h3').length ) {
+      var $pageTitle = $('<h3>'+interaction.page_title+'</h3><div style="text-align:center;padding-right:20px;margin-bottom:20px"><a href="'+interaction.external_url+'" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a></div>')
+      $('#sidebar h4').text('Activty on:').after( $pageTitle );
+    }
+
+  }
+
   if ( interaction.approved || ( !interaction.approved && showBlocked ) ) {
     // write the card first, then append the comment
     var $card = $('<div class="card '+interaction.kind+'" id="card_'+interaction.id+'" />');
