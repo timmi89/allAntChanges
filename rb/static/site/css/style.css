@@ -523,7 +523,7 @@ section[role="content"]	{
 /* MAIN */
 section[role="main"] 	{ 
 	clear:both;
-	margin:0 0 0 200px;
+	margin:0 0 0 215px;
 	padding:0;
 }
 
@@ -685,7 +685,7 @@ section[role="complementary"] {
 	height:100%;
 	position:fixed;
 	left:0px;
-	width:185px;
+	width:200px;
 	padding:0;
 	background:#fff;
 	box-shadow:0 0 10px #888;
@@ -693,7 +693,7 @@ section[role="complementary"] {
 }
 
 section[role="complementary"] #user_data img {
-	max-width: 155px;
+	max-width: 168px;
 }
 
 #sidebar {
@@ -763,6 +763,10 @@ body.wide section[role="main"] div.container {
 
 body.wide section[role="complementary"] { 
 	display:none;
+}
+
+body div.simpleMessage{
+    margin: 15px;
 }
 
 /* analytics dashboard */
