@@ -2452,7 +2452,7 @@ function readrBoard($R){
                     if ( $this.get(0).tagName.toLowerCase() == "iframe" ) {
                         var dontEngage = true;
                         $.each( RDR.group.iframe_whitelist, function(idx, domain) {
-                            if ( $this.attr('src').indexOf(domain) != -1 ) {
+                            if ( $this.attr('src') && $this.attr('src').indexOf(domain) != -1 ) {
                                 dontEngage = false; // DO engage, it's a safe domain
                             }
                         });
