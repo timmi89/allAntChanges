@@ -146,7 +146,7 @@ function writeCard( interaction, showBlocked ) {
       $meta.append('<div class="publisher"><a href=/group/' + interaction.group.short_name + '>'+interaction.group.name+'</a></div>');
     }
     $meta.append('<div class="title">'
-            + '<strong><a href="'+interaction.page_id+'">'+interaction.page_title+'</a></strong>'
+            + '<strong><a href="/page/'+interaction.page_id+'">'+interaction.page_title+'</a></strong>'
             + '<a class="external_link" href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a>'
             + '</div>');
     if ( interaction.moderator ) {
