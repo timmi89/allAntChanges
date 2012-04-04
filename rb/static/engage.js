@@ -41,6 +41,7 @@ function readrBoard($R){
                 img_selector: "img",
                 anno_whitelist: "body p",
                 media_selector: "embed, video, object, iframe",
+                iframe_whitelist: ["youtube.com","hulu.com","funnyordie.com","vimeo.com"],
                 comment_length: 300,
                 initial_pin_limit: 30,
                 no_readr: "",
@@ -2422,6 +2423,18 @@ function readrBoard($R){
                 var imgBlackList = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? ':not('+RDR.group.img_blacklist+')':'';
                 $('body').delegate( 'embed, video, object, iframe, img'+imgBlackList, 'mouseenter.rdr', function(){
                     var $this = $(this);
+
+                    // only do whitelisted iframe src domains
+                    if ( $this.get(0).tagName.toLowerCase() == "iframe" ) {
+                        var dontEngage = true;
+                        $.each( RDR.group.iframe_whitelist, function(idx, domain) {
+                            if ( $this.attr('src').indexOf(domain) != -1 ) {
+                                dontEngage = false; // DO engage, it's a safe domain
+                            }
+                        });
+                        if ( dontEngage == true ) return;
+                    }
+
                     if ( $this.width() >= 180 ) {
                         var hasBeenHashed = $this.hasClass('rdr-hashed'),
                             isBlacklisted = $this.closest('.rdr, .no-rdr').length;
@@ -2449,14 +2462,7 @@ function readrBoard($R){
 
                 RDR.actions.slideshows.setup();
                 
-                $(RDR.group.img_whitelist).each( function() {
-                    // var hash = $(this).data('hash');
-                    // if ( hash ) {
-                    //     RDR.actions.indicators.init( hash );
-                    //     RDR.actions.sendHashes( hash, function(){
-                    //         RDR.actions.indicators.init( hash );
-                    //     });
-                    // }
+                $(RDR.group.img_whitelist+',iframe').each( function() {
                     $(this).trigger('mouseenter.rdr');
                 }); //trigger('mouseenter');
                 

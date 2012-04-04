@@ -26,7 +26,8 @@ var interaction = {
       },
       "created"           :   "{{ interaction.created|date:"M d g:ia" }}",
       "moderator"         :   {% if cookie_user and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %},
-      "page" : {{interaction.page}}
+      "page" : {{interaction.page}},
+      "page_id" : {{interaction.page}}
 };
 interactions.push( interaction );
 /*
@@ -145,7 +146,7 @@ function writeCard( interaction, showBlocked ) {
       $meta.append('<div class="publisher"><a href=/group/' + interaction.group.short_name + '>'+interaction.group.name+'</a></div>');
     }
     $meta.append('<div class="title">'
-            + '<strong><a href="'+interaction.external_url+'">'+interaction.page_title+'</a></strong>'
+            + '<strong><a href="'+interaction.page_id+'">'+interaction.page_title+'</a></strong>'
             + '<a class="external_link" href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a>'
             + '</div>');
     if ( interaction.moderator ) {
