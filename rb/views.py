@@ -107,7 +107,8 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
         'short_name': short_name,
         'kwargs': kwargs,
         'page_num': page_num,
-        'timestamp': timestamp
+        'timestamp': timestamp,
+        'BASE_URL': BASE_URL
     }
 
     if cookie_user:
@@ -314,6 +315,9 @@ def confirm_rb_user(request):
         confirmed = confirmUser(user_id, confirmation)
     except KeyError, ke:
         context['message']  = 'There was a problem with your confirmation information.'
+    except Exception, e:
+        context['message']  = str(e)
+        
     context['confirmed'] = confirmed
     response =  render_to_response(
         "user_confirm.html",

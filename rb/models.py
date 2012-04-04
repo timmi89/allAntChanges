@@ -100,7 +100,7 @@ class SocialUser(models.Model):
     full_name = models.CharField(max_length=255)
 
     # Might not get these -> blank=True
-    username = models.CharField(max_length=255, blank=True, unique=True, null=True)
+    username = models.CharField(max_length=255, blank=True, null=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True)
     hometown = models.CharField(max_length=255, blank=True, null=True)
     bio = models.TextField(max_length=255, blank=True, null=True)
@@ -122,7 +122,7 @@ class SocialUser(models.Model):
         return self.user.username
 
     class Meta:
-        unique_together = ('provider', 'uid')
+        unique_together = ('provider', 'uid', 'username')
 
 class Group(models.Model):
     name = models.CharField(max_length=250)

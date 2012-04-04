@@ -26,7 +26,8 @@ var interaction = {
       },
       "created"           :   "{{ interaction.created|date:"M d g:ia" }}",
       "moderator"         :   {% if cookie_user and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %},
-      "page" : {{interaction.page}}
+      "page" : {{interaction.page}},
+      "page_id" : {{interaction.page}}
 };
 interactions.push( interaction );
 /*
@@ -131,7 +132,7 @@ function writeCard( interaction, showBlocked ) {
     if ( interaction.kind == "img" ) {
       $content.append('<div class="content_body"><img src="'+interaction.content_body+'"></div><div class="comments"></div>');
     } else if ( interaction.kind == "med" ) {
-      $content.append('<div class="content_body"><iframe width="418" frameborder="0" src="'+interaction.content_body+'"></iframe></div><div class="comments"></div>');
+      $content.append('<div class="content_body"><iframe width="418" height="244" frameborder="0" src="'+interaction.content_body+'"></iframe></div><div class="comments"></div>');
     } else if ( interaction.kind == "txt" ) {
       $content.append('<div class="content_body">'+interaction.content_body+'</div><div class="comments"></div>');
     } else if ( interaction.kind == "pag" ) {
@@ -145,7 +146,7 @@ function writeCard( interaction, showBlocked ) {
       $meta.append('<div class="publisher"><a href=/group/' + interaction.group.short_name + '>'+interaction.group.name+'</a></div>');
     }
     $meta.append('<div class="title">'
-            + '<strong><a href="'+interaction.external_url+'">'+interaction.page_title+'</a></strong>'
+            + '<strong><a href="'+interaction.page_id+'">'+interaction.page_title+'</a></strong>'
             + '<a class="external_link" href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a>'
             + '</div>');
     if ( interaction.moderator ) {
