@@ -41,6 +41,7 @@ function readrBoard($R){
                 img_selector: "img",
                 anno_whitelist: "body p",
                 media_selector: "embed, video, object, iframe",
+                iframe_whitelist: ["youtube.com","hulu.com","funnyordie.com","vimeo.com"],
                 comment_length: 300,
                 initial_pin_limit: 30,
                 no_readr: "",
@@ -71,14 +72,15 @@ function readrBoard($R){
         events: {
             track : function( data, hash ) {
                 // RDR.events.track
-                var standardData = "";
+                var standardData = "",
+                    timestamp = new Date().getTime();
 
                 if ( RDR.user && RDR.user.user_id ) standardData += "||uid::"+RDR.user.user_id;
                 if ( hash && RDR.util.getPageProperty('id', hash) ) standardData += "||pid::"+RDR.util.getPageProperty('id', hash);
                 if ( RDR.group && RDR.group.id ) standardData += "||gid::"+RDR.group.id;
                 
                 var eventSrc = data+standardData,
-                    $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
+                    $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+timestamp+'&'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
 
                 $('#rdr_event_pixels').append($event);
             }
@@ -1223,11 +1225,34 @@ function readrBoard($R){
                     
                     $tag.addClass('rdr_comment_indicator');
                     _tempCopyOfCommentHover(diffNode, $tag, $rindow);
+                    _tempMakeRindowResizeIfOneColumnWhenAddingFirstComment( $rindow );
                     _addLinkToViewComs(diffNode, $tag, $rindow);
 
 
                 }
 
+                function _tempMakeRindowResizeIfOneColumnWhenAddingFirstComment($rindow) {
+                    var $tag_table = $rindow.find('table.rdr_tags')
+
+                    // this is a duplication of code from elsewhere:
+                    if ( $tag_table.find('tr:eq(0)').find('td').length == 1 ) {
+                        $tag_table.addClass('rdr-one-column');
+                        
+                        $tag_table.find('td.rdr_has_pillHover').bind('mouseenter, mousemove', function() {
+                            console.log('hovering');
+                            var $this = $(this),
+                                $rindow = $this.closest('div.rdr_window');
+                            
+                            thisWidth = $rindow.data('initialWidth');
+                            RDR.rindow.updateSizes($rindow, thisWidth+26);
+                        }).bind('mouseleave', function() {
+                            var $this = $(this),
+                                $rindow = $this.closest('div.rdr_window');
+                            thisWidth = $rindow.width();
+                            RDR.rindow.updateSizes($rindow, thisWidth-26);
+                        });
+                    }
+                }
 
                 function _tempCopyOfCommentHover(diffNode, $tag, $rindow){
 
@@ -1885,15 +1910,19 @@ function readrBoard($R){
                     case "FB graph error - token invalid":  // call fb login
                     case "Social Auth does not exist for user": // call fb login
                     case "Data to create token is missing": // call fb login
-                        // the token is out of sync.  could be a mistake or a hack.
-                        RDR.session.receiveMessage( args, callback );
-                        // RDR.session.showLoginPanel( args, callback );
-                        $.postMessage(
-                            "reauthUser",
-                            // "killUser",
-                            RDR_baseUrl + "/static/xdm.html",
-                            window.frames['rdr-xdm-hidden']
-                        );
+                        if ( RDR.user.user_type && RDR.user.user_type == "readrboard") {
+                            RDR.session.showLoginPanel( args, callback );
+                        } else {
+                            // the token is out of sync.  could be a mistake or a hack.
+                            RDR.session.receiveMessage( args, callback );
+                            // RDR.session.showLoginPanel( args, callback );
+                            $.postMessage(
+                                "reauthUser",
+                                // "killUser",
+                                RDR_baseUrl + "/static/xdm.html",
+                                window.frames['rdr-xdm-hidden']
+                            );
+                        }
 
                         // // init a new receiveMessage handler to fire this callback if it's successful
                     break;
@@ -2415,9 +2444,21 @@ function readrBoard($R){
                 });
 
                 // todo: this is a pretty wide hackey net - rethink later.
-                var imgBlackList = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? 'not('+RDR.group.img_blacklist+')':'';
+                var imgBlackList = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? ':not('+RDR.group.img_blacklist+')':'';
                 $('body').delegate( 'embed, video, object, iframe, img'+imgBlackList, 'mouseenter.rdr', function(){
                     var $this = $(this);
+
+                    // only do whitelisted iframe src domains
+                    if ( $this.get(0).tagName.toLowerCase() == "iframe" ) {
+                        var dontEngage = true;
+                        $.each( RDR.group.iframe_whitelist, function(idx, domain) {
+                            if ( $this.attr('src').indexOf(domain) != -1 ) {
+                                dontEngage = false; // DO engage, it's a safe domain
+                            }
+                        });
+                        if ( dontEngage == true ) return;
+                    }
+
                     if ( $this.width() >= 180 ) {
                         var hasBeenHashed = $this.hasClass('rdr-hashed'),
                             isBlacklisted = $this.closest('.rdr, .no-rdr').length;
@@ -2445,14 +2486,7 @@ function readrBoard($R){
 
                 RDR.actions.slideshows.setup();
                 
-                $(RDR.group.img_whitelist).each( function() {
-                    // var hash = $(this).data('hash');
-                    // if ( hash ) {
-                    //     RDR.actions.indicators.init( hash );
-                    //     RDR.actions.sendHashes( hash, function(){
-                    //         RDR.actions.indicators.init( hash );
-                    //     });
-                    // }
+                $(RDR.group.img_whitelist+',iframe').each( function() {
                     $(this).trigger('mouseenter.rdr');
                 }); //trigger('mouseenter');
                 
@@ -3393,6 +3427,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             // $rindow.find('div.rdr_commentBox').html('Thank you for your comment. <br><br><strong>Reload the page to see your comment.</strong>').show();
 
                             RDR.rindow.updateSizes( $rindow );
+
+                            
                             // $rindow.find('div.rdr_commentBox').find('div.rdr_tagFeedback, div.rdr_comment').hide();
 
                             //todo: consider adding these fields to the summary
