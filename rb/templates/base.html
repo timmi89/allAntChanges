@@ -163,14 +163,6 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 <script src="{{ STATIC_URL }}site/320/js/libs/respond.min.js"></script>
 <![endif]-->
 
-<script type="text/javascript">
-  // logged in?
-  $(document).ready( function() {
-    if ( !$.cookie('rdr_session') ) {
-        RDRAuth.reauthUser();
-    }
-  });
-</script>
 
 <!-- http://t.co/HZe9oJ4 -->
 <script>
@@ -194,5 +186,6 @@ RB.util.loadScript( chartbeat_script, function() {
 
 {% block sidebarJS %}
 {% endblock %}
+
 </body>
 </html>
