@@ -216,7 +216,19 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr_header div.rdr_remember_image a span   { background:url("../images/actionbar_icons.png") no-repeat -59px -9px transparent; display:inline-block; height:22px; width:22px; }*/
 
 #rdr_sandbox div.rdr.rdr_window                             { max-width:600px; }
-#rdr_sandbox div.rdr div.rdr_header                         { background:#fff !important; position:relative !important; height:18px !important; z-index:5; border-bottom:1px solid #ddd !important;}
+#rdr_sandbox div.rdr div.rdr_header                         { 
+    background:#fff !important;
+    position:relative !important;
+    height:18px !important;
+    z-index:5;
+    border-bottom:1px solid #ddd !important;
+    /*todo: revisit the better way to do this*/
+    -webkit-box-sizing : content-box !important;
+    -moz-box-sizing : content-box !important;
+    -o-box-sizing : content-box !important;
+    box-sizing : content-box !important; 
+}
+
 #rdr_sandbox div.rdr.rdr_window div.rdr_header              { cursor:move; padding:5px 0 !important; }
 #rdr_sandbox div.rdr.rdr_indicator_details div.rdr_header   { padding:3px 0; }
 #rdr_sandbox div.rdr div.rdr_footer                         { background:#f0f0f0 !important; position:absolute !important; height:18px; padding:3px 6px 6px; bottom:0; width:95%; display:none;}
