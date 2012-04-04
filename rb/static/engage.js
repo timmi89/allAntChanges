@@ -327,10 +327,6 @@ function readrBoard($R){
 
                                 $pill.data('tag_count',newTagCount).find('span.rdr_tag_count').text(newTagCount).unbind('hover');
 
-
-                                thisWidth = $rindow.data('initialWidth');
-                                RDR.rindow.updateSizes($rindow, thisWidth+26);
-
                                 $nextSteps.append( '<div class="rdr_reactionMessage">You reacted: <strong>'+tag.body+'</strong>. <a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></div>' );
                                 $nextSteps.find('a.rdr_undo_link').bind('click.rdr', {args:args}, function(event){
                                     var args = event.data.args;
