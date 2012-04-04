@@ -80,8 +80,10 @@ RDRAuth = {
 		}
 	},
 	getReadrToken: function(fb_response, callback ) {
-		if ( $.cookie('user_type') == "facebook" ) {
+console.log('get readr toeken');
+		// if ( $.cookie('user_type') == "facebook" ) {
 			if ( fb_response ) {
+				console.log('1111');
 	            var fb_session = (fb_response.authResponse) ? fb_response.authResponse:fb_response
 				var sendData = {
 					fb: fb_session,
@@ -99,6 +101,7 @@ RDRAuth = {
 						json: JSON.stringify( sendData )
 					},
 					success: function(response){
+						console.log('readr token success of some kind');
 						if ( response.status == "fail" ) {
 							RDRAuth.createTempUser();
 						} else {
@@ -109,41 +112,15 @@ RDRAuth = {
 						}
 					},
 					error: function(response) {
+						console.log('222');
 						RDRAuth.createTempUser();
 					}
 				});
 			} else {
+				console.log('333');
 				RDRAuth.doFBLogin();
 			}
-		// } else {
-		// 	var sendData = "username="+ $.cookie('first_name') +
-		// 				   "&password="+$('#direct_registration').find('input[name="password"]').val();
-
-		// 	$.ajax({
-		// 		beforeSend: function( xhr ) {
-		// 			xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
-		// 		},
-		// 		url: "/api/rb/",
-		// 		type: "post",
-		// 		contentType: "application/x-www-form-urlencoded",
-		// 		dataType: "json",
-		// 		data: sendData,
-		// 		success: function(response) {
-		// 			if ( response.data ) {
-		// 				if ( response.data.status == "fail" ) {
-		// 					$('#direct_registration').prepend('<div class="error">'+response.data.message+'</div>');
-		// 				} else {
-		// 					RDRAuth.setUser(response);
-		// 					RDRAuth.events.track('login_success');
-		// 					window.opener.RDRAuth.readUserCookie();
-		// 					window.opener.RDRAuth.returnUser();
-		// 					window.opener.RDRAuth.notifyParent({}, "close login panel");
-		// 					self.close();
-		// 				}
-		// 			}
-		// 		}
-		// 	});
-		}
+		// }
 	},
 	// simply tell the widget what we currently know about the user
 	// optionally create a temp user
@@ -254,12 +231,12 @@ RDRAuth = {
 				if (top == self) {
 					$('#logged-in').hide().css('visibility','hidden');
 					$('#logged-out').show().css('visibility','visible');
-					// RDRAuth.getReadrToken( response, true );
 				}	
 			}
 		});
 	},
 	setUser : function(response) {
+		console.log('setUser');
 		RDRAuth.rdr_user = {};
 		// if no first_name attribute is in the response, this is a temporary user.
 		if ( response.data.first_name || response.data.full_name ) RDRAuth.rdr_user.temp_user = false;
