@@ -72,14 +72,15 @@ function readrBoard($R){
         events: {
             track : function( data, hash ) {
                 // RDR.events.track
-                var standardData = "";
+                var standardData = "",
+                    timestamp = new Date().getTime();
 
                 if ( RDR.user && RDR.user.user_id ) standardData += "||uid::"+RDR.user.user_id;
                 if ( hash && RDR.util.getPageProperty('id', hash) ) standardData += "||pid::"+RDR.util.getPageProperty('id', hash);
                 if ( RDR.group && RDR.group.id ) standardData += "||gid::"+RDR.group.id;
                 
                 var eventSrc = data+standardData,
-                    $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
+                    $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+timestamp+'&'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
 
                 $('#rdr_event_pixels').append($event);
             }
