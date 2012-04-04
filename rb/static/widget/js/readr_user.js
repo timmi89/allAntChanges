@@ -80,10 +80,8 @@ RDRAuth = {
 		}
 	},
 	getReadrToken: function(fb_response, callback ) {
-console.log('get readr toeken');
 		// if ( $.cookie('user_type') == "facebook" ) {
 			if ( fb_response ) {
-				console.log('1111');
 	            var fb_session = (fb_response.authResponse) ? fb_response.authResponse:fb_response
 				var sendData = {
 					fb: fb_session,
@@ -101,7 +99,6 @@ console.log('get readr toeken');
 						json: JSON.stringify( sendData )
 					},
 					success: function(response){
-						console.log('readr token success of some kind');
 						if ( response.status == "fail" ) {
 							RDRAuth.createTempUser();
 						} else {
@@ -112,12 +109,10 @@ console.log('get readr toeken');
 						}
 					},
 					error: function(response) {
-						console.log('222');
 						RDRAuth.createTempUser();
 					}
 				});
 			} else {
-				console.log('333');
 				RDRAuth.doFBLogin();
 			}
 		// }
@@ -236,7 +231,6 @@ console.log('get readr toeken');
 		});
 	},
 	setUser : function(response) {
-		console.log('setUser');
 		RDRAuth.rdr_user = {};
 		// if no first_name attribute is in the response, this is a temporary user.
 		if ( response.data.first_name || response.data.full_name ) RDRAuth.rdr_user.temp_user = false;
