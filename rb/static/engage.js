@@ -5650,7 +5650,7 @@ function $RFunctions($R){
                     }
 
                     var $RB = $('<div class="rdr-this-is-readrboard"></div>');
-                    $RB.append('<a href="'+RDR_baseUrl+'/group/'+RDR.group.short_name+'" target="_blank"><img src="'+RDR_staticUrl+'widget/images/readrboard_logo.png" class="no-rdr" /></a>');
+                    $RB.append('<a href="'+RDR_baseUrl+'/page/'+page.id+'" target="_blank"><img src="'+RDR_staticUrl+'widget/images/readrboard_logo.png" class="no-rdr" /></a>');
                     $RB.click( function() {
                         RDR.events.track('click_rb_icon_summ');
                     });
