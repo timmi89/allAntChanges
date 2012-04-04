@@ -100,7 +100,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
               </div>
             </div>
             <div style="float:left;padding-left:6px;">
-              <a href="javascript:void(0);" onclick="var rblogin = window.open(RDR_baseUrl+'/rb_login/', 'readr_login','menubar=1,resizable=1,width=370,height=245');rblogin.focus();return false;"><img src="/static/widget/images/rb-login_to_readrboard.png" /></a>
+              <a href="javascript:void(0);" onclick="var rblogin = window.open('{{BASE_URL}}/rb_login/', 'readr_login','menubar=1,resizable=1,width=370,height=245');rblogin.focus();return false;"><img src="/static/widget/images/rb-login_to_readrboard.png" /></a>
             </div>
           </div>    
         </div>
@@ -163,14 +163,6 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 <script src="{{ STATIC_URL }}site/320/js/libs/respond.min.js"></script>
 <![endif]-->
 
-<script type="text/javascript">
-  // logged in?
-  $(document).ready( function() {
-    if ( !$.cookie('rdr_session') ) {
-        RDRAuth.reauthUser();
-    }
-  });
-</script>
 
 <!-- http://t.co/HZe9oJ4 -->
 <script>
@@ -194,5 +186,6 @@ RB.util.loadScript( chartbeat_script, function() {
 
 {% block sidebarJS %}
 {% endblock %}
+
 </body>
 </html>

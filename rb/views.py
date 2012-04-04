@@ -107,7 +107,8 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
         'short_name': short_name,
         'kwargs': kwargs,
         'page_num': page_num,
-        'timestamp': timestamp
+        'timestamp': timestamp,
+        'BASE_URL': BASE_URL
     }
 
     if cookie_user:

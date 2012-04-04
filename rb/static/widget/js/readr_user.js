@@ -80,39 +80,69 @@ RDRAuth = {
 		}
 	},
 	getReadrToken: function(fb_response, callback ) {
-		if ( fb_response ) {
-            var fb_session = (fb_response.authResponse) ? fb_response.authResponse:fb_response
-			var sendData = {
-				fb: fb_session,
-				group_id: (qs_args.group_id) ? qs_args.group_id:1, // TODO aaaaaaaaaaaaaaagh remove GROUP ID and replace with NONCE
-				user_id: RDRAuth.rdr_user.user_id, // might be temp, might be the ID of a valid FB-created user
-				readr_token: RDRAuth.rdr_user.readr_token
-			};
+		if ( $.cookie('user_type') == "facebook" ) {
+			if ( fb_response ) {
+	            var fb_session = (fb_response.authResponse) ? fb_response.authResponse:fb_response
+				var sendData = {
+					fb: fb_session,
+					group_id: (qs_args.group_id) ? qs_args.group_id:1, // TODO aaaaaaaaaaaaaaagh remove GROUP ID and replace with NONCE
+					user_id: RDRAuth.rdr_user.user_id, // might be temp, might be the ID of a valid FB-created user
+					readr_token: RDRAuth.rdr_user.readr_token
+				};
 
-			$.ajax({
-				url: "/api/fb/",
-				type: "get",
-				contentType: "application/json",
-				dataType: "jsonp",
-				data: {
-					json: JSON.stringify( sendData )
-				},
-				success: function(response){
-					if ( response.status == "fail" ) {
+				$.ajax({
+					url: "/api/fb/",
+					type: "get",
+					contentType: "application/json",
+					dataType: "jsonp",
+					data: {
+						json: JSON.stringify( sendData )
+					},
+					success: function(response){
+						if ( response.status == "fail" ) {
+							RDRAuth.createTempUser();
+						} else {
+							RDRAuth.setUser(response);
+							RDRAuth.returnUser();
+							RDRAuth.notifyParent({}, "close login panel");
+							if (callback) callback();
+						}
+					},
+					error: function(response) {
 						RDRAuth.createTempUser();
-					} else {
-						RDRAuth.setUser(response);
-						RDRAuth.returnUser();
-						RDRAuth.notifyParent({}, "close login panel");
-						if (callback) callback();
 					}
-				},
-				error: function(response) {
-					RDRAuth.createTempUser();
-				}
-			});
-		} else {
-			RDRAuth.doFBLogin();
+				});
+			} else {
+				RDRAuth.doFBLogin();
+			}
+		// } else {
+		// 	var sendData = "username="+ $.cookie('first_name') +
+		// 				   "&password="+$('#direct_registration').find('input[name="password"]').val();
+
+		// 	$.ajax({
+		// 		beforeSend: function( xhr ) {
+		// 			xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
+		// 		},
+		// 		url: "/api/rb/",
+		// 		type: "post",
+		// 		contentType: "application/x-www-form-urlencoded",
+		// 		dataType: "json",
+		// 		data: sendData,
+		// 		success: function(response) {
+		// 			if ( response.data ) {
+		// 				if ( response.data.status == "fail" ) {
+		// 					$('#direct_registration').prepend('<div class="error">'+response.data.message+'</div>');
+		// 				} else {
+		// 					RDRAuth.setUser(response);
+		// 					RDRAuth.events.track('login_success');
+		// 					window.opener.RDRAuth.readUserCookie();
+		// 					window.opener.RDRAuth.returnUser();
+		// 					window.opener.RDRAuth.notifyParent({}, "close login panel");
+		// 					self.close();
+		// 				}
+		// 			}
+		// 		}
+		// 	});
 		}
 	},
 	// simply tell the widget what we currently know about the user
@@ -179,8 +209,9 @@ RDRAuth = {
 				RDRAuth.killUser( function(response) {
 					RDRAuth.getReadrToken(response); // function exists in readr_user.js
 				});
-				// RDRAuth.getReadrToken( FB.getAuthResponse() );
 			}
+		} else {
+			// readrboard user.  we don't have a reauth for RB users yet.  but widget should throw the login panel.
 		}
 	},
 	checkFBStatus : function(args) {
@@ -293,7 +324,8 @@ RDRAuth = {
 					// full_name : RDRAuth.rdr_user.full_name,
 					img_url : RDRAuth.rdr_user.img_url,
 					user_id : RDRAuth.rdr_user.user_id,
-					readr_token : RDRAuth.rdr_user.readr_token
+					readr_token : RDRAuth.rdr_user.readr_token,
+					user_type : RDRAuth.rdr_user.user_type
 				}
 			};
 			RDRAuth.notifyParent(sendData, "returning_user");
