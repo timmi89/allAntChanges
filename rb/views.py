@@ -314,6 +314,9 @@ def confirm_rb_user(request):
         confirmed = confirmUser(user_id, confirmation)
     except KeyError, ke:
         context['message']  = 'There was a problem with your confirmation information.'
+    except Exception, e:
+        context['message']  = str(e)
+        
     context['confirmed'] = confirmed
     response =  render_to_response(
         "user_confirm.html",
