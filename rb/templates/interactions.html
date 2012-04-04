@@ -131,7 +131,7 @@ function writeCard( interaction, showBlocked ) {
     if ( interaction.kind == "img" ) {
       $content.append('<div class="content_body"><img src="'+interaction.content_body+'"></div><div class="comments"></div>');
     } else if ( interaction.kind == "med" ) {
-      $content.append('<div class="content_body"><iframe width="418" frameborder="0" src="'+interaction.content_body+'"></iframe></div><div class="comments"></div>');
+      $content.append('<div class="content_body"><iframe width="418" height="244" frameborder="0" src="'+interaction.content_body+'"></iframe></div><div class="comments"></div>');
     } else if ( interaction.kind == "txt" ) {
       $content.append('<div class="content_body">'+interaction.content_body+'</div><div class="comments"></div>');
     } else if ( interaction.kind == "pag" ) {

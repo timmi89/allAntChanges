@@ -26,9 +26,9 @@ FACEBOOK_APP_ID = '163759626987948'
 FACEBOOK_APP_SECRET = '9b7da3d1442f442cec8c25f5bf7ea0d0'
 
 ADMINS = ( 
-    ('Tyler Brock', 'tyler@readrboard.com'),
     ('Porter Bayne', 'porter@readrboard.com'),
     ('Eric Chaves', 'eric@readrboard.com'),
+    ('Michael Shaw', 'michael@readrboard.com')
 )
 
 STATIC_ROOT = 'rb/static/'
@@ -36,6 +36,7 @@ STATIC_ROOT = 'rb/static/'
 if DEBUG:
     
     BASE_URL = 'http://local.readrboard.com:8080'
+    BASE_URL_SECURE = 'https://local.readrboard.com:8080'
     STATIC_URL = 'http://local.readrboard.com:8080/static/'
 
     DATABASES = {
@@ -52,6 +53,7 @@ if DEBUG:
 else:
 
     BASE_URL = 'http://www.readrboard.com'
+    BASE_URL_SECURE = 'https://www.readrboard.com'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATIC_URL = 'http://s3.amazonaws.com/readrboard/'
