@@ -164,9 +164,13 @@ div.rdr_tooltip.rdr_tooltip_sideways {
 }
 
 div.rdr_tooltip.rdr_tooltip_wide { 
-    width:200px; 
+    width:220px; 
     padding:8px 10px;
 }
+div#rdr-tooltip-summary-what-is-it.rdr_tooltip.rdr_tooltip_wide { 
+    width:250px; 
+}
+
 
 div.rdr.rdr_tooltip-arrow { border-color:#fff transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-14px; left:43%;}
 div.rdr.rdr_tooltip-arrow-border { border-color:#80aec9 transparent transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; bottom:-16px; left:43%;}
@@ -302,6 +306,7 @@ table.rdr_tags td.rdr_activePill a.rdr_tag {
     -webkit-box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7), 0 -1px 1px rgba(128, 128, 128, 0.4) inset;
     -moz-box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7), 0 -1px 1px rgba(128, 128, 128, 0.4) inset;
     box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7), 0 -1px 1px rgba(128, 128, 128, 0.4) inset;
+
 }
 
 table.rdr_tags td.rdr_activePill a.rdr_tag span.rdr_tag_count {
@@ -417,6 +422,10 @@ table.rdr_tags div.rdr_cell_wrapper {
     -moz-border-radius:4px 0 0 4px;
     border-radius:4px 0 0 4px;
     z-index:900;
+    -webkit-box-sizing : content-box !important;
+    -moz-box-sizing : content-box !important;
+    -o-box-sizing : content-box !important;
+    box-sizing : content-box !important; 
 }
 
 table.rdr_tags td.rdr_has_pillHover.rdr_hover div.rdr_cell_wrapper,
@@ -904,6 +913,9 @@ div.rdr_indicator_for_text{
 }
 #rdr_sandbox div.rdr_indicator_details div.rdr_body_wrap{
     padding:4px 3px 3px 3px !important;
+}
+#rdr_sandbox div.rdr_body_wrap{
+    padding-top:4px !important;
 }
 
 #rdr_sandbox div.rdr_indicator_details .rdr_see_more {
