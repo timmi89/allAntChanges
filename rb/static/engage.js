@@ -327,6 +327,10 @@ function readrBoard($R){
 
                                 $pill.data('tag_count',newTagCount).find('span.rdr_tag_count').text(newTagCount).unbind('hover');
 
+
+                                thisWidth = $rindow.data('initialWidth');
+                                RDR.rindow.updateSizes($rindow, thisWidth+26);
+
                                 $nextSteps.append( '<div class="rdr_reactionMessage">You reacted: <strong>'+tag.body+'</strong>. <a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></div>' );
                                 $nextSteps.find('a.rdr_undo_link').bind('click.rdr', {args:args}, function(event){
                                     var args = event.data.args;
@@ -1224,11 +1228,34 @@ function readrBoard($R){
                     
                     $tag.addClass('rdr_comment_indicator');
                     _tempCopyOfCommentHover(diffNode, $tag, $rindow);
+                    _tempMakeRindowResizeIfOneColumnWhenAddingFirstComment( $rindow );
                     _addLinkToViewComs(diffNode, $tag, $rindow);
 
 
                 }
 
+                function _tempMakeRindowResizeIfOneColumnWhenAddingFirstComment($rindow) {
+                    var $tag_table = $rindow.find('table.rdr_tags')
+
+                    // this is a duplication of code from elsewhere:
+                    if ( $tag_table.find('tr:eq(0)').find('td').length == 1 ) {
+                        $tag_table.addClass('rdr-one-column');
+                        
+                        $tag_table.find('td.rdr_has_pillHover').bind('mouseenter, mousemove', function() {
+                            console.log('hovering');
+                            var $this = $(this),
+                                $rindow = $this.closest('div.rdr_window');
+                            
+                            thisWidth = $rindow.data('initialWidth');
+                            RDR.rindow.updateSizes($rindow, thisWidth+26);
+                        }).bind('mouseleave', function() {
+                            var $this = $(this),
+                                $rindow = $this.closest('div.rdr_window');
+                            thisWidth = $rindow.width();
+                            RDR.rindow.updateSizes($rindow, thisWidth-26);
+                        });
+                    }
+                }
 
                 function _tempCopyOfCommentHover(diffNode, $tag, $rindow){
 
@@ -3403,6 +3430,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             // $rindow.find('div.rdr_commentBox').html('Thank you for your comment. <br><br><strong>Reload the page to see your comment.</strong>').show();
 
                             RDR.rindow.updateSizes( $rindow );
+
+                            
                             // $rindow.find('div.rdr_commentBox').find('div.rdr_tagFeedback, div.rdr_comment').hide();
 
                             //todo: consider adding these fields to the summary
