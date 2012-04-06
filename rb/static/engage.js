@@ -2796,6 +2796,7 @@ function readrBoard($R){
                             var $mediaItem = containerInfo.$this;
 
                             $mediaItem.data('hover',true).data('hash', hash);
+                            RDR.actions.indicators.utils.updateContainerTracker(hash);
                             RDR.rindow.mediaRindowShow( $mediaItem );
                         }
                     },
