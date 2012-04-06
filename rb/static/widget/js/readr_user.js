@@ -80,7 +80,7 @@ RDRAuth = {
 		}
 	},
 	getReadrToken: function(fb_response, callback ) {
-		if ( $.cookie('user_type') == "facebook" ) {
+		// if ( $.cookie('user_type') == "facebook" ) {
 			if ( fb_response ) {
 	            var fb_session = (fb_response.authResponse) ? fb_response.authResponse:fb_response
 				var sendData = {
@@ -115,35 +115,7 @@ RDRAuth = {
 			} else {
 				RDRAuth.doFBLogin();
 			}
-		// } else {
-		// 	var sendData = "username="+ $.cookie('first_name') +
-		// 				   "&password="+$('#direct_registration').find('input[name="password"]').val();
-
-		// 	$.ajax({
-		// 		beforeSend: function( xhr ) {
-		// 			xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
-		// 		},
-		// 		url: "/api/rb/",
-		// 		type: "post",
-		// 		contentType: "application/x-www-form-urlencoded",
-		// 		dataType: "json",
-		// 		data: sendData,
-		// 		success: function(response) {
-		// 			if ( response.data ) {
-		// 				if ( response.data.status == "fail" ) {
-		// 					$('#direct_registration').prepend('<div class="error">'+response.data.message+'</div>');
-		// 				} else {
-		// 					RDRAuth.setUser(response);
-		// 					RDRAuth.events.track('login_success');
-		// 					window.opener.RDRAuth.readUserCookie();
-		// 					window.opener.RDRAuth.returnUser();
-		// 					window.opener.RDRAuth.notifyParent({}, "close login panel");
-		// 					self.close();
-		// 				}
-		// 			}
-		// 		}
-		// 	});
-		}
+		// }
 	},
 	// simply tell the widget what we currently know about the user
 	// optionally create a temp user
@@ -254,7 +226,6 @@ RDRAuth = {
 				if (top == self) {
 					$('#logged-in').hide().css('visibility','hidden');
 					$('#logged-out').show().css('visibility','visible');
-					// RDRAuth.getReadrToken( response, true );
 				}	
 			}
 		});
