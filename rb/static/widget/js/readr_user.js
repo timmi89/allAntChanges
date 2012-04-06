@@ -165,7 +165,7 @@ RDRAuth = {
 		}
 	},
 	reauthUser : function(args) {
-		if ( $.cookie('user_type') == "facebook" ) {
+		if ( $.cookie('user_type') && $.cookie('user_type') == "facebook" ) {
 			RDRAuth.readUserCookie();
 			if ( !FB.getAuthResponse() ) {
 				FB.getLoginStatus(function(response) {
@@ -213,8 +213,7 @@ RDRAuth = {
 							$('#logged-in').html( $user ).append('<div id="log-out-link"><a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a></div>');
 		      			});
 					} else {
-						RDRAuth.getReadrToken( response.authResponse, function() { 
-						});
+						RDRAuth.getReadrToken( response.authResponse, function() { });
 					}
 				} else {
 					// widget
@@ -250,7 +249,7 @@ RDRAuth = {
 		$.cookie('user_type', RDRAuth.rdr_user.user_type, { expires: 365, path: '/' });
 
 		var session_expiry = new Date(); 
-		session_expiry.setMinutes( session_expiry.getMinutes() + 15 );
+		session_expiry.setMinutes( session_expiry.getMinutes() + 60 );
 		$.cookie('rdr_session', 'true', { expires:session_expiry, path:'/' });
 	},
 	readUserCookie : function() {
@@ -266,7 +265,7 @@ RDRAuth = {
 		RDRAuth.readUserCookie();
 		if (top == self) {
 			// we're on the site
-			if ( $.cookie('user_type') == "facebook" ) {
+			if ( $.cookie('user_type') && $.cookie('user_type') == "facebook" ) {
 				RDRAuth.checkFBStatus();
 			} else {
 				if ( $.cookie('user_id') && $.cookie('full_name') ) {
@@ -380,7 +379,7 @@ RDRAuth = {
                 }); 
     },	
 	logout: function() {
-		if ( $.cookie('user_type') == "facebook" ) {
+		if ( $.cookie('user_type') && $.cookie('user_type') == "facebook" ) {
 			FB.getLoginStatus(function(response) {
 				if (response) {
 					FB.logout(function(response) {
@@ -401,7 +400,13 @@ RDRAuth = {
 		}
 	},
 	init : function() {
-		RDRAuth.returnUser();
+		if ( $.cookie('user_type') && $.cookie('user_type') == "facebook" && !$.cookie('rdr_session' ) ) {
+			FB.getLoginStatus( function(response) {
+				RDRAuth.getReadrToken( response.authResponse, function() {});
+			});
+		} else {
+			RDRAuth.returnUser();
+		}
 	},
 	decodeDjangoCookie : function(value) {
 		if (value) return value.replace(/"/g,'').replace(/\\054/g,",").replace(/\\073/g,";");
