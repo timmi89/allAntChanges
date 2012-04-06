@@ -373,7 +373,9 @@ table.rdr_tags td{
     /*padding:3px 0 0 2px;*/
     font-family: arial;
     vertical-align: top;
+    border: none;
 }
+
 div.rdr a.rdr_tag     { 
     background: -webkit-gradient(linear, center top, center bottom, from(#ffffff), to(#e8e8e8));
     background: -moz-linear-gradient(center top , #ffffff, #e8e8e8) repeat scroll 0 0 transparent;
