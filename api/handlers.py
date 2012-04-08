@@ -408,11 +408,20 @@ class SettingsHandler(AnonymousBaseHandler):
             # Get site object
             try:
                 site = Site.objects.get(domain=host)
+                # Get Group
+                group = Group.objects.get(id=site.group.id)
             except Site.DoesNotExist:
+                # create a group
+                # group = MAKE A GROUP(host)
+                # now use group obj to create a site for this host
+                # site = MAKE A SITE(host, group)
+                    # settings:  temp_limit = 0.  blessed_tag_ids(1,2,3,4).  name=host.  short_name=host.  black_words_list: copy from group_id(readboard)
+                                # approved = true.  requires_approval = false.  share
+                                # sharing, rating, commenting, searching, bookmarking:  true, true, true
+                                # anno_whitelist = p
+
                 return HttpResponse("ReadrBoard not available for this site")
 
-            # Get Group
-            group = Group.objects.get(id=site.group.id)
         
         else:
             group = Group.objects.get(id=group_id)
