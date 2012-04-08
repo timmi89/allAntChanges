@@ -21,6 +21,9 @@ from datetime import datetime
 from django.contrib.auth.forms import UserCreationForm
 from django.core.mail import EmailMessage
 
+import logging
+logger = logging.getLogger('rb.standard')
+
 def widget(request, sn):
     # Widget code is retreived from the server using RBGroup shortname
     try:
@@ -98,6 +101,7 @@ def group(request):
     pass
 
 def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **kwargs):
+    logger.debug("DEBUG MAIN")
     cookie_user = checkCookieToken(request)
     timestamp = datetime.now().date()
     page_num = request.GET.get('page_num', 1)
@@ -198,7 +202,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
     except (EmptyPage, InvalidPage): current_page = paginator.page(paginator.num_pages)
       
     context['current_page'] = current_page
-
+    logger.debug("RENDER MAIN")
     return render_to_response("index.html", context, context_instance=RequestContext(request))
 
 def cards(request, **kwargs):
