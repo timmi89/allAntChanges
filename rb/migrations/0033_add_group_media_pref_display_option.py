@@ -7,9 +7,9 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+        pass
         # Adding field 'Group.media_display_pref'
-        db.add_column('rb_group', 'media_display_pref', self.gf('django.db.models.fields.CharField')(default='', max_length=25, blank=True), keep_default=False)
+        #db.add_column('rb_group', 'media_display_pref', self.gf('django.db.models.fields.CharField')(default='', max_length=25, blank=True), keep_default=False)
 
 
     def backwards(self, orm):

@@ -2,6 +2,7 @@ from exceptions import JSONException
 # from _mysql_exceptions import OperationalError
 import json
 from django.core.exceptions import *
+import traceback
 
 def status_response(func):
     def wrapper(*args, **kwargs):
@@ -23,6 +24,7 @@ def status_response(func):
         except Exception as error:
             res['status'] =  'fail'
             res['message'] = error
+            #res['stack'] = traceback.format_exc()
         else:
             res['data'] = dataout
         return res

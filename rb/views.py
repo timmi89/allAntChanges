@@ -114,16 +114,17 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
     if cookie_user:
         context['cookie_user'] = cookie_user
         # Look for a better way to do this
-        print cookie_user.social_user, "SOCIAL"
+        
         try:
             social_user = SocialUser.objects.get(user=cookie_user)
-        except SocialUser.DoesNotExist:
-            print "SOCIAL DOES NOT EXIST"
-        
-        context['ga_ids'] = GroupAdmin.objects.filter(
+            context['ga_ids'] = GroupAdmin.objects.filter(
                 social_user=social_user,
                 approved=True
             ).values_list('group_id', flat=True)
+        
+        except SocialUser.DoesNotExist:
+            print "SOCIAL DOES NOT EXIST"
+        
         
     """ For interactions.html """
     interactions = Interaction.objects.all()
