@@ -635,7 +635,7 @@ function readrBoard($R){
                     var comments = {},
                         num_comments = 0;
 
-                    if ( !$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions.coms ) ) {
+                    if ( !$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions ) && !$.isEmptyObject( content_node.top_interactions.coms ) ) {
                         $.each( content_node.top_interactions.coms, function(idx, comment) {
                             if ( comment.tag_id == tag.id ) {
                                 num_comments++;
