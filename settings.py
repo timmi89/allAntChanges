@@ -247,11 +247,6 @@ DEBUG_TOOLBAR_CONFIG = {
     "INTERCEPT_REDIRECTS": False
 }
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True
-}
-
 DEVSERVER_MODULES = (
     #'devserver.modules.sql.SQLRealTimeModule',
     #'devserver.modules.sql.SQLSummaryModule',
@@ -272,3 +267,62 @@ DEVSERVER_IGNORED_PREFIXES = ['/media', '/uploads']
 #FACEBOOK_EXTENDED_PERMISSIONS = ('email')
 
 #SESSION_COOKIE_DOMAIN = '.local.readrboard.com'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'filters': {
+        
+    },
+    'handlers': {
+        'null': {
+            'level':'DEBUG',
+            'class':'django.utils.log.NullHandler',
+        },
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'rb_standard':{
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/rb_standard.log',
+            'maxBytes': 1024*1024*10, # 10 MB
+            'backupCount': 50,
+            'formatter':'verbose',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers':['null'],
+            'propagate': True,
+            'level':'INFO',
+        },
+        'django.request': {
+            'handlers': ['mail_admins', 'rb_standard'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'rb.standard': {
+            'handlers': ['console', 'rb_standard'],
+            'level': 'DEBUG',
+        },
+        'django.db': {
+            'handlers': ['console','rb_standard'],
+            'level': 'INFO',
+        }
+    }
+}
