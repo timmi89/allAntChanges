@@ -24,7 +24,7 @@ def convertUser(temp_user, existing_user):
                 new_row.delete();
 
     new.update(user=existing_user)
-    User.objects.get(id=temp_user).delete()
+    #User.objects.get(id=temp_user).delete()
 
 def generateUsername():
     username = base64.b64encode(uuid.uuid4().bytes)[:-2]
