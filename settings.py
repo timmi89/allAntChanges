@@ -191,7 +191,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'api',
     'rb',
-    'piston',
+    # 'piston',
     'south',
     'storages',
     'gunicorn'

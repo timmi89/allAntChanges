@@ -197,8 +197,6 @@ function readrBoard($R){
                     $rindow.data('hover',true).animate( {'height':animHeight+'px' }, 333, 'swing', function() {
                         if (callback) callback();
                     });
-
-                    $('#rdr_indicator_'+hash).hide();
                 }
             },
             mediaRindowHide : function ( $mediaItem, callback ) {
@@ -210,8 +208,6 @@ function readrBoard($R){
                     $rindow.data('hover', false).animate( {'height':'0px' }, 333, 'swing', function() {
                         if (callback) callback();
                     });
-                    
-                    $('#rdr_indicator_'+hash).show();
                 }
             },
             updateSizes : function($rindow, setWidth, setHeight, kind) {
@@ -2414,6 +2410,10 @@ function readrBoard($R){
 
                     if ( !$mouse_target.parents().hasClass('rdr')) {
                         RDR.rindow.closeAll();
+                        $('div.rdr_indicator_details_for_media').each( function() {
+                            console.log(1);
+                            RDR.actions.containers.media.onDisengage( $(this).data('container') );
+                        });
                     }
 
                 });
@@ -2453,7 +2453,7 @@ function readrBoard($R){
                         if ( dontEngage == true ) return;
                     }
 
-                    if ( $this.width() >= 180 ) {
+                    if ( $this.width() >= 150 ) {
                         var hasBeenHashed = $this.hasClass('rdr-hashed'),
                             isBlacklisted = $this.closest('.rdr, .no-rdr').length;
 
@@ -2776,7 +2776,7 @@ function readrBoard($R){
                     //actions for the special cases of media containers
                     onEngage: function(hash){
                         //RDR.actions.containers.media.onEngage:
-                        // action to be run when media container is engaged - typically with a hover over the container
+                        // action to be run when media container is engaged - typically with a click on the indicator
 
                         var $this = $('img.rdr-'+hash+', iframe.rdr-'+hash+',embed.rdr-'+hash+',video.rdr-'+hash+',object.rdr-'+hash+'').eq(0),
                             $indicator = $('#rdr_indicator_'+hash),
@@ -2805,7 +2805,7 @@ function readrBoard($R){
                         clearTimeout(timeoutCloseEvt);
 
                         timeoutCloseEvt = setTimeout(function(){
-                            if ( !$mediaItem.hasClass('rdr_live_hover') && !$indicator.hasClass('rdr_live_hover')  && !$indicator_details.hasClass('rdr_live_hover') ) {
+                            if ( !$mediaItem.hasClass('rdr_live_hover') && !$indicator_details.hasClass('rdr_live_hover') ) {
                                 var containerInfo = RDR.containers[hash];
                                 if ( containerInfo ) {
                                     $mediaItem.data('hover',false).data('hash', hash);
@@ -4172,7 +4172,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             
                             _commonSetup();
 
-                            $indicator.bind('click', function() { RDR.actions.containers.media.onEngage( hash ); $(this).removeClass('rdr_live_hover') })//chain
+                            $indicator.bind('click', function() { 
+                                if ( $('#rdr_indicator_details_'+hash).height() < 10 ) {
+                                    RDR.actions.containers.media.onEngage( hash );
+                                    $(this).removeClass('rdr_live_hover'); 
+                                } else {
+                                    RDR.actions.containers.media.onDisengage( hash );
+                                }
+                            })//chain
                             .bind('mouseover', function() { $(this).addClass('rdr_live_hover'); })//chain
                             .bind('mouseout', function() { $(this).removeClass('rdr_live_hover');  });
 

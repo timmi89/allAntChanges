@@ -212,7 +212,7 @@ div.rdr strong {font-weight:bold !important;}
 
 /* the widget */
 #rdr_sandbox div.rdr h1,
-#rdr_sandbox div.rdr h2  {color:#666 !important; font-size:14px !important; padding:4px 9px 0; }
+#rdr_sandbox div.rdr h2  {color:#666 !important; font-size:13px !important; padding:4px 9px 0 10px; }
 
 #rdr_sandbox div.rdr_header div.rdr_indicator_stats         { position:absolute; margin:3px 0 0 5px; cursor: move !important; }
 /*#rdr_sandbox div.rdr_header div.rdr_remember_image          { position:absolute; right:3px; z-index:0;}
@@ -1013,6 +1013,7 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
 /*now override styles for the image containers*/
 div.rdr_indicator_for_media {
     /*display:absolute !important;*/
+    display:none;
     opacity:1 !important;
     -moz-opacity:1 !important;
     -khtml-opacity:1 !important;
