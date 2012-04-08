@@ -3,8 +3,9 @@ $RDR, //our global $RDR object (jquerified RDR object for attaching data and que
 $R = {}, //init var: our clone of jQuery
 RDR_scriptPaths = {},
 RDR_offline = ( window.location.href.indexOf('local.readrboard.com') != -1 ) ? true:false,
-RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com";
-RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
+RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com",
+RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/",
+RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://www.readrboard.com/static/";
 
 //test
 
@@ -5329,7 +5330,7 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( RDR_staticUrl+"widget/css/widget.css" );
+    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
     
