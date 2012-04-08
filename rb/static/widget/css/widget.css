@@ -797,6 +797,18 @@ div.rdr_reactions {
 .rdr.rdr_brbl,
 .rdr .rdr_brbl   { -moz-border-radius-bottomleft:6px !important; -webkit-border-bottom-left-radius:6px !important; border-bottom-left-radius:6px !important; }
 
+div.rdr_indicator_for_media .rdr.rdr_brtl,
+div.rdr_indicator_for_media .rdr .rdr_brtl   { -moz-border-radius-topleft:4px !important; -webkit-border-top-left-radius:4px !important; border-top-left-radius:4px !important; }
+
+div.rdr_indicator_for_media .rdr.rdr_brtr,
+div.rdr_indicator_for_media .rdr .rdr_brtr   { -moz-border-radius-topright:4px !important; -webkit-border-top-right-radius:4px !important; border-top-right-radius:4px !important; }
+
+div.rdr_indicator_for_media .rdr.rdr_brbr,
+div.rdr_indicator_for_media .rdr .rdr_brbr   { -moz-border-radius-bottomright:4px !important; -webkit-border-bottom-right-radius:4px !important; border-bottom-right-radius:4px!important; }
+
+div.rdr_indicator_for_media .rdr.rdr_brbl,
+div.rdr_indicator_for_media .rdr .rdr_brbl   { -moz-border-radius-bottomleft:4px !important; -webkit-border-bottom-left-radius:4px !important; border-bottom-left-radius:4px !important; }
+
 
 /* user education bar */
 #rdr_sandbox div.rdr_alert_box        { position:fixed; bottom:-400px; left:10px; background:#f0f0f0; min-width:220px; max-width:300px; padding:0px; z-index:12000; overflow:hidden; -moz-box-shadow:0 0 10px 1px #aaa  !important; -webkit-box-shadow:0 0 10px 1px #aaa  !important; box-shadow:0 0 10px 1px #aaa !important; }
@@ -849,6 +861,9 @@ div.rdr_indicator {
     -moz-user-select: none !important;
     -o-user-select: none !important;
     user-select: none !important;
+}
+div.rdr_indicator.rdr_indicator_for_media {
+    cursor:pointer;
 }
 
 /*for the text ones reset it with !important because it will be inline to the doc, so it won't be in the the sandbox,*/
@@ -978,7 +993,7 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
     height: auto !important;
     color: #666666 !important;
     font: 12px Arial,sans-serif !important;
-    padding:4px 3px 1px !important;
+    padding:4px 3px 2px !important;
     left:8px !important;
 }
 
@@ -997,10 +1012,14 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
 
 /*now override styles for the image containers*/
 div.rdr_indicator_for_media {
-    display:absolute !important;
-    opacity:0.6 !important;
-    -moz-opacity:0.7 !important;
-    -khtml-opacity:0.7 !important;
+    /*display:absolute !important;*/
+    opacity:1 !important;
+    -moz-opacity:1 !important;
+    -khtml-opacity:1 !important;
+}
+
+div.rdr_indicator_for_media.rdr_live_hover {
+    display:block !important;
 }
 
 #rdr_sandbox div.rdr_indicator_details_for_media {

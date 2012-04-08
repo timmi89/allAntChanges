@@ -186,7 +186,7 @@ function readrBoard($R){
                 });
             },
             mediaRindowShow : function ( $mediaItem, callback ) {
-                //RDR.rindow.mediaRindowShow:
+                //RDR.rindow.mediaRindowShow
                 var hash = $mediaItem.data('hash'),
                     $rindow = $('#rdr_indicator_details_'+hash);
 
@@ -198,10 +198,7 @@ function readrBoard($R){
                         if (callback) callback();
                     });
 
-                    var $indicator = $('#rdr_indicator_'+hash),
-                        indicator_top = parseInt( $indicator.css('top') );
-
-                    if ( indicator_top == $indicator.data('top') ) $indicator.animate({ 'top':(indicator_top+30) }, 333);
+                    $('#rdr_indicator_'+hash).hide();
                 }
             },
             mediaRindowHide : function ( $mediaItem, callback ) {
@@ -213,10 +210,8 @@ function readrBoard($R){
                     $rindow.data('hover', false).animate( {'height':'0px' }, 333, 'swing', function() {
                         if (callback) callback();
                     });
-                    var $indicator = $('#rdr_indicator_'+hash),
-                        indicator_top = parseInt( $indicator.css('top') );
-
-                    if ( indicator_top > $indicator.data('top') ) $indicator.animate({ 'top':$indicator.data('top') }, 333);
+                    
+                    $('#rdr_indicator_'+hash).show();
                 }
             },
             updateSizes : function($rindow, setWidth, setHeight, kind) {
@@ -1239,7 +1234,6 @@ function readrBoard($R){
                         $tag_table.addClass('rdr-one-column');
                         
                         $tag_table.find('td.rdr_has_pillHover').bind('mouseenter, mousemove', function() {
-                            console.log('hovering');
                             var $this = $(this),
                                 $rindow = $this.closest('div.rdr_window');
                             
@@ -2469,26 +2463,26 @@ function readrBoard($R){
                             if(hash){
                                 RDR.actions.sendHashes( hash, function(){
                                     if( $this.hasClass('rdr_live_hover') ){
-                                        RDR.actions.containers.media.onEngage( hash );
+                                        $('#rdr_indicator_'+hash).show();
                                     }
                                 });
                             }
                         } else {
                             $this.addClass('rdr_live_hover');
-                            RDR.actions.containers.media.onEngage( $this.data('hash') );
+                            $('#rdr_indicator_' + $this.data('hash')).show();
                         }
                     }
                 }).delegate('embed, video, object, iframe, img'+imgBlackList, 'mouseleave', function(){
                     var $this = $(this);
                     $this.removeClass('rdr_live_hover');
-                    RDR.actions.containers.media.onDisengage( $this.data('hash') );
+                    $('#rdr_indicator_' + $this.data('hash')).hide();
                 });
 
                 RDR.actions.slideshows.setup();
                 
-                $(RDR.group.img_whitelist+',iframe').each( function() {
-                    $(this).trigger('mouseenter.rdr');
-                }); //trigger('mouseenter');
+                // $(RDR.group.img_whitelist+',iframe').each( function() {
+                //     $(this).trigger('mouseenter.rdr');
+                // }); //trigger('mouseenter');
                 
                 //hashNodes without any arguments will fetch the default set from the server.
                 // var hashes = this.hashNodes();
@@ -4094,7 +4088,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     
                     function _setupIndicators(){
                         //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
-                        var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body rdr_brtl rdr_brtr" />').attr('id',indicatorBodyId)//chain
+                        var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body rdr_brtl rdr_brtr rdr_brbl rdr_brbr" />').attr('id',indicatorBodyId)//chain
                         .appendTo($indicator)//chain
                         .append(
                             '<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />',
@@ -4178,8 +4172,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             
                             _commonSetup();
 
-                            $indicator.bind('mouseover', function() { $(this).addClass('rdr_live_hover'); RDR.actions.containers.media.onEngage( hash ); })//chain
-                            .bind('mouseout', function() { $(this).removeClass('rdr_live_hover'); RDR.actions.containers.media.onDisengage( hash ); });
+                            $indicator.bind('click', function() { RDR.actions.containers.media.onEngage( hash ); $(this).removeClass('rdr_live_hover') })//chain
+                            .bind('mouseover', function() { $(this).addClass('rdr_live_hover'); })//chain
+                            .bind('mouseout', function() { $(this).removeClass('rdr_live_hover');  });
 
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
 
@@ -4191,19 +4186,20 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 $indicator_details.data('container',hash);
                                 $indicator_details.data('summary',summary);
 
-                                $indicator_details.addClass('rdr_indicator_details_for_media').hover(
-                                    function(e) {
+                                $indicator_details.addClass('rdr_indicator_details_for_media').click(
+                                    function() {
                                         $indicator_details.addClass('rdr_live_hover');
                                         RDR.actions.containers.media.onEngage( hash );
-                                    },
-                                    function(e) {
-                                        $indicator_details.removeClass('rdr_live_hover');
-                                        RDR.actions.containers.media.onDisengage( hash );
+                                    // },
+                                    // function(e) {
+                                    //     $indicator_details.removeClass('rdr_live_hover');
+                                    //     RDR.actions.containers.media.onDisengage( hash );
                                     }
                                 );
 
                                 $indicator.appendTo($container_tracker);
                                 $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline'); 
+
                             }
 
                         },
@@ -4418,8 +4414,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 modIEHeight = ( $R.browser.msie && parseInt( $R.browser.version, 10 ) < 9 ) ? 10:0;
 
                             $indicator.css({
-                                left: 0,
-                                top: $container.height()+modIEHeight
+                                left: -11,
+                                top: $container.height()+modIEHeight-10
                             })//chain
                             .data('top', parseInt( $indicator.css('top') ));
 
