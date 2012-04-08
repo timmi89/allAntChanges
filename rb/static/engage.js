@@ -2412,7 +2412,6 @@ function readrBoard($R){
                     if ( !$mouse_target.parents().hasClass('rdr')) {
                         RDR.rindow.closeAll();
                         $('div.rdr_indicator_details_for_media').each( function() {
-                            console.log(1);
                             RDR.actions.containers.media.onDisengage( $(this).data('container') );
                         });
                     }
