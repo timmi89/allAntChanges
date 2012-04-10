@@ -420,19 +420,26 @@ class SettingsHandler(AnonymousBaseHandler):
                 # create a group
                 # group = MAKE A GROUP(host)
                 # now use group obj to create a site for this host
+                # settings:  temp_limit = 0.  blessed_tag_ids(1,2,3,4).  name=host.  short_name=host.  black_words_list: copy from group_id(readboard)
+                # approved = true.  requires_approval = false.  share
+                # sharing, rating, commenting, searching, bookmarking:  true, true, true
+                # anno_whitelist = p
                 group = Group.objects.create(
                     name=host,
-                    short_name=host
+                    short_name=host,
+                    approved=True,
+                    temp_interact=0,
+                    requires_approval=False
+                    
                 )
                 # site = MAKE A SITE(host, group)
                 Site.objects.create(
                     name=host,
                     domain=host,
                     group=group
+                    
                 )
                 
-                GroupAdmin.objects.create(group=group,social_user=social_user,approved=True)
-        
                 # Add us to admins
                 readr_admins = SocialUser.objects.filter(
                     user__email__in=(
@@ -446,11 +453,6 @@ class SettingsHandler(AnonymousBaseHandler):
                     GroupAdmin.objects.create(group=group,social_user=admin,approved=True)
 
                 
-                # settings:  temp_limit = 0.  blessed_tag_ids(1,2,3,4).  name=host.  short_name=host.  black_words_list: copy from group_id(readboard)
-                                # approved = true.  requires_approval = false.  share
-                                # sharing, rating, commenting, searching, bookmarking:  true, true, true
-                                # anno_whitelist = p
-
         
         else:
             group = Group.objects.get(id=group_id)
