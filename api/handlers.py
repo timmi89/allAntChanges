@@ -9,6 +9,12 @@ from authentication.token import *
 from settings import BASE_URL, STATIC_URL
 from django.forms.models import model_to_dict
 
+
+import logging
+logger = logging.getLogger('rb.standard')
+
+
+
 class SocialUserHandler(AnonymousBaseHandler):
     model = SocialUser
     fields = ('user','full_name', 'img_url')
@@ -414,13 +420,36 @@ class SettingsHandler(AnonymousBaseHandler):
                 # create a group
                 # group = MAKE A GROUP(host)
                 # now use group obj to create a site for this host
+                group = Group.objects.create(
+                    name=host,
+                    short_name=host
+                )
                 # site = MAKE A SITE(host, group)
-                    # settings:  temp_limit = 0.  blessed_tag_ids(1,2,3,4).  name=host.  short_name=host.  black_words_list: copy from group_id(readboard)
+                Site.objects.create(
+                    name=host,
+                    domain=host,
+                    group=group
+                )
+                
+                GroupAdmin.objects.create(group=group,social_user=social_user,approved=True)
+        
+                # Add us to admins
+                readr_admins = SocialUser.objects.filter(
+                    user__email__in=(
+                        'porterbayne@gmail.com',
+                        'erchaves@gmail.com',
+                        'michael@readrboard.com'
+                    )
+                )
+        
+                for admin in readr_admins:
+                    GroupAdmin.objects.create(group=group,social_user=admin,approved=True)
+
+                
+                # settings:  temp_limit = 0.  blessed_tag_ids(1,2,3,4).  name=host.  short_name=host.  black_words_list: copy from group_id(readboard)
                                 # approved = true.  requires_approval = false.  share
                                 # sharing, rating, commenting, searching, bookmarking:  true, true, true
                                 # anno_whitelist = p
-
-                return HttpResponse("ReadrBoard not available for this site")
 
         
         else:

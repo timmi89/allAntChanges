@@ -7,11 +7,14 @@ from django.core.mail import send_mail, mail_admins
 from django.utils.hashcompat import sha_constructor
 from django.contrib.auth.models import Permission
 
+import logging
+logger = logging.getLogger('rb.standard')
+
 
 def convertUser(temp_user, existing_user):
     existing = Interaction.objects.filter(user=existing_user)
     new = Interaction.objects.filter(user=temp_user)
-
+    
     # Make sure there are no duplicate interactions
     # Delete them if there are dupes
     for existing_row in existing:
@@ -25,6 +28,7 @@ def convertUser(temp_user, existing_user):
 
     new.update(user=existing_user)
     User.objects.get(id=temp_user).delete()
+    logger.debug("converted temp user to: " + str(existing_user))
 
 def generateUsername():
     username = base64.b64encode(uuid.uuid4().bytes)[:-2]
@@ -91,11 +95,11 @@ def createSocialUser(django_user, profile, base = 'http://graph.facebook.com', p
             fail_silently=True
         )
     result = ("Created new" if social[1] else "Retreived existing")
-    print result, "social user %s (%s: %s)" % (
+    logger.debug( result + "social user %s (%s: %s)" % (
         social_user.full_name,
         social_user.provider, 
         social_user.uid
-    )
+    ))
 
     return social_user
 
@@ -113,11 +117,11 @@ def createDjangoUser(profile):
     # Print out the result
     django_user = user[0]
     result = "Created new" if user[1] else "Retrieved existing"
-    print result, "django user %s %s (%s)" % (
+    logger.debug( result + "django user %s %s (%s)" % (
         django_user.first_name, 
         django_user.last_name, 
         django_user.email
-    )
+    ))
 
     return django_user
 
@@ -196,8 +200,6 @@ def generatePasswordEmail(username, email):
         except User.DoesNotExist:
             return (None, False)
     
-    message = '%s/reset_password?uid=%s&token=%s ' % (settings.BASE_URL, user.id, generatePasswordToken(user))
-    message += 'Click here to reset your password.  This link is valid until midnight GMT of the day requested.'
     password_email = getEmailTemplate('password_email.html') % (settings.BASE_URL, user.id, generatePasswordToken(user))
     return (user, password_email)
 

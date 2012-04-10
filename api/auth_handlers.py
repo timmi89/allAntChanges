@@ -9,6 +9,9 @@ from userutils import *
 import json
 from piston.utils import Mimer
 
+import logging
+logger = logging.getLogger('rb.standard')
+
 class TempUserHandler(BaseHandler):
     @status_response
     def read(self, request):
@@ -121,13 +124,13 @@ class RBHandler(BaseHandler):
         
         
         confirmed = django_user.has_perm('rb.change_socialuser')
-        print django_user.is_active, confirmed
+        
         if not confirmed:
             return dict(message="Please confirm email address", status='fail', 
                         confirmation=generateConfirmation(django_user), user_id=django_user.id)
         
         social_user = findSocialUser(django_user)
-        print "SOCIAL: " ,social_user
+        logger.info("SOCIAL RB LOGIN : " + str(social_user))
         social_auth = createSocialAuth(
             social_user,
             django_user,
