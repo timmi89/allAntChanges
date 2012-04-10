@@ -41,13 +41,6 @@
             	$('#submit_login').click();
             }
         });
-
-        if ( qs_args['login'] && qs_args['login'] == "success" ) {
-        	window.opener.RDRAuth.readUserCookie();
-			window.opener.RDRAuth.returnUser();
-			window.opener.RDRAuth.notifyParent({}, "close login panel");
-			self.close();
-        }
 		
 		function direct_registration() {
 			var sendData = "username="+$('#direct_registration').find('input[name="username"]').val()+
@@ -69,7 +62,7 @@
 						} else {
 							RDRAuth.setUser(response);
 							RDRAuth.events.track('login_success');
-							window.location.href='http://'+RDR_baseUrl+'/rb_login/?login=success';
+							window.location.href='http://'+RDR_baseUrl+'/rb_login_success/';
 						}
 					}
 				}

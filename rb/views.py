@@ -344,6 +344,16 @@ def rb_login(request):
     
     return response
 
+def rb_login_success(request):
+    context = {}
+    
+    response =  render_to_response(
+        "rb_login_success.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+    
+    return response
 
 def request_password_reset(request):
     context = {}
