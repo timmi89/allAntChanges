@@ -101,6 +101,7 @@ urlpatterns = patterns('',
   url(r'^user_modify/$', 'rb.views.modify_rb_social_user'),
   
   url(r'^rb_login/$', 'rb.views.rb_login'),
+  url(r'^rb_login_success/$', 'rb.views.rb_login_success'),
   # For demos
   #url(r'^demo/', settings.STATIC_URL)
 )

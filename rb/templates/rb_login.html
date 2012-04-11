@@ -7,8 +7,8 @@
 <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script> -->
 	<script>
 	var RDR_offline = ( window.location.href.indexOf('local.readrboard.com') != -1 ) ? true:false,
-	RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com";
-	RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
+	RDR_baseUrl = ( RDR_offline ) ? "//local.readrboard.com:8080":"//www.readrboard.com";
+	RDR_staticUrl = ( RDR_offline ) ? httpProtocol+"//local.readrboard.com:8080/static/":httpProtocol+"//s3.amazonaws.com/readrboard/";
 	document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
 	document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.json-2.2.min.js" type="text/javascript"%3E%3C/script%3E' ) );
 	document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.cookie.js" type="text/javascript"%3E%3C/script%3E' ) );
@@ -62,10 +62,7 @@
 						} else {
 							RDRAuth.setUser(response);
 							RDRAuth.events.track('login_success');
-							window.opener.RDRAuth.readUserCookie();
-							window.opener.RDRAuth.returnUser();
-							window.opener.RDRAuth.notifyParent({}, "close login panel");
-							self.close();
+							window.location.href='http://'+RDR_baseUrl+'/rb_login_success/';
 						}
 					}
 				}
