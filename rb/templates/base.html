@@ -115,7 +115,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
         </div>
         <div id="logged-out" {% if cookie_user.social_user %}style="display:none;"{% endif %}>
           <!-- <a href="javascript:void(0);" onclick="RDRAuth.doFBLogin('site_login')"><img src="{{ STATIC_URL }}site/images/fb_login.png" border="0" alt="Connect with Facebook" /></a> -->
-          <a href="javascript:void(0);" style="margin-left:5px;">Log In</a>
+          <a href="javascript:void(0);" style="margin-left:5px;" onclick="rbLogin();">Log In</a>
           <div id="login-options" style="overflow:auto;">
             <div style="float:left;padding-right:9px;border-right:1px solid #ccc;">
               <div id="fb-login-button">
