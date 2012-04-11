@@ -556,7 +556,7 @@ section[role="main"] div.card header h1:before {
     
 }
 section[role="main"] div.card div.date            { float:right; font-size:10px; margin-right:5px; margin-top:8px;}
-section[role="main"] div.card div.block_content   { font-size:11px; display:none; position:absolute; right:10px; }
+section[role="main"] div.card div.block_content   { font-size:11px; display:none; position:absolute; right:10px; white-space: pre;}
 section[role="main"] div.card:hover div.block_content   { display:block; }
 section[role="main"] div.card div.block_content a { color:red; }
 
