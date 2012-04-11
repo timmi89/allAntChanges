@@ -173,20 +173,28 @@ function writeComment( comment, showBlocked ) {
     var $comments = $card.find('div.comments'),
         $comment_container = $('<div class="comment_container"/>');
 
-    $comment_container.html('<div class="header">' +
-        '<div class="when">'+comment.created+'</div>' +
-        '<a href="'+comment.user_profile_link+'">' +
-          '<div class="avatar"><img src="'+comment.user_avatar+'"></div>' +
-          '<div class="who">'+comment.user_name+'</div>' +
-        '</a>' +
-      '</div>' +
-      '<div class="comment">' +
-        '<div class="quote open">"</div>' +
-        '<div class="comment_body">'+comment.comment+'</div>' +
-        '<div class="quote close">"</div>' +
-      '</div>' +
-      '<a class="block_content" href="javascript:void(0);" onclick="RB.admin.blockContent('+comment.id+');" id="moderate_'+comment.id+'">Block this</a></div>');
-    
+    $comment_container.html(
+        '<div class="header">' +
+            '<div class="when">'+comment.created+'</div>' +
+            '<a href="'+comment.user_profile_link+'">' +
+                '<div class="avatar"><img src="'+comment.user_avatar+'"></div>' +
+                '<div class="who">'+comment.user_name+'</div>' +
+            '</a>' +
+        '</div>' +
+        '<div class="comment">' +
+            '<div class="quote open">"</div>' +
+            '<div class="comment_body">'+comment.comment+'</div>' +
+            '<div class="quote close">"</div>' +
+        '</div>'
+    );
+
+    if ( interaction.moderator ) {
+        $comment_container.append('<div class="block_content">'
+          + '<a class="block_content" href="javascript:void(0);" onclick="RB.admin.blockContent('+comment.id+');" id="moderate_'+comment.id+'">Block this</a>'
+          + '</div>'
+        );
+    }
+
       $comments.show();
       if ( !$comments.find('h2').length ) $comments.append('<h2>Comments</h2>');
       $comments.append( $comment_container );
