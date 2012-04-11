@@ -68,6 +68,26 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 {% block extendedHead %}
 {% endblock %}
 
+<script type="text/javascript">
+    var width = 370;
+    var height = 245;
+    var left = (screen.width/2)-(width/2);
+    var top = (screen.height/2)-(height/2);
+
+    var properties = 'menubar=1,resizable=1,width='+width+',height='+height+',top='+top+',left='+left;
+
+    function rbLogin() {
+        var rbLoginWindow = window.open(
+            '{{BASE_URL}}/rb_login/',
+            'readr_login',
+            properties
+        );
+        rbLoginWindow.focus();
+        return false;
+    }
+
+</script>
+
 </head>
 
 <body class="clearfix {% block bodyClass %}{% endblock %}">
@@ -87,6 +107,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     </nav>
     </div>
     <div id="user">
+        {% block userStatus %}
         <div id="logged-in" {% if not cookie_user.social_user %}style="display:none;"{% endif %}>
           <a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/>{{ cookie_user.social_user.full_name }}</a>
           <div id="log-out-link"><a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a></div>
@@ -101,10 +122,12 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
               </div>
             </div>
             <div style="float:left;padding-left:6px;">
-              <a href="javascript:void(0);" onclick="var rblogin = window.open('{{BASE_URL}}/rb_login/', 'readr_login','menubar=1,resizable=1,width=370,height=245');rblogin.focus();return false;"><img src="/static/widget/images/rb-login_to_readrboard.png" /></a>
+              <a href="javascript:void(0);" onclick="rbLogin();"><img src="/static/widget/images/rb-login_to_readrboard.png" /></a>
             </div>
           </div>    
         </div>
+        {% endblock %}
+
       </div>
     <div id="site_search">
       <form method="get" id="searchform" action="/stream/">
