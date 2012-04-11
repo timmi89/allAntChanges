@@ -74,18 +74,31 @@ html.dailycandy #sidebar h3[role="profile_section_header"]	{display:block;}
 {% endif %}
 <h4>Activity</h4>
 <ul role="filters" class="activity">
-	<li role="all">
+	
+    <li role="all">
 	  {% if profile_user %}
 	    <a href="/user/{{ profile_user.id }}">
 	  {% else %}
-	    <a href="/">
+	    <a href="/stream/">
 	  {% endif %}
-	  All Reactions</a></li>
+	  All Reactions</a>
+    </li>
+
 	<li role="tags"><a href="{% if profile_user %}/user/{{ profile_user.id }}{% endif %}/tags/">Tags</a></li>
-	<li role="shares"><a href="{% if profile_user %}/user/{{ profile_user.id }}{% endif %}/shares/">Shares</a></li>
+	
+    <!-- [ec] commenting this out until it works-->
+    <!--
+    <li role="shares"><a href="{% if profile_user %}/user/{{ profile_user.id }}{% endif %}/shares/">Shares</a>
+    </li>
+    -->
+
 	<li role="comments"><a href="{% if profile_user %}/user/{{ profile_user.id }}{% endif %}/comments/">Comments</a></li>
-	{% if profile_user %}<li role="bookmarks"><a href="/user/{{ profile_user.id }}/bookmarks/">Bookmarks</a></li>{% endif %}
-	<!-- only show this line if looking at a user profile and you're that user
-	<li role="bookmarks">Bookmarks</li>
-	-->
+
+	<!-- only show this line if looking at a user profile and you're that user-->
+    {% if profile_user %}
+    <!--
+    <li role="bookmarks"><a href="/user/{{ profile_user.id }}/bookmarks/">Bookmarks</a>
+    </li>
+    -->
+    {% endif %}
 </ul>
