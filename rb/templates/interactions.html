@@ -1,7 +1,8 @@
 <section>
 <script>
 var comments = [],
-    interactions = [];
+    interactions = [],
+    shares = [];
 
 {% regroup current_page.object_list by page as pi %}
 {% for page in pi %}
@@ -75,6 +76,32 @@ var comments = [],
             comments.push(comment);
         {% endif %}
 
+
+        {% if interaction.human_kind == 'Share' %}
+            var share = {
+                  "id"    :   {{ interaction.id }},
+                  "kind"  :   "{{ interaction.content.kind }}",
+                  "date"  :   "{{ interaction.created|date:"M d, Y"|escapejs }}",
+                  "interaction_node_body" :   "{% if interaction.kind = 'tag' or interaction.kind = 'bkm' %}{{interaction.interaction_node.body|escapejs }}{% else %}{{ interaction.human_kind|escapejs }}{% endif %}",
+                  "content_body"          :   '{{ interaction.content.body|escapejs }}',
+                  "page_title"            :   "{{ page.grouper.title|escapejs }}",
+                  "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url|escapejs }}{% else %}{{ interaction.page.url|escapejs }}{% endif %}",
+                  "approved"              :   {% if interaction.approved %}true{% else %}false{% endif %},
+                  "group" : {
+                    "short_name"  :   "{{ page.grouper.site.group.short_name }}",
+                    "id"          :   "{{ page.grouper.site.id }}",
+                    "logo_url"    :   "{{ STATIC_URL }}{{ page.grouper.site.group.logo_url_sm }}",
+                    "logo_url_lg" :   "{{ STATIC_URL }}{{ page.grouper.site.group.logo_url_lg }}",
+                    "name"        :   "{{ page.grouper.site.group.name|escapejs }}",
+                    "title"       :   "{{ page.grouper.site.group.title|escapejs }}"
+                  },
+                  "created"           :   "{{ interaction.created|date:"M d g:ia" }}",
+                  "moderator"         :   {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %},
+                  "page" : {{interaction.page}},
+                  "page_id" : {{interaction.page}}
+            };
+            shares.push( share );
+        {% endif %}
     {% endfor %}
 {% endfor %}
 </script>
