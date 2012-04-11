@@ -18,14 +18,14 @@
   <h1>Welcome Back!</h1>
   {% csrf_token %}
   <div class="container">
-  	This window should close shortly.
+  	You can close this window.
 	<script type="text/javascript">
 		RDRAuth.events.track('login_sccess_page');
 		// if ( qs_args['login'] && qs_args['login'] == "success" ) {
-    	window.opener.RDRAuth.readUserCookie();
-		window.opener.RDRAuth.returnUser();
-		window.opener.RDRAuth.notifyParent({}, "close login panel");
-		self.close();
+  //   	window.opener.RDRAuth.readUserCookie();
+		// window.opener.RDRAuth.returnUser();
+		// window.opener.RDRAuth.notifyParent({}, "close login panel");
+		// self.close();
         // }
 
 	</script>

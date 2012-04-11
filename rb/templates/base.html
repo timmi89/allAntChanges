@@ -101,7 +101,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
               </div>
             </div>
             <div style="float:left;padding-left:6px;">
-              <a href="javascript:void(0);" onclick="var rblogin = window.open('{{BASE_URL}}/rb_login/', 'readr_login','menubar=1,resizable=1,width=370,height=245');rblogin.focus();return false;"><img src="/static/widget/images/rb-login_to_readrboard.png" /></a>
+              <a href="javascript:void(0);" onclick="RDRAuth.rbloginWindow = window.open('{{BASE_URL}}/rb_login/', 'readr_login','menubar=1,resizable=1,width=370,height=245');RDRAuth.checkRBLoginWindow();RDRAuth.rbloginWindow.focus();return false;"><img src="/static/widget/images/rb-login_to_readrboard.png" /></a>
             </div>
           </div>    
         </div>
