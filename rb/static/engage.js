@@ -2622,7 +2622,7 @@ function readrBoard($R){
                     
                     //don't do this here - do it on success of callback from server
                     // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
-                    $this.addClass( 'rdr-' + hash );//.addClass('rdr-hashed');
+                    $this.addClass( 'rdr-' + hash ).addClass('rdr-node');
 
                     var summary = RDR.actions.summaries.init(hash);
                     RDR.actions.summaries.save(summary);
