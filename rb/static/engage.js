@@ -5238,8 +5238,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     var widgetSummarySettings = page;
                     
                     widgetSummarySettings.key = key;
-                    if ( $container.find( RDR.group.summary_widget_selector + '.rdr-page-widget-key-' + key).length == 1 ) {
-                        widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector + '.rdr-page-widget-key-'+key);
+                    if ( $container.find( RDR.group.summary_widget_selector).length == 1 && $container.find( RDR.group.summary_widget_selector).hasClass('rdr-page-widget-key-' + key) ) {
+                        widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector);
                         widgetSummarySettings.jqFunc = "after";
                     } else {
                         widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
@@ -5642,12 +5642,10 @@ function $RFunctions($R){
                 init: function( options ) {
                     var $this = ( this[0] === document ) ? $('.rdr-summary') : this,
                         settings;
-                    
                     return $this.each(function(){
 
                         // merge default and user parameters
                         settings = options ? $.extend(defaults, options) : defaults;
-                        
                         settings.parentContainer = this;
                         _makeSummaryWidget(settings);
                         
@@ -5670,7 +5668,6 @@ function $RFunctions($R){
 
             //helper function for ajax above
             function _makeSummaryWidget(settings){
-                    
                     var page = settings;
 
                     var widgetClass = 'rdr-summary-key-'+page.key;
