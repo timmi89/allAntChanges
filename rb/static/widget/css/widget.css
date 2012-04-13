@@ -981,7 +981,7 @@ div.rdr_indicator div.rdr_indicator_body {
     left:0; /*don't make important so that our js can update*/
     margin:0 !important;
     overflow:hidden !important;
-    height:16px !important;
+    min-height:16px !important;
 }
 
 /*for now give the text indicators a small offset so the details don't cover the end of content todo: id:12345*/
