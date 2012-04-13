@@ -68,6 +68,27 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 {% block extendedHead %}
 {% endblock %}
 
+<script type="text/javascript">
+    var w = 370;
+    var h = 245;
+    var l = (window.screen.width/2)-(w/2);
+    var t = (window.screen.height/2)-(h/2);
+    
+
+    var properties = 'menubar=1,resizable=1,width='+w+',height='+h+',top='+t+',left='+l;
+
+    function rbLogin() {
+        var rbLoginWindow = window.open(
+            '{{BASE_URL}}/rb_login/',
+            'readr_login',
+            properties
+        );
+        rbLoginWindow.focus();
+        return false;
+    }
+
+</script>
+
 </head>
 
 <body class="clearfix {% block bodyClass %}{% endblock %}">
@@ -87,13 +108,14 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     </nav>
     </div>
     <div id="user">
+        {% block userStatus %}
         <div id="logged-in" {% if not cookie_user.social_user %}style="display:none;"{% endif %}>
           <a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/>{{ cookie_user.social_user.full_name }}</a>
           <div id="log-out-link"><a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a></div>
         </div>
         <div id="logged-out" {% if cookie_user.social_user %}style="display:none;"{% endif %}>
           <!-- <a href="javascript:void(0);" onclick="RDRAuth.doFBLogin('site_login')"><img src="{{ STATIC_URL }}site/images/fb_login.png" border="0" alt="Connect with Facebook" /></a> -->
-          <a href="javascript:void(0);" style="margin-left:5px;">Log In</a>
+          <a href="javascript:void(0);" style="margin-left:5px;" onclick="rbLogin();">Log In</a>
           <div id="login-options" style="overflow:auto;">
             <div style="float:left;padding-right:9px;border-right:1px solid #ccc;">
               <div id="fb-login-button">
@@ -101,10 +123,16 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
               </div>
             </div>
             <div style="float:left;padding-left:6px;">
+<<<<<<< HEAD
               <a href="javascript:void(0);" onclick="RDRAuth.rbloginWindow = window.open('{{BASE_URL}}/rb_login/', 'readr_login','menubar=1,resizable=1,width=370,height=245');RDRAuth.checkRBLoginWindow();RDRAuth.rbloginWindow.focus();return false;"><img src="/static/widget/images/rb-login_to_readrboard.png" /></a>
+=======
+              <a href="javascript:void(0);" onclick="rbLogin();"><img src="/static/widget/images/rb-login_to_readrboard.png" /></a>
+>>>>>>> 0ea737e34d30c524d05b8468b1e5da74aff1d5e9
             </div>
           </div>    
         </div>
+        {% endblock %}
+
       </div>
     <div id="site_search">
       <form method="get" id="searchform" action="/stream/">

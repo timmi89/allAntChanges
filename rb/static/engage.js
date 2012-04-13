@@ -1558,6 +1558,7 @@ function readrBoard($R){
 		},
 		util: {
             makeEmptySummary : function(hash, kind) {
+            // RDR.util.makeEmptySummary( hash )
                 var summary = {};
                 summary[hash] = {};
                 summary[hash].hash = hash;
@@ -2460,8 +2461,14 @@ function readrBoard($R){
                         $this.addClass('rdr_live_hover');
                         if(!hasBeenHashed && !isBlacklisted){
                             var hash = RDR.actions.hashNodes( $(this) );
+
                             if(hash){
                                 RDR.actions.sendHashes( hash, function(){
+                                    $.each( hash, function(page_id, hashArray) {
+                                        if (hashArray.length == 1) {
+                                            hash = hashArray[0];
+                                        }
+                                    });
                                     if( $this.hasClass('rdr_live_hover') ){
                                         $('#rdr_indicator_'+hash).show();
                                     }
@@ -2587,8 +2594,7 @@ function readrBoard($R){
                             // I guess we can take it out if you didn't want it here either.
                 if( !$allNodes.data('body') ) return false;
                 //else
-
-                var hashList = [];
+                var hashList = {};
                 $allNodes.each(function(){
                     var $this = $(this);
                     var body = $this.data('body'),
@@ -2620,14 +2626,13 @@ function readrBoard($R){
 
                     var summary = RDR.actions.summaries.init(hash);
                     RDR.actions.summaries.save(summary);
-
-                    
+                 
                     var page_id = RDR.util.getPageProperty('id', hash );
                     if ( !hashList[ page_id ] ) hashList[ page_id ] = [];
-                    
+
                     hashList[ page_id ].push(hash);
                     $this.data('hash', hash); //todo: consolidate this with the RDR.containers object.  We only need one or the other.
-                    
+
                 });
 
                 RDR.actions.containers.setup(hashList);
