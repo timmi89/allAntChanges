@@ -165,7 +165,7 @@ RDRAuth = {
 		}
 	},
 	reauthUser : function(args) {
-		if ( $.cookie('user_type') && $.cookie('user_type') == "facebook" ) {
+		if ( $.cookie('user_type') && $.cookie('user_type') == "facebook" || ( !$.cookie('user_type') ) ) {
 			RDRAuth.readUserCookie();
 			if ( !FB.getAuthResponse() ) {
 				FB.getLoginStatus(function(response) {
