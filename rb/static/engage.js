@@ -1902,7 +1902,7 @@ function readrBoard($R){
                     case "FB graph error - token invalid":  // call fb login
                     case "Social Auth does not exist for user": // call fb login
                     case "Data to create token is missing": // call fb login
-                        if ( RDR.user.user_type && RDR.user.user_type == "readrboard") {
+                        if ( typeof RDR.user.user_type != "undefined" && RDR.user.user_type == "readrboard") {
                             RDR.session.showLoginPanel( args, callback );
                         } else {
                             // the token is out of sync.  could be a mistake or a hack.
