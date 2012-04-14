@@ -36,3 +36,9 @@ var script="http://local.readrboard.com:8080/widget/demo/";rdr_getScript(script,
 
 /*readrmarklet for live on the web*/
 javascript:(function(){function rdr_getScript(url,success){var head=document.getElementsByTagName("head")[0],done=false;var script=document.createElement("script");script.src=url;script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success();}};head.appendChild(script);}var script="http://www.readrboard.com/widget/default/";rdr_getScript(script,function(){});})();
+
+
+//for testing on local (with and without javascript:)
+//Note - for now you'll have to set manually set RDR_offline = true.
+javascript:(function(){function rdr_getScript(url,success){var head=document.getElementsByTagName("head")[0],done=false;var script=document.createElement("script");script.src=url;script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success();}};head.appendChild(script);}var script="http://localhost:8080/static/engage.js";rdr_getScript(script,function(){});})();
+(function(){function rdr_getScript(url,success){var head=document.getElementsByTagName("head")[0],done=false;var script=document.createElement("script");script.src=url;script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success();}};head.appendChild(script);}var script="http://localhost:8080/static/engage.js";rdr_getScript(script,function(){});})();
