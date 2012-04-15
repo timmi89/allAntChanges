@@ -442,18 +442,13 @@ class SettingsHandler(AnonymousBaseHandler):
                 default_groups = Group.objects.filter(short_name='default')
                 for dgroup in default_groups:
                     if dgroup.short_name == 'default':
-                        logger.info(dgroup)
                         default_group = dgroup
                 
-                logger.info(default_group)
-                logger.info("**************")
-                group.word_blacklist = default_group.word_blacklist,
-                
-                group.anno_whitelist=default_group.anno_whitelist
+                group.word_blacklist = default_group.word_blacklist
+                group.anno_whitelist = default_group.anno_whitelist
                 group.save()
                 
                 blessed = GroupBlessedTag.objects.filter(group = default_group)
-                logger.info(blessed)
                 for blessing in blessed:
                     GroupBlessedTag.objects.create(group=group, node=blessing.node, order=blessing.order )
                     
