@@ -7,7 +7,10 @@ else: DEBUG = True
 #DEBUG=True
 
 # Server e-mail account
-SERVER_EMAIL = "server@readrboard.com"
+if DEBUG:
+    SERVER_EMAIL = "devserver@readrboard.com"
+else:
+    SERVER_EMAIL = "server@readrboard.com"
 
 # For Amazon web services
 AWS_ACCESS_KEY_ID = 'AKIAINM2FE35X6K77P2A'
