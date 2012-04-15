@@ -4,7 +4,7 @@ $R = {}, //init var: our clone of jQuery
 RDR_scriptPaths = {},
 //check if this script is the offline version,
 //note that the other RDR_offline vars in our iframes should check window.location for local.readrboard.com instead
-RDR_offline = !!( document.getElementById("http://localhost:8080/static/engage.js") || document.getElementById("http://local.readrboard.com:8080/static/engage.js") ),
+RDR_offline = !!( document.getElementById("http:--localhost:8080-static-engage.js") || document.getElementById("http:--local.readrboard.com:8080-static-engage.js") ),
 RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com",
 RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/",
 RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://www.readrboard.com/static/";
