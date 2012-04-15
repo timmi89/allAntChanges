@@ -5,7 +5,7 @@ RDR_scriptPaths = {},
 RDR_offline = ( window.location.href.indexOf('local.readrboard.com') != -1 ) ? true:false,
 RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com",
 RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/",
-RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://www.readrboard.com/static/";
+RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
 
 //test
 
@@ -4974,17 +4974,25 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
             },
             shareContent: function(args) {
                 var content = args.content_node_info.content,
-                    share_url = "";
+                    share_url = "",
+                    content_length = 100;
+
                 switch (args.sns) {
                     case "facebook":
-                        share_url = 'http://www.facebook.com/sharer.php?s=100&p[title]='+encodeURI(content.substr(0, content_length) )+'&p[summary]='+encodeURI(args.reaction)+'&p[url]='+args.short_url;
+                        var content_length = 100;
+                        var contentStr = _shortenContentIfNeeded(content, content_length);
+
+                        share_url = 'http://www.facebook.com/sharer.php?s=100&p[title]='+encodeURI( contentStr )+'&p[summary]='+encodeURI(args.reaction)+'&p[url]='+args.short_url;
                     //&p[images][0]=<?php echo $image;?>', 'sharer',
                     break;
 
                     case "twitter":
+
                         var content_length = ( 90 - args.reaction.length );
+                        var contentStr = _shortenContentIfNeeded(content, content_length);
+
                         var twitter_acct = ( RDR.group.twitter ) ? '&via='+RDR.group.twitter : '';
-                        share_url = 'http://twitter.com/intent/tweet?url='+args.short_url+twitter_acct+'&text='+encodeURI(args.reaction)+':+"'+encodeURI(content.substr(0, content_length) );
+                        share_url = 'http://twitter.com/intent/tweet?url='+args.short_url+twitter_acct+'&text='+encodeURI(args.reaction)+':+"'+encodeURI( contentStr );
                     break;
 
                     case "tumblr":
@@ -5013,6 +5021,15 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         RDR.shareWindow.location = share_url;
                     }
                 }
+
+                function _shortenContentIfNeeded(content, content_length){
+                    var ext = '...';
+                    var safeLength = content_length - ext.length;
+                    return ( content.length <= content_length ) ? 
+                        content : 
+                        content.substr(0, safeLength) + ext;
+                }
+
             },
             newUpdateData: function(hash){
                 //RDR.actions.newUpdateData:
