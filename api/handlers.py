@@ -429,9 +429,30 @@ class SettingsHandler(AnonymousBaseHandler):
                     short_name=host,
                     approved=True,
                     temp_interact=0,
-                    requires_approval=False
+                    requires_approval=False,
+                    share = Feature.objects.get(id=1),
+                    rate = Feature.objects.get(id=1),
+                    comment = Feature.objects.get(id=1),
+                    bookmark = Feature.objects.get(id=1),
+                    search = Feature.objects.get(id=1),
                     
                 )
+                
+                
+                default_groups = Group.objects.filter(short_name='default')
+                for dgroup in default_groups:
+                    if dgroup.short_name == 'default':
+                        default_group = dgroup
+                
+                group.word_blacklist = default_group.word_blacklist
+                group.anno_whitelist = default_group.anno_whitelist
+                group.save()
+                
+                blessed = GroupBlessedTag.objects.filter(group = default_group)
+                for blessing in blessed:
+                    GroupBlessedTag.objects.create(group=group, node=blessing.node, order=blessing.order )
+                    
+                    
                 # site = MAKE A SITE(host, group)
                 Site.objects.create(
                     name=host,
