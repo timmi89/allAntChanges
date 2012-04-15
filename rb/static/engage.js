@@ -5279,7 +5279,7 @@ function rdr_loadScript(sScriptSrc,callbackfunction) {
         oHead.appendChild(oScript);
     }
 }
-RDR.offline = true;
+
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
 RDR_scriptPaths.jquery = RDR_offline ?
     RDR_staticUrl+"global/js/jquery-1.6.js" :
