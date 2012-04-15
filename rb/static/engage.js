@@ -1558,6 +1558,7 @@ function readrBoard($R){
 		},
 		util: {
             makeEmptySummary : function(hash, kind) {
+            // RDR.util.makeEmptySummary( hash )
                 var summary = {};
                 summary[hash] = {};
                 summary[hash].hash = hash;
@@ -1901,7 +1902,7 @@ function readrBoard($R){
                     case "FB graph error - token invalid":  // call fb login
                     case "Social Auth does not exist for user": // call fb login
                     case "Data to create token is missing": // call fb login
-                        if ( RDR.user.user_type && RDR.user.user_type == "readrboard") {
+                        if ( typeof RDR.user.user_type != "undefined" && RDR.user.user_type == "readrboard") {
                             RDR.session.showLoginPanel( args, callback );
                         } else {
                             // the token is out of sync.  could be a mistake or a hack.
@@ -2460,8 +2461,14 @@ function readrBoard($R){
                         $this.addClass('rdr_live_hover');
                         if(!hasBeenHashed && !isBlacklisted){
                             var hash = RDR.actions.hashNodes( $(this) );
+
                             if(hash){
                                 RDR.actions.sendHashes( hash, function(){
+                                    $.each( hash, function(page_id, hashArray) {
+                                        if (hashArray.length == 1) {
+                                            hash = hashArray[0];
+                                        }
+                                    });
                                     if( $this.hasClass('rdr_live_hover') ){
                                         $('#rdr_indicator_'+hash).show();
                                     }
@@ -2587,8 +2594,7 @@ function readrBoard($R){
                             // I guess we can take it out if you didn't want it here either.
                 if( !$allNodes.data('body') ) return false;
                 //else
-
-                var hashList = [];
+                var hashList = {};
                 $allNodes.each(function(){
                     var $this = $(this);
                     var body = $this.data('body'),
@@ -2616,18 +2622,17 @@ function readrBoard($R){
                     
                     //don't do this here - do it on success of callback from server
                     // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
-                    $this.addClass( 'rdr-' + hash );//.addClass('rdr-hashed');
+                    $this.addClass( 'rdr-' + hash ).addClass('rdr-node');
 
                     var summary = RDR.actions.summaries.init(hash);
                     RDR.actions.summaries.save(summary);
-
-                    
+                 
                     var page_id = RDR.util.getPageProperty('id', hash );
                     if ( !hashList[ page_id ] ) hashList[ page_id ] = [];
-                    
+
                     hashList[ page_id ].push(hash);
                     $this.data('hash', hash); //todo: consolidate this with the RDR.containers object.  We only need one or the other.
-                    
+
                 });
 
                 RDR.actions.containers.setup(hashList);
@@ -5233,8 +5238,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     var widgetSummarySettings = page;
                     
                     widgetSummarySettings.key = key;
-                    if ( $container.find( RDR.group.summary_widget_selector + '.rdr-page-widget-key-' + key).length == 1 ) {
-                        widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector + '.rdr-page-widget-key-'+key);
+                    if ( $container.find( RDR.group.summary_widget_selector).length == 1 && $container.find( RDR.group.summary_widget_selector).hasClass('rdr-page-widget-key-' + key) ) {
+                        widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector);
                         widgetSummarySettings.jqFunc = "after";
                     } else {
                         widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
@@ -5637,12 +5642,10 @@ function $RFunctions($R){
                 init: function( options ) {
                     var $this = ( this[0] === document ) ? $('.rdr-summary') : this,
                         settings;
-                    
                     return $this.each(function(){
 
                         // merge default and user parameters
                         settings = options ? $.extend(defaults, options) : defaults;
-                        
                         settings.parentContainer = this;
                         _makeSummaryWidget(settings);
                         
@@ -5665,7 +5668,6 @@ function $RFunctions($R){
 
             //helper function for ajax above
             function _makeSummaryWidget(settings){
-                    
                     var page = settings;
 
                     var widgetClass = 'rdr-summary-key-'+page.key;

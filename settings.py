@@ -40,7 +40,7 @@ if DEBUG:
     
     BASE_URL = 'http://local.readrboard.com:8080'
     BASE_URL_SECURE = 'https://local.readrboard.com:8080'
-    STATIC_URL = 'http://local.readrboard.com:8080/static/'
+    STATIC_URL = '//local.readrboard.com:8080/static/'
 
     DATABASES = {
       'default': {
@@ -59,7 +59,7 @@ else:
     BASE_URL_SECURE = 'https://www.readrboard.com'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    STATIC_URL = 'http://s3.amazonaws.com/readrboard/'
+    STATIC_URL = '//s3.amazonaws.com/readrboard/'
     
     DATABASES = {
       'default': {
