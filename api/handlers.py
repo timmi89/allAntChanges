@@ -429,7 +429,15 @@ class SettingsHandler(AnonymousBaseHandler):
                     short_name=host,
                     approved=True,
                     temp_interact=0,
-                    requires_approval=False
+                    requires_approval=False,
+                    blessed_tags = Group.objects.get(short_name='default').blessed_tags,
+                    word_blacklist = Group.objects.get(short_name='default').word_blacklist,
+                    share = Feature.objects.get(id=1),
+                    rate = Feature.objects.get(id=1),
+                    comment = Feature.objects.get(id=1),
+                    bookmark = Feature.objects.get(id=1),
+                    search = Feature.objects.get(id=1),
+                    anno_whitelist=Group.objects.get(short_name='default').anno_whitelist
                     
                 )
                 # site = MAKE A SITE(host, group)
