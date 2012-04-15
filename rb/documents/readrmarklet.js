@@ -6,7 +6,11 @@
   function rdr_getScript(url,success){
     var head = document.getElementsByTagName("head")[0], done = false;
     var script = document.createElement("script");
+    
+    //setting an id helps engage.js know whether it's the local version or not.
+    script.id=url;
     script.src = url;
+
     // Attach handlers for all browsers
     script.onload = script.onreadystatechange = function(){
       if ( !done && (!this.readyState ||
@@ -17,28 +21,29 @@
     };
     head.appendChild(script);
   }
-  var script = "http://local.readrboard.com:8080/widget/demo/";
+  var script = "http://local.readrboard.com:8080/static/engage.js";
+  //var script = "http://www.readrboard.com/static/engage.js";
   rdr_getScript( script, function(){ 
     //callback not used
   });
 })();
 
 
-//question: should '/widget/demo/' be '/widget/default/' I thought right?  But default doesn't seem to be working..
-
-/*readrmarklet for local.readrboard.com*/
-javascript:(function(){function rdr_getScript(url,success){var head=document.getElementsByTagName("head")[0],done=false;var script=document.createElement("script");script.src=url;script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success();}};head.appendChild(script);}
-var script="http://local.readrboard.com:8080/widget/demo/";rdr_getScript(script,function(){});})();
-
-/*readrmarklet for local.readrboard.com at hypervocal*/
-javascript:(function(){function rdr_getScript(url,success){var head=document.getElementsByTagName("head")[0],done=false;var script=document.createElement("script");script.src=url;script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success();}};head.appendChild(script);}
-var script="http://local.readrboard.com:8080/widget/demo/";rdr_getScript(script,function(){});})();
-
-/*readrmarklet for live on the web*/
-javascript:(function(){function rdr_getScript(url,success){var head=document.getElementsByTagName("head")[0],done=false;var script=document.createElement("script");script.src=url;script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success();}};head.appendChild(script);}var script="http://www.readrboard.com/widget/default/";rdr_getScript(script,function(){});})();
+//todo: add a check to make sure we only add the script once.
 
 
 //for testing on local (with and without javascript:)
-//Note - for now you'll have to set manually set RDR_offline = true.
-javascript:(function(){function rdr_getScript(url,success){var head=document.getElementsByTagName("head")[0],done=false;var script=document.createElement("script");script.src=url;script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success();}};head.appendChild(script);}var script="http://localhost:8080/static/engage.js";rdr_getScript(script,function(){});})();
-(function(){function rdr_getScript(url,success){var head=document.getElementsByTagName("head")[0],done=false;var script=document.createElement("script");script.src=url;script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success();}};head.appendChild(script);}var script="http://localhost:8080/static/engage.js";rdr_getScript(script,function(){});})();
+//setting the id to the src helps engage.js auto-detect if we're offline
+    javascript:(function(){function rdr_getScript(url,success){var head=document.getElementsByTagName("head")[0],done=false;var script=document.createElement("script");script.src=url;script.id=url;script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success();}};head.appendChild(script);}var script="http://local.readrboard.com:8080/static/engage.js";rdr_getScript(script,function(){});})();
+    //escaped
+    javascript:(function(){function%20rdr_getScript(url,success){var%20head=document.getElementsByTagName("head")[0],done=false;var%20script=document.createElement("script");script.src=url;script.id=url;script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success();}};head.appendChild(script);}var%20script="http://local.readrboard.com:8080/static/engage.js";rdr_getScript(script,function(){});})();
+
+    (function(){function rdr_getScript(url,success){var head=document.getElementsByTagName("head")[0],done=false;var script=document.createElement("script");script.src=url;script.id=url;script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success();}};head.appendChild(script);}var script="http://local.readrboard.com:8080/static/engage.js";rdr_getScript(script,function(){});})();
+
+//live version (note that if you use this - it will start auto-generating groups, so don't use it till we're ready)
+
+    javascript:(function(){function rdr_getScript(url,success){var head=document.getElementsByTagName("head")[0],done=false;var script=document.createElement("script");script.src=url;script.id=url;script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success();}};head.appendChild(script);}var script="http://www.readrboard.com/static/engage.js";rdr_getScript(script,function(){});})();
+    //escaped
+    javascript:(function(){function%20rdr_getScript(url,success){var%20head=document.getElementsByTagName("head")[0],done=false;var%20script=document.createElement("script");script.src=url;script.id=url;script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success();}};head.appendChild(script);}var%20script="http://www.readrboard.com/static/engage.js";rdr_getScript(script,function(){});})();
+
+    (function(){function rdr_getScript(url,success){var head=document.getElementsByTagName("head")[0],done=false;var script=document.createElement("script");script.src=url;script.id=url;script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success();}};head.appendChild(script);}var script="http://www.readrboard.com/static/engage.js";rdr_getScript(script,function(){});})();
