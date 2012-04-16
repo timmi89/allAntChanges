@@ -531,10 +531,11 @@ table.rdr_tags a.rdr_tag span.rdr_tag_name {
     display:inline-block !important;
     float:left !important;
     margin-top:4px !important;
-    min-width:66px;
+    min-width:66px !important;
     overflow-x:hidden !important;
-    position:relative;
-    z-index:1;
+    position:relative !important;
+    z-index:1 !important;
+    text-align:left !important;
 }
 table.rdr_tags a.rdr_tag span.rdr_tag_count {
     min-width:5px !important;
@@ -543,14 +544,14 @@ table.rdr_tags a.rdr_tag span.rdr_tag_count {
     margin-left:-15px !important; /* feels kludgey.  prevents wrapping in the pill in a small rindow */
 }
 table.rdr_tags span.rdr_comment_indicator {
-    display:block !important;
-    position:absolute;
+    display:block !important !important;
+    position:absolute !important;
     background:url("../images/widget_icons.png") no-repeat scroll -182px -14px transparent !important;
-    right:-5px;
-    top:-4px;
-    width:10px;
-    height:10px;
-    z-index:3;
+    right:-5px !important;
+    top:-4px !important;
+    width:10px !important;
+    height:10px !important;
+    z-index:3 !important;
 }
 
 div.rdr a.rdr_tag span.rdr_tag_count    { 
@@ -566,8 +567,8 @@ div.rdr a.rdr_tag span.rdr_tag_count    {
     margin-right: -5px !important;
     padding: 4px 5px !important;
     text-align: center !important;
-    position:relative;
-    z-index:2;
+    position:relative !important;
+    z-index:2 !important;
 }
 
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
