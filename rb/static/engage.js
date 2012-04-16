@@ -5720,16 +5720,18 @@ function $RFunctions($R){
                         $('#rdr-tooltip-summary-what-is-it').hide();
                     });
 
-                    var $react = $('<div class="rdr-sum-headline"><div /></div>');
+                    var $react = $('<div class="rdr-sum-headline" />');
                     if ( RDR.group && RDR.group.call_to_action && RDR.group.call_to_action != "" ) {
                         $react.append('<div class="rdr-call-to-action">'+RDR.group.call_to_action+'</div>');
                     }
+                    
+                    $react.append('<div class="rdr-sum-reactions"/>');
                     
                     $summary_widget.hoverIntent(
                         function() {
                             var $this = $(this),
                                 $visibleReactions = $this.find('div.rdr-sum-headline'),
-                                $pillContainer = $visibleReactions.find('div');
+                                $pillContainer = $visibleReactions.find('div.rdr-sum-reactions');
                             
                             RDR.events.track( 'view_summary::'+$this.data('page_id') );
                             // if ( $pillContainer.height() > 64 && !$visibleReactions.is(':animated') ) {
@@ -5814,7 +5816,7 @@ function $RFunctions($R){
                     $('#rdr_sandbox').append( $a_custom_tooltip );
                     
                     // $react.append( $a_custom, " " );
-                    $react.find('div').append( $a_custom, " " );
+                    $react.find('div.rdr-sum-reactions').append( $a_custom, " " );
 
                     $a_custom.hover(
                         function() {
@@ -5845,7 +5847,7 @@ function $RFunctions($R){
                                     userPic = '<img src="'+this_user.img_url+'" class="no-rdr" alt="'+this_user.full_name+'" title="'+this_user.full_name+'" />';
                                 // $topusers.append( $userLink.append(userPic) );
                                 $userLink.click( function() { RDR.events.track('click_user_profile'); })
-                                $react.find('div').append( $userLink.append(userPic) );
+                                $react.find('div.rdr-sum-reactions').append( $userLink.append(userPic) );
                             }
                         }
 
@@ -5874,7 +5876,7 @@ function $RFunctions($R){
                         $('#rdr_sandbox').append( $a_tooltip );
                         
                         // $react.append( $a, " " );
-                        $react.find('div').append( $a, " " );
+                        $react.find('div.rdr-sum-reactions').append( $a, " " );
                         $span.css('width', $span.width() + 'px' );
 
                         $a.hoverIntent(

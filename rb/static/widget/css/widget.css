@@ -709,12 +709,12 @@ div.rdr.rdr-summary div.rdr-sum-headline {
     overflow:hidden !important;
 }
 div.rdr.rdr-summary div.rdr-sum-headline div {
-    line-height: 32px !important;
+    line-height: 28px !important;
 }
 
 div.rdr.rdr-summary div.rdr-sum-headline div.rdr-call-to-action {
     display: block !important;
-    margin: 8px 0pt 0px !important;
+    margin: 4px 0px -4px !important;
 }
 div.rdr.rdr-summary div.rdr-top-tags {
     padding:8px 5px 0px 8px !important;
