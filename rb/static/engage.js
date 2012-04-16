@@ -4963,7 +4963,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     }
                                 } else {
                                     //successfully got a short URL
-                                    RDR.actions.shareContent({ sns:params.sns, content_node_info:content_node_info, short_url:response.data.short_url, reaction:tag.body });
+                                    RDR.actions.shareContent({
+                                        sns: params.sns,
+                                        content_node_info: content_node_info,
+                                        short_url: response.data.short_url,
+                                        reaction: tag.body,
+                                        //the content_node_info kind was un-reliable. - use this instead
+                                        container_kind: RDR.summaries[hash].kind
+                                    });
                                 }
                             },
                             error: function(response) {
@@ -4997,18 +5004,28 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     case "tumblr":
                         var source = '&t=' + args.reaction +' ... from ' + RDR.group.name;
-                        switch ( args.content_node_info.kind) {
+                        switch ( args.container_kind ) {
                             case "txt":
-                                share_url = 'http://www.tumblr.com/share?v=3&type=quote&u='+encodeURIComponent(args.short_url)+'&t='+encodeURI(RDR.group.name)+'&s='+encodeURI(content.substr(0, content_length) );
+                            case "text":
+                                // var contentStr = content.substr(0, content_length);
+                                //set a length later.
+                                var contentStr = content;
+                                share_url = 'http://www.tumblr.com/share?v=3&type=quote&u='+encodeURIComponent(args.short_url)+'&t='+encodeURI(RDR.group.name)+'&s='+encodeURI( contentStr );
                             break;
 
                             case "img":
+                            case "image":
                                 var canonical_url = ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href'):window.location.href;
                                 share_url = 'http://www.tumblr.com/share/photo?clickthru='+encodeURIComponent(args.short_url)+'&source='+encodeURIComponent(args.content_node_info.body)+'&caption='+encodeURIComponent(args.reaction);
                             break;
 
                             case "media":
-                                share_url = 'http://www.tumblr.com/share/video?u='+encodeURIComponent(args.short_url)+'&embed='+encodeURIComponent(args.content_node_info.body)+'&caption='+encodeURIComponent(args.reaction);
+                            case "video":
+                                //note that the &u= doesnt work here - gives a tumblr page saying "update bookmarklet"
+                                var iframeString = '<iframe src=" '+args.content_node_info.body+' "></iframe>';
+                                var readrLink = '<a href="'+args.short_url+'">'+args.reaction+'</a>'
+                                share_url = 'http://www.tumblr.com/share/video?&embed='+encodeURIComponent( iframeString )+'&caption='+encodeURIComponent( readrLink );
+                                console.log( share_url ) ;
                             break;
                         }
                     break;
