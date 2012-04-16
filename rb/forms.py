@@ -6,7 +6,7 @@ from api import userutils
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import ugettext_lazy as _
 from PIL import Image
-
+import traceback
 
 class CreateUserForm(forms.ModelForm):
     """
@@ -125,6 +125,7 @@ class ModifySocialUserForm(forms.ModelForm):
     
     def clean_avatar(self):
         avatar = self.cleaned_data["avatar"]
+        
         return avatar
     
     def is_valid(self):
@@ -145,14 +146,18 @@ class ModifySocialUserForm(forms.ModelForm):
             social_user.img_url = social_user.avatar.url
             
             social_user.save()
-            img_filename = social_user.avatar.path
+            #img_filename = social_user.avatar.path
             
             try:
-                image = Image.open(img_filename)
+                image = Image.open(social_user.avatar.file)
                 image.thumbnail((50,50),Image.ANTIALIAS)
-                image.save(img_filename)
+                #image.save(img_filename)
+                image.save(social_user.avatar.file.file.name)
+                #image.save(social_user.avatar.file.file, image.format)
+                social_user.avatar = image
+                social_user.save()
             except Exception, e:
-                print e
+                print traceback.format_exc()
             
         return social_user
 
