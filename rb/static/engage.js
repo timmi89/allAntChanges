@@ -5,7 +5,7 @@ RDR_scriptPaths = {},
 RDR_offline = ( window.location.href.indexOf('local.readrboard.com') != -1 ) ? true:false,
 RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com",
 RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/",
-RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://www.readrboard.com/static/";
+RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
 
 //test
 
@@ -4963,7 +4963,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     }
                                 } else {
                                     //successfully got a short URL
-                                    RDR.actions.shareContent({ sns:params.sns, content_node_info:content_node_info, short_url:response.data.short_url, reaction:tag.body });
+                                    RDR.actions.shareContent({
+                                        sns: params.sns,
+                                        content_node_info: content_node_info,
+                                        short_url: response.data.short_url,
+                                        reaction: tag.body,
+                                        //the content_node_info kind was un-reliable. - use this instead
+                                        container_kind: RDR.summaries[hash].kind
+                                    });
                                 }
                             },
                             error: function(response) {
@@ -4974,33 +4981,51 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
             },
             shareContent: function(args) {
                 var content = args.content_node_info.content,
-                    share_url = "";
+                    share_url = "",
+                    content_length = 100;
+
                 switch (args.sns) {
                     case "facebook":
-                        share_url = 'http://www.facebook.com/sharer.php?s=100&p[title]='+encodeURI(content.substr(0, content_length) )+'&p[summary]='+encodeURI(args.reaction)+'&p[url]='+args.short_url;
+                        var content_length = 100;
+                        var contentStr = _shortenContentIfNeeded(content, content_length);
+
+                        share_url = 'http://www.facebook.com/sharer.php?s=100&p[title]='+encodeURI( contentStr )+'&p[summary]='+encodeURI(args.reaction)+'&p[url]='+args.short_url;
                     //&p[images][0]=<?php echo $image;?>', 'sharer',
                     break;
 
                     case "twitter":
+
                         var content_length = ( 90 - args.reaction.length );
+                        var contentStr = _shortenContentIfNeeded(content, content_length);
+
                         var twitter_acct = ( RDR.group.twitter ) ? '&via='+RDR.group.twitter : '';
-                        share_url = 'http://twitter.com/intent/tweet?url='+args.short_url+twitter_acct+'&text='+encodeURI(args.reaction)+':+"'+encodeURI(content.substr(0, content_length) );
+                        share_url = 'http://twitter.com/intent/tweet?url='+args.short_url+twitter_acct+'&text='+encodeURI(args.reaction)+':+"'+encodeURI( contentStr );
                     break;
 
                     case "tumblr":
                         var source = '&t=' + args.reaction +' ... from ' + RDR.group.name;
-                        switch ( args.content_node_info.kind) {
+                        switch ( args.container_kind ) {
                             case "txt":
-                                share_url = 'http://www.tumblr.com/share?v=3&type=quote&u='+encodeURIComponent(args.short_url)+'&t='+encodeURI(RDR.group.name)+'&s='+encodeURI(content.substr(0, content_length) );
+                            case "text":
+                                // var contentStr = content.substr(0, content_length);
+                                //set a length later.
+                                var contentStr = content;
+                                share_url = 'http://www.tumblr.com/share?v=3&type=quote&u='+encodeURIComponent(args.short_url)+'&t='+encodeURI(RDR.group.name)+'&s='+encodeURI( contentStr );
                             break;
 
                             case "img":
+                            case "image":
                                 var canonical_url = ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href'):window.location.href;
                                 share_url = 'http://www.tumblr.com/share/photo?clickthru='+encodeURIComponent(args.short_url)+'&source='+encodeURIComponent(args.content_node_info.body)+'&caption='+encodeURIComponent(args.reaction);
                             break;
 
                             case "media":
-                                share_url = 'http://www.tumblr.com/share/video?u='+encodeURIComponent(args.short_url)+'&embed='+encodeURIComponent(args.content_node_info.body)+'&caption='+encodeURIComponent(args.reaction);
+                            case "video":
+                                //note that the &u= doesnt work here - gives a tumblr page saying "update bookmarklet"
+                                var iframeString = '<iframe src=" '+args.content_node_info.body+' "></iframe>';
+                                var readrLink = '<a href="'+args.short_url+'">'+args.reaction+'</a>'
+                                share_url = 'http://www.tumblr.com/share/video?&embed='+encodeURIComponent( iframeString )+'&caption='+encodeURIComponent( readrLink );
+                                console.log( share_url ) ;
                             break;
                         }
                     break;
@@ -5013,6 +5038,15 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         RDR.shareWindow.location = share_url;
                     }
                 }
+
+                function _shortenContentIfNeeded(content, content_length){
+                    var ext = '...';
+                    var safeLength = content_length - ext.length;
+                    return ( content.length <= content_length ) ? 
+                        content : 
+                        content.substr(0, safeLength) + ext;
+                }
+
             },
             newUpdateData: function(hash){
                 //RDR.actions.newUpdateData:
@@ -5720,16 +5754,18 @@ function $RFunctions($R){
                         $('#rdr-tooltip-summary-what-is-it').hide();
                     });
 
-                    var $react = $('<div class="rdr-sum-headline"><div /></div>');
+                    var $react = $('<div class="rdr-sum-headline" />');
                     if ( RDR.group && RDR.group.call_to_action && RDR.group.call_to_action != "" ) {
                         $react.append('<div class="rdr-call-to-action">'+RDR.group.call_to_action+'</div>');
                     }
+                    
+                    $react.append('<div class="rdr-sum-reactions"/>');
                     
                     $summary_widget.hoverIntent(
                         function() {
                             var $this = $(this),
                                 $visibleReactions = $this.find('div.rdr-sum-headline'),
-                                $pillContainer = $visibleReactions.find('div');
+                                $pillContainer = $visibleReactions.find('div.rdr-sum-reactions');
                             
                             RDR.events.track( 'view_summary::'+$this.data('page_id') );
                             // if ( $pillContainer.height() > 64 && !$visibleReactions.is(':animated') ) {
@@ -5814,7 +5850,7 @@ function $RFunctions($R){
                     $('#rdr_sandbox').append( $a_custom_tooltip );
                     
                     // $react.append( $a_custom, " " );
-                    $react.find('div').append( $a_custom, " " );
+                    $react.find('div.rdr-sum-reactions').append( $a_custom, " " );
 
                     $a_custom.hover(
                         function() {
@@ -5845,7 +5881,7 @@ function $RFunctions($R){
                                     userPic = '<img src="'+this_user.img_url+'" class="no-rdr" alt="'+this_user.full_name+'" title="'+this_user.full_name+'" />';
                                 // $topusers.append( $userLink.append(userPic) );
                                 $userLink.click( function() { RDR.events.track('click_user_profile'); })
-                                $react.find('div').append( $userLink.append(userPic) );
+                                $react.find('div.rdr-sum-reactions').append( $userLink.append(userPic) );
                             }
                         }
 
@@ -5874,7 +5910,7 @@ function $RFunctions($R){
                         $('#rdr_sandbox').append( $a_tooltip );
                         
                         // $react.append( $a, " " );
-                        $react.find('div').append( $a, " " );
+                        $react.find('div.rdr-sum-reactions').append( $a, " " );
                         $span.css('width', $span.width() + 'px' );
 
                         $a.hoverIntent(
