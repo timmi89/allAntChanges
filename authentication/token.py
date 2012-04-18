@@ -2,6 +2,8 @@ from readrboard.rb.models import *
 from django.utils.hashcompat import sha_constructor
 from datetime import datetime
 from extras.facebook import GraphAPI, GraphAPIError
+import logging
+logger = logging.getLogger('rb.standard')
 
 def checkCookieToken(request):
     """
@@ -34,11 +36,9 @@ def checkToken(data):
     
     # Check and set auth_token for registered social user
     if len(social_user) == 1 and social_user[0].provider == 'Facebook':
-        print "Checking token for registered user"
         try:
             social_auth = SocialAuth.objects.get(social_user__user=data['user_id'])
-            print "--------- SOCIAL AUTH -----------"
-            print social_auth
+            
         except SocialAuth.DoesNotExist:
             return None
 
@@ -49,7 +49,7 @@ def checkToken(data):
                 graph = GraphAPI(social_auth.auth_token)
                 graph.get_object("me")
             except GraphAPIError as GAE:
-                print GAE.message
+                logger.info( GAE.message)
                 return None 
                 
         # If facebook approves, check if expired -- could be redundant
@@ -79,11 +79,9 @@ def createToken(django_id, auth_token):
         except User.DoesNotExist:
             raise JSONException("User does not exist")
 
-        print "Creating readr_token %s %s" % (django_id, auth_token)
         token = sha_constructor(
             unicode(username) +
             unicode(auth_token)
         ).hexdigest()[::2]
-        print "Created token", token
         return token
     return None
