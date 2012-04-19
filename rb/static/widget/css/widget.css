@@ -325,7 +325,7 @@ div.rdr strong {font-weight:bold !important;}
     right:11px !important;
 }
 
-#rdr_sandbox div.rdr div.rdr_header h1                   { margin-left:14px !important; }
+#rdr_sandbox div.rdr div.rdr_header h1                   { margin-left:14px !important; text-align:left !important;}
 /*#rdr_sandbox div#rdr_loginPanel.rdr div.rdr_header h1                   { margin-left:0px !important; }*/
 
 #rdr_sandbox div.rdr textarea,
@@ -713,6 +713,8 @@ div.rdr.rdr-summary div.rdr_info ins img    { margin:0 !important; padding:0 !im
 #rdr_sandbox div.rdr ul.shareLinks li        {padding:0px 2px; display:inline-block; list-style:none;}
 #rdr_sandbox div.rdr ul.shareLinks img       {width:18px !important; margin:0 !important;}
 
+#rdr_sandbox div.rdr table.rdr-one-column td div.rdr_cell_wrapper {text-align:center !important;}
+#rdr_sandbox div.rdr table.rdr-one-column td div.rdr_cell_wrapper a.rdr_tag {text-align:left !important;margin:0 auto !important;}
 #rdr_sandbox div.rdr table.rdr-one-column div.rdr_share_social { text-align:center !important; }
 #rdr_sandbox div.rdr table.rdr-one-column div.rdr_share_social strong { float:none !important; margin:0 !important; }
 #rdr_sandbox div.rdr table.rdr-one-column ul.shareLinks { display: inline-block !important; margin: 2px auto 0 !important; float:none !important; }
