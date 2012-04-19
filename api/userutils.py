@@ -235,3 +235,12 @@ def validateSocialUserToken(social_user_id, token):
         return False
     
     return token == generateSocialUserToken(social_user)
+
+
+def formatUserAvatarUrl(social_user):
+    bad_url = social_user.avatar.url    
+    filename = bad_url[bad_url.rindex("/") + 1:]
+    #logger.info(settings.BASE_URL + settings.MEDIA_URL+ 'users/'+ str(social_user.id) +'/avatars/'+ filename)
+    return settings.BASE_URL + settings.MEDIA_URL+ 'users/'+ str(social_user.id) +'/avatars/'+ filename
+    #return os.path.join(settings.BASE_URL, "/", settings.MEDIA_URL, 'users/', str(social_user.id) +'/avatars/', filename)
+    
