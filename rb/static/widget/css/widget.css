@@ -196,6 +196,83 @@ div.rdr.rdr_tooltip div.rdr_tag_share    { display:block; width:12px; height:13p
 
 div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
 
+/* from Bootstrap CSS */
+.rdr_twtooltip {
+  position: absolute;
+  z-index: 111020;
+  display: block;
+  visibility: visible;
+  padding: 5px;
+  font-size: 11px;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  font-family:Arial,sans-serif !important;
+}
+.rdr_twtooltip.rdr_tw_in {
+  opacity: 0.8;
+  filter: alpha(opacity=80);
+}
+.rdr_twtooltip.rdr_tw_top {
+  margin-top: -2px;
+}
+.rdr_twtooltip.rdr_tw_right {
+  margin-left: 2px;
+}
+.rdr_twtooltip.rdr_tw_bottom {
+  margin-top: 2px;
+}
+.rdr_twtooltip.rdr_tw_left {
+  margin-left: -2px;
+}
+.rdr_twtooltip.rdr_tw_top .rdr_twtooltip-arrow {
+  bottom: 0;
+  left: 50%;
+  margin-left: -5px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #000000;
+}
+.rdr_twtooltip.rdr_tw_left .rdr_twtooltip-arrow {
+  top: 50%;
+  right: 0;
+  margin-top: -5px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid #000000;
+}
+.rdr_twtooltip.rdr_tw_bottom .rdr_twtooltip-arrow {
+  top: 0;
+  left: 50%;
+  margin-left: -5px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #000000;
+}
+.rdr_twtooltip.rdr_tw_right .rdr_twtooltip-arrow {
+  top: 50%;
+  left: 0;
+  margin-top: -5px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 5px solid #000000;
+}
+.rdr_twtooltip-inner {
+  max-width: 200px;
+  padding: 3px 8px;
+  color: #ffffff;
+  text-align: center;
+  text-decoration: none;
+  background-color: #000000;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+.rdr_twtooltip-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
 /*compress ths about icon width*/
 #rdr_sandbox div.rdr_actionbar li.rdr_icon_about             { width:24px; } /*normal width is 30px */
 #rdr_sandbox div.rdr_actionbar li.rdr_icon_about a           { background-position: -3px 0; width:24px;} /*from line above:(30-24)/2 = 3px left*/

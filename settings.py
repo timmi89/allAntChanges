@@ -7,7 +7,10 @@ else: DEBUG = True
 #DEBUG=True
 
 # Server e-mail account
-SERVER_EMAIL = "server@readrboard.com"
+if DEBUG:
+    SERVER_EMAIL = "devserver@readrboard.com"
+else:
+    SERVER_EMAIL = "server@readrboard.com"
 
 # For Amazon web services
 AWS_ACCESS_KEY_ID = 'AKIAINM2FE35X6K77P2A'
@@ -54,9 +57,10 @@ else:
 
     BASE_URL = 'http://www.readrboard.com'
     BASE_URL_SECURE = 'https://www.readrboard.com'
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    STATIC_URL = '//s3.amazonaws.com/readrboard/'
+    #STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    #DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    #STATIC_URL = '//s3.amazonaws.com/readrboard/'
+    STATIC_URL = '//www.readrboard.com/static/'
     
     DATABASES = {
       'default': {

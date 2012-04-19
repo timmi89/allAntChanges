@@ -321,7 +321,7 @@ function readrBoard($R){
                                 $pill.data('tag_count',newTagCount).find('span.rdr_tag_count').text(newTagCount).unbind('hover');
 
                                 $nextSteps.append( '<div class="rdr_reactionMessage">You reacted: <strong>'+tag.body+'</strong>. <a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></div>' );
-                                $nextSteps.find('a.rdr_undo_link').bind('click.rdr', {args:args}, function(event){
+                                $nextSteps.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                     var args = event.data.args;
                         
                                     var newArgs = {    
@@ -350,7 +350,7 @@ function readrBoard($R){
                                 if( $(this).val() === '' ){
                                     $(this).val( 'Add a comment' );
                                 }
-                            }).bind('keyup', {args:args}, function(event) {
+                            }).on('keyup', {args:args}, function(event) {
                                 var commentText = $commentInput.val();
                                 if (event.keyCode == '27') { //esc
                                     //return false;
@@ -414,7 +414,7 @@ function readrBoard($R){
 
                         } else if ( args.scenario == "bookmarkSuccess" ) {
                             $nextSteps.append( '<div>You tagged this note: <strong>'+tag.body+'</strong>. <a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></div>' );
-                            $nextSteps.find('a.rdr_undo_link').bind('click.rdr', {args:args}, function(event){
+                            $nextSteps.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                 var args = event.data.args;
                     
                                 var newArgs = {    
@@ -598,7 +598,7 @@ function readrBoard($R){
 
                     // abstract this when we abstract the same thing in the previous function.
                     var peoples = ( tagCount == 1 ) ? "person":"people",
-                        $a = $('<a class="rdr_tag rdr_tag_'+tag.id+'"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id).data('tag_count',tagCount);
+                        $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="Click to cast this reaction."><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id).data('tag_count',tagCount);
 
                     if ( max_width ) {
                         $a.find('span.rdr_tag_name').css( 'max-width', max_width+"px" );
@@ -627,6 +627,10 @@ function readrBoard($R){
                     });
 
                     $container.append( $a, " " );
+                    $('a.rdr_tooltip_this').tooltip({});
+                    // $container.tooltip({
+                    //     selector:"a.rdr_tooltip_this"
+                    // });
                     
                     // figure out if we should add a comment indicator + comment hover
                     var comments = {},
@@ -881,13 +885,13 @@ function readrBoard($R){
                         if ( $tag_table.find('tr:eq(0)').find('td').length == 1 ) {
                             $tag_table.addClass('rdr-one-column');
                             
-                            $tag_table.find('td.rdr_has_pillHover').bind('mouseenter, mousemove', function() {
+                            $tag_table.find('td.rdr_has_pillHover').on('mouseenter, mousemove', function() {
                                 var $this = $(this),
                                     $rindow = $this.closest('div.rdr_window');
                                 
                                 thisWidth = $rindow.data('initialWidth');
                                 RDR.rindow.updateSizes($rindow, thisWidth+26);
-                            }).bind('mouseleave', function() {
+                            }).on('mouseleave', function() {
                                 var $this = $(this),
                                     $rindow = $this.closest('div.rdr_window');
                                 thisWidth = $rindow.width();
@@ -906,11 +910,21 @@ function readrBoard($R){
                         }
                         // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
                         if ( settings.mode != "writeMode" ) {
-                            $rindow.bind( 'mouseleave', function() {
-                                var $this = $(this);
-                                if ( $this.hasClass('rdr_rewritable') ) {
-                                    $this.remove();
-                                }
+                            $rindow.on( 'mouseleave', function(e) {
+
+                                var $this = $(this),
+                                    timeoutCloseEvt = setTimeout(function(){
+
+                                    if ( $this.hasClass('rdr_rewritable') ) {
+                                        $this.remove();
+                                    }
+                                },300);
+                                
+                                $(this).data('timeoutCloseEvt', timeoutCloseEvt);
+
+                            }).on('mouseenter', function() {
+                                var timeoutCloseEvt = $(this).data('timeoutCloseEvt');
+                                clearTimeout(timeoutCloseEvt);
                             });
 
                             $rindow.find('div.rdr_cell_wrapper').each( function() {
@@ -1104,7 +1118,7 @@ function readrBoard($R){
 
                 // $new_rindow.append( $dragHandle );
     
-                $new_rindow.bind( "resizestop", function(event, ui) {
+                $new_rindow.on( "resizestop", function(event, ui) {
                     var $this = $(this);
                     RDR.rindow.updateSizes( $this );
                 });
@@ -1230,13 +1244,13 @@ function readrBoard($R){
                     if ( $tag_table.find('tr:eq(0)').find('td').length == 1 ) {
                         $tag_table.addClass('rdr-one-column');
                         
-                        $tag_table.find('td.rdr_has_pillHover').bind('mouseenter, mousemove', function() {
+                        $tag_table.find('td.rdr_has_pillHover').on('mouseenter, mousemove', function() {
                             var $this = $(this),
                                 $rindow = $this.closest('div.rdr_window');
                             
                             thisWidth = $rindow.data('initialWidth');
                             RDR.rindow.updateSizes($rindow, thisWidth+26);
-                        }).bind('mouseleave', function() {
+                        }).on('mouseleave', function() {
                             var $this = $(this),
                                 $rindow = $this.closest('div.rdr_window');
                             thisWidth = $rindow.width();
@@ -1785,12 +1799,12 @@ function readrBoard($R){
 
                     //we don't need this here, becuase this is already bound to the document
                     
-                    $(document).bind('click.rdr', function(event) {
+                    $(document).on('click.rdr', function(event) {
                         $mediaBorderWrap.hide();
                         //remove the binding after it's been called.
                         $(document).unbind('click.rdr', arguments.callee);
                     });
-                    $(document).bind('keyup.rdr', function(event) {
+                    $(document).on('keyup.rdr', function(event) {
                         //todo: merge all esc key events (use an array of functions that we can just dequeue?)
                         if (event.keyCode == '27') { //esc
                             $mediaBorderWrap.hide();
@@ -1821,13 +1835,13 @@ function readrBoard($R){
                     /**********/
                     //todo: quick fix!  ... later attach it to a rindow to do it right.
                     //for now at least, make it so we can clear this easily.
-                    $(document).bind('click.rdr', function(event) {
+                    $(document).on('click.rdr', function(event) {
                         $().selog('hilite', selState, 'off');
                         $(document).unbind('click.rdr', arguments.callee);
                     });
                    //bind an escape keypress to clear it.
                     //todo: for a real public API, this should be an option, or passed in function or something
-                    $(document).bind('keyup.rdr', function(event) {
+                    $(document).on('keyup.rdr', function(event) {
                         //todo: merge all esc key events (use an array of functions that we can just dequeue?)
                         if (event.keyCode == '27') { //esc
                             $().selog('hilite', selState, 'off');
@@ -2397,7 +2411,7 @@ function readrBoard($R){
                 $('<div id="rdr_event_pixels" />').appendTo($rdrSandbox);
 
 
-                $(document).bind('mouseup.rdr', function(e){
+                $(document).on('mouseup.rdr', function(e){
                     //temp fix for bug where a click that clears a selection still picks up the selected text:
                     //Todo: This should work in the future as well, but I want to look into it further.
                     setTimeout(function(){
@@ -2407,7 +2421,7 @@ function readrBoard($R){
                     //besides, the fail scenerio here is very minor - just that the actionbar hangs out till you click again.
                 });
 
-                $(document).bind('click.rdr',function(event) {
+                $(document).on('click.rdr',function(event) {
                     var $mouse_target = $(event.target);                                
 
                     if ( !$mouse_target.parents().hasClass('rdr')) {
@@ -2420,14 +2434,14 @@ function readrBoard($R){
                 });
 
                 //bind an escape keypress to clear it.
-                $(document).bind('keyup.rdr', function(event) {
+                $(document).on('keyup.rdr', function(event) {
                     if (event.keyCode == '27') { //esc
                         RDR.rindow.closeAll();
                         RDR.actionbar.closeAll();
                     }
                 });
 
-                $(document).bind('scrollstop', function() {
+                $(document).on('scrollstop', function() {
                     if ( $(window).scrollTop() > 150 && $('#rdr_sandbox') && !$('#rdr_sandbox').data('showingAllIndicator') ) {
                         $('#rdr_sandbox').data('showingAllIndicator', true);
                         if ( RDR.text_container_popularity && RDR.text_container_popularity.length > RDR.group.initial_pin_limit ) {
@@ -2440,7 +2454,7 @@ function readrBoard($R){
 
                 // todo: this is a pretty wide hackey net - rethink later.
                 var imgBlackList = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? ':not('+RDR.group.img_blacklist+')':'';
-                $('body').delegate( 'embed, video, object, iframe, img'+imgBlackList, 'mouseenter.rdr', function(){
+                $('body').on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackList, function(){
                     var $this = $(this);
 
                     // only do whitelisted iframe src domains
@@ -2479,7 +2493,7 @@ function readrBoard($R){
                             $('#rdr_indicator_' + $this.data('hash')).show();
                         }
                     }
-                }).delegate('embed, video, object, iframe, img'+imgBlackList, 'mouseleave', function(){
+                }).on( 'mouseleave', 'embed, video, object, iframe, img'+imgBlackList, function(){
                     var $this = $(this);
                     $this.removeClass('rdr_live_hover');
                     $('#rdr_indicator_' + $this.data('hash')).hide();
@@ -4113,7 +4127,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             // not using anymore:  ?
                             // RDR.actions.indicators.utils.setupContentNodeHilites(hash);
 
-                            $indicator.bind('mouseover.showRindow', function(){
+                            $indicator.on('mouseover.showRindow', function(){
                                 var selStates = $(this).data('selStates');
                                 RDR.events.track( 'view_node::'+hash, hash );
                                 RDR.rindow.make( "readMode", {hash:hash} );
@@ -4121,7 +4135,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $indicator.triggerHandler('mouseover.showRindow');
                         };
                         //bind the hover event that will only be run once.  It gets removed on the success callback above.
-                        $indicator.bind('mouseover.contentNodeInit', function(){
+                        $indicator.on('mouseover.contentNodeInit', function(){
                             RDR.actions.content_nodes.init(hash, onSuccessCallback);
                         });
                     }
@@ -4177,7 +4191,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             
                             _commonSetup();
 
-                            $indicator.bind('click', function() { 
+                            $indicator.on('click', function() { 
                                 if ( $('#rdr_indicator_details_'+hash).height() < 10 ) {
                                     RDR.actions.containers.media.onEngage( hash );
                                     $(this).removeClass('rdr_live_hover'); 
@@ -4185,8 +4199,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     RDR.actions.containers.media.onDisengage( hash );
                                 }
                             })//chain
-                            .bind('mouseover', function() { $(this).addClass('rdr_live_hover'); })//chain
-                            .bind('mouseout', function() { $(this).removeClass('rdr_live_hover');  });
+                            .on('mouseover', function() { $(this).addClass('rdr_live_hover'); })//chain
+                            .on('mouseout', function() { $(this).removeClass('rdr_live_hover');  });
 
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
 
@@ -5413,8 +5427,8 @@ function rdr_loadScript(sScriptSrc,callbackfunction) {
 RDR.offline = true;
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
 RDR_scriptPaths.jquery = RDR_offline ?
-    RDR_staticUrl+"global/js/jquery-1.6.js" :
-    "http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js";
+    RDR_staticUrl+"global/js/jquery-1.7.1.min.js" :
+    "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
 RDR_scriptPaths.jqueryUI = RDR_offline ?
     RDR_staticUrl+"global/js/jquery-ui-1.8.14.custom.min.js" :
     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js";
@@ -5500,10 +5514,10 @@ function $RFunctions($R){
         plugin_jquery_enhancedOffset($R);
         plugin_jquery_hashChange($R);
         plugin_jquery_mousewheel($R);
-        plugin_jquery_mousewheelIntent($R);
         plugin_jquery_scrollStartAndStop($R);
         plugin_jquery_jScrollPane($R);
         plugin_jquery_hoverIntent($R);
+        plugin_jquery_twitterTip($R);
         plugin_jquery_rdrWidgetSummary($R);
         plugin_jquery_selectionographer($R, rangy);
 
@@ -6910,39 +6924,25 @@ function $RFunctions($R){
         }
         
         function plugin_jquery_mousewheel($){
-            /*
-            * jQuery mousewheel
-            * ! Copyright (c) 2010 Brandon Aaron (http://brandonaaron.net)
-            * Licensed under the MIT License (LICENSE.txt).
-            *
-            * Thanks to: http://adomas.org/javascript-mouse-wheel/ for some pointers.
-            * Thanks to: Mathias Bank(http://www.mathias-bank.de) for a scope bug fix.
-            * Thanks to: Seamus Leahy for adding deltaX and deltaY
-            *
-            * Version: 3.0.4
-            * 
-            * Requires: 1.2.2+
-            */
-            var types=['DOMMouseScroll','mousewheel'];$.event.special.mousewheel={setup:function(){if(this.addEventListener){for(var i=types.length;i;){this.addEventListener(types[--i],handler,false);}}else{this.onmousewheel=handler;}},teardown:function(){if(this.removeEventListener){for(var i=types.length;i;){this.removeEventListener(types[--i],handler,false);}}else{this.onmousewheel=null;}}};$.fn.extend({mousewheel:function(fn){return fn?this.bind("mousewheel",fn):this.trigger("mousewheel");},unmousewheel:function(fn){return this.unbind("mousewheel",fn);}});function handler(event){var orgEvent=event||window.event,args=[].slice.call(arguments,1),delta=0,returnValue=true,deltaX=0,deltaY=0;event=$.event.fix(orgEvent);event.type="mousewheel";if(event.wheelDelta){delta=event.wheelDelta/120;}
-            if(event.detail){delta=-event.detail/3;}
+            /*! Copyright (c) 2011 Brandon Aaron (http://brandonaaron.net)
+              Licensed under the MIT License (LICENSE.txt).
+             
+              Thanks to: http://adomas.org/javascript-mouse-wheel/ for some pointers.
+              Thanks to: Mathias Bank(http://www.mathias-bank.de) for a scope bug fix.
+              Thanks to: Seamus Leahy for adding deltaX and deltaY
+             
+              Version: 3.0.6
+              
+              Requires: 1.2.2+
+             */var types=['DOMMouseScroll','mousewheel'];if($.event.fixHooks){for(var i=types.length;i;){$.event.fixHooks[types[--i]]=$.event.mouseHooks;}}
+            $.event.special.mousewheel={setup:function(){if(this.addEventListener){for(var i=types.length;i;){this.addEventListener(types[--i],handler,false);}}else{this.onmousewheel=handler;}},teardown:function(){if(this.removeEventListener){for(var i=types.length;i;){this.removeEventListener(types[--i],handler,false);}}else{this.onmousewheel=null;}}};$.fn.extend({mousewheel:function(fn){return fn?this.bind("mousewheel",fn):this.trigger("mousewheel");},unmousewheel:function(fn){return this.unbind("mousewheel",fn);}});function handler(event){var orgEvent=event||window.event,args=[].slice.call(arguments,1),delta=0,returnValue=true,deltaX=0,deltaY=0;event=$.event.fix(orgEvent);event.type="mousewheel";if(orgEvent.wheelDelta){delta=orgEvent.wheelDelta/120;}
+            if(orgEvent.detail){delta=-orgEvent.detail/3;}
             deltaY=delta;if(orgEvent.axis!==undefined&&orgEvent.axis===orgEvent.HORIZONTAL_AXIS){deltaY=0;deltaX=-1*delta;}
             if(orgEvent.wheelDeltaY!==undefined){deltaY=orgEvent.wheelDeltaY/120;}
             if(orgEvent.wheelDeltaX!==undefined){deltaX=-1*orgEvent.wheelDeltaX/120;}
-            args.unshift(event,delta,deltaX,deltaY);return $.event.handle.apply(this,args);}
+            args.unshift(event,delta,deltaX,deltaY);return($.event.dispatch||$.event.handle).apply(this,args);}
         }
         //end function plugin_jquery_mousewheel
-
-        function plugin_jquery_mousewheelIntent($){
-            /**
-            * jQuery mousewheelIntent
-            * @author trixta
-            * @version 1.2
-            */
-            var mwheelI={pos:[-260,-260]},minDif=3,doc=document,root=doc.documentElement,body=doc.body,longDelay,shortDelay;function unsetPos(){if(this===mwheelI.elem){mwheelI.pos=[-260,-260];mwheelI.elem=false;minDif=3;}}
-            $.event.special.mwheelIntent={setup:function(){var jElm=$(this).bind('mousewheel',$.event.special.mwheelIntent.handler);if(this!==doc&&this!==root&&this!==body){jElm.bind('mouseleave',unsetPos);}
-            jElm=null;return true;},teardown:function(){$(this).unbind('mousewheel',$.event.special.mwheelIntent.handler).unbind('mouseleave',unsetPos);return true;},handler:function(e,d){var pos=[e.clientX,e.clientY];if(this===mwheelI.elem||Math.abs(mwheelI.pos[0]-pos[0])>minDif||Math.abs(mwheelI.pos[1]-pos[1])>minDif){mwheelI.elem=this;mwheelI.pos=pos;minDif=250;clearTimeout(shortDelay);shortDelay=setTimeout(function(){minDif=10;},200);clearTimeout(longDelay);longDelay=setTimeout(function(){minDif=3;},1500);e=$.extend({},e,{type:'mwheelIntent'});return $.event.handle.apply(this,arguments);}}};$.fn.extend({mwheelIntent:function(fn){return fn?this.bind("mwheelIntent",fn):this.trigger("mwheelIntent");},unmwheelIntent:function(fn){return this.unbind("mwheelIntent",fn);}});$(function(){body=doc.body;$(doc).bind('mwheelIntent.mwheelIntentDefault',$.noop);});
-        }
-        //end function plugin_jquery_mousewheelIntent
 
         function plugin_jquery_scrollStartAndStop(jQuery){
             /**
@@ -6952,7 +6952,6 @@ function $RFunctions($R){
             */
             var a=jQuery.event.special,b="D"+ +(new Date),c="D"+(+(new Date)+1);a.scrollstart={setup:function(){var c,d=function(b){var d=this,e=arguments;if(c){clearTimeout(c)}else{b.type="scrollstart";jQuery.event.handle.apply(d,e)}c=setTimeout(function(){c=null},a.scrollstop.latency)};jQuery(this).bind("scroll",d).data(b,d)},teardown:function(){jQuery(this).unbind("scroll",jQuery(this).data(b))}};a.scrollstop={latency:300,setup:function(){var b,d=function(c){var d=this,e=arguments;if(b){clearTimeout(b)}b=setTimeout(function(){b=null;c.type="scrollstop";jQuery.event.handle.apply(d,e)},a.scrollstop.latency)};jQuery(this).bind("scroll",d).data(c,d)},teardown:function(){jQuery(this).unbind("scroll",jQuery(this).data(c))}}
         }
-        //end function plugin_jquery_mousewheelIntent
 
         function plugin_jquery_jScrollPane($){
             /*
@@ -6977,6 +6976,7 @@ function $RFunctions($R){
 
         //function plugin_jquery_hoverIntent
         function plugin_jquery_hoverIntent($){
+
             /**
             * hoverIntent r6 // 2011.02.26 // jQuery 1.5.1+
             * <http://cherne.net/brian/resources/jquery.hoverIntent.html>
@@ -6990,7 +6990,285 @@ function $RFunctions($R){
             // }
             // )(jQuery);
         }
-        //end function plugin_jquery_hoverIntent        
+        //end function plugin_jquery_hoverIntent
+
+        
+        //function plugin_jquery_twitterTip
+        function plugin_jquery_twitterTip($){
+            /* ===========================================================
+             * bootstrap-tooltip.js v2.0.2
+             * http://twitter.github.com/bootstrap/javascript.html#tooltips
+             * Inspired by the original jQuery.tipsy by Jason Frame
+             * ===========================================================
+             * Copyright 2012 Twitter, Inc.
+             *
+             * Licensed under the Apache License, Version 2.0 (the "License");
+             * you may not use this file except in compliance with the License.
+             * You may obtain a copy of the License at
+             *
+             * http://www.apache.org/licenses/LICENSE-2.0
+             *
+             * Unless required by applicable law or agreed to in writing, software
+             * distributed under the License is distributed on an "AS IS" BASIS,
+             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+             * See the License for the specific language governing permissions and
+             * limitations under the License.
+             * ========================================================== */
+
+            !function( $ ) {
+
+              "use strict"
+
+             /* TOOLTIP PUBLIC CLASS DEFINITION
+              * =============================== */
+
+              var Tooltip = function ( element, options ) {
+                this.init('tooltip', element, options);
+              }
+
+              Tooltip.prototype = {
+
+                constructor: Tooltip
+
+              , init: function ( type, element, options ) {
+                  var eventIn
+                    , eventOut
+
+                  this.type = type
+                  this.$element = $(element)
+                  this.options = this.getOptions(options)
+                  this.enabled = true
+
+                  if (this.options.trigger != 'manual') {
+                    eventIn  = this.options.trigger == 'hover' ? 'mouseenter' : 'focus'
+                    eventOut = this.options.trigger == 'hover' ? 'mouseleave' : 'blur'
+                    this.$element.bind(eventIn, this.options.selector, $.proxy(this.enter, this))
+                    this.$element.bind(eventOut, this.options.selector, $.proxy(this.leave, this))
+                  }
+
+                  this.options.selector ?
+                    (this._options = $.extend({}, this.options, { trigger: 'manual', selector: '' })) :
+                    this.fixTitle()
+                }
+
+              , getOptions: function ( options ) {
+                  options = $.extend({}, $.fn[this.type].defaults, options, this.$element.data())
+
+                  if (options.delay && typeof options.delay == 'number') {
+                    options.delay = {
+                      show: options.delay
+                    , hide: options.delay
+                    }
+                  }
+
+                  return options
+                }
+
+              , enter: function ( e ) {
+                  var self = $(e.currentTarget)[this.type](this._options).data(this.type)
+
+                  if (!self.options.delay || !self.options.delay.show) {
+                    self.show()
+                  } else {
+                    self.hoverState = 'in'
+                    setTimeout(function() {
+                      if (self.hoverState == 'in') {
+                        self.show()
+                      }
+                    }, self.options.delay.show)
+                  }
+                }
+
+              , leave: function ( e ) {
+                  var self = $(e.currentTarget)[this.type](this._options).data(this.type)
+
+                  if (!self.options.delay || !self.options.delay.hide) {
+                    self.hide()
+                  } else {
+                    self.hoverState = 'out'
+                    setTimeout(function() {
+                      if (self.hoverState == 'out') {
+                        self.hide()
+                      }
+                    }, self.options.delay.hide)
+                  }
+                }
+
+              , show: function () {
+                  var $tip
+                    , inside
+                    , pos
+                    , actualWidth
+                    , actualHeight
+                    , placement
+                    , tp
+
+                  if (this.hasContent() && this.enabled) {
+                    $tip = this.tip()
+                    this.setContent()
+
+                    if (this.options.animation) {
+                      $tip.addClass('rdr_tw_fade')
+                    }
+
+                    placement = typeof this.options.placement == 'function' ?
+                      this.options.placement.call(this, $tip[0], this.$element[0]) :
+                      this.options.placement
+
+                    inside = /rdr_tw_in/.test(placement)
+
+                    $tip
+                      .remove()
+                      .css({ top: 0, left: 0, display: 'block' })
+                      .appendTo(inside ? this.$element : document.body)
+
+                    pos = this.getPosition(inside)
+
+                    actualWidth = $tip[0].offsetWidth
+                    actualHeight = $tip[0].offsetHeight
+
+                    switch (inside ? placement.split(' ')[1] : placement) {
+                      case 'bottom':
+                        tp = {top: pos.top + pos.height, left: pos.left + pos.width / 2 - actualWidth / 2}
+                        break
+                      case 'top':
+                        tp = {top: pos.top - actualHeight, left: pos.left + pos.width / 2 - actualWidth / 2}
+                        break
+                      case 'left':
+                        tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth}
+                        break
+                      case 'right':
+                        tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width}
+                        break
+                    }
+
+                    $tip
+                      .css(tp)
+                      .addClass('rdr_tw_'+placement)
+                      .addClass('rdr_tw_in')
+                  }
+                }
+
+              , setContent: function () {
+                  var $tip = this.tip()
+                  $tip.find('.rdr_twtooltip-inner').html(this.getTitle())
+                  $tip.removeClass('rdr_tw_fade rdr_tw_in rdr_tw_top rdr_tw_bottom rdr_tw_left rdr_tw_right')
+                }
+
+              , hide: function () {
+                  var that = this
+                    , $tip = this.tip()
+
+                  $tip.removeClass('rdr_tw_in')
+
+                  function removeWithAnimation() {
+                    var timeout = setTimeout(function () {
+                      $tip.off($.support.transition.end).remove();
+                    }, 500)
+
+                    $tip.one($.support.transition.end, function () {
+                      clearTimeout(timeout)
+                      $tip.remove()
+                    })
+                  }
+
+                  $.support.transition && this.$tip.hasClass('rdr_tw_fade') ?
+                    removeWithAnimation() :
+                    $tip.remove();
+                    if ( $.support.transition && this.$tip.hasClass('rdr_tw_fade') ) {
+                    } else {
+                    }
+                }
+
+              , fixTitle: function () {
+                  var $e = this.$element
+                  if ($e.attr('title') || typeof($e.attr('data-original-title')) != 'string') {
+                    $e.attr('data-original-title', $e.attr('title') || '').removeAttr('title')
+                  }
+                }
+
+              , hasContent: function () {
+                  return this.getTitle()
+                }
+
+              , getPosition: function (inside) {
+                  return $.extend({}, (inside ? {top: 0, left: 0} : this.$element.offset()), {
+                    width: this.$element[0].offsetWidth
+                  , height: this.$element[0].offsetHeight
+                  })
+                }
+
+              , getTitle: function () {
+                  var title
+                    , $e = this.$element
+                    , o = this.options
+
+                  title = $e.attr('data-original-title')
+                    || (typeof o.title == 'function' ? o.title.call($e[0]) :  o.title)
+
+                  title = (title || '').toString().replace(/(^\s*|\s*$)/, "")
+
+                  return title
+                }
+
+              , tip: function () {
+                  return this.$tip = this.$tip || $(this.options.template)
+                }
+
+              , validate: function () {
+                  if (!this.$element[0].parentNode) {
+                    this.hide()
+                    this.$element = null
+                    this.options = null
+                  }
+                }
+
+              , enable: function () {
+                  this.enabled = true
+                }
+
+              , disable: function () {
+                  this.enabled = false
+                }
+
+              , toggleEnabled: function () {
+                  this.enabled = !this.enabled
+                }
+
+              , toggle: function () {
+                  this[this.tip().hasClass('rdr_tw_in') ? 'hide' : 'show']()
+                }
+
+              }
+
+
+             /* TOOLTIP PLUGIN DEFINITION
+              * ========================= */
+
+              $.fn.tooltip = function ( option ) {
+                return this.each(function () {
+                  var $this = $(this)
+                    , data = $this.data('tooltip')
+                    , options = typeof option == 'object' && option
+                  if (!data) $this.data('tooltip', (data = new Tooltip(this, options)))
+                  if (typeof option == 'string') data[option]()
+                })
+              }
+
+              $.fn.tooltip.Constructor = Tooltip
+
+              $.fn.tooltip.defaults = {
+                animation: true
+              , delay: 0
+              , selector: false
+              , placement: 'top'
+              , trigger: 'hover'
+              , title: ''
+              , template: '<div class="rdr rdr_twtooltip"><div class="rdr_twtooltip-arrow"></div><div class="rdr_twtooltip-inner"></div></div>'
+              }
+            }( $ );
+        }
+        //end function plugin_jquery_twitterTip
         
         function plugin_rangy(){
 
