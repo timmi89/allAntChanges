@@ -197,33 +197,34 @@ div.rdr.rdr_tooltip div.rdr_tag_share    { display:block; width:12px; height:13p
 div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
 
 /* from Bootstrap CSS */
-.tooltip {
+.rdr_twtooltip {
   position: absolute;
-  z-index: 1020;
+  z-index: 111020;
   display: block;
   visibility: visible;
   padding: 5px;
   font-size: 11px;
   opacity: 0;
   filter: alpha(opacity=0);
+  font-family:Arial,sans-serif !important;
 }
-.tooltip.in {
+.rdr_twtooltip.rdr_tw_in {
   opacity: 0.8;
   filter: alpha(opacity=80);
 }
-.tooltip.top {
+.rdr_twtooltip.rdr_tw_top {
   margin-top: -2px;
 }
-.tooltip.right {
+.rdr_twtooltip.rdr_tw_right {
   margin-left: 2px;
 }
-.tooltip.bottom {
+.rdr_twtooltip.rdr_tw_bottom {
   margin-top: 2px;
 }
-.tooltip.left {
+.rdr_twtooltip.rdr_tw_left {
   margin-left: -2px;
 }
-.tooltip.top .tooltip-arrow {
+.rdr_twtooltip.rdr_tw_top .rdr_twtooltip-arrow {
   bottom: 0;
   left: 50%;
   margin-left: -5px;
@@ -231,7 +232,7 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
   border-right: 5px solid transparent;
   border-top: 5px solid #000000;
 }
-.tooltip.left .tooltip-arrow {
+.rdr_twtooltip.rdr_tw_left .rdr_twtooltip-arrow {
   top: 50%;
   right: 0;
   margin-top: -5px;
@@ -239,7 +240,7 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
   border-bottom: 5px solid transparent;
   border-left: 5px solid #000000;
 }
-.tooltip.bottom .tooltip-arrow {
+.rdr_twtooltip.rdr_tw_bottom .rdr_twtooltip-arrow {
   top: 0;
   left: 50%;
   margin-left: -5px;
@@ -247,7 +248,7 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
   border-right: 5px solid transparent;
   border-bottom: 5px solid #000000;
 }
-.tooltip.right .tooltip-arrow {
+.rdr_twtooltip.rdr_tw_right .rdr_twtooltip-arrow {
   top: 50%;
   left: 0;
   margin-top: -5px;
@@ -255,7 +256,7 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
   border-bottom: 5px solid transparent;
   border-right: 5px solid #000000;
 }
-.tooltip-inner {
+.rdr_twtooltip-inner {
   max-width: 200px;
   padding: 3px 8px;
   color: #ffffff;
@@ -266,7 +267,7 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
   -moz-border-radius: 4px;
   border-radius: 4px;
 }
-.tooltip-arrow {
+.rdr_twtooltip-arrow {
   position: absolute;
   width: 0;
   height: 0;
