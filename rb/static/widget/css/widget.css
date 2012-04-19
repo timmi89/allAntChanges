@@ -757,7 +757,7 @@ div.rdr.rdr-summary.rdr-too-many-reactions div.rdr-see-more {
     display:block;
 }
 
-div.rdr.rdr-summary table { border:0 !important;padding:0 !important; margin:5px 0px 2px 5px !important; }
+div.rdr.rdr-summary table { border:0 !important;padding:0 !important; margin:5px 0px 2px 5px !important; width:auto !important; }
 div.rdr.rdr-summary table td { border:0 !important;padding:0 !important; margin:0 !important; text-align:left !important; vertical-align: top !important;}
 div.rdr.rdr-summary.rdr-combo-box table td div.rdr-fb-twitter { width:195px !important; padding: 6px 0 0 4px !important;}
 div.rdr.rdr-summary.rdr-combo-box table td div.rdr-fb-like,
@@ -766,7 +766,7 @@ div.rdr.rdr-summary.rdr-combo-box table td div.rdr-twitter { margin: 1px 0 0 4px
 
 div.rdr.rdr-summary div.rdr-this-is-readrboard {
     text-align:center !important;
-    padding:8px 2px 0 !important;
+    padding:6px 2px 0 !important;
 }
 div.rdr.rdr-summary div.rdr-this-is-readrboard img {
     margin:0 !important;
