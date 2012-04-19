@@ -6838,6 +6838,15 @@ function $RFunctions($R){
         }
         //end function plugin_jquery_mousewheel
 
+        function plugin_jquery_scrollStartAndStop(jQuery){
+            /**
+            * jQuery scrollstart and scrollstop
+            * @author james padolsey
+            * @version ??
+            */
+            var a=jQuery.event.special,b="D"+ +(new Date),c="D"+(+(new Date)+1);a.scrollstart={setup:function(){var c,d=function(b){var d=this,e=arguments;if(c){clearTimeout(c)}else{b.type="scrollstart";jQuery.event.handle.apply(d,e)}c=setTimeout(function(){c=null},a.scrollstop.latency)};jQuery(this).bind("scroll",d).data(b,d)},teardown:function(){jQuery(this).unbind("scroll",jQuery(this).data(b))}};a.scrollstop={latency:300,setup:function(){var b,d=function(c){var d=this,e=arguments;if(b){clearTimeout(b)}b=setTimeout(function(){b=null;c.type="scrollstop";jQuery.event.handle.apply(d,e)},a.scrollstop.latency)};jQuery(this).bind("scroll",d).data(c,d)},teardown:function(){jQuery(this).unbind("scroll",jQuery(this).data(c))}}
+        }
+        
         function plugin_jquery_jScrollPane($){
             /*
              * jScrollPane - v2.0.0beta11 - 2011-05-02
