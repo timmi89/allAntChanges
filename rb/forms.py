@@ -6,6 +6,12 @@ from api import userutils
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import ugettext_lazy as _
 from PIL import Image
+
+import StringIO
+
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
+
 import traceback
 import logging
 logger = logging.getLogger('rb.standard')
@@ -146,18 +152,23 @@ class ModifySocialUserForm(forms.ModelForm):
         
         if commit:
             
-            social_user.save()
-            
+            #social_user.save()
+            #this should probably just be done in the clean avatar method
             try:
-                social_user.img_url = userutils.formatUserAvatarUrl(social_user)
-                logger.info("IMG URL : " + social_user.img_url)
-                img_filename = social_user.avatar.path
+                logger.info("Starting thumb")
+
                 image = Image.open(social_user.avatar)
                 image.thumbnail((50,50),Image.ANTIALIAS)
-                image.save(img_filename)
-                #image.save(social_user.avatar.file.file.name)
-                #image.save(social_user.avatar.file, image.format)
-                #social_user.avatar = image
+                thumb_io = StringIO.StringIO()
+                logger.info("Trying to save")
+                image.save(thumb_io, format=image.format)
+                #social_user.avatar.delete()
+                filename = social_user.img_url[social_user.img_url.rindex("/") + 1:]
+                logger.info("FORMAT: " + image.format + " " + filename)
+                thumb_file = InMemoryUploadedFile(thumb_io, None, filename, 'image/' + image.format, thumb_io.len, None)
+                social_user.avatar = thumb_file
+                social_user.img_url = userutils.formatUserAvatarUrl(social_user)                
+                logger.info("IMG_URL: " + social_user.img_url)                
                 social_user.save()
             except Exception, e:
                 logger.info(traceback.format_exc())
