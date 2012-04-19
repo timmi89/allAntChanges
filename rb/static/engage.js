@@ -4980,26 +4980,90 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 });
             },
             shareContent: function(args) {
+                var groupName = _getGroupName();
+
                 var content = args.content_node_info.content,
                     share_url = "",
+                    contentStr = "",
                     content_length = 100;
 
                 switch (args.sns) {
                     case "facebook":
-                        var content_length = 100;
-                        var contentStr = _shortenContentIfNeeded(content, content_length);
+                        var imageQueryP = "";
+                        var videoQueryP = "";
 
-                        share_url = 'http://www.facebook.com/sharer.php?s=100&p[title]='+encodeURI( contentStr )+'&p[summary]='+encodeURI(args.reaction)+'&p[url]='+args.short_url;
+                        switch ( args.container_kind ) {
+                            case "txt":
+                            case "text":
+                                content_length = 100;
+                                contentStr = _shortenContentIfNeeded(content, content_length, true);
+                            break;
+
+                            case "img":
+                            case "image":
+                                contentStr = "Check out this picture";
+
+                                //for testing offline
+                                if(RDR_offline){
+                                    content = content.replace("local.readrboard.com:8080", "www.readrboard.com");
+                                    content = content.replace("localhost:8080", "www.readrboard.com");
+                                }
+                                
+                                imageQueryP = '&p[videos][0]='+encodeURI('http://www.youtube.com/embed/72CZHc81qwI');
+
+                            break;
+
+                            case "media":
+                            case "video":
+                                contentStr = "Check out this video";
+                                https://www.facebook.com/sharer/sharer.php?u=http://www.youtube.com/watch?v=72CZHc81qwI&feature=share
+                            break;
+                        }
+
+                        var mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
+                        var footerShareText = "A ReadrBoard Reaction on " + groupName;
+
+                        share_url = 'http://www.facebook.com/sharer.php?s=100' +
+                                        '&p[title]='+encodeURI( mainShareText )+
+                                        '&p[url]='+args.short_url+
+                                        '&p[summary]='+encodeURI(footerShareText)+
+                                        //these will just be "" if not relevant
+                                        imageQueryP+
+                                        videoQueryP
+
                     //&p[images][0]=<?php echo $image;?>', 'sharer',
+                    //window.open('http://www.facebook.com/sharer.php?s=100&amp;p[title]=<?php echo $title;?>&amp;p[summary]=<?php echo $summary;?>&amp;p[url]=<?php echo $url; ?>&amp;&p[images][0]=<?php echo $image;?>', 'sharer', 'toolbar=0,status=0,width=626,height=436');
                     break;
 
                     case "twitter":
 
-                        var content_length = ( 90 - args.reaction.length );
-                        var contentStr = _shortenContentIfNeeded(content, content_length);
+                        switch ( args.container_kind ) {
+                            case "txt":
+                            case "text":
+                                content_length = ( 90 - args.reaction.length );
+                                contentStr = _shortenContentIfNeeded(content, content_length, true);
+                            break;
+
+                            case "img":
+                            case "image":
+                                contentStr = "Check out this picture";
+                            break;
+
+                            case "media":
+                            case "video":
+                                contentStr = "Check out this video";
+                            break;
+                        }
+
+                        var mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
+                        var footerShareText = "A ReadrBoard Reaction on " + groupName;
+
 
                         var twitter_acct = ( RDR.group.twitter ) ? '&via='+RDR.group.twitter : '';
-                        share_url = 'http://twitter.com/intent/tweet?url='+args.short_url+twitter_acct+'&text='+encodeURI(args.reaction)+':+"'+encodeURI( contentStr );
+                        share_url = 'http://twitter.com/intent/tweet?'+
+                                'url='+args.short_url+
+                                twitter_acct+
+                                '&text='+encodeURI(mainShareText);
                     break;
 
                     case "tumblr":
@@ -5015,18 +5079,34 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             case "img":
                             case "image":
-                                var canonical_url = ( $('link[rel="canonical"]').length > 0 ) ? $('link[rel="canonical"]').attr('href'):window.location.href;
-                                share_url = 'http://www.tumblr.com/share/photo?clickthru='+encodeURIComponent(args.short_url)+'&source='+encodeURIComponent(args.content_node_info.body)+'&caption='+encodeURIComponent(args.reaction);
+                                                            //for testing offline
+                                if(RDR_offline){
+                                    content = content.replace("local.readrboard.com:8080", "www.readrboard.com");
+                                    content = content.replace("localhost:8080", "www.readrboard.com");
+                                }
+
+                                contentStr = "Check out this picture";
+                                var mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
+                                var footerShareText = "A ReadrBoard Reaction on " + groupName;
+
+                                share_url = 'http://www.tumblr.com/share/photo?'+
+                                    'source='+encodeURIComponent(content)+
+                                    '&caption='+encodeURIComponent(mainShareText + "<br/> -" + footerShareText )+
+                                    '&click_thru='+encodeURIComponent(args.short_url);
                             break;
 
                             case "media":
                             case "video":
+                                //todo: - I haven't gone back to try this yet...
+
                                 //note that the &u= doesnt work here - gives a tumblr page saying "update bookmarklet"
                                 var iframeString = '<iframe src=" '+args.content_node_info.body+' "></iframe>';
                                 var readrLink = '<a href="'+args.short_url+'">'+args.reaction+'</a>'
                                 share_url = 'http://www.tumblr.com/share/video?&embed='+encodeURIComponent( iframeString )+'&caption='+encodeURIComponent( readrLink );
                                 console.log( share_url ) ;
                             break;
+                                
+
                         }
                     break;
 
@@ -5039,12 +5119,24 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
                 }
 
-                function _shortenContentIfNeeded(content, content_length){
+                function _getGroupName(){
+                    //consider using RDR.group.name
+                    //todo: make this smarter - check for www. only in start of domain
+                    return (document.domain).replace('www.', " ")
+                }
+                
+                function _wrapTag(tag){
+                    return "<"  + tag + ">";
+                }
+
+                function _shortenContentIfNeeded(content, content_length, addQuotes){
                     var ext = '...';
                     var safeLength = content_length - ext.length;
-                    return ( content.length <= content_length ) ? 
+                    var str = ( content.length <= content_length ) ? 
                         content : 
                         content.substr(0, safeLength) + ext;
+                    str = addQuotes ? ( '"' + str + '"' ) : str;
+                    return str;
                 }
 
             },
