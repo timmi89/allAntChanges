@@ -687,7 +687,7 @@ function readrBoard($R){
                         helpText =  ( actionType=="react" ) ? "Add yours..." : "Add tag...";
 
                     // add custom tag
-                    var $a_custom = $('<a class="rdr_tag rdr_custom_tag"><input type="text" value="'+helpText+'" class="rdr_default"/></a>');
+                    var $a_custom = $('<a class="rdr_tag rdr_custom_tag rdr_tooltip_this" title="Add your own reaction. Type it in, then press Enter."><input type="text" value="'+helpText+'" class="rdr_default"/></a>');
                     $a_custom.find('input').focus( function() {
                         RDR.events.track('start_custom_reaction_rindow');
                         var $input = $(this);
@@ -728,6 +728,7 @@ function readrBoard($R){
                     // if ( $container ) $container.append( $a_custom, " " );
                     // else return $a_custom;
                     $container.append( $a_custom, " " );
+                    $a_custom.tooltip();
                 }
             },
             _rindowTypes: {
@@ -5873,7 +5874,7 @@ function $RFunctions($R){
                     }
 
                     // add custom tag
-                    var $a_custom = $('<a class="rdr_tag rdr_custom_tag rdr_tooltip_this" title="Add your own reaction to this page."><input type="text" value="Add yours..." class="rdr_default"/></a>');
+                    var $a_custom = $('<a class="rdr_tag rdr_custom_tag rdr_tooltip_this" title="Add your own reaction to this page.  Type it in, then press Enter."><input type="text" value="Add yours..." class="rdr_default"/></a>');
                     $a_custom.find('input').focus( function() {
                         RDR.events.track('start_custom_reaction_summ');
                         var $input = $(this);
