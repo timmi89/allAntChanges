@@ -93,7 +93,6 @@ class SocialUser(models.Model):
     private_profile = models.BooleanField(default=False)
 
     """Social Auth association model"""
-    #user = models.ForeignKey(User, related_name='social_user')
     user = models.OneToOneField(User, related_name='social_user', unique=True)
     provider = models.CharField(max_length=32)
     uid = models.CharField(max_length=255, unique=True)

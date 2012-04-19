@@ -57,9 +57,10 @@ else:
 
     BASE_URL = 'http://www.readrboard.com'
     BASE_URL_SECURE = 'https://www.readrboard.com'
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    STATIC_URL = '//s3.amazonaws.com/readrboard/'
+    #STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    #DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    #STATIC_URL = '//s3.amazonaws.com/readrboard/'
+    STATIC_URL = '//www.readrboard.com/static/'
     
     DATABASES = {
       'default': {

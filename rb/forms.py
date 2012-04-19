@@ -145,21 +145,22 @@ class ModifySocialUserForm(forms.ModelForm):
             raise forms.ValidationError(_("A problem occurred while updating your profile."))
         
         if commit:
-            social_user.img_url = social_user.avatar.url
-            logger.info("committing:" + social_user.img_url)
-            social_user.save()
-            #img_filename = social_user.avatar.path
             
-            #try:
-                #image = Image.open(social_user.avatar.file)
-                #image.thumbnail((50,50),Image.ANTIALIAS)
-                #image.save(img_filename)
+            social_user.save()
+            
+            try:
+                social_user.img_url = userutils.formatUserAvatarUrl(social_user)
+                logger.info("IMG URL : " + social_user.img_url)
+                img_filename = social_user.avatar.path
+                image = Image.open(social_user.avatar)
+                image.thumbnail((50,50),Image.ANTIALIAS)
+                image.save(img_filename)
                 #image.save(social_user.avatar.file.file.name)
                 #image.save(social_user.avatar.file, image.format)
                 #social_user.avatar = image
-                #social_user.save()
-            #except Exception, e:
-                #logger.info(traceback.format_exc())
+                social_user.save()
+            except Exception, e:
+                logger.info(traceback.format_exc())
             
         return social_user
 
