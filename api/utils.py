@@ -6,6 +6,8 @@ import re
 from exceptions import FBException, JSONException
 from readrboard.rb.profanity_filter import ProfanitiesFilter
 from urlparse import urlsplit, urlunsplit
+import logging
+logger = logging.getLogger('rb.standard')
 
 blacklist = ['fuck','shit','poop','cock','cunt']
 
