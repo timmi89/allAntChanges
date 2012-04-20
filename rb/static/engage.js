@@ -5004,7 +5004,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 switch (args.sns) {
                     case "facebook":
                         var imageQueryP = "";
-                        var videoQueryP = "";
+                        var videoQueryP = ""; //cant get one of these to work yet without overwriting the rest of the stuff
 
                         switch ( args.container_kind ) {
                             case "txt":
@@ -5023,14 +5023,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     content = content.replace("localhost:8080", "www.readrboard.com");
                                 }
                                 
-                                imageQueryP = '&p[videos][0]='+encodeURI('http://www.youtube.com/embed/72CZHc81qwI');
+                                imageQueryP = '&p[images][0]='+encodeURI(content);
 
                             break;
 
                             case "media":
                             case "video":
                                 contentStr = "Check out this video";
-                                https://www.facebook.com/sharer/sharer.php?u=http://www.youtube.com/watch?v=72CZHc81qwI&feature=share
                             break;
                         }
 
@@ -5043,7 +5042,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         '&p[summary]='+encodeURI(footerShareText)+
                                         //these will just be "" if not relevant
                                         imageQueryP+
-                                        videoQueryP
+                                        videoQueryP;
 
                     //&p[images][0]=<?php echo $image;?>', 'sharer',
                     //window.open('http://www.facebook.com/sharer.php?s=100&amp;p[title]=<?php echo $title;?>&amp;p[summary]=<?php echo $summary;?>&amp;p[url]=<?php echo $url; ?>&amp;&p[images][0]=<?php echo $image;?>', 'sharer', 'toolbar=0,status=0,width=626,height=436');
@@ -5099,7 +5098,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     content = content.replace("localhost:8080", "www.readrboard.com");
                                 }
 
-                                contentStr = "Check out this picture";
+                                contentStr = '<a href="'+args.short_url+'">Check out this picture</a>';
                                 var mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
                                 var footerShareText = "A ReadrBoard Reaction on " + groupName;
 
@@ -5115,9 +5114,15 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                                 //note that the &u= doesnt work here - gives a tumblr page saying "update bookmarklet"
                                 var iframeString = '<iframe src=" '+args.content_node_info.body+' "></iframe>';
-                                var readrLink = '<a href="'+args.short_url+'">'+args.reaction+'</a>'
+                                
+                                contentStr = '<a href="'+args.short_url+'">Check out this video</a>';
+                                var mainShareText = _wrapTag(args.reaction, true) +" "+ contentStr;
+                                var footerShareText = "A ReadrBoard Reaction on " + groupName;
+
+
+                                //todo: get the urlencode right and put the link back in
+                                var readrLink = mainShareText + '<br/> -' + footerShareText;
                                 share_url = 'http://www.tumblr.com/share/video?&embed='+encodeURIComponent( iframeString )+'&caption='+encodeURIComponent( readrLink );
-                                console.log( share_url ) ;
                             break;
                                 
 
@@ -5139,8 +5144,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     return (document.domain).replace('www.', " ")
                 }
                 
-                function _wrapTag(tag){
-                    return "<"  + tag + ">";
+                function _wrapTag(tag, doHTMLEscape){
+                    //return "&lt;"  + tag + "&gt;"; //<tag>
+                    return doHTMLEscape ?
+                        "&#40;"  + tag + "&#41;&#45;&gt;" :
+                        "("  + tag + ")->" ;
                 }
 
                 function _shortenContentIfNeeded(content, content_length, addQuotes){
