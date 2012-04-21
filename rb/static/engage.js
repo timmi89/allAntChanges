@@ -2812,13 +2812,14 @@ function readrBoard($R){
                         clearTimeout(timeoutCloseEvt);
 
                         timeoutCloseEvt = setTimeout(function(){
-                            if ( !$mediaItem.hasClass('rdr_live_hover') && !$indicator_details.hasClass('rdr_live_hover') ) {
+                            // commenting this out.  it causes the image drawers to stick.
+                            // if ( !$mediaItem.hasClass('rdr_live_hover') && !$indicator_details.hasClass('rdr_live_hover') ) {
                                 var containerInfo = RDR.containers[hash];
                                 if ( containerInfo ) {
                                     $mediaItem.data('hover',false).data('hash', hash);
                                     RDR.rindow.mediaRindowHide( $mediaItem );
                                 }
-                            }
+                            // }
                         },100);
                         $mediaItem.data('timeoutCloseEvt_'+hash, timeoutCloseEvt);
                     }
