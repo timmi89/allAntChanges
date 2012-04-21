@@ -3343,7 +3343,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             data: { json: $.toJSON(sendData) },
                             success: function(response) {
                                 args.response = response;
-                                args.container_id = response.data.container.id;
+
+                                //this will be here for new containers only
+                                if( response.data && response.data.container ){
+                                    args.container_id = response.data.container.id;
+                                }
                                 if ( response.data && response.data.num_interactions ) RDR.user.num_interactions = response.data.num_interactions;
                                 if ( response.status == "success" ) {
                                     if ( args.response.data.interaction ) {
