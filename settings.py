@@ -24,6 +24,10 @@ AWS_HEADERS = {
     'Cache-Control': 'public, max-age=25200',
 }
 
+AWS_DEFAULT_ACL='public-read'
+AWS_QUERYSTRING_AUTH = False
+AWS_S3_FILE_OVERWRITE = True  
+
 # For Facebook
 FACEBOOK_APP_ID = '163759626987948'
 FACEBOOK_APP_SECRET = '9b7da3d1442f442cec8c25f5bf7ea0d0'
@@ -58,6 +62,8 @@ else:
     BASE_URL = 'http://www.readrboard.com'
     BASE_URL_SECURE = 'https://www.readrboard.com'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    #STATICFILES_STORAGE = 'rb.s3boto.S3BotoStorage'
+    #DEFAULT_FILE_STORAGE = 'rb.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATIC_URL = '//s3.amazonaws.com/readrboard/'
     

@@ -235,7 +235,6 @@ function readrBoard($R){
                     visiblePane.height = visiblePane.$elm.height();
                     visiblePane.which = "rdr_body";
                 }
-
                 if ( visiblePane.height > 0 ) {
                     if ( visiblePane.height > 260 ) visiblePane.height = 260; // an effective max-height.  is this right?
                     if ( setHeight ) { // override if height is passed in
@@ -243,7 +242,6 @@ function readrBoard($R){
                         heightAdjustment = 0;
                     }
                     $rindow.find('div.jspContainer').height( visiblePane.height+4 );
-
 
                     // this section sets width.  I know, it's goofy.
                     var rindow_width = $rindow.width();
@@ -968,6 +966,10 @@ function readrBoard($R){
                         }, 333, 'swing' );
 
                         $rindow.data( 'initialWidth', rindowWidth );
+
+                        // return $rindow to RDR.rindow.make
+                        return $rindow;
+
                         /* END modify the rindow size */
                     },
                     customOptions: {
@@ -1004,7 +1006,10 @@ function readrBoard($R){
                     settings = $.extend( {}, defaultOptions, customOptions, options, {mode:rindowType} );
 
                 //call make function for appropriate type
-                RDR.rindow._rindowTypes.tagMode.make(settings);
+                var $rindow = RDR.rindow._rindowTypes.tagMode.make(settings);
+                
+                // return $rindow to whatever called RDR.rindow.make
+                return $rindow;
 
             },
             draw: function(options) {
@@ -2807,13 +2812,14 @@ function readrBoard($R){
                         clearTimeout(timeoutCloseEvt);
 
                         timeoutCloseEvt = setTimeout(function(){
-                            if ( !$mediaItem.hasClass('rdr_live_hover') && !$indicator_details.hasClass('rdr_live_hover') ) {
+                            // commenting this out.  it causes the image drawers to stick.
+                            // if ( !$mediaItem.hasClass('rdr_live_hover') && !$indicator_details.hasClass('rdr_live_hover') ) {
                                 var containerInfo = RDR.containers[hash];
                                 if ( containerInfo ) {
                                     $mediaItem.data('hover',false).data('hash', hash);
                                     RDR.rindow.mediaRindowHide( $mediaItem );
                                 }
-                            }
+                            // }
                         },100);
                         $mediaItem.data('timeoutCloseEvt_'+hash, timeoutCloseEvt);
                     }
@@ -4120,7 +4126,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $indicator.on('mouseover.showRindow', function(){
                                 var selStates = $(this).data('selStates');
                                 RDR.events.track( 'view_node::'+hash, hash );
-                                RDR.rindow.make( "readMode", {hash:hash} );
+                                var $rindow = RDR.rindow.make( "readMode", {hash:hash} );
+                                RDR.rindow.updateSizes( $rindow );
+                                RDR.rindow.updateSizes( $rindow );
                             });
                             $indicator.triggerHandler('mouseover.showRindow');
                         };
