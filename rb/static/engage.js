@@ -3343,6 +3343,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             data: { json: $.toJSON(sendData) },
                             success: function(response) {
                                 args.response = response;
+                                args.container_id = response.data.container.id;
                                 if ( response.data && response.data.num_interactions ) RDR.user.num_interactions = response.data.num_interactions;
                                 if ( response.status == "success" ) {
                                     if ( args.response.data.interaction ) {
@@ -3698,6 +3699,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 //reset this var for now
                                 content_node_data = args.content_node || RDR.actions.content_nodes.make(content_node_data);
 
+                                //if the summary doesn't have an id, set it
+                                summary.id = summary.id || args.container_id;
+                                
                                 //do updates
                                 var intNodeHelper = {
                                     id: interaction_node.id,
