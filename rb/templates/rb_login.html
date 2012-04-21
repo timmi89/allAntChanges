@@ -47,6 +47,8 @@
             }
         });
 		
+		window.opener.RDRAuth.checkRBLoginWindow();
+
 		function direct_registration() {
 			var sendData = "username="+$('#direct_registration').find('input[name="username"]').val()+
 						   "&password="+$('#direct_registration').find('input[name="password"]').val();

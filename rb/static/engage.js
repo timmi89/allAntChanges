@@ -596,7 +596,7 @@ function readrBoard($R){
 
                     // abstract this when we abstract the same thing in the previous function.
                     var peoples = ( tagCount == 1 ) ? "person":"people",
-                        $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="Click to cast this reaction"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id).data('tag_count',tagCount);
+                        $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="Click to add this reaction"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id).data('tag_count',tagCount);
 
                     if ( max_width ) {
                         $a.find('span.rdr_tag_name').css( 'max-width', max_width+"px" );
