@@ -163,7 +163,8 @@ class ModifySocialUserForm(forms.ModelForm):
                 logger.info("Trying to save")
                 image.save(thumb_io, format=image.format)
                 #social_user.avatar.delete()
-                filename = social_user.img_url[social_user.img_url.rindex("/") + 1:]
+                #filename = social_user.img_url[social_user.img_url.rindex("/") + 1:]
+                filename = 'avatar.' + image.format
                 logger.info("FORMAT: " + image.format + " " + filename)
                 thumb_file = InMemoryUploadedFile(thumb_io, None, filename, 'image/' + image.format, thumb_io.len, None)
                 social_user.avatar = thumb_file

@@ -4994,17 +4994,20 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     case "facebook":
                         var imageQueryP = "";
                         var videoQueryP = ""; //cant get one of these to work yet without overwriting the rest of the stuff
+                        var mainShareText = "";
+                        var footerShareText = "A ReadrBoard Reaction on " + groupName;
 
                         switch ( args.container_kind ) {
                             case "txt":
                             case "text":
                                 content_length = 100;
                                 contentStr = _shortenContentIfNeeded(content, content_length, true);
+                                mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
                             break;
 
                             case "img":
                             case "image":
-                                contentStr = "Check out this picture";
+                                contentStr = "See picture";
 
                                 //for testing offline
                                 if(RDR_offline){
@@ -5013,17 +5016,15 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 }
                                 
                                 imageQueryP = '&p[images][0]='+encodeURI(content);
-
+                                mainShareText = _wrapTag(args.reaction, false, true) +" "+ contentStr;
                             break;
 
                             case "media":
                             case "video":
-                                contentStr = "Check out this video";
+                                contentStr = "See video";
+                                mainShareText = _wrapTag(args.reaction, false, true) +" "+ contentStr;
                             break;
                         }
-
-                        var mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
-                        var footerShareText = "A ReadrBoard Reaction on " + groupName;
 
                         share_url = 'http://www.facebook.com/sharer.php?s=100' +
                                         '&p[title]='+encodeURI( mainShareText )+
@@ -5038,30 +5039,32 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     break;
 
                     case "twitter":
-
+                        
+                        var mainShareText = "";
+                        var footerShareText = "A ReadrBoard Reaction on " + groupName;
+                        var twitter_acct = ( RDR.group.twitter ) ? '&via='+RDR.group.twitter : '';
+                    
                         switch ( args.container_kind ) {
                             case "txt":
                             case "text":
                                 content_length = ( 90 - args.reaction.length );
                                 contentStr = _shortenContentIfNeeded(content, content_length, true);
+                                mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
                             break;
 
                             case "img":
                             case "image":
-                                contentStr = "Check out this picture";
+                                contentStr = "See image";
+                                mainShareText = _wrapTag(args.reaction, false, true) +" "+ contentStr;
                             break;
 
                             case "media":
                             case "video":
-                                contentStr = "Check out this video";
+                                contentStr = "See video";
+                                mainShareText = _wrapTag(args.reaction, false, true) +" "+ contentStr;
                             break;
                         }
 
-                        var mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
-                        var footerShareText = "A ReadrBoard Reaction on " + groupName;
-
-
-                        var twitter_acct = ( RDR.group.twitter ) ? '&via='+RDR.group.twitter : '';
                         share_url = 'http://twitter.com/intent/tweet?'+
                                 'url='+args.short_url+
                                 twitter_acct+
@@ -5069,14 +5072,22 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     break;
 
                     case "tumblr":
-                        var source = '&t=' + args.reaction +' ... from ' + RDR.group.name;
+                        
+                        var mainShareText = "";
+
                         switch ( args.container_kind ) {
                             case "txt":
                             case "text":
-                                // var contentStr = content.substr(0, content_length);
-                                //set a length later.
-                                var contentStr = content;
-                                share_url = 'http://www.tumblr.com/share?v=3&type=quote&u='+encodeURIComponent(args.short_url)+'&t='+encodeURI(RDR.group.name)+'&s='+encodeURI( contentStr );
+                                //tumblr adds quotes for us - don't pass true to quote it.
+                                var footerShareText = _wrapTag(args.reaction, true, true) +
+                                    "See quote on " +
+                                    '<a href="'+args.short_url+'">'+groupName+'</a>';
+
+                                contentStr = _shortenContentIfNeeded(content, content_length);
+                                share_url = 'http://www.tumblr.com/share/quote?'+
+                                'quote='+encodeURIComponent(contentStr)+
+                                '&source='+encodeURIComponent(footerShareText);
+
                             break;
 
                             case "img":
@@ -5087,13 +5098,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     content = content.replace("localhost:8080", "www.readrboard.com");
                                 }
 
-                                contentStr = '<a href="'+args.short_url+'">Check out this picture</a>';
-                                var mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
-                                var footerShareText = "A ReadrBoard Reaction on " + groupName;
+                                mainShareText = _wrapTag(args.reaction, true, true);
+
+                                var footerShareText = 'See picture on <a href="'+args.short_url+'">'+ groupName +'</a>';
 
                                 share_url = 'http://www.tumblr.com/share/photo?'+
                                     'source='+encodeURIComponent(content)+
-                                    '&caption='+encodeURIComponent(mainShareText + "<br/> -" + footerShareText )+
+                                    '&caption='+encodeURIComponent(mainShareText + footerShareText )+
                                     '&click_thru='+encodeURIComponent(args.short_url);
                             break;
 
@@ -5103,14 +5114,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                                 //note that the &u= doesnt work here - gives a tumblr page saying "update bookmarklet"
                                 var iframeString = '<iframe src=" '+args.content_node_info.body+' "></iframe>';
-                                
-                                contentStr = '<a href="'+args.short_url+'">Check out this video</a>';
-                                var mainShareText = _wrapTag(args.reaction, true) +" "+ contentStr;
-                                var footerShareText = "A ReadrBoard Reaction on " + groupName;
 
+                                mainShareText = _wrapTag(args.reaction, true, true);
+
+                                var footerShareText = 'See video on <a href="'+args.short_url+'">'+ groupName +'</a>';
 
                                 //todo: get the urlencode right and put the link back in
-                                var readrLink = mainShareText + '<br/> -' + footerShareText;
+                                var readrLink = mainShareText + footerShareText;
                                 share_url = 'http://www.tumblr.com/share/video?&embed='+encodeURIComponent( iframeString )+'&caption='+encodeURIComponent( readrLink );
                             break;
 
@@ -5133,11 +5143,24 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     return (document.domain).replace('www.', " ")
                 }
                 
-                function _wrapTag(tag, doHTMLEscape){
-                    //return "&lt;"  + tag + "&gt;"; //<tag>
+                function _wrapTag(tag, doHTMLEscape, isActionNotContent){
+                    
+                    var connectorSign = isActionNotContent ?
+                            //use pipe
+                            doHTMLEscape ? 
+                                "&#124;" :
+                                "|"
+                        :
+                            //use >>
+                            doHTMLEscape ? 
+                                "&gt;&gt;" :
+                                ">>"
+                        ;
+
+
                     return doHTMLEscape ?
-                        "&#40;"  + tag + "&#41;&#45;&gt;" :
-                        "("  + tag + ")->" ;
+                        "&#91;&nbsp;"  + tag + "&nbsp;&#93;&nbsp;&nbsp;"+connectorSign+"&nbsp;" : //[ tag ]  >>
+                        "[ "  + tag + " ]  "+connectorSign+" " ;
                 }
 
                 function _shortenContentIfNeeded(content, content_length, addQuotes){
