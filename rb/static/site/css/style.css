@@ -567,7 +567,7 @@ section[role="main"] div.card div.meta div.title      { }
 section[role="main"] div.card div.meta div.title a    { color:#999; }
 section[role="main"] div.card div.meta div.title a.external_link		{ font-size:10px; margin-left:10px; }
 
-section[role="main"] div.card.txt div.content						{ xborder-top: 1px solid #fff; margin:0 20px 0; padding-top:9px;}
+section[role="main"] div.card.txt div.content						{ xborder-top: 1px solid #fff; margin:0 5px 0; padding-top:9px;}
 section[role="main"] div.card.txt div.content div.content_type		{ width:25px; height:47px; margin:5px 8px 0 0; background:url(../images/type_text.png) top left no-repeat; text-indent:-9999px; float:left; }
 section[role="main"] div.card.txt div.content div.content_body		{ font-size:24px; font-family:Times New Roman, Georgia, serif;}
 
