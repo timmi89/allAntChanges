@@ -601,8 +601,15 @@ function readrBoard($R){
                         max_width = $container.data('max-width');
 
                     // abstract this when we abstract the same thing in the previous function.
-                    var peoples = ( tagCount == 1 ) ? "person":"people",
-                        $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+tagCount+' '+peoples+' had this reaction.<br/>Click to agree."><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id).data('tag_count',tagCount);
+                    if ( tagCount == "+" ) {
+                        var message = 'Click to add this reaction';
+                    } else {
+                        var peoples = ( tagCount == 1 ) ? "person":"people";
+                        var message = tagCount+' '+peoples+' had this reaction.<br/>Click to agree.';
+                    }
+                    // var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'">'+tag.body+'</a>').data('tag_id',tag.id);
+                    
+                    var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id).data('tag_count',tagCount);
 
                     if ( max_width ) {
                         $a.find('span.rdr_tag_name').css( 'max-width', max_width+"px" );
@@ -4133,8 +4140,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 var selStates = $(this).data('selStates');
                                 RDR.events.track( 'view_node::'+hash, hash );
                                 var $rindow = RDR.rindow.make( "readMode", {hash:hash} );
-                                RDR.rindow.updateSizes( $rindow );
-                                RDR.rindow.updateSizes( $rindow );
+                                if ( typeof $rindow != "undefined" ) {
+                                    RDR.rindow.updateSizes( $rindow );
+                                    RDR.rindow.updateSizes( $rindow );
+                                }
                             });
                             $indicator.triggerHandler('mouseover.showRindow');
                         };
@@ -5997,8 +6006,13 @@ function $RFunctions($R){
                     if ( $react.find('a.rdr_tag_'+tag.id).length === 0 ) { // removing tag count check for now:  && $react.find('a.rdr_tag').length < 4
                         tagCount = ( tag.tag_count ) ? tag.tag_count:"+";
 
-                        var peoples = ( tagCount == 1 ) ? "person":"people";
-                        var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+tagCount+' '+peoples+' had this reaction.<br/>Click to agree.">'+tag.body+'</a>').data('tag_id',tag.id);
+                        if ( tagCount == "+" ) {
+                            var message = 'Click to add this reaction';
+                        } else {
+                            var peoples = ( tagCount == 1 ) ? "person":"people";
+                            var message = tagCount+' '+peoples+' had this reaction.<br/>Click to agree.';
+                        }
+                        var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'">'+tag.body+'</a>').data('tag_id',tag.id);
 
                         $span = $('<span class="rdr_tag_count">'+tagCount+'</span>');
 
