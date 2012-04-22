@@ -1068,8 +1068,7 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
     height: auto !important;
     color: #666666 !important;
     font: 12px Arial,sans-serif !important;
-    padding:4px 3px 2px !important;
-    left:8px !important;
+    padding:4px 3px 3px 1px !important;
 }
 
 
@@ -1100,7 +1099,7 @@ div.rdr_indicator_for_media.rdr_live_hover {
 
 #rdr_sandbox div.rdr_indicator_details_for_media {
     overflow:hidden !important; /*for the animate out to work nicely*/
-    height:0 !important;
+    height:0;;
     /*height:200px !important;*/
     display:block !important;
     margin:0 !important;
@@ -1256,6 +1255,8 @@ visibility: visible/hidden/collapse;;
 opacity: x;;
 -moz-opacity: x;;
 filter:alpha(opacity=xx);;
+height:0;;
+
 
 //useful regex for checking the doc
 display:\s*none\s!important

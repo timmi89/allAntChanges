@@ -1398,7 +1398,8 @@ function readrBoard($R){
                                 "src_with_path":src_with_path
                             });
                         }
-                    },
+                    }//,
+                    /*
                     {
                         "item":"bookmark",
                         "tipText":"Remember this",
@@ -1412,6 +1413,7 @@ function readrBoard($R){
                             });
                         }
                     }
+                    */
                 ];
 
                 RDR.events.track( 'show_action_bar::'+content );
@@ -4095,14 +4097,21 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
                     
                     function _setupIndicators(){
+
+                        var cornerClasses = "rdr_brtr rdr_brbr";
+                        if( summary.kind == 'text' || summary.kind == 'txt' ){
+                            cornerClasses += " rdr_brbl rdr_brtl";
+                        }
+
                         //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
-                        var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body rdr_brtl rdr_brtr rdr_brbl rdr_brbr" />').attr('id',indicatorBodyId)//chain
-                        .appendTo($indicator)//chain
-                        .append(
-                            '<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />',
-                            '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
-                        );//chain
-                        // .data( {'hash':hash} );
+                        var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body " />')
+                            .attr('id',indicatorBodyId)
+                            .addClass(cornerClasses)
+                            .appendTo($indicator)
+                            .append(
+                                '<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />',
+                                '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
+                            );
 
                         $indicator.css('visibility','visible');
                     }
