@@ -28,8 +28,6 @@
     padding:0px !important;
     position:absolute !important;
     z-index:12000 !important;
-    top:100px !important;
-    left:100px !important;
     background:#f6f6f6 !important;
     overflow:hidden !important;
     min-width:90px !important;
@@ -71,7 +69,7 @@
 }
 
 #rdr_sandbox div.rdr_actionbar li.rdr_icon_reaction a        { background-position:3px 3px !important; }
-#rdr_sandbox div.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-61px -4px !important; display:none !important;}
+#rdr_sandbox div.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-61px -4px !important; display:none;;}
 
 
 #rdr_sandbox div.rdr_actionbar li:hover                     { 
@@ -116,7 +114,7 @@
 }
 
 
-#rdr_sandbox div.rdr_actionbar span.rdr_icon_divider         { width:1px !important; background:#BBB !important; height:70% !important; position:absolute !important; top:15% !important; right:0 !important; display:none !important;/*show dynamically*/}
+#rdr_sandbox div.rdr_actionbar span.rdr_icon_divider         { width:1px !important; background:#BBB !important; height:70% !important; position:absolute !important; top:15% !important; right:0 !important; display:none;;/*show dynamically*/}
 
 div.rdr_loader {
     background: url(../images/loader.gif) 0px 0px no-repeat #fff !important;
@@ -124,7 +122,7 @@ div.rdr_loader {
     height: 20px !important;
     margin-right: 5px !important;
     width: 20px !important;
-    visibility:hidden !important;
+    visibility:hidden;;
     position:relative !important;
     z-index:1 !important;
     position:absolute !important;
@@ -201,11 +199,11 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block !important; }
   position: absolute !important;
   z-index: 111020 !important;
   display: block !important;
-  visibility: visible !important;
+  visibility: visible;;
   padding: 5px !important;
   font-size: 11px !important;
-  opacity: 0 !important;
-  filter: alpha(opacity=0) !important;
+  opacity: 0;;
+  filter: alpha(opacity=0);;
   font-family:Arial,sans-serif !important;
 }
 .rdr_twtooltip.rdr_tw_in {
@@ -312,13 +310,13 @@ div.rdr strong {font-weight:bold !important;}
 
 #rdr_sandbox div.rdr.rdr_window div.rdr_header              { cursor:move !important; padding:5px 0 !important; }
 #rdr_sandbox div.rdr.rdr_indicator_details div.rdr_header   { padding:3px 0 !important; }
-#rdr_sandbox div.rdr div.rdr_footer                         { background:#f0f0f0 !important; position:absolute !important; height:18px !important; padding:3px 6px 6px !important; bottom:0 !important; width:95% !important; display:none !important;}
+#rdr_sandbox div.rdr div.rdr_footer                         { background:#f0f0f0 !important; position:absolute !important; height:18px !important; padding:3px 6px 6px !important; bottom:0 !important; width:95% !important; display:none;;}
 #rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace                { background:#f0f0f0 !important; position:relative !important; overflow:hidden !important;}
 #rdr_sandbox div.rdr div.rdr_body   { max-height:266px !important; margin:0 4px !important; float:left !important; display:block !important;}
 #rdr_sandbox div.rdr div.rdr_body div.jspPane   { margin:0 !important; }
 #rdr_sandbox div.rdr div.jspScrollable   { outline:none!important; }
 
-#rdr_sandbox div.rdr div.rdr_body div.jspHorizontalBar  { display:none !important; }
+#rdr_sandbox div.rdr div.rdr_body div.jspHorizontalBar  { display:none;; }
 #rdr_sandbox div.rdr div.rdr_body div.jspVerticalBar    { z-index:10001 !important; right:4px !important; }
 #rdr_sandbox div.rdr_indicator_details_for_media div.rdr_body div.jspVerticalBar {
     margin-left:-17px !important;
@@ -426,12 +424,12 @@ table.rdr_tags tr.rdr_nextSteps hr{
     width: 98% !important;
 }
 table.rdr_tags tr.rdr_nextSteps.rdr_wide hr.rdr_first{
-    display:none !important;
+    display:none;;
 }
 table.rdr_tags tr.rdr_nextSteps.rdr_wide hr.rdr_second{
     clear:both !important;
     margin-top:25px !important; /*assumes this is a second row... */
-    display:none !important;
+    display:none;;
 }
 table.rdr_tags tr.rdr_nextSteps a{
     font-style:normal !important;
@@ -551,7 +549,7 @@ table.rdr_tags div.rdr_cell_wrapper span.rdr_comment_hover {
     top:-1px !important;
     z-index:11000 !important;
     background:#fff !important;
-    display:none !important;
+    display:none;;
     white-space:nowrap !important;
     cursor:pointer !important;
     -webkit-border-radius:0 4px 4px 0 !important;
@@ -591,7 +589,7 @@ table.rdr_tags td.rdr_has_pillHover:hover div.rdr_cell_wrapper span.rdr_comment_
 }
 table.rdr_tags td.rdr_hover div.rdr_cell_wrapper span.rdr_comment_indicator,
 table.rdr_tags td:hover div.rdr_cell_wrapper span.rdr_comment_indicator {
-    display:none !important;
+    display:none;;
 }
 table.rdr_tags span.rdr_comment_hover:hover {
     color:#008be4 !important;
@@ -681,7 +679,7 @@ div.rdr a.rdr_tag.rdr_custom_tag input.rdr_default {
 div.rdr a.rdr_tag.rdr_custom_tag:hover,
 div.rdr a.rdr_tag.rdr_custom_tag.rdr_hover { color:#008be4 !important; background:#fff !important; -webkit-box-shadow:0px 0px 4px #aaa !important; -moz-box-shadow:0px 0px 4px #aaa !important; box-shadow:0px 0px 4px #aaa !important; }
 
-div.rdr.rdr-summary div.rdr_info            { clear: both !important; margin: 5px !important; padding: 5px !important; border: 1px solid #008be4 !important; background:#fff !important; display:none !important; }
+div.rdr.rdr-summary div.rdr_info            { clear: both !important; margin: 5px !important; padding: 5px !important; border: 1px solid #008be4 !important; background:#fff !important; display:none;; }
 div.rdr.rdr-summary div.rdr_info em         { font-style:italic !important; }
 div.rdr.rdr-summary div.rdr_info ins        { text-decoration:none !important; }
 div.rdr.rdr-summary div.rdr_info ins img    { margin:0 !important; padding:0 !important; border:0 !important;}
@@ -750,7 +748,7 @@ div.rdr.rdr-summary div.rdr-see-more {
     position:absolute !important;
     left:6px !important;
     bottom:10px !important;
-    display:none !important;
+    display:none;;
 }
 div.rdr.rdr-summary.rdr-too-many-reactions div.rdr-see-more {
     display:block !important;
@@ -921,9 +919,9 @@ div.rdr_indicator_for_media .rdr .rdr_brbl   { -moz-border-radius-bottomleft:4px
 div.rdr_indicator {
     /*start with 0 opacity so it can fade in properly*/
     /* opacity for .rdr_indicator set in js instead of here. Fade it in on load so we can still use display:inline !important; */
-    opacity:0.0 !important;
-    -moz-opacity:0.0 !important;
-    -khtml-opacity:0.0 !important;
+    opacity:0.0;;
+    -moz-opacity:0.0;;
+    -khtml-opacity:0.0;;
     position: relative !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -992,7 +990,7 @@ div.rdr_indicator_for_text{
     background-image: -moz-linear-gradient(center bottom , #ECECEC 0%, #fff 39%) !important;
     margin:-5px 0 0 -4px !important;
     overflow:hidden !important;
-    display:none !important; /*start with them hidden by default - will override with js*/
+    display:none;; /*start with them hidden by default - will override with js*/
     -webkit-user-select: none !important;
     -khtml-user-select: none !important;
     -moz-user-select: none !important;
@@ -1090,7 +1088,7 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
 /*now override styles for the image containers*/
 div.rdr_indicator_for_media {
     /*display:absolute !important;*/
-    display:none !important;
+    display:none;;
     opacity:1 !important;
     -moz-opacity:1 !important;
     -khtml-opacity:1 !important;
@@ -1248,4 +1246,19 @@ Then Look Ahead: Not ' !important;'
 Note that I would have made the word !important, but for some reason
 sublime seems to not like the ! character, but it also won't escape it.
 Doesn't matter though, important matches fine.
+*/
+
+/*
+attributes to generally keep unimportant - use ;;
+
+display:none;;
+visibility: visible/hidden/collapse;;
+opacity: x;;
+-moz-opacity: x;;
+filter:alpha(opacity=xx);;
+
+//useful regex for checking the doc
+display:\s*none\s!important
+...
+
 */

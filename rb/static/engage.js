@@ -4428,11 +4428,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 indicatorBodyWidth = $indicator_body.width(),
                                 modIEHeight = ( $R.browser.msie && parseInt( $R.browser.version, 10 ) < 9 ) ? 10:0;
 
-                            $indicator.css({
-                                left: -11,
-                                top: $container.height()+modIEHeight-10
-                            })//chain
-                            .data('top', parseInt( $indicator.css('top') ));
+                            var cssTop = $container.height()+modIEHeight-10;
+                            $indicator.data('top', cssTop);
+
+                            RDR.util.cssSuperImportant( $indicator, {
+                                left: 0,
+                                top: cssTop
+                            });
 
                             var has_inline_indicator = (summary.kind=="text") ? false:true; //$container.data('inlineIndicator'); //boolean                        
                             if(has_inline_indicator){
