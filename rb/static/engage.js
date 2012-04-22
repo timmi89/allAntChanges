@@ -2,7 +2,13 @@ var RDR = {}, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
 $R = {}, //init var: our clone of jQuery
 RDR_scriptPaths = {},
-RDR_offline = ( window.location.href.indexOf('local.readrboard.com') != -1 ) ? true:false,
+RDR_offline = !!(
+    //see the readrmarklet file for why we use http:--
+    document.getElementById("http:--localhost:8080-static-engage.js") ||
+    document.getElementById("http:--local.readrboard.com:8080-static-engage.js") ||
+    document.domain == "local.readrboard.com" ||
+    document.domain == "localhost"
+),
 RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com",
 RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/",
 RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
