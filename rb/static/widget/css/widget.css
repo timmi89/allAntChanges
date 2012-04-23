@@ -12,9 +12,9 @@
 #rdr_sandbox{
     /*temp reset*/
     position:absolute !important;
-    margin:0;
+    margin:0 !important;
     padding:0 !important;
-    top:0;
+    top:0 !important;
     left:0 !important;
 }
 
@@ -531,7 +531,7 @@ table.rdr_tags div.rdr_cell_wrapper {
     height:27px !important;
     position:relative !important;
     padding:3px 0 0 !important;
-    border:1px solid transparent;
+    border:1px solid transparent !important;
     -webkit-border-radius:4px 0 0 4px !important;
     -moz-border-radius:4px 0 0 4px !important;
     border-radius:4px 0 0 4px !important;
@@ -644,10 +644,10 @@ table.rdr_tags a.rdr_tag span.rdr_tag_name {
     display:inline-block !important;
     float:left !important;
     margin-top:4px !important;
-    min-width:66px;
+    min-width:66px !important;
     overflow-x:hidden !important;
-    position:relative;
-    z-index:1;
+    position:relative !important;
+    z-index:1 !important;
 }
 table.rdr_tags a.rdr_tag span.rdr_tag_count {
     min-width:5px !important;
@@ -657,13 +657,13 @@ table.rdr_tags a.rdr_tag span.rdr_tag_count {
 }
 table.rdr_tags span.rdr_comment_indicator {
     display:block !important;
-    position:absolute;
+    position:absolute !important;
     background:url("../images/widget_icons.png") no-repeat scroll -182px -14px transparent !important;
-    right:-5px;
-    top:-4px;
-    width:10px;
-    height:10px;
-    z-index:3;
+    right:-5px !important;
+    top:-4px !important;
+    width:10px !important;
+    height:10px !important;
+    z-index:3 !important;
 }
 
 div.rdr a.rdr_tag span.rdr_tag_count    { 
@@ -679,8 +679,8 @@ div.rdr a.rdr_tag span.rdr_tag_count    {
     margin-right: -5px !important;
     padding: 4px 5px !important;
     text-align: center !important;
-    position:relative;
-    z-index:2;
+    position:relative !important;
+    z-index:2 !important;
 }
 
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
@@ -1229,42 +1229,3 @@ div.rdr_indicator span.rdr_count,
     /*position:fixed !important;*/
     z-index: 12101 !important;
 }
-
-/*
-Regex to add !important everywhere (except where noted not to as indicated by a ;;)
-(?<!\<important\>)(?<! !important;) !important;(?! !important;)
---> replace with " !important;"
-//note the space at the beginning
-
-
-
-//broken out into components
-
-Look Behind: Not the word 'important'
-And also, Look Behind: Not ' !important;'
-
-Then ' !important;'
-
-Then Look Ahead: Not ' !important;'
-
-Note that I would have made the word !important, but for some reason
-sublime seems to not like the ! character, but it also won't escape it.
-Doesn't matter though, important matches fine.
-*/
-
-/*
-attributes to generally keep unimportant - use ;;
-
-display:none;;
-visibility: visible/hidden/collapse;;
-opacity: x;;
--moz-opacity: x;;
-filter:alpha(opacity=xx);;
-height:0;;
-
-
-//useful regex for checking the doc
-display:\s*none\s!important
-...
-
-*/
