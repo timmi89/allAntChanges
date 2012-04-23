@@ -488,7 +488,7 @@ div.rdr.rdr-summary a.rdr_tag {
 }
 
 div#rdr_sandbox div.rdr_tag_details {
-  /*display:none;*/
+  display:none;
   position:absolute !important;
   background:#fff;
   z-index:100000;
@@ -713,7 +713,7 @@ div.rdr.rdr_tag_details a.rdr_tag span.rdr_tag_count    {
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
   background:none !important;
   font-size:10px !important;
-  color:#9a9a9a !important;
+  color:#bbb !important;
   border-radius:0 !important;
 }
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count img.rdr_ui_arrow   {
