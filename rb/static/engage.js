@@ -6013,7 +6013,7 @@ function $RFunctions($R){
                         } else {
                             var peoples = ( tagCount == 1 ) ? "person":"people",
                                 message = tagCount+' '+peoples+' had this reaction.',  // <br/>Hold your mouse here to see why.
-                                countMessage = '('+tagCount+')';
+                                countMessage = tagCount;
                         }
                         var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'">'+tag.body+'</a>').data('tag_id',tag.id).data('tag_body',tag.body).data('tag_count',tagCount);
 
