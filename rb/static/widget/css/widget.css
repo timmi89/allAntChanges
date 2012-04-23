@@ -713,7 +713,7 @@ div.rdr.rdr_tag_details a.rdr_tag span.rdr_tag_count    {
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
   background:none !important;
   font-size:10px !important;
-  color:#bbb !important;
+  color:#aaa !important;
   border-radius:0 !important;
 }
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count img.rdr_ui_arrow   {
