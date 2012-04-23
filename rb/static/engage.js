@@ -6081,7 +6081,7 @@ function $RFunctions($R){
                                         message = tag_count+' '+peoples+' had this reaction.<br/>Click to agree.';
                                 }
 
-                                var $pill = $('<a class="rdr_tag rdr_tag_'+tag_id+'" title="'+message+'">'+tag_body+'</a>').data('tag_id',tag_id).data('hash',hash).data('page_id',page.id);
+                                var $pill = $('<a class="rdr_tag rdr_tag_'+tag_id+'" xtitle="'+message+'">'+tag_body+'</a>').data('tag_id',tag_id).data('hash',hash).data('page_id',page.id);
 
                                 $span = $('<span class="rdr_tag_count">'+tag_count+'</span>');
 
