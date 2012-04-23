@@ -488,7 +488,7 @@ div.rdr.rdr-summary a.rdr_tag {
 }
 
 div#rdr_sandbox div.rdr_tag_details {
-  display:none;
+  /*display:none;*/
   position:absolute !important;
   background:#fff;
   z-index:100000;
@@ -702,11 +702,13 @@ div.rdr a.rdr_tag span.rdr_tag_count    {
   display: inline-block !important;
   font-size: 11px !important;
   margin-right: -5px !important;
-  margin-left: 5px !important;
   padding: 4px 5px !important;
   text-align: center !important;
   position:relative !important;
   z-index:2 !important;
+}
+div.rdr.rdr_tag_details a.rdr_tag span.rdr_tag_count    {
+  margin-left: 5px !important;
 }
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
   background:none !important;

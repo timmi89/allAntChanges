@@ -5429,7 +5429,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
 
                     //div to hold summary tag detail "menus"
-                    $('<div id="rdr_summary_tag_details" />').appendTo( $('#rdr_sandbox') );
+                    $('#rdr_sandbox').append('<div id="rdr_summary_tag_details" />');
                     if ( ($('div.rdr-summary').length===0) || ( $('div.rdr-summary').length < $(RDR.group.post_selector).length ) ) {
                         widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
                     }
@@ -6021,7 +6021,7 @@ function $RFunctions($R){
 
                         $a.append( $span );
 
-                        var $details = $('<div class="rdr rdr_tag_details" id="rdr_tag_'+tag.id+'_details"/></div>').hover(
+                        var $details = $('<div class="rdr rdr_tag_details" id="rdr_tag_'+tag.id+'_details"/>').hover(
                             function() {
 
                                 $(this).addClass('rdr_live_hover');
@@ -6049,7 +6049,7 @@ function $RFunctions($R){
                                     tag_id = $this.data('tag_id'),
                                     tag_body = $this.data('tag_body'),
                                     tag_count = $this.data('tag_count'),
-                                    $details = $('#rdr_tag_'+tag_id+'_details').data('container',hash).data('kind', 'page'), // hardcoding page since this is only used in the button to +1 a page reaction
+                                    $details = $('#rdr_tag_'+tag_id+'_details'), // hardcoding page since this is only used in the button to +1 a page reaction
                                     $detailsHtml = $('<div/>'),
                                     counts = {
                                         "img":0,
@@ -6058,7 +6058,9 @@ function $RFunctions($R){
                                         "page":(tag_count=="+")?0:tag_count
                                     },
                                     otherCountsWidth = 0;
-                                
+
+                                $details.data('container',hash).data('kind', 'page'); // hardcoding page since this is only used in the button to +1 a page reaction
+
                                 $.each( page.containers, function( idx, container ) {
                                     if ( RDR.summaries && RDR.summaries[container.hash] && RDR.summaries[container.hash].top_interactions ) {
                                         if ( RDR.summaries[container.hash].top_interactions.tags && RDR.summaries[container.hash].top_interactions.tags[tag_id] ) {
@@ -6069,8 +6071,8 @@ function $RFunctions($R){
                                 });
 
                                 var $page = $('<div class="rdr_counts rdr_page"><img src="'+RDR_staticUrl+'site/images/type_page.png"/> <span class="rdr_details_pill"/></div>');
+                                
                                 // pill here
-                                // var $pill = RDR.rindow.pill.make( tag, $page.find('span.rdr_details_pill'), $details, false );
                                 if ( counts.page == 0 ) {
                                     var tag_count = '+';
                                 } else {
@@ -6084,8 +6086,6 @@ function $RFunctions($R){
                                 $span = $('<span class="rdr_tag_count">'+tag_count+'</span>');
 
                                 $pill.append( $span );
-
-                                // $pill.tooltip();
                                 
                                 // old "click to react" functionality
                                 $pill.click( function() {
@@ -6125,6 +6125,7 @@ function $RFunctions($R){
 
                                     $this.addClass('rdr_live_hover');
                                     $details.html($detailsHtml).css('top', offsets.top+20 + 'px').css('left',offsets.left + 'px').show();
+                                    // alert( $detailsHtml.html() );
                                     
                                     $.each($details.find('div.rdr_counts_other div.rdr_counts'), function() {
                                         otherCountsWidth += $(this).width();
