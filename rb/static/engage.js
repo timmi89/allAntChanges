@@ -6081,7 +6081,7 @@ function $RFunctions($R){
                                         message = tag_count+' '+peoples+' had this reaction.<br/>Click to agree.';
                                 }
 
-                                var $pill = $('<a class="rdr_tag rdr_tag_'+tag_id+'" xtitle="'+message+'">'+tag_body+'</a>').data('tag_id',tag_id).data('hash',hash).data('page_id',page.id);
+                                var $pill = $('<a class="rdr_tag rdr_tag_'+tag_id+'">'+tag_body+'</a>').data('tag_id',tag_id).data('hash',hash).data('page_id',page.id).data('tag_count',tag_count);;
 
                                 $span = $('<span class="rdr_tag_count">'+tag_count+'</span>');
 
@@ -6093,7 +6093,14 @@ function $RFunctions($R){
                                     var page_id = parseInt( $(this).data('page_id') );
                                     args = { tag:tag, page_id:page_id, uiMode:'writeMode', kind:"page", hash:hash };
                                     RDR.actions.interactions.ajax( args, 'react', 'create');
-                                });
+                                }).hover(
+                                    function() {
+                                        $(this).find('span.rdr_tag_count').text('+');
+                                    },
+                                    function() {
+                                        $(this).find('span.rdr_tag_count').text( $(this).data('tag_count') );
+                                    }
+                                );
                                 $page.find('span.rdr_details_pill').append($pill);
                                 if ( counts.page > 0 ) {
                                     $page.addClass('rdr_tooltip_this').attr('title', 'There are ('+counts.page+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions to this page.<br/>Click to agree.');
