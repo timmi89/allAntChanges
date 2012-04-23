@@ -6008,7 +6008,7 @@ function $RFunctions($R){
                         tagCount = ( tag.tag_count ) ? tag.tag_count:"+";
 
                         if ( tagCount == "+" ) {
-                            var message = 'Click to add this reaction here',
+                            var message = '',
                                 countMessage = '<img class="rdr_ui_arrow" src="'+RDR_staticUrl+'widget/images/blank.png" />';
                         } else {
                             var peoples = ( tagCount == 1 ) ? "person":"people",
