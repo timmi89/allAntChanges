@@ -715,6 +715,7 @@ div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
   font-size:10px !important;
   color:#aaa !important;
   border-radius:0 !important;
+  min-width:7px !important;
 }
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count img.rdr_ui_arrow   {
   background:url(../images/summary_box_arrow.png) 0px -8px no-repeat;
