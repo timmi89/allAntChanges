@@ -556,7 +556,7 @@ section[role="main"] div.card header h1:before {
     
 }
 section[role="main"] div.card div.date            { float:right; font-size:10px; margin-right:5px; margin-top:8px;}
-section[role="main"] div.card div.block_content   { font-size:11px; display:none; position:absolute; right:10px; white-space: pre;}
+section[role="main"] div.card div.block_content   { font-size:11px; display:none; position:absolute; right:10px; white-space: pre;bottom:5px;}
 section[role="main"] div.card:hover div.block_content   { display:block; }
 section[role="main"] div.card div.block_content a { color:red; }
 
@@ -565,7 +565,7 @@ section[role="main"] div.card div.meta 						{ clear:both; font-size:11px; margi
 section[role="main"] div.card div.meta div.publisher		{ float:left; margin-right:10px; }
 section[role="main"] div.card div.meta div.title      { }
 section[role="main"] div.card div.meta div.title a    { color:#999; }
-section[role="main"] div.card div.meta div.title a.external_link		{ font-size:10px; margin-left:10px; }
+section[role="main"] div.card div.meta div.title a.external_link		{  display: block;float: right;font-size: 20px;margin-left: 10px; }
 
 section[role="main"] div.card.txt div.content						{ xborder-top: 1px solid #fff; margin:0 5px 0; padding-top:9px;}
 section[role="main"] div.card.txt div.content div.content_type		{ width:25px; height:47px; margin:5px 8px 0 0; background:url(../images/type_text.png) top left no-repeat; text-indent:-9999px; float:left; }
