@@ -37,7 +37,8 @@ html.dailycandy #sidebar h3[role="profile_section_header"]	{display:block;}
 </style>
 {% if group %}
 <div id="avatar">
-	<img src="{{ group.logo_url_lg }}" />
+  {% if group.logo_url_lg %}<img src="{{ group.logo_url_lg }}" />{% endif %}
+	{% if !group.logo_url_lg %}{{ group.name }}{% endif %}
 </div>
 
 {% endif %}
