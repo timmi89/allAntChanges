@@ -2423,6 +2423,8 @@ function readrBoard($R){
                 $(document).on('click.rdr',function(event) {
                     var $mouse_target = $(event.target);
 
+                    // clear any errant tooltips
+                    $('div.rdr_twtooltip').remove();
                     if ( !$mouse_target.parents().hasClass('rdr')) {
                         RDR.rindow.closeAll();
                         $('div.rdr_indicator_details_for_media').each( function() {
@@ -6103,26 +6105,26 @@ function $RFunctions($R){
                                 );
                                 $page.find('span.rdr_details_pill').append($pill);
                                 if ( counts.page > 0 ) {
-                                    $page.addClass('rdr_tooltip_this').attr('title', 'There are ('+counts.page+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions to this page.<br/>Click to agree.');
+                                    $page.addClass('rdr_tooltip_this').attr('title', 'There are ('+counts.page+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions to this <strong>page</strong>.<br/>Click to agree.');
                                 } else {
-                                    $page.addClass('rdr_tooltip_this').attr('title', 'Click to add this reaction to the page.');
+                                    $page.addClass('rdr_tooltip_this').attr('title', 'Click to add this reaction to the <strong>page</strong>.');
                                 }
                                 $detailsHtml.append( $page );
 
                                 if ( counts.text > 0 || counts.img > 0 || counts.media > 0 ) {
                                     $detailsHtml.append('<div class="rdr_counts_other" />');
                                     if ( counts.text > 0 ) {
-                                        var $text = $('<div class="rdr_counts rdr_text rdr_tooltip_this" title="There are ('+counts.text+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on text in this page."><img src="'+RDR_staticUrl+'site/images/type_text.png"/> <strong>'+counts.text+'</strong></div>');
+                                        var $text = $('<div class="rdr_counts rdr_text rdr_tooltip_this" title="There are ('+counts.text+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on <strong>text</strong> in this page."><img src="'+RDR_staticUrl+'site/images/type_text.png"/> <strong>'+counts.text+'</strong></div>');
                                         $detailsHtml.find('div.rdr_counts_other').append( $text );
                                     }
 
                                     if ( counts.img > 0 ) {
-                                        var $img = $('<div class="rdr_counts rdr_image rdr_tooltip_this" title="There are ('+counts.img+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on images in this page."><img src="'+RDR_staticUrl+'site/images/type_img.png"/> <strong>'+counts.img+'</strong></div>');
+                                        var $img = $('<div class="rdr_counts rdr_image rdr_tooltip_this" title="There are ('+counts.img+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on <strong>images</strong> in this page."><img src="'+RDR_staticUrl+'site/images/type_img.png"/> <strong>'+counts.img+'</strong></div>');
                                         $detailsHtml.find('div.rdr_counts_other').append( $img );
                                     }
 
                                     if ( counts.media > 0 ) {
-                                        var $media = $('<div class="rdr_counts rdr_media rdr_tooltip_this" title="There are ('+counts.media+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on videos &amp; other media in this page."><img src="'+RDR_staticUrl+'site/images/type_media.png"/> <strong>'+counts.media+'</strong></div>');
+                                        var $media = $('<div class="rdr_counts rdr_media rdr_tooltip_this" title="There are ('+counts.media+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on <strong>videos &amp; other media</strong> in this page."><img src="'+RDR_staticUrl+'site/images/type_media.png"/> <strong>'+counts.media+'</strong></div>');
                                         $detailsHtml.find('div.rdr_counts_other').append( $media );
                                     }
 
