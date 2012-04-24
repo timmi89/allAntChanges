@@ -1,7 +1,7 @@
 {% load static %}
 <style type="text/css">
 #sidebar		{padding:20px 0 0 0;}
-#sidebar h2		{font-size:46px; font-weight:normal; margin:0 10px;}
+#sidebar h2		{font-size:26px; font-weight:normal; margin:0 10px; max-width:160px;}
 #sidebar h3		{font-size:16px; font-weight:100; margin:0 10px; font-family:Arial; color:#5f5f5f; text-align:center;}
 #sidebar #avatar      {text-align:center; margin:0 10px;}
 #sidebar #avatar img			{max-width:160px;}
@@ -38,7 +38,7 @@ html.dailycandy #sidebar h3[role="profile_section_header"]	{display:block;}
 {% if group %}
 <div id="avatar">
   {% if group.logo_url_lg %}<img src="{{ group.logo_url_lg }}" />{% endif %}
-	{% if !group.logo_url_lg %}{{ group.name }}{% endif %}
+	{% if not group.logo_url_lg %}<h2>{{ group.name }}</h2>{% endif %}
 </div>
 
 {% endif %}
@@ -86,7 +86,7 @@ html.dailycandy #sidebar h3[role="profile_section_header"]	{display:block;}
 	  All Reactions</a>
     </li>
 
-	<!-- <li role="tags"><a href="{% if profile_user %}/user/{{ profile_user.id }}{% endif %}/tags/">Tags</a></li> -->
+	<!-- <li role="tags"><a href="{% if profile_user %}/user/{{ profile_user.id }}{% endif %}/tags/">Tags</a></li>
 	
     <!-- [ec] commenting this out until it works-->
     <!--
