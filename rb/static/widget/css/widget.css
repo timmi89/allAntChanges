@@ -379,6 +379,9 @@ table.rdr_tags {
     float:left !important;
 }
 
+table.rdr_tags td {
+  background:#f7f7f7 !important;
+}
 table.rdr_tags td.rdr_activePill a.rdr_tag {
     background: -webkit-gradient(linear, center top, center bottom, from(#e8e8e8), to(#fff)) !important;
     background: -moz-linear-gradient(center top , #e8e8e8, #ffffff) repeat scroll 0 0 transparent !important;
@@ -809,7 +812,7 @@ div.rdr.rdr-summary div.rdr_info a.rdr_share_link img    { max-width:20px;margin
 /* forms */
 #rdr_sandbox div.rdr textarea,
 #rdr_sandbox div.rdr input[type="text"]  {font-size:14px; color:#666; -moz-box-shadow:inset 0px 0px 5px #ddd;-webkit-box-shadow:inset 0px 0px 5px #ddd; box-shadow:inset 0px 0px 5px #ddd; border:1px solid #ddd; height:auto; width:auto; font-family: arial;}
-#rdr_sandbox div.rdr tr.rdr_wide div.rdr_commentBox input[type="text"]  { width:100% !important; margin-bottom:5px !important; }
+#rdr_sandbox div.rdr tr.rdr_wide div.rdr_commentBox input[type="text"]  { width:100% !important; margin-bottom:5px !important; background-color:#fff !important; }
 #rdr_sandbox div.rdr button              {font-size:11px; }
 
 /* summary widget */
@@ -847,7 +850,7 @@ div.rdr.rdr-summary.rdr-too-many-reactions div.rdr-see-more {
 }
 
 div.rdr.rdr-summary table { border:0 !important;padding:0 !important; margin:2px 0 0px 5px !important; width:auto !important; }
-div.rdr.rdr-summary table td { border:0 !important;padding:0 !important; margin:0 !important; text-align:left !important; vertical-align: top !important;}
+div.rdr.rdr-summary table td { border:0 !important;padding:0 !important; margin:0 !important; text-align:left !important; vertical-align: top !important; background:#f7f7f7 !important;}
 div.rdr.rdr-summary.rdr-combo-box table td div.rdr-fb-twitter { width:195px !important; padding: 6px 0 0 4px !important;}
 div.rdr.rdr-summary.rdr-combo-box table td div.rdr-fb-like,
 div.rdr.rdr-summary.rdr-combo-box table td div.rdr-gplus,
