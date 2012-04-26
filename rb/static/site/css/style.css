@@ -562,7 +562,8 @@ section[role="main"] div.card div.block_content a { color:red; }
 
 section[role="main"] div.card header h1	span 	{ font-size:20px; }
 section[role="main"] div.card div.meta 						{ clear:both; font-size:11px; margin:15px 5px 0; overflow:auto;}
-section[role="main"] div.card div.meta div.publisher		{ float:left; margin-right:10px; }
+section[role="main"] div.card div.meta div.publisher    { float:left; margin-right:10px; }
+section[role="main"] div.card div.meta div.publisher img	{ max-width:80px; }
 section[role="main"] div.card div.meta div.title      { }
 section[role="main"] div.card div.meta div.title a    { color:#999; }
 section[role="main"] div.card div.meta div.title a.external_link		{  display: block;float: right;font-size: 20px;margin-left: 10px; }
