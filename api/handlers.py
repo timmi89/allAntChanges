@@ -453,3 +453,47 @@ class SettingsHandler(AnonymousBaseHandler):
         settings_dict['blessed_tags'] = blessed_tags
         
         return settings_dict
+
+
+class FollowHandler(InteractionHandler):
+
+    @status_response
+    @json_data_post
+    def create(self, request, data):
+        cookie_user = checkCookieToken(request)
+        if cookie_user is None:
+            #Not logged in?
+            pass
+        owner = SocialUser.objects.get(user=cookie_user)
+        type = data['type']
+        follow_id = data['follow_id']
+        #check type against follow types
+        #verify follow is valid (type and id object exists)
+        follow = Follow.objects.create(owner = owner, type = type, follow_id = follow_id)
+        #if type == 'usr'
+            #send followed user notification
+        follow_dict = model_to_dict(
+            follow,
+            exclude=[]
+        )
+        return follow_dict
+
+    @status_response
+    @json_data
+    def read(self, request, data):
+        cookie_user = checkCookieToken(request)
+        if cookie_user is None:
+            #Not logged in?
+            pass
+        
+        social_user_id = data['social_user_id']
+        owner = SocialUser.objects.get(id = social_user_id)
+        
+        requested_types = data['types']
+        follows = {}
+        for type in requested_types:
+            follows[type] = []
+            follows = Follow.objects.filter(owner = owner, type = type) 
+            for follow in follows:
+                follows[type].append(model_to_dict(follow))
+        return follows

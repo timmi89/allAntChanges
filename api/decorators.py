@@ -43,3 +43,18 @@ def json_data(func):
         
         return func(self, request, data, *args, **kwargs)
     return wrapper
+
+def json_data_post(func):
+    def wrapper(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.POST['json'])
+        except KeyError:
+            raise JSONException("No data dude! -- data must be passed in a json object")
+        except ValueError:
+            raise JSONException("Could not parse JSON")
+        except:
+            raise JSONException("Shit went down trying to get that JSON bro")
+        
+        return func(self, request, data, *args, **kwargs)
+    return wrapper
+

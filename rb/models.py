@@ -365,3 +365,21 @@ class SocialAuth(models.Model):
     class Meta:
         unique_together = ('auth_token', 'expires')
         
+        
+class Follow(models.Model):
+    FOLLOW_TYPES = (
+        ('pag', 'page'),
+        ('usr', 'user'),
+        ('grp', 'group'),
+    )
+    owner = models.ForeignKey(SocialUser, related_name='follow_owner')
+    type = models.CharField(max_length=3, choices=FOLLOW_TYPES)
+    follow_id = models.IntegerField(default=0)
+    
+    def __unicode__(self):
+        return unicode(str(self.owner.id) + " " + type + " " + str(follow_id))
+
+    class Meta:
+        unique_together = ('owner', 'type', 'follow_id')
+
+        

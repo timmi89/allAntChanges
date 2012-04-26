@@ -21,6 +21,7 @@ Vote = Resource(handler=VoteHandler)
 Moderate = Resource(handler=ModerationHandler)
 Privacy = Resource(handler=PrivacyHandler)
 Confirmation = Resource(handler=ConfirmUserHandler)
+Follow = Resource(handler=FollowHandler)
 
 urlpatterns = patterns('',
     url(r'^settings/$', Settings),
@@ -64,5 +65,6 @@ urlpatterns = patterns('',
     url(r'^admin_request/', FBLogin, kwargs={"admin_req": True}),
     url(r'^moderate/toggle/', Moderate),
     url(r'^privacy/toggle/', Privacy),
+    url(r'^follow/', Follow),
     #url(r'^comments/', Comments),
 )
