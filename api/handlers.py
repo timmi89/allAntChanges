@@ -462,8 +462,7 @@ class FollowHandler(InteractionHandler):
     def create(self, request, data):
         cookie_user = checkCookieToken(request)
         if cookie_user is None:
-            #Not logged in?
-            pass
+            return {'message':'not_logged_in'}
         owner = SocialUser.objects.get(user=cookie_user)
         type = data['type']
         follow_id = data['follow_id']
@@ -488,12 +487,27 @@ class FollowHandler(InteractionHandler):
         
         social_user_id = data['social_user_id']
         owner = SocialUser.objects.get(id = social_user_id)
-        
+        page_num = data['page_num']
         requested_types = data['types']
         follows = {}
-        for type in requested_types:
-            follows[type] = []
-            follows = Follow.objects.filter(owner = owner, type = type) 
-            for follow in follows:
-                follows[type].append(model_to_dict(follow))
+        #maybe just do this all in one query... may avoid problems with paginator and interpolation.
+        #for type in requested_types:
+        follows['page'] = []
+        follows['page_num'] = page_num
+        follow_objects = Follow.objects.filter(owner = owner, type__in  = requested_types) 
+            
+        follows_objects_paginator = Paginator(interactions, 20)
+
+        try: page_number = int(page_num)
+        except ValueError: page_number = 1
+
+        try: current_page = follows_paginator.page(page_number)
+        except (EmptyPage, InvalidPage): current_page = paginator.page(paginator.num_pages)
+        
+        for follow in current_page:
+            follows['page'].append(model_to_dict(follow))
+            
         return follows
+    
+    
+    
