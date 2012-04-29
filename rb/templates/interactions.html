@@ -70,7 +70,7 @@ var comments = [],
                 "user_profile_link" :   "/user/{{interaction.user.id}}",
                 "user_avatar"       :   "{{ interaction.user.social_user.img_url }}",
                 "user_name"         :   "{{ interaction.user.social_user.full_name }}",
-                "comment"           :   "{% filter force_escape %}{{ interaction.interaction_node.body|linebreaksbr }}{% endfilter %}",
+                "comment"           :   "{% filter force_escape %}{{ interaction.interaction_node.body|linebreaksbr|escapejs }}{% endfilter %}",
                 "moderator"         :   {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %}
             };
             comments.push(comment);
