@@ -1859,12 +1859,12 @@ function readrBoard($R){
 
                 $('html,body').animate({scrollTop: scrollTarget}, 1000);
 
-                if ( data.page_hash && data.page_hash.length > 1 ) {
-                    // TODO SHARE HACK REMOVE THIS DAILYCANDY ONLY
-                    var p = data.page_hash;
-                    var slide = parseInt( p.substr( p.indexOf('=')+1 ) ) - 1;
-                    DAILYCANDYCYCLE( slide );
-                }
+                // if ( data.page_hash && data.page_hash.length > 1 ) {
+                //     // TODO SHARE HACK REMOVE THIS DAILYCANDY ONLY
+                //     var p = data.page_hash;
+                //     var slide = parseInt( p.substr( p.indexOf('=')+1 ) ) - 1;
+                //     DAILYCANDYCYCLE( slide );
+                // }
             },
             getSharedLinkInfo: function( data ){
                 //some condition
@@ -1880,8 +1880,10 @@ function readrBoard($R){
 
                 //note: the "\054" is actually the octal for a comma.  The back end is passing it back that way. It's working fine though.
                 //, so it seems that "2:10\0542:32" == "2:10,2:32"
-                RDR.session.alertBar.make('fromShareLink', data);
-                return true; //could return something more useful if we need it.
+                if ( $.cookie('content_type') != 'pag' ) {
+                    RDR.session.alertBar.make('fromShareLink', data);
+                    return true; //could return something more useful if we need it.
+                }
             },
             getUser: function(args, callback) {
                 if ( callback && args ) {
@@ -2423,6 +2425,8 @@ function readrBoard($R){
                 $(document).on('click.rdr',function(event) {
                     var $mouse_target = $(event.target);
 
+                    // clear any errant tooltips
+                    $('div.rdr_twtooltip').remove();
                     if ( !$mouse_target.parents().hasClass('rdr')) {
                         RDR.rindow.closeAll();
                         $('div.rdr_indicator_details_for_media').each( function() {
@@ -3670,7 +3674,30 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                                 $span.show(200).css('visibility','visible');
 
-                                $summary_box.find('div.rdr_info').html( $('<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>') );
+                                var $pageTagResponse = $('<div><em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em>  <strong class="rdr_share_it">Share It:</strong> </div>');
+                                
+                                var socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
+
+                                // embed icons/links for diff SNS
+                                var shareHash = hash;
+                                $.each(socialNetworks, function(idx, val){
+                                    $pageTagResponse.append('<a href="http://' +val+ '.com" class="rdr_share_link"><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a>');
+                                    $pageTagResponse.find('a.rdr_share_link:last').click( function() {
+                                        RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
+
+                                        var title = $('meta[property="og:title"]').attr('content') ?
+                                            $('meta[property="og:title"]').attr('content') :
+                                                $('title').text() ?
+                                                $('title').text() : "";
+
+                                        RDR.actions.share_getLink({ hash:args.hash, kind:args.kind, sns:val, rindow:{}, tag:args.tag, content_node:{content:title,kind:"page"} }); // ugh, lots of weird data nesting
+                                        return false;
+                                    });
+                                });
+                                // $nextSteps.find('div.rdr_share_social').append( $shareLinks );
+
+                                $pageTagResponse.append( '<br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>' );
+                                $summary_box.find('div.rdr_info').html( $pageTagResponse );
                                 //todo: reconsider this method of liberally updating everything with updateContainerTrackers
                                 $summary_box.find('div.rdr_info').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
                             } else {
@@ -4900,10 +4927,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 } //end makeOtherComments
             },
             share_getLink: function(args) {
-
                 var hash = args.hash,
                     summary = RDR.summaries[hash],
-                    kind = summary.kind;
+                    kind = (args.kind) ? args.kind:summary.kind;
 
                 //example:
                 //tag:{body, id}, rindow:rindow, settings:settings, callback:
@@ -4962,7 +4988,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         "group_id" : RDR.group.id,
                         "page_id" : RDR.util.getPageProperty('id', hash),
                         "referring_int_id" : RDR.session.referring_int_id,
-                        "container_kind" : RDR.summaries[hash].kind
+                        "container_kind" : (args.kind=="page") ? "page":RDR.summaries[hash].kind  // TODO: a container kind of page should be handled better
                     };
 
                         // send the data!
@@ -5518,7 +5544,7 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?v1" );
+    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv1" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
 
@@ -5554,6 +5580,7 @@ function $RFunctions($R){
         //jQuery Plugins
         plugin_jquery_log($R);
         plugin_jquery_json($R);
+        plugin_jquery_cookie($R);
         plugin_jquery_postMessage($R);
         plugin_jquery_enhancedOffset($R);
         plugin_jquery_hashChange($R);
@@ -5748,6 +5775,69 @@ function $RFunctions($R){
             };
         }
         //end function plugin_jquery_json
+
+        function plugin_jquery_cookie($){
+            /*jslint browser: true */ /*global jQuery: true */
+
+            /**
+            * jQuery Cookie plugin
+            *
+            * Copyright (c) 2010 Klaus Hartl (stilbuero.de)
+            * Dual licensed under the MIT and GPL licenses:
+            * http://www.opensource.org/licenses/mit-license.php
+            * http://www.gnu.org/licenses/gpl.html
+            *
+            */
+
+            /*
+            * Get the value of a cookie with the given key.
+            *
+            * @desc Set the value of a cookie.
+            * @example $.cookie('the_cookie', 'the_value');
+            *
+            * @desc Create a cookie with all available options.
+            * @example $.cookie('the_cookie', 'the_value', { expires: 7, path: '/', domain: 'jquery.com', secure: true });
+            *
+            * @desc Create a session cookie.
+            * @example $.cookie('the_cookie', 'the_value');
+            *
+            * @desc Delete a cookie by passing null as value.
+            * @example $.cookie('the_cookie', null);
+            *
+            */
+            $.cookie = function (key, value, options) {
+                
+                // key and at least value given, set cookie...
+                if (arguments.length > 1 && String(value) !== "[object Object]") {
+                    options = $.extend({}, options);
+
+                    if (value === null || value === undefined) {
+                        options.expires = -1;
+                    }
+
+                    if (typeof options.expires === 'number') {
+                        var days = options.expires, t = options.expires = new Date();
+                        t.setDate(t.getDate() + days);
+                    }
+                    
+                    value = String(value);
+                    
+                    return (document.cookie = [
+                        encodeURIComponent(key), '=',
+                        options.raw ? value : encodeURIComponent(value),
+                        options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
+                        options.path ? '; path=' + options.path : '',
+                        options.domain ? '; domain=' + options.domain : '',
+                        options.secure ? '; secure' : ''
+                    ].join(''));
+                }
+
+                // key and possibly options given, get cookie...
+                options = value || {};
+                var result, decode = options.raw ? function (s) { return s; } : decodeURIComponent;
+                return (result = new RegExp('(?:^|; )' + encodeURIComponent(key) + '=([^;]*)').exec(document.cookie)) ? decode(result[1]) : null;
+            };
+        }
 
         function plugin_jquery_postMessage($){
             /*
@@ -6013,7 +6103,7 @@ function $RFunctions($R){
                         } else {
                             var peoples = ( tagCount == 1 ) ? "person":"people",
                                 message = tagCount+' '+peoples+' had this reaction.',  // <br/>Hold your mouse here to see why.
-                                countMessage = '('+tagCount+')';
+                                countMessage = tagCount;
                         }
                         var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'">'+tag.body+'</a>').data('tag_id',tag.id).data('tag_body',tag.body).data('tag_count',tagCount);
 
@@ -6081,7 +6171,7 @@ function $RFunctions($R){
                                         message = tag_count+' '+peoples+' had this reaction.<br/>Click to agree.';
                                 }
 
-                                var $pill = $('<a class="rdr_tag rdr_tag_'+tag_id+'" title="'+message+'">'+tag_body+'</a>').data('tag_id',tag_id).data('hash',hash).data('page_id',page.id);
+                                var $pill = $('<a class="rdr_tag rdr_tag_'+tag_id+'">'+tag_body+'</a>').data('tag_id',tag_id).data('hash',hash).data('page_id',page.id).data('tag_count',tag_count);;
 
                                 $span = $('<span class="rdr_tag_count">'+tag_count+'</span>');
 
@@ -6093,29 +6183,36 @@ function $RFunctions($R){
                                     var page_id = parseInt( $(this).data('page_id') );
                                     args = { tag:tag, page_id:page_id, uiMode:'writeMode', kind:"page", hash:hash };
                                     RDR.actions.interactions.ajax( args, 'react', 'create');
-                                });
+                                }).hover(
+                                    function() {
+                                        $(this).find('span.rdr_tag_count').text('+');
+                                    },
+                                    function() {
+                                        $(this).find('span.rdr_tag_count').text( $(this).data('tag_count') );
+                                    }
+                                );
                                 $page.find('span.rdr_details_pill').append($pill);
                                 if ( counts.page > 0 ) {
-                                    $page.addClass('rdr_tooltip_this').attr('title', 'There are ('+counts.page+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions to this page.<br/>Click to agree.');
+                                    $page.addClass('rdr_tooltip_this').attr('title', 'There are ('+counts.page+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions to this <strong>page</strong>.<br/>Click to agree.');
                                 } else {
-                                    $page.addClass('rdr_tooltip_this').attr('title', 'Click to add this reaction to the page.');
+                                    $page.addClass('rdr_tooltip_this').attr('title', 'Click to add this reaction to the <strong>page</strong>.');
                                 }
                                 $detailsHtml.append( $page );
 
                                 if ( counts.text > 0 || counts.img > 0 || counts.media > 0 ) {
                                     $detailsHtml.append('<div class="rdr_counts_other" />');
                                     if ( counts.text > 0 ) {
-                                        var $text = $('<div class="rdr_counts rdr_text rdr_tooltip_this" title="There are ('+counts.text+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on text in this page."><img src="'+RDR_staticUrl+'site/images/type_text.png"/> <strong>'+counts.text+'</strong></div>');
+                                        var $text = $('<div class="rdr_counts rdr_text rdr_tooltip_this" title="There are ('+counts.text+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on <strong>text</strong> in this page."><img src="'+RDR_staticUrl+'site/images/type_text.png"/> <strong>'+counts.text+'</strong></div>');
                                         $detailsHtml.find('div.rdr_counts_other').append( $text );
                                     }
 
                                     if ( counts.img > 0 ) {
-                                        var $img = $('<div class="rdr_counts rdr_image rdr_tooltip_this" title="There are ('+counts.img+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on images in this page."><img src="'+RDR_staticUrl+'site/images/type_img.png"/> <strong>'+counts.img+'</strong></div>');
+                                        var $img = $('<div class="rdr_counts rdr_image rdr_tooltip_this" title="There are ('+counts.img+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on <strong>images</strong> in this page."><img src="'+RDR_staticUrl+'site/images/type_img.png"/> <strong>'+counts.img+'</strong></div>');
                                         $detailsHtml.find('div.rdr_counts_other').append( $img );
                                     }
 
                                     if ( counts.media > 0 ) {
-                                        var $media = $('<div class="rdr_counts rdr_media rdr_tooltip_this" title="There are ('+counts.media+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on videos &amp; other media in this page."><img src="'+RDR_staticUrl+'site/images/type_media.png"/> <strong>'+counts.media+'</strong></div>');
+                                        var $media = $('<div class="rdr_counts rdr_media rdr_tooltip_this" title="There are ('+counts.media+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on <strong>videos &amp; other media</strong> in this page."><img src="'+RDR_staticUrl+'site/images/type_media.png"/> <strong>'+counts.media+'</strong></div>');
                                         $detailsHtml.find('div.rdr_counts_other').append( $media );
                                     }
 
@@ -7565,6 +7662,6 @@ function $RFunctions($R){
 //end $RFunctions()
 
 // DEMO remove!!
-function DAILYCANDYCYCLE(slide) {
-    if ( jQuery('#module-flipbook').length == 1 ) jQuery('#module-flipbook').cycle( slide );
-}
+// function DAILYCANDYCYCLE(slide) {
+//     if ( jQuery('#module-flipbook').length == 1 ) jQuery('#module-flipbook').cycle( slide );
+// }
