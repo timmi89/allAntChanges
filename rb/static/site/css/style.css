@@ -523,7 +523,7 @@ section[role="content"]	{
 /* MAIN */
 section[role="main"] 	{ 
 	clear:both;
-	margin:52px auto 0;
+	margin:62px auto 0;
 	padding:0;
 }
 
@@ -567,7 +567,7 @@ section[role="main"] div.card div.block_content a { color:red; }
 section[role="main"] div.card header h1	span 	{ font-size:20px; }
 section[role="main"] div.card div.meta 						{ clear:both; font-size:11px; margin:5px; overflow:auto;}
 section[role="main"] div.card div.meta div.publisher    { xxfloat:left; margin-right:10px; }
-section[role="main"] div.card div.meta div.publisher img	{ max-width:80px; }
+section[role="main"] div.card div.meta div.publisher img	{ max-width:80px; max-height:30px; }
 section[role="main"] div.card div.meta div.title      { }
 section[role="main"] div.card div.meta div.title a    { color:#999; }
 section[role="main"] div.card div.meta div.title a.external_link		{  display: block;float: right;font-size: 20px;margin-left: 10px; }
@@ -691,7 +691,7 @@ section[role="main"] div.card div.comment_container .comment .quote.close {    d
 /* COMPLEMENTARY */
 section[role="complementary"] { 
   width:100%;
-	height:32px;
+	height:50px;
   position:fixed;
   left:0px;
 	padding:0;
@@ -700,20 +700,24 @@ section[role="complementary"] {
   z-index:5;
 }
 
-section[role="complementary"] #user_data img {
-	max-width: 168px;
-}
+/*section[role="complementary"] #user_data {
+  float:left;
+  margin:5px;
+}*/
+/*section[role="complementary"] #user_data img {
+	max-width:40px;
+}*/
 
 
-section[role="complementary"] #user_data label {
+/*section[role="complementary"] #user_data label {
   font-size:12px;
   font-weight:bold;
   margin-bottom:20px;
   display:block;
   overflow:visible;
-}
+}*/
 
-section[role="complementary"] #user_data label span {
+/*section[role="complementary"] #user_data label span {
   font-size:10px;
   color:#666;
   font-style:italic;
@@ -721,7 +725,7 @@ section[role="complementary"] #user_data label span {
   margin-left:23px;
   float:left;
   clear:both;
-}
+}*/
 
 #sidebar {
 	padding:20px;
@@ -738,34 +742,37 @@ section[role="complementary"] #user_data label span {
     margin-bottom: 10px;
 }
 
-#sidebar    {padding:5px 0 0 0;}
+#sidebar    {padding:0;overflow:auto;}
 #sidebar h2   {font-size:26px; font-weight:normal; margin:0 10px; max-width:160px;}
-#sidebar h3   {font-size:16px; font-weight:100; margin:0 10px; font-family:Arial; color:#5f5f5f; text-align:center;}
-#sidebar #avatar      {text-align:center; margin:0 10px;}
-#sidebar #avatar img      {max-width:160px;}
+#sidebar h3   {font-size:16px; font-weight:100; margin:0 10px; font-family:Arial; color:#5f5f5f; text-align:center; display:inline-block;}
+#sidebar #avatar,
+#sidebar #user_data      {text-align:center; margin:8px 10px 0;}
+#sidebar #avatar img     {max-height:32px; }
+#sidebar #user_data img      {max-height:32px; margin-bottom:-9px;}
 #sidebar #follow      {margin:5px 10px 10px;}
 #sidebar #follow button   {background:#cde4f3; cursor:pointer; border:1px solid #8bb6d0; border-radius:3px; box-shadow: -1px -9px 11px -5px #559FCB inset;color: #42718E; text-shadow: 1px 1px 1px #CDE4F3; font-size:12px; font-weight:bold;}
 #sidebar #social-icons img  {width:20px; height:20px; }
 #sidebar #social-icons    {margin:0 10px;}
-#sidebar ul[role="filters"]         {list-style-type:none; font-size:13px;}
+#sidebar ul[role="filters"]         {font-size: 13px; list-style-type: none; position: absolute; right: 0; top: 14px;}
 #sidebar ul[role="filters"] li        {text-align:center; padding:2px 25px 1px 25px; cursor:pointer; }
 #sidebar ul[role="filters"] li:hover,
-#sidebar ul[role="filters"] li.active   {xfont-weight:bold; color:#008be4; border:1px solid #bababa; border-left:0; border-right:0;}
+#sidebar ul[role="filters"] li.active   {xxfont-weight:bold; color:#008be4; border:1px solid #bababa; border-left:0; border-right:0;}
 #sidebar #following,
 #sidebar #followed_by {margin:0 10px 10px;}
 
-#sidebar #user_data h3 {font-size:30px; font-weight: bold; padding-bottom:10px; padding-left:10px}
-#sidebar #user_data img {padding:15px}
+/*#sidebar #user_data h3 {xxfont-size:30px; font-weight: bold; xxpadding-bottom:10px; xxpadding-left:10px}
+#sidebar #user_data img {float:left;}*/
 
 #sidebar h2,
 #sidebar #avatar,
+#sidebar #user_data,
 #sidebar #follow,
 #sidebar #following,
 #sidebar #followed_by,
 #sidebar h3[role="profile_section_header"]
-
 html.dailycandy #sidebar h2,
 html.dailycandy #sidebar #avatar,
+html.dailycandy #sidebar #user_data,
 html.dailycandy #sidebar #follow,
 html.dailycandy #sidebar #following,
 html.dailycandy #sidebar #followed_by,

@@ -1,5 +1,36 @@
 {% load static %}
 
+<!-- <h4>Activity</h4> -->
+<ul role="filters" class="activity">
+  
+    <li role="all">
+    {% if profile_user %}
+      <a href="/user/{{ profile_user.id }}">
+    {% else %}
+      <a href="/stream/">
+    {% endif %}
+    All Reactions</a>
+    </li>
+
+  <!-- <li role="tags"><a href="{% if profile_user %}/user/{{ profile_user.id }}{% endif %}/tags/">Tags</a></li>
+  
+    <!-- [ec] commenting this out until it works-->
+    <!--
+    <li role="shares"><a href="{% if profile_user %}/user/{{ profile_user.id }}{% endif %}/shares/">Shares</a>
+    </li>
+    -->
+
+  <!-- <li role="comments"><a href="{% if profile_user %}/user/{{ profile_user.id }}{% endif %}/comments/">Comments</a></li> -->
+
+  <!-- only show this line if looking at a user profile and you're that user-->
+    {% if profile_user %}
+    <!--
+    <li role="bookmarks"><a href="/user/{{ profile_user.id }}/bookmarks/">Bookmarks</a>
+    </li>
+    -->
+    {% endif %}
+</ul>
+
 {% if group %}
 <div id="avatar">
   {% if group.logo_url_lg %}<img src="{{ group.logo_url_lg }}" />{% endif %}
@@ -39,33 +70,3 @@
     </script>
   </div>
 {% endif %}
-<!-- <h4>Activity</h4> -->
-<ul role="filters" class="activity">
-	
-    <li role="all">
-	  {% if profile_user %}
-	    <a href="/user/{{ profile_user.id }}">
-	  {% else %}
-	    <a href="/stream/">
-	  {% endif %}
-	  All Reactions</a>
-    </li>
-
-	<!-- <li role="tags"><a href="{% if profile_user %}/user/{{ profile_user.id }}{% endif %}/tags/">Tags</a></li>
-	
-    <!-- [ec] commenting this out until it works-->
-    <!--
-    <li role="shares"><a href="{% if profile_user %}/user/{{ profile_user.id }}{% endif %}/shares/">Shares</a>
-    </li>
-    -->
-
-	<!-- <li role="comments"><a href="{% if profile_user %}/user/{{ profile_user.id }}{% endif %}/comments/">Comments</a></li> -->
-
-	<!-- only show this line if looking at a user profile and you're that user-->
-    {% if profile_user %}
-    <!--
-    <li role="bookmarks"><a href="/user/{{ profile_user.id }}/bookmarks/">Bookmarks</a>
-    </li>
-    -->
-    {% endif %}
-</ul>
