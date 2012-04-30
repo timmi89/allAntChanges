@@ -4414,6 +4414,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $container = summary.$container,
                             $container_tracker = $('#rdr_container_tracker_'+hash);
 
+                        //quick fix so this doesnt get run on text.
+                        //TODO figure out where this was getting called for text containers.
+                        var container = RDR.containers[hash];
+                        if ( container.kind && ( container.kind == "text" || container.kind == "txt") ) return;
+
                         var padding = {
                             top: parseInt( $container.css('padding-top'), 10 ),
                             right: parseInt( $container.css('padding-right'), 10 ),
