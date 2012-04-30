@@ -545,8 +545,7 @@ div#rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr_page {
   padding-bottom:5px !important;
 }
 div#rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr_page img {
-  width:18px !important;
-  margin-left:-6px !important;
+  margin-left:0 !important;
   margin-bottom:-13px !important;
 }
 div#rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr_text img {
