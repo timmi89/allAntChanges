@@ -208,6 +208,7 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
   filter: alpha(opacity=0);
   font-family:Arial,sans-serif !important;
   letter-spacing:0.5px !important;
+  line-height:13px !important;
 }
 .rdr_twtooltip.rdr_tw_in {
   opacity: 0.90;
