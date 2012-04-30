@@ -60,12 +60,12 @@ urlpatterns = patterns('',
   url(r'^site/(?P<site_id>\d+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}),
 
   # Specific group
-  url(r'^group/(?P<short_name>[\w\-]+)/$', 'rb.views.main'),
-  url(r'^group/(?P<short_name>[\w\-]+)/not_approved/$', 'rb.views.main', kwargs={"admin":"not_approved"}),
-  url(r'^group/(?P<short_name>[\w\-]+)/tags/$', 'rb.views.main', kwargs={"view":"tags"}),
-  url(r'^group/(?P<short_name>[\w\-]+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
-  url(r'^group/(?P<short_name>[\w\-]+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
-  url(r'^group/(?P<short_name>[\w\-]+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}), 
+  url(r'^group/(?P<short_name>[\w\-\.]+)/$', 'rb.views.main'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/not_approved/$', 'rb.views.main', kwargs={"admin":"not_approved"}),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/tags/$', 'rb.views.main', kwargs={"view":"tags"}),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}), 
   
   # Main Site Supporting Pages
   url(r'^about/$', 'rb.views.about'),
@@ -101,6 +101,7 @@ urlpatterns = patterns('',
   url(r'^user_modify/$', 'rb.views.modify_rb_social_user'),
   
   url(r'^rb_login/$', 'rb.views.rb_login'),
+  url(r'^rb_login_success/$', 'rb.views.rb_login_success'),
   # For demos
   #url(r'^demo/', settings.STATIC_URL)
 )

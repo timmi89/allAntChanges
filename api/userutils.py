@@ -6,6 +6,8 @@ import uuid
 from django.core.mail import send_mail, mail_admins
 from django.utils.hashcompat import sha_constructor
 from django.contrib.auth.models import Permission
+import logging
+logger = logging.getLogger('rb.standard')
 
 import logging
 logger = logging.getLogger('rb.standard')
@@ -95,7 +97,7 @@ def createSocialUser(django_user, profile, base = 'http://graph.facebook.com', p
             fail_silently=True
         )
     result = ("Created new" if social[1] else "Retreived existing")
-    logger.debug( result + "social user %s (%s: %s)" % (
+    logger.info( "social user %s (%s: %s)" % (
         social_user.full_name,
         social_user.provider, 
         social_user.uid
@@ -117,7 +119,7 @@ def createDjangoUser(profile):
     # Print out the result
     django_user = user[0]
     result = "Created new" if user[1] else "Retrieved existing"
-    logger.debug( result + "django user %s %s (%s)" % (
+    logger.info("django user %s %s (%s)" % (
         django_user.first_name, 
         django_user.last_name, 
         django_user.email
@@ -235,3 +237,12 @@ def validateSocialUserToken(social_user_id, token):
         return False
     
     return token == generateSocialUserToken(social_user)
+
+
+def formatUserAvatarUrl(social_user):
+    bad_url = social_user.avatar.url    
+    filename = bad_url[bad_url.rindex("/") + 1:]
+    #logger.info(settings.BASE_URL + settings.MEDIA_URL+ 'users/'+ str(social_user.id) +'/avatars/'+ filename)
+    return settings.STATIC_URL + 'users/'+ str(social_user.id) +'/avatars/'+ filename
+    #return os.path.join(settings.BASE_URL, "/", settings.MEDIA_URL, 'users/', str(social_user.id) +'/avatars/', filename)
+    

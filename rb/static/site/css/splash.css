@@ -379,12 +379,13 @@ footer div.footerLinks a:hover{
     -webkit-border-radius:5px;
     border-radius:5px;
 }
-#promoGallery .textSlide blockquote{
+#promoGallery .textSlide blockquote, #promoGallery .textSlide p{
 	border:none;
 	font-size: 17px;
 	margin-bottom: 10px;
 	margin-top: 14px;
 	text-align: left;
+    font-style: italic;
 }
 #promoGallery .textSlide span.author{
 	font-size:11px;

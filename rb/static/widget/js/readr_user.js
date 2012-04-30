@@ -165,7 +165,7 @@ RDRAuth = {
 		}
 	},
 	reauthUser : function(args) {
-		if ( $.cookie('user_type') && $.cookie('user_type') == "facebook" ) {
+		if ( $.cookie('user_type') && $.cookie('user_type') == "facebook" || ( !$.cookie('user_type') ) ) {
 			RDRAuth.readUserCookie();
 			if ( !FB.getAuthResponse() ) {
 				FB.getLoginStatus(function(response) {
@@ -228,6 +228,23 @@ RDRAuth = {
 				}	
 			}
 		});
+	},
+	checkRBLoginWindow : function() {
+		if (!RDRAuth.checkingRBLoginWindow) {
+			RDRAuth.checkingRBLoginWindow = setInterval( function(popup) {
+				if ( !RDRAuth.rbloginWindow.closed ) {
+					if ( RDRAuth.rbloginWindow.location.href.indexOf('success') != -1 ) {
+						RDRAuth.readUserCookie();
+						RDRAuth.returnUser();
+						RDRAuth.notifyParent({}, "close login panel");
+						RDRAuth.rbloginWindow.close();
+					}
+				} else {
+					clearInterval( RDRAuth.checkingRBLoginWindow );
+				}
+			}, 250 );
+		}
+
 	},
 	setUser : function(response) {
 		RDRAuth.rdr_user = {};

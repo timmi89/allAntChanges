@@ -369,7 +369,8 @@ class PageDataHandler(AnonymousBaseHandler):
             # ---Find top 10 tags on a given page---
             tags = InteractionNode.objects.filter(
                 interaction__kind='tag',
-                interaction__page=current_page
+                interaction__page=current_page,
+                interaction__approved=True
             )
             ordered_tags = tags.order_by('body')
             tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
