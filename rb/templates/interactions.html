@@ -189,7 +189,7 @@ function writeCard( interaction, showBlocked ) {
     if ( interaction.moderator ) {
         $meta.append('<div class="block_content">'
           + '<a href="javascript:void(0);" onclick="RB.admin.blockContent('+interaction.id+');" id="moderate_'+interaction.id+'">'
-          + (( interaction.approved ) ? 'Block this':'Unblock')
+          + (( interaction.approved ) ? 'Block':'Unblock')
           + '</a></div>');
     }
     $card.append( $header, $content, $meta );
@@ -236,7 +236,7 @@ function writeComment( comment, showBlocked ) {
 
     if ( interaction.moderator ) {
         $comment_container.append('<div class="block_content">'
-          + '<a class="block_content" href="javascript:void(0);" onclick="RB.admin.blockContent('+comment.id+');" id="moderate_'+comment.id+'">Block this</a>'
+          + '<a class="block_content" href="javascript:void(0);" onclick="RB.admin.blockContent('+comment.id+');" id="moderate_'+comment.id+'">Block</a>'
           + '</div>'
         );
     }
