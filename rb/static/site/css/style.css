@@ -709,13 +709,12 @@ section[role="complementary"] {
 }*/
 
 
-/*section[role="complementary"] #user_data label {
-  font-size:12px;
-  font-weight:bold;
-  margin-bottom:20px;
-  display:block;
-  overflow:visible;
-}*/
+/* temp style: */
+section[role="complementary"] #user_data label {
+  display:inline-block;
+  float:none;
+}
+
 
 /*section[role="complementary"] #user_data label span {
   font-size:10px;
