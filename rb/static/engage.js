@@ -1459,7 +1459,7 @@ function readrBoard($R){
                 $('#rdr_sandbox').append( $new_actionbar );
                 $('a.rdr_tooltip_this').tooltip({});
 
-                if(kind == "img" || kind == "media"){
+                if(kind == "img" || kind == "media" || kind == "med" ){
                     $new_actionbar.addClass('rdr_actionbar_for_media');
                     $new_actionbar.append('<div style="clear:both;" />').removeClass('rdr_widget rdr_widget_bar');
 
@@ -1788,7 +1788,7 @@ function readrBoard($R){
                     $container = $('.rdr-'+hash);
 
                 var kind = $container.data('kind');
-                if(kind == 'img' || kind == 'media'){
+                if(kind == 'img' || kind == 'media' || kind == 'med'){
                     $container.addClass('rdr_shared');
 
                     var $containerTracker = $('#rdr_container_tracker_'+hash),
@@ -3599,7 +3599,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             //If readmode, we will have a content_node.  If not, use content_node_data, and build a new content_node on success.
                             var content_node = args.content_node || null;
 
-                            if(kind == 'img' || kind == 'media'){
+                            if(kind == 'img' || kind == 'media' || kind == 'med'){
                                 var body = $container[0].src;
 
                                 content_node_data = {
@@ -3914,7 +3914,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         //If readmode, we will have a content_node.  If not, use content_node_data, and build a new content_node on success.
                         var content_node = args.content_node || null;
 
-                        if(kind == 'img' || kind == 'media'){
+                        if(kind == 'img' || kind == 'media' || kind == 'med'){
                             var body = $container[0].src;
 
                             content_node_data = {
@@ -4392,7 +4392,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     },
                     updateContainerTrackers: function(){
                         $.each( RDR.containers, function(idx, container) {
-                            if ( container.kind && ( container.kind == "img" || container.kind == "media" ) ) {
+                            if ( container.kind && ( container.kind == "img" || container.kind == "media" || container.kind == "med") ) {
                                 RDR.actions.indicators.utils.updateContainerTracker( container.hash );
                             }
                         });
@@ -5068,6 +5068,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             break;
 
                             case "media":
+                            case "med":
                             case "video":
                                 contentStr = "See video";
                                 mainShareText = _wrapTag(args.reaction, false, true) +" "+ contentStr;
@@ -5107,6 +5108,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             break;
 
                             case "media":
+                            case "med":
                             case "video":
                                 contentStr = "See video";
                                 mainShareText = _wrapTag(args.reaction, false, true) +" "+ contentStr;
@@ -5157,6 +5159,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             break;
 
                             case "media":
+                            case "med":
                             case "video":
                                 //todo: - I haven't gone back to try this yet...
 
