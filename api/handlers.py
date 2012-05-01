@@ -477,6 +477,8 @@ class FollowHandler(InteractionHandler):
             follow.page = Page.objects.get(id=follow_id)
         elif type == 'grp':
             follow.group = Group.objects.get(id=follow_id)
+        else:
+            return {'message':'bad_type'}
         
         follow.save()
         
