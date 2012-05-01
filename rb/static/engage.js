@@ -653,7 +653,13 @@ function readrBoard($R){
                         });
                     }
 
-                    if ($.isEmptyObject(comments) && summary.kind=="img" && !$.isEmptyObject(summary.top_interactions) && !$.isEmptyObject(summary.top_interactions.coms)) {
+                    //New Check 
+                    var crazyCheckForDataTieOver = $.isEmptyObject(comments) && 
+                        (summary.kind=="img" || summary.kind=="media" || summary.kind=="med") && 
+                        !$.isEmptyObject(summary.top_interactions) &&
+                        !$.isEmptyObject(summary.top_interactions.coms)
+
+                    if (crazyCheckForDataTieOver) {
                         comments = summary.top_interactions.coms[tag.id];
                         if ( !$.isEmptyObject( comments ) ) num_comments = comments.length;
                     }
