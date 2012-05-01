@@ -571,8 +571,9 @@ def follow_interactions(request, user_id):
     if cookie_user:
         context['cookie_user'] = cookie_user
         # Look for a better way to do this
-        
-    owner = SocialUser.objects.get(id = user_id)
+    
+    django_user = User.objects.get(id = user_id)
+    owner = SocialUser.objects.get(user = django_user)
     
     requested_types = request.GET.getlist('type')
     if len(requested_types) == 0:
