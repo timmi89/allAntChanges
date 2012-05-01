@@ -374,10 +374,13 @@ class Follow(models.Model):
     )
     owner = models.ForeignKey(SocialUser, related_name='follow_owner')
     type = models.CharField(max_length=3, choices=FOLLOW_TYPES)
-    follow_id = models.IntegerField(default=0)
+    page = models.ForeignKey(Page, blank=True, null=True, related_name='followed_page')
+    user = models.ForeignKey(SocialUser, blank=True, null=True, related_name='followed_user')
+    group = models.ForeignKey(Group, blank=True, null=True, related_name='followed_group')
+    follow_id = models.IntegerField(default = 0)
     
     def __unicode__(self):
-        return unicode(str(self.owner.id) + " " + type + " " + str(follow_id))
+        return unicode(str(self.owner.id) + " " + self.type + " " + str(self.follow_id))
 
     class Meta:
         unique_together = ('owner', 'type', 'follow_id')

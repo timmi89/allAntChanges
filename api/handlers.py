@@ -1,7 +1,7 @@
 from piston.handler import AnonymousBaseHandler
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.db.models import Count
-from decorators import status_response, json_data
+from decorators import status_response, json_data, json_data_post
 from exceptions import JSONException
 from utils import *
 from userutils import *
@@ -471,6 +471,15 @@ class FollowHandler(InteractionHandler):
         follow = Follow.objects.create(owner = owner, type = type, follow_id = follow_id)
         #if type == 'usr'
             #send followed user notification
+        if type == 'usr':
+            follow.user = SocialUser.objects.get(id=follow_id)
+        elif type == 'pag':
+            follow.page = Page.objects.get(id=follow_id)
+        elif type == 'grp':
+            follow.group = Group.objects.get(id=follow_id)
+        
+        follow.save()
+        
         follow_dict = model_to_dict(
             follow,
             exclude=[]

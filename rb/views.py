@@ -101,7 +101,6 @@ def group(request):
     pass
 
 def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **kwargs):
-    logger.debug("DEBUG MAIN")
     cookie_user = checkCookieToken(request)
     timestamp = datetime.now().date()
     page_num = request.GET.get('page_num', 1)
@@ -202,7 +201,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
     except (EmptyPage, InvalidPage): current_page = paginator.page(paginator.num_pages)
       
     context['current_page'] = current_page
-    logger.debug("RENDER MAIN")
+    #logger.debug("RENDER MAIN")
     return render_to_response("index.html", context, context_instance=RequestContext(request))
 
 def cards(request, **kwargs):
@@ -556,4 +555,62 @@ def interaction_redirect(request, short):
     redirect_response.set_cookie(key='content_type', value=smart_str(interaction.content.kind))
 
     return redirect_response
+
+def follow_interactions(request, user_id):
+    cookie_user = checkCookieToken(request)
+    timestamp = datetime.now().date()
+    page_num = request.GET.get('page_num', 1)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'user_id': user_id,
+        'page_num': page_num,
+        'timestamp': timestamp,
+        'BASE_URL': BASE_URL
+    }
+
+    if cookie_user:
+        context['cookie_user'] = cookie_user
+        # Look for a better way to do this
+        
+    owner = SocialUser.objects.get(id = user_id)
+    
+    requested_types = request.GET.getlist('type')
+    if len(requested_types) == 0:
+        requested_types.append('usr')
+    
+    follow_objects = Follow.objects.filter(owner = owner, type__in  = requested_types)
+    follow_lists = {}
+    for type in requested_types:
+        follow_lists[type] = []
+    for follow in follow_objects:
+        follow_lists[follow.type].append(follow.follow_id)
+    
+    if not follow_lists.has_key('pag'):
+        follow_lists['pag'] = []
+    if not follow_lists.has_key('grp'):
+        follow_lists['grp'] = []
+    if not follow_lists.has_key('usr'):
+        follow_lists['usr'] = []
+    
+    interactions = Interaction.objects.all()
+
+    interactions.filter(Q(user__id__in = follow_lists['usr']) | 
+                        Q(page__id__in = follow_lists['pag']) | 
+                        Q(page__site__group__id__in = follow_lists['grp']))
+    
+    interactions_paginator = Paginator(interactions, 20)
+    
+    
+    try: page_number = int(page_num)
+    except ValueError: page_number = 1
+
+    try: current_page = interactions_paginator.page(page_number)
+    except (EmptyPage, InvalidPage): current_page = paginator.page(paginator.num_pages)
+      
+    context['current_page'] = current_page
+    #logger.debug("RENDER MAIN")
+    return render_to_response("follow_index.html", context, context_instance=RequestContext(request))
+
+
+
 

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block sidebarContent %}
+<div id="sidebar">
+  {% include "sidebar.html" %}
+</div>
+{% endblock sidebarContent %}
+
+{% block mainContent %}
+<!-- <h1>Latest Reactions</h1> -->
+<div id="cards">
+  {% include "interactions.html" %}
+</div>
+{% endblock mainContent %}
+
+

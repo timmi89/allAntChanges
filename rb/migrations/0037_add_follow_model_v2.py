@@ -13,6 +13,9 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('owner', self.gf('django.db.models.fields.related.ForeignKey')(related_name='follow_owner', to=orm['rb.SocialUser'])),
             ('type', self.gf('django.db.models.fields.CharField')(max_length=3)),
+            ('page', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='followed_page', null=True, to=orm['rb.Page'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='followed_user', null=True, to=orm['rb.SocialUser'])),
+            ('group', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='followed_group', null=True, to=orm['rb.Group'])),
             ('follow_id', self.gf('django.db.models.fields.IntegerField')(default=0)),
         ))
         db.send_create_signal('rb', ['Follow'])
@@ -93,9 +96,12 @@ class Migration(SchemaMigration):
         'rb.follow': {
             'Meta': {'unique_together': "(('owner', 'type', 'follow_id'),)", 'object_name': 'Follow'},
             'follow_id': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'group': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'followed_group'", 'null': 'True', 'to': "orm['rb.Group']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'follow_owner'", 'to': "orm['rb.SocialUser']"}),
-            'type': ('django.db.models.fields.CharField', [], {'max_length': '3'})
+            'page': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'followed_page'", 'null': 'True', 'to': "orm['rb.Page']"}),
+            'type': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'followed_user'", 'null': 'True', 'to': "orm['rb.SocialUser']"})
         },
         'rb.group': {
             'Meta': {'ordering': "['short_name']", 'object_name': 'Group'},

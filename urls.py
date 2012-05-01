@@ -42,7 +42,9 @@ urlpatterns = patterns('',
   url(r'^user/(?P<user_id>\d+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
   url(r'^user/(?P<user_id>\d+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
   url(r'^user/(?P<user_id>\d+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}),
-
+  
+  url(r'^follows/(?P<user_id>\d+)/$', 'rb.views.follow_interactions'),
+  
   # Specific page
   url(r'^page/(?P<page_id>\d+)/$', 'rb.views.main'),
   url(r'^page/(?P<page_id>\d+)/not_approved/$', 'rb.views.main', kwargs={"admin":"not_approved"}),
