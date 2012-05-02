@@ -460,10 +460,10 @@ class FollowHandler(InteractionHandler):
     @status_response
     @json_data_post
     def create(self, request, data):
-        cookie_user = checkCookieToken(request)
-        if cookie_user is None:
+        owner = checkCookieToken(request)
+        if owner is None:
             return {'message':'not_logged_in'}
-        owner = SocialUser.objects.get(user=cookie_user)
+        
         type = data['type']
         follow_id = data['follow_id']
         #check type against follow types
@@ -472,7 +472,7 @@ class FollowHandler(InteractionHandler):
         #if type == 'usr'
             #send followed user notification
         if type == 'usr':
-            follow.user = SocialUser.objects.get(id=follow_id)
+            follow.user = User.objects.get(id=follow_id)
         elif type == 'pag':
             follow.page = Page.objects.get(id=follow_id)
         elif type == 'grp':
@@ -496,8 +496,8 @@ class FollowHandler(InteractionHandler):
             #Not logged in?
             pass
         
-        social_user_id = data['social_user_id']
-        owner = SocialUser.objects.get(id = social_user_id)
+        user_id = data['user_id']
+        owner = User.objects.get(id = user_id)
         page_num = data['page_num']
         requested_types = data['types']
         follows = {}

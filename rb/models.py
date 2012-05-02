@@ -372,10 +372,10 @@ class Follow(models.Model):
         ('usr', 'user'),
         ('grp', 'group'),
     )
-    owner = models.ForeignKey(SocialUser, related_name='follow_owner')
+    owner = models.ForeignKey(User, related_name='follow_owner')
     type = models.CharField(max_length=3, choices=FOLLOW_TYPES)
     page = models.ForeignKey(Page, blank=True, null=True, related_name='followed_page')
-    user = models.ForeignKey(SocialUser, blank=True, null=True, related_name='followed_user')
+    user = models.ForeignKey(User, blank=True, null=True, related_name='followed_user')
     group = models.ForeignKey(Group, blank=True, null=True, related_name='followed_group')
     follow_id = models.IntegerField(default = 0)
     

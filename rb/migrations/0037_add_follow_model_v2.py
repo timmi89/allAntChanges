@@ -11,10 +11,10 @@ class Migration(SchemaMigration):
         # Adding model 'Follow'
         db.create_table('rb_follow', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('owner', self.gf('django.db.models.fields.related.ForeignKey')(related_name='follow_owner', to=orm['rb.SocialUser'])),
+            ('owner', self.gf('django.db.models.fields.related.ForeignKey')(related_name='follow_owner', to=orm['auth.User'])),
             ('type', self.gf('django.db.models.fields.CharField')(max_length=3)),
             ('page', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='followed_page', null=True, to=orm['rb.Page'])),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='followed_user', null=True, to=orm['rb.SocialUser'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='followed_user', null=True, to=orm['auth.User'])),
             ('group', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='followed_group', null=True, to=orm['rb.Group'])),
             ('follow_id', self.gf('django.db.models.fields.IntegerField')(default=0)),
         ))
@@ -98,10 +98,10 @@ class Migration(SchemaMigration):
             'follow_id': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'group': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'followed_group'", 'null': 'True', 'to': "orm['rb.Group']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'follow_owner'", 'to': "orm['rb.SocialUser']"}),
+            'owner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'follow_owner'", 'to': "orm['auth.User']"}),
             'page': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'followed_page'", 'null': 'True', 'to': "orm['rb.Page']"}),
             'type': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'followed_user'", 'null': 'True', 'to': "orm['rb.SocialUser']"})
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'followed_user'", 'null': 'True', 'to': "orm['auth.User']"})
         },
         'rb.group': {
             'Meta': {'ordering': "['short_name']", 'object_name': 'Group'},
