@@ -45,7 +45,7 @@ if DEBUG:
     BASE_URL = 'http://local.readrboard.com:8080'
     BASE_URL_SECURE = 'https://local.readrboard.com:8080'
     STATIC_URL = '//local.readrboard.com:8080/static/'
-    DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']
+    DATABASE_ROUTERS = ['rb.routers.SyncRouter']
     
     DATABASES = {
       'default': {
