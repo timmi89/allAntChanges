@@ -777,7 +777,7 @@ div.rdr.rdr-summary div.rdr_info ins img    { margin:0 !important; padding:0 !im
 div.rdr.rdr-summary div.rdr_info strong.rdr_share_it    { margin-left:10px;border-left:1px solid #ccc;padding-left:10px;}
 div.rdr.rdr-summary div.rdr_info a.rdr_share_link img    { max-width:20px;margin:0 5px -5px 0 !important;}
 
-div.rdr.rdr-summary img.rdr_summary_help  { border:0;position:absolute;right:0;top:3px;background:url(../images/readr_icons.png) -96px -1px no-repeat;cursor:pointer;width:13px;height:13px; }
+div.rdr.rdr-summary img.rdr_summary_help  { border:0;position:absolute;right:3px;top:3px;background:url(../images/readr_icons.png) -96px -1px no-repeat;cursor:pointer;width:13px;height:13px; }
 div.rdr.rdr-summary img.rdr_summary_help:hover  { background-position: -79px -1px; }
 
 #rdr_sandbox div.rdr div.rdr_close       {position:absolute;top:8px;right:7px;color:#999;cursor:pointer;font-size:14px;z-index:150;}

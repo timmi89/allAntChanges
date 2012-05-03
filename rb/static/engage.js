@@ -5954,7 +5954,7 @@ function $RFunctions($R){
                         $summary_row = $summary_widget.find('tr');
 
                     $summary_widget.append('<div class="rdr-see-more"></div>');
-                    $summary_widget.append('<img src="'+RDR_staticUrl+'widget/images/blank.png" class="rdr_summary_help rdr_tooltip_this" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. ReadrBoard lets you easily react to anything on this page.<br><br>Click a button to the right to react to this whole page.<br><br>Or -- select any text, image, or video and react to just that part of the page."/>');
+                    $summary_widget.append('<img src="'+RDR_staticUrl+'widget/images/blank.png" class="rdr_summary_help rdr_tooltip_this" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. ReadrBoard lets you easily react to anything on this page.<br><br>The tags to the left let you react to this whole page.<br><br>Or -- select any text, image, or video and react to just that part of the page."/>');
                     $summary_widget.data('page_id', page.id);
 
                     //page.jqFunc would be something like 'append' or 'after',
