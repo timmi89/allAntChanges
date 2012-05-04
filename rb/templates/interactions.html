@@ -70,7 +70,7 @@ var comments = [],
                 "user_profile_link" :   "/user/{{interaction.user.id}}",
                 "user_avatar"       :   "{{ interaction.user.social_user.img_url }}",
                 "user_name"         :   "{{ interaction.user.social_user.full_name }}",
-                "comment"           :   "{% filter force_escape %}{{ interaction.interaction_node.body|linebreaksbr }}{% endfilter %}",
+                "comment"           :   "{% filter force_escape %}{{ interaction.interaction_node.body|linebreaksbr|escapejs }}{% endfilter %}",
                 "moderator"         :   {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %}
             };
             comments.push(comment);
@@ -140,49 +140,69 @@ function writeCard( interaction, showBlocked ) {
   }
 
   if ( interaction.approved || ( !interaction.approved && showBlocked ) ) {
+    
+    // if a page-level one, let's group it into a container.  This is Part 1 of the process.
+    if ( interaction.kind == "pag" ) {
+      if ( !$('div.card.pag_container').last().length || $('div.card.pag_container').last().find('div.card').length != 1 ) {
+        // var $pag_container = $('div.card.pag_container').last();
+      // } else {
+        $('#cards section').append('<div class="card pag_container" />');
+      }
+    }
+
     // write the card first, then append the comment
     var $card = $('<div class="card '+interaction.kind+'" id="card_'+interaction.id+'" />');
-    $card.append('<div class="date">'+interaction.date+'</div>');
     var $header = $('<header/>').attr('title', interaction.interaction_node_body)
          .append('<h1><a href="/stream/?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></h1>')
          .append('<span class="count"></span>');
 
-    var $content = $('<div class="content"/>');
+    var $content = ( interaction.kind != "pag" ) ? $('<div class="content"/>'):'';
     
-    if ( interaction.kind == "txt" ) {
-        $content.append('<div class="content_type" rel="tooltip" title="This reaction is to text from the article.">quote</div>');
-    } else if ( interaction.kind == "pag" ) {
-        $content.append('<div class="content_type" rel="tooltip" title="This is reaction is to a whole page.">page</div>');
-    }
-
     if ( interaction.kind == "img" ) {
-      $content.append('<div class="content_body"><img src="'+interaction.content_body+'"></div><div class="comments"></div>');
+      $content.append('<div class="content_body"><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><img src="'+interaction.content_body+'"></a></div><div class="comments" />');
     } else if ( interaction.kind == "med" ) {
-      $content.append('<div class="content_body"><iframe width="418" height="244" frameborder="0" src="'+interaction.content_body+'"></iframe></div><div class="comments"></div>');
+      $content.append('<div class="content_body"><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><iframe width="418" height="244" frameborder="0" src="'+interaction.content_body+'&wmode=opaque"></iframe></a></div><div class="comments" />');
     } else if ( interaction.kind == "txt" ) {
-      $content.append('<div class="content_body">'+interaction.content_body+'</div><div class="comments"></div>');
-    } else if ( interaction.kind == "pag" ) {
-      $content.append('<div class="content_body">'+interaction.page_title+'</div><div class="comments"></div>');
+      $content.append('<div class="content_body"><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank">'+interaction.content_body+'</a></div><div class="comments" />');
     }
 
     var $meta = $('<div class="meta"/>');
+    if ( interaction.kind != "pag" ) { $meta.append('<div class="date">'+interaction.date+'</div>'); }
+    if ( interaction.kind == "txt" ) {
+        $meta.append('<div class="content_type" rel="tooltip" title="This reaction is to <strong>text</strong> from the page."><img src="{{ STATIC_URL }}site/images/type_text.png" /></div>');
+    } else if ( interaction.kind == "img" ) {
+        $meta.append('<div class="content_type" rel="tooltip" title="This is reaction is to an <strong>image</strong> from the page."><img src="{{ STATIC_URL }}site/images/type_img.png" /></div>');
+    } else if ( interaction.kind == "med" ) {
+        $meta.append('<div class="content_type" rel="tooltip" title="This is reaction is to a <strong>video or other type of media</strong> from the page."><img src="{{ STATIC_URL }}site/images/type_media.png" /></div>');
+      } else if ( interaction.kind == "pag" ) {
+        $meta.append('<div class="content_type" rel="tooltip" title="This is reaction is to the <strong>whole page</strong>."><img src="{{ STATIC_URL }}site/images/type_page.png" width="12" /></div>');
+    }
     if ( interaction.group.logo_url != "" ) {
       $meta.append('<div class="publisher"><a href=/group/' + interaction.group.short_name + '><img alt="' + interaction.group.name + '" src="' + interaction.group.logo_url + '"></a></div>');
     } else {
       $meta.append('<div class="publisher"><a href=/group/' + interaction.group.short_name + '>'+interaction.group.name+'</a></div>');
     }
     $meta.append('<div class="title">'
-            + '<strong><a href="/page/'+interaction.page_id+'">'+interaction.page_title+'</a></strong>'
-            + '<a class="external_link" href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a>'
+            + '<a href="/page/'+interaction.page_id+'">'+interaction.page_title+'</a>'
             + '</div>');
+    if ( interaction.kind == "pag" ) { $meta.append('<div class="date">'+interaction.date+'</div>'); }
     if ( interaction.moderator ) {
         $meta.append('<div class="block_content">'
           + '<a href="javascript:void(0);" onclick="RB.admin.blockContent('+interaction.id+');" id="moderate_'+interaction.id+'">'
-          + (( interaction.approved ) ? 'Block this':'Unblock')
+          + (( interaction.approved ) ? 'Block':'Unblock')
           + '</a></div>');
     }
     $card.append( $header, $content, $meta );
-    $('#cards section').append( $card );
+
+    if ( interaction.kind == "pag" ) {
+      var $pag_container = $('div.card.pag_container').last();
+      if ( $pag_container.find('div.card').length == 0 ) {
+        $card.addClass('first');
+      }
+      $pag_container.append( $card );
+    } else {
+      $('#cards section').append( $card );
+    }
   }
 }
 
@@ -216,7 +236,7 @@ function writeComment( comment, showBlocked ) {
 
     if ( interaction.moderator ) {
         $comment_container.append('<div class="block_content">'
-          + '<a class="block_content" href="javascript:void(0);" onclick="RB.admin.blockContent('+comment.id+');" id="moderate_'+comment.id+'">Block this</a>'
+          + '<a class="block_content" href="javascript:void(0);" onclick="RB.admin.blockContent('+comment.id+');" id="moderate_'+comment.id+'">Block</a>'
           + '</div>'
         );
     }
@@ -239,8 +259,12 @@ var $container = $('#cards section');
 $container.imagesLoaded(function(){
   $container.masonry({
       // options
-      itemSelector : '.card',
-      columnWidth : 439
+      itemSelector : 'div.card.pag_container,div.card.img,div.card.txt,div.card.med',
+      columnWidth : 316,
+      isFitWidth:true,
+      containerStyle : {
+        "margin":"0 auto"
+      }
   });
   $container.tooltip({
     selector: "div.content_type"
