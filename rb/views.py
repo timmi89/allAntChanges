@@ -126,7 +126,11 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
             ).values_list('group_id', flat=True)
         
         except SocialUser.DoesNotExist:
+# <<<<<<< HEAD
             logger.info("SOCIAL USER DOES NOT EXIST FOR: " + str(cookie_user))
+# =======
+            # logger.info("SOCIAL DOES NOT EXIST")
+# >>>>>>> pills
         
         
     """ For interactions.html """
@@ -276,6 +280,7 @@ def create_rb_user(request):
     return response
 
 def modify_rb_social_user(request):
+    logger.info("modify user")
     context = {}
     cookie_user = checkCookieToken(request)
     if not cookie_user: return HttpResponseRedirect('/rb_login/')
@@ -343,6 +348,16 @@ def rb_login(request):
     
     return response
 
+def rb_login_success(request):
+    context = {}
+    
+    response =  render_to_response(
+        "rb_login_success.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+    
+    return response
 
 def request_password_reset(request):
     context = {}
@@ -389,7 +404,11 @@ def reset_rb_password(request):
             user_id = request.POST['uid']
         except KeyError, ke:
             context['message']  = 'There was a problem with your reset token. Please reopen this page from the link in your email.'
+# <<<<<<< HEAD
             logger.warn(str(ke))
+# =======
+            # logger.error(ke)
+# >>>>>>> pills
     
         form = ChangePasswordForm(request.POST)
         is_valid_token = validatePasswordToken(user_id, password_token)

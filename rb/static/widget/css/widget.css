@@ -196,6 +196,88 @@ div.rdr.rdr_tooltip div.rdr_tag_share    { display:block; width:12px; height:13p
 
 div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
 
+/* from Bootstrap CSS */
+.rdr_twtooltip {
+  position: absolute;
+  z-index: 111020;
+  display: block;
+  visibility: visible;
+  padding: 5px;
+  font-size: 11px;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  font-family:Arial,sans-serif !important;
+  letter-spacing:0.5px !important;
+  line-height:13px !important;
+}
+.rdr_twtooltip.rdr_tw_in {
+  opacity: 0.90;
+  filter: alpha(opacity=90);
+}
+.rdr_twtooltip.rdr_tw_top {
+  margin-top: -2px;
+}
+.rdr_twtooltip.rdr_tw_right {
+  margin-left: 2px;
+}
+.rdr_twtooltip.rdr_tw_bottom {
+  margin-top: 2px;
+}
+.rdr_twtooltip.rdr_tw_left {
+  margin-left: -2px;
+}
+.rdr_twtooltip.rdr_tw_top .rdr_twtooltip-arrow {
+  bottom: 0;
+  left: 50%;
+  margin-left: -5px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #000000;
+}
+.rdr_twtooltip.rdr_tw_left .rdr_twtooltip-arrow {
+  top: 50%;
+  right: 0;
+  margin-top: -5px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid #000000;
+}
+.rdr_twtooltip.rdr_tw_bottom .rdr_twtooltip-arrow {
+  top: 0;
+  left: 50%;
+  margin-left: -5px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #000000;
+}
+.rdr_twtooltip.rdr_tw_right .rdr_twtooltip-arrow {
+  top: 50%;
+  left: 0;
+  margin-top: -5px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 5px solid #000000;
+}
+.rdr_twtooltip-inner {
+  max-width: 200px;
+  padding: 3px 8px;
+  color: #e0e0e0;
+  text-align: center;
+  text-decoration: none;
+  background-color: #000000;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+.rdr_twtooltip strong {
+  color:#fff;
+}
+.rdr_twtooltip-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
 /*compress ths about icon width*/
 #rdr_sandbox div.rdr_actionbar li.rdr_icon_about             { width:24px; } /*normal width is 30px */
 #rdr_sandbox div.rdr_actionbar li.rdr_icon_about a           { background-position: -3px 0; width:24px;} /*from line above:(30-24)/2 = 3px left*/
@@ -248,7 +330,7 @@ div.rdr strong {font-weight:bold !important;}
     right:11px !important;
 }
 
-#rdr_sandbox div.rdr div.rdr_header h1                   { margin-left:14px !important; white-space: nowrap !important;}
+#rdr_sandbox div.rdr div.rdr_header h1                   { margin-left:14px !important; text-align:left !important; white-space: nowrap !important;}
 /*#rdr_sandbox div#rdr_loginPanel.rdr div.rdr_header h1                   { margin-left:0px !important; }*/
 
 #rdr_sandbox div.rdr textarea,
@@ -298,6 +380,9 @@ table.rdr_tags {
     float:left !important;
 }
 
+table.rdr_tags td {
+  background:#f7f7f7 !important;
+}
 table.rdr_tags td.rdr_activePill a.rdr_tag {
     background: -webkit-gradient(linear, center top, center bottom, from(#e8e8e8), to(#fff)) !important;
     background: -moz-linear-gradient(center top , #e8e8e8, #ffffff) repeat scroll 0 0 transparent !important;
@@ -377,30 +462,95 @@ table.rdr_tags td{
 }
 
 div.rdr a.rdr_tag     { 
-    background: -webkit-gradient(linear, center top, center bottom, from(#ffffff), to(#e8e8e8));
-    background: -moz-linear-gradient(center top , #ffffff, #e8e8e8) repeat scroll 0 0 transparent;
-    -webkit-border-radius: 7px 7px 7px 7px;
-    -moz-border-radius: 7px 7px 7px 7px;
-    border-radius: 7px 7px 7px 7px;
-    border-top: 1px solid #f8f8f8;
-    -webkit-box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7);
-    -moz-box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7);
-    box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7);
-    color: #767676;
-    cursor: pointer !important;
-    display: inline !important;
-    font-size: 11px !important;
-    font-style: normal !important;
-    font-weight: normal !important;
-    height: 21px !important;
-    margin: 0 5px 0 -2px !important;
-    padding: 4px 5px !important;
-    position: relative !important;
-    text-decoration: none !important;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
-    text-transform: none !important;
-    white-space: nowrap !important;
-    z-index:10001;
+  background: -webkit-gradient(linear, center top, center bottom, from(#ffffff), to(#e8e8e8));
+  background: -moz-linear-gradient(center top , #ffffff, #e8e8e8) repeat scroll 0 0 transparent;
+  -webkit-border-radius: 7px 7px 7px 7px;
+  -moz-border-radius: 7px 7px 7px 7px;
+  border-radius: 7px 7px 7px 7px;
+  border-top: 1px solid #f8f8f8;
+  -webkit-box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7);
+  -moz-box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7);
+  box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7);
+  color: #767676;
+  cursor: pointer !important;
+  display: inline !important;
+  font-size: 11px !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  height: 21px !important;
+  margin: 0 5px 0 -2px !important;
+  padding: 4px 5px 3px !important;
+  position: relative !important;
+  text-decoration: none !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+  text-transform: none !important;
+  white-space: nowrap !important;
+  z-index:10001;
+}
+div.rdr.rdr-summary a.rdr_tag {
+  background:#fff !important;
+  border-radius:0px !important;
+  color:#5e5e5e;
+  font-family:'Helvetica',Arial,sans-serif !important;
+  font-weight:bold !important;
+}
+
+div#rdr_sandbox div.rdr_tag_details {
+  display:none;
+  position:absolute !important;
+  background:#fff;
+  z-index:100000;
+  min-width:80px;
+  -webkit-box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7);
+  -moz-box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7);
+  box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7);
+  border-top:1px solid #ddd;
+  padding:4px;
+}
+div#rdr_sandbox div.rdr_tag_details a.rdr_tag {
+  margin-left:5px !important;
+}
+div#rdr_sandbox div.rdr_tag_details div.rdr_counts {
+  display:block !important;
+  float:left !important;
+  margin-right:10px !important;
+  margin-left:5px !important;
+  padding:3px;
+}
+div#rdr_sandbox div.rdr_tag_details div.rdr_counts:hover {
+  background:#eee;
+}
+div#rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr-last-child {
+  margin-right:0px !important;
+  margin-left:5px !important;
+}
+div#rdr_sandbox div.rdr_tag_details div.rdr_counts_other {
+  clear:both;
+  overflow:auto;
+  width:100%;
+  padding-top:5px;
+  border-top:1px solid #ddd !important;
+}
+
+div#rdr_sandbox div.rdr_tag_details div.rdr_counts img {
+  width:12px !important;
+  float:left !important;
+  margin-right:5px !important;
+}
+div#rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr_page {
+  clear:both !important;
+  float:none !important;
+  width:89% !important;
+  margin:0 !important;
+  white-space:nowrap !important;
+  padding-bottom:5px !important;
+}
+div#rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr_page img {
+  margin-left:0 !important;
+  margin-bottom:-13px !important;
+}
+div#rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr_text img {
+  width:10px !important;
 }
 
 table.rdr_tags a.rdr_tag     {
@@ -531,10 +681,11 @@ table.rdr_tags a.rdr_tag span.rdr_tag_name {
     display:inline-block !important;
     float:left !important;
     margin-top:4px !important;
-    min-width:66px;
+    min-width:66px !important;
     overflow-x:hidden !important;
-    position:relative;
-    z-index:1;
+    position:relative !important;
+    z-index:1 !important;
+    text-align:left !important;
 }
 table.rdr_tags a.rdr_tag span.rdr_tag_count {
     min-width:5px !important;
@@ -543,35 +694,50 @@ table.rdr_tags a.rdr_tag span.rdr_tag_count {
     margin-left:-15px !important; /* feels kludgey.  prevents wrapping in the pill in a small rindow */
 }
 table.rdr_tags span.rdr_comment_indicator {
-    display:block !important;
-    position:absolute;
+    display:block !important !important;
+    position:absolute !important;
     background:url("../images/widget_icons.png") no-repeat scroll -182px -14px transparent !important;
-    right:-5px;
-    top:-4px;
-    width:10px;
-    height:10px;
-    z-index:3;
+    right:-5px !important;
+    top:-4px !important;
+    width:10px !important;
+    height:10px !important;
+    z-index:3 !important;
 }
 
 div.rdr a.rdr_tag span.rdr_tag_count    { 
-    background: -webkit-gradient(linear, center top, center bottom, from(#ddedff), to(#add1f9)); 
-    background: -moz-linear-gradient(center top , #ddedff, #add1f9) repeat scroll 0 0 transparent;
-    -moz-border-radius: 0 7px 7px 0 !important;
-    -webkit-border-radius: 0 7px 7px 0 !important;
-    border-radius: 0 7px 7px 0 !important;
-    color: #666666;
-    cursor: pointer !important;
-    display: inline-block !important;
-    font-size: 11px !important;
-    margin-right: -5px !important;
-    padding: 4px 5px !important;
-    text-align: center !important;
-    position:relative;
-    z-index:2;
+  background: -webkit-gradient(linear, center top, center bottom, from(#ddedff), to(#add1f9)); 
+  background: -moz-linear-gradient(center top , #ddedff, #add1f9) repeat scroll 0 0 transparent;
+  -moz-border-radius: 0 7px 7px 0 !important;
+  -webkit-border-radius: 0 7px 7px 0 !important;
+  border-radius: 0 7px 7px 0 !important;
+  color: #666666;
+  cursor: pointer !important;
+  display: inline-block !important;
+  font-size: 11px !important;
+  margin-right: -5px !important;
+  padding: 4px 5px !important;
+  text-align: center !important;
+  position:relative !important;
+  z-index:2 !important;
+}
+div.rdr.rdr_tag_details a.rdr_tag span.rdr_tag_count    {
+  margin-left: 5px !important;
+}
+div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
+  background:none !important;
+  font-size:10px !important;
+  color:#aaa !important;
+  border-radius:0 !important;
+  min-width:7px !important;
+}
+div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count img.rdr_ui_arrow   {
+  background:url(../images/summary_box_arrow.png) 0px -8px no-repeat;
+  margin:0 -5px -9px 0px !important;
+  padding:0 !important;
 }
 
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
-    margin-left: 4px !important;
+    margin-left: 0px !important;
 }
 
 table.rdr_tags a.rdr_tag span.rdr_tag_count{ 
@@ -604,11 +770,15 @@ div.rdr a.rdr_tag.rdr_custom_tag input.rdr_default {
 div.rdr a.rdr_tag.rdr_custom_tag:hover,
 div.rdr a.rdr_tag.rdr_custom_tag.rdr_hover { color:#008be4; background:#fff; -webkit-box-shadow:0px 0px 4px #aaa; -moz-box-shadow:0px 0px 4px #aaa; box-shadow:0px 0px 4px #aaa; }
 
-div.rdr.rdr-summary div.rdr_info            { clear: both; margin: 5px; padding: 5px; border: 1px solid #008be4; background:#fff; display:none; }
+div.rdr.rdr-summary div.rdr_info            { clear: both; margin: 5px; padding: 5px; border: 1px solid #ccc; background:#fff; display:none; }
 div.rdr.rdr-summary div.rdr_info em         { font-style:italic !important; }
 div.rdr.rdr-summary div.rdr_info ins        { text-decoration:none !important; }
 div.rdr.rdr-summary div.rdr_info ins img    { margin:0 !important; padding:0 !important; border:0 !important;}
+div.rdr.rdr-summary div.rdr_info strong.rdr_share_it    { margin-left:10px;border-left:1px solid #ccc;padding-left:10px;}
+div.rdr.rdr-summary div.rdr_info a.rdr_share_link img    { max-width:20px;margin:0 5px -5px 0 !important;}
 
+div.rdr.rdr-summary img.rdr_summary_help  { border:0;position:absolute;right:3px;top:3px;background:url(../images/readr_icons.png) -96px -1px no-repeat;cursor:pointer;width:13px;height:13px; }
+div.rdr.rdr-summary img.rdr_summary_help:hover  { background-position: -79px -1px; }
 
 #rdr_sandbox div.rdr div.rdr_close       {position:absolute;top:8px;right:7px;color:#999;cursor:pointer;font-size:14px;z-index:150;}
 
@@ -635,6 +805,8 @@ div.rdr.rdr-summary div.rdr_info ins img    { margin:0 !important; padding:0 !im
 #rdr_sandbox div.rdr ul.shareLinks li        {padding:0px 2px; display:inline-block; list-style:none;}
 #rdr_sandbox div.rdr ul.shareLinks img       {width:18px !important; margin:0 !important;}
 
+#rdr_sandbox div.rdr table.rdr-one-column td div.rdr_cell_wrapper {text-align:center !important;}
+#rdr_sandbox div.rdr table.rdr-one-column td div.rdr_cell_wrapper a.rdr_tag {text-align:left !important;margin:0 auto !important;}
 #rdr_sandbox div.rdr table.rdr-one-column div.rdr_share_social { text-align:center !important; }
 #rdr_sandbox div.rdr table.rdr-one-column div.rdr_share_social strong { float:none !important; margin:0 !important; }
 #rdr_sandbox div.rdr table.rdr-one-column ul.shareLinks { display: inline-block !important; margin: 2px auto 0 !important; float:none !important; }
@@ -642,7 +814,7 @@ div.rdr.rdr-summary div.rdr_info ins img    { margin:0 !important; padding:0 !im
 /* forms */
 #rdr_sandbox div.rdr textarea,
 #rdr_sandbox div.rdr input[type="text"]  {font-size:14px; color:#666; -moz-box-shadow:inset 0px 0px 5px #ddd;-webkit-box-shadow:inset 0px 0px 5px #ddd; box-shadow:inset 0px 0px 5px #ddd; border:1px solid #ddd; height:auto; width:auto; font-family: arial;}
-#rdr_sandbox div.rdr tr.rdr_wide div.rdr_commentBox input[type="text"]  { width:100% !important; margin-bottom:5px !important; }
+#rdr_sandbox div.rdr tr.rdr_wide div.rdr_commentBox input[type="text"]  { width:100% !important; margin-bottom:5px !important; background-color:#fff !important; }
 #rdr_sandbox div.rdr button              {font-size:11px; }
 
 /* summary widget */
@@ -679,8 +851,8 @@ div.rdr.rdr-summary.rdr-too-many-reactions div.rdr-see-more {
     display:block;
 }
 
-div.rdr.rdr-summary table { border:0 !important;padding:0 !important; margin:5px 0px 2px 5px !important; }
-div.rdr.rdr-summary table td { border:0 !important;padding:0 !important; margin:0 !important; text-align:left !important; vertical-align: top !important;}
+div.rdr.rdr-summary table { border:0 !important;padding:0 !important; margin:2px 0 0px 5px !important; width:auto !important; }
+div.rdr.rdr-summary table td { border:0 !important;padding:0 !important; margin:0 !important; text-align:left !important; vertical-align: top !important; background:#f7f7f7 !important;}
 div.rdr.rdr-summary.rdr-combo-box table td div.rdr-fb-twitter { width:195px !important; padding: 6px 0 0 4px !important;}
 div.rdr.rdr-summary.rdr-combo-box table td div.rdr-fb-like,
 div.rdr.rdr-summary.rdr-combo-box table td div.rdr-gplus,
@@ -688,7 +860,7 @@ div.rdr.rdr-summary.rdr-combo-box table td div.rdr-twitter { margin: 1px 0 0 4px
 
 div.rdr.rdr-summary div.rdr-this-is-readrboard {
     text-align:center !important;
-    padding:8px 2px 0 !important;
+    padding:6px 2px 0 !important;
 }
 div.rdr.rdr-summary div.rdr-this-is-readrboard img {
     margin:0 !important;
@@ -708,12 +880,12 @@ div.rdr.rdr-summary div.rdr-sum-headline {
     overflow:hidden !important;
 }
 div.rdr.rdr-summary div.rdr-sum-headline div {
-    line-height: 32px !important;
+    line-height: 28px !important;
 }
 
 div.rdr.rdr-summary div.rdr-sum-headline div.rdr-call-to-action {
     display: block !important;
-    margin: 8px 0pt 0px !important;
+    margin: 4px 0px -4px !important;
 }
 div.rdr.rdr-summary div.rdr-top-tags {
     padding:8px 5px 0px 8px !important;
@@ -981,6 +1153,7 @@ div.rdr_indicator div.rdr_indicator_body {
     left:0; /*don't make important so that our js can update*/
     margin:0 !important;
     overflow:hidden !important;
+    min-height:16px !important;
 }
 
 /*for now give the text indicators a small offset so the details don't cover the end of content todo: id:12345*/
@@ -993,7 +1166,7 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
     height: auto !important;
     color: #666666 !important;
     font: 12px Arial,sans-serif !important;
-    padding:4px 3px 2px !important;
+    padding:5px 3px 2px !important;
     left:8px !important;
 }
 

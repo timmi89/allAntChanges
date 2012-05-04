@@ -7,7 +7,10 @@ else: DEBUG = True
 #DEBUG=True
 
 # Server e-mail account
-SERVER_EMAIL = "server@readrboard.com"
+if DEBUG:
+    SERVER_EMAIL = "devserver@readrboard.com"
+else:
+    SERVER_EMAIL = "server@readrboard.com"
 
 # For Amazon web services
 AWS_ACCESS_KEY_ID = 'AKIAINM2FE35X6K77P2A'
@@ -20,6 +23,10 @@ AWS_HEADERS = {
     'Expires': 'Thu, 15 Apr 2020 20:00:00 GMT',
     'Cache-Control': 'public, max-age=25200',
 }
+
+AWS_DEFAULT_ACL='public-read'
+AWS_QUERYSTRING_AUTH = False
+AWS_S3_FILE_OVERWRITE = True  
 
 # For Facebook
 FACEBOOK_APP_ID = '163759626987948'
@@ -37,7 +44,7 @@ if DEBUG:
     
     BASE_URL = 'http://local.readrboard.com:8080'
     BASE_URL_SECURE = 'https://local.readrboard.com:8080'
-    STATIC_URL = 'http://local.readrboard.com:8080/static/'
+    STATIC_URL = '//local.readrboard.com:8080/static/'
 
     DATABASES = {
       'default': {
@@ -55,8 +62,11 @@ else:
     BASE_URL = 'http://www.readrboard.com'
     BASE_URL_SECURE = 'https://www.readrboard.com'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    #STATICFILES_STORAGE = 'rb.s3boto.S3BotoStorage'
+    #DEFAULT_FILE_STORAGE = 'rb.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    STATIC_URL = 'http://s3.amazonaws.com/readrboard/'
+    STATIC_URL = '//s3.amazonaws.com/readrboard/'
+    
     
     DATABASES = {
       'default': {

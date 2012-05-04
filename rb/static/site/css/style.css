@@ -61,8 +61,8 @@ cursor:help; }
 
 html {
 	/*overflow-y:scroll;*/
-	background:url("../images/noise.png") repeat scroll 0 0 #f4f1ef;
-  /*background:#fff;*/
+	background:url("../images/noise.png") repeat scroll 0 0 #f2f2f2;
+  /*background:#f2f2f2;*/
   /*background:#f4f1ef;*/
 }
 
@@ -523,7 +523,7 @@ section[role="content"]	{
 /* MAIN */
 section[role="main"] 	{ 
 	clear:both;
-	margin:0 0 0 215px;
+	margin:62px auto 0;
 	padding:0;
 }
 
@@ -541,42 +541,50 @@ section[role="main"] 	{
 }
 /* End Tyler's Crap */
 
-#cards { overflow:auto; }
-section[role="main"] div.card	{ border-bottom:3px solid #ccc; width:420px; padding:15px 15px 20px; float:left; margin-left:5px; margin-right:5px; margin-top:20px;}
-section[role="main"] div.card.rdr_hover { background:#fff; box-shadow:0px 0px 4px #ccc; }
-section[role="main"] div.card:hover	{ background:#fff; box-shadow:0px 0px 4px #ccc; }
-section[role="main"] div.card header 			{ padding:0 5px; }
-section[role="main"] div.card header h1     { font-size:30px; font-weight:bold; color:#427ebb; padding:0 0 3px; border-bottom:1px dashed #ccc; position:relative; }
-section[role="main"] div.card header h1:before {
+#cards { padding-top:5px; }
+section[role="main"] div.card { xxborder:1px solid #ddd; width:300px; padding:0; xxfloat:left; xxmargin-left:5px; xxmargin-right:5px; margin-bottom:16px;background:#fff;box-shadow:0px 0px 4px #bbb;}
+section[role="main"] div.card.pag { width:142px; padding:0; margin-bottom:16px; background:#fff; box-shadow:0px 0px 4px #bbb; position:static !important; float:left; margin-bottom:0; }
+section[role="main"] div.card.pag.first { margin-right:16px; }
+section[role="main"] div.card.pag_container	{ background:transparent; box-shadow:none; }
+/*section[role="main"] div.card.rdr_hover { background-color:#fff; box-shadow:0px 0px 4px #ccc; }*/
+/*section[role="main"] div.card:hover	{ background-color:#fff; box-shadow:0px 0px 4px #ccc; }*/
+section[role="main"] div.card header 			{ padding:10px 5px; background-color:rgba(255,255,255,0.85); position:relative;z-index:3;}
+section[role="main"] div.card header h1     { font-size:20px; font-weight:bold; padding:0 5px; xxborder-bottom:1px dashed #ccc; xxposition:relative; }
+section[role="main"] div.card header h1 a   { color:#222; }
+/*section[role="main"] div.card header h1:before {
     content: attr(title);
     position:absolute;
     color:rgba(255,255,255,0.1);
     top:1px;
     left:1px;
-    
-}
-section[role="main"] div.card div.date            { float:right; font-size:10px; margin-right:5px; margin-top:8px;}
-section[role="main"] div.card div.block_content   { font-size:11px; display:none; position:absolute; right:10px; }
+}*/
+section[role="main"] div.card div.date            { float:right; font-size:10px; margin-right:5px; }
+section[role="main"] div.card.pag div.date        { float:none; }
+section[role="main"] div.card div.block_content   { font-size:11px; display:none; position:absolute; right:10px; white-space:pre; bottom:3px;}
 section[role="main"] div.card:hover div.block_content   { display:block; }
 section[role="main"] div.card div.block_content a { color:red; }
 
 section[role="main"] div.card header h1	span 	{ font-size:20px; }
-section[role="main"] div.card div.meta 						{ clear:both; font-size:11px; margin:15px 5px 0; overflow:auto;}
-section[role="main"] div.card div.meta div.publisher		{ float:left; margin-right:10px; }
+section[role="main"] div.card div.meta 						{ clear:both; font-size:11px; margin:5px; overflow:auto;}
+section[role="main"] div.card div.meta div.publisher    { xxfloat:left; margin-right:10px; }
+section[role="main"] div.card div.meta div.publisher img	{ max-width:80px; max-height:30px; }
 section[role="main"] div.card div.meta div.title      { }
 section[role="main"] div.card div.meta div.title a    { color:#999; }
-section[role="main"] div.card div.meta div.title a.external_link		{ font-size:10px; margin-left:10px; }
+section[role="main"] div.card div.meta div.title a.external_link		{  display: block;float: right;font-size: 20px;margin-left: 10px; }
+section[role="main"] div.card div.meta div.content_type   { width:16px; xxheight:30px; margin:5px 5px 0 5px; xxbackground:url(../images/type_text.png) top left no-repeat; xxtext-indent:-9999px; float:left; }
+section[role="main"] div.card.img div.meta div.content_type,
+section[role="main"] div.card.med div.meta div.content_type { margin:0px 8px 0 2px; }
 
-section[role="main"] div.card.txt div.content						{ xborder-top: 1px solid #fff; margin:0 20px 0; padding-top:9px;}
-section[role="main"] div.card.txt div.content div.content_type		{ width:25px; height:47px; margin:5px 8px 0 0; background:url(../images/type_text.png) top left no-repeat; text-indent:-9999px; float:left; }
-section[role="main"] div.card.txt div.content div.content_body		{ font-size:24px; font-family:Times New Roman, Georgia, serif;}
+section[role="main"] div.card.txt div.content           { xxborder-top: 1px solid #fff; margin:0; position:relative;z-index:2;}
+/*section[role="main"] div.card.txt div.content div.content_body    { font-size:20px; font-weight:normal; font-family:Helvetica, 'HelveticaBold', Arial, sans-serif; font-style:italic; xxbackground:#f0f0f0; padding:10px; background:url("../images/noise.png") repeat scroll 0 0 #f2f2f2; }*/
+section[role="main"] div.card.txt div.content div.content_body    { font-size:17px; font-weight:normal; font-family:Helvetica, 'HelveticaBold', Arial, sans-serif; background:url(../images/quote_background.jpg) bottom right repeat-y #f0f0f0; padding:15px 20px; border-top:1px solid #ddd; border-bottom:1px solid #ddd;}
+section[role="main"] div.card.txt div.content div.content_body a  { color:#606060; text-decoration:none; }
+section[role="main"] div.card.txt div.content div.content_body:first-child:first-letter { font-size:31px; line-height:33px; font-weight:bold; float:left; padding:0px 2px 0 0; text-transform:uppercase;}
 
 section[role="main"] div.card.img div.content,
-section[role="main"] div.card.med div.content							{ margin:0 20px 0; }
-section[role="main"] div.card.img div.content div.content_type,
-section[role="main"] div.card.med div.content div.content_type		{ display:none; }
-section[role="main"] div.card.img div.content div.content_body img			{ width:420px; margin-top:-1px; margin-left:-35px; position:relative;z-index:1; border-top:1px dashed #ccc; border-bottom:1px dashed #ccc; xpadding:5px 0;}
-section[role="main"] div.card.med div.content div.content_body iframe		{ width:420px; margin-top:-1px; margin-left:-35px; position:relative;z-index:1; border-top:1px dashed #ccc; border-bottom:1px dashed #ccc; xpadding:5px 0;}
+section[role="main"] div.card.med div.content							{ margin:-43px 0 0; position:relative; z-index:2;}
+section[role="main"] div.card.img div.content div.content_body img			{ width:300px; margin-top:-1px; xxmargin-left:-35px; position:relative;z-index:1; xxborder-top:1px dashed #ccc; xxborder-bottom:1px dashed #ccc; xpadding:5px 0;}
+section[role="main"] div.card.med div.content div.content_body iframe		{ width:300px; margin-top:-1px; xxmargin-left:-35px; position:relative;z-index:1; xxborder-top:1px dashed #ccc; xxborder-bottom:1px dashed #ccc; xpadding:5px 0;}
 
 /*section[role="main"] div.card.page	{ border:1px solid #ccc; border-top:none; width:210px; padding:15px 0 20px; float:left; margin-left:-1px; xmargin-top:-1px; }*/
 section[role="main"] div.card.pag header 			{ /*padding:0 10px;*/ }
@@ -585,8 +593,8 @@ section[role="main"] div.card.pag div.content			{ xborder-top: 1px solid #fff; m
 section[role="main"] div.card.pag div.content_type		{ width:25px; height:37px; margin:5px 8px 0 0; background:url(../images/type_page.png) top left no-repeat; text-indent:-9999px; float:left; }
 section[role="main"] div.card.pag div.content_body		{ margin-top:4px; }
 
-section[role="main"] div.card div.comments    { background:#eee; border:1px solid #d3d4d4; box-shadow:0px 0px 2px #aaa; padding:5px; clear:both; margin:30px 20px; display:none; }
-section[role="main"] div.card:hover div.comments    { background:#f0f0f0; }
+section[role="main"] div.card div.comments    { xxbackground:#eee; xxborder:1px solid #d3d4d4; xxbox-shadow:0px 0px 2px #aaa; padding:5px; clear:both; margin:15px; display:none; }
+/*section[role="main"] div.card:hover div.comments    { background:#f0f0f0; }*/
 section[role="main"] div.card div.comments h2 { font-size:12px; }
 section[role="main"] div.card div.comment_container { position:relative; }
 section[role="main"] div.card div.comment_container .block_content   { position:absolute; right:5px; bottom: 3px; font-size:11px; color:red; }
@@ -682,19 +690,41 @@ section[role="main"] div.card div.comment_container .comment .quote.close {    d
 
 /* COMPLEMENTARY */
 section[role="complementary"] { 
-	height:100%;
-	position:fixed;
-	left:0px;
-	width:200px;
+  width:100%;
+	height:50px;
+  position:fixed;
+  left:0px;
 	padding:0;
 	background:#fff;
 	box-shadow:0 0 10px #888;
-  z-index:1;
+  z-index:5;
 }
 
-section[role="complementary"] #user_data img {
-	max-width: 168px;
+/*section[role="complementary"] #user_data {
+  float:left;
+  margin:5px;
+}*/
+/*section[role="complementary"] #user_data img {
+	max-width:40px;
+}*/
+
+
+/* temp style: */
+section[role="complementary"] #user_data label {
+  display:inline-block;
+  float:none;
 }
+
+
+/*section[role="complementary"] #user_data label span {
+  font-size:10px;
+  color:#666;
+  font-style:italic;
+  display:block;
+  margin-left:23px;
+  float:left;
+  clear:both;
+}*/
 
 #sidebar {
 	padding:20px;
@@ -711,23 +741,42 @@ section[role="complementary"] #user_data img {
     margin-bottom: 10px;
 }
 
-section[role="complementary"] #user_data label {
-	font-size:12px;
-	font-weight:bold;
-	margin-bottom:20px;
-	display:block;
-	overflow:visible;
-}
+#sidebar    {padding:0;overflow:auto;}
+#sidebar h2   {font-size:26px; font-weight:normal; margin:0 10px; max-width:160px;}
+#sidebar h3   {font-size:16px; font-weight:100; margin:0 10px; font-family:Arial; color:#5f5f5f; text-align:center; display:inline-block;}
+#sidebar #avatar,
+#sidebar #user_data      {text-align:center; margin:8px 10px 0;}
+#sidebar #avatar img     {max-height:32px; }
+#sidebar #user_data img      {max-height:32px; margin-bottom:-9px;}
+#sidebar #follow      {margin:5px 10px 10px;}
+#sidebar #follow button   {background:#cde4f3; cursor:pointer; border:1px solid #8bb6d0; border-radius:3px; box-shadow: -1px -9px 11px -5px #559FCB inset;color: #42718E; text-shadow: 1px 1px 1px #CDE4F3; font-size:12px; font-weight:bold;}
+#sidebar #social-icons img  {width:20px; height:20px; }
+#sidebar #social-icons    {margin:0 10px;}
+#sidebar ul[role="filters"]         {font-size: 13px; list-style-type: none; position: absolute; right: 0; top: 14px;}
+#sidebar ul[role="filters"] li        {text-align:center; padding:2px 25px 1px 25px; cursor:pointer; }
+#sidebar ul[role="filters"] li:hover,
+#sidebar ul[role="filters"] li.active   {xxfont-weight:bold; color:#008be4; border:1px solid #bababa; border-left:0; border-right:0;}
+#sidebar #following,
+#sidebar #followed_by {margin:0 10px 10px;}
 
-section[role="complementary"] #user_data label span {
-	font-size:10px;
-	color:#666;
-	font-style:italic;
-	display:block;
-	margin-left:23px;
-	float:left;
-	clear:both;
-}
+/*#sidebar #user_data h3 {xxfont-size:30px; font-weight: bold; xxpadding-bottom:10px; xxpadding-left:10px}
+#sidebar #user_data img {float:left;}*/
+
+#sidebar h2,
+#sidebar #avatar,
+#sidebar #user_data,
+#sidebar #follow,
+#sidebar #following,
+#sidebar #followed_by,
+#sidebar h3[role="profile_section_header"]
+html.dailycandy #sidebar h2,
+html.dailycandy #sidebar #avatar,
+html.dailycandy #sidebar #user_data,
+html.dailycandy #sidebar #follow,
+html.dailycandy #sidebar #following,
+html.dailycandy #sidebar #followed_by,
+html.dailycandy #sidebar h3[role="profile_section_header"],
+html.dailycandy #sidebar h3[role="profile_section_header"]  {display:block;}
 
 /*************** WIDE PAGES ***************/
 /* CONTENT CONTAINER */
@@ -769,7 +818,7 @@ body div.simpleMessage{
 }
 
 /* analytics dashboard */
-section[role="group panel header"] 			{ width:100%; background:#7f7f7f; color:#eee; overflow:auto; box-shadow:0px -10px 9px -9px #454545 inset; position:fixed; bottom:0; z-index:2; }
+section[role="group panel header"] 			{ width:100%; background:#7f7f7f; color:#eee; overflow:auto; box-shadow:0px -10px 9px -9px #454545 inset; position:fixed; bottom:0; z-index:10; }
 section[role="group panel header"] h3			{ float:left; overflow:auto; padding:5px; margin:0; font-size:12px; font-weight:bold; background: none repeat scroll 0 0 #638296; box-shadow: 0 -10px 9px -9px #454545 inset; }
 
 section[role="group links"] 		{ padding:4px; font-size:12px; float:left; border-left:1px solid #ddd; text-shadow:1px 1px 2px #454545;}

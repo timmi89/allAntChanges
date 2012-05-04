@@ -7,6 +7,14 @@ from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import ugettext_lazy as _
 from PIL import Image
 
+import StringIO
+
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
+
+import traceback
+import logging
+logger = logging.getLogger('rb.standard')
 
 class CreateUserForm(forms.ModelForm):
     """
@@ -125,6 +133,7 @@ class ModifySocialUserForm(forms.ModelForm):
     
     def clean_avatar(self):
         avatar = self.cleaned_data["avatar"]
+        
         return avatar
     
     def is_valid(self):
@@ -142,17 +151,28 @@ class ModifySocialUserForm(forms.ModelForm):
             raise forms.ValidationError(_("A problem occurred while updating your profile."))
         
         if commit:
-            social_user.img_url = social_user.avatar.url
             
-            social_user.save()
-            img_filename = social_user.avatar.path
-            
+            #social_user.save()
+            #this should probably just be done in the clean avatar method
             try:
-                image = Image.open(img_filename)
+                logger.info("Starting thumb")
+
+                image = Image.open(social_user.avatar)
                 image.thumbnail((50,50),Image.ANTIALIAS)
-                image.save(img_filename)
+                thumb_io = StringIO.StringIO()
+                logger.info("Trying to save")
+                image.save(thumb_io, format=image.format)
+                #social_user.avatar.delete()
+                #filename = social_user.img_url[social_user.img_url.rindex("/") + 1:]
+                filename = 'avatar.' + image.format
+                logger.info("FORMAT: " + image.format + " " + filename)
+                thumb_file = InMemoryUploadedFile(thumb_io, None, filename, 'image/' + image.format, thumb_io.len, None)
+                social_user.avatar = thumb_file
+                social_user.img_url = userutils.formatUserAvatarUrl(social_user)                
+                logger.info("IMG_URL: " + social_user.img_url)                
+                social_user.save()
             except Exception, e:
-                print e
+                logger.info(traceback.format_exc())
             
         return social_user
 

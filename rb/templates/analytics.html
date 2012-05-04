@@ -387,6 +387,8 @@ if ( RB.util.getHashValue('end') ) {
 	RB.analytics.endDate = RB.util.getHashValue('end');
 } else {
 	RB.analytics.endDate = "{% now "m/d/y" %}";
+	// this line is here b/c i suck at python datetime string BS:
+	RB.analytics.endDate = RB.analytics.endDate.split('/')[0]+'/'+(parseInt(RB.analytics.endDate.split('/')[1])+1)+'/'+RB.analytics.endDate.split('/')[2];
 }
 
 $('input[name="start_date"]').val( RB.analytics.startDate );

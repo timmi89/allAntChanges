@@ -62,6 +62,10 @@ body.rdr_ie div.rdr a.rdr_tag span.rdr_tag_count    {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
 }
 
+body.rdr_ie div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    { 
+    -ms-filter:"progid:DXImageTransform.Microsoft.gradient(enabled = false)";
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
 
 body.rdr_ie table.rdr_tags a.rdr_tag span.rdr_tag_count{ 
     -ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff0f0f0', endColorstr='#ffd0d0d0')" !important;
@@ -72,6 +76,11 @@ body.rdr_ie table.rdr_tags a.rdr_tag.rdr_hover span.rdr_tag_count,
 body.rdr_ie table.rdr_tags a.rdr_tag:hover span.rdr_tag_count{
     -ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9')" !important;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffddedff', endColorstr='#ffadd1f9');
+}
+
+body.rdr_ie div.rdr_tag_details {
+    border:1px solid #ccc !important;
+    margin-top:2px !important;
 }
 
 #rdr_loginPanel iframe,
