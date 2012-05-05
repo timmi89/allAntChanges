@@ -1430,7 +1430,8 @@ function readrBoard($R){
                                 "src_with_path":src_with_path
                             });
                         }
-                    },
+                    }//,
+                    /*
                     {
                         "item":"bookmark",
                         "tipText":"Remember this",
@@ -1444,6 +1445,7 @@ function readrBoard($R){
                             });
                         }
                     }
+                    */
                 ];
 
                 RDR.events.track( 'show_action_bar::'+content );
@@ -4210,14 +4212,21 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
 
                     function _setupIndicators(){
-                        //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at
-                        var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body rdr_brtl rdr_brtr rdr_brbl rdr_brbr" />').attr('id',indicatorBodyId)//chain
-                        .appendTo($indicator)//chain
-                        .append(
-                            '<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />',
-                            '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
-                        );//chain
-                        // .data( {'hash':hash} );
+
+                        var cornerClasses = "rdr_brtr rdr_brbr";
+                        if( summary.kind == 'text' || summary.kind == 'txt' ){
+                            cornerClasses += " rdr_brbl rdr_brtl";
+                        }
+
+                        //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
+                        var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body " />')
+                            .attr('id',indicatorBodyId)
+                            .addClass(cornerClasses)
+                            .appendTo($indicator)
+                            .append(
+                                '<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />',
+                                '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
+                            );
 
                         $indicator.css('visibility','visible');
                     }
@@ -4473,6 +4482,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $container = summary.$container,
                             $container_tracker = $('#rdr_container_tracker_'+hash);
 
+                        //quick fix so this doesnt get run on text.
+                        //TODO figure out where this was getting called for text containers.
+                        var container = RDR.containers[hash];
+                        if ( container.kind && ( container.kind == "text" || container.kind == "txt") ) return;
+
                         var padding = {
                             top: parseInt( $container.css('padding-top'), 10 ),
                             right: parseInt( $container.css('padding-right'), 10 ),
@@ -4547,13 +4561,15 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 indicatorBodyWidth = $indicator_body.width(),
                                 modIEHeight = ( $R.browser.msie && parseInt( $R.browser.version, 10 ) < 9 ) ? 10:0;
 
-                            $indicator.css({
-                                left: -11,
-                                top: $container.height()+modIEHeight-10
-                            })//chain
-                            .data('top', parseInt( $indicator.css('top') ));
+                            var cssTop = $container.height()+modIEHeight-10;
+                            $indicator.data('top', cssTop);
 
-                            var has_inline_indicator = (summary.kind=="text") ? false:true; //$container.data('inlineIndicator'); //boolean
+                            RDR.util.cssSuperImportant( $indicator, {
+                                left: 0,
+                                top: cssTop
+                            });
+
+                            var has_inline_indicator = (summary.kind=="text") ? false:true; //$container.data('inlineIndicator'); //boolean                        
                             if(has_inline_indicator){
                                 RDR.actions.indicators.utils.updateInlineIndicator(hash);
                             }else{

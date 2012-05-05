@@ -126,11 +126,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
             ).values_list('group_id', flat=True)
         
         except SocialUser.DoesNotExist:
-# <<<<<<< HEAD
-            logger.info("SOCIAL USER DOES NOT EXIST FOR: " + str(cookie_user))
-# =======
-            # logger.info("SOCIAL DOES NOT EXIST")
-# >>>>>>> pills
+            logger.info("SOCIAL DOES NOT EXIST")
         
         
     """ For interactions.html """
@@ -404,11 +400,7 @@ def reset_rb_password(request):
             user_id = request.POST['uid']
         except KeyError, ke:
             context['message']  = 'There was a problem with your reset token. Please reopen this page from the link in your email.'
-# <<<<<<< HEAD
-            logger.warn(str(ke))
-# =======
-            # logger.error(ke)
-# >>>>>>> pills
+            logger.error(ke)
     
         form = ChangePasswordForm(request.POST)
         is_valid_token = validatePasswordToken(user_id, password_token)
