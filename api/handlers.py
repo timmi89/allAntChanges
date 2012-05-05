@@ -9,6 +9,12 @@ from authentication.token import *
 from settings import BASE_URL, STATIC_URL
 from django.forms.models import model_to_dict
 
+
+import logging
+logger = logging.getLogger('rb.standard')
+
+
+
 class SocialUserHandler(AnonymousBaseHandler):
     model = SocialUser
     fields = ('user','full_name', 'img_url')
@@ -363,7 +369,8 @@ class PageDataHandler(AnonymousBaseHandler):
             # ---Find top 10 tags on a given page---
             tags = InteractionNode.objects.filter(
                 interaction__kind='tag',
-                interaction__page=current_page
+                interaction__page=current_page,
+                interaction__approved=True
             )
             ordered_tags = tags.order_by('body')
             tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
@@ -414,14 +421,60 @@ class SettingsHandler(AnonymousBaseHandler):
                 # create a group
                 # group = MAKE A GROUP(host)
                 # now use group obj to create a site for this host
+                # settings:  temp_limit = 0.  blessed_tag_ids(1,2,3,4).  name=host.  short_name=host.  black_words_list: copy from group_id(readboard)
+                # approved = true.  requires_approval = false.  share
+                # sharing, rating, commenting, searching, bookmarking:  true, true, true
+                # anno_whitelist = p
+                group = Group.objects.create(
+                    name=host,
+                    short_name=host,
+                    approved=True,
+                    temp_interact=0,
+                    requires_approval=False,
+                    share = Feature.objects.get(id=1),
+                    rate = Feature.objects.get(id=1),
+                    comment = Feature.objects.get(id=1),
+                    bookmark = Feature.objects.get(id=1),
+                    search = Feature.objects.get(id=1),
+                    
+                )
+                
+                
+                default_groups = Group.objects.filter(short_name='default')
+                for dgroup in default_groups:
+                    if dgroup.short_name == 'default':
+                        default_group = dgroup
+                
+                group.word_blacklist = default_group.word_blacklist
+                group.anno_whitelist = default_group.anno_whitelist
+                group.save()
+                
+                blessed = GroupBlessedTag.objects.filter(group = default_group)
+                for blessing in blessed:
+                    GroupBlessedTag.objects.create(group=group, node=blessing.node, order=blessing.order )
+                    
+                    
                 # site = MAKE A SITE(host, group)
-                    # settings:  temp_limit = 0.  blessed_tag_ids(1,2,3,4).  name=host.  short_name=host.  black_words_list: copy from group_id(readboard)
-                                # approved = true.  requires_approval = false.  share
-                                # sharing, rating, commenting, searching, bookmarking:  true, true, true
-                                # anno_whitelist = p
+                Site.objects.create(
+                    name=host,
+                    domain=host,
+                    group=group
+                    
+                )
+                
+                # Add us to admins
+                readr_admins = SocialUser.objects.filter(
+                    user__email__in=(
+                        'porterbayne@gmail.com',
+                        'erchaves@gmail.com',
+                        'michael@readrboard.com'
+                    )
+                )
+        
+                for admin in readr_admins:
+                    GroupAdmin.objects.create(group=group,social_user=admin,approved=True)
 
-                return HttpResponse("ReadrBoard not available for this site")
-
+                
         
         else:
             group = Group.objects.get(id=group_id)

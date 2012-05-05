@@ -9,11 +9,14 @@ from django.contrib.auth.models import Permission
 import logging
 logger = logging.getLogger('rb.standard')
 
+import logging
+logger = logging.getLogger('rb.standard')
+
 
 def convertUser(temp_user, existing_user):
     existing = Interaction.objects.filter(user=existing_user)
     new = Interaction.objects.filter(user=temp_user)
-
+    
     # Make sure there are no duplicate interactions
     # Delete them if there are dupes
     for existing_row in existing:
@@ -27,6 +30,7 @@ def convertUser(temp_user, existing_user):
 
     new.update(user=existing_user)
     User.objects.get(id=temp_user).delete()
+    logger.debug("converted temp user to: " + str(existing_user))
 
 def generateUsername():
     username = base64.b64encode(uuid.uuid4().bytes)[:-2]
@@ -198,8 +202,6 @@ def generatePasswordEmail(username, email):
         except User.DoesNotExist:
             return (None, False)
     
-    message = '%s/reset_password?uid=%s&token=%s ' % (settings.BASE_URL, user.id, generatePasswordToken(user))
-    message += 'Click here to reset your password.  This link is valid until midnight GMT of the day requested.'
     password_email = getEmailTemplate('password_email.html') % (settings.BASE_URL, user.id, generatePasswordToken(user))
     return (user, password_email)
 

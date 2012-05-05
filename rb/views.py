@@ -201,7 +201,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
     except (EmptyPage, InvalidPage): current_page = paginator.page(paginator.num_pages)
       
     context['current_page'] = current_page
-    #logger.debug("RENDER MAIN")
+
     return render_to_response("index.html", context, context_instance=RequestContext(request))
 
 def cards(request, **kwargs):
@@ -406,6 +406,7 @@ def reset_rb_password(request):
         is_valid_token = validatePasswordToken(user_id, password_token)
         
         if is_valid_token and form.is_valid():
+            logger.info("resetting password for " + str(user_id))
             user = form.save(True)            
             context['requested'] = True
     

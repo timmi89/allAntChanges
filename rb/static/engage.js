@@ -2,6 +2,8 @@ var RDR = {}, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
 $R = {}, //init var: our clone of jQuery
 RDR_scriptPaths = {},
+//check if this script is the offline version
+//note that the other RDR_offline vars in our iframes should check window.location for local.readrboard.com instead
 RDR_offline = !!(
     //see the readrmarklet file for why we use http:--
     document.getElementById("http:--localhost:8080-static-engage.js") ||
@@ -1422,7 +1424,8 @@ function readrBoard($R){
                                 "src_with_path":src_with_path
                             });
                         }
-                    },
+                    }//,
+                    /*
                     {
                         "item":"bookmark",
                         "tipText":"Remember this",
@@ -1436,6 +1439,7 @@ function readrBoard($R){
                             });
                         }
                     }
+                    */
                 ];
 
                 RDR.events.track( 'show_action_bar::'+content );
@@ -1859,12 +1863,12 @@ function readrBoard($R){
 
                 $('html,body').animate({scrollTop: scrollTarget}, 1000);
 
-                if ( data.page_hash && data.page_hash.length > 1 ) {
-                    // TODO SHARE HACK REMOVE THIS DAILYCANDY ONLY
-                    var p = data.page_hash;
-                    var slide = parseInt( p.substr( p.indexOf('=')+1 ) ) - 1;
-                    DAILYCANDYCYCLE( slide );
-                }
+                // if ( data.page_hash && data.page_hash.length > 1 ) {
+                //     // TODO SHARE HACK REMOVE THIS DAILYCANDY ONLY
+                //     var p = data.page_hash;
+                //     var slide = parseInt( p.substr( p.indexOf('=')+1 ) ) - 1;
+                //     DAILYCANDYCYCLE( slide );
+                // }
             },
             getSharedLinkInfo: function( data ){
                 //some condition
@@ -1880,8 +1884,10 @@ function readrBoard($R){
 
                 //note: the "\054" is actually the octal for a comma.  The back end is passing it back that way. It's working fine though.
                 //, so it seems that "2:10\0542:32" == "2:10,2:32"
-                RDR.session.alertBar.make('fromShareLink', data);
-                return true; //could return something more useful if we need it.
+                if ( $.cookie('content_type') != 'pag' ) {
+                    RDR.session.alertBar.make('fromShareLink', data);
+                    return true; //could return something more useful if we need it.
+                }
             },
             getUser: function(args, callback) {
                 if ( callback && args ) {
@@ -2423,6 +2429,8 @@ function readrBoard($R){
                 $(document).on('click.rdr',function(event) {
                     var $mouse_target = $(event.target);
 
+                    // clear any errant tooltips
+                    $('div.rdr_twtooltip').remove();
                     if ( !$mouse_target.parents().hasClass('rdr')) {
                         RDR.rindow.closeAll();
                         $('div.rdr_indicator_details_for_media').each( function() {
@@ -3670,7 +3678,30 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                                 $span.show(200).css('visibility','visible');
 
-                                $summary_box.find('div.rdr_info').html( $('<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>') );
+                                var $pageTagResponse = $('<div><em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em>  <strong class="rdr_share_it">Share It:</strong> </div>');
+                                
+                                var socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
+
+                                // embed icons/links for diff SNS
+                                var shareHash = hash;
+                                $.each(socialNetworks, function(idx, val){
+                                    $pageTagResponse.append('<a href="http://' +val+ '.com" class="rdr_share_link"><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a>');
+                                    $pageTagResponse.find('a.rdr_share_link:last').click( function() {
+                                        RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
+
+                                        var title = $('meta[property="og:title"]').attr('content') ?
+                                            $('meta[property="og:title"]').attr('content') :
+                                                $('title').text() ?
+                                                $('title').text() : "";
+
+                                        RDR.actions.share_getLink({ hash:args.hash, kind:args.kind, sns:val, rindow:{}, tag:args.tag, content_node:{content:title,kind:"page"} }); // ugh, lots of weird data nesting
+                                        return false;
+                                    });
+                                });
+                                // $nextSteps.find('div.rdr_share_social').append( $shareLinks );
+
+                                $pageTagResponse.append( '<br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>' );
+                                $summary_box.find('div.rdr_info').html( $pageTagResponse );
                                 //todo: reconsider this method of liberally updating everything with updateContainerTrackers
                                 $summary_box.find('div.rdr_info').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
                             } else {
@@ -4113,14 +4144,21 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
 
                     function _setupIndicators(){
-                        //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at
-                        var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body rdr_brtl rdr_brtr rdr_brbl rdr_brbr" />').attr('id',indicatorBodyId)//chain
-                        .appendTo($indicator)//chain
-                        .append(
-                            '<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />',
-                            '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
-                        );//chain
-                        // .data( {'hash':hash} );
+
+                        var cornerClasses = "rdr_brtr rdr_brbr";
+                        if( summary.kind == 'text' || summary.kind == 'txt' ){
+                            cornerClasses += " rdr_brbl rdr_brtl";
+                        }
+
+                        //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
+                        var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body " />')
+                            .attr('id',indicatorBodyId)
+                            .addClass(cornerClasses)
+                            .appendTo($indicator)
+                            .append(
+                                '<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />',
+                                '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
+                            );
 
                         $indicator.css('visibility','visible');
                     }
@@ -4376,6 +4414,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $container = summary.$container,
                             $container_tracker = $('#rdr_container_tracker_'+hash);
 
+                        //quick fix so this doesnt get run on text.
+                        //TODO figure out where this was getting called for text containers.
+                        var container = RDR.containers[hash];
+                        if ( container.kind && ( container.kind == "text" || container.kind == "txt") ) return;
+
                         var padding = {
                             top: parseInt( $container.css('padding-top'), 10 ),
                             right: parseInt( $container.css('padding-right'), 10 ),
@@ -4450,13 +4493,15 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 indicatorBodyWidth = $indicator_body.width(),
                                 modIEHeight = ( $R.browser.msie && parseInt( $R.browser.version, 10 ) < 9 ) ? 10:0;
 
-                            $indicator.css({
-                                left: -11,
-                                top: $container.height()+modIEHeight-10
-                            })//chain
-                            .data('top', parseInt( $indicator.css('top') ));
+                            var cssTop = $container.height()+modIEHeight-10;
+                            $indicator.data('top', cssTop);
 
-                            var has_inline_indicator = (summary.kind=="text") ? false:true; //$container.data('inlineIndicator'); //boolean
+                            RDR.util.cssSuperImportant( $indicator, {
+                                left: 0,
+                                top: cssTop
+                            });
+
+                            var has_inline_indicator = (summary.kind=="text") ? false:true; //$container.data('inlineIndicator'); //boolean                        
                             if(has_inline_indicator){
                                 RDR.actions.indicators.utils.updateInlineIndicator(hash);
                             }else{
@@ -4900,10 +4945,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 } //end makeOtherComments
             },
             share_getLink: function(args) {
-
                 var hash = args.hash,
                     summary = RDR.summaries[hash],
-                    kind = summary.kind;
+                    kind = (args.kind) ? args.kind:summary.kind;
 
                 //example:
                 //tag:{body, id}, rindow:rindow, settings:settings, callback:
@@ -4962,7 +5006,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         "group_id" : RDR.group.id,
                         "page_id" : RDR.util.getPageProperty('id', hash),
                         "referring_int_id" : RDR.session.referring_int_id,
-                        "container_kind" : RDR.summaries[hash].kind
+                        "container_kind" : (args.kind=="page") ? "page":RDR.summaries[hash].kind  // TODO: a container kind of page should be handled better
                     };
 
                         // send the data!
@@ -5468,7 +5512,7 @@ function rdr_loadScript(sScriptSrc,callbackfunction) {
         oHead.appendChild(oScript);
     }
 }
-RDR.offline = true;
+
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
 RDR_scriptPaths.jquery = RDR_offline ?
     RDR_staticUrl+"global/js/jquery-1.7.1.min.js" :
@@ -5554,6 +5598,7 @@ function $RFunctions($R){
         //jQuery Plugins
         plugin_jquery_log($R);
         plugin_jquery_json($R);
+        plugin_jquery_cookie($R);
         plugin_jquery_postMessage($R);
         plugin_jquery_enhancedOffset($R);
         plugin_jquery_hashChange($R);
@@ -5749,6 +5794,69 @@ function $RFunctions($R){
         }
         //end function plugin_jquery_json
 
+        function plugin_jquery_cookie($){
+            /*jslint browser: true */ /*global jQuery: true */
+
+            /**
+            * jQuery Cookie plugin
+            *
+            * Copyright (c) 2010 Klaus Hartl (stilbuero.de)
+            * Dual licensed under the MIT and GPL licenses:
+            * http://www.opensource.org/licenses/mit-license.php
+            * http://www.gnu.org/licenses/gpl.html
+            *
+            */
+
+            /*
+            * Get the value of a cookie with the given key.
+            *
+            * @desc Set the value of a cookie.
+            * @example $.cookie('the_cookie', 'the_value');
+            *
+            * @desc Create a cookie with all available options.
+            * @example $.cookie('the_cookie', 'the_value', { expires: 7, path: '/', domain: 'jquery.com', secure: true });
+            *
+            * @desc Create a session cookie.
+            * @example $.cookie('the_cookie', 'the_value');
+            *
+            * @desc Delete a cookie by passing null as value.
+            * @example $.cookie('the_cookie', null);
+            *
+            */
+            $.cookie = function (key, value, options) {
+                
+                // key and at least value given, set cookie...
+                if (arguments.length > 1 && String(value) !== "[object Object]") {
+                    options = $.extend({}, options);
+
+                    if (value === null || value === undefined) {
+                        options.expires = -1;
+                    }
+
+                    if (typeof options.expires === 'number') {
+                        var days = options.expires, t = options.expires = new Date();
+                        t.setDate(t.getDate() + days);
+                    }
+                    
+                    value = String(value);
+                    
+                    return (document.cookie = [
+                        encodeURIComponent(key), '=',
+                        options.raw ? value : encodeURIComponent(value),
+                        options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
+                        options.path ? '; path=' + options.path : '',
+                        options.domain ? '; domain=' + options.domain : '',
+                        options.secure ? '; secure' : ''
+                    ].join(''));
+                }
+
+                // key and possibly options given, get cookie...
+                options = value || {};
+                var result, decode = options.raw ? function (s) { return s; } : decodeURIComponent;
+                return (result = new RegExp('(?:^|; )' + encodeURIComponent(key) + '=([^;]*)').exec(document.cookie)) ? decode(result[1]) : null;
+            };
+        }
+
         function plugin_jquery_postMessage($){
             /*
              * jQuery postMessage - v0.5 - 9/11/2009
@@ -5864,24 +5972,25 @@ function $RFunctions($R){
                         $summary_row = $summary_widget.find('tr');
 
                     $summary_widget.append('<div class="rdr-see-more"></div>');
+                    $summary_widget.append('<img src="'+RDR_staticUrl+'widget/images/blank.png" class="rdr_summary_help rdr_tooltip_this" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. ReadrBoard lets you easily react to anything on this page.<br><br>The tags to the left let you react to this whole page.<br><br>Or -- select any text, image, or video and react to just that part of the page."/>');
                     $summary_widget.data('page_id', page.id);
 
                     //page.jqFunc would be something like 'append' or 'after',
                     //so this would read $summary_widget_parent.append($summary_widget);
                     $summary_widget_parent[page.jqFunc]($summary_widget);
+                    $summary_widget.find('img.rdr_tooltip_this').tooltip();
 
                     var total_interactions = 0;
                     for ( var i in page.summary ) {
                         if ( page.summary[i].kind == "tag" ) total_interactions = page.summary[i].count;
                     }
 
-                    var $RB = $('<div class="rdr-this-is-readrboard rdr_tooltip_this" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. ReadrBoard lets you easily react to anything on this page!<br><br>Click a button to the right to react to this whole page.<br><br>Or -- select any text, image, or video and react to just that part of the page."></div>');
+                    var $RB = $('<div class="rdr-this-is-readrboard"></div>');
                     $RB.append('<a href="'+RDR_baseUrl+'/page/'+page.id+'" target="_blank"><img src="'+RDR_staticUrl+'widget/images/readrboard_logo.png" class="no-rdr" /></a>');
                     $RB.click( function() {
                         RDR.events.track('click_rb_icon_summ');
                     });
 
-                    $RB.tooltip();
 
                     var $react = $('<div class="rdr-sum-headline" />');
                     if ( RDR.group && RDR.group.call_to_action && RDR.group.call_to_action != "" ) {
@@ -6103,26 +6212,26 @@ function $RFunctions($R){
                                 );
                                 $page.find('span.rdr_details_pill').append($pill);
                                 if ( counts.page > 0 ) {
-                                    $page.addClass('rdr_tooltip_this').attr('title', 'There are ('+counts.page+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions to this page.<br/>Click to agree.');
+                                    $page.addClass('rdr_tooltip_this').attr('title', 'There are ('+counts.page+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions to this <strong>page</strong>.<br/>Click to agree.');
                                 } else {
-                                    $page.addClass('rdr_tooltip_this').attr('title', 'Click to add this reaction to the page.');
+                                    $page.addClass('rdr_tooltip_this').attr('title', 'Click to add this reaction to the <strong>page</strong>.');
                                 }
                                 $detailsHtml.append( $page );
 
                                 if ( counts.text > 0 || counts.img > 0 || counts.media > 0 ) {
                                     $detailsHtml.append('<div class="rdr_counts_other" />');
                                     if ( counts.text > 0 ) {
-                                        var $text = $('<div class="rdr_counts rdr_text rdr_tooltip_this" title="There are ('+counts.text+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on text in this page."><img src="'+RDR_staticUrl+'site/images/type_text.png"/> <strong>'+counts.text+'</strong></div>');
+                                        var $text = $('<div class="rdr_counts rdr_text rdr_tooltip_this" title="There are ('+counts.text+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on <strong>text</strong> in this page."><img src="'+RDR_staticUrl+'site/images/type_text.png"/> <strong>'+counts.text+'</strong></div>');
                                         $detailsHtml.find('div.rdr_counts_other').append( $text );
                                     }
 
                                     if ( counts.img > 0 ) {
-                                        var $img = $('<div class="rdr_counts rdr_image rdr_tooltip_this" title="There are ('+counts.img+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on images in this page."><img src="'+RDR_staticUrl+'site/images/type_img.png"/> <strong>'+counts.img+'</strong></div>');
+                                        var $img = $('<div class="rdr_counts rdr_image rdr_tooltip_this" title="There are ('+counts.img+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on <strong>images</strong> in this page."><img src="'+RDR_staticUrl+'site/images/type_img.png"/> <strong>'+counts.img+'</strong></div>');
                                         $detailsHtml.find('div.rdr_counts_other').append( $img );
                                     }
 
                                     if ( counts.media > 0 ) {
-                                        var $media = $('<div class="rdr_counts rdr_media rdr_tooltip_this" title="There are ('+counts.media+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on videos &amp; other media in this page."><img src="'+RDR_staticUrl+'site/images/type_media.png"/> <strong>'+counts.media+'</strong></div>');
+                                        var $media = $('<div class="rdr_counts rdr_media rdr_tooltip_this" title="There are ('+counts.media+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on <strong>videos &amp; other media</strong> in this page."><img src="'+RDR_staticUrl+'site/images/type_media.png"/> <strong>'+counts.media+'</strong></div>');
                                         $detailsHtml.find('div.rdr_counts_other').append( $media );
                                     }
 
@@ -7572,6 +7681,6 @@ function $RFunctions($R){
 //end $RFunctions()
 
 // DEMO remove!!
-function DAILYCANDYCYCLE(slide) {
-    if ( jQuery('#module-flipbook').length == 1 ) jQuery('#module-flipbook').cycle( slide );
-}
+// function DAILYCANDYCYCLE(slide) {
+//     if ( jQuery('#module-flipbook').length == 1 ) jQuery('#module-flipbook').cycle( slide );
+// }

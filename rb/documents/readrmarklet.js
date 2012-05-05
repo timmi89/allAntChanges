@@ -6,7 +6,12 @@
   function rdr_getScript(url,success){
     var head = document.getElementsByTagName("head")[0], done = false;
     var script = document.createElement("script");
+    
+    //setting an id helps engage.js know whether it's the local version or not.
+    //replace "/" because it's not technically a valid char for an id
+    script.id=url.replace(/\//g,"-");
     script.src = url;
+
     // Attach handlers for all browsers
     script.onload = script.onreadystatechange = function(){
       if ( !done && (!this.readyState ||
@@ -17,7 +22,8 @@
     };
     head.appendChild(script);
   }
-  var script = "http://local.readrboard.com:8080/widget/demo/";
+  var script = "http://local.readrboard.com:8080/static/engage.js";
+  //var script = "http://www.readrboard.com/static/engage.js";
   rdr_getScript( script, function(){ 
     //callback not used
   });
