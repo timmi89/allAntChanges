@@ -2,6 +2,8 @@ var RDR = {}, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
 $R = {}, //init var: our clone of jQuery
 RDR_scriptPaths = {},
+//check if this script is the offline version
+//note that the other RDR_offline vars in our iframes should check window.location for local.readrboard.com instead
 RDR_offline = !!(
     //see the readrmarklet file for why we use http:--
     document.getElementById("http:--localhost:8080-static-engage.js") ||
@@ -5570,7 +5572,7 @@ function rdr_loadScript(sScriptSrc,callbackfunction) {
         oHead.appendChild(oScript);
     }
 }
-RDR.offline = true;
+
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
 RDR_scriptPaths.jquery = RDR_offline ?
     RDR_staticUrl+"global/js/jquery-1.7.1.min.js" :

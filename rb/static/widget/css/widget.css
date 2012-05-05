@@ -330,7 +330,7 @@ div.rdr strong {font-weight:bold !important;}
     right:11px !important;
 }
 
-#rdr_sandbox div.rdr div.rdr_header h1                   { margin-left:14px !important; text-align:left !important;}
+#rdr_sandbox div.rdr div.rdr_header h1                   { margin-left:14px !important; text-align:left !important; white-space: nowrap !important;}
 /*#rdr_sandbox div#rdr_loginPanel.rdr div.rdr_header h1                   { margin-left:0px !important; }*/
 
 #rdr_sandbox div.rdr textarea,
