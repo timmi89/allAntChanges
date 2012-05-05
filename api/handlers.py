@@ -509,8 +509,22 @@ class SettingsHandler(AnonymousBaseHandler):
         return settings_dict
 
 
+class UnFollowHandler(InteractionHandler):
+    allowed_methods = ('POST')
+
+    @status_response
+    @json_data_post
+    def create(self, request, data):
+        owner = checkCookieToken(request)
+        if owner is None:
+            return {'message':'not_logged_in'}
+        type = data['type']
+        follow_id = data['follow_id']
+        Follow.objects.delete(owner = owner, type = type, follow_id = follow_id)
+        return {}
+    
 class FollowHandler(InteractionHandler):
-    allowed_methods = ('POST','GET','DELETE')
+    allowed_methods = ('POST','GET')
 
     @status_response
     @json_data_post
@@ -543,16 +557,6 @@ class FollowHandler(InteractionHandler):
         )
         return follow_dict
 
-    @status_response
-    @json_data
-    def delete(self, request, data):
-        owner = checkCookieToken(request)
-        if owner is None:
-            return {'message':'not_logged_in'}
-        type = data['type']
-        follow_id = data['follow_id']
-        Follow.objects.delete(owner = owner, type = type, follow_id = follow_id)
-        return {}
     
     @status_response
     @json_data
