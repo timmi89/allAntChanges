@@ -1,9 +1,9 @@
 var RB = RB ? RB : {};
 
 RB = {
-	group : {},
-	user_auth : {
-		doFBLogin : function(requesting_action) {
+	group: {},
+	user_auth: {
+		doFBLogin: function(requesting_action) {
 			FB.login(function(response) {
               if (response.authResponse) {
                 FB.api('/me', function(response) {
@@ -16,8 +16,8 @@ RB = {
             }, {scope: 'email'});
 		}
 	},
-	admin : {
-		requestAccess : function(fb_response, group_id) {
+	admin: {
+		requestAccess: function(fb_response, group_id) {
 			if ( fb_response ) {
 		        var fb_session = (fb_response.session) ? fb_response.session:fb_response
 				var sendData = {
@@ -42,11 +42,11 @@ RB = {
 				});
 			}
 		},
-		blockContent : function(int_id) {
+		blockContent: function(int_id) {
 			var sendData = {
-                "int_id" : int_id,
-                "user_id" : RDRAuth.rdr_user.user_id,
-                "readr_token" : RDRAuth.rdr_user.readr_token
+                "int_id": int_id,
+                "user_id": RDRAuth.rdr_user.user_id,
+                "readr_token": RDRAuth.rdr_user.readr_token
             };
 
             // send the data!
@@ -73,7 +73,7 @@ RB = {
             });
 		}
 	},
-	util : {
+	util: {
 		getHashValue: function( key ) {
             var hash = window.location.hash;
             if ( hash.length > 0 ) {
@@ -126,7 +126,7 @@ RB = {
             	window.location.hash = newHash;
             }
         },
-		loadScript : function(sScriptSrc,callbackfunction) {
+		loadScript: function(sScriptSrc,callbackfunction) {
 		var oHead = document.getElementsByTagName('head')[0];
 		if(oHead) {
 		    var oScript = document.createElement('script');
