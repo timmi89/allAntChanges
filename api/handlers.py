@@ -510,7 +510,8 @@ class SettingsHandler(AnonymousBaseHandler):
 
 
 class FollowHandler(InteractionHandler):
-
+    allowed_methods = ('POST','GET','DELETE')
+    
     @status_response
     @json_data_post
     def create(self, request, data):
@@ -592,6 +593,31 @@ class FollowHandler(InteractionHandler):
         follows['followed_by_count'] = followed_by_paginator.count
         
         return follows
+    
+class FollowedEntityHandler(InteractionHandler):
+    allowed_methods = ('GET')
+    
+    @status_response
+    @json_data
+    def read(self, request, data):
+       
+        follow_id = data['entity_id']
+        page_num = data['page_num']
+        
+        follows = {}
+        follows['paginated_follows'] = []
+        followed_by = Follow.objects.filter(type = 'usr', follow_id = follow_id)
+        followed_by_paginator = Paginator(followed_by, 20)
+        try: followed_by_page = followed_by_paginator.page(page_num)
+        except (EmptyPage, InvalidPage): followed_by_page = followed_by_paginator.page(followed_by_paginator.num_pages)
+        
+        follows['followed_by_count'] = followed_by_paginator.count
+        
+        for follower in followed_by_page.object_list:
+            follows['paginated_follows'].append(model_to_dict(follower))
+        return follows
+    
+    
     
     
     
