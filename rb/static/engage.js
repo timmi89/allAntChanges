@@ -1715,6 +1715,61 @@ function readrBoard($R){
                     left: borderLeft
                 });
 
+            },
+            throttledUpdateContainerTrackers: RDR.util._.throttle(
+                RDR.actions.indicators.utils.updateContainerTrackers,
+                100
+            ),
+
+            //temp copies of some underscore functions.  Later we'll use the underscore library - replace then.
+            _: {
+                //RDR.util._:
+            
+                // Returns a function, that, as long as it continues to be invoked, will not
+                // be triggered. The function will be called after it stops being called for
+                // N milliseconds.
+                debounce: function(func, wait) {
+                    //RDR.util._.debounce:
+                    var timeout;
+                    return function() {
+                        var context = this, args = arguments;
+                        var later = function() {
+                            timeout = null;
+                            func.apply(context, args);
+                        };
+                        clearTimeout(timeout);
+                        timeout = setTimeout(later, wait);
+                    };
+                },
+
+                // Returns a function, that, when invoked, will only be triggered at most once
+                // during a given window of time.
+                throttle: function(func, wait) {
+                    //RDR.util._.throttle:
+
+                    //fake the underscore stuff
+                    var _ = {};
+                    _.debounce = RDR.util._.debounce;
+
+                    var context, args, timeout, throttling, more;
+                    var whenDone = _.debounce(function(){ more = throttling = false; }, wait);
+                    return function() {
+                        context = this; args = arguments;
+                        var later = function() {
+                            timeout = null;
+                            if (more) func.apply(context, args);
+                            whenDone();
+                        };
+                        if (!timeout) timeout = setTimeout(later, wait);
+                        if (throttling) {
+                            more = true;
+                        } else {
+                            func.apply(context, args);
+                        }
+                        whenDone();
+                        throttling = true;
+                    };
+                }
             }
         },
 		session: {
@@ -2460,6 +2515,8 @@ function readrBoard($R){
                         }
                     }
                 });
+                
+                $(window).resize(throttledUpdateContainerTrackers);
 
                 // todo: this is a pretty wide hackey net - rethink later.
                 var imgBlackList = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? ':not('+RDR.group.img_blacklist+')':'';
