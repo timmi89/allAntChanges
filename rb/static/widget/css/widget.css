@@ -210,8 +210,8 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block !important; }
   line-height:13px !important;
 }
 .rdr_twtooltip.rdr_tw_in {
-  opacity: 0.85;
-  filter: alpha(opacity=85);
+  opacity: 0.85 !important;
+  filter: alpha(opacity=85) !important;
 }
 .rdr_twtooltip.rdr_tw_top {
   margin-top: -2px !important;
@@ -258,15 +258,15 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block !important; }
   border-right: 5px solid #000000 !important;
 }
 .rdr_twtooltip-inner {
-  max-width: 200px;
-  padding: 5px 8px;
-  color: #e0e0e0;
-  text-align: center;
-  text-decoration: none;
-  background-color: #000000;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
+  max-width: 200px !important;
+  padding: 5px 8px !important;
+  color: #e0e0e0 !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  background-color: #000000 !important;
+  -webkit-border-radius: 4px !important;
+  -moz-border-radius: 4px !important;
+  border-radius: 4px !important;
 }
 .rdr_twtooltip strong {
   color:#fff !important;
@@ -816,8 +816,8 @@ div.rdr.rdr-summary div.rdr_info ins img    { margin:0 !important; padding:0 !im
 div.rdr.rdr-summary div.rdr_info strong.rdr_share_it    { margin-left:10px !important;border-left:1px solid #ccc !important;padding-left:10px !important;}
 div.rdr.rdr-summary div.rdr_info a.rdr_share_link img    { max-width:20px !important;margin:0 5px -5px 0 !important;}
 
-div.rdr.rdr-summary img.rdr_summary_help  { border:0;position:absolute;right:3px;top:3px;background:url(../images/readr_icons.png) -96px -1px no-repeat;cursor:pointer;width:13px;height:13px; }
-div.rdr.rdr-summary img.rdr_summary_help:hover  { background-position: -79px -1px; }
+div.rdr.rdr-summary img.rdr_summary_help  { border:0 !important;position:absolute !important;right:3px !important;top:3px !important;background:url(../images/readr_icons.png) -96px -1px no-repeat !important;cursor:pointer !important;width:13px !important;height:13px !important; }
+div.rdr.rdr-summary img.rdr_summary_help:hover  { background-position: -79px -1px !important; }
 
 /* summary widget */
 #rdr-page-summary {position:relative !important;}
