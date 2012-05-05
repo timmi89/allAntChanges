@@ -1,6 +1,7 @@
 from piston.handler import AnonymousBaseHandler
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.db.models import Count
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from decorators import status_response, json_data, json_data_post
 from exceptions import JSONException
 from utils import *
@@ -567,7 +568,7 @@ class FollowHandler(InteractionHandler):
         follows = {}
         #maybe just do this all in one query... may avoid problems with paginator and interpolation.
         #for type in requested_types:
-        follows['page'] = []
+        follows['paginated_follows'] = []
         follows['page_num'] = page_num
         follow_objects = Follow.objects.filter(owner = owner, type__in  = requested_types) 
             
@@ -580,8 +581,8 @@ class FollowHandler(InteractionHandler):
         except (EmptyPage, InvalidPage): current_page = follows_paginator.page(paginator.num_pages)
         
         follows['follows_count'] = follows_paginator.count
-        for follow in current_page:
-            follows['page'].append(model_to_dict(follow))
+        for follow in current_page.object_list:
+            follows['paginated_follows'].append(model_to_dict(follow))
             
         followed_by = Follow.objects.filter(type = 'usr', follow_id = owner.id)
         followed_by_paginator = Paginator(followed_by, 1)
