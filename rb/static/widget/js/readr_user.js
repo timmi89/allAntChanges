@@ -419,7 +419,9 @@ RDRAuth = {
 	init : function() {
 		if ( $.cookie('user_type') && $.cookie('user_type') == "facebook" && !$.cookie('rdr_session' ) ) {
 			FB.getLoginStatus( function(response) {
-				RDRAuth.getReadrToken( response.authResponse, function() {});
+				if ( response.status && response.status == "connected" ) {
+					RDRAuth.getReadrToken( response.authResponse, function() {});
+				}
 			});
 		} else {
 			RDRAuth.returnUser();
