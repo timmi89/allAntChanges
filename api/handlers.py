@@ -610,7 +610,8 @@ class FollowedEntityHandler(InteractionHandler):
             followed_by = Follow.objects.filter(page = Page.objects.get(id = follow_id))
         elif entity_type == 'grp':
             followed_by = Follow.objects.filter(group = Group.objects.get(id = follow_id))
-                                                
+        elif entity_type == 'usr':        
+            followed_by = Follow.objects.filter(user = User.objects.get(id = follow_id))                      
                                                 
         followed_by_paginator = Paginator(followed_by, 20)
         try: followed_by_page = followed_by_paginator.page(page_num)
