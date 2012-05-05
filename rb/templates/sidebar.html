@@ -34,13 +34,13 @@
 {% if group %}
 <div id="avatar">
   {% if group.logo_url_lg %}<img src="{{ group.logo_url_lg }}" />{% endif %}
-	{% if not group.logo_url_lg %}<h2>{{ group.name }} | <a href="javascript:void(0);" onclick="follow_group();">follow this group</a></h2>{% endif %}
+	{% if not group.logo_url_lg %}<h2>{{ group.name }} | <a href="javascript:void(0);" onclick="follow_group({{ group.id }});">follow this group</a> | <a href="javascript:void(0);" onclick="who_follows_group({{ group.id }});">who follows this group</a> | <a href="javascript:void(0);" onclick="unfollow_group({{ group.id }});">unfollow this group</a></h2>{% endif %}
 </div>
 {% endif %}
 <script>
-function follow_group() {
+function follow_group(id) {
   var data = {
-    follow_id:13,
+    follow_id:parseInt(id),
     type:"grp"
 };
 
@@ -52,6 +52,28 @@ $.ajax({
   type: "post",
   // contentType: "application/json",
   contentType:"application/x-www-form-urlencoded",
+  dataType: "json",
+  data: { json: $.toJSON(data) },
+  success: function(response) {
+    console.dir(response);
+  }
+});
+}
+
+function unfollow_group(id) {
+  var data = {
+    follow_id:parseInt(id),
+    type:"grp"
+};
+console.dir(data);
+$.ajax({
+  beforeSend: function( xhr ) {
+    xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
+  },
+  url: "/api/unfollow/",
+  type: "post",
+  contentType: "application/json",
+  // contentType:"application/x-www-form-urlencoded",
   dataType: "json",
   data: { json: $.toJSON(data) },
   success: function(response) {
@@ -105,11 +127,35 @@ $.ajax({
 });
 }
 
-function who_follows() {
+function who_follows_user() {
   // who follows this thing
   var data = {
     entity_id:57,
     entity_type:"usr",
+    page_num:1
+};
+
+$.ajax({
+  beforeSend: function( xhr ) {
+    xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
+  },
+  url: "/api/entity/follow/",
+  type: "get",
+  // contentType: "application/json",
+  contentType:"application/x-www-form-urlencoded",
+  dataType: "json",
+  data: { json: $.toJSON(data) },
+  success: function(response) {
+    console.dir(response);
+  }
+});
+}
+
+function who_follows_group(id) {
+  // who follows this thing
+  var data = {
+    entity_id:parseInt(id),
+    entity_type:"grp",
     page_num:1
 };
 
@@ -133,7 +179,7 @@ $.ajax({
   <div id="user_data">
   {% csrf_token %}
     <img src="{{ profile_user.social_user.img_url }}?type=large">
-    <h3>{{ profile_user.social_user.full_name }} <a href="javascript:void(0);" onclick="follow();">follow</a> | <a href="javascript:void(0);" onclick="who_i_follow_count();">who i follow count</a> | <a href="javascript:void(0);" onclick="who_follows();">who_follows count</a></h3>
+    <h3>{{ profile_user.social_user.full_name }} <a href="javascript:void(0);" onclick="follow();">follow</a> | <a href="javascript:void(0);" onclick="who_i_follow_count();">who i follow count</a> | <a href="javascript:void(0);" onclick="who_follows_user();">who_follows count</a></h3>
     {% if cookie_user.id = profile_user.id %}
       <label for="private_profile">
         <input type="checkbox" id="private_profile" {% if user.social_user.private_profile %}checked="checked"{% endif %} /> 

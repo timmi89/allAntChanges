@@ -544,7 +544,7 @@ class FollowHandler(InteractionHandler):
         return follow_dict
 
     @status_response
-    @json_data
+    @json_data_post
     def delete(self, request, data):
         owner = checkCookieToken(request)
         if owner is None:
