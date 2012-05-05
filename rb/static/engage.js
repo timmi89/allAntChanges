@@ -5979,7 +5979,7 @@ function $RFunctions($R){
                         if ( page.summary[i].kind == "tag" ) total_interactions = page.summary[i].count;
                     }
 
-                    var $RB = $('<div class="rdr-this-is-readrboard rdr_tooltip_this" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. ReadrBoard lets you easily react to anything on this page!<br><br>Click a button to the right to react to this whole page.<br><br>Or -- select any text, image, or video and react to just that part of the page."></div>');
+                    var $RB = $('<div class="rdr-this-is-readrboard rdr_tooltip_this" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. ReadrBoard lets you easily react to anything on this page!<br><br>Use this summary bar to react to this article.<br><br>Or -- select text, or hover over images and videos below to react to specific content."></div>');
                     $RB.append('<a href="'+RDR_baseUrl+'/page/'+page.id+'" target="_blank"><img src="'+RDR_staticUrl+'widget/images/readrboard_logo.png" class="no-rdr" /></a>');
                     $RB.click( function() {
                         RDR.events.track('click_rb_icon_summ');
