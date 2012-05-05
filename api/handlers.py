@@ -603,10 +603,15 @@ class FollowedEntityHandler(InteractionHandler):
        
         follow_id = data['entity_id']
         page_num = data['page_num']
-        
+        entity_type = data['entity_type']
         follows = {}
         follows['paginated_follows'] = []
-        followed_by = Follow.objects.filter(type = 'usr', follow_id = follow_id)
+        if entity_type == 'pag':
+            followed_by = Follow.objects.filter(page = Page.objects.get(id = follow_id))
+        elif entity_type == 'grp':
+            followed_by = Follow.objects.filter(group = Group.objects.get(id = follow_id))
+                                                
+                                                
         followed_by_paginator = Paginator(followed_by, 20)
         try: followed_by_page = followed_by_paginator.page(page_num)
         except (EmptyPage, InvalidPage): followed_by_page = followed_by_paginator.page(followed_by_paginator.num_pages)
