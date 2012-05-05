@@ -1718,10 +1718,15 @@ function readrBoard($R){
                 });
 
             },
-            throttledUpdateContainerTrackers: RDR.util._.throttle(
-                RDR.actions.indicators.utils.updateContainerTrackers,
-                100
-            ),
+
+            //_.throttle returns a function
+            throttledUpdateContainerTrackers: function(){
+                return RDR.util._.throttle(
+                    //RDR.util.throttledUpdateContainerTrackers
+                    RDR.actions.indicators.utils.updateContainerTrackers,
+                    100
+                );
+            },
 
             //temp copies of some underscore functions.  Later we'll use the underscore library - replace then.
             _: {
@@ -2518,7 +2523,7 @@ function readrBoard($R){
                     }
                 });
                 
-                $(window).resize(throttledUpdateContainerTrackers);
+                $(window).resize(RDR.util.throttledUpdateContainerTrackers());
 
                 // todo: this is a pretty wide hackey net - rethink later.
                 var imgBlackList = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? ':not('+RDR.group.img_blacklist+')':'';
