@@ -600,19 +600,38 @@ class FollowedEntityHandler(InteractionHandler):
     @status_response
     @json_data
     def read(self, request, data):
-       
+        cookie_user = checkCookieToken(request)
+        if cookie_user is None:
+            #Not logged in?
+            pass
+        
         follow_id = data['entity_id']
         page_num = data['page_num']
         entity_type = data['entity_type']
         follows = {}
         follows['paginated_follows'] = []
+        user_is_follower = False
         if entity_type == 'pag':
             followed_by = Follow.objects.filter(page = Page.objects.get(id = follow_id))
+            if cookie_user is not None:
+                logged_followers = Follow.objects.filter(owner=cookie_user, page = Page.objects.get(id = follow_id))
+                if len(logged_followers) > 0:
+                    user_is_follower = True
         elif entity_type == 'grp':
             followed_by = Follow.objects.filter(group = Group.objects.get(id = follow_id))
+            if cookie_user is not None:
+                logged_followers = Follow.objects.filter(owner=cookie_user, group = Group.objects.get(id = follow_id))
+                if len(logged_followers) > 0:
+                    user_is_follower = True
         elif entity_type == 'usr':        
             followed_by = Follow.objects.filter(user = User.objects.get(id = follow_id))                      
-                                                
+            if cookie_user is not None:
+                logged_followers = Follow.objects.filter(owner=cookie_user, user = User.objects.get(id = follow_id))
+                if len(logged_followers) > 0:
+                    user_is_follower = True
+        
+        follows['user_is_follower'] = user_is_follower
+                                               
         followed_by_paginator = Paginator(followed_by, 20)
         try: followed_by_page = followed_by_paginator.page(page_num)
         except (EmptyPage, InvalidPage): followed_by_page = followed_by_paginator.page(followed_by_paginator.num_pages)
@@ -621,6 +640,9 @@ class FollowedEntityHandler(InteractionHandler):
         
         for follower in followed_by_page.object_list:
             follows['paginated_follows'].append(model_to_dict(follower))
+        
+        
+        
         return follows
     
     
