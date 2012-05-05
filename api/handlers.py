@@ -511,7 +511,7 @@ class SettingsHandler(AnonymousBaseHandler):
 
 class FollowHandler(InteractionHandler):
     allowed_methods = ('POST','GET','DELETE')
-    
+
     @status_response
     @json_data_post
     def create(self, request, data):

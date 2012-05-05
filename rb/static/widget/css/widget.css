@@ -210,8 +210,8 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block !important; }
   line-height:13px !important;
 }
 .rdr_twtooltip.rdr_tw_in {
-  opacity: 0.90 !important;
-  filter: alpha(opacity=90) !important;
+  opacity: 0.85;
+  filter: alpha(opacity=85);
 }
 .rdr_twtooltip.rdr_tw_top {
   margin-top: -2px !important;
@@ -259,7 +259,7 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block !important; }
 }
 .rdr_twtooltip-inner {
   max-width: 200px !important;
-  padding: 3px 8px !important;
+  padding: 5px 8px !important;
   color: #e0e0e0 !important;
   text-align: center !important;
   text-decoration: none !important;

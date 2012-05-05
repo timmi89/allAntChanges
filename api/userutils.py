@@ -97,7 +97,7 @@ def createSocialUser(django_user, profile, base = 'http://graph.facebook.com', p
             fail_silently=True
         )
     result = ("Created new" if social[1] else "Retreived existing")
-    logger.info( "social user %s (%s: %s)" % (
+    logger.debug( result + "social user %s (%s: %s)" % (
         social_user.full_name,
         social_user.provider, 
         social_user.uid
@@ -119,7 +119,7 @@ def createDjangoUser(profile):
     # Print out the result
     django_user = user[0]
     result = "Created new" if user[1] else "Retrieved existing"
-    logger.info("django user %s %s (%s)" % (
+    logger.debug( result + "django user %s %s (%s)" % (
         django_user.first_name, 
         django_user.last_name, 
         django_user.email
