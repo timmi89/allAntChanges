@@ -198,7 +198,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
     except ValueError: page_number = 1
 
     try: current_page = interactions_paginator.page(page_number)
-    except (EmptyPage, InvalidPage): current_page = paginator.page(paginator.num_pages)
+    except (EmptyPage, InvalidPage): current_page = interactions_paginator.page(paginator.num_pages)
       
     context['current_page'] = current_page
 
@@ -575,8 +575,7 @@ def follow_interactions(request, user_id):
     
     owner = User.objects.get(id = user_id)
     #owner = SocialUser.objects.get(user = django_user)
-    
-    requested_types = request.GET.getlist('type')
+    requested_types = request.GET.getlist('ftype')
     if len(requested_types) == 0:
         requested_types.append('usr')
     
@@ -588,15 +587,14 @@ def follow_interactions(request, user_id):
         follow_lists[follow.type].append(follow.follow_id)
     
     if not follow_lists.has_key('pag'):
-        follow_lists['pag'] = []
+        follow_lists['pag'] = [-1]
     if not follow_lists.has_key('grp'):
-        follow_lists['grp'] = []
-    if not follow_lists.has_key('usr'):
-        follow_lists['usr'] = []
+        follow_lists['grp'] = [-1]
+    if not follow_lists.has_key('usr') or len(follow_lists['usr']) == 0 :
+        follow_lists['usr'] = [-1]
     
-    interactions = Interaction.objects.all()
-
-    interactions.filter(Q(user__id__in = follow_lists['usr']) | 
+    
+    interactions = Interaction.objects.filter(Q(user__id__in = follow_lists['usr']) | 
                         Q(page__id__in = follow_lists['pag']) | 
                         Q(page__site__group__id__in = follow_lists['grp']))
     
@@ -607,10 +605,9 @@ def follow_interactions(request, user_id):
     except ValueError: page_number = 1
 
     try: current_page = interactions_paginator.page(page_number)
-    except (EmptyPage, InvalidPage): current_page = paginator.page(paginator.num_pages)
-      
+    except (EmptyPage, InvalidPage): current_page = interactions_paginator.page(paginator.num_pages)
     context['current_page'] = current_page
-    #logger.debug("RENDER MAIN")
+    
     return render_to_response("follow_index.html", context, context_instance=RequestContext(request))
 
 

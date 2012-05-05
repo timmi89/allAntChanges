@@ -543,6 +543,17 @@ class FollowHandler(InteractionHandler):
 
     @status_response
     @json_data
+    def delete(self, request, data):
+        owner = checkCookieToken(request)
+        if owner is None:
+            return {'message':'not_logged_in'}
+        type = data['type']
+        follow_id = data['follow_id']
+        Follow.objects.delete(owner = owner, type = type, follow_id = follow_id)
+        return {}
+    
+    @status_response
+    @json_data
     def read(self, request, data):
         cookie_user = checkCookieToken(request)
         if cookie_user is None:
@@ -560,17 +571,25 @@ class FollowHandler(InteractionHandler):
         follows['page_num'] = page_num
         follow_objects = Follow.objects.filter(owner = owner, type__in  = requested_types) 
             
-        follows_objects_paginator = Paginator(interactions, 20)
+        follows_paginator = Paginator(follow_objects, 20)
 
         try: page_number = int(page_num)
         except ValueError: page_number = 1
 
         try: current_page = follows_paginator.page(page_number)
-        except (EmptyPage, InvalidPage): current_page = paginator.page(paginator.num_pages)
+        except (EmptyPage, InvalidPage): current_page = follows_paginator.page(paginator.num_pages)
         
+        follows['follows_count'] = follows_paginator.count
         for follow in current_page:
             follows['page'].append(model_to_dict(follow))
             
+        followed_by = Follow.objects.filter(type = 'usr', follow_id = owner.id)
+        followed_by_paginator = Paginator(followed_by, 1)
+        try: followed_by_page = followed_by_paginator.page(1)
+        except (EmptyPage, InvalidPage): followed_by_page = followed_by_paginator.page(followed_by_paginator.num_pages)
+        
+        follows['followed_by_count'] = followed_by_paginator.count
+        
         return follows
     
     
