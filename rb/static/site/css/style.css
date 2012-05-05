@@ -581,8 +581,7 @@ section[role="main"] div.card.txt div.content div.content_body    { font-size:17
 section[role="main"] div.card.txt div.content div.content_body a  { color:#606060; text-decoration:none; }
 section[role="main"] div.card.txt div.content div.content_body:first-child:first-letter { font-size:31px; line-height:33px; font-weight:bold; float:left; padding:0px 2px 0 0; text-transform:uppercase;}
 
-section[role="main"] div.card.img div.content,
-section[role="main"] div.card.med div.content							{ margin:-43px 0 0; position:relative; z-index:2;}
+section[role="main"] div.card.img div.content                               { margin:-43px 0 0; position:relative; z-index:2;}
 section[role="main"] div.card.img div.content div.content_body img			{ width:300px; margin-top:-1px; xxmargin-left:-35px; position:relative;z-index:1; xxborder-top:1px dashed #ccc; xxborder-bottom:1px dashed #ccc; xpadding:5px 0;}
 section[role="main"] div.card.med div.content div.content_body iframe		{ width:300px; margin-top:-1px; xxmargin-left:-35px; position:relative;z-index:1; xxborder-top:1px dashed #ccc; xxborder-bottom:1px dashed #ccc; xpadding:5px 0;}
 
