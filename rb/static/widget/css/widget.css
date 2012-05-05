@@ -208,6 +208,7 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block; }
   filter: alpha(opacity=0);
   font-family:Arial,sans-serif !important;
   letter-spacing:0.5px !important;
+  line-height:13px !important;
 }
 .rdr_twtooltip.rdr_tw_in {
   opacity: 0.90;
@@ -546,8 +547,7 @@ div#rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr_page {
   padding-bottom:5px !important;
 }
 div#rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr_page img {
-  width:18px !important;
-  margin-left:-6px !important;
+  margin-left:0 !important;
   margin-bottom:-13px !important;
 }
 div#rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr_text img {
@@ -778,6 +778,8 @@ div.rdr.rdr-summary div.rdr_info ins img    { margin:0 !important; padding:0 !im
 div.rdr.rdr-summary div.rdr_info strong.rdr_share_it    { margin-left:10px;border-left:1px solid #ccc;padding-left:10px;}
 div.rdr.rdr-summary div.rdr_info a.rdr_share_link img    { max-width:20px;margin:0 5px -5px 0 !important;}
 
+div.rdr.rdr-summary img.rdr_summary_help  { border:0;position:absolute;right:3px;top:3px;background:url(../images/readr_icons.png) -96px -1px no-repeat;cursor:pointer;width:13px;height:13px; }
+div.rdr.rdr-summary img.rdr_summary_help:hover  { background-position: -79px -1px; }
 
 #rdr_sandbox div.rdr div.rdr_close       {position:absolute;top:8px;right:7px;color:#999;cursor:pointer;font-size:14px;z-index:150;}
 

@@ -5968,24 +5968,25 @@ function $RFunctions($R){
                         $summary_row = $summary_widget.find('tr');
 
                     $summary_widget.append('<div class="rdr-see-more"></div>');
+                    $summary_widget.append('<img src="'+RDR_staticUrl+'widget/images/blank.png" class="rdr_summary_help rdr_tooltip_this" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. ReadrBoard lets you easily react to anything on this page.<br><br>The tags to the left let you react to this whole page.<br><br>Or -- select any text, image, or video and react to just that part of the page."/>');
                     $summary_widget.data('page_id', page.id);
 
                     //page.jqFunc would be something like 'append' or 'after',
                     //so this would read $summary_widget_parent.append($summary_widget);
                     $summary_widget_parent[page.jqFunc]($summary_widget);
+                    $summary_widget.find('img.rdr_tooltip_this').tooltip();
 
                     var total_interactions = 0;
                     for ( var i in page.summary ) {
                         if ( page.summary[i].kind == "tag" ) total_interactions = page.summary[i].count;
                     }
 
-                    var $RB = $('<div class="rdr-this-is-readrboard rdr_tooltip_this" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. ReadrBoard lets you easily react to anything on this page!<br><br>Use this summary bar to react to this article.<br><br>Or -- select text, or hover over images and videos below to react to specific content."></div>');
+                    var $RB = $('<div class="rdr-this-is-readrboard"></div>');
                     $RB.append('<a href="'+RDR_baseUrl+'/page/'+page.id+'" target="_blank"><img src="'+RDR_staticUrl+'widget/images/readrboard_logo.png" class="no-rdr" /></a>');
                     $RB.click( function() {
                         RDR.events.track('click_rb_icon_summ');
                     });
 
-                    $RB.tooltip();
 
                     var $react = $('<div class="rdr-sum-headline" />');
                     if ( RDR.group && RDR.group.call_to_action && RDR.group.call_to_action != "" ) {
