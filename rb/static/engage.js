@@ -4766,8 +4766,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 _makeOtherComments();
                 _makeCommentBox();
 
-                var commentRindowWidth = (summary.kind=="img") ? $rindow.data('initialWidth'):300,
-                    commentRindowHeight = (summary.kind=="img") ? 180:296;
+                var isMediaContainer = kind=="img" ||
+                    kind=="imgage" ||
+                    kind=="med" ||
+                    kind=="media";
+
+                var commentRindowWidth = isMediaContainer ? $rindow.data('initialWidth'):300,
+                    commentRindowHeight = isMediaContainer ? 180:296;
 
                 RDR.rindow.panelShow( $rindow, 'rdr_comments', commentRindowWidth, null, function() {
                     if ( kind == "text" ) $().selog('hilite', summary.content_nodes[ content_node.id ].selState, 'on');
