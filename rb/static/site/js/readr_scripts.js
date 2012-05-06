@@ -297,8 +297,8 @@ RB = {
                 dataType: "json",
                 data: { json: $.toJSON(data) },
                 success: function(response) {
-                    if ( typeof response.data.followed_by_count != "undefined" ) {
-                        $('#following_count').html( "<strong>"+response.data.followed_by_count + "</strong> following" );
+                    if ( typeof response.data.follows_count != "undefined" ) {
+                        $('#following_count').html( "<strong>"+response.data.follows_count + "</strong> following" );
                     }
                 }
             });

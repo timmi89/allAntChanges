@@ -594,7 +594,7 @@ class FollowHandler(InteractionHandler):
         except (EmptyPage, InvalidPage): followed_by_page = followed_by_paginator.page(followed_by_paginator.num_pages)
         
         follows['followed_by_count'] = followed_by_paginator.count
-        
+        logger.info(follows)
         return follows
     
 class FollowedEntityHandler(InteractionHandler):
@@ -614,6 +614,7 @@ class FollowedEntityHandler(InteractionHandler):
         follows = {}
         follows['paginated_follows'] = []
         user_is_follower = False
+        logger.info("entity: " + str(follow_id) + " type: " + entity_type)
         if entity_type == 'pag':
             followed_by = Follow.objects.filter(page = Page.objects.get(id = follow_id))
             if cookie_user is not None:

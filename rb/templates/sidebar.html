@@ -28,7 +28,7 @@ $(document).ready( function() {
     <script>
     $(document).ready( function() {
       RB.follow.followers({{ profile_user.id }},'usr');
-      RB.follow.following({{ profile_user.id }},'usr');
+      RB.follow.following({{ profile_user.id }},1);
     });
     </script>
     <h2><img src="{{ profile_user.social_user.img_url }}?type=small"> {{ profile_user.social_user.full_name }}</h2>

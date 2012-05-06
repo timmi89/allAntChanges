@@ -258,8 +258,6 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 
-DEVSERVER_IGNORED_PREFIXES = ['/media', '/uploads']
-
 # for social auth
 #SOCIAL_AUTH_ERROR_KEY = 'social_errors'
 #SOCIAL_AUTH_EXPIRATION = 'expires'

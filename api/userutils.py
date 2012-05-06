@@ -9,9 +9,6 @@ from django.contrib.auth.models import Permission
 import logging
 logger = logging.getLogger('rb.standard')
 
-import logging
-logger = logging.getLogger('rb.standard')
-
 
 def convertUser(temp_user, existing_user):
     existing = Interaction.objects.filter(user=existing_user)
