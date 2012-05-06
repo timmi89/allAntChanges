@@ -29,7 +29,6 @@
   });
 })();
 
-
 //todo: add a check to make sure we only add the script once.
 
 
@@ -51,3 +50,17 @@
 
 //trying the aws version instead
 javascript:(function(){function%20rdr_getScript(url,success){var%20head=document.getElementsByTagName("head")[0],done=false;var%20script=document.createElement("script");script.src=url;script.id=url.replace(/\//g,"-");script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success();}};head.appendChild(script);}var%20script="http://s3.amazonaws.com/readrboard/engage.js";rdr_getScript(script,function(){});})();
+
+
+//-----------------------------------
+//css regex for widget.css
+/*
+
+find:
+(?<!\<important\>)(?<!;);(?!;)
+
+replace:
+ !important
+//note the space before the '!' - you need that.
+
+*/

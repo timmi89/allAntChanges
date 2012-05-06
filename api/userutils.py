@@ -97,6 +97,7 @@ def createSocialUser(django_user, profile, base = 'http://graph.facebook.com', p
             fail_silently=True
         )
     result = ("Created new" if social[1] else "Retreived existing")
+
     logger.debug( result + "social user %s (%s: %s)" % (
         social_user.full_name,
         social_user.provider, 
