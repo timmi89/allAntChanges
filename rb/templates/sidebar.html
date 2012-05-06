@@ -10,13 +10,20 @@
 </div>
 <script>
 RB.follow.followers({{ group.id }},'grp');
-RB.follow.following({{ group.id }},'grp');
 </script>
 {% endif %}
 
 {% if profile_user %}
   <div id="user_data">
   {% csrf_token %}
+    <div id="avatar">
+    <div id="follow_info">
+      <span id="follower_count"></span> | <span id="following_count"></span> | <a id="follow_action" href="javascript:void(0);"></a>
+    </div>
+    <script>
+    RB.follow.followers({{ profile_user.id }},'usr');
+    RB.follow.following({{ profile_user.id }},'usr');
+    </script>
     <img src="{{ profile_user.social_user.img_url }}?type=large">
     <h3>{{ profile_user.social_user.full_name }} <a href="javascript:void(0);" onclick="follow();">follow</a> | <a href="javascript:void(0);" onclick="who_i_follow_count();">who i follow count</a> | <a href="javascript:void(0);" onclick="who_follows_user();">who_follows count</a></h3>
     {% if cookie_user.id = profile_user.id %}

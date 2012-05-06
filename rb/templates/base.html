@@ -209,6 +209,11 @@ RB.group = {
   id:{{ group.id }}
 };
 {% endif %}
+{% if profile_user %}
+RB.profile_user = {
+  id:{{ profile_user.id }}
+};
+{% endif %}
 </script>
 
 {% block pageJS %}
