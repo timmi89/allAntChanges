@@ -68,6 +68,8 @@
     float:left !important;
 }
 
+#rdr_sandbox div.rdr_actionbar li.rdr_icon_bookmark         { display: none !important;}
+
 #rdr_sandbox div.rdr_actionbar li.rdr_icon_reaction a        { background-position:3px 3px !important; }
 #rdr_sandbox div.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-61px -4px !important; display:none;;}
 
@@ -971,18 +973,6 @@ div.rdr_reactions {
 .rdr.rdr_brbl,
 .rdr .rdr_brbl   { -moz-border-radius-bottomleft:6px !important; -webkit-border-bottom-left-radius:6px !important; border-bottom-left-radius:6px !important; }
 
-div.rdr_indicator_for_media .rdr.rdr_brtl,
-div.rdr_indicator_for_media .rdr .rdr_brtl   { -moz-border-radius-topleft:4px !important; -webkit-border-top-left-radius:4px !important; border-top-left-radius:4px !important; }
-
-div.rdr_indicator_for_media .rdr.rdr_brtr,
-div.rdr_indicator_for_media .rdr .rdr_brtr   { -moz-border-radius-topright:4px !important; -webkit-border-top-right-radius:4px !important; border-top-right-radius:4px !important; }
-
-div.rdr_indicator_for_media .rdr.rdr_brbr,
-div.rdr_indicator_for_media .rdr .rdr_brbr   { -moz-border-radius-bottomright:4px !important; -webkit-border-bottom-right-radius:4px !important; border-bottom-right-radius:4px!important; }
-
-div.rdr_indicator_for_media .rdr.rdr_brbl,
-div.rdr_indicator_for_media .rdr .rdr_brbl   { -moz-border-radius-bottomleft:4px !important; -webkit-border-bottom-left-radius:4px !important; border-bottom-left-radius:4px !important; }
-
 
 /* user education bar */
 #rdr_sandbox div.rdr_alert_box        { position:fixed !important; bottom:-400px !important; left:10px !important; background:#f0f0f0 !important; min-width:220px !important; max-width:300px !important; padding:0px !important; z-index:12000 !important; overflow:hidden !important; -moz-box-shadow:0 0 10px 1px #aaa  !important; -webkit-box-shadow:0 0 10px 1px #aaa  !important; box-shadow:0 0 10px 1px #aaa !important; }
@@ -1169,7 +1159,14 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
     height: auto !important;
     color: #666666 !important;
     font: 12px Arial,sans-serif !important;
-    padding:4px 3px 3px 1px !important;
+    padding: 5px 5px 2px 4px !important;
+
+    border-radius: 4px 4px 4px 4px !important;
+
+    -moz-box-shadow:0 0 10px 1px #aaa  !important;
+    -webkit-box-shadow:0 0 10px 1px #aaa  !important;
+    box-shadow:0 0 10px 1px #aaa !important;
+
 }
 
 
@@ -1219,8 +1216,8 @@ div.rdr_indicator_for_media.rdr_live_hover {
 }
 
 div.rdr_indicator_for_media_inline div.rdr_indicator_body { 
-    left:0 !important;
-    top:-18px !important;    
+    left:-12px !important;
+    top:-36px !important;    
 }
 
 #rdr_sandbox div#rdr_event_pixels {
