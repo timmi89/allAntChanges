@@ -744,7 +744,7 @@ section[role="complementary"] #user_data label {
 #sidebar h2   {font-size:26px; font-weight:normal; margin:10px; }
 #sidebar h3   {font-size:16px; font-weight:100; margin:0 10px; font-family:Arial; color:#5f5f5f; text-align:center; display:inline-block;}
 #sidebar #avatar,
-#sidebar #user_data      {text-align:center; margin:8px 10px 0;}
+#sidebar #user_data      {text-align:center; margin:8px 10px 0; position:relative;}
 #sidebar #avatar img     {max-height:32px; }
 #sidebar #user_data img      {max-height:32px; margin-bottom:-9px;}
 #sidebar #follow      {margin:5px 10px 10px;}
@@ -755,8 +755,7 @@ section[role="complementary"] #user_data label {
 #sidebar ul[role="filters"] li        {text-align:center; padding:2px 25px 1px 25px; cursor:pointer; }
 #sidebar ul[role="filters"] li:hover,
 #sidebar ul[role="filters"] li.active   {xxfont-weight:bold; color:#008be4; border:1px solid #bababa; border-left:0; border-right:0;}
-#sidebar #following,
-#sidebar #followed_by {margin:0 10px 10px;}
+#sidebar #follow_info { position:absolute; right:10px; top:10px; }
 
 /*#sidebar #user_data h3 {xxfont-size:30px; font-weight: bold; xxpadding-bottom:10px; xxpadding-left:10px}
 #sidebar #user_data img {float:left;}*/

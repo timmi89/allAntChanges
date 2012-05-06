@@ -204,6 +204,11 @@ var chartbeat_script = (("https:" == document.location.protocol) ? "https://a248
 RB.util.loadScript( chartbeat_script, function() {
   // pSUPERFLY.virtualPage(window.location.href, decodeURIComponent(qs_args.group_name) );
 });
+{% if group %}
+RB.group = {
+  id:{{ group.id }}
+};
+{% endif %}
 </script>
 
 {% block pageJS %}

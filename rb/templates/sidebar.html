@@ -2,14 +2,15 @@
 
 {% if group %}
 <div id="avatar">
-  <div style="float:right;">
-    <a href="javascript:void(0);" onclick="RB.follow.add({{ group.id }}, 'grp');">follow this group</a> | <a href="javascript:void(0);" onclick="RB.follow.remove({{ group.id }},'grp');">unfollow this group</a>
+  <div id="follow_info">
+    <span id="follower_count"></span> | <a id="follow_action" href="javascript:void(0);"></a>
   </div>
   {% if group.logo_url_lg %}<img src="{{ group.logo_url_lg }}" />{% endif %}
 	{% if not group.logo_url_lg %}<h2>{{ group.name }}</h2>{% endif %}
 </div>
 <script>
 RB.follow.followers({{ group.id }},'grp');
+RB.follow.following({{ group.id }},'grp');
 </script>
 {% endif %}
 

@@ -223,7 +223,11 @@ RB = {
                 dataType: "json",
                 data: { json: $.toJSON(data) },
                 success: function(response) {
-                    console.dir(response);
+                    // console.dir(response);
+                    $('#follow_action').text( 'Stop following' ).click( function() {
+                        RB.follow.remove( RB.group.id, 'grp' );
+                    });
+                    $('#follower_count').text( (parseInt( $('#follower_count').text() )+1) + " followers" );
                 }
             });
         },
@@ -245,7 +249,10 @@ RB = {
                 dataType: "json",
                 data: { json: $.toJSON(data) },
                 success: function(response) {
-                    console.dir(response);
+                    $('#follow_action').text( 'Follow' ).click( function() {
+                        RB.follow.add( RB.group.id, 'grp' );
+                    });
+                    $('#follower_count').text( (parseInt( $('#follower_count').text() )-1) + " followers" );
                 }
             });
         },
@@ -315,7 +322,23 @@ RB = {
                 dataType: "json",
                 data: { json: $.toJSON(data) },
                 success: function(response) {
-                    console.dir(response);
+                    // console.dir(response);
+                    if ( response.data.followed_by_count ) {
+                        $('#follower_count').text( response.data.followed_by_count + " followers" );
+                    }
+                    if ( response.data.user_is_follower ) {
+                        $('#follow_action').text( 'Stop following' ).click( function() {
+                            RB.follow.remove( RB.group.id, 'grp' );
+                        });
+                    } else {
+                        $('#follow_action').text( 'Follow' ).click( function() {
+                            RB.follow.add( RB.group.id, 'grp' );
+                        });
+                    }
+
+                    
+                    // response.data.user_is_follower
+                    // follower_count
                 }
             });
         }
