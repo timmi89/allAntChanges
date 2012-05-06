@@ -111,8 +111,8 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
         {% block userStatus %}
         <div id="logged-in" {% if not cookie_user.social_user %}style="display:none;"{% endif %}>
           <a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/>{{ cookie_user.social_user.full_name }}</a>
-          <div id=""><a href="/user/{{ cookie_user.id }}">My Activity</a></div>
-          <div id=""><a href="/follows/{{ cookie_user.id }}">Activity I Follow</a></div>
+          <!-- <div id=""><a href="/user/{{ cookie_user.id }}">My Activity</a></div>
+          <div id=""><a href="/follows/{{ cookie_user.id }}">Activity I Follow</a></div> -->
           <div id="log-out-link"><a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a></div>
         </div>
         <div id="logged-out" {% if cookie_user.social_user %}style="display:none;"{% endif %}>
