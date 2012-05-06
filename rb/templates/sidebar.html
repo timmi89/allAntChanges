@@ -33,13 +33,14 @@ $(document).ready( function() {
     });
     </script>
     {% endif %}
-    <h2><img src="{{ profile_user.social_user.img_url }}?type=small"> {{ profile_user.social_user.full_name }}</h2>
+    <h2><img src="{{ profile_user.social_user.img_url }}?type=small"> {{ profile_user.social_user.full_name }}
     {% if cookie_user.id = profile_user.id %}
       <label for="private_profile">
         <input type="checkbox" id="private_profile" {% if user.social_user.private_profile %}checked="checked"{% endif %} /> 
         Profile is only visible to me
       </label>
     {% endif %}
+    </h2>
     <script type="text/javascript">
     	$('#private_profile').click( function() {
     		$('label[for="private_profile"] span').remove();
