@@ -757,6 +757,7 @@ section[role="complementary"] #user_data label {
 #sidebar ul[role="filters"] li.active   {xxfont-weight:bold; color:#008be4; border:1px solid #bababa; border-left:0; border-right:0;}
 #sidebar #follow_info { position:absolute; right:10px; top:10px; }
 #sidebar #follow_info strong { font-size:14px; }
+#sidebar #which_content { position:absolute; left:10px; top:10px; }
 
 /*#sidebar #user_data h3 {xxfont-size:30px; font-weight: bold; xxpadding-bottom:10px; xxpadding-left:10px}
 #sidebar #user_data img {float:left;}*/

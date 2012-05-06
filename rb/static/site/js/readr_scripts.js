@@ -223,7 +223,6 @@ RB = {
                 dataType: "json",
                 data: { json: $.toJSON(data) },
                 success: function(response) {
-                    // console.dir(response);
                     $('#follow_action').text( 'Stop following' ).unbind().click( function() {
                         var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
                         RB.follow.remove( id, type );
@@ -276,7 +275,6 @@ RB = {
 //   dataType: "json",
 //   data: { json: $.toJSON(data) },
 //   success: function(response) {
-//     console.dir(response);
 //   }
 // });
 // }
@@ -299,7 +297,6 @@ RB = {
                 dataType: "json",
                 data: { json: $.toJSON(data) },
                 success: function(response) {
-                    console.dir(response);
                     if ( typeof response.data.followed_by_count != "undefined" ) {
                         $('#following_count').html( "<strong>"+response.data.followed_by_count + "</strong> following" );
                     }
@@ -332,14 +329,11 @@ RB = {
                     }
                     
                     var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
-                    console.log(0000);
                     if ( response.data.user_is_follower ) {
-                        console.log(111);
                         $('#follow_action').text( 'Stop following' ).unbind().click( function() {
                             RB.follow.remove( id, type );
                         });
                     } else {
-                        console.log(222);
                         $('#follow_action').text( 'Follow' ).unbind().click( function() {
                             RB.follow.add( id, type );
                         });
@@ -367,7 +361,6 @@ RB = {
 //   dataType: "json",
 //   data: { json: $.toJSON(data) },
 //   success: function(response) {
-//     console.dir(response);
 //   }
 // });
 // }

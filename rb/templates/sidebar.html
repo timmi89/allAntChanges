@@ -9,7 +9,9 @@
 	{% if not group.logo_url_lg %}<h2>{{ group.name }}</h2>{% endif %}
 </div>
 <script>
-RB.follow.followers({{ group.id }},'grp');
+$(document).ready( function() {
+  RB.follow.followers({{ group.id }},'grp');
+});
 </script>
 {% endif %}
 
@@ -24,8 +26,10 @@ RB.follow.followers({{ group.id }},'grp');
       <span id="follower_count"></span> | <span id="following_count"></span> | <a id="follow_action" href="javascript:void(0);"></a>
     </div>
     <script>
-    RB.follow.followers({{ profile_user.id }},'usr');
-    RB.follow.following({{ profile_user.id }},'usr');
+    $(document).ready( function() {
+      RB.follow.followers({{ profile_user.id }},'usr');
+      RB.follow.following({{ profile_user.id }},'usr');
+    });
     </script>
     <img src="{{ profile_user.social_user.img_url }}?type=large">
     <h2>{{ profile_user.social_user.full_name }}</h2>
