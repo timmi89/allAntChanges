@@ -6094,14 +6094,14 @@ function $RFunctions($R){
                             var this_tag = page.toptags[i];
 
                             if ( this_tag ) {
-                                writeTag( this_tag );
+                                writeTag( this_tag, page );
                             }
                         }
 
                     }
 
                     for ( var i = 0; i < RDR.group.blessed_tags.length; i++) {
-                        writeTag( RDR.group.blessed_tags[i] );
+                        writeTag( RDR.group.blessed_tags[i], page );
                     }
 
                     // add custom tag
@@ -6170,7 +6170,7 @@ function $RFunctions($R){
 
                     $summary_widget.append( $('<div class="rdr_info" />') );
 
-                function writeTag(tag) {
+                function writeTag(tag, page) {
                     var tagCount, $span;
 
                     if ( $react.find('a.rdr_tag_'+tag.id).length === 0 ) { // removing tag count check for now:  && $react.find('a.rdr_tag').length < 4
@@ -6190,18 +6190,23 @@ function $RFunctions($R){
 
                         $a.append( $span );
 
-                        var $details = $('<div class="rdr rdr_tag_details" id="rdr_tag_'+tag.id+'_details"/>').hover(
-                            function() {
-
-                                $(this).addClass('rdr_live_hover');
-                            },
-                            function() {
-                                $(this).removeClass('rdr_live_hover');
-                                if ( !$('div.rdr-summary-'+page.id).find('a.rdr_tag_'+tag.id).hasClass('rdr_live_hover') ) {
-                                    $(this).hide();
+                        var $details = $('<div class="rdr rdr_tag_details" id="rdr_tag_'+tag.id+'_details"/>')
+                            .hover(
+                                function() {
+                                    $(this).addClass('rdr_live_hover');
+                                },
+                                function() {
+                                    var $this = $(this);
+                                    $this.hide();
+                                    $this.removeClass('rdr_live_hover');
+                                    var page_id = page.id;
+                                    //this page id isn't the right one, but I don't think we need this logid anyways.  Just hide it.
+                                    // if ( !$('div.rdr-summary-'+page_id).find('a.rdr_tag_'+tag.id).hasClass('rdr_live_hover') ) {
+                                    //     $this.hide();
+                                    // }
                                 }
-                            }
-                        );
+                            );
+                        
                         $('#rdr_summary_tag_details').append( $details );
 
                         $a.tooltip();
@@ -6212,8 +6217,10 @@ function $RFunctions($R){
 
                         $a.hoverIntent(
                             function() {
+                                
                                 var $this = $(this),
                                     hash = $this.closest('.rdr-page-container').data('hash'),
+                                    page = RDR.pages[ RDR.util.getPageProperty('id',hash) ],
                                     offsets = $this.offset(),
                                     tag_id = $this.data('tag_id'),
                                     tag_body = $this.data('tag_body'),
@@ -6250,7 +6257,12 @@ function $RFunctions($R){
                                         message = tag_count+' '+peoples+' had this reaction.<br/>Click to agree.';
                                 }
 
-                                var $pill = $('<a class="rdr_tag rdr_tag_'+tag_id+'">'+tag_body+'</a>').data('tag_id',tag_id).data('hash',hash).data('page_id',page.id).data('tag_count',tag_count);;
+                                var $pill = $('<a class="rdr_tag rdr_tag_'+tag_id+'">'+tag_body+'</a>').data({
+                                    tag_id: tag_id,
+                                    hash: hash,
+                                    page_id: page.id,
+                                    tag_count: tag_count
+                                });
 
                                 $span = $('<span class="rdr_tag_count">'+tag_count+'</span>');
 
@@ -6259,7 +6271,8 @@ function $RFunctions($R){
                                 // old "click to react" functionality
                                 $pill.click( function() {
                                     var hash = $(this).data('hash');
-                                    var page_id = parseInt( $(this).data('page_id') );
+                                    var page_id = parseInt( $(this).data('page_id'), 10);
+                                    
                                     args = { tag:tag, page_id:page_id, uiMode:'writeMode', kind:"page", hash:hash };
                                     RDR.actions.interactions.ajax( args, 'react', 'create');
                                 }).hover(
