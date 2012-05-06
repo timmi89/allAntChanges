@@ -203,5 +203,145 @@ RB = {
             hrefBase;
 
         return finalUrl;
-    }        
+    },
+    follow : {
+        add : function(id, type) {
+            // RB.follow.add
+            // type: usr, grp, pag
+            var data = {
+                follow_id:parseInt(id),
+                type:type
+            };
+
+            $.ajax({
+                beforeSend: function( xhr ) {
+                    xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
+                },
+                url: "/api/follow/",
+                type: "post",
+                contentType:"application/x-www-form-urlencoded",
+                dataType: "json",
+                data: { json: $.toJSON(data) },
+                success: function(response) {
+                    console.dir(response);
+                }
+            });
+        },
+        remove : function(id, type) {
+            // RB.follow.remove
+            // type: usr, grp, pag
+            var data = {
+                follow_id:parseInt(id),
+                type:type
+            };
+
+            $.ajax({
+                beforeSend: function( xhr ) {
+                    xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
+                },
+                url: "/api/unfollow/",
+                type: "post",
+                contentType:"application/x-www-form-urlencoded",
+                dataType: "json",
+                data: { json: $.toJSON(data) },
+                success: function(response) {
+                    console.dir(response);
+                }
+            });
+        },
+
+// function follow() {
+//   var data = {
+//     follow_id:57,
+//     type:"usr"
+// };
+
+// $.ajax({
+//   beforeSend: function( xhr ) {
+//     xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
+//   },
+//   url: "/api/follow/",
+//   type: "post",
+//   // contentType: "application/json",
+//   contentType:"application/x-www-form-urlencoded",
+//   dataType: "json",
+//   data: { json: $.toJSON(data) },
+//   success: function(response) {
+//     console.dir(response);
+//   }
+// });
+// }
+        following : function(id, page_num) {
+            // RB.follow.following
+            // who am I following?
+            var data = {
+                user_id:parseInt(id),
+                page_num:(page_num)?page_num:1,
+                types:["usr","grp","pag"]
+            };
+
+            $.ajax({
+                beforeSend: function( xhr ) {
+                    xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
+                },
+                url: "/api/follow/",
+                type: "get",
+                contentType:"application/x-www-form-urlencoded",
+                dataType: "json",
+                data: { json: $.toJSON(data) },
+                success: function(response) {
+                    console.dir(response);
+                }
+            });
+        },
+
+        followers : function(id, type) {
+            // RB.follow.followers
+            // who follows this thing
+            // type: usr, grp, pag
+            var data = {
+                entity_id:parseInt(id),
+                entity_type:type,
+                page_num:(typeof page_num != "undefined")?page_num:1,
+            };
+
+            $.ajax({
+                beforeSend: function( xhr ) {
+                    xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
+                },
+                url: "/api/entity/follow/",
+                type: "get",
+                contentType:"application/x-www-form-urlencoded",
+                dataType: "json",
+                data: { json: $.toJSON(data) },
+                success: function(response) {
+                    console.dir(response);
+                }
+            });
+        }
+
+// function who_follows_group(id) {
+//   // who follows this thing
+//   var data = {
+//     entity_id:parseInt(id),
+//     entity_type:"grp",
+//     page_num:1
+// };
+
+// $.ajax({
+//   beforeSend: function( xhr ) {
+//     xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
+//   },
+//   url: "/api/entity/follow/",
+//   type: "get",
+//   // contentType: "application/json",
+//   contentType:"application/x-www-form-urlencoded",
+//   dataType: "json",
+//   data: { json: $.toJSON(data) },
+//   success: function(response) {
+//     console.dir(response);
+//   }
+// });
+// }
+    }   
 };
