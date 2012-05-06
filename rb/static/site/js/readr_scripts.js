@@ -223,7 +223,7 @@ RB = {
                 dataType: "json",
                 data: { json: $.toJSON(data) },
                 success: function(response) {
-                    $('#follow_action').text( 'Stop following' ).unbind().click( function() {
+                    $('#follow_action').text( 'Stop Following Me' ).unbind().click( function() {
                         var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
                         RB.follow.remove( id, type );
                     });
@@ -249,7 +249,7 @@ RB = {
                 dataType: "json",
                 data: { json: $.toJSON(data) },
                 success: function(response) {
-                    $('#follow_action').text( 'Follow' ).unbind().click( function() {
+                    $('#follow_action').text( 'Follow Me' ).unbind().click( function() {
                         var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
                         RB.follow.add( id, type );
                     });
@@ -330,11 +330,11 @@ RB = {
                     
                     var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
                     if ( response.data.user_is_follower ) {
-                        $('#follow_action').text( 'Stop following' ).unbind().click( function() {
+                        $('#follow_action').text( 'Stop Following Me' ).unbind().click( function() {
                             RB.follow.remove( id, type );
                         });
                     } else {
-                        $('#follow_action').text( 'Follow' ).unbind().click( function() {
+                        $('#follow_action').text( 'Follow Me' ).unbind().click( function() {
                             RB.follow.add( id, type );
                         });
                     }

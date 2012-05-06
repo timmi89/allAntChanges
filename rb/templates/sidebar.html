@@ -20,10 +20,11 @@ $(document).ready( function() {
   {% csrf_token %}
     <div id="avatar">
     <div id="which_content">
-      <a href="/user/{{profile_user.id}}">My Content</a> | <a href="/follows/{{profile_user.id}}">Content I Follow</a>
+      {% if on_follow_page %}<a href="/user/{{profile_user.id}}">My Activity</a>{% else %}<strong>My Activity</strong>{% endif %} | {% if not on_follow_page %}<a href="/follows/{{profile_user.id}}">Activity I Follow</a>{% else %}<strong>Activity I Follow</strong>{% endif %}
     </div>
+    {% if not on_follow_page %}
     <div id="follow_info">
-      <span id="follower_count"></span> | <span id="following_count"></span> | <a id="follow_action" href="javascript:void(0);"></a>
+      <span id="follower_count"></span> | <span id="following_count"></span> {% if profile_user.id != cookie_user.id %}| <a id="follow_action" href="javascript:void(0);"></a>{% endif %}
     </div>
     <script>
     $(document).ready( function() {
@@ -31,6 +32,7 @@ $(document).ready( function() {
       RB.follow.following({{ profile_user.id }},1);
     });
     </script>
+    {% endif %}
     <h2><img src="{{ profile_user.social_user.img_url }}?type=small"> {{ profile_user.social_user.full_name }}</h2>
     {% if cookie_user.id = profile_user.id %}
       <label for="private_profile">
