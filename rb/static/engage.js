@@ -25,12 +25,12 @@ RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/sta
 
 (function(){
 function readrBoard($R){
-    console.log('have I already run?');
+    // console.log('have I already run?');
     if(ReadrBoardLoaded){
-        console.log('yes I have already run');
+        // console.log('yes I have already run');
         return;
     }
-    console.log('nope, I still need to run');
+    // console.log('nope, I still need to run');
 
     var $ = $R;
 
