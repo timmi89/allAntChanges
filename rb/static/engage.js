@@ -1,4 +1,10 @@
-var RDR = {}, //our global RDR object
+//this if isn't technically needed I don't think since re-declaring a var won't overide the value,
+//but do it for now while I confirm across all browsers.
+if(!ReadrBoardLoaded){
+
+//our vars in the global namespace
+var ReadrBoardLoaded,
+RDR = {}, //our global RDR object
 $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
 $R = {}, //init var: our clone of jQuery
 RDR_scriptPaths = {},
@@ -15,23 +21,20 @@ RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.r
 RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/",
 RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
 
-//test
+}
 
-//testing flipbook_changes branch
-
-//Our Readrboard function that builds the RDR object which gets returned into the global scope.
-//This function gets called by the function $RFunctions() via the function rdr_loadScript().
+(function(){
 function readrBoard($R){
+    console.log('have I already run?');
+    if(ReadrBoardLoaded){
+        console.log('yes I have already run');
+        return;
+    }
+    console.log('nope, I still need to run');
 
     var $ = $R;
 
-    //todo: [eric] this doesn't really do anything, cause even if we pick up the global RDR into the local version,
-        // we're just overwriting it in the next line anyway.
-        //consider using <if (RDR.length) return;> or just omit it.
-    var RDR = RDR ? RDR: {};
-
-    // none of this obj's properties are definite.  just jotting down a few ideas.
-    RDR = {
+    var RDR = {
         summaries:{},
         current: {}, //todo: what is this? delete it?
         content_nodes: {
@@ -5620,6 +5623,7 @@ rdr_loadScript( RDR_scriptPaths.jquery, function(){
         //The rest of our code is then set off with RDR.actions.init();
         $RFunctions($R);
 
+        ReadrBoardLoaded = true;
     });
 });
 
@@ -7773,3 +7777,5 @@ function $RFunctions($R){
 // function DAILYCANDYCYCLE(slide) {
 //     if ( jQuery('#module-flipbook').length == 1 ) jQuery('#module-flipbook').cycle( slide );
 // }
+
+})();
