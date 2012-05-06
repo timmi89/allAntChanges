@@ -227,7 +227,7 @@ RB = {
                         var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
                         RB.follow.remove( id, type );
                     });
-                    $('#follower_count').text( (parseInt( $('#follower_count').text() )+1) + " followers" );
+                    $('#follower_count').html( "<strong>"+(parseInt( $('#follower_count').text() )+1) + "</strong> followers" );
                 }
             });
         },
@@ -253,7 +253,7 @@ RB = {
                         var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
                         RB.follow.add( id, type );
                     });
-                    $('#follower_count').text( (parseInt( $('#follower_count').text() )-1) + " followers" );
+                    $('#follower_count').html( "<strong>"+(parseInt( $('#follower_count').text() )-1) + "</strong> followers" );
                 }
             });
         },

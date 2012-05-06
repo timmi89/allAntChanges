@@ -24,7 +24,7 @@ $(document).ready( function() {
     </div>
     {% if not on_follow_page %}
     <div id="follow_info">
-      <span id="follower_count"></span> | <span id="following_count"></span> {% if profile_user.id != cookie_user.id %}| <a id="follow_action" href="javascript:void(0);"></a>{% endif %}
+      <span id="follower_count"></span> | <span id="following_count"></span> {% if profile_user.id != cookie_user.id and cookie_user %}| <a id="follow_action" href="javascript:void(0);"></a>{% endif %}
     </div>
     <script>
     $(document).ready( function() {
