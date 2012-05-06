@@ -520,7 +520,7 @@ class UnFollowHandler(InteractionHandler):
             return {'message':'not_logged_in'}
         type = data['type']
         follow_id = data['follow_id']
-        Follow.objects.delete(owner = owner, type = type, follow_id = follow_id)
+        Follow.objects.get(owner = owner, type = type, follow_id = follow_id).delete()
         return {}
     
 class FollowHandler(InteractionHandler):
