@@ -22,6 +22,7 @@ Moderate = Resource(handler=ModerationHandler)
 Privacy = Resource(handler=PrivacyHandler)
 Confirmation = Resource(handler=ConfirmUserHandler)
 Follow = Resource(handler=FollowHandler)
+UnFollow = Resource(handler=UnFollowHandler)
 FollowedEntity = Resource(handler=FollowedEntityHandler)
 
 
@@ -68,6 +69,7 @@ urlpatterns = patterns('',
     url(r'^moderate/toggle/', Moderate),
     url(r'^privacy/toggle/', Privacy),
     url(r'^follow/', Follow),
+    url(r'^unfollow/', UnFollow),
     url(r'^entity/follow/', FollowedEntity),
     #url(r'^comments/', Comments),
 )
