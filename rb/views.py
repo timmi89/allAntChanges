@@ -574,6 +574,7 @@ def follow_interactions(request, user_id):
         # Look for a better way to do this
     
     owner = User.objects.get(id = user_id)
+    context['profile_user'] = owner
     #owner = SocialUser.objects.get(user = django_user)
     requested_types = request.GET.getlist('ftype')
     if len(requested_types) == 0:
