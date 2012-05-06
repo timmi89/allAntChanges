@@ -1,9 +1,9 @@
 var RB = RB ? RB : {};
 
 RB = {
-	group : {},
-	user_auth : {
-		doFBLogin : function(requesting_action) {
+	group: {},
+	user_auth: {
+		doFBLogin: function(requesting_action) {
 			FB.login(function(response) {
               if (response.authResponse) {
                 FB.api('/me', function(response) {
@@ -16,8 +16,8 @@ RB = {
             }, {scope: 'email'});
 		}
 	},
-	admin : {
-		requestAccess : function(fb_response, group_id) {
+	admin: {
+		requestAccess: function(fb_response, group_id) {
 			if ( fb_response ) {
 		        var fb_session = (fb_response.session) ? fb_response.session:fb_response
 				var sendData = {
@@ -42,11 +42,11 @@ RB = {
 				});
 			}
 		},
-		blockContent : function(int_id) {
+		blockContent: function(int_id) {
 			var sendData = {
-                "int_id" : int_id,
-                "user_id" : RDRAuth.rdr_user.user_id,
-                "readr_token" : RDRAuth.rdr_user.readr_token
+                "int_id": int_id,
+                "user_id": RDRAuth.rdr_user.user_id,
+                "readr_token": RDRAuth.rdr_user.readr_token
             };
 
             // send the data!
@@ -73,7 +73,7 @@ RB = {
             });
 		}
 	},
-	util : {
+	util: {
 		getHashValue: function( key ) {
             var hash = window.location.hash;
             if ( hash.length > 0 ) {
@@ -126,7 +126,7 @@ RB = {
             	window.location.hash = newHash;
             }
         },
-		loadScript : function(sScriptSrc,callbackfunction) {
+		loadScript: function(sScriptSrc,callbackfunction) {
 		var oHead = document.getElementsByTagName('head')[0];
 		if(oHead) {
 		    var oScript = document.createElement('script');
@@ -144,5 +144,64 @@ RB = {
 		    oHead.appendChild(oScript);
 			}
 		}
-	}
+	},
+
+    fixUrlParams: function (urlOrNull, newQParams, replaceNotMerge) {
+        //given a url (or defaulting to the window url if null),
+        //pulls out the query params,
+        //merges in newQParams if replaceNotMerge is false or null (default null)
+        //or replaces them completely if replaceNotMerge is truee
+
+        var self = this;
+        
+        function _getQueryParams (optQueryString) {
+            var queryString = optQueryString || window.location.search;
+            //thanks: http://stackoverflow.com/a/2880929/1289255
+            //I haven't verfied that this is 100% perfect for every url case, but it's solid.
+
+            var urlParams = {};
+            var e,
+            a = /\+/g,  // Regex for replacing addition symbol with a space
+            r = /([^&=]+)=?([^&]*)/g,
+            d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+            q = queryString.substring(1);
+
+            while (e = r.exec(q))
+                urlParams[d(e[1])] = d(e[2]);
+
+            return urlParams;
+        }
+
+        //todo
+        var url = urlOrNull || window.location,
+            qIndex = url.indexOf('?'),
+            hrefBase,
+            hrefQuery,
+            qParams,
+            _newQParams;
+
+        //if qIndex == -1, there was no ?
+        if(qIndex == -1 ) {
+            hrefBase = url;
+            hrefQuery = "";
+        }else{
+            hrefBase = url.slice(0, qIndex);
+            hrefQuery = url.slice(qIndex);
+        }
+
+        qParams = replaceNotMerge ? {} : _getQueryParams(hrefQuery);
+        _newQParams = newQParams || {};
+
+        //add or override the params we need:
+        $.extend(qParams, _newQParams);
+
+        //overwrite hrefQuery with new settings
+        hrefQuery = $.param(qParams);
+        
+        var finalUrl = hrefQuery ?
+            hrefBase + '?' + hrefQuery : 
+            hrefBase;
+
+        return finalUrl;
+    }        
 };
