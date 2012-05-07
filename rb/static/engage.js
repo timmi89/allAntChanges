@@ -218,6 +218,7 @@ function readrBoard($R){
 
                 if ( !$mediaItem.data('hover') && !$rindow.is(':animated') ) {
                     $rindow.data('hover', false).animate( {'height':'0px' }, 333, 'swing', function() {
+                        $rindow.removeClass('rdr_has_border');
                         if (callback) callback();
                     });
                 }
@@ -2907,7 +2908,6 @@ function readrBoard($R){
                             if ( containerInfo ) {
                                 $mediaItem.data('hover',false).data('hash', hash);
                                 RDR.rindow.mediaRindowHide( $mediaItem );
-                                $indicator_details.removeClass('rdr_has_border');
                             }
                         },100);
                         $mediaItem.data('timeoutCloseEvt_'+hash, timeoutCloseEvt);
@@ -5641,7 +5641,7 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv2" );
+    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv3" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
 
