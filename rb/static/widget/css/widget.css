@@ -538,7 +538,7 @@ div#rdr_sandbox div.rdr_tag_details {
   position:absolute !important;
   background:#fff !important;
   z-index:100000 !important;
-  min-width:80px !important;
+  min-width:80px;;
   -webkit-box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7) !important;
   -moz-box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7) !important;
   box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7) !important;
@@ -1196,9 +1196,8 @@ div.rdr_indicator_for_media.rdr_live_hover {
 }
 
 #rdr_sandbox div.rdr_indicator_details_for_media {
-    overflow:hidden !important; /*for the animate out to work nicely*/
+    overflow:hidden !important; /*for the animate() out to work nicely*/
     height:0;;
-    /*height:200px !important;*/
     display:block !important;
     margin:0 !important;
     -moz-border-radius:0px 0px 6px 6px !important;
@@ -1211,9 +1210,6 @@ div.rdr_indicator_for_media.rdr_live_hover {
     border-width:0 !important;
 }
 #rdr_sandbox div.rdr_indicator_details_for_media.rdr_has_border {
-/*#rdr_sandbox div.rdr_indicator_details_for_media:hover {*/
-    /*max-height:150px !important;*/
-    /*overflow-y:auto !important;*/
     border-width:1px !important;
 }
 

@@ -6341,7 +6341,12 @@ function $RFunctions($R){
 
                                     $details.find('div.rdr_counts_other').width( otherCountsWidth + 35 );
 
-                                    $details.css( 'min-width', ($details.find('.rdr_tag').width()+$details.find('.rdr_tag_count').width() + 35)+'px' );
+                                    console.log( $details.find('.rdr_tag').length );
+                                    console.log( $details.find('.rdr_tag').width() );
+                                    console.log( $details.find('.rdr_tag_count').length );
+                                    console.log( $details.find('.rdr_tag_count').width() );
+                                    console.log( $details.find('.rdr_details_pill').text() );
+                                    $details.css( 'min-width', ( $details.find('.rdr_tag').width()+$details.find('.rdr_tag_count').width() + 35 )+'px' );
                             },
                             function() {
                                 var $this = $(this),
