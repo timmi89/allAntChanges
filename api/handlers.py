@@ -9,6 +9,7 @@ from userutils import *
 from authentication.token import *
 from settings import BASE_URL, STATIC_URL
 from django.forms.models import model_to_dict
+from django.core.mail import EmailMessage
 
 
 import logging
@@ -542,6 +543,8 @@ class FollowHandler(InteractionHandler):
             #send followed user notification
         if type == 'usr':
             follow.user = User.objects.get(id=follow_id)
+            
+            
         elif type == 'pag':
             follow.page = Page.objects.get(id=follow_id)
         elif type == 'grp':
@@ -555,6 +558,11 @@ class FollowHandler(InteractionHandler):
             follow,
             exclude=[]
         )
+        if follow.user is not None:
+            follow_email = generateFollowEmail(owner)
+            msg = EmailMessage("You are being followed on readrboard", follow_email, "hello@readrboard.com", [follow.user.email])
+            msg.content_subtype='html'
+            msg.send(False)
         return follow_dict
     
     @status_response
@@ -590,9 +598,9 @@ class FollowHandler(InteractionHandler):
             if follow.type == 'usr':
                 compound_dict['usr'] = model_to_dict(follow.user, exclude = ['user_permissions', 'email', 'is_superuser', 'is_staff', 'password', 'groups'])
                 compound_dict['social_usr'] = model_to_dict(follow.user.social_user, exclude = [])
-            elif follow.type == 'grp':
-                compound_dict['grp'] = model_to_dict(follow.group)
-            elif follow.type == 'pag':
+            elif follow.type == 'grp' and follow.group is not None:
+                compound_dict['grp'] = model_to_dict(follow.group, exclude=['word_blacklist'])
+            elif follow.type == 'pag' and follow.page is not None:
                 compound_dict['pag'] = model_to_dict(follow.page)
             follows['paginated_follows'].append(compound_dict)
             
