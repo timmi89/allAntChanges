@@ -3,6 +3,9 @@
 var comments = [],
     interactions = [],
     shares = [];
+if ( window.location.href.indexOf('/user/') != -1 ) {
+  $('#cards').addClass('user_profile');
+}
 
 {% regroup current_page.object_list by page as pi %}
 {% for page in pi %}
@@ -25,6 +28,9 @@ var comments = [],
                     "name"        :   "{{ page.grouper.site.group.name|escapejs }}",
                     "title"       :   "{{ page.grouper.site.group.title|escapejs }}"
                   },
+                  "user_profile_link" :   "/user/{{interaction.user.id}}",
+                  "user_avatar"       :   "{{ interaction.user.social_user.img_url }}",
+                  "user_name"         :   "{{ interaction.user.social_user.full_name }}",
                   "created"           :   "{{ interaction.created|date:"M d g:ia" }}",
                   "moderator"         :   {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %},
                   "page" : {{interaction.page}},
@@ -190,8 +196,8 @@ function writeCard( interaction, showBlocked ) {
       $meta.append('<div class="publisher"><a href=/group/' + interaction.group.short_name + '>'+interaction.group.name+'</a></div>');
     }
     $meta.append('<div class="title">'
-            + '<a href="/page/'+interaction.page_id+'">'+interaction.page_title+'</a>'
-            + '</div>');
+                + '<a href="/page/'+interaction.page_id+'">'+interaction.page_title+'</a>'
+              + '</div>');
     if ( interaction.kind == "pag" ) { $meta.append('<div class="date">'+interaction.date+'</div>'); }
     if ( interaction.moderator ) {
         $meta.append('<div class="block_content">'
@@ -199,7 +205,14 @@ function writeCard( interaction, showBlocked ) {
           + (( interaction.approved ) ? 'Block':'Unblock')
           + '</a></div>');
     }
-    $card.append( $header, $content, $meta );
+    var $addedBy = $( '<div class="added_by"><em>Added by</em> '
+                + '<a href="'+interaction.user_profile_link+'">'
+                + interaction.user_name + '</a>'
+                + '</div>');
+        if (interaction.user_avatar != "None") {
+          $addedBy.find('a').prepend('<img src="'+interaction.user_avatar+'" /> ');
+        }
+    $card.append( $header, $content, $meta, $addedBy );
 
     if ( interaction.kind == "pag" ) {
       var $pag_container = $('div.card.pag_container').last();

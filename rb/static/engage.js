@@ -218,6 +218,7 @@ function readrBoard($R){
 
                 if ( !$mediaItem.data('hover') && !$rindow.is(':animated') ) {
                     $rindow.data('hover', false).animate( {'height':'0px' }, 333, 'swing', function() {
+                        $rindow.removeClass('rdr_has_border');
                         if (callback) callback();
                     });
                 }
@@ -2904,6 +2905,7 @@ function readrBoard($R){
                             $mediaItem.data('hover',true).data('hash', hash);
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
                             RDR.rindow.mediaRindowShow( $mediaItem );
+                            $indicator_details.addClass('rdr_has_border');
                         }
                     },
                     onDisengage: function(hash){
@@ -2917,14 +2919,11 @@ function readrBoard($R){
                         clearTimeout(timeoutCloseEvt);
 
                         timeoutCloseEvt = setTimeout(function(){
-                            // commenting this out.  it causes the image drawers to stick.
-                            // if ( !$mediaItem.hasClass('rdr_live_hover') && !$indicator_details.hasClass('rdr_live_hover') ) {
-                                var containerInfo = RDR.containers[hash];
-                                if ( containerInfo ) {
-                                    $mediaItem.data('hover',false).data('hash', hash);
-                                    RDR.rindow.mediaRindowHide( $mediaItem );
-                                }
-                            // }
+                            var containerInfo = RDR.containers[hash];
+                            if ( containerInfo ) {
+                                $mediaItem.data('hover',false).data('hash', hash);
+                                RDR.rindow.mediaRindowHide( $mediaItem );
+                            }
                         },100);
                         $mediaItem.data('timeoutCloseEvt_'+hash, timeoutCloseEvt);
                     }
@@ -5669,7 +5668,7 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv1" );
+    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv3" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
 
@@ -6369,7 +6368,12 @@ function $RFunctions($R){
 
                                     $details.find('div.rdr_counts_other').width( otherCountsWidth + 35 );
 
-                                    $details.css( 'min-width', ($details.find('.rdr_tag').width()+$details.find('.rdr_tag_count').width() + 35)+'px' );
+                                    console.log( $details.find('.rdr_tag').length );
+                                    console.log( $details.find('.rdr_tag').width() );
+                                    console.log( $details.find('.rdr_tag_count').length );
+                                    console.log( $details.find('.rdr_tag_count').width() );
+                                    console.log( $details.find('.rdr_details_pill').text() );
+                                    $details.css( 'min-width', ( $details.find('.rdr_tag').width()+$details.find('.rdr_tag_count').width() + 35 )+'px' );
                             },
                             function() {
                                 var $this = $(this),
