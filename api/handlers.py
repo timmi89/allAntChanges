@@ -586,7 +586,14 @@ class FollowHandler(InteractionHandler):
         
         follows['follows_count'] = follows_paginator.count
         for follow in current_page.object_list:
-            follows['paginated_follows'].append(model_to_dict(follow))
+            compound_dict = model_to_dict(follow)
+            if follow.type == 'usr':
+                compound_dict['usr'] = model_to_dict(follow.user, exclude = ['user_permissions', 'email', 'is_superuser', 'is_staff', 'password', 'groups'])
+            elif follow.type == 'grp':
+                compound_dict['grp'] = model_to_dict(follow.group)
+            elif follow.type == 'pag':
+                compound_dict['pag'] = model_to_dict(follow.page)
+            follows['paginated_follows'].append(compound_dict)
             
         followed_by = Follow.objects.filter(type = 'usr', follow_id = owner.id)
         followed_by_paginator = Paginator(followed_by, 1)
