@@ -2363,7 +2363,8 @@ function readrBoard($R){
                 
                 var noDefinedSummaries = (
                     !$('#rdr-page-summary').length &&
-                    !$(RDR.group.post_selector).length
+                    !$(RDR.group.post_selector).length &&
+                    !$(RDR.group.summary_widget_selector).length
                 );
                 
                 if (noDefinedSummaries){
