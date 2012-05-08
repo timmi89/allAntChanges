@@ -652,9 +652,8 @@ class FollowedEntityHandler(InteractionHandler):
         
         for follower in followed_by_page.object_list:
             compound_dict = model_to_dict(follow)
-            if follow.type == 'usr':
-                compound_dict['usr'] = model_to_dict(follow.user, exclude = ['user_permissions', 'email', 'is_superuser', 'is_staff', 'password', 'groups'])
-                compound_dict['social_usr'] = model_to_dict(follow.user.social_user, exclude = [])
+            compound_dict['usr'] = model_to_dict(follow.owner, exclude = ['user_permissions', 'email', 'is_superuser', 'is_staff', 'password', 'groups'])
+            compound_dict['social_usr'] = model_to_dict(follow.owner.social_user, exclude = [])
             follows['paginated_follows'].append(compound_dict)
         
         
