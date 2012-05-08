@@ -6,7 +6,6 @@ var comments = [],
 if ( window.location.href.indexOf('/user/') != -1 ) {
   $('#cards').addClass('user_profile');
 }
-
 {% regroup current_page.object_list by page as pi %}
 {% for page in pi %}
     {% for interaction in page.list %}
@@ -36,6 +35,9 @@ if ( window.location.href.indexOf('/user/') != -1 ) {
                   "page" : {{interaction.page}},
                   "page_id" : {{interaction.page}}
             };
+            if ( interaction.user_name == "" ) {
+              interaction.user_name = "Unregistered User";
+            }
             interactions.push( interaction );
             /*
                   <h5>Other Reactions</h5>
@@ -209,7 +211,7 @@ function writeCard( interaction, showBlocked ) {
                 + '<a href="'+interaction.user_profile_link+'">'
                 + interaction.user_name + '</a>'
                 + '</div>');
-        if (interaction.user_avatar != "None") {
+        if ( interaction.user_avatar != "None" && interaction.user_avatar != "") {
           $addedBy.find('a').prepend('<img src="'+interaction.user_avatar+'" /> ');
         }
     $card.append( $header, $content, $meta, $addedBy );
