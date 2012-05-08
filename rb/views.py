@@ -609,7 +609,7 @@ def follow_interactions(request, user_id):
     except (EmptyPage, InvalidPage): current_page = interactions_paginator.page(paginator.num_pages)
     context['current_page'] = current_page
     context['on_follow_page'] = True
-    return render_to_response("follow_index.html", context, context_instance=RequestContext(request))
+    return render_to_response("index.html", context, context_instance=RequestContext(request))
 
 
 
