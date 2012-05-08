@@ -570,10 +570,13 @@ section[role="main"] div.card div.meta div.publisher    { xxfloat:left; margin-r
 section[role="main"] div.card div.meta div.publisher img	{ max-width:80px; max-height:30px; }
 section[role="main"] div.card div.meta div.title      { }
 section[role="main"] div.card div.meta div.title a    { color:#999; }
-section[role="main"] div.card div.meta div.title a.external_link		{  display: block;float: right;font-size: 20px;margin-left: 10px; }
+section[role="main"] div.card div.meta div.title a.external_link    {  display: block;float: right;font-size: 20px;margin-left: 10px; }
 section[role="main"] div.card div.meta div.content_type   { width:16px; xxheight:30px; margin:5px 5px 0 5px; xxbackground:url(../images/type_text.png) top left no-repeat; xxtext-indent:-9999px; float:left; }
 section[role="main"] div.card.img div.meta div.content_type,
 section[role="main"] div.card.med div.meta div.content_type { margin:0px 8px 0 2px; }
+
+section[role="main"] div.card div.added_by      { background:#eee; padding:5px; font-size:11px; text-align:center; }
+section[role="main"] div.card div.added_by img  { display: inline-block; margin-bottom:-5px; margin-left:5px; width:18px; }
 
 section[role="main"] div.card.txt div.content           { xxborder-top: 1px solid #fff; margin:0; position:relative;z-index:2;}
 /*section[role="main"] div.card.txt div.content div.content_body    { font-size:20px; font-weight:normal; font-family:Helvetica, 'HelveticaBold', Arial, sans-serif; font-style:italic; xxbackground:#f0f0f0; padding:10px; background:url("../images/noise.png") repeat scroll 0 0 #f2f2f2; }*/
