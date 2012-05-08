@@ -651,7 +651,11 @@ class FollowedEntityHandler(InteractionHandler):
         follows['followed_by_count'] = followed_by_paginator.count
         
         for follower in followed_by_page.object_list:
-            follows['paginated_follows'].append(model_to_dict(follower))
+            compound_dict = model_to_dict(follow)
+            if follow.type == 'usr':
+                compound_dict['usr'] = model_to_dict(follow.user, exclude = ['user_permissions', 'email', 'is_superuser', 'is_staff', 'password', 'groups'])
+                compound_dict['social_usr'] = model_to_dict(follow.user.social_user, exclude = [])
+            follows['paginated_follows'].append(compound_dict)
         
         
         
