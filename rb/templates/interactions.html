@@ -3,6 +3,9 @@
 var comments = [],
     interactions = [],
     shares = [];
+if ( window.location.href.indexOf('/user/') != -1 ) {
+  $('#cards').addClass('user_profile');
+}
 
 {% regroup current_page.object_list by page as pi %}
 {% for page in pi %}
