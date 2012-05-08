@@ -1692,7 +1692,7 @@ function readrBoard($R){
             },
             cssSuperImportant: function($domNode, cssDict){
                 //RDR.util.cssSuperImportant:
-                var inlineStyleStr = "";
+                var inlineStyleStr = $domNode.attr('style') || "";
                 $.each(cssDict,function(key,val){
                     inlineStyleStr += (key+ ':' +val+ 'px !important; ');
                 });
@@ -2357,8 +2357,13 @@ function readrBoard($R){
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
                 var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr"/>').appendTo('body');
                 
-                //this will only get used if the group doesn't ad an override for the summary widget
-                var $defaultSummaryBarWrap = $('<div id="rdr-page-summary" class="rdr no-rdr"/>').appendTo('body');
+                //if the publisher doesn't have this predefined we can safely add it.
+                //todo: make this more clear later
+                if ( !$('#rdr-page-summary').length ){
+                    //add a class defaultSummaryBar to show that this is our added rdr-page-summary
+                    //and not a publisher added one.
+                    $('<div id="rdr-page-summary" class="rdr no-rdr defaultSummaryBar"/>').prependTo('body');
+                }
                 
                 // RDR.session.educateUser(); //this function has changed now
                //? do we want to model this here to be symetrical with user and group data?
@@ -5553,6 +5558,18 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     } else {
                         widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
                         widgetSummarySettings.jqFunc = "append";
+                        //this is hacky and sucks, do it better later
+                        if ( widgetSummarySettings.$anchor.hasClass('defaultSummaryBar') ){
+                            //then we added it as the bookmarklet defaultSummaryBar - not the pub defined one.
+
+                            //add a margin to the publishers body
+                            //- use existing in case their shit already depends on a margin
+                            var $body = $('body');
+                            var existingmarging = parseInt($body.css('marginTop'), 10);
+                            RDR.util.cssSuperImportant( $body, {
+                               "margin-top": existingmarging + 30
+                            });
+                        }
                     }
 
                     //div to hold summary tag detail "menus"
