@@ -203,6 +203,11 @@ def generatePasswordEmail(username, email):
     password_email = getEmailTemplate('password_email.html') % (settings.BASE_URL, user.id, generatePasswordToken(user))
     return (user, password_email)
 
+def generateFollowEmail(owner):
+    follow_email = getEmailTemplate('follow_email.html') % (settings.BASE_URL, owner.id, owner.social_user.username)
+    return (follow_email)
+
+
 def getEmailTemplate(template_filename):
     email_template = open(settings.EMAIL_TEMPLATE_DIR + '/' + template_filename)
     return email_template.read()
