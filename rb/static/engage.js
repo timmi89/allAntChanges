@@ -62,7 +62,14 @@ function readrBoard($R){
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
                 inline_selector: 'img, embed, video, object, iframe',
                 slideshow_trigger: '#module-flipbook-wrap',
-                slideshow_img_selector: '#module-flipbook div.slideImg img'
+                slideshow_img_selector: '#module-flipbook div.slideImg img',
+                //the staticSummaryBar will only be used if the group doesn't have a Summary widget selector.
+                //use this flag though if you want the group to never have a static summary bar.
+                neverUseStaticSummaryBar: false,
+                //if these aren't overwritten they will make a static summary bar at the top of the page.
+                summary_widget_selector: '#rdr-page-summary',
+                post_selector:'',
+                post_href_selector: ''
             }
         },
         user: {
@@ -2333,7 +2340,19 @@ function readrBoard($R){
 
                         var group_settings = response.data;
 
+
+                        //let some empty strings get overridden to null so the defaults will take.
+                        var props = [
+                            "summary_widget_selector",
+                            "post_selector",
+                            "post_href_selector"
+                        ];
+                        $.each(props, function(idx, val){
+                            //empty strings get set to null
+                            group_settings[val] = group_settings[val] || undefined;
+                        });
                         RDR.group = $.extend({}, RDR.group.defaults, group_settings );
+
 
                         $(RDR.group.no_readr).each( function() {
                             $(this).addClass('no-rdr');
@@ -2357,7 +2376,10 @@ function readrBoard($R){
             initPageData: function(){
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
                 var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr"/>').appendTo('body');
-
+                
+                //this will only get used if the group doesn't ad an override for the summary widget
+                var $defaultSummaryBarWrap = $('<div id="rdr-page-summary" class="rdr no-rdr"/>').appendTo('body');
+                
                 // RDR.session.educateUser(); //this function has changed now
                //? do we want to model this here to be symetrical with user and group data?
 
@@ -2366,7 +2388,6 @@ function readrBoard($R){
                 // make one call for the page unless post_selector, post_href_selector, summary_widget_selector are all set to not-an-empty-string AND are present on page
 
                 // defaults for just one page / main page
-
 
                 var pagesArr = [],
                     urlsArr = [],
@@ -2377,10 +2398,12 @@ function readrBoard($R){
                     title;
 
                 // if multiple posts, add additional "pages"
-                if (
-                    ( RDR.group.post_selector !== "" && RDR.group.post_href_selector !== "" && RDR.group.summary_widget_selector !== "" ) &&
-                    ( $(RDR.group.post_selector).length > 0 )
-                   ) {
+                if (   
+                        RDR.group.post_selector !== "" &&
+                        RDR.group.post_href_selector !== "" && 
+                        RDR.group.summary_widget_selector !== ""
+                    ) {
+                        //if $(RDR.group.post_selector).length is 0, this will just do nothing
                         $(RDR.group.post_selector).each( function(){
                             var key = pagesArr.length;
                             var $post = $(this);
@@ -2455,7 +2478,20 @@ function readrBoard($R){
                     dataType: "jsonp",
                     data: { json: $.toJSON(sendData) },
 					success: function(response) {
-                       RDR.events.track( 'load' );
+                        RDR.events.track( 'load' );
+
+                        console.log(response)
+                        
+                        // var useStaticSummaryBar = (
+                        //     //single page
+                        //     response.data.length = 1 &&
+                        //     //that
+                        //     response.data[0].$anchor
+                        //     !RDR.group.neverUseStaticSummaryBar &&
+
+                        // );
+                        // neverUseStaticSummaryBar
+
                         $.each( response.data, function(key,page){
                             //todo: it seems like we should use the page.id as the unique identifier instead of introducting 'key' which is just a counter
                             page.key = key;
