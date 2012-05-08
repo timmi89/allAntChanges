@@ -2359,7 +2359,13 @@ function readrBoard($R){
                 
                 //if the publisher doesn't have this predefined we can safely add it.
                 //todo: make this more clear later
-                if ( !$('#rdr-page-summary').length ){
+                
+                var noDefinedSummaries = (
+                    !$('#rdr-page-summary').length &&
+                    !$(RDR.group.post_selector).length
+                );
+                
+                if (noDefinedSummaries){
                     //add a class defaultSummaryBar to show that this is our added rdr-page-summary
                     //and not a publisher added one.
                     $('<div id="rdr-page-summary" class="rdr no-rdr defaultSummaryBar"/>').prependTo('body');
