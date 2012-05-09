@@ -5494,7 +5494,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
                 }
                 function _isValid($node){
-                    var validity = ( $node.css('display') == "block" &&
+                    var validity = ( ( $node.css('display') == "block" || $node.css('display') == "list-item" ) &&
                         $node.css('float') == "none" &&
                         ! $node.closest('.rdr_indicator').length &&
                         ! $node.is('html, body')
