@@ -1,40 +1,54 @@
-//this if isn't technically needed I don't think since re-declaring a var won't overide the value,
-//but do it for now while I confirm across all browsers.
-if(!ReadrBoardLoaded){
+;(function(){
+//dont bother indenting this top level anonymous function
 
-//our vars in the global namespace
-var ReadrBoardLoaded,
-RDR = {}, //our global RDR object
-$RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
-$R = {}, //init var: our clone of jQuery
+var RDR = window.READRBOARDCOM || {};
+if(RDR.hasLoaded){
+    // console.log('I have already run - returning');
+    return;
+}
+// console.log('I have not run - running');
+
+//READRBOARDCOM will now be the only thing in the global namespace
+window.READRBOARDCOM = RDR;
+ 
+RDR.hasLoaded = true;
+
+RDR.engageScript = document.getElementById("readrboardscript") || findEngageScript();
+RDR.engageScriptSrc = RDR.engageScript.src;
+
+//todo: clean these up
+var $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
+$R, //init var: our clone of jQuery
 RDR_scriptPaths = {},
 //check if this script is the offline version
 //note that the other RDR_offline vars in our iframes should check window.location for local.readrboard.com instead
 RDR_offline = !!(
-    //see the readrmarklet file for why we use http:--
-    document.getElementById("http:--localhost:8080-static-engage.js") ||
-    document.getElementById("http:--local.readrboard.com:8080-static-engage.js") ||
-    document.domain == "local.readrboard.com" ||
-    document.domain == "localhost"
+    RDR.engageScriptSrc.indexOf('local.readrboard.com') ||
+    document.domain == "local.readrboard.com" //shouldn't need this line anymore
 ),
 RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com",
 RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/",
 RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
 
+//this doesn't need to run if we have an id on the script
+function findEngageScript(){
+    var scripts = document.getElementsByTagName('script')
+
+    for(var i=0; i<scripts.length; i++){
+        var s = scripts[i];
+        var src = s.src;
+        //not looking for readrboard.com right now in case we use the amazon version without an id on the script
+        var isReadrBoardScript = src.indexOf('readrboard') && src.indexOf('engage');
+        if(isReadrBoardScript){
+            return s;
+        }
+    }
 }
 
-(function(){
 function readrBoard($R){
-    // console.log('have I already run?');
-    if(ReadrBoardLoaded){
-        // console.log('yes I have already run');
-        return;
-    }
-    // console.log('nope, I still need to run');
-
     var $ = $R;
 
-    var RDR = {
+    $.extend(RDR, {
         summaries:{},
         current: {}, //todo: what is this? delete it?
         content_nodes: {
@@ -1783,7 +1797,47 @@ function readrBoard($R){
                         throttling = true;
                     };
                 }
+            },
+            getQueryParams: function(optQueryString) {
+                //RDR.util.getQueryParams:
+
+                //thanks: http://stackoverflow.com/a/2880929/1289255
+                //I haven't verfied that this is 100% perfect for every url case, but it's solid.
+                
+                //this function is also in readr_scripts
+                var queryString = optQueryString || window.location.search;
+
+                var urlParams = {};
+                var e,
+                a = /\+/g,  // Regex for replacing addition symbol with a space
+                r = /([^&=]+)=?([^&]*)/g,
+                d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+                q = queryString.substring(1);
+
+                while (e = r.exec(q))
+                    urlParams[d(e[1])] = d(e[2]);
+
+                return urlParams;
+            },
+            getQueryStrFromUrl: function(url){
+                var qIndex = url.indexOf('?'),
+                    hrefBase,
+                    hrefQuery,
+                    qParams;
+
+                 //if qIndex == -1, there was no ?
+                if(qIndex == -1 ) {
+                    hrefBase = url;
+                    hrefQuery = "";
+                }else{
+                    hrefBase = url.slice(0, qIndex);
+                    hrefQuery = url.slice(qIndex);
+                }
+                return hrefQuery;
             }
+
+
+
         },
 		session: {
             alertBar: {
@@ -2355,19 +2409,20 @@ function readrBoard($R){
                 });
             },
             initPageData: function(){
+                var queryStr = RDR.util.getQueryStrFromUrl(RDR.engageScriptSrc);
+                RDR.engageScriptParams = RDR.util.getQueryParams(queryStr);
+                
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
                 var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr"/>').appendTo('body');
-                
-                //if the publisher doesn't have this predefined we can safely add it.
-                //todo: make this more clear later
-                
-                var noDefinedSummaries = (
+
+                var useDefaultSummaryBar = (
+                    RDR.engageScriptParams.bookmarklet &&
                     !$('#rdr-page-summary').length &&
                     !$(RDR.group.post_selector).length &&
                     !$(RDR.group.summary_widget_selector).length
                 );
                 
-                if (noDefinedSummaries){
+                if (useDefaultSummaryBar){
                     //add a class defaultSummaryBar to show that this is our added rdr-page-summary
                     //and not a publisher added one.
                     $('<div id="rdr-page-summary" class="rdr no-rdr defaultSummaryBar"/>').prependTo('body');
@@ -4577,7 +4632,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             var cornerPadding = 0,
                                 indicatorBodyWidth = $indicator_body.width(),
-                                modIEHeight = ( $R.browser.msie && parseInt( $R.browser.version, 10 ) < 9 ) ? 10:0;
+                                modIEHeight = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 10:0;
 
                             var cssTop = $container.height()+modIEHeight-10;
                             $indicator.data('top', cssTop);
@@ -5573,7 +5628,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             var $body = $('body');
                             var existingmarging = parseInt($body.css('marginTop'), 10);
                             RDR.util.cssSuperImportant( $body, {
-                               "margin-top": existingmarging + 30
+                               "margin-top": existingmarging + 40
                             });
                         }
                     }
@@ -5593,9 +5648,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 }
             }
         }//end RDR.actions
-    };
-
-    return RDR;
+    });
 }
 
 
@@ -5654,7 +5707,6 @@ rdr_loadScript( RDR_scriptPaths.jquery, function(){
         //The rest of our code is then set off with RDR.actions.init();
         $RFunctions($R);
 
-        ReadrBoardLoaded = true;
     });
 });
 
@@ -5692,8 +5744,7 @@ function $RFunctions($R){
     //init our plugins (includes rangy, but otherwise, mostly jquery plugins. The $R passed is our jQuery alias)
     initPlugins($R);
 
-    //initiate our RDR object
-    RDR = readrBoard($R);
+    readrBoard($R);
 
     //run init functions
     RDR.actions.init();
@@ -7800,6 +7851,12 @@ function $RFunctions($R){
     }
     //end initPlugins()
 
+    //if we're offline, expose stuff to window for testing
+    if(RDR_offline){
+        window.RDR = window.READRBOARDCOM;
+        window.$RDR = $RDR;
+        window.$R = $R;
+    }
 }
 //end $RFunctions()
 
