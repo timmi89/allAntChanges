@@ -23,7 +23,7 @@ RDR_scriptPaths = {},
 //check if this script is the offline version
 //note that the other RDR_offline vars in our iframes should check window.location for local.readrboard.com instead
 RDR_offline = !!(
-    RDR.engageScriptSrc.indexOf('local.readrboard.com') ||
+    RDR.engageScriptSrc.indexOf('local.readrboard.com') != -1 ||
     document.domain == "local.readrboard.com" //shouldn't need this line anymore
 ),
 RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com",
@@ -38,7 +38,10 @@ function findEngageScript(){
         var s = scripts[i];
         var src = s.src;
         //not looking for readrboard.com right now in case we use the amazon version without an id on the script
-        var isReadrBoardScript = src.indexOf('readrboard') && src.indexOf('engage');
+        var isReadrBoardScript = (
+            src.indexOf('readrboard') != -1 &&
+            src.indexOf('engage') != -1
+        );
         if(isReadrBoardScript){
             return s;
         }
