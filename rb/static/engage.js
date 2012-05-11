@@ -5624,10 +5624,10 @@ RDR_scriptPaths.jquery = RDR_offline ?
     RDR_staticUrl+"global/js/jquery-1.7.1.min.js" :
     "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
 RDR_scriptPaths.jqueryUI = RDR_offline ?
-    RDR_staticUrl+"global/js/jquery-ui-1.8.14.custom.min.js" :
+    RDR_staticUrl+"global/js/jquery-ui-1.8.17.min.js" :
     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js";
 RDR_scriptPaths.jqueryUI_CSS = RDR_offline ?
-    RDR_staticUrl+"global/css/jquery-ui-1.8.14.base.css" :
+    RDR_staticUrl+"global/css/jquery-ui-1.8.17.base.css" :
     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/themes/base/jquery-ui.css";
 
 rdr_loadScript( RDR_scriptPaths.jquery, function(){
