@@ -5632,6 +5632,7 @@ RDR_scriptPaths.jqueryUI_CSS = RDR_offline ?
 
 rdr_loadScript( RDR_scriptPaths.jquery, function(){
     //callback
+
     if ( $.browser.msie  && parseInt($.browser.version, 10) < 8 ) {
         return false;
     }
@@ -5639,11 +5640,14 @@ rdr_loadScript( RDR_scriptPaths.jquery, function(){
         $('body').addClass('rdr_ie');
     }
 
+    //don't pass true yet.  Give back the $ here while the jqueryUI loads,
+    //but wait to give back the jQuery because the UI will need it.
+    $.noConflict();
+
     rdr_loadScript( RDR_scriptPaths.jqueryUI, function(){
         //callback
 
-        //within this scope while the $ refers to our version of jQuery, attach it to our Global var $R at least for now, for testing later
-        //todo - I don't think it really matters, but consider making this just local later
+        //Now give back the jQuery as well.
         $R = jQuery.noConflict(true);
 
         //A function to load all plugins including those (most) that depend on jQuery.
