@@ -207,9 +207,13 @@ RB.util.loadScript( chartbeat_script, function() {
   // pSUPERFLY.virtualPage(window.location.href, decodeURIComponent(qs_args.group_name) );
 });
 {% if group %}
-RB.group = {
-  id:{{ group.id }}
-};
+if ( !RB.group) {
+  RB.group = {
+    id:{{ group.id }}
+  };
+} else {
+  RB.group.id = {{ group.id }};
+}
 {% endif %}
 {% if profile_user %}
 RB.profile_user = {

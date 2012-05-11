@@ -5494,7 +5494,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
                 }
                 function _isValid($node){
-                    var validity = ( $node.css('display') == "block" &&
+                    var validity = ( ( $node.css('display') == "block" || $node.css('display') == "list-item" ) &&
                         $node.css('float') == "none" &&
                         ! $node.closest('.rdr_indicator').length &&
                         ! $node.is('html, body')
@@ -5673,7 +5673,7 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv3" );
+    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv4" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
 
@@ -6372,12 +6372,6 @@ function $RFunctions($R){
                                     });
 
                                     $details.find('div.rdr_counts_other').width( otherCountsWidth + 35 );
-
-                                    console.log( $details.find('.rdr_tag').length );
-                                    console.log( $details.find('.rdr_tag').width() );
-                                    console.log( $details.find('.rdr_tag_count').length );
-                                    console.log( $details.find('.rdr_tag_count').width() );
-                                    console.log( $details.find('.rdr_details_pill').text() );
                                     $details.css( 'min-width', ( $details.find('.rdr_tag').width()+$details.find('.rdr_tag_count').width() + 35 )+'px' );
                             },
                             function() {
