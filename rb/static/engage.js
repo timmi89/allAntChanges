@@ -6162,7 +6162,9 @@ function $RFunctions($R){
                     //page.jqFunc would be something like 'append' or 'after',
                     //so this would read $summary_widget_parent.append($summary_widget);
                     $summary_widget_parent[page.jqFunc]($summary_widget);
-                    $summary_widget.find('img.rdr_tooltip_this').tooltip();
+
+                    var placement = ($summary_widget_parent.hasClass('defaultSummaryBar')) ? "bottom":"top";
+                    $summary_widget.find('img.rdr_tooltip_this').tooltip({placement:placement});
 
                     var total_interactions = 0;
                     for ( var i in page.summary ) {
@@ -6333,11 +6335,12 @@ function $RFunctions($R){
                         
                         $('#rdr_summary_tag_details').append( $details );
 
-                        $a.tooltip();
-
                         // $react.append( $a, " " );
                         $react.find('div.rdr-sum-reactions').append( $a, " " );
                         $span.css('width', $span.width() + 'px' );
+
+                        var placement = ($a.closest('div.defaultSummaryBar').length) ? "bottom":"top";
+                        $a.tooltip({placement:placement});
 
                         $a.hoverIntent(
                             function() {
@@ -6434,11 +6437,13 @@ function $RFunctions($R){
 
                                 }
                                     $detailsHtml.find('div.rdr_counts:last-child').addClass('rdr-last-child');
-                                    $detailsHtml.find('div.rdr_tooltip_this').tooltip({});
 
                                     $this.addClass('rdr_live_hover');
                                     $details.html($detailsHtml).css('top', offsets.top+20 + 'px').css('left',offsets.left + 'px').show();
                                     // alert( $detailsHtml.html() );
+
+                                    var placement = ($a.closest('div.defaultSummaryBar').length) ? "bottom":"top";
+                                    $detailsHtml.find('div.rdr_tooltip_this').tooltip({placement:placement});
                                     
                                     $.each($details.find('div.rdr_counts_other div.rdr_counts'), function() {
                                         otherCountsWidth += $(this).width();
