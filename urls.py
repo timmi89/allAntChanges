@@ -34,7 +34,7 @@ urlpatterns = patterns('',
   url(r'^settings/$', 'rb.views.settings'),
   url(r'^register/$', 'rb.views.group'),
   url(r'^sites/$', 'rb.views.sites'),
-  url(r'^settings/(?P<short_name>[\w\-]+)/$', 'rb.views.settings'),
+  url(r'^settings/(?P<short_name>[\w\-\.]+)/$', 'rb.views.settings'),
 
   # User profile pages
   url(r'^user/(?P<user_id>\d+)/$', 'rb.views.main'),
@@ -78,7 +78,7 @@ urlpatterns = patterns('',
   # Sidebar
   url(r'^sidebar/$', 'rb.views.sidebar'),
   url(r'^sidebar/user/(?P<user_id>\d+)/$', 'rb.views.sidebar'),
-  url(r'^sidebar/group/(?P<short_name>[\w\-]+)/$', 'rb.views.sidebar'),
+  url(r'^sidebar/group/(?P<short_name>[\w\-\.]+)/$', 'rb.views.sidebar'),
   #url(r'^cards/(?P<group_id>\d/$', 'rb.views.cards'),
 
   # Extras
@@ -91,7 +91,7 @@ urlpatterns = patterns('',
   # Group Supporting Pages
   url(r'^signup/$', 'rb.views.create_group'),
   url(r'^analytics/', include('readrboard.analytics.urls')),
-  url(r'^admin_request/(?P<short_name>[\w\-]+)/$', 'rb.views.admin_request'),
+  url(r'^admin_request/(?P<short_name>[\w\-\.]+)/$', 'rb.views.admin_request'),
   url(r'^admin_approve/$', 'rb.views.admin_approve'),
   url(r'^admin_approve/(?P<request_id>\d+)/$', 'rb.views.admin_approve'),
   
