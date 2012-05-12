@@ -843,6 +843,15 @@ div.rdr.rdr-summary * {
     font-family:Arial, sans-serif !important;
     line-height:13px !important;
 }
+div.rdr.rdr-summary #rdr-user {
+  float:right !important;
+  margin:13px 25px 0 15px !important;
+}
+div.rdr.rdr-summary #rdr-user a {
+  font-style:normal !important;
+  color:#008be4 !important;
+}
+
 div.rdr.rdr-summary div.rdr-see-more {
     background: url("../images/readr_icons.png") repeat scroll -225px 0px transparent !important;
     height:16px !important;

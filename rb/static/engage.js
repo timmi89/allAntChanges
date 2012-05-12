@@ -24,6 +24,7 @@ RDR_scriptPaths = {},
 //note that the other RDR_offline vars in our iframes should check window.location for local.readrboard.com instead
 RDR_offline = !!(
     RDR.engageScriptSrc.indexOf('local.readrboard.com') != -1 ||
+    RDR.engageScriptSrc.indexOf('local.readrboard2.com') != -1 ||
     document.domain == "local.readrboard.com" //shouldn't need this line anymore
 ),
 RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com",
@@ -1750,6 +1751,18 @@ function readrBoard($R){
                     100
                 );
             },
+            userLoginState: function() {
+                if ( !$('#rdr-user').length ) {
+                    $('#rdr-page-summary').find('div.rdr-summary').prepend('<div id="rdr-user" />');
+                }
+                if ( RDR && RDR.user && RDR.user.full_name && $('#rdr-page-summary.defaultSummaryBar').length ) {
+                    var name = (RDR.user.user_type == "facebook") ? ( RDR.user.full_name.split(' ')[0] ) : RDR.user.full_name;
+                    $('#rdr-user').html('Hello, <a href="'+RDR_baseUrl+'/user/'+RDR.user.user_id+'" target="_blank">'+name+'</a>');
+                } else {
+                    $('#rdr-user').html('<a href="javascript:void(0);">Log in to ReadrBoard</a>');
+                    $('#rdr-user').find('a').click( function() { RDR.session.showLoginPanel(); } );
+                }
+            },
 
             //temp copies of some underscore functions.  Later we'll use the underscore library - replace then.
             _: {
@@ -2070,7 +2083,9 @@ function readrBoard($R){
             },
 			createXDMframe: function() {
 
-                RDR.session.receiveMessage();
+                RDR.session.receiveMessage({}, function() {
+                    RDR.util.userLoginState();
+                });
 
                 var iframeUrl = RDR_baseUrl + "/static/xdm.html",
                 parentUrl = window.location.href,
@@ -2107,6 +2122,9 @@ function readrBoard($R){
                                     callbackFunction();
                                     callbackFunction = null;
                                 }
+
+                                RDR.util.userLoginState();
+
                             } else if ( message.status == "fb_user_needs_to_login" ) {
                                 if ( callbackFunction && args ) {
                                     RDR.session.showLoginPanel( args, callbackFunction );
