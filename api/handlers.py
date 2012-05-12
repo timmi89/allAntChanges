@@ -75,6 +75,25 @@ class PrivacyHandler(AnonymousBaseHandler):
         # Update and save social user -- toggle privacy
         su.private_profile = not su.private_profile
         su.save()
+        
+class FollowEmailHandler(AnonymousBaseHandler):
+    @status_response
+    @json_data
+    def read(self, request, data):
+        # Check if current user's token has permission
+        user = checkToken(data)
+        if not user: raise JSONException(u"Token was invalid")
+        
+        # Retrieve social user
+        try:
+            su = SocialUser.objects.get(user=user)
+        except SocialUser.DoesNotExist, SocialUser.MultipleObjectsReturned:
+            raise JSONException(u"Privacy Handler: Error getting socialuser!")
+            
+        # Update and save social user -- toggle follow_email_option
+        su.follow_email_option = not su.follow_email_option
+        su.save()
+
 
 class ModerationHandler(AnonymousBaseHandler):
     @status_response
@@ -558,7 +577,7 @@ class FollowHandler(InteractionHandler):
             follow,
             exclude=[]
         )
-        if follow.user is not None:
+        if follow.user is not None and follow.user.social_user.follow_email_option:
             follow_email = generateFollowEmail(owner)
             msg = EmailMessage("You are being followed on readrboard", follow_email, "hello@readrboard.com", [follow.user.email])
             msg.content_subtype='html'

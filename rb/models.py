@@ -91,7 +91,9 @@ class SocialUser(models.Model):
 
     # For Privacy
     private_profile = models.BooleanField(default=False)
-
+    follow_email_option = models.BooleanField(default=True)
+    
+    
     """Social Auth association model"""
     user = models.OneToOneField(User, related_name='social_user', unique=True)
     provider = models.CharField(max_length=32)
