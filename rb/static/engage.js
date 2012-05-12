@@ -3,10 +3,8 @@
 
 var RDR = window.READRBOARDCOM || {};
 if(RDR.hasLoaded){
-    // console.log('I have already run - returning');
     return;
 }
-// console.log('I have not run - running');
 
 //READRBOARDCOM will now be the only thing in the global namespace
 window.READRBOARDCOM = RDR;
@@ -2090,7 +2088,8 @@ function readrBoard($R){
                 var iframeUrl = RDR_baseUrl + "/static/xdm.html",
                 parentUrl = window.location.href,
                 parentHost = window.location.protocol + "//" + window.location.host,
-                $xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+encodeURIComponent(RDR.group.name)+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
+                bookmarklet = ( RDR.engageScriptParams.bookmarklet ) ? "bookmarklet=true":"",
+                $xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+encodeURIComponent(RDR.group.name)+'&'+bookmarklet+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
                 );
                 $('#rdr_sandbox').append( $xdmIframe );
 
