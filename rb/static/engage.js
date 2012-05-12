@@ -106,6 +106,7 @@ function readrBoard($R){
                 if ( RDR.user && RDR.user.user_id ) standardData += "||uid::"+RDR.user.user_id;
                 if ( hash && RDR.util.getPageProperty('id', hash) ) standardData += "||pid::"+RDR.util.getPageProperty('id', hash);
                 if ( RDR.group && RDR.group.id ) standardData += "||gid::"+RDR.group.id;
+                if ( RDR.engageScriptParams.bookmarklet ) standardData += "||bookmarklet";
 
                 var eventSrc = data+standardData,
                     $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+timestamp+'&'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
