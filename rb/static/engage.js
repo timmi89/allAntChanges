@@ -3,10 +3,8 @@
 
 var RDR = window.READRBOARDCOM || {};
 if(RDR.hasLoaded){
-    // console.log('I have already run - returning');
     return;
 }
-// console.log('I have not run - running');
 
 //READRBOARDCOM will now be the only thing in the global namespace
 window.READRBOARDCOM = RDR;
@@ -108,6 +106,7 @@ function readrBoard($R){
                 if ( RDR.user && RDR.user.user_id ) standardData += "||uid::"+RDR.user.user_id;
                 if ( hash && RDR.util.getPageProperty('id', hash) ) standardData += "||pid::"+RDR.util.getPageProperty('id', hash);
                 if ( RDR.group && RDR.group.id ) standardData += "||gid::"+RDR.group.id;
+                if ( RDR.engageScriptParams.bookmarklet ) standardData += "||bookmarklet";
 
                 var eventSrc = data+standardData,
                     $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+timestamp+'&'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
@@ -946,9 +945,9 @@ function readrBoard($R){
                         var tableTableWidth = ( $tag_table.find('td').length == 1 ) ? ( $rindow.width()-10 ) : 180;
                         $tag_table.css('max-width','none').width(tableTableWidth);
 
-                        if (actionType=="bookmark") {
-                            $tag_table.append('<tr class="rdr_note_instruction"><td colspan="100"><div class="rdr_info"><em>Notes are private.  Only you can see them.</em></div></td></tr>');
-                        }
+                        // if (actionType=="bookmark") {
+                        //     $tag_table.append('<tr class="rdr_note_instruction"><td colspan="100"><div class="rdr_info"><em>Notes are private.  Only you can see them.</em></div></td></tr>');
+                        // }
                         // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
                         if ( settings.mode != "writeMode" ) {
                             $rindow.on( 'mouseleave', function(e) {
@@ -1757,7 +1756,7 @@ function readrBoard($R){
                 }
                 if ( RDR && RDR.user && RDR.user.full_name && $('#rdr-page-summary.defaultSummaryBar').length ) {
                     var name = (RDR.user.user_type == "facebook") ? ( RDR.user.full_name.split(' ')[0] ) : RDR.user.full_name;
-                    $('#rdr-user').html('Hello, <a href="'+RDR_baseUrl+'/user/'+RDR.user.user_id+'" target="_blank">'+name+'</a>');
+                    $('#rdr-user').html('Hi, <a href="'+RDR_baseUrl+'/user/'+RDR.user.user_id+'" target="_blank">'+name+'</a>');
                 } else {
                     $('#rdr-user').html('<a href="javascript:void(0);">Log in to ReadrBoard</a>');
                     $('#rdr-user').find('a').click( function() { RDR.session.showLoginPanel(); } );
@@ -2090,7 +2089,8 @@ function readrBoard($R){
                 var iframeUrl = RDR_baseUrl + "/static/xdm.html",
                 parentUrl = window.location.href,
                 parentHost = window.location.protocol + "//" + window.location.host,
-                $xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+encodeURIComponent(RDR.group.name)+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
+                bookmarklet = ( RDR.engageScriptParams.bookmarklet ) ? "bookmarklet=true":"",
+                $xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+encodeURIComponent(RDR.group.name)+'&'+bookmarklet+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
                 );
                 $('#rdr_sandbox').append( $xdmIframe );
 
@@ -3991,7 +3991,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     },
                     onFail: function(args){
                         if (args.kind && args.kind == "page") {
-                            var $message = "";
+                            var $message = '<div style="position:absolute;right:13px;">X</div>';
                             if ( args.response.data && args.response.data.existing && args.response.data.existing === true ) {
                                 $message = $('<em>You have already given that reaction.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>');
                             } else if ( args.response.message.indexOf("Temporary user interaction limit reached") != -1 ) {
@@ -5747,7 +5747,7 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv4" );
+    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv5" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
 
@@ -6162,7 +6162,9 @@ function $RFunctions($R){
                     //page.jqFunc would be something like 'append' or 'after',
                     //so this would read $summary_widget_parent.append($summary_widget);
                     $summary_widget_parent[page.jqFunc]($summary_widget);
-                    $summary_widget.find('img.rdr_tooltip_this').tooltip();
+
+                    var placement = ($summary_widget_parent.hasClass('defaultSummaryBar')) ? "bottom":"top";
+                    $summary_widget.find('img.rdr_tooltip_this').tooltip({placement:placement});
 
                     var total_interactions = 0;
                     for ( var i in page.summary ) {
@@ -6267,7 +6269,7 @@ function $RFunctions($R){
                         }
                     });
 
-                    $a_custom.tooltip();
+                    $a_custom.tooltip({placement:placement});
 
                     $react.find('div.rdr-sum-reactions').append( $a_custom, " " );
 
@@ -6333,11 +6335,12 @@ function $RFunctions($R){
                         
                         $('#rdr_summary_tag_details').append( $details );
 
-                        $a.tooltip();
-
                         // $react.append( $a, " " );
                         $react.find('div.rdr-sum-reactions').append( $a, " " );
                         $span.css('width', $span.width() + 'px' );
+
+                        var placement = ($a.closest('div.defaultSummaryBar').length) ? "right":"top";
+                        $a.tooltip({placement:placement});
 
                         $a.hoverIntent(
                             function() {
@@ -6434,11 +6437,13 @@ function $RFunctions($R){
 
                                 }
                                     $detailsHtml.find('div.rdr_counts:last-child').addClass('rdr-last-child');
-                                    $detailsHtml.find('div.rdr_tooltip_this').tooltip({});
 
                                     $this.addClass('rdr_live_hover');
                                     $details.html($detailsHtml).css('top', offsets.top+20 + 'px').css('left',offsets.left + 'px').show();
                                     // alert( $detailsHtml.html() );
+
+                                    var placement = ($a.closest('div.defaultSummaryBar').length) ? "right":"top";
+                                    $detailsHtml.find('div.rdr_tooltip_this').tooltip({placement:placement});
                                     
                                     $.each($details.find('div.rdr_counts_other div.rdr_counts'), function() {
                                         otherCountsWidth += $(this).width();
