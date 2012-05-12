@@ -36,8 +36,12 @@ $(document).ready( function() {
     <h2><img src="{{ profile_user.social_user.img_url }}?type=small"> {{ profile_user.social_user.full_name }}
     {% if cookie_user and cookie_user.id == profile_user.id %}
       <label for="private_profile">
-        <input type="checkbox" id="private_profile" {% if user.social_user.private_profile %}checked="checked"{% endif %} /> 
+        <input type="checkbox" id="private_profile" {% if profile_user.social_user.private_profile %}checked="checked"{% endif %} /> 
         Profile is only visible to me
+      </label>
+      <label for="follow_email">
+        <input type="checkbox" id="follow_email" {% if profile_user.social_user.follow_email_option %}checked="checked"{% endif %} /> 
+        Send me email when someone follows my activity.
       </label>
     {% endif %}
     </h2>
@@ -61,5 +65,26 @@ $(document).ready( function() {
   		});
     	});
     </script>
+    <script type="text/javascript">
+        $('#follow_email').click( function() {
+            $('label[for="follow_email"] span').remove();
+            var sendData = {
+                user_id:RDRAuth.rdr_user.user_id, 
+                readr_token:RDRAuth.rdr_user.readr_token,
+                group_id:1
+            };
+        $.ajax({
+            url: "/api/followemail/toggle/",
+            type: "get",
+            data: {
+                json: JSON.stringify(sendData)
+              },
+            success: function(response) {
+                $('label[for="follow_email"]').append('<span>Saved</span>');
+            }
+        });
+        });
+    </script>
+    
   </div>
 {% endif %}
