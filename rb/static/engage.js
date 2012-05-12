@@ -2037,6 +2037,7 @@ function readrBoard($R){
                             if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
+
                                 for ( var i in message.data ) {
                                     RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i],10):message.data[i];
                                 }
@@ -2316,7 +2317,7 @@ function readrBoard($R){
                    RDR.session.createXDMframe();
                    //next fired on ajax success
                 });
-                //start the dequeue chain
+                //start the dequeue chaindel
                 $RDR.dequeue('initAjax');
             },
             initGroupData: function(groupShortName){
@@ -2603,7 +2604,7 @@ function readrBoard($R){
                 //hashNodes without any arguments will fetch the default set from the server.
                 // var hashes = this.hashNodes();
 
-				$RDR.dequeue('initAjax');
+                $RDR.dequeue('initAjax');
             },
             hashNodes: function( $node, nomedia ) {
                 //RDR.actions.hashNodes:

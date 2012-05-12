@@ -69,8 +69,8 @@ RDRAuth = {
 		} else if ( RDRAuth.rdr_user.readr_token ) {  // temp or non-temp.  doesn't matter.
 			var sendData = {
 				data : {
-					// first_name : RDRAuth.rdr_user.first_name,
-					// full_name : RDRAuth.rdr_user.full_name,
+					first_name : RDRAuth.rdr_user.first_name,
+					full_name : RDRAuth.rdr_user.full_name,
 					img_url : RDRAuth.rdr_user.img_url,
 					user_id : RDRAuth.rdr_user.user_id,
 					readr_token : RDRAuth.rdr_user.readr_token
@@ -141,8 +141,8 @@ RDRAuth = {
 					RDRAuth.setUser(response);
 					var sendData = {
 						data : {
-							// first_name : RDRAuth.rdr_user.first_name,
-							// full_name : RDRAuth.rdr_user.full_name,
+							first_name : RDRAuth.rdr_user.first_name,
+							full_name : RDRAuth.rdr_user.full_name,
 							img_url : RDRAuth.rdr_user.img_url,
 							user_id : RDRAuth.rdr_user.user_id,
 							readr_token : RDRAuth.rdr_user.readr_token
@@ -154,8 +154,8 @@ RDRAuth = {
 		} else {
 			var sendData = {
 				data : {
-					// first_name : RDRAuth.rdr_user.first_name,
-					// full_name : RDRAuth.rdr_user.full_name,
+					first_name : RDRAuth.rdr_user.first_name,
+					full_name : RDRAuth.rdr_user.full_name,
 					img_url : RDRAuth.rdr_user.img_url,
 					user_id : RDRAuth.rdr_user.user_id,
 					readr_token : RDRAuth.rdr_user.readr_token
@@ -270,8 +270,8 @@ RDRAuth = {
 		$.cookie('rdr_session', 'true', { expires:session_expiry, path:'/' });
 	},
 	readUserCookie : function() {
-		// RDRAuth.rdr_user.first_name = $.cookie('first_name');
-		// RDRAuth.rdr_user.full_name = $.cookie('full_name');
+		if ( $.cookie('first_name') ) RDRAuth.rdr_user.first_name = $.cookie('first_name');
+		if ( $.cookie('full_name') ) RDRAuth.rdr_user.full_name = $.cookie('full_name');
 		if ( $.cookie('img_url') ) RDRAuth.rdr_user.img_url = $.cookie('img_url');
 		if ( $.cookie('user_id') ) RDRAuth.rdr_user.user_id = $.cookie('user_id');
 		if ( $.cookie('readr_token') ) RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
@@ -307,8 +307,8 @@ RDRAuth = {
 			var sendData = {
 				// arguments are nested under data for consistency with passing values up to the parent
 				data : {
-					// first_name : RDRAuth.rdr_user.first_name,
-					// full_name : RDRAuth.rdr_user.full_name,
+					first_name : RDRAuth.rdr_user.first_name,
+					full_name : RDRAuth.rdr_user.full_name,
 					img_url : RDRAuth.rdr_user.img_url,
 					user_id : RDRAuth.rdr_user.user_id,
 					readr_token : RDRAuth.rdr_user.readr_token,
