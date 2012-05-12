@@ -1,14 +1,14 @@
 ;(function(){
 //dont bother indenting this top level anonymous function
 
-var RDR = window.READRBOARDCOM || {};
+var RDR = window.readrboard = window.READRBOARDCOM || {};
 if(RDR.hasLoaded){
     // console.log('I have already run - returning');
     return;
 }
 // console.log('I have not run - running');
 
-//READRBOARDCOM will now be the only thing in the global namespace
+//READRBOARDCOM and readrboard will now be the only things in the global namespace
 window.READRBOARDCOM = RDR;
  
 RDR.hasLoaded = true;
@@ -1854,6 +1854,11 @@ function readrBoard($R){
 
 
 
+        },
+        debug: function(){
+            window.RDR = window.READRBOARDCOM;
+            window.$RDR = $RDR;
+            window.$R = $R;
         },
 		session: {
             alertBar: {
@@ -7880,9 +7885,7 @@ function $RFunctions($R){
 
     //if we're offline, expose stuff to window for testing
     if(RDR_offline){
-        window.RDR = window.READRBOARDCOM;
-        window.$RDR = $RDR;
-        window.$R = $R;
+        RDR.debug();
     }
 }
 //end $RFunctions()
