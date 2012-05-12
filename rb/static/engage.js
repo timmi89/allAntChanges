@@ -6269,7 +6269,7 @@ function $RFunctions($R){
                         }
                     });
 
-                    $a_custom.tooltip();
+                    $a_custom.tooltip({placement:placement});
 
                     $react.find('div.rdr-sum-reactions').append( $a_custom, " " );
 
