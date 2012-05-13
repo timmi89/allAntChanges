@@ -25,7 +25,7 @@ Confirmation = Resource(handler=ConfirmUserHandler)
 Follow = Resource(handler=FollowHandler)
 UnFollow = Resource(handler=UnFollowHandler)
 FollowedEntity = Resource(handler=FollowedEntityHandler)
-
+EntitySearch = Resource(handler=EntitySearchHandler)
 
 urlpatterns = patterns('',
     url(r'^settings/$', Settings),
@@ -73,5 +73,6 @@ urlpatterns = patterns('',
     url(r'^follow/', Follow),
     url(r'^unfollow/', UnFollow),
     url(r'^entity/follow/', FollowedEntity),
+    url(r'^entity/search/', EntitySearch),
     #url(r'^comments/', Comments),
 )
