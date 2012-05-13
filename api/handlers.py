@@ -10,6 +10,7 @@ from authentication.token import *
 from settings import BASE_URL, STATIC_URL
 from django.forms.models import model_to_dict
 from django.core.mail import EmailMessage
+from django.db.models import Q
 
 
 import logging
@@ -687,7 +688,42 @@ class FollowedEntityHandler(InteractionHandler):
         
         return follows
     
+class EntitySearchHandler(AnonymousBaseHandler):
+    allowed_methods = ('GET')
     
-    
-    
-    
+    @status_response
+    @json_data
+    def read(self, request, data):
+        cookie_user = checkCookieToken(request)
+        if cookie_user is None:
+            #Not logged in?
+            pass
+        entity_type = data.get('entity_type', 'usr')
+        search_term = data['search_term']
+        page_num = data.get('page_num',1)
+        entities = {}
+        if entity_type == 'usr':
+            entities['users'] = []
+            users = User.objects.filter(Q(social_user__full_name__icontains = search_term) | 
+                        Q(social_user__username__icontains = search_term))
+            user_paginator = Paginator(users, 20)
+            try: user_page = user_paginator.page(page_num)
+            except (EmptyPage, InvalidPage): user_page = user_paginator.page(user_paginator.num_pages)
+            for user in user_page.object_list:
+                user_dict = model_to_dict(user, exclude=['user_permissions', 'email', 'is_superuser', 'is_staff', 'password', 'groups'])
+                user_dict['social_user'] = model_to_dict(user.social_user)
+                entities['users'].append(user_dict)
+        
+        elif entity_type == 'grp':
+            entities['groups'] = []
+            groups = Group.objects.filter(Q(name__icontains = search_term) | 
+                        Q(short_name__icontains = search_term))
+            group_paginator = Paginator(groups, 20)
+            try: group_page = group_paginator.page(page_num)
+            except (EmptyPage, InvalidPage): group_page = group_paginator.page(group_paginator.num_pages)
+            for group in group_page.object_list:
+                group_dict = model_to_dict(group, fields=['id', 'name', 'short_name'])
+                entities['groups'].append(group_dict)
+                
+        return entities
+        
