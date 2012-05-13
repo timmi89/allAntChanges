@@ -275,12 +275,13 @@ function readrBoard($R){
                     // this section sets width.  I know, it's goofy.
                     var rindow_width = $rindow.width();
                     if ( !setWidth ) {
-                        var visible_pane_width = $rindow.find('div.rdr_body_wrap').width();
-                        setWidth = ( visible_pane_width >= rindow_width ) ? rindow_width:visible_pane_width+8;
+                        var rdr_body_wrap_width = $rindow.find('div.rdr_body_wrap').width(),
+                            rdr_body_jspScrollable_width = $rindow.find('table.rdr_tags').width(),  // tag tables tend to be wider than what their containers claim they are, for some reason
+                            visible_content_pane_width = ( rdr_body_jspScrollable_width>rdr_body_wrap_width ) ? rdr_body_jspScrollable_width:rdr_body_wrap_width;
+                        var setWidth = ( visible_content_pane_width <= rindow_width ) ? rindow_width:visible_content_pane_width+8;
                     } else {
                         visiblePane.$elm.css('width', setWidth+'px' );
                     }
-
                     // still goofy, i know.
                     if ( Math.abs( setWidth - rindow_width ) > 2  ) $rindow.animate({ width: setWidth, height:(visiblePane.height + heightAdjustment) }, { duration:333, queue:false } );
                     else $rindow.animate({ height:(visiblePane.height + heightAdjustment) }, { duration:333, queue:false } );
