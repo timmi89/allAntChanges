@@ -149,7 +149,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
         
         interactions = interactions.filter(user=user_id)
         if cookie_user != profile_user:
-            if profile_user.social_user.private_profile:
+            if profile_user.social_user is not None and profile_user.social_user.private_profile:
                 interactions = interactions.none()
             else:
                 interactions = interactions.exclude(kind="bkm")
