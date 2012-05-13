@@ -202,7 +202,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
         interactions = interactions.filter(approved=True)
 
     # Pagination
-    interactions_paginator = Paginator(interactions, 20)
+    interactions_paginator = Paginator(interactions, 50)
 
     try: page_number = int(page_num)
     except ValueError: page_number = 1
