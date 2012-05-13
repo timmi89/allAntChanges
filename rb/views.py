@@ -149,10 +149,16 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
         
         interactions = interactions.filter(user=user_id)
         if cookie_user != profile_user:
-            if profile_user.social_user is not None and profile_user.social_user.private_profile:
-                interactions = interactions.none()
-            else:
+            try:
+                social = SocialUser.objects.get(user=profile_user)
+                if social.private_profile:
+                    interactions = interactions.none()
+                else:
+                    interactions = interactions.exclude(kind="bkm")
+            except SocialUser.DoesNotExist:
                 interactions = interactions.exclude(kind="bkm")
+            
+            
         context['profile_user'] = profile_user
     else:
         # If not viewing a user profile, remove bookmarks from interaction set
