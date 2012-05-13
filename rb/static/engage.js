@@ -4781,9 +4781,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
                         $.each(nodes, function(id,diffNode){
                             //coms or tags
+
                             if( summary_nodes.hasOwnProperty(id) && typeof summary_nodes[id] !== 'undefined' ){
                                 var summary_node = summary_nodes[id];
                                 summary_node.count += diffNode.delta;
+
+                                //also update page
+                                _updatePage(hash, diffNode);
 
                                 //if this cleared out the last of this node, delete it. (i.e. if a first-ever tag was made, and then undone )
                                 if( summary_node.count <= 0 ){
@@ -4803,6 +4807,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         parent_interaction_node: diffNode.parent_interaction_node
                                     };
 
+                                    //also update page
+                                    _updatePage(hash, diffNode);
+
                                 }else{
                                     var user = diffNode.user;
 
@@ -4821,6 +4828,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         parent_interaction_node: diffNode.parent_interaction_node
                                     }
                                 }
+
                             }
 
                             //update the summary's counts object
@@ -4856,8 +4864,39 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         //RDR.actions.summaries.update( 'pageSummary' );
                     }
 
-                     //update the page summaries:
-                    //$(document).rdrWidgetSummary('update');
+                    function _updatePage(hash, diffNode){
+
+                        //also update page
+                        var tagId = diffNode.id;
+                        var pageId = RDR.util.getPageProperty('id', hash);
+                        var page = RDR.pages[pageId];
+                        var toptags = page.toptags;
+                        
+                        var foundIt;
+
+                        //update the tag count for this tag
+                        $.each(toptags, function(){
+                            if(this.id == tagId){
+                                page.count += diffNode.delta;
+                                this.tag_count += diffNode.delta;
+
+                                foundIt = true;
+                            }
+                        });
+
+                        if(!foundIt){
+                            //add to topTags
+                            toptags.push({
+                                body:diffNode.body,
+                                id:diffNode.id,
+                                tag_count:1 //will always be 1
+                            });
+                        }
+
+                        var $summaryWidgetAnchorNode = $('.rdr-page-widget-key-'+page.key);
+                        $summaryWidgetAnchorNode.rdrWidgetSummary('update');
+
+                    }
 
                 },
                 sortInteractions: function(hash) {
@@ -6125,17 +6164,30 @@ function $RFunctions($R){
                         settings;
                     return $this.each(function(){
 
-                        // merge default and user parameters
-                        settings = options ? $.extend(defaults, options) : defaults;
-                        settings.parentContainer = this;
-                        _makeSummaryWidget(settings);
 
+                        // merge default and user parameters
+                        settings = options ? $.extend({}, defaults, options) : defaults;
+                        settings.parentContainer = this;
+                        //temp quick fix
+                        $(this).data('settings', settings);
+                        _makeSummaryWidget(settings);
                     });
                 },
                 update: function(param){
                     //todo check this
+                    var options = (typeof params != 'undefined') ? params : {};
+
                     var $this = ( this[0] === document ) ? $('.rdr-summary') : this;
                     return $this.each(function(index){
+
+                        //grab the basic setting just from the data 
+                        var settings = $(this).data('settings');
+
+                        //get the latest page data
+                        //I don't think we use this, but here it is.
+                        settings.summary = RDR.pages[settings.id].summary;
+                        
+                        _makeSummaryWidget(settings);
                     });
                 }
 
@@ -6150,10 +6202,11 @@ function $RFunctions($R){
             //helper function for ajax above
             function _makeSummaryWidget(settings){
                     var page = settings;
-
+                    
                     var widgetClass = 'rdr-summary-key-'+page.key;
 
                     //first kill any existing instances; we're going to recreate them.
+
                     $('.'+widgetClass).remove();
 
                     var $summary_widget_parent = $(page.parentContainer),
@@ -6162,7 +6215,10 @@ function $RFunctions($R){
 
                     $summary_widget.append('<div class="rdr-see-more"></div>');
                     $summary_widget.append('<img src="'+RDR_staticUrl+'widget/images/blank.png" class="rdr_summary_help rdr_tooltip_this" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. ReadrBoard lets you easily react to anything on this page.<br><br>The tags to the left let you react to this whole page.<br><br>Or -- select any text, image, or video and react to just that part of the page."/>');
-                    $summary_widget.data('page_id', page.id);
+                    $summary_widget.data({
+                        page_id:page.id,
+                        page_key:page.key
+                    });
 
                     //page.jqFunc would be something like 'append' or 'after',
                     //so this would read $summary_widget_parent.append($summary_widget);
@@ -6172,6 +6228,7 @@ function $RFunctions($R){
                     $summary_widget.find('img.rdr_tooltip_this').tooltip({placement:placement});
 
                     var total_interactions = 0;
+                    
                     for ( var i in page.summary ) {
                         if ( page.summary[i].kind == "tag" ) total_interactions = page.summary[i].count;
                     }
