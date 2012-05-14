@@ -3578,6 +3578,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         }
                                     }
                                 }
+                                RDR.util.userLoginState();
                             }
                         });
                     } else {
