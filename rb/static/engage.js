@@ -1752,6 +1752,7 @@ function readrBoard($R){
                 );
             },
             userLoginState: function() {
+                $.postMessage
                 if ( !$('#rdr-user').length ) {
                     $('#rdr-page-summary').find('div.rdr-summary').prepend('<div id="rdr-user" />');
                 }
@@ -2601,6 +2602,12 @@ function readrBoard($R){
                     // clear any errant tooltips
                     $('div.rdr_twtooltip').remove();
                     if ( !$mouse_target.parents().hasClass('rdr')) {
+                        if ( $('#rdr_loginPanel').length ) {
+                            RDR.session.getUser(function() {
+                                RDR.util.userLoginState();
+                            });
+                        }
+
                         RDR.rindow.closeAll();
                         $('div.rdr_indicator_details_for_media').each( function() {
                             RDR.actions.containers.media.onDisengage( $(this).data('container') );
