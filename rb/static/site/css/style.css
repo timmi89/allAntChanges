@@ -846,7 +846,7 @@ section[role="datepicker"]			{ font-size:12px; background:#eee; padding:5px; bor
 section[role="datepicker"] input  { width:80px; text-align:center; margin:o 3px; }
 section[role="datepicker"] label	{ display:inline; }
 
-section[role="panels"] 					{ float:left; overflow:auto; padding:10px; }
+section[role="panels"] 					{ xfloat:left; overflow:auto; padding:10px; }
 section[role="wide panels"] 			{ float:left; padding:0 10px 10px; width: 740px; }
 section[role="wide panels"] section		{ margin-bottom:20px; }
 section[role="wide panels"] h3 			{ font-family:Helvetica, 'HelveticaRegular',Arial; font-size:30px; margin:0; border-top:1px solid #aaa; padding:7px 0; }
@@ -944,6 +944,13 @@ table[role="popular bookmarks"] td 						{ vertical-align:middle; }
 table[role="popular bookmarks"] td[role="content"]			{ font-size:14px;}
 table[role="popular bookmarks"] td[role="via"],
 table[role="popular bookmarks"] td[role="reactions"]	{ padding:0 0 10px 23px; }
+
+
+/* get the react button */
+.howto {
+  display:none;
+}
+
 
 footer{
 	padding:15px 0;

@@ -228,9 +228,9 @@ def cards(request, **kwargs):
     return render_to_response("cards.html", context, context_instance=RequestContext(request))
 
 
-def goodies(request, **kwargs):
+def react(request, **kwargs):
     context = {}
-    return render_to_response("goodies.html", context, context_instance=RequestContext(request))
+    return render_to_response("react.html", context, context_instance=RequestContext(request))
 
 
 def interactions(request):

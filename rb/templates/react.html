@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}ReadrBoard / Get the React Button{%endblock%}
+
+{% block bodyClass %}wide{% endblock %}
+
+{% block mainContent %}
+<h1><strong>React</strong> to react to anything on the web</h1>
+<div class="container">
+<section role="panels">
+	<section role="wide panels">
+		<h2><strong>Get the “React Button”</strong></h2>
+		<div style="border:1px solid #ccc;box-shadow:0px 0px 4px #ccc;font-size:24px;margin:20px 0;padding:10px;overflow:auto;">
+			<a title="React" style="display:block;float:left;width:135px;height:40px;background:url({{ STATIC_URL }}site/images/react_button.png) 0px 0px no-repeat;cursor:move;text-indent:-9999px;" href="javascript:%20(function%20()%20{var%20jsCode%20=%20document.createElement('script');jsCode.setAttribute('src',%20'http://www.readrboard.com/static/engage.js?bookmarklet=true');document.body.appendChild(jsCode);}());" onclick="alert('Drag me to the bookmarks bar'); return false;">React</a>
+			<span style="display:block;float:left;margin-left:23px;margin-top:8px;">←  Drag this link to your Bookmarks Bar</span>
+		</div>
+		<div id="howto_firefox" class="howto">
+			<h4>To install the React button in Firefox:</h4>
+			<ol style="margin-bottom:40px;">
+				<li style="margin-bottom:10px;">Display your Bookmarks bar by clicking <strong style="font-size:14px;">View &gt; Toolbars &gt; Bookmarks Toolbar</strong></li>
+				<li style="margin-bottom:10px;">Drag the “React” button to your Bookmarks bar</li>
+				<li style="margin-bottom:10px;">When you are browsing the web, push the “React” button to react to anything on the page.</li>
+			</ol>
+		</div>
+		<div id="howto_chrome" class="howto">
+			<h4>To install the React button in Chrome:</h4>
+			<ol style="margin-bottom:40px;">
+				<li style="margin-bottom:10px;">Display your Bookmarks bar by clicking the <strong style="font-size:14px;">Wrench Icon &gt; Tools &gt; Always Show Bookmarks Bar</strong></li>
+				<li style="margin-bottom:10px;">Drag the “React” button to your Bookmarks bar</li>
+				<li style="margin-bottom:10px;">When you are browsing the web, push the “React” button to react to anything on the page.</li>
+			</ol>
+		</div>
+		<div id="howto_safari" class="howto">
+			<h4>To install the React button in Safari:</h4>
+			<ol style="margin-bottom:40px;">
+				<li style="margin-bottom:10px;">Display your Bookmarks bar by clicking <strong style="font-size:14px;">View &gt; Show Bookmarks Bar</strong></li>
+				<li style="margin-bottom:10px;">Drag the “React” button to your Bookmarks bar</li>
+				<li style="margin-bottom:10px;">When you are browsing the web, push the “React” button to react to anything on the page.</li>
+			</ol>
+		</div>
+		<div id="howto_ie" class="howto">
+			<h4>To install the React button in Internet Explorer:</h4>
+			<ol style="margin-bottom:40px;">
+				<li style="margin-bottom:10px;">Display your Favorites Bar by clicking <strong style="font-size:14px;">Tools &gt; Toolbars &gt; Favorites Bar</strong></li>
+				<li style="margin-bottom:10px;">Right-click the “React” button and select “Add to Favorites”</li>
+				<li style="margin-bottom:10px;">On the pop-up window, select “Create in: Favorites Bar”</li>
+				<li style="margin-bottom:10px;">When you are browsing the web, push the “React” button to react to anything on the page.</li>
+			</ol>
+		</div>
+		<script>
+		(function() {
+			var userAgent = navigator.userAgent.toLowerCase(); 
+			$.browser.chrome = /chrome/.test(navigator.userAgent.toLowerCase());
+			if($.browser.chrome){
+			  // userAgent = userAgent.substring(userAgent.indexOf('chrome/') +7);
+			  // userAgent = userAgent.substring(0,userAgent.indexOf('.'));
+			  // $.browser.version = userAgent;
+			  // If it is chrome then jQuery thinks it's safari so we have to tell it it isn't
+			  $.browser.safari = false;
+			}
+
+			 if ( $.browser.safari ) {
+			 	$('#howto_safari').show();
+			 }
+			 if ( $.browser.chrome ) {
+			 	$('#howto_chrome').show();
+			 }
+			 if ( $.browser.mozilla ) {
+			 	$('#howto_firefox').show();
+			 }
+			 if ( $.browser.msie ) {
+			 	$('#howto_ie').show();
+			 }
+		})();
+		</script>
+	</section> <!-- / wide panels -->
+
+	<section role="thin panels">
+		<section role="rb examples">
+			<!-- 
+			<h2>Show and Tell</h2>
+			<img src="{{ STATIC_URL }}site/images/rindow-for-splashpage.png" />
+			-->
+		</section>
+	</section>
+</section>
+</div>
+
+{% endblock mainContent %}
+
+{% block footer %}
+<footer class="no-rdr">
+	<div class="footerLinks">
+		<ul class="footerLinksLeft">
+			<li>
+				<a href="/stream/">live stream</a>
+			</li>
+			<li>
+				<a href="/about/" >about us</a>
+			</li>
+			<li>
+				<a href="/faq/" >frequently asked questions</a>
+			</li>
+		</ul>
+		<div class="clearDiv"></div>
+	</div>
+</footer>
+{% endblock %}
