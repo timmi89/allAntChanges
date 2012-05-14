@@ -208,7 +208,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
     except ValueError: page_number = 1
 
     try: current_page = interactions_paginator.page(page_number)
-    except (EmptyPage, InvalidPage): current_page = interactions_paginator.page(paginator.num_pages)
+    except (EmptyPage, InvalidPage): current_page = interactions_paginator.page(interactions_paginator.num_pages)
       
     context['current_page'] = current_page
 
@@ -226,6 +226,12 @@ def cards(request, **kwargs):
     cards = [Card(page, interactions.filter(page=page)) for page in pages]
     context = {'cards': cards}
     return render_to_response("cards.html", context, context_instance=RequestContext(request))
+
+
+def goodies(request, **kwargs):
+    context = {}
+    return render_to_response("goodies.html", context, context_instance=RequestContext(request))
+
 
 def interactions(request):
     pass
