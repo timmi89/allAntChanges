@@ -172,7 +172,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
 
     if interaction_id:
         interactions = interactions.filter(id=interaction_id)
-
+        context['singleton'] = True
     
     # Interactions for specific page
     if site_id:
