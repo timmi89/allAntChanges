@@ -100,7 +100,7 @@ def sites(request):
 def group(request):
     pass
 
-def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **kwargs):
+def main(request, user_id=None, short_name=None, site_id=None, page_id=None, interaction_id=None, **kwargs):
     cookie_user = checkCookieToken(request)
     timestamp = datetime.now().date()
     page_num = request.GET.get('page_num', 1)
@@ -169,6 +169,10 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, **k
         group = Group.objects.get(short_name=short_name)
         interactions = interactions.filter(page__site__group__short_name=short_name)
         context['group'] = group
+
+    if interaction_id:
+        interactions = interactions.filter(id=interaction_id)
+        context['singleton'] = True
     
     # Interactions for specific page
     if site_id:

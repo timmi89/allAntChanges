@@ -19,6 +19,7 @@ if ( window.location.href.indexOf('/user/') != -1 ) {
                   "page_title"            :   "{{ page.grouper.title|escapejs }}",
                   "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url|escapejs }}{% else %}{{ interaction.page.url|escapejs }}{% endif %}",
                   "approved"              :   {% if interaction.approved %}true{% else %}false{% endif %},
+                  "singleton"              :   {% if singleton %}true{% else %}false{% endif %},
                   "group" : {
                     "short_name"  :   "{{ page.grouper.site.group.short_name }}",
                     "id"          :   "{{ page.grouper.site.id }}",
@@ -64,6 +65,7 @@ if ( window.location.href.indexOf('/user/') != -1 ) {
                   "page_title"            :   "{{ page.grouper.title|escapejs }}",
                   "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url|escapejs }}{% else %}{{ interaction.page.url|escapejs }}{% endif %}",
                   "approved"              :   {% if interaction.parent.approved %}true{% else %}false{% endif %},
+                  "singleton"              :   {% if singleton %}true{% else %}false{% endif %},
                   "group" : {
                     "short_name"  :   "{{ page.grouper.site.group.short_name }}",
                     "id"          :   "{{ page.grouper.site.id }}",
