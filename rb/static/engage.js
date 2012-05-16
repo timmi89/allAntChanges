@@ -1613,28 +1613,29 @@ function readrBoard($R){
 
                 //will be false if nothing was selected
                 var existingSelState = $('document').selog('save');
+               
                 if(!existingSelState) return;
                 //else
 
                 var node = existingSelState.range.commonAncestorContainer
+
                 //if this is a textNode, use the parent, otherwise use this.
                 var $node = (node.nodeType === 3) ? $(node).parent() : $(node);
-                
-                var selected = $node.selog('save');
 
-                var $actionbar = RDR.actions.startSelect($node);
+                // var selected = $node.selog('save');
+            
+                // var hash = $actionbar.data('hash')
+                // var kind = 'text';
+                // var content = selected.text;
 
-                if( $actionbar ){
-                    var hash = $actionbar.data('hash')
-                    var kind = 'text';
-                    var content = selected.text;
+                var $actionbar = RDR.actions.startSelect($node, null, function(hash, kind, content){
 
                     RDR.rindow.make( 'writeMode', {
                         "hash": hash,
                         "kind": kind,
                         "content": content
                     });
-                }
+                });
             },
             makeEmptySummary : function(hash, kind) {
             // RDR.util.makeEmptySummary( hash )
@@ -5554,10 +5555,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                 }
             },
-            startSelect: function($mouse_target, mouseEvent) {
+            startSelect: function($mouse_target, mouseEvent, callback) {
                 //RDR.actions.startSelect:
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
-
+                
                 //destroy all other actionbars
                 RDR.actionbar.closeAll();
                 var maxChars = 800;
@@ -5567,7 +5568,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 // The way we're dealing with this is a little weird.  It works, but could be cleaner)
                 if ( $mouse_target.closest('.rdr, .no-rdr').length && !$mouse_target.closest('.rdr_indicator').length ) return;
                 //else
-
                 var $blockParent = null;
                 if( _isValid($mouse_target) ) {
                     // the node initially clicked on is the first block level container
@@ -5577,10 +5577,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 }
                 //if no valid blockParent was found, we're done here.
                 if( $blockParent === null ) return;
-                else {
-                    $rdrParent = $blockParent.closest('.rdr-hashed');
-                }
                 //else
+
+                $rdrParent = $blockParent.closest('.rdr-hashed');
+            
                 //let selog use serialrange to check if the selected text is contained in the $blockParent (also check for "" of just whitespace)
                 var selected = $blockParent.selog('save');
                 if ( !selected.serialRange || !selected.text || (/^\s*$/g.test(selected.text)) ) return;
@@ -5589,8 +5589,18 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 //don't send text that's too long - mostly so that the ajax won't choke.
                 if(selected.text.length > maxChars) return;
 
+                var kind = 'text';
+                var content = selected.text;
+
+
                 // check if the blockparent is already hashed
                 if ( $rdrParent.hasClass('rdr-hashed') && !$rdrParent.hasClass('rdr-page-container') ) {
+                    if(callback){
+            
+                        var hash = $rdrParent.data('hash')
+                        callback(hash, kind, content);
+                        return;
+                    }
                     return _drawActionBar($rdrParent);
                 }
                 else{
@@ -5600,6 +5610,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     var hash = RDR.actions.hashNodes( $blockParent );
                     if(hash){
                         RDR.actions.sendHashes( hash, function(){
+                            if(callback){
+                                //god this re-var-ing of hash is awful, rewrite later.
+                                var hash = $blockParent.data('hash');
+                                callback(hash, kind, content);
+                                return;
+                            }
                            return _drawActionBar($blockParent);
                         });
                     }
