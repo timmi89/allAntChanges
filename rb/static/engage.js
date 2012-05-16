@@ -1604,6 +1604,38 @@ function readrBoard($R){
             }
 		},
 		util: {
+            checkForSelectedTextAndLaunchRindow: function(){
+                //RDR.util.checkForSelectedTextAndLaunchRindow
+                    
+                //this function is really hacky and gross.
+                //But there are functions we want within actionbar that I don't have time to parse out, so just make one in order to click it.
+
+
+                //will be false if nothing was selected
+                var existingSelState = $('document').selog('save');
+                if(!existingSelState) return;
+                //else
+
+                var node = existingSelState.range.commonAncestorContainer
+                //if this is a textNode, use the parent, otherwise use this.
+                var $node = (node.nodeType === 3) ? $(node).parent() : $(node);
+                
+                var selected = $node.selog('save');
+
+                var $actionbar = RDR.actions.startSelect($node);
+
+                if( $actionbar ){
+                    var hash = $actionbar.data('hash')
+                    var kind = 'text';
+                    var content = selected.text;
+
+                    RDR.rindow.make( 'writeMode', {
+                        "hash": hash,
+                        "kind": kind,
+                        "content": content
+                    });
+                }
+            },
             makeEmptySummary : function(hash, kind) {
             // RDR.util.makeEmptySummary( hash )
                 var summary = {};
@@ -2104,6 +2136,8 @@ function readrBoard($R){
 
 				// this is the postMessage receiver for ALL messages posted.
                 // TODO: put this elsewhere so it's more logically placed and easier to find??
+
+                $RDR.dequeue('initAjax');
 			},
             receiveMessage: function(args, callbackFunction) {
                 //args is passed through this function into the callback as a parameter.
@@ -2399,6 +2433,11 @@ function readrBoard($R){
                    RDR.session.createXDMframe();
                    //next fired on ajax success
                 });
+                $RDR.queue('initAjax', function(next){
+                   // this will check for FB login status, too, and set user data
+                   RDR.util.checkForSelectedTextAndLaunchRindow();
+                   //next fired on ajax success
+                });
                 //start the dequeue chaindel
                 $RDR.dequeue('initAjax');
             },
@@ -2590,7 +2629,7 @@ function readrBoard($R){
                     //temp fix for bug where a click that clears a selection still picks up the selected text:
                     //Todo: This should work in the future as well, but I want to look into it further.
                     setTimeout(function(){
-                        RDR.actions.startSelect(e);
+                        RDR.actions.startSelectFromMouseUp(e);
                     }, 1 );
                     //even 0 works, so I'm not worried about 1 being too low.
                     //besides, the fail scenerio here is very minor - just that the actionbar hangs out till you click again.
@@ -5515,14 +5554,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                 }
             },
-            startSelect: function(e) {
+            startSelect: function($mouse_target, mouseEvent) {
                 //RDR.actions.startSelect:
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
 
                 //destroy all other actionbars
                 RDR.actionbar.closeAll();
-
-                var $mouse_target = $(e.target);
                 var maxChars = 800;
 
                 // make sure it's not selecting inside the RDR windows.
@@ -5554,7 +5591,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                 // check if the blockparent is already hashed
                 if ( $rdrParent.hasClass('rdr-hashed') && !$rdrParent.hasClass('rdr-page-container') ) {
-                    _drawActionBar($rdrParent);
+                    return _drawActionBar($rdrParent);
                 }
                 else{
                     //hasn't been hashed yet.
@@ -5563,7 +5600,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     var hash = RDR.actions.hashNodes( $blockParent );
                     if(hash){
                         RDR.actions.sendHashes( hash, function(){
-                            _drawActionBar($blockParent);
+                           return _drawActionBar($blockParent);
                         });
                     }
                 }
@@ -5596,11 +5633,16 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     //close with our own event instead of removing directly so that I can bind an event to the remove event (thanks ie.)
                     RDR.rindow.close( $('div.rdr.rdr_window.rdr.rdr_rewritable') );
 
-                    RDR.actionbar.draw({
-                        coords:{
-                            top:parseInt(e.pageY, 10),
-                            left:parseInt(e.pageX, 10)
-                        },
+                    var actionbarCoords = mouseEvent ? {
+                        top: parseInt(mouseEvent.pageY, 10),
+                        left: parseInt(mouseEvent.pageX, 10)
+                    } : {
+                        top: $mouse_target.offset().top,
+                        left: $mouse_target.offset().left
+                    };
+
+                    return RDR.actionbar.draw({
+                        coords:actionbarCoords,
                         kind:"text",
                         content:selected.text,
                         hash:$blockParent.data('hash')
@@ -5631,9 +5673,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     );
                     return validity;
                 }
-
-
-            },//end RDR.actions.startSelect
+            },
+            startSelectFromMouseUp: function(e) {
+                //RDR.actions.startSelectFromMouseUp
+                var $mouse_target = $(e.target);
+                RDR.actions.startSelect($mouse_target, e);
+            },
             pages: {
                 //RDR.actions.pages:
                 save: function(id, page){
@@ -5830,6 +5875,7 @@ function $RFunctions($R){
 
         //Rangy - init before our jquery
         var rangy = plugin_rangy();
+        window.rangy = rangy;
         rangy.init();
 
         //jQuery Plugins
