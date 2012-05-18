@@ -1785,7 +1785,6 @@ function readrBoard($R){
                 );
             },
             userLoginState: function() {
-                $.postMessage
                 if ( !$('#rdr-user').length ) {
                     $('#rdr-page-summary').find('div.rdr-summary').prepend('<div id="rdr-user" />');
                 }
@@ -2147,7 +2146,6 @@ function readrBoard($R){
                     function(e){
                         var message = $.evalJSON( e.data );
                         if ( message.status ) {
-
                             if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
@@ -2167,6 +2165,9 @@ function readrBoard($R){
 
                                 RDR.util.userLoginState();
 
+                            } else if ( message.status == "getUserLoginState" ) {
+                                RDR.util.userLoginState();
+                                $('#rdr_loginPanel').remove();
                             } else if ( message.status == "fb_user_needs_to_login" ) {
                                 if ( callbackFunction && args ) {
                                     RDR.session.showLoginPanel( args, callbackFunction );
@@ -2642,11 +2643,11 @@ function readrBoard($R){
                     // clear any errant tooltips
                     $('div.rdr_twtooltip').remove();
                     if ( !$mouse_target.parents().hasClass('rdr')) {
-                        if ( $('#rdr_loginPanel').length ) {
-                            RDR.session.getUser(function() {
-                                RDR.util.userLoginState();
-                            });
-                        }
+                        // if ( $('#rdr_loginPanel').length ) {
+                        //     RDR.session.getUser(function() {
+                        //         RDR.util.userLoginState();
+                        //     });
+                        // }
 
                         RDR.rindow.closeAll();
                         $('div.rdr_indicator_details_for_media').each( function() {
