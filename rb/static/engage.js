@@ -365,18 +365,18 @@ function readrBoard($R){
                                 $nextSteps.append( '<div class="rdr_reactionMessage">You have already given that reaction.</div>' );
                             }
 
-                            $nextSteps.append( '<div class="rdr_commentBox"><input type="text" class="rdr_add_comment" value="Add a comment"/></div>' );
+                            $nextSteps.append( '<div class="rdr_commentBox"><input type="text" class="rdr_add_comment" value="Comment or hashtag..."/></div>' );
 
                             // comment functionality
                             var $commentInput = $nextSteps.find('input.rdr_add_comment');
                             $commentInput.focus(function(){
                                 RDR.events.track('start_comment_sm::'+args.response.data.interaction.id);
-                                if( $(this).val() == 'Add a comment' ){
+                                if( $(this).val() == 'Comment or hashtag...' ){
                                     $(this).val('');
                                 }
                             }).blur(function(){
                                 if( $(this).val() === '' ){
-                                    $(this).val( 'Add a comment' );
+                                    $(this).val( 'Comment or hashtag...' );
                                 }
                             }).on('keyup', {args:args}, function(event) {
                                 var commentText = $commentInput.val();
@@ -401,7 +401,7 @@ function readrBoard($R){
                                         // $commentInput.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
                                     }
 
-                                    if ( commentText != "Add a comment" ) {
+                                    if ( commentText != "Comment or hashtag..." ) {
                                         //temp translations..
                                         //quick fix
                                         var summary = RDR.summaries[hash];
@@ -3659,14 +3659,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 response = args.response,
                                 tag = args.tag;
 
-
                             //clear loader
                             if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
-                            var interaction = response.data.interaction;
-                            var content_node = response.data.content_node;
-                            var content_id = content_node.id;
-                            var num_interactions = response.data.num_interactions;
+                            var interaction = response.data.interaction,
+                                content_node = (response.data.content_node) ? response.data.content_node:response.content_node_data,
+                                content_id = (content_node.id) ? content_node.id:"",
+                                num_interactions = response.data.num_interactions;
 
                             // $rindow.find('div.rdr_commentBox').html('Thank you for your comment. <br><br><strong>Reload the page to see your comment.</strong>').show();
 
