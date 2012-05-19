@@ -5762,10 +5762,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             //add a margin to the publishers body
                             //- use existing in case their shit already depends on a margin
                             var $body = $('body');
-                            var existingmarging = parseInt($body.css('marginTop'), 10);
+                            var existingmargin = parseInt($body.css('marginTop'), 10);
                             RDR.util.cssSuperImportant( $body, {
-                               "margin-top": existingmarging + 40
+                               "margin-top": existingmargin + 40
                             });
+                            if ( $body.css('position') == "relative" ) {
+                                $body.addClass('rdr_heightAdjustment');
+                            }
                         }
                     }
 

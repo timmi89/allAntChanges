@@ -18,6 +18,9 @@
     left:0 !important;
     width: 100% !important;
 }
+body.rdr_heightAdjustment #rdr_sandbox {
+  margin-top:-40px !important;
+}
 
 #rdr_sandbox a div.rdr       {text-decoration:none !important;}
 #rdr_sandbox div.rdr {
@@ -211,6 +214,9 @@ div.rdr_tag_share:hover div.rdr_tooltip     { display:block !important; }
   font-family:Arial,sans-serif !important;
   letter-spacing:0.5px !important;
   line-height:13px !important;
+}
+body.rdr_heightAdjustment .rdr_twtooltip {
+  margin-top:-40px !important;
 }
 .rdr_twtooltip.rdr_tw_in {
   opacity: 0.85 !important;
