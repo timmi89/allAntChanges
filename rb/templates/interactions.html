@@ -200,7 +200,7 @@ function writeCard( interaction, showBlocked ) {
       $meta.append('<div class="publisher"><a href=/group/' + interaction.group.short_name + '>'+interaction.group.name+'</a></div>');
     }
     $meta.append('<div class="title">'
-                + '<a href="/page/'+interaction.page_id+'">'+interaction.page_title+'</a>'
+                + '<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank">'+interaction.page_title+'</a>'
               + '</div>');
     if ( interaction.kind == "pag" ) { $meta.append('<div class="date">'+interaction.date+'</div>'); }
     if ( interaction.moderator ) {
