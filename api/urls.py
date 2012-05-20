@@ -9,6 +9,7 @@ PageData = Resource(handler=PageDataHandler)
 Containers = Resource(handler=ContainerSummaryHandler)
 CreateContainers = Resource(handler=CreateContainerHandler)
 Tag = Resource(handler=TagHandler)
+MeToo = Resource(handler=MeTooHandler)
 Comment = Resource(handler=CommentHandler)
 FBLogin = Resource(handler=FBHandler)
 RBLogin = Resource(handler=RBHandler)
@@ -57,6 +58,7 @@ urlpatterns = patterns('',
     url(r'^containers/create/', CreateContainers),
     url(r'^summary/containers/', Containers),
     url(r'^summary/container/content', Content),
+    url(r'^metoo', MeToo),
     url(r'^tag/create/', Tag, kwargs={'action':'create'}),
     url(r'^tag/remove/', Tag, kwargs={'action':'delete'}),
     url(r'^bookmark/create/', Bookmark, kwargs={'action':'create'}),

@@ -236,6 +236,28 @@ class TagHandler(InteractionHandler):
 
         return interaction
 
+class MeTooHandler(AnonymousBaseHandler):
+    allowed_methods = ('GET', 'POST')
+
+    @status_response
+    @json_data_post
+    def create(self, request, data):
+        owner = checkCookieToken(request)
+        if owner is None:
+            return {'message':'not_logged_in'}
+        
+        parent_id = data.get('parent_id', None)
+
+        if parent_id is not None:
+            try:
+                parent = Interaction.objects.get(id = parent_id)
+                interaction = createInteraction(parent.page, parent.container, parent.content, owner, parent.kind, parent.interaction_node, page.site.group, parent)
+            except Interaction.DoesNotExist:
+                return {'message' : 'no such interaction for metoo'}
+        return interaction
+
+
+
 class BookmarkHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
         # Same as a tag but with bookmark kind -- makes private to user
