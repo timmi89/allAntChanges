@@ -39,8 +39,15 @@ if ( window.location.href.indexOf('/user/') != -1 ) {
                   "comments" : [
                   {% for comment in interaction.comments %}
                       {
-                      "id": {{comment.id}} 
-                      },
+                      "id": {{comment.id}},
+                      "approved"          :   {% if comment.approved %}true{% else %}false{% endif %},
+                      "created"           :   "{{ comment.created|date:"M d g:ia" }}",
+                      "user_profile_link" :   "/user/{{comment.user.id}}",
+                      "user_avatar"       :   "{{ comment.user.social_user.img_url }}",
+                      "user_name"         :   "{{ comment.user.social_user.full_name }}",
+                      "comment"           :   "{% filter force_escape %}{{ comment.interaction_node.body|linebreaksbr|escapejs }}{% endfilter %}",
+                      "moderator"         :   {% if cookie_user and ga_ids and comment.page.site.group.id in ga_ids %}true{% else %}false{% endif %}
+                      }{% if not forloop.last %},{% endif %}
                   {% endfor %}
                   ]
             };
@@ -60,40 +67,6 @@ if ( window.location.href.indexOf('/user/') != -1 ) {
             </div>
             */
         {%endif%}
-        {% if interaction.kind == 'com' %}
-
-            // if parent interaction content type is txt or med or img
-            var comment = {
-                "parent" : {
-                  "id"    :   {{ interaction.parent.id }},
-                  "kind"  :   "{{ interaction.parent.content.kind }}",
-                  "date"  :   "{{ interaction.parent.created|date:"M d, Y" }}",
-                  "interaction_node_body" :   "{% if interaction.parent.kind = 'tag' or interaction.parent.kind = 'bkm' %}{{interaction.parent.interaction_node.body|escapejs }}{% else %}{{ interaction.parent.human_kind|escapejs }}{% endif %}",
-                  "content_body"          :   '{{ interaction.parent.content.body|escapejs }}',
-                  "page_title"            :   "{{ page.grouper.title|escapejs }}",
-                  "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url|escapejs }}{% else %}{{ interaction.page.url|escapejs }}{% endif %}",
-                  "approved"              :   {% if interaction.parent.approved %}true{% else %}false{% endif %},
-                  "singleton"              :   {% if singleton %}true{% else %}false{% endif %},
-                  "group" : {
-                    "short_name"  :   "{{ page.grouper.site.group.short_name }}",
-                    "id"          :   "{{ page.grouper.site.id }}",
-                    "logo_url"    :   "{{ page.grouper.site.group.logo_url_sm }}",
-                    "name"        :   "{{ page.grouper.site.group.name|escapejs }}",
-                    "title"       :   "{{ page.grouper.site.group.title|escapejs }}"
-                  }
-                },
-                "id"                :   "{{ interaction.id }}",
-                "approved"          :   {% if interaction.approved %}true{% else %}false{% endif %},
-                "created"           :   "{{ interaction.created|date:"M d g:ia" }}",
-                "user_profile_link" :   "/user/{{interaction.user.id}}",
-                "user_avatar"       :   "{{ interaction.user.social_user.img_url }}",
-                "user_name"         :   "{{ interaction.user.social_user.full_name }}",
-                "comment"           :   "{% filter force_escape %}{{ interaction.interaction_node.body|linebreaksbr|escapejs }}{% endfilter %}",
-                "moderator"         :   {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %}
-            };
-            comments.push(comment);
-        {% endif %}
-
 
         {% if interaction.human_kind == 'Share' %}
             var share = {
@@ -248,14 +221,14 @@ function writeCard( interaction, showBlocked ) {
   }
 }
 
-function writeComment( comment, showBlocked ) {
+function writeComment( comment, parent, showBlocked ) {
   if ( comment.approved || ( !comment.approved && showBlocked ) ) {
-    var $card = $('#card_'+comment.parent.id);
+    var $card = $('#card_'+parent.id);
 
     // check to see if the card for the interaction exists yet
     if ( !$card.length ) {
-      writeCard( comment.parent );
-      var $card = $('#card_'+comment.parent.id);
+      writeCard( parent );
+      var $card = $('#card_'+parent.id);
     }
 
     var $comments = $card.find('div.comments'),
@@ -291,16 +264,9 @@ function writeComment( comment, showBlocked ) {
 
 $.each( interactions, function(idx, interaction) {
   writeCard( interaction );
-  if (typeof interaction.comments != "undefined" ) {
-    console.dir(interaction.comments);
-  }
-  if (typeof interaction.content_id != "undefined" ) {
-    console.log(':interaction.content_id: '+interaction.content_id);
-  }
-});
-
-$.each( comments, function(idx, comment) {
-  writeComment( comment );
+  $.each( interaction.comments, function(idx, comment) {
+    writeComment( comment, interaction );
+  });
 });
 
 var $container = $('#cards section');
