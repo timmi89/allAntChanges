@@ -575,7 +575,8 @@ section[role="main"] div.card div.meta div.content_type   { width:16px; xxheight
 section[role="main"] div.card.img div.meta div.content_type,
 section[role="main"] div.card.med div.meta div.content_type { margin:0px 8px 0 2px; }
 
-section[role="main"] div.card div.added_by      { background:#eee; padding:5px; font-size:11px; text-align:center; }
+section[role="main"] div.card div.added_by      { background:#eee; padding:5px; font-size:11px; text-align:center;}
+section[role="main"] div.card.pag.heightAdjusted div.added_by      { position:absolute; bottom:0; width:100%; }
 section[role="main"] div.card div.added_by img  { display: inline-block; margin-bottom:-5px; margin-left:5px; width:18px; }
 section[role="main"] .user_profile div.card div.added_by      { display:none; }
 
