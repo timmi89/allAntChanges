@@ -35,6 +35,13 @@ $(document).ready( function() {
     {% endif %}
     <h2>{% if profile_user.social_user.img_url and profile_user.social_user.img_url != "None" %}<img src="{{ profile_user.social_user.img_url }}?type=small">{% endif %} {{ profile_user.social_user.full_name }}
     {% if cookie_user and cookie_user.id == profile_user.id %}
+    <style>
+      #user_settings { font-size:11px !important; font-weight:bold; }
+      #user_settings label { display:none; }
+      #user_settings:hover label { display:block; }
+    </style>
+    <div id="user_settings">
+      Settings
       <label for="private_profile">
         <input type="checkbox" id="private_profile" {% if profile_user.social_user.private_profile %}checked="checked"{% endif %} /> 
         Profile is only visible to me
@@ -43,6 +50,7 @@ $(document).ready( function() {
         <input type="checkbox" id="follow_email" {% if profile_user.social_user.follow_email_option %}checked="checked"{% endif %} /> 
         Send me email when someone follows my activity.
       </label>
+    </div>
     {% endif %}
     </h2>
     </div>
