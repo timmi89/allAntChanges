@@ -18,6 +18,7 @@ if ( window.location.href.indexOf('/user/') != -1 ) {
                   "content_body"          :   '{{ interaction.content.body|escapejs }}',
                   "page_title"            :   "{{ page.grouper.title|escapejs }}",
                   "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url|escapejs }}{% else %}{{ interaction.page.url|escapejs }}{% endif %}",
+                  "domain"              : "{{page.grouper.site.domain}}",
                   "approved"              :   {% if interaction.approved %}true{% else %}false{% endif %},
                   "singleton"              :   {% if singleton %}true{% else %}false{% endif %},
                   "group" : {
@@ -164,7 +165,7 @@ function writeCard( interaction, showBlocked ) {
     var $card = $('<div class="card '+interaction.kind+'" id="card_'+interaction.id+'" />');
     var $header = $('<header/>').attr('title', interaction.interaction_node_body)
          .append('<h1><a href="/stream/?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></h1>')
-         .append('<span class="count"></span>');
+         .append('<span class="count"></span>')
 
     var $content = ( interaction.kind != "pag" ) ? $('<div class="content"/>'):'';
     
@@ -183,39 +184,47 @@ function writeCard( interaction, showBlocked ) {
       $content.append('<div class="content_body"><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank">'+interaction.content_body+'</a></div><div class="comments" />');
     }
 
-    var $meta = $('<div class="meta"/>');
-    if ( interaction.kind != "pag" ) { $meta.append('<div class="date">'+interaction.date+'</div>'); }
+    var $meta = $('<div class="meta"/>'),
+        $metaLeft = $('<div class="metaLeft"/>').appendTo($meta),
+        $metaRight = $('<div class="metaRight"/>').appendTo($meta);
+
+    $meta.prepend('<div class="date">'+interaction.date+'</div>');
+
     if ( interaction.kind == "txt" ) {
-        $meta.append('<div class="content_type" rel="tooltip" title="This reaction is to <strong>text</strong> from the page."><img src="{{ STATIC_URL }}site/images/type_text.png" /></div>');
+        $metaLeft.append('<div class="content_type" rel="tooltip" title="This reaction is to <strong>text</strong> from the page."><img src="{{ STATIC_URL }}site/images/type_text.png" /></div>');
     } else if ( interaction.kind == "img" ) {
-        $meta.append('<div class="content_type" rel="tooltip" title="This is reaction is to an <strong>image</strong> from the page."><img src="{{ STATIC_URL }}site/images/type_img.png" /></div>');
+        $metaLeft.append('<div class="content_type" rel="tooltip" title="This is reaction is to an <strong>image</strong> from the page."><img src="{{ STATIC_URL }}site/images/type_img.png" /></div>');
     } else if ( interaction.kind == "med" ) {
-        $meta.append('<div class="content_type" rel="tooltip" title="This is reaction is to a <strong>video or other type of media</strong> from the page."><img src="{{ STATIC_URL }}site/images/type_media.png" /></div>');
-      } else if ( interaction.kind == "pag" ) {
-        $meta.append('<div class="content_type" rel="tooltip" title="This is reaction is to the <strong>whole page</strong>."><img src="{{ STATIC_URL }}site/images/type_page.png" width="12" /></div>');
+        $metaLeft.append('<div class="content_type" rel="tooltip" title="This is reaction is to a <strong>video or other type of media</strong> from the page."><img src="{{ STATIC_URL }}site/images/type_media.png" /></div>');
+    } else if ( interaction.kind == "pag" ) {
+        $metaLeft.append('<div class="content_type" rel="tooltip" title="This is reaction is to the <strong>whole page</strong>."><img src="{{ STATIC_URL }}site/images/type_page.png" /></div>');
+        $metaLeft.append('<div class="favicon"><img src="http://www.google.com/s2/favicons?domain='+interaction.domain+'" /></div>');
     }
     if ( interaction.group.logo_url != "" ) {
-      $meta.append('<div class="publisher"><a href=/group/' + interaction.group.short_name + '><img alt="' + interaction.group.name + '" src="' + interaction.group.logo_url + '"></a></div>');
+      $metaRight.append('<div class="publisher"><a href=/group/' + interaction.group.short_name + '><img alt="' + interaction.group.name + '" src="' + interaction.group.logo_url + '"></a></div>');
     } else {
-      $meta.append('<div class="publisher"><a href=/group/' + interaction.group.short_name + '>'+interaction.group.name+'</a></div>');
+      $metaRight.append('<div class="publisher"><a href=/group/' + interaction.group.short_name + '>'+interaction.group.name+'</a></div>');
     }
-    $meta.append('<div class="title">'
+    $metaRight.append('<div class="title">'
                 + '<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank">'+interaction.page_title+'</a>'
               + '</div>');
-    if ( interaction.kind == "pag" ) { $meta.append('<div class="date">'+interaction.date+'</div>'); }
+    
     if ( interaction.moderator ) {
         $meta.append('<div class="block_content">'
           + '<a href="javascript:void(0);" onclick="RB.admin.blockContent('+interaction.id+');" id="moderate_'+interaction.id+'">'
           + (( interaction.approved ) ? 'Block':'Unblock')
           + '</a></div>');
     }
-    var $addedBy = $( '<div class="added_by"><em>Added by</em> '
+
+    var $addedBy = $( '<div class="added_by">'
                 + '<a href="'+interaction.user_profile_link+'">'
                 + interaction.user_name + '</a>'
                 + '</div>');
-        if ( interaction.user_avatar != "None" && interaction.user_avatar != "") {
-          $addedBy.find('a').prepend('<img src="'+interaction.user_avatar+'" /> ');
-        }
+    
+    var hasProfilePic =  interaction.user_avatar != "None" && interaction.user_avatar != "";
+    var profilePic = hasProfilePic ? interaction.user_avatar : "{{ STATIC_URL }}site/images/anonymous-user.png";
+    $addedBy.find('a').prepend('<img src="'+profilePic+'" /> ');
+    
     $card.append( $header, $content, $meta, $addedBy );
 
     if ( interaction.kind == "pag" ) {
