@@ -3,6 +3,7 @@
 var comments = [],
     interactions = [],
     shares = [];
+    
 if ( window.location.href.indexOf('/user/') != -1 ) {
   $('#cards').addClass('user_profile');
 }
@@ -41,7 +42,7 @@ if ( window.location.href.indexOf('/user/') != -1 ) {
                       "id": {{comment.id}} 
                       },
                   {% endfor %}
-                  ]
+                  ],
             };
             if ( interaction.user_name == "" ) {
               interaction.user_name = "Unregistered User";
@@ -121,6 +122,13 @@ if ( window.location.href.indexOf('/user/') != -1 ) {
         {% endif %}
     {% endfor %}
 {% endfor %}
+var metoos = {
+    {% if child_interactions %}
+    {% for key, value in child_interactions.items %}
+        {{key}} : {{value}},
+    {% endfor %}
+    {% endif %}
+};
 </script>
 
 </section>
