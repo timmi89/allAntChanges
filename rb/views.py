@@ -163,6 +163,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     else:
         # If not viewing a user profile, remove bookmarks from interaction set
         interactions = interactions.exclude(kind="bkm")
+        interactions = interactions.filter(parent=None)
 
     # Interactions for group profile
     if short_name:
