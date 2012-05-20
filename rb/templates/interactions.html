@@ -192,10 +192,8 @@ function writeCard( interaction, showBlocked ) {
     }
 
     var $meta = $('<div class="meta"/>'),
-        $metaLeft = $('<div class="metaLeft"/>').appendTo($meta),
-        $metaRight = $('<div class="metaRight"/>').appendTo($meta);
-
-    $meta.prepend('<div class="date">'+interaction.date+'</div>');
+        $metaLeft = $('<div class="metaLeft"/>'),
+        $metaRight = $('<div class="metaRight"/>');
 
     if ( interaction.kind == "txt" ) {
         $metaLeft.append('<div class="content_type" rel="tooltip" title="This reaction is to <strong>text</strong> from the page."><img src="{{ STATIC_URL }}site/images/type_text.png" /></div>');
@@ -204,9 +202,18 @@ function writeCard( interaction, showBlocked ) {
     } else if ( interaction.kind == "med" ) {
         $metaLeft.append('<div class="content_type" rel="tooltip" title="This is reaction is to a <strong>video or other type of media</strong> from the page."><img src="{{ STATIC_URL }}site/images/type_media.png" /></div>');
     } else if ( interaction.kind == "pag" ) {
-        $metaLeft.append('<div class="content_type" rel="tooltip" title="This is reaction is to the <strong>whole page</strong>."><img src="{{ STATIC_URL }}site/images/type_page.png" /></div>');
-        $metaLeft.append('<div class="favicon"><img src="http://www.google.com/s2/favicons?domain='+interaction.domain+'" /></div>');
+        $metaLeft.append('<div class="content_type" rel="tooltip" title="This is reaction is to the <strong>whole page</strong>.">'
+                + '<img class="pageIcon" src="{{ STATIC_URL }}site/images/type_page.png" />'
+                + '<div class="favicon"><img src="http://www.google.com/s2/favicons?domain='+interaction.domain+'" /></div>'
+            +'</div>'
+        );
     }
+
+    $meta.prepend('<div class="date">'+interaction.date+'</div>');
+    $meta.append($metaLeft);
+    $meta.append($metaRight);
+    $meta.append('<div class="clear" />');
+
     if ( interaction.group.logo_url != "" ) {
       $metaRight.append('<div class="publisher"><a href=/group/' + interaction.group.short_name + '><img alt="' + interaction.group.name + '" src="' + interaction.group.logo_url + '"></a></div>');
     } else {
@@ -216,22 +223,23 @@ function writeCard( interaction, showBlocked ) {
                 + '<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank">'+interaction.page_title+'</a>'
               + '</div>');
     
+    var hasProfilePic =  interaction.user_avatar != "None" && interaction.user_avatar != "";
+    var profilePic = hasProfilePic ? interaction.user_avatar : "{{ STATIC_URL }}site/images/anonymous-user.png";
+    var $addedBy = $( '<div class="added_by">'
+        + '<a href="'+interaction.user_profile_link+'" rel="tooltip" title="'+interaction.user_name +'">'
+        + '<img src="'+profilePic+'" />'
+        + '</a>'
+        + '</div>'
+    );
+    
     if ( interaction.moderator ) {
-        $meta.append('<div class="block_content">'
+        $addedBy.append('<div class="block_content">'
           + '<a href="javascript:void(0);" onclick="RB.admin.blockContent('+interaction.id+');" id="moderate_'+interaction.id+'">'
           + (( interaction.approved ) ? 'Block':'Unblock')
           + '</a></div>');
     }
 
-    var $addedBy = $( '<div class="added_by">'
-                + '<a href="'+interaction.user_profile_link+'">'
-                + interaction.user_name + '</a>'
-                + '</div>');
-    
-    var hasProfilePic =  interaction.user_avatar != "None" && interaction.user_avatar != "";
-    var profilePic = hasProfilePic ? interaction.user_avatar : "{{ STATIC_URL }}site/images/anonymous-user.png";
-    $addedBy.find('a').prepend('<img src="'+profilePic+'" /> ');
-    
+
     $card.append( $header, $content, $meta, $addedBy );
 
     if ( interaction.kind == "pag" ) {
@@ -320,7 +328,7 @@ $container.imagesLoaded(function(){
       }
   });
   $container.tooltip({
-    selector: "div.content_type"
+    selector: "div.content_type, .added_by a"
   });
 });
 </script>
