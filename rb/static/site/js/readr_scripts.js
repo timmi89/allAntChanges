@@ -223,7 +223,8 @@ RB = {
                 dataType: "json",
                 data: { json: $.toJSON(data) },
                 success: function(response) {
-                    $('#follow_action').text( 'Stop following this person' ).unbind().click( function() {
+                    var person_or_group = (data.type=="usr") ? "person":"group";
+                    $('#follow_action').text( 'Stop following this '+person_or_group ).unbind().click( function() {
                         var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
                         RB.follow.remove( id, type );
                     });
@@ -249,7 +250,8 @@ RB = {
                 dataType: "json",
                 data: { json: $.toJSON(data) },
                 success: function(response) {
-                    $('#follow_action').text( 'Follow this person' ).unbind().click( function() {
+                    var person_or_group = (data.type=="usr") ? "person":"group";
+                    $('#follow_action').text( 'Follow this '+person_or_group ).unbind().click( function() {
                         var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
                         RB.follow.add( id, type );
                     });
@@ -257,27 +259,6 @@ RB = {
                 }
             });
         },
-
-// function follow() {
-//   var data = {
-//     follow_id:57,
-//     type:"usr"
-// };
-
-// $.ajax({
-//   beforeSend: function( xhr ) {
-//     xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
-//   },
-//   url: "/api/follow/",
-//   type: "post",
-//   // contentType: "application/json",
-//   contentType:"application/x-www-form-urlencoded",
-//   dataType: "json",
-//   data: { json: $.toJSON(data) },
-//   success: function(response) {
-//   }
-// });
-// }
         following : function(id, page_num) {
             // RB.follow.following
             // who am I following?
@@ -328,41 +309,19 @@ RB = {
                         $('#follower_count').html( "<strong>"+response.data.followed_by_count + "</strong> followers" );
                     }
                     
-                    var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
+                    var id = (data.entity_type=="usr") ? RB.profile_user.id:RB.group.id,
+                        person_or_group = (data.entity_type=="usr") ? "person":"group";
                     if ( response.data.user_is_follower ) {
-                        $('#follow_action').text( 'Stop following this person' ).unbind().click( function() {
+                        $('#follow_action').text( 'Stop following this ' + person_or_group ).unbind().click( function() {
                             RB.follow.remove( id, type );
                         });
                     } else {
-                        $('#follow_action').text( 'Follow this person' ).unbind().click( function() {
+                        $('#follow_action').text( 'Follow this ' + person_or_group ).unbind().click( function() {
                             RB.follow.add( id, type );
                         });
                     }
                 }
             });
         }
-
-// function who_follows_group(id) {
-//   // who follows this thing
-//   var data = {
-//     entity_id:parseInt(id),
-//     entity_type:"grp",
-//     page_num:1
-// };
-
-// $.ajax({
-//   beforeSend: function( xhr ) {
-//     xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
-//   },
-//   url: "/api/entity/follow/",
-//   type: "get",
-//   // contentType: "application/json",
-//   contentType:"application/x-www-form-urlencoded",
-//   dataType: "json",
-//   data: { json: $.toJSON(data) },
-//   success: function(response) {
-//   }
-// });
-// }
     }   
 };
