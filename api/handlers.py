@@ -211,7 +211,8 @@ class TagHandler(InteractionHandler):
         container_kind = data['container_kind']
         content_node_data = data['content_node_data']
         content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[ content_node_data['kind'] ]
-
+        parent_id = data.get('parent_id', None)
+        
         #optional
         tag_id = data['tag'].get('id', None)
         location = content_node_data.get('location', None)
@@ -226,8 +227,12 @@ class TagHandler(InteractionHandler):
             defaults = {'kind': container_kind,}
         )[0]
 
+        if parent_id is not None:
+            parent = Interaction.objects.get(id = parent_id)
+        else:
+            parent = None
         # Create an interaction
-        interaction = createInteraction(page, container, content, user, kind, inode, group)
+        interaction = createInteraction(page, container, content, user, kind, inode, group, parent)
 
         return interaction
 

@@ -3,7 +3,7 @@
 {% if group %}
 <div id="avatar">
   <div id="follow_info">
-    <span id="follower_count"></span> | <a id="follow_action" href="javascript:void(0);"></a>
+    <span id="follower_count"></span> &bull; <a id="follow_action" href="javascript:void(0);"></a>
   </div>
   {% if group.logo_url_lg %}<img src="{{ group.logo_url_lg }}" />{% endif %}
 	{% if not group.logo_url_lg %}<h2>{{ group.name }}</h2>{% endif %}
@@ -20,11 +20,11 @@ $(document).ready( function() {
   {% csrf_token %}
     <div id="avatar">
     <div id="which_content">
-      {% if on_follow_page %}<a href="/user/{{profile_user.id}}">My Activity</a>{% else %}<strong>My Activity</strong>{% endif %} | {% if not on_follow_page %}<a href="/follows/{{profile_user.id}}">Activity I Follow</a>{% else %}<strong>Activity I Follow</strong>{% endif %}
+      {% if on_follow_page %}<a href="/user/{{profile_user.id}}">My Activity</a>{% else %}<strong>My Activity</strong>{% endif %} &bull; {% if not on_follow_page %}<a href="/follows/{{profile_user.id}}">Activity I Follow</a>{% else %}<strong>Activity I Follow</strong>{% endif %}
     </div>
     {% if not on_follow_page %}
     <div id="follow_info">
-      <span id="follower_count"></span> | <span id="following_count"></span> {% if cookie_user and profile_user.id != cookie_user.id %}| <a id="follow_action" href="javascript:void(0);"></a>{% endif %}
+      <span id="follower_count"></span> &bull; <span id="following_count"></span> {% if cookie_user and profile_user.id != cookie_user.id %}&bull; <a id="follow_action" href="javascript:void(0);"></a>{% endif %}
     </div>
     <script>
     $(document).ready( function() {
@@ -33,59 +33,8 @@ $(document).ready( function() {
     });
     </script>
     {% endif %}
-    <h2>{% if profile_user.social_user.img_url and profile_user.social_user.img_url != "None" %}<img src="{{ profile_user.social_user.img_url }}?type=small">{% endif %} {{ profile_user.social_user.full_name }}
-    {% if cookie_user and cookie_user.id == profile_user.id %}
-      <label for="private_profile">
-        <input type="checkbox" id="private_profile" {% if profile_user.social_user.private_profile %}checked="checked"{% endif %} /> 
-        Profile is only visible to me
-      </label>
-      <label for="follow_email">
-        <input type="checkbox" id="follow_email" {% if profile_user.social_user.follow_email_option %}checked="checked"{% endif %} /> 
-        Send me email when someone follows my activity.
-      </label>
-    {% endif %}
-    </h2>
+    <h2>{% if profile_user.social_user.img_url and profile_user.social_user.img_url != "None" %}<img src="{{ profile_user.social_user.img_url }}?type=small">{% endif %} {{ profile_user.social_user.full_name }}</h2>
     </div>
-    <script type="text/javascript">
-    	$('#private_profile').click( function() {
-    		$('label[for="private_profile"] span').remove();
-    		var sendData = {
-    			user_id:RDRAuth.rdr_user.user_id, 
-    			readr_token:RDRAuth.rdr_user.readr_token,
-    			group_id:1
-    		};
-  		$.ajax({
-  		    url: "/api/privacy/toggle/",
-  		    type: "get",
-  		    data: {
-              	json: JSON.stringify(sendData)
-              },
-  		    success: function(response) {
-  		        $('label[for="private_profile"]').append('<span>Saved</span>');
-  		    }
-  		});
-    	});
-    </script>
-    <script type="text/javascript">
-        $('#follow_email').click( function() {
-            $('label[for="follow_email"] span').remove();
-            var sendData = {
-                user_id:RDRAuth.rdr_user.user_id, 
-                readr_token:RDRAuth.rdr_user.readr_token,
-                group_id:1
-            };
-        $.ajax({
-            url: "/api/followemail/toggle/",
-            type: "get",
-            data: {
-                json: JSON.stringify(sendData)
-              },
-            success: function(response) {
-                $('label[for="follow_email"]').append('<span>Saved</span>');
-            }
-        });
-        });
-    </script>
 {% endif %}
 
 {% if not profile_user and not group %}

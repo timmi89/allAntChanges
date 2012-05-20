@@ -216,6 +216,17 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     except (EmptyPage, InvalidPage): current_page = interactions_paginator.page(interactions_paginator.num_pages)
       
     context['current_page'] = current_page
+    
+    child_interactions = Interaction.objects.filter(parent__in = current_page.object_list, kind='tag')
+    
+    context['child_interactions'] = {}
+    
+    for child_interaction in child_interactions:
+        if not context['child_interactions'].has_key(child_interaction.parent.id):
+            context['child_interactions'][child_interaction.parent.id] = 0
+            logger.info(child_interaction.parent.id)
+        context['child_interactions'][child_interaction.parent.id] += 1
+        logger.info(context['child_interactions'])
 
     return render_to_response("index.html", context, context_instance=RequestContext(request))
 
