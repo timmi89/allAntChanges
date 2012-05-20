@@ -5189,8 +5189,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 $commentReplies = $('<div class="rdr_commentReplies" />'),
                                 $commentReply = $('<div class="rdr_commentReply" />'),
                                 $commentReply_link = $('<a href="javascript:void(0);">Reply</a>');
-                            var user_image_url = ( this_comment.social_user.img_url ) ? this_comment.social_user.img_url: RDR_staticUrl+'widget/images/anonymousplode.png';
-                            var user_name = ( this_comment.user.first_name === "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
+
+                            var user_image_url = ( this_comment && this_comment.social_user && this_comment.social_user.img_url ) ? this_comment.social_user.img_url: RDR_staticUrl+'widget/images/anonymousplode.png';
+
+                            var user_name = ( !this_comment || !this_comment.user || this_comment.user.first_name === "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
                             $commentBy.html( '<a href="'+RDR_baseUrl+'/user/'+this_comment.user.id+'" target="_blank"><img src="'+user_image_url+'" class="no-rdr" /> ' + user_name + '</a>' ).click( function() {
                                 RDR.events.track('click_user_profile');
                             });
