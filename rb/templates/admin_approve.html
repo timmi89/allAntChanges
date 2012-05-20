@@ -1,15 +1,12 @@
 {% extends "base.html" %}
-
-{% block sidebarContent %}
-<div id="sidebar">
-<h2>{{ group.name }}</h2>
-<img src="{{ group.logo_url_lg }}" />
-</div>
-{% endblock sidebarContent %}
-
+{% block title %}{{ group.name }} Approve Administrators{%endblock%}
+{% block bodyClass %}wide{% endblock %}
 {% block mainContent %}
-  <h1>{{ group.name }} Approve Administrators</h1>
-  {% regroup requests by group as groups %}
+<h1>{{ group.name }} Approve Administrators</h1>
+<div class="container">
+<section role="panels">
+  <section role="wide panels">
+{% regroup requests by group as groups %}
     {% for group in groups %}
       Admin Requests for {{ group.grouper.name }}
       <ul>
@@ -18,6 +15,9 @@
         {% endfor %}
       </ul>
     {% empty %}
-        <p>Nobody to approve!</p>
+        <h2>Nobody to approve!</h2>
     {% endfor %}
+  </section>
+</section>
+</div>
 {% endblock mainContent %}

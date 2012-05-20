@@ -35,7 +35,14 @@ if ( window.location.href.indexOf('/user/') != -1 ) {
                   "created"           :   "{{ interaction.created|date:"M d g:ia" }}",
                   "moderator"         :   {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %},
                   "page" : {{interaction.page}},
-                  "page_id" : {{interaction.page}}
+                  "page_id" : {{interaction.page}},
+                  "comments" : [
+                  {% for comment in interaction.comments %}
+                      {
+                      "id": {{comment.id}} 
+                      },
+                  {% endfor %}
+                  ]
             };
             if ( interaction.user_name == "" ) {
               interaction.user_name = "Unregistered User";
@@ -228,11 +235,21 @@ function writeCard( interaction, showBlocked ) {
     $card.append( $header, $content, $meta, $addedBy );
 
     if ( interaction.kind == "pag" ) {
-      var $pag_container = $('div.card.pag_container').last();
-      if ( $pag_container.find('div.card').length == 0 ) {
+      var $pag_container = $('div.card.pag_container').last(),
+          $pag_cards = $pag_container.find('div.card');
+      if ( $pag_cards.length == 0 ) {
         $card.addClass('first');
       }
       $pag_container.append( $card );
+
+      $pag_cards = $pag_container.find('div.card');
+      var pag_card_height = 0;
+      $pag_cards.each( function() {
+        var this_card_height = $(this).height();
+        pag_card_height = ( this_card_height > pag_card_height ) ? this_card_height:pag_card_height;
+      });
+      $pag_cards.each( function() { $(this).height( pag_card_height ).addClass('heightAdjusted'); });
+
     } else {
       $('#cards section').append( $card );
     }
@@ -282,6 +299,9 @@ function writeComment( comment, showBlocked ) {
 
 $.each( interactions, function(idx, interaction) {
   writeCard( interaction );
+  if (typeof interaction.comments != "undefined" ) {
+    console.dir(interaction.comments);
+  }
 });
 
 $.each( comments, function(idx, comment) {
