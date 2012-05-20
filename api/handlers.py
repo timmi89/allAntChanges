@@ -211,7 +211,8 @@ class TagHandler(InteractionHandler):
         container_kind = data['container_kind']
         content_node_data = data['content_node_data']
         content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[ content_node_data['kind'] ]
-
+        parent_id = data.get('parent_id', None)
+        
         #optional
         tag_id = data['tag'].get('id', None)
         location = content_node_data.get('location', None)
@@ -226,10 +227,36 @@ class TagHandler(InteractionHandler):
             defaults = {'kind': container_kind,}
         )[0]
 
+        if parent_id is not None:
+            parent = Interaction.objects.get(id = parent_id)
+        else:
+            parent = None
         # Create an interaction
-        interaction = createInteraction(page, container, content, user, kind, inode, group)
+        interaction = createInteraction(page, container, content, user, kind, inode, group, parent)
 
         return interaction
+
+class MeTooHandler(AnonymousBaseHandler):
+    allowed_methods = ('GET', 'POST')
+
+    @status_response
+    @json_data_post
+    def create(self, request, data):
+        owner = checkCookieToken(request)
+        if owner is None:
+            return {'message':'not_logged_in'}
+        
+        parent_id = data.get('parent_id', None)
+
+        if parent_id is not None:
+            try:
+                parent = Interaction.objects.get(id = parent_id)
+                interaction = createInteraction(parent.page, parent.container, parent.content, owner, parent.kind, parent.interaction_node, page.site.group, parent)
+            except Interaction.DoesNotExist:
+                return {'message' : 'no such interaction for metoo'}
+        return interaction
+
+
 
 class BookmarkHandler(InteractionHandler):
     def create(self, request, data, user, page, group):

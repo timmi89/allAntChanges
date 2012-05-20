@@ -794,8 +794,11 @@ table.rdr_tags a.rdr_tag span.rdr_tag_count{
 
 table.rdr_tags a.rdr_tag.rdr_hover span.rdr_tag_count,
 table.rdr_tags a.rdr_tag:hover span.rdr_tag_count{
-    background: -webkit-gradient(linear, center top, center bottom, from(#ddedff), to(#add1f9)) !important; 
-    background: -moz-linear-gradient(center top , #ddedff, #add1f9) repeat scroll 0 0 transparent !important;
+    background: none !important;
+    color: #008be4 !important;
+    font-size: 15px !important;
+    font-weight: bold !important;
+    line-height: 14px !important;
 }
 
 #rdr_sandbox div.rdr a.rdr_tag.rdr_custom_tag input, div.rdr a.rdr_tag.rdr_custom_tag input{
