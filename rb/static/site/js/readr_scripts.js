@@ -281,6 +281,8 @@ RB = {
                     if ( typeof response.data.follows_count != "undefined" ) {
                         $('#following_count').html( "<strong>"+response.data.follows_count + "</strong> following" );
                     }
+
+                    $('#follower_list').html('people im following');
                 }
             });
         },
@@ -320,6 +322,7 @@ RB = {
                             RB.follow.add( id, type );
                         });
                     }
+                    $('#following_list').html('<h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1>');
                 }
             });
         }
