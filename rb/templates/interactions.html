@@ -16,6 +16,7 @@ if ( window.location.href.indexOf('/user/') != -1 ) {
                   "date"  :   "{{ interaction.created|date:"M d, Y"|escapejs }}",
                   "interaction_node_body" :   "{% if interaction.kind = 'tag' or interaction.kind = 'bkm' %}{{interaction.interaction_node.body|escapejs }}{% else %}{{ interaction.human_kind|escapejs }}{% endif %}",
                   "content_body"          :   '{{ interaction.content.body|escapejs }}',
+                  "content_id"          :   '{{ interaction.content.id }}',
                   "page_title"            :   "{{ page.grouper.title|escapejs }}",
                   "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url|escapejs }}{% else %}{{ interaction.page.url|escapejs }}{% endif %}",
                   "approved"              :   {% if interaction.approved %}true{% else %}false{% endif %},
@@ -292,6 +293,9 @@ $.each( interactions, function(idx, interaction) {
   writeCard( interaction );
   if (typeof interaction.comments != "undefined" ) {
     console.dir(interaction.comments);
+  }
+  if (typeof interaction.content_id != "undefined" ) {
+    console.log(':interaction.content_id: '+interaction.content_id);
   }
 });
 

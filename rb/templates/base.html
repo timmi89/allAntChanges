@@ -110,10 +110,23 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     <div id="user">
         {% block userStatus %}
         <div id="logged-in" {% if not cookie_user.social_user %}style="display:none;"{% endif %}>
-          <a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/>{{ cookie_user.social_user.full_name }}</a>
-          <!-- <div id=""><a href="/user/{{ cookie_user.id }}">My Activity</a></div>
-          <div id=""><a href="/follows/{{ cookie_user.id }}">Activity I Follow</a></div> -->
-          <div id="log-out-link"><a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a></div>
+          <a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/><strong>{{ cookie_user.social_user.full_name }}</strong></a>
+          <div id="log-out-link">
+            <a href="/user/{{ cookie_user.id }}">My Activity</a>
+            <a href="/follows/{{ cookie_user.id }}">Activity I Follow</a>
+            <a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a>
+            {% if cookie_user %}
+            <h5 id="user_settings">Settings</h5>
+            <label for="private_profile">
+              <input type="checkbox" id="private_profile" {% if cookie_user.social_user.private_profile %}checked="checked"{% endif %} /> 
+              Profile is private
+            </label>
+            <label for="follow_email">
+              <input type="checkbox" id="follow_email" {% if cookie_user.social_user.follow_email_option %}checked="checked"{% endif %} /> 
+              Send me email when someone follows my activity.
+            </label>
+            {% endif %}
+          </div>
         </div>
         <div id="logged-out" {% if cookie_user.social_user %}style="display:none;"{% endif %}>
           <!-- <a href="javascript:void(0);" onclick="RDRAuth.doFBLogin('site_login')"><img src="{{ STATIC_URL }}site/images/fb_login.png" border="0" alt="Connect with Facebook" /></a> -->
@@ -245,6 +258,43 @@ RB.profile_user = {
 
 {% block sidebarJS %}
 {% endblock %}
-
+<script type="text/javascript">
+      $('#private_profile').click( function() {
+        $('label[for="private_profile"] span').remove();
+        var sendData = {
+          user_id:RDRAuth.rdr_user.user_id, 
+          readr_token:RDRAuth.rdr_user.readr_token,
+          group_id:1
+        };
+        $.ajax({
+            url: "/api/privacy/toggle/",
+            type: "get",
+            data: {
+                  json: JSON.stringify(sendData)
+                },
+            success: function(response) {
+                $('label[for="private_profile"]').append('<span>Saved</span>');
+            }
+        });
+      });
+      $('#follow_email').click( function() {
+        $('label[for="follow_email"] span').remove();
+        var sendData = {
+            user_id:RDRAuth.rdr_user.user_id, 
+            readr_token:RDRAuth.rdr_user.readr_token,
+            group_id:1
+        };
+        $.ajax({
+            url: "/api/followemail/toggle/",
+            type: "get",
+            data: {
+                json: JSON.stringify(sendData)
+              },
+            success: function(response) {
+                $('label[for="follow_email"]').append('<span>Saved</span>');
+            }
+        });
+      });
+    </script>
 </body>
 </html>

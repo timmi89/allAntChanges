@@ -33,67 +33,8 @@ $(document).ready( function() {
     });
     </script>
     {% endif %}
-    <h2>{% if profile_user.social_user.img_url and profile_user.social_user.img_url != "None" %}<img src="{{ profile_user.social_user.img_url }}?type=small">{% endif %} {{ profile_user.social_user.full_name }}
-    {% if cookie_user and cookie_user.id == profile_user.id %}
-    <style>
-      #user_settings { font-size:11px !important; font-weight:bold; }
-      #user_settings label { display:none; }
-      #user_settings:hover label { display:block; }
-    </style>
-    <div id="user_settings">
-      Settings
-      <label for="private_profile">
-        <input type="checkbox" id="private_profile" {% if profile_user.social_user.private_profile %}checked="checked"{% endif %} /> 
-        Profile is only visible to me
-      </label>
-      <label for="follow_email">
-        <input type="checkbox" id="follow_email" {% if profile_user.social_user.follow_email_option %}checked="checked"{% endif %} /> 
-        Send me email when someone follows my activity.
-      </label>
+    <h2>{% if profile_user.social_user.img_url and profile_user.social_user.img_url != "None" %}<img src="{{ profile_user.social_user.img_url }}?type=small">{% endif %} {{ profile_user.social_user.full_name }}</h2>
     </div>
-    {% endif %}
-    </h2>
-    </div>
-    <script type="text/javascript">
-    	$('#private_profile').click( function() {
-    		$('label[for="private_profile"] span').remove();
-    		var sendData = {
-    			user_id:RDRAuth.rdr_user.user_id, 
-    			readr_token:RDRAuth.rdr_user.readr_token,
-    			group_id:1
-    		};
-  		$.ajax({
-  		    url: "/api/privacy/toggle/",
-  		    type: "get",
-  		    data: {
-              	json: JSON.stringify(sendData)
-              },
-  		    success: function(response) {
-  		        $('label[for="private_profile"]').append('<span>Saved</span>');
-  		    }
-  		});
-    	});
-    </script>
-    <script type="text/javascript">
-        $('#follow_email').click( function() {
-            $('label[for="follow_email"] span').remove();
-            var sendData = {
-                user_id:RDRAuth.rdr_user.user_id, 
-                readr_token:RDRAuth.rdr_user.readr_token,
-                group_id:1
-            };
-        $.ajax({
-            url: "/api/followemail/toggle/",
-            type: "get",
-            data: {
-                json: JSON.stringify(sendData)
-              },
-            success: function(response) {
-                $('label[for="follow_email"]').append('<span>Saved</span>');
-            }
-        });
-        });
-    </script>
 {% endif %}
 
 {% if not profile_user and not group %}
