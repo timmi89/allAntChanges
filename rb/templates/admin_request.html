@@ -1,14 +1,11 @@
 {% extends "base.html" %}
-
-{% block sidebarContent %}
-<div id="sidebar">
-<h2>{{ group.name }}</h2>
-<img src="{{ group.logo_url_lg }}" />
-</div>
-{% endblock sidebarContent %}
-
+{% block title %}{{ group.name }} Administrative Access{%endblock%}
+{% block bodyClass %}wide{% endblock %}
 {% block mainContent %}
-  <h1>{{ group.name }} Administrative Access</h1>
+<h1>{{ group.name }} Administrative Access</h1>
+<div class="container">
+<section role="panels">
+	<section role="wide panels">
   {% if requested %}
     <h2>Administrative access for {{ group.name }} has been requested!</h2>
   {% else %}
@@ -17,4 +14,7 @@
       <button type="submit">Request Access</button>
     </form>
   {% endif %}
+ </section>
+</section>
+</div>
 {% endblock mainContent %}

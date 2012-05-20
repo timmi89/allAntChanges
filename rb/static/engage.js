@@ -69,7 +69,7 @@ function readrBoard($R){
                 img_selector: "img",
                 anno_whitelist: "body p",
                 media_selector: "embed, video, object, iframe",
-                iframe_whitelist: ["youtube.com","hulu.com","funnyordie.com","vimeo.com"],
+                iframe_whitelist: ["youtube.com","hulu.com","funnyordie.com","vimeo.com","mtvnservices.com"],
                 comment_length: 300,
                 initial_pin_limit: 30,
                 no_readr: "",
