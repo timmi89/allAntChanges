@@ -34,7 +34,14 @@ if ( window.location.href.indexOf('/user/') != -1 ) {
                   "created"           :   "{{ interaction.created|date:"M d g:ia" }}",
                   "moderator"         :   {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %},
                   "page" : {{interaction.page}},
-                  "page_id" : {{interaction.page}}
+                  "page_id" : {{interaction.page}},
+                  "comments" : [
+                  {% for comment in interaction.comments %}
+                      {
+                      "id": {{comment.id}} 
+                      },
+                  {% endfor %}
+                  ]
             };
             if ( interaction.user_name == "" ) {
               interaction.user_name = "Unregistered User";
@@ -283,6 +290,9 @@ function writeComment( comment, showBlocked ) {
 
 $.each( interactions, function(idx, interaction) {
   writeCard( interaction );
+  if (typeof interaction.comments != "undefined" ) {
+    console.dir(interaction.comments);
+  }
 });
 
 $.each( comments, function(idx, comment) {
