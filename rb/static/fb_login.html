@@ -31,7 +31,7 @@
 	   	<strong id="groupname"></strong> uses <strong style="color:#008be4;"><a href="http://www.readrboard.com/" target="_blank">ReadrBoard</a></strong> so you can react to content easily and safely.
 	   	<br><br>
 	   	To keep participating, just log in:
-		<div style="overflow:auto;">
+		<div style="overflow:auto;" id="login-buttons">
 			<div style="float:left;padding-right:9px;border-right:1px solid #ccc;">
 				<div id="fb-login-button">
 					<a href="javascript:void(0);" onclick="FB.login(function(response) {if (response.authResponse) {RDRAuth.getReadrToken( FB.getAuthResponse(), function() {RDRAuth.checkFBStatus();});} else {}}, {scope: 'email'});"><img src="/static/widget/images/fb-login_to_readrboard.png" /></a>
@@ -40,6 +40,12 @@
 			<div style="float:left;padding-left:6px;">
 				<a href="javascript:void(0);" onclick="RDRAuth.rbloginWindow = window.open(RDR_baseUrl+'/rb_login/?group_id='+qs_args.group_id, 'readr_login','menubar=1,resizable=1,width=370,height=245');return false;"><img src="/static/widget/images/rb-login_to_readrboard.png" style="margin-top:8px;" /></a>
 			</div>
+			<script>
+			$('#login-buttons a').click( function() {
+				$('#might-need-to-click-here').show();
+				$('#fb-logged-out').hide();
+			});
+			</script>
 		</div>
 		<strong><span style="color:#008be4;">ReadrBoard</span> values your privacy.</strong>  <a href="http://www.readrboard.com/faq/" target="_blank">Learn more</a>.
 		<!--
@@ -53,6 +59,9 @@
 	<div id="fb-logged-in" style="display:none;">
 		<div><strong>Welcome to ReadrBoard!</strong></div>
 		<a href="javascript:void(0);" onclick="RDRAuth.logout();">Log out of ReadrBoard</a>
+	</div>
+	<div id="might-need-to-click-here" style="display:none;">
+		<div>You might need to <strong><a href="javascript:void(0);" onclick="RDRAuth.notifyParent({}, 'getUserLoginState');">click here</a></strong> once you've logged in.</div>
 	</div>
 	<!-- <p>
 		<a href="javascript:void(0);" onclick="RDRAuth.tempUser();">Create Temp User</a>

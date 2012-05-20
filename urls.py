@@ -24,7 +24,8 @@ urlpatterns = patterns('',
   
   
   # For main website
-  url(r'^$','rb.views.splash'),
+  url(r'^publishers/$','rb.views.splash'),
+  url(r'^$', 'rb.views.main', kwargs={"view":"index"}),
   url(r'^stream/$', 'rb.views.main', kwargs={"view":"index"}),
   url(r'^tags/$', 'rb.views.main', kwargs={"view":"tags"}),
   url(r'^comments/$', 'rb.views.main', kwargs={"view":"comments"}),

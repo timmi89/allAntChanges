@@ -16,7 +16,7 @@ $(document).ready( function() {
 {% endif %}
 
 {% if profile_user %}
-  <div id="user_data">
+
   {% csrf_token %}
     <div id="avatar">
     <div id="which_content">
@@ -45,6 +45,7 @@ $(document).ready( function() {
       </label>
     {% endif %}
     </h2>
+    </div>
     <script type="text/javascript">
     	$('#private_profile').click( function() {
     		$('label[for="private_profile"] span').remove();
@@ -85,6 +86,13 @@ $(document).ready( function() {
         });
         });
     </script>
-    
+{% endif %}
+
+{% if not profile_user and not group %}
+<div id="avatar">
+  <div style="position:absolute;right:10px;top:10px;">
+    <a href="/react/">&rarr; Get the React button</a>
   </div>
+  <h2>All Reactions</h2>
+</div>
 {% endif %}

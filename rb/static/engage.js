@@ -275,9 +275,9 @@ function readrBoard($R){
                     // this section sets width.  I know, it's goofy.
                     var rindow_width = $rindow.width();
                     if ( !setWidth ) {
-                        var rdr_body_wrap_width = $rindow.find('div.rdr_body_wrap').width(),
+                        var rdr_contentSpace_width = $rindow.find('div.rdr_contentSpace').width(),
                             rdr_body_jspScrollable_width = $rindow.find('table.rdr_tags').width(),  // tag tables tend to be wider than what their containers claim they are, for some reason
-                            visible_content_pane_width = ( rdr_body_jspScrollable_width>rdr_body_wrap_width ) ? rdr_body_jspScrollable_width:rdr_body_wrap_width;
+                            visible_content_pane_width = ( rdr_body_jspScrollable_width>rdr_contentSpace_width ) ? rdr_body_jspScrollable_width:rdr_contentSpace_width;
                         var setWidth = ( visible_content_pane_width <= rindow_width ) ? rindow_width:visible_content_pane_width+8;
                     } else {
                         visiblePane.$elm.css('width', setWidth+'px' );
@@ -365,18 +365,18 @@ function readrBoard($R){
                                 $nextSteps.append( '<div class="rdr_reactionMessage">You have already given that reaction.</div>' );
                             }
 
-                            $nextSteps.append( '<div class="rdr_commentBox"><input type="text" class="rdr_add_comment" value="Add a comment"/></div>' );
+                            $nextSteps.append( '<div class="rdr_commentBox"><input type="text" class="rdr_add_comment" value="Comment or hashtag..."/></div>' );
 
                             // comment functionality
                             var $commentInput = $nextSteps.find('input.rdr_add_comment');
                             $commentInput.focus(function(){
                                 RDR.events.track('start_comment_sm::'+args.response.data.interaction.id);
-                                if( $(this).val() == 'Add a comment' ){
+                                if( $(this).val() == 'Comment or hashtag...' ){
                                     $(this).val('');
                                 }
                             }).blur(function(){
                                 if( $(this).val() === '' ){
-                                    $(this).val( 'Add a comment' );
+                                    $(this).val( 'Comment or hashtag...' );
                                 }
                             }).on('keyup', {args:args}, function(event) {
                                 var commentText = $commentInput.val();
@@ -401,7 +401,7 @@ function readrBoard($R){
                                         // $commentInput.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
                                     }
 
-                                    if ( commentText != "Add a comment" ) {
+                                    if ( commentText != "Comment or hashtag..." ) {
                                         //temp translations..
                                         //quick fix
                                         var summary = RDR.summaries[hash];
@@ -1785,7 +1785,6 @@ function readrBoard($R){
                 );
             },
             userLoginState: function() {
-                $.postMessage
                 if ( !$('#rdr-user').length ) {
                     $('#rdr-page-summary').find('div.rdr-summary').prepend('<div id="rdr-user" />');
                 }
@@ -2147,7 +2146,6 @@ function readrBoard($R){
                     function(e){
                         var message = $.evalJSON( e.data );
                         if ( message.status ) {
-
                             if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
@@ -2167,6 +2165,9 @@ function readrBoard($R){
 
                                 RDR.util.userLoginState();
 
+                            } else if ( message.status == "getUserLoginState" ) {
+                                RDR.util.userLoginState();
+                                $('#rdr_loginPanel').remove();
                             } else if ( message.status == "fb_user_needs_to_login" ) {
                                 if ( callbackFunction && args ) {
                                     RDR.session.showLoginPanel( args, callbackFunction );
@@ -2642,11 +2643,11 @@ function readrBoard($R){
                     // clear any errant tooltips
                     $('div.rdr_twtooltip').remove();
                     if ( !$mouse_target.parents().hasClass('rdr')) {
-                        if ( $('#rdr_loginPanel').length ) {
-                            RDR.session.getUser(function() {
-                                RDR.util.userLoginState();
-                            });
-                        }
+                        // if ( $('#rdr_loginPanel').length ) {
+                        //     RDR.session.getUser(function() {
+                        //         RDR.util.userLoginState();
+                        //     });
+                        // }
 
                         RDR.rindow.closeAll();
                         $('div.rdr_indicator_details_for_media').each( function() {
@@ -3659,14 +3660,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 response = args.response,
                                 tag = args.tag;
 
-
                             //clear loader
                             if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
-                            var interaction = response.data.interaction;
-                            var content_node = response.data.content_node;
-                            var content_id = content_node.id;
-                            var num_interactions = response.data.num_interactions;
+                            var interaction = response.data.interaction,
+                                content_node = (response.data.content_node) ? response.data.content_node:response.content_node_data,
+                                content_id = (content_node.id) ? content_node.id:"",
+                                num_interactions = response.data.num_interactions;
 
                             // $rindow.find('div.rdr_commentBox').html('Thank you for your comment. <br><br><strong>Reload the page to see your comment.</strong>').show();
 
@@ -5764,10 +5764,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             //add a margin to the publishers body
                             //- use existing in case their shit already depends on a margin
                             var $body = $('body');
-                            var existingmarging = parseInt($body.css('marginTop'), 10);
+                            var existingmargin = parseInt($body.css('marginTop'), 10);
                             RDR.util.cssSuperImportant( $body, {
-                               "margin-top": existingmarging + 40
+                               "margin-top": existingmargin + 40
                             });
+                            if ( $body.css('position') == "relative" ) {
+                                $body.addClass('rdr_heightAdjustment');
+                            }
                         }
                     }
 
@@ -5863,7 +5866,7 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv5" );
+    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv6" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
 
