@@ -217,7 +217,7 @@ function writeCard( interaction, showBlocked ) {
     var profilePic = hasProfilePic ? interaction.user_avatar : "{{ STATIC_URL }}site/images/anonymous-user.png";
     var $addedBy = $( '<div class="added_by">'
         + '<img src="{{ STATIC_URL }}site/images/blank.png" class="me_too" title="Add this to your profile"/>'
-        + '<a href="'+interaction.user_profile_link+'" rel="tooltip" title="'+interaction.user_name +'">'
+        + '<a href="'+interaction.user_profile_link+'" rel="tooltip" title="'+interaction.user_name +'" class="added_by_user">'
         + '<img src="'+profilePic+'" class="user_avatar" />'
         + '</a>'
         + '<div class="me_too_outcome" />'
@@ -306,6 +306,10 @@ $.each( interactions, function(idx, interaction) {
   $.each( interaction.comments, function(idx, comment) {
     writeComment( comment, interaction );
   });
+});
+
+$.each( metoos, function(interaction_id, count) {
+  $('#card_'+interaction_id).find('div.added_by').append('<span style="margin-left:5px;">and '+count+' more</span>');
 });
 
 var $container = $('#cards section');
