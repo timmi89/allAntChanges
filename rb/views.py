@@ -216,7 +216,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     except (EmptyPage, InvalidPage): current_page = interactions_paginator.page(interactions_paginator.num_pages)
       
     context['current_page'] = current_page
-    
+    len(current_page.object_list)
     child_interactions = Interaction.objects.filter(parent__in = current_page.object_list, kind='tag')
     
     context['child_interactions'] = {}
