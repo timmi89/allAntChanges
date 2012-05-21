@@ -123,6 +123,7 @@ var metoos = {
 
 
 <script>
+var zIndex = 400;
 function writeCard( interaction, showBlocked ) {
 
   if ( window.location.href.indexOf('/page/') != -1 ) {
@@ -146,15 +147,22 @@ function writeCard( interaction, showBlocked ) {
       if ( !$('div.card.pag_container').last().length || $('div.card.pag_container').last().find('div.card').length != 1 ) {
         // var $pag_container = $('div.card.pag_container').last();
       // } else {
-        $('#cards section').append('<div class="card pag_container" />');
+        $('#cards section').append('<div class="card pag_container" style="z-index:'+zIndex+'" />');
       }
     }
 
     // write the card first, then append the comment
-    var $card = $('<div class="card '+interaction.kind+'" id="card_'+interaction.id+'" />');
+    var $card = $('<div class="card '+interaction.kind+'" id="card_'+interaction.id+'" style="z-index:'+zIndex+'" />');
     var $header = $('<header/>').attr('title', interaction.interaction_node_body)
          .append('<h1><a href="/stream/?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></h1>')
          .append('<span class="count"></span>')
+
+    if ( interaction.moderator ) {
+        $header.append('<div class="block_content">'
+          + '<a href="javascript:void(0);" onclick="RB.admin.blockContent('+interaction.id+');" id="moderate_'+interaction.id+'">'
+          + (( interaction.approved ) ? 'Block':'Unblock')
+          + '</a></div>');
+    }
 
     var $content = ( interaction.kind != "pag" ) ? $('<div class="content"/>'):'';
     
@@ -208,21 +216,20 @@ function writeCard( interaction, showBlocked ) {
     var hasProfilePic =  interaction.user_avatar != "None" && interaction.user_avatar != "";
     var profilePic = hasProfilePic ? interaction.user_avatar : "{{ STATIC_URL }}site/images/anonymous-user.png";
     var $addedBy = $( '<div class="added_by">'
+        + '<img src="{{ STATIC_URL }}site/images/blank.png" class="me_too" title="Add this to your profile"/>'
         + '<a href="'+interaction.user_profile_link+'" rel="tooltip" title="'+interaction.user_name +'">'
-        + '<img src="'+profilePic+'" />'
+        + '<img src="'+profilePic+'" class="user_avatar" />'
         + '</a>'
+        + '<div class="me_too_outcome" />'
         + '</div>'
     );
-    
-    if ( interaction.moderator ) {
-        $addedBy.append('<div class="block_content">'
-          + '<a href="javascript:void(0);" onclick="RB.admin.blockContent('+interaction.id+');" id="moderate_'+interaction.id+'">'
-          + (( interaction.approved ) ? 'Block':'Unblock')
-          + '</a></div>');
-    }
 
+    $addedBy.find('img.me_too').click( function() {
+      RB.interactions.me_too( interaction.id );
+    });
 
     $card.append( $header, $content, $meta, $addedBy );
+    zIndex--;
 
     if ( interaction.kind == "pag" ) {
       var $pag_container = $('div.card.pag_container').last(),
@@ -234,11 +241,18 @@ function writeCard( interaction, showBlocked ) {
 
       $pag_cards = $pag_container.find('div.card');
       var pag_card_height = 0;
+
       $pag_cards.each( function() {
         var this_card_height = $(this).height();
         pag_card_height = ( this_card_height > pag_card_height ) ? this_card_height:pag_card_height;
       });
-      $pag_cards.each( function() { $(this).height( pag_card_height ).addClass('heightAdjusted'); });
+
+      $pag_cards.each( function() { 
+        var this_card_height = $(this).height();
+        if ( this_card_height < pag_card_height ) {
+          $(this).css( 'min-height', pag_card_height ).addClass('heightAdjusted').find('div.added_by').css('margin-top', (pag_card_height - this_card_height + 5) );
+        }
+      });
 
     } else {
       $('#cards section').append( $card );
@@ -295,7 +309,8 @@ $.each( interactions, function(idx, interaction) {
 });
 
 var $container = $('#cards section');
-$container.imagesLoaded(function(){
+// $container.imagesLoaded(function(){
+$(document).ready(function(){
   $container.masonry({
       // options
       itemSelector : 'div.card.pag_container,div.card.img,div.card.txt,div.card.med',
@@ -306,7 +321,7 @@ $container.imagesLoaded(function(){
       }
   });
   $container.tooltip({
-    selector: "div.content_type, .added_by a"
+    selector: "div.content_type, .added_by a, .added_by img.me_too"
   });
 });
 </script>

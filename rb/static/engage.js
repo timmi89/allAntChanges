@@ -424,7 +424,7 @@ function readrBoard($R){
                             // $nextSteps.append( '<hr class="rdr_second"/>' );
                             $nextSteps.append( '<hr class="rdr_first"/>' );
                             $nextSteps.append( '<div class="rdr_share_social"><strong>Share It:</strong></div>' );
-                            $shareLinks = $('<ul class="shareLinks"></ul>'),
+                            var $shareLinks = $('<ul class="shareLinks"></ul>'),
                             // sns sharing links
                             socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
 
@@ -5317,7 +5317,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 var content = args.content_node_info.content,
                     share_url = "",
                     contentStr = "",
-                    content_length = 100;
+                    content_length = 300;
 
                 switch (args.sns) {
                     case "facebook":
@@ -5329,7 +5329,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         switch ( args.container_kind ) {
                             case "txt":
                             case "text":
-                                content_length = 100;
+                                content_length = 300;
                                 contentStr = _shortenContentIfNeeded(content, content_length, true);
                                 mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
                             break;
@@ -5377,7 +5377,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         switch ( args.container_kind ) {
                             case "txt":
                             case "text":
-                                content_length = ( 90 - args.reaction.length );
+                                content_length = ( 100 - args.reaction.length );
                                 contentStr = _shortenContentIfNeeded(content, content_length, true);
                                 mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
                             break;
