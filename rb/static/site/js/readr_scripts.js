@@ -282,7 +282,16 @@ RB = {
                         $('#following_count').html( "<strong>"+response.data.follows_count + "</strong> following" );
                     }
 
-                    $('#follower_list').html('people im following');
+                    var $following_html = $('<div><h2>'+$('#avatar h2').text().trim()+' is following:</h2></div>'),
+                        $ul = $('<ul/>');
+                    $.each( response.data.paginated_follows, function(idx, following) {
+                        if ( typeof following.social_usr != "undefined" ) {
+                            $ul.append('<li><div class="follow_type">Person</div><a href="/user/'+following.social_usr.user+'/"><img style="margin-bottom:-15px;" src="'+following.social_usr.img_url+'" /> '+following.social_usr.full_name+'</a></li>');
+                        } else if ( typeof following.grp != "undefined" ) {
+                            $ul.append('<li><div class="follow_type">Website</div><a href="/group/'+following.grp.short_name+'/">'+following.grp.short_name+'</a></li>');
+                        }
+                    });
+                    $('#following_list').html( $following_html.append($ul) );
                 }
             });
         },
@@ -322,7 +331,13 @@ RB = {
                             RB.follow.add( id, type );
                         });
                     }
-                    $('#following_list').html('<h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1><h1>people following me</h1>');
+
+                    var $follower_html = $('<div><h2>Following '+$('#avatar h2').text().trim()+':</h2></div>'),
+                        $ul = $('<ul/>');
+                    $.each( response.data.paginated_follows, function(idx, following) {
+                        $ul.append('<li><a href="/user/'+following.social_usr.user+'/"><img style="margin-bottom:-15px;" src="'+following.social_usr.img_url+'" /> '+following.social_usr.full_name+'</a></li>');
+                    });
+                    $('#follower_list').html( $follower_html.append($ul) );
                 }
             });
         }

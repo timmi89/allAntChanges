@@ -803,6 +803,10 @@ section[role="complementary"] #user_data label {
 #sidebar ul[role="filters"] li.active   {xxfont-weight:bold; color:#008be4; border:1px solid #bababa; border-left:0; border-right:0;}
 #sidebar #follow_info { position:absolute; right:10px; top:10px; }
 #sidebar #follow_info strong { font-size:16px; }
+.follow_list h2       { font-size:24px;font-family:Helvetica, 'HelveticaRegular',Arial;font-weight:bold; }
+.follow_list li       { padding:2px; }
+.follow_list li:hover { background:#eee; }
+.follow_list li div.follow_type       { float:right;font-size:10px;color:#999;font-style:italic; }
 #sidebar #which_content { position:absolute; left:10px; top:10px; }
 
 /*#sidebar #user_data h3 {xxfont-size:30px; font-weight: bold; xxpadding-bottom:10px; xxpadding-left:10px}
