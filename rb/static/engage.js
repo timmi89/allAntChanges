@@ -296,7 +296,6 @@ function readrBoard($R){
             updateTagMessage: function(args) {
                 //RDR.rindow.updateTagMessage
                 // used for updating the message in the rindow that follows a reaction
-
                 if ( args.scenario && args.rindow ) {
                     // ugly as hell.  rewrite time.
                     if ( args.args ) {
@@ -1266,7 +1265,6 @@ function readrBoard($R){
 
                 function _addComIndicator($rindow, diffNode){
                     var $tags, $tag;
-
                     $tags = $rindow.find('.rdr_tags');
 
                     //todo: we also need the contentnode id to make this unique
@@ -3602,6 +3600,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     }
 
                                     args.scenario = ( args.response.data.existing ) ? "reactionExists": ( args.response.data.deleted_interaction ) ? "tagDeleted":"reactionSuccess";
+                                    if ( typeof args.tag.id == "undefined" ) {
+                                        args.tag.id = response.data.interaction.interaction_node.id;
+                                    }
+
                                     RDR.actions.interactions[int_type].onSuccess[action_type](args);
                                 }else{
                                     if ( int_type == "react" ) {
@@ -3947,6 +3949,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 }
 
                                 // update the rindow to reflect success
+
                                 RDR.rindow.updateTagMessage( args );
 
                                 //temp tie-over
@@ -4910,7 +4913,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                         //now update the page.
                             //not working yet.  Page reads from a different kind of summary.
-                        //RDR.actions.summaries.update( 'pageSummary' );
+                        //RDR.actions.summaries. update( 'pageSummary' );
                     }
 
                     function _updatePage(hash, diffNode){
@@ -5142,7 +5145,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     if( !$.isArray(comments) ){
                         comments = [].push(comments);
                     }
-
 
                     $.each(comments, function(idx, com){
                          if ( com.tag_id == tag.id ) {
