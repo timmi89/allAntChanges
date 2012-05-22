@@ -69,7 +69,7 @@ function readrBoard($R){
                 img_selector: "img",
                 anno_whitelist: "body p",
                 media_selector: "embed, video, object, iframe",
-                iframe_whitelist: ["youtube.com","hulu.com","funnyordie.com","vimeo.com","mtvnservices.com"],
+                iframe_whitelist: ["youtube.com","hulu.com","funnyordie.com","vimeo.com","mtvnservices.com","dailycandy.com"],
                 comment_length: 300,
                 initial_pin_limit: 30,
                 no_readr: "",
@@ -3021,6 +3021,8 @@ function readrBoard($R){
                         //RDR.actions.containers.media.onEngage:
                         // action to be run when media container is engaged - typically with a click on the indicator
 
+                        RDR.actions.indicators.utils.updateContainerTrackers();
+                        
                         var $this = $('img.rdr-'+hash+', iframe.rdr-'+hash+',embed.rdr-'+hash+',video.rdr-'+hash+',object.rdr-'+hash+'').eq(0),
                             $indicator = $('#rdr_indicator_'+hash),
                             $indicator_details = $('#rdr_indicator_details_'+hash);
