@@ -2679,8 +2679,8 @@ function readrBoard($R){
                 // todo: this is a pretty wide hackey net - rethink later.
                 var imgBlackList = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? ':not('+RDR.group.img_blacklist+')':'';
                 $('body').on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackList, function(){
+                    RDR.actions.indicators.utils.updateContainerTrackers();
                     var $this = $(this);
-
                     // only do whitelisted iframe src domains
                     if ( $this.get(0).tagName.toLowerCase() == "iframe" ) {
                         var dontEngage = true;
@@ -3021,8 +3021,6 @@ function readrBoard($R){
                         //RDR.actions.containers.media.onEngage:
                         // action to be run when media container is engaged - typically with a click on the indicator
 
-                        RDR.actions.indicators.utils.updateContainerTrackers();
-                        
                         var $this = $('img.rdr-'+hash+', iframe.rdr-'+hash+',embed.rdr-'+hash+',video.rdr-'+hash+',object.rdr-'+hash+'').eq(0),
                             $indicator = $('#rdr_indicator_'+hash),
                             $indicator_details = $('#rdr_indicator_details_'+hash);
