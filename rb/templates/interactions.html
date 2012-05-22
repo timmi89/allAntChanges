@@ -213,10 +213,11 @@ function writeCard( interaction, showBlocked ) {
                 + '<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank">'+interaction.page_title+'</a>'
               + '</div>');
     
-    var hasProfilePic =  interaction.user_avatar != "None" && interaction.user_avatar != "";
-    var profilePic = hasProfilePic ? interaction.user_avatar : "{{ STATIC_URL }}site/images/anonymous-user.png";
+    var hasProfilePic =  interaction.user_avatar != "None" && interaction.user_avatar != "",
+        profilePic = hasProfilePic ? interaction.user_avatar : "{{ STATIC_URL }}site/images/anonymous-user.png";
+        plus_one_tooltip = ( $.cookie('rdr_session') ) ? "Add this to your profile":"Log in to add this to your profile";
     var $addedBy = $( '<div class="added_by">'
-        + '<img src="{{ STATIC_URL }}site/images/blank.png" class="me_too" title="Add this to your profile"/>'
+        + '<img src="{{ STATIC_URL }}site/images/blank.png" class="me_too" title="'+plus_one_tooltip+'"/>'
         + '<a href="'+interaction.user_profile_link+'" rel="tooltip" title="'+interaction.user_name +'" class="added_by_user">'
         + '<img src="'+profilePic+'" class="user_avatar" />'
         + '</a>'
@@ -224,9 +225,11 @@ function writeCard( interaction, showBlocked ) {
         + '</div>'
     );
 
-    $addedBy.find('img.me_too').click( function() {
-      RB.interactions.me_too( interaction.id );
-    });
+    if ( $.cookie('rdr_session') ) {
+      $addedBy.find('img.me_too').click( function() {
+        RB.interactions.me_too( interaction.id );
+      });
+    }
 
     $card.append( $header, $content, $meta, $addedBy );
     zIndex--;

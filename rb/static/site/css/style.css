@@ -546,6 +546,24 @@ section[role="main"] 	{
 }
 /* End Tyler's Crap */
 
+#splashAnnounce {
+    border-bottom:1px dashed #ccc;
+    bottom:0;
+    color:#888;
+    margin:0 0 15px 0;
+    padding:25px 0;
+    text-align:center;
+}
+#splashAnnounce h3{
+  font-family:Arial;
+  font-size:20px;
+  font-weight:bold;
+}
+#splashAnnounce h3 span{
+  color:#26465A;
+}
+
+
 #cards { padding-top:5px; }
 section[role="main"] div.card { xxborder:1px solid #ddd; width:300px; padding:0; xxfloat:left; xxmargin-left:5px; xxmargin-right:5px; margin-bottom:16px;background:#fff;box-shadow:0px 0px 4px #bbb;}
 section[role="main"] div.card.pag { width:142px; padding:0; margin-bottom:16px; background:#fff; box-shadow:0px 0px 4px #bbb; position:relative !important; float:left; margin-bottom:0; }
