@@ -1,3 +1,10 @@
+var RDR_offline = !!(
+    document.domain == "local.readrboard.com" //shouldn't need this line anymore
+),
+RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com",
+RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/",
+RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
+
 var RB = RB ? RB : {};
 
 RB = {
@@ -281,10 +288,20 @@ RB = {
                     if ( typeof response.data.follows_count != "undefined" ) {
                         $('#following_count').html( "<strong>"+response.data.follows_count + "</strong> following" );
                     }
+
+                    var $following_html = $('<div><h2>'+$('#avatar h2').text().trim()+' is following:</h2></div>'),
+                        $ul = $('<ul/>');
+                    $.each( response.data.paginated_follows, function(idx, following) {
+                        if ( typeof following.social_usr != "undefined" ) {
+                            $ul.append('<li><div class="follow_type">Person</div><a href="/user/'+following.social_usr.user+'/"><img style="margin-bottom:-15px;" src="'+following.social_usr.img_url+'" /> '+following.social_usr.full_name+'</a></li>');
+                        } else if ( typeof following.grp != "undefined" ) {
+                            $ul.append('<li><div class="follow_type">Website</div><a href="/group/'+following.grp.short_name+'/">'+following.grp.short_name+'</a></li>');
+                        }
+                    });
+                    $('#following_list').html( $following_html.append($ul) );
                 }
             });
         },
-
         followers : function(id, type) {
             // RB.follow.followers
             // who follows this thing
@@ -320,8 +337,270 @@ RB = {
                             RB.follow.add( id, type );
                         });
                     }
+
+                    var $follower_html = $('<div><h2>Following '+$('#avatar h2').text().trim()+':</h2></div>'),
+                        $ul = $('<ul/>');
+                    $.each( response.data.paginated_follows, function(idx, following) {
+                        $ul.append('<li><a href="/user/'+following.social_usr.user+'/"><img style="margin-bottom:-15px;" src="'+following.social_usr.img_url+'" /> '+following.social_usr.full_name+'</a></li>');
+                    });
+                    $('#follower_list').html( $follower_html.append($ul) );
                 }
             });
         }
-    }   
+    },
+    interactions : {
+        me_too : function(parent_id) {
+            // RB.interactions.me_too
+            var sendData = {"parent_id":parent_id};
+            
+            $.ajax({
+                beforeSend: function( xhr ) {
+                    xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
+                },
+                url: "/api/metoo/",
+                type: "post",
+                data: {
+                    json: $.toJSON( sendData )
+                },
+                success: function(response) {
+                    if (response.status == "success" ) {
+                        var $card = $('#card_'+parent_id),
+                            $outcome = $card.find('div.me_too_outcome');
+
+                        if (response.data.existing == true ) {
+                            var $successMessage = $('<div><em>You have already added this to your profile.</em></div>');
+                        } else {
+                            var $successMessage = $('<div><em>Success! You have added this to <a href="/user/'+$.cookie('user_id')+'">your profile</a>.</em></div>');
+                        }
+
+                        var $shareLinks = $('<div style="overflow:auto;"><strong style="display:block;float:left;margin:5px 5px 0 0;">Share It:</strong> <ul class="shareLinks"></ul>'),
+                            socialNetworks = ["facebook","twitter", "tumblr"],
+                            kind = ( $card.hasClass('txt') ) ? "txt":($card.hasClass('img')) ? "img":"med",
+                            content = "";
+
+                        if ( kind=="txt") {
+                            content = $card.find('div.content_body').text();
+                        } else if ( kind=="img") {
+                            content = $card.find('div.content_body img').attr('src');
+                        } else if ( kind=="med") {
+                            content = $card.find('div.content_body iframe').attr('src');
+                        }
+
+                        var groupName = ($card.find('div.publisher img').length ) ? $card.find('div.publisher img').attr('alt'):$card.find('div.publisher a').text()
+
+                        $.each(socialNetworks, function(idx, val){
+                            $shareLinks.find('ul').append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                            $shareLinks.find('li:last').click( function() {
+                                RB.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
+                                RB.interactions.share(val, kind, parent_id, $card.find('header').attr('title'), groupName, content)
+                                // RDR.actions.share_getLink({ hash:args.hash, kind:args.kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node }); // ugh, lots of weird data nesting
+                                return false;
+                            });
+                        });
+
+                        var $close = $('<div style="font-size:11px;text-align:right;"><a href="javascript:void(0);">Close</a>');
+                        $close.find('a').click( function() {
+                            $('#card_'+parent_id).find('div.me_too_outcome').hide(333);
+                        });
+
+                        $successMessage.append( $shareLinks, $close );
+                        $outcome.html( $successMessage );
+                        $outcome.show(333);
+                    }
+                }
+            });
+        },
+        share : function(sns, kind, interaction_id, interaction_body, groupName, content) {
+            // RB.interactions.share
+
+            var content = content,
+                share_url = "",
+                contentStr = "",
+                content_length = 300,
+                short_url = RDR_baseUrl + '/i/' + interaction_id;
+
+            switch (sns) {
+
+                case "facebook":
+                    var imageQueryP = "";
+                    var videoQueryP = ""; //cant get one of these to work yet without overwriting the rest of the stuff
+                    var mainShareText = "";
+                    var footerShareText = "A ReadrBoard Reaction on " + groupName;
+
+                    switch ( kind ) {
+                        case "txt":
+                        case "text":
+                            content_length = 300;
+                            contentStr = _shortenContentIfNeeded(content, content_length, true);
+                            mainShareText = _wrapTag(interaction_body) +" "+ contentStr;
+                        break;
+
+                        case "img":
+                        case "image":
+                            contentStr = "See picture";
+
+                            //for testing offline
+                            if(RDR_offline){
+                                content = content.replace("local.readrboard.com:8080", "www.readrboard.com");
+                                content = content.replace("localhost:8080", "www.readrboard.com");
+                            }
+                            
+                            imageQueryP = '&p[images][0]='+encodeURI(content);
+                            mainShareText = _wrapTag(interaction_body, false, true) +" "+ contentStr;
+                        break;
+
+                        case "media":
+                        case "med":
+                        case "video":
+                            contentStr = "See video";
+                            mainShareText = _wrapTag(interaction_body, false, true) +" "+ contentStr;
+                        break;
+                    }
+
+                    share_url = 'http://www.facebook.com/sharer.php?s=100' +
+                                    '&p[title]='+encodeURI( mainShareText )+
+                                    '&p[url]='+short_url+
+                                    '&p[summary]='+encodeURI(footerShareText)+
+                                    //these will just be "" if not relevant
+                                    imageQueryP+
+                                    videoQueryP;
+
+                //&p[images][0]=<?php echo $image;?>', 'sharer',
+                //window.open('http://www.facebook.com/sharer.php?s=100&amp;p[title]=<?php echo $title;?>&amp;p[summary]=<?php echo $summary;?>&amp;p[url]=<?php echo $url; ?>&amp;&p[images][0]=<?php echo $image;?>', 'sharer', 'toolbar=0,status=0,width=626,height=436');
+                break;
+
+                case "twitter":
+                    
+                    var mainShareText = "";
+                    var footerShareText = "A ReadrBoard Reaction on " + groupName;
+                    // var twitter_acct = ( RDR.group.twitter ) ? '&via='+RDR.group.twitter : '';
+                
+                    switch ( kind ) {
+                        case "txt":
+                        case "text":
+                            content_length = ( 100 - interaction_body.length );
+                            contentStr = _shortenContentIfNeeded(content, content_length, true);
+                            mainShareText = _wrapTag(interaction_body) +" "+ contentStr;
+                        break;
+
+                        case "img":
+                        case "image":
+                            contentStr = "See image";
+                            mainShareText = _wrapTag(interaction_body, false, true) +" "+ contentStr;
+                        break;
+
+                        case "media":
+                        case "med":
+                        case "video":
+                            contentStr = "See video";
+                            mainShareText = _wrapTag(interaction_body, false, true) +" "+ contentStr;
+                        break;
+                    }
+
+                    share_url = 'http://twitter.com/intent/tweet?'+
+                            'url='+short_url+
+                            // twitter_acct+
+                            '&text='+encodeURI(mainShareText);
+                break;
+
+                case "tumblr":
+                    
+                    var mainShareText = "";
+
+                    switch ( kind ) {
+                        case "txt":
+                        case "text":
+                            //tumblr adds quotes for us - don't pass true to quote it.
+                            var footerShareText = _wrapTag(interaction_body, true, true) +
+                                "See quote on " +
+                                '<a href="'+short_url+'">'+groupName+'</a>';
+
+                            contentStr = _shortenContentIfNeeded(content, content_length);
+                            share_url = 'http://www.tumblr.com/share/quote?'+
+                            'quote='+encodeURIComponent(contentStr)+
+                            '&source='+encodeURIComponent(footerShareText);
+
+                        break;
+
+                        case "img":
+                        case "image":
+                                                        //for testing offline
+                            if(RDR_offline){
+                                content = content.replace("local.readrboard.com:8080", "www.readrboard.com");
+                                content = content.replace("localhost:8080", "www.readrboard.com");
+                            }
+
+                            mainShareText = _wrapTag(interaction_body, true, true);
+
+                            var footerShareText = 'See picture on <a href="'+short_url+'">'+ groupName +'</a>';
+
+                            share_url = 'http://www.tumblr.com/share/photo?'+
+                                'source='+encodeURIComponent(content)+
+                                '&caption='+encodeURIComponent(mainShareText + footerShareText )+
+                                '&click_thru='+encodeURIComponent(short_url);
+                        break;
+
+                        case "media":
+                        case "med":
+                        case "video":
+                            //todo: - I haven't gone back to try this yet...
+
+                            //note that the &u= doesnt work here - gives a tumblr page saying "update bookmarklet"
+                            var iframeString = '<iframe src=" '+content+' "></iframe>';
+
+                            mainShareText = _wrapTag(interaction_body, true, true);
+
+                            var footerShareText = 'See video on <a href="'+short_url+'">'+ groupName +'</a>';
+
+                            //todo: get the urlencode right and put the link back in
+                            var readrLink = mainShareText + footerShareText;
+                            share_url = 'http://www.tumblr.com/share/video?&embed='+encodeURIComponent( iframeString )+'&caption='+encodeURIComponent( readrLink );
+                        break;
+                    }
+                break;
+            }
+
+            if ( share_url !== "" ) {
+                if ( RB.shareWindow ) {
+                    RB.shareWindow.location = share_url;
+                }
+            }
+
+            function _getGroupName(){
+                //consider using RDR.group.name
+                //todo: make this smarter - check for www. only in start of domain
+                return (document.domain).replace('www.', " ")
+            }
+            
+            function _wrapTag(tag, doHTMLEscape, isActionNotContent){
+                
+                var connectorSign = isActionNotContent ?
+                        //use pipe
+                        doHTMLEscape ? 
+                            "&#124;" :
+                            "|"
+                    :
+                        //use >>
+                        doHTMLEscape ? 
+                            "&gt;&gt;" :
+                            ">>"
+                    ;
+
+
+                return doHTMLEscape ?
+                    "&#91;&nbsp;"  + tag + "&nbsp;&#93;&nbsp;&nbsp;"+connectorSign+"&nbsp;" : //[ tag ]  >>
+                    "[ "  + tag + " ]  "+connectorSign+" " ;
+            }
+
+            function _shortenContentIfNeeded(content, content_length, addQuotes){
+                var ext = '...';
+                var safeLength = content_length - ext.length;
+                var str = ( content.length <= content_length ) ?
+                    content :
+                    content.substr(0, safeLength) + ext;
+                str = addQuotes ? ( '"' + str + '"' ) : str;
+                return str;
+            }
+        }
+    }
 };

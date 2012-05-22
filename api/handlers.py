@@ -251,7 +251,7 @@ class MeTooHandler(AnonymousBaseHandler):
         if parent_id is not None:
             try:
                 parent = Interaction.objects.get(id = parent_id)
-                interaction = createInteraction(parent.page, parent.container, parent.content, owner, parent.kind, parent.interaction_node, page.site.group, parent)
+                interaction = createInteraction(parent.page, parent.container, parent.content, owner, parent.kind, parent.interaction_node, parent.page.site.group, parent)
             except Interaction.DoesNotExist:
                 return {'message' : 'no such interaction for metoo'}
         return interaction

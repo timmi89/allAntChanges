@@ -3,7 +3,7 @@
 {% if group %}
 <div id="avatar">
   <div id="follow_info">
-    <span id="follower_count"></span> &bull; <a id="follow_action" href="javascript:void(0);"></a>
+    <a id="follower_count" href="#follower_list" class="fancybox"></a> &bull; <a id="follow_action" href="javascript:void(0);"></a>
   </div>
   {% if group.logo_url_lg %}<img src="{{ group.logo_url_lg }}" />{% endif %}
 	{% if not group.logo_url_lg %}<h2>{{ group.name }}</h2>{% endif %}
@@ -22,9 +22,9 @@ $(document).ready( function() {
     <div id="which_content">
       {% if on_follow_page %}<a href="/user/{{profile_user.id}}">My Activity</a>{% else %}<strong>My Activity</strong>{% endif %} &bull; {% if not on_follow_page %}<a href="/follows/{{profile_user.id}}">Activity I Follow</a>{% else %}<strong>Activity I Follow</strong>{% endif %}
     </div>
-    {% if not on_follow_page %}
+
     <div id="follow_info">
-      <span id="follower_count"></span> &bull; <span id="following_count"></span> {% if cookie_user and profile_user.id != cookie_user.id %}&bull; <a id="follow_action" href="javascript:void(0);"></a>{% endif %}
+      <a id="follower_count" href="#follower_list" class="fancybox"></a> &bull; <a id="following_count" href="#following_list" class="fancybox"></a> {% if cookie_user and profile_user.id != cookie_user.id %}&bull; <a id="follow_action" href="javascript:void(0);"></a>{% endif %}
     </div>
     <script>
     $(document).ready( function() {
@@ -32,7 +32,7 @@ $(document).ready( function() {
       RB.follow.following({{ profile_user.id }},1);
     });
     </script>
-    {% endif %}
+
     <h2>{% if profile_user.social_user.img_url and profile_user.social_user.img_url != "None" %}<img src="{{ profile_user.social_user.img_url }}?type=small">{% endif %} {{ profile_user.social_user.full_name }}</h2>
     </div>
 {% endif %}
@@ -45,3 +45,23 @@ $(document).ready( function() {
   <h2>All Reactions</h2>
 </div>
 {% endif %}
+
+<script>
+$("a.fancybox").fancybox({
+  wrapCSS    : 'fancybox-custom',
+  helpers : {
+    title : {
+      type : 'inside'
+    },
+    overlay : {
+      css : {
+        'background-color' : '#eee'
+      }
+    }
+  }
+});
+</script>
+<div class="follow_list" id="follower_list" style="display:none;width:500px;"></div>
+<div class="follow_list" id="following_list" style="display:none;width:500px;"></div>
+
+

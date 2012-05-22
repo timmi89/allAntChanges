@@ -546,6 +546,24 @@ section[role="main"] 	{
 }
 /* End Tyler's Crap */
 
+#splashAnnounce {
+    border-bottom:1px dashed #ccc;
+    bottom:0;
+    color:#888;
+    margin:0 0 15px 0;
+    padding:25px 0;
+    text-align:center;
+}
+#splashAnnounce h3{
+  font-family:Arial;
+  font-size:20px;
+  font-weight:bold;
+}
+#splashAnnounce h3 span{
+  color:#26465A;
+}
+
+
 #cards { padding-top:5px; }
 section[role="main"] div.card { xxborder:1px solid #ddd; width:300px; padding:0; xxfloat:left; xxmargin-left:5px; xxmargin-right:5px; margin-bottom:16px;background:#fff;box-shadow:0px 0px 4px #bbb;}
 section[role="main"] div.card.pag { width:142px; padding:0; margin-bottom:16px; background:#fff; box-shadow:0px 0px 4px #bbb; position:relative !important; float:left; margin-bottom:0; }
@@ -571,7 +589,7 @@ section[role="main"] div.card div.date {
 }
 
 section[role="main"] div.card.pag div.date        { float:none; }
-section[role="main"] div.card div.block_content   { font-size:11px; display:none; position:absolute; right:10px; white-space:pre; bottom:3px;}
+section[role="main"] div.card div.block_content   { font-size:11px; display:none; position:absolute; right:10px; white-space:pre; top:5px;}
 section[role="main"] div.card:hover div.block_content   { display:block; }
 section[role="main"] div.card div.block_content a { color:red; }
 
@@ -615,9 +633,17 @@ section[role="main"] div.meta div.favicon { position: absolute; bottom: 0; left:
 
 
 section[role="main"] div.card div.added_by      { background:#eee; padding:5px; font-size:11px; text-align:left;}
-section[role="main"] div.card.pag.heightAdjusted div.added_by      { position:absolute; bottom:0; width:100%; }
-section[role="main"] div.card div.added_by img  { display: inline-block; margin-bottom:-5px; width:18px; }
-section[role="main"] .user_profile div.card div.added_by      { display:none; }
+section[role="main"] div.card.pag.heightAdjusted div.added_by      { xposition:relative; width:100%; }
+section[role="main"] div.card div.added_by img.user_avatar  { display: inline-block; margin-bottom:-5px; width:20px; }
+section[role="main"] div.card div.added_by img.me_too  { width:25px;height:24px;background:url(../images/me_too.png) -25px 0px no-repeat;display:block;float:right;cursor:pointer;margin-top:-2px;}
+section[role="main"] div.card div.added_by img.me_too:hover   { background-position: 0px 0px; }
+section[role="main"] div.card div.added_by div.me_too_outcome { display:none;border-top:1px solid #aaa;padding:3px;margin-top:6px;}
+
+section[role="main"] div.card div.added_by em { display:block; }
+section[role="main"] div.card div.added_by ul.shareLinks { display: block !important; margin: 2px 0 0 !important; top: 0 !important; padding: 0 !important; float:left !important; }
+section[role="main"] div.card div.added_by ul.shareLinks li        {padding:0px 2px !important; display:inline-block !important; list-style:none !important;}
+section[role="main"] div.card div.added_by ul.shareLinks img       {width:18px !important; margin:0 !important;}
+
 
 section[role="main"] div.card.txt div.content           { xxborder-top: 1px solid #fff; margin:0; position:relative;z-index:2;}
 /*section[role="main"] div.card.txt div.content div.content_body    { font-size:20px; font-weight:normal; font-family:Helvetica, 'HelveticaBold', Arial, sans-serif; font-style:italic; xxbackground:#f0f0f0; padding:10px; background:url("../images/noise.png") repeat scroll 0 0 #f2f2f2; }*/
@@ -740,7 +766,7 @@ section[role="complementary"] {
     padding:0;
     background:#fff;
     box-shadow:0 0 10px #888;
-    z-index:10;
+    z-index:500;
 }
 
 /*section[role="complementary"] #user_data {
@@ -803,6 +829,10 @@ section[role="complementary"] #user_data label {
 #sidebar ul[role="filters"] li.active   {xxfont-weight:bold; color:#008be4; border:1px solid #bababa; border-left:0; border-right:0;}
 #sidebar #follow_info { position:absolute; right:10px; top:10px; }
 #sidebar #follow_info strong { font-size:16px; }
+.follow_list h2       { font-size:24px;font-family:Helvetica, 'HelveticaRegular',Arial;font-weight:bold; }
+.follow_list li       { padding:2px; }
+.follow_list li:hover { background:#eee; }
+.follow_list li div.follow_type       { float:right;font-size:10px;color:#999;font-style:italic; }
 #sidebar #which_content { position:absolute; left:10px; top:10px; }
 
 /*#sidebar #user_data h3 {xxfont-size:30px; font-weight: bold; xxpadding-bottom:10px; xxpadding-left:10px}
@@ -864,7 +894,7 @@ body div.simpleMessage{
 }
 
 /* analytics dashboard */
-section[role="group panel header"] 			{ width:100%; background:#7f7f7f; color:#eee; overflow:auto; box-shadow:0px -10px 9px -9px #454545 inset; position:fixed; bottom:0; z-index:10; }
+section[role="group panel header"] 			{ width:100%; background:#7f7f7f; color:#eee; overflow:auto; box-shadow:0px -10px 9px -9px #454545 inset; position:fixed; bottom:0; z-index:450; }
 section[role="group panel header"] h3			{ float:left; overflow:auto; padding:5px; margin:0; font-size:12px; font-weight:bold; background: none repeat scroll 0 0 #638296; box-shadow: 0 -10px 9px -9px #454545 inset; }
 
 section[role="group links"] 		{ padding:4px; font-size:12px; float:left; border-left:1px solid #ddd; text-shadow:1px 1px 2px #454545;}
