@@ -178,7 +178,7 @@ function writeCard( interaction, showBlocked ) {
 
       $content.append('<div class="content_body"><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><iframe width="418" height="244" frameborder="0" src="'+videoUrl+'"></iframe></a></div><div class="comments" />');
     } else if ( interaction.kind == "txt" ) {
-      $content.append('<div class="content_body"><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank">'+interaction.content_body+'</a></div><div class="comments" />');
+      $content.append('<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><div class="content_body"><span>'+interaction.content_body+'</span></div></a><div class="comments" />');
     }
 
     var $meta = $('<div class="meta"/>'),
