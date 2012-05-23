@@ -1265,11 +1265,20 @@ div.rdr_indicator_for_media_inline div.rdr_indicator_body {
     position:absolute !important;
     top:0 !important;
     left:0 !important;
-    z-index:12000 !important;
+    z-index:10500 !important;
+    display: none !important; /*to be overridden below*/
 }
 /*the only divs here will be the border elements*/
 #rdr_sandbox div.rdr_media_border_wrap div{
     position:absolute !important;
+}
+
+#rdr_sandbox div.rdr_media_border_wrap.engaged{
+    /*uncomment to turn on media hilites*/    
+    /*
+    display: block !important;
+    */
+    
 }
 
 #rdr_sandbox div.rdr_mediaHilite_top{
