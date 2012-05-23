@@ -217,7 +217,10 @@ class TagHandler(InteractionHandler):
         tag_id = data['tag'].get('id', None)
         location = content_node_data.get('location', None)
 
-        content = Content.objects.get_or_create(kind=content_type, body=content_node_data['body'], location=location)[0]
+        if content_node_data.get('id'):
+            content = Content.objects.get(id = content_node_data['id'])
+        else:
+            content = Content.objects.get_or_create(kind=content_type, body=content_node_data['body'], location=location)[0]
 
         inode = createInteractionNode(tag_id, tag_body, group)
 
@@ -279,7 +282,10 @@ class ShareHandler(InteractionHandler):
         parent = None
 
         # Get or create content
-        content = Content.objects.get_or_create(kind=content_type, body=content_node_data['body'], location=location)[0]
+        if content_node_data.get('id'):
+            content = Content.objects.get(id = content_node_data['id'])
+        else:
+            content = Content.objects.get_or_create(kind=content_type, body=content_node_data['body'], location=location)[0]
         
         inode = createInteractionNode(tag_id, tag_body, group)
 
