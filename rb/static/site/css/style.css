@@ -600,9 +600,10 @@ section[role="main"] div.card div.meta div.publisher img	{ max-width:80px; max-h
 section[role="main"] div.card div.meta div.title      { }
 section[role="main"] div.card div.meta div.title a    { color:#999; }
 section[role="main"] div.card div.meta div.title a.external_link    {  display: block;float: right;font-size: 20px;margin-left: 10px; }
-section[role="main"] div.card div.meta div.content_type   { margin:5px 5px 0 5px; xxbackground:url(../images/type_text.png) top left no-repeat; xxtext-indent:-9999px; float:left; }
+section[role="main"] div.card div.meta div.content_type   { margin:0 0 0 8px; xxbackground:url(../images/type_text.png) top left no-repeat; xxtext-indent:-9999px; float:left; }
 section[role="main"] div.card.img div.meta div.content_type,
 section[role="main"] div.card.med div.meta div.content_type { margin:0px 8px 0 2px; }
+section[role="main"] div.card.txt div.meta div.content_type { margin:3px 0 0 5px;}
 
 
 
@@ -611,7 +612,7 @@ section[role="main"] div.metaRight { float: left; width: 265px; overflow:hidden;
 
 section[role="main"] div.metaRight div.publisher { width: 190px;}
 
-section[role="main"] div.card.pag_container div.meta { z-index: 5; overflow: visible; margin: 5px 0;}
+section[role="main"] div.card.pag_container div.meta { z-index: 5; overflow: visible; margin: 8px 0;}
 section[role="main"] div.card.pag_container div.metaLeft { float: left; width: 40px;}
 section[role="main"] div.card.pag_container div.metaLeft .pageIcon { position: absolute;}
 section[role="main"] div.card.pag_container div.metaRight { float: left; width: 90px;}
@@ -625,15 +626,18 @@ section[role="main"] div.card.pag_container div.meta div.date{
     padding: 0 4px;
     position: absolute;
     right: 5px;
-    top: -14px;
+    top: -16px;
 }
 
-section[role="main"] div.meta div.favicon { position: absolute; bottom: 0; left: 2px;}
-section[role="main"] div.meta div.favicon { position: absolute; bottom: 0; left: 2px;}
+section[role="main"] div.meta div.favicon { position: absolute; bottom: 0; left: 4px;}
 
 
 section[role="main"] div.card div.added_by      { background:#eee; padding:5px; font-size:11px; text-align:left;}
-section[role="main"] div.card.pag.heightAdjusted div.added_by      { xposition:relative; width:100%; }
+section[role="main"] div.card.pag.heightAdjusted div.added_by {
+    width: 100%; 
+    bottom: 0 !important;
+    position: absolute !important;
+}
 section[role="main"] div.card div.added_by img.user_avatar  { display: inline-block; margin-bottom:-5px; width:20px; }
 section[role="main"] div.card div.added_by img.me_too  { width:25px;height:24px;background:url(../images/me_too.png) -25px 0px no-repeat;display:block;float:right;cursor:pointer;margin-top:-2px;}
 section[role="main"] div.card div.added_by img.me_too:hover   { background-position: 0px 0px; }
