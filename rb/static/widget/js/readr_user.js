@@ -255,7 +255,7 @@ RDRAuth = {
 		if (!RDRAuth.checkingRBLoginWindow) {
 			RDRAuth.checkingRBLoginWindow = setInterval( function(popup) {
 				// console.log('RDRAuth.checkingRBLoginWindow 1');
-				if ( !RDRAuth.rbloginWindow.closed ) {
+				if ( RDRAuth.rbloginWindow.closed ) {
 					// console.log('RDRAuth.checkingRBLoginWindow 2a');
 					// if ( RDRAuth.rbloginWindow.location.href.indexOf('success') != -1 ) {
 						RDRAuth.readUserCookie();
