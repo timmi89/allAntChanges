@@ -200,37 +200,39 @@ RDRAuth = {
 						$('#logged-in').show().css('visibility','visible');
 						$('#logged-out').hide().css('visibility','hidden');
 						FB.api('/me', function(response) {
+							// console.dir(response);
 							if ( $('#fb-login-button a.logging-in').length ) {
-								// reload the window only if they had just taken the action of clicking the login button.  janky-ish.
-								window.location.reload();
+							// 	// reload the window only if they had just taken the action of clicking the login button.  janky-ish.
+							// 	window.location.reload();
+
+			      				var $user = $('<a/>'),
+								$avatar = $('<img/>'),
+								$name = $('<strong/>');
+
+								$user.attr('href', '/user/'+user_id );
+								$avatar.attr('src', img_url + '?type=square');
+								$name.text( response.name );
+
+								$user.append( $avatar, $name );
+
+								var user_id = $.cookie('user_id'),
+									user_name = $.cookie('full_name');
+									$user_menu = $('<div id="log-out-link" />');
+
+								$user_menu.append('<a href="/user/'+user_id+'">My Activity</a>' +
+						            '<a href="/follows/'+user_id+'">Activity I Follow</a>' +
+						            '<a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a>' +
+						            '<h5>Settings</h5>' +
+						            '<label for="private_profile">' +
+						              '(Reload the page to edit your setttings.)' +
+						            //   'Profile is private' +
+						            // '</label>' +
+						            // '<label for="follow_email">' +
+						            //   '<input type="checkbox" id="follow_email" {% if cookie_user.social_user.follow_email_option %}checked="checked"{% endif %} /> ' +
+						            //   'Send me email when someone follows my activity.' +
+						            '</label>');
+								$('#logged-in').html( $user ).append($user_menu);
 							}
-		     //  				var $user = $('<a/>'),
-							// $avatar = $('<img/>'),
-							// $name = $('<strong/>');
-
-							// $user.attr('href', '/user/'+user_id );
-							// $avatar.attr('src', img_url + '?type=square');
-							// $name.text( response.name );
-
-							// $user.append( $avatar, $name );
-
-							// var user_id = $.cookie('user_id'),
-							// 	user_name = $.cookie('full_name');
-							// 	$user_menu = $('<div id="log-out-link" />');
-
-							// $user_menu.append('<a href="/user/'+user_id+'">My Activity</a>' +
-					  //           '<a href="/follows/'+user_id+'">Activity I Follow</a>' +
-					  //           '<a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a>' +
-					  //           '<h5>Settings</h5>' +
-					  //           '<label for="private_profile">' +
-					  //             '(Reload the page to edit your setttings.)' +
-					  //           //   'Profile is private' +
-					  //           // '</label>' +
-					  //           // '<label for="follow_email">' +
-					  //           //   '<input type="checkbox" id="follow_email" {% if cookie_user.social_user.follow_email_option %}checked="checked"{% endif %} /> ' +
-					  //           //   'Send me email when someone follows my activity.' +
-					  //           '</label>');
-							// $('#logged-in').html( $user ).append($user_menu);
 		      			});
 					} else {
 						RDRAuth.getReadrToken( response.authResponse, function() { });
