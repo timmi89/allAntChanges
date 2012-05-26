@@ -200,7 +200,8 @@ RDRAuth = {
 						$('#logged-in').show().css('visibility','visible');
 						$('#logged-out').hide().css('visibility','hidden');
 						FB.api('/me', function(response) {
-							if ( !$('#user_settings').length ) {
+							if ( $('#fb-login-button a.logging-in').length ) {
+								// reload the window only if they had just taken the action of clicking the login button.  janky-ish.
 								window.location.reload();
 							}
 		     //  				var $user = $('<a/>'),
