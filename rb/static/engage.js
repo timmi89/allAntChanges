@@ -6119,8 +6119,8 @@ function $RFunctions($R){
         plugin_jquery_hoverIntent($R);
         plugin_jquery_twitterTip($R);
         plugin_jquery_rdrWidgetSummary($R);
+        plugin_jquery_socialPageShareBox($R);
         plugin_jquery_selectionographer($R, rangy);
-
 
         /* are we using this */
         //todo: maybe need to fix this...
@@ -6437,8 +6437,6 @@ function $RFunctions($R){
             };
 
             var defaults = {
-                initTest:'init',
-                passedIn: 'nothing to see here...'
             };
 
             var methods = {
@@ -6817,6 +6815,57 @@ function $RFunctions($R){
 
         }
         //end function plugin_jquery_rdrWidgetSummary
+
+        function plugin_jquery_socialPageShareBox($){
+
+            /*
+             * jQuery Plugin by readrboard.com
+             * builds the readrboard widget's summary widget.
+             * accepts settings to customize the format
+             */
+
+            $.fn.socialPageShareBox = function( params ) {
+                //jQuery plugin pattern :http://docs.jquery.com/Plugins/Authoring
+                if ( methods[params] ) {
+                    return methods[params].apply( this, Array.prototype.slice.call( arguments, 1 ));
+                } else if ( typeof params === 'object' || ! params ) {
+                    return methods.init.apply( this, arguments );
+                } else {
+                    $.error( 'Method ' +  params + ' does not exist.' );
+                }
+            };
+
+            var defaults = {
+            };
+
+            var methods = {
+                init: function( options ) {
+                    var $this = this;
+                    return $this.each(function(){
+                        // merge default and user parameters
+                        var settings = options ? $.extend({}, defaults, options) : defaults;
+                        $(this).data('settings', settings);
+                        _makeWidget(settings);
+                    });
+                },
+                update: function(param){
+                    var $this = this;
+                    return $this.each(function(){
+                    });
+                }
+            };
+            //end methods
+
+            //private functions:
+            function _secret(){
+            }
+
+            //helper function for ajax above
+            function _makeWidget(settings){
+            }
+
+        }
+        //end function plugin_jquery_socialPageShareBox
 
         function plugin_jquery_selectionographer($, rangy){
             /*
