@@ -254,20 +254,12 @@ RDRAuth = {
 	checkRBLoginWindow : function() {
 		if (!RDRAuth.checkingRBLoginWindow) {
 			RDRAuth.checkingRBLoginWindow = setInterval( function(popup) {
-				// console.log('RDRAuth.checkingRBLoginWindow 1');
 				if ( RDRAuth.rbloginWindow.closed ) {
-					// console.log('RDRAuth.checkingRBLoginWindow 2a');
-					// if ( RDRAuth.rbloginWindow.location.href.indexOf('success') != -1 ) {
-						RDRAuth.readUserCookie();
-						RDRAuth.returnUser();
-						RDRAuth.notifyParent({}, "close login panel");
-						RDRAuth.rbloginWindow.close();
-						clearInterval( RDRAuth.checkingRBLoginWindow );
-						// window.location.reload();
-					// }
-				// } else {
-					// console.log('RDRAuth.checkingRBLoginWindow 2b');
-					// clearInterval( RDRAuth.checkingRBLoginWindow );
+					RDRAuth.readUserCookie();
+					RDRAuth.returnUser();
+					RDRAuth.notifyParent({}, "close login panel");
+					RDRAuth.rbloginWindow.close();
+					clearInterval( RDRAuth.checkingRBLoginWindow );
 				}
 			}, 250 );
 		}
