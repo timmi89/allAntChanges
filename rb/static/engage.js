@@ -1921,7 +1921,7 @@ function readrBoard($R){
                         } else {
                             //put a better message here
                             $msg2 = $('<div><strong class="reactionText">Reaction: <em>' + data.reaction + '</em></strong>'+
-                                '<em>' + data.content.substr(0,140) + '...</em>'+
+                                '<strong>"</strong><em>' + data.content.substr(0,140) + '...</em><strong>"</strong>'+
                                 '<br /><strong class="seeItLinkText"><a class="rdr_showSelection" href="javascript:void(0);">Show it on the page</a></strong></div>');
                         }
                         $msg2.find('a.rdr_showSelection').click( function() {
