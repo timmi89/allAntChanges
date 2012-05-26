@@ -1038,6 +1038,20 @@ div.rdr_reactions {
     position: static !important;
 }
 
+#rdr_sandbox div.rdr_alert_box.rdr_fromShareLink .reactionText{
+    display: block !important;
+    margin: 10px 0 !important;
+}
+
+#rdr_sandbox div.rdr_alert_box.rdr_fromShareLink a:hover{
+    text-decoration: underline !important;
+}
+#rdr_sandbox div.rdr_alert_box .seeItLinkText {
+    margin:10px 0 !important;
+    display: block !important;
+    font-style: normal !important;
+}
+
 /*everything below here is stuff that is inline to the client's document.  Generally will use !important for everything*/
 
 /* container indicator icons */
@@ -1275,11 +1289,15 @@ div.rdr_indicator_for_media_inline div.rdr_indicator_body {
 
 #rdr_sandbox div.rdr_media_border_wrap.engaged{
     /*uncomment to turn on media hilites*/    
-    /*
+    /*    
     display: block !important;
-    */
-    
+    */    
 }
+
+#rdr_sandbox div.rdr_media_border_wrap.engaged.engagedForShareLink{
+    display: block !important;
+}
+
 
 #rdr_sandbox div.rdr_mediaHilite_top{
     box-shadow:  0 -1px 10px 1px #008BE4 !important;

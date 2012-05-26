@@ -52,6 +52,13 @@
     javascript:(function(){function%20rdr_getScript(id,url,success){var%20head=document.getElementsByTagName("head")[0],done=false;var%20script=document.createElement("script");script.src=url;if(id){script.id=id}script.onload=script.onreadystatechange=function(){if(!done&&(!this.readyState||this.readyState=="loaded"||this.readyState=="complete")){done=true;success()}};head.appendChild(script)}var%20script="http://s3.amazonaws.com/readrboard/engage.js?bookmarklet=true";var%20id="readrboardscript";rdr_getScript(id,script,function(){})})();
 
 
+//-----------------------------------
+//regex to look for logs
+/*
+    [^se ^_ ^//]log\(
+*/
+
+
 
 //-----------------------------------
 //css regex for widget.css

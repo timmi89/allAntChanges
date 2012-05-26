@@ -227,6 +227,7 @@ function readrBoard($R){
                         if (callback) callback();
                     });
                 }
+                $rindow.addClass('engaged')
             },
             mediaRindowHide : function ( $mediaItem, callback ) {
                 //RDR.rindow.mediaRindowHide:
@@ -239,6 +240,7 @@ function readrBoard($R){
                         if (callback) callback();
                     });
                 }
+                $rindow.removeClass('engaged');
             },
             updateSizes : function($rindow, setWidth, setHeight, kind) {
                 //RDR.rindow.updateSizes:
@@ -1897,7 +1899,7 @@ function readrBoard($R){
 		session: {
             alertBar: {
                 make: function( whichAlert, data) {
-                    // RDR.session.alertBar.make
+                    // RDR.session.alertBar.make:
                     //whichAlert to tell us if it's the educate user bar, or the sharedLink bar
                     //data if we want it, not using it now... - expects:
                     /*
@@ -1913,10 +1915,14 @@ function readrBoard($R){
                         $msg1 = $('<h1>Shared with <span>ReadrBoard</span></h1>');
 
                         if ( $('img.rdr-'+data.container_hash).length == 1 ) {
-                            $msg2 = $('<strong style="display:block;">' + data.reaction + ':</strong> <img src="' + data.content + '" style="max-width:100px !important;max-height:70px !important;margin:5px 0 !important;display:block !important;" /> <strong style="display:block;"><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>');
+                            $msg2 = $('<div><strong class="reactionText">Reaction: <em>' + data.reaction + '</em></strong>'+
+                                ' <a class="rdr_showSelection" href="javascript:void(0);"><img src="' + data.content + '" style="max-width:100px !important;max-height:70px !important;margin:5px 0 !important;display:block !important;" />'+
+                                ' <strong class="seeItLinkText rdr_blue">Show it on the page</strong></a></div>');
                         } else {
                             //put a better message here
-                            $msg2 = $('<strong>' + data.reaction + ':</strong> <em>' + data.content.substr(0,140) + '...</em> <strong><a class="rdr_showSelection" href="javascript:void(0);">See It</a></strong>');
+                            $msg2 = $('<div><strong class="reactionText">Reaction: <em>' + data.reaction + '</em></strong>'+
+                                '<em>' + data.content.substr(0,140) + '...</em>'+
+                                '<br /><strong class="seeItLinkText"><a class="rdr_showSelection" href="javascript:void(0);">Show it on the page</a></strong></div>');
                         }
                         $msg2.find('a.rdr_showSelection').click( function() {
                             //show the alertBar sliding closed for just a second before scrolling down..
@@ -1957,7 +1963,13 @@ function readrBoard($R){
                     }
                 },
                 close: function( whichAlert ) {
+                    //RDR.session.alertBar.close:
                     $('div.rdr_alert_box.rdr_'+whichAlert).remove();
+
+                    //brute force for now -
+                    //if they click the X we need this;
+                    RDR.actions.indicators.utils.borderHilites.disengageAll();
+                    
                     // set a cookie in the iframe saying not to show this anymore
                     $.postMessage(
                         "close "+whichAlert,
@@ -1973,29 +1985,8 @@ function readrBoard($R){
                 var kind = $container.data('kind');
                 if(kind == 'img' || kind == 'media' || kind == 'med'){
                     $container.addClass('rdr_shared');
-
-                    var $containerTracker = $('#rdr_container_tracker_'+hash),
-                        $mediaBorderWrap = $containerTracker.find('.rdr_media_border_wrap');
-                    //make sure it's still positioned right, though page load should have set it.
-                    //todo: reconsider this method of liberally updating everything
                     RDR.actions.indicators.utils.updateContainerTracker(hash);
-                    $mediaBorderWrap.show();
-
-                    //we don't need this here, becuase this is already bound to the document
-
-                    $(document).on('click.rdr', function(event) {
-                        $mediaBorderWrap.hide();
-                        //remove the binding after it's been called.
-                        $(document).unbind('click.rdr', arguments.callee);
-                    });
-                    $(document).on('keyup.rdr', function(event) {
-                        //todo: merge all esc key events (use an array of functions that we can just dequeue?)
-                        if (event.keyCode == '27') { //esc
-                            $mediaBorderWrap.hide();
-                            //remove the binding after it's been called.
-                            $(document).unbind('keyup.rdr', arguments.callee);
-                        }
-                    });
+                    RDR.actions.indicators.utils.borderHilites.engage(hash, true);
                 }
 
                 if ( data.location && data.location != "None" ) {
@@ -2641,8 +2632,6 @@ function readrBoard($R){
                 $(document).on('click.rdr',function(event) {
                     var $mouse_target = $(event.target);
 
-                    // clear any errant tooltips
-                    $('div.rdr_twtooltip').remove();
                     if ( !$mouse_target.parents().hasClass('rdr')) {
                         // if ( $('#rdr_loginPanel').length ) {
                         //     RDR.session.getUser(function() {
@@ -2650,7 +2639,8 @@ function readrBoard($R){
                         //     });
                         // }
 
-                        RDR.rindow.closeAll();
+                        RDR.actions.UIClearState();
+
                         $('div.rdr_indicator_details_for_media').each( function() {
                             RDR.actions.containers.media.onDisengage( $(this).data('container') );
                         });
@@ -2661,8 +2651,7 @@ function readrBoard($R){
                 //bind an escape keypress to clear it.
                 $(document).on('keyup.rdr', function(event) {
                     if (event.keyCode == '27') { //esc
-                        RDR.rindow.closeAll();
-                        RDR.actionbar.closeAll();
+                        RDR.actions.UIClearState();
                     }
                 });
 
@@ -2743,6 +2732,22 @@ function readrBoard($R){
                 // var hashes = this.hashNodes();
 
                 $RDR.dequeue('initAjax');
+            },
+            UIClearState: function(){
+                //RDR.actions.UIClearState:
+                // clear any errant tooltips
+                $('div.rdr_twtooltip').remove();
+
+                RDR.rindow.closeAll();
+                RDR.actionbar.closeAll();
+                RDR.actions.containers.media.disengageAll();
+                RDR.actions.indicators.utils.borderHilites.disengageAll();
+
+                //clear a share alert if it exists - do this better later.
+                var shareBoxExists = $('.rdr_fromShareLink').length;
+                if( shareBoxExists ){
+                    RDR.session.alertBar.close( 'fromShareLink' );
+                }
             },
             hashNodes: function( $node, nomedia ) {
                 //RDR.actions.hashNodes:
@@ -3066,6 +3071,17 @@ function readrBoard($R){
                             }
                         },100);
                         $mediaItem.data('timeoutCloseEvt_'+hash, timeoutCloseEvt);
+                    },
+                    disengageAll: function(){
+                        //RDR.actions.containers.media.disengageAll:
+
+                        //only need to run this for containers that are active
+                        var hashes = [];
+                        $('.rdr_live_hover').each(function(){
+                            var hash = $(this).data('hash');
+                            hashes.push(hash);
+                            RDR.actions.containers.media.onDisengage(hash);
+                        });
                     }
                 },
                 save: function(settings){
@@ -4886,21 +4902,35 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             });                       
                     
                         },
-                        engage: function(hash){
+                        engage: function(hash, isShareLink){
                             //RDR.actions.indicators.utils.borderHilites.engage:
-                            log(hash)
                             var $container_tracker = $('#rdr_container_tracker_'+hash),
                                 $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
 
                             $mediaBorderWrap.addClass('engaged');
+                            
+                            if (isShareLink) {
+                                $mediaBorderWrap.addClass('engagedForShareLink');
+                            }
                         },
                         disengage: function(hash){
                             //RDR.actions.indicators.utils.borderHilites.disengage:
-                            log(hash)
                             var $container_tracker = $('#rdr_container_tracker_'+hash),
                                 $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
 
                             $mediaBorderWrap.removeClass('engaged');
+                            $mediaBorderWrap.removeClass('engagedForShareLink');
+                        },
+                        engageAll: function(){
+                            //RDR.actions.indicators.utils.borderHilites.engageAll:
+                            $mediaBorderWrap = $('.rdr_media_border_wrap');
+                            $mediaBorderWrap.addClass('engaged');
+                        },
+                        disengageAll: function(){
+                            //RDR.actions.indicators.utils.borderHilites.disengageAll:
+                            $mediaBorderWrap = $('.rdr_media_border_wrap');
+                            $mediaBorderWrap.removeClass('engaged');
+                            $mediaBorderWrap.removeClass('engagedForShareLink');
                         }
                     }
 
