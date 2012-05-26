@@ -1788,22 +1788,17 @@ function readrBoard($R){
                 );
             },
             userLoginState: function() {
-                $.log('userLoginState zzzz');
+                //RDR.util.userLoginState
                 if ( !$('#rdr-user').length ) {
-                    $.log(1);
                     $('#rdr-page-summary').find('div.rdr-summary').prepend('<div id="rdr-user" />');
                 }
-                $.log(2);
                 if ( RDR && RDR.user && RDR.user.full_name && $('#rdr-page-summary.defaultSummaryBar').length ) {
-                    $.log(3);
                     var name = (RDR.user.user_type == "facebook") ? ( RDR.user.full_name.split(' ')[0] ) : RDR.user.full_name;
                     $('#rdr-user').html('Hi, <a href="'+RDR_baseUrl+'/user/'+RDR.user.user_id+'" target="_blank">'+name+'</a>');
                 } else {
-                    $.log(4);
                     $('#rdr-user').html('<a href="javascript:void(0);">Log in to ReadrBoard</a>');
                     $('#rdr-user').find('a').click( function() { RDR.session.showLoginPanel(); } );
                 }
-                $.log(5);
             },
 
             //temp copies of some underscore functions.  Later we'll use the underscore library - replace then.

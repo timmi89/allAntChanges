@@ -38,7 +38,7 @@
 				</div>
 			</div>
 			<div style="float:left;padding-left:6px;">
-				<a href="javascript:void(0);" onclick="RDRAuth.rbloginWindow = window.open(RDR_baseUrl+'/rb_login/?group_id='+qs_args.group_id, 'readr_login','menubar=1,resizable=1,width=370,height=245');return false;"><img src="/static/widget/images/rb-login_to_readrboard.png" style="margin-top:8px;" /></a>
+				<a href="javascript:void(0);" onclick="RDRAuth.rbloginWindow = window.open(RDR_baseUrl+'/rb_login/?group_id='+qs_args.group_id, 'readr_login','menubar=1,resizable=1,width=370,height=245');RDRAuth.checkRBLoginWindow();return false;"><img src="/static/widget/images/rb-login_to_readrboard.png" style="margin-top:8px;" /></a>
 			</div>
 			<script>
 			$('#login-buttons a').click( function() {
