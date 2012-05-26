@@ -2168,6 +2168,7 @@ function readrBoard($R){
                                     RDR.session.showLoginPanel( args );
                                 }
                             } else if ( message.status == "close login panel" ) {
+                                RDR.util.userLoginState();
                                 $('#rdr_loginPanel').remove(); // little brute force, maybe should go elsewhere?
                                 $('div.rdr-summary div.rdr_info').html('<em>You\'re logged in!  Try your last reaction again.');
                             } else if ( message.status == "already had user" ) {

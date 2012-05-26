@@ -262,11 +262,12 @@ RDRAuth = {
 						RDRAuth.returnUser();
 						RDRAuth.notifyParent({}, "close login panel");
 						RDRAuth.rbloginWindow.close();
-						window.location.reload();
+						clearInterval( RDRAuth.checkingRBLoginWindow );
+						// window.location.reload();
 					// }
-				} else {
+				// } else {
 					// console.log('RDRAuth.checkingRBLoginWindow 2b');
-					clearInterval( RDRAuth.checkingRBLoginWindow );
+					// clearInterval( RDRAuth.checkingRBLoginWindow );
 				}
 			}, 250 );
 		}
