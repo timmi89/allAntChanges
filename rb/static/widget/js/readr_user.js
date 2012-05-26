@@ -260,6 +260,9 @@ RDRAuth = {
 					RDRAuth.notifyParent({}, "close login panel");
 					RDRAuth.rbloginWindow.close();
 					clearInterval( RDRAuth.checkingRBLoginWindow );
+					if (top == self) {
+						window.location.reload();
+					}
 				}
 			}, 250 );
 		}
