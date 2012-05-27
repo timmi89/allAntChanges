@@ -104,6 +104,57 @@ var metoos = {
     {% endfor %}
     {% endif %}
 };
+{% if comment_parents %}
+    {% for interaction in comment_parents %}
+    var interaction = {
+              "id"    :   {{ interaction.id }},
+              "kind"  :   "{{ interaction.content.kind }}",
+              "date"  :   "{{ interaction.created|date:"M d, Y"|escapejs }}",
+              "interaction_node_body" :   "{% if interaction.kind = 'tag' or interaction.kind = 'bkm' %}{{interaction.interaction_node.body|escapejs }}{% else %}{{ interaction.human_kind|escapejs }}{% endif %}",
+              "content_body"          :   '{{ interaction.content.body|escapejs }}',
+              "content_id"          :   '{{ interaction.content.id }}',
+              "page_title"            :   "{{ page.grouper.title|escapejs }}",
+              "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url|escapejs }}{% else %}{{ interaction.page.url|escapejs }}{% endif %}",
+              "domain"              : "{{page.grouper.site.domain}}",
+              "approved"              :   {% if interaction.approved %}true{% else %}false{% endif %},
+              "singleton"              :   {% if singleton %}true{% else %}false{% endif %},
+              "group" : {
+                "short_name"  :   "{{ page.grouper.site.group.short_name }}",
+                "id"          :   "{{ page.grouper.site.id }}",
+                "logo_url"    :   "{{ page.grouper.site.group.logo_url_sm }}",
+                "logo_url_lg" :   "{{ page.grouper.site.group.logo_url_lg }}",
+                "name"        :   "{{ page.grouper.site.group.name|escapejs }}",
+                "title"       :   "{{ page.grouper.site.group.title|escapejs }}"
+              },
+              "user_profile_link" :   "/user/{{interaction.user.id}}",
+              "user_avatar"       :   "{{ interaction.user.social_user.img_url }}",
+              "user_name"         :   "{{ interaction.user.social_user.full_name }}",
+              "created"           :   "{{ interaction.created|date:"M d g:ia" }}",
+              "moderator"         :   {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %},
+              "page" : {{interaction.page}},
+              "page_id" : {{interaction.page}},
+              "comments" : [
+              {% for comment in interaction.comments %}
+                  {
+                  "id": {{comment.id}},
+                  "approved"          :   {% if comment.approved %}true{% else %}false{% endif %},
+                  "created"           :   "{{ comment.created|date:"M d g:ia" }}",
+                  "user_profile_link" :   "/user/{{comment.user.id}}",
+                  "user_avatar"       :   "{{ comment.user.social_user.img_url }}",
+                  "user_name"         :   "{{ comment.user.social_user.full_name }}",
+                  "comment"           :   "{% filter force_escape %}{{ comment.interaction_node.body|linebreaksbr|escapejs }}{% endfilter %}",
+                  "moderator"         :   {% if cookie_user and ga_ids and comment.page.site.group.id in ga_ids %}true{% else %}false{% endif %}
+                  }{% if not forloop.last %},{% endif %}
+              {% endfor %}
+              ],
+        };
+        if ( interaction.user_name == "" ) {
+          interaction.user_name = "Unregistered User";
+        }
+        interactions.push( interaction );
+    {% endfor %}
+{% endif %}
+
 </script>
 
 </section>

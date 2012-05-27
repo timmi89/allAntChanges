@@ -138,7 +138,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     if query_string:
         interactions = interactions.filter(
             Q(interaction_node__body__icontains=query_string) |
-            Q(content__body__icontains=query_string)
+            Q(content__body__icontains=query_string) 
         )
 
     context['query_string'] = query_string
@@ -163,7 +163,8 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     else:
         # If not viewing a user profile, remove bookmarks from interaction set
         interactions = interactions.exclude(kind="bkm")
-        interactions = interactions.filter(parent=None)
+        if not query_string:
+            interactions = interactions.filter(parent=None)
 
     # Interactions for group profile
     if short_name:
@@ -216,13 +217,17 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     except (EmptyPage, InvalidPage): current_page = interactions_paginator.page(interactions_paginator.num_pages)
       
     context['current_page'] = current_page
-    len(current_page.object_list)
-    parent_ids = []
-    for inter in current_page.object_list:
-        parent_ids.append(inter.id)
     
-    child_interactions = Interaction.objects.filter(parent__id__in = parent_ids, kind='tag')
-    
+    child_interactions = Interaction.objects.filter(parent__in = current_page.object_list, kind='tag')
+
+    if query_string:
+        comment_parents = set()
+        for inter in current_page.object_list:
+            if inter.kind == 'com':
+                comment_parents.add(inter.parent)
+        print "COMMENT PARENTS", comment_parents
+        context['comment_parents'] = comment_parents        
+        
     context['child_interactions'] = {}
     
     for child_interaction in child_interactions:
