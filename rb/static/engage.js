@@ -78,7 +78,18 @@ function readrBoard($R){
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
                 inline_selector: 'img, embed, video, object, iframe',
                 slideshow_trigger: '#module-flipbook-wrap',
-                slideshow_img_selector: '#module-flipbook div.slideImg img'
+                slideshow_img_selector: '#module-flipbook div.slideImg img',
+
+                doShowSocialPageShareBox: true,
+                socialPageShareBox_selector: null,
+                //these default to be true
+                socialPageShareBox_brands: {
+                    facebook: true,
+                    twitter: true,
+                    reddit: true,
+                    stumbleUpon: true,
+                    digg: true
+                } 
             }
         },
         user: {
@@ -2594,7 +2605,7 @@ function readrBoard($R){
                             //todo: it seems like we should use the page.id as the unique identifier instead of introducting 'key' which is just a counter
                             page.key = key;
                             RDR.actions.pages.save(page.id, page);
-                            RDR.actions.pages.initPageContainers(page.id);
+                            RDR.actions.pages.initPageContainer(page.id);
                         });
 
                         $RDR.dequeue('initAjax');
@@ -5910,23 +5921,20 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     //RDR.actions.pages.save:
                     RDR.pages[page.id] = page;
                 },
-                initPageContainers: function(pageId){
+                initPageContainer: function(pageId){
                     var page = RDR.pages[pageId],
                         key = page.key; //todo: consider phasing out - use id instead
 
                     var $container = ( $(RDR.group.post_selector + '.rdr-page-key-'+key).length == 1 ) ? $(RDR.group.post_selector + '.rdr-page-key-'+key):$('body.rdr-page-key-'+key);
-
                     if ( $container.length !== 1 ) return;
                     //else
 
-                    //[eric] not a big deal, but why did we add this class and then remove it?
                     $container.removeClass( 'rdr-page-key-' + key );
 
                     //todo: [eric] this can't be right - we shouldn't just hash a single number like '1'.
                     var hash = RDR.util.md5.hex_md5( String(page.id) );
                     var tagName = $container.get(0).nodeName.toLowerCase();  //todo: looks like we're not using this for pages?
 
-                    //[eric] using our containers.save method to ensure out model is consistent througout.
                     RDR.actions.containers.save({
                         id: String(page.id),
                         kind: "page",
@@ -5935,8 +5943,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     });
 
                     $container.data( 'page_id', String(page.id) ); // the page ID
-
-                    //todo: I don't think this is doing anything... the hash doesn't make sense and containers seems to always be empty.
 
                     // hash the "page" descendant nodes
                     // RDR.actions.hashNodes( $container, "nomedia" );
@@ -5983,9 +5989,18 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     //div to hold summary tag detail "menus"
                     $('#rdr_sandbox').append('<div id="rdr_summary_tag_details" />');
+                    
+                    //setup widgetSummary
                     if ( ($('div.rdr-summary').length===0) || ( $('div.rdr-summary').length < $(RDR.group.post_selector).length ) ) {
                         widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
                     }
+
+                    //setup socialPageShareBox
+                    var settings = {
+                        shareToolBrandOpts: RDR.group.socialPageShareBox_brands
+                    }
+                    $container.socialPageShareBox( settings );
+
                 }
             },
             users: {
@@ -6845,7 +6860,7 @@ function $RFunctions($R){
                         // merge default and user parameters
                         var settings = options ? $.extend({}, defaults, options) : defaults;
                         $(this).data('settings', settings);
-                        _makeWidget(settings);
+                        _makeWidget.call(this, settings);
                     });
                 },
                 update: function(param){
@@ -6856,13 +6871,93 @@ function $RFunctions($R){
             };
             //end methods
 
+            var shareToolBrandCode = {
+                facebook: function(settings){
+                    var ret = [];
+
+                    //script needed
+                    ret.push(
+                        '<div id="fb-root"></div>'+
+                        '<script>(function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)){return}; js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=163759626987948"; fjs.parentNode.insertBefore(js, fjs) }(document, "script", "facebook-jssdk"));</script>'
+                    );
+
+                    //later we can merge in settings
+                    var width = 0;
+                    ret.push(
+                        '<div class="fb-like" data-send="false" data-layout="box_count" data-width="'+width+'" data-show-faces="false"></div>'
+                    );
+
+                    return ret.join('');
+                },
+                twitter: function(settings){
+                    var ret = [];
+                    ret.push(
+                        '<a href="https://twitter.com/share" class="twitter-share-button" data-count="vertical" >Tweet</a>'+
+                        '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>'
+                    );
+                    return ret.join('');
+                },
+                reddit: function(settings){
+                    var ret = [];
+                    ret.push(
+
+                    );
+                    return ret.join('');
+                },
+                stumbleUpon: function(settings){
+                    var ret = [];
+                    ret.push(
+
+                    );
+                    return ret.join('');
+                },
+                digg: function(settings){
+                    var ret = [];
+                    ret.push(
+
+                    );
+                    return ret.join('');
+                },
+            };
+
             //private functions:
-            function _secret(){
+            function _addBrands($contentList, selectedBrands){
+                $.each( selectedBrands, function(key, isTrue){
+                    if (!isTrue) return;
+                    //else
+                    var $listItem = $('<li />').append( shareToolBrandCode[key] );
+                    $contentList.append( $listItem );
+                });
+                return $contentList;
             }
 
             //helper function for ajax above
             function _makeWidget(settings){
+                var $this = $(this);
+
+                if ( !RDR.group.doShowSocialPageShareBox ) {
+                    return;
+                }
+                //else
+
+                var $widgetWrap = $('<div />').addClass('rdr_socialPageShareBox'),
+                    $contents = $('<div class="rdr_innerWrap"></div>').appendTo($widgetWrap),
+                    $contentList = _addBrands( $('<ul />'), settings.shareToolBrandOpts)
+                        .appendTo($contents);
+
+                var selectorParam = RDR.group.socialPageShareBox_selector,
+                    hasSelector = ( 
+                        selectorParam &&
+                        selectorParam !== ""
+                    );
+                if( hasSelector ){
+                    $this.append($widgetWrap);
+                }else{
+                    $widgetWrap.appendTo('#rdr_sandbox').addClass('rdr_shareBox_Default');
+                }
             }
+
+
 
         }
         //end function plugin_jquery_socialPageShareBox

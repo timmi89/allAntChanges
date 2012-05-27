@@ -992,6 +992,34 @@ div#rdr-page-summary.defaultSummaryBar .rdr-summary{
     border-radius:5px !important;
 }
 
+
+/*socialPageShareBox*/
+div.rdr_socialPageShareBox{
+    display: block;
+    padding: 2px 0;
+    background-color: #eee;
+}
+div.rdr_socialPageShareBox.rdr_shareBox_Default{
+    position: absolute;
+    top:100px;
+    left: 100px;
+    display: block;
+    padding: 2px 0;
+    background-color: #eee;
+}
+div.rdr_socialPageShareBox .rdr_innerWrap{
+    text-align: center;
+}
+div.rdr_socialPageShareBox .rdr_innerWrap ul{
+    display: block;
+}
+div.rdr_socialPageShareBox .rdr_innerWrap ul li{
+    display: block;
+    list-style: none outside none;
+    margin: 10px;
+}
+
+
 div.rdr_reactions {
     min-width:120px !important;
 }
