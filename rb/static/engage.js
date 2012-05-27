@@ -80,7 +80,7 @@ function readrBoard($R){
                 slideshow_trigger: '#module-flipbook-wrap',
                 slideshow_img_selector: '#module-flipbook div.slideImg img',
 
-                doShowSocialPageShareBox: true,
+                doShowSocialPageShareBox: false,
                 socialPageShareBox_selector: null,
                 //these default to be true
                 socialPageShareBox_brands: {
