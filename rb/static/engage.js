@@ -80,12 +80,18 @@ function readrBoard($R){
                 slideshow_trigger: '#module-flipbook-wrap',
                 slideshow_img_selector: '#module-flipbook div.slideImg img',
 
-                doShowSocialPageShareBox: false,
-                socialPageShareBox_selector: null,
+                //SocialPageShareBox Stuff//
+                //todo set to false
+                socialPageShareBox_doShow: true,
+                socialPageShareBox_fadeIn: true,
+                // socialPageShareBox_selector: null,
+                socialPageShareBox_selector: '.rdr_socialPageShareBoxHook',
                 //these default to be true
-                socialPageShareBox_brands: {
+                socialPageShareBox_socialBrands: {
+                    readrboard: true,
                     facebook: true,
                     twitter: true,
+                    google: true,
                     reddit: true,
                     stumbleUpon: true,
                     digg: true
@@ -5997,7 +6003,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     //setup socialPageShareBox
                     var settings = {
-                        shareToolBrandOpts: RDR.group.socialPageShareBox_brands
+                        doShow: RDR.group.socialPageShareBox_doShow,
+                        domHookSelector: RDR.group.socialPageShareBox_selector,
+                        shareToolBrandOpts: RDR.group.socialPageShareBox_socialBrands,
+                        fadeInOnLoad: RDR.group.socialPageShareBox_fadeIn
                     }
                     $container.socialPageShareBox( settings );
 
@@ -6016,12 +6025,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
 
 //rdr_loadScript copied from http://www.logiclabz.com/javascript/dynamically-loading-javascript-file-with-callback-event-handlers.aspx
-function rdr_loadScript(sScriptSrc,callbackfunction) {
+function rdr_loadScript(attributes, callbackfunction) {
     var oHead = document.getElementsByTagName('head')[0];
     if(oHead) {
         var oScript = document.createElement('script');
 
-        oScript.setAttribute('src',sScriptSrc);
+        oScript.setAttribute('src', attributes.src);
         oScript.setAttribute('type','text/javascript');
 
         var loadFunction = function() {
@@ -6034,6 +6043,8 @@ function rdr_loadScript(sScriptSrc,callbackfunction) {
         oHead.appendChild(oScript);
     }
 }
+//add to RDR for use later.
+RDR.rdr_loadScript = rdr_loadScript;
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
 RDR_scriptPaths.jquery = RDR_offline ?
@@ -6046,7 +6057,7 @@ RDR_scriptPaths.jqueryUI_CSS = RDR_offline ?
     RDR_staticUrl+"global/css/jquery-ui-1.8.17.base.css" :
     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/themes/base/jquery-ui.css";
 
-rdr_loadScript( RDR_scriptPaths.jquery, function(){
+rdr_loadScript( {src:RDR_scriptPaths.jquery}, function(){
     //callback
 
     if ( $.browser.msie  && parseInt($.browser.version, 10) < 8 ) {
@@ -6060,7 +6071,7 @@ rdr_loadScript( RDR_scriptPaths.jquery, function(){
     //but wait to give back the jQuery because the UI will need it.
     $.noConflict();
 
-    rdr_loadScript( RDR_scriptPaths.jqueryUI, function(){
+    rdr_loadScript( {src:RDR_scriptPaths.jqueryUI}, function(){
         //callback
 
         //Now give back the jQuery as well.
@@ -6851,7 +6862,9 @@ function $RFunctions($R){
             };
 
             var defaults = {
+                fadeInOnLoad: true
             };
+            var $widgets = $();
 
             var methods = {
                 init: function( options ) {
@@ -6859,106 +6872,280 @@ function $RFunctions($R){
                     return $this.each(function(){
                         // merge default and user parameters
                         var settings = options ? $.extend({}, defaults, options) : defaults;
-                        $(this).data('settings', settings);
-                        _makeWidget.call(this, settings);
+                        settings.pluginRootEl = this;
+
+                        var $newWidget = _makeWidget.call(this, settings);
+                        $widgets = $widgets.add( $newWidget );
                     });
                 },
-                update: function(param){
+                update: function(){
+                    var $this = this;
+
+                    methods.renderReadrBoardButton.call($this);
+                    
+                    return $this.each(function(){
+                    });
+                },
+                renderReadrBoardButton: function(){
+                    //this will mostly likely just be called via update().  Prob No need to call it by itself.
+
                     var $this = this;
                     return $this.each(function(){
+                        var $this = $(this);
+                        var $widget = $this.find('.'+P.widgetClass);
+
+                        //first make sure our page count is up to date.
+                        _updateWidgetInteractionCount($this);
+
+                        var $RBSocialPageBox = $widget.find('#readrBoardSocialWidgetButton');
+                        //empty it/
+                        //todo: check on this.
+                        $RBSocialPageBox.children().remove();
+
+                        var $bubble = $('<div class="rdr_shareBubble"/>').appendTo($RBSocialPageBox),
+                            $bubbleTriangle = $('<div class="rdr_bubbleTriangleWrap"/>').appendTo($bubble),
+                            $bubbleCount = $('<div class="rdr_bubbleCount"/>').appendTo($bubble),
+                            $button = $('<div class="rdr_bubbleButton"/>').appendTo($RBSocialPageBox);
+
+                        $bubbleTriangle.append('<div class="rdr_innerTriangle"/>');
+                        $bubbleTriangle.append('<div class="rdr_outerTriangle"/>');
+
+                        //dummy count
+                        var count = $this.data('pageTagCount');
+                        $bubbleCount.append('<span>'+count+'</span>');
                     });
                 }
             };
             //end methods
 
-            var shareToolBrandCode = {
-                facebook: function(settings){
-                    var ret = [];
+            //private objects:
+            var P = {
+                widgetClass: 'rdr_socialPageShareBox',
+                loadingTrackerDict: {},
+                isLoadedCallback: function(){
+                    $widgets.each(function(){
+                        var $this = $(this);
+                        var settings = $this.data('settings');
 
-                    //script needed
-                    ret.push(
-                        '<div id="fb-root"></div>'+
-                        '<script>(function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)){return}; js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=163759626987948"; fjs.parentNode.insertBefore(js, fjs) }(document, "script", "facebook-jssdk"));</script>'
-                    );
+                        var pluginRoot = settings.pluginRootEl,
+                            $pluginRoot = $(pluginRoot);
+                        
+                        if( settings.shareToolBrandOpts.readrboard ){
+                            methods.renderReadrBoardButton.call($pluginRoot);
+                        }
 
-                    //later we can merge in settings
-                    var width = 0;
-                    ret.push(
-                        '<div class="fb-like" data-send="false" data-layout="box_count" data-width="'+width+'" data-show-faces="false"></div>'
-                    );
-
-                    return ret.join('');
+                        if( settings.fadeInOnLoad ){
+                            //give it another second after the scripts are loaded
+                            setTimeout(function(){
+                                $this.animate({opacity:1}, 500);
+                            }, 1000);
+                        }
+                    });
                 },
-                twitter: function(settings){
-                    var ret = [];
-                    ret.push(
-                        '<a href="https://twitter.com/share" class="twitter-share-button" data-count="vertical" >Tweet</a>'+
-                        '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>'
-                    );
-                    return ret.join('');
+                //this is added to the global scope below
+                socialPageShareBoxBrandOnLoad: function(brand){
+                    delete P.loadingTrackerDict[brand];
+                    var isLoaded = $.isEmptyObject(P.loadingTrackerDict);
+                    if(isLoaded){
+                        P.isLoadedCallback();
+                    }
                 },
-                reddit: function(settings){
-                    var ret = [];
-                    ret.push(
+                shareToolBrandCode: {
+                    readrboard: function(brand){
+                        var ret = [];
+                        //script needed
+                        ret.push(
+                            '<div id="readrBoardSocialWidgetButton"></div>'
+                        );
+                        //our script is already included
+                        delete P.loadingTrackerDict[brand];
 
-                    );
-                    return ret.join('');
-                },
-                stumbleUpon: function(settings){
-                    var ret = [];
-                    ret.push(
+                        //we'll just activate our button manually because their is no script to call
+                        return ret.join('');
+                    },
+                    facebook: function(brand){
+                        var ret = [];
 
-                    );
-                    return ret.join('');
-                },
-                digg: function(settings){
-                    var ret = [];
-                    ret.push(
+                        //script needed
+                        ret.push(
+                            '<div id="fb-root"></div>'+
+                            // '<script>(function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)){return}; js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=163759626987948"; fjs.parentNode.insertBefore(js, fjs) }(document, "script", "facebook-jssdk"));</script>'
+                            '<script type="text/javascript">(function(){ RDR.rdr_loadScript( '+
+                                ' { src:"//connect.facebook.net/en_US/all.js#xfbml=1&appId=163759626987948", id:"facebook-jssdk" }, function(){'+
+                                ' window.READRBOARDCOM.socialPageShareBoxBrandOnLoad("'+brand+'"); '+
+                            '}) })();</script>'
+                        );
+                        ret.push(
+                            '<div class="fb-like" data-send="false" data-layout="box_count" data-show-faces="false"></div>'
+                        );
+                        
+                            return ret.join('');
+                    },
+                    twitter: function(brand){
+                        var ret = [];
+                        ret.push(
+                            '<a href="https://twitter.com/share" class="twitter-share-button" data-count="vertical" >Tweet</a>'+
+                            '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>'
+                        );
 
-                    );
-                    return ret.join('');
-                },
+                        //no callback, flag now.
+                        delete P.loadingTrackerDict[brand];
+                        return ret.join('');
+                    },
+                    google: function(brand){
+                        var ret = [];
+
+                        ret.push(
+                            // '<!-- Place this tag where you want the +1 button to render -->'+
+                            '<div class="g-plusone" data-size="tall"></div>'
+                        );
+                        ret.push(
+                            // '<!-- Place this render call where appropriate -->'+
+                            '<script type="text/javascript">(function(){ RDR.rdr_loadScript( '+
+                                ' {src:"//apis.google.com/js/plusone.js"}, function(){'+
+                                ' gapi.plusone.go();  window.READRBOARDCOM.socialPageShareBoxBrandOnLoad("'+brand+'"); '+
+                            '}) })();</script>'
+                        );
+                        return ret.join('');
+                    },
+                    reddit: function(brand){
+                        var ret = [];
+                        //reddit doesn't offer an async solution, so let's tempoarily hijack the document.write method.
+                        window.realDocumentWrite = document.write;
+                        var hijackedDocumentWrite = function(text){
+                            var shouldHijack = text.indexOf("reddit.com") !== -1;
+                            if(shouldHijack){
+                                //this should always be there because we add it below.
+                                var hook = document.getElementById("redditShareButton");
+                                if (hook){
+                                    hook.innerHTML = text;
+                                }
+                            }else{
+                                window.realDocumentWrite.call(document, text);
+                            }
+                        };
+                        
+                        //will get set back in the callback of our loader
+                        document.write = hijackedDocumentWrite;
+                        
+                        ret.push(
+                            '<div id="redditShareButton"></div>'
+                        );
+                        ret.push(
+                            '<script type="text/javascript">(function(){ RDR.rdr_loadScript( '+
+                                ' {src:"http://www.reddit.com/static/button/button2.js"}, function(){'+
+                                ' document.write = window.realDocumentWrite; window.READRBOARDCOM.socialPageShareBoxBrandOnLoad("'+brand+'"); '+
+                            '}) })();</script>'
+                        );
+                        return ret.join('');
+                    },
+                    stumbleUpon: function(brand){
+                        var ret = [];
+                        ret.push(
+                            // '<!-- Place this tag where you want the su badge to render -->'
+                            '<su:badge layout="5"></su:badge>'
+                        );
+                        ret.push(
+                            // '<!-- Place this snippet wherever appropriate -->'+
+                            '<script type="text/javascript">(function() {var li = document.createElement("script"); li.type = "text/javascript"; li.async = true;li.src = "https://platform.stumbleupon.com/1/widgets.js";var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(li, s);})()</script>'
+                        );
+                        //no callback, flag now.
+                        delete P.loadingTrackerDict[brand];
+                        return ret.join('');
+                    },
+                    digg: function(brand){
+                        var ret = [];
+                        ret.push(
+                            '<script type="text/javascript">(function(){ RDR.rdr_loadScript( '+
+                                ' {src:"http://widgets.digg.com/buttons.js"}, function(){'+
+                                ' window.READRBOARDCOM.socialPageShareBoxBrandOnLoad("'+brand+'"); '+
+                            '}) })();</script>'
+                        );
+                        ret.push(
+                            '<div><a class="DiggThisButton DiggMedium"></a></div>'
+                        );
+                        return ret.join('');
+                    },
+                }
             };
+            //we need this in the global scope.
+            window.READRBOARDCOM.socialPageShareBoxBrandOnLoad = P.socialPageShareBoxBrandOnLoad;
 
             //private functions:
-            function _addBrands($contentList, selectedBrands){
+            function _renderSocialBrands($contentList, selectedBrands){
                 $.each( selectedBrands, function(key, isTrue){
                     if (!isTrue) return;
                     //else
-                    var $listItem = $('<li />').append( shareToolBrandCode[key] );
+
+                    //just placeholder strings to pop off when they're loaded.
+                    P.loadingTrackerDict[key] = true;
+
+                    var brandDomHtml = P.shareToolBrandCode[key](key);
+
+                    var $listItem = $('<li />').html( brandDomHtml );
                     $contentList.append( $listItem );
                 });
                 return $contentList;
             }
 
-            //helper function for ajax above
             function _makeWidget(settings){
                 var $this = $(this);
 
-                if ( !RDR.group.doShowSocialPageShareBox ) {
+                if ( !settings.doShow ) {
                     return;
                 }
                 //else
 
-                var $widgetWrap = $('<div />').addClass('rdr_socialPageShareBox'),
-                    $contents = $('<div class="rdr_innerWrap"></div>').appendTo($widgetWrap),
-                    $contentList = _addBrands( $('<ul />'), settings.shareToolBrandOpts)
+                //todo: this is a little hacky for now.
+                //add a hook for our default placement of the socialPageShareBox
+                var $defaultHook = $('<div class="rdr_socialPageShareBoxHook" />');
+                $this.find('.rdr-summary').before($defaultHook);
+
+                //make it
+                var $widget = $('<div />').addClass(P.widgetClass),
+                    $contents = $('<div class="rdr_innerWrap"></div>').appendTo($widget),
+                    $contentList = _renderSocialBrands( $('<ul />'), settings.shareToolBrandOpts)
                         .appendTo($contents);
 
-                var selectorParam = RDR.group.socialPageShareBox_selector,
+                //note that there are callbacks which will get triggered from the DOM above when it renders.
+                //it embeds scripts which will eventually call P.isLoadedCallback which will call methods.renderReadrBoardButton
+
+                var selectorParam = settings.domHookSelector,
                     hasSelector = ( 
                         selectorParam &&
                         selectorParam !== ""
                     );
                 if( hasSelector ){
-                    $this.append($widgetWrap);
+                    var $hook = $this.find(selectorParam);
+                    $hook.append($widget);
                 }else{
-                    $widgetWrap.appendTo('#rdr_sandbox').addClass('rdr_shareBox_Default');
+                    $widget.appendTo('#rdr_sandbox').addClass('rdr_socialPageShareBox_default');
                 }
+
+                $widget.data('settings', settings);
+                if( settings.fadeInOnLoad ){
+                    $widget.css({opacity:0});
+                }
+                return $widget;
             }
 
+            function _updateWidgetInteractionCount($pluginRoot){
+                //this updates the counts in the widgets' data.
+                var $this = $pluginRoot;
+                var pageId = $this.data('page_id');
 
+                var summary = RDR.pages[pageId].summary;
 
+                //get the count.  This sucks - fix our summary later.
+                var tagCount = 0;
+                $.each( summary, function(idx, val){
+                    if(val.kind == "tag"){
+                        tagCount = val.count;
+                    }
+                });
+                
+                $this.data('pageTagCount', tagCount);
+            }
         }
         //end function plugin_jquery_socialPageShareBox
 
