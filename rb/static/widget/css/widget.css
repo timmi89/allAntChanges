@@ -1,4 +1,4 @@
-  .rdr * {
+.rdr * {
     /*temp reset*/
     margin:0;;
     padding:0;;
@@ -1033,13 +1033,13 @@ div.rdr_socialPageShareBox .rdr_innerWrap ul li{
     padding: 0;
     box-sizing: border-box;
 }
-div#readrBoardCommonSocialWidget{
+div#readrBoardSocialWidgetButton{
     display: block;
     visibility: visible;
     position: relative;
     vertical-align:top;
 }
-div#readrBoardCommonSocialWidget .rdr_shareBubble{
+div#readrBoardSocialWidgetButton .rdr_shareBubble{
     position: relative;
     background: none repeat scroll 0 0 #FFFFFF;
     border: 1px solid #BBBBBB;
@@ -1048,7 +1048,7 @@ div#readrBoardCommonSocialWidget .rdr_shareBubble{
     min-width: 15px;
 }
 
-div#readrBoardCommonSocialWidget .rdr_bubbleTriangleWrap{
+div#readrBoardSocialWidgetButton .rdr_bubbleTriangleWrap{
     background: none repeat scroll 0 0 #FFFFFF;
     position: absolute;
     overflow: visible;
@@ -1058,7 +1058,7 @@ div#readrBoardCommonSocialWidget .rdr_bubbleTriangleWrap{
     right: auto;
     top: auto;
 }
-div#readrBoardCommonSocialWidget .rdr_bubbleTriangleWrap .rdr_innerTriangle{
+div#readrBoardSocialWidgetButton .rdr_bubbleTriangleWrap .rdr_innerTriangle{
     position: absolute;
     left: -3px;
     top:0;
@@ -1069,7 +1069,7 @@ div#readrBoardCommonSocialWidget .rdr_bubbleTriangleWrap .rdr_innerTriangle{
     position: absolute;
     z-index: 101;
 }
-div#readrBoardCommonSocialWidget .rdr_bubbleTriangleWrap .rdr_outerTriangle{
+div#readrBoardSocialWidgetButton .rdr_bubbleTriangleWrap .rdr_outerTriangle{
     position: absolute;
     left:-4px;
     top:0;
@@ -1079,7 +1079,7 @@ div#readrBoardCommonSocialWidget .rdr_bubbleTriangleWrap .rdr_outerTriangle{
     border-bottom: 4px solid transparent;
     z-index: 100;
 }
-div#readrBoardCommonSocialWidget .rdr_bubbleButton{
+div#readrBoardSocialWidgetButton .rdr_bubbleButton{
     background: url("../images/socialPageShareButton.png") no-repeat scroll 0 0 transparent !important;
     height: 22px;
     left: 0;
@@ -1088,11 +1088,11 @@ div#readrBoardCommonSocialWidget .rdr_bubbleButton{
     width: 102%;
     z-index: 102;
 }
-div#readrBoardCommonSocialWidget .rdr_bubbleButton.hover,
-div#readrBoardCommonSocialWidget .rdr_bubbleButton:hover{
+div#readrBoardSocialWidgetButton .rdr_bubbleButton.hover,
+div#readrBoardSocialWidgetButton .rdr_bubbleButton:hover{
     background: url("../images/socialPageShareButton-hover.png") no-repeat scroll 0 0 transparent !important;
 }
-div#readrBoardCommonSocialWidget .rdr_bubbleCount{
+div#readrBoardSocialWidgetButton .rdr_bubbleCount{
     text-align: center;
     white-space: nowrap;
     font-size: 16px;
