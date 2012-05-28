@@ -6023,8 +6023,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         doShow: RDR.group.socialPageShareBox_doShow,
                         domHookSelector: RDR.group.socialPageShareBox_selector,
                         shareToolBrandOpts: RDR.group.socialPageShareBox_socialBrands,
-                        fadeInOnLoad: RDR.group.socialPageShareBox_fadeIn
+                        fadeInOnLoad: RDR.group.socialPageShareBox_fadeIn,
+                        //use this as a default for now.  It will make it absolute-postion offset left of it. - in the page margin.
+                        widgetKeyEl: RDR.group.summary_widget_selector
                     }
+
                     $container.socialPageShareBox( settings );
 
                 }
@@ -7113,11 +7116,6 @@ function $RFunctions($R){
                 }
                 //else
 
-                //todo: this is a little hacky for now.
-                //add a hook for our default placement of the socialPageShareBox
-                var $defaultHook = $('<div class="rdr_socialPageShareBoxHook" />');
-                $this.find('.rdr-summary').before($defaultHook);
-
                 //make it
                 var $widget = $('<div />').addClass(P.widgetClass),
                     $contents = $('<div class="rdr_innerWrap"></div>').appendTo($widget),
@@ -7128,15 +7126,18 @@ function $RFunctions($R){
                 //it embeds scripts which will eventually call P.isLoadedCallback which will call methods.renderReadrBoardButton
 
                 var selectorParam = settings.domHookSelector,
-                    hasSelector = ( 
-                        selectorParam &&
-                        selectorParam !== ""
-                    );
+                    widgetKeyEl = settings.widgetKeyEl;
+
+                    var hasSelector = ( selectorParam && widgetKeyEl );
+                
+                var $hook = $('<div class="rdr_socialPageShareBoxHook" />');
                 if( hasSelector ){
-                    var $hook = $this.find(selectorParam);
+                    $this.find(settings.widgetKeyEl).prepend($hook);
                     $hook.append($widget);
                 }else{
-                    $widget.appendTo('#rdr_sandbox').addClass('rdr_socialPageShareBox_default');
+                    $hook.appendTo('#rdr_sandbox');
+                    $hook.append($widget);
+                    $widget.addClass('rdr_socialPageShareBox_default');
                 }
 
                 $widget.data('settings', settings);
