@@ -1736,20 +1736,6 @@ function readrBoard($R){
                     return para.replace(/[\n\r\t]+/gi,' ').replace().replace(/\s{2,}/g,' ');
                 }
             },
-            prettyNumber: function(int){
-                var parsedInt = parseInt(int, 10); //convert if we can.
-                if( isNaN(parsedInt) || parsedInt<0 ) return false;
-                //else
-
-                var abr = ["",'K','M','B','T'];
-                for(var i=0; i<abr.length; i++){
-                    var thisfactor = Math.pow(10, 3*i);
-                    var nextfactor = Math.pow(10, 3*(i+1));
-                    if( parsedInt < nextfactor ){
-                        return ""+ Math.floor( parsedInt/thisfactor ) + abr[i];
-                    }
-                }
-            },
             trimToLastWord: function(str){
                 var danglerRE = /\w+$/.exec(str);
                 if( !danglerRE){
@@ -4473,8 +4459,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     var $count = $indicator_body.find('.rdr_count'),
                         $details_header_count = ($indicator_details) ? $indicator_details.find('div.rdr_header h1'):false;
                     if ( summary.counts.tags > 0 ) {
-                        $count.html( RDR.util.prettyNumber( summary.counts.tags ) );
-                        if ($details_header_count) $details_header_count.html( RDR.util.prettyNumber( summary.counts.tags ) + " Reactions" );
+                        $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
+                        if ($details_header_count) $details_header_count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + " Reactions" );
                     }
 
                     if(summary.kind !== 'text'){
@@ -6135,14 +6121,40 @@ function $RFunctions($R){
         });
     }
 
+    //these are basic utils that can be used both in the plugins and main scripts.  Added to RDR.commonUtil;
+    initCommonUtils($R);
+        
     //init our plugins (includes rangy, but otherwise, mostly jquery plugins. The $R passed is our jQuery alias)
     initPlugins($R);
 
+    //load our main scripts
     readrBoard($R);
 
     //run init functions
     RDR.actions.init();
 
+
+    function initCommonUtils($){
+        $.extend(RDR, {
+            commonUtil: {
+                prettyNumber: function(int){
+                    // RDR.commonUtil.prettyNumber:
+                    var parsedInt = parseInt(int, 10); //convert if we can.
+                    if( isNaN(parsedInt) || parsedInt<0 ) return false;
+                    //else
+
+                    var abr = ["",'K','M','B','T'];
+                    for(var i=0; i<abr.length; i++){
+                        var thisfactor = Math.pow(10, 3*i);
+                        var nextfactor = Math.pow(10, 3*(i+1));
+                        if( parsedInt < nextfactor ){
+                            return ""+ Math.floor( parsedInt/thisfactor ) + abr[i];
+                        }
+                    }
+                }
+            }
+        });
+    }
 
     function initPlugins($R){
         //All jquery plugins to be loaded using our $R version of jquery and before our widget code;
@@ -6932,7 +6944,7 @@ function $RFunctions($R){
 
                         //dummy count
                         var count = $this.data('pageTagCount');
-                        $bubbleCount.append('<span>'+count+'</span>');
+                        $bubbleCount.append('<span>'+ P.imports.prettyNumber(count) +'</span>');
                     });
                 }
             };
@@ -7086,8 +7098,12 @@ function $RFunctions($R){
                         );
                         return ret.join('');
                     },
+                },
+                imports: {
+                    prettyNumber: RDR.commonUtil.prettyNumber
                 }
             };
+
             //we need this in the global scope.
             window.READRBOARDCOM.socialPageShareBoxBrandOnLoad = P.socialPageShareBoxBrandOnLoad;
 
