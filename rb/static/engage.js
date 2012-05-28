@@ -629,7 +629,7 @@ function readrBoard($R){
 
                     $('#rdr_sandbox').append( $pill );
                     var pill_width = $pill.width();
-                    $('#rdr_sandbox').find( $pill ).remove();
+                    $pill.remove();
                     delete $pill;
                     return pill_width;
                 },
@@ -6807,10 +6807,10 @@ function $RFunctions($R){
                                     RDR.actions.interactions.ajax( args, 'react', 'create');
                                 }).hover(
                                     function() {
-                                        $(this).find('span.rdr_tag_count').text('+');
+                                        $(this).find('span.rdr_tag_count').addClass('rdr_hover').text('+');
                                     },
                                     function() {
-                                        $(this).find('span.rdr_tag_count').text( $(this).data('tag_count') );
+                                        $(this).find('span.rdr_tag_count').removeClass('rdr_hover').text( $(this).data('tag_count') );
                                     }
                                 );
                                 $page.find('span.rdr_details_pill').append($pill);
@@ -6854,6 +6854,9 @@ function $RFunctions($R){
 
                                     $details.find('div.rdr_counts_other').width( otherCountsWidth + 35 );
                                     $details.css( 'min-width', ( $details.find('.rdr_tag').width()+$details.find('.rdr_tag_count').width() + 35 )+'px' );
+
+                                    //save a reference to this $pill - since we're recreating a new one on each hover, we'll want to clean up old ones.
+                                    $this.data('$pill', $pill);
                             },
                             function() {
                                 var $this = $(this),
@@ -6862,6 +6865,12 @@ function $RFunctions($R){
                                 $this.removeClass('rdr_live_hover');
                                 if ( !$('#rdr_tag_'+tag.id+'_details').hasClass('rdr_live_hover') ) {
                                     $('#rdr_tag_'+tag.id+'_details').hide();
+                                    
+                                    // kill old pill if it exists
+                                    var $oldPill = $this.data('$pill');
+                                    if($oldPill){
+                                        $oldPill.remove();
+                                    }
                                 }
                             }
                         );
