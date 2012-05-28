@@ -8,6 +8,11 @@
 		RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com";
 		RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
 
+		var w = 370;
+	    var h = 245;
+	    var l = (window.screen.width/2)-(w/2);
+	    var t = (window.screen.height/2)-(h/2);
+
 		// var date = new Date();
 		// TODO use the following line.  it creates a cachebuster that represents the current day/week/month
 		// var cachebuster = String( parseInt( date.getDate() / 7 )+1 )+String(date.getMonth()) + String(date.getYear());
@@ -38,7 +43,7 @@
 				</div>
 			</div>
 			<div style="float:left;padding-left:6px;">
-				<a href="javascript:void(0);" onclick="RDRAuth.rbloginWindow = window.open(RDR_baseUrl+'/rb_login/?group_id='+qs_args.group_id, 'readr_login','menubar=1,resizable=1,width=370,height=245');return false;"><img src="/static/widget/images/rb-login_to_readrboard.png" style="margin-top:8px;" /></a>
+				<a href="javascript:void(0);" onclick="RDRAuth.rbloginWindow = window.open(RDR_baseUrl+'/rb_login/?group_id='+qs_args.group_id, 'readr_login','menubar=1,resizable=1,width=370,height=245,top='+t+',left='+l);RDRAuth.checkRBLoginWindow();return false;"><img src="/static/widget/images/rb-login_to_readrboard.png" style="margin-top:8px;" /></a>
 			</div>
 			<script>
 			$('#login-buttons a').click( function() {
