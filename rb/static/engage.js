@@ -5139,6 +5139,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
 
                     function _updatePage(hash, diffNode){
+                        //todo it looks like we're assuming this is a tag - check if we need to consider comments
 
                         //also update page
                         var tagId = diffNode.id;
@@ -5167,9 +5168,25 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             });
                         }
 
+                        //add to page tag count
+                        //This sucks - fix our summary later.
+                        var summary = page.summary;
+                        $.each( summary, function(idx, val){
+                            if(val.kind == "tag"){
+                                val.count = val.count + diffNode.delta;
+                            }
+                        });
+
+                        
+                        //update plugin widgets
+                        //update rdrWidgetSummary...
                         var $summaryWidgetAnchorNode = $('.rdr-page-widget-key-'+page.key);
                         $summaryWidgetAnchorNode.rdrWidgetSummary('update');
-
+                        
+                        //update socialPageShareBox...
+                        //this shoudl do for now to find the page...
+                        var $page = $summaryWidgetAnchorNode.closest('.rdr-page-container');
+                        $page.socialPageShareBox('update');
                     }
 
                 },
