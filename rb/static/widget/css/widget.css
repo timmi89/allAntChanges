@@ -524,6 +524,10 @@ div.rdr a.rdr_tag     {
     font-style: normal !important;
     font-weight: normal !important;
     height: 21px !important;
+
+    /*this is kludgy*/
+    line-height: 14px !important;
+    
     margin: 0 5px 0 -2px !important;
     padding: 4px 5px !important;
     position: relative !important;
@@ -752,12 +756,9 @@ table.rdr_tags span.rdr_comment_indicator {
 }
 
 div.rdr a.rdr_tag span.rdr_tag_count    { 
-    background: -webkit-gradient(linear, center top, center bottom, from(#ddedff), to(#add1f9)) !important; 
-    background: -moz-linear-gradient(center top , #ddedff, #add1f9) repeat scroll 0 0 transparent !important;
     -moz-border-radius: 0 7px 7px 0 !important;
     -webkit-border-radius: 0 7px 7px 0 !important;
     border-radius: 0 7px 7px 0 !important;
-    color: #666666 !important;
     cursor: pointer !important;
     display: inline-block !important;
     font-size: 11px !important;
@@ -793,13 +794,27 @@ table.rdr_tags a.rdr_tag span.rdr_tag_count{
 }
 
 table.rdr_tags a.rdr_tag.rdr_hover span.rdr_tag_count,
-table.rdr_tags a.rdr_tag:hover span.rdr_tag_count{
+table.rdr_tags a.rdr_tag:hover span.rdr_tag_count,
+div.rdr span.rdr_details_pill a.rdr_tag.rdr_hover span.rdr_tag_count,
+div.rdr span.rdr_details_pill a.rdr_tag:hover span.rdr_tag_count{
     background: none !important;
     color: #008be4 !important;
     font-size: 15px !important;
     font-weight: bold !important;
     line-height: 14px !important;
 }
+
+/*overwrite the above if it's active*/
+table.rdr_tags td.rdr_activePill a.rdr_tag.rdr_hover span.rdr_tag_count,
+table.rdr_tags td.rdr_activePill a.rdr_tag:hover span.rdr_tag_count{
+    font-size: 11px !important;
+    font-weight: normal !important;
+}
+div.rdr span.rdr_details_pill a.rdr_tag.rdr_hover span.rdr_tag_count,
+div.rdr span.rdr_details_pill a.rdr_tag:hover span.rdr_tag_count{
+    top: 2px;
+}
+
 
 #rdr_sandbox div.rdr a.rdr_tag.rdr_custom_tag input, div.rdr a.rdr_tag.rdr_custom_tag input{
     background: transparent !important;

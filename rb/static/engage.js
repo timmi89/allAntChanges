@@ -651,7 +651,11 @@ function readrBoard($R){
                     }
                     // var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'">'+tag.body+'</a>').data('tag_id',tag.id);
                     
-                    var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ').data('tag_id',tag.id).data('tag_count',tagCount);
+                    var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ')
+                        .data({
+                            tag_id: tag.id,
+                            tag_count: tagCount
+                        });
 
                     if ( max_width ) {
                         $a.find('span.rdr_tag_name').css( 'max-width', max_width+"px" );
@@ -6713,7 +6717,11 @@ function $RFunctions($R){
                                 message = tagCount+' '+peoples+' had this reaction.',  // <br/>Hold your mouse here to see why.
                                 countMessage = tagCount;
                         }
-                        var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'">'+tag.body+'</a>').data('tag_id',tag.id).data('tag_body',tag.body).data('tag_count',tagCount);
+                        var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'" >'+tag.body+'</a>').data({
+                            tag_id: tag.id,
+                            tag_body: tag.body,
+                            tag_count: tagCount
+                        });
 
                         $span = $('<span class="rdr_tag_count">'+countMessage+'</span>');
 
@@ -6787,16 +6795,17 @@ function $RFunctions($R){
                                         message = tag_count+' '+peoples+' had this reaction.<br/>Click to agree.';
                                 }
 
-                                var $pill = $('<a class="rdr_tag rdr_tag_'+tag_id+'">'+tag_body+'</a>').data({
+                                var $pill = $('<a class="rdr_tag rdr_tag_'+tag_id+'" />').data({
                                     tag_id: tag_id,
                                     hash: hash,
                                     page_id: page.id,
                                     tag_count: tag_count
                                 });
-
+                                
+                                $tagName = $('<span class="rdr_tag_name">'+tag_body+'</span>');
                                 $span = $('<span class="rdr_tag_count">'+tag_count+'</span>');
 
-                                $pill.append( $span );
+                                $pill.append( $tagName, $span );
                                 
                                 // old "click to react" functionality
                                 $pill.click( function() {
@@ -6807,10 +6816,14 @@ function $RFunctions($R){
                                     RDR.actions.interactions.ajax( args, 'react', 'create');
                                 }).hover(
                                     function() {
-                                        $(this).find('span.rdr_tag_count').addClass('rdr_hover').text('+');
+                                        var $this = $(this);
+                                        $this.addClass('rdr_hover')
+                                            .find('span.rdr_tag_count').text('+');
                                     },
                                     function() {
-                                        $(this).find('span.rdr_tag_count').removeClass('rdr_hover').text( $(this).data('tag_count') );
+                                        var $this = $(this);
+                                        $this.removeClass('rdr_hover')
+                                            .find('span.rdr_tag_count').text( $this.data('tag_count') );
                                     }
                                 );
                                 $page.find('span.rdr_details_pill').append($pill);
