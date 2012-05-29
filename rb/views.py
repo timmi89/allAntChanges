@@ -207,6 +207,9 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     else:
         interactions = interactions.filter(approved=True)
 
+    if 'filtered' in kwargs:
+        logger.info('filtering')
+        interactions = interactions.filter( Q(user = cookie_user) & ~Q(user__email__exact='tempuser@readrboard.com') | Q(page__site__group__approved = True))
     # Pagination
     interactions_paginator = Paginator(interactions, 50)
 
@@ -236,9 +239,8 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     for child_interaction in child_interactions:
         if not context['child_interactions'].has_key(child_interaction.parent.id):
             context['child_interactions'][child_interaction.parent.id] = 0
-            logger.info(child_interaction.parent.id)
         context['child_interactions'][child_interaction.parent.id] += 1
-        logger.info(context['child_interactions'])
+
 
     return render_to_response("index.html", context, context_instance=RequestContext(request))
 

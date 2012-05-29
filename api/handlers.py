@@ -483,7 +483,7 @@ class SettingsHandler(AnonymousBaseHandler):
                 group = Group.objects.create(
                     name=host,
                     short_name=host,
-                    approved=True,
+                    approved=False,
                     temp_interact=0,
                     requires_approval=False,
                     share = Feature.objects.get(id=1),
