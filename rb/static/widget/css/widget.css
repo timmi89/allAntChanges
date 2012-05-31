@@ -793,6 +793,11 @@ table.rdr_tags a.rdr_tag span.rdr_tag_count{
     background: -moz-linear-gradient(center top , #f0f0f0, #d0d0d0) repeat scroll 0 0 transparent !important;
 }
 
+div.rdr span.rdr_details_pill a.rdr_tag.rdr_hover,
+div.rdr span.rdr_details_pill a.rdr_tag:hover{
+    top: -1px !important;
+}
+
 table.rdr_tags a.rdr_tag.rdr_hover span.rdr_tag_count,
 table.rdr_tags a.rdr_tag:hover span.rdr_tag_count,
 div.rdr span.rdr_details_pill a.rdr_tag.rdr_hover span.rdr_tag_count,
@@ -812,7 +817,7 @@ table.rdr_tags td.rdr_activePill a.rdr_tag:hover span.rdr_tag_count{
 }
 div.rdr span.rdr_details_pill a.rdr_tag.rdr_hover span.rdr_tag_count,
 div.rdr span.rdr_details_pill a.rdr_tag:hover span.rdr_tag_count{
-    top: 2px;
+    top: 1px !important;
 }
 
 
@@ -959,7 +964,7 @@ div#rdr-page-summary.defaultSummaryBar{
     position: fixed !important;
     top:0 !important;
     width: 100% !important;
-    z-index: 13000000 !important;
+    z-index: 95000 !important;
 }
 div#rdr-page-summary.defaultSummaryBar .rdr-summary{
   -moz-box-shadow:0px 1px 4px #ccc !important;
