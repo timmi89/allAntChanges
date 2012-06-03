@@ -525,7 +525,15 @@ class SettingsHandler(AnonymousBaseHandler):
                         'michael@readrboard.com'
                     )
                 )
-        
+                msg = EmailMessage("ReadrBoard group approval", generateApprovalEmail(group), "groups@readrboard.com", 
+                                   [
+                                   'porterbayne@gmail.com',
+                                   'erchaves@gmail.com',
+                                   'michael@readrboard.com']
+                                   )
+                msg.content_subtype='html'
+                msg.send(False)
+                
                 for admin in readr_admins:
                     GroupAdmin.objects.create(group=group,social_user=admin,approved=True)
 
@@ -534,8 +542,8 @@ class SettingsHandler(AnonymousBaseHandler):
         else:
             group = Group.objects.get(id=group_id)
             
-        if group.approved == False:
-            return HttpResponse("Group not approved")
+        #if group.approved == False:   
+        #    return HttpResponse("Group not approved")
         
         settings_dict = model_to_dict(
             group,
