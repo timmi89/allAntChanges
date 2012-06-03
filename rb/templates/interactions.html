@@ -1,7 +1,82 @@
-<section>
+<style>
+#cards {
+  width:870px;
+  margin:0 auto;
+}
+#content {
+  overflow:auto;
+  float:left;
+  width:610px;
+  position:relative;
+  visibility:hidden;
+}
+#content .card {
+  float:left;
+  width:300px;
+  padding:0 0 10px 0;
+  margin:0 0 10px 0;
+  background:#fff;
+  border:1px solid #ccc;
+  border-top:none;
+  /*box-shadow:0 0 4px #bbb;*/
+}
+#content .card .group {
+  background:#9fd1ea;
+  text-align:center;
+  font-size:10px;
+  font-weight:bold;
+  color:#fff;
+}
+#content .card .group span {
+  color:#fff;
+}
+.card .group img {
+  margin-bottom: -4px;
+  margin-top: 2px;
+}
+.card .group span {
+  margin-bottom:2px;
+  display:inline-block;
+}
+.card .group a:hover {text-decoration:none;}
+#pages  {
+  float:right;
+  overflow:auto;
+  width:248px;  /* +2px border == 250 */
+  background:#f7f8f9;
+  border:1px solid #ccc;
+  margin-left:10px;
+}
+#pages .card .group {
+  font-size:11px;
+  font-weight:bold;
+  color:#7ebadf;
+}
+
+.card .buttons {
+  position:absolute;right:3px;top:45px;z-index:1;display:none;
+}
+.card.txt .buttons {
+  top:5px;
+}
+.card .buttons button {
+  font-size:10px;color:#777;cursor:pointer;
+}
+#pages .card .buttons {
+  position:absolute;right:3px;top:-40px;z-index:1;display:none;
+}
+.card:hover .buttons { display:block; }
+#pages .card:hover .buttons { display:block; }
+</style>
+<section id="headlines" style="overflow:auto;margin-bottom:10px;">
+  <h1 style="float:left;font-size:21px;padding:10px 0;border-radius:5px;font-weight:normal;font-family:Helvetica,Arial,sans-serif;background:#fff;box-shadow:0px 0px 4px #ccc;color:#454545;text-align:center;width:602px;margin:2px 14px 2px 4px;">Content</h1>
+  <h2 style="float:left;font-size:21px;padding:10px 0;border-radius:5px;font-weight:normal;font-family:Helvetica,Arial,sans-serif;background:#fff;box-shadow:0px 0px 4px #ccc;color:#454545;text-align:center;width:247px;margin:2px 0;">Pages</h2>
+</section>
+<section id="pages"></section>
+<section id="content"></section>
 <script>
 var comments = [],
-    interactions = [],
+    interactions = {pages:[],content:[]},
     shares = [];
     
 if ( window.location.href.indexOf('/user/') != -1 ) {
@@ -56,18 +131,13 @@ if ( window.location.href.indexOf('/user/') != -1 ) {
             if ( interaction.user_name == "" ) {
               interaction.user_name = "Unregistered User";
             }
-            interactions.push( interaction );
-            /*
-                  <h5>Other Reactions</h5>
-                  <ul class="other_reactions">
-                    {% for other_tag in interaction.related_tags %}
-                        <li>{{ other_tag.body }}</li>
-                    {% endfor %}
-                  </ul>
+            {% if interaction.content.kind == "pag" %}
+              interactions['pages'].push( interaction );
+            {% endif %}
+            {% if interaction.content.kind != "pag" %}
+              interactions['content'].push( interaction );
+            {% endif %}
 
-              </div>
-            </div>
-            */
         {%endif%}
 
         {% if interaction.human_kind == 'Share' %}
@@ -157,7 +227,6 @@ var metoos = {
 
 </script>
 
-</section>
 <div class="pagination">
   <span class="step-links">
     {% if current_page.has_previous %}
@@ -175,7 +244,7 @@ var metoos = {
 
 <script>
 var zIndex = 400;
-function writeCard( interaction, showBlocked ) {
+function writeContentCard( interaction, showBlocked ) {
 
   if ( window.location.href.indexOf('/page/') != -1 ) {
     // this should really be done by the back-end.
@@ -193,20 +262,22 @@ function writeCard( interaction, showBlocked ) {
 
   if ( interaction.approved || ( !interaction.approved && showBlocked ) ) {
     
-    // if a page-level one, let's group it into a container.  This is Part 1 of the process.
-    if ( interaction.kind == "pag" ) {
-      if ( !$('div.card.pag_container').last().length || $('div.card.pag_container').last().find('div.card').length != 1 ) {
-        // var $pag_container = $('div.card.pag_container').last();
-      // } else {
-        $('#cards section').append('<div class="card pag_container" style="z-index:'+zIndex+'" />');
-      }
-    }
-
     // write the card first, then append the comment
-    var $card = $('<div class="card '+interaction.kind+'" id="card_'+interaction.id+'" style="z-index:'+zIndex+'" />');
+    var $card = $('<div class="card '+interaction.kind+'" id="card_'+interaction.id+'" style="z-index:'+zIndex+'" />')//chain
+        .append('<div class="group"><a href=/group/' + interaction.group.short_name + '><img src="http://www.google.com/s2/favicons?domain='+interaction.domain+'" /> <span>'+interaction.domain+'</span></a></div>');
     var $header = $('<header/>').attr('title', interaction.interaction_node_body)
-         .append('<h1><a href="/stream/?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></h1>')
-         .append('<span class="count"></span>')
+         .append('<h1><a href="/stream/?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></h1>');
+
+    var hasProfilePic =  interaction.user_avatar != "None" && interaction.user_avatar != "",
+        profilePic = hasProfilePic ? interaction.user_avatar : "{{ STATIC_URL }}site/images/anonymous-user.png";
+
+    var $addedBy = $( '<div class="added_by">'
+        + '<a href="'+interaction.user_profile_link+'" rel="tooltip" title="'+interaction.user_name +'" class="added_by_user">'
+        + '<img src="'+profilePic+'" class="user_avatar" />'
+        + '</a>'
+        + '<div class="me_too_outcome" />'
+        + '</div>'
+    ).prependTo( $header );
 
     if ( interaction.moderator ) {
         $header.append('<div class="block_content">'
@@ -215,7 +286,7 @@ function writeCard( interaction, showBlocked ) {
           + '</a></div>');
     }
 
-    var $content = ( interaction.kind != "pag" ) ? $('<div class="content"/>'):'';
+    var $content = $('<div class="content"/>');
     
     if ( interaction.kind == "img" ) {
       $content.append('<div class="content_body"><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><img src="'+interaction.content_body+'"></a></div><div class="comments" />');
@@ -232,43 +303,80 @@ function writeCard( interaction, showBlocked ) {
       $content.append('<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><div class="content_body"><span>'+interaction.content_body+'</span></div></a><div class="comments" />');
     }
 
+    var $buttons = $('<div class="buttons"><button>Add new reaction</button> <button>+1 '+interaction.interaction_node_body+'</button></div>').appendTo( $content );
+
     var $meta = $('<div class="meta"/>'),
-        $metaLeft = $('<div class="metaLeft"/>'),
         $metaRight = $('<div class="metaRight"/>');
 
-    if ( interaction.kind == "txt" ) {
-        $metaLeft.append('<div class="content_type" rel="tooltip" title="This reaction is to <strong>text</strong> from the page."><img src="{{ STATIC_URL }}site/images/type_text.png" /></div>');
-    } else if ( interaction.kind == "img" ) {
-        $metaLeft.append('<div class="content_type" rel="tooltip" title="This is reaction is to an <strong>image</strong> from the page."><img src="{{ STATIC_URL }}site/images/type_img.png" /></div>');
-    } else if ( interaction.kind == "med" ) {
-        $metaLeft.append('<div class="content_type" rel="tooltip" title="This is reaction is to a <strong>video or other type of media</strong> from the page."><img src="{{ STATIC_URL }}site/images/type_media.png" /></div>');
-    } else if ( interaction.kind == "pag" ) {
-        $metaLeft.append('<div class="content_type" rel="tooltip" title="This is reaction is to the <strong>whole page</strong>.">'
-                + '<img class="pageIcon" src="{{ STATIC_URL }}site/images/type_page.png" />'
-                + '<div class="favicon"><img src="http://www.google.com/s2/favicons?domain='+interaction.domain+'" /></div>'
-            +'</div>'
-        );
-    }
-
     $meta.prepend('<div class="date">'+interaction.date+'</div>');
-    $meta.append($metaLeft);
     $meta.append($metaRight);
     $meta.append('<div class="clear" />');
 
-    if ( interaction.group.logo_url != "" ) {
-      $metaRight.append('<div class="publisher"><a href=/group/' + interaction.group.short_name + '><img alt="' + interaction.group.name + '" src="' + interaction.group.logo_url + '"></a></div>');
-    } else {
-      $metaRight.append('<div class="publisher"><a href=/group/' + interaction.group.short_name + '>'+interaction.group.name+'</a></div>');
+    $metaRight.append('<div class="title">'
+                + '<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank">'+interaction.page_title+'</a>'
+              + '</div>');
+
+    // if ( $.cookie('rdr_session') ) {
+    //   $addedBy.find('img.me_too').click( function() {
+    //     RB.interactions.me_too( interaction.id );
+    //   });
+    // }
+
+    $card.append( $header, $content, $meta );
+    zIndex--;
+
+    $('#cards #content').append( $card ); 
+  }
+}
+
+function writePageCard( interaction, showBlocked ) {
+
+  if ( window.location.href.indexOf('/page/') != -1 ) {
+    // this should really be done by the back-end.
+    if ( !$('#sidebar div#avatar').length ) {
+      var $avatar = $('<div id="avatar"><a href="/group/'+interaction.group.short_name+'"><img alt="'+interaction.group.name+'" src="'+interaction.group.logo_url_lg+'"></a></div>')
+      $('#sidebar').prepend( $avatar );
     }
+
+    if ( !$('#sidebar h3').length ) {
+      var $pageTitle = $('<h3>'+interaction.page_title+'</h3><div style="text-align:center;padding-right:20px;margin-bottom:20px"><a href="'+interaction.external_url+'" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a></div>')
+      $('#sidebar h4').text('Activity on:').after( $pageTitle );
+    }
+
+  }
+
+  if ( interaction.approved || ( !interaction.approved && showBlocked ) ) {
+    
+    // write the card first, then append the comment
+    var $card = $('<div class="card '+interaction.kind+'" id="card_'+interaction.id+'" style="z-index:'+zIndex+'" />')//chain
+        .append('<div class="group"><a href=/group/' + interaction.group.short_name + '><img src="http://www.google.com/s2/favicons?domain='+interaction.domain+'" /> <span>'+interaction.domain+'</span></a></div>');
+    var $header = $('<header/>').attr('title', interaction.interaction_node_body)
+         .append('<h1><a href="/stream/?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></h1>')
+         .append('<span class="count"></span>')
+
+    if ( interaction.moderator ) {
+        $header.append('<div class="block_content">'
+          + '<a href="javascript:void(0);" onclick="RB.admin.blockContent('+interaction.id+');" id="moderate_'+interaction.id+'">'
+          + (( interaction.approved ) ? 'Block':'Unblock')
+          + '</a></div>');
+    }
+    
+    var $meta = $('<div class="meta"/>'),
+        $metaRight = $('<div class="metaRight"/>');
+
+    $meta.append($metaRight);
+    $meta.append('<div class="date">'+interaction.date+'</div>');
+    $meta.append('<div class="clear" />');
+
     $metaRight.append('<div class="title">'
                 + '<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank">'+interaction.page_title+'</a>'
               + '</div>');
     
     var hasProfilePic =  interaction.user_avatar != "None" && interaction.user_avatar != "",
         profilePic = hasProfilePic ? interaction.user_avatar : "{{ STATIC_URL }}site/images/anonymous-user.png";
-        plus_one_tooltip = ( $.cookie('rdr_session') ) ? "Add this to your profile":"Log in to add this to your profile";
+        // plus_one_tooltip = ( $.cookie('rdr_session') ) ? "Add this to your profile":"Log in to add this to your profile";
     var $addedBy = $( '<div class="added_by">'
-        + '<img src="{{ STATIC_URL }}site/images/blank.png" class="me_too" title="'+plus_one_tooltip+'"/>'
+        // + '<img src="{{ STATIC_URL }}site/images/blank.png" class="me_too" title="'+plus_one_tooltip+'"/>'
         + '<a href="'+interaction.user_profile_link+'" rel="tooltip" title="'+interaction.user_name +'" class="added_by_user">'
         + '<img src="'+profilePic+'" class="user_avatar" />'
         + '</a>'
@@ -276,40 +384,22 @@ function writeCard( interaction, showBlocked ) {
         + '</div>'
     );
 
-    if ( $.cookie('rdr_session') ) {
-      $addedBy.find('img.me_too').click( function() {
-        RB.interactions.me_too( interaction.id );
-      });
-    }
+    // if ( $.cookie('rdr_session') ) {
+    //   $addedBy.find('img.me_too').click( function() {
+    //     RB.interactions.me_too( interaction.id );
+    //   });
+    // }
 
-    $card.append( $header, $content, $meta, $addedBy );
+    // var $buttons = $('<div class="buttons"><button>+1</button> <button>New reaction</button></div>').appendTo( $meta );
+    var $buttons = $('<div class="buttons"><button>Add new reaction</button> <button>+1 '+interaction.interaction_node_body+'</button></div>').appendTo( $meta );
+
+    $card.append( $header, $meta, $addedBy );
     zIndex--;
 
     if ( interaction.kind == "pag" ) {
-      var $pag_container = $('div.card.pag_container').last(),
-          $pag_cards = $pag_container.find('div.card');
-      if ( $pag_cards.length == 0 ) {
-        $card.addClass('first');
-      }
-      $pag_container.append( $card );
-
-      $pag_cards = $pag_container.find('div.card');
-      var pag_card_height = 0;
-
-      $pag_cards.each( function() {
-        var this_card_height = $(this).height();
-        pag_card_height = ( this_card_height > pag_card_height ) ? this_card_height:pag_card_height;
-      });
-
-      $pag_cards.each( function() { 
-        var this_card_height = $(this).height();
-        if ( this_card_height < pag_card_height ) {
-          $(this).css( 'min-height', pag_card_height ).addClass('heightAdjusted').find('div.added_by').css('margin-top', (pag_card_height - this_card_height + 5) );
-        }
-      });
-
+      $('#cards #pages').append( $card ); 
     } else {
-      $('#cards section').append( $card );
+      $('#cards #content').append( $card ); 
     }
   }
 }
@@ -355,29 +445,74 @@ function writeComment( comment, parent, showBlocked ) {
   }
 }
 
-$.each( interactions, function(idx, interaction) {
-  writeCard( interaction );
+
+$.each( interactions.content, function(idx, interaction) {
+  writeContentCard( interaction );
   $.each( interaction.comments, function(idx, comment) {
     writeComment( comment, interaction );
   });
+});
+
+$.each( interactions.pages, function(idx, interaction) {
+  writePageCard( interaction );
 });
 
 $.each( metoos, function(interaction_id, count) {
   $('#card_'+interaction_id).find('div.added_by').append('<span style="margin-left:5px;">and '+count+' more</span>');
 });
 
-var $container = $('#cards section');
-// $container.imagesLoaded(function(){
+
+var $container = $('#content');
+
+// modified Isotope methods for gutters in masonry
+  $.Isotope.prototype._getMasonryGutterColumns = function() {
+    var gutter = this.options.masonry && this.options.masonry.gutterWidth || 0;
+        containerWidth = this.element.width();
+  
+    this.masonry.columnWidth = this.options.masonry && this.options.masonry.columnWidth ||
+                  // or use the size of the first item
+                  this.$filteredAtoms.outerWidth(true) ||
+                  // if there's no items, use size of container
+                  containerWidth;
+
+    this.masonry.columnWidth += gutter;
+
+    this.masonry.cols = Math.floor( ( containerWidth + gutter ) / this.masonry.columnWidth );
+    this.masonry.cols = Math.max( this.masonry.cols, 1 );
+  };
+
+  $.Isotope.prototype._masonryReset = function() {
+    // layout-specific props
+    this.masonry = {};
+    // FIXME shouldn't have to call this again
+    this._getMasonryGutterColumns();
+    var i = this.masonry.cols;
+    this.masonry.colYs = [];
+    while (i--) {
+      this.masonry.colYs.push( 0 );
+    }
+  };
+
+  $.Isotope.prototype._masonryResizeChanged = function() {
+    var prevSegments = this.masonry.cols;
+    // update cols/rows
+    this._getMasonryGutterColumns();
+    // return if updated cols/rows is not equal to previous
+    return ( this.masonry.cols !== prevSegments );
+  };
+
+
 $(document).ready(function(){
-  $container.masonry({
-      // options
-      itemSelector : 'div.card.pag_container,div.card.img,div.card.txt,div.card.med',
-      columnWidth : 316,
-      isFitWidth:true,
-      containerStyle : {
-        "margin":"0 auto"
-      }
+  $container.isotope({
+      masonry: {
+        columnWidth: 300,
+        gutterWidth: 10
+      },
+      itemSelector : 'div.card'
+  }, function() {
+    $('#content').css('visibility','visible');
   });
+
   $container.tooltip({
     selector: "div.content_type, .added_by a, .added_by img.me_too"
   });
