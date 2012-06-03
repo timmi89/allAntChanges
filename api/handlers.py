@@ -250,7 +250,7 @@ class MeTooHandler(AnonymousBaseHandler):
             return {'message':'not_logged_in'}
         
         parent_id = data.get('parent_id', None)
-
+        
         if parent_id is not None:
             try:
                 parent = Interaction.objects.get(id = parent_id)
@@ -259,6 +259,59 @@ class MeTooHandler(AnonymousBaseHandler):
                 return {'message' : 'no such interaction for metoo'}
         return interaction
 
+
+class StreamResponseHandler(AnonymousBaseHandler):
+    allowed_methods = ('POST')
+
+    @status_response
+    @json_data_post
+    def create(self, request, data):
+        owner = checkCookieToken(request)
+        if owner is None:
+            return {'message':'not_logged_in'}
+        
+        parent_id = data.get('parent_id', None)
+        
+        tag_body = data['tag']['body']
+        
+        if parent_id is not None:
+            try:
+                parent = Interaction.objects.get(id = parent_id)
+                inode = createInteractionNode(tag_id, tag_body, group)
+                interaction = createInteraction(parent.page, parent.container, parent.content, owner, parent.kind, inode, parent.page.site.group, None)
+            except Interaction.DoesNotExist:
+                return {'message' : 'no such interaction for stream response'}
+        return interaction
+    
+class StreamCommentHandler(AnonymousBaseHandler):
+    allowed_methods = ('POST')
+
+    @status_response
+    @json_data_post
+    def create(self, request, data):
+        owner = checkCookieToken(request)
+        if owner is None:
+            return {'message':'not_logged_in'}
+        
+        parent_id = data.get('parent_id', None)
+        
+        tag_body = data['comment']
+        
+        
+        if parent_id is not None:
+            try:
+                parent = Interaction.objects.get(id = parent_id)
+                try:
+                    comment = createInteractionNode(body=comment, group=parent.page.site.group)
+                except:
+                    raise JSONException(u'Error creating comment interaction node')
+        
+                # Create the interaction
+                interaction = createInteraction(parent.page, parent.container, parent.content, owner, 'com', comment, parent.page.site.group, parent)
+        
+            except Interaction.DoesNotExist:
+                return {'message' : 'no such interaction for stream response'}
+        return interaction
 
 
 class BookmarkHandler(InteractionHandler):
