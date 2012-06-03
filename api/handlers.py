@@ -277,8 +277,8 @@ class StreamResponseHandler(AnonymousBaseHandler):
         if parent_id is not None:
             try:
                 parent = Interaction.objects.get(id = parent_id)
-                inode = createInteractionNode(tag_id, tag_body, group)
-                interaction = createInteraction(parent.page, parent.container, parent.content, owner, parent.kind, inode, parent.page.site.group, None)
+                inode = createInteractionNode(None, tag_body, parent.page.site.group)
+                interaction = createInteraction(parent.page, parent.container, parent.content, owner, 'tag', inode, parent.page.site.group, None)
             except Interaction.DoesNotExist:
                 return {'message' : 'no such interaction for stream response'}
         return interaction
@@ -295,14 +295,14 @@ class StreamCommentHandler(AnonymousBaseHandler):
         
         parent_id = data.get('parent_id', None)
         
-        tag_body = data['comment']
+        comment_text = data['comment']
         
         
         if parent_id is not None:
             try:
                 parent = Interaction.objects.get(id = parent_id)
                 try:
-                    comment = createInteractionNode(body=comment, group=parent.page.site.group)
+                    comment = createInteractionNode(body=comment_text, group=parent.page.site.group)
                 except:
                     raise JSONException(u'Error creating comment interaction node')
         
