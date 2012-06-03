@@ -662,14 +662,16 @@ section[role="main"] div.card.pag.heightAdjusted div.added_by {
     position: absolute !important;
 }
 section[role="main"] div.card div.added_by img.user_avatar  { display: inline-block; margin-bottom:-5px; width:20px; }
-section[role="main"] div.card div.added_by img.me_too  { width:25px;height:24px;background:url(../images/me_too.png) -25px 0px no-repeat;display:block;float:right;cursor:pointer;margin-top:-2px;}
-section[role="main"] div.card div.added_by img.me_too:hover   { background-position: 0px 0px; }
-section[role="main"] div.card div.added_by div.me_too_outcome { display:none;border-top:1px solid #aaa;padding:3px;margin-top:6px;}
+section[role="main"] div.card div.meta img.me_too  { width:25px;height:24px;background:url(../images/me_too.png) -25px 0px no-repeat;display:block;float:right;cursor:pointer;margin-top:-2px;}
+section[role="main"] div.card div.meta img.me_too:hover   { background-position: 0px 0px; }
+section[role="main"] div.card div.meta div.me_too_outcome { display:none;border-top:1px solid #aaa;padding:3px;margin-top:6px;}
+section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:11px;text-align:right; }
+section[role="main"] div.card.pag div.meta div.me_too_outcome div.close { text-align:left; }
 
-section[role="main"] div.card div.added_by em { display:block; }
-section[role="main"] div.card div.added_by ul.shareLinks { display: block !important; margin: 2px 0 0 !important; top: 0 !important; padding: 0 !important; float:left !important; }
-section[role="main"] div.card div.added_by ul.shareLinks li        {padding:0px 2px !important; display:inline-block !important; list-style:none !important;}
-section[role="main"] div.card div.added_by ul.shareLinks img       {width:18px !important; margin:0 !important;}
+section[role="main"] div.card div.meta em { display:block; }
+section[role="main"] div.card div.meta ul.shareLinks { display: block !important; margin: 2px 0 0 !important; top: 0 !important; padding: 0 !important; float:left !important; }
+section[role="main"] div.card div.meta ul.shareLinks li        {padding:0px 2px !important; display:inline-block !important; list-style:none !important;}
+section[role="main"] div.card div.meta ul.shareLinks img       {width:18px !important; margin:0 !important;}
 
 
 section[role="main"] div.card.txt div.content           { xxborder-top: 1px solid #fff; margin:0; position:relative;z-index:2;}

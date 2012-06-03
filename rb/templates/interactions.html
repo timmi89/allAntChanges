@@ -1,7 +1,8 @@
 <style>
 #cards {
-  width:870px;
+  /*width:870px;*/
   margin:0 auto;
+  padding:10px;
 }
 #content {
   overflow:auto;
@@ -18,7 +19,7 @@
   background:#fff;
   border:1px solid #ccc;
   border-top:none;
-  /*box-shadow:0 0 4px #bbb;*/
+  box-shadow:0 0 2px #bbb;
 }
 #content .card .group {
   background:#9fd1ea;
@@ -46,6 +47,7 @@
   background:#f7f8f9;
   border:1px solid #ccc;
   margin-left:10px;
+  visibility:hidden;
 }
 #pages .card .group {
   font-size:11px;
@@ -54,7 +56,7 @@
 }
 
 .card .buttons {
-  position:absolute;right:3px;top:45px;z-index:1;display:none;
+  position:absolute;left:3px;top:45px;z-index:1;display:none;
 }
 .card.txt .buttons {
   top:5px;
@@ -68,9 +70,9 @@
 .card:hover .buttons { display:block; }
 #pages .card:hover .buttons { display:block; }
 </style>
-<section id="headlines" style="overflow:auto;margin-bottom:10px;">
-  <h1 style="float:left;font-size:21px;padding:10px 0;border-radius:5px;font-weight:normal;font-family:Helvetica,Arial,sans-serif;background:#fff;box-shadow:0px 0px 4px #ccc;color:#454545;text-align:center;width:602px;margin:2px 14px 2px 4px;">Content</h1>
-  <h2 style="float:left;font-size:21px;padding:10px 0;border-radius:5px;font-weight:normal;font-family:Helvetica,Arial,sans-serif;background:#fff;box-shadow:0px 0px 4px #ccc;color:#454545;text-align:center;width:247px;margin:2px 0;">Pages</h2>
+<section id="headlines" style="margin-bottom:10px;">
+  <h1 style="text-align:center;display:inline-block;background:#ddd;padding:5px 0;font-size:21px;font-family:Georgia,serif;text-shadow: 0 1px 0 #fff;visibility:hidden;">Reactions to Content</h1>
+  <h2 style="text-align:center;display:inline-block;background:#ddd;padding:5px 0;font-size:21px;font-family:Georgia,serif;text-shadow: 0 1px 0 #fff;visibility:hidden;width:250px;margin-left:6px;">Reactions to Pages</h2>
 </section>
 <section id="pages"></section>
 <section id="content"></section>
@@ -257,7 +259,6 @@ function writeContentCard( interaction, showBlocked ) {
       var $pageTitle = $('<h3>'+interaction.page_title+'</h3><div style="text-align:center;padding-right:20px;margin-bottom:20px"><a href="'+interaction.external_url+'" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a></div>')
       $('#sidebar h4').text('Activity on:').after( $pageTitle );
     }
-
   }
 
   if ( interaction.approved || ( !interaction.approved && showBlocked ) ) {
@@ -275,7 +276,6 @@ function writeContentCard( interaction, showBlocked ) {
         + '<a href="'+interaction.user_profile_link+'" rel="tooltip" title="'+interaction.user_name +'" class="added_by_user">'
         + '<img src="'+profilePic+'" class="user_avatar" />'
         + '</a>'
-        + '<div class="me_too_outcome" />'
         + '</div>'
     ).prependTo( $header );
 
@@ -303,24 +303,31 @@ function writeContentCard( interaction, showBlocked ) {
       $content.append('<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><div class="content_body"><span>'+interaction.content_body+'</span></div></a><div class="comments" />');
     }
 
-    var $buttons = $('<div class="buttons"><button>Add new reaction</button> <button>+1 '+interaction.interaction_node_body+'</button></div>').appendTo( $content );
+    if ( $.cookie('rdr_session') ) {
+      var $buttons = $('<div class="buttons"><button class="me_too">+1 '+interaction.interaction_node_body+'</button> <button class="add_new_reaction">Add new reaction</button> <button class="add_new_comment">Add comment</button></div>').appendTo( $content );
+    } else {
+      var $buttons = $('<div class="buttons"><div style="background:#fff;border:1px solid #999;font-size:11px;padding:2px;margin-right:5px;">To react or comment, use the link in the top left-hand corner of the screen.</div></div>').appendTo( $content );
+    }
 
     var $meta = $('<div class="meta"/>'),
         $metaRight = $('<div class="metaRight"/>');
 
     $meta.prepend('<div class="date">'+interaction.date+'</div>');
     $meta.append($metaRight);
-    $meta.append('<div class="clear" />');
+    $meta.append('<div class="clear" /><div class="me_too_outcome" />');
 
     $metaRight.append('<div class="title">'
                 + '<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank">'+interaction.page_title+'</a>'
               + '</div>');
 
-    // if ( $.cookie('rdr_session') ) {
-    //   $addedBy.find('img.me_too').click( function() {
-    //     RB.interactions.me_too( interaction.id );
-    //   });
-    // }
+    if ( $.cookie('rdr_session') ) {
+      $buttons.find('button.me_too').click( function() {
+        RB.interactions.me_too( interaction.id );
+      });
+      $buttons.find('button.add_new_reaction').click( function() {
+        RB.interactions.add_new( interaction.id, "test tag" );
+      });
+    }
 
     $card.append( $header, $content, $meta );
     zIndex--;
@@ -366,7 +373,7 @@ function writePageCard( interaction, showBlocked ) {
 
     $meta.append($metaRight);
     $meta.append('<div class="date">'+interaction.date+'</div>');
-    $meta.append('<div class="clear" />');
+    $meta.append('<div class="clear" /><div class="me_too_outcome" />');
 
     $metaRight.append('<div class="title">'
                 + '<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank">'+interaction.page_title+'</a>'
@@ -376,22 +383,24 @@ function writePageCard( interaction, showBlocked ) {
         profilePic = hasProfilePic ? interaction.user_avatar : "{{ STATIC_URL }}site/images/anonymous-user.png";
         // plus_one_tooltip = ( $.cookie('rdr_session') ) ? "Add this to your profile":"Log in to add this to your profile";
     var $addedBy = $( '<div class="added_by">'
-        // + '<img src="{{ STATIC_URL }}site/images/blank.png" class="me_too" title="'+plus_one_tooltip+'"/>'
         + '<a href="'+interaction.user_profile_link+'" rel="tooltip" title="'+interaction.user_name +'" class="added_by_user">'
         + '<img src="'+profilePic+'" class="user_avatar" />'
         + '</a>'
-        + '<div class="me_too_outcome" />'
         + '</div>'
     );
 
-    // if ( $.cookie('rdr_session') ) {
-    //   $addedBy.find('img.me_too').click( function() {
-    //     RB.interactions.me_too( interaction.id );
-    //   });
-    // }
+    if ( $.cookie('rdr_session') ) {
+      var $buttons = $('<div class="buttons"><button class="me_too">+1 '+interaction.interaction_node_body+'</button> <button class="add_new_reaction">Add new reaction</button></div>').appendTo( $meta );
+    } else {
+      var $buttons = $('<div class="buttons"><div style="background:#fff;border:1px solid #999;font-size:11px;padding:2px;margin-right:5px;">To react or comment, use the link in the top left-hand corner of the screen.</div></div>').appendTo( $meta );
+    }
+    
+    if ( $.cookie('rdr_session') ) {
+      $buttons.find('button.me_too').click( function() {
+        RB.interactions.me_too( interaction.id );
+      });
 
-    // var $buttons = $('<div class="buttons"><button>+1</button> <button>New reaction</button></div>').appendTo( $meta );
-    var $buttons = $('<div class="buttons"><button>Add new reaction</button> <button>+1 '+interaction.interaction_node_body+'</button></div>').appendTo( $meta );
+    }
 
     $card.append( $header, $meta, $addedBy );
     zIndex--;
@@ -500,9 +509,10 @@ var $container = $('#content');
     // return if updated cols/rows is not equal to previous
     return ( this.masonry.cols !== prevSegments );
   };
-
-
-$(document).ready(function(){
+function cardReset() {
+  $('#cards').width( $(window).width() - 20 );
+  var contentWidth = $('#cards').width() - 280;
+  $('#content').width( contentWidth );
   $container.isotope({
       masonry: {
         columnWidth: 300,
@@ -510,11 +520,22 @@ $(document).ready(function(){
       },
       itemSelector : 'div.card'
   }, function() {
-    $('#content').css('visibility','visible');
+    var numColumns = parseInt(contentWidth/310);
+    $('#content, #headlines h1').width( (numColumns*300) + ((numColumns-1)*10) );
+    var extraMargin = $(window).width() - ((numColumns*300) + ((numColumns-1)*10)) - 260 - 40;
+    $('#content').css('visibility','visible').css('margin-left', (extraMargin/2)+'px');
+    $('#pages').css('visibility','visible').css('margin-right', (extraMargin/2)+'px');
+    $('#headlines h1').css('visibility','visible').css('margin-left', (extraMargin/2)+'px');
+    $('#headlines h2').css('visibility','visible');
   });
-
+}
+$(document).ready(function(){
+  cardReset();
   $container.tooltip({
-    selector: "div.content_type, .added_by a, .added_by img.me_too"
+    selector: ".added_by a"
   });
+});
+$(window).resize( function() {
+  cardReset();
 });
 </script>

@@ -398,7 +398,68 @@ RB = {
                             });
                         });
 
-                        var $close = $('<div style="font-size:11px;text-align:right;"><a href="javascript:void(0);">Close</a>');
+                        var $close = $('<div class="close"><a href="javascript:void(0);">Close</a>');
+                        $close.find('a').click( function() {
+                            $('#card_'+parent_id).find('div.me_too_outcome').hide(333);
+                        });
+
+                        $successMessage.append( $shareLinks, $close );
+                        $outcome.html( $successMessage );
+                        $outcome.show(333);
+                    }
+                }
+            });
+        },
+        add_new : function(parent_id, tag_body) {
+            // RB.interactions.add_new
+            var sendData = {"parent_id":parent_id, "tag":{"body":tag_body}};
+            
+            $.ajax({
+                beforeSend: function( xhr ) {
+                    xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
+                },
+                url: "/api/stream/response/",
+                type: "post",
+                data: {
+                    json: $.toJSON( sendData )
+                },
+                success: function(response) {
+                    if (response.status == "success" ) {
+                        var $card = $('#card_'+parent_id),
+                            $outcome = $card.find('div.me_too_outcome');
+
+                        if (response.data.existing == true ) {
+                            var $successMessage = $('<div><em>You have already added this to your profile.</em></div>');
+                        } else {
+                            var $successMessage = $('<div><em>Success! You have added this to <a href="/user/'+$.cookie('user_id')+'">your profile</a>.</em></div>');
+                        }
+
+                        var $shareLinks = $('<div style="overflow:auto;"><strong style="display:block;float:left;margin:5px 5px 0 0;">Share It:</strong> <ul class="shareLinks"></ul>'),
+                            socialNetworks = ["facebook","twitter", "tumblr"],
+                            kind = ( $card.hasClass('txt') ) ? "txt":($card.hasClass('img')) ? "img":"med",
+                            content = "";
+
+                        if ( kind=="txt") {
+                            content = $card.find('div.content_body').text();
+                        } else if ( kind=="img") {
+                            content = $card.find('div.content_body img').attr('src');
+                        } else if ( kind=="med") {
+                            content = $card.find('div.content_body iframe').attr('src');
+                        }
+
+                        var groupName = ($card.find('div.publisher img').length ) ? $card.find('div.publisher img').attr('alt'):$card.find('div.publisher a').text()
+
+                        $.each(socialNetworks, function(idx, val){
+                            $shareLinks.find('ul').append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                            $shareLinks.find('li:last').click( function() {
+                                RB.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
+                                RB.interactions.share(val, kind, parent_id, $card.find('header').attr('title'), groupName, content)
+                                // RDR.actions.share_getLink({ hash:args.hash, kind:args.kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node }); // ugh, lots of weird data nesting
+                                return false;
+                            });
+                        });
+
+                        var $close = $('<div class="close"><a href="javascript:void(0);">Close</a>');
                         $close.find('a').click( function() {
                             $('#card_'+parent_id).find('div.me_too_outcome').hide(333);
                         });
