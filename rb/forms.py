@@ -217,7 +217,7 @@ class CreateGroupForm(forms.Form):
             user__email__in=(
                 'porterbayne@gmail.com',
                 'erchaves@gmail.com',
-                'tyler.brock@gmail.com'
+                'michael@readrboard.com'
             )
         ).exclude(id=social_user.id)
 
