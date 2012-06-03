@@ -37,3 +37,10 @@ def requires_admin(func):
         else:
             return HttpResponseRedirect('/')
     return wrapper
+
+def requires_access_key(func):
+    def wrapper(*args, **kwargs):
+        request = args[0] if len(args) == 1 else args[1]
+
+        return func(*args, **kwargs)
+    return wrapper

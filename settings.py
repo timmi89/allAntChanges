@@ -54,6 +54,14 @@ if DEBUG:
           'PASSWORD': '',
           'HOST':     '', 
           'PORT':     '',
+        },
+        'slave1': {
+          'ENGINE':   'django.db.backends.sqlite3',
+          'NAME':     'readrdb.db',
+          'USER':     '',
+          'PASSWORD': '',
+          'HOST':     '', 
+          'PORT':     '',
         }
     }
 
@@ -75,6 +83,17 @@ else:
         'USER':     'root',
         'PASSWORD': '',
         'HOST':     'localhost',
+        'PORT':     '3306',
+        'OPTIONS': {
+            "init_command": "SET storage_engine=INNODB",
+        }
+      },
+      'slave1': {
+        'ENGINE':   'django.db.backends.mysql',
+        'NAME':     'readrboard',
+        'USER':     'readr',
+        'PASSWORD': 'r34drsl4v3',
+        'HOST':     '50.116.59.190',
         'PORT':     '3306',
         'OPTIONS': {
             "init_command": "SET storage_engine=INNODB",
