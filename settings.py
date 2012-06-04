@@ -220,6 +220,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'api',
     'rb',
+    'chronos',
     # 'piston',
     'south',
     'storages',

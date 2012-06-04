@@ -4,5 +4,6 @@ from views import *
 
 
 urlpatterns = patterns('',
-    url(r'^chronos/(?P<job_name>[\w\-\.]+)/$', 'chronos.views.main'),
+    url(r'^agree/(?P<interaction_id>\d+)/$', 'chronos.views.agree'),
+    url(r'^comment/(?P<interaction_id>\d+)/$', 'chronos.views.comment'),
 )
