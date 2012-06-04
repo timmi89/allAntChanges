@@ -410,8 +410,8 @@ RB = {
                 }
             });
         },
-        add_new : function(parent_id, tag_body) {
-            // RB.interactions.add_new
+        add_new_reaction : function(parent_id, tag_body) {
+            // RB.interactions.add_new_reaction
             var sendData = {"parent_id":parent_id, "tag":{"body":tag_body}};
             
             $.ajax({
@@ -426,7 +426,7 @@ RB = {
                 success: function(response) {
                     if (response.status == "success" ) {
                         var $card = $('#card_'+parent_id),
-                            $outcome = $card.find('div.me_too_outcome');
+                            $outcome = $('#add_new_reaction_form');
 
                         if (response.data.existing == true ) {
                             var $successMessage = $('<div><em>You have already added this to your profile.</em></div>');
@@ -459,12 +459,36 @@ RB = {
                             });
                         });
 
-                        var $close = $('<div class="close"><a href="javascript:void(0);">Close</a>');
-                        $close.find('a').click( function() {
-                            $('#card_'+parent_id).find('div.me_too_outcome').hide(333);
-                        });
+                        $successMessage.append( $shareLinks );
+                        $outcome.html( $successMessage );
+                        $outcome.show(333);
+                    }
+                }
+            });
+        },
+        add_new_comment : function(parent_id, comment_body) {
+            // RB.interactions.add_new_comment
+            var sendData = { "parent_id":parent_id, "comment":comment_body };
+            
+            $.ajax({
+                beforeSend: function( xhr ) {
+                    xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
+                },
+                url: "/api/stream/comment/",
+                type: "post",
+                data: {
+                    json: $.toJSON( sendData )
+                },
+                success: function(response) {
+                    if (response.status == "success" ) {
+                        var $card = $('#card_'+parent_id),
+                            $outcome = $('#add_new_comment_form');
 
-                        $successMessage.append( $shareLinks, $close );
+                        if (response.data.existing == true ) {
+                            var $successMessage = $('<div><em>You have already added this to your profile.</em></div>');
+                        } else {
+                            var $successMessage = $('<div><em>Success! You have added this comment.<br/><br/>Reload the page or check it out on <a href="/user/'+$.cookie('user_id')+'">your profile</a>.</em></div>');
+                        }
                         $outcome.html( $successMessage );
                         $outcome.show(333);
                     }

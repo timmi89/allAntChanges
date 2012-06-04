@@ -669,9 +669,9 @@ section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:
 section[role="main"] div.card.pag div.meta div.me_too_outcome div.close { text-align:left; }
 
 section[role="main"] div.card div.meta em { display:block; }
-section[role="main"] div.card div.meta ul.shareLinks { display: block !important; margin: 2px 0 0 !important; top: 0 !important; padding: 0 !important; float:left !important; }
-section[role="main"] div.card div.meta ul.shareLinks li        {padding:0px 2px !important; display:inline-block !important; list-style:none !important;}
-section[role="main"] div.card div.meta ul.shareLinks img       {width:18px !important; margin:0 !important;}
+ul.shareLinks { display: block !important; margin: 2px 0 0 !important; top: 0 !important; padding: 0 !important; float:left !important; }
+ul.shareLinks li        {padding:0px 2px !important; display:inline-block !important; list-style:none !important;}
+ul.shareLinks img       {width:18px !important; margin:0 !important;}
 
 
 section[role="main"] div.card.txt div.content           { xxborder-top: 1px solid #fff; margin:0; position:relative;z-index:2;}
@@ -1194,3 +1194,8 @@ http://camendesign.com/design/
 http://yui.yahooapis.com/2.8.1/build/base/base.css
 http://webaim.org/techniques/css/invisiblecontent/
 http://drupal.org/node/897638
+*/
+
+.fancybox-wrap {
+  overflow:visible !important;
+}

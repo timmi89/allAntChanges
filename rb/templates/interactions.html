@@ -243,7 +243,6 @@ var metoos = {
   </span>
 </div>
 
-
 <script>
 var zIndex = 400;
 function writeContentCard( interaction, showBlocked ) {
@@ -298,7 +297,7 @@ function writeContentCard( interaction, showBlocked ) {
       //   wmode:"transparent"
       // });
 
-      $content.append('<div class="content_body"><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><iframe width="418" height="244" frameborder="0" src="'+videoUrl+'"></iframe></a></div><div class="comments" />');
+      $content.append('<div class="content_body"><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><iframe width="300" height="175" frameborder="0" src="'+videoUrl+'"></iframe></a></div><div class="comments" />');
     } else if ( interaction.kind == "txt" ) {
       $content.append('<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><div class="content_body"><span>'+interaction.content_body+'</span></div></a><div class="comments" />');
     }
@@ -321,12 +320,78 @@ function writeContentCard( interaction, showBlocked ) {
               + '</div>');
 
     if ( $.cookie('rdr_session') ) {
+      // ADD A NEW REACTION
       $buttons.find('button.me_too').click( function() {
         RB.interactions.me_too( interaction.id );
       });
+
       $buttons.find('button.add_new_reaction').click( function() {
-        RB.interactions.add_new( interaction.id, "test tag" );
+        $('#add_new_reaction_form').remove();
+        if ( interaction.kind == "img" ) {
+          var $rateContent = $('<div style="width:300px;float:left;"><img width="300" src="'+interaction.content_body+'"></div>');
+        } else if ( interaction.kind == "med" ) {
+          $rateContent = $('<div style="width:300px;float:left;"><iframe width="300" height="175" frameborder="0" src="'+interaction.content_body+'"></iframe></div>');
+        } else if ( interaction.kind == "txt" ) {
+          $rateContent = $('<div style="width:300px;background:#ddd;float:left;"><span style="display:block;padding:20px;">'+interaction.content_body+'</span></div>');
+        }
+
+        var $obj = $('<div style="width:600px;overflow:auto;" id="add_new_reaction_form" />').append('<h2 style="margin-bottom:20px;">What\'s your reaction?</h2>')//chain
+                  .append( '<div style="width:280px;margin-left:20px;float:right;"><input type="text" style="width:100%;font-size:20px;" id="new_reaction_text" /><button style="clear:both;margin-top:10px;font-size:20px;" id="new_reaction_button">Add Reaction</button></div>' )//chain
+                  .append( $rateContent );
+        $.fancybox($obj ,{
+          wrapCSS    : 'fancybox-custom',
+          helpers : {
+            overlay : {
+              css : {
+                'background-color' : '#eee'
+              }
+            }
+          },
+        });
+        $obj.find('input').focus().keyup( function(event) {
+          if (event.keyCode == '13') { //en
+            RB.interactions.add_new_reaction( interaction.id, $(this).val() );
+          }
+        });
+        $obj.find('#new_reaction_button').click(function() {
+          RB.interactions.add_new_reaction( interaction.id, $('#new_reaction_text').val() );
+        });
       });
+
+      // ADD A COMMENT
+      $buttons.find('button.add_new_comment').click( function() {
+        $('#add_new_comment_form').remove();
+        if ( interaction.kind == "img" ) {
+          var $rateContent = $('<div style="width:300px;float:left;"><img width="300" src="'+interaction.content_body+'"></div>');
+        } else if ( interaction.kind == "med" ) {
+          $rateContent = $('<div style="width:300px;float:left;"><iframe width="300" height="175" frameborder="0" src="'+interaction.content_body+'"></iframe></div>');
+        } else if ( interaction.kind == "txt" ) {
+          $rateContent = $('<div style="width:300px;background:#ddd;float:left;"><span style="display:block;padding:20px;">'+interaction.content_body+'</span></div>');
+        }
+
+        var $obj = $('<div style="width:600px;overflow:auto;" id="add_new_comment_form" />').append('<h2 style="margin-bottom:20px;">What\'s your comment?</h2><h3 style="font-weight:bold;font-style:italic;">'+interaction.interaction_node_body+'</h3>')//chain
+                  .append( '<div style="width:280px;margin-left:20px;float:right;"><input type="text" style="width:100%;font-size:20px;" id="new_comment_text" /><button style="clear:both;margin-top:10px;font-size:20px;" id="new_comment_button">Add Comment</button></div>' )//chain
+                  .append( $rateContent );
+        $.fancybox($obj ,{
+          // wrapCSS    : 'fancybox-custom',
+          helpers : {
+            overlay : {
+              css : {
+                'background-color' : '#eee'
+              }
+            }
+          },
+        });
+        $obj.find('input').focus().keyup( function(event) {
+          if (event.keyCode == '13') { //en
+            RB.interactions.add_new_comment( interaction.id, $(this).val() );
+          }
+        });
+        $obj.find('#new_comment_button').click(function() {
+          RB.interactions.add_new_comment( interaction.id, $('#new_comment_text').val() );
+        });
+      });
+
     }
 
     $card.append( $header, $content, $meta );
@@ -358,8 +423,7 @@ function writePageCard( interaction, showBlocked ) {
     var $card = $('<div class="card '+interaction.kind+'" id="card_'+interaction.id+'" style="z-index:'+zIndex+'" />')//chain
         .append('<div class="group"><a href=/group/' + interaction.group.short_name + '><img src="http://www.google.com/s2/favicons?domain='+interaction.domain+'" /> <span>'+interaction.domain+'</span></a></div>');
     var $header = $('<header/>').attr('title', interaction.interaction_node_body)
-         .append('<h1><a href="/stream/?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></h1>')
-         .append('<span class="count"></span>')
+         .append('<h1><a href="/stream/?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></h1>');
 
     if ( interaction.moderator ) {
         $header.append('<div class="block_content">'
@@ -390,16 +454,16 @@ function writePageCard( interaction, showBlocked ) {
     );
 
     if ( $.cookie('rdr_session') ) {
-      var $buttons = $('<div class="buttons"><button class="me_too">+1 '+interaction.interaction_node_body+'</button> <button class="add_new_reaction">Add new reaction</button></div>').appendTo( $meta );
+      var $buttons = $('<div class="buttons"><button class="me_too">+1 '+interaction.interaction_node_body+'</button></div>').appendTo( $meta );
     } else {
       var $buttons = $('<div class="buttons"><div style="background:#fff;border:1px solid #999;font-size:11px;padding:2px;margin-right:5px;">To react or comment, use the link in the top left-hand corner of the screen.</div></div>').appendTo( $meta );
     }
     
     if ( $.cookie('rdr_session') ) {
+      // ADD A NEW REACTION
       $buttons.find('button.me_too').click( function() {
         RB.interactions.me_too( interaction.id );
       });
-
     }
 
     $card.append( $header, $meta, $addedBy );
@@ -538,4 +602,5 @@ $(document).ready(function(){
 $(window).resize( function() {
   cardReset();
 });
+
 </script>
