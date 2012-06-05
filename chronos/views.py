@@ -26,7 +26,7 @@ def agree(request, interaction_id = None, **kwargs):
     try:
         interaction = Interaction.objects.get(id = interaction_id)
         social_user = SocialUser.objects.get(user = interaction.user)
-        child_interactions = Interaction.objects.filter(parent = interaction).order_by('-created')
+        child_interactions = Interaction.objects.filter(parent = interaction, kind = 'tag').order_by('-created')
         child_count = child_interactions.count()
         logger.info("agree child count: " + str(child_count))
         thresholds = NotificationType.objects.filter(name__startswith = 'agreethreshold')
@@ -43,6 +43,9 @@ def agree(request, interaction_id = None, **kwargs):
                                                                    notification_type = threshold)
                 if created:
                     #SEND EMAIL!
+                    msg = EmailMessage("ReadrBoard comment notification", generateAgreeEmail(social_user), "hello@readrboard.com", [user.email])
+                    msg.content_subtype='html'
+                    msg.send(False)
                     logger.info("SHOULD SEND NOTIFICATION: " + threshold.name)
             else:
                 logger.info("DID NOT PASS: " + threshold.name)
@@ -63,7 +66,39 @@ def agree(request, interaction_id = None, **kwargs):
 def comment(request, interaction_id = None, **kwargs):
     context = {}
     
-
+    try:
+        interaction = Interaction.objects.get(id = interaction_id)
+        social_user = SocialUser.objects.get(user = interaction.user)
+        child_interactions = Interaction.objects.filter(parent = interaction, kind = 'com').order_by('-created')
+        child_count = child_interactions.count()
+        logger.info("comment child count: " + str(child_count))
+        thresholds = NotificationType.objects.filter(name__startswith = 'commentthreshold')
+        for threshold in thresholds:
+            passed = True
+            for rule in threshold.rules.all():
+                if rules.has_key(rule.name):
+                    passed = rules[rule.name].passes(count = child_count) 
+                    if not passed:
+                        break
+            if passed:
+                notification, created = InteractionNotification.objects.get_or_create(interaction = interaction, 
+                                                                   social_user = social_user,
+                                                                   notification_type = threshold)
+                if created:
+                    #SEND EMAIL!
+                    msg = EmailMessage("ReadrBoard comment notification", generateCommentEmail(social_user), "hello@readrboard.com", [user.email])
+                    msg.content_subtype='html'
+                    msg.send(False)
+                    logger.info("SHOULD SEND NOTIFICATION: " + threshold.name)
+            else:
+                logger.info("DID NOT PASS: " + threshold.name)
+                    
+    except Interaction.DoesNotExist:
+        logger.info("BAD INTERACTION ID")
+    except SocialUser.DoesNotExist:
+        logger.info("NO SOCIAL USER")
+    
+    
     return render_to_response(
         "chronos.html",
         context,
