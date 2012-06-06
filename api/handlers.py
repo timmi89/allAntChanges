@@ -11,6 +11,8 @@ from settings import BASE_URL, STATIC_URL
 from django.forms.models import model_to_dict
 from django.core.mail import EmailMessage
 from django.db.models import Q
+from chronos.jobs import *
+from threading import Thread
 
 
 import logging
@@ -93,6 +95,24 @@ class FollowEmailHandler(AnonymousBaseHandler):
             
         # Update and save social user -- toggle follow_email_option
         su.follow_email_option = not su.follow_email_option
+        su.save()
+
+class NotificationEmailHandler(AnonymousBaseHandler):
+    @status_response
+    @json_data
+    def read(self, request, data):
+        # Check if current user's token has permission
+        user = checkToken(data)
+        if not user: raise JSONException(u"Token was invalid")
+        
+        # Retrieve social user
+        try:
+            su = SocialUser.objects.get(user=user)
+        except SocialUser.DoesNotExist, SocialUser.MultipleObjectsReturned:
+            raise JSONException(u"Privacy Handler: Error getting socialuser!")
+            
+        # Update and save social user -- toggle follow_email_option
+        su.notification_email_option = not su.notification_email_option
         su.save()
 
 
@@ -200,8 +220,16 @@ class CommentHandler(InteractionHandler):
             raise JSONException(u'Error creating comment interaction node')
         
         # Create the interaction
-        interaction = createInteraction(parent.page, parent.container, parent.content, user, 'com', comment, group, parent)
         
+        interaction = createInteraction(parent.page, parent.container, parent.content, user, 'com', comment, group, parent)
+        try:
+            logger.info(interaction)
+            notification = AsynchCommentNotification()
+            #t = Thread(target=notification, kwargs={"interaction_id":interaction['interaction'].id,})
+            t = Thread(target=notification, kwargs={"interaction_id":parent.id,})
+            t.start()
+        except Exception, e:
+            logger.info(e)
         return interaction
 
 class TagHandler(InteractionHandler):
@@ -236,7 +264,7 @@ class TagHandler(InteractionHandler):
             parent = None
         # Create an interaction
         interaction = createInteraction(page, container, content, user, kind, inode, group, parent)
-
+        
         return interaction
 
 class MeTooHandler(AnonymousBaseHandler):
@@ -255,8 +283,17 @@ class MeTooHandler(AnonymousBaseHandler):
             try:
                 parent = Interaction.objects.get(id = parent_id)
                 interaction = createInteraction(parent.page, parent.container, parent.content, owner, parent.kind, parent.interaction_node, parent.page.site.group, parent)
+                try:
+                    logger.info("INTERACTION: " + str(interaction))
+                    notification = AsynchAgreeNotification()
+                    #t = Thread(target=notification, kwargs={"interaction_id":interaction['interaction'].id,})
+                    t = Thread(target=notification, kwargs={"interaction_id":parent_id})
+                    t.start()
+                except Exception, e:
+                    logger.info("thread" +  str(e))
             except Interaction.DoesNotExist:
                 return {'message' : 'no such interaction for metoo'}
+        
         return interaction
 
 

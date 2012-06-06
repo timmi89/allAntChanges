@@ -178,13 +178,13 @@ def generateConfirmationEmail(user):
     
     return message      
 
-def generateAgreeEmail(user, count):
-    message = getEmailTemplate('agree_email.html') % (user.username, settings.BASE_URL, user.id)
+def generateAgreeEmail(user, count, interaction):
+    message = getEmailTemplate('agree_email.html') % (user.username, count, settings.BASE_URL, interaction.id)
     
     return message
 
-def generateCommentEmail(user):
-    message = getEmailTemplate('comment_email.html') % (user.username, settings.BASE_URL, user.id)
+def generateCommentEmail(user, interaction):
+    message = getEmailTemplate('comment_email.html') % (user.username, settings.BASE_URL, interaction.id)
     
     return message
 

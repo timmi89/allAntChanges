@@ -41,7 +41,7 @@ ADMINS = (
 STATIC_ROOT = 'rb/static/'
 
 if DEBUG:
-    
+    URL_NO_PROTO = 'local.readrboard.com:8080'
     BASE_URL = 'http://local.readrboard.com:8080'
     BASE_URL_SECURE = 'https://local.readrboard.com:8080'
     STATIC_URL = '//local.readrboard.com:8080/static/'
@@ -66,7 +66,7 @@ if DEBUG:
     }
 
 else:
-
+    URL_NO_PROTO = 'www.readrboard.com'
     BASE_URL = 'http://www.readrboard.com'
     BASE_URL_SECURE = 'https://www.readrboard.com'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'

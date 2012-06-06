@@ -92,6 +92,7 @@ class SocialUser(models.Model):
     # For Privacy
     private_profile = models.BooleanField(default=False)
     follow_email_option = models.BooleanField(default=True)
+    notification_email_option = models.BooleanField(default=True)
     
     
     """Social Auth association model"""

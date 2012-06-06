@@ -22,6 +22,7 @@ Vote = Resource(handler=VoteHandler)
 Moderate = Resource(handler=ModerationHandler)
 Privacy = Resource(handler=PrivacyHandler)
 FollowEmail = Resource(handler=FollowEmailHandler)
+NotificationEmail = Resource(handler=NotificationEmailHandler)
 Confirmation = Resource(handler=ConfirmUserHandler)
 Follow = Resource(handler=FollowHandler)
 UnFollow = Resource(handler=UnFollowHandler)
@@ -72,6 +73,7 @@ urlpatterns = patterns('',
     url(r'^moderate/toggle/', Moderate),
     url(r'^privacy/toggle/', Privacy),
     url(r'^followemail/toggle/', FollowEmail),
+    url(r'^notificationemail/toggle/', NotificationEmail),
     url(r'^follow/', Follow),
     url(r'^unfollow/', UnFollow),
     url(r'^entity/follow/', FollowedEntity),
