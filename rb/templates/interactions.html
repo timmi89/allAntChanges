@@ -302,10 +302,10 @@ function writeContentCard( interaction, showBlocked ) {
       $content.append('<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><div class="content_body"><span>'+interaction.content_body+'</span></div></a><div class="comments" />');
     }
 
-    if ( $.cookie('rdr_session') ) {
-      var $buttons = $('<div class="buttons"><button class="me_too">+1 '+interaction.interaction_node_body+'</button> <button class="add_new_reaction">Add new reaction</button> <button class="add_new_comment">Comment</button></div>').appendTo( $content );
+    if ( $.cookie('user_id') ) {
+      var $buttons = $('<div class="buttons"><button class="me_too">+1 '+interaction.interaction_node_body+'</button> <button class="add_new_reaction">Add new reaction</button> <button class="add_new_comment">Comment / Tag</button></div>').appendTo( $content );
     } else {
-      var $buttons = $('<div class="buttons"><div style="background:#fff;border:1px solid #999;font-size:11px;padding:2px;margin-right:5px;">To react or comment, use the link in the top left-hand corner of the screen.</div></div>').appendTo( $content );
+      var $buttons = $('<div class="buttons"><div style="background:#fff;border:1px solid #999;font-size:11px;padding:2px;margin-right:5px;">To react or comment, log in with the link in the top left-hand corner of the screen.</div></div>').appendTo( $content );
     }
 
     var $meta = $('<div class="meta"/>'),
@@ -319,7 +319,7 @@ function writeContentCard( interaction, showBlocked ) {
                 + '<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank">'+interaction.page_title+'</a>'
               + '</div>');
 
-    if ( $.cookie('rdr_session') ) {
+    if ( $.cookie('user_id') ) {
       // ADD A NEW REACTION
       $buttons.find('button.me_too').click( function() {
         RB.interactions.me_too( interaction.id );
@@ -369,8 +369,8 @@ function writeContentCard( interaction, showBlocked ) {
           $rateContent = $('<div style="width:300px;background:#ddd;float:left;"><span style="display:block;padding:20px;">'+interaction.content_body+'</span></div>');
         }
 
-        var $obj = $('<div style="width:600px;overflow:auto;" id="add_new_comment_form" />').append('<h2 style="margin-bottom:20px;">What\'s your comment?</h2><h3 style="font-weight:bold;font-style:italic;">'+interaction.interaction_node_body+'</h3>')//chain
-                  .append( '<div style="width:280px;margin-left:20px;float:right;"><input type="text" style="width:100%;font-size:20px;" id="new_comment_text" /><button style="clear:both;margin-top:10px;font-size:20px;" id="new_comment_button">Add Comment</button></div>' )//chain
+        var $obj = $('<div style="width:600px;overflow:auto;" id="add_new_comment_form" />').append('<h2 style="margin-bottom:20px;">Add a comment or hashtag</h2><h3 style="font-weight:bold;font-style:italic;">'+interaction.interaction_node_body+'</h3>')//chain
+                  .append( '<div style="width:280px;margin-left:20px;float:right;"><input type="text" style="width:100%;font-size:20px;" id="new_comment_text" /><label style="display:block;font-size:11px;font-style:italic;">e.g. <strong>Wow, I totally agree</strong>, or <strong>#london2012</strong></label><button style="clear:both;margin-top:10px;font-size:20px;" id="new_comment_button">Add Comment</button></div>' )//chain
                   .append( $rateContent );
         $.fancybox($obj ,{
           // wrapCSS    : 'fancybox-custom',
@@ -445,7 +445,7 @@ function writePageCard( interaction, showBlocked ) {
     
     var hasProfilePic =  interaction.user_avatar != "None" && interaction.user_avatar != "",
         profilePic = hasProfilePic ? interaction.user_avatar : "{{ STATIC_URL }}site/images/anonymous-user.png";
-        // plus_one_tooltip = ( $.cookie('rdr_session') ) ? "Add this to your profile":"Log in to add this to your profile";
+
     var $addedBy = $( '<div class="added_by">'
         + '<a href="'+interaction.user_profile_link+'" rel="tooltip" title="'+interaction.user_name +'" class="added_by_user">'
         + '<img src="'+profilePic+'" class="user_avatar" />'
@@ -453,13 +453,13 @@ function writePageCard( interaction, showBlocked ) {
         + '</div>'
     );
 
-    if ( $.cookie('rdr_session') ) {
+    if ( $.cookie('user_id') ) {
       var $buttons = $('<div class="buttons"><button class="me_too">+1 '+interaction.interaction_node_body+'</button></div>').appendTo( $meta );
     } else {
       var $buttons = $('<div class="buttons"><div style="background:#fff;border:1px solid #999;font-size:11px;padding:2px;margin-right:5px;">To react or comment, use the link in the top left-hand corner of the screen.</div></div>').appendTo( $meta );
     }
     
-    if ( $.cookie('rdr_session') ) {
+    if ( $.cookie('user_id') ) {
       // ADD A NEW REACTION
       $buttons.find('button.me_too').click( function() {
         RB.interactions.me_too( interaction.id );
