@@ -180,11 +180,12 @@ import os
 RB_SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 EMAIL_TEMPLATE_DIR = RB_SITE_ROOT + "/rb/email_templates"
 
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'accounts@readrboard.com'
-EMAIL_HOST_PASSWORD = 'readr4acc0unts'
-EMAIL_PORT = 587
+if DEBUG:
+    EMAIL_USE_TLS = True
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = 'accounts@readrboard.com'
+    EMAIL_HOST_PASSWORD = 'readr4acc0unts'
+    EMAIL_PORT = 587
 
 
 """

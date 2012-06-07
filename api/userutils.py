@@ -207,6 +207,12 @@ def generateFollowEmail(owner):
     follow_email = getEmailTemplate('follow_email.html') % (settings.BASE_URL, owner.id, owner.social_user.username)
     return (follow_email)
 
+def generateApprovalEmail(group):
+    approval_email = getEmailTemplate('group_approval_email.html') % (settings.BASE_URL, group.id, group.short_name)
+    return (approval_email)
+
+
+
 
 def getEmailTemplate(template_filename):
     email_template = open(settings.EMAIL_TEMPLATE_DIR + '/' + template_filename)
