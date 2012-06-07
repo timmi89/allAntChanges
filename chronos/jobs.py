@@ -24,7 +24,7 @@ class AbstractAsynchronousNotification(object):
             lines = resp.read()
             hcon.close()
         except Exception, e:
-            logger.info("BLOW")
+            logger.info("BLOW" + str(e))
 
 class AsynchAgreeNotification(AbstractAsynchronousNotification):
     def generate_url(self, **kwargs):

@@ -80,6 +80,7 @@ def comment(request, interaction_id = None, **kwargs):
         interaction = Interaction.objects.get(id = interaction_id)
         social_user = SocialUser.objects.get(user = interaction.user)
         if social_user.notification_email_option:
+            logger.info("comment notification?")
             child_interactions = Interaction.objects.filter(parent = interaction, kind = 'com').order_by('-created')
             child_count = child_interactions.count()
             thresholds = NotificationType.objects.filter(name__startswith = 'commentthreshold')
@@ -96,11 +97,11 @@ def comment(request, interaction_id = None, **kwargs):
                                                                        notification_type = threshold)
                     
                     if created:
-                        #SEND EMAIL!
+                        logger.info("sending comment notification")
                         msg = EmailMessage("ReadrBoard comment notification", 
                                            generateCommentEmail(social_user, interaction), 
                                            "hello@readrboard.com", 
-                                           [user.email])
+                                           [interaction.user.email])
                         msg.content_subtype='html'
                         msg.send(False)
                         logger.info("SHOULD SEND NOTIFICATION: " + threshold.name)

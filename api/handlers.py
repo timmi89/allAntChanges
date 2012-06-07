@@ -345,7 +345,14 @@ class StreamCommentHandler(AnonymousBaseHandler):
         
                 # Create the interaction
                 interaction = createInteraction(parent.page, parent.container, parent.content, owner, 'com', comment, parent.page.site.group, parent)
-        
+                try:
+                    logger.info(interaction)
+                    notification = AsynchCommentNotification()
+                    #t = Thread(target=notification, kwargs={"interaction_id":interaction['interaction'].id,})
+                    t = Thread(target=notification, kwargs={"interaction_id":parent.id,})
+                    t.start()
+                except Exception, e:
+                    logger.info(e)
             except Interaction.DoesNotExist:
                 return {'message' : 'no such interaction for stream response'}
         return interaction
