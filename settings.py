@@ -41,7 +41,7 @@ ADMINS = (
 STATIC_ROOT = 'rb/static/'
 
 if DEBUG:
-    
+    URL_NO_PROTO = 'local.readrboard.com:8080'
     BASE_URL = 'http://local.readrboard.com:8080'
     BASE_URL_SECURE = 'https://local.readrboard.com:8080'
     STATIC_URL = '//local.readrboard.com:8080/static/'
@@ -54,11 +54,19 @@ if DEBUG:
           'PASSWORD': '',
           'HOST':     '', 
           'PORT':     '',
+        },
+        'slave1': {
+          'ENGINE':   'django.db.backends.sqlite3',
+          'NAME':     'readrdb.db',
+          'USER':     '',
+          'PASSWORD': '',
+          'HOST':     '', 
+          'PORT':     '',
         }
     }
 
 else:
-
+    URL_NO_PROTO = 'www.readrboard.com'
     BASE_URL = 'http://www.readrboard.com'
     BASE_URL_SECURE = 'https://www.readrboard.com'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
@@ -75,6 +83,17 @@ else:
         'USER':     'root',
         'PASSWORD': '',
         'HOST':     'localhost',
+        'PORT':     '3306',
+        'OPTIONS': {
+            "init_command": "SET storage_engine=INNODB",
+        }
+      },
+      'slave1': {
+        'ENGINE':   'django.db.backends.mysql',
+        'NAME':     'readrboard',
+        'USER':     'readr',
+        'PASSWORD': 'r34drsl4v3',
+        'HOST':     '50.116.59.190',
         'PORT':     '3306',
         'OPTIONS': {
             "init_command": "SET storage_engine=INNODB",
@@ -202,6 +221,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'api',
     'rb',
+    'chronos',
     # 'piston',
     'south',
     'storages',

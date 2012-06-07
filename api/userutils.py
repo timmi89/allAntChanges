@@ -178,6 +178,16 @@ def generateConfirmationEmail(user):
     
     return message      
 
+def generateAgreeEmail(user, count, interaction):
+    message = getEmailTemplate('agree_email.html') % (user.username, count, settings.BASE_URL, interaction.id)
+    
+    return message
+
+def generateCommentEmail(user, interaction):
+    message = getEmailTemplate('comment_email.html') % (user.username, settings.BASE_URL, interaction.id)
+    
+    return message
+
 def generatePasswordToken(user):
     window_datetime = datetime.now()
     window_str = window_datetime.strftime("%Y%m%d")

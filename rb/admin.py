@@ -1,4 +1,5 @@
 from rb.models import *
+from chronos.models import *
 from django.contrib import admin
 #from piston.models import Nonce, Consumer, Token 
 #admin.site.unregister(Consumer) 
@@ -152,3 +153,9 @@ admin.site.register(Profile)
 admin.site.register(GroupAdmin, GroupAdminAdmin)
 admin.site.register(GroupBlessedTag, GroupBlessedTagAdmin)
 admin.site.register(Follow)
+
+admin.site.register(NotificationRule)
+admin.site.register(NotificationType)
+admin.site.register(InteractionNotification)
+
+

@@ -94,6 +94,10 @@ urlpatterns = patterns('',
   # API
   url(r'^api/', include('readrboard.api.urls')),
   
+  # CHRONS API
+  url(r'^chronos/', include('readrboard.chronos.urls')),
+  
+  
   # Group Supporting Pages
   url(r'^signup/$', 'rb.views.create_group'),
   url(r'^analytics/', include('readrboard.analytics.urls')),

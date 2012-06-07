@@ -163,7 +163,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     else:
         # If not viewing a user profile, remove bookmarks from interaction set
         interactions = interactions.exclude(kind="bkm")
-        if not query_string:
+        if not query_string and not interaction_id:
             interactions = interactions.filter(parent=None)
 
     # Interactions for group profile
@@ -250,8 +250,8 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     for child_interaction in child_interactions:
         if not context['child_interactions'].has_key(child_interaction.parent.id):
             context['child_interactions'][child_interaction.parent.id] = 0
-        context['child_interactions'][child_interaction.parent.id] += 1
 
+        context['child_interactions'][child_interaction.parent.id] += 1
 
     return render_to_response("index.html", context, context_instance=RequestContext(request))
 
