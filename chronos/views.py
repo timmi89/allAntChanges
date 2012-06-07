@@ -19,7 +19,12 @@ import logging
 logger = logging.getLogger('rb.standard')
 
 rules = {'threshold1':ThresholdNotificationRule(threshold = 1), 
-         'threshold5':ThresholdNotificationRule(threshold = 5)}
+         'threshold5':ThresholdNotificationRule(threshold = 5), 
+         'threshold10':ThresholdNotificationRule(threshold = 10), 
+         'threshold25':ThresholdNotificationRule(threshold = 25), 
+         'threshold50':ThresholdNotificationRule(threshold = 50), 
+         'threshold100':ThresholdNotificationRule(threshold = 100)
+         }
 
 def agree(request, interaction_id = None, **kwargs):
     context = {}
@@ -89,6 +94,7 @@ def comment(request, interaction_id = None, **kwargs):
                     notification, created = InteractionNotification.objects.get_or_create(interaction = interaction, 
                                                                        social_user = social_user,
                                                                        notification_type = threshold)
+                    
                     if created:
                         #SEND EMAIL!
                         msg = EmailMessage("ReadrBoard comment notification", 
