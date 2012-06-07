@@ -1,7 +1,7 @@
 #from django.template import Context, loader
 from models import *
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core import serializers
 from settings import FACEBOOK_APP_ID, BASE_URL
@@ -163,31 +163,40 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     else:
         # If not viewing a user profile, remove bookmarks from interaction set
         interactions = interactions.exclude(kind="bkm")
-        if not query_string:
+        if not query_string and not interaction_id:
             interactions = interactions.filter(parent=None)
 
     # Interactions for group profile
     if short_name:
-        group = Group.objects.get(short_name=short_name)
-        interactions = interactions.filter(page__site__group__short_name=short_name)
-        context['group'] = group
-
+        try:
+            group = Group.objects.get(short_name=short_name)
+            interactions = interactions.filter(page__site__group__short_name=short_name)
+            context['group'] = group
+        except Group.DoesNotExist:
+            raise Http404
+        
     if interaction_id:
         interactions = interactions.filter(id=interaction_id)
         context['singleton'] = True
     
     # Interactions for specific page
     if site_id:
-        site = Site.objects.get(id=site_id)
-        interactions = interactions.filter(page__site=site)
-        context['site'] = site    
-
+        try:
+            site = Site.objects.get(id=site_id)
+            interactions = interactions.filter(page__site=site)
+            context['site'] = site    
+        except Site.DoesNotExist:
+            raise Http404
+        
     # Interactions for specific page
     if page_id:
-        page = Page.objects.get(id=page_id)
-        interactions = interactions.filter(page=page)
-        context['page'] = page        
-
+        try:
+            page = Page.objects.get(id=page_id)
+            interactions = interactions.filter(page=page)
+            context['page'] = page        
+        except Page.DoesNotExist:
+            raise Http404
+            
     # Process view filters
     if 'view' in kwargs:
         view = kwargs['view']
@@ -207,6 +216,11 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     else:
         interactions = interactions.filter(approved=True)
 
+    if 'filtered' in kwargs:
+        logger.info('filtering')
+        #interactions = interactions.filter( Q(user = cookie_user) & ~Q(user__email__exact='tempuser@readrboard.com') | Q(page__site__group__approved = True))
+        interactions = interactions.filter(page__site__group__approved = True)
+        
     # Pagination
     interactions_paginator = Paginator(interactions, 50)
 
@@ -236,9 +250,8 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     for child_interaction in child_interactions:
         if not context['child_interactions'].has_key(child_interaction.parent.id):
             context['child_interactions'][child_interaction.parent.id] = 0
-            logger.info(child_interaction.parent.id)
+
         context['child_interactions'][child_interaction.parent.id] += 1
-        logger.info(context['child_interactions'])
 
     return render_to_response("index.html", context, context_instance=RequestContext(request))
 
@@ -656,5 +669,5 @@ def follow_interactions(request, user_id):
     return render_to_response("index.html", context, context_instance=RequestContext(request))
 
 
-
+ 
 

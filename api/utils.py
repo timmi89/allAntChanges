@@ -240,15 +240,16 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             interaction_node=interaction_node,
             kind=kind
         )
-        print "Found existing Interaction with id %s" % existing_interaction.id
+        logger.info("Found existing Interaction with id %s" % existing_interaction.id)
         return dict(interaction=existing_interaction, existing=True)
     except Interaction.DoesNotExist:
         pass
 
     if parent:
-        print "Creating Interaction with parent node"
+        pass
+        #print "Creating Interaction with parent node"
     else:
-        print "Creating Interaction without parent node"
+        #print "Creating Interaction without parent node"
         parent = None
     
     try:
@@ -259,7 +260,8 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             user=user,
             kind=kind,
             interaction_node=interaction_node,
-            parent=parent
+            parent=parent,
+            approved = False if group.requires_approval else True
         )
     except:
         raise JSONException(u"Error creating interaction object")

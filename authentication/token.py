@@ -61,7 +61,6 @@ def checkToken(data):
     
     # Set auth_token for temporary user
     else:
-        print "USING READRBOARD AUTH_TOKEN"
         auth_token = 'R3dRB0aRdR0X'
     
     # Create token with passed in credentials

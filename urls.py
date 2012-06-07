@@ -25,7 +25,8 @@ urlpatterns = patterns('',
   
   # For main website
   url(r'^publishers/$','rb.views.splash'),
-  url(r'^$', 'rb.views.main', kwargs={"view":"index"}),
+  url(r'^$', 'rb.views.main', kwargs={"view":"index", "filtered":"charcoal"}),
+  url(r'^unfiltered/$', 'rb.views.main', kwargs={"view":"index"}),
   url(r'^stream/$', 'rb.views.main', kwargs={"view":"index"}),
   url(r'^tags/$', 'rb.views.main', kwargs={"view":"tags"}),
   url(r'^comments/$', 'rb.views.main', kwargs={"view":"comments"}),
@@ -92,6 +93,10 @@ urlpatterns = patterns('',
 
   # API
   url(r'^api/', include('readrboard.api.urls')),
+  
+  # CHRONS API
+  url(r'^chronos/', include('readrboard.chronos.urls')),
+  
   
   # Group Supporting Pages
   url(r'^signup/$', 'rb.views.create_group'),
