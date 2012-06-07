@@ -17,7 +17,7 @@ class AbstractAsynchronousNotification(object):
         logger.info("NO PROTO URL: " + str(settings.URL_NO_PROTO) + " *** " + str(url))
         try:
             #hcon = httplib.HTTPConnection(settings.BASE_URL, timeout=3)
-            hcon = httplib.HTTPConnection('local.readrboard.com',8080, timeout=3)
+            hcon = httplib.HTTPConnection(settings.URL_NO_PROTO, timeout=3)
             hcon.connect()
             hcon.request('GET', url)
             resp = hcon.getresponse(True)
