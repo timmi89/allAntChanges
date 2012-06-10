@@ -539,11 +539,24 @@ section[role="main"] 	{
     clear:both;
 }
 
-.pagination .current {
-    margin-left: 180px;
-    margin-right: 180px;
-}
 /* End Tyler's Crap */
+/*temp bootstap override*/
+.pagination a {
+    background: none repeat scroll 0 0 transparent;
+    border: medium none !important;
+    font-size: 14px;
+    line-height: 14px !important;
+    margin: 1px 10px;
+    position: absolute;
+}
+
+.rdrIcon   {
+    background: url("../../widget/images/readr_icons.png") no-repeat scroll -1px 1px transparent;
+    float: left;
+    height: 16px;
+    margin: 0 2px 0 -2px;
+    width: 16px;
+}
 
 #splashAnnounce {
     border-bottom:1px dashed #ccc;
@@ -562,6 +575,22 @@ section[role="main"] 	{
   color:#26465A;
 }
 
+.callToActionButtons{
+    margin: 0 auto;
+    width: 445px;
+    padding: 15px 0;
+}
+.callToActionButtons a{
+    font-weight:bold;
+    font-size:18px;
+    margin-top:5px;
+}
+.callToActionButtons .left{
+    float: left;
+}
+.callToActionButtons .right{
+    float: right;
+}
 
 #cards { }
 section[role="main"] div.card { }
