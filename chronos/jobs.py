@@ -20,7 +20,7 @@ class AbstractAsynchronousNotification(object):
             hcon = httplib.HTTPConnection(settings.URL_NO_PROTO, timeout=3)
             hcon.connect()
             hcon.request('GET', url)
-            resp = hcon.getresponse(True)
+            resp = hcon.getresponse()
             lines = resp.read()
             hcon.close()
         except Exception, e:

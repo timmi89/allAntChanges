@@ -96,15 +96,15 @@ def comment(request, interaction_id = None, **kwargs):
                                                                        social_user = social_user,
                                                                        notification_type = threshold)
                     
-                    if created:
-                        logger.info("sending comment notification")
-                        msg = EmailMessage("ReadrBoard comment notification", 
+                   # if created:
+                    logger.info("sending comment notification")
+                    msg = EmailMessage("ReadrBoard comment notification", 
                                            generateCommentEmail(social_user, interaction), 
                                            "hello@readrboard.com", 
                                            [interaction.user.email])
-                        msg.content_subtype='html'
-                        msg.send(False)
-                        logger.info("SHOULD SEND NOTIFICATION: " + threshold.name)
+                    msg.content_subtype='html'
+                    msg.send(False)
+                    logger.info("SHOULD SEND NOTIFICATION: " + threshold.name)
                 else:
                     logger.info("DID NOT PASS: " + threshold.name)
                     
