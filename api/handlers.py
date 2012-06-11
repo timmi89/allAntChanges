@@ -13,7 +13,7 @@ from django.core.mail import EmailMessage
 from django.db.models import Q
 from chronos.jobs import *
 from threading import Thread
-
+from itertools import chain
 
 import logging
 logger = logging.getLogger('rb.standard')
@@ -663,6 +663,16 @@ class SettingsHandler(AnonymousBaseHandler):
             groupblessedtag__group=group.id
         ).order_by('groupblessedtag__order')
         
+        owner = checkCookieToken(request)
+        if owner is not None:
+            try:
+                social_user = SocialUser.objects.get(user = owner)
+                user_tags = InteractionNode.objects.filter(userdefaulttag__social_user = social_user)
+                blessed_tags = list(chain(blessed_tags, user_tags))
+                logger.info(blessed_tags)
+            except SocialUser.DoesNotExist:
+                logger.info("User does not have social account")
+                
         settings_dict['blessed_tags'] = blessed_tags
         
         return settings_dict

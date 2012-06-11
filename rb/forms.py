@@ -119,11 +119,19 @@ class ModifySocialUserForm(forms.ModelForm):
     
     id = forms.CharField(label=_('User Id'), widget=forms.HiddenInput)
     user_token = forms.CharField(label=_('User Token'), widget=forms.HiddenInput)
-    avatar = forms.ImageField(label=_("Avatar Image"), max_length=255)
+    avatar = forms.ImageField(label=_("Avatar Image"), max_length=255, required = False)
+    default_tags = forms.CharField(label='Default Reactions', required = False)
     
+    def __init__(self, *args, **kwargs):
+        super(ModifySocialUserForm, self).__init__(*args, **kwargs)
+        tags = []
+        for tag in GroupBlessedTag.objects.filter(group=self.instance):
+            tags.append(tag.node.body)
+        self.fields['default_tags'].initial = ','.join(tags)
+  
     class Meta:
         model = SocialUser
-        fields = ("avatar", "id")
+        fields = ("avatar", "id", "default_tags")
 
     def clean_id(self):
         return self.cleaned_data['id']
@@ -136,6 +144,19 @@ class ModifySocialUserForm(forms.ModelForm):
         
         return avatar
     
+
+    # Get or create blessed tag interaction nodes to prepare for save
+    def clean_default_tags(self):
+        tags = self.cleaned_data['default_tags']
+        new_default_tags = []
+        for tag in tags.split(','):
+            tag = tag.strip()
+            new_default_tags.append(
+                InteractionNode.objects.get_or_create(body=tag)[0]
+            )
+        self.new_default_tags = new_default_tags
+    
+    
     def is_valid(self):
         valid = super(ModifySocialUserForm, self).is_valid()
         return valid and userutils.validateSocialUserToken(self.cleaned_data['id'],self.cleaned_data['user_token'] )
@@ -145,34 +166,38 @@ class ModifySocialUserForm(forms.ModelForm):
         
         try:
             social_user = SocialUser.objects.get(id=self.clean_id())
-            social_user.avatar = self.clean_avatar()
+            if self.clean_avatar() is not None:
+                social_user.avatar = self.clean_avatar()
             
         except SocialUser.DoesNotExist:
             raise forms.ValidationError(_("A problem occurred while updating your profile."))
-        
+
         if commit:
-            
+            UserDefaultTag.objects.filter(social_user=social_user).delete()
+        
+            # Add all the new blessed tags
+            for tag in enumerate(self.new_default_tags):
+                UserDefaultTag.objects.create(social_user=social_user, node=tag[1], order=tag[0])
+    
             #social_user.save()
             #this should probably just be done in the clean avatar method
-            try:
-                logger.info("Starting thumb")
-
-                image = Image.open(social_user.avatar)
-                image.thumbnail((50,50),Image.ANTIALIAS)
-                thumb_io = StringIO.StringIO()
-                logger.info("Trying to save")
-                image.save(thumb_io, format=image.format)
-                #social_user.avatar.delete()
-                #filename = social_user.img_url[social_user.img_url.rindex("/") + 1:]
-                filename = 'avatar.' + image.format
-                logger.info("FORMAT: " + image.format + " " + filename)
-                thumb_file = InMemoryUploadedFile(thumb_io, None, filename, 'image/' + image.format, thumb_io.len, None)
-                social_user.avatar = thumb_file
-                social_user.img_url = userutils.formatUserAvatarUrl(social_user)                
-                logger.info("IMG_URL: " + social_user.img_url)                
-                social_user.save()
-            except Exception, e:
-                logger.info(traceback.format_exc())
+            if self.clean_avatar() is not None:
+                try:
+                    image = Image.open(social_user.avatar)
+                    image.thumbnail((50,50),Image.ANTIALIAS)
+                    thumb_io = StringIO.StringIO()
+                    image.save(thumb_io, format=image.format)
+                    #social_user.avatar.delete()
+                    #filename = social_user.img_url[social_user.img_url.rindex("/") + 1:]
+                    filename = 'avatar.' + image.format
+                    logger.info("FORMAT: " + image.format + " " + filename)
+                    thumb_file = InMemoryUploadedFile(thumb_io, None, filename, 'image/' + image.format, thumb_io.len, None)
+                    social_user.avatar = thumb_file
+                    social_user.img_url = userutils.formatUserAvatarUrl(social_user)                
+                    logger.info("IMG_URL: " + social_user.img_url)                
+                    social_user.save()
+                except Exception, e:
+                    logger.info(traceback.format_exc())
             
         return social_user
 

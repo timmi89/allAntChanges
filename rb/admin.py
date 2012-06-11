@@ -153,7 +153,7 @@ admin.site.register(Profile)
 admin.site.register(GroupAdmin, GroupAdminAdmin)
 admin.site.register(GroupBlessedTag, GroupBlessedTagAdmin)
 admin.site.register(Follow)
-
+admin.site.register(UserDefaultTag)
 admin.site.register(NotificationRule)
 admin.site.register(NotificationType)
 admin.site.register(InteractionNotification)

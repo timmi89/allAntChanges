@@ -19,7 +19,10 @@
     	<label for="id_avatar">Avatar </label>
     	{{ form.avatar }}{{ form.avatar.errors }}
   	</div>
-  	
+  	<div>
+        <label for="id_default_tags">Your Default Reactions</label>
+        {{ form.default_tags }}
+    </div>
   	<div>
       {{ form.user_token }} {{ form.user_token.errors }}
     </div>
