@@ -65,9 +65,10 @@
   font-size:10px;color:#777;cursor:pointer;
 }
 #pages .card .buttons {
-  position:absolute;right:3px;top:-40px;z-index:1;display:none;
+  position:absolute;right:3px;top:10px;z-index:1;display:none;left:auto;
 }
-.card:hover .buttons { display:block; }
+.card:hover .buttons,
+#pages .card:hover .buttons { display:block; }
 #pages .card:hover .buttons { display:block; }
 </style>
 <section id="headlines" style="margin-bottom:10px;">
@@ -454,9 +455,11 @@ function writePageCard( interaction, showBlocked ) {
     );
 
     if ( $.cookie('user_id') ) {
-      var $buttons = $('<div class="buttons"><button class="me_too">+1 '+interaction.interaction_node_body+'</button></div>').appendTo( $meta );
+      // var $buttons = $('<div class="buttons"><button class="me_too">+1 '+interaction.interaction_node_body+'</button></div>').appendTo( $meta );
+      var $buttons = $('<div class="buttons"><button class="me_too">+1 '+interaction.interaction_node_body+'</button></div>').appendTo( $card.find('div.group') );
     } else {
-      var $buttons = $('<div class="buttons"><div style="background:#fff;border:1px solid #999;font-size:11px;padding:2px;margin-right:5px;">To react or comment, use the link in the top left-hand corner of the screen.</div></div>').appendTo( $meta );
+      var $buttons = $('<div class="buttons"><div style="background:#fff;border:1px solid #999;font-size:11px;padding:2px;margin-right:5px;">To react or comment, use the link in the top left-hand corner of the screen.</div></div>').before( $card.find('div.group') );
+      // var $buttons = $('<div class="buttons"><div style="background:#fff;border:1px solid #999;font-size:11px;padding:2px;margin-right:5px;">To react or comment, use the link in the top left-hand corner of the screen.</div></div>').appendTo( $meta );
     }
     
     if ( $.cookie('user_id') ) {
