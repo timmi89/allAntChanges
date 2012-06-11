@@ -782,6 +782,7 @@ div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count img.rdr_ui_arrow   {
   background:url(../images/summary_box_arrow.png) 0px -8px no-repeat !important;
   margin:0 -5px -9px 0px !important;
   padding:0 !important;
+  float:none !important;
 }
 
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
