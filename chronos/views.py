@@ -81,7 +81,7 @@ def comment(request, interaction_id = None, **kwargs):
         social_user = SocialUser.objects.get(user = interaction.user)
         if social_user.notification_email_option:
             logger.info("comment notification?")
-            child_interactions = Interaction.objects.filter(parent = interaction, kind = 'com').order_by('-created')
+            child_interactions = Interaction.objects.exclude(user=interaction.user).filter(parent = interaction, kind = 'com').order_by('-created')
             child_count = child_interactions.count()
             thresholds = NotificationType.objects.filter(name__startswith = 'commentthreshold')
             for threshold in thresholds:
