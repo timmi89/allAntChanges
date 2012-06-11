@@ -513,6 +513,10 @@ class PageDataHandler(AnonymousBaseHandler):
             # Retrieve containers
             containers = Container.objects.filter(id__in=iop.values('container'))
         
+            parents = interactions.filter(page=current_page, parent=None)
+            par_con = []
+            for parent in parents:
+                par_con.append({parent.container.id:parent.id})
             # Get page interaction counts, grouped by kind
             values = iop.order_by('kind').values('kind')
             # Annotate values with count of interactions
@@ -547,7 +551,8 @@ class PageDataHandler(AnonymousBaseHandler):
                     toptags=toptags,
                     topusers=topusers,
                     topshares=topshares,
-                    containers=containers
+                    containers=containers,
+                    parents = par_con
                 )
             )
         
