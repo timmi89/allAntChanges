@@ -141,6 +141,14 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
               <input type="checkbox" id="activity_notifications" {% if cookie_user.social_user.notification_email_option %}checked="checked"{% endif %} /> 
               Send me activity notifications.
             </label>
+            
+            {% if cookie_user.social_user.provider == "Readrboard" %}
+            <hr/>
+            <a href="javascript:void(0);" onclick="RDRAuth.rbAvatarUploadWindow = window.open(RDR_baseUrl+'/user_modify/', 'readr_avatar_upload','menubar=1,resizable=1,width=370,height=245,top='+t+',left='+l);RDRAuth.checkRBLoginWindow();return false;">Upload Profile Picture</a>
+            {% endif %}
+            <!--
+            /user_modify/
+            -->
             {% endif %}
           </div>
         </div>
