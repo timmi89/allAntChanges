@@ -137,6 +137,10 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
               <input type="checkbox" id="follow_email" {% if cookie_user.social_user.follow_email_option %}checked="checked"{% endif %} /> 
               Send me email when someone follows my activity.
             </label>
+            <label for="activity_notifications">
+              <input type="checkbox" id="activity_notifications" {% if cookie_user.social_user.notification_email_option %}checked="checked"{% endif %} /> 
+              Send me activity notifications.
+            </label>
             {% endif %}
           </div>
         </div>
@@ -285,7 +289,7 @@ RB.profile_user = {
                   json: JSON.stringify(sendData)
                 },
             success: function(response) {
-                $('label[for="private_profile"]').append('<span>Saved</span>');
+                $('label[for="private_profile"]').append('<strong style="display:inline-block;float:none;margin:0;color:#4b8ac8;">Saved</strong>');
             }
         });
       });
@@ -303,7 +307,26 @@ RB.profile_user = {
                 json: JSON.stringify(sendData)
               },
             success: function(response) {
-                $('label[for="follow_email"]').append('<span>Saved</span>');
+                $('label[for="follow_email"]').append('<strong style="display:inline-block;float:none;margin:0;color:#4b8ac8;">Saved</strong>');
+            }
+        });
+      });
+
+      $('#activity_notifications').click( function() {
+        $('label[for="activity_notifications"] span').remove();
+        var sendData = {
+            user_id:RDRAuth.rdr_user.user_id, 
+            readr_token:RDRAuth.rdr_user.readr_token,
+            group_id:1
+        };
+        $.ajax({
+            url: "/api/notificationemail/toggle/",
+            type: "get",
+            data: {
+                json: JSON.stringify(sendData)
+              },
+            success: function(response) {
+                $('label[for="activity_notifications"]').append('<strong style="display:inline-block;float:none;margin:0;color:#4b8ac8;">Saved</strong>');
             }
         });
       });
