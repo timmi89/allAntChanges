@@ -41,11 +41,11 @@ ADMINS = (
 STATIC_ROOT = 'rb/static/'
 
 if DEBUG:
-    URL_NO_PROTO = 'local.readrboard.com:8080'
+    
     BASE_URL = 'http://local.readrboard.com:8080'
     BASE_URL_SECURE = 'https://local.readrboard.com:8080'
     STATIC_URL = '//local.readrboard.com:8080/static/'
-    DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']
+    DATABASE_ROUTERS = ['rb.routers.SyncRouter']
     
     DATABASES = {
       'default': {
@@ -71,21 +71,13 @@ if DEBUG:
           'PASSWORD': '4rc4n30n3',
           'HOST':     '192.168.1.14', 
           'PORT':     '',
-        },
-        'slave1': {
-          'ENGINE':   'django.db.backends.sqlite3',
-          'NAME':     'readrdb.db',
-          'USER':     '',
-          'PASSWORD': '',
-          'HOST':     '', 
-          'PORT':     '',
         }
     }
     
     
 
 else:
-    URL_NO_PROTO = 'www.readrboard.com'
+
     BASE_URL = 'http://www.readrboard.com'
     BASE_URL_SECURE = 'https://www.readrboard.com'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
@@ -102,17 +94,6 @@ else:
         'USER':     'root',
         'PASSWORD': '',
         'HOST':     'localhost',
-        'PORT':     '3306',
-        'OPTIONS': {
-            "init_command": "SET storage_engine=INNODB",
-        }
-      },
-      'slave1': {
-        'ENGINE':   'django.db.backends.mysql',
-        'NAME':     'readrboard',
-        'USER':     'readr',
-        'PASSWORD': 'r34drsl4v3',
-        'HOST':     '50.116.59.190',
         'PORT':     '3306',
         'OPTIONS': {
             "init_command": "SET storage_engine=INNODB",
@@ -218,18 +199,11 @@ import os
 RB_SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 EMAIL_TEMPLATE_DIR = RB_SITE_ROOT + "/rb/email_templates"
 
-if DEBUG:
-    EMAIL_USE_TLS = True
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_USER = 'accounts@readrboard.com'
-    EMAIL_HOST_PASSWORD = 'readr4acc0unts'
-    EMAIL_PORT = 587
-else:
-    EMAIL_USE_TLS = True
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_USER = 'accounts@readrboard.com'
-    EMAIL_HOST_PASSWORD = 'readr4acc0unts'
-    EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'accounts@readrboard.com'
+EMAIL_HOST_PASSWORD = 'readr4acc0unts'
+EMAIL_PORT = 587
 
 
 """
@@ -246,7 +220,6 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'api',
     'rb',
-    'chronos',
     # 'piston',
     'south',
     'storages',
@@ -263,7 +236,7 @@ if DEBUG: INSTALLED_APPS.append('django_extensions')
 DEVSERVER_MODULES = (
     'devserver.modules.sql.SQLRealTimeModule',
     'devserver.modules.sql.SQLSummaryModule',
-    # 'devserver.modules.profile.ProfileSummaryModule',
+    'devserver.modules.profile.ProfileSummaryModule',
 
     # Modules not enabled by default
     #'devserver.modules.ajax.AjaxDumpModule',
@@ -303,6 +276,8 @@ DEBUG_TOOLBAR_CONFIG = {
     "INTERCEPT_REDIRECTS": False
 }
 
+
+DEVSERVER_IGNORED_PREFIXES = ['/media', '/uploads']
 
 # for social auth
 #SOCIAL_AUTH_ERROR_KEY = 'social_errors'

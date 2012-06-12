@@ -9,13 +9,13 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         
         # Removing unique constraint on 'Page', fields ['url', 'canonical_url']
-        db.delete_unique('rb_page', ['url', 'canonical_url'])
+        #db.delete_unique('rb_page', ['url', 'canonical_url'])
 
         # Changing field 'SocialAuth.auth_token'
         db.alter_column('rb_socialauth', 'auth_token', self.gf('django.db.models.fields.CharField')(max_length=150))
 
         # Adding unique constraint on 'Page', fields ['url', 'site', 'canonical_url']
-        db.create_unique('rb_page', ['url', 'site_id', 'canonical_url'])
+        #db.create_unique('rb_page', ['url', 'site_id', 'canonical_url'])
 
 
     def backwards(self, orm):
