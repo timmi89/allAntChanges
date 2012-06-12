@@ -203,8 +203,11 @@ RDRAuth = {
 							// console.dir(response);
 							if ( $('#fb-login-button a.logging-in').length ) {
 							// 	// reload the window only if they had just taken the action of clicking the login button.  janky-ish.
-							// 	window.location.reload();
+								if ( $('#fb-login-button a').hasClass('logging-in') ) {
+									window.location.reload();
+								}
 
+								// shouldn't need this.  the window reload above removes the need for it.
 			      				var $user = $('<a/>'),
 								$avatar = $('<img/>'),
 								$name = $('<strong/>');
