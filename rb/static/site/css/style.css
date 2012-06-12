@@ -594,7 +594,7 @@ section[role="main"] div.card.pag div.meta { margin:0; overflow:visible; }
 section[role="main"] div.card.pag div.meta div.title      { width:200px; }
 section[role="main"] div.card.pag div.meta div.title a  { font-weight:normal; font-size:12px; color:#454545;}
 section[role="main"] div.card.pag div.metaRight { float: none; overflow:hidden; width:auto;}
-section[role="main"] div.card.pag div.date        { float:none; position:static;}
+section[role="main"] div.card.pag div.date        { float:none; position:static; max-width:140px;}
 section[role="main"] div.card.pag div.added_by {margin-top:-20px;}
 section[role="main"] div.card.pag div.block_content   { top:-32px; left:5px;}
 
