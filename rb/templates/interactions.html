@@ -529,7 +529,7 @@ function writeComment( comment, parent, showBlocked ) {
 
       $comments.show();
       if ( !$comments.find('h2').length ) $comments.append('<h2>Comments / Tags</h2>');
-      $comments.append( $comment_container );
+      $comments.find('h2').after( $comment_container );
   }
 }
 
