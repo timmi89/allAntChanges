@@ -121,6 +121,7 @@ class InteractionAdmin(admin.ModelAdmin):
         'modified',
         'anonymous',
         'approved',
+        'rank',
     )
 
 class NodeValueAdmin(admin.ModelAdmin):

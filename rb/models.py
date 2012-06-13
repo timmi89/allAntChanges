@@ -315,6 +315,8 @@ class Interaction(DateAwareModel, UserAwareModel):
     parent= models.ForeignKey('self', blank=True, null=True)
     kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)
     
+    rank = models.BigIntegerField(default = 0)
+    
     class Meta:
         ordering = ['-created']
         unique_together = ('page', 'content', 'kind', 'interaction_node', 'user')

@@ -46,7 +46,7 @@ if DEBUG:
     BASE_URL_SECURE = 'https://local.readrboard.com:8080'
     STATIC_URL = '//local.readrboard.com:8080/static/'
     DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']
-    
+    """
     DATABASES = {
       'default': {
           'ENGINE':   'django.db.backends.mysql',
@@ -81,7 +81,41 @@ if DEBUG:
           'PORT':     '',
         }
     }
-    
+    """
+    DATABASES = {
+      'default': {
+          'ENGINE':   'django.db.backends.sqlite3',
+          'NAME':     'readrdb.db',
+          'USER':     '',
+          'PASSWORD': '',
+          'HOST':     '', 
+          'PORT':     '',
+        },
+      'readonly1': {
+          'ENGINE':   'django.db.backends.sqlite3',
+          'NAME':     'readrdb.db',
+          'USER':     '',
+          'PASSWORD': '',
+          'HOST':     '', 
+          'PORT':     '',
+        },
+      'readonly2': {
+          'ENGINE':   'django.db.backends.sqlite3',
+          'NAME':     'readrdb.db',
+          'USER':     '',
+          'PASSWORD': '',
+          'HOST':     '', 
+          'PORT':     '',
+        },
+        'slave1': {
+          'ENGINE':   'django.db.backends.sqlite3',
+          'NAME':     'readrdb.db',
+          'USER':     '',
+          'PASSWORD': '',
+          'HOST':     '', 
+          'PORT':     '',
+        }
+    }
     
 
 else:
@@ -107,7 +141,18 @@ else:
             "init_command": "SET storage_engine=INNODB",
         }
       },
-      'slave1': {
+      'readonly1': {
+        'ENGINE':   'django.db.backends.mysql',
+        'NAME':     'readrboard',
+        'USER':     'readr',
+        'PASSWORD': 'r34drsl4v3',
+        'HOST':     '50.116.59.190',
+        'PORT':     '3306',
+        'OPTIONS': {
+            "init_command": "SET storage_engine=INNODB",
+        }
+      },
+      'readonly2': {
         'ENGINE':   'django.db.backends.mysql',
         'NAME':     'readrboard',
         'USER':     'readr',
@@ -118,6 +163,8 @@ else:
             "init_command": "SET storage_engine=INNODB",
         }
       }
+      
+      
     }
 
     CACHES = {
