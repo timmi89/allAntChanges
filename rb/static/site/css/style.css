@@ -1088,6 +1088,9 @@ footer div.footerLinks a:hover{
 	color:#7997B1;
 }
 
+.noFooter #uvTab {display:none !important;}
+.noFooter footer div.footerLinks { visibility:hidden; }
+
 /* HEADINGS */
 /* TYPOGRAPHY */
 /* LINKS */
