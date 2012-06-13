@@ -563,7 +563,7 @@ section[role="main"] 	{
     bottom:0;
     color:#888;
     margin:0 0 15px 0;
-    padding:25px 0;
+    padding:25px 0 15px 0;
     text-align:center;
 }
 #splashAnnounce h3{
@@ -1075,10 +1075,18 @@ table[role="popular bookmarks"] td[role="via"],
 table[role="popular bookmarks"] td[role="reactions"]	{ padding:0 0 10px 23px; }
 
 
-/* get the react button */
+/* get the reaction button */
 .howto {
   display:none;
 }
+.howto ol{
+    list-style-type: none;
+}
+.howto li{
+    margin-bottom:10px;
+
+}
+
 
 
 footer{
@@ -1086,7 +1094,7 @@ footer{
 	background:#333;
 	z-index:1000;
 }
-footer div.footerLinks{
+/*footer div.footerLinks{
 	width:960px;
 	margin:auto;
 	position:relative;
@@ -1115,8 +1123,54 @@ footer div.footerLinks a{
 }
 footer div.footerLinks a:hover{
 	color:#7997B1;
+}*/
+
+footer{
+    padding:15px 0;
+    background:#333;
+    z-index:1000;
+    text-align: center;
+    overflow: hidden;
 }
 
+footer div.footerLinks{
+    /*left:-50%;
+    margin: auto;
+    position: relative;
+    width: 100%;*/
+}
+footer div.footerLinks ul{
+    list-style: none;
+    position: relative;
+    float: left;
+    display: block;
+    left: 50%;
+}
+footer div.footerLinks ul li{
+    padding:10px;
+    margin: 0 40px;
+    position: relative;
+    float: left;
+    display: block;
+    right: 50%;
+}
+footer div.footerLinks ul.footerLinksRight{
+    position:absolute;
+    right:0;    
+}
+footer div.footerLinks ul.footerLinksRight li{
+    float:right;
+    margin-left:40px;
+    margin-right:0;
+}
+footer div.footerLinks a{
+    font-style:none;
+    text-decoration:none;
+    color:#fff;
+}
+footer div.footerLinks a:hover{
+    color:#7997B1;
+}
 /* HEADINGS */
 /* TYPOGRAPHY */
 /* LINKS */
@@ -1227,4 +1281,38 @@ http://drupal.org/node/897638
 
 .fancybox-wrap {
   overflow:visible !important;
+}
+
+#reactPage{
+    width: 650px;
+    margin: auto;
+}
+#reactPage h1{
+    margin: 10px 0 20px 0;
+}
+#reactPage section{
+    margin: 30px 0 20px;
+    border-top: 1px dashed #CCCCCC;
+}
+#reactPage h2{
+    /*background: none repeat scroll 0 0 #EEEEEE;
+    border-top: 1px solid #E9E9E9;
+    border-bottom: 1px solid #ddd;*/
+    color: #26465A;
+    margin: 25px 0 0 0;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+#reactPage h4{
+    margin: 0 0 10px 0;
+}
+#reactPage .videoWrap{
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+}
+#reactPage .needHelp{
+    color: #888;
+    font-size: 12px;
 }

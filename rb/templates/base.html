@@ -185,28 +185,30 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     </section>
   </section>
 
-  <footer role="contentinfo" class="clearfix">
+{% block footer %}
+<footer role="contentinfo" class="clearfix">
     <div class="footerLinks">
-    <ul class="footerLinksLeft">
-      <li>
-        <a href="/react/"><strong style="color:#008be4;">Get the React button</strong></a>
-      </li>
-      <li>
-        <a href="/publishers/"><strong style="color:#008be4;">Add to your site</strong></a>
-      </li>
-      <li>
-        <a href="/stream/">Recent Activity</a>
-      </li>
-      <li>
-        <a href="/about/" >About Us</a>
-      </li>
-      <li>
-        <a href="/faq/" >FAQ</a>
-      </li>
-    </ul>
-    <div class="clearDiv"></div>
-  </div>
-  </footer>
+        <ul class="footerLinksLeft">
+            <li>
+                <a href="/stream/">Home</a>
+            </li>
+            <li>
+                <a href="/react/"><strong style="color:#008be4;">Get the Reaction Button</strong></a>
+            </li>
+            <li>
+                <a href="/about/"><strong>About ReadrBoard</strong></a>
+            </li>
+            <li>
+                <a href="https://twitter.com/ReadrBoard" class="twitter-follow-button" data-show-count="false">Follow @ReadrBoard</a>
+                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                
+            </li>
+        </ul>
+        <div class="clearDiv"></div>
+    </div>
+</footer>
+{% endblock footer %}
+
 
   <div id="fb-root"></div>
   <!-- Facebook: load synchronously -->

@@ -11,290 +11,213 @@
 {% block bodyClass %}wide{% endblock %}
 
 {% block mainContent %}
-<div id="splashAnnounce" class="no-rdr">
-	<div id="splashAnnounceInner">
-	 	<div class="left">
-	 		<img src="{{ STATIC_URL }}site/images/imagine.png" title="Imagine a better Like button" id="imagine" />
-			<div id="sns_buttons">
-				<div><img src="{{ STATIC_URL }}site/images/like_button.png" alt="Like" id="sns_fb" class="no-rdr" /></div>
-				<div style="display:none;"><img src="{{ STATIC_URL }}site/images/plus_one_button.png" alt="+1" id="sns_google" class="no-rdr"/></div>
-				<div style="display:none;"><img src="{{ STATIC_URL }}site/images/tweet_button.png" alt="Tweet" id="sns_twitter" class="no-rdr"/></div>
-			</div>
-			<img src="{{ STATIC_URL }}site/images/summary_bar.png" style="zoom:1;"/>
-			<h3 class="no-rdr"><span>ReadrBoard</span> is the fastest way to <span>say exactly what you think</span><br/>about any phrase, picture, video, or article on the web.</h3>
-			<div style="overflow:auto;" id="action_links">
-                <a href="/stream/" style="margin-right:75px;">See live reactions</a>
-                <a href="#try-it" style="margin-right:75px;">Try it</a>
-				<a href="mailto:info@readrboard.com?subject=ReadrBoard Beta Request&body=(Tell us what site you would like to try ReadrBoard on, and why.  Thanks!)">Get it for your website</a>
-				<!-- <div style="width:250px;float:left;text-align:center;"><a href="#try-it">Try it</a></div>
-				<div style="width:250px;float:left;text-align:center;"><a href="mailto:info@readrboard.com?subject=ReadrBoard Beta Request&body=(Tell us what site you would like to try ReadrBoard on, and why.  Thanks!)">Get it for your website</a></div> -->
-			</div>
-		</div>
-		<div class="right">
-			{ video }
-		</div>
-	</div>
-	<div class="splashQuote">
-		<div style="width:200px;float:left;margin-right:20px;">
-			<a href="http://www.readrboard.com/group/racialicious" target="_blank"><img src="{{ STATIC_URL }}site/images/logo_racialicious.png" title="Racialicious logo" /></a>
-		</div>
-		<div style="width:700px;float:left;">
-			<em>"ReadrBoard has allowed a whole new level of engagement for my readers, and allowed us to plot the impact of our posts in a completely new way."</em>
-			<div style="padding-top:20px;">Latoya Peterson, <a href="http://www.readrboard.com/group/racialicious" target="_blank">Racialicious</a></div>
-		</div>
-	</div>
-	<div class="splashQuote">
-		<div style="width:200px;float:left;margin-right:20px;">
-			<a href="http://www.readrboard.com/group/hypervocal" target="_blank"><img src="{{ STATIC_URL }}site/images/logo_hv.png" title="HyperVocal logo" /></a>
-		</div>
-		<div style="width:700px;float:left;">
-			<em>"ReadrBoard combines the easy clickability of the "Like" button with the community feature of a comment section.  It is becoming an invaluable tool for keeping our readers engaged."</em>
-			<div style="padding-top:20px;">Lee Brenner &amp; Slade Sohmer, <a href="http://www.readrboard.com/group/hypervocal" target="_blank">HyperVocal</a></div>
-		</div>
-	</div>
-</div>
-<div id="splashBlurbs">
-	<div class="blurbsInner">
-		<div id="blurbBody">
-		<a name="try-it"></a>
-			<div class="blurb blurb-for-readers selected">
-				<div class="tryit">
-					<h3 class="no-rdr sectionHeader">Try It</h3>
-					<!-- <div class="no-rdr markerAnnotation page">
-						<img src="{{ STATIC_URL }}site/images/marker-annotation-page.png" alt="React to the whole page" width="200"/>
-					</div> -->
-					<div id="promoDiv" class="animationDiv">
-						<div id="promoGallery">
-							<div class="promoGalleryBody startSlide">
-								<h3>React to text...</h3>
-								<div class="textSlide">
-									<div>
-                                        <p>
-    										"If you ask 20 different readers why they read, they will all be right."
-                                        </p>
-    										<span class="author">- Teresa Nielsen Hayden</span>
-									</div>
-									<div>
-                                        <p>
-											"Write a wise saying and your name will live forever."
-                                        </p>
-    										<span class="author">- Anonymous</span>
-									</div>
-								</div>
-								<!-- <div class="no-rdr markerAnnotation">
-									<img src="{{ STATIC_URL }}site/images/marker-annotation-text.png" alt="select that text" />
-								</div> -->
-							</div>
-							<div class="promoGalleryBody">
-								<h3>React to images...</h3>
-								<img src="{{ STATIC_URL }}site/images/old-man-tricycle2.jpg" alt="ReadrBoard sample image" width="380" class="contentImg" />
-								<!-- <div class="no-rdr markerAnnotation">
-									<img src="{{ STATIC_URL }}site/images/marker-annotation-image.png" alt="hover over that image" />
-								</div> -->
-							</div>
-							<div class="promoGalleryBody slideVideo">
-								<h3>React to video...</h3>
-								<!--chrome was FOUCing this without this hack - hide here, show with js-->
-								<iframe style="display:none;" width="480" height="300" frameborder="0" allowfullscreen="" src="http://www.youtube.com/embed/eD1i6IpU56o?wmode=transparent" class="rdr_video"></iframe>
-								<!-- <div class="no-rdr markerAnnotation">
-									<img src="{{ STATIC_URL }}site/images/marker-annotation-video.png" alt="hover over that video" />
-								</div> -->
-							</div>
-						</div>
-						<!-- show on slideshow init to avoid FOUC -->
-						<div id="promoControls" class="no-rdr" style="display:none;">
-							<div id="promoControlsInnerWrap">
-							<!-- to be filled in with the pager control of the cycle plugin -->
-							<!--
-								<div class="pagerDiv">
-									<a href="#" class="pagerImage">
-										<img src="{{ STATIC_URL }}site/images/blank.png" alt="show image example" />
-									</a>
-								</div>
-								<div class="pagerDiv">
-									<a href="#" class="pagerText">
-										<img src="{{ STATIC_URL }}site/images/blank.png" alt="show text example" />
-									</a>
-								</div>
-								<div class="pagerDiv">
-									<a href="#" class="pagerVideo">
-										<img src="{{ STATIC_URL }}site/images/blank.png" alt="show video example" />
-									</a>
-								</div>
-								-->
-							</div>
-						</div>
-						<div class="clearDiv"></div>
-					</div>
-				</div>
-				<div class="no-rdr bullets">
-					<h3 class="sectionHeader">What You Can Do <em style="display:block;font-family:Arial;font-size:16px;font-weight:normal;color:#666;">on sites using ReadrBoard</em></h3>
-					<ul class="bullet-points">
-						<li>
-							<h3>React</h3>
-							<span>Quickly react to any phrase, image, or video - or, a whole page - while you read. </span>
-						</li>
-						<li>
-							<h3>Discover</h3>
-							<span>Discover reactions from other readers - people interested in the same content you are - right on the articles you read.</span>
-						</li>
-						<!-- <li>
-							<h3>Bookmark</h3>
-							<span>Save favorite parts of a page in your private bookmark list.</span>
-						</li> -->
-						<li>
-							<h3>Share</h3>
-							<span>Easily share your reaction to something specific on a page.</span>
-						</li>
-						<li>
-							<h3>Manage Your Profile</h3>
-							<span>Using ReadrBoard creates a <a href="http://www.readrboard.com/user/11/" target="_blank">profile</a> to show people what you've content you've been reacting to, and you can make it private.  <!-- (Bookmarks are <strong>always</strong> private.) --></span>
-						</li>
+    <div id="splashAnnounce">
+        <h3 class="no-rdr"><span>ReadrBoard lets you express your reaction</span><br>about any phrase, picture, video, or article on the web.</h3>
+        <div class="callToActionButtons">
+            <a href="/react/" class="btn left"><span class="rdrIcon"></span>Get the Reaction Button</a>
+            <a class="btn right" href="/">See Reactions</a>
+            <div class="clear"></div>
+        </div>
+    </div>
+    <div id="splashBlurbs">
+    	
+    	<div class="blurb blurb-for-readers selected">
+            <h1 class="sectionBanner">Why you'll love ReadrBoard</h1>
+    		<div class="leftSide">
+                <h3 style="color: #aaa; font-style: italic; top: -5px; position: relative;">ReadrBoard lets you:
+                    <!-- <em style="display:block;font-family:Arial;font-size:16px;font-weight:normal;color:#666;">on sites using ReadrBoard</em> -->
+                </h3>
+                <ul class="bullet-points">
+                    <li>
+                        <h3>React</h3>
+                        <span>Express your reaction to any phrase, picture, video, or article on the web.</span> 
+                        <a style="font-style:italic; font-size:14px;font-weight:normal;display: block;" href="/react/">Get started with the Reaction Button.</a>
+                    </li>
+                    <li>
+                        <h3>Share</h3>
+                        <span>Easily share your reaction with any social network you want.</span>
+                    </li>
+                    <li>
+                        <h3>Discover</h3>
+                        <span>Discover reactions from other readers who share your interests - displayed live on the articles you read.</span>
+                    </li>
+                    <!-- <li>
+                        <h3>Bookmark</h3>
+                        <span>Save favorite parts of a page in your private bookmark list.</span>
+                    </li> -->
+                    <li>
+                        <h3>Follow Your Favorites</h3>
+                        <span>ReadrBoard gives you a <a href="http://www.readrboard.com/user/11/" target="_blank">profile</a> to showcase the content that matters to you.  Follow your favorite profiles to discover inspiring content.</span>
+                        <span style="font-size:14px;font-weight:normal;display: block; color: #aaa;">(Shy folks can make their profile private)</span>
+                    </li>
 
-					</ul>
-				</div>
-				<div class="clearDiv"></div>
-			</div>
-			<h4 class="no-rdr">Stuff For Publishers</h4>
-			<div class="no-rdr blurb blurb-for-publishers">
-				<div class="bullets">
-					<ul class="bullet-points">
-						<li>
-							<h3>Add to any page on your site</h3>
-							<span>Add just one line of Javascript to your site to enable all-new levels of engagement with your content.</span>
-						</li>
-						<li>
-							<h3>Increase engagement 100%</h3>
-							<span>Readers use ReadrBoard <strong>at least as much as comments</strong>.  This means:</span>
-							<div class="test">
-								<ul class="sub-bullets">
-									<li>
-										<span>Better quality interactions with your content</span>
-									</li>
-									<li>
-										<span>Increased shared links</span>
-									</li>
-									<li>
-										<span>Longer site visits</span>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li>
-							<h3>Know your readers</h3>
-							<span>Better understand your community's tastes, sentiments, and interests.</span>
-						</li>
-						<li>
-							<h3>All-new analytics</h3>
-							<span>Deeply understand why certain content drives interest &amp; engagement. (See the screenshot to the left.)</span>
-						</li>
-						<li>
-							<h3>Simple moderation</h3>
-							<span>Should something inappropriate show up, you can block it in one click.</span>
-						</li>
-						<li>
-							<span><a href="mailto:info@readrboard.com">It's free! Ask us about joining the beta.</a></span>
-						</li>
-					</ul>
-				</div>	
-				<div class="tryit">
-					<a target="_blank" href="{{STATIC_URL}}site/images/demo-analytics-mockup.jpg" title="Demo Publisher Analytics for Readrboard" >
-						<img src="{{STATIC_URL}}site/images/demo-analytics-mockup-sm.jpg" alt="Demo Publisher Analytics" id="analytics_screenshot"/>
-					</a>
-				</div>
-				<div class="clearDiv"></div>
-			</div>
-		</div>
-	</div>
-	<div class="no-rdr partnerLogoSection">
-		<h3>Try ReadrBoard live on our Partners' websites</h3>
-		<div>
-			<ul class="partnerLogos">
-				<li>
-					<a href="http://hypervocal.com/" target="_blank">
-						<img class="greyscaleImg" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/hypervocal-logo-lg.png" alt="hypervocal logo" />
-						<img class="colorImg" style="display:none;" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/hypervocal-logo-lg.png" alt="hypervocal logo" />
-					</a>
-				</li>
-				<li>
-					<a href="http://www.racialicious.com/" target="_blank">
-						<img class="greyscaleImg wideImg" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/racialicious-logo-for-splash.png" alt="racialicious logo" />
-						<img class="colorImg wideImg" style="display:none;" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/racialicious-logo-for-splash.png" alt="racialicious logo" />
-					</a>
-				</li>
-				{% comment %}
-				<li>
-					<a href="http://www.fathomaway.com/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/fathom-logo-lg.png" alt="fathom logo" />
-					</a>
-				</li>
-				<li>
-					<a href="http://www.reuters.com/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/reuters-logo-lg.png" alt="reuters logo" />
-					</a>
-				</li>
-				<li>
-					<a href="http://www.dailycandy.com/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/dailycandy-logo-lg.png" alt="dailycandy logo" />
-					</a>
-				</li>
-				<li>
-					<a href="http://www.foodnetwork.co.uk/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/foodnetwork_uk-logo-lg.png" alt="foodnetwork logo" />
-					</a>
-				</li>
-				<li>
-					<a href="http://www.nearlyweds.com/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/nearlyweds-logo-lg.png" alt="nearlyweds logo" />
-					</a>
-				</li>
-				<li>
-					<a href="http://www.onewed.com/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/onewed-logo-lg.png" alt="onewed logo" />
-					</a>
-				</li>
-				<li>
-					<a href="http://www.politico.com/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/politico-logo-lg.png" alt="politico logo" />
-					</a>
-				</li>
-				<li>
-					<a href="http://www.themarknews.com/" target="_blank">
-						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/themark-logo-lg.png" alt="themarknews logo" />
-					</a>
-				</li>
-				{% endcomment %}
-			</ul>
-			<div class="moreLogos">
-				More launching soon...
-			</div>
-			<div class="clearDiv"></div>
-		</div>
-	</div>
-</div>
+                </ul>
+            </div>
+            <div class="rightSide video">
+    			<!-- <h3 class="sectionHeader">See it in action</h3> -->
+                <iframe src="http://player.vimeo.com/video/42622860" width="640" height="480" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+
+                <div class="clearDiv"></div>
+            </div>
+            <div class="clearDiv"></div>
+        </div>
+        <div class="blurb blurb-for-publishers">
+            <h1 class="sectionBanner">Why Publishers love ReadrBoard</h1>
+            
+            <div class="splashQuoteSection">
+                <h4>Testimonials from our Partner Publishers</h4>
+                <div class="splashQuotes">
+                    <div class="splashQuote">
+                        <div class="splashQuoteLogo">
+                            <a href="http://hypervocal.com" target="_blank"><img src="{{ STATIC_URL }}global/group/logos/hypervocal-logo.png" title="HyperVocal logo" /></a>
+                        </div>
+                        <div>
+                            <em>"ReadrBoard combines the easy clickability of the "Like" button with the community feature of a comment section.  It is becoming an invaluable tool for keeping our readers engaged."</em>
+                            <div>
+                                <span class="attribution">
+                                    Lee Brenner &amp; Slade Sohmer, <a href="http://hypervocal.com/" target="_blank">HyperVocal</a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="splashQuote">
+                        <div class="splashQuoteLogo racialiciousLogo">
+                            <a href="http://www.racialicious.com/" target="_blank"><img src="{{ STATIC_URL }}site/images/logo_racialicious.png" title="Racialicious logo" /></a>
+                        </div>
+                        <div>
+                            <em>"ReadrBoard has allowed a whole new level of engagement for my readers, and allowed us to plot the impact of our posts in a completely new way."</em>
+                            <span class="attribution">
+                                Latoya Peterson, <a href="http://www.racialicious.com/" target="_blank">Racialicious</a>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="clearDiv"></div>
+                </div>
+            </div>
+
+            <div class="leftSide wide">
+                <a target="_blank" href="{{STATIC_URL}}site/images/demo-analytics-mockup.jpg" title="Demo Publisher Analytics for Readrboard" >
+                    <img src="{{STATIC_URL}}site/images/demo-analytics-mockup-sm.jpg" alt="Demo Publisher Analytics" id="analytics_screenshot"/>
+                </a>
+            </div>
+    		<div class="rightSide narrow">
+    			<ul class="bullet-points">
+    				<li>
+    					<h3>Increase engagement 100%</h3>
+    					<span>Readers use ReadrBoard <strong>at least as much as comments</strong>.  This means:</span>
+    					<div class="test">
+    						<ul class="sub-bullets">
+    							<li>
+    								<span>Better quality interactions with your content</span>
+    							</li>
+    							<li>
+    								<span>Increased shared links</span>
+    							</li>
+    							<li>
+    								<span>Longer site visits</span>
+    							</li>
+    						</ul>
+    					</div>
+    				</li>
+    				<li>
+    					<h3>Know your readers</h3>
+    					<span>Better understand your community's tastes, sentiments, and interests.</span>
+    				</li>
+    				<li>
+    					<h3>All-new analytics</h3>
+    					<span>Deeply understand why certain content drives interest &amp; engagement. (See the screenshot to the left.)</span>
+    				</li>
+    				<li>
+    					<h3>Simple moderation</h3>
+    					<span>Should something inappropriate show up, you can block it in one click.</span>
+    				</li>
+                    <li>
+                        <h3>Add to any page on your site</h3>
+                        <span>Add just one line of Javascript to your site to enable all-new levels of engagement with your content.</span>
+                    </li>
+    				<li>
+    					<span><a href="mailto:info@readrboard.com">It's free! Ask us about joining the beta.</a></span>
+    				</li>
+    			</ul>
+    		</div>
+    		<div class="clearDiv"></div>
+    	</div>
+    	
+    	<div class="partnerLogoSection">
+    		<h3>Try ReadrBoard live on our Partners' websites</h3>
+    		<div>
+    			<ul class="partnerLogos">
+    				<li>
+    					<a href="http://hypervocal.com/" target="_blank">
+    						<img class="greyscaleImg" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/hypervocal-logo-lg.png" alt="hypervocal logo" />
+    						<img class="colorImg" style="display:none;" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/hypervocal-logo-lg.png" alt="hypervocal logo" />
+    					</a>
+    				</li>
+    				<li>
+    					<a href="http://www.racialicious.com/" target="_blank">
+    						<img class="greyscaleImg wideImg" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/racialicious-logo-for-splash.png" alt="racialicious logo" />
+    						<img class="colorImg wideImg" style="display:none;" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/racialicious-logo-for-splash.png" alt="racialicious logo" />
+    					</a>
+    				</li>
+    				{% comment %}
+    				<li>
+    					<a href="http://www.fathomaway.com/" target="_blank">
+    						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/fathom-logo-lg.png" alt="fathom logo" />
+    					</a>
+    				</li>
+    				<li>
+    					<a href="http://www.reuters.com/" target="_blank">
+    						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/reuters-logo-lg.png" alt="reuters logo" />
+    					</a>
+    				</li>
+    				<li>
+    					<a href="http://www.dailycandy.com/" target="_blank">
+    						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/dailycandy-logo-lg.png" alt="dailycandy logo" />
+    					</a>
+    				</li>
+    				<li>
+    					<a href="http://www.foodnetwork.co.uk/" target="_blank">
+    						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/foodnetwork_uk-logo-lg.png" alt="foodnetwork logo" />
+    					</a>
+    				</li>
+    				<li>
+    					<a href="http://www.nearlyweds.com/" target="_blank">
+    						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/nearlyweds-logo-lg.png" alt="nearlyweds logo" />
+    					</a>
+    				</li>
+    				<li>
+    					<a href="http://www.onewed.com/" target="_blank">
+    						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/onewed-logo-lg.png" alt="onewed logo" />
+    					</a>
+    				</li>
+    				<li>
+    					<a href="http://www.politico.com/" target="_blank">
+    						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/politico-logo-lg.png" alt="politico logo" />
+    					</a>
+    				</li>
+    				<li>
+    					<a href="http://www.themarknews.com/" target="_blank">
+    						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/themark-logo-lg.png" alt="themarknews logo" />
+    					</a>
+    				</li>
+    				{% endcomment %}
+    			</ul>
+    			<div class="moreLogos">
+    				More launching soon...
+    			</div>
+    			<div class="clearDiv"></div>
+    		</div>
+    	</div>
+    </div>
 {% endblock %}
 
-{% block footer %}
-	<div class="footerLinks">
-		<ul class="footerLinksLeft">
-			<li>
-				<a href="/stream/">live stream</a>
-			</li>
-			<li>
-				<a href="/about/" >about us</a>
-			</li>
-			<li>
-				<a href="/faq/" >frequently asked questions</a>
-			</li>
-		</ul>
-		<div class="clearDiv"></div>
-	</div>
-
-{% endblock %}
 
 {% block pageJS %}
-<script type="text/javascript" src="{{ STATIC_URL }}site/js/jquery.cycle/jquery.cycle.all.min.js"></script>
+<!-- <script type="text/javascript" src="{{ STATIC_URL }}site/js/jquery.cycle/jquery.cycle.all.min.js"></script> -->
+
 <script type="text/javascript" src="{{ STATIC_URL }}site/js/splash.js"></script>
-<script src="/static/engage.js" type="text/javascript"></script>
+
+<!-- <script src="/static/engage.js" type="text/javascript"></script> -->
+
 {% endblock %}
 <!-- widget for slideshow -->
