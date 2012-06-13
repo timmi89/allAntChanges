@@ -236,7 +236,13 @@ var metoos = {
         if ( interaction.user_name == "" ) {
           interaction.user_name = "Unregistered User";
         }
-        interactions.push( interaction );
+
+        {% if interaction.content.kind == "pag" %}
+          interactions['pages'].push( interaction );
+        {% endif %}
+        {% if interaction.content.kind != "pag" %}
+          interactions['content'].push( interaction );
+        {% endif %}
     {% endfor %}
 {% endif %}
 
