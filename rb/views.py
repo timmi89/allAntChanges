@@ -138,7 +138,9 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     if query_string:
         interactions = interactions.filter(
             Q(interaction_node__body__icontains=query_string) |
-            Q(content__body__icontains=query_string) 
+            Q(content__body__icontains=query_string) |
+            Q(page__site__name__icontains=query_string) |
+            Q(page__title__icontains=query_string)
         )
 
     context['query_string'] = query_string

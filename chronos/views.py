@@ -49,7 +49,7 @@ def agree(request, interaction_id = None, **kwargs):
                                                                        notification_type = threshold)
                     if created:
                         #SEND EMAIL!
-                        msg = EmailMessage("ReadrBoard notification", 
+                        msg = EmailMessage("ReadrBoard: Someone agreed with you!", 
                                            generateAgreeEmail(social_user, child_count, interaction), 
                                            "hello@readrboard.com", 
                                            [social_user.user.email])
@@ -81,7 +81,7 @@ def comment(request, interaction_id = None, **kwargs):
         social_user = SocialUser.objects.get(user = interaction.user)
         if social_user.notification_email_option:
             logger.info("comment notification?")
-            child_interactions = Interaction.objects.filter(parent = interaction, kind = 'com').order_by('-created')
+            child_interactions = Interaction.objects.exclude(user=interaction.user).filter(parent = interaction, kind = 'com').order_by('-created')
             child_count = child_interactions.count()
             thresholds = NotificationType.objects.filter(name__startswith = 'commentthreshold')
             for threshold in thresholds:
@@ -98,7 +98,7 @@ def comment(request, interaction_id = None, **kwargs):
                     
                    # if created:
                     logger.info("sending comment notification")
-                    msg = EmailMessage("ReadrBoard comment notification", 
+                    msg = EmailMessage("ReadrBoard: Someone commented on your reaction!", 
                                            generateCommentEmail(social_user, interaction), 
                                            "hello@readrboard.com", 
                                            [interaction.user.email])

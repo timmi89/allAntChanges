@@ -85,7 +85,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 {% endblock %}
 
 <script type="text/javascript">
-    var w = 370;
+    var w = 400;
     var h = 245;
     var l = (window.screen.width/2)-(w/2);
     var t = (window.screen.height/2)-(h/2);
@@ -141,6 +141,18 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
               <input type="checkbox" id="follow_email" {% if cookie_user.social_user.follow_email_option %}checked="checked"{% endif %} /> 
               Send me email when someone follows my activity.
             </label>
+            <label for="activity_notifications">
+              <input type="checkbox" id="activity_notifications" {% if cookie_user.social_user.notification_email_option %}checked="checked"{% endif %} /> 
+              Send me activity notifications.
+            </label>
+            
+            {% if cookie_user.social_user.provider == "Readrboard" %}
+            <hr/>
+            <a href="javascript:void(0);" onclick="RDRAuth.rbAvatarUploadWindow = window.open(RDR_baseUrl+'/user_modify/', 'readr_avatar_upload','menubar=1,resizable=1,width=370,height=245,top='+t+',left='+l);RDRAuth.checkRBLoginWindow();return false;">Upload Profile Picture</a>
+            {% endif %}
+            <!--
+            /user_modify/
+            -->
             {% endif %}
           </div>
         </div>
@@ -291,7 +303,7 @@ RB.profile_user = {
                   json: JSON.stringify(sendData)
                 },
             success: function(response) {
-                $('label[for="private_profile"]').append('<span>Saved</span>');
+                $('label[for="private_profile"]').append('<strong style="display:inline-block;float:none;margin:0;color:#4b8ac8;">Saved</strong>');
             }
         });
       });
@@ -309,10 +321,39 @@ RB.profile_user = {
                 json: JSON.stringify(sendData)
               },
             success: function(response) {
-                $('label[for="follow_email"]').append('<span>Saved</span>');
+                $('label[for="follow_email"]').append('<strong style="display:inline-block;float:none;margin:0;color:#4b8ac8;">Saved</strong>');
+            }
+        });
+      });
+
+      $('#activity_notifications').click( function() {
+        $('label[for="activity_notifications"] span').remove();
+        var sendData = {
+            user_id:RDRAuth.rdr_user.user_id, 
+            readr_token:RDRAuth.rdr_user.readr_token,
+            group_id:1
+        };
+        $.ajax({
+            url: "/api/notificationemail/toggle/",
+            type: "get",
+            data: {
+                json: JSON.stringify(sendData)
+              },
+            success: function(response) {
+                $('label[for="activity_notifications"]').append('<strong style="display:inline-block;float:none;margin:0;color:#4b8ac8;">Saved</strong>');
             }
         });
       });
     </script>
+
+<script type="text/javascript">
+  var uvOptions = {};
+  (function() {
+    var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
+    uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/3DVkEqsafasAnOSpNK7J1g.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
+  })();
+</script>
+
 </body>
 </html>
