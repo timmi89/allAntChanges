@@ -76,7 +76,7 @@ urlpatterns = patterns('',
   url(r'^interaction/(?P<interaction_id>\d+)/$', 'rb.views.main'),
   
   # Main Site Supporting Pages
-  url(r'^team/$', 'rb.views.about'),
+  url(r'^team/$', 'rb.views.team'),
   url(r'^faq/$', 'rb.views.faq'),
   url(r'^react/$', 'rb.views.react'),
   url(r'^splash/$', 'rb.views.splash'),

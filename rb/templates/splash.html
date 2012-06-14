@@ -20,8 +20,7 @@
         </div>
     </div>
     <div id="splashBlurbs">
-    	
-    	<div class="blurb blurb-for-readers selected">
+    	<div id="readers" class="blurb blurb-for-readers selected">
             <h1 class="sectionBanner">Why you'll love ReadrBoard</h1>
     		<div class="leftSide">
                 <h3 style="color: #aaa; font-style: italic; top: -5px; position: relative;">ReadrBoard lets you:
@@ -35,11 +34,11 @@
                     </li>
                     <li>
                         <h3>Share</h3>
-                        <span>Easily share your reaction with any social network you want.</span>
+                        <span>Share interesting content with your favorite social networks - in one click.</span>
                     </li>
                     <li>
                         <h3>Discover</h3>
-                        <span>Discover reactions from other readers who share your interests - displayed live on the articles you read.</span>
+                        <span>Find readers who share your interests and see what's catching their attention.</span>
                     </li>
                     <!-- <li>
                         <h3>Bookmark</h3>
@@ -47,7 +46,7 @@
                     </li> -->
                     <li>
                         <h3>Follow Your Favorites</h3>
-                        <span>ReadrBoard gives you a <a href="http://www.readrboard.com/user/11/" target="_blank">profile</a> to showcase the content that matters to you.  Follow your favorite profiles to discover inspiring content.</span>
+                        <span>Every reader and publisher has a <a href="http://www.readrboard.com/user/11/" target="_blank">profile</a> to showcase their reactions.  Follow your favorites to discover inspiring content.</span>
                         <span style="font-size:14px;font-weight:normal;display: block; color: #aaa;">(Shy folks can make their profile private)</span>
                     </li>
 
@@ -61,7 +60,7 @@
             </div>
             <div class="clearDiv"></div>
         </div>
-        <div class="blurb blurb-for-publishers">
+        <div id="publishers" class="blurb blurb-for-publishers">
             <h1 class="sectionBanner">Why Publishers love ReadrBoard</h1>
             
             <div class="splashQuoteSection">
@@ -136,13 +135,33 @@
                         <span>Add just one line of Javascript to your site to enable all-new levels of engagement with your content.</span>
                     </li>
     				<li>
-    					<span><a href="mailto:info@readrboard.com">It's free! Ask us about joining the beta.</a></span>
+    					<span><a href="mailto:info@readrboard.com?subject=Inquiring about ReadrBoard">It's free! Ask us about signing up.</a></span>
     				</li>
     			</ul>
     		</div>
     		<div class="clearDiv"></div>
     	</div>
     	
+        <div class="blurb blurb-about-the-team">
+            <h1 class="sectionBanner">Meet the Team</h1>
+            <a href="/team/" class="teamThumbnails">
+                <ul>
+                    <li>
+                        <img src="{{BASE_URL}}{{STATIC_URL}}site/images/about/bayne.jpg" />
+                    </li>                
+                    <li>
+                        <img src="{{BASE_URL}}{{STATIC_URL}}site/images/about/chaves.jpg" />
+                    </li>                
+                    <li>
+                        <img src="{{BASE_URL}}{{STATIC_URL}}site/images/about/shaw.jpg" />
+                    </li>
+                </ul>
+            </a>
+            <div class="clearDiv"></div>
+            <span>Hi, we're ReadrBoard. </span>
+            <a href="/team/" >Meet the team.</a>
+        </div>
+
     	<div class="partnerLogoSection">
     		<h3>Try ReadrBoard live on our Partners' websites</h3>
     		<div>

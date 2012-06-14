@@ -138,21 +138,12 @@ div.splashQuote {
 #splashAnnounce .rindow-img img{
 	width:250px;
 }
-#splashBlurbs .blurbsInner{
+/*#splashBlurbs .blurbsInner{
 	padding-top:10px;
 }
 #splashBlurbs .blurbsInner, #splashBlurbs .partnerLogoSection{
     /*width:960px;
     margin:auto;*/
-}
-#splashBlurbs .blurbsInner h4{
-	font-family:Helvetica, 'HelveticaBold', Arial;
-	color:#888;
-	padding:0 0 10px 6px;
-	font-size:36px;
-	padding-top:20px;
-	border-top:1px solid #888;
-	margin-top:20px;
 }
 #splashBlurbs .partnerLogoSection{
 	padding: 10px 0;
@@ -200,8 +191,18 @@ div.splashQuote {
 #splashBlurbs .blurb{
 	width:100%;
 	clear:both;
-	
+    position: relative;
+    /*works together with the next declaration*/
+    top: -20px;
 }
+#splashBlurbs .blurb:before { 
+  display: block; 
+  content: " "; 
+  margin-top: -20px; 
+  height: 20px; 
+  visibility: hidden; 
+}
+
 #splashBlurbs h2, #splashBlurbs h3{
 	color:#2f4e6d;
 	padding:0;
@@ -223,7 +224,7 @@ div.splashQuote {
 	list-style:none;
 }
 #splashBlurbs .bullet-points li{
-	margin: 3px 0 6px;
+	margin: 5px 0 10px;
 	padding: 0;
 }
 #splashBlurbs div.blurb .bullet-points span{
@@ -260,10 +261,40 @@ div.splashQuote {
     top: 32px;
     font-size:14px;
 }
+#splashBlurbs .partnerLogoSection {
+    padding-top: 10px;
+    border-top: 1px dashed #CCCCCC;
+}
 #splashBlurbs .partnerLogoSection h3{
 	font-size:18px;
 	padding-left:5px;
 }
+.blurb-about-the-team {
+    text-align: center;
+}
+.teamThumbnails{
+    clear: both;
+    display: block;
+    margin: 10px 0;
+}
+.blurb-about-the-team ul{
+    display: block;
+    float: left;
+    left: 50%;
+    position: relative;
+    list-style-type: none;
+}
+.blurb-about-the-team li{
+    display: block;
+    float: left;
+    left: -50%;
+    position: relative;
+    margin: 5px;
+}
+.blurb-about-the-team li img{
+    width: 60px;
+}
+
 
 /*for slideshow*/
 #promoDiv{
