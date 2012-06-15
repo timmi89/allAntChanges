@@ -38,9 +38,9 @@ def widgetCss(request):
       context_instance=RequestContext(request),
       mimetype = 'text/css')
 
-def about(request):
+def team(request):
     return render_to_response(
-      "about.html",
+      "team.html",
       {'fb_client_id': FACEBOOK_APP_ID},
       context_instance=RequestContext(request)
     )
