@@ -5,6 +5,7 @@ body.wide section[role="main"] {
     width: 960px;
     margin: 0 auto;
     background:none;
+    padding: 10px 0 0 0;
 }
 body section[role="controls"]{
 	border:none;	
@@ -100,18 +101,17 @@ div.splashQuote {
     width: 100%;
 }
 #splashAnnounce #imagine {
-	position:absolute;
+	position:relative;
 	top:0;
-	left:180px;
 	/*left:0;*/
 }
-#splashAnnounce #sns_buttons{
+#sns_buttons{
 	display:block;
 	position:absolute;
 	width:85px;
 	height:52px;
-	left:530px;
-	top:-2px;
+	left:539px;
+	top:-4px;
 }
 #action_links {
 	overflow:auto;
@@ -119,20 +119,29 @@ div.splashQuote {
 #action_links a {
 	font-weight:bold;
 }
-#splashAnnounce #sns_buttons img{
-	position:absolute;
+#betterLikeButton{
+    text-align:center;
+    width:100%;
+    position:relative;
+    margin: 0 0 10px 0;
+}
+#sns_buttons div{
+    position: absolute;
+}
+#sns_buttons img{
+	position:relative;
 	left:0;
 	/*top:12px;*/
 	max-height:45px;
 }
-#splashAnnounce #sns_buttons img#sns_fb{
+#sns_buttons img#sns_fb{
 	top:3px;
 }
-#splashAnnounce #sns_buttons img#sns_google{
+#sns_buttons img#sns_google{
 	left:3px;
 	top:2px;
 }
-#splashAnnounce #sns_buttons img#sns_twitter{
+#sns_buttons img#sns_twitter{
 	top:7px;
 }
 #splashAnnounce .rindow-img img{

@@ -12,11 +12,25 @@
 
 {% block mainContent %}
     <div id="splashAnnounce">
-        <h3 class="no-rdr"><span>ReadrBoard lets you express your reaction</span><br>about any phrase, picture, video, or article on the web.</h3>
-        <div class="callToActionButtons">
-            <a href="/react/" class="btn left"><span class="rdrIcon"></span>Get the Reaction Button</a>
-            <a class="btn right" href="/">See Reactions</a>
-            <div class="clear"></div>
+
+        <div id="betterLikeButton" >
+            <img src="{{ STATIC_URL }}site/images/imagine.png" title="Imagine a better Like button" id="imagine" />
+            <div id="sns_buttons">
+                <div style="display:block;"><img src="{{ STATIC_URL }}site/images/like_button.png" alt="Like" id="sns_fb" class="no-rdr" /></div>
+                <div style="display:none;"><img src="{{ STATIC_URL }}site/images/plus_one_button.png" alt="+1" id="sns_google" class="no-rdr"/></div>
+                <div style="display:none;"><img src="{{ STATIC_URL }}site/images/tweet_button.png" alt="Tweet" id="sns_twitter" class="no-rdr"/></div>
+            </div>
+            <!-- <img src="{{ STATIC_URL }}site/images/summary_bar.png" style="zoom:1;"/> -->
+        </div>
+
+
+        <div class="theSpitch">
+            <h3 class="no-rdr"><span>ReadrBoard lets you express your reaction</span><br>about any phrase, picture, video, or article on the web.</h3>
+            <div class="callToActionButtons">
+                <a href="/react/" class="btn left"><span class="rdrIcon"></span>Get the Reaction Button</a>
+                <a class="btn right" href="/">See Reactions</a>
+                <div class="clear"></div>
+            </div>
         </div>
     </div>
     <div id="splashBlurbs">
@@ -232,7 +246,7 @@
 
 
 {% block pageJS %}
-<!-- <script type="text/javascript" src="{{ STATIC_URL }}site/js/jquery.cycle/jquery.cycle.all.min.js"></script> -->
+<script type="text/javascript" src="{{ STATIC_URL }}site/js/jquery.cycle/jquery.cycle.all.min.js"></script>
 
 <script type="text/javascript" src="{{ STATIC_URL }}site/js/splash.js"></script>
 
