@@ -2063,6 +2063,15 @@ function readrBoard($R){
                 //note: the "\054" is actually the octal for a comma.  The back end is passing it back that way. It's working fine though.
                 //, so it seems that "2:10\0542:32" == "2:10,2:32"
                 if ( $.cookie('content_type') != 'pag' ) {
+                    
+                    // quick fix
+                    // todo  - do this better later;
+                    var containerHash = data.container_hash;
+                    var pageHasContainer = !! RDR.containers[containerHash];
+                    if (!pageHasContainer){
+                        return;
+                    }
+                    
                     RDR.session.alertBar.make('fromShareLink', data);
                     return true; //could return something more useful if we need it.
                 }
