@@ -22,19 +22,20 @@
   <h1>Log In</h1>
   {% csrf_token %}
   <div class="container">
-  	<div id="direct_registration" style="overflow:auto;">
-  		<div style="float:left;width:150px;margin-right:20px;">
+    <div id="errorMsgWrap"></div>
+    <div id="direct_registration" class="formBody clearfix">
+  		<div class='formBodySection'>
   			<label>User Name</label>
 			<input type="text" name="username" tabindex="1" />
-			<a href="javascript:void(0);" onclick="createNewAccount();" style="font-size:11px;font-style:italic;">Create New Account &raquo;</a>
+			<a class="alternateAction" href="javascript:void(0);" onclick="createNewAccount();" style="font-size:11px;font-style:italic;">Create New Account &raquo;</a>
 		</div>
-		<div style="float:left;width:150px;">
+		<div class='formBodySection'>
 	  		<label>Password</label>
 			<input type="password" name="password" tabindex="2" />
-			<a href="javascript:void(0);" onclick="forgotPassword();" style="font-size:11px;font-style:italic;">Forgot Password? &raquo;</a>
+			<a class="alternateAction" href="javascript:void(0);" onclick="forgotPassword();" style="font-size:11px;font-style:italic;">Forgot Password? &raquo;</a>
 		</div>
 	</div>
-	<button onclick="direct_registration();" tabindex="3" id="submit_login">Log In</button>
+	<button class="btn" onclick="direct_registration();" tabindex="3" id="submit_login">Log In</button>
 	<script type="text/javascript">
 
 		RDRAuth.events.track('show_login_form');
@@ -65,7 +66,9 @@
 				success: function(response) {
 					if ( response.data ) {
 						if ( response.data.status == "fail" ) {
-							$('#direct_registration').prepend('<div class="error">'+response.data.message+'</div>');
+							$('#errorMsgWrap').html('<div class="error">'+response.data.message+'</div>')
+                                .hide()
+                                .fadeIn();
 						} else {
 							RDRAuth.setUser(response);
 							RDRAuth.events.track('login_success');
@@ -78,7 +81,8 @@
 
         function createNewAccount(){
             var w = 535;
-            var h = 300;
+            /*made higher to account for 'required fields' message*/
+            var h = 350;
             var l = (window.screen.width/2)-(w/2);
             var t = (window.screen.height/2)-(h/2);
 
@@ -118,3 +122,7 @@
 {% block pageJS %}
 {% endblock %}
 
+
+{% block footer %}
+    <div class="emptyFooter"></div>
+{% endblock footer %}

@@ -9,7 +9,7 @@
 {% block mainContent %}
   {% if requested %}
   <h1>Thanks for signing up!</h1>
-  <div class="container">
+  <div class="container userFeedbackMsg">
     <h3>Now, confirm your email address.</h3>
     <p>Please check your email inbox for a confirmation email with a link to activate your account.</p>
     <p>Rest assured, we will never give or sell personal information to any third parties, and we won't send you any marketing messages.</p>
@@ -17,40 +17,41 @@
   {% else %}
   <h1>Create User Account</h1>
   <div class="container">
-    <form action="/user_create/" enctype="multipart/form-data" method="post" class="in-page">
-    {% csrf_token %}
-  
-      {{ form.non_field_errors }}
-
-    <div  style="overflow:auto;clear:both;">
-      <div style="float:left;width:200px;margin-right:20px;">
-        <div>
-      		<label for="id_username">User Name </label>
-      		{{ form.username.errors }}{{ form.username }}
-      	</div>
-      	<div>
-        	<label for="id_email">Email </label>
-        	{{ form.email.errors }}{{ form.email }}
-      	</div>
-      </div>
-      <div style="float:left;width:200px;">
-      	<div>
-      	  <label for="id_password1">Password</label>
-      	  {{ form.password1.errors }}{{ form.password1 }}
-      	</div>
-      	<div>
-          <label for="id_password2">Confirm Password</label>
-          {{ form.password2.errors }}{{ form.password2 }}
+    <form class="popupForm" action="/user_create/" enctype="multipart/form-data" method="post" class="in-page">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        
+        <div class="formBody clearfix">
+            <div class='formBodyColSection'>
+                <div class='formBodySection'>
+              		<label for="id_username">User Name </label>
+              		{{ form.username.errors }}{{ form.username }}
+              	</div>
+              	<div class='formBodySection'>
+                	<label for="id_email">Email </label>
+                	{{ form.email.errors }}{{ form.email }}
+                </div>
+          	</div>
+            <div class='formBodyColSection'>
+                <div class='formBodySection'>
+                    <label for="id_password1">Password</label>
+                    {{ form.password1.errors }}{{ form.password1 }}
+              	</div>
+              	<div class='formBodySection'>
+                    <label for="id_password2">Confirm Password</label>
+                    {{ form.password2.errors }}{{ form.password2 }}
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <button type="submit">Submit</button>
+        <button class="btn" type="submit">Submit</button>
     </form>
   {% endif %}
-<style>
-footer div.footerLinks { visibility:hidden; }
-</style>
+
 {% endblock mainContent %}
 
 {% block pageJS %}
 {% endblock %}
+
+{% block footer %}
+    <div class="emptyFooter"></div>
+{% endblock footer %}

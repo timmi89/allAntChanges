@@ -2175,7 +2175,11 @@ function readrBoard($R){
                                 RDR.util.userLoginState();
 
                             } else if ( message.status == "getUserLoginState" ) {
-                                RDR.util.userLoginState();
+                                RDR.session.getUser();
+
+                                //I would think this needs to get added as a callback to the function above, but looks like we don't need it.
+                                // RDR.util.userLoginState();
+
                                 $('#rdr_loginPanel').remove();
                             } else if ( message.status == "fb_user_needs_to_login" ) {
                                 if ( callbackFunction && args ) {

@@ -27,9 +27,40 @@ if ( typeof $.receiveMessage == "function") {
 		qs_args.parentHost
 	);
 }
+
+var windowProps = (function(){ 
+    var w = 400;
+    var h = 300;
+    var l = (window.screen.width/2)-(w/2);
+    var t = (window.screen.height/2)-(h/2);
+    return 'menubar=1,resizable=1,scrollbars=yes,width='+w+',height='+h+',top='+t+',left='+l;
+})();
+
+//Do we expect this do work, because it won't - it just redeclares it below.
 var RDRAuth = RDRAuth ? RDRAuth : {};
+
 RDRAuth = {
 	rdr_user: {},
+    popups: {},
+    openRbLoginWindow: function(){
+        RDRAuth.checkRBLoginWindow();
+        RDRAuth.popups.loginWindow = window.open(
+            RDR_baseUrl+'/rb_login/',
+            'readr_login',
+            windowProps
+        );
+        RDRAuth.popups.loginWindow.focus();
+        return false;
+    },
+    openRbAvatarUploadWindow: function(){
+        RDRAuth.popups.loginWindow = window.open(
+            RDR_baseUrl+'/user_modify/',
+            'readr_avatar_upload',
+            windowProps
+        );
+        RDRAuth.popups.loginWindow.focus();
+        return false;
+    },
 	events : {
 		track : function( data ) {
 	        // RDRAuth.events.track
@@ -55,7 +86,7 @@ RDRAuth = {
 		}
 	},
 	notifyParent: function(response, status) {
-		response.status = status;
+        response.status = status;
 		// send this info up to the widget!
 		RDRAuth.postMessage({
 			message: JSON.stringify( response )
@@ -257,11 +288,11 @@ RDRAuth = {
 	checkRBLoginWindow : function() {
 		if (!RDRAuth.checkingRBLoginWindow) {
 			RDRAuth.checkingRBLoginWindow = setInterval( function(popup) {
-				if ( RDRAuth.rbloginWindow.closed ) {
+				if ( RDRAuth.popups.loginWindow && RDRAuth.popups.loginWindow.closed ) {
 					RDRAuth.readUserCookie();
 					RDRAuth.returnUser();
 					RDRAuth.notifyParent({}, "close login panel");
-					RDRAuth.rbloginWindow.close();
+					RDRAuth.popups.loginWindow.close();
 					clearInterval( RDRAuth.checkingRBLoginWindow );
 					if (top == self) {
 						window.location.reload();
@@ -456,5 +487,6 @@ RDRAuth = {
 		if (value) return value.replace(/"/g,'').replace(/\\054/g,",").replace(/\\073/g,";");
 	}
 }
-RDRAuth.init();
-
+$(document).ready(function(){
+    RDRAuth.init();
+});

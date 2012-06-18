@@ -147,17 +147,10 @@ div.splashQuote {
 #splashAnnounce .rindow-img img{
 	width:250px;
 }
-/*#splashBlurbs .blurbsInner{
-	padding-top:10px;
-}
-#splashBlurbs .blurbsInner, #splashBlurbs .partnerLogoSection{
-    /*width:960px;
-    margin:auto;*/
-}
+
 #splashBlurbs .partnerLogoSection{
 	padding: 10px 0;
-	padding-top:20px;
-	border-top:1px solid #888;
+    border-top: 1px dashed #CCCCCC;
 	margin-top:20px;
 	clear:both;	
 }
@@ -270,10 +263,7 @@ div.splashQuote {
     top: 32px;
     font-size:14px;
 }
-#splashBlurbs .partnerLogoSection {
-    padding-top: 10px;
-    border-top: 1px dashed #CCCCCC;
-}
+
 #splashBlurbs .partnerLogoSection h3{
 	font-size:18px;
 	padding-left:5px;
