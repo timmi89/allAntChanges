@@ -1,10 +1,4 @@
-{% extends "base.html" %}
-
-{% block bodyClass %}wide noFooter{% endblock %}
-
-{% block userStatus %}
-<!-- don't show log in link-->
-{% endblock userStatus %}
+{% extends "popup_form.html" %}
 
 {% block mainContent %}
 <!-- ported from fb login file -->
@@ -118,11 +112,3 @@
 	</script>
   </div>
 {% endblock mainContent %}
-
-{% block pageJS %}
-{% endblock %}
-
-
-{% block footer %}
-    <div class="emptyFooter"></div>
-{% endblock footer %}

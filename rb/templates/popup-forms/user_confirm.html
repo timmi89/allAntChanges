@@ -1,11 +1,4 @@
-{% extends "base.html" %}
-
-{% block bodyClass %}wide{% endblock %}
-
-{% block sidebarContent %}
-<div id="sidebar">
-</div>
-{% endblock sidebarContent %}
+{% extends "popup_form.html" %}
 
 {% block mainContent %}
   {% if confirmed %}
@@ -21,10 +14,3 @@
     {% endif %}
 
 {% endblock mainContent %}
-
-{% block pageJS %}
-{% endblock %}
-
-{% block footer %}
-    <div class="emptyFooter"></div>
-{% endblock footer %}
