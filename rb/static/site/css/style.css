@@ -1388,6 +1388,9 @@ http://drupal.org/node/897638
 .userFeedbackMsg{
     padding: 20px 40px 20px 20px !important;
 }
+.userFeedbackMsg p{
+    margin:10px 0;
+}
 .container .userFeedbackMsg{
     padding: 20px 20px 20px 0 !important;   
 }
