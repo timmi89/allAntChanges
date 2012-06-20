@@ -21,28 +21,30 @@
   		<div class='formBodySection'>
   			<label>User Name</label>
 			<input type="text" name="username" tabindex="1" />
-			<a class="alternateAction" href="javascript:void(0);" onclick="createNewAccount();" style="font-size:11px;font-style:italic;">Create New Account &raquo;</a>
+			<a class="alternateAction" href="javascript:void(0);" onclick="RDRAuth.openRbCreateNewAccountWindow({widow:window});" style="font-size:11px;font-style:italic;">Create New Account &raquo;</a>
 		</div>
 		<div class='formBodySection'>
 	  		<label>Password</label>
 			<input type="password" name="password" tabindex="2" />
-			<a class="alternateAction" href="javascript:void(0);" onclick="forgotPassword();" style="font-size:11px;font-style:italic;">Forgot Password? &raquo;</a>
+			<a class="alternateAction" href="javascript:void(0);" onclick="RDRAuth.openRbForgotPasswordWindow({widow:window});" style="font-size:11px;font-style:italic;">Forgot Password? &raquo;</a>
 		</div>
 	</div>
 	<button class="btn" onclick="direct_registration();" tabindex="3" id="submit_login">Log In</button>
 	<script type="text/javascript">
 
-		RDRAuth.events.track('show_login_form');
-		$('input[name="username"]').focus();
-		$('#groupname').text( decodeURI(qs_args.group_name) );
+        $(document).ready(function(){
 
-		$('#direct_registration input').keyup( function(event) {
-            if (event.keyCode == '13') { //enter.  
-            	$('#submit_login').click();
-            }
+            RDRAuth.events.track('show_login_form');
+            $('input[name="username"]').focus();
+            $('#groupname').text( decodeURI(qs_args.group_name) );
+
+            $('#direct_registration input').keyup( function(event) {
+                if (event.keyCode == '13') { //enter.  
+                    $('#submit_login').click();
+                }
+            });
+            window.opener.RDRAuth.checkRBLoginWindow();
         });
-		
-		window.opener.RDRAuth.checkRBLoginWindow();
 
 		function direct_registration() {
 			var sendData = "username="+$('#direct_registration').find('input[name="username"]').val()+
@@ -72,42 +74,6 @@
 				}
 			});
 		}
-
-        function createNewAccount(){
-            var w = 535;
-            /*made higher to account for 'required fields' message*/
-            var h = 350;
-            var l = (window.screen.width/2)-(w/2);
-            var t = (window.screen.height/2)-(h/2);
-
-            var properties = 'menubar=1,scrollbars=yes,resizable=1,width='+w+',height='+h+',top='+t+',left='+l;
-
-            window.close();
-            window.open(
-                RDR_baseUrl+'/user_create/',
-                'readr_create_user',
-                properties
-            );
-            return false;
-        }
-        
-        function forgotPassword () {
-            var w = 535;
-            var h = 300;
-            var l = (window.screen.width/2)-(w/2);
-            var t = (window.screen.height/2)-(h/2);
-
-            var properties = 'menubar=1,scrollbars=yes,resizable=1,width='+w+',height='+h+',top='+t+',left='+l;
-
-
-            window.close();
-            window.open(
-                RDR_baseUrl+'/request_password/',
-                'readr_forgot_pw',
-                properties
-            );
-            return false;
-        }
 
 	</script>
   </div>
