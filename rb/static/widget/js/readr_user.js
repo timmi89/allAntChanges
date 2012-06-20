@@ -28,13 +28,14 @@ if ( typeof $.receiveMessage == "function") {
 	);
 }
 
-var windowProps = (function(){ 
-    var w = 400;
-    var h = 300;
+function getWindowProps(options){
+    options = options || {};
+    var w = options.width || 400;
+    var h = options.height || 300;
     var l = (window.screen.width/2)-(w/2);
     var t = (window.screen.height/2)-(h/2);
     return 'menubar=1,resizable=1,scrollbars=yes,width='+w+',height='+h+',top='+t+',left='+l;
-})();
+};
 
 //Do we expect this do work, because it won't - it just redeclares it below.
 var RDRAuth = RDRAuth ? RDRAuth : {};
@@ -42,7 +43,8 @@ var RDRAuth = RDRAuth ? RDRAuth : {};
 RDRAuth = {
 	rdr_user: {},
     popups: {},
-    openRbLoginWindow: function(){
+    openRbLoginWindow: function(options){
+        var windowProps = getWindowProps(options);
         RDRAuth.checkRBLoginWindow();
         RDRAuth.popups.loginWindow = window.open(
             RDR_baseUrl+'/rb_login/',
@@ -52,12 +54,36 @@ RDRAuth = {
         RDRAuth.popups.loginWindow.focus();
         return false;
     },
-    openRbAvatarUploadWindow: function(){
+    openRbCreateNewAccountWindow: function(options){
+        var windowProps = getWindowProps(options);
+        RDRAuth.checkRBLoginWindow();
+        RDRAuth.popups.loginWindow = window.open(
+            RDR_baseUrl+'/user_create/',
+            'readr_create_user',
+            windowProps
+        );
+        RDRAuth.popups.loginWindow.focus();
+        return false;
+    },
+    openRbForgotPasswordWindow: function(options){
+        var windowProps = getWindowProps(options);
+        RDRAuth.checkRBLoginWindow();
+        RDRAuth.popups.loginWindow = window.open(
+            RDR_baseUrl+'/request_password/',
+            'readr_forgot_pw',
+            windowProps
+        );
+        RDRAuth.popups.loginWindow.focus();
+        return false;
+    },
+    openRbAvatarUploadWindow: function(options){
+        var windowProps = getWindowProps(options);
         RDRAuth.popups.loginWindow = window.open(
             RDR_baseUrl+'/user_modify/',
             'readr_avatar_upload',
             windowProps
         );
+        RDRAuth.checkRBLoginWindow();
         RDRAuth.popups.loginWindow.focus();
         return false;
     },
@@ -286,7 +312,7 @@ RDRAuth = {
 		});
 	},
 	checkRBLoginWindow : function() {
-		if (!RDRAuth.checkingRBLoginWindow) {
+        if (!RDRAuth.checkingRBLoginWindow) {
 			RDRAuth.checkingRBLoginWindow = setInterval( function(popup) {
 				if ( RDRAuth.popups.loginWindow && RDRAuth.popups.loginWindow.closed ) {
 					RDRAuth.readUserCookie();
@@ -294,13 +320,12 @@ RDRAuth = {
 					RDRAuth.notifyParent({}, "close login panel");
 					RDRAuth.popups.loginWindow.close();
 					clearInterval( RDRAuth.checkingRBLoginWindow );
-					if (top == self) {
+                    if (top == self) {
 						window.location.reload();
 					}
 				}
 			}, 250 );
 		}
-
 	},
 	setUser : function(response) {
 		RDRAuth.rdr_user = {};

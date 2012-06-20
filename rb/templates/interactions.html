@@ -73,6 +73,21 @@
 .card:hover .buttons,
 #pages .card:hover .buttons { display:block; }
 #pages .card:hover .buttons { display:block; }
+
+.fancybox-inner h3{
+    font-weight: bold;
+    font-style: italic;
+    margin: 3px 0;
+}
+.fancybox-inner button{
+    margin: 5px 0;
+}
+.fancybox-inner label{
+    display:block;
+    font-size:11px;
+    font-style:italic;
+    margin: 2px 0;
+}
 </style>
 {% if singleton %}
 <style>
@@ -363,7 +378,7 @@ function writeContentCard( interaction, showBlocked ) {
         }
 
         var $obj = $('<div style="width:600px;overflow:auto;" id="add_new_reaction_form" />').append('<h2 style="margin-bottom:20px;">What\'s your reaction?</h2>')//chain
-                  .append( '<div style="width:280px;margin-left:20px;float:right;"><input type="text" style="width:100%;font-size:20px;height:auto;" id="new_reaction_text" class="new_reaction_text" /><button style="clear:both;margin-top:10px;font-size:20px;" id="new_reaction_button">Add Reaction</button></div>' )//chain
+                  .append( '<div style="width:280px;margin-left:20px;float:right;"><input type="text" style="width:100%;font-size:20px;height:auto;" id="new_reaction_text" class="new_reaction_text" /><button class="btn" id="new_reaction_button">Add Reaction</button></div>' )//chain
                   .append( $rateContent );
         $.fancybox($obj ,{
           wrapCSS    : 'fancybox-custom',
@@ -396,8 +411,8 @@ function writeContentCard( interaction, showBlocked ) {
           $rateContent = $('<div style="width:300px;background:#ddd;float:left;"><span style="display:block;padding:20px;">'+interaction.content_body+'</span></div>');
         }
 
-        var $obj = $('<div style="width:600px;overflow:auto;" id="add_new_comment_form" />').append('<h2 style="margin-bottom:20px;">Add a comment or hashtag</h2><h3 style="font-weight:bold;font-style:italic;">'+interaction.interaction_node_body+'</h3>')//chain
-                  .append( '<div style="width:280px;margin-left:20px;float:right;"><input type="text" style="width:100%;font-size:20px;" id="new_comment_text" /><label style="display:block;font-size:11px;font-style:italic;">e.g. <strong>Wow, I totally agree</strong>, or <strong>#london2012</strong></label><button style="clear:both;margin-top:10px;font-size:20px;" id="new_comment_button">Add Comment</button></div>' )//chain
+        var $obj = $('<div style="width:600px;overflow:auto;" id="add_new_comment_form" />').append('<h2 style="margin-bottom:20px;">Add a comment or hashtag</h2><h3>'+interaction.interaction_node_body+'</h3>')//chain
+                  .append( '<div style="width:280px;margin-left:20px;float:right;"><input type="text" style="width:100%;font-size:20px;" id="new_comment_text" /><label>e.g. <strong>Wow, I totally agree</strong>, or <strong>#london2012</strong></label><button class="btn" id="new_comment_button">Add Comment</button></div>' )//chain
                   .append( $rateContent );
         $.fancybox($obj ,{
           // wrapCSS    : 'fancybox-custom',
@@ -602,6 +617,7 @@ var $container = $('#content');
     // return if updated cols/rows is not equal to previous
     return ( this.masonry.cols !== prevSegments );
   };
+
 function cardReset() {
   $('#cards').width( $(window).width() - 20 );
   var contentWidth = $('#cards').width() - 280;
@@ -622,6 +638,7 @@ function cardReset() {
     $('#headlines h2').css('visibility','visible');
   });
 }
+
 $(document).ready(function(){
   cardReset();
   $('#cards').tooltip({

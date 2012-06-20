@@ -735,7 +735,11 @@ section[role="main"] div.card div.added_by img.user_avatar  { display: inline-bl
 section[role="main"] div.card div.meta img.me_too  { width:25px;height:24px;background:url(../images/me_too.png) -25px 0px no-repeat;display:block;float:right;cursor:pointer;margin-top:-2px;}
 section[role="main"] div.card div.meta img.me_too:hover   { background-position: 0px 0px; }
 section[role="main"] div.card div.meta div.me_too_outcome { display:none;border-top:1px solid #aaa;padding:3px;margin-top:6px;}
-section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:11px;text-align:right; }
+section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:11px;text-align:right;
+    opacity: 0.8;
+    -moz-pacity: 0.8;
+    filter:alpha(opacity=8);
+}
 section[role="main"] div.card.pag div.meta div.me_too_outcome div.close { text-align:left; }
 
 section[role="main"] div.card div.meta em { display:block; }
@@ -1004,13 +1008,22 @@ ul.link-list li a			{ color:#fff; }
 ul.link-list li.active a	{ color:#95c9ea; font-weight:bold; }
 
 /* settings form */
+section.column         { float:left; width:45%; }
+section.column.left    { margin-right:5%; }
+form.big-form button            { clear:both; font-size:24px; display:block; padding: 10px;}
+form.big-form h3            { color:#668294; border-bottom:1px solid #668294; margin:10px 0;}
+
 form.big-form 				{ padding:10px 20px; }
-form.big-form label			{ display:block; }
-form.big-form label span	{ display:block; font-style:italic; font-size:12px; }
+form.big-form label			{ display:block; margin: 5px 0;}
+form.big-form label span    { display:block; font-style:italic; font-size:12px; }
+form.big-form label span.labelTitle	{font-style:normal; font-weight: bold; margin-top: 1px;}
 form.big-form input			{ font-size:18px; margin-bottom:10px; font-family:Arial; }
-form.big-form input[type="checkbox"]	{ display:block; float:left; }
+form.big-form input[type="checkbox"]	{ display:block; float:left; margin: 0 5px 0 2px; }
 form.big-form input[type="text"]		{ width:400px; }
 form.big-form input#id_call_to_action	{ width:800px; }
+.formBodySection {
+    clear: both;
+}
 
 section[role="datepicker"]			{ font-size:12px; background:#eee; padding:5px; border-top:1px solid #7f7f7f; border-bottom:1px solid #7f7f7f; }
 section[role="datepicker"] input  { width:80px; text-align:center; margin:o 3px; }

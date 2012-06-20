@@ -87,20 +87,23 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 
 </head>
 
-<body class="clearfix {% block bodyClass %}{% endblock %}">
-
-    {% comment %}
-        moving this here for now to bluntly rule out any race conditions
-    {% endcomment %}
+<body class="clearfix {% block bodyClass %}{% endblock %}">    
     <div id="fb-root"></div>
     <!-- Facebook: load synchronously -->
     <script src="//connect.facebook.net/en_US/all.js" type="text/javascript"></script>
     <script type="text/javascript">
-        FB.init({ 
-          appId:'{{ fb_client_id }}', cookie:true, 
-          status:true, xfbml:true, oauth:true
-        });
+        //don't depend on Facebook
+        (function(FB){
+            if(typeof FB === "undefined"){
+                return;
+            }
+            FB.init({ 
+              appId:'{{ fb_client_id }}', cookie:true, 
+              status:true, xfbml:true, oauth:true
+            });
+        })(FB);
     </script>
+
     <script type="text/javascript" src="{{ STATIC_URL }}widget/js/readr_user.js"></script>
 
 
