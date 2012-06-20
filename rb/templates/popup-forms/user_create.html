@@ -1,16 +1,17 @@
 {% extends "popup_form.html" %}
 
 {% block mainContent %}
-  {% if requested %}
-  <h1>Thanks for signing up!</h1>
-  <div class="container userFeedbackMsg">
-    <h3>Now, confirm your email address.</h3>
-    <p>Please check your email inbox for a confirmation email with a link to activate your account.</p>
-    <p>Rest assured, we will never give or sell personal information to any third parties, and we won't send you any marketing messages.</p>
-    <a href = "/" onclick="window.close();">Close window</a>
-  {% else %}
-  <h1>Create User Account</h1>
-  <div class="container">
+{% if requested %}
+    <h1>Thanks for signing up!</h1>
+    <div class="container userFeedbackMsg">
+        <h3>Now, confirm your email address.</h3>
+        <p>Please check your email inbox for a confirmation email with a link to activate your account.</p>
+        <p>Rest assured, we will never give or sell personal information to any third parties, and we won't send you any marketing messages.</p>
+        <a href = "/" onclick="window.close();">Close window</a>
+    </div>
+{% else %}
+    <h1>Create User Account</h1>
+    <div class="container">
     <form class="popupForm" action="/user_create/" enctype="multipart/form-data" method="post" class="in-page">
         {% csrf_token %}
         {{ form.non_field_errors }}
@@ -39,6 +40,6 @@
         </div>
         <button class="btn" type="submit">Submit</button>
     </form>
-  {% endif %}
+{% endif %}
 
 {% endblock mainContent %}
