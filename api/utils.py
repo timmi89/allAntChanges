@@ -26,7 +26,7 @@ def getTagSummary(tag, tags):
     data['body'] = tag.body
     for inter in tags:
         if not inter.parent:
-            data['parent'] = inter.id
+            data['parent_id'] = inter.id
             break
     return data
 

@@ -643,7 +643,8 @@ function readrBoard($R){
                     var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'"><span class="rdr_tag_count">'+tagCount+'</span><span class="rdr_tag_name">'+tag.body+'</span></a> ')
                         .data({
                             tag_id: tag.id,
-                            tag_count: tagCount
+                            tag_count: tagCount,
+                            parent_id:tag.parent_id
                         });
 
                     if ( max_width ) {
@@ -912,7 +913,7 @@ function readrBoard($R){
                             } else {
                                 RDR.actions.summaries.sortInteractions(hash);
                                 $.each( summary.interaction_order, function( idx, interaction ){
-                                    var tag = { id:interaction.tag_id, count:interaction.tag_count, body:interaction.tag_body },
+                                    var tag = { id:interaction.tag_id, count:interaction.tag_count, body:interaction.tag_body, parent_id:interaction.parent_id },
                                         $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, 180 ),
                                         $pill = RDR.rindow.pill.make( tag, $pill_container, $rindow, interaction.content_node_id );
                                 });
@@ -4435,7 +4436,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 var $rindow = RDR.rindow.make( "readMode", {hash:hash} );
                                 if ( typeof $rindow != "undefined" ) {
                                     RDR.rindow.updateSizes( $rindow );
-                                    RDR.rindow.updateSizes( $rindow );
+                                    RDR.rindow.updateSizes( $rindow ); // needed kludge.
                                 }
                             });
                             $indicator.triggerHandler('mouseover.showRindow');
@@ -5195,7 +5196,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     if ( !$.isEmptyObject( summary.content_nodes ) ) {
                         $.each( summary.content_nodes, function( node_id, node_data ) {
                             $.each( node_data.top_interactions.tags, function( tag_id, tag_data ) {
-                                summary.interaction_order.push( { tag_count:tag_data.count, tag_id:tag_id, tag_body:tag_data.body, content_node_id:node_id } );
+                                summary.interaction_order.push( { tag_count:tag_data.count, tag_id:tag_id, tag_body:tag_data.body, content_node_id:node_id, parent_id:tag_data.parent_id } );
                             });
                         });
                     }

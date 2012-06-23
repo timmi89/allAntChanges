@@ -239,11 +239,11 @@ class TagHandler(InteractionHandler):
         container_kind = data['container_kind']
         content_node_data = data['content_node_data']
         content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[ content_node_data['kind'] ]
-        parent_id = data.get('parent_id', None)
         
         #optional
         tag_id = data['tag'].get('id', None)
         location = content_node_data.get('location', None)
+        parent_id = data['tag'].get('parent_id', None)
 
         if content_node_data.get('id'):
             content = Content.objects.get(id = content_node_data['id'])
