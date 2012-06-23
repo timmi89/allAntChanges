@@ -27,9 +27,66 @@ if ( typeof $.receiveMessage == "function") {
 		qs_args.parentHost
 	);
 }
+
+function getWindowProps(options){
+    options = options || {};
+    var w = options.width || 400;
+    var h = options.height || 300;
+    var l = (window.screen.width/2)-(w/2);
+    var t = (window.screen.height/2)-(h/2);
+    return 'menubar=1,resizable=1,scrollbars=yes,width='+w+',height='+h+',top='+t+',left='+l;
+};
+
+//Do we expect this do work, because it won't - it just redeclares it below.
 var RDRAuth = RDRAuth ? RDRAuth : {};
+
 RDRAuth = {
 	rdr_user: {},
+    popups: {},
+    openRbLoginWindow: function(options){
+        var windowProps = getWindowProps(options);
+        RDRAuth.checkRBLoginWindow();
+        RDRAuth.popups.loginWindow = window.open(
+            RDR_baseUrl+'/rb_login/',
+            'readr_login',
+            windowProps
+        );
+        RDRAuth.popups.loginWindow.focus();
+        return false;
+    },
+    openRbCreateNewAccountWindow: function(options){
+        var windowProps = getWindowProps(options);
+        RDRAuth.checkRBLoginWindow();
+        RDRAuth.popups.loginWindow = window.open(
+            RDR_baseUrl+'/user_create/',
+            'readr_create_user',
+            windowProps
+        );
+        RDRAuth.popups.loginWindow.focus();
+        return false;
+    },
+    openRbForgotPasswordWindow: function(options){
+        var windowProps = getWindowProps(options);
+        RDRAuth.checkRBLoginWindow();
+        RDRAuth.popups.loginWindow = window.open(
+            RDR_baseUrl+'/request_password/',
+            'readr_forgot_pw',
+            windowProps
+        );
+        RDRAuth.popups.loginWindow.focus();
+        return false;
+    },
+    openRbAvatarUploadWindow: function(options){
+        var windowProps = getWindowProps(options);
+        RDRAuth.popups.loginWindow = window.open(
+            RDR_baseUrl+'/user_modify/',
+            'readr_avatar_upload',
+            windowProps
+        );
+        RDRAuth.checkRBLoginWindow();
+        RDRAuth.popups.loginWindow.focus();
+        return false;
+    },
 	events : {
 		track : function( data ) {
 	        // RDRAuth.events.track
@@ -55,7 +112,7 @@ RDRAuth = {
 		}
 	},
 	notifyParent: function(response, status) {
-		response.status = status;
+        response.status = status;
 		// send this info up to the widget!
 		RDRAuth.postMessage({
 			message: JSON.stringify( response )
@@ -255,21 +312,20 @@ RDRAuth = {
 		});
 	},
 	checkRBLoginWindow : function() {
-		if (!RDRAuth.checkingRBLoginWindow) {
+        if (!RDRAuth.checkingRBLoginWindow) {
 			RDRAuth.checkingRBLoginWindow = setInterval( function(popup) {
-				if ( RDRAuth.rbloginWindow.closed ) {
+				if ( RDRAuth.popups.loginWindow && RDRAuth.popups.loginWindow.closed ) {
 					RDRAuth.readUserCookie();
 					RDRAuth.returnUser();
 					RDRAuth.notifyParent({}, "close login panel");
-					RDRAuth.rbloginWindow.close();
+					RDRAuth.popups.loginWindow.close();
 					clearInterval( RDRAuth.checkingRBLoginWindow );
-					if (top == self) {
+                    if (top == self) {
 						window.location.reload();
 					}
 				}
 			}, 250 );
 		}
-
 	},
 	setUser : function(response) {
 		RDRAuth.rdr_user = {};
@@ -456,5 +512,6 @@ RDRAuth = {
 		if (value) return value.replace(/"/g,'').replace(/\\054/g,",").replace(/\\073/g,";");
 	}
 }
-RDRAuth.init();
-
+$(document).ready(function(){
+    RDRAuth.init();
+});

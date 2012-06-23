@@ -2,9 +2,10 @@ body{
 }
 
 body.wide section[role="main"] {
-    width: 100%;
+    width: 960px;
+    margin: 0 auto;
     background:none;
-
+    padding: 10px 0 0 0;
 }
 body section[role="controls"]{
 	border:none;	
@@ -23,6 +24,15 @@ section.introBlurb{
 .clearDiv{
 	clear:both;
 }
+h1.sectionBanner{
+    background: none repeat scroll 0 0 #EEEEEE;
+    border-bottom: 1px solid #E9E9E9;
+    border-top: 1px solid #E9E9E9;
+    padding: 10px 0 4px;
+    text-align: center;
+    margin: 20px 0 !important;
+}
+
 .introBlurb .readrboard_logo{
 	float:left;
 	padding-right:8px;
@@ -34,42 +44,46 @@ section.introBlurb{
 #background-layer .pin-large-icon{
 	display:none;
 }
-#background-layer .background-radial-grad{
-	left: -400px; 			/*The width of the image is 800px*/
-    margin-left: 50%;
-    position: absolute;
-    width: 100%;
-    top:0;
-
-	opacity:0.4;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-    filter:alpha(opacity=40);
-    -moz-opacity:0.4;
-    -khtml-opacity:0.4;
-}
 #splashAnnounce{
 	text-align:center;
 	width:100%;
 	position:relative;
-	margin-top:35px;
 }
 #splashAnnounceInner{
-	height:270px;
-	position:relative;
-	overflow:auto;
-	margin:0 auto;
-	width:960px;
-	padding-top:50px;
+}
+div.splashQuoteSection{
+    border-bottom: 1px dashed #CCCCCC;
+    margin-bottom: 20px;
+}
+div.splashQuoteSection h4{
+    color: #999999;
+    font-size: 14px;
+    margin-left: 21px;
+    text-align: center;
+} 
+div.splashQuotes{
+    /*width: 50%;*/
 }
 div.splashQuote {
-	position:relative;
-	overflow:auto;
-	margin:20px auto;
-	width:960px;	
-	border-top:1px dashed #ccc;
-	padding:20px 20px 0 20px;
-	text-align:left;
+    float: left;
+    font-size: 12px;
+    overflow: auto;
+    padding: 0 20px;
+    position: relative;
+    text-align: left;
+    width: 50%;
+    margin: 20px 0;
 }
+.splashQuoteLogo{
+    float:left;
+    margin: 10px 15px 20px 0;
+    width:170px;
+}
+.splashQuoteLogo.racialiciousLogo a{
+    top: -17px;
+    position: relative;
+}
+
 #splashAnnounceInner .left {
 	float:left;
 	/*width:580px;
@@ -82,35 +96,22 @@ div.splashQuote {
 	display:none;
 }
 #splashBlurbs{
-	background:white;
 	position:relative;
+    margin:0 auto;
+    width: 100%;
 }
 #splashAnnounce #imagine {
-	position:absolute;
+	position:relative;
 	top:0;
-	left:180px;
 	/*left:0;*/
 }
-#splashAnnounce h3{
-    border-top:1px dashed #ccc;
-    bottom:0;
-    color:#888;
-    font-family:Arial;
-    font-size:20px;
-    font-weight:bold;
-    margin-top:25px;
-    padding:35px 0;
-}
-#splashAnnounce h3 span{
-	color:#26465A;
-}
-#splashAnnounce #sns_buttons{
+#sns_buttons{
 	display:block;
 	position:absolute;
 	width:85px;
 	height:52px;
-	left:530px;
-	top:-2px;
+	left:539px;
+	top:-4px;
 }
 #action_links {
 	overflow:auto;
@@ -118,76 +119,73 @@ div.splashQuote {
 #action_links a {
 	font-weight:bold;
 }
-#splashAnnounce #sns_buttons img{
-	position:absolute;
+#betterLikeButton{
+    text-align:center;
+    width:960px;
+    position:relative;
+    margin: 0 auto 10px;
+}
+#sns_buttons div{
+    position: absolute;
+}
+#sns_buttons img{
+	position:relative;
 	left:0;
 	/*top:12px;*/
 	max-height:45px;
 }
-#splashAnnounce #sns_buttons img#sns_fb{
+#sns_buttons img#sns_fb{
 	top:3px;
 }
-#splashAnnounce #sns_buttons img#sns_google{
+#sns_buttons img#sns_google{
 	left:3px;
 	top:2px;
 }
-#splashAnnounce #sns_buttons img#sns_twitter{
+#sns_buttons img#sns_twitter{
 	top:7px;
 }
 #splashAnnounce .rindow-img img{
 	width:250px;
 }
-#splashBlurbs .blurbsInner, #splashBlurbs .partnerLogoSection{
-	width:960px;
-	margin:auto;
-}
-#splashBlurbs .blurbsInner{
-	padding-top:10px;
-	overflow:auto;
-}
-#splashBlurbs .blurbsInner h4{
-	font-family:Helvetica, 'HelveticaBold', Arial;
-	color:#888;
-	padding:0 0 10px 6px;
-	font-size:36px;
-	padding-top:20px;
-	border-top:1px solid #888;
-	margin-top:20px;
-}
+
 #splashBlurbs .partnerLogoSection{
 	padding: 10px 0;
-	padding-top:20px;
-	border-top:1px solid #888;
+    border-top: 1px dashed #CCCCCC;
 	margin-top:20px;
 	clear:both;	
 }
-#blurbBody{
-	height:410px;
-}
-#blurbBody > div{
-	
-}
-#blurbBody > div.selected{
-	display:block;
-}
-#blurbBody .bullets{
-	float:right;
-	width:42%;
-}
-#blurbBody .tryit{
-	width:52%;
+
+#splashBlurbs .leftSide{
 	float:left;
+	width:31%;
+}
+#splashBlurbs .leftSide.wide{
+    width:52%;
+}
+#splashBlurbs .rightSide{
+	width:72%;
+	float:right;
 	position:relative;
 }
-#blurbBody div.tryit img, #blurbBody div.tryit iframe{
-    /*-moz-box-shadow:1px 1px 10px 2px #bbb;
-    -webkit-box-shadow:1px 1px 10px 2px #bbb;
-    box-shadow:1px 1px 10px 2px #bbb;*/
+
+#splashBlurbs .rightSide.video{
+    float: right;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    text-align: right;
+    width: auto;
 }
-#blurbBody div.tryit img{
-	width:100%;
+#splashBlurbs .rightSide.narrow{
+    width: 42%;
 }
-#blurbBody div.tryit img#analytics_screenshot{
+
+#splashBlurbs .rightSide.video iframe{
+    margin-top:30px;
+}
+
+
+#splashBlurbs div.leftSide img#analytics_screenshot{
 	box-shadow: 0 0 8px #666666;
     margin-left: 10px;
     width: 100%;
@@ -195,8 +193,18 @@ div.splashQuote {
 #splashBlurbs .blurb{
 	width:100%;
 	clear:both;
-	
+    position: relative;
+    /*works together with the next declaration*/
+    top: -20px;
 }
+#splashBlurbs .blurb:before { 
+  display: block; 
+  content: " "; 
+  margin-top: -20px; 
+  height: 20px; 
+  visibility: hidden; 
+}
+
 #splashBlurbs h2, #splashBlurbs h3{
 	color:#2f4e6d;
 	padding:0;
@@ -211,26 +219,26 @@ div.splashQuote {
 #splashBlurbs h3.sectionHeader{
 	text-align:center;
 	font-family:Helvetica,'HelveticaBold',Arial;
-	font-size:48px;
+	font-size:30px;
 	margin:30px 0;
 }
 #splashBlurbs .blurb .bullet-points{
 	list-style:none;
 }
 #splashBlurbs .bullet-points li{
-	margin-bottom: 20px;
-	padding: 0 5px;
+	margin: 5px 0 10px;
+	padding: 0;
 }
 #splashBlurbs div.blurb .bullet-points span{
 	padding:0;
 	font-size:16px;
 }
-#splashBlurbs div.blurb ul.sub-bullets li{
+#splashBlurbs div.blurb ul.sub-leftSide li{
 	padding:5px 0 0 0;
 	margin: 0;
 	display:block;
 }
-#splashBlurbs div.blurb ul.sub-bullets span{
+#splashBlurbs div.blurb ul.sub-leftSide span{
 	font-size:14px;
 }
 #splashBlurbs ul.partnerLogos{
@@ -255,45 +263,37 @@ div.splashQuote {
     top: 32px;
     font-size:14px;
 }
+
 #splashBlurbs .partnerLogoSection h3{
 	font-size:18px;
 	padding-left:5px;
 }
-footer{
-	padding:15px 0;
-	background:#333;
-	z-index:1000;
+.blurb-about-the-team {
+    text-align: center;
 }
-footer div.footerLinks{
-	width:960px;
-	margin:auto;
-	position:relative;
+.teamThumbnails{
+    clear: both;
+    display: block;
+    margin: 10px 0;
 }
-footer div.footerLinks ul{
-	list-style:none;
+.blurb-about-the-team ul{
+    display: block;
+    float: left;
+    left: 50%;
+    position: relative;
+    list-style-type: none;
 }
-footer div.footerLinks ul li{
-	float:left;
-	padding:10px;
-	margin-right:40px;
+.blurb-about-the-team li{
+    display: block;
+    float: left;
+    left: -50%;
+    position: relative;
+    margin: 5px;
 }
-footer div.footerLinks ul.footerLinksRight{
-	position:absolute;
-	right:0;	
+.blurb-about-the-team li img{
+    width: 60px;
 }
-footer div.footerLinks ul.footerLinksRight li{
-	float:right;
-	margin-left:40px;
-	margin-right:0;
-}
-footer div.footerLinks a{
-	font-style:none;
-	text-decoration:none;
-	color:#fff;
-}
-footer div.footerLinks a:hover{
-	color:#7997B1;
-}
+
 
 /*for slideshow*/
 #promoDiv{

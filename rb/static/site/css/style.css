@@ -240,7 +240,7 @@ font-style:italic; }
 caption { background-color:transparent; }
 
 /* FORMS (See css/mylibs/forms.css) */
-div.container button {
+/*div.container button {
   background: -webkit-gradient(linear, center top, center bottom, from(#ffffff), to(#e8e8e8));
   background: -moz-linear-gradient(center top , #ffffff, #e8e8e8) repeat scroll 0 0 transparent;
   -webkit-border-radius: 7px 7px 7px 7px;
@@ -260,6 +260,7 @@ div.container button {
   padding-top: 4px;
   display:block;
 }
+*/
 
 label {
   display:block;
@@ -503,7 +504,7 @@ header[role="banner"] #user #logged-in #log-out-link h5  { color:#999; font-size
 header[role="banner"] #user	#logged-in:hover #log-out-link	{ display:block; }
 
 header[role="banner"] #site_search			{ position:absolute; right:8px; top:6px; display:block; }
-header[role="banner"] #site_search input	{ border:1px solid #424242; background:#eee;padding:4px;height:24px;width:180px;}
+header[role="banner"] #site_search input	{ border:1px solid #424242; background:#eee;padding:1px 4px;height:24px;width:180px;}
 header[role="banner"] #site_search button	{ width:26px; height:24px; background:url(../images/search_button.png) top left no-repeat;border:none;text-indent:-9999px;cursor:pointer;z-index:1; position:relative;float:right;margin-left:-26px;margin-top:0;}
 
 header[role="banner"] #settings				{ position:absolute; right:0; top:-4px; height:39px; border-left:1px solid #393939;display:none; }
@@ -531,6 +532,46 @@ section[role="main"] 	{
 	padding:0;
 }
 
+
+/* bootstrap css resets */
+label, input, button, select, textarea,
+select,
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"]
+{
+    height: auto;
+    width: auto;
+    line-height: 14px;
+    font-size: 14px;
+}
+
+.container{
+    width: auto;
+}
+.container label{
+    margin: 5px 0;
+}
+.container button {
+    margin: 15px 0 5px 0;
+}
+/* end bootstrap css resets */
+
+
+
+
 /* Tyler's crap, remove if wanted */
 .pagination {
     position: relative;
@@ -539,18 +580,31 @@ section[role="main"] 	{
     clear:both;
 }
 
-.pagination .current {
-    margin-left: 180px;
-    margin-right: 180px;
-}
 /* End Tyler's Crap */
+/*temp bootstap override*/
+.pagination a {
+    background: none repeat scroll 0 0 transparent;
+    border: medium none !important;
+    font-size: 14px;
+    line-height: 14px !important;
+    margin: 1px 10px;
+    position: absolute;
+}
+
+.rdrIcon   {
+    background: url("../../widget/images/readr_icons.png") no-repeat scroll -1px 1px transparent;
+    float: left;
+    height: 16px;
+    margin: 0 2px 0 -2px;
+    width: 16px;
+}
 
 #splashAnnounce {
     border-bottom:1px dashed #ccc;
     bottom:0;
     color:#888;
     margin:0 0 15px 0;
-    padding:25px 0;
+    padding:25px 0 15px 0;
     text-align:center;
 }
 #splashAnnounce h3{
@@ -562,6 +616,22 @@ section[role="main"] 	{
   color:#26465A;
 }
 
+.callToActionButtons{
+    margin: 0 auto;
+    width: 445px;
+    padding: 15px 0;
+}
+.callToActionButtons a{
+    font-weight:bold;
+    font-size:18px;
+    margin-top:5px;
+}
+.callToActionButtons .left{
+    float: left;
+}
+.callToActionButtons .right{
+    float: right;
+}
 
 #cards { }
 section[role="main"] div.card { }
@@ -594,8 +664,8 @@ section[role="main"] div.card.pag div.meta { margin:0; overflow:visible; }
 section[role="main"] div.card.pag div.meta div.title      { width:200px; }
 section[role="main"] div.card.pag div.meta div.title a  { font-weight:normal; font-size:12px; color:#454545;}
 section[role="main"] div.card.pag div.metaRight { float: none; overflow:hidden; width:auto;}
-section[role="main"] div.card.pag div.date        { float:none; position:static;}
-section[role="main"] div.card.pag div.added_by {margin-top:-20px;}
+section[role="main"] div.card.pag div.date        { float:none; position:static; max-width:140px;}
+section[role="main"] div.card.pag div.added_by {margin-top:-20px;position:relative; z-index:100;}
 section[role="main"] div.card.pag div.block_content   { top:-32px; left:5px;}
 
 /*section[role="main"] div.card header h1:before {
@@ -665,7 +735,11 @@ section[role="main"] div.card div.added_by img.user_avatar  { display: inline-bl
 section[role="main"] div.card div.meta img.me_too  { width:25px;height:24px;background:url(../images/me_too.png) -25px 0px no-repeat;display:block;float:right;cursor:pointer;margin-top:-2px;}
 section[role="main"] div.card div.meta img.me_too:hover   { background-position: 0px 0px; }
 section[role="main"] div.card div.meta div.me_too_outcome { display:none;border-top:1px solid #aaa;padding:3px;margin-top:6px;}
-section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:11px;text-align:right; }
+section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:11px;text-align:right;
+    opacity: 0.8;
+    -moz-pacity: 0.8;
+    filter:alpha(opacity=8);
+}
 section[role="main"] div.card.pag div.meta div.me_too_outcome div.close { text-align:left; }
 
 section[role="main"] div.card div.meta em { display:block; }
@@ -680,12 +754,12 @@ section[role="main"] div.card.txt div.content div.content_body    { font-size:18
 section[role="main"] div.card.txt div.content a { color:#606060; text-decoration:none; }
 /*section[role="main"] div.card.txt div.content div.content_body:first-child:first-letter { font-size:31px; line-height:33px; font-weight:bold; float:left; padding:0px 2px 0 0; text-transform:uppercase;}*/
 
-section[role="main"] div.card.img div.content                               { margin:-43px 0 0; position:relative; z-index:2;}
+section[role="main"] div.card.img div.content                               { margin:0; position:relative; z-index:2;}
 section[role="main"] div.card.img div.content div.content_body img			{ width:298px; margin-top:-1px; xxmargin-left:-35px; position:relative;z-index:1; xxborder-top:1px dashed #ccc; xxborder-bottom:1px dashed #ccc; xpadding:5px 0;}
 section[role="main"] div.card.med div.content div.content_body iframe		{ width:298px; margin-top:-1px; xxmargin-left:-35px; position:relative;z-index:1; xxborder-top:1px dashed #ccc; xxborder-bottom:1px dashed #ccc; xpadding:5px 0;}
 
 /*section[role="main"] div.card.page	{ border:1px solid #ccc; border-top:none; width:210px; padding:15px 0 20px; float:left; margin-left:-1px; xmargin-top:-1px; }*/
-section[role="main"] div.card.pag header 			{ /*padding:0 10px;*/ }
+section[role="main"] div.card.pag header 			{ margin: 8px 0 0 0;}
 section[role="main"] div.card.pag header h1			{ font-size:16px; }
 section[role="main"] div.card.pag div.content			{ xborder-top: 1px solid #fff; margin:0 20px 0; padding-top:9px;}
 section[role="main"] div.card.pag div.content_type		{ width:25px; height:37px; margin:5px 8px 0 0; background:url(../images/type_page.png) top left no-repeat; }
@@ -934,11 +1008,17 @@ ul.link-list li a			{ color:#fff; }
 ul.link-list li.active a	{ color:#95c9ea; font-weight:bold; }
 
 /* settings form */
+section.column         { float:left; width:45%; }
+section.column.left    { margin-right:5%; }
+form.big-form button            { clear:both; font-size:24px; display:block; padding: 10px;}
+form.big-form h3            { color:#668294; border-bottom:1px solid #668294; margin:10px 0;}
+
 form.big-form 				{ padding:10px 20px; }
-form.big-form label			{ display:block; }
-form.big-form label span	{ display:block; font-style:italic; font-size:12px; }
+form.big-form label			{ display:block; margin: 5px 0;}
+form.big-form label span    { display:block; font-style:italic; font-size:12px; }
+form.big-form label span.labelTitle	{font-style:normal; font-weight: bold; margin-top: 1px;}
 form.big-form input			{ font-size:18px; margin-bottom:10px; font-family:Arial; }
-form.big-form input[type="checkbox"]	{ display:block; float:left; }
+form.big-form input[type="checkbox"]	{ display:block; float:left; margin: 0 5px 0 2px; }
 form.big-form input[type="text"]		{ width:400px; }
 form.big-form input#id_call_to_action	{ width:800px; }
 
@@ -1046,10 +1126,18 @@ table[role="popular bookmarks"] td[role="via"],
 table[role="popular bookmarks"] td[role="reactions"]	{ padding:0 0 10px 23px; }
 
 
-/* get the react button */
+/* get the reaction button */
 .howto {
   display:none;
 }
+.howto ol{
+    list-style-type: none;
+}
+.howto li{
+    margin-bottom:10px;
+
+}
+
 
 
 footer{
@@ -1057,7 +1145,7 @@ footer{
 	background:#333;
 	z-index:1000;
 }
-footer div.footerLinks{
+/*footer div.footerLinks{
 	width:960px;
 	margin:auto;
 	position:relative;
@@ -1086,7 +1174,56 @@ footer div.footerLinks a{
 }
 footer div.footerLinks a:hover{
 	color:#7997B1;
+}*/
+
+footer, .emptyFooter{
+    padding:15px 0;
+    background:#333;
+    z-index:1000;
+    text-align: center;
+    overflow: hidden;
 }
+
+footer div.footerLinks{
+    /*left:-50%;
+    margin: auto;
+    position: relative;
+    width: 100%;*/
+}
+footer div.footerLinks ul{
+    list-style: none;
+    position: relative;
+    float: left;
+    display: block;
+    left: 50%;
+}
+footer div.footerLinks ul li{
+    padding:10px;
+    margin: 0 40px;
+    position: relative;
+    float: left;
+    display: block;
+    right: 50%;
+}
+footer div.footerLinks ul.footerLinksRight{
+    position:absolute;
+    right:0;    
+}
+footer div.footerLinks ul.footerLinksRight li{
+    float:right;
+    margin-left:40px;
+    margin-right:0;
+}
+footer div.footerLinks a{
+    font-style:none;
+    text-decoration:none;
+    color:#fff;
+}
+footer div.footerLinks a:hover{
+    color:#7997B1;
+}
+.noFooter #uvTab {display:none !important;}
+.noFooter footer div.footerLinks { display: none; }
 
 /* HEADINGS */
 /* TYPOGRAPHY */
@@ -1198,4 +1335,72 @@ http://drupal.org/node/897638
 
 .fancybox-wrap {
   overflow:visible !important;
+}
+
+#reactPage{
+    width: 650px;
+    margin: auto;
+}
+#reactPage h1{
+    margin: 10px 0 20px 0;
+}
+#reactPage section{
+    margin: 30px 0 20px;
+    border-top: 1px dashed #CCCCCC;
+}
+#reactPage h2{
+    /*background: none repeat scroll 0 0 #EEEEEE;
+    border-top: 1px solid #E9E9E9;
+    border-bottom: 1px solid #ddd;*/
+    color: #26465A;
+    margin: 25px 0 0 0;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+#reactPage h4{
+    margin: 0 0 10px 0;
+}
+#reactPage .videoWrap{
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+}
+#reactPage .needHelp{
+    color: #888;
+    font-size: 12px;
+}
+
+
+.userSettingsMenu label{
+    margin: 5px 0;
+}
+
+.formBody{
+}
+.formBodySection{
+    float: left;
+    margin-right:20px;
+}
+.formBodyColSection{
+    float: left;
+}
+.formBodyColSection .formBodySection{
+    clear: both;
+}
+.popupForm .btn{
+    clear: both;
+}
+.alternateAction{
+    clear:both;
+    display: block;
+}
+.userFeedbackMsg{
+    padding: 20px 40px 20px 20px !important;
+}
+.userFeedbackMsg p{
+    margin:10px 0;
+}
+.container .userFeedbackMsg{
+    padding: 20px 20px 20px 0 !important;   
 }

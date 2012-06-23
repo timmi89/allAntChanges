@@ -54,7 +54,7 @@ def agree(request, interaction_id = None, **kwargs):
                                                                        notification_type = threshold)
                     if created:
                         #SEND EMAIL!
-                        msg = EmailMessage("ReadrBoard notification", 
+                        msg = EmailMessage("ReadrBoard: Someone agreed with you!", 
                                            generateAgreeEmail(social_user, child_count, interaction), 
                                            "hello@readrboard.com", 
                                            [social_user.user.email])
@@ -106,7 +106,7 @@ def comment(request, interaction_id = None, **kwargs):
                     
                    # if created:
                     logger.info("sending comment notification")
-                    msg = EmailMessage("ReadrBoard comment notification", 
+                    msg = EmailMessage("ReadrBoard: Someone commented on your reaction!", 
                                            generateCommentEmail(social_user, interaction), 
                                            "hello@readrboard.com", 
                                            [interaction.user.email])

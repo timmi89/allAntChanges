@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}About ReadrBoard{%endblock%}
+
+{% block bodyClass %}wide{% endblock %}
+
+{% block mainContent %}
+
+<style>
+
+body{
+}
+
+body.wide section[role="main"] {
+    width: 900px;
+}
+body section[role="controls"]{
+	border:none;	
+}
+body.wide section[role="content"]{
+	width: 900px;
+	background:none;
+}
+section[role="wide panels"]{
+	width:auto;
+	padding: 0 6%;
+}
+section.introBlurb{
+	margin:30px 0 20px 0 !important;
+}
+section.introBlurb p{
+    margin:10px 0;
+}
+.introBlurb .readrboard_logo{
+	float:left;
+	padding-right:8px;
+	margin-top:10px;
+}
+.introBlurb h3{
+	border:none !important;
+}
+
+.aboutSection{
+    padding:10px 0;
+    text-align:center;
+}
+td.aboutSectionPanel{
+    padding: 0 5%;
+}
+.aboutSection h1{
+    background: none repeat scroll 0 0 #EEEEEE;
+    border-bottom: 1px solid #E9E9E9;
+    border-top: 1px solid #E9E9E9;
+    margin: 0 0 20px 0 !important;
+    padding: 10px 0 4px;
+}
+.aboutSection table{
+    margin: 20px 0;
+}
+
+section h4.bioName{
+    font-size: 16px;
+    margin: 8px 0 5px;
+}
+.bio{
+    margin: 8px 0;
+    text-align: left;
+}
+
+.bioIntro{
+    margin: 10px 0;
+}
+
+/*this is silly, but works for now*/
+.imgPlaceholderWrap{
+    display: inline-block;
+}
+.imgPlaceholder{
+    width: 147px;
+    height: 116px;
+    border: 1px dashed #ccc;
+    display: block;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    -o-box-sizing:border-box;
+    box-sizing:border-box;
+}
+
+</style>
+
+<section role="analytics header">
+	<!-- 
+    <section role="controls">
+		About ReadrBoard
+	</section>
+    -->
+</section>
+
+<section role="panels">
+	<section role="wide panels">
+		
+		<section role="most active pages" class="introBlurb">
+			<a href="{{BASE_URL}}" ><img class="readrboard_logo" src="{{BASE_URL}}{{STATIC_URL}}site/images/temp-logo-on-grey.png" /></a>
+			<h3>A reaction button for the web.</h3>
+			<p>
+				Hi, we're ReadrBoard.
+            </p>
+            <p>
+                We help you express your reaction about any phrase, picture, video, or article on the web.
+            </p>
+            <p>
+                Oh, and if you're a publisher, <a href="mailto:info@readrboard.com?subject=Inquiring about ReadrBoard">ask us how</a> we can boost your engagement and show you analytics that will make you swoon.
+			</p>
+		</section>
+
+	       <div class="aboutSection">
+                <h1>Team ReadrBoard</h1>
+                <table width="100%;">
+        			<tr>
+        				<td style="width:28%;">
+        					<img src="{{BASE_URL}}{{STATIC_URL}}site/images/about/bayne.jpg" />
+        					<br>
+                            <h4 class="bioName">
+                                <strong class="blue">Porter Bayne</strong>
+                            </h4>
+        					<div class="bio">
+        						Before moving back to NYC in June 2010, Porter launched two angel-funded startups in Seattle - more or less at the same time.  Nearlyweds, which he sits on the board of, acquired OneWed.com in Fall 2010 and is poised to bring much needed innovation to the intersection of online bridal technology, media, and vendor recommendations.  He also launched Ameritocracy in Spring 2008, which sought to address many similar problems and opportunities with online engagement as ReadrBoard does.  Ameritocracy closed in August 2010, and from the lessons learned there, ReadrBoard was born.
+        					</div>
+        					<div class="bio">
+        						Exemplifying the "will, not skill" mantra of startups, Porter is an expert at surrounding himself with people notably cleverer than he (in particular, the others shown here) - which, he likes to think, isn't as quite easy as it sounds.
+        					</div>
+        					<div class="bio">
+        						His earlier career includes designing &amp; building online software for Verizon Wireless, TV Guide, Zagat, aura readers, and defense contractors.
+        					</div>
+        				</td>
+        				<td style="width:8%;">&nbsp;</td>
+        				<td style="width:28%;">
+                            <img src="{{BASE_URL}}{{STATIC_URL}}site/images/about/chaves.jpg" />
+                            <h4 class="bioName">
+                                <strong class="blue">Eric Chaves</strong>
+                            </h4>
+                            <div class="bio">
+                                Eric moved from San Francisco 2 years ago to establish roots in New York and to start a company that will evolve how we respond to content on the web.
+                            </div>
+                            <div class="bio">
+                                Eric is a web designer and developer.  After graduating from Dartmouth in 2005, he moved to San Francisco where he worked in architecture and product design before later building a web development freelance business.  Under the branding "thinksketchdesign" he designed user interfaces and built custom websites for small businesses.
+                            </div>
+                            <div class="bio">
+                                Since moving to New York, he has been active in the tech community doing contract work for The Daily and CNNMoney.  He currently works as a software developer for ZocDoc.
+                            </div>
+        				</td>
+        				<td style="width:8%;">&nbsp;</td>
+        				<td style="width:28%;">
+        					<img src="{{BASE_URL}}{{STATIC_URL}}site/images/about/shaw.jpg" />
+                            <h4 class="bioName">
+                                <strong class="blue">Michael Shaw</strong>
+                            </h4>
+        					<div class="bio">
+        						Mike is a very smart and multi-talented human.  He is a killer systems engineer and developer for ReadrBoard.  As soon as he's not too busy keeping our servers up and running like champs, we'll ask him for a better bio.
+        					</div>
+        				</td>
+        			</tr>
+        		</table>
+        </div>
+    	<div class="aboutSection">
+            <h1>Advisers</h1>
+    		<table width="100%;">
+    			<tr>
+    				<td class="aboutSectionPanel" style="width:50%;">
+    					<img src="{{BASE_URL}}{{STATIC_URL}}site/images/about/ohanian.jpg" />
+                        <h4 class="bioName">
+                            <strong class="blue">Alexis Ohanian</strong>
+                        </h4>
+    					<div class="bio bioIntro">
+                            <strong>In our words:</strong>
+    						Alexis is damned smart and knows a thing or two about ways to design for better online community and engagement.  So we asked if he'd help us avoid reinventing any wheels, and come up with some new ones.  He agreed.
+    					</div>
+                        <div class="bio">
+    						<strong>In <a href="http://alexisohanian.com/">his words</a>:</strong>
+    						Guten Tag! TechCrunch calls me "one of the more passionate and audacious young entrepreneurs in tech." Hide your kids.
+						</div>
+						<div class="bio">
+    						After graduating from UVA in 2005, I started reddit.com with Steve Huffman. Founded Breadpig, which creates geeky things, sells them, and gives away all the profits -- $180,000 so far. Publisher of xkcd: volume 0. Bottler of AwesomeSauce. Maker of LOLMagnetz. Said WTFCNN?! one too many times. Bassist in a Rock Band. Ambassador to the East for Y Combinator. Angel investor at Das Kapital Capital, LLC. Head marketing dude at hipmunk. Once rendered in CGI on NMA.TV. Contributor with regular appearances on Bloomberg TV as "hoodie-clad tech entrepreneur." Gave a TED talk at 26 about a whale named Mr. Splashy Pants.
+						</div>
+						<div class="bio">
+    						And my favorite: Stephen Colbert once sent me this photo posing with a mug I made him (and even gave me a shoutout in a letter to reddit).
+						</div>
+						<div class="bio">
+    						If you've ever told someone about any of my projects, I owe you a beer. (Thanks!)
+						</div>
+    				</td>
+    				<td class="aboutSectionPanel" style="width:30%;">
+                        <div class="imgPlaceholderWrap">
+                            <img class="imgPlaceholder" />
+                        </div>
+                        <h4 class="bioName">
+                            <strong>Are you our next adviser?</strong>
+                        </h4>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="aboutSection">
+            <h1>MVPs</h1>
+            <table width="100%;">
+                <tr>
+                    <td class="aboutSectionPanel" style="width:50%;">
+                        <img style="width: 147px;" src="{{BASE_URL}}{{STATIC_URL}}site/images/about/cheng.jpg" />
+                        <h4 class="bioName">
+                            <strong class="blue">Denise Cheng</strong>
+                        </h4>
+                        <div class="bio">
+                            <strong>In our words:</strong>
+                            As a savvy journalist and scholar, Denise has been a huge help consulting ReadrBoard on industry trends.
+                        </div>
+                        <div class="bio">
+                            Denise recently completed the CUNY Tow-Knight Entrepreneurial Journalism Program. We are ecstatic to have her onboard and driving Publisher Relations for ReadrBoard before she heads off to MIT for a M.S. in Comparative Media Studies.
+                        </div>
+                        <div class="bio">
+                            <strong>In <a href="http://www.linkedin.com/in/denisecheng">her words</a>:</strong>
+                            I am fascinated by cultural intersections and phenomena and am passionate about establishing mutual awareness and appreciation between different groups of people.  I am currently getting as much experience as I can in community building, web skills, media access, &amp;c. that I believe will make me more effective in the changing field of journalism.
+                        </div>
+                    </td>
+                    <td class="aboutSectionPanel" style="width:50%;">
+                        <img src="{{BASE_URL}}{{STATIC_URL}}site/images/about/brock.jpg" />
+                        <h4 class="bioName">
+                            <strong class="blue">Tyler Brock</strong>
+                        </h4>
+                        <div class="bio">
+                            Tyler was an original member of team ReadrBoard who helped launch the Alpha product with a brilliant backend stack.  He's a crackerjack engineer and is now on the <a href="http://www.10gen.com/">10gen</a> team developing the amazing MongoDB product.
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="aboutSection">
+            <h1>Investors</h1>
+            Well, us (boot)strapping cofounders, so far.  <a href="http://porterbayne.wufoo.com/forms/m7x3k1/" onclick="window.open(this.href,  null, 'height=410, width=775, toolbar=0, location=0, status=1, scrollbars=1, resizable=1'); return false" title="Tell me more about ReadrBoard!!">Interested?</a>
+        </div>
+
+        <a href="/about/" style="display: block; position: relative; margin: 20px 0 0 0;">« About ReadrBoard</a>
+
+	</section>
+</section>
+{% endblock %}

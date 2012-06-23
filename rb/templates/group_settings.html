@@ -11,12 +11,6 @@
   <form action="/settings/{{ short_name }}/" enctype="multipart/form-data" method="post" class="big-form">{% csrf_token %}
   {{ form.non_field_errors }}
 
-	<style>
-	.column			{ float:left; width:45%; }
-	.column.left	{ margin-right:5%; }
-	form.big-form button			{ clear:both; font-size:24px; display:block; }
-	form.big-form h3			{ color:#668294; border-bottom:1px solid #668294; margin-bottom:10px;}
-	</style>
 	<section class="left column">
 		<h3>Group Information</h3>
 		<div>
@@ -25,49 +19,49 @@
 			{{ form.name.errors }}
 		</div>
 		<div>
-			<label for="id_short_name">Short Name <span>Used in URLs on readrboard.com</span></label>
+			<label for="id_short_name"><span class="labelTitle">Short Name </span><span>Used in URLs on readrboard.com</span></label>
 			{{ form.short_name }}
 			{{ form.short_name.errors }}
 		</div>
 		<div>
-			<label for="id_blessed_tags">Default Reactions <span>Default tags for people to react with.</span></label>
+			<label for="id_blessed_tags"><span class="labelTitle">Default Reactions </span><span>Default tags for people to react with.</span></label>
 			{{ form.blessed_tags }}
 		</div>
 		<!-- <div>
-		<label for="id_language">Language <span>For now, only "en" supported</span></label>
+		<label for="id_language"><span class="labelTitle">Language </span><span>For now, only "en" supported</span></label>
 		{{ form.language }}{{ form.language.errors }}
 		</div> -->
 		<div>
-			<label for="id_temp_interact">Temporary Interactions <span>How many times someone can react, comment &amp; share before logging in.</span></label>
+			<label for="id_temp_interact"><span class="labelTitle">Temporary Interactions </span><span>How many times someone can react, comment &amp; share before logging in.</span></label>
 			{{ form.temp_interact }}{{ form.temp_interact.errors }}
 		</div>
 		<div>
-			<label for="id_logo_url_sm">Small Logo <span>URL to a small logo file (max 64x18)</span></label>
+			<label for="id_logo_url_sm"><span class="labelTitle">Small Logo </span><span>URL to a small logo file (max 64x18)</span></label>
 			{{ form.logo_url_sm }}{{ form.logo_url_sm.errors }}
 		</div>
 		<div>
-			<label for="id_logo_url_med">Medium Logo <span>URL to a medium logo file (max 100x50)</span></label>
+			<label for="id_logo_url_med"><span class="labelTitle">Medium Logo </span><span>URL to a medium logo file (max 100x50)</span></label>
 			{{ form.logo_url_med }}{{ form.logo_url_med.errors }}
 		</div>
 		<div>
-			<label for="id_logo_url_lg">Large Logo <span>URL to a large logo file (max 300x250)</span></label>
+			<label for="id_logo_url_lg"><span class="labelTitle">Large Logo </span><span>URL to a large logo file (max 300x250)</span></label>
 			{{ form.logo_url_lg }}{{ form.logo_url_lg.errors }}
 		</div>
 		<h3>Moderation</h3>
-		<div>
+		<div style="margin: 10px 0;">
 			{{ form.requires_approval }}{{ form.requires_approval.errors }}
-			<label for="id_requires_approval">Requires Approval? <span>If you want comments and reactions to be approved before they are visible for others to see, check this box.</span></label>
+			<label for="id_requires_approval"><span class="labelTitle">Requires Approval? </span><span>If you want comments and reactions to be approved before they are visible for others to see, check this box.</span></label>
 		</div>
 		<div>
-			<label for="id_word_blacklist">Word Blacklist <span>Words that are automatically censored.</span></label>
+			<label for="id_word_blacklist"><span class="labelTitle">Word Blacklist </span><span>Words that are automatically censored.</span></label>
 			{{ form.word_blacklist }}{{ form.word_blacklist.errors }}
 		</div>
 		<div>
-			<label for="id_custom_css">Custom CSS <span>Custom CSS rules to embed on the page.</span></label>
+			<label for="id_custom_css"><span class="labelTitle">Custom CSS </span><span>Custom CSS rules to embed on the page.</span></label>
 			{{ form.custom_css }}
 		</div>
 		<div>
-			<label for="call_to_action">Call To Action <span>A call to action for your users.  HTML is A-okay.</span></label>
+			<label for="call_to_action"><span class="labelTitle">Call To Action </span><span>A call to action for your users.  HTML is A-okay.</span></label>
 			{{ form.call_to_action }}
 		</div>
 	</section>
@@ -75,31 +69,31 @@
 	<section class="right column">
 		<h3>Configuring Your Site</h3>
 		<div>
-			<label for="id_anno_whitelist">Active Text <span>CSS Selectors for text ReadrBoard interacts with by default.</span></label>
+			<label for="id_anno_whitelist"><span class="labelTitle">Active Text </span><span>CSS Selectors for text ReadrBoard interacts with by default.</span></label>
 			{{ form.anno_whitelist }}{{ form.anno_whitelist.errors }}
 		</div>
 		<div>
-			<label for="id_no_readr">Inactive Text <span>CSS Selectors for text ReadrBoard should always ignore.</span></label>
+			<label for="id_no_readr"><span class="labelTitle">Inactive Text </span><span>CSS Selectors for text ReadrBoard should always ignore.</span></label>
 			{{ form.no_readr }}{{ form.no_rdr.errors }}
 		</div>
 		<div>
-			<label for="id_img_whitelist">Active Images <span>CSS Selectors for images ReadrBoard interacts with by default.</span></label>
+			<label for="id_img_whitelist"><span class="labelTitle">Active Images </span><span>CSS Selectors for images ReadrBoard interacts with by default.</span></label>
 			{{ form.img_whitelist }}{{ form.img_whitelist.errors }}
 		</div>
 		<div>
-			<label for="id_img_blacklist">Inactive Images <span>CSS Selectors for text ReadrBoard should always ignore.</span></label>
+			<label for="id_img_blacklist"><span class="labelTitle">Inactive Images </span><span>CSS Selectors for text ReadrBoard should always ignore.</span></label>
 			{{ form.img_blacklist }}{{ form.img_blacklist.errors }}
 		</div>
 		<div>
-			<label for="id_post_selector">Post Selector <span></span></label>
+			<label for="id_post_selector"><span class="labelTitle">Post Selector </span><span></span></label>
 			{{ form.post_selector }}{{ form.post_selector.errors }}
 		</div>
 		<div>
-			<label for="id_post_href_selector">Post HREF Selector <span></span></label>
+			<label for="id_post_href_selector"><span class="labelTitle">Post HREF Selector </span><span></span></label>
 			{{ form.post_href_selector }}{{ form.post_href_selector.errors }}
 		</div>
 		<div>
-			<label for="id_summary_widget_selector">Summary Widget Selector <span></span></label>
+			<label for="id_summary_widget_selector"><span class="labelTitle">Summary Widget Selector </span><span></span></label>
 			{{ form.summary_widget_selector }}{{ form.summary_widget_selector.errors }}
 		</div>
 	</section>
@@ -109,7 +103,7 @@
 {% endcomment %}
 
 
-  <button type="submit">Submit</button>
+  <button class="btn" type="submit">Submit</button>
   </form>
 {% endwith %}
 {% endblock mainContent %}

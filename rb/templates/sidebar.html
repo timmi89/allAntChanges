@@ -20,7 +20,7 @@ $(document).ready( function() {
   {% csrf_token %}
     <div id="avatar">
     <div id="which_content">
-      {% if on_follow_page %}<a href="/user/{{profile_user.id}}">My Activity</a>{% else %}<strong>My Activity</strong>{% endif %} &bull; {% if not on_follow_page %}<a href="/follows/{{profile_user.id}}">Activity I Follow</a>{% else %}<strong>Activity I Follow</strong>{% endif %}
+      {% if on_follow_page %}<a href="/user/{{profile_user.id}}">My Activity</a>{% else %}<strong>My Activity</strong>{% endif %} &bull; {% if not on_follow_page %}<a href="/follows/{{profile_user.id}}">Activity I'm Following</a>{% else %}<strong>Activity I'm Following</strong>{% endif %}
     </div>
 
     <div id="follow_info">
@@ -40,7 +40,7 @@ $(document).ready( function() {
 {% if not profile_user and not group %}
 <div id="avatar">
   <div style="position:absolute;right:10px;top:10px;">
-    <a href="/react/">&rarr; Get the React button</a>
+    <a href="/react/">&rarr; Get the Reaction Button</a>
   </div>
   <h2>All Reactions</h2>
 </div>

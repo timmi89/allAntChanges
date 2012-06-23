@@ -2063,6 +2063,15 @@ function readrBoard($R){
                 //note: the "\054" is actually the octal for a comma.  The back end is passing it back that way. It's working fine though.
                 //, so it seems that "2:10\0542:32" == "2:10,2:32"
                 if ( $.cookie('content_type') != 'pag' ) {
+                    
+                    // quick fix
+                    // todo  - do this better later;
+                    var containerHash = data.container_hash;
+                    var pageHasContainer = !! RDR.containers[containerHash];
+                    if (!pageHasContainer){
+                        return;
+                    }
+                    
                     RDR.session.alertBar.make('fromShareLink', data);
                     return true; //could return something more useful if we need it.
                 }
@@ -2166,7 +2175,11 @@ function readrBoard($R){
                                 RDR.util.userLoginState();
 
                             } else if ( message.status == "getUserLoginState" ) {
-                                RDR.util.userLoginState();
+                                RDR.session.getUser();
+
+                                //I would think this needs to get added as a callback to the function above, but looks like we don't need it.
+                                // RDR.util.userLoginState();
+
                                 $('#rdr_loginPanel').remove();
                             } else if ( message.status == "fb_user_needs_to_login" ) {
                                 if ( callbackFunction && args ) {

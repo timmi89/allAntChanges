@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 
+{% block title %}ReadrBoard{%endblock%}
+{% block extendedHead %}
+<link rel="stylesheet" href="{{ STATIC_URL }}site/css/splash.css?v={{ timestamp|date:"U" }}">
+<link rel="canonical" href="{% if debug %}http://local.readrboard.com:8080/{% else %}http://www.readrboard.com/{% endif %}">
+<meta name="google-site-verification" content="pWVfDSLL5X9Fs9agM5UiL2BHDDcxJtN46MgM2YkJXyg" />
+{%endblock%}
+
 {% block sidebarContent %}
 <div id="sidebar">
   {% include "sidebar.html" %}
@@ -14,10 +21,27 @@ section[role="main"] {margin-top:10px;}
 section[role="complementary"] {display:none;}
 </style>
 <div id="splashAnnounce">
-	<h3 class="no-rdr"><span>ReadrBoard lets you express your reaction</span><br/>about any phrase, picture, video, or article on the web.</h3>
-    <a style="font-weight:bold;font-size:18px;margin-top:5px;" href="/react/">&raquo; Get the React button &laquo;</a>
+
+    <div id="betterLikeButton" >
+        <img src="{{ STATIC_URL }}site/images/imagine.png" title="Imagine a better Like button" id="imagine" />
+        <div id="sns_buttons">
+            <div style="display:block;"><img src="{{ STATIC_URL }}site/images/like_button.png" alt="Like" id="sns_fb" class="no-rdr" /></div>
+            <div style="display:none;"><img src="{{ STATIC_URL }}site/images/plus_one_button.png" alt="+1" id="sns_google" class="no-rdr"/></div>
+            <div style="display:none;"><img src="{{ STATIC_URL }}site/images/tweet_button.png" alt="Tweet" id="sns_twitter" class="no-rdr"/></div>
+        </div>
+        <!-- <img src="{{ STATIC_URL }}site/images/summary_bar.png" style="zoom:1;"/> -->
+    </div>
+
+
+    <div class="theSpitch">
+        <h3 class="no-rdr"><span>ReadrBoard lets you easily express your reaction</span><br>about any phrase, picture, video, or article on the web.</h3>
+        <div class="callToActionButtons">
+            <a href="/react/" class="btn left"><span class="rdrIcon"></span>Get the Reaction Button</a>
+            <a class="btn right" href="/about/">Find Out More</a>
+            <div class="clear"></div>
+        </div>
+    </div>
 </div>
-<div>
 <!-- <em style="marign-bottom:10px;text-align:center;display:block;">Reactions from around the web</em> -->
   <!-- <div xstyle="position:absolute;right:10px;top:10px;"> -->
   <!-- </div> -->
@@ -26,5 +50,7 @@ section[role="complementary"] {display:none;}
   {% include "interactions.html" %}
 </div>
 {% endblock mainContent %}
-
-
+{% block pageJS %}
+<script type="text/javascript" src="{{ STATIC_URL }}site/js/jquery.cycle/jquery.cycle.all.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}site/js/splash.js"></script>
+{% endblock %}

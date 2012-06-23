@@ -1,0 +1,34 @@
+{% extends "popup_form.html" %}
+
+{% block mainContent %}
+  <h1>Change User Avatar</h1>
+  <div class="container">
+        {% if requested %}
+            <h3>Thanks!</h3>
+            <a href = "/">Home</a>
+        {% else %}
+    
+        <form class="popupForm" action="/user_modify/" enctype="multipart/form-data" method="post" class="in-page">
+            <div class="formBody clearfix">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                {{ form.errors }}
+
+                <div class='formBodySection'>
+                    <label for="id_avatar">Avatar </label>
+                    {{ form.avatar }}{{ form.avatar.errors }}
+                </div>
+                <div>
+                    {{ form.user_token }} {{ form.user_token.errors }}
+                </div>
+                <div>
+                    {{ form.id }} {{ form.id.errors }}
+                </div>
+
+            </div>
+            <button class="btn" type="submit">Submit</button>
+        </form>
+
+    </div>
+  {% endif %}
+{% endblock mainContent %}

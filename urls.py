@@ -25,6 +25,7 @@ urlpatterns = patterns('',
   
   # For main website
   url(r'^publishers/$','rb.views.splash'),
+  url(r'^about/$','rb.views.splash'),
   url(r'^$', 'rb.views.main', kwargs={"view":"index", "filtered":"charcoal"}),
   url(r'^unfiltered/$', 'rb.views.main', kwargs={"view":"index"}),
   url(r'^stream/$', 'rb.views.main', kwargs={"view":"index"}),
@@ -75,7 +76,7 @@ urlpatterns = patterns('',
   url(r'^interaction/(?P<interaction_id>\d+)/$', 'rb.views.main'),
   
   # Main Site Supporting Pages
-  url(r'^about/$', 'rb.views.about'),
+  url(r'^team/$', 'rb.views.team'),
   url(r'^faq/$', 'rb.views.faq'),
   url(r'^react/$', 'rb.views.react'),
   url(r'^splash/$', 'rb.views.splash'),

@@ -38,9 +38,9 @@ def widgetCss(request):
       context_instance=RequestContext(request),
       mimetype = 'text/css')
 
-def about(request):
+def team(request):
     return render_to_response(
-      "about.html",
+      "team.html",
       {'fb_client_id': FACEBOOK_APP_ID},
       context_instance=RequestContext(request)
     )
@@ -328,7 +328,7 @@ def create_rb_user(request):
         
     context['form'] = form
     response =  render_to_response(
-        "user_create.html",
+        "popup-forms/user_create.html",
         context,
         context_instance=RequestContext(request)
     )
@@ -348,10 +348,10 @@ def modify_rb_social_user(request):
         context['not_logged_in'] = True
         context['requested'] = True
         return render_to_response(
-                    "social_user_modify.html",
-                    context,
-                    context_instance=RequestContext(request)
-                    )
+            "popup-forms/social_user_modify.html",
+            context,
+            context_instance=RequestContext(request)
+        )
     
     if request.method == 'POST':
         form = ModifySocialUserForm(request.POST, request.FILES)
@@ -364,7 +364,7 @@ def modify_rb_social_user(request):
         
     context['form'] = form
     response =  render_to_response(
-        "social_user_modify.html",
+        "popup-forms/social_user_modify.html",
         context,
         context_instance=RequestContext(request)
     )
@@ -385,7 +385,7 @@ def confirm_rb_user(request):
         
     context['confirmed'] = confirmed
     response =  render_to_response(
-        "user_confirm.html",
+        "popup-forms/user_confirm.html",
         context,
         context_instance=RequestContext(request)
     )
@@ -397,7 +397,7 @@ def rb_login(request):
     context = {}
     
     response =  render_to_response(
-        "rb_login.html",
+        "popup-forms/rb_login.html",
         context,
         context_instance=RequestContext(request)
     )
@@ -408,7 +408,7 @@ def rb_login_success(request):
     context = {}
     
     response =  render_to_response(
-        "rb_login_success.html",
+        "popup-forms/rb_login_success.html",
         context,
         context_instance=RequestContext(request)
     )
@@ -435,7 +435,7 @@ def request_password_reset(request):
         context['requested'] = False
         
     response =  render_to_response(
-        "password_reset.html",
+        "popup-forms/password_reset.html",
         context,
         context_instance=RequestContext(request)
     )
@@ -473,7 +473,7 @@ def reset_rb_password(request):
     context['form'] = form
     
     response =  render_to_response(
-        "password_change.html",
+        "popup-forms/password_change.html",
         context,
         context_instance=RequestContext(request)
     )
