@@ -330,21 +330,10 @@ function readrBoard($R){
 
                     var hash = args.hash,
                         $rindow = args.rindow,
-                        // $rindow = $('div#rdr_indicator_details_'+hash),
                         kind = args.kind,
                         tag = args.tag,
-                        $pill = ( $rindow.find('a.rdr_tag_'+tag.id).length ) ? $rindow.find('a.rdr_tag_'+tag.id):$rindow.find('a.rdr_custom_tag.rdr_tagged').eq(-1), // get the second-to-last custom tag, since we added the new, empty custom tag before getting here
+                        $pill = ( $rindow.find('a.rdr_tag_'+tag.id).length ) ? $rindow.find('a.rdr_tag_'+tag.id).eq(0):$rindow.find('a.rdr_custom_tag.rdr_tagged').eq(-1), // get the second-to-last custom tag, since we added the new, empty custom tag before getting here
                         content_node = (args.sendData)?args.sendData.content_node_data:{};
-
-                    if ( $pill.length > 1 ) {
-                        $.each( $pill, function(index, pill) {
-                            var $thisPill = $(pill);
-                            if ( $thisPill.hasClass('rdr_content_node_'+content_node.id) ) {
-                                $pill = $thisPill;
-                                return false;
-                            }
-                        });
-                    }
 
                     var $wrapperDiv = $pill.parent(),
                         $td = $wrapperDiv.parent(),
