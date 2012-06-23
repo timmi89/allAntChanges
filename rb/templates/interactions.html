@@ -564,7 +564,8 @@ function writeComment( comment, parent, showBlocked ) {
 
 
 $.each( interactions.content, function(idx, interaction) {
-  writeContentCard( interaction );
+  var showBlocked = ( window.location.href.indexOf('/not_approved/') != -1 ) ? true:false;
+  writeContentCard( interaction, showBlocked );
   $.each( interaction.comments, function(idx, comment) {
     writeComment( comment, interaction );
   });
