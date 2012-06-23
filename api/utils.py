@@ -20,9 +20,14 @@ def getTagCommentData(comment):
 
 def getTagSummary(tag, tags):
     tags = filter(lambda x: x.interaction_node==tag, tags)
+    
     data = {}
     data['count'] = len(tags)
     data['body'] = tag.body
+    for inter in tags:
+        if not inter.parent:
+            data['parent'] = inter.id
+            break
     return data
 
 def getSummary(interactions, container=None, content=None, page=None, data=None):
