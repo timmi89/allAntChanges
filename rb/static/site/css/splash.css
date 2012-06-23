@@ -121,9 +121,9 @@ div.splashQuote {
 }
 #betterLikeButton{
     text-align:center;
-    width:100%;
+    width:960px;
     position:relative;
-    margin: 0 0 10px 0;
+    margin: 0 auto 10px;
 }
 #sns_buttons div{
     position: absolute;
