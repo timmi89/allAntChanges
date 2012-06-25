@@ -8634,5 +8634,5 @@ function $RFunctions($R){
 // function DAILYCANDYCYCLE(slide) {
 //     if ( jQuery('#module-flipbook').length == 1 ) jQuery('#module-flipbook').cycle( slide );
 // }
-
+ 
 })();
