@@ -82,12 +82,12 @@
 
             var properties = 'menubar=1,scrollbars=yes,resizable=1,width='+w+',height='+h+',top='+t+',left='+l;
 
-            window.close();
             window.open(
                 RDR_baseUrl+'/user_create/',
                 'readr_create_user',
                 properties
             );
+            window.close();
             return false;
         }
         
@@ -99,13 +99,12 @@
 
             var properties = 'menubar=1,scrollbars=yes,resizable=1,width='+w+',height='+h+',top='+t+',left='+l;
 
-
-            window.close();
             window.open(
                 RDR_baseUrl+'/request_password/',
                 'readr_forgot_pw',
                 properties
             );
+            window.close();
             return false;
         }
 
