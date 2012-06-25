@@ -10,8 +10,14 @@
 	document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
 	document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.json-2.2.min.js" type="text/javascript"%3E%3C/script%3E' ) );
 	document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.cookie.js" type="text/javascript"%3E%3C/script%3E' ) );
-	document.write( unescape( '%3Cscript src="/static/widget/js/readr_user.js" type="text/javascript"%3E%3C/script%3E' ) );
+	
+    //use window.opener's version instead.
+    // document.write( unescape( '%3Cscript src="/static/widget/js/readr_user.js" type="text/javascript"%3E%3C/script%3E' ) );
 	</script>
+
+    <script type="text/javascript">
+        window.RDRAuth = window.opener.RDRAuth;
+    </script>
 
   <h1>Log In</h1>
   {% csrf_token %}
@@ -21,12 +27,12 @@
   		<div class='formBodySection'>
   			<label>User Name</label>
 			<input type="text" name="username" tabindex="1" />
-			<a class="alternateAction" href="javascript:void(0);" onclick="RDRAuth.openRbCreateNewAccountWindow({widow:window});" style="font-size:11px;font-style:italic;">Create New Account &raquo;</a>
+			<a class="alternateAction" href="javascript:void(0);" onclick="RDRAuth.openRbCreateNewAccountWindow();" style="font-size:11px;font-style:italic;">Create New Account &raquo;</a>
 		</div>
 		<div class='formBodySection'>
 	  		<label>Password</label>
 			<input type="password" name="password" tabindex="2" />
-			<a class="alternateAction" href="javascript:void(0);" onclick="RDRAuth.openRbForgotPasswordWindow({widow:window});" style="font-size:11px;font-style:italic;">Forgot Password? &raquo;</a>
+			<a class="alternateAction" href="javascript:void(0);" onclick="RDRAuth.openRbForgotPasswordWindow();" style="font-size:11px;font-style:italic;">Forgot Password? &raquo;</a>
 		</div>
 	</div>
 	<button class="btn" onclick="direct_registration();" tabindex="3" id="submit_login">Log In</button>
@@ -43,7 +49,8 @@
                     $('#submit_login').click();
                 }
             });
-            window.opener.RDRAuth.checkRBLoginWindow();
+            //shouldn't need this?
+            // RDRAuth.checkRBLoginWindow();
         });
 
 		function direct_registration() {
