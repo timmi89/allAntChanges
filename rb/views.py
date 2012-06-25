@@ -392,17 +392,6 @@ def confirm_rb_user(request):
     return response
 
 
-def generic_login(request):
-    context = {}
-    
-    response =  render_to_response(
-        "popup-forms/generic_login.html",
-        context,
-        context_instance=RequestContext(request)
-    )
-    
-    return response
-
 def rb_login(request):
     context = {}
     

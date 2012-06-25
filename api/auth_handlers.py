@@ -85,10 +85,7 @@ class FBHandler(BaseHandler):
             full_name=social_user.full_name,
             img_url=social_user.img_url,
             readr_token=readr_token,
-            user_type="facebook",
-            private_profile=social_user.private_profile,
-            follow_email_option=social_user.follow_email_option,
-            notification_email_option=social_user.notification_email_option
+            user_type="facebook"
         )
         
         
@@ -155,10 +152,7 @@ class RBHandler(BaseHandler):
             full_name=social_user.full_name,
             img_url=social_user.img_url,
             readr_token=readr_token,
-            user_type="readrboard",
-            private_profile=social_user.private_profile,
-            follow_email_option=social_user.follow_email_option,
-            notification_email_option=social_user.notification_email_option
+            user_type="readrboard"
         )
       
 

@@ -2213,14 +2213,6 @@ function readrBoard($R){
 			showLoginPanel: function(args, callback) {
              // RDR.session.showLoginPanel
 
-                // $.postMessage(
-                //     "openGenericLoginWindow",
-                //     RDR_baseUrl + "/static/xdm.html",
-                //     window.frames['rdr-xdm-hidden']
-                // );
-                
-                // return;
-                
                 $('.rdr_rewritable').removeClass('rdr_rewritable');
 
                 if ( $('#rdr_loginPanel').length < 1 ) {

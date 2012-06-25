@@ -1022,7 +1022,6 @@ form.big-form input[type="checkbox"]	{ display:block; float:left; margin: 0 5px 
 form.big-form input[type="text"]		{ width:400px; }
 form.big-form input#id_call_to_action	{ width:800px; }
 
-
 section[role="datepicker"]			{ font-size:12px; background:#eee; padding:5px; border-top:1px solid #7f7f7f; border-bottom:1px solid #7f7f7f; }
 section[role="datepicker"] input  { width:80px; text-align:center; margin:o 3px; }
 section[role="datepicker"] label	{ display:inline; }
