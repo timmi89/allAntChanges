@@ -54,13 +54,14 @@ RDRAuth = {
         'follow_email_option',
         'notification_email_option'
     ],
+    //increment this to force a re-login.  Doing this to make sure we won't cause errors by adding new cookies props.
+    //I couldn't figure out how to reset cookies more nicely.
+    cookieBuster: 3,
 	rdr_user: {},
     popups: {},
     currentPopup: null,
     closeCurrentPopup: function(){
-
     },
-
     completeFBWidgetLogin: function(response){
         if (response && response.authResponse) {
             RDRAuth.getReadrToken( response, function(){
@@ -668,6 +669,15 @@ RDRAuth = {
 		}
 	},
 	init: function() {
+        
+        //respect the cookieBuster
+        var cookieBuster = $.cookie('cookieBuster');
+        if (!cookieBuster || cookieBuster < RDRAuth.cookieBuster) {
+            RDRAuth.killUser( function(response) {
+                $.cookie('cookieBuster', RDRAuth.cookieBuster, { expires: 365, path: '/' });
+            });
+        }
+
 		if ( $.cookie('user_type') && $.cookie('user_type') == "facebook" && !$.cookie('rdr_session' ) ) {
 			FB.getLoginStatus( function(response) {
 				if ( response.status && response.status == "connected" ) {
