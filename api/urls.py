@@ -30,7 +30,7 @@ FollowedEntity = Resource(handler=FollowedEntityHandler)
 EntitySearch = Resource(handler=EntitySearchHandler)
 StreamResponse = Resource(handler=StreamResponseHandler)
 StreamComment = Resource(handler=StreamCommentHandler)
-
+PlusOneUsers = Resource(handler=PlusOneUserHandler)
 
 urlpatterns = patterns('',
     url(r'^settings/$', Settings),
@@ -83,5 +83,6 @@ urlpatterns = patterns('',
     url(r'^entity/search/', EntitySearch),
     url(r'^stream/response/', StreamResponse),
     url(r'^stream/comment/', StreamComment),
+    url(r'^plusones', PlusOneUsers),
     #url(r'^comments/', Comments),
 )
