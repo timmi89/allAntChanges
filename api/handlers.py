@@ -139,7 +139,7 @@ class ModerationHandler(AnonymousBaseHandler):
         ).values_list('group_id', flat=True)
         
         if interaction.page.site.group.id in group_ids:
-            interaction.approved = False
+            interaction.approved = not interaction.approved
             interaction.save()
             #return HttpResponseRedirect(request.path)
         else:
