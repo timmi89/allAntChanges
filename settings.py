@@ -163,7 +163,42 @@ else:
             "init_command": "SET storage_engine=INNODB",
         }
       }
-      
+"""
+    DATABASES = {
+      'default': {
+        'ENGINE':   'django.db.backends.mysql',
+        'NAME':     'readrboard',
+        'USER':     'root',
+        'PASSWORD': '',
+        'HOST':     'localhost',
+        'PORT':     '3306',
+        'OPTIONS': {
+            "init_command": "SET storage_engine=INNODB",
+        }
+      },
+      'readonly1': {
+        'ENGINE':   'django.db.backends.mysql',
+        'NAME':     'readrboard',
+        'USER':     'root',
+        'PASSWORD': '',
+        'HOST':     'localhost',
+        'PORT':     '3306',
+        'OPTIONS': {
+            "init_command": "SET storage_engine=INNODB",
+        }
+      },
+      'readonly2': {
+        'ENGINE':   'django.db.backends.mysql',
+        'NAME':     'readrboard',
+        'USER':     'root',
+        'PASSWORD': '',
+        'HOST':     'localhost',
+        'PORT':     '3306',
+        'OPTIONS': {
+            "init_command": "SET storage_engine=INNODB",
+        }
+      }
+"""   
       
     }
 
@@ -268,13 +303,13 @@ EMAIL_TEMPLATE_DIR = RB_SITE_ROOT + "/rb/email_templates"
 if DEBUG:
     EMAIL_USE_TLS = True
     EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_USER = 'accounts@readrboard.com'
+    EMAIL_HOST_USER = 'hello-dev@readrboard.com'
     EMAIL_HOST_PASSWORD = 'readr4acc0unts'
     EMAIL_PORT = 587
 else:
     EMAIL_USE_TLS = True
     EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_USER = 'accounts@readrboard.com'
+    EMAIL_HOST_USER = 'hello@readrboard.com'
     EMAIL_HOST_PASSWORD = 'readr4acc0unts'
     EMAIL_PORT = 587
 
