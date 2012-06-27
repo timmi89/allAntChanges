@@ -593,7 +593,10 @@ $.each( interactions.pages, function(idx, interaction) {
 });
 
 $.each( metoos, function(interaction_id, count) {
-  $('#card_'+interaction_id).find('div.added_by').append('<span style="margin-left:5px;">and '+count+' more</span>');
+  $('#card_'+interaction_id).find('div.added_by').append('<span class="metoos" style="margin-left:5px;">and '+count+' more</span>')//chain
+  .click( function() {
+    RB.follow.agreed(interaction_id);
+  } );
 });
 
 
