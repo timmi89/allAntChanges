@@ -675,6 +675,9 @@ function getContentDimsStyle(dims){
     var CARDWIDTH = 300;
     var minHeight = Math.round((height/width)*CARDWIDTH);
 
+    minHeight -= 3;
+    //quick fix for now to make the styles look better
+
     return 'style=" min-height:'+minHeight+'px; "';
 }
 
