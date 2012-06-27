@@ -86,8 +86,9 @@ font-size:3em; /* 48 / 16 = 3 */
 line-height:1.2; }
 
 h2 { 
-font-size:2em; /* 36 / 16 = 2 */
-line-height:1.2; }
+  font-size: 1.5em;
+  line-height: 1.2;
+  margin-bottom: 10px;
 
 h3 { 
 font-size:1.5em; /* 24 / 16 = 1.5 */
@@ -725,7 +726,8 @@ section[role="main"] div.card.pag_container div.meta div.date{
 section[role="main"] div.meta div.favicon { position: absolute; bottom: 0; left: 4px;}
 
 
-section[role="main"] div.card div.added_by      { padding:5px; font-size:11px; text-align:left; float:right;}
+section[role="main"] div.card div.added_by              { padding:5px; font-size:11px; text-align:left; float:right;}
+section[role="main"] div.card div.added_by span.metoos:hover  { text-decoration:underline; cursor:pointer; }
 section[role="main"] div.card.pag.heightAdjusted div.added_by {
     width: 100%; 
     bottom: 0 !important;
@@ -932,10 +934,11 @@ section[role="complementary"] #user_data label {
 #sidebar ul[role="filters"] li.active   {xxfont-weight:bold; color:#008be4; border:1px solid #bababa; border-left:0; border-right:0;}
 #sidebar #follow_info { position:absolute; right:10px; top:10px; }
 #sidebar #follow_info strong { font-size:16px; }
-.follow_list h2       { font-size:24px;font-family:Helvetica, 'HelveticaRegular',Arial;font-weight:bold; }
-.follow_list li       { padding:2px; }
-.follow_list li:hover { background:#eee; }
-.follow_list li div.follow_type       { float:right;font-size:10px;color:#999;font-style:italic; }
+.fancy_user_list h2       { font-size:24px;font-family:Helvetica, 'HelveticaRegular',Arial;font-weight:bold; }
+.fancy_user_list li       { padding:2px; margin-bottom:5px; }
+.fancy_user_list li:hover { background:#eee; }
+.fancy_user_list li div.follow_type       { float:right;font-size:10px;color:#999;font-style:italic; }
+.fancy_user_list li a img  { max-width:40px; }
 #sidebar #which_content { position:absolute; left:10px; top:10px; }
 
 /*#sidebar #user_data h3 {xxfont-size:30px; font-weight: bold; xxpadding-bottom:10px; xxpadding-left:10px}
