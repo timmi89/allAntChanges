@@ -280,6 +280,8 @@ class Content(DateAwareModel):
     kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='pag')
     location = models.CharField(max_length=255, blank=True, null=True)
     body = models.TextField()
+    height =  models.IntegerField(default = 0, null=True)
+    width =  models.IntegerField(default = 0, null=True)
     #hash = models.CharField(max_length=32, unique=True, db_index=True)
     
     def __unicode__(self):

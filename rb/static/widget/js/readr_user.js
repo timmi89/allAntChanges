@@ -36,7 +36,6 @@ function getWindowProps(options){
     var t = (window.screen.height/2)-(h/2);
     return 'menubar=1,resizable=1,scrollbars=yes,width='+w+',height='+h+',top='+t+',left='+l;
 };
-
 //Do we expect this do work, because it won't - it just redeclares it below.
 var RDRAuth = RDRAuth ? RDRAuth : {};
 

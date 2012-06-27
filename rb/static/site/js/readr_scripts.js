@@ -293,7 +293,7 @@ RB = {
                         $ul = $('<ul/>');
                     $.each( response.data.paginated_follows, function(idx, following) {
                         if ( typeof following.social_usr != "undefined" ) {
-                            $ul.append('<li><div class="follow_type">Person</div><a href="/user/'+following.social_usr.user+'/"><img style="margin-bottom:-15px;" src="'+following.social_usr.img_url+'" /> '+following.social_usr.full_name+'</a></li>');
+                            $ul.append('<li><div class="follow_type">Person</div><a href="/user/'+following.social_usr.user+'/"><img style="margin-bottom:-7px;" src="'+following.social_usr.img_url+'" /> '+following.social_usr.full_name+'</a></li>');
                         } else if ( typeof following.grp != "undefined" ) {
                             $ul.append('<li><div class="follow_type">Website</div><a href="/group/'+following.grp.short_name+'/">'+following.grp.short_name+'</a></li>');
                         }
@@ -341,12 +341,56 @@ RB = {
                     var $follower_html = $('<div><h2>Following '+$('#avatar h2').text().trim()+':</h2></div>'),
                         $ul = $('<ul/>');
                     $.each( response.data.paginated_follows, function(idx, following) {
-                        $ul.append('<li><a href="/user/'+following.social_usr.user+'/"><img style="margin-bottom:-15px;" src="'+following.social_usr.img_url+'" /> '+following.social_usr.full_name+'</a></li>');
+                        $ul.append('<li><a href="/user/'+following.social_usr.user+'/"><img style="margin-bottom:-7px;" src="'+following.social_usr.img_url+'" /> '+following.social_usr.full_name+'</a></li>');
                     });
                     $('#follower_list').html( $follower_html.append($ul) );
                 }
             });
-        }
+        },
+        agreed : function(parent_id) {
+            // RB.follow.agreed
+            // who agreed with this reaction?
+            var data = {
+                parent_id:parseInt(parent_id)
+                // page_num:(page_num)?page_num:1,
+                // types:["usr","grp","pag"]
+            };
+
+            $.ajax({
+                beforeSend: function( xhr ) {
+                    xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
+                },
+                url: "/api/plusones/",
+                type: "get",
+                contentType:"application/x-www-form-urlencoded",
+                dataType: "json",
+                data: { json: $.toJSON(data) },
+                success: function(response) {
+                    var $agreeing_users = $('<div><h2>These readers had this reaction:</h2></div>'),
+                        $ul = $('<ul class="fancy_user_list"/>');
+                    $.each( response.data, function(idx, user) {
+                        if ( user.social_user.full_name != "undefined" ) {
+                            $ul.append('<li><a href="/user/'+user.id+'/"><img style="margin-bottom:-7px;" src="'+user.social_user.img_url+'" /> '+user.social_user.full_name+'</a></li>');
+                        // } else if ( typeof following.grp != "undefined" ) {
+                            // $ul.append('<li><div class="follow_type">Website</div><a href="/group/'+following.grp.short_name+'/">'+following.grp.short_name+'</a></li>');
+                        }
+                    });
+                    $agreeing_users.append( $ul );
+
+                    $.fancybox($agreeing_users ,{
+                      wrapCSS    : 'fancybox-custom',
+                      helpers : {
+                        overlay : {
+                          css : {
+                            'background-color' : '#eee'
+                          }
+                        }
+                      },
+                    });
+                    // $('#agreeing_list').html( $agreeing_users.append($ul) );
+                }
+            });
+        },
     },
     interactions : {
         me_too : function(parent_id) {

@@ -139,7 +139,7 @@ class ModerationHandler(AnonymousBaseHandler):
         ).values_list('group_id', flat=True)
         
         if interaction.page.site.group.id in group_ids:
-            interaction.approved = False
+            interaction.approved = not interaction.approved
             interaction.save()
             #return HttpResponseRedirect(request.path)
         else:
@@ -239,16 +239,21 @@ class TagHandler(InteractionHandler):
         container_kind = data['container_kind']
         content_node_data = data['content_node_data']
         content_type = dict(((v,k) for k,v in Content.CONTENT_TYPES))[ content_node_data['kind'] ]
-        parent_id = data.get('parent_id', None)
         
         #optional
         tag_id = data['tag'].get('id', None)
         location = content_node_data.get('location', None)
+        parent_id = data['tag'].get('parent_id', None)
 
         if content_node_data.get('id'):
             content = Content.objects.get(id = content_node_data['id'])
         else:
-            content = Content.objects.get_or_create(kind=content_type, body=content_node_data['body'], location=location)[0]
+            content = Content.objects.get_or_create(kind=content_type, 
+                                                    body=content_node_data['body'], 
+                                                    location=location, 
+                                                    height = int(content_node_data.get('height', 0)), 
+                                                    width = int(content_node_data.get('width', 0))
+                                                    )[0]
 
         inode = createInteractionNode(tag_id, tag_body, group)
 
@@ -887,4 +892,30 @@ class EntitySearchHandler(AnonymousBaseHandler):
                 entities['groups'].append(group_dict)
                 
         return entities
+        
+
+class PlusOneUserHandler(AnonymousBaseHandler):
+    allowed_methods = ('GET')
+    
+    @status_response
+    @json_data
+    def read(self, request, data):
+        cookie_user = checkCookieToken(request)
+        if cookie_user is None:
+            #Not logged in?
+            pass
+        
+        parent_id = data['parent_id']
+        
+        parent_interaction = Interaction.objects.get(id=parent_id)
+        child_interactions = Interaction.objects.filter(parent = parent_interaction)
+        users = []
+        
+        for child in child_interactions:
+            user_dict = model_to_dict(child.user, exclude=['user_permissions', 'last_login', 'date_joined', 'email', 'is_superuser', 'is_staff', 'password', 'groups'])
+            user_dict['social_user'] = model_to_dict(child.user.social_user, exclude=['notification_email_option', 'gender', 'provider', 'bio', 'hometown', 'user',
+                                                                                      'follow_email_option'])
+            users.append(user_dict)
+                
+        return users
         
