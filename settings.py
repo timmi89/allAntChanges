@@ -163,42 +163,6 @@ else:
             "init_command": "SET storage_engine=INNODB",
         }
       }
-"""
-    DATABASES = {
-      'default': {
-        'ENGINE':   'django.db.backends.mysql',
-        'NAME':     'readrboard',
-        'USER':     'root',
-        'PASSWORD': '',
-        'HOST':     'localhost',
-        'PORT':     '3306',
-        'OPTIONS': {
-            "init_command": "SET storage_engine=INNODB",
-        }
-      },
-      'readonly1': {
-        'ENGINE':   'django.db.backends.mysql',
-        'NAME':     'readrboard',
-        'USER':     'root',
-        'PASSWORD': '',
-        'HOST':     'localhost',
-        'PORT':     '3306',
-        'OPTIONS': {
-            "init_command": "SET storage_engine=INNODB",
-        }
-      },
-      'readonly2': {
-        'ENGINE':   'django.db.backends.mysql',
-        'NAME':     'readrboard',
-        'USER':     'root',
-        'PASSWORD': '',
-        'HOST':     'localhost',
-        'PORT':     '3306',
-        'OPTIONS': {
-            "init_command": "SET storage_engine=INNODB",
-        }
-      }
-"""   
       
     }
 
