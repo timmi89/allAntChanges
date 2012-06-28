@@ -497,6 +497,18 @@ page-break-after:avoid; }
         clear: both !important;
     }
 
+    header[role="banner"] {
+      max-width:320px !important;
+    }
+    header[role="banner"] h1 {
+      display:block;
+      float:right;
+      width:150px;
+    }
+    #fixedBar {
+      display:none !important;
+    }
+
 }
 /* ROOT */
 /* HEADINGS */
