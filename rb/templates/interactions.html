@@ -106,8 +106,8 @@
 {% endif %}
 {% if not singleton %}
 <section id="headlines" style="margin-bottom:10px;">
-  <h1 class="contentCardsHeader" style="text-align:center;display:inline-block;background:#ddd;padding:5px 0;font-size:21px;font-family:Georgia,serif;text-shadow: 0 1px 0 #fff;visibility:hidden;">Reactions to Content</h1>
-  <h2 class="ArticleCardsHeader" style="text-align:center;display:inline-block;background:#ddd;padding:5px 0;font-size:21px;font-family:Georgia,serif;text-shadow: 0 1px 0 #fff;visibility:hidden;width:250px;margin-left:6px;">Reactions to Articles</h2>
+  <h1 style="text-align:center;display:inline-block;background:#f7f7f7;color:#bcbcbc;padding:8px 0 5px;font-size:18px;font-weight:bold;font-family:Helvetica,Arial,sans-serif;visibility:hidden;">Reactions to Content</h1>
+  <h2 style="text-align:center;display:inline-block;background:#f7f7f7;color:#bcbcbc;padding:8px 0 5px;font-size:18px;font-weight:bold;font-family:Helvetica,Arial,sans-serif;visibility:hidden;width:250px;margin-left:6px;">Reactions to Articles</h2>
 </section>
 <section id="pages"></section>
 {% endif %}
@@ -593,7 +593,7 @@ $.each( interactions.pages, function(idx, interaction) {
 });
 
 $.each( metoos, function(interaction_id, count) {
-  $('#card_'+interaction_id).find('div.added_by').append('<span class="metoos" style="margin-left:5px;">and '+count+' more</span>')//chain
+  $('#card_'+interaction_id).find('div.added_by').append('<span class="metoos" style="">and '+count+' more</span>')//chain
   .click( function() {
     RB.follow.agreed(interaction_id);
   } );

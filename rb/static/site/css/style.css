@@ -497,6 +497,18 @@ page-break-after:avoid; }
         clear: both !important;
     }
 
+    header[role="banner"] {
+      max-width:320px !important;
+    }
+    header[role="banner"] h1 {
+      display:block;
+      float:right;
+      width:150px;
+    }
+    #fixedBar {
+      display:none !important;
+    }
+
 }
 /* ROOT */
 /* HEADINGS */
@@ -654,18 +666,24 @@ input[type="color"]
   color:#26465A;
 }
 
+.theSpitch {
+  margin-bottom:10px;
+}
 .callToActionButtons{
-    margin: 0 auto;
-    width: 445px;
-    padding: 15px 0;
+    /*margin: 0 auto;
+    width: 550px;
+    padding: 15px 0;*/
+    display:inline-block;
 }
 .callToActionButtons a{
     font-weight:bold;
     font-size:18px;
-    margin-top:5px;
+    /*margin-top:5px;*/
 }
 .callToActionButtons .left{
     float: left;
+    margin-right:30px;
+    margin-left:20px;
 }
 .callToActionButtons .right{
     float: right;
@@ -687,7 +705,7 @@ section[role="main"] div.card.hover {
     filter:alpha(opacity=1);
 }
 
-section[role="main"] div.card header      { padding:10px 5px; background-color:rgba(255,255,255,0.85); position:relative;z-index:3;}
+section[role="main"] div.card header      { padding:10px 0 5px 5px; background-color:rgba(255,255,255,0.85); position:relative;z-index:3;}
 section[role="main"] div.card header h1     { font-size:20px; font-weight:bold; margin:0 5px; overflow: hidden;}
 section[role="main"] div.card header h1 a   { color:#222; }
 
@@ -763,14 +781,15 @@ section[role="main"] div.card.pag_container div.meta div.date{
 section[role="main"] div.meta div.favicon { position: absolute; bottom: 0; left: 4px;}
 
 
-section[role="main"] div.card div.added_by              { padding:5px; font-size:11px; text-align:left; float:right;}
+section[role="main"] div.card div.added_by              { padding:5px 5px 3px 5px; font-size:11px; text-align:left; float:right; margin-top:-10px; background:#f0f0f0;}
+section[role="main"] div.card div.added_by span.metoos        { display: inline-block; }
 section[role="main"] div.card div.added_by span.metoos:hover  { text-decoration:underline; cursor:pointer; }
 section[role="main"] div.card.pag.heightAdjusted div.added_by {
     width: 100%; 
     bottom: 0 !important;
     position: absolute !important;
 }
-section[role="main"] div.card div.added_by img.user_avatar  { display: inline-block; margin-bottom:-5px; width:20px; }
+section[role="main"] div.card div.added_by img.user_avatar  { display: inline-block; margin-bottom:0px; width:27px; }
 section[role="main"] div.card div.meta img.me_too  { width:25px;height:24px;background:url(../images/me_too.png) -25px 0px no-repeat;display:block;float:right;cursor:pointer;margin-top:-2px;}
 section[role="main"] div.card div.meta img.me_too:hover   { background-position: 0px 0px; }
 section[role="main"] div.card div.meta div.me_too_outcome { display:none;border-top:1px solid #aaa;padding:3px;margin-top:6px;}
