@@ -3465,6 +3465,17 @@ function readrBoard($R){
                     });
                 },
                 utils: {
+                    getMediaDims: function($mediaNode){
+                        //RDR.actions.content_nodes.utils.getMediaDims:
+
+                        var h = $mediaNode.height();
+                        var w = $mediaNode.width();
+
+                        return ( !h || !w ) ? {} : {
+                            height: h,
+                            width: w
+                        };
+                    },
                     makeDictSortedByTag: function(content_nodes){
                         //RDR.actions.content_nodes.utils.makeDictSortedByTag:
 
@@ -3862,13 +3873,16 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             if(kind == 'img' || kind == 'media' || kind == 'med'){
                                 var body = $container[0].src;
-
                                 content_node_data = {
                                     'container': rindow.data('container'),
                                     'body': body,
                                     'kind':kind,
                                     'hash':hash
                                 };
+
+                                //add dims
+                                var mediaDims = RDR.actions.content_nodes.utils.getMediaDims($container)
+                                $.extend(content_node_data, mediaDims);
 
                             }else{
                                 //is text

@@ -130,6 +130,8 @@ if ( window.location.href.indexOf('/user/') != -1 ) {
                   "date"  :   "{{ interaction.created|date:"M d, Y"|escapejs }}",
                   "interaction_node_body" :   "{% if interaction.kind = 'tag' or interaction.kind = 'bkm' %}{{interaction.interaction_node.body|escapejs }}{% else %}{{ interaction.human_kind|escapejs }}{% endif %}",
                   "content_body"          :   '{{ interaction.content.body|escapejs }}',
+                  "content_height"          :   {{ interaction.content.height }},
+                  "content_width"          :   {{ interaction.content.width }},
                   "content_id"          :   '{{ interaction.content.id }}',
                   "page_title"            :   "{{ page.grouper.title|escapejs }}",
                   "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url|escapejs }}{% else %}{{ interaction.page.url|escapejs }}{% endif %}",
@@ -330,16 +332,31 @@ function writeContentCard( interaction, showBlocked ) {
     var $content = $('<div class="content"/>');
     
     if ( interaction.kind == "img" ) {
-      $content.append('<div class="content_body"><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><img src="'+interaction.content_body+'"></a></div><div class="comments" />');
+        
+        //apply this to the content_body to serve as a spacer.
+        var styleString = getContentDimsStyle({
+            height: interaction.content_height,
+            width: interaction.content_width
+        });
+
+        $content.append(
+            '<div class="content_body" '+styleString+'><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><img src="'+interaction.content_body+'"></a></div><div class="comments" />');
     } else if ( interaction.kind == "med" ) {
       
+        //apply this to the content_body to serve as a spacer.
+        var styleString = getContentDimsStyle({
+            height: interaction.content_height,
+            width: interaction.content_width
+        });
+
       var videoUrl = interaction.content_body;
       //if we want this later...
       // var videoUrl = RB.fixUrlParams(interaction.content_body, {
       //   wmode:"transparent"
       // });
 
-      $content.append('<div class="content_body"><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><iframe width="300" height="175" frameborder="0" src="'+videoUrl+'"></iframe></a></div><div class="comments" />');
+      $content.append(
+        '<div class="content_body" '+styleString+'><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><iframe width="300" height="175" frameborder="0" src="'+videoUrl+'"></iframe></a></div><div class="comments" />');
     } else if ( interaction.kind == "txt" ) {
       $content.append('<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><div class="content_body"><span>'+interaction.content_body+'</span></div></a><div class="comments" />');
     }
@@ -576,7 +593,7 @@ $.each( interactions.pages, function(idx, interaction) {
 });
 
 $.each( metoos, function(interaction_id, count) {
-  $('#card_'+interaction_id).find('div.added_by').append('<span class="metoos" style="margin-left:5px;">and '+count+' more</span>')//chain
+  $('#card_'+interaction_id).find('div.added_by').append('<span class="metoos" style="">and '+count+' more</span>')//chain
   .click( function() {
     RB.follow.agreed(interaction_id);
   } );
@@ -641,6 +658,27 @@ function cardReset() {
     $('#headlines h1').css('visibility','visible').css('margin-left', (extraMargin/2)+'px');
     $('#headlines h2').css('visibility','visible');
   });
+}
+
+function getContentDimsStyle(dims){
+    
+    //these will be 0 by default from the DB.
+    var height = dims.height;
+    var width = dims.width;
+
+    if(!height || !width){
+        return "";
+    }
+    //else
+
+    //this must match our .card{width:300px} css
+    var CARDWIDTH = 300;
+    var minHeight = Math.round((height/width)*CARDWIDTH);
+
+    minHeight -= 3;
+    //quick fix for now to make the styles look better
+
+    return 'style=" min-height:'+minHeight+'px; "';
 }
 
 $(document).ready(function(){
