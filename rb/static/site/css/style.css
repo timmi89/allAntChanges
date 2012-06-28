@@ -449,7 +449,7 @@ page-break-after:avoid; }
 }/*/mediaquery*/
 
 /*480px __________________________________________________________________________________________________________ */
-@media screen and (max-width:600px) {
+@media screen and (max-device-width:600px) {
     header[role="banner"] #site_search{ 
         display:none !important; 
     }

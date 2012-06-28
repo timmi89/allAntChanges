@@ -166,7 +166,7 @@ if ( window.location.href.indexOf('/user/') != -1 ) {
                       "moderator"         :   {% if cookie_user and ga_ids and comment.page.site.group.id in ga_ids %}true{% else %}false{% endif %}
                       }{% if not forloop.last %},{% endif %}
                   {% endfor %}
-                  ],
+                  ]
             };
             if ( interaction.user_name == "" ) {
               interaction.user_name = "Unregistered User";
@@ -406,7 +406,7 @@ function writeContentCard( interaction, showBlocked ) {
                 'background-color' : '#eee'
               }
             }
-          },
+          }
         });
         $obj.find('input').focus().keyup( function(event) {
           if (event.keyCode == '13') { //en
