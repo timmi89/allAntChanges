@@ -898,7 +898,7 @@ section[role="main"] div.card div.comment_container .comment .quote.close {    d
   filter: alpha(opacity=80);
 }
 .tooltip.top {
-  margin-top: -2px;
+  margin-top: -15px;
 }
 .tooltip.right {
   margin-left: 2px;
