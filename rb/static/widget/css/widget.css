@@ -783,6 +783,7 @@ div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count img.rdr_ui_arrow   {
   margin:0 -5px -9px 0px !important;
   padding:0 !important;
   float:none !important;
+  max-width:16px !important;
 }
 
 div.rdr.rdr-summary a.rdr_tag span.rdr_tag_count    {
