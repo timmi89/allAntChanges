@@ -746,6 +746,7 @@ section[role="main"] div.card.pag div.meta div.title a  { font-weight:normal; fo
 section[role="main"] div.card.pag div.metaRight { float: none; overflow:hidden; width:auto;}
 section[role="main"] div.card.pag div.date        { float:none; position:static; max-width:140px;}
 section[role="main"] div.card.pag div.added_by {margin-top:-20px;position:relative; z-index:100;}
+
 section[role="main"] div.card.pag div.block_content   { top:-32px; left:5px;}
 
 /*section[role="main"] div.card header h1:before {
@@ -805,7 +806,7 @@ section[role="main"] div.card.pag_container div.meta div.date{
 section[role="main"] div.meta div.favicon { position: absolute; bottom: 0; left: 4px;}
 
 
-section[role="main"] div.card div.added_by                    { padding:5px 5px 3px 5px; font-size:11px; text-align:left; float:right; margin-top:-10px; background:#f0f0f0;}
+section[role="main"] div.card div.added_by                    { padding:5px 5px 3px 5px; font-size:11px; text-align:left; float:right; margin-top:-10px; background:#f0f0f0; position: relative; min-height: 30px;}
 section[role="main"] div.card div.added_by a                  { margin-right: 5px; }
 section[role="main"] div.card div.added_by span.metoos        { display: block; float: right; margin-top: 9px; }
 section[role="main"] div.card div.added_by span.metoos:hover  { text-decoration:underline; cursor:pointer; }
@@ -814,6 +815,17 @@ section[role="main"] div.card.pag.heightAdjusted div.added_by {
     bottom: 0 !important;
     position: absolute !important;
 }
+section[role="main"] div.added_by .arrowLeft{
+    width: 0; 
+    height: 0;
+    border-top: 19px solid transparent;
+    border-bottom: 19px solid transparent;    
+    border-right:10px solid #F0F0F0;
+    position: absolute;
+    top: 0;
+    left: -10px;
+}
+
 section[role="main"] div.card div.added_by img.user_avatar  { display: inline-block; margin-bottom:0px; width:27px; }
 section[role="main"] div.card div.meta img.me_too  { width:25px;height:24px;background:url(../images/me_too.png) -25px 0px no-repeat;display:block;float:right;cursor:pointer;margin-top:-2px;}
 section[role="main"] div.card div.meta img.me_too:hover   { background-position: 0px 0px; }
