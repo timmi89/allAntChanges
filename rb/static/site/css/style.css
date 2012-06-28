@@ -463,20 +463,40 @@ page-break-after:avoid; }
         margin:0 0 10px 20px;
     }
 
+    body {
+        width:320px !important;
+        margin: 0 !important;
+    }
+    header[role="banner"] a{
+        float: right;
+        width: 150px;
+    }
+
+    #splashAnnounce{
+        width: 320px !important;
+    }
     section#content{
-        min-width: 310px !important;
+        min-width: 300px !important;
+        margin-left: 0 !important;
     }
     section#pages{
         display: none !important;
+    }
+    #cards{
+        padding: 0 !important;
+        width: 300px !important;
+        display: inline-block !important;
+        margin-left: 10px !important;
     }
     #headlines{
         text-align: center !important;
     }
     .contentCardsHeader{
         display: block !important;
+        margin: 0 auto !important;
     }
 
-    .ArticleCardsHeader{
+    .articleCardsHeader{
         display: none !important;
     }
 
@@ -495,6 +515,10 @@ page-break-after:avoid; }
     .callToActionButtons a{
         float: none !important;
         clear: both !important;
+    }
+    
+    #login-options{
+        min-width: 170px; 
     }
 
     header[role="banner"] {
