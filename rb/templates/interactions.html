@@ -10,12 +10,14 @@
   width:610px;
   position:relative;
   visibility:hidden;
+  /*to account for top margin of cards*/
+  top: -10px;
 }
 #content .card {
   float:left;
   width:300px;
   padding:0 0 10px 0;
-  margin:0 0 10px 0;
+  margin:10px 0;
   background:#fff;
   border:1px solid #ccc;
   border-top:none;
@@ -677,7 +679,7 @@ function getContentDimsStyle(dims){
     var CARDWIDTH = 300;
     var minHeight = Math.round((height/width)*CARDWIDTH);
 
-    minHeight -= 3;
+    minHeight += 3;
     //quick fix for now to make the styles look better
 
     return 'style=" min-height:'+minHeight+'px; "';
