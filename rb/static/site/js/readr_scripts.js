@@ -385,7 +385,7 @@ RB = {
                             'background-color' : '#eee'
                           }
                         }
-                      },
+                      }
                     });
                     // $('#agreeing_list').html( $agreeing_users.append($ul) );
                 }
