@@ -10,12 +10,14 @@
   width:610px;
   position:relative;
   visibility:hidden;
+  /*to account for top margin of cards*/
+  top: -10px;
 }
 #content .card {
   float:left;
   width:300px;
   padding:0 0 10px 0;
-  margin:0 0 10px 0;
+  margin:10px 0;
   background:#fff;
   border:1px solid #ccc;
   border-top:none;
@@ -166,7 +168,7 @@ if ( window.location.href.indexOf('/user/') != -1 ) {
                       "moderator"         :   {% if cookie_user and ga_ids and comment.page.site.group.id in ga_ids %}true{% else %}false{% endif %}
                       }{% if not forloop.last %},{% endif %}
                   {% endfor %}
-                  ],
+                  ]
             };
             if ( interaction.user_name == "" ) {
               interaction.user_name = "Unregistered User";
@@ -406,7 +408,7 @@ function writeContentCard( interaction, showBlocked ) {
                 'background-color' : '#eee'
               }
             }
-          },
+          }
         });
         $obj.find('input').focus().keyup( function(event) {
           if (event.keyCode == '13') { //en
@@ -677,7 +679,7 @@ function getContentDimsStyle(dims){
     var CARDWIDTH = 300;
     var minHeight = Math.round((height/width)*CARDWIDTH);
 
-    minHeight -= 3;
+    minHeight += 3;
     //quick fix for now to make the styles look better
 
     return 'style=" min-height:'+minHeight+'px; "';
