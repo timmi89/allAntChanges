@@ -6586,7 +6586,7 @@ function $RFunctions($R){
                     //so this would read $summary_widget_parent.append($summary_widget);
                     $summary_widget_parent[page.jqFunc]($summary_widget);
 
-                    var placement = ($summary_widget_parent.hasClass('defaultSummaryBar')) ? "bottom":"top";
+                    var placement = ($summary_widget_parent.hasClass('defaultSummaryBar')) ? "top":"top";
                     $summary_widget.find('img.rdr_tooltip_this').tooltip({placement:placement});
 
                     var total_interactions = 0;

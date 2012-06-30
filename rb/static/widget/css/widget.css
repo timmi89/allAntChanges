@@ -969,7 +969,7 @@ div#rdr-page-summary.defaultSummaryBar{
     z-index: 95000 !important;
 }
 div#rdr-page-summary.defaultSummaryBar div.rdr.rdr-summary {
-  margin-bottom:-1px;
+  margin-bottom:-1px !important;
 }
 div#rdr-page-summary.defaultSummaryBar .rdr-summary{
   -moz-box-shadow:0px 1px 4px #ccc !important;
