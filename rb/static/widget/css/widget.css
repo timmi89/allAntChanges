@@ -42,7 +42,6 @@ body.rdr_heightAdjustment #rdr_sandbox {
     border:1px solid #c9c9c9 !important; 
     background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, rgb(236,236,236)), color-stop(0.39, rgb(255,255,255)) ) !important;
     background-image: -moz-linear-gradient(center bottom , #ECECEC 0%, #fff 39%) !important;
-
     padding:0 !important;
     font:normal 12px Arial, sans-serif !important;
     position:relative !important;
@@ -538,11 +537,12 @@ div.rdr a.rdr_tag     {
     z-index:10001 !important;
 }
 div.rdr.rdr-summary a.rdr_tag {
-  background:#fff !important;
-  border-radius:0px !important;
-  color:#5e5e5e !important;
-  font-family:'Helvetica',Arial,sans-serif !important;
-  font-weight:bold !important;
+  background:none repeat scroll 0 0 transparent !important;
+    border-radius:0 0 0 0 !important;
+    box-shadow:none !important;
+    color:#5E5E5E !important;
+    font-family:'Helvetica',Arial,sans-serif !important;
+    font-weight:bold !important;
 }
 
 div#rdr_sandbox div.rdr_tag_details {
@@ -867,7 +867,9 @@ div.rdr.rdr-summary {
     text-indent:0 !important;
     position:relative !important;
 }
-
+div.rdr.rdr-summary.rdr_bookmarklet {
+  padding-bottom:0px !important
+}
 /*blunt attack for now*/
 div.rdr.rdr-summary * {
     font-size:12px !important; 
@@ -905,12 +907,18 @@ div.rdr.rdr-summary.rdr-combo-box table td div.rdr-twitter { margin: 1px 0 0 4px
 
 /*override for our default bookmarklet version of the summary bar.  Leave room for the login on the right */
 div#rdr-page-summary.defaultSummaryBar div.rdr.rdr-summary table{
-    margin: 4px 200px 0 10px  !important;
+    margin: 0px 200px 0 0px  !important;
 }
 
+div.rdr.rdr-summary td.rdr_rb_logo {
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, rgb(236,236,236)), color-stop(0.39, rgb(255,255,255)) ) !important;
+  background-image: -moz-linear-gradient(center bottom , #ECECEC 0%, #fff 39%) !important;
+  border-right: 1px solid #CCCCCC !important;
+  padding-right: 5px !important;
+}
 div.rdr.rdr-summary div.rdr-this-is-readrboard {
     text-align:center !important;
-    padding:6px 2px 0 !important;
+    padding:7px 1px 0 5px !important;
 }
 div.rdr.rdr-summary div.rdr-this-is-readrboard img {
     margin:0 !important;
@@ -928,14 +936,31 @@ div.rdr.rdr-summary div.rdr-sum-headline {
     line-height: 32px !important;
     max-height:64px !important;
     overflow:hidden !important;
+    float:left !important;
 }
-div.rdr.rdr-summary div.rdr-sum-headline div {
-    line-height: 28px !important;
-}
+/*div.rdr.rdr-summary div.rdr-sum-headline div {
+    line-height: 24px !important;
+}*/
 
 div.rdr.rdr-summary div.rdr-sum-headline div.rdr-call-to-action {
     display: block !important;
     margin: 4px 0px -4px !important;
+}
+div.rdr.rdr-summary div.rdr-sum-reactions {
+  /*margin-top:5px !important;*/
+}
+div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactions_label {
+  font-style:normal !important;
+  font-weight:bold !important;
+  color:#888 !important;
+  font-size:11px !important;
+  margin-right:4px !important;
+  margin-left:4px !important;
+  padding-right:2px !important;
+}
+div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactions_label:hover {
+  text-decoration:none !important;
+  background:none !important;
 }
 div.rdr.rdr-summary div.rdr-top-tags {
     padding:8px 5px 0px 8px !important;
@@ -950,6 +975,48 @@ div.rdr.rdr-summary div.rdr-top-tags span em {
     font-style:normal !important;
     color:#aaa !important;
 }
+div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle {
+  display:inline-block !important;
+  font-style:normal !important;
+  font-weight:bold !important;
+  color:#666 !important;
+  font-size:11px !important;
+  border-left:1px solid #ccc !important;
+  padding-left:5px !important;
+}
+div.rdr.rdr-summary div.rdr-sum-reactions a {
+  height:22px !important;
+  display:inline-block !important;
+  border-top:0 none !important;
+  padding-top:8px !important;
+  margin-right:-1px !important;
+  padding-right:10px !important;
+}
+div.rdr.rdr-summary div.rdr-sum-reactions a:hover {
+  text-decoration:none !important;
+  background:#d1d1d1 !important;
+}
+div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle.rdr_noReactions {
+  border-left:0 none !important;
+  margin-left:-15px !important;
+  padding-left:0 !important;
+}
+div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_logo {
+  background:url("../images/readr_icons.png") no-repeat scroll 0 1px transparent !important;
+  margin-bottom:-2px !important;
+}
+div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle.rdr_noReactions img.rdr_logo {
+  background:none !important;
+}
+div.rdr.rdr-summary.rdr_bookmarklet div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
+  background:url("../images/summary_box_arrow.png") no-repeat scroll -1px 0 transparent !important;
+  height:8px;
+  width:10px;
+}
+div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
+  background-position:-1px -8px !important;
+}
+/*
 div.rdr.rdr-summary a.rdr-top-user {
     display:inline !important;
     margin:0 0 0 -6px !important;
@@ -961,7 +1028,7 @@ div.rdr.rdr-summary a.rdr-top-user img {
     margin:0 0 -6px 0 !important;
     padding:0 !important;
 }
-
+*/
 div#rdr-page-summary.defaultSummaryBar{
     position: fixed !important;
     bottom:0 !important;
