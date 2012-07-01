@@ -563,8 +563,6 @@ def admin_request(request, short_name=None):
 
 def expander(request, short):
     link_id = base62_decode(short)
-    print 'short=', short
-    print 'link_id = ', link_id
     # Retrieve Link object
     try:
         link = Link.objects.get(id=link_id)
@@ -577,10 +575,14 @@ def expander(request, short):
 
     # Retrieve related objects
     interaction = Interaction.objects.get(id=link.interaction.id)
-    page = Page.objects.get(id=interaction.page.id)
 
-    # Create redirect response
-    url = page.url;
+    if interaction.parent:
+        url = BASE_URL + '/interaction/' + str(interaction.parent.id)
+    else:
+        page = Page.objects.get(id=interaction.page.id)
+
+        # Create redirect response
+        url = page.url;
     redirect_response = HttpResponseRedirect(unicode(url))
     
     # Setup cookie for redirect
