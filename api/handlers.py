@@ -13,7 +13,7 @@ from django.core.mail import EmailMessage
 from django.db.models import Q
 from chronos.jobs import *
 from threading import Thread
-
+from itertools import chain
 
 import logging
 logger = logging.getLogger('rb.standard')
@@ -321,6 +321,14 @@ class StreamResponseHandler(AnonymousBaseHandler):
                 parent = Interaction.objects.get(id = parent_id)
                 inode = createInteractionNode(None, tag_body, parent.page.site.group)
                 interaction = createInteraction(parent.page, parent.container, parent.content, owner, 'tag', inode, parent.page.site.group, None)
+                try:
+                    logger.info("INTERACTION: " + str(interaction))
+                    notification = AsynchAgreeNotification()
+                    #t = Thread(target=notification, kwargs={"interaction_id":interaction['interaction'].id,})
+                    t = Thread(target=notification, kwargs={"interaction_id":parent_id})
+                    t.start()
+                except Exception, e:
+                    logger.info("thread" +  str(e))
             except Interaction.DoesNotExist:
                 return {'message' : 'no such interaction for stream response'}
         return interaction
@@ -673,6 +681,16 @@ class SettingsHandler(AnonymousBaseHandler):
             groupblessedtag__group=group.id
         ).order_by('groupblessedtag__order')
         
+        owner = checkCookieToken(request)
+        if owner is not None:
+            try:
+                social_user = SocialUser.objects.get(user = owner)
+                user_tags = InteractionNode.objects.filter(userdefaulttag__social_user = social_user)
+                blessed_tags = list(chain(blessed_tags, user_tags))
+                logger.info(blessed_tags)
+            except SocialUser.DoesNotExist:
+                logger.info("User does not have social account")
+                
         settings_dict['blessed_tags'] = blessed_tags
         
         return settings_dict

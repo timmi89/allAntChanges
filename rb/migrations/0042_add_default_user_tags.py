@@ -8,26 +8,20 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Removing unique constraint on 'Page', fields ['url', 'canonical_url']
-        #db.delete_unique('rb_page', ['url', 'canonical_url'])
-
-        # Changing field 'SocialAuth.auth_token'
-        db.alter_column('rb_socialauth', 'auth_token', self.gf('django.db.models.fields.CharField')(max_length=150))
-
-        # Adding unique constraint on 'Page', fields ['url', 'site', 'canonical_url']
-        #db.create_unique('rb_page', ['url', 'site_id', 'canonical_url'])
+        # Adding model 'UserDefaultTag'
+        db.create_table('rb_userdefaulttag', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('social_user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rb.SocialUser'])),
+            ('node', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rb.InteractionNode'])),
+            ('order', self.gf('django.db.models.fields.IntegerField')()),
+        ))
+        db.send_create_signal('rb', ['UserDefaultTag'])
 
 
     def backwards(self, orm):
         
-        # Removing unique constraint on 'Page', fields ['url', 'site', 'canonical_url']
-        db.delete_unique('rb_page', ['url', 'site_id', 'canonical_url'])
-
-        # Changing field 'SocialAuth.auth_token'
-        db.alter_column('rb_socialauth', 'auth_token', self.gf('django.db.models.fields.CharField')(max_length=103))
-
-        # Adding unique constraint on 'Page', fields ['url', 'canonical_url']
-        db.create_unique('rb_page', ['url', 'canonical_url'])
+        # Deleting model 'UserDefaultTag'
+        db.delete_table('rb_userdefaulttag')
 
 
     models = {
@@ -90,6 +84,16 @@ class Migration(SchemaMigration):
             'images': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'text': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
+        'rb.follow': {
+            'Meta': {'unique_together': "(('owner', 'type', 'follow_id'),)", 'object_name': 'Follow'},
+            'follow_id': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'group': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'followed_group'", 'null': 'True', 'to': "orm['rb.Group']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'owner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'follow_owner'", 'to': "orm['auth.User']"}),
+            'page': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'followed_page'", 'null': 'True', 'to': "orm['rb.Page']"}),
+            'type': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'followed_user'", 'null': 'True', 'to': "orm['auth.User']"})
+        },
         'rb.group': {
             'Meta': {'ordering': "['short_name']", 'object_name': 'Group'},
             'admins': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['rb.SocialUser']", 'through': "orm['rb.GroupAdmin']", 'symmetrical': 'False'}),
@@ -97,16 +101,20 @@ class Migration(SchemaMigration):
             'approved': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'blessed_tags': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['rb.InteractionNode']", 'through': "orm['rb.GroupBlessedTag']", 'symmetrical': 'False'}),
             'bookmark': ('django.db.models.fields.related.ForeignKey', [], {'default': '1', 'related_name': "'Bookmark Feature'", 'to': "orm['rb.Feature']"}),
+            'call_to_action': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '255', 'blank': 'True'}),
             'comment': ('django.db.models.fields.related.ForeignKey', [], {'default': '1', 'related_name': "'Comment Feature'", 'to': "orm['rb.Feature']"}),
             'custom_css': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'demo_group': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'img_blacklist': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'img_whitelist': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
+            'inline_func': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '25', 'blank': 'True'}),
+            'inline_selector': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '100', 'blank': 'True'}),
             'language': ('django.db.models.fields.CharField', [], {'default': "'en'", 'max_length': '25'}),
             'logo_url_lg': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'logo_url_med': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'logo_url_sm': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
+            'media_display_pref': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '25', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
             'no_readr': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'post_href_selector': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
@@ -192,7 +200,7 @@ class Migration(SchemaMigration):
         'rb.site': {
             'Meta': {'unique_together': "(('name', 'domain', 'group'),)", 'object_name': 'Site'},
             'css': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
-            'domain': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'domain': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100'}),
             'group': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.Group']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'include_selectors': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
@@ -212,18 +220,29 @@ class Migration(SchemaMigration):
             'social_user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'social_auth'", 'to': "orm['rb.SocialUser']"})
         },
         'rb.socialuser': {
-            'Meta': {'unique_together': "(('provider', 'uid'),)", 'object_name': 'SocialUser'},
+            'Meta': {'unique_together': "(('provider', 'uid', 'username'),)", 'object_name': 'SocialUser'},
+            'avatar': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'bio': ('django.db.models.fields.TextField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'default_tags': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['rb.InteractionNode']", 'through': "orm['rb.UserDefaultTag']", 'symmetrical': 'False'}),
+            'follow_email_option': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'full_name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'gender': ('django.db.models.fields.CharField', [], {'max_length': '1', 'null': 'True', 'blank': 'True'}),
             'hometown': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'img_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
+            'notification_email_option': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'private_profile': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'provider': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
             'uid': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'social_user'", 'unique': 'True', 'to': "orm['auth.User']"}),
-            'username': ('django.db.models.fields.CharField', [], {'max_length': '255', 'unique': 'True', 'null': 'True', 'blank': 'True'})
+            'username': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
+        },
+        'rb.userdefaulttag': {
+            'Meta': {'ordering': "['order']", 'object_name': 'UserDefaultTag'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'node': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.InteractionNode']"}),
+            'order': ('django.db.models.fields.IntegerField', [], {}),
+            'social_user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rb.SocialUser']"})
         }
     }
 

@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import random
 import json
 import re
+import time
 from exceptions import FBException, JSONException
 from readrboard.rb.profanity_filter import ProfanitiesFilter
 from urlparse import urlsplit, urlunsplit
@@ -266,6 +267,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             kind=kind,
             interaction_node=interaction_node,
             parent=parent,
+            rank = int(time.time()*1000),
             approved = False if group.requires_approval else True
         )
     except:

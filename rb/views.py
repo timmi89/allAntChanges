@@ -131,7 +131,8 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
         
     """ For interactions.html """
     interactions = Interaction.objects.all()
-
+    
+    interactions.order_by('-rank')
     # Search interaction node body and content body
     # for instances of the 's' query string parameter
     query_string = request.GET.get('s', None)

@@ -27,3 +27,6 @@ class InteractionNotification(DateAwareModel):
     
     class Meta:
         unique_together = ('interaction', 'social_user', 'notification_type')
+    
+    
+    

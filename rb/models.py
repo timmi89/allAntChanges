@@ -109,10 +109,9 @@ class SocialUser(models.Model):
     img_url = models.URLField(blank=True)
     
     avatar = models.ImageField(upload_to=get_image_path, blank=True, null=True)
-    """
-    def get_upload_to(self, attname):
-            return 'users/%d/avatars/' % self.user.id
-    """
+    
+    default_tags = models.ManyToManyField(InteractionNode, through='UserDefaultTag')
+
     def admin_groups(self):
         ga = GroupAdmin.objects.filter(social_user=self, approved=True)
         return Group.objects.filter(id__in=ga.values('group'))
@@ -190,6 +189,17 @@ class GroupBlessedTag(models.Model):
     
     def __unicode__(self):
         return str(self.group) + ":" + str(self.node) + "" + str(self.order)
+    
+    class Meta:
+        ordering = ['order']
+        
+class UserDefaultTag(models.Model):
+    social_user = models.ForeignKey(SocialUser)
+    node = models.ForeignKey(InteractionNode)
+    order =  models.IntegerField()
+    
+    def __unicode__(self):
+        return str(self.social_user) + ":" + str(self.node) + "" + str(self.order)
     
     class Meta:
         ordering = ['order']
@@ -306,6 +316,8 @@ class Interaction(DateAwareModel, UserAwareModel):
     anonymous = models.BooleanField(default=False)
     parent= models.ForeignKey('self', blank=True, null=True)
     kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)
+    
+    rank = models.BigIntegerField(default = 0)
     
     class Meta:
         ordering = ['-created']

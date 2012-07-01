@@ -339,5 +339,31 @@ RB.profile_user = {
   })();
 </script>
 
+<div style="text-align:center;font-weight:bold;position:fixed;bottom:0;width:100%;background:#7fbadf;z-index:1000;overflow:auto;padding:10px 0;" id="fixedBar">
+    <h3 style="color:#fff;xfloat:left;display:inline-block;">Add your reactions, from any site on the web:</h3>
+    <div class="callToActionButtons" style="xfloat:left;display:inline-block;margin-bottom:-7px;">
+        <a href="/react/" class="btn left"><span class="rdrIcon"></span>Get the Reaction Button</a>
+        <a class="btn right" href="javascript:void(0);" id="watch_the_throne" onclick="showVideo();">Watch our 2-minute video</a>
+        <div class="clear"></div>
+    </div>
+</div>
+<script>
+function showVideo() {
+    var $video_overview = $('<iframe src="http://player.vimeo.com/video/44853134" width="1000" height="563" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>');
+    $.fancybox($video_overview ,{
+      wrapCSS    : 'fancybox-custom',
+      helpers : {
+        overlay : {
+          css : {
+            'background-color' : '#eee'
+          }
+        }
+      },
+    });
+}
+</script>
+<style>
+footer[role="contentinfo"] {display:none;}
+</style>
 </body>
 </html>

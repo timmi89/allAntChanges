@@ -26,11 +26,16 @@ rules = {'threshold1':ThresholdNotificationRule(threshold = 1),
          'threshold100':ThresholdNotificationRule(threshold = 100)
          }
 
+MILLI_RANK_INC = 60000
+
 def agree(request, interaction_id = None, **kwargs):
     context = {}
     try:
         interaction = Interaction.objects.get(id = interaction_id)
         social_user = SocialUser.objects.get(user = interaction.user)
+        new_rank = interaction.rank + MILLI_RANK_INC 
+        interaction.rank = new_rank
+        interaction.save()
         logger.info("SEND NOTIFICATION: " + str(social_user.notification_email_option))
         if social_user.notification_email_option:
             child_interactions = Interaction.objects.filter(parent = interaction, kind = 'tag').order_by('-created')
@@ -79,6 +84,9 @@ def comment(request, interaction_id = None, **kwargs):
     try:
         interaction = Interaction.objects.get(id = interaction_id)
         social_user = SocialUser.objects.get(user = interaction.user)
+        new_rank = interaction.rank + MILLI_RANK_INC * 2 
+        interaction.rank = new_rank
+        interaction.save()
         if social_user.notification_email_option:
             logger.info("comment notification?")
             child_interactions = Interaction.objects.exclude(user=interaction.user).filter(parent = interaction, kind = 'com').order_by('-created')
