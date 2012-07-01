@@ -309,7 +309,7 @@ RB = {
             var data = {
                 entity_id:parseInt(id),
                 entity_type:type,
-                page_num:(typeof page_num != "undefined")?page_num:1,
+                page_num:(typeof page_num != "undefined")?page_num:1
             };
 
             $.ajax({
@@ -385,7 +385,7 @@ RB = {
                             'background-color' : '#eee'
                           }
                         }
-                      },
+                      }
                     });
                     // $('#agreeing_list').html( $agreeing_users.append($ul) );
                 }

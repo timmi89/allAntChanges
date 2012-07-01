@@ -2499,7 +2499,7 @@ function readrBoard($R){
                 if (useDefaultSummaryBar){
                     //add a class defaultSummaryBar to show that this is our added rdr-page-summary
                     //and not a publisher added one.
-                    $('<div id="rdr-page-summary" class="rdr no-rdr defaultSummaryBar"/>').prependTo('body');
+                    $('<div id="rdr-page-summary" class="rdr no-rdr defaultSummaryBar"/>').appendTo('body');
                 }
                 
                 // RDR.session.educateUser(); //this function has changed now
@@ -6010,9 +6010,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             //- use existing in case their shit already depends on a margin
                             var $body = $('body');
                             var existingmargin = parseInt($body.css('marginTop'), 10);
-                            RDR.util.cssSuperImportant( $body, {
-                               "margin-top": existingmargin + 40
-                            });
+                            // RDR.util.cssSuperImportant( $body, {
+                            //    "margin-top": existingmargin + 40
+                            // });
                             if ( $body.css('position') == "relative" ) {
                                 $body.addClass('rdr_heightAdjustment');
                             }
@@ -6586,7 +6586,7 @@ function $RFunctions($R){
                     //so this would read $summary_widget_parent.append($summary_widget);
                     $summary_widget_parent[page.jqFunc]($summary_widget);
 
-                    var placement = ($summary_widget_parent.hasClass('defaultSummaryBar')) ? "bottom":"top";
+                    var placement = ($summary_widget_parent.hasClass('defaultSummaryBar')) ? "top":"top";
                     $summary_widget.find('img.rdr_tooltip_this').tooltip({placement:placement});
 
                     var total_interactions = 0;
