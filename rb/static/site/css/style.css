@@ -1244,6 +1244,9 @@ footer{
 	background:#333;
 	z-index:1000;
 }
+footer.withFixedBar{
+    margin-bottom: 40px; 
+}
 /*footer div.footerLinks{
 	width:960px;
 	margin:auto;
