@@ -204,7 +204,7 @@ div.splashQuote {
 	clear:both;
     position: relative;
     margin-bottom: 20px;
-    
+
     /*works together with the next declaration*/
     top: -20px;
 
@@ -306,7 +306,14 @@ div.splashQuote {
     width: 60px;
 }
 
-
+.publisherSignupCallToAction{
+    width: 100%;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.publisherSignupCallToAction a{
+    font-size: 20px;
+}
 /*for slideshow*/
 #promoDiv{
 	width:480px;
