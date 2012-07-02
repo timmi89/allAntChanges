@@ -402,7 +402,7 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr div.rdr_comment textarea    { margin:5px 0 !important; resize:none !important; padding:5px !important; width:100% !important; max-width:94% !important; font-family:"lucida grande",tahoma,verdana,arial,sans-serif !important;font-size:11px !important;background:#fff !important;}
 #rdr_sandbox div.rdr div.rdr_comment div.rdr_charCount          {font-size:10px !important; font-style:italic !important; color:#999 !important; float:left !important;}
 
-#rdr_sandbox div.rdr ul.shareLinks { display: block !important; margin: 2px 0 0 !important; top: 0 !important; padding: 0 !important; float:left !important; }
+#rdr_sandbox div.rdr ul.shareLinks { display: block !important; top: 0 !important; padding: 0 !important; float:left !important; }
 #rdr_sandbox div.rdr tr.rdr_wide ul.shareLinks { margin: 0 0 !important; }
 #rdr_sandbox div.rdr ul.shareLinks li        {padding:0px 2px !important; display:inline-block !important; list-style:none !important;}
 #rdr_sandbox div.rdr ul.shareLinks img       {width:18px !important; margin:0 !important;}
@@ -414,6 +414,16 @@ div.rdr strong {font-weight:bold !important;}
 /* forms */
 #rdr_sandbox div.rdr textarea,
 #rdr_sandbox div.rdr input[type="text"]  { -moz-box-shadow:inset 0px 0px 5px #ddd !important;-webkit-box-shadow:inset 0px 0px 5px #ddd !important; box-shadow:inset 0px 0px 5px #ddd !important; border:1px solid #ddd !important; height:auto !important; width:auto !important; font-family: arial !important; color:#666 !important; background:#fff !important;}
+
+#rdr_sandbox div.rdr div.rdr_commentBox.inlineCommentBox {
+    max-width: none !important;
+}
+#rdr_sandbox div.rdr input[type="text"].inlineComment{
+    width: 80% !important;
+    padding: 5px 2px !important;
+    float: left !important;
+}
+
 #rdr_sandbox div.rdr tr.rdr_wide div.rdr_commentBox input[type="text"]  { width:100% !important; margin-bottom:5px !important; font-size: 12px !important;}
 #rdr_sandbox div.rdr button              {font-size:11px !important; }
 
@@ -427,7 +437,8 @@ table.rdr_tags {
 }
 
 table.rdr_tags td {
-  background:#f7f7f7 !important;
+/*pretty sure we dont need or want this - confirm*/
+  /*background:#f7f7f7 !important;*/
 }
 table.rdr_tags td.rdr_activePill a.rdr_tag {
     background: -webkit-gradient(linear, center top, center bottom, from(#e8e8e8), to(#fff)) !important;
@@ -461,6 +472,7 @@ table.rdr_tags tr.rdr_nextSteps div {
     white-space:normal !important;
     text-align:center !important;
 }
+
 table.rdr_tags tr.rdr_nextSteps.rdr_wide div {
     display: block !important;
     float: left !important;
@@ -469,9 +481,38 @@ table.rdr_tags tr.rdr_nextSteps.rdr_wide div {
 table.rdr_tags tr.rdr_nextSteps.rdr_wide div.rdr_reactionMessage {
     padding:4px 10px 2px 0 !important;
     border-right:1px solid #d0d0d0 !important;
+    white-space:normal !important;
 }
+table.rdr_tags tr.rdr_nextSteps div.rdr_reactionMessage {
+    text-align: left !important;
+}
+table.rdr_tags tr.rdr_nextSteps div.rdr_reactionMessage span{
+    margin-left: 8px;
+}
+
+table.rdr_tags tr.rdr_nextSteps .rdr_label_icon{
+    height: 18px !important;
+    width: 18px !important;
+    float: left !important;
+    top: -3px !important;
+    position: relative !important;
+    margin: 0 4px !important;
+}
+
+table.rdr_tags tr.rdr_nextSteps div.rdr_reactSuccess .rdr_label_icon{
+    background: url(../images/readr_icons_grey.png) no-repeat -110px 0 transparent !important;
+}
+table.rdr_tags tr.rdr_nextSteps div.rdr_commentBox .rdr_label_icon{
+    background: url(../images/readr_icons_grey.png) no-repeat -23px 0 transparent !important;
+    top: 1px !important;
+}
+table.rdr_tags tr.rdr_nextSteps div.rdr_share_social .rdr_label_icon{
+    background: url(../images/readr_icons_grey.png) no-repeat -50px 0 transparent !important;
+    top: 1px !important;
+}
+
 table.rdr_tags tr.rdr_nextSteps div.rdr_nextSteps_container {
-    padding:0 2px !important;
+    padding:3px 2px 0 2px !important;
 }
 table.rdr_tags tr.rdr_nextSteps hr{
     height:1px !important;

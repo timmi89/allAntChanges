@@ -355,7 +355,14 @@ function readrBoard($R){
 
                                 $pill.data('tag_count',newTagCount).find('span.rdr_tag_count').text(newTagCount).unbind('hover');
 
-                                $nextSteps.append( '<div class="rdr_reactionMessage">You reacted: <strong>'+tag.body+'</strong>. <a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></div>' );
+                                $nextSteps.append(
+                                    '<div class="rdr_reactionMessage rdr_reactSuccess">'+
+                                        '<div class="rdr_label_icon"></div>'+
+                                        '<strong>'+tag.body+'</strong>'+
+                                        '<span><a href="javascript:void(0);" class="rdr_seeit_link">See it.</a></span>'+
+                                        '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
+                                    '</div>' 
+                                );
                                 $nextSteps.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                     var args = event.data.args;
 
@@ -369,10 +376,15 @@ function readrBoard($R){
 
                                 });
                             } else if ( args.scenario == "reactionExists" ) {
-                                $nextSteps.append( '<div class="rdr_reactionMessage">You have already given that reaction.</div>' );
+                                $nextSteps.append('<div class="rdr_reactionMessage">You have already given that reaction.</div>' );
                             }
 
-                            $nextSteps.append( '<div class="rdr_commentBox"><input type="text" class="rdr_add_comment" value="Comment or hashtag..."/></div>' );
+                            $nextSteps.append(
+                                '<div class="rdr_commentBox inlineCommentBox">'+
+                                    '<div class="rdr_label_icon"></div>'+
+                                    '<input type="text" class="rdr_add_comment inlineComment" value="Comment or hashtag..."/>'+
+                                '</div>'
+                            );
 
                             // comment functionality
                             var $commentInput = $nextSteps.find('input.rdr_add_comment');
@@ -429,8 +441,12 @@ function readrBoard($R){
                                 //$commentInput.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
                             });
                             // $nextSteps.append( '<hr class="rdr_second"/>' );
-                            $nextSteps.append( '<hr class="rdr_first"/>' );
-                            $nextSteps.append( '<div class="rdr_share_social"><strong>Share It:</strong></div>' );
+                            $nextSteps.append('<hr class="rdr_first"/>' );
+                            var $shareSocial = $(
+                                '<div class="rdr_share_social">'+
+                                    '<div class="rdr_label_icon"></div>'+
+                                '</div>'
+                            );
                             var $shareLinks = $('<ul class="shareLinks"></ul>'),
                             // sns sharing links
                             socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
@@ -445,7 +461,8 @@ function readrBoard($R){
                                     return false;
                                 });
                             });
-                            $nextSteps.find('div.rdr_share_social').append( $shareLinks );
+                            $shareSocial.append( $shareLinks );
+                            $nextSteps.append($shareSocial);
 
                         } else if ( args.scenario == "bookmarkSuccess" ) {
                             $nextSteps.append( '<div>You tagged this note: <strong>'+tag.body+'</strong>. <a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></div>' );
