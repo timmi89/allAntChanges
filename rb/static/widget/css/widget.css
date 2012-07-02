@@ -1025,6 +1025,7 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
 }
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer {
   max-width:320px !important;
+  text-align:left !important;
 }
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer h1 {
   margin-bottom:5px !important;
