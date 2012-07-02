@@ -6769,6 +6769,51 @@ function $RFunctions($R){
                                 _writePagePill( tag, hash, page, $pillContainer.find('div.rdr_pillContainerTable') );
                             });
 
+                            // add custom tag
+                            // 7/1/2012: we'll probably roll this into the react flyout.
+                            var $a_custom = $('<a class="rdr_tag rdr_custom_tag rdr_tooltip_this" title="Add your own reaction to this page.  Type it in, then press Enter."><input type="text" value="Add yours..." class="rdr_default"/></a>');
+                            $a_custom.find('input').focus( function() {
+                                RDR.events.track('start_custom_reaction_summ');
+                                var $input = $(this);
+                                $input.removeClass('rdr_default');
+                                if ( $input.val() == "Add yours..." ) {
+                                    $input.val('');
+                                }
+                            }).blur( function() {
+                                var $input = $(this);
+                                if ( $input.val() === "" ) {
+                                    $input.val('Add yours...');
+                                }
+                                if ( $input.val() == "Add yours..." ) {
+                                    $input.addClass('rdr_default');
+                                }
+                            }).keyup( function(event) {
+                                var $input = $(this),
+                                    tag = {},
+                                    hash = $input.closest('.rdr-page-container').data('hash');
+
+                                if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
+
+                                    tag.body = $input.val();
+
+                                    args = { tag:tag, hash:hash, kind:"page" };
+                                    RDR.actions.interactions.ajax( args, 'react', 'create' );
+                                    $input.blur();
+                                }
+                                else if (event.keyCode == '27') { //esc
+                                    //return false;
+                                    $input.blur();
+                                } else if ( $input.val().length > 20 ) {
+                                    var customTag = $input.val();
+                                    $input.val( customTag.substr(0, 20) );
+                                }
+                            });
+
+                            $a_custom.tooltip({placement:placement});
+
+                            $pillContainer.find('div.rdr_pillContainerTable').append( $a_custom, " " );
+                            // $react.find('div.rdr-sum-reactions').append( $a_custom, " " );
+
                             $pillContainer.hover(
                                 function() {
                                     $(this).addClass('rdr_live_hover');

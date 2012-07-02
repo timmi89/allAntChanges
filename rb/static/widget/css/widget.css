@@ -1037,6 +1037,9 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
   white-space:normal !important;
   padding:0px 5px !important;
 }
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer div.rdr_pillContainerTable a.rdr_tag.rdr_custom_tag input {
+  padding:4px 0 0 0 !important;
+}
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer div.rdr_pillContainerTable a.rdr_tag span.rdr_tag_count {
   background: -webkit-gradient(linear, center top, center bottom, from(#f0f0f0), to(#d0d0d0)) !important; 
   background: -moz-linear-gradient(center top , #f0f0f0, #d0d0d0) repeat scroll 0 0 transparent !important;
