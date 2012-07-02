@@ -301,6 +301,8 @@ function readrBoard($R){
                     } else {
                         visiblePane.$elm.css('width', setWidth+'px' );
                     }
+                    
+
                     // still goofy, i know.
                     if ( Math.abs( setWidth - rindow_width ) > 2  ) $rindow.animate({ width: setWidth, height:(visiblePane.height + heightAdjustment) }, { duration:333, queue:false } );
                     else $rindow.animate({ height:(visiblePane.height + heightAdjustment) }, { duration:333, queue:false } );
@@ -359,7 +361,7 @@ function readrBoard($R){
                                     '<div class="rdr_reactionMessage rdr_reactSuccess">'+
                                         '<div class="rdr_label_icon"></div>'+
                                         '<strong>'+tag.body+'</strong>'+
-                                        '<span><a href="javascript:void(0);" class="rdr_seeit_link">See it.</a></span>'+
+                                        '<span><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
                                         '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
                                     '</div>' 
                                 );
@@ -383,6 +385,7 @@ function readrBoard($R){
                                 '<div class="rdr_commentBox inlineCommentBox">'+
                                     '<div class="rdr_label_icon"></div>'+
                                     '<input type="text" class="rdr_add_comment inlineComment" value="Comment or hashtag..."/>'+
+                                    '<div class="rdr_clear"></div>'+
                                 '</div>'
                             );
 
@@ -440,7 +443,7 @@ function readrBoard($R){
                                 // add back in.  animate in?
                                 //$commentInput.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
                             });
-                            // $nextSteps.append( '<hr class="rdr_second"/>' );
+                            
                             $nextSteps.append('<hr class="rdr_first"/>' );
                             var $shareSocial = $(
                                 '<div class="rdr_share_social">'+
@@ -485,6 +488,7 @@ function readrBoard($R){
                         }
                         $tr.after( $nextTr );
                         if ( $nextSteps.width() > 310 ) $nextTr.addClass('rdr_wide');
+                        if ( $nextSteps.width() < 180 ) $nextTr.addClass('rdr_narrow');
 
                         // make the next steps stuff centered in the table.  only way I could think of.
                         // this gets the width of the nextSteps div, the width of its parent, subtracts them, divides that number by 2,
@@ -2699,6 +2703,9 @@ function readrBoard($R){
 
                 // todo: this is a pretty wide hackey net - rethink later.
                 var imgBlackList = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? ':not('+RDR.group.img_blacklist+')':'';
+                
+                var minImgWidth = 160;
+
                 $('body').on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackList, function(){
                     RDR.actions.indicators.utils.updateContainerTrackers();
                     var $this = $(this);
@@ -2713,7 +2720,7 @@ function readrBoard($R){
                         if ( dontEngage == true ) return;
                     }
 
-                    if ( $this.width() >= 150 ) {
+                    if ( $this.width() >= minImgWidth ) {
                         var hasBeenHashed = $this.hasClass('rdr-hashed'),
                             isBlacklisted = $this.closest('.rdr, .no-rdr').length;
 

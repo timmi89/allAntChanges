@@ -9,6 +9,9 @@
     width:auto !important;
     border:none !important;
 }
+.rdr_clear{
+    clear: both;
+}
 #rdr_sandbox{
     /*temp reset*/
     position:absolute !important;
@@ -326,7 +329,7 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr.rdr_window div.rdr_header              { cursor:move !important; padding:5px 0 !important; }
 #rdr_sandbox div.rdr.rdr_indicator_details div.rdr_header   { padding:3px 0 !important; }
 #rdr_sandbox div.rdr div.rdr_footer                         { background:#f0f0f0 !important; position:absolute !important; height:18px !important; padding:3px 6px 6px !important; bottom:0 !important; width:95% !important; display:none;;}
-#rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace                { background:#f0f0f0 !important; position:relative !important; overflow:hidden !important;}
+#rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace                { background:#f0f0f0 !important; position:relative !important; overflow:hidden !important; min-width: 150px !important; }
 #rdr_sandbox div.rdr div.rdr_body   { max-height:266px !important; float:left !important; display:block !important;}
 #rdr_sandbox div.rdr div.rdr_body div.jspPane   { margin:0 !important; }
 #rdr_sandbox div.rdr div.jspScrollable   { outline:none!important; }
@@ -390,10 +393,10 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr div.rdr_shareBox                       { background:#edf6ff !important; border:1px solid #b6d3ee !important; -webkit-border-radius:6px !important; -moz-border-radius:6px !important; border-radius:6px !important; margin:0 0 0 10px !important; text-align: center !important; width: 120px !important; display:inline-block !important; padding:3px 0 !important;}
 #rdr_sandbox div.rdr div.rdr_share_social                   { overflow:auto !important; }
 #rdr_sandbox div.rdr div.rdr_share_social strong            { display:block !important; float:left !important; margin:5px 5px 0 24px !important; }
-#rdr_sandbox div.rdr tr.rdr_wide div.rdr_share_social strong            { margin:3px 5px 0 10px !important; }
+/*#rdr_sandbox div.rdr tr.rdr_wide div.rdr_share_social strong            { margin:3px 5px 0 10px !important; }*/
 #rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both !important; display:block !important; border-top: 1px solid #d0d0d0 !important; padding-top:5px !important; max-width:92% !important; text-align:left !important;}
 #rdr_sandbox div.rdr div.rdr_nextSteps_container div.rdr_commentBox                     { border:none !important; text-align:center !important;}
-#rdr_sandbox div.rdr tr.rdr_wide div.rdr_nextSteps_container div.rdr_commentBox         { clear:both !important; float:none !important;  }
+/*#rdr_sandbox div.rdr tr.rdr_wide div.rdr_nextSteps_container div.rdr_commentBox         { clear:both !important; float:none !important;  }*/
 
 #rdr_sandbox div.rdr div.rdr_back { position:relative !important; z-index:1 !important; background:#aaa !important; font-size:9px !important; text-transform:uppercase !important; color:#fff !important; cursor:pointer !important; padding: 2px 12px !important; margin-bottom:4px !important;text-align:left !important;}
 #rdr_sandbox div.rdr_indicator_details_for_media div.rdr_body div.rdr_back { margin-right:10px !important; }
@@ -403,11 +406,10 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr div.rdr_comment div.rdr_charCount          {font-size:10px !important; font-style:italic !important; color:#999 !important; float:left !important;}
 
 #rdr_sandbox div.rdr ul.shareLinks { display: block !important; top: 0 !important; padding: 0 !important; float:left !important; }
-#rdr_sandbox div.rdr tr.rdr_wide ul.shareLinks { margin: 0 0 !important; }
+/*#rdr_sandbox div.rdr tr.rdr_wide ul.shareLinks { margin: 0 0 !important; }*/
 #rdr_sandbox div.rdr ul.shareLinks li        {padding:0px 2px !important; display:inline-block !important; list-style:none !important;}
 #rdr_sandbox div.rdr ul.shareLinks img       {width:18px !important; margin:0 !important;}
 
-#rdr_sandbox div.rdr table.rdr-one-column div.rdr_share_social { text-align:center !important; }
 #rdr_sandbox div.rdr table.rdr-one-column div.rdr_share_social strong { float:none !important; margin:0 !important; }
 #rdr_sandbox div.rdr table.rdr-one-column ul.shareLinks { display: inline-block !important; margin: 2px auto 0 !important; float:none !important; }
 
@@ -420,11 +422,17 @@ div.rdr strong {font-weight:bold !important;}
 }
 #rdr_sandbox div.rdr input[type="text"].inlineComment{
     width: 80% !important;
-    padding: 5px 2px !important;
+    padding: 4px 2px !important;
     float: left !important;
+    margin: -2px 0 4px !important;
 }
 
-#rdr_sandbox div.rdr tr.rdr_wide div.rdr_commentBox input[type="text"]  { width:100% !important; margin-bottom:5px !important; font-size: 12px !important;}
+#rdr_sandbox div.rdr .rdr_narrow input[type="text"].inlineComment{
+    width: 75% !important;
+}
+
+
+/*#rdr_sandbox div.rdr tr.rdr_wide div.rdr_commentBox input[type="text"]  { width:100% !important; margin-bottom:5px !important; font-size: 12px !important;}*/
 #rdr_sandbox div.rdr button              {font-size:11px !important; }
 
 
@@ -470,19 +478,18 @@ table.rdr_tags tr.rdr_nextSteps{
 table.rdr_tags tr.rdr_nextSteps div {
     margin:4px 0 !important;
     white-space:normal !important;
-    text-align:center !important;
 }
 
-table.rdr_tags tr.rdr_nextSteps.rdr_wide div {
+/*table.rdr_tags tr.rdr_nextSteps.rdr_wide div {
     display: block !important;
     float: left !important;
     margin: 0 0 !important;
-}
-table.rdr_tags tr.rdr_nextSteps.rdr_wide div.rdr_reactionMessage {
+}*/
+t/*able.rdr_tags tr.rdr_nextSteps.rdr_wide div.rdr_reactionMessage {
     padding:4px 10px 2px 0 !important;
     border-right:1px solid #d0d0d0 !important;
     white-space:normal !important;
-}
+}*/
 table.rdr_tags tr.rdr_nextSteps div.rdr_reactionMessage {
     text-align: left !important;
 }
@@ -496,7 +503,7 @@ table.rdr_tags tr.rdr_nextSteps .rdr_label_icon{
     float: left !important;
     top: -3px !important;
     position: relative !important;
-    margin: 0 4px !important;
+    margin: 0 4px 0 0 !important;
 }
 
 table.rdr_tags tr.rdr_nextSteps div.rdr_reactSuccess .rdr_label_icon{
@@ -519,15 +526,16 @@ table.rdr_tags tr.rdr_nextSteps hr{
     background:#d0d0d0 !important;
     border: none !important;
     width: 98% !important;
+    clear: both !important;
 }
 table.rdr_tags tr.rdr_nextSteps.rdr_wide hr.rdr_first{
     display:none;;
 }
-table.rdr_tags tr.rdr_nextSteps.rdr_wide hr.rdr_second{
-    clear:both !important;
-    margin-top:25px !important; /*assumes this is a second row... */
-    display:none;;
+table.rdr_tags tr.rdr_nextSteps.rdr_wide .rdr_nextSteps_container{
+    margin: 0 auto !important;
+    width: 200px !important;
 }
+
 table.rdr_tags tr.rdr_nextSteps a{
     font-style:normal !important;
     text-decoration:underline !important;
