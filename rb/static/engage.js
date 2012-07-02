@@ -490,11 +490,13 @@ function readrBoard($R){
                         if ( $nextSteps.width() > 310 ) $nextTr.addClass('rdr_wide');
                         if ( $nextSteps.width() < 180 ) $nextTr.addClass('rdr_narrow');
 
+                        //we dont need this anymore - just use margin: 0 auto with a fixed width
+
                         // make the next steps stuff centered in the table.  only way I could think of.
                         // this gets the width of the nextSteps div, the width of its parent, subtracts them, divides that number by 2,
                         // and sets the left margin to be that value.  using 'cssText' b/c that is how to set an inline style to !important
                         // and thus override existing !important declarations in our classes.
-                        $nextSteps.css('cssText', 'margin-left:' + ( ($nextSteps.parent().width()-$nextSteps.width() )/2) + 'px !important');
+                        // $nextSteps.css('cssText', 'margin-left:' + ( ($nextSteps.parent().width()-$nextSteps.width() )/2) + 'px !important');
 
                         RDR.actions.containers.media.onEngage( hash );
                     } else {
@@ -1687,7 +1689,7 @@ function readrBoard($R){
 
                 return summary;
             },
-            getPageProperty : function( prop, hash ) {
+            getPageProperty: function( prop, hash ) {
             //RDR.util.getPageProperty
                 if (!prop) prop = "id";
                 if (!hash) return false;
@@ -2568,7 +2570,7 @@ function readrBoard($R){
                                 if ( !$post.hasClass('rdr-page-container') ) {
                                     $post.addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
                                 }
-                                $summary_widget.addClass('rdr-page-widget-key-'+key);
+                                $summary_widget.addClass('rdr-page-widget-key-'+key).addClass('rdr-page-widget-key');
                             }
                         });
                 }
@@ -2597,12 +2599,12 @@ function readrBoard($R){
                         $( 'body' ).addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
 
                         if ( $('#rdr-page-summary').length == 1 ) {
-                            $('#rdr-page-summary').addClass('rdr-page-widget-key-'+key);
+                            $('#rdr-page-summary').addClass('rdr-page-widget-key-'+key).addClass('rdr-page-widget-key');
                         } else {
                             var $widget_key_last = $( 'body' ).find(RDR.group.summary_widget_selector).eq(0);
                             // this seems unnecessary, but, on a blogroll, we don't want to have two widget keys on the first post's summary box
                             if ( !$widget_key_last.hasClass('rdr-page-widget-key-0') ) {
-                                $widget_key_last.addClass('rdr-page-widget-key-'+key);
+                                $widget_key_last.addClass('rdr-page-widget-key-'+key).addClass('rdr-page-widget-key');
                             }
                         }
                     }
@@ -4011,6 +4013,57 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 $summary_box.addClass('rdr_reacted').html( $pageTagResponse );
                                 //todo: reconsider this method of liberally updating everything with updateContainerTrackers
                                 // $summary_box.find('div.rdr_info').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
+                            
+
+// : Object
+// group_id: 4
+// hash: "acdaa0036c7002b6c75471ba3bf4b492"
+// kind: "page"
+// page_id: 11
+// readr_token: "91b59eda08d7462d87c0"
+// response: Object
+    // data: Object
+    // existing: true
+    // interaction: Object
+        // id: 318
+            // interaction_node: Object
+                // body: "Craisins"
+                // id: 371
+// scenario: "reactionExists"
+// sendData: Object
+// tag: Object
+// uiMode: "writeMode"
+// user: Object
+// user_id: 170
+
+
+
+                           //do updates
+                                var intNodeHelper = {
+                                    kind: "page",
+                                    page_id: args.page_id,
+                                    id: args.response.data.interaction.interaction_node.id,
+                                    parent_id: null,
+                                    parent_interaction_node: null,
+                                    content_id: null, //todo add later
+                                    body: args.response.data.interaction.interaction_node.body,
+                                    delta: 1,
+                                    user: args.user,
+                                    social_user: args.social_user
+                                };
+
+                                var diff = {
+                                    tags: {}
+                                };
+                                diff.tags[ intNodeHelper.id ] = intNodeHelper;
+
+                                // if ( args.scenario != "reactionExists" ) {
+                                    //true for isPage
+                                    RDR.actions.summaries.update(args.hash, diff, true);
+                                // }
+
+
+
                             } else {
                                 $('#rdr_loginPanel').remove()
 
@@ -5041,7 +5094,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     // RDR.actions.summaries.sortInteractions(hash);
 
                 },
-                update: function(hash, diff){
+                update: function(hash, diff, isPage){
                     //RDR.actions.summaries.update:
                     /*
                     //EXAMPLE: diff object.  keep commented out, but leave it here.
@@ -5075,7 +5128,17 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         }
                     }
                     */
-
+                    if(isPage){
+                        $.each( diff, function(interaction_node_type, nodes){
+                            //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
+                            $.each(nodes, function(id,diffNode){
+                                //coms or tags
+                                _updatePage(hash, diffNode);
+                            });
+                        });
+                        return;
+                    }
+                    //else, not a page
 
                     //get summary, or if it doesn't exist, get a zero'ed out template of one.
 
@@ -6577,12 +6640,11 @@ function $RFunctions($R){
 
                     var $this = ( this[0] === document ) ? $('.rdr-summary') : this;
                     return $this.each(function(index){
-
+                        
                         //grab the basic setting just from the data 
                         var settings = $(this).data('settings');
 
                         //get the latest page data
-                        //I don't think we use this, but here it is.
                         settings.summary = RDR.pages[settings.id].summary;
                         
                         _makeSummaryWidget(settings);

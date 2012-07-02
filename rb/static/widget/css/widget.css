@@ -390,7 +390,7 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr div.rdr_info        {font:italic 11px Arial !important;color:#767676 !important; margin:0 !important; cursor:text !important; }
 
 #rdr_sandbox div.rdr div.rdr_shareBox                       { background:#edf6ff !important; border:1px solid #b6d3ee !important; -webkit-border-radius:6px !important; -moz-border-radius:6px !important; border-radius:6px !important; margin:0 0 0 10px !important; text-align: center !important; width: 120px !important; display:inline-block !important; padding:3px 0 !important;}
-#rdr_sandbox div.rdr div.rdr_share_social                   { overflow:auto !important; }
+#rdr_sandbox div.rdr div.rdr_share_social                   { overflow:auto !important; position: relative !important; top: 4px !important;}
 #rdr_sandbox div.rdr div.rdr_share_social strong            { display:block !important; float:left !important; margin:5px 5px 0 24px !important; }
 /*#rdr_sandbox div.rdr tr.rdr_wide div.rdr_share_social strong            { margin:3px 5px 0 10px !important; }*/
 #rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both !important; display:block !important; border-top: 1px solid #d0d0d0 !important; padding-top:5px !important; max-width:92% !important; text-align:left !important;}
@@ -518,14 +518,15 @@ table.rdr_tags tr.rdr_nextSteps div.rdr_share_social .rdr_label_icon{
 }
 
 table.rdr_tags tr.rdr_nextSteps div.rdr_nextSteps_container {
-    padding:3px 2px 0 2px !important;
+    padding:3px 2px 1px 2px !important;
 }
 table.rdr_tags tr.rdr_nextSteps hr{
-    height:1px !important;
+    /*height:1px !important;
     background:#d0d0d0 !important;
     border: none !important;
     width: 98% !important;
-    clear: both !important;
+    clear: both !important;*/
+    display: none !important;
 }
 table.rdr_tags tr.rdr_nextSteps.rdr_wide hr.rdr_first{
     display:none;;
