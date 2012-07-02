@@ -6941,7 +6941,7 @@ function $RFunctions($R){
                                     if ( RDR.summaries && RDR.summaries[container.hash] && RDR.summaries[container.hash].top_interactions ) {
                                         if ( RDR.summaries[container.hash].top_interactions.tags && RDR.summaries[container.hash].top_interactions.tags[tag_id] ) {
                                             counts[RDR.summaries[container.hash].kind] += RDR.summaries[container.hash].top_interactions.tags[tag_id].count;
-                                            // counts.page -= RDR.summaries[container.hash].top_interactions.tags[tag_id].count;
+                                            counts.page -= RDR.summaries[container.hash].top_interactions.tags[tag_id].count;
                                         }
                                     }
                                 });
