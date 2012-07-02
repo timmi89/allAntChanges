@@ -557,6 +557,10 @@ div#rdr_sandbox div.rdr_tag_details {
   padding:4px !important;
   display:none;;
 }
+div#rdr_sandbox div.rdr_tag_details.rdr_boomarklet {
+  position:fixed !important;
+  bottom:34px !important;
+}
 div#rdr_sandbox div.rdr_tag_details a.rdr_tag {
   margin-left:5px !important;
 }
@@ -588,12 +592,12 @@ div#rdr_sandbox div.rdr_tag_details div.rdr_counts img {
   margin-right:5px !important;
 }
 div#rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr_page {
-  clear:both !important;
+  /*clear:both !important;
   float:none !important;
   width:89% !important;
   margin:0 !important;
   white-space:nowrap !important;
-  padding-bottom:5px !important;
+  padding-bottom:5px !important;*/
 }
 div#rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr_page img {
   margin-left:0 !important;
@@ -858,7 +862,7 @@ div.rdr.rdr-summary img.rdr_summary_help:hover  { background-position: -79px -1p
 
 div.rdr.rdr-summary {
     background:#f7f7f7 !important;
-    padding-bottom:2px !important;
+    padding-bottom:0px !important;
     margin-bottom:10px !important;
     border:1px solid #ccc !important;
     /*max-height: 67px !important;*/
@@ -866,9 +870,6 @@ div.rdr.rdr-summary {
     clear:both !important;
     text-indent:0 !important;
     position:relative !important;
-}
-div.rdr.rdr-summary.rdr_bookmarklet {
-  padding-bottom:0px !important
 }
 /*blunt attack for now*/
 div.rdr.rdr-summary * {
@@ -898,7 +899,7 @@ div.rdr.rdr-summary.rdr-too-many-reactions div.rdr-see-more {
     display:block !important;
 }
 
-div.rdr.rdr-summary table { border:0 !important;padding:0 !important; margin:2px 0 0px 5px !important; width:auto !important; }
+div.rdr.rdr-summary table { border:0 !important;padding:0 !important; margin:0 !important; width:auto !important; }
 div.rdr.rdr-summary table td { border:0 !important;padding:0 !important; margin:0 !important; text-align:left !important; vertical-align: top !important; background:#f7f7f7 !important;}
 div.rdr.rdr-summary.rdr-combo-box table td div.rdr-fb-twitter { width:195px !important; padding: 6px 0 0 4px !important;}
 div.rdr.rdr-summary.rdr-combo-box table td div.rdr-fb-like,
@@ -918,7 +919,7 @@ div.rdr.rdr-summary td.rdr_rb_logo {
 }
 div.rdr.rdr-summary div.rdr-this-is-readrboard {
     text-align:center !important;
-    padding:7px 1px 0 5px !important;
+    padding:10px 1px 0 5px !important;
 }
 div.rdr.rdr-summary div.rdr-this-is-readrboard img {
     margin:0 !important;
@@ -981,7 +982,7 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle {
   font-weight:bold !important;
   color:#666 !important;
   font-size:11px !important;
-  border-left:1px solid #ccc !important;
+  /*border-left:1px solid #ccc !important;*/
   padding-left:5px !important;
 }
 div.rdr.rdr-summary div.rdr-sum-reactions a {
@@ -992,9 +993,12 @@ div.rdr.rdr-summary div.rdr-sum-reactions a {
   margin-right:-1px !important;
   padding-right:10px !important;
 }
+div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_lastchild {
+  border-right:1px solid #ccc !important;
+}
 div.rdr.rdr-summary div.rdr-sum-reactions a:hover {
   text-decoration:none !important;
-  background:#d1d1d1 !important;
+  background:#d8e6f6 !important;
 }
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle.rdr_noReactions {
   border-left:0 none !important;
@@ -1003,7 +1007,7 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle.rdr_noReactions {
 }
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_logo {
   background:url("../images/readr_icons.png") no-repeat scroll 0 1px transparent !important;
-  margin-bottom:-2px !important;
+  margin:0 0 -2px 0 !important;
 }
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle.rdr_noReactions img.rdr_logo {
   background:none !important;
@@ -1014,8 +1018,33 @@ div.rdr.rdr-summary.rdr_bookmarklet div.rdr-sum-reactions a.rdr_reactToArticle i
   width:10px;
 }
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
-  background-position:-1px -8px !important;
+  background:url("../images/summary_box_arrow.png") no-repeat scroll -1px -8px transparent !important;
+  height:8px;
+  width:10px;
+  margin:0 !important;
 }
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer {
+  max-width:320px !important;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer h1 {
+  margin-bottom:5px !important;
+}
+
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer div.rdr_pillContainerTable a.rdr_tag{
+  display:inline-block !important;
+  margin-bottom:7px !important;
+  white-space:normal !important;
+  padding:0px 5px !important;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer div.rdr_pillContainerTable a.rdr_tag span.rdr_tag_count {
+  background: -webkit-gradient(linear, center top, center bottom, from(#f0f0f0), to(#d0d0d0)) !important; 
+  background: -moz-linear-gradient(center top , #f0f0f0, #d0d0d0) repeat scroll 0 0 transparent !important;
+  padding:3px 5px !important;
+}
+
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer ins    { text-decoration:none !important; }
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer a.rdr_share_link img    { max-width:20px !important;margin:0 5px -5px 0 !important; float:none !important;}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer strong.rdr_share_it    { margin-left:10px !important;border-left:1px solid #ccc !important;padding-left:10px !important;}
 /*
 div.rdr.rdr-summary a.rdr-top-user {
     display:inline !important;
