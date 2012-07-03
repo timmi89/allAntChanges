@@ -3978,9 +3978,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         '<div class="feedbackMsg">'+
                                             '<div class="rdr_label_icon"></div>'+
                                             '<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em>'+
-                                            '<span class="pipe"> | </span>'+
+                                            // '<span class="pipe"> | </span>'+
                                             // '<span><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
-                                            '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
+                                            // '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
                                         '</div>'
                                     );
 
@@ -3996,9 +3996,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     var $feedbackMsg = $(
                                         '<div class="feedbackMsg">'+
                                             '<em><strong>You have already given that reaction.</em></strong>'+
-                                            '<span class="pipe"> | </span>'+
+                                            // '<span class="pipe"> | </span>'+
                                             // '<span><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
-                                            '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
+                                            // '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
                                         '</div>'
                                     );
                                     
