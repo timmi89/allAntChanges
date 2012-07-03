@@ -6671,13 +6671,13 @@ function $RFunctions($R){
                     $('.'+widgetClass).remove();
 
                     var $summary_widget_parent = $(page.parentContainer),
-                        $summary_widget = $('<div class="rdr rdr-summary rdr-summary-'+page.id+'"><table cellpadding="0" cellspacing="0" border="0"><tr/></table><div class="rdr-see-more"></div></div>').addClass(widgetClass),
+                        $summary_widget = $('<div class="rdr rdr-summary rdr-summary-'+page.id+'"><table cellpadding="0" cellspacing="0" border="0"><tr/></table></div>').addClass(widgetClass),
                         $summary_row = $summary_widget.find('tr');
 
                     if ( RDR.engageScriptParams.bookmarklet == "true" ) {
                         $summary_widget.addClass('rdr_bookmarklet');
                     }
-                    $summary_widget.append('<div class="rdr-see-more"></div>');
+                    // $summary_widget.append('<div class="rdr-see-more"></div>');
                     // $summary_widget.append('<img src="'+RDR_staticUrl+'widget/images/blank.png" class="rdr_summary_help rdr_tooltip_this"/>');
                     $summary_widget.data({
                         page_id:page.id,
