@@ -6233,12 +6233,12 @@ RDR_scriptPaths.jqueryUI_CSS = RDR_offline ?
 
 rdr_loadScript( {src:RDR_scriptPaths.jquery}, function(){
     //callback
-
-    if ( $.browser.msie  && parseInt($.browser.version, 10) < 8 ) {
+    var $$ = $ || jQuery;
+    if ( $$.browser.msie  && parseInt($$.browser.version, 10) < 8 ) {
         return false;
     }
-    if ( $.browser.msie  && parseInt($.browser.version, 10) == 8 ) {
-        $('body').addClass('rdr_ie');
+    if ( $$.browser.msie  && parseInt($$.browser.version, 10) == 8 ) {
+        $$('body').addClass('rdr_ie');
     }
 
     //don't pass true yet.  Give back the $ here while the jqueryUI loads,
