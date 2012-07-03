@@ -6698,7 +6698,9 @@ function $RFunctions($R){
                     }
 
                     var $RB = $('<div class="rdr-this-is-readrboard"></div>');
-                    $RB.append('<a href="'+RDR_baseUrl+'/page/'+page.id+'" target="_blank"><img title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site to learn more!" src="'+RDR_staticUrl+'widget/images/readrboard_logo.png" class="no-rdr" /></a>');
+                    //having this go to our home page for now because we have no messaging for the page level reactions.
+                    // $RB.append('<a href="'+RDR_baseUrl+'/page/'+page.id+'" target="_blank"><img title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site to learn more!" src="'+RDR_staticUrl+'widget/images/readrboard_logo.png" class="no-rdr" /></a>');
+                    $RB.append('<a href="'+RDR_baseUrl+'" target="_blank"><img title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site to learn more!" src="'+RDR_staticUrl+'widget/images/readrboard_logo.png" class="no-rdr" /></a>');
                     $RB.click( function() {
                         RDR.events.track('click_rb_icon_summ');
                     });
