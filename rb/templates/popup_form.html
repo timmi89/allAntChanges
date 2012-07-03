@@ -6,12 +6,8 @@
 <!-- don't show log in link-->
 {% endblock userStatus %}
 
-{% block mainContent %}
-{% endblock mainContent %}
-
-{% block footer %}
-    <div class="emptyFooter"></div>
     
+{% block extendedHead %}
     <style>
         /*quick fix*/
         #fixedBar{
@@ -21,5 +17,12 @@
             display: none;
         }
     </style>
+{% endblock %}
 
+
+{% block mainContent %}
+{% endblock mainContent %}
+
+{% block footer %}
+    <div class="emptyFooter"></div>
 {% endblock footer %}

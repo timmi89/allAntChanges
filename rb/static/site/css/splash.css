@@ -25,12 +25,21 @@ section.introBlurb{
 	clear:both;
 }
 h1.sectionBanner{
-    background: none repeat scroll 0 0 #EEEEEE;
+    
     border-bottom: 1px solid #E9E9E9;
     border-top: 1px solid #E9E9E9;
     padding: 10px 0 4px;
     text-align: center;
     margin: 20px 0 !important;
+    padding: 8px 0px 5px;
+
+    background: #F7F7F7;
+    color: #BCBCBC;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: Helvetica, Arial, sans-serif;
+
+
 }
 
 .introBlurb .readrboard_logo{
@@ -194,8 +203,11 @@ div.splashQuote {
 	width:100%;
 	clear:both;
     position: relative;
+    margin-bottom: 20px;
+
     /*works together with the next declaration*/
     top: -20px;
+
 }
 #splashBlurbs .blurb:before { 
   display: block; 
@@ -294,7 +306,14 @@ div.splashQuote {
     width: 60px;
 }
 
-
+.publisherSignupCallToAction{
+    width: 100%;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.publisherSignupCallToAction a{
+    font-size: 20px;
+}
 /*for slideshow*/
 #promoDiv{
 	width:480px;
