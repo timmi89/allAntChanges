@@ -460,7 +460,7 @@ function readrBoard($R){
                                 $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                                 $shareLinks.find('li:last').click( function() {
                                     RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
-                                    RDR.actions.share_getLink({ hash:args.hash, kind:args.kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node }); // ugh, lots of weird data nesting
+                                    RDR.actions.share_getLink({ referring_int_id:args.response.data.interaction.id, hash:args.hash, kind:args.kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node }); // ugh, lots of weird data nesting
                                     return false;
                                 });
                             });
@@ -2212,7 +2212,7 @@ function readrBoard($R){
                             } else if ( message.status.indexOf('sharedLink') != -1 ) {
                                 var sharedLink = message.status.split('|');
                                 if ( sharedLink[5] ) {
-                                    RDR.session.referring_int_id = parseInt( sharedLink[5], 10 );
+                                    RDR.session.referring_int_id = parseInt( sharedLink[5], 10 ); // TODO what is this used for any more?
                                 }
                                 // TODO sharedLink[6] is SHARE HACK REMOVE THIS DAILYCANDY ONLY
                                 RDR.session.getSharedLinkInfo( { container_hash:sharedLink[1], location:sharedLink[2], reaction:sharedLink[3], content:sharedLink[4], page_hash:sharedLink[6] } );
@@ -5618,7 +5618,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         "readr_token" : RDR.user.readr_token,
                         "group_id" : RDR.group.id,
                         "page_id" : RDR.util.getPageProperty('id', hash),
-                        "referring_int_id" : RDR.session.referring_int_id,
+                        "referring_int_id" : args.referring_int_id,
                         "container_kind" : (args.kind=="page") ? "page":RDR.summaries[hash].kind  // TODO: a container kind of page should be handled better
                     };
 
