@@ -2780,7 +2780,7 @@ function readrBoard($R){
                 RDR.actionbar.closeAll();
                 RDR.actions.containers.media.disengageAll();
                 RDR.actions.indicators.utils.borderHilites.disengageAll();
-                $('div.rdr.rdr_tag_details.rdr_pillContainer').remove();
+                $('div.rdr.rdr_tag_details.rdr_sbRollover').remove();
 
                 //clear a share alert if it exists - do this better later.
                 var shareBoxExists = $('.rdr_fromShareLink').length;
@@ -3484,6 +3484,9 @@ function readrBoard($R){
                                 });
                             }
 
+                            // add a class so we note that the content summary was retrieved
+                            $(RDR.containers[ hash ].HTMLkind+'.rdr-'+hash).addClass('rdr_summary_loaded');
+
                             //finally, run the success callback function
                             if ( onSuccessCallback ) {
                                 onSuccessCallback();
@@ -3966,7 +3969,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             if (args.kind && args.kind == "page") {
                                 // either we have a hash, or we don't, and so we hope there is only one div.rdr-summary.  IE sucks.
-                                var $summary_box = $('div.rdr_pillContainer');
+                                var $summary_box = $('div.rdr_sbRollover');
                                 var $pageTagResponse = $('<div class="rdr_info" style="padding:4px;"></div>');
                                 var $shareIcons = _makeShareIcons(args);
 
@@ -6715,18 +6718,18 @@ function $RFunctions($R){
                         function() {
                             var $this = $(this),
                                 $visibleReactions = $this.find('div.rdr-sum-headline'),
-                                $pillContainer = $visibleReactions.find('div.rdr-sum-reactions');
+                                $sbRollover = $visibleReactions.find('div.rdr-sum-reactions');
 
                             RDR.events.track( 'view_summary::'+$this.data('page_id') );
-                            // if ( $pillContainer.height() > 64 && !$visibleReactions.is(':animated') ) {
+                            // if ( $sbRollover.height() > 64 && !$visibleReactions.is(':animated') ) {
                             if ( $this.hasClass('rdr-too-many-reactions') && !$visibleReactions.is(':animated') ) {
-                                $visibleReactions.height(64).css('max-height','none').animate({ height:$pillContainer.height() });
+                                $visibleReactions.height(64).css('max-height','none').animate({ height:$sbRollover.height() });
                             }
                         },
                         function() {
                             var $this = $(this),
                                 $visibleReactions = $this.find('div.rdr-sum-headline'),
-                                $pillContainer = $visibleReactions.find('div');
+                                $sbRollover = $visibleReactions.find('div');
 
                             // if ( $visibleReactions.height() > 64 && !$visibleReactions.is(':animated') ) {
                             if ( $this.hasClass('rdr-too-many-reactions') && !$visibleReactions.is(':animated') ) {
@@ -6764,56 +6767,6 @@ function $RFunctions($R){
                         writePageReactionPills( $reactToArticle, page );
                     }
 
-                    // 7/1/2012: we'll probably roll this into the react flyout.
-                    // for ( var i = 0; i < RDR.group.blessed_tags.length; i++) {
-                    //     writeTag( RDR.group.blessed_tags[i], page );
-                    // }
-
-                    // add custom tag
-                    // 7/1/2012: we'll probably roll this into the react flyout.
-                    // var $a_custom = $('<a class="rdr_tag rdr_custom_tag rdr_tooltip_this" title="Add your own reaction to this page.  Type it in, then press Enter."><input type="text" value="Add yours..." class="rdr_default"/></a>');
-                    // $a_custom.find('input').focus( function() {
-                    //     RDR.events.track('start_custom_reaction_summ');
-                    //     var $input = $(this);
-                    //     $input.removeClass('rdr_default');
-                    //     if ( $input.val() == "Add yours..." ) {
-                    //         $input.val('');
-                    //     }
-                    // }).blur( function() {
-                    //     var $input = $(this);
-                    //     if ( $input.val() === "" ) {
-                    //         $input.val('Add yours...');
-                    //     }
-                    //     if ( $input.val() == "Add yours..." ) {
-                    //         $input.addClass('rdr_default');
-                    //     }
-                    // }).keyup( function(event) {
-                    //     var $input = $(this),
-                    //         tag = {},
-                    //         hash = $input.closest('.rdr-page-container').data('hash');
-
-                    //     if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
-
-                    //         tag.body = $input.val();
-
-                    //         args = { tag:tag, hash:hash, kind:"page" };
-                    //         RDR.actions.interactions.ajax( args, 'react', 'create' );
-                    //         $input.blur();
-                    //     }
-                    //     else if (event.keyCode == '27') { //esc
-                    //         //return false;
-                    //         $input.blur();
-                    //     } else if ( $input.val().length > 20 ) {
-                    //         var customTag = $input.val();
-                    //         $input.val( customTag.substr(0, 20) );
-                    //     }
-                    // });
-
-                    // $a_custom.tooltip({placement:placement});
-
-                    // $react.find('div.rdr-sum-reactions').append( $a_custom, " " );
-
-
                     // removing for now 7/1/2012
                     // if ( page.topusers.length > 0 ){
                     //     var $topusers = $('<div class="rdr-top-users" />');
@@ -6838,6 +6791,140 @@ function $RFunctions($R){
 
                     $summary_widget.append( $('<div class="rdr_info" />') );
 
+                function getReactedContent($this) {
+                    
+                    // show the rollover
+                    var offsets = $this.offset(),
+                        tag_id = $this.data('tag_id'),
+                        tag_body = $this.data('tag_body'),
+                        tag_count = $this.data('tag_count'),
+                        $sbRollover = $('#rdr_tag_'+tag_id+'_details');
+                    
+                    if ( !$sbRollover.length ) {
+                        $sbRollover = $('<div class="rdr rdr_tag_details rdr_sbRollover" id="rdr_tag_'+tag_id+'_details" />')//chain
+                                .append('<h1>Loading...</h1>');
+                    }
+                    
+                    $('#rdr_summary_tag_details').append( $sbRollover );
+                    $sbRollover.hover(
+                        function() {
+                            $(this).addClass('rdr_live_hover');
+                        },
+                        function() {
+                            var $this = $(this);
+                            if ( !$this.hasClass('rdr_reacted') ) {
+                                $this.hide();
+                                $this.removeClass('rdr_live_hover');
+                            }
+                        }
+                    );
+
+                    if ( RDR.engageScriptParams.bookmarklet ) {
+                        var sbRolloverModifier = {
+                            left:0
+                        };
+                        $sbRollover.addClass('rdr_boomarklet');
+                        $sbRollover.css('left',offsets.left + sbRolloverModifier.left + 'px').show();
+                    } else {
+                        var sbRolloverModifier = {
+                            top:30,
+                            left:0
+                        };
+                        $sbRollover.css('top', offsets.top + sbRolloverModifier.top + 'px').css('left',offsets.left + sbRolloverModifier.left + 'px').show();
+                    }
+
+                    var placement = ($this.closest('div.defaultSummaryBar').length) ? "right":"top";
+
+                    // get all of the content_nodes for this page
+                    // may want to limit this on back-end by a date range
+                    if ( typeof RDR.interaction_data == "undefined" ) {
+                        RDR.interaction_data = {};
+                    }
+
+                    // just do this once per page load for a given tag.  means it won't update... we'll address that later.
+                    if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) {
+                        $.each( RDR.summaries, function(hash, summary) {
+                            $.each( summary.top_interactions.tags, function(tag_id,interaction) {
+                                if (typeof interaction != "undefined" ) {
+                                    if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) RDR.interaction_data[ tag_id ] = {};
+                                    RDR.interaction_data[ tag_id ][ interaction.parent_id ] = {};
+                                    RDR.interaction_data[ tag_id ][ interaction.parent_id ].hash = hash;
+                                    RDR.interaction_data[ tag_id ][ interaction.parent_id ].container_id = summary.id;
+                                    RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag = { body:interaction.body, id:tag_id};
+                                    RDR.interaction_data[ tag_id ][ interaction.parent_id ].kind = summary.kind;
+
+                                    if ( typeof RDR.summaries[ hash ].content_nodes != "undefined") {
+                                        //callback:
+                                        $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
+                                            if ( typeof node.top_interactions != "undefined" && typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ] != "undefined" ) {
+                                                var this_interaction = node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ];
+                                                // this content node's content, location is what we want
+                                                RDR.interaction_data[ tag_id ][ interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
+                                                RDR.interaction_data[ tag_id ][ interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
+                                            }
+                                        });
+                                        console.log('call showReactedContent NO callback');
+                                    } else {
+                                        RDR.actions.content_nodes.init( hash, function() {
+                                            $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
+                                                if ( typeof node.top_interactions != "undefined" && typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ] != "undefined" ) {
+                                                    var this_interaction = node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ];
+                                                    // this content node's content, location is what we want
+                                                    RDR.interaction_data[ tag_id ][ interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
+                                                    RDR.interaction_data[ tag_id ][ interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
+                                                }
+                                            });
+                                            showReactedContent($this);
+                                        });
+                                        return;
+                                    }
+                                }
+                            });
+                        });
+                    } else {
+                        showReactedContent($this);
+                    }
+                }
+                function showReactedContent($this) {
+                    // show the rollover
+                    var tag_id = $this.data('tag_id'),
+                        tag_body = $this.data('tag_body'),
+                        tag_count = $this.data('tag_count'),
+                        $sbRollover = $('#rdr_tag_'+tag_id+'_details');
+
+                    if ( !$sbRollover.find('ul').length ) {
+                        $sbRollover.html('<h1>'+tag_body+' ('+tag_count+')</h1><ul />');
+                    }
+                    
+                    // iterate through and create an array of counts + $li.  this is then sortable.
+                    $.each( RDR.interaction_data[ tag_id ], function(int_id, data) {
+                        if ( !$sbRollover.find('li.rdr_int_summary_'+int_id).length ) {
+                            var $li = $('<li class="rdr_int_summary_'+int_id+'"/>');
+                            if (typeof RDR.interaction_data[ tag_id ][ int_id ].interaction != "undefined" && typeof RDR.interaction_data[ tag_id ][ int_id ].content_node != "undefined" ) {
+                                $li.append('<div class="rdr_count">'+RDR.interaction_data[ tag_id ][ int_id ].interaction.count+'</div><div class="rdr_content">'+RDR.interaction_data[ tag_id ][ int_id ].content_node.body+'</div>')//chain
+                                .data('count', RDR.interaction_data[ tag_id ][ int_id ].interaction.count);
+                                // lis.push({$li:$li, count:tag_count});
+
+                                // insert the new content into the right place, ordered by count
+                                if ( !$sbRollover.find('li').length ) {
+                                    $sbRollover.find('ul').append( $li );
+                                } else {
+                                    var insertIndex = 0;
+                                    $.each( $sbRollover.find('li'), function(idx, existing_li) {
+                                        // console.log('idx: '+idx);
+                                        // console.log($existing_li);
+                                        if ( parseInt(RDR.interaction_data[ tag_id ][ int_id ].interaction.count) > parseInt($(existing_li).data('count')) ) {
+                                            insertIndex = idx;
+                                            return false;
+                                        }
+                                    });
+                                    $sbRollover.find('li:eq('+insertIndex+')').append( $li );
+                                }
+                            }
+                        }
+                    });
+
+                }
                 function writePageReactionPills($a, page) {
                     $a.hoverIntent(
                         function() {
@@ -6847,13 +6934,13 @@ function $RFunctions($R){
                                 page = RDR.pages[ RDR.util.getPageProperty('id',hash) ],
                                 offsets = $this.offset();
                                 
-                            var $pillContainer = $('<div class="rdr rdr_tag_details rdr_pillContainer" />')//chain
-                                .append('<h1>Your reaction to this article?</h1><div class="rdr_pillContainerTable"/>');
+                            var $sbRollover = $('<div class="rdr rdr_tag_details rdr_sbRollover" />')//chain
+                                .append('<h2>Your reaction to this article?</h2><div class="rdr_sbRolloverTable"/>');
 
-                            $('#rdr_summary_tag_details').append( $pillContainer );
+                            $('#rdr_summary_tag_details').append( $sbRollover );
 
                             $.each( RDR.group.blessed_tags, function(idx, tag) {
-                                _writePagePill( tag, hash, page, $pillContainer.find('div.rdr_pillContainerTable') );
+                                _writePagePill( tag, hash, page, $sbRollover.find('div.rdr_sbRolloverTable') );
                             });
 
                             // add custom tag
@@ -6862,7 +6949,7 @@ function $RFunctions($R){
                             $a_custom.find('input').focus( function() {
                                 RDR.events.track('start_custom_reaction_summ');
                                 var $input = $(this);
-                                $input.removeClass('rdr_default');
+                                $input.removeClass('rdr_default').closest('div.rdr_sbRollover').addClass('rdr_reacted');
                                 if ( $input.val() == "Add yours..." ) {
                                     $input.val('');
                                 }
@@ -6872,7 +6959,7 @@ function $RFunctions($R){
                                     $input.val('Add yours...');
                                 }
                                 if ( $input.val() == "Add yours..." ) {
-                                    $input.addClass('rdr_default');
+                                    $input.addClass('rdr_default').removeClass('rdr_reacted');
                                 }
                             }).keyup( function(event) {
                                 var $input = $(this),
@@ -6898,10 +6985,10 @@ function $RFunctions($R){
 
                             $a_custom.tooltip({placement:placement});
 
-                            $pillContainer.find('div.rdr_pillContainerTable').append( $a_custom, " " );
+                            $sbRollover.find('div.rdr_sbRolloverTable').append( $a_custom, " " );
                             // $react.find('div.rdr-sum-reactions').append( $a_custom, " " );
 
-                            $pillContainer.hover(
+                            $sbRollover.hover(
                                 function() {
                                     $(this).addClass('rdr_live_hover');
                                 },
@@ -6916,17 +7003,17 @@ function $RFunctions($R){
                         
 
                             if ( RDR.engageScriptParams.bookmarklet ) {
-                                var pillContainerModifier = {
+                                var sbRolloverModifier = {
                                     left:0
                                 };
-                                $pillContainer.addClass('rdr_boomarklet');
-                                $pillContainer.css('left',offsets.left + +pillContainerModifier.left + 'px').show();
+                                $sbRollover.addClass('rdr_boomarklet');
+                                $sbRollover.css('left',offsets.left + +sbRolloverModifier.left + 'px').show();
                             } else {
-                                var pillContainerModifier = {
+                                var sbRolloverModifier = {
                                     top:30,
                                     left:0
                                 };
-                                $pillContainer.css('top', offsets.top + pillContainerModifier.top + 'px').css('left',offsets.left + +pillContainerModifier.left + 'px').show();
+                                $sbRollover.css('top', offsets.top + sbRolloverModifier.top + 'px').css('left',offsets.left + +sbRolloverModifier.left + 'px').show();
                             }
                             // $details.data('container',hash).data('kind', 'page'); // hardcoding page since this is only used in the button to +1 a page reaction
 
@@ -6944,9 +7031,9 @@ function $RFunctions($R){
                             //     tag_id = $this.data('tag_id');
                             
                             $this.removeClass('rdr_live_hover');
-                            var $pillContainer = $('#rdr_summary_tag_details').find('div.rdr_pillContainer');
-                            if ( !$pillContainer.hasClass('rdr_live_hover') ) {
-                                $pillContainer.hide();
+                            var $sbRollover = $('#rdr_summary_tag_details').find('div.rdr_sbRollover');
+                            if ( !$sbRollover.hasClass('rdr_live_hover') ) {
+                                $sbRollover.hide();
                                 
                                 // // kill old pill if it exists
                                 // var $oldPill = $this.data('$pill');
@@ -7021,24 +7108,24 @@ function $RFunctions($R){
 
                         $a.append( $span );
 
-                        var $details = $('<div class="rdr rdr_tag_details" id="rdr_tag_'+tag.id+'_details"/>')//chain
-                            .hover(
-                                function() {
-                                    $(this).addClass('rdr_live_hover');
-                                },
-                                function() {
-                                    var $this = $(this);
-                                    $this.hide();
-                                    $this.removeClass('rdr_live_hover');
-                                    var page_id = page.id;
-                                    //this page id isn't the right one, but I don't think we need this logid anyways.  Just hide it.
-                                    // if ( !$('div.rdr-summary-'+page_id).find('a.rdr_tag_'+tag.id).hasClass('rdr_live_hover') ) {
-                                    //     $this.hide();
-                                    // }
-                                }
-                            );
+                        // var $details = $('<div class="rdr rdr_tag_details" id="rdr_tag_'+tag.id+'_details"/>')//chain
+                        //     .hover(
+                        //         function() {
+                        //             $(this).addClass('rdr_live_hover');
+                        //         },
+                        //         function() {
+                        //             var $this = $(this);
+                        //             $this.hide();
+                        //             $this.removeClass('rdr_live_hover');
+                        //             var page_id = page.id;
+                        //             //this page id isn't the right one, but I don't think we need this logid anyways.  Just hide it.
+                        //             // if ( !$('div.rdr-summary-'+page_id).find('a.rdr_tag_'+tag.id).hasClass('rdr_live_hover') ) {
+                        //             //     $this.hide();
+                        //             // }
+                        //         }
+                        //     );
                         
-                        $('#rdr_summary_tag_details').append( $details );
+                        // $('#rdr_summary_tag_details').append( $details );
 
                         // $react.append( $a, " " );
                         $react.find('div.rdr-sum-reactions').append( $a, " " );
@@ -7057,8 +7144,8 @@ function $RFunctions($R){
                                     tag_id = $this.data('tag_id'),
                                     tag_body = $this.data('tag_body'),
                                     tag_count = $this.data('tag_count'),
-                                    $details = $('#rdr_tag_'+tag_id+'_details'), // hardcoding page since this is only used in the button to +1 a page reaction
-                                    $detailsHtml = $('<div/>'),
+                                    // $details = $('#rdr_tag_'+tag_id+'_details'), // hardcoding page since this is only used in the button to +1 a page reaction
+                                    // $detailsHtml = $('<div/>'),
                                     counts = {
                                         "img":0,
                                         "text":0,
@@ -7066,8 +7153,6 @@ function $RFunctions($R){
                                         "page":(tag_count=="+")?0:tag_count
                                     },
                                     otherCountsWidth = 0;
-
-                                $details.data('container',hash).data('kind', 'page'); // hardcoding page since this is only used in the button to +1 a page reaction
 
                                 $.each( page.containers, function( idx, container ) {
                                     if ( RDR.summaries && RDR.summaries[container.hash] && RDR.summaries[container.hash].top_interactions ) {
@@ -7078,77 +7163,58 @@ function $RFunctions($R){
                                     }
                                 });
 
-                                // var $page = $('<div class="rdr_counts rdr_page"><img src="'+RDR_staticUrl+'site/images/type_page.png"/> <span class="rdr_details_pill"/></div>');
-                                
-                                // pill here
-                                // if ( counts.page == 0 ) {
-                                //     var tag_count = '+';
-                                // } else {
-                                //     var peoples = ( counts.page == 1 ) ? "person":"people",
-                                //         tag_count = counts.page,
-                                //         message = tag_count+' '+peoples+' had this reaction.<br/>Click to agree.';
-                                // }
+                                getReactedContent( $this, counts );
 
-                                // $page.find('span.rdr_details_pill').append($pill);
                                 // if ( counts.page > 0 ) {
-                                //     $page.addClass('rdr_tooltip_this').attr('title', 'There are ('+counts.page+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions to this <strong>page</strong>.<br/>Click to agree.');
-                                // } else {
-                                //     $page.addClass('rdr_tooltip_this').attr('title', 'Click to add this reaction to the <strong>page</strong>.');
+                                //     var $page = $('<div class="rdr_counts rdr_page rdr_tooltip_this" title="There are ('+counts.page+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions to this <strong>page</strong>."><img src="'+RDR_staticUrl+'site/images/type_page.png"/> <strong>'+counts.page+'</strong></div>');
+                                //     $detailsHtml.append( $page );
                                 // }
-                                // $detailsHtml.append( $page );
 
-                                // if ( counts.text > 0 || counts.img > 0 || counts.media > 0 ) {
-                                // $detailsHtml.append('<div class="rdr_counts_other" />');
-                                if ( counts.page > 0 ) {
-                                    var $page = $('<div class="rdr_counts rdr_page rdr_tooltip_this" title="There are ('+counts.page+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions to this <strong>page</strong>."><img src="'+RDR_staticUrl+'site/images/type_page.png"/> <strong>'+counts.page+'</strong></div>');
-                                    $detailsHtml.append( $page );
-                                }
-
-                                if ( counts.text > 0 ) {
-                                    var $text = $('<div class="rdr_counts rdr_text rdr_tooltip_this" title="There are ('+counts.text+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on <strong>text</strong> in this page."><img src="'+RDR_staticUrl+'site/images/type_text.png"/> <strong>'+counts.text+'</strong></div>');
-                                    $detailsHtml.append( $text );
-                                }
-
-                                if ( counts.img > 0 ) {
-                                    var $img = $('<div class="rdr_counts rdr_image rdr_tooltip_this" title="There are ('+counts.img+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on <strong>images</strong> in this page."><img src="'+RDR_staticUrl+'site/images/type_img.png"/> <strong>'+counts.img+'</strong></div>');
-                                    $detailsHtml.append( $img );
-                                }
-
-                                if ( counts.media > 0 ) {
-                                    var $media = $('<div class="rdr_counts rdr_media rdr_tooltip_this" title="There are ('+counts.media+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on <strong>videos &amp; other media</strong> in this page."><img src="'+RDR_staticUrl+'site/images/type_media.png"/> <strong>'+counts.media+'</strong></div>');
-                                    $detailsHtml.append( $media );
-                                }
-
+                                // if ( counts.text > 0 ) {
+                                //     var $text = $('<div class="rdr_counts rdr_text rdr_tooltip_this" title="There are ('+counts.text+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on <strong>text</strong> in this page."><img src="'+RDR_staticUrl+'site/images/type_text.png"/> <strong>'+counts.text+'</strong></div>');
+                                //     $detailsHtml.append( $text );
                                 // }
-                                $detailsHtml.find('div.rdr_counts:last-child').addClass('rdr-last-child');
+
+                                // if ( counts.img > 0 ) {
+                                //     var $img = $('<div class="rdr_counts rdr_image rdr_tooltip_this" title="There are ('+counts.img+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on <strong>images</strong> in this page."><img src="'+RDR_staticUrl+'site/images/type_img.png"/> <strong>'+counts.img+'</strong></div>');
+                                //     $detailsHtml.append( $img );
+                                // }
+
+                                // if ( counts.media > 0 ) {
+                                //     var $media = $('<div class="rdr_counts rdr_media rdr_tooltip_this" title="There are ('+counts.media+') <strong style=\'color:#4d92da;\'>'+tag_body+'</strong> reactions on <strong>videos &amp; other media</strong> in this page."><img src="'+RDR_staticUrl+'site/images/type_media.png"/> <strong>'+counts.media+'</strong></div>');
+                                //     $detailsHtml.append( $media );
+                                // }
+
+                                // // }
+                                // $detailsHtml.find('div.rdr_counts:last-child').addClass('rdr-last-child');
 
                                 $this.addClass('rdr_live_hover');
-                                $details.html($detailsHtml);
+                                // $details.html($detailsHtml);
 
-                                if ( RDR.engageScriptParams.bookmarklet ) {
-                                    var detailsModifier = {
-                                        left:0
-                                    };
-                                    $details.addClass('rdr_boomarklet');
-                                    $details.css('left',offsets.left + +detailsModifier.left + 'px').show();
-                                } else {
-                                    var detailsModifier = {
-                                        top:30,
-                                        left:0
-                                    };
-                                    $details.css('top', offsets.top + detailsModifier.top + 'px').css('left',offsets.left + +detailsModifier.left + 'px').show();
-                                }
-                                // alert( $detailsHtml.html() );
+                                // if ( RDR.engageScriptParams.bookmarklet ) {
+                                //     var detailsModifier = {
+                                //         left:0
+                                //     };
+                                //     $details.addClass('rdr_boomarklet');
+                                //     $details.css('left',offsets.left + detailsModifier.left + 'px').show();
+                                // } else {
+                                //     var detailsModifier = {
+                                //         top:30,
+                                //         left:0
+                                //     };
+                                //     $details.css('top', offsets.top + detailsModifier.top + 'px').css('left',offsets.left + detailsModifier.left + 'px').show();
+                                // }
+                                // // alert( $detailsHtml.html() );
 
-                                var placement = ($a.closest('div.defaultSummaryBar').length) ? "right":"top";
-                                $detailsHtml.find('div.rdr_tooltip_this').tooltip({placement:placement});
+                                // var placement = ($a.closest('div.defaultSummaryBar').length) ? "right":"top";
+                                // $detailsHtml.find('div.rdr_tooltip_this').tooltip({placement:placement});
                                 
-                                $.each($details.find('div.rdr_counts_other div.rdr_counts'), function() {
-                                    otherCountsWidth += $(this).width();
-                                });
+                                // $.each($details.find('div.rdr_counts_other div.rdr_counts'), function() {
+                                //     otherCountsWidth += $(this).width();
+                                // });
 
-                                $details.find('div.rdr_counts_other').width( otherCountsWidth + 35 );
-                                $details.css( 'min-width', ( $details.find('.rdr_tag').width()+$details.find('.rdr_tag_count').width() + 35 )+'px' );
+                                // $details.find('div.rdr_counts_other').width( otherCountsWidth + 35 );
+                                // $details.css( 'min-width', ( $details.find('.rdr_tag').width()+$details.find('.rdr_tag_count').width() + 35 )+'px' );
                             },
                             function() {
                                 var $this = $(this),
