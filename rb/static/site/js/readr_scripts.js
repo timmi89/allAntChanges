@@ -546,7 +546,7 @@ RB = {
                 share_url = "",
                 contentStr = "",
                 content_length = 300,
-                short_url = RDR_baseUrl + '/i/' + interaction_id;
+                short_url = RDR_baseUrl + '/interaction/' + interaction_id;
 
             switch (sns) {
 
