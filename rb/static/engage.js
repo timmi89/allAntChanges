@@ -6221,46 +6221,46 @@ function rdr_loadScript(attributes, callbackfunction) {
 RDR.rdr_loadScript = rdr_loadScript;
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
-RDR_scriptPaths.jquery = RDR_offline ?
-    RDR_staticUrl+"global/js/jquery-1.7.1.min.js" :
-    "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
-RDR_scriptPaths.jqueryUI = RDR_offline ?
-    RDR_staticUrl+"global/js/jquery-ui-1.8.17.min.js" :
-    "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js";
+// RDR_scriptPaths.jquery = RDR_offline ?
+//     RDR_staticUrl+"global/js/jquery-1.7.1.min.js" :
+//     "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
+// RDR_scriptPaths.jqueryUI = RDR_offline ?
+//     RDR_staticUrl+"global/js/jquery-ui-1.8.17.min.js" :
+//     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js";
+
+RDR_scriptPaths.jqueryWithJqueryUI = RDR_staticUrl+"global/js/jquery-1.7.1.min-with-ui-1.8.17.min.js"
+
 RDR_scriptPaths.jqueryUI_CSS = RDR_offline ?
     RDR_staticUrl+"global/css/jquery-ui-1.8.17.base.css" :
     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/themes/base/jquery-ui.css";
 
-rdr_loadScript( {src:RDR_scriptPaths.jquery}, function(){
+rdr_loadScript( {src:RDR_scriptPaths.jqueryWithJqueryUI}, function(){
     //callback
-    var $$ = $ || jQuery;
-    if ( $$.browser.msie  && parseInt($$.browser.version, 10) < 8 ) {
+
+    //Give back the $ and jQuery.
+    $R = jQuery.noConflict(true);
+
+    var $ = $R;
+
+    if ( $.browser.msie  && parseInt($.browser.version, 10) < 8 ) {
         return false;
     }
-    if ( $$.browser.msie  && parseInt($$.browser.version, 10) == 8 ) {
-        $$('body').addClass('rdr_ie');
+    if ( $.browser.msie  && parseInt($.browser.version, 10) == 8 ) {
+        $('body').addClass('rdr_ie');
     }
 
-    //don't pass true yet.  Give back the $ here while the jqueryUI loads,
-    //but wait to give back the jQuery because the UI will need it.
-    $.noConflict();
+    //A function to load all plugins including those (most) that depend on jQuery.
+    //The rest of our code is then set off with RDR.actions.init();
+    $RFunctions($R);
 
-    rdr_loadScript( {src:RDR_scriptPaths.jqueryUI}, function(){
-        //callback
-
-        //Now give back the jQuery as well.
-        $R = jQuery.noConflict(true);
-
-        //A function to load all plugins including those (most) that depend on jQuery.
-        //The rest of our code is then set off with RDR.actions.init();
-        $RFunctions($R);
-
-    });
 });
 
 function $RFunctions($R){
     //called after our version of jQuery ($R) is loaded
-
+    
+    //alias $ here as well to be the same as our $R version of jQuery;
+    var $ = $R;
+    
     //load CSS
     var css = [];
 
