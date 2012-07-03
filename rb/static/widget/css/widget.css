@@ -484,7 +484,7 @@ table.rdr_tags tr.rdr_nextSteps div {
     float: left !important;
     margin: 0 0 !important;
 }*/
-t/*able.rdr_tags tr.rdr_nextSteps.rdr_wide div.rdr_reactionMessage {
+/*table.rdr_tags tr.rdr_nextSteps.rdr_wide div.rdr_reactionMessage {
     padding:4px 10px 2px 0 !important;
     border-right:1px solid #d0d0d0 !important;
     white-space:normal !important;
@@ -609,7 +609,8 @@ div#rdr_sandbox div.rdr_tag_details {
 }
 div#rdr_sandbox div.rdr_tag_details.rdr_boomarklet {
   position:fixed !important;
-  bottom:34px !important;
+  /*bottom:34px !important;*/
+  bottom:45px !important;
 }
 div#rdr_sandbox div.rdr_tag_details a.rdr_tag {
   margin-left:5px !important;
@@ -1062,6 +1063,11 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_logo {
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle.rdr_noReactions img.rdr_logo {
   background:none !important;
 }
+div.rdr.rdr-summary.rdr_bookmarklet {
+  border-bottom: 12px solid #444 !important;
+  border-right: none !important;
+  border-left: none !important;
+}
 div.rdr.rdr-summary.rdr_bookmarklet div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
   background:url("../images/summary_box_arrow.png") no-repeat scroll -1px 0 transparent !important;
   height:8px;
@@ -1098,7 +1104,48 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
 
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer ins    { text-decoration:none !important; }
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer a.rdr_share_link img    { max-width:20px !important;margin:0 5px -5px 0 !important; float:none !important;}
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer strong.rdr_share_it    { margin-left:10px !important;border-left:1px solid #ccc !important;padding-left:10px !important;}
+
+/*#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer strong.rdr_share_it    { margin-left:10px !important;border-left:1px solid #ccc !important;padding-left:10px !important;}*/
+
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer .feedbackMsg {
+    display: block !important;
+    clear: both !important;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer .feedbackMsg .rdr_label_icon{
+    height: 18px !important;
+    width: 18px !important;
+    float: left !important;
+    top: -3px !important;
+    position: relative !important;
+    margin: 0 4px 0 0 !important;
+    background: url(../images/readr_icons_grey.png) no-repeat -110px 0 transparent !important;
+}
+
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer .shareWrapper {
+    display: block !important;
+    clear: both !important;
+    margin: 8px 0 !important;
+}
+
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer .shareWrapper strong.rdr_share_it {
+    margin-right: 6px !important;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer .tipReactToOtherStuff {
+    clear: both !important;
+    line-height: 1.2em !important;
+}
+
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer .rdr_seeit_link,
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer .rdr_undo_link {
+    font-style: normal !important;
+    text-decoration: underline !important;
+    color: #008BE4 !important;
+    margin: 0 4px !important;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer .pipe{
+    margin: 0 4px !important;   
+}
+
 /*
 div.rdr.rdr-summary a.rdr-top-user {
     display:inline !important;

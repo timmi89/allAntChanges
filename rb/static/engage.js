@@ -3959,109 +3959,53 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         create: function(args){
                             //RDR.actions.interactions.react.onSuccess.create:
                             //todo: clean up these args.
+
+                            //todo: we should always only have one tooltip - code this up in one place.
+                            //quick fix for tooltip that is still hanging out after custom reaction
+                            $('.rdr_twtooltip').remove();
+
                             if (args.kind && args.kind == "page") {
                                 // either we have a hash, or we don't, and so we hope there is only one div.rdr-summary.  IE sucks.
                                 var $summary_box = $('div.rdr_pillContainer');
+                                var $pageTagResponse = $('<div class="rdr_info" style="padding:4px;"></div>');
+                                var $shareIcons = _makeShareIcons(args);
 
+                                var existing = args.response.data.existing;
 
-                                // TODO ERIC 7/2012
-                                // modification of this should allow adding or incrementing 
-                                // also, if easy, fire a Twitter tooltip above the added/incremented tag saying something like
-                                // "Your reaction was added, and is visible to other readers!"
-                                // >> ideally, do this on ALL tag success calls -- text/image/media, too.
+                                if(!existing){
+                                    var $rdr_reactionMessage = $('<div class="rdr_reactSuccess rdr_reactionMessage"></div>');
+                                    var $feedbackMsg = $(
+                                        '<div class="feedbackMsg">'+
+                                            '<div class="rdr_label_icon"></div>'+
+                                            '<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em>'+
+                                            '<span class="pipe"> | </span>'+
+                                            // '<span><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
+                                            '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
+                                        '</div>'
+                                    );
 
-                                // the tag in the summary bar after a page-level reaction
-
-                                // $span = $summary_box.find('a.rdr_tag_' + args.tag.id + ' span');
-
-                                // if ( $span.length === 0 && $summary_box.find('a.rdr_tag_' + args.tag.id).length === 0 ) { // it's a custom tag
-                                //     $summary_box.find('a.rdr_custom_tag').html( args.tag.body );
-                                //     $summary_box.find('a.rdr_custom_tag').append( '<span class="rdr_tag_count">1</span>' );
-                                // }
-
-                                // var tagCount = ( isNaN(args.tag.tag_count) ) ? 1 : args.tag.tag_count + 1;;
-
-                                // $span.text( tagCount );
-                                // $span.parent().data('tagCount', tagCount );  // update the stored tag count.
-
-                                // $span.show(200).css('visibility','visible');
-
-
-                                var $pageTagResponse = $('<div class="rdr_info" style="padding:4px;"><em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em>  <strong class="rdr_share_it">Share It:</strong> </div>');
-                                
-                                var socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
-
-                                // embed icons/links for diff SNS
-                                var shareHash = hash;
-                                $.each(socialNetworks, function(idx, val){
-                                    $pageTagResponse.append('<a href="http://' +val+ '.com" class="rdr_share_link"><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a>');
-                                    $pageTagResponse.find('a.rdr_share_link:last').click( function() {
-                                        RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
-
-                                        var title = $('meta[property="og:title"]').attr('content') ?
-                                            $('meta[property="og:title"]').attr('content') :
-                                                $('title').text() ?
-                                                $('title').text() : "";
-
-                                        RDR.actions.share_getLink({ hash:args.hash, kind:args.kind, sns:val, rindow:{}, tag:args.tag, content_node:{content:title,kind:"page"} }); // ugh, lots of weird data nesting
-                                        return false;
-                                    });
-                                });
-                                // $nextSteps.find('div.rdr_share_social').append( $shareLinks );
-
-                                $pageTagResponse.append( '<br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>' );
-                                $summary_box.addClass('rdr_reacted').html( $pageTagResponse );
-                                //todo: reconsider this method of liberally updating everything with updateContainerTrackers
-                                // $summary_box.find('div.rdr_info').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
-                            
-
-// : Object
-// group_id: 4
-// hash: "acdaa0036c7002b6c75471ba3bf4b492"
-// kind: "page"
-// page_id: 11
-// readr_token: "91b59eda08d7462d87c0"
-// response: Object
-    // data: Object
-    // existing: true
-    // interaction: Object
-        // id: 318
-            // interaction_node: Object
-                // body: "Craisins"
-                // id: 371
-// scenario: "reactionExists"
-// sendData: Object
-// tag: Object
-// uiMode: "writeMode"
-// user: Object
-// user_id: 170
-
-
-
-                           //do updates
-                                var intNodeHelper = {
-                                    kind: "page",
-                                    page_id: args.page_id,
-                                    id: args.response.data.interaction.interaction_node.id,
-                                    parent_id: null,
-                                    parent_interaction_node: null,
-                                    content_id: null, //todo add later
-                                    body: args.response.data.interaction.interaction_node.body,
-                                    delta: 1,
-                                    user: args.user,
-                                    social_user: args.social_user
-                                };
-
-                                var diff = {
-                                    tags: {}
-                                };
-                                diff.tags[ intNodeHelper.id ] = intNodeHelper;
-
-                                // if ( args.scenario != "reactionExists" ) {
-                                    //true for isPage
-                                    RDR.actions.summaries.update(args.hash, diff, true);
-                                // }
-
+                                    $pageTagResponse.append($feedbackMsg);
+                                    $pageTagResponse.append($shareIcons);
+                                    
+                                    $pageTagResponse.append('<div class="tipReactToOtherStuff"><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins></div>' );
+                                    $summary_box.addClass('rdr_reacted').html( $pageTagResponse );
+                                    _doPageUpdates(args);
+                                    
+                                }else{
+                                    var $rdr_reactionMessage = $('<div class="rdr_reactionMessage"></div>');
+                                    var $feedbackMsg = $(
+                                        '<div class="feedbackMsg">'+
+                                            '<em><strong>You have already given that reaction.</em></strong>'+
+                                            '<span class="pipe"> | </span>'+
+                                            // '<span><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
+                                            '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
+                                        '</div>'
+                                    );
+                                    
+                                    $pageTagResponse.append($feedbackMsg);
+                                    $pageTagResponse.append($shareIcons);
+                                    $summary_box.addClass('rdr_reacted').html( $pageTagResponse );
+                                }
 
 
                             } else {
@@ -4138,6 +4082,63 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             }
 
+                            function _makePageReactSuccess(args){
+
+                            }
+
+                            function _makePageReactAlreadyGiven(args){
+
+                            }
+                            
+                            function _doPageUpdates(args){
+                                var intNodeHelper = {
+                                    kind: "page",
+                                    page_id: args.page_id,
+                                    id: args.response.data.interaction.interaction_node.id,
+                                    parent_id: null,
+                                    parent_interaction_node: null,
+                                    content_id: null, //todo add later
+                                    body: args.response.data.interaction.interaction_node.body,
+                                    delta: 1,
+                                    user: args.user,
+                                    social_user: args.social_user
+                                };
+
+                                var diff = {
+                                    tags: {}
+                                };
+                                diff.tags[ intNodeHelper.id ] = intNodeHelper;
+
+                                // if ( args.scenario != "reactionExists" ) {
+                                    //true for isPage
+                                    RDR.actions.summaries.update(args.hash, diff, true);
+                                // }
+                            }
+
+                            function _makeShareIcons(args){
+                                // embed icons/links for diff SNS
+                                var socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
+                                var shareHash = args.hash;
+                                var $shareWrapper = $('<div class="shareWrapper" ></div>');
+                                
+                                $shareWrapper.append('<strong class="rdr_share_it">Share It:</strong>');
+
+                                $.each(socialNetworks, function(idx, val){
+                                    $shareWrapper.append('<a href="http://' +val+ '.com" class="rdr_share_link"><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a>');
+                                    $shareWrapper.find('a.rdr_share_link:last').click( function() {
+                                        RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
+
+                                        var title = $('meta[property="og:title"]').attr('content') ?
+                                            $('meta[property="og:title"]').attr('content') :
+                                                $('title').text() ?
+                                                $('title').text() : "";
+
+                                        RDR.actions.share_getLink({ hash:shareHash, kind:args.kind, sns:val, rindow:{}, tag:args.tag, content_node:{content:title,kind:"page"} }); // ugh, lots of weird data nesting
+                                        return false;
+                                    });
+                                });
+                                return $shareWrapper;
+                            }
                         },
                         remove: function(args){
                             //RDR.actions.interactions.react.onSuccess.remove:
@@ -7162,6 +7163,9 @@ function $RFunctions($R){
                                     // if($oldPill){
                                     //     $oldPill.remove();
                                     // }
+
+                                    var $oldMsg = $('.rdr_tag_details');
+                                    $oldMsg.remove();
                                 }
                             }
                         );
