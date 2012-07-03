@@ -361,8 +361,8 @@ function readrBoard($R){
                                     '<div class="rdr_reactionMessage rdr_reactSuccess">'+
                                         '<div class="rdr_label_icon"></div>'+
                                         '<strong>'+tag.body+'</strong>'+
-                                        '<span><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
-                                        '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
+                                        '<span class="rdr_link"><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
+                                        '<span class="rdr_link"><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
                                     '</div>' 
                                 );
                                 $nextSteps.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
@@ -3983,12 +3983,17 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                             '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
                                         '</div>'
                                     );
+                                    $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
+                                        var args = event.data.args;
+                                        _undoPageReaction(args);
+                                    });
 
                                     $pageTagResponse.append($feedbackMsg);
                                     $pageTagResponse.append($shareIcons);
                                     
                                     $pageTagResponse.append('<div class="tipReactToOtherStuff"><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins></div>' );
                                     $summary_box.addClass('rdr_reacted').html( $pageTagResponse );
+                                    
                                     _doPageUpdates(args);
                                     
                                 }else{
@@ -4001,12 +4006,15 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                             '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
                                         '</div>'
                                     );
-                                    
+                                    $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
+                                        var args = event.data.args;
+                                        _undoPageReaction(args);
+                                    });
+
                                     $pageTagResponse.append($feedbackMsg);
                                     $pageTagResponse.append($shareIcons);
                                     $summary_box.addClass('rdr_reacted').html( $pageTagResponse );
                                 }
-
 
                             } else {
                                 $('#rdr_loginPanel').remove()
@@ -4083,13 +4091,23 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
 
                             function _makePageReactSuccess(args){
-
                             }
 
                             function _makePageReactAlreadyGiven(args){
-
                             }
                             
+                            function _undoPageReaction(args){
+                                
+                                var newArgs = {
+                                    hash: args.hash,
+                                    kind: 'page',
+                                    int_id: args.response.data.interaction.id,
+                                    tag: args.tag,
+                                    rindow: args.rindow
+                                };
+                                RDR.actions.interactions.ajax( newArgs, 'react', 'remove' );
+                            }
+
                             function _doPageUpdates(args){
                                 var intNodeHelper = {
                                     kind: "page",
@@ -5134,7 +5152,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
                             $.each(nodes, function(id,diffNode){
                                 //coms or tags
-                                _updatePage(hash, diffNode);
+                                RDR.actions.summaries.pageLevelUpdate(hash, diffNode);
                             });
                         });
                         return;
@@ -5170,7 +5188,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 summary_node.count += diffNode.delta;
 
                                 //also update page
-                                _updatePage(hash, diffNode);
+                                RDR.actions.summaries.pageLevelUpdate(hash, diffNode);
 
                                 //if this cleared out the last of this node, delete it. (i.e. if a first-ever tag was made, and then undone )
                                 if( summary_node.count <= 0 ){
@@ -5191,7 +5209,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     };
 
                                     //also update page
-                                    _updatePage(hash, diffNode);
+                                    RDR.actions.summaries.pageLevelUpdate(hash, diffNode);
 
                                 }else{
                                     var user = diffNode.user;
@@ -5247,8 +5265,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         //RDR.actions.summaries. update( 'pageSummary' );
                     }
 
-                    function _updatePage(hash, diffNode){
-                        //todo it looks like we're assuming this is a tag - check if we need to consider comments
+                },
+                pageLevelUpdate: function(hash, diffNode){
+                    //RDR.actions.summaries.pageLevelUpdate:
 
                         //also update page
                         var tagId = diffNode.id;
@@ -5264,6 +5283,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 page.count += diffNode.delta;
                                 this.tag_count += diffNode.delta;
 
+                                //no need to remove 0 counts, it seems to just work.
                                 foundIt = true;
                             }
                         });
@@ -5296,8 +5316,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         //this shoudl do for now to find the page...
                         var $page = $summaryWidgetAnchorNode.closest('.rdr-page-container');
                         $page.socialPageShareBox('update');
-                    }
-
+                    
                 },
                 sortInteractions: function(hash) {
                     // RDR.actions.summaries.sortInteractions

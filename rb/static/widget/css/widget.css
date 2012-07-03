@@ -1390,6 +1390,9 @@ div.rdr_reactions {
     margin:10px 0 !important;
     display: block !important;
     font-style: normal !important;
+}
+
+.rdr_link{
     white-space: nowrap !important;
 }
 
