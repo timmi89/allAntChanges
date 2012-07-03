@@ -314,6 +314,23 @@ function readrBoard($R){
                 }
                 RDR.rindow.jspUpdate( $rindow, setWidth, kind );
             },
+            updatePageTagMessage: function(args, action) {
+
+                if(action == 'tagDeleted'){
+                    var $rindow = args.rindow;
+                    console.log($rindow);
+                    $rindow.html(
+                        '<div class="rdr_reactionMessage rdr_reactUndoSuccess">'+
+                            '<div class="rdr_label_icon"></div>'+
+                            '<em>'+
+                                '<span>Your Reaction: </span>'+
+                                '<strong> '+args.tag.body+' </strong>'+
+                                '<span>has been undone.</span>'+
+                            '</em>'+
+                        '</div>' 
+                    );
+                }
+            },
             updateTagMessage: function(args) {
                 //RDR.rindow.updateTagMessage
                 // used for updating the message in the rindow that follows a reaction
@@ -3978,13 +3995,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         '<div class="feedbackMsg">'+
                                             '<div class="rdr_label_icon"></div>'+
                                             '<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em>'+
-                                            // '<span class="pipe"> | </span>'+
+                                            '<span class="pipe"> | </span>'+
                                             // '<span><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
-                                            // '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
+                                            '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
                                         '</div>'
                                     );
                                     $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                         var args = event.data.args;
+                                        args.rindow = $(this).closest('.rdr_pillContainer');
                                         _undoPageReaction(args);
                                     });
 
@@ -4001,13 +4019,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     var $feedbackMsg = $(
                                         '<div class="feedbackMsg">'+
                                             '<em><strong>You have already given that reaction.</em></strong>'+
-                                            // '<span class="pipe"> | </span>'+
+                                            '<span class="pipe"> | </span>'+
                                             // '<span><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
-                                            // '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
+                                            '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
                                         '</div>'
                                     );
                                     $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                         var args = event.data.args;
+                                        args.rindow = $(this).closest('.rdr_pillContainer');
                                         _undoPageReaction(args);
                                     });
 
@@ -4186,7 +4205,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             };
                             diff.tags[ intNodeHelper.id ] = intNodeHelper;
 
-                            RDR.actions.summaries.update(hash, diff);
+
+                            var isPage = (args.kind == 'page');
+
+                            RDR.actions.summaries.update(hash, diff, isPage);
 
                             var usrMsgArgs = {
                                 msgType: "interactionSuccess",
@@ -4202,8 +4224,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $rindow.queue('userMessage', function(){
                                 RDR.session.rindowUserMessage.show( usrMsgArgs );
                             });
-
-                            RDR.rindow.updateTagMessage( {rindow:$rindow, tag:args.tag, scenario:"tagDeleted", args:args} );
+                            
+                            if(args.kind == 'page'){
+                                RDR.rindow.updatePageTagMessage( args, 'tagDeleted' );
+                            }else{
+                                RDR.rindow.updateTagMessage( {rindow:$rindow, tag:args.tag, scenario:"tagDeleted", args:args} );
+                            }
                         }
                     },
                     onFail: function(args){

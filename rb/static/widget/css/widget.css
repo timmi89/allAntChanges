@@ -520,6 +520,10 @@ table.rdr_tags tr.rdr_nextSteps div.rdr_share_social .rdr_label_icon{
     top: 1px !important;
 }
 
+.rdr_reactUndoSuccess{
+    padding: 5px;
+}
+
 table.rdr_tags tr.rdr_nextSteps div.rdr_nextSteps_container {
     padding:3px 2px 1px 2px !important;
 }
@@ -1086,6 +1090,10 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
 }
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer h1 {
   margin-bottom:5px !important;
+}
+
+#rdr_sandbox #rdr_summary_tag_details .rdr_pillContainer h1 {
+    margin-bottom: 8px !important;
 }
 
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer div.rdr_pillContainerTable a.rdr_tag{
