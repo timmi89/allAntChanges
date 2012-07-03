@@ -7165,7 +7165,7 @@ function $RFunctions($R){
                                     // }
 
                                     var $oldMsg = $('.rdr_tag_details');
-                                    $oldMsg.remove();
+                                    $oldMsg.hide();
                                 }
                             }
                         );
