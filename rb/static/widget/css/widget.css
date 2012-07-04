@@ -495,6 +495,9 @@ table.rdr_tags tr.rdr_nextSteps div.rdr_reactionMessage {
 table.rdr_tags tr.rdr_nextSteps div.rdr_reactionMessage span{
     margin-left: 8px;
 }
+table.rdr_tags tr.rdr_nextSteps div.rdr_reactionMessage strong{
+    white-space: nowrap !important;
+}
 
 table.rdr_tags tr.rdr_nextSteps .rdr_label_icon{
     height: 18px !important;
@@ -515,6 +518,10 @@ table.rdr_tags tr.rdr_nextSteps div.rdr_commentBox .rdr_label_icon{
 table.rdr_tags tr.rdr_nextSteps div.rdr_share_social .rdr_label_icon{
     background: url(../images/readr_icons_grey.png) no-repeat -50px 0 transparent !important;
     top: 1px !important;
+}
+
+.rdr_reactUndoSuccess{
+    padding: 5px;
 }
 
 table.rdr_tags tr.rdr_nextSteps div.rdr_nextSteps_container {
@@ -610,7 +617,7 @@ div#rdr_sandbox div.rdr_tag_details {
 div#rdr_sandbox div.rdr_tag_details.rdr_boomarklet {
   position:fixed !important;
   /*bottom:34px !important;*/
-  bottom:45px !important;
+  bottom:42px !important;
 }
 div#rdr_sandbox div.rdr_tag_details a.rdr_tag {
   margin-left:5px !important;
@@ -930,7 +937,7 @@ div.rdr.rdr-summary * {
 }
 div.rdr.rdr-summary #rdr-user {
   float:right !important;
-  margin:13px 25px 0 15px !important;
+  margin:9px 25px 0 15px !important;
 }
 div.rdr.rdr-summary #rdr-user a {
   font-style:normal !important;
@@ -970,7 +977,7 @@ div.rdr.rdr-summary td.rdr_rb_logo {
 }
 div.rdr.rdr-summary div.rdr-this-is-readrboard {
     text-align:center !important;
-    padding:10px 1px 0 5px !important;
+    padding:7px 1px 0 5px !important;
 }
 div.rdr.rdr-summary div.rdr-this-is-readrboard img {
     margin:0 !important;
@@ -982,7 +989,6 @@ div.rdr.rdr-summary div.rdr-this-is-readrboard div {
 }
 
 div.rdr.rdr-summary div.rdr-sum-headline {
-    padding:0px 5px !important;
     display:inline-block !important;
     color:#787878 !important;
     line-height: 32px !important;
@@ -1001,14 +1007,16 @@ div.rdr.rdr-summary div.rdr-sum-headline div.rdr-call-to-action {
 div.rdr.rdr-summary div.rdr-sum-reactions {
   /*margin-top:5px !important;*/
 }
+div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_tag{
+  margin:0 !important;
+}
+
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactions_label {
   font-style:normal !important;
   font-weight:bold !important;
   color:#888 !important;
   font-size:11px !important;
-  margin-right:4px !important;
-  margin-left:4px !important;
-  padding-right:2px !important;
+  padding: 5px 10px !important;
 }
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactions_label:hover {
   text-decoration:none !important;
@@ -1037,12 +1045,9 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle {
   padding-left:5px !important;
 }
 div.rdr.rdr-summary div.rdr-sum-reactions a {
-  height:22px !important;
   display:inline-block !important;
   border-top:0 none !important;
-  padding-top:8px !important;
-  margin-right:-1px !important;
-  padding-right:10px !important;
+  padding: 6px 10px 4px 10px !important;
 }
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_lastchild {
   border-right:1px solid #ccc !important;
@@ -1092,6 +1097,7 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
   font-size:18px !important;
   border-bottom:1px solid #999 !important;
   padding-bottom:5px !important;
+  margin-bottom:8px !important;
 }
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover table {
   min-width:150px !important;
@@ -1189,6 +1195,7 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
     text-decoration: underline !important;
     color: #008BE4 !important;
     margin: 0 4px !important;
+    white-space: nowrap !important;
 }
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .pipe{
     margin: 0 4px !important;   
@@ -1434,6 +1441,10 @@ div.rdr_reactions {
     margin:10px 0 !important;
     display: block !important;
     font-style: normal !important;
+}
+
+.rdr_link{
+    white-space: nowrap !important;
 }
 
 /*everything below here is stuff that is inline to the client's document.  Generally will use !important for everything*/
