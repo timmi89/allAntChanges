@@ -6198,7 +6198,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 }
 
 
-//rdr_loadScript copied from http://www.logiclabz.com/javascript/dynamically-loading-javascript-file-with-callback-event-handlers.aspx
+//from http://www.aaronpeters.nl/blog/prevent-double-callback-execution-in-IE9#comment-175618750
 function rdr_loadScript(attributes, callbackfunction) {
     var oHead = document.getElementsByTagName('head')[0];
     if(oHead) {
@@ -6207,13 +6207,21 @@ function rdr_loadScript(attributes, callbackfunction) {
         oScript.setAttribute('src', attributes.src);
         oScript.setAttribute('type','text/javascript');
 
-        var loadFunction = function() {
-            if (this.readyState == 'complete' || this.readyState == 'loaded') {
+
+
+        if (oScript.readyState) { // IE, incl. IE9
+            oScript.onreadystatechange = function() {
+                if (oScript.readyState == "loaded" || oScript.readyState == "complete") {
+                    oScript.onreadystatechange = null;
+                    callbackfunction();
+                }
+            };
+        } else {
+            oScript.onload = function() { // Other browsers
                 callbackfunction();
-            }
-        };
-        oScript.onload = callbackfunction;
-        oScript.onreadystatechange = loadFunction;
+            };
+        }
+
         oHead.appendChild(oScript);
     }
 }
