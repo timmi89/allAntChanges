@@ -34,10 +34,10 @@ body.rdr_ie a.rdr_tag {
     display:inline-block !important;
 }
 
-body.rdr_ie .rdr-sum-reactions a.rdr_tag {
+body.rdr_ie div.rdr-sum-reactions a.rdr_tag {
     border: none !important;
 }
-body.rdr_ie .rdr-sum-reactions .rdr_tag_details a.rdr_tag {
+body.rdr_ie div.rdr_tag_details a.rdr_tag {
     border:1px solid #ccc !important;
 }
 
