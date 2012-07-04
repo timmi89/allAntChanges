@@ -2017,35 +2017,8 @@ function readrBoard($R){
 
                     var selogStack = $().selog('stack'); //just fyi, not using it... Will be an empty stack on page load.
 
-                    /*
-                    //no need to check for existing hilites right now
-                    var oldSelState = selState || null;
-                    if (oldSelState){
-                        $().selog('hilite',oldSelState.idx, 'off')
-                    }
-                    */
-
                     var selState = $container.selog('save', {'serialRange':serialRange} );
                     $().selog('hilite', selState, 'on');
-
-                    /**********/
-                    //todo: quick fix!  ... later attach it to a rindow to do it right.
-                    //for now at least, make it so we can clear this easily.
-                    $(document).on('click.rdr', function(event) {
-                        $().selog('hilite', selState, 'off');
-                        $(document).unbind('click.rdr', arguments.callee);
-                    });
-                   //bind an escape keypress to clear it.
-                    //todo: for a real public API, this should be an option, or passed in function or something
-                    $(document).on('keyup.rdr', function(event) {
-                        //todo: merge all esc key events (use an array of functions that we can just dequeue?)
-                        if (event.keyCode == '27') { //esc
-                            $().selog('hilite', selState, 'off');
-                            //remove the binding after it's been called.
-                            $(document).unbind('keyup.rdr', arguments.callee);
-                        }
-                    });
-                    /**********/ //end quick fix
                 }
 
                 var targetOffset = $container.offset().top,
@@ -2053,13 +2026,6 @@ function readrBoard($R){
                 scrollTarget = targetOffset-windowPadding || 0;
 
                 $('html,body').animate({scrollTop: scrollTarget}, 1000);
-
-                // if ( data.page_hash && data.page_hash.length > 1 ) {
-                //     // TODO SHARE HACK REMOVE THIS DAILYCANDY ONLY
-                //     var p = data.page_hash;
-                //     var slide = parseInt( p.substr( p.indexOf('=')+1 ) ) - 1;
-                //     DAILYCANDYCYCLE( slide );
-                // }
             },
             getSharedLinkInfo: function( data ){
                 //some condition
@@ -2781,6 +2747,8 @@ function readrBoard($R){
                 RDR.actions.containers.media.disengageAll();
                 RDR.actions.indicators.utils.borderHilites.disengageAll();
                 $('div.rdr.rdr_tag_details.rdr_sbRollover').remove();
+
+                $().selog('hilite', true, 'off');
 
                 //clear a share alert if it exists - do this better later.
                 var shareBoxExists = $('.rdr_fromShareLink').length;
@@ -6791,7 +6759,7 @@ function $RFunctions($R){
 
                     $summary_widget.append( $('<div class="rdr_info" />') );
 
-                function getReactedContent($this) {
+                function getReactedContent($this, counts) {
                     
                     // show the rollover
                     var offsets = $this.offset(),
@@ -6841,31 +6809,21 @@ function $RFunctions($R){
                         RDR.interaction_data = {};
                     }
 
-                    // just do this once per page load for a given tag.  means it won't update... we'll address that later.
-                    if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) {
-                        $.each( RDR.summaries, function(hash, summary) {
-                            $.each( summary.top_interactions.tags, function(tag_id,interaction) {
-                                if (typeof interaction != "undefined" ) {
-                                    if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) RDR.interaction_data[ tag_id ] = {};
-                                    RDR.interaction_data[ tag_id ][ interaction.parent_id ] = {};
-                                    RDR.interaction_data[ tag_id ][ interaction.parent_id ].hash = hash;
-                                    RDR.interaction_data[ tag_id ][ interaction.parent_id ].container_id = summary.id;
-                                    RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag = { body:interaction.body, id:tag_id};
-                                    RDR.interaction_data[ tag_id ][ interaction.parent_id ].kind = summary.kind;
+                    if ( counts.img > 0 || counts.text > 0 || counts.media > 0 ) {
+                        // just do this once per page load for a given tag.  means it won't update... we'll address that later.
+                        if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) {
+                            $.each( RDR.summaries, function(hash, summary) {
+                                $.each( summary.top_interactions.tags, function(tag_id,interaction) {
+                                    if (typeof interaction != "undefined" ) {
+                                        if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) RDR.interaction_data[ tag_id ] = {};
+                                        RDR.interaction_data[ tag_id ][ interaction.parent_id ] = {};
+                                        RDR.interaction_data[ tag_id ][ interaction.parent_id ].hash = hash;
+                                        RDR.interaction_data[ tag_id ][ interaction.parent_id ].container_id = summary.id;
+                                        RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag = { body:interaction.body, id:tag_id};
+                                        RDR.interaction_data[ tag_id ][ interaction.parent_id ].kind = summary.kind;
 
-                                    if ( typeof RDR.summaries[ hash ].content_nodes != "undefined") {
-                                        //callback:
-                                        $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
-                                            if ( typeof node.top_interactions != "undefined" && typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ] != "undefined" ) {
-                                                var this_interaction = node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ];
-                                                // this content node's content, location is what we want
-                                                RDR.interaction_data[ tag_id ][ interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
-                                                RDR.interaction_data[ tag_id ][ interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
-                                            }
-                                        });
-                                        console.log('call showReactedContent NO callback');
-                                    } else {
-                                        RDR.actions.content_nodes.init( hash, function() {
+                                        if ( typeof RDR.summaries[ hash ].content_nodes != "undefined") {
+                                            //callback:
                                             $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
                                                 if ( typeof node.top_interactions != "undefined" && typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ] != "undefined" ) {
                                                     var this_interaction = node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ];
@@ -6874,55 +6832,96 @@ function $RFunctions($R){
                                                     RDR.interaction_data[ tag_id ][ interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
                                                 }
                                             });
-                                            showReactedContent($this);
-                                        });
-                                        return;
+                                        } else {
+                                            RDR.actions.content_nodes.init( hash, function() {
+                                                $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
+                                                    if ( typeof node.top_interactions != "undefined" && typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ] != "undefined" ) {
+                                                        var this_interaction = node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ];
+                                                        // this content node's content, location is what we want
+                                                        RDR.interaction_data[ tag_id ][ interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
+                                                        RDR.interaction_data[ tag_id ][ interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
+                                                    }
+                                                });
+                                                showReactedContent($this, counts);
+                                            });
+                                            return;
+                                        }
                                     }
-                                }
+                                });
                             });
-                        });
+                        } else {
+                            showReactedContent($this, counts);
+                        }
                     } else {
-                        showReactedContent($this);
+                        showReactedContent($this, counts);
                     }
                 }
-                function showReactedContent($this) {
+                function showReactedContent($this, counts) {
+                    $().selog('hilite', true, 'off');
+                    
+                    // the "counts" thing comes from the hoverIntent thing in writeTag() below, and should probably go / be cleaned up.
+                    // I'm in a hurry, hey.
                     // show the rollover
                     var tag_id = $this.data('tag_id'),
                         tag_body = $this.data('tag_body'),
                         tag_count = $this.data('tag_count'),
                         $sbRollover = $('#rdr_tag_'+tag_id+'_details');
 
-                    if ( !$sbRollover.find('ul').length ) {
-                        $sbRollover.html('<h1>'+tag_body+' ('+tag_count+')</h1><ul />');
+                    if ( !$sbRollover.find('table').length ) {
+                        $sbRollover.html('<h1>'+tag_body+' ('+tag_count+')</h1><table cellpadding="0" cellspacing="0" border="0" />');
+                        if ( counts && counts.page ) {
+                            var page_reaction_word = (counts.page>1) ? "reactions":"reaction";
+                            $sbRollover.find('table').append('<tr class="rdr_page_reactions"><td colspan="2"><strong>('+counts.page+') '+tag_body+'</strong> '+page_reaction_word+' to this <strong>article</strong></td></tr>');
+                        }
                     }
                     
-                    // iterate through and create an array of counts + $li.  this is then sortable.
-                    $.each( RDR.interaction_data[ tag_id ], function(int_id, data) {
-                        if ( !$sbRollover.find('li.rdr_int_summary_'+int_id).length ) {
-                            var $li = $('<li class="rdr_int_summary_'+int_id+'"/>');
-                            if (typeof RDR.interaction_data[ tag_id ][ int_id ].interaction != "undefined" && typeof RDR.interaction_data[ tag_id ][ int_id ].content_node != "undefined" ) {
-                                $li.append('<div class="rdr_count">'+RDR.interaction_data[ tag_id ][ int_id ].interaction.count+'</div><div class="rdr_content">'+RDR.interaction_data[ tag_id ][ int_id ].content_node.body+'</div>')//chain
-                                .data('count', RDR.interaction_data[ tag_id ][ int_id ].interaction.count);
-                                // lis.push({$li:$li, count:tag_count});
+                    if ( counts.img > 0 || counts.text > 0 || counts.media > 0 ) {
+                        // iterate through and create an array of counts + $tr.  this is then sortable.
+                        $.each( RDR.interaction_data[ tag_id ], function(int_id, data) {
+                            if ( !$sbRollover.find('tr.rdr_int_summary_'+int_id).length ) {
+                                var $tr = $('<tr valign="middle" class="rdr_content_reaction rdr_int_summary_'+int_id+'"/>'),
+                                    thing = RDR.interaction_data[ tag_id ][ int_id ];
+                                if (typeof thing.interaction != "undefined" && typeof thing.content_node != "undefined" ) {
+                                    var reaction_word = (thing.interaction.count>1) ? "reactions":"reaction";
+                                    $tr.append('<td class="rdr_count"><h4>'+thing.interaction.count+'</h4><h5>'+reaction_word+'</h5></td>')//chain
+                                    .data('count', thing.interaction.count)//chain
+                                    .data('tag_id', tag_id)//chain
+                                    .data('int_id', int_id);
 
-                                // insert the new content into the right place, ordered by count
-                                if ( !$sbRollover.find('li').length ) {
-                                    $sbRollover.find('ul').append( $li );
-                                } else {
-                                    var insertIndex = 0;
-                                    $.each( $sbRollover.find('li'), function(idx, existing_li) {
-                                        // console.log('idx: '+idx);
-                                        // console.log($existing_li);
-                                        if ( parseInt(RDR.interaction_data[ tag_id ][ int_id ].interaction.count) > parseInt($(existing_li).data('count')) ) {
-                                            insertIndex = idx;
-                                            return false;
-                                        }
+                                    if ( thing.kind == "text" ) {
+                                        $tr.append('<td class="rdr_content">'+thing.content_node.body+'</td>');
+                                    } else if ( thing.kind == "img" ) {
+                                        $tr.append('<td class="rdr_content"><img src="'+thing.content_node.body+'" height="50"/></td>');
+                                    } else if ( thing.kind == "media" ) {
+                                        $tr.append('<td class="rdr_content"><img src="'+RDR_baseUrl+'/static/widget/images/video_icon.png" height="33"/> Video</td>');
+                                    }
+
+                                    $tr.click( function(e) {
+                                        e.preventDefault();
+                                        var data = {
+                                            container_hash:thing.hash,
+                                            location:thing.content_node.location
+                                        };
+                                        RDR.session.revealSharedContent(data);
                                     });
-                                    $sbRollover.find('li:eq('+insertIndex+')').append( $li );
+
+                                    // insert the new content into the right place, ordered by count
+                                    if ( !$sbRollover.find('tr.rdr_content_reaction').length ) {
+                                        $sbRollover.find('table').append( $tr );
+                                    } else {
+                                        var insertIndex = ($sbRollover.find('tr.rdr_content_reaction').length-1);
+                                        $.each( $sbRollover.find('tr.rdr_content_reaction'), function(idx, existing_tr) {
+                                            if ( parseInt(thing.interaction.count) > parseInt($(existing_tr).data('count')) ) {
+                                                insertIndex = idx;
+                                                return false;
+                                            }
+                                        });
+                                        $sbRollover.find('tr.rdr_content_reaction:eq('+insertIndex+')').before( $tr );
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
+                    }
 
                 }
                 function writePageReactionPills($a, page) {

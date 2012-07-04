@@ -1082,6 +1082,8 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover {
   max-width:320px !important;
   text-align:left !important;
+  max-height:350px !important;
+  overflow-y:auto !important;
 }
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover h1, #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover h2 {
   margin-bottom:5px !important;
@@ -1091,8 +1093,46 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
   border-bottom:1px solid #999 !important;
   padding-bottom:5px !important;
 }
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover ul {
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover table {
   min-width:150px !important;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover td {
+  /*clear:both !important;*/
+  /*overflow:auto !important;*/
+  padding:5px 0 !important;
+  cursor:pointer !important;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover tr:hover {
+  background:#dae7f5 !important;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover tr.rdr_page_reactions td {
+  text-align:center !important;
+  padding-bottom:10px !important;
+  border-bottom:1px solid #ddd !important;
+  cursor:auto !important;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover td.rdr_count {
+  /*float:left !important;*/
+  text-align:center !important;
+  width:60px !important;
+  padding:5px !important;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover td.rdr_count h4 {
+  font-size:16px !important;
+  font-weight:bold !important;
+  font-style:normal !italic;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover td.rdr_count h5 {
+  font-size:12px !important;
+  font-weight:bold !important;
+  font-style:normal !italic;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover td.rdr_content {
+  max-width:300px !important;
+  font-family:Georgia,serif !important;
+  font-size:13px !important;
+  font-style:italic !important;
+  text-decoration:none !important;
 }
 
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag{
