@@ -61,24 +61,34 @@
 
 		});
 
-		function rdr_loadScript(sScriptSrc,callbackfunction) {
-		    var oHead = document.getElementsByTagName('head')[0];
-		    if(oHead) {
-		        var oScript = document.createElement('script');
+        //from http://www.aaronpeters.nl/blog/prevent-double-callback-execution-in-IE9#comment-175618750
+        function rdr_loadScript(attributes, callbackfunction) {
+            var oHead = document.getElementsByTagName('head')[0];
+            if(oHead) {
+                var oScript = document.createElement('script');
 
-		        oScript.setAttribute('src',sScriptSrc);
-		        oScript.setAttribute('type','text/javascript');
+                oScript.setAttribute('src', attributes.src);
+                oScript.setAttribute('type','text/javascript');
 
-		        var loadFunction = function() {
-		            if (this.readyState == 'complete' || this.readyState == 'loaded') {
-		                callbackfunction();
-		            }
-		        };
-		        oScript.onload = callbackfunction;
-		        oScript.onreadystatechange = loadFunction;
-		        oHead.appendChild(oScript);
-		    }
-		}
+
+
+                if (oScript.readyState) { // IE, incl. IE9
+                    oScript.onreadystatechange = function() {
+                        if (oScript.readyState == "loaded" || oScript.readyState == "complete") {
+                            oScript.onreadystatechange = null;
+                            callbackfunction();
+                        }
+                    };
+                } else {
+                    oScript.onload = function() { // Other browsers
+                        callbackfunction();
+                    };
+                }
+
+                oHead.appendChild(oScript);
+            }
+        }
+
 
 		var _sf_async_config={uid:26845,domain:"readrboard.com"};
 		var chartbeat_script = (("https:" == document.location.protocol) ? "https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/" : "http://static.chartbeat.com/") + "js/chartbeat.js";
