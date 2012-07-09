@@ -1084,43 +1084,88 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
   width:10px;
   margin:0 !important;
 }
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer {
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover {
   max-width:320px !important;
   text-align:left !important;
+  max-height:350px !important;
+  overflow-y:auto !important;
 }
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer h1 {
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover h1, #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover h2 {
   margin-bottom:5px !important;
 }
-
-#rdr_sandbox #rdr_summary_tag_details .rdr_pillContainer h1 {
-    margin-bottom: 8px !important;
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover h1 {
+  font-size:18px !important;
+  border-bottom:1px solid #999 !important;
+  padding-bottom:5px !important;
+  margin-bottom:8px !important;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover table {
+  min-width:150px !important;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover td {
+  /*clear:both !important;*/
+  /*overflow:auto !important;*/
+  padding:5px 0 !important;
+  cursor:pointer !important;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover tr:hover {
+  background:#dae7f5 !important;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover tr.rdr_page_reactions td {
+  text-align:center !important;
+  padding-bottom:10px !important;
+  border-bottom:1px solid #ddd !important;
+  cursor:auto !important;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover td.rdr_count {
+  /*float:left !important;*/
+  text-align:center !important;
+  width:60px !important;
+  padding:5px !important;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover td.rdr_count h4 {
+  font-size:16px !important;
+  font-weight:bold !important;
+  font-style:normal !italic;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover td.rdr_count h5 {
+  font-size:12px !important;
+  font-weight:bold !important;
+  font-style:normal !italic;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover td.rdr_content {
+  max-width:300px !important;
+  font-family:Georgia,serif !important;
+  font-size:13px !important;
+  font-style:italic !important;
+  text-decoration:none !important;
 }
 
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer div.rdr_pillContainerTable a.rdr_tag{
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag{
   display:inline-block !important;
   margin-bottom:7px !important;
   white-space:normal !important;
   padding:0px 5px !important;
 }
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer div.rdr_pillContainerTable a.rdr_tag.rdr_custom_tag input {
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag.rdr_custom_tag input {
   padding:4px 0 0 0 !important;
 }
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer div.rdr_pillContainerTable a.rdr_tag span.rdr_tag_count {
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag span.rdr_tag_count {
   background: -webkit-gradient(linear, center top, center bottom, from(#f0f0f0), to(#d0d0d0)) !important; 
   background: -moz-linear-gradient(center top , #f0f0f0, #d0d0d0) repeat scroll 0 0 transparent !important;
   padding:3px 5px !important;
 }
 
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer ins    { text-decoration:none !important; }
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer a.rdr_share_link img    { max-width:20px !important;margin:0 5px -5px 0 !important; float:none !important;}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover ins    { text-decoration:none !important; }
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover a.rdr_share_link img    { max-width:20px !important;margin:0 5px -5px 0 !important; float:none !important;}
 
-/*#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer strong.rdr_share_it    { margin-left:10px !important;border-left:1px solid #ccc !important;padding-left:10px !important;}*/
+/*#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover strong.rdr_share_it    { margin-left:10px !important;border-left:1px solid #ccc !important;padding-left:10px !important;}*/
 
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer .feedbackMsg {
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .feedbackMsg {
     display: block !important;
     clear: both !important;
 }
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer .feedbackMsg .rdr_label_icon{
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .feedbackMsg .rdr_label_icon{
     height: 18px !important;
     width: 18px !important;
     float: left !important;
@@ -1130,29 +1175,29 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
     background: url(../images/readr_icons_grey.png) no-repeat -110px 0 transparent !important;
 }
 
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer .shareWrapper {
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .shareWrapper {
     display: block !important;
     clear: both !important;
     margin: 8px 0 !important;
 }
 
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer .shareWrapper strong.rdr_share_it {
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .shareWrapper strong.rdr_share_it {
     margin-right: 6px !important;
 }
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer .tipReactToOtherStuff {
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .tipReactToOtherStuff {
     clear: both !important;
     line-height: 1.2em !important;
 }
 
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer .rdr_seeit_link,
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer .rdr_undo_link {
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .rdr_seeit_link,
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .rdr_undo_link {
     font-style: normal !important;
     text-decoration: underline !important;
     color: #008BE4 !important;
     margin: 0 4px !important;
     white-space: nowrap !important;
 }
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer .pipe{
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .pipe{
     margin: 0 4px !important;   
 }
 
