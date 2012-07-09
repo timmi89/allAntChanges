@@ -198,7 +198,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
   </section>
 
 {% block footer %}
-<footer role="contentinfo" class="withFixedBar clearfix">
+<footer role="contentinfo" class="{% block hasFixedBar %}withFixedBar{% endblock %} clearfix">
     <div class="footerLinks">
         <ul class="footerLinksLeft">
             <li>
@@ -342,6 +342,7 @@ RB.profile_user = {
   })();
 </script>
 
+{% block fixedBar %}
 <div style="text-align:center;font-weight:bold;position:fixed;bottom:0;width:100%;background:#7fbadf;z-index:1000;overflow:auto;padding:10px 0;" id="fixedBar">
     <h3 style="color:#fff;xfloat:left;display:inline-block;">Add your reactions to any site on the web:</h3>
     <div class="callToActionButtons" style="xfloat:left;display:inline-block;margin-bottom:-7px;">
@@ -365,6 +366,7 @@ function showVideo() {
     });
 }
 </script>
+{% endblock %}
 
 <script>
 
