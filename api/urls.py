@@ -31,6 +31,10 @@ EntitySearch = Resource(handler=EntitySearchHandler)
 StreamResponse = Resource(handler=StreamResponseHandler)
 StreamComment = Resource(handler=StreamCommentHandler)
 PlusOneUsers = Resource(handler=PlusOneUserHandler)
+BoardAdd = Resource(handler=BoardAddHandler)
+
+
+
 
 urlpatterns = patterns('',
     url(r'^settings/$', Settings),
@@ -84,5 +88,7 @@ urlpatterns = patterns('',
     url(r'^stream/response/', StreamResponse),
     url(r'^stream/comment/', StreamComment),
     url(r'^plusones', PlusOneUsers),
+    url(r'^boardadd', BoardAdd),
+    url(r'^boarddelete', BoardAdd, kwargs={'action':'delete'}),
     #url(r'^comments/', Comments),
 )
