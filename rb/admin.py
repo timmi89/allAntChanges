@@ -158,5 +158,6 @@ admin.site.register(UserDefaultTag)
 admin.site.register(NotificationRule)
 admin.site.register(NotificationType)
 admin.site.register(InteractionNotification)
-
+admin.site.register(Board)
+admin.site.register(BoardAdmin)
 

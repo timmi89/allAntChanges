@@ -402,4 +402,47 @@ class Follow(models.Model):
     class Meta:
         unique_together = ('owner', 'type', 'follow_id')
 
+
+
+        
+class Board(DateAwareModel):
+    owner = models.ForeignKey(User, related_name='board_owner')
+    admins = models.ManyToManyField(User, through='BoardAdmin')
+    title = models.CharField(max_length = 255, blank=False, null=False)
+    description = models.TextField()
+    interactions = models.ManyToManyField(Interaction, through='BoardInteraction')
+    active = models.BooleanField(default=True)
+    visible = models.BooleanField(default=True)
+    
+    def __unicode__(self):
+        return unicode(str(self.owner.id) + " " + str(self.active) + " " + str(self.visible) + " " + self.title)
+
+    class Meta:
+        unique_together = ('owner', 'title')
+
+    
+    
+class BoardInteraction(models.Model):
+    board = models.ForeignKey(Board)
+    interaction = models.ForeignKey(Interaction)
+    
+    def __unicode__(self):
+        return unicode(str(self.board) + " " + str(self.interaction.id))
+
+    class Meta:
+        unique_together = ('board','interaction')
+    
+    
+    
+class BoardAdmin(models.Model):
+    board = models.ForeignKey(Board)
+    user = models.ForeignKey(User)
+    approved = models.BooleanField(default=True)
+    
+    def __unicode__(self):
+        return str(self.board) + ":" + self.user.full_name + ":" + str(self.approved)
+    
+    class Meta:
+        unique_together = ('board', 'user')
+
         
