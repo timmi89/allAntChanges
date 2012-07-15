@@ -1,0 +1,35 @@
+{% extends "index.html" %}
+
+    {% block cards %}
+
+    <div class="singleReactionHeader">
+        <span class="title">A ReadrBoard Reaction</span>
+        <a id="seeItLink" class="seeIt">See it live</a>
+        <div class="clear"></div>
+    </div>
+
+    <div id="cards">
+      {% include "interactions.html" %}
+      <div class="seeAllReactionsButtonWrap">
+        <a href="/">See more Reactions on ReadrBoard</a>
+      </div>
+
+    </div>
+    <script>
+        var interactionId = $('.card').data('interactionId');
+        $('#seeItLink').attr("href", "/i/"+interactionId);
+
+        $('#content').hover(
+            function(){
+                $('#seeItLink').addClass('hover');
+            },
+            function(){
+                $('#seeItLink').removeClass('hover');
+            }
+        );
+
+    </script>
+    {% endblock cards %}    
+
+{% block hasFixedBar %}{%endblock%}
+{% block fixedBar %}{%endblock%}

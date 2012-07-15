@@ -829,7 +829,7 @@ section[role="main"] div.added_by .arrowLeft{
     left: -10px;
 }
 
-section[role="main"] div.card div.added_by img.user_avatar  { display: inline-block; margin-bottom:0px; width:27px; }
+section[role="main"] div.card div.added_by img.user_avatar  { display: inline-block; margin-bottom:0px; width:27px; max-height: 27px;}
 section[role="main"] div.card div.meta img.me_too  { width:25px;height:24px;background:url(../images/me_too.png) -25px 0px no-repeat;display:block;float:right;cursor:pointer;margin-top:-2px;}
 section[role="main"] div.card div.meta img.me_too:hover   { background-position: 0px 0px; }
 section[role="main"] div.card div.meta div.me_too_outcome { display:none;border-top:1px solid #aaa;padding:3px;margin-top:6px;}
@@ -1237,15 +1237,8 @@ table[role="popular bookmarks"] td[role="reactions"]	{ padding:0 0 10px 23px; }
 
 }
 
-
-
-footer{
-	padding:15px 0;
-	background:#333;
-	z-index:1000;
-}
 footer.withFixedBar{
-    margin-bottom: 40px; 
+    margin-bottom: 50px; 
 }
 /*footer div.footerLinks{
 	width:960px;
@@ -1279,7 +1272,8 @@ footer div.footerLinks a:hover{
 }*/
 
 footer, .emptyFooter{
-    padding:15px 0;
+    padding:15px 0 6px 0;
+    
     background:#333;
     z-index:1000;
     text-align: center;
@@ -1505,4 +1499,43 @@ http://drupal.org/node/897638
 }
 .container .userFeedbackMsg{
     padding: 20px 20px 20px 0 !important;   
+}
+
+.seeAllReactionsButtonWrap{
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    margin-bottom: 10px;
+}
+.singleReactionHeader{
+    position: relative;
+    width: 300px;
+    margin: 0 auto;
+    text-align: left;
+    
+}
+.seeAllReactionsButtonWrap a{
+    width: 300px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 8px 0;
+    color:#7EBADF;
+}
+.singleReactionHeader .title,
+.singleReactionHeader .seeIt{
+    font-size: 14px;
+    color: #bbb;
+}
+.singleReactionHeader .title{
+    float: left;
+}
+.singleReactionHeader .seeIt{
+    float: right;
+    color:#7EBADF;
+}
+
+.singleReactionHeader .seeIt.hover{
+    text-decoration: underline;
 }

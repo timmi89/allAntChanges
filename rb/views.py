@@ -113,6 +113,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
         'timestamp': timestamp,
         'BASE_URL': BASE_URL
     }
+    singleton = False;
 
     if cookie_user:
         context['cookie_user'] = cookie_user
@@ -180,6 +181,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
         
     if interaction_id:
         interactions = interactions.filter(id=interaction_id)
+        singleton = True;
         context['singleton'] = True
     
     # Interactions for specific page
@@ -256,7 +258,8 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
 
         context['child_interactions'][child_interaction.parent.id] += 1
 
-    return render_to_response("index.html", context, context_instance=RequestContext(request))
+    template = "single_interaction.html" if singleton else "index.html"
+    return render_to_response(template, context, context_instance=RequestContext(request))
 
 def cards(request, **kwargs):
     # Get interaction set based on filter criteria
